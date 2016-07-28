@@ -144,3 +144,5 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 /.idea/vcs.xml
+app/libs/
+app/src/main/res/drawable/
