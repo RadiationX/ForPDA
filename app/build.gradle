@@ -25,4 +25,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.1.1'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile "com.squareup.okhttp3:okhttp-urlconnection:3.4.1"
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
 }
