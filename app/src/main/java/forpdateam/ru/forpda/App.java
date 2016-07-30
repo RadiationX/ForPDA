@@ -16,6 +16,8 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import java.io.File;
 
 import forpdateam.ru.forpda.api.Api;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * Created by radiationx on 28.07.16.
@@ -40,6 +42,11 @@ public class App extends android.app.Application {
         super.onCreate();
         Api.Init();
         initImageLoader(this);
+
+
+        RealmConfiguration configuration = new RealmConfiguration.Builder(this).build();
+        Realm.setDefaultConfiguration(configuration);
+
     }
 
     private static DisplayImageOptions.Builder options = new DisplayImageOptions.Builder()

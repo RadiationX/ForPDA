@@ -3,6 +3,7 @@
     package="forpdateam.ru.forpda">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -21,6 +22,19 @@
         <activity android:name=".test.LoginActivity">
 
         </activity>
+        <activity android:name=".test.TestDevDbActivity"
+            android:theme="@style/AppTheme"
+            android:label="DevDb" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <!--Так проще тестировать-->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".utils.permission.ShadowActivity"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     </application>
 
 </manifest>

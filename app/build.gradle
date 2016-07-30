@@ -1,29 +1,90 @@
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.0"
 
-    defaultConfig {
-        applicationId "forpdateam.ru.forpda"
-        minSdkVersion 18
-        targetSdkVersion 24
-        versionCode 1
-        versionName "1.0"
+    def versionPropsFile = file('version.properties')
+    if (versionPropsFile.canRead()) {
+        def Properties versionProps = new Properties()
+
+        versionProps.load(new FileInputStream(versionPropsFile))
+
+        def value = 0
+
+        def runTasks = gradle.startParameter.taskNames
+        if ('assemble' in runTasks || 'assembleRelease' in runTasks || 'aR' in runTasks) {
+            value = 1;
+        }
+
+        def versionMajor = 0
+        def versionMinor = 0
+        def versionPatch = versionProps['VERSION_PATCH'].toInteger() + value
+        def versionBuild = versionProps['VERSION_BUILD'].toInteger() + 1
+        def versionNumber = versionProps['VERSION_NUMBER'].toInteger() + value
+
+        versionProps['VERSION_PATCH'] = versionPatch.toString()
+        versionProps['VERSION_BUILD'] = versionBuild.toString()
+        versionProps['VERSION_NUMBER'] = versionNumber.toString()
+
+        versionProps.store(versionPropsFile.newWriter(), null)
+
+        defaultConfig {
+            applicationId "ru.forpdateam.forpda"
+            versionCode versionNumber
+            versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})"
+            minSdkVersion 18
+            targetSdkVersion 24
+            vectorDrawables.useSupportLibrary = true
+        }
+
+        applicationVariants.all { variant ->
+            variant.outputs.each { output ->
+                def fileNaming = "apk/RELEASES"
+                variant.outputs.each { output1 ->
+                    def outputFile = output1.outputFile
+                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                        output1.outputFile = new File(getProject().getRootDir(), "${fileNaming}-${versionMajor}.${versionMinor}.${versionPatch}-${outputFile.name}")
+                    }
+                }
+            }
+        }
+    } else {
+        throw new GradleException("Could not read version.properties!")
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
+}
+
+ext {
+    supportLibVersion = '24.1.1'
+    okHttpVersion = '3.4.1'
+    rxbindingVersion = '0.4.0'
+    rxlifecycleVersion = '0.6.1'
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:24.1.1'
-    compile 'com.squareup.okhttp3:okhttp:3.4.1'
-    compile "com.squareup.okhttp3:okhttp-urlconnection:3.4.1"
+    compile "com.android.support:appcompat-v7:${supportLibVersion}"
+    compile "com.squareup.okhttp3:okhttp:${okHttpVersion}"
+    compile "com.squareup.okhttp3:okhttp-urlconnection:${okHttpVersion}"
+    compile 'com.annimon:stream:1.0.9' // Стримы - классная штука
+    compile 'io.reactivex:rxandroid:1.2.1' // Прослойка между Rx и android
+    compile 'io.reactivex:rxjava:1.1.6' // Rx
+    compile "com.jakewharton.rxbinding:rxbinding:${rxbindingVersion}" // Очередная няшка от Джека))
+    compile "com.trello:rxlifecycle:${rxlifecycleVersion}" // Думаю из названия понятно
+    compile "com.trello:rxlifecycle-components:${rxlifecycleVersion}"
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+    compile 'org.jsoup:jsoup:1.9.1'
 }
