@@ -16,7 +16,7 @@ import forpdateam.ru.forpda.client.Client;
 
 public class Parser {
 
-    public static ArrayList<DevCatalog> getStandartDevicesTypes() {
+    public static ArrayList<DevCatalog> getStandardDevicesTypes() {
         ArrayList<DevCatalog> res = new ArrayList<>();
         res.add(new DevCatalog("http://4pda.ru/devdb/phones/", "Телефоны").setType(DevCatalog.DEVICE_TYPE));
         res.add(new DevCatalog("http://4pda.ru/devdb/pad/", "Планшеты").setType(DevCatalog.DEVICE_TYPE));
@@ -26,7 +26,7 @@ public class Parser {
     }
 
     public static ArrayList<DevCatalog> parseBrands(Client client, String devicesTypeUrl) {
-        String pageBody = null;
+        String pageBody;
         ArrayList<DevCatalog> res = new ArrayList<>();
         try {
             pageBody = client.get(devicesTypeUrl + "all");

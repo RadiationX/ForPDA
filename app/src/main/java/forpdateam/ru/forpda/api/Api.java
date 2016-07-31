@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.api;
 
 import forpdateam.ru.forpda.api.login.Login;
+import forpdateam.ru.forpda.api.newslist.NewsList;
 import forpdateam.ru.forpda.api.qms.Qms;
 
 /**
@@ -10,11 +11,13 @@ public class Api {
     private static Api INSTANCE = null;
     private static Qms qmsApi = null;
     private static Login loginApi = null;
+    private static NewsList newsListApi = null;
 
     public Api() {
         INSTANCE = this;
         qmsApi = new Qms();
         loginApi = new Login();
+        newsListApi = new NewsList();
     }
 
     public static void Init() {
@@ -27,6 +30,10 @@ public class Api {
 
     public static Login Login() {
         return loginApi;
+    }
+
+    public static NewsList NewsList() {
+        return newsListApi;
     }
 
     /*public static Api get() {

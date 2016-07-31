@@ -2,15 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="forpdateam.ru.forpda">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name=".App"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -19,12 +19,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".test.LoginActivity">
-
-        </activity>
-        <activity android:name=".test.TestDevDbActivity"
-            android:theme="@style/AppTheme"
-            android:label="DevDb" >
+        <activity android:name=".test.LoginActivity" />
+        <activity android:name=".test.NewsListActivity" />
+        <activity
+            android:name=".test.TestDevDbActivity"
+            android:label="DevDb"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <!--Так проще тестировать-->
