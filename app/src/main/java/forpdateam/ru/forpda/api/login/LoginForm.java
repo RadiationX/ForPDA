@@ -1,10 +1,12 @@
 package forpdateam.ru.forpda.api.login;
 
+import forpdateam.ru.forpda.client.Client;
+
 /**
  * Created by radiationx on 29.07.16.
  */
 public class LoginForm {
-    private final static String returnField = "http://4pda.ru/forum/index.php?showforum=200";
+    private final static String returnField = Client.minimalPage;
     private final static String rememberField = "1";
     private String captchaImageUrl;
     private String captcha;

@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.client;
 
+import android.util.Log;
 import android.webkit.WebSettings;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ public class Client {
     private static final URI domain = URI.create("http://4pda.ru/");
     private static final CookieManager msCookieManager = new CookieManager();
     private static Client INSTANCE = null;
+    public static final String minimalPage = "http://4pda.ru/forum/index.php?showforum=200";
 
     public Client() {
         INSTANCE = this;
@@ -47,43 +49,59 @@ public class Client {
         httpCookie.setPath(fields[3]);
         return httpCookie;
     }
-
+    private static List<Cookie> cookies = new ArrayList<>();
+    public static void logout(){
+        cookies.clear();
+    }
     private static final OkHttpClient client = new OkHttpClient.Builder()
             .cookieJar(new CookieJar() {
-                private List<Cookie> cookies = new ArrayList<>();
+
 
                 @Override
                 public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-                    msCookieManager.getCookieStore().removeAll();
+                    Log.d("kek", "response cookies size "+cookies.size());
+                    try {
+                        msCookieManager.getCookieStore().removeAll();
 
-                    for (Cookie cookie : cookies) {
-                        if (cookie.name().matches("member_id|pass_hash")) {
-                            String toSave = cookie.name() + "|:|" + cookie.value() + "|:|" + cookie.domain() + "|:|" + cookie.path() + "|:|";
-                            App.getInstance().getPreferences().edit().putString("cookie_" + cookie.name(), toSave).apply();
-                            HttpCookie tempCookie = new HttpCookie(cookie.name(), cookie.value());
-                            tempCookie.setDomain(cookie.domain());
-                            tempCookie.setPath(cookie.path());
-                            if (!msCookieManager.getCookieStore().getCookies().contains(tempCookie))
-                                msCookieManager.getCookieStore().add(domain, tempCookie);
+                        for (Cookie cookie : cookies) {
+                            if (cookie.name().matches("member_id|pass_hash")) {
+                                String toSave = cookie.name() + "|:|" + cookie.value() + "|:|" + cookie.domain() + "|:|" + cookie.path() + "|:|";
+                                App.getInstance().getPreferences().edit().putString("cookie_" + cookie.name(), toSave).apply();
+                                HttpCookie tempCookie = new HttpCookie(cookie.name(), cookie.value());
+                                tempCookie.setDomain(cookie.domain());
+                                tempCookie.setPath(cookie.path());
+                                if (!msCookieManager.getCookieStore().getCookies().contains(tempCookie))
+                                    msCookieManager.getCookieStore().add(domain, tempCookie);
+                            }
                         }
+
+                        for (Cookie cookie : cookies) {
+                            Client.cookies.add(cookie);
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
 
-                    for (Cookie cookie : cookies) {
-                        this.cookies.add(cookie);
-                    }
                 }
 
                 @Override
                 public List<Cookie> loadForRequest(HttpUrl url) {
-                    for (HttpCookie cookie : msCookieManager.getCookieStore().getCookies()) {
-                        Cookie tempCookie = new Cookie.Builder()
-                                .name(cookie.getName())
-                                .value(cookie.getValue())
-                                .domain(cookie.getDomain())
-                                .build();
-                        if (!cookies.contains(tempCookie))
-                            cookies.add(tempCookie);
+                    try {
+                        for (HttpCookie cookie : msCookieManager.getCookieStore().getCookies()) {
+                            Cookie tempCookie = new Cookie.Builder()
+                                    .name(cookie.getName())
+                                    .value(cookie.getValue())
+                                    .domain(cookie.getDomain())
+                                    .build();
+                            if (!cookies.contains(tempCookie))
+                                cookies.add(tempCookie);
+                        }
+
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
+
+                    Log.d("kek", "cookies size "+cookies.size());
                     return cookies;
                 }
             })
