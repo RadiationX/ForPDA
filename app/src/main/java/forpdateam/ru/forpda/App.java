@@ -23,17 +23,10 @@ import io.realm.RealmConfiguration;
  * Created by radiationx on 28.07.16.
  */
 public class App extends android.app.Application {
-    private static App INSTANCE = null;
+    private static App INSTANCE = new App();
     private SharedPreferences preferences;
 
-    public App() {
-        INSTANCE = this;
-    }
-
     public static App getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new App();
-        }
         return INSTANCE;
     }
 

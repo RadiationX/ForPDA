@@ -25,11 +25,10 @@ public class Client {
     private static final String userAgent = WebSettings.getDefaultUserAgent(App.getContext());
     private static final URI domain = URI.create("http://4pda.ru/");
     private static final CookieManager msCookieManager = new CookieManager();
-    private static Client INSTANCE = null;
+    private static Client INSTANCE = new Client();
     public static final String minimalPage = "http://4pda.ru/forum/index.php?showforum=200";
 
     public Client() {
-        INSTANCE = this;
         msCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
         String member_id = App.getInstance().getPreferences().getString("cookie_member_id", null);
         String pass_hash = App.getInstance().getPreferences().getString("cookie_pass_hash", null);
@@ -38,7 +37,6 @@ public class Client {
     }
 
     public static Client getInstance() {
-        if (INSTANCE == null) INSTANCE = new Client();
         return INSTANCE;
     }
 
@@ -49,17 +47,18 @@ public class Client {
         httpCookie.setPath(fields[3]);
         return httpCookie;
     }
+
     private static List<Cookie> cookies = new ArrayList<>();
-    public static void logout(){
+
+    public static void logout() {
         cookies.clear();
     }
+
     private static final OkHttpClient client = new OkHttpClient.Builder()
             .cookieJar(new CookieJar() {
-
-
                 @Override
                 public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-                    Log.d("kek", "response cookies size "+cookies.size());
+                    Log.d("kek", "response cookies size " + cookies.size());
                     try {
                         msCookieManager.getCookieStore().removeAll();
 
@@ -73,15 +72,11 @@ public class Client {
                                 if (!msCookieManager.getCookieStore().getCookies().contains(tempCookie))
                                     msCookieManager.getCookieStore().add(domain, tempCookie);
                             }
-                        }
-
-                        for (Cookie cookie : cookies) {
                             Client.cookies.add(cookie);
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-
                 }
 
                 @Override
@@ -97,11 +92,10 @@ public class Client {
                                 cookies.add(tempCookie);
                         }
 
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-
-                    Log.d("kek", "cookies size "+cookies.size());
+                    Log.d("kek", "cookies size " + cookies.size());
                     return cookies;
                 }
             })
