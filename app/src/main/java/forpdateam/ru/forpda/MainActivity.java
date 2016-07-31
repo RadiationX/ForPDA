@@ -12,15 +12,20 @@ import android.widget.Toast;
 
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.test.LoginActivity;
+import forpdateam.ru.forpda.utils.Utils;
+import forpdateam.ru.forpda.utils.permission.RxPermissions;
 
 public class MainActivity extends AppCompatActivity {
     Button testLogin;
     Button clearCookies;
+    private RxPermissions permissions;
     Button testLogout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        permissions = RxPermissions.getInstance(this);
+
         testLogin = (Button) findViewById(R.id.button);
         clearCookies = (Button) findViewById(R.id.button3);
         testLogout = (Button) findViewById(R.id.button4);
