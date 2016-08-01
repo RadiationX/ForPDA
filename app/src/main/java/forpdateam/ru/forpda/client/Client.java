@@ -29,6 +29,7 @@ public class Client {
     public static final String minimalPage = "http://4pda.ru/forum/index.php?showforum=200";
 
     public Client() {
+        INSTANCE = this;
         msCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
         String member_id = App.getInstance().getPreferences().getString("cookie_member_id", null);
         String pass_hash = App.getInstance().getPreferences().getString("cookie_pass_hash", null);

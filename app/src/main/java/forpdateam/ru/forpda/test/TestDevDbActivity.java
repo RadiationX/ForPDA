@@ -31,7 +31,7 @@ import rx.schedulers.Schedulers;
 
 public class TestDevDbActivity extends RxAppCompatActivity {
     private static final int LAYOUT = R.layout.test_devdb_activity;
-    private static final String LINk = "";
+    private static final String LINk = "http://4pda.ru/devdb/phones/";
     private ApiImpl api;
     private RxPermissions permissions;
     private Subscription subscription;
@@ -132,4 +132,5 @@ public class TestDevDbActivity extends RxAppCompatActivity {
     private void logD(String text) {
         Log.d("Test DevDb Activity", text);
     }
+
 }

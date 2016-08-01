@@ -30,16 +30,17 @@ public class App extends android.app.Application {
         return INSTANCE;
     }
 
+    public App(){
+        INSTANCE = this;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         Api.Init();
         initImageLoader(this);
-
-
         RealmConfiguration configuration = new RealmConfiguration.Builder(this).build();
         Realm.setDefaultConfiguration(configuration);
-
     }
 
     private static DisplayImageOptions.Builder options = new DisplayImageOptions.Builder()
@@ -69,17 +70,6 @@ public class App extends android.app.Application {
 
     public static Context getContext() {
         return getInstance();
-    }
-
-    public static String getSystemDir() {
-        File dir = App.getInstance().getFilesDir();
-        if (dir == null)
-            dir = App.getInstance().getExternalFilesDir(null);
-
-        String res = dir.getPath();
-        if (!res.endsWith(File.separator))
-            res = res.concat(File.separator);
-        return res;
     }
 
     public SharedPreferences getPreferences() {
