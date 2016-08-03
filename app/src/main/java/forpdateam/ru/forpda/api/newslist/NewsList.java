@@ -1,11 +1,19 @@
 package forpdateam.ru.forpda.api.newslist;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.devdb.Parser;
+import forpdateam.ru.forpda.api.devdb.models.DevCatalog;
+import forpdateam.ru.forpda.api.newslist.models.NewsItem;
 import forpdateam.ru.forpda.client.Client;
+import rx.Observable;
+import rx.Subscriber;
 
 /**
  * Created by radiationx on 31.07.16.
@@ -21,8 +29,8 @@ public class NewsList {
     * 7. Description */
     private static final Pattern pattern = Pattern.compile("<article[^>]*?class=\"post\"[^>]*?data-ztm=\"[^ ]+\"[^>]*>[\\s\\S]*?<a[^>]*?href=\"([^\"]*)\"[^>]*?title=\"([^\"]*?)\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\"[\\s\\S]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[\\s\\S]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?itemprop=\"description\">([\\s\\S]*?)<\\/div>[\\s\\S]*?<\\/article>");
 
-    public List<NewsItem> get(String url) throws Exception {
-        List<NewsItem> list = new ArrayList<>();
+    public ArrayList<NewsItem> get(String url) throws Exception {
+        ArrayList<NewsItem> list = new ArrayList<>();
         String response = Client.getInstance().get(url);
 
         Matcher matcher = pattern.matcher(response);
@@ -38,5 +46,19 @@ public class NewsList {
             list.add(item);
         }
         return list;
+    }
+
+    public Observable<ArrayList<NewsItem>> getRx(final String url) {
+        return Observable.create(new Observable.OnSubscribe<ArrayList<NewsItem>>() {
+            @Override
+            public void call(Subscriber<? super ArrayList<NewsItem>> subscriber) {
+                try {
+                    subscriber.onNext(Api.NewsList().get(url));
+                    subscriber.onCompleted();
+                }catch (Exception e){
+                    subscriber.onError(e);
+                }
+            }
+        });
     }
 }

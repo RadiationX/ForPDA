@@ -15,9 +15,6 @@ public class Api {
 
     public Api() {
         INSTANCE = this;
-        qmsApi = new Qms();
-        loginApi = new Login();
-        newsListApi = new NewsList();
     }
 
     public static void Init() {
@@ -25,14 +22,17 @@ public class Api {
     }
 
     public static Qms Qms() {
+        if (qmsApi == null) qmsApi = new Qms();
         return qmsApi;
     }
 
     public static Login Login() {
+        if (loginApi == null) loginApi = new Login();
         return loginApi;
     }
 
     public static NewsList NewsList() {
+        if (newsListApi == null) newsListApi = new NewsList();
         return newsListApi;
     }
 

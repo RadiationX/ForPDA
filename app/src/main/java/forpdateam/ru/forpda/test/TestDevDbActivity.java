@@ -60,36 +60,37 @@ public class TestDevDbActivity extends RxAppCompatActivity {
     }
 
     private void loadData() {
-        subscription = api.getBrands(Client.getInstance(), LINk)
-                /**
-                 * Оператор subscribeOn - в нем мы говорим что Observable(Источник данных)
-                 * будет работать в другом потоке. Для этого мы используем Schedulers.io().
-                 * Бывают и другие но для операций ввода - вывода используют IO.
-                 * Он же и используется для похода в сеть.
-                 * Можно еще самому намутить тред(ы) и передать туда.
-                 */
-                .subscribeOn(Schedulers.io())
-                /**
-                 * Оператор observeOn - тут мы указываем в каком потоке будет работать subscribe.
-                 * В котором мы будем работать с полученными данными из Observable.
-                 * AndroidSchedulers.mainThread() из библиотеки rxandroid.
-                 * Тут думаю все понятно.
-                 *
-                 * Обрати внимания. Логично было бы если в subscribeOn мы указывали поток subscribe,
-                 * но какой то мучачес решил по другому. Вообщем нужно первое время быть внимательнее.
-                 * А то завалится.
-                 */
-                .observeOn(AndroidSchedulers.mainThread()) // Главное не путать
-                /**
-                 * Оператор compose - типа трансформация. Глянь лучше доки.
-                 * В наше случае мы отслеживаем состояние активити.
-                 * Чтоб если активити когда ушла на паузу мы не пытались рисовать вьюхи
-                 */
-                .compose(this.bindUntilEvent(ActivityEvent.PAUSE))
-                /**
-                 * Оператор subscribe - это подписчик.
-                 * Вот так он выглядит без сахара 8ки и чуть больше.))
-                 */
+        try {
+            subscription = api.getBrands(Client.getInstance(), LINk)
+                    /**
+                     * Оператор subscribeOn - в нем мы говорим что Observable(Источник данных)
+                     * будет работать в другом потоке. Для этого мы используем Schedulers.io().
+                     * Бывают и другие но для операций ввода - вывода используют IO.
+                     * Он же и используется для похода в сеть.
+                     * Можно еще самому намутить тред(ы) и передать туда.
+                     */
+                    .subscribeOn(Schedulers.io())
+                    /**
+                     * Оператор observeOn - тут мы указываем в каком потоке будет работать subscribe.
+                     * В котором мы будем работать с полученными данными из Observable.
+                     * AndroidSchedulers.mainThread() из библиотеки rxandroid.
+                     * Тут думаю все понятно.
+                     *
+                     * Обрати внимания. Логично было бы если в subscribeOn мы указывали поток subscribe,
+                     * но какой то мучачес решил по другому. Вообщем нужно первое время быть внимательнее.
+                     * А то завалится.
+                     */
+                    .observeOn(AndroidSchedulers.mainThread()) // Главное не путать
+                    /**
+                     * Оператор compose - типа трансформация. Глянь лучше доки.
+                     * В наше случае мы отслеживаем состояние активити.
+                     * Чтоб если активити когда ушла на паузу мы не пытались рисовать вьюхи
+                     */
+                    .compose(this.bindUntilEvent(ActivityEvent.PAUSE))
+                    /**
+                     * Оператор subscribe - это подписчик.
+                     * Вот так он выглядит без сахара 8ки и чуть больше.))
+                     */
 //                .subscribe(new Action1<ArrayList<DevCatalog>>() {
 //                    @Override
 //                    public void call(ArrayList<DevCatalog> catalogs) {
@@ -114,7 +115,10 @@ public class TestDevDbActivity extends RxAppCompatActivity {
 //                         */
 //                    }
 //                });
-                .subscribe(this::bindUi);
+                    .subscribe(this::bindUi);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     /**

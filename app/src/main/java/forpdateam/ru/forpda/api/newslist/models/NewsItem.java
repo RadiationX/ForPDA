@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.api.newslist;
+package forpdateam.ru.forpda.api.newslist.models;
 
 import forpdateam.ru.forpda.api.newslist.interfaces.INewsItem;
 

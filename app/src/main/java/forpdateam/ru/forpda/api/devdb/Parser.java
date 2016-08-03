@@ -25,24 +25,20 @@ public class Parser {
         return res;
     }
 
-    public static ArrayList<DevCatalog> parseBrands(Client client, String devicesTypeUrl) {
+    public static ArrayList<DevCatalog> parseBrands(Client client, String devicesTypeUrl) throws Exception {
         String pageBody;
         ArrayList<DevCatalog> res = new ArrayList<>();
-        try {
-            pageBody = client.get(devicesTypeUrl + "all");
-            Document doc = Jsoup.parse(pageBody);
+        pageBody = client.get(devicesTypeUrl + "all");
+        Document doc = Jsoup.parse(pageBody);
 
-            Elements con = doc.getElementsByClass("word-list");
-            Elements con1 = con.select("li");
-            for (Element element1 : con1) {
-                String brandsLink = element1.getElementsByTag("a").attr("href");
-                String brandsName = element1.text();
-                DevCatalog f = new DevCatalog(brandsLink, brandsName);
-                f.setType(DevCatalog.DEVICE_BRAND);
-                res.add(f);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        Elements con = doc.getElementsByClass("word-list");
+        Elements con1 = con.select("li");
+        for (Element element1 : con1) {
+            String brandsLink = element1.getElementsByTag("a").attr("href");
+            String brandsName = element1.text();
+            DevCatalog f = new DevCatalog(brandsLink, brandsName);
+            f.setType(DevCatalog.DEVICE_BRAND);
+            res.add(f);
         }
 
         return res;
