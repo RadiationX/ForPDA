@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.test;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -15,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.qms.models.QmsChatItem;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsThread;
 import rx.android.schedulers.AndroidSchedulers;
@@ -80,6 +82,26 @@ public class QmsActivity extends RxAppCompatActivity {
                 .subscribe(this::addText));
     }
 
+    private void loadChat(String url) {
+        Log.d("kek", "load cahat " + url);
+        mCompositeSubscription.add(Api.Qms().getChat(url)
+                .timeout(2, TimeUnit.SECONDS)
+                .retry(2)
+                .onErrorResumeNext(throwable -> {
+                    Log.d("kek", "error return next");
+                    return null;
+                })
+                .onErrorReturn(throwable -> {
+                    Log.d("kek", throwable.getMessage());
+                    throwable.printStackTrace();
+                    return new ArrayList<>();
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .compose(this.bindUntilEvent(ActivityEvent.PAUSE))
+                .subscribe(this::showChat));
+    }
+
 
     private void bindUi(ArrayList<QmsContact> contacts) {
         String temp = "";
@@ -88,7 +110,10 @@ public class QmsActivity extends RxAppCompatActivity {
                 //temp+=contact.getNick()+"\n";
                 Button button = new Button(this);
                 button.setText(contact.getNick() + (contact.getCount().isEmpty() ? "" : " : " + contact.getCount()));
-                button.setOnClickListener(view -> loadThreads("http://4pda.ru/forum/index.php?act=qms&mid=" + contact.getId()));
+                button.setOnClickListener(view -> {
+                    mid = contact.getId();
+                    loadThreads("http://4pda.ru/forum/index.php?act=qms&mid=" + mid);
+                });
                 container.addView(button);
             }
         }
@@ -97,11 +122,37 @@ public class QmsActivity extends RxAppCompatActivity {
         text.setText(temp);
     }
 
+
+    String mid, tid;
+    int lastThreads = -1;
+
     private void addText(ArrayList<QmsThread> threads) {
+        //String temp = "";
+        if (threads != null) {
+            if (lastThreads != -1) {
+                for (int i = 0; i < lastThreads; i++) {
+                    container.removeViewAt(0);
+                }
+            }
+            lastThreads = threads.size();
+            for (QmsThread thread : threads) {
+                //temp += thread.getName() + (thread.getCountNew().isEmpty() ? "" : " : " + thread.getCountNew() + " /") + " " + thread.getCountMessages() + "\n";
+                Button button = new Button(this);
+                button.setBackgroundColor(Color.parseColor("#55ff55"));
+                button.setText(thread.getName() + (thread.getCountNew().isEmpty() ? "" : " : " + thread.getCountNew() + " /") + " " + thread.getCountMessages());
+                button.setOnClickListener(view -> loadChat("http://4pda.ru/forum/index.php?act=qms&mid=" + mid + "&t=" + thread.getId()));
+                container.addView(button, 0);
+            }
+        }
+        //text.setText(temp);
+    }
+
+    private void showChat(ArrayList<QmsChatItem> threads) {
+        Log.d("kekos", threads.size() + " size");
         String temp = "";
         if (threads != null) {
-            for (QmsThread thread : threads) {
-                temp += thread.getName() + (thread.getCountNew().isEmpty() ? "" : " : " + thread.getCountNew() + " /") + " " + thread.getCountMessages() + "\n";
+            for (QmsChatItem item : threads) {
+                temp += (item.isDate() ? item.getDate() : ((item.getWhoseMessage() ? "Я" : "Он") + ":\n") + item.getContent()) + "\n\n";
             }
         }
         text.setText(temp);
