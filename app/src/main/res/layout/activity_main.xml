@@ -38,4 +38,10 @@
         android:text="News List"
         android:id="@+id/button3"
         android:layout_gravity="center_horizontal" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Profile"
+        android:id="@+id/button5"
+        android:layout_gravity="center_horizontal" />
 </LinearLayout>

@@ -10,6 +10,7 @@ import android.widget.Button;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.test.LoginActivity;
 import forpdateam.ru.forpda.test.NewsListActivity;
+import forpdateam.ru.forpda.test.ProfileActivity;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     Button testNewsList;
     private RxPermissions permissions;
     Button testLogout;
+    Button profile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,12 +28,18 @@ public class MainActivity extends AppCompatActivity {
         testLogin = (Button) findViewById(R.id.button);
         testNewsList = (Button) findViewById(R.id.button3);
         testLogout = (Button) findViewById(R.id.button4);
+        profile = (Button) findViewById(R.id.button5);
+
         testLogin.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
         });
         testNewsList.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, NewsListActivity.class);
+            startActivity(intent);
+        });
+        profile.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);
         });
         testLogout.setOnClickListener(view -> new Task().execute());

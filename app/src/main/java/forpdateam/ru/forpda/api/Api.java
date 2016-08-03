@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.api;
 
 import forpdateam.ru.forpda.api.login.Login;
 import forpdateam.ru.forpda.api.newslist.NewsList;
+import forpdateam.ru.forpda.api.profile.Profile;
 import forpdateam.ru.forpda.api.qms.Qms;
 
 /**
@@ -12,6 +13,7 @@ public class Api {
     private static Qms qmsApi = null;
     private static Login loginApi = null;
     private static NewsList newsListApi = null;
+    private static Profile profileApi = null;
 
     public Api() {
         INSTANCE = this;
@@ -34,6 +36,11 @@ public class Api {
     public static NewsList NewsList() {
         if (newsListApi == null) newsListApi = new NewsList();
         return newsListApi;
+    }
+
+    public static Profile Profile() {
+        if (profileApi == null) profileApi = new Profile();
+        return profileApi;
     }
 
     /*public static Api get() {

@@ -21,6 +21,7 @@
         </activity>
         <activity android:name=".test.LoginActivity" />
         <activity android:name=".test.NewsListActivity" />
+        <activity android:name=".test.ProfileActivity" />
         <activity
             android:name=".test.TestDevDbActivity"
             android:label="DevDb"
