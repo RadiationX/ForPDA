@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.api.qms;
 import android.text.Html;
 import android.util.Log;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -84,6 +85,11 @@ public class Qms {
         return list;
     }
 
+    private String[] findUser(final String nick) throws Exception{
+        final String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q="+nick+"&limit=150&timestamp="+System.currentTimeMillis());
+        return response.split(" |\n");
+    }
+
     public Observable<ArrayList<QmsContact>> getContactList(final String url) {
         return Observable.create(new Observable.OnSubscribe<ArrayList<QmsContact>>() {
             @Override
@@ -118,6 +124,20 @@ public class Qms {
             public void call(Subscriber<? super ArrayList<QmsChatItem>> subscriber) {
                 try {
                     subscriber.onNext(chatItemsList(url));
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    public Observable<String[]> search(final String nick) {
+        return Observable.create(new Observable.OnSubscribe<String[]>() {
+            @Override
+            public void call(Subscriber<? super String[]> subscriber) {
+                try {
+                    subscriber.onNext(findUser(nick));
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

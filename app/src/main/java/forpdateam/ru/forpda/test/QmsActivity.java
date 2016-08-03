@@ -3,9 +3,12 @@ package forpdateam.ru.forpda.test;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.trello.rxlifecycle.ActivityEvent;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
@@ -33,6 +36,8 @@ public class QmsActivity extends RxAppCompatActivity {
     private Date date;
     private TextView text;
     private LinearLayout container;
+    private EditText searchText;
+    private Button search;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,7 +45,17 @@ public class QmsActivity extends RxAppCompatActivity {
         setContentView(R.layout.activity_newslist);
         text = (TextView) findViewById(R.id.textView2);
         container = (LinearLayout) findViewById(R.id.container);
+        findViewById(R.id.search_field).setVisibility(View.VISIBLE);
+        searchText = (EditText) findViewById(R.id.search);
+        search = (Button) findViewById(R.id.search_nick);
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                search(searchText.getText().toString());
+            }
+        });
         date = new Date();
+
         loadContacts();
     }
 
@@ -102,6 +117,24 @@ public class QmsActivity extends RxAppCompatActivity {
                 .subscribe(this::showChat));
     }
 
+    private void search(String nick) {
+        mCompositeSubscription.add(Api.Qms().search(nick)
+                .timeout(2, TimeUnit.SECONDS)
+                .retry(2)
+                .onErrorResumeNext(throwable -> {
+                    Log.d("kek", "error return next");
+                    return null;
+                })
+                .onErrorReturn(throwable -> {
+                    Log.d("kek", throwable.getMessage());
+                    throwable.printStackTrace();
+                    return new String[]{};
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .compose(this.bindUntilEvent(ActivityEvent.PAUSE))
+                .subscribe(this::showResult));
+    }
 
     private void bindUi(ArrayList<QmsContact> contacts) {
         String temp = "";
@@ -158,6 +191,15 @@ public class QmsActivity extends RxAppCompatActivity {
         text.setText(temp);
     }
 
+    private void showResult(String[] res){
+        String temp = "";
+        if(res!=null){
+            for(String nick: res){
+                temp+=nick+"\n";
+            }
+        }
+        Toast.makeText(this, temp, Toast.LENGTH_SHORT).show();
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
