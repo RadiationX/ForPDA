@@ -1,15 +1,10 @@
 package forpdateam.ru.forpda.api.newslist;
 
-import android.util.Log;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.devdb.Parser;
-import forpdateam.ru.forpda.api.devdb.models.DevCatalog;
 import forpdateam.ru.forpda.api.newslist.models.NewsItem;
 import forpdateam.ru.forpda.client.Client;
 import rx.Observable;

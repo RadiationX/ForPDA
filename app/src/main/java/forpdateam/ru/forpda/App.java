@@ -13,8 +13,6 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
-import java.io.File;
-
 import forpdateam.ru.forpda.api.Api;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;

@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.api.profile.models;
 import android.util.Pair;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import forpdateam.ru.forpda.api.profile.interfaces.IProfileModel;
 

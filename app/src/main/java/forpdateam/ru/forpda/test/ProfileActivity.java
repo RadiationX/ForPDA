@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.trello.rxlifecycle.ActivityEvent;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
@@ -15,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.newslist.models.NewsItem;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
