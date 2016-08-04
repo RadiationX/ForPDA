@@ -30,7 +30,7 @@ class TestDevDbPresenter extends MvpPresenter<DevDbMvpView> {
                     getMvpView().setProgress(false);
                     getMvpView().loadData(catalogs);
                 }, throwable -> {
-                    getMvpView().setProgress(true);
+                    getMvpView().setProgress(false);
                     getMvpView().onError(0, throwable.toString());
                 });
     }
