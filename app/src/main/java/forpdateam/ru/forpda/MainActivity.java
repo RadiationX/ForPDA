@@ -12,6 +12,7 @@ import forpdateam.ru.forpda.test.LoginActivity;
 import forpdateam.ru.forpda.test.NewsListActivity;
 import forpdateam.ru.forpda.test.ProfileActivity;
 import forpdateam.ru.forpda.test.QmsActivity;
+import forpdateam.ru.forpda.test.ThemeActivity;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     Button testLogout;
     Button profile;
     Button qms;
+    Button theme;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         testLogout = (Button) findViewById(R.id.button4);
         profile = (Button) findViewById(R.id.button5);
         qms = (Button) findViewById(R.id.button6);
+        theme = (Button) findViewById(R.id.button7);
 
         testLogin.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -47,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
         });
         qms.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, QmsActivity.class);
+            startActivity(intent);
+        });
+        theme.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, ThemeActivity.class);
             startActivity(intent);
         });
         testLogout.setOnClickListener(view -> new Task().execute());

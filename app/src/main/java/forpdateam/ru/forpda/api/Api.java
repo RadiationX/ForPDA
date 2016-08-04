@@ -4,6 +4,7 @@ import forpdateam.ru.forpda.api.login.Login;
 import forpdateam.ru.forpda.api.newslist.NewsList;
 import forpdateam.ru.forpda.api.profile.Profile;
 import forpdateam.ru.forpda.api.qms.Qms;
+import forpdateam.ru.forpda.api.theme.Theme;
 
 /**
  * Created by radiationx on 29.07.16.
@@ -14,6 +15,7 @@ public class Api {
     private static Login loginApi = null;
     private static NewsList newsListApi = null;
     private static Profile profileApi = null;
+    private static Theme themeApi = null;
 
     public Api() {
         INSTANCE = this;
@@ -41,6 +43,11 @@ public class Api {
     public static Profile Profile() {
         if (profileApi == null) profileApi = new Profile();
         return profileApi;
+    }
+
+    public static Theme Theme() {
+        if (themeApi == null) themeApi = new Theme();
+        return themeApi;
     }
 
     /*public static Api get() {

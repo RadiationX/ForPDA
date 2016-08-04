@@ -22,6 +22,7 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsChatItem;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsThread;
+import forpdateam.ru.forpda.utils.IntentHandler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -48,13 +49,29 @@ public class QmsActivity extends RxAppCompatActivity {
         findViewById(R.id.search_field).setVisibility(View.VISIBLE);
         searchText = (EditText) findViewById(R.id.search);
         search = (Button) findViewById(R.id.search_nick);
-        search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                search(searchText.getText().toString());
-            }
-        });
+        search.setOnClickListener(view -> search(searchText.getText().toString()));
         date = new Date();
+        IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=2556269");
+        IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=84979&view=getlastpost");
+        IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=84979&view=getnewpost");
+        IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=84979&view=findpost&p=51813850");
+        IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=84979&st=22460#entry51805351");
+        IntentHandler.handle("http://4pda.ru/forum/index.php?act=findpost&pid=51805351");
+        IntentHandler.handle("http://4pda.ru/forum/index.php?act=idx");
+        IntentHandler.handle("http://4pda.ru/forum/index.php?act=fav");
+        IntentHandler.handle("http://4pda.ru/forum/index.php?act=boardrules");
+        IntentHandler.handle("http://4pda.ru/forum/index.php?act=qms");
+        IntentHandler.handle("http://4pda.ru/forum/index.php?act=qms&mid=5106086");
+        IntentHandler.handle("http://4pda.ru/forum/index.php?act=qms&mid=5106086&t=3127574");
+        IntentHandler.handle("http://4pda.ru/devdb/");
+        IntentHandler.handle("http://4pda.ru/devdb/phones/");
+        IntentHandler.handle("http://4pda.ru/devdb/phones/acer");
+        IntentHandler.handle("http://4pda.ru/devdb/acer_liquid_z410_duo");
+        IntentHandler.handle("http://4pda.ru/2016/08/04/315172/");
+        IntentHandler.handle("http://4pda.ru/reviews/tag/smart-watches/");
+        IntentHandler.handle("http://4pda.ru/articles/");
+        IntentHandler.handle("http://4pda.ru/special/polzovatelskoe-testirovanie-alcatel-idol-4s/");
+        IntentHandler.handle("");
 
         loadContacts();
     }
@@ -68,7 +85,6 @@ public class QmsActivity extends RxAppCompatActivity {
                     return null;
                 })
                 .onErrorReturn(throwable -> {
-                    Log.d("kek", throwable.getMessage());
                     throwable.printStackTrace();
                     return new ArrayList<>();
                 })

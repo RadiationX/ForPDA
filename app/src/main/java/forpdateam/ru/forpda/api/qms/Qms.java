@@ -1,9 +1,7 @@
 package forpdateam.ru.forpda.api.qms;
 
 import android.text.Html;
-import android.util.Log;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,67 +24,86 @@ public class Qms {
 
     private ArrayList<QmsContact> contactsList(final String url) throws Exception {
         ArrayList<QmsContact> list = new ArrayList<>();
-        final String response = Client.getInstance().get(url);
-        final Matcher matcher = contactsPattern.matcher(response);
-        QmsContact contact;
-        while (matcher.find()) {
-            contact = new QmsContact();
-            contact.setId(matcher.group(1));
-            contact.setCount(matcher.group(2) == null ? "" : matcher.group(2));
-            contact.setAvatar(matcher.group(3));
-            contact.setNick(matcher.group(4));
-            list.add(contact);
+        try {
+            final String response = Client.getInstance().get(url);
+            final Matcher matcher = contactsPattern.matcher(response);
+            QmsContact contact;
+            while (matcher.find()) {
+                contact = new QmsContact();
+                contact.setId(matcher.group(1));
+                contact.setCount(matcher.group(2) == null ? "" : matcher.group(2));
+                contact.setAvatar(matcher.group(3));
+                contact.setNick(matcher.group(4));
+                list.add(contact);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
-
         return list;
     }
 
     private ArrayList<QmsThread> threadList(final String url) throws Exception {
         ArrayList<QmsThread> list = new ArrayList<>();
-        final String response = Client.getInstance().get(url);
-        final Matcher matcher = threadPattern.matcher(response);
-        QmsThread thread;
-        while (matcher.find()) {
-            thread = new QmsThread();
-            thread.setId(matcher.group(1));
-            thread.setDate(matcher.group(2));
-            Matcher nameMatcher = threadName.matcher(Html.fromHtml(matcher.group(3).trim()));
-            if (nameMatcher.find()) {
-                thread.setName(nameMatcher.group(1));
-                thread.setCountMessages(nameMatcher.group(2));
-                thread.setCountNew(nameMatcher.group(3) == null ? "" : nameMatcher.group(3));
+        try {
+            final String response = Client.getInstance().get(url);
+            final Matcher matcher = threadPattern.matcher(response);
+            QmsThread thread;
+            while (matcher.find()) {
+                thread = new QmsThread();
+                thread.setId(matcher.group(1));
+                thread.setDate(matcher.group(2));
+                Matcher nameMatcher = threadName.matcher(Html.fromHtml(matcher.group(3).trim()));
+                if (nameMatcher.find()) {
+                    thread.setName(nameMatcher.group(1));
+                    thread.setCountMessages(nameMatcher.group(2));
+                    thread.setCountNew(nameMatcher.group(3) == null ? "" : nameMatcher.group(3));
+                }
+                list.add(thread);
             }
-            list.add(thread);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
         return list;
     }
 
     private ArrayList<QmsChatItem> chatItemsList(final String url) throws Exception {
         ArrayList<QmsChatItem> list = new ArrayList<>();
-        final String response = Client.getInstance().get(url);
-        final Matcher matcher = chatPattern.matcher(response);
-        QmsChatItem item;
-        while (matcher.find()) {
-            Log.d("kek", "FIND LOL");
-            item = new QmsChatItem();
-            if (matcher.group(1) == null && matcher.group(9) != null) {
-                item.setIsDate(true);
-                item.setDate(matcher.group(9).trim());
-            } else {
-                item.setWhoseMessage(!matcher.group(1).isEmpty());
-                item.setId(matcher.group(2));
-                item.setReadStatus(matcher.group(3));
-                item.setTime(matcher.group(4));
-                item.setAvatar(matcher.group(5));
-                item.setContent(matcher.group(6).trim());
+        try {
+            final String response = Client.getInstance().get(url);
+            final Matcher matcher = chatPattern.matcher(response);
+            QmsChatItem item;
+            while (matcher.find()) {
+                item = new QmsChatItem();
+                if (matcher.group(1) == null && matcher.group(9) != null) {
+                    item.setIsDate(true);
+                    item.setDate(matcher.group(9).trim());
+                } else {
+                    item.setWhoseMessage(!matcher.group(1).isEmpty());
+                    item.setId(matcher.group(2));
+                    item.setReadStatus(matcher.group(3));
+                    item.setTime(matcher.group(4));
+                    item.setAvatar(matcher.group(5));
+                    item.setContent(matcher.group(6).trim());
+                }
+                list.add(item);
             }
-            list.add(item);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
         return list;
     }
 
-    private String[] findUser(final String nick) throws Exception{
-        final String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q="+nick+"&limit=150&timestamp="+System.currentTimeMillis());
+    private String[] findUser(final String nick) throws Exception {
+        String response;
+        try {
+            response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=" + nick + "&limit=150&timestamp=" + System.currentTimeMillis());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
         return response.split(" |\n");
     }
 

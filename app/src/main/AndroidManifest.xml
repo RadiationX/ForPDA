@@ -23,6 +23,7 @@
         <activity android:name=".test.NewsListActivity" />
         <activity android:name=".test.ProfileActivity" />
         <activity android:name=".test.QmsActivity" />
+        <activity android:name=".test.ThemeActivity" />
         <activity
             android:name=".test.TestDevDbActivity"
             android:label="DevDb"
