@@ -25,7 +25,7 @@
         <activity android:name=".test.QmsActivity" />
         <activity android:name=".test.ThemeActivity" />
         <activity
-            android:name=".test.TestDevDbActivity"
+            android:name=".test.testdevdb.TestDevDbActivity"
             android:label="DevDb"
             android:theme="@style/AppTheme">
             <intent-filter>
