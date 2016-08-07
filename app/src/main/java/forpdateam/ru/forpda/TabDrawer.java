@@ -18,19 +18,18 @@ import java.util.List;
  * Created by radiationx on 07.08.16.
  */
 public class TabDrawer {
-    private MainActivity activity;
     private TabAdapter adapter;
 
     public TabDrawer(MainActivity activity) {
-        this.activity = activity;
+        adapter = new TabAdapter(activity, R.layout.tab_drawer_item, TabManager.getInstance().getFragments());
+        ListView tabsList = (ListView) activity.findViewById(R.id.tabs_list);
         DrawerLayout drawer = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(activity, drawer, activity.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        ListView tabsList = (ListView) activity.findViewById(R.id.tabs_list);
-        adapter = new TabAdapter(activity, R.layout.tab_drawer_item, activity.tabManager.getFragments());
+
         tabsList.setAdapter(adapter);
-        tabsList.setOnItemClickListener((adapterView, view, i, l) -> activity.tabManager.select(activity.tabManager.get(i)));
+        tabsList.setOnItemClickListener((adapterView, view, i, l) -> TabManager.getInstance().select(TabManager.getInstance().get(i)));
     }
 
     public void notifyTabsChanged() {
@@ -38,8 +37,9 @@ public class TabDrawer {
     }
 
     public class TabAdapter extends ArrayAdapter {
-        final LayoutInflater inflater;
-        List<TabFragment> mObjects = null;
+        private final LayoutInflater inflater;
+        private List<TabFragment> mObjects = null;
+        private int color = Color.argb(128, 255, 128, 65);
 
         public TabAdapter(Context context, int item_resource, List<TabFragment> objects) {
             super(context, item_resource, objects);
@@ -72,12 +72,12 @@ public class TabDrawer {
 
             final TabFragment item = mObjects.get(position);
             if (position == TabManager.getActiveIndex())
-                convertView.setBackgroundColor(Color.parseColor("#ff7711"));
+                convertView.setBackgroundColor(color);
             else
                 convertView.setBackgroundColor(Color.TRANSPARENT);
 
             holder.text.setText(item.getTitle());
-            holder.close.setOnClickListener(view -> activity.tabManager.remove(item));
+            holder.close.setOnClickListener(view -> TabManager.getInstance().remove(item));
             return convertView;
         }
 

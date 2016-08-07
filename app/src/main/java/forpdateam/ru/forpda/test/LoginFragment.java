@@ -34,7 +34,7 @@ public class LoginFragment extends TabFragment {
     private LoginForm loginForm;
     private Button send;
 
-    public static LoginFragment newInstance(String tabTitle){
+    public static LoginFragment newInstance(String tabTitle) {
         LoginFragment fragment = new LoginFragment();
         Bundle args = new Bundle();
         args.putString("TabTitle", tabTitle);
@@ -53,9 +53,9 @@ public class LoginFragment extends TabFragment {
         captchaImage = (ImageView) findViewById(R.id.captchaImage);
         send = (Button) findViewById(R.id.button2);
         send.setOnClickListener(view -> tryLogin());
-        if(!Client.checkLogin()){
+        if (!Client.checkLogin()) {
             loadForm();
-        }else {
+        } else {
             //finish();
         }
         return view;

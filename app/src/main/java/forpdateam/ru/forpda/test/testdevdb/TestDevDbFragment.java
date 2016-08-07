@@ -80,7 +80,7 @@ public class TestDevDbFragment extends MvpFragment<TestDevDbPresenter> implement
         Stream.of(brands).forEach(brand -> {
             TextView textView = new TextView(getActivity());
             textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            textView.setPadding(8,8,8,8);
+            textView.setPadding(8, 8, 8, 8);
             textView.setTextSize(16f);
             textView.setText(brand.getTitle());
             containerLayout.addView(textView);

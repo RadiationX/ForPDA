@@ -10,7 +10,7 @@ import com.trello.rxlifecycle.components.support.RxFragment;
 /**
  * Created by radiationx on 07.08.16.
  */
-public class TabFragment extends RxFragment {
+public class TabFragment extends RxFragment implements ITabFragment {
     protected View view;
     private String title;
     private String subtitle;
@@ -60,5 +60,10 @@ public class TabFragment extends RxFragment {
         Log.d("kek", this + " : onpause");
         getSupportActionBar().setTitle(null);
         getSupportActionBar().setSubtitle(null);
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
     }
 }

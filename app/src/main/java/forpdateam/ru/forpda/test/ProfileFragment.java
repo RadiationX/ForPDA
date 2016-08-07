@@ -33,7 +33,7 @@ public class ProfileFragment extends TabFragment {
     private Date date;
     private TextView text;
 
-    public static ProfileFragment newInstance(String tabTitle){
+    public static ProfileFragment newInstance(String tabTitle) {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
         args.putString("TabTitle", tabTitle);
@@ -94,12 +94,12 @@ public class ProfileFragment extends TabFragment {
             for (Pair<String, String> pair : list) {
                 temp += (pair != null ? pair.first + " : " + pair.second : "null") + postfix;
             }
-            temp += (profile.getKarma() != null ? profile.getKarma().first + " : " +profile.getKarma().second : "null") + postfix;
-            temp += (profile.getSitePosts() != null ? profile.getSitePosts().first + " : " +profile.getSitePosts().second : "null") + postfix;
-            temp += (profile.getComments() != null ? profile.getComments().first + " : " +profile.getComments().second : "null") + postfix;
-            temp += (profile.getReputation() != null ? profile.getReputation().first + " : " +profile.getReputation().second : "null") + postfix;
-            temp += (profile.getTopics() != null ? profile.getTopics().first + " : " +profile.getTopics().second : "null") + postfix;
-            temp += (profile.getPosts() != null ? profile.getPosts().first + " : " +profile.getPosts().second : "null") + postfix;
+            temp += (profile.getKarma() != null ? profile.getKarma().first + " : " + profile.getKarma().second : "null") + postfix;
+            temp += (profile.getSitePosts() != null ? profile.getSitePosts().first + " : " + profile.getSitePosts().second : "null") + postfix;
+            temp += (profile.getComments() != null ? profile.getComments().first + " : " + profile.getComments().second : "null") + postfix;
+            temp += (profile.getReputation() != null ? profile.getReputation().first + " : " + profile.getReputation().second : "null") + postfix;
+            temp += (profile.getTopics() != null ? profile.getTopics().first + " : " + profile.getTopics().second : "null") + postfix;
+            temp += (profile.getPosts() != null ? profile.getPosts().first + " : " + profile.getPosts().second : "null") + postfix;
         }
 
         Log.d("kek", "time: " + (new Date().getTime() - date.getTime()));

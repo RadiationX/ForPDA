@@ -33,7 +33,7 @@ public class NewsListFragment extends TabFragment {
     private Date date;
     private TextView text;
 
-    public static NewsListFragment newInstance(String tabTitle){
+    public static NewsListFragment newInstance(String tabTitle) {
         NewsListFragment fragment = new NewsListFragment();
         Bundle args = new Bundle();
         args.putString("TabTitle", tabTitle);

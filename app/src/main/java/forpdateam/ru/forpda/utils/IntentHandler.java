@@ -151,7 +151,7 @@ public class IntentHandler {
             run("show newslist");
             return true;
         } else if (uri.getPathSegments().get(0).matches("news|articles|reviews|tag|software|games|review")) {
-            run("show newslist category "+uri.getPathSegments().get(0));
+            run("show newslist category " + uri.getPathSegments().get(0));
             return true;
         }
 

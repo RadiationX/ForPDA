@@ -50,7 +50,7 @@ public class NewsList {
                 try {
                     subscriber.onNext(Api.NewsList().get(url));
                     subscriber.onCompleted();
-                }catch (Exception e){
+                } catch (Exception e) {
                     subscriber.onError(e);
                 }
             }

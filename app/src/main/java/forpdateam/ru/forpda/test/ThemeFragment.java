@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,11 +33,10 @@ public class ThemeFragment extends TabFragment {
 
     private Date date;
     private TextView text;
-    private LinearLayout container;
     private EditText searchText;
     private Button search;
 
-    public static ThemeFragment newInstance(String tabTitle){
+    public static ThemeFragment newInstance(String tabTitle) {
         ThemeFragment fragment = new ThemeFragment();
         Bundle args = new Bundle();
         args.putString("TabTitle", tabTitle);
@@ -53,7 +51,6 @@ public class ThemeFragment extends TabFragment {
         setTitle(getArguments().getString("TabTitle"));
         text = (TextView) findViewById(R.id.textView2);
         date = new Date();
-        container = (LinearLayout) findViewById(R.id.container);
         findViewById(R.id.search_field).setVisibility(View.VISIBLE);
         searchText = (EditText) findViewById(R.id.search);
         search = (Button) findViewById(R.id.search_nick);

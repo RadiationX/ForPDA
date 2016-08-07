@@ -31,7 +31,7 @@ public class ApiImpl implements DevDbApi {
                 try {
                     subscriber.onNext(Parser.parseBrands(client, devicesTypeUrl));
                     subscriber.onCompleted();
-                }catch (Exception e){
+                } catch (Exception e) {
                     subscriber.onError(e);
                 }
             }

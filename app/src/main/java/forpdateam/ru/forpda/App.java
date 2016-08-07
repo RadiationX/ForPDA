@@ -28,7 +28,7 @@ public class App extends android.app.Application {
         return INSTANCE;
     }
 
-    public App(){
+    public App() {
         INSTANCE = this;
     }
 

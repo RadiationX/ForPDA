@@ -3,7 +3,7 @@ package forpdateam.ru.forpda.mvp;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 
-public class MvpPresenter<V extends MvpView>  {
+public class MvpPresenter<V extends MvpView> {
 
     @Nullable
     private volatile V mvpView;

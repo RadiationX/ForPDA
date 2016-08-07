@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TabManager {
+    private static TabManager instance;
     private final static int containerViewId = R.id.fr_container;
     private final static String prefix = "tab_";
     private final static String bundlePrefix = "tab_manager_";
@@ -28,6 +29,19 @@ public class TabManager {
         void onSelectTab(TabFragment fragment);
 
         void onChange();
+    }
+
+    public static TabManager init(AppCompatActivity activity, UpdateListener listener) {
+        if (instance != null) {
+            instance = null;
+            System.gc();
+        }
+        instance = new TabManager(activity, listener);
+        return instance;
+    }
+
+    public static TabManager getInstance() {
+        return instance;
     }
 
     public TabManager(AppCompatActivity activity, UpdateListener listener) {
@@ -67,17 +81,24 @@ public class TabManager {
     public void update() {
         existingFragments.clear();
         if (fragmentManager.getFragments() == null) return;
-        for (Fragment fr : fragmentManager.getFragments())
-            if (fr != null) existingFragments.add((TabFragment) fr);
+        for(int i = 0; i<fragmentManager.getFragments().size(); i++){
+            if (fragmentManager.getFragments().get(i) != null) existingFragments.add((TabFragment) fragmentManager.getFragments().get(i));
+        }
+
+
     }
 
     private void hideTabs(FragmentTransaction transaction) {
         if (fragmentManager.getFragments() == null) return;
         for (Fragment fragment : fragmentManager.getFragments())
-            if (fragment != null && !fragment.isHidden()){
+            if (fragment != null && !fragment.isHidden()) {
                 transaction.hide(fragment);
                 fragment.onPause();
             }
+    }
+
+    public TabFragment getActive() {
+        return get(activeIndex);
     }
 
     public TabFragment get(final int index) {

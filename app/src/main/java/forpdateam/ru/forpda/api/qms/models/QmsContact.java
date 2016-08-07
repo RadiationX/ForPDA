@@ -7,6 +7,7 @@ import forpdateam.ru.forpda.api.qms.interfaces.IQmsContact;
  */
 public class QmsContact implements IQmsContact {
     private String nick, id, count, avatar;
+
     @Override
     public String getNick() {
         return nick;

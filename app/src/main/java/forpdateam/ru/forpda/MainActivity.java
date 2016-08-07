@@ -6,6 +6,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.widget.Toast;
 
@@ -18,10 +19,13 @@ import forpdateam.ru.forpda.test.ThemeFragment;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
 
 public class MainActivity extends AppCompatActivity implements TabManager.UpdateListener {
-    public TabManager tabManager = new TabManager(this, this);
     private TabDrawer tabDrawer;
     private RxPermissions permissions;
     public Toolbar toolbar;
+
+    public MainActivity() {
+        TabManager.init(this, this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +33,8 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        tabManager.loadState(savedInstanceState);
-        tabManager.update();
+        TabManager.getInstance().loadState(savedInstanceState);
+        TabManager.getInstance().update();
         tabDrawer = new TabDrawer(this);
 
         permissions = RxPermissions.getInstance(this);
@@ -42,17 +46,17 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
 
     @Override
     public void onAddTab(TabFragment fragment) {
-
+        Log.d("kek", "onadd " + fragment);
     }
 
     @Override
     public void onRemoveTab(TabFragment fragment) {
-
+        Log.d("kek", "onremove " + fragment);
     }
 
     @Override
     public void onSelectTab(TabFragment fragment) {
-
+        Log.d("kek", "onselect " + fragment);
     }
 
     @Override
@@ -60,8 +64,12 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
         updateTabList();
     }
 
-
-
+    @Override
+    public void onBackPressed() {
+        if (!TabManager.getInstance().getActive().onBackPressed()) {
+            TabManager.getInstance().remove(TabManager.getInstance().getActive());
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -71,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
             menu = new MenuBuilder(this);
 
         menu.add("login").setOnMenuItemClickListener(menuItem -> {
-            tabManager.add(LoginFragment.newInstance("login"));
+            TabManager.getInstance().add(LoginFragment.newInstance("login"));
             return false;
         });
         menu.add("logout").setOnMenuItemClickListener(menuItem -> {
@@ -79,19 +87,19 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
             return false;
         });
         menu.add("news").setOnMenuItemClickListener(menuItem -> {
-            tabManager.add(NewsListFragment.newInstance("news"));
+            TabManager.getInstance().add(NewsListFragment.newInstance("news"));
             return false;
         });
         menu.add("profile").setOnMenuItemClickListener(menuItem -> {
-            tabManager.add(ProfileFragment.newInstance("profile"));
+            TabManager.getInstance().add(ProfileFragment.newInstance("profile"));
             return false;
         });
         menu.add("qms").setOnMenuItemClickListener(menuItem -> {
-            tabManager.add(QmsFragment.newInstance("qms"));
+            TabManager.getInstance().add(QmsFragment.newInstance("qms"));
             return false;
         });
         menu.add("theme").setOnMenuItemClickListener(menuItem -> {
-            tabManager.add(ThemeFragment.newInstance("theme"));
+            TabManager.getInstance().add(ThemeFragment.newInstance("theme"));
             return false;
         });
         return true;

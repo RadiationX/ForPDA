@@ -43,7 +43,7 @@ public class QmsFragment extends TabFragment {
     private EditText searchText;
     private Button search;
 
-    public static QmsFragment newInstance(String tabTitle){
+    public static QmsFragment newInstance(String tabTitle) {
         QmsFragment fragment = new QmsFragment();
         Bundle args = new Bundle();
         args.putString("TabTitle", tabTitle);
@@ -57,7 +57,7 @@ public class QmsFragment extends TabFragment {
         view = inflater.inflate(R.layout.activity_newslist, container, false);
         setTitle(getArguments().getString("TabTitle"));
         text = (TextView) findViewById(R.id.textView2);
-        container = (LinearLayout) findViewById(R.id.container);
+        this.container = (LinearLayout) findViewById(R.id.container);
         findViewById(R.id.search_field).setVisibility(View.VISIBLE);
         searchText = (EditText) findViewById(R.id.search);
         search = (Button) findViewById(R.id.search_nick);
@@ -85,7 +85,7 @@ public class QmsFragment extends TabFragment {
         IntentHandler.handle("http://4pda.ru/special/polzovatelskoe-testirovanie-alcatel-idol-4s/");
         IntentHandler.handle("");
 
-        if(Client.checkLogin())
+        if (Client.checkLogin())
             loadContacts();
         else
             Toast.makeText(getContext(), "sosi pisos", Toast.LENGTH_SHORT).show();
@@ -203,15 +203,16 @@ public class QmsFragment extends TabFragment {
         text.setText(temp);
     }
 
-    private void showResult(String[] res){
+    private void showResult(String[] res) {
         String temp = "";
-        if(res!=null){
-            for(String nick: res){
-                temp+=nick+"\n";
+        if (res != null) {
+            for (String nick : res) {
+                temp += nick + "\n";
             }
         }
         Toast.makeText(getContext(), temp, Toast.LENGTH_SHORT).show();
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
