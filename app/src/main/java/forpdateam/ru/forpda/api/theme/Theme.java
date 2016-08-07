@@ -22,52 +22,57 @@ public class Theme {
     private final static Pattern countsPattern = Pattern.compile("parseInt\\((\\d*)\\)[\\s\\S]*?parseInt\\(st\\*(\\d*)\\)");
     private final static Pattern titlePattern = Pattern.compile("<div class=\"topic_title_post\">([^,<]*)(, ([^<]*)|)<");
     private final static Pattern alreadyInFavPattern = Pattern.compile("Тема уже добавлена в <a href=\"[^\"]*act=fav\">");
+    private final static Pattern paginationPattern = Pattern.compile("pagination\"><a[^>]*?jump_to_page[^>]*?>[^<]*?</a>[^<]*(<a[^>]*?>«</a>|)[^<]*(<a[^>]*?>&lt;</a>[^<]*|)[\\s\\S]*?<span[^>]*?>([^<]*?)</span>[\\s\\S]*?(<a[^>]*?>(&gt;)</a>|<a[^>]*?>(»)</a>)[\\s\\S]*?</div>");
+
+
+    private final static Pattern newsPattern = Pattern.compile("<section[^>]*?><article[^>]*?>[^<]*?<div class=\"container\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\" alt=\"([\\s\\S]*?)\"[\\s\\S]*?<em[^>]*>([^<]*?)</em>[\\s\\S]*?<a href=\"([^\"]*?)\">([\\s\\S]*?)</a>[\\s\\S]*?<a[^>]*?>([^<]*?)</a><div[^>]*?># ([\\s\\S]*?)</div>[\\s\\S]*?<div class=\"content-box\"[^>]*?>([\\s\\S]*?)</div></div></div>[^<]*?<div class=\"materials-box\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?<div class=\"comment-box\" id=\"comments\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[^<]*?<form");
 
     private ThemePage get(final String url) throws Exception {
         ThemePage page = new ThemePage();
-        try {
-            String response = Client.getInstance().get(url);
-            Date date = new Date();
-            Matcher matcher = countsPattern.matcher(response);
-            if (matcher.find()) {
-                page.setAllPagesCount(Integer.parseInt(matcher.group(1)));
-                page.setPostsOnPageCount(Integer.parseInt(matcher.group(2)));
-            }
-            matcher = titlePattern.matcher(response);
-            if(matcher.find()){
-                page.setTitle(matcher.group(1));
-                page.setDesc(matcher.group(3));
-            }
-            matcher = alreadyInFavPattern.matcher(response);
-            page.setInFavorite(matcher.matches());
-            matcher = postsPattern.matcher(response);
-            while (matcher.find()) {
-                ThemePost post = new ThemePost();
-                post.setId(matcher.group(1));
-                post.setDate(matcher.group(2));
-                post.setNumber(matcher.group(3));
-                post.setUserAvatar(matcher.group(4));
-                post.setUserName(matcher.group(5));
-                post.setCurator(!matcher.group(6).isEmpty());
-                post.setGroupColor(matcher.group(8));
-                post.setGroup(matcher.group(9));
-                post.setOnline(matcher.group(10).contains("green"));
-                post.setUserId(matcher.group(11));
-                post.setReputation(matcher.group(12));
-                post.setCanMinus(!matcher.group(13).isEmpty());
-                post.setCanPlus(!matcher.group(14).isEmpty());
-                post.setCanReport(!matcher.group(15).isEmpty());
-                post.setCanEdit(!matcher.group(16).isEmpty());
-                post.setCanDelete(!matcher.group(17).isEmpty());
-                post.setCanQoute(!matcher.group(18).isEmpty());
-                post.setBody(matcher.group(19));
-                page.addPost(post);
-            }
-            Log.d("kek", "parsing time " + (new Date().getTime() - date.getTime()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+        String response = Client.getInstance().get(url);
+        Date date = new Date();
+        Matcher matcher = countsPattern.matcher(response);
+        if (matcher.find()) {
+            page.setAllPagesCount(Integer.parseInt(matcher.group(1)));
+            page.setPostsOnPageCount(Integer.parseInt(matcher.group(2)));
         }
+        matcher = paginationPattern.matcher(response);
+        if (matcher.find()) {
+            page.setIsFirstPage(matcher.group(2).isEmpty());
+            page.setCurrentPage(Integer.parseInt(matcher.group(3)));
+            page.setIsLastPage(matcher.group(5) == null);
+        }
+        matcher = titlePattern.matcher(response);
+        if (matcher.find()) {
+            page.setTitle(matcher.group(1));
+            page.setDesc(matcher.group(3));
+        }
+        matcher = alreadyInFavPattern.matcher(response);
+        page.setInFavorite(matcher.matches());
+        matcher = postsPattern.matcher(response);
+        while (matcher.find()) {
+            ThemePost post = new ThemePost();
+            post.setId(matcher.group(1));
+            post.setDate(matcher.group(2));
+            post.setNumber(matcher.group(3));
+            post.setUserAvatar(matcher.group(4));
+            post.setUserName(matcher.group(5));
+            post.setCurator(!matcher.group(6).isEmpty());
+            post.setGroupColor(matcher.group(8));
+            post.setGroup(matcher.group(9));
+            post.setOnline(matcher.group(10).contains("green"));
+            post.setUserId(matcher.group(11));
+            post.setReputation(matcher.group(12));
+            post.setCanMinus(!matcher.group(13).isEmpty());
+            post.setCanPlus(!matcher.group(14).isEmpty());
+            post.setCanReport(!matcher.group(15).isEmpty());
+            post.setCanEdit(!matcher.group(16).isEmpty());
+            post.setCanDelete(!matcher.group(17).isEmpty());
+            post.setCanQoute(!matcher.group(18).isEmpty());
+            post.setBody(matcher.group(19));
+            page.addPost(post);
+        }
+        Log.d("kek", "parsing time " + (new Date().getTime() - date.getTime()));
         return page;
     }
 

@@ -2,26 +2,29 @@ package forpdateam.ru.forpda.test;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.trello.rxlifecycle.ActivityEvent;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
+import com.trello.rxlifecycle.FragmentEvent;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.TabFragment;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsChatItem;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsThread;
+import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -30,7 +33,7 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * Created by radiationx on 03.08.16.
  */
-public class QmsActivity extends RxAppCompatActivity {
+public class QmsFragment extends TabFragment {
     private static final String LINk = "http://4pda.ru/forum/index.php?&act=qms-xhr&action=userlist";
     private CompositeSubscription mCompositeSubscription = new CompositeSubscription();
 
@@ -40,10 +43,19 @@ public class QmsActivity extends RxAppCompatActivity {
     private EditText searchText;
     private Button search;
 
+    public static QmsFragment newInstance(String tabTitle){
+        QmsFragment fragment = new QmsFragment();
+        Bundle args = new Bundle();
+        args.putString("TabTitle", tabTitle);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_newslist);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.activity_newslist, container, false);
+        setTitle(getArguments().getString("TabTitle"));
         text = (TextView) findViewById(R.id.textView2);
         container = (LinearLayout) findViewById(R.id.container);
         findViewById(R.id.search_field).setVisibility(View.VISIBLE);
@@ -73,83 +85,67 @@ public class QmsActivity extends RxAppCompatActivity {
         IntentHandler.handle("http://4pda.ru/special/polzovatelskoe-testirovanie-alcatel-idol-4s/");
         IntentHandler.handle("");
 
-        loadContacts();
+        if(Client.checkLogin())
+            loadContacts();
+        else
+            Toast.makeText(getContext(), "sosi pisos", Toast.LENGTH_SHORT).show();
+        return view;
     }
 
     private void loadContacts() {
         mCompositeSubscription.add(Api.Qms().getContactList(LINk)
-                .timeout(2, TimeUnit.SECONDS)
-                .retry(2)
-                .onErrorResumeNext(throwable -> {
-                    Log.d("kek", "error return next");
-                    return null;
-                })
                 .onErrorReturn(throwable -> {
                     throwable.printStackTrace();
                     return new ArrayList<>();
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(this.bindUntilEvent(ActivityEvent.PAUSE))
-                .subscribe(this::bindUi));
+                .compose(this.bindUntilEvent(FragmentEvent.PAUSE))
+                .subscribe(this::bindUi, throwable -> {
+                    Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                }));
     }
 
     private void loadThreads(String url) {
         mCompositeSubscription.add(Api.Qms().getThreadList(url)
-                .timeout(2, TimeUnit.SECONDS)
-                .retry(2)
-                .onErrorResumeNext(throwable -> {
-                    Log.d("kek", "error return next");
-                    return null;
-                })
                 .onErrorReturn(throwable -> {
-                    Log.d("kek", throwable.getMessage());
                     throwable.printStackTrace();
                     return new ArrayList<>();
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(this.bindUntilEvent(ActivityEvent.PAUSE))
-                .subscribe(this::addText));
+                .compose(this.bindUntilEvent(FragmentEvent.PAUSE))
+                .subscribe(this::addText, throwable -> {
+                    Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                }));
     }
 
     private void loadChat(String url) {
-        Log.d("kek", "load cahat " + url);
         mCompositeSubscription.add(Api.Qms().getChat(url)
-                .timeout(2, TimeUnit.SECONDS)
-                .retry(2)
-                .onErrorResumeNext(throwable -> {
-                    Log.d("kek", "error return next");
-                    return null;
-                })
                 .onErrorReturn(throwable -> {
-                    Log.d("kek", throwable.getMessage());
                     throwable.printStackTrace();
                     return new ArrayList<>();
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(this.bindUntilEvent(ActivityEvent.PAUSE))
-                .subscribe(this::showChat));
+                .compose(this.bindUntilEvent(FragmentEvent.PAUSE))
+                .subscribe(this::showChat, throwable -> {
+                    Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                }));
     }
 
     private void search(String nick) {
         mCompositeSubscription.add(Api.Qms().search(nick)
-                .timeout(2, TimeUnit.SECONDS)
-                .retry(2)
-                .onErrorResumeNext(throwable -> {
-                    Log.d("kek", "error return next");
-                    return null;
-                })
                 .onErrorReturn(throwable -> {
-                    Log.d("kek", throwable.getMessage());
                     throwable.printStackTrace();
                     return new String[]{};
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(this.bindUntilEvent(ActivityEvent.PAUSE))
-                .subscribe(this::showResult));
+                .compose(this.bindUntilEvent(FragmentEvent.PAUSE))
+                .subscribe(this::showResult, throwable -> {
+                    Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                }));
     }
 
     private void bindUi(ArrayList<QmsContact> contacts) {
@@ -157,7 +153,7 @@ public class QmsActivity extends RxAppCompatActivity {
         if (contacts != null) {
             for (QmsContact contact : contacts) {
                 //temp+=contact.getNick()+"\n";
-                Button button = new Button(this);
+                Button button = new Button(getContext());
                 button.setText(contact.getNick() + (contact.getCount().isEmpty() ? "" : " : " + contact.getCount()));
                 button.setOnClickListener(view -> {
                     mid = contact.getId();
@@ -186,7 +182,7 @@ public class QmsActivity extends RxAppCompatActivity {
             lastThreads = threads.size();
             for (QmsThread thread : threads) {
                 //temp += thread.getName() + (thread.getCountNew().isEmpty() ? "" : " : " + thread.getCountNew() + " /") + " " + thread.getCountMessages() + "\n";
-                Button button = new Button(this);
+                Button button = new Button(getContext());
                 button.setBackgroundColor(Color.parseColor("#55ff55"));
                 button.setText(thread.getName() + (thread.getCountNew().isEmpty() ? "" : " : " + thread.getCountNew() + " /") + " " + thread.getCountMessages());
                 button.setOnClickListener(view -> loadChat("http://4pda.ru/forum/index.php?act=qms&mid=" + mid + "&t=" + thread.getId()));
@@ -214,10 +210,10 @@ public class QmsActivity extends RxAppCompatActivity {
                 temp+=nick+"\n";
             }
         }
-        Toast.makeText(this, temp, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), temp, Toast.LENGTH_SHORT).show();
     }
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         mCompositeSubscription.unsubscribe();
     }

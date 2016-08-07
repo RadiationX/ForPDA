@@ -22,88 +22,68 @@ public class Qms {
     private final static Pattern threadName = Pattern.compile("([\\s\\S]*?) \\((\\d+)(?= / (\\d+)|)");
     private final static Pattern chatPattern = Pattern.compile("group-item([^\"]*?)\" data-message-id=\"([^\"]*?)\"[^>]*?data-unread-status=\"([^\"]*?)\">[\\s\\S]*?</b> ([^ <]*?) [\\s\\S]*?src=\"([^\"]*?)\"[\\s\\S]*?msg-content[^>]*?>([\\s\\S]*?)(</div>[^<]*?</div>[^<]*?<div (class=\"list|id=\"threa|class=\"date))|<div class=\"text\">([^<]*?)</div>");
 
-    private ArrayList<QmsContact> contactsList(final String url) throws Exception {
+    private ArrayList<QmsContact> contactsList(final String url) throws Throwable {
         ArrayList<QmsContact> list = new ArrayList<>();
-        try {
-            final String response = Client.getInstance().get(url);
-            final Matcher matcher = contactsPattern.matcher(response);
-            QmsContact contact;
-            while (matcher.find()) {
-                contact = new QmsContact();
-                contact.setId(matcher.group(1));
-                contact.setCount(matcher.group(2) == null ? "" : matcher.group(2));
-                contact.setAvatar(matcher.group(3));
-                contact.setNick(matcher.group(4));
-                list.add(contact);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+        final String response = Client.getInstance().get(url);
+        final Matcher matcher = contactsPattern.matcher(response);
+        QmsContact contact;
+        while (matcher.find()) {
+            contact = new QmsContact();
+            contact.setId(matcher.group(1));
+            contact.setCount(matcher.group(2) == null ? "" : matcher.group(2));
+            contact.setAvatar(matcher.group(3));
+            contact.setNick(matcher.group(4));
+            list.add(contact);
         }
+
         return list;
     }
 
     private ArrayList<QmsThread> threadList(final String url) throws Exception {
         ArrayList<QmsThread> list = new ArrayList<>();
-        try {
-            final String response = Client.getInstance().get(url);
-            final Matcher matcher = threadPattern.matcher(response);
-            QmsThread thread;
-            while (matcher.find()) {
-                thread = new QmsThread();
-                thread.setId(matcher.group(1));
-                thread.setDate(matcher.group(2));
-                Matcher nameMatcher = threadName.matcher(Html.fromHtml(matcher.group(3).trim()));
-                if (nameMatcher.find()) {
-                    thread.setName(nameMatcher.group(1));
-                    thread.setCountMessages(nameMatcher.group(2));
-                    thread.setCountNew(nameMatcher.group(3) == null ? "" : nameMatcher.group(3));
-                }
-                list.add(thread);
+        final String response = Client.getInstance().get(url);
+        final Matcher matcher = threadPattern.matcher(response);
+        QmsThread thread;
+        while (matcher.find()) {
+            thread = new QmsThread();
+            thread.setId(matcher.group(1));
+            thread.setDate(matcher.group(2));
+            Matcher nameMatcher = threadName.matcher(Html.fromHtml(matcher.group(3).trim()));
+            if (nameMatcher.find()) {
+                thread.setName(nameMatcher.group(1));
+                thread.setCountMessages(nameMatcher.group(2));
+                thread.setCountNew(nameMatcher.group(3) == null ? "" : nameMatcher.group(3));
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+            list.add(thread);
         }
         return list;
     }
 
     private ArrayList<QmsChatItem> chatItemsList(final String url) throws Exception {
         ArrayList<QmsChatItem> list = new ArrayList<>();
-        try {
-            final String response = Client.getInstance().get(url);
-            final Matcher matcher = chatPattern.matcher(response);
-            QmsChatItem item;
-            while (matcher.find()) {
-                item = new QmsChatItem();
-                if (matcher.group(1) == null && matcher.group(9) != null) {
-                    item.setIsDate(true);
-                    item.setDate(matcher.group(9).trim());
-                } else {
-                    item.setWhoseMessage(!matcher.group(1).isEmpty());
-                    item.setId(matcher.group(2));
-                    item.setReadStatus(matcher.group(3));
-                    item.setTime(matcher.group(4));
-                    item.setAvatar(matcher.group(5));
-                    item.setContent(matcher.group(6).trim());
-                }
-                list.add(item);
+        final String response = Client.getInstance().get(url);
+        final Matcher matcher = chatPattern.matcher(response);
+        QmsChatItem item;
+        while (matcher.find()) {
+            item = new QmsChatItem();
+            if (matcher.group(1) == null && matcher.group(9) != null) {
+                item.setIsDate(true);
+                item.setDate(matcher.group(9).trim());
+            } else {
+                item.setWhoseMessage(!matcher.group(1).isEmpty());
+                item.setId(matcher.group(2));
+                item.setReadStatus(matcher.group(3));
+                item.setTime(matcher.group(4));
+                item.setAvatar(matcher.group(5));
+                item.setContent(matcher.group(6).trim());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+            list.add(item);
         }
         return list;
     }
 
     private String[] findUser(final String nick) throws Exception {
-        String response;
-        try {
-            response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=" + nick + "&limit=150&timestamp=" + System.currentTimeMillis());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
+        String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=" + nick + "&limit=150&timestamp=" + System.currentTimeMillis());
         return response.split(" |\n");
     }
 
@@ -114,7 +94,7 @@ public class Qms {
                 try {
                     subscriber.onNext(contactsList(url));
                     subscriber.onCompleted();
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     subscriber.onError(e);
                 }
             }

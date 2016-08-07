@@ -9,8 +9,8 @@ import forpdateam.ru.forpda.api.theme.interfaces.IThemePage;
  */
 public class ThemePage implements IThemePage {
     private String title, desc;
-    private boolean inFavorite = false;
-    private int postsOnPageCount = 20, allPagesCount = 0;
+    private boolean inFavorite, firstPage = true, lastPage = true;
+    private int postsOnPageCount = 20, allPagesCount = 0, currentPage = 0;
     private ArrayList<ThemePost> posts = new ArrayList<>();
 
     @Override
@@ -36,6 +36,21 @@ public class ThemePage implements IThemePage {
     @Override
     public int getAllPagesCount() {
         return allPagesCount;
+    }
+
+    @Override
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    @Override
+    public boolean isFirstPage() {
+        return firstPage;
+    }
+
+    @Override
+    public boolean isLastPage() {
+        return lastPage;
     }
 
     @Override
@@ -65,5 +80,17 @@ public class ThemePage implements IThemePage {
 
     public void addPost(ThemePost post) {
         posts.add(post);
+    }
+
+    public void setIsFirstPage(boolean firstPage) {
+        this.firstPage = firstPage;
+    }
+
+    public void setIsLastPage(boolean lastPage) {
+        this.lastPage = lastPage;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
     }
 }

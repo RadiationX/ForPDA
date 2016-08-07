@@ -18,5 +18,11 @@ public interface IThemePage {
 
     int getAllPagesCount();
 
+    int getCurrentPage();
+
+    boolean isFirstPage();
+
+    boolean isLastPage();
+
     ArrayList<ThemePost> getPosts();
 }

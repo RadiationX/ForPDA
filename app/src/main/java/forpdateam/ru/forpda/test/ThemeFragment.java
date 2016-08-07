@@ -1,20 +1,23 @@
 package forpdateam.ru.forpda.test;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.trello.rxlifecycle.ActivityEvent;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
+import com.trello.rxlifecycle.FragmentEvent;
 
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.TabFragment;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
@@ -25,8 +28,8 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * Created by radiationx on 05.08.16.
  */
-public class ThemeActivity extends RxAppCompatActivity {
-    private static final String LINk = "http://4pda.ru/forum/index.php?showtopic=541046";
+public class ThemeFragment extends TabFragment {
+    private static final String LINk = "http://4pda.ru/forum/index.php?showtopic=271502&st=0";
     private CompositeSubscription mCompositeSubscription = new CompositeSubscription();
 
     private Date date;
@@ -35,10 +38,19 @@ public class ThemeActivity extends RxAppCompatActivity {
     private EditText searchText;
     private Button search;
 
+    public static ThemeFragment newInstance(String tabTitle){
+        ThemeFragment fragment = new ThemeFragment();
+        Bundle args = new Bundle();
+        args.putString("TabTitle", tabTitle);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_newslist);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.activity_newslist, container, false);
+        setTitle(getArguments().getString("TabTitle"));
         text = (TextView) findViewById(R.id.textView2);
         date = new Date();
         container = (LinearLayout) findViewById(R.id.container);
@@ -47,31 +59,31 @@ public class ThemeActivity extends RxAppCompatActivity {
         search = (Button) findViewById(R.id.search_nick);
         search.setOnClickListener(view -> loadPage(searchText.getText().toString()));
         loadPage(LINk);
+        return view;
     }
 
     private void loadPage(String url) {
         mCompositeSubscription.add(Api.Theme().getPage(url)
-                .timeout(2, TimeUnit.SECONDS)
-                .retry(2)
-                .onErrorResumeNext(throwable -> {
-                    Log.d("kek", "error return next");
-                    return null;
-                })
                 .onErrorReturn(throwable -> {
                     throwable.printStackTrace();
                     return new ThemePage();
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(this.bindUntilEvent(ActivityEvent.PAUSE))
-                .subscribe(this::bindUi));
+                .compose(this.bindUntilEvent(FragmentEvent.PAUSE))
+                .subscribe(this::bindUi, throwable -> {
+                    Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                }));
     }
 
 
     private void bindUi(ThemePage page) {
-        getSupportActionBar().setTitle(page.getTitle());
-        getSupportActionBar().setSubtitle(page.getDesc());
+        Log.d("kek", "bindui");
+
+        setTitle(page.getTitle());
+        setSubtitle(page.getDesc());
         String temp = "";
+        temp += page.getCurrentPage() + " : " + page.isFirstPage() + " : " + page.isLastPage() + " : " + page.getAllPagesCount() + " : " + page.getPostsOnPageCount() + "\n\n\n";
         String postFix = " : ";
         for (ThemePost post : page.getPosts()) {
             temp += post.getId() + postFix;
@@ -94,10 +106,11 @@ public class ThemeActivity extends RxAppCompatActivity {
             temp += "\n\n";
         }
         text.setText(temp);
+        Log.d("kek", "time " + (new Date().getTime() - date.getTime()));
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         mCompositeSubscription.unsubscribe();
     }

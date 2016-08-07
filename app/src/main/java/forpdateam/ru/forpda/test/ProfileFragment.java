@@ -1,18 +1,22 @@
 package forpdateam.ru.forpda.test;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Pair;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.trello.rxlifecycle.ActivityEvent;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
+import com.trello.rxlifecycle.FragmentEvent;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.TabFragment;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import rx.Subscription;
@@ -22,20 +26,30 @@ import rx.schedulers.Schedulers;
 /**
  * Created by radiationx on 03.08.16.
  */
-public class ProfileActivity extends RxAppCompatActivity {
+public class ProfileFragment extends TabFragment {
     private static final String LINk = "http://4pda.ru/forum/index.php?showuser=2556269#";
     private Subscription subscription;
 
     private Date date;
     private TextView text;
 
+    public static ProfileFragment newInstance(String tabTitle){
+        ProfileFragment fragment = new ProfileFragment();
+        Bundle args = new Bundle();
+        args.putString("TabTitle", tabTitle);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_newslist);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.activity_newslist, container, false);
+        setTitle(getArguments().getString("TabTitle"));
         text = (TextView) findViewById(R.id.textView2);
         date = new Date();
         loadData();
+        return view;
     }
 
     private void loadData() {
@@ -53,7 +67,7 @@ public class ProfileActivity extends RxAppCompatActivity {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(this.bindUntilEvent(ActivityEvent.PAUSE))
+                .compose(this.bindUntilEvent(FragmentEvent.PAUSE))
                 .subscribe(this::bindUi);
     }
 
@@ -93,7 +107,7 @@ public class ProfileActivity extends RxAppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         subscription.unsubscribe();
     }

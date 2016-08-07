@@ -117,6 +117,7 @@ public class Client {
         if (headers != null) {
             FormBody.Builder formBodyBuilder = new FormBody.Builder();
             for (Map.Entry<String, String> entry : headers.entrySet()) {
+                Log.d("kek", entry.getKey() + " : " + entry.getValue());
                 formBodyBuilder.add(entry.getKey(), entry.getValue());
             }
             builder.post(formBodyBuilder.build());
@@ -126,5 +127,11 @@ public class Client {
         if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
         return response.body().string();
+    }
+
+    public static boolean checkLogin() {
+        final String mid = App.getInstance().getPreferences().getString("cookie_member_id", "");
+        final String ph = App.getInstance().getPreferences().getString("cookie_pass_hash", "");
+        return !mid.isEmpty() && !ph.isEmpty();
     }
 }
