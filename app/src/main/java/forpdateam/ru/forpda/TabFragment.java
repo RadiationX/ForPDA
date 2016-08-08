@@ -14,6 +14,11 @@ public class TabFragment extends RxFragment implements ITabFragment {
     protected View view;
     private String title;
     private String subtitle;
+    private int UID = 0;
+
+    public String getDefaultUrl() {
+        return "";
+    }
 
     public String getTitle() {
         return title;
@@ -60,6 +65,24 @@ public class TabFragment extends RxFragment implements ITabFragment {
         Log.d("kek", this + " : onpause");
         getSupportActionBar().setTitle(null);
         getSupportActionBar().setSubtitle(null);
+    }
+
+    @Override
+    public int getUID() {
+        return UID;
+    }
+
+    @Override
+    public boolean isAlone() {
+        return false;
+    }
+
+    protected void setUID(){
+        setUID((getArguments().toString() + getDefaultUrl()).hashCode());
+    }
+    private void setUID(final int uid) {
+        Log.d("kekos", this.getClass().getSimpleName() + " set UID: " + uid);
+        UID = uid;
     }
 
     @Override

@@ -38,7 +38,18 @@ public class NewsListFragment extends TabFragment {
         Bundle args = new Bundle();
         args.putString("TabTitle", tabTitle);
         fragment.setArguments(args);
+        fragment.setUID();
         return fragment;
+    }
+
+    @Override
+    public String getDefaultUrl() {
+        return LINk;
+    }
+
+    @Override
+    public boolean isAlone() {
+        return true;
     }
 
     @Nullable
@@ -54,14 +65,7 @@ public class NewsListFragment extends TabFragment {
 
     private void loadData() {
         subscription = Api.NewsList().getRx(LINk)
-                .timeout(2, TimeUnit.SECONDS)
-                .retry(2)
-                .onErrorResumeNext(throwable -> {
-                    Log.d("kek", "error return next");
-                    return null;
-                })
                 .onErrorReturn(throwable -> {
-                    Log.d("kek", "error return");
                     Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
                     return new ArrayList<>();
                 })

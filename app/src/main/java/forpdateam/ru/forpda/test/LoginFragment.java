@@ -17,6 +17,7 @@ import com.trello.rxlifecycle.FragmentEvent;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabFragment;
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.login.Login;
 import forpdateam.ru.forpda.api.login.LoginForm;
 import forpdateam.ru.forpda.client.Client;
 import rx.android.schedulers.AndroidSchedulers;
@@ -39,7 +40,18 @@ public class LoginFragment extends TabFragment {
         Bundle args = new Bundle();
         args.putString("TabTitle", tabTitle);
         fragment.setArguments(args);
+        fragment.setUID();
         return fragment;
+    }
+
+    @Override
+    public String getDefaultUrl() {
+        return Login.loginFormUrl;
+    }
+
+    @Override
+    public boolean isAlone() {
+        return true;
     }
 
     @Nullable

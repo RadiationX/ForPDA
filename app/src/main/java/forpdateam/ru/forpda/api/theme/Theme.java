@@ -72,7 +72,7 @@ public class Theme {
             post.setBody(matcher.group(19));
             page.addPost(post);
         }
-        Log.d("kek", "parsing time " + (new Date().getTime() - date.getTime()));
+        Log.d("kek", "theme parsing time " + (new Date().getTime() - date.getTime()));
         return page;
     }
 

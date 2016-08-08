@@ -62,7 +62,7 @@ public class TabManager {
         activeIndex = state.getInt(bundlePrefix + "active_index", 0);
     }
 
-    public int getCount() {
+    public int getSize() {
         return existingFragments.size();
     }
 
@@ -81,8 +81,9 @@ public class TabManager {
     public void update() {
         existingFragments.clear();
         if (fragmentManager.getFragments() == null) return;
-        for(int i = 0; i<fragmentManager.getFragments().size(); i++){
-            if (fragmentManager.getFragments().get(i) != null) existingFragments.add((TabFragment) fragmentManager.getFragments().get(i));
+        for (int i = 0; i < fragmentManager.getFragments().size(); i++) {
+            if (fragmentManager.getFragments().get(i) != null)
+                existingFragments.add((TabFragment) fragmentManager.getFragments().get(i));
         }
 
 
@@ -112,6 +113,17 @@ public class TabManager {
     public void add(TabFragment tabFragment) {
         if (tabFragment == null)
             return;
+        String check;
+        if (tabFragment.isAlone())
+            check = getTagContainClass(tabFragment.getClass().getSimpleName());
+        else
+            check = getTagByUID(tabFragment.getUID());
+
+        if (check != null) {
+            select(check);
+            return;
+        }
+
         activeTag = prefix + count;
         count++;
         FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -122,6 +134,18 @@ public class TabManager {
         activeIndex = existingFragments.indexOf(tabFragment);
         updateListener.onChange();
         updateListener.onAddTab(tabFragment);
+    }
+
+    private String getTagByUID(int uid) {
+        for (TabFragment fragment : existingFragments)
+            if (fragment.getUID() == uid) return fragment.getTag();
+        return null;
+    }
+
+    private String getTagContainClass(final String className) {
+        for (TabFragment fragment : existingFragments)
+            if (fragment.getClass().getSimpleName().equals(className)) return fragment.getTag();
+        return null;
     }
 
     public void remove(final String tag) {

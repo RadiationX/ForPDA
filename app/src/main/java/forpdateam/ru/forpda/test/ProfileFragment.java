@@ -38,7 +38,13 @@ public class ProfileFragment extends TabFragment {
         Bundle args = new Bundle();
         args.putString("TabTitle", tabTitle);
         fragment.setArguments(args);
+        fragment.setUID();
         return fragment;
+    }
+
+    @Override
+    public String getDefaultUrl() {
+        return LINk;
     }
 
     @Nullable
@@ -54,14 +60,7 @@ public class ProfileFragment extends TabFragment {
 
     private void loadData() {
         subscription = Api.Profile().getRx(LINk)
-                .timeout(2, TimeUnit.SECONDS)
-                .retry(2)
-                .onErrorResumeNext(throwable -> {
-                    Log.d("kek", "error return next");
-                    return null;
-                })
                 .onErrorReturn(throwable -> {
-                    Log.d("kek", throwable.getMessage());
                     throwable.printStackTrace();
                     return new ProfileModel();
                 })

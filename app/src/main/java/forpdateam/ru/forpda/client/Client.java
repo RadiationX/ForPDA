@@ -117,7 +117,6 @@ public class Client {
         if (headers != null) {
             FormBody.Builder formBodyBuilder = new FormBody.Builder();
             for (Map.Entry<String, String> entry : headers.entrySet()) {
-                Log.d("kek", entry.getKey() + " : " + entry.getValue());
                 formBodyBuilder.add(entry.getKey(), entry.getValue());
             }
             builder.post(formBodyBuilder.build());

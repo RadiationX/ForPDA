@@ -48,7 +48,18 @@ public class QmsFragment extends TabFragment {
         Bundle args = new Bundle();
         args.putString("TabTitle", tabTitle);
         fragment.setArguments(args);
+        fragment.setUID();
         return fragment;
+    }
+
+    @Override
+    public String getDefaultUrl() {
+        return LINk;
+    }
+
+    @Override
+    public boolean isAlone() {
+        return true;
     }
 
     @Nullable
@@ -63,6 +74,8 @@ public class QmsFragment extends TabFragment {
         search = (Button) findViewById(R.id.search_nick);
         search.setOnClickListener(view -> search(searchText.getText().toString()));
         date = new Date();
+        IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=2556269");
+        IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=2556269");
         IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=2556269");
         IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=84979&view=getlastpost");
         IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=84979&view=getnewpost");

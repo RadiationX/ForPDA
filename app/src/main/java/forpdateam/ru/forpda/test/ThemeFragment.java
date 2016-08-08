@@ -41,7 +41,13 @@ public class ThemeFragment extends TabFragment {
         Bundle args = new Bundle();
         args.putString("TabTitle", tabTitle);
         fragment.setArguments(args);
+        fragment.setUID();
         return fragment;
+    }
+
+    @Override
+    public String getDefaultUrl() {
+        return LINk;
     }
 
     @Nullable

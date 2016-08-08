@@ -17,7 +17,7 @@ import rx.Subscriber;
  * Created by radiationx on 29.07.16.
  */
 public class Login {
-    private final static String loginFormUrl = "http://4pda.ru/forum/index.php?act=auth";
+    public final static String loginFormUrl = "http://4pda.ru/forum/index.php?act=auth";
     private final static Pattern captchaPattern = Pattern.compile("captcha-time\" value=\"([^\"]*?)\"[\\s\\S]*?captcha-sig\" value=\"([^\"]*?)\"[\\s\\S]*?src=\"([^\"]*?)\"");
     private final static Pattern errorPattern = Pattern.compile("errors-list\">([\\s\\S]*?)</ul>");
 
@@ -68,7 +68,6 @@ public class Login {
         Matcher matcher = Pattern.compile("<a[^>]*?act=login&CODE=03&k=([^&]*?)&").matcher(response);
         if (matcher.find()) {
             result = true;
-            Log.d("kek", "logout key " + matcher.group(1));
             App.getInstance().getPreferences().edit().putString("logout_key", matcher.group(1)).apply();
         }
         return result;

@@ -12,8 +12,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.List;
-
 /**
  * Created by radiationx on 07.08.16.
  */
@@ -21,7 +19,7 @@ public class TabDrawer {
     private TabAdapter adapter;
 
     public TabDrawer(MainActivity activity) {
-        adapter = new TabAdapter(activity, R.layout.tab_drawer_item, TabManager.getInstance().getFragments());
+        adapter = new TabAdapter(activity);
         ListView tabsList = (ListView) activity.findViewById(R.id.tabs_list);
         DrawerLayout drawer = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(activity, drawer, activity.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -36,20 +34,19 @@ public class TabDrawer {
         adapter.notifyDataSetChanged();
     }
 
-    public class TabAdapter extends ArrayAdapter {
+    public class TabAdapter extends ArrayAdapter<TabFragment> {
+        private final static int item_res = R.layout.tab_drawer_item;
         private final LayoutInflater inflater;
-        private List<TabFragment> mObjects = null;
         private int color = Color.argb(128, 255, 128, 65);
 
-        public TabAdapter(Context context, int item_resource, List<TabFragment> objects) {
-            super(context, item_resource, objects);
-            mObjects = objects;
+        public TabAdapter(Context context) {
+            super(context, item_res, TabManager.getInstance().getFragments());
             inflater = LayoutInflater.from(context);
         }
 
         @Override
         public int getCount() {
-            return mObjects.size();
+            return TabManager.getInstance().getSize();
         }
 
         @Override
@@ -57,20 +54,17 @@ public class TabDrawer {
             final ViewHolder holder;
 
             if (convertView == null) {
-                convertView = inflater.inflate(R.layout.tab_drawer_item, parent, false);
+                convertView = inflater.inflate(item_res, parent, false);
                 holder = new ViewHolder();
                 assert convertView != null;
-
                 holder.text = (TextView) convertView.findViewById(R.id.text);
                 holder.close = (ImageView) convertView.findViewById(R.id.close);
-
                 convertView.setTag(holder);
-
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            final TabFragment item = mObjects.get(position);
+            TabFragment item = TabManager.getInstance().get(position);
             if (position == TabManager.getActiveIndex())
                 convertView.setBackgroundColor(color);
             else

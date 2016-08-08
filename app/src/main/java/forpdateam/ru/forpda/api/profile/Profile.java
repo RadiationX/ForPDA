@@ -95,8 +95,6 @@ public class Profile implements IProfileApi {
                     profile.setPosts(pair);
             }
         }
-
-        Log.d("kek", "End Profile Parse: " + (new Date().getTime() - date.getTime()));
         return profile;
     }
 

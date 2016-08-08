@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
             return false;
         });
         menu.add("qms").setOnMenuItemClickListener(menuItem -> {
-            TabManager.getInstance().add(QmsFragment.newInstance("qms"));
+            TabManager.getInstance().add(QmsFragment.newInstance("qms-huis"));
             return false;
         });
         menu.add("theme").setOnMenuItemClickListener(menuItem -> {

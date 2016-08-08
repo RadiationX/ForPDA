@@ -51,6 +51,8 @@ public class IntentHandler {
     private final static String SPECIAL_PATH = "forum";
 
     public static boolean handle(String url) {
+        Log.d("kek", url.hashCode() + " hash : " + url);
+
         Uri uri = Uri.parse(url.toLowerCase());
         if (uri.getHost() != null && uri.getHost().matches("4pda.ru")) {
             switch (uri.getPathSegments().get(0)) {
