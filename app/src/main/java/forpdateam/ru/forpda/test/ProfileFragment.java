@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -13,7 +15,6 @@ import com.trello.rxlifecycle.FragmentEvent;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabFragment;
@@ -52,10 +53,40 @@ public class ProfileFragment extends TabFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_newslist, container, false);
         setTitle(getArguments().getString("TabTitle"));
+        setHasOptionsMenu(true);
         text = (TextView) findViewById(R.id.textView2);
         date = new Date();
         loadData();
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        Log.d("kek", "oncreate menu");
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        Log.d("kek", "onprepare menu");
+        menu.clear();
+        menu.add("HYZ");
+        menu.add("PIZZA");
+    }
+
+
+
+    @Override
+    public void onOptionsMenuClosed(Menu menu) {
+        super.onOptionsMenuClosed(menu);
+        Log.d("kek", "onclose menu");
+    }
+
+    @Override
+    public void onDestroyOptionsMenu() {
+        super.onDestroyOptionsMenu();
+        Log.d("kek", "ondestroy menu");
     }
 
     private void loadData() {

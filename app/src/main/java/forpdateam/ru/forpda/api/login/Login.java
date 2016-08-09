@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.api.login;
 
 import android.text.Html;
-import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;

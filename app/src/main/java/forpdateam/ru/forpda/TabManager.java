@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +33,9 @@ public class TabManager {
     }
 
     public static TabManager init(AppCompatActivity activity, UpdateListener listener) {
+        Log.d("kekos", "" + instance);
         if (instance != null) {
             instance = null;
-            System.gc();
         }
         instance = new TabManager(activity, listener);
         return instance;
@@ -160,15 +161,20 @@ public class TabManager {
         fragmentManager.executePendingTransactions();
         update();
 
-        if (activeIndex >= existingFragments.size() - 1) {
-            if (activeIndex != 0)
-                activeIndex = existingFragments.size() - 1;
+        if (tabFragment.getParentTag() == null) {
+            if (activeIndex >= existingFragments.size() - 1) {
+                if (activeIndex != 0)
+                    activeIndex = existingFragments.size() - 1;
+            }
+
+            if (existingFragments.size() == 0)
+                activeTag = "";
+            else
+                activeTag = existingFragments.get(activeIndex).getTag();
+        } else {
+            activeTag = tabFragment.getParentTag();
         }
 
-        if (existingFragments.size() == 0)
-            activeTag = "";
-        else
-            activeTag = existingFragments.get(activeIndex).getTag();
 
         select(activeTag);
         updateListener.onChange();

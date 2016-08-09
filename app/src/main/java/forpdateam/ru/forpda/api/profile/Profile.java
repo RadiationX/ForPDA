@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.api.profile;
 
-import android.util.Log;
 import android.util.Pair;
 
 import java.util.Date;

@@ -24,8 +24,6 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsChatItem;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsThread;
-import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.utils.IntentHandler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -74,7 +72,7 @@ public class QmsFragment extends TabFragment {
         search = (Button) findViewById(R.id.search_nick);
         search.setOnClickListener(view -> search(searchText.getText().toString()));
         date = new Date();
-        IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=2556269");
+        /*IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=2556269");
         IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=2556269");
         IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=2556269");
         IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=84979&view=getlastpost");
@@ -96,12 +94,8 @@ public class QmsFragment extends TabFragment {
         IntentHandler.handle("http://4pda.ru/reviews/tag/smart-watches/");
         IntentHandler.handle("http://4pda.ru/articles/");
         IntentHandler.handle("http://4pda.ru/special/polzovatelskoe-testirovanie-alcatel-idol-4s/");
-        IntentHandler.handle("");
-
-        if (Client.checkLogin())
-            loadContacts();
-        else
-            Toast.makeText(getContext(), "sosi pisos", Toast.LENGTH_SHORT).show();
+        IntentHandler.handle("");*/
+        loadContacts();
         return view;
     }
 

@@ -40,6 +40,12 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
         permissions = RxPermissions.getInstance(this);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        TabManager.getInstance().saveState(outState);
+    }
+
     public void updateTabList() {
         tabDrawer.notifyTabsChanged();
     }
@@ -66,9 +72,23 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
 
     @Override
     public void onBackPressed() {
-        if (!TabManager.getInstance().getActive().onBackPressed()) {
-            TabManager.getInstance().remove(TabManager.getInstance().getActive());
+        if (TabManager.getInstance().getSize() > 1) {
+            if (!TabManager.getInstance().getActive().onBackPressed()) {
+                TabManager.getInstance().remove(TabManager.getInstance().getActive());
+            }
+        } else {
+            new AlertDialog.Builder(this)
+                    .setPositiveButton("yes", (dialogInterface, i) -> {
+                        super.onBackPressed();
+                    })
+                    .show();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("kekos", "ACTIVE TAB "+TabManager.getActiveIndex()+" : "+TabManager.getActiveTag());
     }
 
     @Override
@@ -77,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
             menu.clear();
         else
             menu = new MenuBuilder(this);
+
 
         menu.add("login").setOnMenuItemClickListener(menuItem -> {
             TabManager.getInstance().add(LoginFragment.newInstance("login"));

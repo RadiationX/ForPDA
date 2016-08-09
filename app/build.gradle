@@ -93,4 +93,5 @@ dependencies {
     compile "com.trello:rxlifecycle-components:${rxlifecycleVersion}"
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     compile 'org.jsoup:jsoup:1.9.1'
+    compile 'com.github.rahatarmanahmed:circularprogressview:2.5.0'
 }

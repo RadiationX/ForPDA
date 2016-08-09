@@ -19,7 +19,6 @@ import forpdateam.ru.forpda.TabFragment;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.login.Login;
 import forpdateam.ru.forpda.api.login.LoginForm;
-import forpdateam.ru.forpda.client.Client;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -27,7 +26,7 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * Created by radiationx on 29.07.16.
  */
-public class LoginFragment extends TabFragment {
+public class LoginFragment extends TabFragment{
     private CompositeSubscription mCompositeSubscription = new CompositeSubscription();
     private Throwable throwable = null;
     private EditText login, password, captcha;
@@ -65,11 +64,7 @@ public class LoginFragment extends TabFragment {
         captchaImage = (ImageView) findViewById(R.id.captchaImage);
         send = (Button) findViewById(R.id.button2);
         send.setOnClickListener(view -> tryLogin());
-        if (!Client.checkLogin()) {
-            loadForm();
-        } else {
-            //finish();
-        }
+        loadForm();
         return view;
     }
 
