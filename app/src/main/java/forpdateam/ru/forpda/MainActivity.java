@@ -1,13 +1,19 @@
 package forpdateam.ru.forpda;
 
+import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import forpdateam.ru.forpda.api.Api;
@@ -21,6 +27,10 @@ import forpdateam.ru.forpda.utils.permission.RxPermissions;
 public class MainActivity extends AppCompatActivity implements TabManager.UpdateListener {
     private TabDrawer tabDrawer;
     private RxPermissions permissions;
+    private boolean lastHamburgerState = true;
+    private final DecelerateInterpolator interpolator = new DecelerateInterpolator();
+    private final View.OnClickListener toggleListener = view -> tabDrawer.toggleState();
+    private final View.OnClickListener removeTabListener = view -> TabManager.getInstance().remove(TabManager.getActiveTag());
     public Toolbar toolbar;
 
     public MainActivity() {
@@ -36,8 +46,46 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
         TabManager.getInstance().loadState(savedInstanceState);
         TabManager.getInstance().update();
         tabDrawer = new TabDrawer(this);
+        tabDrawer.getDrawerLayout().addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+            }
 
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                if (MainActivity.this.getCurrentFocus() != null)
+                    ((InputMethodManager) MainActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(MainActivity.this.getCurrentFocus().getWindowToken(), 0);
+                TabManager.getInstance().getActive().hidePopupWindows();
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+            }
+        });
         permissions = RxPermissions.getInstance(this);
+    }
+
+
+    public void setHamburgerState(boolean state) {
+        if (toolbar == null || state == lastHamburgerState) return;
+        if (state) {
+            toolbar.setNavigationOnClickListener(toggleListener);
+            tabDrawer.getDrawerLayout().addDrawerListener(tabDrawer.getToggle());
+        } else {
+            toolbar.setNavigationOnClickListener(removeTabListener);
+            tabDrawer.getDrawerLayout().removeDrawerListener(tabDrawer.getToggle());
+        }
+        lastHamburgerState = state;
+        ValueAnimator anim = ValueAnimator.ofFloat(state ? 1.0f : 0.0f, state ? 0.0f : 1.0f);
+        anim.addUpdateListener(valueAnimator -> tabDrawer.getToggle().onDrawerSlide(tabDrawer.getDrawerLayout(), (float) valueAnimator.getAnimatedValue()));
+        anim.setInterpolator(interpolator);
+        anim.setDuration(225);
+        anim.start();
     }
 
     @Override
@@ -88,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("kekos", "ACTIVE TAB "+TabManager.getActiveIndex()+" : "+TabManager.getActiveTag());
+        Log.d("kekos", "ACTIVE TAB " + TabManager.getActiveIndex() + " : " + TabManager.getActiveTag());
     }
 
     @Override

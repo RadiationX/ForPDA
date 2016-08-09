@@ -5,10 +5,18 @@ package forpdateam.ru.forpda;
  */
 public interface ITabFragment {
     String getTitle();
+
     String getDefaultUrl();
+
     String getParentTag();
+
     int getUID();
+
     void setUID();
+
     boolean isAlone();
+
     boolean onBackPressed();
+
+    void hidePopupWindows();
 }

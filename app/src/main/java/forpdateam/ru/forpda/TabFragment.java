@@ -61,6 +61,11 @@ public class TabFragment extends RxFragment implements ITabFragment {
     }
 
     @Override
+    public void hidePopupWindows() {
+
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
@@ -68,6 +73,11 @@ public class TabFragment extends RxFragment implements ITabFragment {
             title = savedInstanceState.getString(prefix + "title");
             subtitle = savedInstanceState.getString(prefix + "subtitle");
         }
+
+        if (isAlone())
+            removeArrow();
+        else
+            setArrow();
     }
 
     @Override
@@ -88,8 +98,21 @@ public class TabFragment extends RxFragment implements ITabFragment {
         } else {
             getSupportActionBar().setTitle(title);
             getSupportActionBar().setSubtitle(subtitle);
+            if (isAlone())
+                removeArrow();
+            else
+                setArrow();
         }
     }
+
+    public void setArrow() {
+        getMainActivity().setHamburgerState(false);
+    }
+
+    public void removeArrow() {
+        getMainActivity().setHamburgerState(true);
+    }
+
 
     /* For UI in class */
     protected final String getSubtitle() {

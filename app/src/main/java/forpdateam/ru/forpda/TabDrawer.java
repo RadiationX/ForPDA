@@ -2,6 +2,7 @@ package forpdateam.ru.forpda;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.LayoutInflater;
@@ -17,17 +18,36 @@ import android.widget.TextView;
  */
 public class TabDrawer {
     private TabAdapter adapter;
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle toggle;
+    private NavigationView drawer;
 
     public TabDrawer(MainActivity activity) {
         adapter = new TabAdapter(activity);
         ListView tabsList = (ListView) activity.findViewById(R.id.tabs_list);
-        DrawerLayout drawer = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(activity, drawer, activity.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+        drawer = (NavigationView) activity.findViewById(R.id.nav_view);
+        drawerLayout = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
+        toggle = new ActionBarDrawerToggle(activity, drawerLayout, activity.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
         tabsList.setAdapter(adapter);
         tabsList.setOnItemClickListener((adapterView, view, i, l) -> TabManager.getInstance().select(TabManager.getInstance().get(i)));
+    }
+
+    public ActionBarDrawerToggle getToggle() {
+        return toggle;
+    }
+
+    public DrawerLayout getDrawerLayout() {
+        return drawerLayout;
+    }
+
+    public void toggleState() {
+        if (drawerLayout.isDrawerOpen(drawer))
+            drawerLayout.closeDrawer(drawer);
+        else
+            drawerLayout.openDrawer(drawer);
     }
 
     public void notifyTabsChanged() {

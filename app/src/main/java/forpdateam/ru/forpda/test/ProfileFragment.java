@@ -66,14 +66,14 @@ public class ProfileFragment extends TabFragment {
         Log.d("kek", "oncreate menu");
     }
 
-    @Override
+    /*@Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         Log.d("kek", "onprepare menu");
         menu.clear();
         menu.add("HYZ");
         menu.add("PIZZA");
-    }
+    }*/
 
 
 
