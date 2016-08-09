@@ -5,8 +5,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:openDrawer="start">
+    android:fitsSystemWindows="true">
 
     <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -40,17 +39,29 @@
             tools:context="forpdateam.ru.frman.MainActivity" />
 
     </android.support.design.widget.CoordinatorLayout>
-
     <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view"
+        android:id="@+id/menu_drawer"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:fitsSystemWindows="true">
+        <ListView
+            android:id="@+id/menu_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </android.support.design.widget.NavigationView>
+    <android.support.design.widget.NavigationView
+        android:id="@+id/tab_drawer"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
         android:fitsSystemWindows="true">
         <ListView
             android:id="@+id/tabs_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </android.support.design.widget.NavigationView>
+
+
 
 </android.support.v4.widget.DrawerLayout>

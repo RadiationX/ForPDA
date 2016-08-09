@@ -27,14 +27,18 @@ public class Client {
     private static final CookieManager msCookieManager = new CookieManager();
     private static Client INSTANCE = new Client();
     public static final String minimalPage = "http://4pda.ru/forum/index.php?showforum=200";
+    private boolean loginState = false;
 
     public Client() {
         INSTANCE = this;
         msCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
         String member_id = App.getInstance().getPreferences().getString("cookie_member_id", null);
         String pass_hash = App.getInstance().getPreferences().getString("cookie_pass_hash", null);
-        if (member_id != null) msCookieManager.getCookieStore().add(domain, parseCookie(member_id));
-        if (pass_hash != null) msCookieManager.getCookieStore().add(domain, parseCookie(pass_hash));
+        if (member_id != null && pass_hash != null) {
+            loginState = true;
+            msCookieManager.getCookieStore().add(domain, parseCookie(member_id));
+            msCookieManager.getCookieStore().add(domain, parseCookie(pass_hash));
+        }
     }
 
     public static Client getInstance() {
@@ -126,6 +130,10 @@ public class Client {
         if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
         return response.body().string();
+    }
+
+    public boolean getLoginState() {
+        return loginState;
     }
 
     public static boolean checkLogin() {

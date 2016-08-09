@@ -15,10 +15,10 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.trello.rxlifecycle.FragmentEvent;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.TabFragment;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.login.Login;
 import forpdateam.ru.forpda.api.login.LoginForm;
+import forpdateam.ru.forpda.fragments.TabFragment;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -57,7 +57,6 @@ public class LoginFragment extends TabFragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_login, container, false);
-        setTitle(getArguments().getString("TabTitle"));
         login = (EditText) findViewById(R.id.editText);
         password = (EditText) findViewById(R.id.editText2);
         captcha = (EditText) findViewById(R.id.editText3);

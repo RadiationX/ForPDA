@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda;
+package forpdateam.ru.forpda.fragments;
 
 /**
  * Created by radiationx on 07.08.16.

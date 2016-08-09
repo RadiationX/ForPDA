@@ -10,6 +10,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import forpdateam.ru.forpda.fragments.TabFragment;
+
 public class TabManager {
     private static TabManager instance;
     private final static int containerViewId = R.id.fr_container;

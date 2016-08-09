@@ -14,6 +14,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.client.Client;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -36,6 +37,7 @@ public class App extends android.app.Application {
     public void onCreate() {
         super.onCreate();
         Api.Init();
+        Client.getInstance();
         initImageLoader(this);
         RealmConfiguration configuration = new RealmConfiguration.Builder(this).build();
         Realm.setDefaultConfiguration(configuration);

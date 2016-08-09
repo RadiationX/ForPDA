@@ -19,11 +19,11 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.TabFragment;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsChatItem;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsThread;
+import forpdateam.ru.forpda.fragments.TabFragment;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -64,7 +64,6 @@ public class QmsFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_newslist, container, false);
-        setTitle(getArguments().getString("TabTitle"));
         text = (TextView) findViewById(R.id.textView2);
         this.container = (LinearLayout) findViewById(R.id.container);
         findViewById(R.id.search_field).setVisibility(View.VISIBLE);

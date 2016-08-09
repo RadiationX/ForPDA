@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
@@ -17,21 +18,21 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.test.LoginFragment;
-import forpdateam.ru.forpda.test.NewsListFragment;
-import forpdateam.ru.forpda.test.ProfileFragment;
-import forpdateam.ru.forpda.test.QmsFragment;
-import forpdateam.ru.forpda.test.ThemeFragment;
+import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
 
 public class MainActivity extends AppCompatActivity implements TabManager.UpdateListener {
+    public final static String DEF_TITLE = "ForPDA";
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle toggle;
     private TabDrawer tabDrawer;
+    private MenuDrawer menuDrawer;
     private RxPermissions permissions;
     private boolean lastHamburgerState = true;
     private final DecelerateInterpolator interpolator = new DecelerateInterpolator();
-    private final View.OnClickListener toggleListener = view -> tabDrawer.toggleState();
+    private final View.OnClickListener toggleListener = view -> menuDrawer.toggleState();
     private final View.OnClickListener removeTabListener = view -> TabManager.getInstance().remove(TabManager.getActiveTag());
-    public Toolbar toolbar;
+    private Toolbar toolbar;
 
     public MainActivity() {
         TabManager.init(this, this);
@@ -41,12 +42,17 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        TabManager.getInstance().loadState(savedInstanceState);
-        TabManager.getInstance().update();
-        tabDrawer = new TabDrawer(this);
-        tabDrawer.getDrawerLayout().addDrawerListener(new DrawerLayout.DrawerListener() {
+
+        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+        menuDrawer = new MenuDrawer(this, drawerLayout);
+        tabDrawer = new TabDrawer(this, drawerLayout);
+
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
             }
@@ -56,7 +62,8 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
                 if (MainActivity.this.getCurrentFocus() != null)
                     ((InputMethodManager) MainActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE))
                             .hideSoftInputFromWindow(MainActivity.this.getCurrentFocus().getWindowToken(), 0);
-                TabManager.getInstance().getActive().hidePopupWindows();
+                if (TabManager.getInstance().getSize() > 0)
+                    TabManager.getInstance().getActive().hidePopupWindows();
             }
 
             @Override
@@ -68,6 +75,9 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
             }
         });
         permissions = RxPermissions.getInstance(this);
+
+        TabManager.getInstance().loadState(savedInstanceState);
+        TabManager.getInstance().update();
     }
 
 
@@ -75,14 +85,14 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
         if (toolbar == null || state == lastHamburgerState) return;
         if (state) {
             toolbar.setNavigationOnClickListener(toggleListener);
-            tabDrawer.getDrawerLayout().addDrawerListener(tabDrawer.getToggle());
+            drawerLayout.addDrawerListener(toggle);
         } else {
             toolbar.setNavigationOnClickListener(removeTabListener);
-            tabDrawer.getDrawerLayout().removeDrawerListener(tabDrawer.getToggle());
+            drawerLayout.removeDrawerListener(toggle);
         }
         lastHamburgerState = state;
         ValueAnimator anim = ValueAnimator.ofFloat(state ? 1.0f : 0.0f, state ? 0.0f : 1.0f);
-        anim.addUpdateListener(valueAnimator -> tabDrawer.getToggle().onDrawerSlide(tabDrawer.getDrawerLayout(), (float) valueAnimator.getAnimatedValue()));
+        anim.addUpdateListener(valueAnimator -> toggle.onDrawerSlide(drawerLayout, (float) valueAnimator.getAnimatedValue()));
         anim.setInterpolator(interpolator);
         anim.setDuration(225);
         anim.start();
@@ -146,29 +156,8 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
         else
             menu = new MenuBuilder(this);
 
-
-        menu.add("login").setOnMenuItemClickListener(menuItem -> {
-            TabManager.getInstance().add(LoginFragment.newInstance("login"));
-            return false;
-        });
         menu.add("logout").setOnMenuItemClickListener(menuItem -> {
             new Task().execute();
-            return false;
-        });
-        menu.add("news").setOnMenuItemClickListener(menuItem -> {
-            TabManager.getInstance().add(NewsListFragment.newInstance("news"));
-            return false;
-        });
-        menu.add("profile").setOnMenuItemClickListener(menuItem -> {
-            TabManager.getInstance().add(ProfileFragment.newInstance("profile"));
-            return false;
-        });
-        menu.add("qms").setOnMenuItemClickListener(menuItem -> {
-            TabManager.getInstance().add(QmsFragment.newInstance("qms-huis"));
-            return false;
-        });
-        menu.add("theme").setOnMenuItemClickListener(menuItem -> {
-            TabManager.getInstance().add(ThemeFragment.newInstance("theme"));
             return false;
         });
         return true;

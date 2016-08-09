@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,34 +12,23 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import forpdateam.ru.forpda.fragments.TabFragment;
+
 /**
  * Created by radiationx on 07.08.16.
  */
 public class TabDrawer {
     private TabAdapter adapter;
     private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle toggle;
     private NavigationView drawer;
 
-    public TabDrawer(MainActivity activity) {
-        adapter = new TabAdapter(activity);
+    public TabDrawer(MainActivity activity, DrawerLayout drawerLayout) {
         ListView tabsList = (ListView) activity.findViewById(R.id.tabs_list);
-        drawer = (NavigationView) activity.findViewById(R.id.nav_view);
-        drawerLayout = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
-        toggle = new ActionBarDrawerToggle(activity, drawerLayout, activity.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
+        drawer = (NavigationView) activity.findViewById(R.id.tab_drawer);
+        adapter = new TabAdapter(activity);
         tabsList.setAdapter(adapter);
         tabsList.setOnItemClickListener((adapterView, view, i, l) -> TabManager.getInstance().select(TabManager.getInstance().get(i)));
-    }
-
-    public ActionBarDrawerToggle getToggle() {
-        return toggle;
-    }
-
-    public DrawerLayout getDrawerLayout() {
-        return drawerLayout;
+        this.drawerLayout = drawerLayout;
     }
 
     public void toggleState() {
@@ -55,7 +43,7 @@ public class TabDrawer {
     }
 
     public class TabAdapter extends ArrayAdapter<TabFragment> {
-        private final static int item_res = R.layout.tab_drawer_item;
+        private final static int item_res = R.layout.drawer_tab_item;
         private final LayoutInflater inflater;
         private int color = Color.argb(128, 255, 128, 65);
 

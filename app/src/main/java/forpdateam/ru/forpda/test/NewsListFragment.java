@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.TabFragment;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.newslist.models.NewsItem;
+import forpdateam.ru.forpda.fragments.TabFragment;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -55,7 +55,6 @@ public class NewsListFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_newslist, container, false);
-        setTitle(getArguments().getString("TabTitle"));
         text = (TextView) findViewById(R.id.textView2);
         date = new Date();
         loadData();

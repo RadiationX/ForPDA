@@ -16,10 +16,10 @@ import com.trello.rxlifecycle.FragmentEvent;
 import java.util.Date;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.TabFragment;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
+import forpdateam.ru.forpda.fragments.TabFragment;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -54,7 +54,6 @@ public class ThemeFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_newslist, container, false);
-        setTitle(getArguments().getString("TabTitle"));
         text = (TextView) findViewById(R.id.textView2);
         date = new Date();
         findViewById(R.id.search_field).setVisibility(View.VISIBLE);

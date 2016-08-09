@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda;
+package forpdateam.ru.forpda.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -8,6 +8,9 @@ import android.util.Log;
 import android.view.View;
 
 import com.trello.rxlifecycle.components.support.RxFragment;
+
+import forpdateam.ru.forpda.MainActivity;
+import forpdateam.ru.forpda.TabManager;
 
 /**
  * Created by radiationx on 07.08.16.
@@ -22,6 +25,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
 
     public TabFragment() {
         parentTag = TabManager.getActiveTag();
+        setUID();
     }
 
     /* For TabManager etc */
@@ -37,7 +41,8 @@ public class TabFragment extends RxFragment implements ITabFragment {
 
     @Override
     public void setUID() {
-        UID = (getArguments().toString() + getDefaultUrl()).hashCode();
+        UID = (getArguments() + getDefaultUrl() + getClass().getSimpleName()).hashCode();
+        Log.d("UID", ""+UID);
     }
 
     @Override
@@ -78,6 +83,12 @@ public class TabFragment extends RxFragment implements ITabFragment {
             removeArrow();
         else
             setArrow();
+
+        if (getArguments() != null) {
+            setTitle(getArguments().getString("TabTitle"));
+        } else {
+            setTitle(title);
+        }
     }
 
     @Override
@@ -157,6 +168,16 @@ public class TabFragment extends RxFragment implements ITabFragment {
         Log.d("kek", this + " : onpause");
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getSupportActionBar().setTitle(MainActivity.DEF_TITLE);
+        getSupportActionBar().setSubtitle(null);
+        if (!isAlone())
+            removeArrow();
+        else
+            setArrow();
+    }
 
     /* Experiment */
     public static class Creator<T extends TabFragment> {
