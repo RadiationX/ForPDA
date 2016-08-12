@@ -33,21 +33,18 @@ public class MenuDrawer {
     private DrawerLayout drawerLayout;
     private NavigationView drawer;
     private ArrayList<MenuItem> menuItems = new ArrayList<>();
-
+    private MenuAdapter adapter;
+    private int active = -1;
 
     public MenuDrawer(MainActivity activity, DrawerLayout drawerLayout) {
         initMenuItems();
         ListView menuList = (ListView) activity.findViewById(R.id.menu_list);
         drawer = (NavigationView) activity.findViewById(R.id.menu_drawer);
-        MenuAdapter adapter = new MenuAdapter(activity);
+        adapter = new MenuAdapter(activity);
         menuList.setAdapter(adapter);
         menuList.setOnItemClickListener((adapterView, view, i, l) -> {
             Log.d("kek", "clicked " + i + " : " + menuItems.get(i).name);
-            try {
-                TabManager.getInstance().add((TabFragment) menuItems.get(i).gettClass().newInstance());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            select(menuItems.get(i));
         });
         this.drawerLayout = drawerLayout;
         Api.Auth().addLoginObserver((observable, o) -> {
@@ -56,22 +53,64 @@ public class MenuDrawer {
             adapter.notifyDataSetChanged();
             Toast.makeText(activity, o + " result of update", Toast.LENGTH_SHORT).show();
         });
+        String last = App.getInstance().getPreferences().getString("menu_drawer_last", NewsListFragment.class.getSimpleName());
+        if (last != null)
+            select(findByClassName(last));
+    }
+
+    private void select(MenuItem item) {
+        if (item == null) return;
+        try {
+            TabManager.getInstance().add((TabFragment) item.gettClass().newInstance());
+            active = menuItems.indexOf(item);
+            Log.d("kek", "menu active "+active);
+            adapter.notifyDataSetChanged();
+            App.getInstance().getPreferences().edit().putString("menu_drawer_last", item.gettClass().getSimpleName()).apply();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private MenuItem findByClassName(String className) {
+        for (MenuItem item : menuItems) {
+            if (item.gettClass().getSimpleName().equals(className))
+                return item;
+        }
+        return null;
     }
 
     private void initMenuItems() {
-        menuItems.add(new MenuItem<>("AuthParser", android.R.drawable.ic_input_add, AuthFragment.class));
+        menuItems.add(new MenuItem<>("Auth", android.R.drawable.ic_input_add, AuthFragment.class));
         menuItems.add(new MenuItem<>("News List", android.R.drawable.ic_input_add, NewsListFragment.class));
         menuItems.add(new MenuItem<>("Profile", android.R.drawable.ic_input_add, ProfileFragment.class));
-        if(Api.Auth().getState())
+        if (Api.Auth().getState())
             menuItems.add(new MenuItem<>("QMS", android.R.drawable.ic_input_add, QmsFragment.class));
         menuItems.add(new MenuItem<>("Theme", android.R.drawable.ic_input_add, ThemeFragment.class));
     }
 
     public void toggleState() {
         if (drawerLayout.isDrawerOpen(drawer))
-            drawerLayout.closeDrawer(drawer);
+            close();
         else
-            drawerLayout.openDrawer(drawer);
+            open();
+    }
+
+    public void open() {
+        drawerLayout.openDrawer(drawer);
+    }
+
+    public void close() {
+        drawerLayout.closeDrawer(drawer);
+    }
+
+    public void setActive(String className) {
+        for (int i = 0; i < menuItems.size(); i++) {
+            if (menuItems.get(i).gettClass().getSimpleName().equals(className)) {
+                active = i;
+                adapter.notifyDataSetChanged();
+                return;
+            }
+        }
     }
 
     public class MenuAdapter extends ArrayAdapter<MenuItem> {
@@ -105,6 +144,12 @@ public class MenuDrawer {
             }
 
             MenuItem item = menuItems.get(position);
+
+            if (position == active)
+                convertView.setBackgroundColor(color);
+            else
+                convertView.setBackgroundColor(Color.TRANSPARENT);
+
             holder.icon.setImageDrawable(App.getContext().getResources().getDrawable(item.getDrawable()));
             holder.text.setText(item.getName());
             return convertView;

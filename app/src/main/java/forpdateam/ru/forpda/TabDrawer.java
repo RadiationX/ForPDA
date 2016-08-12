@@ -33,9 +33,17 @@ public class TabDrawer {
 
     public void toggleState() {
         if (drawerLayout.isDrawerOpen(drawer))
-            drawerLayout.closeDrawer(drawer);
+            close();
         else
-            drawerLayout.openDrawer(drawer);
+            open();
+    }
+
+    public void open() {
+        drawerLayout.openDrawer(drawer);
+    }
+
+    public void close() {
+        drawerLayout.closeDrawer(drawer);
     }
 
     public void notifyTabsChanged() {

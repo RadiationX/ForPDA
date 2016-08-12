@@ -52,8 +52,8 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
         toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        menuDrawer = new MenuDrawer(this, drawerLayout);
         tabDrawer = new TabDrawer(this, drawerLayout);
+        menuDrawer = new MenuDrawer(this, drawerLayout);
 
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -123,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
 
     @Override
     public void onSelectTab(TabFragment fragment) {
+        menuDrawer.setActive(fragment.getClass().getSimpleName());
         Log.d("kek", "onselect " + fragment);
     }
 

@@ -35,7 +35,6 @@ public class TabManager {
     }
 
     public static TabManager init(AppCompatActivity activity, UpdateListener listener) {
-        Log.d("kekos", "" + instance);
         if (instance != null) {
             instance = null;
         }
@@ -88,8 +87,6 @@ public class TabManager {
             if (fragmentManager.getFragments().get(i) != null)
                 existingFragments.add((TabFragment) fragmentManager.getFragments().get(i));
         }
-
-
     }
 
     private void hideTabs(FragmentTransaction transaction) {
@@ -99,6 +96,14 @@ public class TabManager {
                 transaction.hide(fragment);
                 fragment.onPause();
             }
+    }
+
+    private TabFragment findTabByTag(String tag) {
+        if (tag == null) return null;
+        for (TabFragment tab : existingFragments)
+            if (tab.getTag().equals(tag))
+                return tab;
+        return null;
     }
 
     public TabFragment getActive() {
@@ -163,20 +168,24 @@ public class TabManager {
         fragmentManager.executePendingTransactions();
         update();
 
-        if (tabFragment.getParentTag() == null) {
-            if (activeIndex >= existingFragments.size() - 1) {
-                if (activeIndex != 0)
-                    activeIndex = existingFragments.size() - 1;
-            }
+        TabFragment parent = null;
+        if (tabFragment.getParentTag() != null && tabFragment.getParentTag().equals(""))
+            parent = findTabByTag(tabFragment.getParentTag());
 
-            if (existingFragments.size() == 0)
-                activeTag = "";
-            else
+        if (parent == null) {
+            if (existingFragments.size() >= 1) {
+                if (existingFragments.size() <= activeIndex)
+                    activeIndex = existingFragments.size() - 1;
+
                 activeTag = existingFragments.get(activeIndex).getTag();
+            } else {
+                activeIndex = 0;
+                activeTag = "";
+            }
         } else {
             activeTag = tabFragment.getParentTag();
+            activeIndex = existingFragments.indexOf(parent);
         }
-
 
         select(activeTag);
         updateListener.onChange();
