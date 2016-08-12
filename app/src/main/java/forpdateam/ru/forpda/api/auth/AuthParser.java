@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.api.login;
+package forpdateam.ru.forpda.api.auth;
 
 import android.text.Html;
 
@@ -8,6 +8,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.auth.models.AuthForm;
 import forpdateam.ru.forpda.client.Client;
 import rx.Observable;
 import rx.Subscriber;
@@ -15,13 +17,13 @@ import rx.Subscriber;
 /**
  * Created by radiationx on 29.07.16.
  */
-public class Login {
-    public final static String loginFormUrl = "http://4pda.ru/forum/index.php?act=auth";
+public class AuthParser {
+    public final static String authFormUrl = "http://4pda.ru/forum/index.php?act=auth";
     private final static Pattern captchaPattern = Pattern.compile("captcha-time\" value=\"([^\"]*?)\"[\\s\\S]*?captcha-sig\" value=\"([^\"]*?)\"[\\s\\S]*?src=\"([^\"]*?)\"");
     private final static Pattern errorPattern = Pattern.compile("errors-list\">([\\s\\S]*?)</ul>");
 
-    private LoginForm doLoadForm() throws Throwable {
-        String response = Client.getInstance().get(loginFormUrl);
+    private AuthForm doLoadForm() throws Throwable {
+        String response = Client.getInstance().get(authFormUrl);
 
         if (response == null || response.isEmpty())
             throw new Exception("Page Empty!");
@@ -29,7 +31,7 @@ public class Login {
         if (checkLogin(response))
             throw new Exception("You Already Logged");
 
-        LoginForm form = new LoginForm();
+        AuthForm form = new AuthForm();
         Matcher matcher = captchaPattern.matcher(response);
         if (matcher.find()) {
             form.setCaptchaTime(matcher.group(1));
@@ -42,13 +44,13 @@ public class Login {
         return form;
     }
 
-    private Boolean doLogin(final LoginForm form) throws Throwable {
+    private Boolean doLogin(final AuthForm form) throws Throwable {
         Map<String, String> headers = new HashMap<>();
         headers.put("captcha-time", form.getCaptchaTime());
         headers.put("captcha-sig", form.getCaptchaSig());
         headers.put("captcha", form.getCaptcha());
         headers.put("return", form.getReturnField());
-        headers.put("login", form.getLogin());
+        headers.put("login", form.getNick());
         headers.put("password", form.getPassword());
         headers.put("remember", form.getRememberField());
         String response = Client.getInstance().post("http://4pda.ru/forum/index.php?act=auth", headers);
@@ -79,16 +81,17 @@ public class Login {
         if (matcher.find())
             throw new Exception("You already logout");
 
-        Client.logout();
+        Client.getCookies().clear();
         App.getInstance().getPreferences().edit().remove("cookie_member_id").remove("cookie_pass_hash").apply();
+        Api.Auth().setState(false);
 
         return !checkLogin(Client.getInstance().get(Client.minimalPage));
     }
 
-    public Observable<LoginForm> getForm() {
-        return Observable.create(new Observable.OnSubscribe<LoginForm>() {
+    public Observable<AuthForm> getForm() {
+        return Observable.create(new Observable.OnSubscribe<AuthForm>() {
             @Override
-            public void call(Subscriber<? super LoginForm> subscriber) {
+            public void call(Subscriber<? super AuthForm> subscriber) {
                 try {
                     subscriber.onNext(doLoadForm());
                     subscriber.onCompleted();
@@ -101,12 +104,12 @@ public class Login {
 
     }
 
-    public Observable<Boolean> login(final LoginForm loginForm) {
+    public Observable<Boolean> tryLogin(final AuthForm authForm) {
         return Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override
             public void call(Subscriber<? super Boolean> subscriber) {
                 try {
-                    subscriber.onNext(doLogin(loginForm));
+                    subscriber.onNext(doLogin(authForm));
                     subscriber.onCompleted();
                 } catch (Throwable e) {
                     subscriber.onError(e);

@@ -11,8 +11,11 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.api.Api;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.FormBody;
@@ -27,15 +30,16 @@ public class Client {
     private static final CookieManager msCookieManager = new CookieManager();
     private static Client INSTANCE = new Client();
     public static final String minimalPage = "http://4pda.ru/forum/index.php?showforum=200";
-    private boolean loginState = false;
+    private static List<Cookie> cookies = new ArrayList<>();
 
+    //Class
     public Client() {
         INSTANCE = this;
         msCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
         String member_id = App.getInstance().getPreferences().getString("cookie_member_id", null);
         String pass_hash = App.getInstance().getPreferences().getString("cookie_pass_hash", null);
         if (member_id != null && pass_hash != null) {
-            loginState = true;
+            Api.Auth().setState(true);
             msCookieManager.getCookieStore().add(domain, parseCookie(member_id));
             msCookieManager.getCookieStore().add(domain, parseCookie(pass_hash));
         }
@@ -51,12 +55,6 @@ public class Client {
         httpCookie.setDomain(fields[2]);
         httpCookie.setPath(fields[3]);
         return httpCookie;
-    }
-
-    private static List<Cookie> cookies = new ArrayList<>();
-
-    public static void logout() {
-        cookies.clear();
     }
 
     private static final OkHttpClient client = new OkHttpClient.Builder()
@@ -106,6 +104,8 @@ public class Client {
             })
             .build();
 
+
+    //Network
     public String get(String url) throws Exception {
         return request(url, null);
     }
@@ -132,13 +132,7 @@ public class Client {
         return response.body().string();
     }
 
-    public boolean getLoginState() {
-        return loginState;
-    }
-
-    public static boolean checkLogin() {
-        final String mid = App.getInstance().getPreferences().getString("cookie_member_id", "");
-        final String ph = App.getInstance().getPreferences().getString("cookie_pass_hash", "");
-        return !mid.isEmpty() && !ph.isEmpty();
+    public static List<Cookie> getCookies() {
+        return cookies;
     }
 }

@@ -37,6 +37,7 @@ public class App extends android.app.Application {
     public void onCreate() {
         super.onCreate();
         Api.Init();
+        //init
         Client.getInstance();
         initImageLoader(this);
         RealmConfiguration configuration = new RealmConfiguration.Builder(this).build();

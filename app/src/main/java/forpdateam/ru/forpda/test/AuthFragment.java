@@ -16,8 +16,8 @@ import com.trello.rxlifecycle.FragmentEvent;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.login.Login;
-import forpdateam.ru.forpda.api.login.LoginForm;
+import forpdateam.ru.forpda.api.auth.AuthParser;
+import forpdateam.ru.forpda.api.auth.models.AuthForm;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -26,16 +26,16 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * Created by radiationx on 29.07.16.
  */
-public class LoginFragment extends TabFragment{
+public class AuthFragment extends TabFragment{
     private CompositeSubscription mCompositeSubscription = new CompositeSubscription();
     private Throwable throwable = null;
-    private EditText login, password, captcha;
+    private EditText nick, password, captcha;
     private ImageView captchaImage;
-    private LoginForm loginForm;
+    private AuthForm authForm;
     private Button send;
 
-    public static LoginFragment newInstance(String tabTitle) {
-        LoginFragment fragment = new LoginFragment();
+    public static AuthFragment newInstance(String tabTitle) {
+        AuthFragment fragment = new AuthFragment();
         Bundle args = new Bundle();
         args.putString("TabTitle", tabTitle);
         fragment.setArguments(args);
@@ -45,7 +45,7 @@ public class LoginFragment extends TabFragment{
 
     @Override
     public String getDefaultUrl() {
-        return Login.loginFormUrl;
+        return AuthParser.authFormUrl;
     }
 
     @Override
@@ -56,8 +56,8 @@ public class LoginFragment extends TabFragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_login, container, false);
-        login = (EditText) findViewById(R.id.editText);
+        view = inflater.inflate(R.layout.activity_auth, container, false);
+        nick = (EditText) findViewById(R.id.editText);
         password = (EditText) findViewById(R.id.editText2);
         captcha = (EditText) findViewById(R.id.editText3);
         captchaImage = (ImageView) findViewById(R.id.captchaImage);
@@ -68,11 +68,11 @@ public class LoginFragment extends TabFragment{
     }
 
     private void loadForm() {
-        mCompositeSubscription.add(Api.Login().getForm()
+        mCompositeSubscription.add(Api.Auth().getForm()
                 .onErrorReturn(throwable -> {
                     this.throwable = throwable;
                     throwable.printStackTrace();
-                    return new LoginForm();
+                    return new AuthForm();
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -82,23 +82,23 @@ public class LoginFragment extends TabFragment{
                 }));
     }
 
-    private void bindUi(LoginForm loginForm) {
-        this.loginForm = loginForm;
+    private void bindUi(AuthForm authForm) {
+        this.authForm = authForm;
         if (throwable != null) {
             new AlertDialog.Builder(getContext())
                     .setMessage(throwable.getMessage())
                     .setPositiveButton("Ok", null)
                     .show();
         } else {
-            ImageLoader.getInstance().displayImage(loginForm.getCaptchaImageUrl(), captchaImage);
+            ImageLoader.getInstance().displayImage(authForm.getCaptchaImageUrl(), captchaImage);
         }
     }
 
     private void tryLogin() {
-        loginForm.setCaptcha(captcha.getText().toString());
-        loginForm.setLogin(login.getText().toString());
-        loginForm.setPassword(password.getText().toString());
-        mCompositeSubscription.add(Api.Login().login(loginForm)
+        authForm.setCaptcha(captcha.getText().toString());
+        authForm.setNick(nick.getText().toString());
+        authForm.setPassword(password.getText().toString());
+        mCompositeSubscription.add(Api.Auth().tryLogin(authForm)
                 .onErrorReturn(throwable -> {
                     this.throwable = throwable;
                     throwable.printStackTrace();
@@ -114,8 +114,9 @@ public class LoginFragment extends TabFragment{
 
     private void showLoginResult(boolean b) {
         if (b) {
-            Toast.makeText(getContext(), "Login Complete", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "AuthParser Complete", Toast.LENGTH_SHORT).show();
             //new Handler().postDelayed(this::finish, 500);
+            Api.Auth().doOnLogin();
         } else {
             if (throwable != null) {
                 new AlertDialog.Builder(getContext())

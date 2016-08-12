@@ -1,18 +1,18 @@
-package forpdateam.ru.forpda.api.login;
+package forpdateam.ru.forpda.api.auth.models;
 
 import forpdateam.ru.forpda.client.Client;
 
 /**
  * Created by radiationx on 29.07.16.
  */
-public class LoginForm {
+public class AuthForm {
     private final static String returnField = Client.minimalPage;
     private final static String rememberField = "1";
     private String captchaImageUrl;
     private String captcha;
     private String captchaTime;
     private String captchaSig;
-    private String login;
+    private String nick;
     private String password;
     private String body;
 
@@ -36,8 +36,8 @@ public class LoginForm {
         this.captchaSig = captchaSig;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setNick(String nick) {
+        this.nick = nick;
     }
 
     public void setPassword(String password) {
@@ -64,8 +64,8 @@ public class LoginForm {
         return captchaSig;
     }
 
-    public String getLogin() {
-        return login;
+    public String getNick() {
+        return nick;
     }
 
     public String getPassword() {

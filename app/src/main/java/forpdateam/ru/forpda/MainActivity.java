@@ -17,6 +17,9 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
@@ -174,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
         @Override
         protected Object doInBackground(Object[] objects) {
             try {
-                Api.Login().tryLogout();
+                Api.Auth().tryLogout();
             } catch (Exception e) {
                 exception = e;
             }
@@ -190,6 +193,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
                         .show();
             } else {
                 Toast.makeText(MainActivity.this, "logout complete", Toast.LENGTH_LONG).show();
+                Api.Auth().doOnLogout();
             }
         }
     }

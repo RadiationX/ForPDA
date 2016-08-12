@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.api;
 
-import forpdateam.ru.forpda.api.login.Login;
+import forpdateam.ru.forpda.api.auth.Auth;
 import forpdateam.ru.forpda.api.newslist.NewsList;
 import forpdateam.ru.forpda.api.profile.Profile;
 import forpdateam.ru.forpda.api.qms.Qms;
@@ -12,7 +12,7 @@ import forpdateam.ru.forpda.api.theme.Theme;
 public class Api {
     private static Api INSTANCE = null;
     private static Qms qmsApi = null;
-    private static Login loginApi = null;
+    private static Auth authApi = null;
     private static NewsList newsListApi = null;
     private static Profile profileApi = null;
     private static Theme themeApi = null;
@@ -30,9 +30,9 @@ public class Api {
         return qmsApi;
     }
 
-    public static Login Login() {
-        if (loginApi == null) loginApi = new Login();
-        return loginApi;
+    public static Auth Auth() {
+        if (authApi == null) authApi = new Auth();
+        return authApi;
     }
 
     public static NewsList NewsList() {

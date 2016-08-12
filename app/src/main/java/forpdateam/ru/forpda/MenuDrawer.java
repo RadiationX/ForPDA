@@ -12,11 +12,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
+import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.test.LoginFragment;
+import forpdateam.ru.forpda.test.AuthFragment;
 import forpdateam.ru.forpda.test.NewsListFragment;
 import forpdateam.ru.forpda.test.ProfileFragment;
 import forpdateam.ru.forpda.test.QmsFragment;
@@ -26,37 +30,43 @@ import forpdateam.ru.forpda.test.ThemeFragment;
  * Created by radiationx on 07.08.16.
  */
 public class MenuDrawer {
-    private MenuAdapter adapter;
     private DrawerLayout drawerLayout;
     private NavigationView drawer;
     private ArrayList<MenuItem> menuItems = new ArrayList<>();
-
 
 
     public MenuDrawer(MainActivity activity, DrawerLayout drawerLayout) {
         initMenuItems();
         ListView menuList = (ListView) activity.findViewById(R.id.menu_list);
         drawer = (NavigationView) activity.findViewById(R.id.menu_drawer);
-        adapter = new MenuAdapter(activity);
+        MenuAdapter adapter = new MenuAdapter(activity);
         menuList.setAdapter(adapter);
         menuList.setOnItemClickListener((adapterView, view, i, l) -> {
-            Log.d("kek", "clicked "+i+" : "+menuItems.get(i).name);
+            Log.d("kek", "clicked " + i + " : " + menuItems.get(i).name);
             try {
                 TabManager.getInstance().add((TabFragment) menuItems.get(i).gettClass().newInstance());
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
         this.drawerLayout = drawerLayout;
+        Api.Auth().addLoginObserver((observable, o) -> {
+            menuItems.clear();
+            initMenuItems();
+            adapter.notifyDataSetChanged();
+            Toast.makeText(activity, o + " result of update", Toast.LENGTH_SHORT).show();
+        });
     }
 
-    private void initMenuItems(){
-        menuItems.add(new MenuItem<>("Login", android.R.drawable.ic_input_add, LoginFragment.class));
+    private void initMenuItems() {
+        menuItems.add(new MenuItem<>("AuthParser", android.R.drawable.ic_input_add, AuthFragment.class));
         menuItems.add(new MenuItem<>("News List", android.R.drawable.ic_input_add, NewsListFragment.class));
         menuItems.add(new MenuItem<>("Profile", android.R.drawable.ic_input_add, ProfileFragment.class));
-        menuItems.add(new MenuItem<>("QMS", android.R.drawable.ic_input_add, QmsFragment.class));
+        if(Api.Auth().getState())
+            menuItems.add(new MenuItem<>("QMS", android.R.drawable.ic_input_add, QmsFragment.class));
         menuItems.add(new MenuItem<>("Theme", android.R.drawable.ic_input_add, ThemeFragment.class));
     }
+
     public void toggleState() {
         if (drawerLayout.isDrawerOpen(drawer))
             drawerLayout.closeDrawer(drawer);
