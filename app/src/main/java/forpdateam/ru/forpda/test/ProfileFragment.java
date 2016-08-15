@@ -11,8 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.trello.rxlifecycle.FragmentEvent;
-
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -20,19 +18,22 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import rx.Subscription;
+import forpdateam.ru.forpda.utils.ErrorHandler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by radiationx on 03.08.16.
  */
 public class ProfileFragment extends TabFragment {
     private static final String LINk = "http://4pda.ru/forum/index.php?showuser=2556269#";
-    private Subscription subscription;
+    private CompositeSubscription compositeSubscription = new CompositeSubscription();
+
 
     private Date date;
     private TextView text;
+    boolean isLoaded = false;
 
     public static ProfileFragment newInstance(String tabTitle) {
         ProfileFragment fragment = new ProfileFragment();
@@ -55,7 +56,6 @@ public class ProfileFragment extends TabFragment {
         setHasOptionsMenu(true);
         text = (TextView) findViewById(R.id.textView2);
         date = new Date();
-        loadData();
         return view;
     }
 
@@ -75,7 +75,6 @@ public class ProfileFragment extends TabFragment {
     }*/
 
 
-
     @Override
     public void onOptionsMenuClosed(Menu menu) {
         super.onOptionsMenuClosed(menu);
@@ -88,16 +87,18 @@ public class ProfileFragment extends TabFragment {
         Log.d("kek", "ondestroy menu");
     }
 
-    private void loadData() {
-        subscription = Api.Profile().getRx(LINk)
-                .onErrorReturn(throwable -> {
-                    throwable.printStackTrace();
-                    return new ProfileModel();
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .compose(this.bindUntilEvent(FragmentEvent.PAUSE))
-                .subscribe(this::bindUi);
+    @Override
+    public void loadData() {
+        compositeSubscription.add(
+                Api.Profile().getRx(LINk)
+                        .onErrorReturn(throwable -> {
+                            ErrorHandler.handle(getMainActivity(), throwable, view1 -> loadData());
+                            return new ProfileModel();
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::bindUi)
+        );
     }
 
     private void bindUi(ProfileModel profile) {
@@ -133,11 +134,12 @@ public class ProfileFragment extends TabFragment {
 
         Log.d("kek", "time: " + (new Date().getTime() - date.getTime()));
         text.setText(temp);
+        isLoaded = true;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        subscription.unsubscribe();
+        compositeSubscription.unsubscribe();
     }
 }

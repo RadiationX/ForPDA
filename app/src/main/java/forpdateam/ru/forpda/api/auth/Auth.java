@@ -10,7 +10,7 @@ import rx.Observable;
  */
 public class Auth {
     private AuthParser parser = new AuthParser();
-    private MyObservable observable = new MyObservable();
+    private LoginObservable observable = new LoginObservable();
     private boolean authState = false;
 
     public Auth() {
@@ -50,7 +50,7 @@ public class Auth {
         observable.notifyObservers(false);
     }
 
-    private class MyObservable extends java.util.Observable {
+    private class LoginObservable extends java.util.Observable {
         @Override
         public synchronized boolean hasChanged() {
             return true;

@@ -7,9 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.trello.rxlifecycle.FragmentEvent;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,6 +15,7 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.newslist.models.NewsItem;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.utils.ErrorHandler;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -26,7 +24,7 @@ import rx.schedulers.Schedulers;
  * Created by radiationx on 31.07.16.
  */
 public class NewsListFragment extends TabFragment {
-    private static final String LINk = "http://4pda.ru/";
+    private static final String LINk = "http://4pda.ru/article/";
     private Subscription subscription;
 
     private Date date;
@@ -57,19 +55,18 @@ public class NewsListFragment extends TabFragment {
         view = inflater.inflate(R.layout.activity_newslist, container, false);
         text = (TextView) findViewById(R.id.textView2);
         date = new Date();
-        loadData();
         return view;
     }
 
-    private void loadData() {
+    @Override
+    public void loadData() {
         subscription = Api.NewsList().getRx(LINk)
                 .onErrorReturn(throwable -> {
-                    Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                    ErrorHandler.handle(getMainActivity(), throwable, view1 -> loadData());
                     return new ArrayList<>();
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(this.bindUntilEvent(FragmentEvent.PAUSE))
                 .subscribe(this::bindUi);
     }
 

@@ -19,4 +19,6 @@ public interface ITabFragment {
     boolean onBackPressed();
 
     void hidePopupWindows();
+
+    void loadData();
 }

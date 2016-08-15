@@ -24,6 +24,7 @@ import forpdateam.ru.forpda.api.qms.models.QmsChatItem;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsThread;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.utils.ErrorHandler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -94,19 +95,18 @@ public class QmsFragment extends TabFragment {
         IntentHandler.handle("http://4pda.ru/articles/");
         IntentHandler.handle("http://4pda.ru/special/polzovatelskoe-testirovanie-alcatel-idol-4s/");
         IntentHandler.handle("");*/
-        loadContacts();
         return view;
     }
 
-    private void loadContacts() {
+    @Override
+    public void loadData() {
         mCompositeSubscription.add(Api.Qms().getContactList(LINk)
                 .onErrorReturn(throwable -> {
-                    throwable.printStackTrace();
+                    ErrorHandler.handle(getMainActivity(), throwable, view1 -> loadData());
                     return new ArrayList<>();
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(this.bindUntilEvent(FragmentEvent.PAUSE))
                 .subscribe(this::bindUi, throwable -> {
                     Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
                 }));

@@ -4,6 +4,7 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
@@ -16,9 +17,6 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
-
-import java.util.Observable;
-import java.util.Observer;
 
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -36,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
     private final View.OnClickListener toggleListener = view -> menuDrawer.toggleState();
     private final View.OnClickListener removeTabListener = view -> TabManager.getInstance().remove(TabManager.getActiveTag());
     private Toolbar toolbar;
+    private CoordinatorLayout coordinatorLayout;
 
     public MainActivity() {
         TabManager.init(this, this);
@@ -45,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -83,6 +83,9 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
         TabManager.getInstance().update();
     }
 
+    public CoordinatorLayout getCoordinatorLayout() {
+        return coordinatorLayout;
+    }
 
     public void setHamburgerState(boolean state) {
         if (toolbar == null || state == lastHamburgerState) return;

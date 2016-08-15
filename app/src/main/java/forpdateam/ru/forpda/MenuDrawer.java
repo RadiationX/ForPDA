@@ -15,8 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Observable;
-import java.util.Observer;
 
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -63,7 +61,7 @@ public class MenuDrawer {
         try {
             TabManager.getInstance().add((TabFragment) item.gettClass().newInstance());
             active = menuItems.indexOf(item);
-            Log.d("kek", "menu active "+active);
+            Log.d("kek", "menu active " + active);
             adapter.notifyDataSetChanged();
             App.getInstance().getPreferences().edit().putString("menu_drawer_last", item.gettClass().getSimpleName()).apply();
         } catch (Exception e) {
@@ -80,7 +78,8 @@ public class MenuDrawer {
     }
 
     private void initMenuItems() {
-        menuItems.add(new MenuItem<>("Auth", android.R.drawable.ic_input_add, AuthFragment.class));
+        if (!Api.Auth().getState())
+            menuItems.add(new MenuItem<>("Auth", android.R.drawable.ic_input_add, AuthFragment.class));
         menuItems.add(new MenuItem<>("News List", android.R.drawable.ic_input_add, NewsListFragment.class));
         menuItems.add(new MenuItem<>("Profile", android.R.drawable.ic_input_add, ProfileFragment.class));
         if (Api.Auth().getState())

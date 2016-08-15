@@ -1,9 +1,11 @@
 package forpdateam.ru.forpda.client;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 import android.webkit.WebSettings;
 
-import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.HttpCookie;
@@ -11,7 +13,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
 import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
@@ -31,6 +32,7 @@ public class Client {
     private static Client INSTANCE = new Client();
     public static final String minimalPage = "http://4pda.ru/forum/index.php?showforum=200";
     private static List<Cookie> cookies = new ArrayList<>();
+    private NetworkObservable networkObserver = new NetworkObservable();
 
     //Class
     public Client() {
@@ -115,6 +117,8 @@ public class Client {
     }
 
     private String request(String url, Map<String, String> headers) throws Exception {
+        Log.d("kek", "request url " + url);
+
         Request.Builder builder = new Request.Builder()
                 .url(url)
                 .header("User-Agent", userAgent);
@@ -126,13 +130,43 @@ public class Client {
             builder.post(formBodyBuilder.build());
         }
 
+        String res;
         Response response = client.newCall(builder.build()).execute();
-        if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+        try {
+            if (!response.isSuccessful())
+                throw new OkHttpResponseException(response.code(), response.message(), url);
+            res = response.body().string();
+        } finally {
+            response.close();
+        }
 
-        return response.body().string();
+        return res;
     }
 
     public static List<Cookie> getCookies() {
         return cookies;
+    }
+
+    public void addNetworkObserver(Observer observer) {
+        networkObserver.addObserver(observer);
+    }
+
+    public void notifyNetworkObservers(Boolean b) {
+        networkObserver.notifyObservers(b);
+    }
+
+    private class NetworkObservable extends java.util.Observable {
+        @Override
+        public synchronized boolean hasChanged() {
+            return true;
+        }
+    }
+
+    public boolean getNetworkState() {
+        ConnectivityManager cm =
+                (ConnectivityManager) App.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 }

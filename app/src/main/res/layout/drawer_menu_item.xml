@@ -4,27 +4,28 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:id="@+id/item"
-    android:layout_height="wrap_content">
+    android:layout_height="48dp">
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:id="@+id/text"
         android:gravity="center_vertical"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="8dp"
+        android:layout_marginStart="72dp"
         android:textStyle="bold"
-        android:textSize="14sp"
-        android:layout_toEndOf="@+id/icon" />
+        android:textSize="14sp"/>
 
     <ImageView
         android:id="@+id/icon"
-        android:layout_width="48dp"
-        android:layout_height="fill_parent"
-        android:padding="12dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
         app:srcCompat="@android:drawable/ic_delete"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:clickable="true" />
+        android:layout_alignParentTop="true" />
 </RelativeLayout>

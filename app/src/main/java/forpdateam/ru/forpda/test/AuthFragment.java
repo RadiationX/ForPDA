@@ -63,11 +63,11 @@ public class AuthFragment extends TabFragment{
         captchaImage = (ImageView) findViewById(R.id.captchaImage);
         send = (Button) findViewById(R.id.button2);
         send.setOnClickListener(view -> tryLogin());
-        loadForm();
         return view;
     }
 
-    private void loadForm() {
+    @Override
+    public void loadData() {
         mCompositeSubscription.add(Api.Auth().getForm()
                 .onErrorReturn(throwable -> {
                     this.throwable = throwable;
@@ -76,7 +76,6 @@ public class AuthFragment extends TabFragment{
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(this.bindUntilEvent(FragmentEvent.PAUSE))
                 .subscribe(this::bindUi, throwable -> {
                     Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
                 }));
@@ -122,7 +121,7 @@ public class AuthFragment extends TabFragment{
                 new AlertDialog.Builder(getContext())
                         .setMessage(throwable.getMessage())
                         .setPositiveButton("Ok", (dialogInterface, i) -> {
-                            loadForm();
+                            loadData();
                         })
                         .show();
             }

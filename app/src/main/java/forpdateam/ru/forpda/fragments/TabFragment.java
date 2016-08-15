@@ -3,14 +3,18 @@ package forpdateam.ru.forpda.fragments;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.trello.rxlifecycle.components.support.RxFragment;
 
 import forpdateam.ru.forpda.MainActivity;
+import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
+import forpdateam.ru.forpda.client.Client;
 
 /**
  * Created by radiationx on 07.08.16.
@@ -22,6 +26,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
     private String title = this.getClass().getSimpleName();
     private String subtitle;
     private String parentTag;
+    private ImageView icNoNetwork;
 
     public TabFragment() {
         parentTag = TabManager.getActiveTag();
@@ -42,7 +47,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
     @Override
     public void setUID() {
         UID = (getArguments() + getDefaultUrl() + getClass().getSimpleName()).hashCode();
-        Log.d("UID", ""+UID);
+        Log.d("UID", "" + UID);
     }
 
     @Override
@@ -71,8 +76,13 @@ public class TabFragment extends RxFragment implements ITabFragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void loadData() {
+
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             parentTag = savedInstanceState.getString(prefix + "parent_tag");
             title = savedInstanceState.getString(prefix + "title");
@@ -84,10 +94,32 @@ public class TabFragment extends RxFragment implements ITabFragment {
         else
             setArrow();
 
+        Log.d("kek", "oncreate " + getArguments() + " : " + savedInstanceState + " : " + title);
         if (getArguments() != null) {
             setTitle(getArguments().getString("TabTitle"));
         } else {
             setTitle(title);
+        }
+        if (Client.getInstance().getNetworkState()) {
+            loadData();
+        }
+
+        Client.getInstance().addNetworkObserver((observable, o) -> {
+            if (icNoNetwork.getVisibility() == View.VISIBLE && (boolean) o) {
+                loadData();
+                icNoNetwork.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        icNoNetwork = (ImageView) view.findViewById(R.id.ic_no_network);
+        if (!Client.getInstance().getNetworkState()) {
+            icNoNetwork.setVisibility(View.VISIBLE);
+            if (!getTag().equals(TabManager.getActiveTag())) return;
+            Snackbar.make(getMainActivity().getCoordinatorLayout(), "No network connection", Snackbar.LENGTH_LONG).show();
         }
     }
 
@@ -104,8 +136,8 @@ public class TabFragment extends RxFragment implements ITabFragment {
         super.onHiddenChanged(hidden);
         Log.d("kek", this + " : hidden change " + hidden);
         if (hidden) {
-            getSupportActionBar().setTitle(null);
-            getSupportActionBar().setSubtitle(null);
+            /*getSupportActionBar().setTitle(null);
+            getSupportActionBar().setSubtitle(null);*/
         } else {
             getSupportActionBar().setTitle(title);
             getSupportActionBar().setSubtitle(subtitle);
