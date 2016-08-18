@@ -4,7 +4,7 @@ apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.0"
+    buildToolsVersion "24.0.1"
 
     def versionPropsFile = file('version.properties')
     if (versionPropsFile.canRead()) {
@@ -68,7 +68,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '24.1.1'
+    supportLibVersion = '24.2.0'
     okHttpVersion = '3.4.1'
     rxbindingVersion = '0.4.0'
     rxlifecycleVersion = '0.6.1'
