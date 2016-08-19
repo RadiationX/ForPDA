@@ -35,17 +35,8 @@ public class ProfileFragment extends TabFragment {
     private TextView text;
     boolean isLoaded = false;
 
-    public static ProfileFragment newInstance(String tabTitle) {
-        ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putString("TabTitle", tabTitle);
-        fragment.setArguments(args);
-        fragment.setUID();
-        return fragment;
-    }
-
     @Override
-    public String getDefaultUrl() {
+    public String getTabUrl() {
         return LINk;
     }
 

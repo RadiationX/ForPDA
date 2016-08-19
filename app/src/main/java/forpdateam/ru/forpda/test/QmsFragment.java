@@ -42,17 +42,8 @@ public class QmsFragment extends TabFragment {
     private EditText searchText;
     private Button search;
 
-    public static QmsFragment newInstance(String tabTitle) {
-        QmsFragment fragment = new QmsFragment();
-        Bundle args = new Bundle();
-        args.putString("TabTitle", tabTitle);
-        fragment.setArguments(args);
-        fragment.setUID();
-        return fragment;
-    }
-
     @Override
-    public String getDefaultUrl() {
+    public String getTabUrl() {
         return LINk;
     }
 

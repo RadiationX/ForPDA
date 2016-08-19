@@ -33,21 +33,8 @@ public class ThemeFragment extends TabFragment {
     private TextView text;
     private EditText searchText;
     private Button search;
-    private String thisUrl = "http://4pda.ru/forum/index.php?showtopic=271502&st=0";
+    //private String thisUrl = "http://4pda.ru/forum/index.php?showtopic=84979&view=getnewpost";
 
-    public static ThemeFragment newInstance(String tabTitle) {
-        ThemeFragment fragment = new ThemeFragment();
-        Bundle args = new Bundle();
-        args.putString("TabTitle", tabTitle);
-        fragment.setArguments(args);
-        fragment.setUID();
-        return fragment;
-    }
-
-    @Override
-    public String getDefaultUrl() {
-        return thisUrl;
-    }
 
     @Nullable
     @Override
@@ -55,19 +42,19 @@ public class ThemeFragment extends TabFragment {
         view = inflater.inflate(R.layout.activity_newslist, container, false);
         text = (TextView) findViewById(R.id.textView2);
         date = new Date();
-        findViewById(R.id.search_field).setVisibility(View.VISIBLE);
-        searchText = (EditText) findViewById(R.id.search);
+        //findViewById(R.id.search_field).setVisibility(View.VISIBLE);
+        /*searchText = (EditText) findViewById(R.id.search);
         search = (Button) findViewById(R.id.search_nick);
         search.setOnClickListener(view -> {
             thisUrl = searchText.getText().toString();
             loadData();
-        });
+        });*/
         return view;
     }
 
     @Override
     public void loadData() {
-        mCompositeSubscription.add(Api.Theme().getPage(thisUrl)
+        mCompositeSubscription.add(Api.Theme().getPage(getTabUrl())
                 .onErrorReturn(throwable -> {
                     ErrorHandler.handle(getMainActivity(), throwable, view1 -> loadData());
                     return new ThemePage();
@@ -79,6 +66,9 @@ public class ThemeFragment extends TabFragment {
                 }));
     }
 
+    String template =
+            "%s : %s : %s : %s";
+
     private void bindUi(ThemePage page) {
         Log.d("kek", "bindui");
 
@@ -88,6 +78,8 @@ public class ThemeFragment extends TabFragment {
         temp += page.getCurrentPage() + " : " + page.isFirstPage() + " : " + page.isLastPage() + " : " + page.getAllPagesCount() + " : " + page.getPostsOnPageCount() + "\n\n\n";
         String postFix = " : ";
         for (ThemePost post : page.getPosts()) {
+            temp += String.format(template, post.getId(), post.getDate(), post.getNumber(), post.getUserAvatar());
+            temp += "\n\n";
             temp += post.getId() + postFix;
             temp += post.getDate() + postFix;
             temp += post.getNumber() + postFix;

@@ -30,17 +30,8 @@ public class NewsListFragment extends TabFragment {
     private Date date;
     private TextView text;
 
-    public static NewsListFragment newInstance(String tabTitle) {
-        NewsListFragment fragment = new NewsListFragment();
-        Bundle args = new Bundle();
-        args.putString("TabTitle", tabTitle);
-        fragment.setArguments(args);
-        fragment.setUID();
-        return fragment;
-    }
-
     @Override
-    public String getDefaultUrl() {
+    public String getTabUrl() {
         return LINk;
     }
 

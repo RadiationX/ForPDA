@@ -1,10 +1,15 @@
 package forpdateam.ru.forpda.utils;
 
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import forpdateam.ru.forpda.TabManager;
+import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.test.ThemeFragment;
 
 /**
  * Created by radiationx on 04.08.16.
@@ -99,6 +104,10 @@ public class IntentHandler {
                     pid = m.group(1);
             }
             run("showtopic " + tid + " : " + view + " : " + st + " : " + pid);
+            Bundle args = new Bundle();
+            args.putString(TabFragment.URL_ARG, uri.toString());
+            args.putString(TabFragment.TITLE_ARG, "lolka");
+            TabManager.getInstance().add(new TabFragment.Builder<>(ThemeFragment.class).setArgs(args).build());
             return true;
         }
         param = uri.getQueryParameter("showforum");

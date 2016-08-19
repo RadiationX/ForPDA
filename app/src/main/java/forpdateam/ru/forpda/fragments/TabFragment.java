@@ -20,7 +20,10 @@ import forpdateam.ru.forpda.client.Client;
  * Created by radiationx on 07.08.16.
  */
 public class TabFragment extends RxFragment implements ITabFragment {
+    public final static String TITLE_ARG = "TAB_TITLE";
+    public final static String URL_ARG = "TAB_URL";
     private final static String prefix = "tab_fragment_";
+    protected String tabUrl = "";
     protected View view;
     private int UID = 0;
     private String title = this.getClass().getSimpleName();
@@ -46,7 +49,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
 
     @Override
     public void setUID() {
-        UID = (getArguments() + getDefaultUrl() + getClass().getSimpleName()).hashCode();
+        UID = (getArguments() + getTabUrl() + getClass().getSimpleName()).hashCode();
         Log.d("UID", "" + UID);
     }
 
@@ -56,8 +59,12 @@ public class TabFragment extends RxFragment implements ITabFragment {
     }
 
     @Override
-    public String getDefaultUrl() {
-        return "";
+    public String getTabUrl() {
+        return tabUrl;
+    }
+
+    public void setTabUrl(String tabUrl) {
+        this.tabUrl = tabUrl;
     }
 
     @Override
@@ -95,8 +102,11 @@ public class TabFragment extends RxFragment implements ITabFragment {
             setArrow();
 
         Log.d("kek", "oncreate " + getArguments() + " : " + savedInstanceState + " : " + title);
+
+
         if (getArguments() != null) {
-            setTitle(getArguments().getString("TabTitle"));
+            setTitle(getArguments().getString(TITLE_ARG));
+            setTabUrl(getArguments().getString(URL_ARG));
         } else {
             setTitle(title);
         }
@@ -212,10 +222,10 @@ public class TabFragment extends RxFragment implements ITabFragment {
     }
 
     /* Experiment */
-    public static class Creator<T extends TabFragment> {
+    public static class Builder<T extends TabFragment> {
         private T tClass;
 
-        public Creator(Class<T> tClass) {
+        public Builder(Class<T> tClass) {
             try {
                 this.tClass = (T) tClass.newInstance();
             } catch (Exception e) {
@@ -223,17 +233,18 @@ public class TabFragment extends RxFragment implements ITabFragment {
             }
         }
 
-        public Creator setArgs(Bundle args) {
+        public Builder setArgs(Bundle args) {
             tClass.setArguments(args);
             return this;
         }
 
-        public Creator setTitle(String title) {
+        public Builder setTitle(String title) {
             tClass.setTitle(title);
             return this;
         }
 
-        public T get() {
+        public T build() {
+            tClass.setUID();;
             return tClass;
         }
     }

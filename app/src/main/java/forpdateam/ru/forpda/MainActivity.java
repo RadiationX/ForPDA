@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
 
 public class MainActivity extends AppCompatActivity implements TabManager.UpdateListener {
@@ -165,6 +166,10 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
 
         menu.add("logout").setOnMenuItemClickListener(menuItem -> {
             new Task().execute();
+            return false;
+        });
+        menu.add("test").setOnMenuItemClickListener(menuItem -> {
+            IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=84979&view=getnewpost");
             return false;
         });
         return true;

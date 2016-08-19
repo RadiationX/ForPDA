@@ -34,17 +34,8 @@ public class AuthFragment extends TabFragment{
     private AuthForm authForm;
     private Button send;
 
-    public static AuthFragment newInstance(String tabTitle) {
-        AuthFragment fragment = new AuthFragment();
-        Bundle args = new Bundle();
-        args.putString("TabTitle", tabTitle);
-        fragment.setArguments(args);
-        fragment.setUID();
-        return fragment;
-    }
-
     @Override
-    public String getDefaultUrl() {
+    public String getTabUrl() {
         return AuthParser.authFormUrl;
     }
 

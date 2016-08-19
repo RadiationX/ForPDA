@@ -6,7 +6,7 @@ package forpdateam.ru.forpda.fragments;
 public interface ITabFragment {
     String getTitle();
 
-    String getDefaultUrl();
+    String getTabUrl();
 
     String getParentTag();
 
