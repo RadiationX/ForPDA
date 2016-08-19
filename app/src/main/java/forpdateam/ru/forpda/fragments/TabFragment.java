@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.fragments;
 
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -9,15 +10,15 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.app.ActionBar;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.trello.rxlifecycle.components.support.RxFragment;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
@@ -125,13 +126,14 @@ public class TabFragment extends RxFragment implements ITabFragment {
 
         int iconRes;
         if (isAlone()) {
-            iconRes = R.drawable.ic_menu_black_24dp;
+            iconRes = R.drawable.ic_menu_white_24dp;
             toolbar.setNavigationOnClickListener(getMainActivity().getToggleListener());
         } else {
-            iconRes = R.drawable.ic_arrow_back_black_24dp;
+            iconRes = R.drawable.ic_arrow_back_white_24dp;
             toolbar.setNavigationOnClickListener(getMainActivity().getRemoveTabListener());
         }
-        Drawable drawable = ResourcesCompat.getDrawable(getResources(), iconRes, null);
+
+        Drawable drawable = AppCompatResources.getDrawable(App.getContext(), iconRes);
         if (drawable != null) {
             drawable = DrawableCompat.wrap(drawable);
             DrawableCompat.setTint(drawable, Color.WHITE);
