@@ -25,17 +25,18 @@ import forpdateam.ru.forpda.utils.permission.RxPermissions;
 
 public class MainActivity extends AppCompatActivity implements TabManager.UpdateListener {
     public final static String DEF_TITLE = "ForPDA";
-    private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle toggle;
     private TabDrawer tabDrawer;
     private MenuDrawer menuDrawer;
-    private RxPermissions permissions;
-    private boolean lastHamburgerState = true;
-    private final DecelerateInterpolator interpolator = new DecelerateInterpolator();
     private final View.OnClickListener toggleListener = view -> menuDrawer.toggleState();
     private final View.OnClickListener removeTabListener = view -> TabManager.getInstance().remove(TabManager.getActiveTag());
-    private Toolbar toolbar;
-    private CoordinatorLayout coordinatorLayout;
+
+    public View.OnClickListener getToggleListener() {
+        return toggleListener;
+    }
+
+    public View.OnClickListener getRemoveTabListener() {
+        return removeTabListener;
+    }
 
     public MainActivity() {
         TabManager.init(this, this);
@@ -45,12 +46,9 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         tabDrawer = new TabDrawer(this, drawerLayout);
@@ -78,31 +76,11 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
             public void onDrawerStateChanged(int newState) {
             }
         });
-        permissions = RxPermissions.getInstance(this);
+        RxPermissions permissions = RxPermissions.getInstance(this);
 
         TabManager.getInstance().loadState(savedInstanceState);
         TabManager.getInstance().update();
-    }
-
-    public CoordinatorLayout getCoordinatorLayout() {
-        return coordinatorLayout;
-    }
-
-    public void setHamburgerState(boolean state) {
-        if (toolbar == null || state == lastHamburgerState) return;
-        if (state) {
-            toolbar.setNavigationOnClickListener(toggleListener);
-            drawerLayout.addDrawerListener(toggle);
-        } else {
-            toolbar.setNavigationOnClickListener(removeTabListener);
-            drawerLayout.removeDrawerListener(toggle);
-        }
-        lastHamburgerState = state;
-        ValueAnimator anim = ValueAnimator.ofFloat(state ? 1.0f : 0.0f, state ? 0.0f : 1.0f);
-        anim.addUpdateListener(valueAnimator -> toggle.onDrawerSlide(drawerLayout, (float) valueAnimator.getAnimatedValue()));
-        anim.setInterpolator(interpolator);
-        anim.setDuration(225);
-        anim.start();
+        //IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=84979&view=getnewpost");
     }
 
     @Override

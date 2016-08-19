@@ -14,7 +14,7 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 
 public class TabManager {
     private static TabManager instance;
-    private final static int containerViewId = R.id.fr_container;
+    private final static int containerViewId = R.id.fragment_container;
     private final static String prefix = "tab_";
     private final static String bundlePrefix = "tab_manager_";
     private FragmentManager fragmentManager;

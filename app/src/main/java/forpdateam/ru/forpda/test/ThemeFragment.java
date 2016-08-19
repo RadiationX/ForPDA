@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.test;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +40,9 @@ public class ThemeFragment extends TabFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_newslist, container, false);
+        view = inflater.inflate(R.layout.fragment_base, container, false);
+        inflater.inflate(R.layout.activity_newslist, (ViewGroup) view.findViewById(R.id.fragment_content), true);
+        //toolbar = (Toolbar) findViewById(R.id.toolbar);
         text = (TextView) findViewById(R.id.textView2);
         date = new Date();
         //findViewById(R.id.search_field).setVisibility(View.VISIBLE);
@@ -56,7 +59,7 @@ public class ThemeFragment extends TabFragment {
     public void loadData() {
         mCompositeSubscription.add(Api.Theme().getPage(getTabUrl())
                 .onErrorReturn(throwable -> {
-                    ErrorHandler.handle(getMainActivity(), throwable, view1 -> loadData());
+                    ErrorHandler.handle(this, throwable, view1 -> loadData());
                     return new ThemePage();
                 })
                 .subscribeOn(Schedulers.io())

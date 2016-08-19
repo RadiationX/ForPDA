@@ -1,13 +1,20 @@
 package forpdateam.ru.forpda.fragments;
 
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.trello.rxlifecycle.components.support.RxFragment;
 
@@ -25,6 +32,8 @@ public class TabFragment extends RxFragment implements ITabFragment {
     private final static String prefix = "tab_fragment_";
     protected String tabUrl = "";
     protected View view;
+    protected Toolbar toolbar;
+    protected CoordinatorLayout coordinatorLayout;
     private int UID = 0;
     private String title = this.getClass().getSimpleName();
     private String subtitle;
@@ -87,6 +96,10 @@ public class TabFragment extends RxFragment implements ITabFragment {
 
     }
 
+    public CoordinatorLayout getCoordinatorLayout() {
+        return coordinatorLayout;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,20 +109,50 @@ public class TabFragment extends RxFragment implements ITabFragment {
             subtitle = savedInstanceState.getString(prefix + "subtitle");
         }
 
-        if (isAlone())
-            removeArrow();
-        else
-            setArrow();
 
         Log.d("kek", "oncreate " + getArguments() + " : " + savedInstanceState + " : " + title);
+    }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d("kek", "onactivitycreated " + getArguments() + " : " + savedInstanceState + " : " + title);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
+        icNoNetwork = (ImageView) view.findViewById(R.id.ic_no_network);
+        toolbar.setTitle(MainActivity.DEF_TITLE);
+
+
+        int iconRes;
+        if (isAlone()) {
+            iconRes = R.drawable.ic_menu_black_24dp;
+            toolbar.setNavigationOnClickListener(getMainActivity().getToggleListener());
+        } else {
+            iconRes = R.drawable.ic_arrow_back_black_24dp;
+            toolbar.setNavigationOnClickListener(getMainActivity().getRemoveTabListener());
+        }
+        Drawable drawable = ResourcesCompat.getDrawable(getResources(), iconRes, null);
+        if (drawable != null) {
+            drawable = DrawableCompat.wrap(drawable);
+            DrawableCompat.setTint(drawable, Color.WHITE);
+            toolbar.setNavigationIcon(drawable);
+        }
+
+        if (!Client.getInstance().getNetworkState()) {
+            icNoNetwork.setVisibility(View.VISIBLE);
+            if (!getTag().equals(TabManager.getActiveTag())) return;
+            Snackbar.make(getCoordinatorLayout(), "No network connection", Snackbar.LENGTH_LONG).show();
+        }
 
         if (getArguments() != null) {
             setTitle(getArguments().getString(TITLE_ARG));
             setTabUrl(getArguments().getString(URL_ARG));
         } else {
-            setTitle(title);
+            if(title!=null)
+                setTitle(title);
         }
+        setSubtitle(subtitle);
+
         if (Client.getInstance().getNetworkState()) {
             loadData();
         }
@@ -123,49 +166,12 @@ public class TabFragment extends RxFragment implements ITabFragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        icNoNetwork = (ImageView) view.findViewById(R.id.ic_no_network);
-        if (!Client.getInstance().getNetworkState()) {
-            icNoNetwork.setVisibility(View.VISIBLE);
-            if (!getTag().equals(TabManager.getActiveTag())) return;
-            Snackbar.make(getMainActivity().getCoordinatorLayout(), "No network connection", Snackbar.LENGTH_LONG).show();
-        }
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(prefix + "parent_tag", parentTag);
         outState.putString(prefix + "title", title);
         outState.putString(prefix + "subtitle", subtitle);
     }
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        Log.d("kek", this + " : hidden change " + hidden);
-        if (hidden) {
-            /*getSupportActionBar().setTitle(null);
-            getSupportActionBar().setSubtitle(null);*/
-        } else {
-            getSupportActionBar().setTitle(title);
-            getSupportActionBar().setSubtitle(subtitle);
-            if (isAlone())
-                removeArrow();
-            else
-                setArrow();
-        }
-    }
-
-    public void setArrow() {
-        getMainActivity().setHamburgerState(false);
-    }
-
-    public void removeArrow() {
-        getMainActivity().setHamburgerState(true);
-    }
-
 
     /* For UI in class */
     protected final String getSubtitle() {
@@ -190,8 +196,8 @@ public class TabFragment extends RxFragment implements ITabFragment {
         return view.findViewById(id);
     }
 
-    protected final ActionBar getSupportActionBar() {
-        return getMainActivity().getSupportActionBar();
+    protected final Toolbar getSupportActionBar() {
+        return toolbar;
     }
 
     protected final MainActivity getMainActivity() {
@@ -213,12 +219,6 @@ public class TabFragment extends RxFragment implements ITabFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        getSupportActionBar().setTitle(MainActivity.DEF_TITLE);
-        getSupportActionBar().setSubtitle(null);
-        if (!isAlone())
-            removeArrow();
-        else
-            setArrow();
     }
 
     /* Experiment */
@@ -244,7 +244,8 @@ public class TabFragment extends RxFragment implements ITabFragment {
         }
 
         public T build() {
-            tClass.setUID();;
+            tClass.setUID();
+            ;
             return tClass;
         }
     }

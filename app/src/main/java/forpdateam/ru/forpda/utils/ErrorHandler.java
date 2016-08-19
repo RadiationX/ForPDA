@@ -10,6 +10,7 @@ import java.net.UnknownHostException;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.client.OkHttpResponseException;
+import forpdateam.ru.forpda.fragments.TabFragment;
 
 /**
  * Created by RadiationX on 14.08.2016.
@@ -17,7 +18,7 @@ import forpdateam.ru.forpda.client.OkHttpResponseException;
 public class ErrorHandler {
 
 
-    public static void handle(MainActivity activity, Throwable throwable, View.OnClickListener listener) {
+    public static void handle(TabFragment fragment, Throwable throwable, View.OnClickListener listener) {
         throwable.printStackTrace();
         String text = "";
         boolean isNetworkEx = false;
@@ -39,7 +40,7 @@ public class ErrorHandler {
         }
 
         if(isNetworkEx){
-            Snackbar snackbar = Snackbar.make(activity.getCoordinatorLayout(), text, listener != null ? Snackbar.LENGTH_INDEFINITE : Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(fragment.getCoordinatorLayout(), text, listener != null ? Snackbar.LENGTH_INDEFINITE : Snackbar.LENGTH_LONG);
             if (listener != null)
                 snackbar.setAction("Retry", listener);
             snackbar.show();

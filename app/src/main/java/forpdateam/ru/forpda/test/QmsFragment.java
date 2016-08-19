@@ -55,7 +55,8 @@ public class QmsFragment extends TabFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_newslist, container, false);
+        view = inflater.inflate(R.layout.fragment_base, container, false);
+        inflater.inflate(R.layout.activity_newslist, (ViewGroup) view.findViewById(R.id.fragment_content), true);
         text = (TextView) findViewById(R.id.textView2);
         this.container = (LinearLayout) findViewById(R.id.container);
         findViewById(R.id.search_field).setVisibility(View.VISIBLE);
@@ -93,7 +94,7 @@ public class QmsFragment extends TabFragment {
     public void loadData() {
         mCompositeSubscription.add(Api.Qms().getContactList(LINk)
                 .onErrorReturn(throwable -> {
-                    ErrorHandler.handle(getMainActivity(), throwable, view1 -> loadData());
+                    ErrorHandler.handle(this, throwable, view1 -> loadData());
                     return new ArrayList<>();
                 })
                 .subscribeOn(Schedulers.io())
