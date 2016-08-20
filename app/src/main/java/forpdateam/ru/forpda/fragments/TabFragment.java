@@ -240,10 +240,10 @@ public class TabFragment extends RxFragment implements ITabFragment {
             return this;
         }
 
-        public Builder setTitle(String title) {
+        /*public Builder setTitle(String title) {
             tClass.setTitle(title);
             return this;
-        }
+        }*/
 
         public T build() {
             tClass.setUID();

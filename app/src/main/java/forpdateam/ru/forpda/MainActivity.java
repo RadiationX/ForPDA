@@ -1,20 +1,16 @@
 package forpdateam.ru.forpda;
 
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
@@ -23,12 +19,12 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
 
-public class MainActivity extends AppCompatActivity implements TabManager.UpdateListener {
+public class MainActivity extends AppCompatActivity implements TabManager.TabListener {
     public final static String DEF_TITLE = "ForPDA";
     private TabDrawer tabDrawer;
     private MenuDrawer menuDrawer;
     private final View.OnClickListener toggleListener = view -> menuDrawer.toggleState();
-    private final View.OnClickListener removeTabListener = view -> TabManager.getInstance().remove(TabManager.getActiveTag());
+    private final View.OnClickListener removeTabListener = view -> backHandler();
 
     public View.OnClickListener getToggleListener() {
         return toggleListener;
@@ -116,6 +112,9 @@ public class MainActivity extends AppCompatActivity implements TabManager.Update
 
     @Override
     public void onBackPressed() {
+        backHandler();
+    }
+    public void backHandler(){
         if (TabManager.getInstance().getSize() > 1) {
             if (!TabManager.getInstance().getActive().onBackPressed()) {
                 TabManager.getInstance().remove(TabManager.getInstance().getActive());

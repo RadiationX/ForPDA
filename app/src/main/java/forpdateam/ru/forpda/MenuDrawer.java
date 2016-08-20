@@ -43,6 +43,7 @@ public class MenuDrawer {
         menuList.setOnItemClickListener((adapterView, view, i, l) -> {
             Log.d("kek", "clicked " + i + " : " + menuItems.get(i).name);
             select(menuItems.get(i));
+            close();
         });
         this.drawerLayout = drawerLayout;
         Api.Auth().addLoginObserver((observable, o) -> {

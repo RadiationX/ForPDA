@@ -10,7 +10,7 @@ import forpdateam.ru.forpda.api.profile.interfaces.IProfileModel;
  * Created by radiationx on 03.08.16.
  */
 public class ProfileModel implements IProfileModel {
-    private String avatar, nick, status, group, regDate, alerts, onlineDate, sign, gender, birthday, userTime, note;
+    private String avatar, nick, status, group, regDate, alerts, onlineDate, sign, gender, birthday, userTime, note, city;
     private ArrayList<Pair<String, String>> contacts = new ArrayList<>();
     private ArrayList<Pair<String, String>> devices = new ArrayList<>();
     private Pair<String, String> karma, sitePosts, comments, reputation, topics, posts;
@@ -213,5 +213,13 @@ public class ProfileModel implements IProfileModel {
     @Override
     public void setNote(String arg) {
         note = arg;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 }

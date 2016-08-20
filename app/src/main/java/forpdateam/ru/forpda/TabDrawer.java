@@ -27,7 +27,10 @@ public class TabDrawer {
         drawer = (NavigationView) activity.findViewById(R.id.tab_drawer);
         adapter = new TabAdapter(activity);
         tabsList.setAdapter(adapter);
-        tabsList.setOnItemClickListener((adapterView, view, i, l) -> TabManager.getInstance().select(TabManager.getInstance().get(i)));
+        tabsList.setOnItemClickListener((adapterView, view, i, l) -> {
+            TabManager.getInstance().select(TabManager.getInstance().get(i));
+            close();
+        });
         this.drawerLayout = drawerLayout;
     }
 

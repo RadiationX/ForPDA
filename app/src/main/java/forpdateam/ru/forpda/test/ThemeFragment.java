@@ -65,7 +65,7 @@ public class ThemeFragment extends TabFragment {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::bindUi, throwable -> {
-                    Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                    ErrorHandler.handle(this, throwable, null);
                 }));
     }
 

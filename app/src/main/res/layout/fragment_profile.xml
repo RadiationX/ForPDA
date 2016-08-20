@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#eeeeee"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <HorizontalScrollView
+            android:id="@+id/horisont"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="16dp"
+            android:background="#ffffff">
+
+            <LinearLayout
+                android:id="@+id/profile_count_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+        <include
+            layout="@layout/block_shadow_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:layout_below="@+id/horisont"
+            android:layout_marginTop="-16dp" />
+
+        <include
+            layout="@layout/block_shadow_top"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_above="@+id/profile_information"
+            android:layout_marginBottom="-8dp"/>
+
+        <include
+            layout="@layout/block_shadow_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_below="@+id/profile_information"
+            android:layout_marginTop="-21dp" />
+
+        <LinearLayout
+            android:id="@+id/profile_information"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/horisont"
+            android:layout_marginBottom="16dp"
+            android:background="#ffffff"
+            android:orientation="vertical"
+            android:paddingBottom="0dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="Информация"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <include
+            layout="@layout/block_shadow_top"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_marginBottom="-9dp"
+            android:layout_above="@+id/profile_contacts" />
+
+        <include
+            layout="@layout/block_shadow_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_below="@+id/profile_contacts"
+            android:layout_marginTop="-21dp" />
+
+        <LinearLayout
+            android:id="@+id/profile_contacts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/profile_information"
+            android:layout_marginBottom="16dp"
+            android:background="#ffffff"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"
+                android:paddingTop="16dp"
+                android:text="Контакты"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp">
+
+                <LinearLayout
+                    android:id="@+id/profile_contact_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</android.support.v4.widget.NestedScrollView>

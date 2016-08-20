@@ -6,6 +6,8 @@ import android.widget.Toast;
 
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.MainActivity;
@@ -31,6 +33,11 @@ public class ErrorHandler {
         } else if (c == UnknownHostException.class) {
             text = "Server not available";
             isNetworkEx = true;
+        } else if (c == IllegalArgumentException.class) {
+            Matcher matcher = Pattern.compile("unexpected (.*?):").matcher(throwable.getMessage());
+            if (matcher.find()) {
+                text = text.concat("Неверный аргумент ").concat(matcher.group(1));
+            }
         } else if (c == OkHttpResponseException.class) {
             OkHttpResponseException exception = (OkHttpResponseException) throwable;
             text = exception.getName() + " : " + exception.getCode();
@@ -39,14 +46,19 @@ public class ErrorHandler {
             text = throwable.getMessage();
         }
 
-        if(isNetworkEx){
-            Snackbar snackbar = Snackbar.make(fragment.getCoordinatorLayout(), text, listener != null ? Snackbar.LENGTH_INDEFINITE : Snackbar.LENGTH_LONG);
-            if (listener != null)
-                snackbar.setAction("Retry", listener);
-            snackbar.show();
-        }else {
-            Toast.makeText(App.getContext(), "Not Network Ex\n"+text, Toast.LENGTH_SHORT).show();
-        }
+
+        //if (isNetworkEx) {
+        Snackbar snackbar = Snackbar.make(fragment.getCoordinatorLayout(), text, listener != null && isNetworkEx ? Snackbar.LENGTH_INDEFINITE : Snackbar.LENGTH_LONG);
+        if (listener != null && isNetworkEx)
+            snackbar.setAction("Retry", listener);
+        snackbar.show();
+        /*} else {
+
+            final String finalText = text;
+            new Thread(() -> {
+                Toast.makeText(App.getContext(), "Not Network Ex\n" + finalText, Toast.LENGTH_SHORT).show();
+            }).run();
+        }*/
 
     }
 }

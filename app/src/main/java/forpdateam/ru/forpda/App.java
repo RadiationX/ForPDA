@@ -48,7 +48,7 @@ public class App extends android.app.Application {
             .cacheInMemory(true)
             .resetViewBeforeLoading(true)
             .cacheOnDisc(true)
-            .bitmapConfig(Bitmap.Config.RGB_565)
+            .bitmapConfig(Bitmap.Config.ARGB_8888)
             .handler(new Handler())
             .displayer(new FadeInBitmapDisplayer(500, true, true, false));
 

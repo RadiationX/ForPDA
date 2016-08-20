@@ -18,13 +18,13 @@ public class TabManager {
     private final static String prefix = "tab_";
     private final static String bundlePrefix = "tab_manager_";
     private FragmentManager fragmentManager;
-    private UpdateListener updateListener;
+    private TabListener tabListener;
     private int count = 0;
     private static String activeTag = "";
     private static int activeIndex = 0;
     private List<TabFragment> existingFragments = new ArrayList<>();
 
-    public interface UpdateListener {
+    public interface TabListener {
         void onAddTab(TabFragment fragment);
 
         void onRemoveTab(TabFragment fragment);
@@ -34,7 +34,7 @@ public class TabManager {
         void onChange();
     }
 
-    public static TabManager init(AppCompatActivity activity, UpdateListener listener) {
+    public static TabManager init(AppCompatActivity activity, TabListener listener) {
         if (instance != null) {
             instance = null;
         }
@@ -46,9 +46,9 @@ public class TabManager {
         return instance;
     }
 
-    public TabManager(AppCompatActivity activity, UpdateListener listener) {
+    public TabManager(AppCompatActivity activity, TabListener listener) {
         fragmentManager = activity.getSupportFragmentManager();
-        updateListener = listener;
+        tabListener = listener;
         update();
     }
 
@@ -141,8 +141,8 @@ public class TabManager {
         fragmentManager.executePendingTransactions();
         update();
         activeIndex = existingFragments.indexOf(tabFragment);
-        updateListener.onChange();
-        updateListener.onAddTab(tabFragment);
+        tabListener.onChange();
+        tabListener.onAddTab(tabFragment);
     }
 
     private String getTagByUID(int uid) {
@@ -189,8 +189,8 @@ public class TabManager {
         }
 
         select(activeTag);
-        updateListener.onChange();
-        updateListener.onRemoveTab(tabFragment);
+        tabListener.onChange();
+        tabListener.onRemoveTab(tabFragment);
     }
 
     public void select(final String tag) {
@@ -208,7 +208,7 @@ public class TabManager {
         update();
         activeTag = tabFragment.getTag();
         activeIndex = existingFragments.indexOf(tabFragment);
-        updateListener.onChange();
-        updateListener.onSelectTab(tabFragment);
+        tabListener.onChange();
+        tabListener.onSelectTab(tabFragment);
     }
 }

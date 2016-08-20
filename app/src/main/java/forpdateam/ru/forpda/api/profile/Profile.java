@@ -58,6 +58,9 @@ public class Profile implements IProfileApi {
 
                 if (data.group(1).contains("Время"))
                     profile.setUserTime(safe(data.group(2)));
+
+                if (data.group(1).contains("Город"))
+                    profile.setCity(safe(data.group(2)));
             }
 
             data = contacts.matcher(mainMatcher.group(8));
@@ -98,7 +101,7 @@ public class Profile implements IProfileApi {
     }
 
     private static String safe(String s) {
-        return s == null ? "" : s.trim();
+        return s == null ? null : s.trim();
     }
 
     public Observable<ProfileModel> getRx(final String url) {
