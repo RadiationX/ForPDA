@@ -1,19 +1,17 @@
 package forpdateam.ru.forpda.fragments;
 
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.trello.rxlifecycle.components.support.RxFragment;
@@ -34,7 +32,9 @@ public class TabFragment extends RxFragment implements ITabFragment {
     protected String tabUrl = "";
     protected View view;
     protected Toolbar toolbar;
+    protected ImageView toolbarBackground;
     protected CoordinatorLayout coordinatorLayout;
+    protected FloatingActionButton fab;
     private int UID = 0;
     private String title = this.getClass().getSimpleName();
     private String subtitle;
@@ -114,16 +114,13 @@ public class TabFragment extends RxFragment implements ITabFragment {
         Log.d("kek", "oncreate " + getArguments() + " : " + savedInstanceState + " : " + title);
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Log.d("kek", "onactivitycreated " + getArguments() + " : " + savedInstanceState + " : " + title);
+    protected void initBaseView(LayoutInflater inflater, @Nullable ViewGroup container) {
+        view = inflater.inflate(R.layout.fragment_base, container, false);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbarBackground = (ImageView) findViewById(R.id.toolbar_image_background);
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
         icNoNetwork = (ImageView) view.findViewById(R.id.ic_no_network);
-        toolbar.setTitle(MainActivity.DEF_TITLE);
-
-
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         int iconRes;
         if (isAlone()) {
             iconRes = R.drawable.ic_menu_white_24dp;
@@ -132,13 +129,8 @@ public class TabFragment extends RxFragment implements ITabFragment {
             iconRes = R.drawable.ic_arrow_back_white_24dp;
             toolbar.setNavigationOnClickListener(getMainActivity().getRemoveTabListener());
         }
+        toolbar.setNavigationIcon(AppCompatResources.getDrawable(App.getContext(), iconRes));
 
-        Drawable drawable = AppCompatResources.getDrawable(App.getContext(), iconRes);
-        if (drawable != null) {
-            drawable = DrawableCompat.wrap(drawable);
-            DrawableCompat.setTint(drawable, Color.WHITE);
-            toolbar.setNavigationIcon(drawable);
-        }
 
         if (!Client.getInstance().getNetworkState()) {
             icNoNetwork.setVisibility(View.VISIBLE);
@@ -147,10 +139,10 @@ public class TabFragment extends RxFragment implements ITabFragment {
         }
 
         if (getArguments() != null) {
-            setTitle(getArguments().getString(TITLE_ARG));
+            setTitle(getArguments().getString(TITLE_ARG, title));
             setTabUrl(getArguments().getString(URL_ARG));
         } else {
-            if(title!=null)
+            if (title != null)
                 setTitle(title);
         }
         setSubtitle(subtitle);
@@ -165,6 +157,14 @@ public class TabFragment extends RxFragment implements ITabFragment {
                 icNoNetwork.setVisibility(View.GONE);
             }
         });
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d("kek", "onactivitycreated " + getArguments() + " : " + savedInstanceState + " : " + title);
+
+
     }
 
     @Override
@@ -183,14 +183,12 @@ public class TabFragment extends RxFragment implements ITabFragment {
     protected final void setTitle(String title) {
         this.title = title;
         getMainActivity().updateTabList();
-        if (getTag().equals(TabManager.getActiveTag()))
-            getSupportActionBar().setTitle(title);
+        getTitleBar().setTitle(title);
     }
 
     protected final void setSubtitle(String subtitle) {
         this.subtitle = subtitle;
-        if (getTag().equals(TabManager.getActiveTag()))
-            getSupportActionBar().setSubtitle(subtitle);
+        getTitleBar().setSubtitle(subtitle);
     }
 
 
@@ -198,7 +196,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
         return view.findViewById(id);
     }
 
-    protected final Toolbar getSupportActionBar() {
+    protected final Toolbar getTitleBar() {
         return toolbar;
     }
 

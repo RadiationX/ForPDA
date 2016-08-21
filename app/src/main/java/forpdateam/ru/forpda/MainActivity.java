@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -77,6 +78,12 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         TabManager.getInstance().loadState(savedInstanceState);
         TabManager.getInstance().update();
         //IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=84979&view=getnewpost");
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d("kek", "onnewintent "+intent);
     }
 
     @Override

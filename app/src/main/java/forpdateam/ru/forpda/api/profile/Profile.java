@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.api.profile;
 
+import android.text.Html;
 import android.util.Pair;
 
 import java.util.Date;
@@ -24,6 +25,7 @@ public class Profile implements IProfileApi {
     private static final Pattern devices = Pattern.compile("<a[^>]*?href=\"([^\"]*?)\"[^>]*?>([\\s\\S]*?)</a>([\\s\\S]*?)</li>");
     private static final Pattern siteStats = Pattern.compile("<span class=\"title\">([^<]*?)</span>[\\s\\S]*?<div class=\"area\">[\\s\\S]*?(?=<a[^>]*?href=\"([^\"]*?)\"[^>]*?>([\\s\\S]*?)<|([\\s\\S]*?)</div>)");
     private static final Pattern forumStats = Pattern.compile("<span class=\"title\">([^<]*?)</span>[\\s\\S]*?<div class=\"area\">[\\s\\S]*?(?=<a[^>]*?href=\"([^\"]*?)\"[^>]*?>([\\s\\S]*?)</a>|([\\s\\S]*?)</div>)");
+    private static final Pattern note = Pattern.compile("<textarea[^>]*?profile-textarea\"[^>]*?>([\\s\\S]*?)</textarea>");
 
     private ProfileModel get(String url) throws Exception {
         ProfileModel profile = new ProfileModel();
@@ -95,6 +97,10 @@ public class Profile implements IProfileApi {
 
                 if (data.group(1).contains("Постов"))
                     profile.setPosts(pair);
+            }
+            data = note.matcher(response);
+            if (data.find()) {
+                profile.setNote(Html.fromHtml(data.group(1).replaceAll("\n", "<br></br>")).toString());
             }
         }
         return profile;

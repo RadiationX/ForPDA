@@ -10,8 +10,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <include
+            layout="@layout/block_shadow_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_below="@+id/profile_block_counts"
+            android:layout_marginTop="-21dp" />
+
         <HorizontalScrollView
-            android:id="@+id/horisont"
+            android:id="@+id/profile_block_counts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -25,32 +32,26 @@
                 android:orientation="horizontal" />
         </HorizontalScrollView>
 
-        <include
-            layout="@layout/block_shadow_bottom"
-            android:layout_width="match_parent"
-            android:layout_height="6dp"
-            android:layout_below="@+id/horisont"
-            android:layout_marginTop="-16dp" />
 
         <include
             layout="@layout/block_shadow_top"
             android:layout_width="match_parent"
             android:layout_height="10dp"
-            android:layout_above="@+id/profile_information"
-            android:layout_marginBottom="-8dp"/>
+            android:layout_above="@+id/profile_block_information"
+            android:layout_marginBottom="-8dp" />
 
         <include
             layout="@layout/block_shadow_bottom"
             android:layout_width="match_parent"
             android:layout_height="10dp"
-            android:layout_below="@+id/profile_information"
+            android:layout_below="@+id/profile_block_information"
             android:layout_marginTop="-21dp" />
 
         <LinearLayout
-            android:id="@+id/profile_information"
+            android:id="@+id/profile_block_information"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/horisont"
+            android:layout_below="@+id/profile_block_counts"
             android:layout_marginBottom="16dp"
             android:background="#ffffff"
             android:orientation="vertical"
@@ -73,21 +74,21 @@
             layout="@layout/block_shadow_top"
             android:layout_width="match_parent"
             android:layout_height="10dp"
-            android:layout_marginBottom="-9dp"
-            android:layout_above="@+id/profile_contacts" />
+            android:layout_above="@+id/profile_block_contacts"
+            android:layout_marginBottom="-9dp" />
 
         <include
             layout="@layout/block_shadow_bottom"
             android:layout_width="match_parent"
             android:layout_height="10dp"
-            android:layout_below="@+id/profile_contacts"
+            android:layout_below="@+id/profile_block_contacts"
             android:layout_marginTop="-21dp" />
 
         <LinearLayout
-            android:id="@+id/profile_contacts"
+            android:id="@+id/profile_block_contacts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/profile_information"
+            android:layout_below="@+id/profile_block_information"
             android:layout_marginBottom="16dp"
             android:background="#ffffff"
             android:orientation="vertical">
@@ -117,6 +118,68 @@
             </HorizontalScrollView>
 
         </LinearLayout>
+
+        <include
+            layout="@layout/block_shadow_top"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_above="@+id/profile_block_note"
+            android:layout_marginBottom="-9dp" />
+
+        <include
+            layout="@layout/block_shadow_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_below="@+id/profile_block_note"
+            android:layout_marginTop="-21dp" />
+
+        <LinearLayout
+            android:id="@+id/profile_block_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/profile_block_contacts"
+            android:layout_marginBottom="16dp"
+            android:background="#ffffff"
+            android:descendantFocusability="beforeDescendants"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"
+                android:paddingTop="16dp"
+                android:text="Блокнот"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/profile_note_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:gravity="top"
+                android:minLines="4"
+                android:text="text" />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/profile_save_note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="16dp"
+                android:background="?attr/selectableItemBackground"
+                android:text="Сохранить"
+                android:textColor="@color/colorPrimary" />
+
+        </LinearLayout>
+
 
     </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>

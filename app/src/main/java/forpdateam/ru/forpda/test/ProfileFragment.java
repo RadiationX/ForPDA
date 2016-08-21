@@ -6,16 +6,21 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.content.res.AppCompatResources;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -24,8 +29,6 @@ import android.widget.Toast;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-
-import java.util.Date;
 
 import at.favre.lib.dali.Dali;
 import forpdateam.ru.forpda.App;
@@ -44,15 +47,13 @@ import rx.subscriptions.CompositeSubscription;
 public class ProfileFragment extends TabFragment {
     private static final String LINk = "http://4pda.ru/forum/index.php?showuser=2556269#";
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
-    private Date date;
+    private LayoutInflater inflater;
 
     private TextView nick, group, sign;
-    private ImageView background, avatar;
-    private LinearLayout countList, information, contactList;
-    private CountItem countItem;
-    private InfoItem infoItem;
-    private ContactItem contactItem;
-    private LayoutInflater inflater;
+    private ImageView avatar;
+    private LinearLayout countList, infoBlock, contactList;
+    private EditText noteText;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
 
 
     class CountItem extends LinearLayout {
@@ -105,7 +106,7 @@ public class ProfileFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         this.inflater = inflater;
-        view = inflater.inflate(R.layout.fragment_base, container, false);
+        initBaseView(inflater, container);
         inflater.inflate(R.layout.fragment_profile, (ViewGroup) view.findViewById(R.id.fragment_content), true);
         ViewStub viewStub = (ViewStub) findViewById(R.id.toolbar_content);
         viewStub.setLayoutResource(R.layout.profile_toolbar);
@@ -113,18 +114,34 @@ public class ProfileFragment extends TabFragment {
         nick = (TextView) findViewById(R.id.profile_nick);
         group = (TextView) findViewById(R.id.profile_group);
         sign = (TextView) findViewById(R.id.profile_sign);
-        background = (ImageView) findViewById(R.id.profile_image_background);
         avatar = (ImageView) findViewById(R.id.profile_avatar);
         countList = (LinearLayout) findViewById(R.id.profile_count_list);
-        information = (LinearLayout) findViewById(R.id.profile_information);
+        infoBlock = (LinearLayout) findViewById(R.id.profile_block_information);
         contactList = (LinearLayout) findViewById(R.id.profile_contact_list);
+
+        fab.setImageDrawable(AppCompatResources.getDrawable(App.getContext(), R.drawable.contact_qms));
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        collapsingToolbarLayout.setExpandedTitleColor(Color.TRANSPARENT);
+        collapsingToolbarLayout.setCollapsedTitleTextColor(Color.TRANSPARENT);
+        collapsingToolbarLayout.setTitleEnabled(true);
+        /*collapsingToolbarLayout.setExpandedTitleGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL);
+        collapsingToolbarLayout.setExpandedTitleMarginTop(dpToPx(216));
+        collapsingToolbarLayout.setScrimVisibleHeightTrigger(dpToPx(144));
+        collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.QText);
+        collapsingToolbarLayout.setScrimAnimationDuration(225);
+*/
+        noteText = (EditText) findViewById(R.id.profile_note_text);
+         findViewById(R.id.profile_save_note).setOnClickListener(view1 -> Toast.makeText(getContext(), "save : "+noteText.getText().toString(), Toast.LENGTH_SHORT).show());
+        //toolbar.setTitleTextColor(Color.TRANSPARENT);
 
 
         setHasOptionsMenu(true);
-        date = new Date();
         return view;
     }
-
+    public int dpToPx(int dp) {
+        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+        return (int)((dp * displayMetrics.density) + 0.5);
+    }
     @Override
     public void onResume() {
         super.onResume();
@@ -174,7 +191,7 @@ public class ProfileFragment extends TabFragment {
     }
 
     private void addCountItem(String title, Pair<String, String> data) {
-        countItem = new CountItem(getContext());
+        CountItem countItem = new CountItem(getContext());
         countItem.setTitle(title);
         countItem.setDesc(data.second);
         countItem.setOnClickListener(view1 -> Toast.makeText(getContext(), data.first + "", Toast.LENGTH_SHORT).show());
@@ -182,14 +199,14 @@ public class ProfileFragment extends TabFragment {
     }
 
     private void addInfoItem(String title, String data) {
-        infoItem = new InfoItem(getContext());
+        InfoItem infoItem = new InfoItem(getContext());
         infoItem.setTitle(title);
         infoItem.setDesc(data);
-        information.addView(infoItem);
+        infoBlock.addView(infoItem);
     }
 
     private void addContactItem(Drawable icon, String data) {
-        contactItem = new ContactItem(getContext());
+        ContactItem contactItem = new ContactItem(getContext());
         contactItem.setIcon(icon);
         contactItem.setOnClickListener(view1 -> Toast.makeText(getContext(), data + "", Toast.LENGTH_SHORT).show());
         contactList.addView(contactItem);
@@ -220,9 +237,10 @@ public class ProfileFragment extends TabFragment {
         }
     }
 
+
     private void bindUi(ProfileModel profile) {
         ImageLoader.getInstance().displayImage(profile.getAvatar(), avatar);
-        ImageLoader.getInstance().displayImage(profile.getAvatar(), background, new ImageLoadingListener() {
+        ImageLoader.getInstance().displayImage(profile.getAvatar(), toolbarBackground, new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String imageUri, View view) {
 
@@ -235,7 +253,7 @@ public class ProfileFragment extends TabFragment {
 
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                Dali.create(getContext()).load(loadedImage).noFade().colorFilter(Color.parseColor("#bbbbbb")).concurrent().copyBitmapBeforeProcess().into(background);
+                Dali.create(getContext()).load(loadedImage).noFade().colorFilter(Color.parseColor("#bbbbbb")).concurrent().copyBitmapBeforeProcess().into(toolbarBackground);
             }
 
             @Override
@@ -244,9 +262,11 @@ public class ProfileFragment extends TabFragment {
             }
         });
 
+        setTitle(profile.getNick());
         nick.setText(profile.getNick());
         group.setText(profile.getGroup());
         sign.setText(Html.fromHtml(profile.getSign()));
+        sign.setMovementMethod(new LinkMovementMethod());
         addCountItem("Постов", profile.getPosts());
         addCountItem("Тем", profile.getTopics());
         addCountItem("Репутация", profile.getReputation());
@@ -262,7 +282,7 @@ public class ProfileFragment extends TabFragment {
             addInfoItem("Город", profile.getCity());
         if (profile.getUserTime() != null)
             addInfoItem("Время у юзера", profile.getUserTime());
-        inflater.inflate(R.layout.profile_divider, information);
+        inflater.inflate(R.layout.profile_divider, infoBlock);
         if (profile.getRegDate() != null)
             addInfoItem("Регистрация", profile.getRegDate());
         if (profile.getOnlineDate() != null)
@@ -270,53 +290,25 @@ public class ProfileFragment extends TabFragment {
         if (profile.getAlerts() != null)
             addInfoItem("Предупреждения", profile.getAlerts());
 
-        for (Pair<String, String> contact : profile.getContacts()) {
-            Log.d("kek", contact.first + " : " + contact.second);
-            if (contact.second.equals("QMS")) continue;
-            addContactItem(AppCompatResources.getDrawable(App.getContext(), getIconRes(contact.second)), contact.first);
+        if(profile.getContacts().size()>0){
+            for (Pair<String, String> contact : profile.getContacts()) {
+                if (contact.second.equals("QMS")) {
+                    fab.setVisibility(View.VISIBLE);
+                    fab.setOnClickListener(view1 -> {
+                        Toast.makeText(getContext(), "qms : " + contact.first, Toast.LENGTH_SHORT).show();
+                    });
+                    continue;
+                }
+                addContactItem(AppCompatResources.getDrawable(App.getContext(), getIconRes(contact.second)), contact.first);
+            }
+        }else {
+            findViewById(R.id.profile_block_contacts).setVisibility(View.GONE);
         }
 
-        /*countItem = (LinearLayout) inflater.inflate(R.layout.profile_counts_list_item, null);
-        countList.addView(countItem);
-        countItem = (LinearLayout) inflater.inflate(R.layout.profile_counts_list_item, null);
-        ((TextView)countItem.findViewById(R.id.item_title)).setText("uhi");
-        countList.addView(countItem);
-        countItem = (LinearLayout) inflater.inflate(R.layout.profile_counts_list_item, null);
-        ((TextView)countItem.findViewById(R.id.item_title)).setText("jopa");
-        countList.addView(countItem);*/
-        /*String temp = "";
-        String postfix = " \n\n";
-        if (profile != null) {
-            temp += profile.getAvatar() + postfix;
-            temp += profile.getNick() + postfix;
-            temp += profile.getStatus() + postfix;
-            temp += profile.getGroup() + postfix;
-            temp += profile.getRegDate() + postfix;
-            temp += profile.getAlerts() + postfix;
-            temp += profile.getOnlineDate() + postfix;
-            temp += profile.getSign() + postfix;
-            temp += profile.getGender() + postfix;
-            temp += profile.getBirthDay() + postfix;
-            temp += profile.getUserTime() + postfix;
-            ArrayList<Pair<String, String>> list = profile.getContacts();
-            for (Pair<String, String> pair : list) {
-                temp += (pair != null ? pair.first + " : " + pair.second : "null") + postfix;
-            }
-            list = profile.getDevices();
-            for (Pair<String, String> pair : list) {
-                temp += (pair != null ? pair.first + " : " + pair.second : "null") + postfix;
-            }
-            temp += (profile.getKarma() != null ? profile.getKarma().first + " : " + profile.getKarma().second : "null") + postfix;
-            temp += (profile.getSitePosts() != null ? profile.getSitePosts().first + " : " + profile.getSitePosts().second : "null") + postfix;
-            temp += (profile.getComments() != null ? profile.getComments().first + " : " + profile.getComments().second : "null") + postfix;
-            temp += (profile.getReputation() != null ? profile.getReputation().first + " : " + profile.getReputation().second : "null") + postfix;
-            temp += (profile.getTopics() != null ? profile.getTopics().first + " : " + profile.getTopics().second : "null") + postfix;
-            temp += (profile.getPosts() != null ? profile.getPosts().first + " : " + profile.getPosts().second : "null") + postfix;
+        if(profile.getNote()!=null){
+            findViewById(R.id.profile_block_note).setVisibility(View.VISIBLE);
+            noteText.setText(profile.getNote());
         }
-
-        Log.d("kek", "time: " + (new Date().getTime() - date.getTime()));
-        text.setText(temp);
-        isLoaded = true;*/
     }
 
     @Override

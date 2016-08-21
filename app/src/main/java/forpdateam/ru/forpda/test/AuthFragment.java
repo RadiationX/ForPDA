@@ -47,7 +47,7 @@ public class AuthFragment extends TabFragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_base, container, false);
+        initBaseView(inflater, container);
         inflater.inflate(R.layout.activity_auth, (ViewGroup) view.findViewById(R.id.fragment_content), true);
         nick = (EditText) findViewById(R.id.editText);
         password = (EditText) findViewById(R.id.editText2);

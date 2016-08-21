@@ -40,7 +40,7 @@ public class ThemeFragment extends TabFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_base, container, false);
+        initBaseView(inflater, container);
         inflater.inflate(R.layout.activity_newslist, (ViewGroup) view.findViewById(R.id.fragment_content), true);
         //toolbar = (Toolbar) findViewById(R.id.toolbar);
         text = (TextView) findViewById(R.id.textView2);
