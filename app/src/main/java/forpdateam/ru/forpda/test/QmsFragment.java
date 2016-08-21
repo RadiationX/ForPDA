@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsChatItem;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
@@ -156,6 +157,11 @@ public class QmsFragment extends TabFragment {
                 button.setOnClickListener(view -> {
                     mid = contact.getId();
                     loadThreads("http://4pda.ru/forum/index.php?act=qms&mid=" + mid);
+                });
+                button.setOnClickListener(view1 -> {
+                    Bundle args = new Bundle();
+                    args.putString(TabFragment.URL_ARG, "http://4pda.ru/forum/index.php?showuser=" + contact.getId());
+                    TabManager.getInstance().add(new TabFragment.Builder<>(ProfileFragment.class).setArgs(args).build());
                 });
                 container.addView(button);
             }

@@ -97,11 +97,6 @@ public class ProfileFragment extends TabFragment {
         }
     }
 
-    @Override
-    public String getTabUrl() {
-        return LINk;
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -131,21 +126,17 @@ public class ProfileFragment extends TabFragment {
         collapsingToolbarLayout.setScrimAnimationDuration(225);
 */
         noteText = (EditText) findViewById(R.id.profile_note_text);
-         findViewById(R.id.profile_save_note).setOnClickListener(view1 -> Toast.makeText(getContext(), "save : "+noteText.getText().toString(), Toast.LENGTH_SHORT).show());
+        findViewById(R.id.profile_save_note).setOnClickListener(view1 -> Toast.makeText(getContext(), "save : " + noteText.getText().toString(), Toast.LENGTH_SHORT).show());
         //toolbar.setTitleTextColor(Color.TRANSPARENT);
 
 
         setHasOptionsMenu(true);
         return view;
     }
+
     public int dpToPx(int dp) {
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
-        return (int)((dp * displayMetrics.density) + 0.5);
-    }
-    @Override
-    public void onResume() {
-        super.onResume();
-        setTitle(null);
+        return (int) ((dp * displayMetrics.density) + 0.5);
     }
 
     @Override
@@ -179,7 +170,7 @@ public class ProfileFragment extends TabFragment {
     @Override
     public void loadData() {
         compositeSubscription.add(
-                Api.Profile().getRx(LINk)
+                Api.Profile().getRx(getTabUrl())
                         .onErrorReturn(throwable -> {
                             ErrorHandler.handle(this, throwable, view1 -> loadData());
                             return new ProfileModel();
@@ -239,6 +230,7 @@ public class ProfileFragment extends TabFragment {
 
 
     private void bindUi(ProfileModel profile) {
+        if(profile.getNick()==null)return;
         ImageLoader.getInstance().displayImage(profile.getAvatar(), avatar);
         ImageLoader.getInstance().displayImage(profile.getAvatar(), toolbarBackground, new ImageLoadingListener() {
             @Override
@@ -290,7 +282,7 @@ public class ProfileFragment extends TabFragment {
         if (profile.getAlerts() != null)
             addInfoItem("Предупреждения", profile.getAlerts());
 
-        if(profile.getContacts().size()>0){
+        if (profile.getContacts().size() > 0) {
             for (Pair<String, String> contact : profile.getContacts()) {
                 if (contact.second.equals("QMS")) {
                     fab.setVisibility(View.VISIBLE);
@@ -301,11 +293,11 @@ public class ProfileFragment extends TabFragment {
                 }
                 addContactItem(AppCompatResources.getDrawable(App.getContext(), getIconRes(contact.second)), contact.first);
             }
-        }else {
+        } else {
             findViewById(R.id.profile_block_contacts).setVisibility(View.GONE);
         }
 
-        if(profile.getNote()!=null){
+        if (profile.getNote() != null) {
             findViewById(R.id.profile_block_note).setVisibility(View.VISIBLE);
             noteText.setText(profile.getNote());
         }

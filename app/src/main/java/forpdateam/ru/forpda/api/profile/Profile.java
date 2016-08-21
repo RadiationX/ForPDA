@@ -19,12 +19,12 @@ import rx.Subscriber;
 public class Profile implements IProfileApi {
 
     private static final Pattern mainPattern = Pattern.compile("<div[^>]*?user-box[\\s\\S]*?<img src=\"([^\"]*?)\"[\\s\\S]*?<h1>([^<]*?)</h1>[\\s\\S]*?(?=<span class=\"title\">([^<]*?)</span>| )[\\s\\S]*?<h2><span style[^>]*?>([^\"]*?)</span></h2>[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?<div class=\"u-note\">([\\s\\S]*?)</div>[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?(<ul[\\s\\S]*?/ul>)");
-    private static final Pattern info = Pattern.compile("<li[\\s\\S]*?title[^>]*?>([^>]*?)<[\\s\\S]*?div[^>]*>([^<]*)[\\s\\S]*?</div>");
+    private static final Pattern info = Pattern.compile("<li[\\s\\S]*?title[^>]*?>([^>]*?)<[\\s\\S]*?div[^>]*>([\\s\\S]*?)</div>");
     private static final Pattern personal = Pattern.compile("<li[\\s\\S]*?title[^>]*?>([^>]*?)<[\\s\\S]*?(?=<div[^>]*>([^<]*)[\\s\\S]*?</div>|)<");
     private static final Pattern contacts = Pattern.compile("<a[^>]*?href=\"([^\"]*?)\"[^>]*?>(?=<strong>([\\s\\S]*?)</strong>|([\\s\\S]*?)</a>)");
     private static final Pattern devices = Pattern.compile("<a[^>]*?href=\"([^\"]*?)\"[^>]*?>([\\s\\S]*?)</a>([\\s\\S]*?)</li>");
     private static final Pattern siteStats = Pattern.compile("<span class=\"title\">([^<]*?)</span>[\\s\\S]*?<div class=\"area\">[\\s\\S]*?(?=<a[^>]*?href=\"([^\"]*?)\"[^>]*?>([\\s\\S]*?)<|([\\s\\S]*?)</div>)");
-    private static final Pattern forumStats = Pattern.compile("<span class=\"title\">([^<]*?)</span>[\\s\\S]*?<div class=\"area\">[\\s\\S]*?(?=<a[^>]*?href=\"([^\"]*?)\"[^>]*?>([\\s\\S]*?)</a>|([\\s\\S]*?)</div>)");
+    private static final Pattern forumStats = Pattern.compile("<span class=\"title\">([^<]*?)</span>[\\s\\S]*?<div class=\"area\">[\\s\\S]*?<a[^>]*?href=\"([^\"]*?(history|pst|topics)[^\"]*?)\"[^>]*?>[^<]*?(<span[^>]*?>|)([^<]*?)(</span>|)</a>");
     private static final Pattern note = Pattern.compile("<textarea[^>]*?profile-textarea\"[^>]*?>([\\s\\S]*?)</textarea>");
 
     private ProfileModel get(String url) throws Exception {
@@ -45,7 +45,7 @@ public class Profile implements IProfileApi {
                     profile.setRegDate(safe(data.group(2)));
 
                 if (data.group(1).contains("Последнее"))
-                    profile.setOnlineDate(safe(data.group(2)));
+                    profile.setOnlineDate(safe(Html.fromHtml(data.group(2).trim()).toString()));
             }
 
             profile.setSign(safe(mainMatcher.group(6)));
@@ -88,7 +88,7 @@ public class Profile implements IProfileApi {
 
             data = forumStats.matcher(mainMatcher.group(11));
             while (data.find()) {
-                Pair<String, String> pair = Pair.create(safe(data.group(2)), safe(data.group(3) == null ? data.group(4) : data.group(3).replaceFirst("<span[^>]*?>([^<]*?)</span>", "$1")));
+                Pair<String, String> pair = Pair.create(safe(data.group(2)), safe(data.group(5)));
                 if (data.group(1).contains("Репу"))
                     profile.setReputation(pair);
 
