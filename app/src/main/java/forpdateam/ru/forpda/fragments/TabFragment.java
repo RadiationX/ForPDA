@@ -227,7 +227,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
 
         public Builder(Class<T> tClass) {
             try {
-                this.tClass = (T) tClass.newInstance();
+                this.tClass = tClass.newInstance();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -245,7 +245,6 @@ public class TabFragment extends RxFragment implements ITabFragment {
 
         public T build() {
             tClass.setUID();
-            ;
             return tClass;
         }
     }

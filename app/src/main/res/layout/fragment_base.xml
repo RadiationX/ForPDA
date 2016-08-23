@@ -20,21 +20,23 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
-            app:titleEnabled="false"
-            app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
+            app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
+            app:titleEnabled="false">
 
             <ImageView
                 android:id="@+id/toolbar_image_background"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layout_collapseMode="parallax"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax" />
+
             <ViewStub
-                android:fitsSystemWindows="true"
                 android:id="@+id/toolbar_content"
                 android:layout_width="match_parent"
+                android:layout_height="match_parent"
 
-                android:layout_height="match_parent" android:visibility="gone"/>
+                android:fitsSystemWindows="true"
+                android:visibility="gone" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -45,22 +47,33 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
+
+
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/fragment_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <ImageView
+            android:id="@+id/ic_no_network"
+            android:visibility="gone"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/ic_cloud_off_black_24dp" />
+    </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:clickable="true"
         android:visibility="gone"
         app:fabSize="normal"
-        app:layout_behavior="forpdateam.ru.forpda.ScrollAwareFABBehavior"
-        android:layout_gravity="bottom|end" />
+        app:layout_behavior="forpdateam.ru.forpda.ScrollAwareFABBehavior" />
 
 </android.support.design.widget.CoordinatorLayout>

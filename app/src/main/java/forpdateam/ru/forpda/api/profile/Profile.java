@@ -26,8 +26,9 @@ public class Profile implements IProfileApi {
     private static final Pattern siteStats = Pattern.compile("<span class=\"title\">([^<]*?)</span>[\\s\\S]*?<div class=\"area\">[\\s\\S]*?(?=<a[^>]*?href=\"([^\"]*?)\"[^>]*?>([\\s\\S]*?)<|([\\s\\S]*?)</div>)");
     private static final Pattern forumStats = Pattern.compile("<span class=\"title\">([^<]*?)</span>[\\s\\S]*?<div class=\"area\">[\\s\\S]*?<a[^>]*?href=\"([^\"]*?(history|pst|topics)[^\"]*?)\"[^>]*?>[^<]*?(<span[^>]*?>|)([^<]*?)(</span>|)</a>");
     private static final Pattern note = Pattern.compile("<textarea[^>]*?profile-textarea\"[^>]*?>([\\s\\S]*?)</textarea>");
+    private static final Pattern about = Pattern.compile("<div[^>]*?div-custom-about[^>]*?>([\\s\\S]*?)</div>");
 
-    private ProfileModel get(String url) throws Exception {
+    private ProfileModel parse(String url) throws Exception {
         ProfileModel profile = new ProfileModel();
         final String response = Client.getInstance().get(url);
 
@@ -48,7 +49,8 @@ public class Profile implements IProfileApi {
                     profile.setOnlineDate(safe(Html.fromHtml(data.group(2).trim()).toString()));
             }
 
-            profile.setSign(safe(mainMatcher.group(6)));
+            String signString = safe(mainMatcher.group(6));
+            profile.setSign(signString.equals("Нет подписи") ? null : Html.fromHtml(signString));
 
             data = personal.matcher(mainMatcher.group(7));
             while (data.find()) {
@@ -102,6 +104,11 @@ public class Profile implements IProfileApi {
             if (data.find()) {
                 profile.setNote(Html.fromHtml(data.group(1).replaceAll("\n", "<br></br>")).toString());
             }
+
+            data = about.matcher(response);
+            if (data.find()) {
+                profile.setAbout(Html.fromHtml(safe(data.group(1))));
+            }
         }
         return profile;
     }
@@ -110,12 +117,12 @@ public class Profile implements IProfileApi {
         return s == null ? null : s.trim();
     }
 
-    public Observable<ProfileModel> getRx(final String url) {
+    public Observable<ProfileModel> get(final String url) {
         return Observable.create(new Observable.OnSubscribe<ProfileModel>() {
             @Override
             public void call(Subscriber<? super ProfileModel> subscriber) {
                 try {
-                    subscriber.onNext(get(url));
+                    subscriber.onNext(parse(url));
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

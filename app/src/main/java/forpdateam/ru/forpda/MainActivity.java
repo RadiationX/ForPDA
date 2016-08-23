@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             public void onDrawerStateChanged(int newState) {
             }
         });
-        RxPermissions permissions = RxPermissions.getInstance(this);
+        RxPermissions.getInstance(this);
 
         TabManager.getInstance().loadState(savedInstanceState);
         TabManager.getInstance().update();

@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.api.profile.models;
 
+import android.text.Spanned;
 import android.util.Pair;
 
 import java.util.ArrayList;
@@ -10,7 +11,8 @@ import forpdateam.ru.forpda.api.profile.interfaces.IProfileModel;
  * Created by radiationx on 03.08.16.
  */
 public class ProfileModel implements IProfileModel {
-    private String avatar, nick, status, group, regDate, alerts, onlineDate, sign, gender, birthday, userTime, note, city;
+    private String avatar, nick, status, group, regDate, alerts, onlineDate, gender, birthday, userTime, note, city;
+    private Spanned sign, about;
     private ArrayList<Pair<String, String>> contacts = new ArrayList<>();
     private ArrayList<Pair<String, String>> devices = new ArrayList<>();
     private Pair<String, String> karma, sitePosts, comments, reputation, topics, posts;
@@ -51,7 +53,7 @@ public class ProfileModel implements IProfileModel {
     }
 
     @Override
-    public String getSign() {
+    public Spanned getSign() {
         return sign;
     }
 
@@ -116,6 +118,11 @@ public class ProfileModel implements IProfileModel {
     }
 
     @Override
+    public Spanned getAbout() {
+        return about;
+    }
+
+    @Override
     public void setAvatar(String arg) {
         avatar = arg;
     }
@@ -151,7 +158,7 @@ public class ProfileModel implements IProfileModel {
     }
 
     @Override
-    public void setSign(String arg) {
+    public void setSign(Spanned arg) {
         sign = arg;
     }
 
@@ -213,6 +220,11 @@ public class ProfileModel implements IProfileModel {
     @Override
     public void setNote(String arg) {
         note = arg;
+    }
+
+    @Override
+    public void setAbout(Spanned arg) {
+        about = arg;
     }
 
     public String getCity() {

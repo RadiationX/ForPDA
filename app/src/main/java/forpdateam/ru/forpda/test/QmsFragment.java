@@ -19,13 +19,13 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsChatItem;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsThread;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.ErrorHandler;
+import forpdateam.ru.forpda.utils.IntentHandler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -159,9 +159,7 @@ public class QmsFragment extends TabFragment {
                     loadThreads("http://4pda.ru/forum/index.php?act=qms&mid=" + mid);
                 });
                 button.setOnClickListener(view1 -> {
-                    Bundle args = new Bundle();
-                    args.putString(TabFragment.URL_ARG, "http://4pda.ru/forum/index.php?showuser=" + contact.getId());
-                    TabManager.getInstance().add(new TabFragment.Builder<>(ProfileFragment.class).setArgs(args).build());
+                    IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + contact.getId());
                 });
                 container.addView(button);
             }

@@ -7,9 +7,18 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:background="#44000000" />
 
+    <com.github.rahatarmanahmed.cpv.CircularProgressView
+        android:id="@+id/profile_progress"
+        android:layout_width="132dp"
+        android:layout_height="132dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="70dp"
+        android:scaleType="centerCrop"
+        app:cpv_color="#ffffffff"
+        app:cpv_animAutostart="true"
+        app:cpv_indeterminate="true" />
 
     <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/profile_avatar"
@@ -20,6 +29,7 @@
         android:scaleType="centerCrop"
         app:civ_border_color="#00000000"
         app:civ_border_width="0dp" />
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -36,24 +46,22 @@
             android:id="@+id/profile_nick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:alpha="1"
             android:shadowColor="#4c000000"
             android:shadowDy="1"
             android:shadowRadius="5"
-            android:text="User Nick"
             android:textColor="#ffffff"
             android:textSize="24sp"
-            android:textStyle="bold"
-            android:alpha="1"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/profile_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8px"
+            android:layout_marginTop="8dp"
             android:shadowColor="#4c000000"
             android:shadowDy="1"
             android:shadowRadius="5"
-            android:text="User Group"
             android:textColor="#ffffff"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -66,10 +74,10 @@
             android:shadowColor="#4c000000"
             android:shadowDy="1"
             android:shadowRadius="5"
-            android:text="User Sign"
             android:textAlignment="center"
             android:textColor="#ffffff"
             android:textColorLink="#ffffff"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:visibility="gone" />
     </LinearLayout>
 </FrameLayout>

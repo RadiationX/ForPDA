@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.api.profile.interfaces;
 
+import android.text.Spanned;
 import android.util.Pair;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public interface IProfileModel {
 
     String getOnlineDate();
 
-    String getSign();
+    Spanned getSign();
 
     String getGender();
 
@@ -48,6 +49,8 @@ public interface IProfileModel {
 
     String getNote();
 
+    Spanned getAbout();
+
     void setAvatar(String arg);
 
     void setNick(String arg);
@@ -62,7 +65,7 @@ public interface IProfileModel {
 
     void setOnlineDate(String arg);
 
-    void setSign(String arg);
+    void setSign(Spanned arg);
 
     void setGender(String arg);
 
@@ -87,4 +90,6 @@ public interface IProfileModel {
     void setPosts(Pair<String, String> arg);
 
     void setNote(String arg);
+
+    void setAbout(Spanned arg);
 }

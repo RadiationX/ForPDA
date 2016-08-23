@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.test.ProfileFragment;
 import forpdateam.ru.forpda.test.ThemeFragment;
 
 /**
@@ -90,6 +91,9 @@ public class IntentHandler {
         String param = uri.getQueryParameter("showuser");
         if (param != null) {
             run("showuser " + param);
+            Bundle args = new Bundle();
+            args.putString(TabFragment.URL_ARG, uri.toString());
+            TabManager.getInstance().add(new TabFragment.Builder<>(ProfileFragment.class).setArgs(args).build());
             return true;
         }
         param = uri.getQueryParameter("showtopic");

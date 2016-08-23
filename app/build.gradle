@@ -38,8 +38,6 @@ android {
             minSdkVersion 18
             targetSdkVersion 24
             vectorDrawables.useSupportLibrary = true
-            renderscriptTargetApi 19
-            renderscriptSupportModeEnabled true
         }
 
         applicationVariants.all { variant ->
@@ -97,5 +95,4 @@ dependencies {
     compile 'org.jsoup:jsoup:1.9.1'
     compile 'com.github.rahatarmanahmed:circularprogressview:2.5.0'
     compile 'de.hdodenhof:circleimageview:2.1.0'
-    compile 'at.favre.lib:dali:0.2'
 }
