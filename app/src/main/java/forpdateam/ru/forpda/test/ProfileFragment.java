@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.content.res.AppCompatResources;
+import android.support.v7.view.menu.MenuBuilder;
 import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
@@ -31,6 +33,9 @@ import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -56,10 +61,20 @@ public class ProfileFragment extends TabFragment {
     private LinearLayout countList, infoBlock, contactList, devicesList;
     private EditText noteText;
     private CircularProgressView progressView;
+    private int profileId = 0;
 
 
     public ProfileFragment() {
         setTabUrl(LINk);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        Matcher matcher = Pattern.compile("showuser=(\\d*)").matcher(getTabUrl());
+        if(matcher.find())
+            profileId = Integer.parseInt(matcher.group(1));
     }
 
     @Nullable
@@ -98,7 +113,6 @@ public class ProfileFragment extends TabFragment {
         //toolbar.setTitleTextColor(Color.TRANSPARENT);
 
 
-        setHasOptionsMenu(true);
         return view;
     }
 
@@ -109,30 +123,32 @@ public class ProfileFragment extends TabFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
         Log.d("kek", "oncreate menu");
+        menu.add("Ссылка").setOnMenuItemClickListener(menuItem -> {
+            Toast.makeText(getContext(), profileId+" lolka", Toast.LENGTH_SHORT).show();
+            return false;
+        });
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
         Log.d("kek", "onprepare menu");
-        menu.clear();
-        menu.add("HYZ");
-        menu.add("PIZZA");
+        super.onPrepareOptionsMenu(menu);
+
     }
 
 
     @Override
     public void onOptionsMenuClosed(Menu menu) {
-        super.onOptionsMenuClosed(menu);
         Log.d("kek", "onclose menu");
+        super.onOptionsMenuClosed(menu);
     }
 
     @Override
     public void onDestroyOptionsMenu() {
-        super.onDestroyOptionsMenu();
         Log.d("kek", "ondestroy menu");
+        super.onDestroyOptionsMenu();
     }
 
     @Override

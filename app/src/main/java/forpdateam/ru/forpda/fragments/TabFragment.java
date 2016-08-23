@@ -109,14 +109,17 @@ public class TabFragment extends RxFragment implements ITabFragment {
             title = savedInstanceState.getString(prefix + "title");
             subtitle = savedInstanceState.getString(prefix + "subtitle");
         }
-
-
+        if(getArguments()!=null)
+            setTabUrl(getArguments().getString(URL_ARG));
+        setHasOptionsMenu(true);
         Log.d("kek", "oncreate " + getArguments() + " : " + savedInstanceState + " : " + title);
     }
 
     protected void initBaseView(LayoutInflater inflater, @Nullable ViewGroup container) {
         view = inflater.inflate(R.layout.fragment_base, container, false);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //For work menu in toolbar
+        getMainActivity().setSupportActionBar(toolbar);
         toolbarBackground = (ImageView) findViewById(R.id.toolbar_image_background);
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
         icNoNetwork = (ImageView) view.findViewById(R.id.ic_no_network);
@@ -140,7 +143,6 @@ public class TabFragment extends RxFragment implements ITabFragment {
 
         if (getArguments() != null) {
             setTitle(getArguments().getString(TITLE_ARG, title));
-            setTabUrl(getArguments().getString(URL_ARG));
         } else {
             if (title != null)
                 setTitle(title);
