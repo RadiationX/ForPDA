@@ -8,15 +8,13 @@
         android:id="@+id/item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Последнее посещение"
         android:textSize="14sp"
-        android:textColor="#aaa"/>
+        android:textColor="@color/text_second_color"/>
     <TextView
         android:id="@+id/item_desc"
-        android:text="Сегодня, 20:46"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/text_color"
         android:textSize="16sp"
-        android:paddingTop="2dp"
-        android:textColor="#212121"/>
+        android:paddingTop="2dp"/>
 </LinearLayout>

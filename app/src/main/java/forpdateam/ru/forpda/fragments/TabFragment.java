@@ -116,10 +116,11 @@ public class TabFragment extends RxFragment implements ITabFragment {
     }
 
     protected void initBaseView(LayoutInflater inflater, @Nullable ViewGroup container) {
+        Log.d("kek", "view "+view);
         view = inflater.inflate(R.layout.fragment_base, container, false);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         //For work menu in toolbar
-        getMainActivity().setSupportActionBar(toolbar);
+        //getMainActivity().setSupportActionBar(toolbar);
         toolbarBackground = (ImageView) findViewById(R.id.toolbar_image_background);
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
         icNoNetwork = (ImageView) view.findViewById(R.id.ic_no_network);

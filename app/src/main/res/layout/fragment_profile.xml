@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:card_view="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#eeeeee"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <RelativeLayout
@@ -13,16 +11,12 @@
 
         <android.support.v7.widget.CardView
             android:id="@+id/profile_block_counts"
+            style="?ProfileCardStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="@dimen/card_margin_horizontal"
-            android:layout_marginRight="@dimen/card_margin_horizontal"
             android:layout_marginTop="@dimen/card_margin_horizontal"
-            android:visibility="gone"
-            app:cardCornerRadius="0dp"
-            card_view:cardCornerRadius="0dp">
+            android:visibility="gone">
 
             <HorizontalScrollView
                 android:layout_width="match_parent"
@@ -38,17 +32,13 @@
 
         <android.support.v7.widget.CardView
             android:id="@+id/profile_block_about"
+            style="?ProfileCardStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/profile_block_counts"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="@dimen/card_margin_horizontal"
-            android:layout_marginRight="@dimen/card_margin_horizontal"
             android:descendantFocusability="beforeDescendants"
             android:focusableInTouchMode="true"
-            android:visibility="gone"
-            app:cardCornerRadius="0dp"
-            card_view:cardCornerRadius="0dp">
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -61,32 +51,27 @@
                     android:paddingEnd="16dp"
                     android:paddingStart="16dp"
                     android:paddingTop="16dp"
-                    android:text="О себе"
-                    android:textColor="#000000"
+                    android:text="@string/profile_title_about"
+                    android:textColor="@color/text_color"
                     android:textSize="24sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:id="@+id/profile_about_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColorLink="@color/colorPrimary"
                     android:gravity="top"
-                    android:padding="16dp" />
+                    android:padding="16dp"/>
             </LinearLayout>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
             android:id="@+id/profile_block_information"
+            style="?ProfileCardStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/profile_block_about"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="@dimen/card_margin_horizontal"
-            android:layout_marginRight="@dimen/card_margin_horizontal"
-            android:visibility="gone"
-            app:cardCornerRadius="0dp"
-            card_view:cardCornerRadius="0dp">
+            android:visibility="gone">
 
             <LinearLayout
                 android:id="@+id/profile_list_information"
@@ -102,24 +87,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:text="Информация"
-                    android:textColor="#000000"
+                    android:text="@string/profile_title_information"
+                    android:textColor="@color/text_color"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
         </android.support.v7.widget.CardView>
+
         <android.support.v7.widget.CardView
             android:id="@+id/profile_block_devices"
+            style="?ProfileCardStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/profile_block_information"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="@dimen/card_margin_horizontal"
-            android:layout_marginRight="@dimen/card_margin_horizontal"
-            android:visibility="gone"
-            app:cardCornerRadius="0dp"
-            card_view:cardCornerRadius="0dp">
+            android:visibility="gone">
 
             <LinearLayout
                 android:id="@+id/profile_list_devices"
@@ -133,26 +115,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:paddingStart="16dp"
                     android:paddingEnd="0dp"
-                    android:text="Устройства"
-                    android:textColor="#000000"
+                    android:paddingStart="16dp"
+                    android:text="@string/profile_title_devices"
+                    android:textColor="@color/text_color"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
         </android.support.v7.widget.CardView>
+
         <android.support.v7.widget.CardView
             android:id="@+id/profile_block_contacts"
+            style="?ProfileCardStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/profile_block_devices"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="@dimen/card_margin_horizontal"
-            android:layout_marginRight="@dimen/card_margin_horizontal"
-            android:visibility="gone"
-            app:cardCornerRadius="0dp"
-            card_view:cardCornerRadius="0dp">
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -166,8 +145,8 @@
                     android:paddingEnd="16dp"
                     android:paddingStart="16dp"
                     android:paddingTop="16dp"
-                    android:text="Контакты"
-                    android:textColor="#000000"
+                    android:text="@string/profile_title_contacts"
+                    android:textColor="@color/text_color"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
@@ -187,17 +166,13 @@
 
         <android.support.v7.widget.CardView
             android:id="@+id/profile_block_note"
+            style="?ProfileCardStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/profile_block_contacts"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="@dimen/card_margin_horizontal"
-            android:layout_marginRight="@dimen/card_margin_horizontal"
             android:descendantFocusability="beforeDescendants"
             android:focusableInTouchMode="true"
-            android:visibility="gone"
-            app:cardCornerRadius="0dp"
-            card_view:cardCornerRadius="0dp">
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -211,8 +186,8 @@
                     android:paddingEnd="16dp"
                     android:paddingStart="16dp"
                     android:paddingTop="16dp"
-                    android:text="Блокнот"
-                    android:textColor="#000000"
+                    android:text="@string/profile_title_note"
+                    android:textColor="@color/text_color"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
@@ -223,18 +198,19 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:gravity="top"
-                    android:minLines="4"
-                    android:text="text" />
+                    android:hint="@string/profile_hint_note"
+                    android:labelFor="@id/profile_note_text"
+                    android:minLines="4" />
 
                 <android.support.v7.widget.AppCompatButton
                     android:id="@+id/profile_save_note"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right"
+                    android:layout_gravity="end"
                     android:layout_marginBottom="10dp"
-                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
                     android:background="?attr/selectableItemBackground"
-                    android:text="Сохранить"
+                    android:text="@string/profile_button_save"
                     android:textColor="@color/colorPrimary" />
             </LinearLayout>
         </android.support.v7.widget.CardView>

@@ -4,6 +4,9 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="ProfileToolbarTextStyle">@style/ProfileToolbarTextStyle</item>
+        <item name="ProfileCardStyle">@style/ProfileCardStyle</item>
+        <item name="ProfileCardTitleStyle">@style/ProfileCardTitleStyle</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -15,14 +18,24 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-
-    <style name="QText" parent="@android:style/TextAppearance">
-        <item name="android:textSize">24sp</item>
-        <item name="android:textColor">#ffffffff</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:shadowColor">#4c000000</item>
-        <item name="android:shadowRadius">5</item>
+    <style name="ProfileToolbarTextStyle">
+        <item name="android:textColorLink">@color/white</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">5</item>
+        <item name="android:shadowColor">#4c000000</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="ProfileCardStyle" parent="CardView">
+        <item name="android:layout_marginLeft">@dimen/card_margin_horizontal</item>
+        <item name="android:layout_marginRight">@dimen/card_margin_horizontal</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="cardCornerRadius">0dp</item>
+
+    </style>
+
+    <style name="ProfileCardTitleStyle">
+
     </style>
 </resources>

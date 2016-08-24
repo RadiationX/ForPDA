@@ -1,17 +1,19 @@
 package forpdateam.ru.forpda.test;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.content.res.AppCompatResources;
-import android.support.v7.view.menu.MenuBuilder;
 import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -19,10 +21,10 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.view.animation.AlphaAnimation;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -43,7 +45,7 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.ErrorHandler;
-import forpdateam.ru.forpda.utils.FastBlur;
+import forpdateam.ru.forpda.utils.BlurUtil;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -73,7 +75,7 @@ public class ProfileFragment extends TabFragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         Matcher matcher = Pattern.compile("showuser=(\\d*)").matcher(getTabUrl());
-        if(matcher.find())
+        if (matcher.find())
             profileId = Integer.parseInt(matcher.group(1));
     }
 
@@ -125,7 +127,7 @@ public class ProfileFragment extends TabFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         Log.d("kek", "oncreate menu");
         menu.add("Ссылка").setOnMenuItemClickListener(menuItem -> {
-            Toast.makeText(getContext(), profileId+" lolka", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), profileId + " lolka", Toast.LENGTH_SHORT).show();
             return false;
         });
         super.onCreateOptionsMenu(menu, inflater);
@@ -233,7 +235,20 @@ public class ProfileFragment extends TabFragment {
 
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                blur(loadedImage, toolbarBackground, imageUri);
+                //Нужен handler, иначе при повторном создании фрагмента неверно вычисляется высота вьюхи
+                new Handler().post(() -> {
+                    toolbarBackground.setBackground(new BitmapDrawable(getResources(), centerCrop(loadedImage, view.getWidth(), view.getHeight(), 1)));
+                    AlphaAnimation animation1 = new AlphaAnimation(0, 1);
+                    animation1.setDuration(500);
+                    animation1.setFillAfter(true);
+                    toolbarBackground.startAnimation(animation1);
+                    blur(loadedImage, toolbarBackground, imageUri);
+                });
+                AlphaAnimation animation1 = new AlphaAnimation(1, 0);
+                animation1.setDuration(500);
+                //animation1.setStartOffset(5000);
+                animation1.setFillAfter(true);
+                progressView.startAnimation(animation1);
                 new Handler().postDelayed(() -> {
                     progressView.stopAnimation();
                     progressView.setVisibility(View.GONE);
@@ -251,33 +266,35 @@ public class ProfileFragment extends TabFragment {
         nick.setText(profile.getNick());
         group.setText(profile.getGroup());
         if (profile.getSign() != null) {
+            Log.d("kek", "view sign set");
             sign.setText(profile.getSign());
-            sign.setMovementMethod(new LinkMovementMethod());
             sign.setVisibility(View.VISIBLE);
+            Log.d("kek", "view sign setted");
+            sign.setMovementMethod(new LinkMovementMethod());
         }
 
-        addCountItem("Постов", profile.getPosts());
-        addCountItem("Тем", profile.getTopics());
-        addCountItem("Репутация", profile.getReputation());
-        addCountItem("Карма", profile.getKarma());
-        addCountItem("Новостей", profile.getSitePosts());
-        addCountItem("Комментариев", profile.getComments());
+        addCountItem(getContext().getString(R.string.profile_item_text_posts), profile.getPosts());
+        addCountItem(getContext().getString(R.string.profile_item_text_themes), profile.getTopics());
+        addCountItem(getContext().getString(R.string.profile_item_text_rep), profile.getReputation());
+        addCountItem(getContext().getString(R.string.profile_item_text_karma), profile.getKarma());
+        addCountItem(getContext().getString(R.string.profile_item_text_site_posts), profile.getSitePosts());
+        addCountItem(getContext().getString(R.string.profile_item_text_comments), profile.getComments());
 
         if (profile.getGender() != null)
-            addInfoItem("Пол", profile.getGender());
+            addInfoItem(getContext().getString(R.string.profile_item_text_gender), profile.getGender());
         if (profile.getBirthDay() != null)
-            addInfoItem("Дата рождения", profile.getBirthDay());
+            addInfoItem(getContext().getString(R.string.profile_item_text_birthday), profile.getBirthDay());
         if (profile.getCity() != null)
-            addInfoItem("Город", profile.getCity());
+            addInfoItem(getContext().getString(R.string.profile_item_text_city), profile.getCity());
         if (profile.getUserTime() != null)
-            addInfoItem("Время у юзера", profile.getUserTime());
+            addInfoItem(getContext().getString(R.string.profile_item_text_user_time), profile.getUserTime());
         inflater.inflate(R.layout.profile_divider, infoBlock);
         if (profile.getRegDate() != null)
-            addInfoItem("Регистрация", profile.getRegDate());
+            addInfoItem(getContext().getString(R.string.profile_item_text_reg), profile.getRegDate());
         if (profile.getOnlineDate() != null)
-            addInfoItem("Последнее посещение", profile.getOnlineDate());
+            addInfoItem(getContext().getString(R.string.profile_item_text_last_online), profile.getOnlineDate());
         if (profile.getAlerts() != null)
-            addInfoItem("Предупреждения", profile.getAlerts());
+            addInfoItem(getContext().getString(R.string.profile_item_text_alerts), profile.getAlerts());
 
         if (profile.getContacts().size() > 0) {
             fab.setVisibility(View.VISIBLE);
@@ -301,8 +318,10 @@ public class ProfileFragment extends TabFragment {
         }
         if (profile.getAbout() != null) {
             about.setText(profile.getAbout());
+            about.setMovementMethod(new LinkMovementMethod());
             findViewById(R.id.profile_block_about).setVisibility(View.VISIBLE);
         }
+
     }
 
     @Override
@@ -367,45 +386,24 @@ public class ProfileFragment extends TabFragment {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void blur(Bitmap bkg, ImageView view, String url) {
-        Log.d("kek", "start blur");
-        //bkg = Bitmap.createScaledBitmap(bkg, view.getWidth(), view.getHeight(), false);
-
-        bkg = centerCrop(bkg, view.getWidth(), view.getHeight());
-        Log.d("kek", "end crop");
-        float scaleFactor = 8;
-        int radius = 24;
-
-        Bitmap overlay = Bitmap.createBitmap((int) (view.getWidth() / scaleFactor),
-                (int) (view.getHeight() / scaleFactor), Bitmap.Config.ARGB_8888);
-        overlay.eraseColor(Color.WHITE);
-        Canvas canvas = new Canvas(overlay);
-        canvas.translate(-view.getLeft() / scaleFactor, -view.getTop() / scaleFactor);
-        canvas.scale(1 / scaleFactor, 1 / scaleFactor);
-        canvas.drawBitmap(bkg, 0, 0, new Paint(Paint.FILTER_BITMAP_FLAG));
-        Log.d("kek", "do blur");
-        FastBlur.doBlur(overlay, radius, true);
-        Log.d("kek", "end do blur");
-        view.setImageBitmap(overlay);
-        //storeImage(overlay, url);
-        Log.d("kek", "end blur");
+        long startMs = System.currentTimeMillis();
+        float scaleFactor = 3;
+        int radius = 4;
+        Bitmap overlay = centerCrop(bkg, view.getWidth(), view.getHeight(), scaleFactor);
+        Log.d("kek", "sizes " + overlay.getWidth() + " : " + overlay.getHeight() + " : " + view.getWidth() + " : " + view.getHeight() + " : " + url);
+        BlurUtil.fastBlur(overlay, radius, true);
+        //overlay = BlurUtil.rsBlur(getContext(), overlay, radius);
+        view.setBackground(new BitmapDrawable(getResources(), overlay));
+        Log.d("kek", "time blur " + (System.currentTimeMillis() - startMs + "ms"));
     }
 
-    public static Bitmap centerCrop(final Bitmap src, final int w, final int h) {
-        return crop(src, w, h, 0.5f, 0.5f);
-    }
-
-    public static Bitmap crop(final Bitmap src, final int w, final int h,
-                              final float horizontalCenterPercent, final float verticalCenterPercent) {
-        if (horizontalCenterPercent < 0 || horizontalCenterPercent > 1 || verticalCenterPercent < 0
-                || verticalCenterPercent > 1) {
-            throw new IllegalArgumentException(
-                    "horizontalCenterPercent and verticalCenterPercent must be between 0.0f and "
-                            + "1.0f, inclusive.");
-        }
-        final int srcWidth = src.getWidth();
-        final int srcHeight = src.getHeight();
-        // exit early if no resize/crop needed
+    public static Bitmap centerCrop(final Bitmap src, int w, int h, float scaleFactor) {
+        final int srcWidth = (int) (src.getWidth() / scaleFactor);
+        final int srcHeight = (int) (src.getHeight() / scaleFactor);
+        w = (int) (w / scaleFactor);
+        h = (int) (h / scaleFactor);
         if (w == srcWidth && h == srcHeight) {
             return src;
         }
@@ -418,13 +416,17 @@ public class ProfileFragment extends TabFragment {
         int srcX, srcY;
         srcCroppedW = Math.round(w / scale);
         srcCroppedH = Math.round(h / scale);
-        srcX = (int) (srcWidth * horizontalCenterPercent - srcCroppedW / 2);
-        srcY = (int) (srcHeight * verticalCenterPercent - srcCroppedH / 2);
-        // Nudge srcX and srcY to be within the bounds of src
+        srcX = (int) (srcWidth * 0.5f - srcCroppedW / 2);
+        srcY = (int) (srcHeight * 0.5f - srcCroppedH / 2);
         srcX = Math.max(Math.min(srcX, srcWidth - srcCroppedW), 0);
         srcY = Math.max(Math.min(srcY, srcHeight - srcCroppedH), 0);
-        final Bitmap cropped = Bitmap.createBitmap(src, srcX, srcY, srcCroppedW, srcCroppedH, m,
-                true /* filter */);
-        return cropped;
+
+        Bitmap overlay = Bitmap.createBitmap(srcCroppedW, srcCroppedH, Bitmap.Config.ARGB_8888);
+        overlay.eraseColor(Color.WHITE);
+        Canvas canvas = new Canvas(overlay);
+        canvas.translate(-srcX / scaleFactor, -srcY / scaleFactor);
+        canvas.scale(1 / scaleFactor, 1 / scaleFactor);
+        canvas.drawBitmap(src, 0, 0, new Paint(Paint.FILTER_BITMAP_FLAG));
+        return overlay;
     }
 }

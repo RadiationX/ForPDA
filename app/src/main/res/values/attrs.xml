@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="ProfileToolbarTextStyle" format="reference" />
+    <attr name="ProfileCardStyle" format="reference" />
+    <attr name="ProfileCardTitleStyle" format="reference" />
+
+</resources>

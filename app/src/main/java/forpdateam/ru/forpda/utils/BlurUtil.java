@@ -1,12 +1,25 @@
 package forpdateam.ru.forpda.utils;
 
+import android.annotation.TargetApi;
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
+import android.renderscript.Allocation;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
+import android.util.Log;
+import android.widget.ImageView;
+
+import forpdateam.ru.forpda.R;
 
 /**
  * Created by radiationx on 23.08.16.
  */
-public class FastBlur {
-    public static Bitmap doBlur(Bitmap sentBitmap, int radius, boolean canReuseInBitmap) {
+public class BlurUtil {
+    public static Bitmap fastBlur(Bitmap sentBitmap, int radius, boolean canReuseInBitmap) {
 
         // Stack Blur v1.0 from
         // http://www.quasimondo.com/StackBlurForCanvas/StackBlurDemo.html
@@ -56,6 +69,7 @@ public class FastBlur {
         int wm = w - 1;
         int hm = h - 1;
         int wh = w * h;
+
         int div = radius + radius + 1;
 
         int r[] = new int[wh];
@@ -70,6 +84,7 @@ public class FastBlur {
         for (i = 0; i < 256 * divsum; i++) {
             dv[i] = (i / divsum);
         }
+        Log.d("kek", String.format("suka %d : %d : %d : %d : %d : %d : %d : %d : %d", w, h, wm, hm, wh, div, Math.max(w, h), divsum, divsum * 256));
 
         yw = yi = 0;
 
@@ -81,6 +96,7 @@ public class FastBlur {
         int r1 = radius + 1;
         int routsum, goutsum, boutsum;
         int rinsum, ginsum, binsum;
+        //Log.d("kek", String.format("blya %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d", rsum, gsum, bsum, x, y, i, p, yp, yi, yw, stackpointer,stackstart, rbs, r1, routsum, goutsum, boutsum, rinsum, ginsum, binsum ));
 
         for (y = 0; y < h; y++) {
             rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;
@@ -241,4 +257,17 @@ public class FastBlur {
         return (bitmap);
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    public static Bitmap rsBlur(Context context, Bitmap sentBitmap, int radius) {
+        Bitmap overlay = Bitmap.createBitmap(sentBitmap.getWidth(), sentBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        RenderScript rs = RenderScript.create(context);
+        Allocation overlayAlloc = Allocation.createFromBitmap(rs, sentBitmap);
+        ScriptIntrinsicBlur blur = ScriptIntrinsicBlur.create(rs, overlayAlloc.getElement());
+        blur.setInput(overlayAlloc);
+        blur.setRadius(radius);
+        blur.forEach(overlayAlloc);
+        overlayAlloc.copyTo(overlay);
+        rs.destroy();
+        return overlay;
+    }
 }
