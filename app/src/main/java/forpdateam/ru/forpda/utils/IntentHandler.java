@@ -57,13 +57,18 @@ public class IntentHandler {
     private final static String DEVDB_PATH = "forum";
     private final static String SPECIAL_PATH = "forum";
 
-    public static boolean handle(String url) {
+    public static boolean handle(String url){
+        return handle(url, null);
+    }
+
+    public static boolean handle(String url, Bundle args) {
         Uri uri = Uri.parse(url.toLowerCase());
         Log.d("kek", "HANDLE URL " + uri.toString());
         if (uri.getHost() != null && uri.getHost().matches("4pda.ru")) {
+            if(args==null) args = new Bundle();
             switch (uri.getPathSegments().get(0)) {
                 case "forum":
-                    return handleForum(uri);
+                    return handleForum(uri, args);
                 case "devdb":
                     if (uri.getPathSegments().size() > 1) {
                         if (uri.getPathSegments().get(1).matches("phones|pad|ebook|smartwatch")) {
@@ -82,18 +87,17 @@ public class IntentHandler {
                         return true;
                     }
                 default:
-                    return handleSite(uri);
+                    return handleSite(uri, args);
             }
         }
         run("unhandled url: " + uri.toString());
         return false;
     }
 
-    public static boolean handleForum(Uri uri) {
+    private static boolean handleForum(Uri uri, Bundle args) {
         String param = uri.getQueryParameter("showuser");
         if (param != null) {
             run("showuser " + param);
-            Bundle args = new Bundle();
             args.putString(TabFragment.URL_ARG, uri.toString());
             TabManager.getInstance().add(new TabFragment.Builder<>(ProfileFragment.class).setArgs(args).build());
             return true;
@@ -110,7 +114,6 @@ public class IntentHandler {
                     pid = m.group(1);
             }
             run("showtopic " + tid + " : " + view + " : " + st + " : " + pid);
-            Bundle args = new Bundle();
             args.putString(TabFragment.URL_ARG, uri.toString());
             args.putString(TabFragment.TITLE_ARG, "lolka");
             TabManager.getInstance().add(new TabFragment.Builder<>(ThemeFragment.class).setArgs(args).build());
@@ -156,7 +159,7 @@ public class IntentHandler {
         return false;
     }
 
-    public static boolean handleSite(Uri uri) {
+    private static boolean handleSite(Uri uri, Bundle args) {
         if (Pattern.compile("\\d{4}/\\d{2}/\\d{2}/\\d+").matcher(uri.toString()).find()) {
             run("show news");
             return true;

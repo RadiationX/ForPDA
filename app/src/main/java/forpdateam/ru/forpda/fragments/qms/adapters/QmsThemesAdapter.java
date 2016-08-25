@@ -1,31 +1,28 @@
-package forpdateam.ru.forpda.fragments.qms;
+package forpdateam.ru.forpda.fragments.qms.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.qms.models.QmsContact;
+import forpdateam.ru.forpda.api.qms.models.QmsTheme;
 
 /**
  * Created by radiationx on 25.08.16.
  */
-public class QmsContactsAdapter extends RecyclerView.Adapter<QmsContactsAdapter.ViewHolder> {
+public class QmsThemesAdapter extends RecyclerView.Adapter<QmsThemesAdapter.ViewHolder> {
 
-    private ArrayList<QmsContact> qmsContacts = new ArrayList<>();
+    private ArrayList<QmsTheme> qmsContacts = new ArrayList<>();
 
     private OnItemClickListener itemClickListener;
     private OnLongItemClickListener longItemClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(View view, int position, QmsContactsAdapter adapter);
+        void onItemClick(View view, int position, QmsThemesAdapter adapter);
     }
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
@@ -33,7 +30,7 @@ public class QmsContactsAdapter extends RecyclerView.Adapter<QmsContactsAdapter.
     }
 
     public interface OnLongItemClickListener {
-        void onItemClick(View view, int position, QmsContactsAdapter adapter);
+        void onItemClick(View view, int position, QmsThemesAdapter adapter);
     }
 
     public void setOnLongItemClickListener(final OnLongItemClickListener longItemClickListener) {
@@ -41,15 +38,13 @@ public class QmsContactsAdapter extends RecyclerView.Adapter<QmsContactsAdapter.
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        public ImageView avatar;
-        public TextView nick;
+        public TextView name;
         public TextView count;
 
         public ViewHolder(View v) {
             super(v);
-            avatar = (ImageView) v.findViewById(R.id.qms_contact_avatar);
-            nick = (TextView) v.findViewById(R.id.qms_contact_nick);
-            count = (TextView) v.findViewById(R.id.qms_contact_count);
+            name = (TextView) v.findViewById(R.id.qms_theme_name);
+            count = (TextView) v.findViewById(R.id.qms_theme_count);
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
         }
@@ -57,41 +52,40 @@ public class QmsContactsAdapter extends RecyclerView.Adapter<QmsContactsAdapter.
         @Override
         public void onClick(View view) {
             if (itemClickListener != null) {
-                itemClickListener.onItemClick(view, getLayoutPosition(), QmsContactsAdapter.this);
+                itemClickListener.onItemClick(view, getLayoutPosition(), QmsThemesAdapter.this);
             }
         }
 
         @Override
         public boolean onLongClick(View view) {
             if (longItemClickListener != null) {
-                longItemClickListener.onItemClick(view, getLayoutPosition(), QmsContactsAdapter.this);
+                longItemClickListener.onItemClick(view, getLayoutPosition(), QmsThemesAdapter.this);
                 return true;
             }
             return false;
         }
     }
 
-    public QmsContactsAdapter(ArrayList<QmsContact> qmsContacts) {
+    public QmsThemesAdapter(ArrayList<QmsTheme> qmsContacts) {
         this.qmsContacts = qmsContacts;
     }
 
 
     @Override
-    public QmsContactsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.qms_contact_item, parent, false);
+    public QmsThemesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.qms_theme_item, parent, false);
         return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        QmsContact item = qmsContacts.get(position);
+        QmsTheme item = qmsContacts.get(position);
 
-        holder.nick.setText(item.getNick());
-        ImageLoader.getInstance().displayImage(item.getAvatar(), holder.avatar);
-        if (item.getCount() == null) {
+        holder.name.setText(item.getName());
+        if (item.getCountNew() == null) {
             holder.count.setVisibility(View.GONE);
         } else {
-            holder.count.setText(item.getCount());
+            holder.count.setText(item.getCountNew());
             holder.count.setVisibility(View.VISIBLE);
         }
     }
@@ -101,7 +95,7 @@ public class QmsContactsAdapter extends RecyclerView.Adapter<QmsContactsAdapter.
         return qmsContacts.size();
     }
 
-    public QmsContact getItem(int position) {
+    public QmsTheme getItem(int position) {
         return qmsContacts.get(position);
     }
 

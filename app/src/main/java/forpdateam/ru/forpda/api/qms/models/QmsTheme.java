@@ -5,7 +5,7 @@ import forpdateam.ru.forpda.api.qms.interfaces.IQmsThread;
 /**
  * Created by radiationx on 03.08.16.
  */
-public class QmsThread implements IQmsThread {
+public class QmsTheme implements IQmsThread {
     String id, name, date, countMessages, countNew;
 
     @Override

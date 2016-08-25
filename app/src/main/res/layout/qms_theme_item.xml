@@ -1,41 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="56dp"
+    android:layout_height="48dp"
     android:background="?attr/selectableItemBackground">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/qms_contact_avatar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:scaleType="centerCrop" />
-
     <TextView
-        android:id="@+id/qms_contact_nick"
+        android:id="@+id/qms_theme_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginStart="72dp"
+        android:layout_marginStart="16dp"
+        android:text="asdasd"
         android:textColor="@color/text_color" />
 
     <TextView
-        android:id="@+id/qms_contact_count"
+        android:id="@+id/qms_theme_count"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:minWidth="24dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/qms_count_backgroud"
-        android:paddingEnd="6dp"
-        android:paddingStart="6dp"
-        android:text="1"
         android:gravity="center"
+        android:layout_marginEnd="16dp"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
+        android:background="@drawable/qms_count_backgroud"
         android:textColor="@color/white"
-        android:textStyle="bold"/>
-
+        android:textStyle="bold"
+        android:text="5" />
 
 </RelativeLayout>

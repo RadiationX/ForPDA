@@ -103,6 +103,7 @@ public class ProfileFragment extends TabFragment {
         collapsingToolbarLayout.setExpandedTitleColor(Color.TRANSPARENT);
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.TRANSPARENT);
         collapsingToolbarLayout.setTitleEnabled(true);
+        toolbarTitleView.setVisibility(View.GONE);
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams();
         params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED); // list other flags here by |
         collapsingToolbarLayout.setLayoutParams(params);

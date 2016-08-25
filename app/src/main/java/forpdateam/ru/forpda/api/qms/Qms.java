@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.qms.models.QmsChatItem;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
-import forpdateam.ru.forpda.api.qms.models.QmsThread;
+import forpdateam.ru.forpda.api.qms.models.QmsTheme;
 import forpdateam.ru.forpda.client.Client;
 import rx.Observable;
 import rx.Subscriber;
@@ -39,20 +39,20 @@ public class Qms {
         return list;
     }
 
-    private ArrayList<QmsThread> threadList(final String url) throws Exception {
-        ArrayList<QmsThread> list = new ArrayList<>();
-        final String response = Client.getInstance().get(url);
+    private ArrayList<QmsTheme> themesList(final String id) throws Exception {
+        ArrayList<QmsTheme> list = new ArrayList<>();
+        final String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=qms&mid="+id);
         final Matcher matcher = threadPattern.matcher(response);
-        QmsThread thread;
+        QmsTheme thread;
         while (matcher.find()) {
-            thread = new QmsThread();
+            thread = new QmsTheme();
             thread.setId(matcher.group(1));
             thread.setDate(matcher.group(2));
             Matcher nameMatcher = threadName.matcher(Html.fromHtml(matcher.group(3).trim()));
             if (nameMatcher.find()) {
                 thread.setName(nameMatcher.group(1));
                 thread.setCountMessages(nameMatcher.group(2));
-                thread.setCountNew(nameMatcher.group(3) == null ? "" : nameMatcher.group(3));
+                thread.setCountNew(nameMatcher.group(3));
             }
             list.add(thread);
         }
@@ -101,12 +101,12 @@ public class Qms {
         });
     }
 
-    public Observable<ArrayList<QmsThread>> getThreadList(final String url) {
-        return Observable.create(new Observable.OnSubscribe<ArrayList<QmsThread>>() {
+    public Observable<ArrayList<QmsTheme>> getThemesList(final String id) {
+        return Observable.create(new Observable.OnSubscribe<ArrayList<QmsTheme>>() {
             @Override
-            public void call(Subscriber<? super ArrayList<QmsThread>> subscriber) {
+            public void call(Subscriber<? super ArrayList<QmsTheme>> subscriber) {
                 try {
-                    subscriber.onNext(threadList(url));
+                    subscriber.onNext(themesList(id));
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

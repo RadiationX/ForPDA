@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.trello.rxlifecycle.components.support.RxFragment;
 
@@ -41,6 +42,9 @@ public class TabFragment extends RxFragment implements ITabFragment {
     private String subtitle;
     private String parentTag;
     private ImageView icNoNetwork;
+    protected TextView toolbarTitleView;
+    protected TextView toolbarSubitleView;
+    protected ImageView toolbarImageView;
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     public TabFragment() {
@@ -130,6 +134,9 @@ public class TabFragment extends RxFragment implements ITabFragment {
         Log.d("kek", "view "+view);
         view = inflater.inflate(R.layout.fragment_base, container, false);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbarTitleView = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        toolbarSubitleView = (TextView) toolbar.findViewById(R.id.toolbar_subtitle);
+        toolbarImageView = (ImageView) toolbar.findViewById(R.id.toolbar_image_icon);
         //For work menu in toolbar
         //getMainActivity().setSupportActionBar(toolbar);
         toolbarBackground = (ImageView) findViewById(R.id.toolbar_image_background);
@@ -197,12 +204,19 @@ public class TabFragment extends RxFragment implements ITabFragment {
     protected final void setTitle(String title) {
         this.title = title;
         getMainActivity().updateTabList();
-        getTitleBar().setTitle(title);
+        //getTitleBar().setTitle(title);
+        toolbarTitleView.setText(title);
     }
 
     protected final void setSubtitle(String subtitle) {
         this.subtitle = subtitle;
-        getTitleBar().setSubtitle(subtitle);
+        if(subtitle==null){
+            toolbarSubitleView.setVisibility(View.GONE);
+        }else {
+            toolbarSubitleView.setText(subtitle);
+            toolbarSubitleView.setVisibility(View.VISIBLE);
+        }
+        //getTitleBar().setSubtitle(subtitle);
     }
 
 

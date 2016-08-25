@@ -20,11 +20,12 @@ import java.util.ArrayList;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.qms.adapters.QmsContactsAdapter;
 import forpdateam.ru.forpda.utils.ErrorHandler;
-import forpdateam.ru.forpda.utils.IntentHandler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -42,17 +43,24 @@ public class QmsContactsFragment extends TabFragment {
     private RecyclerView recyclerView;
     private QmsContactsAdapter adapter;
     private QmsContactsAdapter.OnItemClickListener onItemClickListener =
-            (view1, position, adapter1) -> IntentHandler.handle("http://4pda.ru/forum/index.php?act=qms&mid=" + adapter1.getItem(position).getId());
-    private QmsContactsAdapter.OnLongItemClickListener onLongItemClickListener =
-            (view1, position, adapter1) -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + adapter1.getItem(position).getId());
+            (view1, position, adapter1) -> {
+                Bundle args = new Bundle();
+                args.putString(TabFragment.TITLE_ARG, adapter1.getItem(position).getNick());
+                args.putString(QmsThemesFragment.USER_ID_ARG, adapter1.getItem(position).getId());
+                args.putString(QmsThemesFragment.USER_AVATAR_ARG, adapter1.getItem(position).getAvatar());
+                TabManager.getInstance().add(new TabFragment.Builder<>(QmsThemesFragment.class).setArgs(args).build());
+            };
+    //private QmsContactsAdapter.OnLongItemClickListener onLongItemClickListener = (view1, position, adapter1) -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + adapter1.getItem(position).getId());
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         initBaseView(inflater, container);
         inflater.inflate(R.layout.fragment_qms_contacts, (ViewGroup) view.findViewById(R.id.fragment_content), true);
-        recyclerView = (RecyclerView) findViewById(R.id.qms_recycler);
+        recyclerView = (RecyclerView) findViewById(R.id.qms_list_contacts);
         recyclerView.setBackgroundColor(Color.WHITE);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         toolbar.getMenu().add(R.string.refresh).setOnMenuItemClickListener(menuItem -> {
             loadData();
             return false;
@@ -87,7 +95,7 @@ public class QmsContactsFragment extends TabFragment {
                     }
                     searchAdapter = new QmsContactsAdapter(searchContacts);
                     searchAdapter.setOnItemClickListener(onItemClickListener);
-                    adapter.setOnLongItemClickListener(onLongItemClickListener);
+                    //adapter.setOnLongItemClickListener(onLongItemClickListener);
                     recyclerView.setAdapter(searchAdapter);
                 } else {
                     recyclerView.setAdapter(adapter);
@@ -100,8 +108,6 @@ public class QmsContactsFragment extends TabFragment {
         fab.setImageDrawable(AppCompatResources.getDrawable(App.getContext(), R.drawable.ic_create_white_24dp));
         fab.setOnClickListener(view1 -> Toast.makeText(getContext(), "Create new dialog", Toast.LENGTH_SHORT).show());
         fab.setVisibility(View.VISIBLE);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         return view;
     }
 
@@ -134,7 +140,7 @@ public class QmsContactsFragment extends TabFragment {
     private void onLoadContacts(ArrayList<QmsContact> contacts) {
         Log.d("kek", "contacts loaded");
         adapter = new QmsContactsAdapter(contacts);
-        adapter.setOnLongItemClickListener(onLongItemClickListener);
+        //adapter.setOnLongItemClickListener(onLongItemClickListener);
         adapter.setOnItemClickListener(onItemClickListener);
         recyclerView.setAdapter(adapter);
     }

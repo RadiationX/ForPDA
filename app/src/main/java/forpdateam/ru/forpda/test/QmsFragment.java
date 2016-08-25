@@ -22,7 +22,7 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsChatItem;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
-import forpdateam.ru.forpda.api.qms.models.QmsThread;
+import forpdateam.ru.forpda.api.qms.models.QmsTheme;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.ErrorHandler;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -81,7 +81,7 @@ public class QmsFragment extends TabFragment {
     }
 
     private void loadThreads(String url) {
-        getCompositeSubscription().add(Api.Qms().getThreadList(url)
+        getCompositeSubscription().add(Api.Qms().getThemesList(url)
                 .onErrorReturn(throwable -> {
                     throwable.printStackTrace();
                     return new ArrayList<>();
@@ -148,7 +148,7 @@ public class QmsFragment extends TabFragment {
     String mid, tid;
     int lastThreads = -1;
 
-    private void addText(ArrayList<QmsThread> threads) {
+    private void addText(ArrayList<QmsTheme> threads) {
         //String temp = "";
         if (threads != null) {
             if (lastThreads != -1) {
@@ -157,7 +157,7 @@ public class QmsFragment extends TabFragment {
                 }
             }
             lastThreads = threads.size();
-            for (QmsThread thread : threads) {
+            for (QmsTheme thread : threads) {
                 //temp += thread.getName() + (thread.getCountNew().isEmpty() ? "" : " : " + thread.getCountNew() + " /") + " " + thread.getCountMessages() + "\n";
                 Button button = new Button(getContext());
                 button.setBackgroundColor(Color.parseColor("#55ff55"));
