@@ -56,9 +56,10 @@ public class QmsContactsFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         initBaseView(inflater, container);
+        initFabBehavior();
+        setWhiteBackground();
         inflater.inflate(R.layout.fragment_qms_contacts, (ViewGroup) view.findViewById(R.id.fragment_content), true);
         recyclerView = (RecyclerView) findViewById(R.id.qms_list_contacts);
-        recyclerView.setBackgroundColor(Color.WHITE);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         toolbar.getMenu().add(R.string.refresh).setOnMenuItemClickListener(menuItem -> {

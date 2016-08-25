@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -20,6 +21,7 @@ import com.trello.rxlifecycle.components.support.RxFragment;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.ScrollAwareFABBehavior;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.client.Client;
 import rx.subscriptions.CompositeSubscription;
@@ -29,6 +31,7 @@ import rx.subscriptions.CompositeSubscription;
  */
 public class TabFragment extends RxFragment implements ITabFragment {
     public final static String TITLE_ARG = "TAB_TITLE";
+    public final static String SUBTITLE_ARG = "TAB_SUBTITLE";
     public final static String URL_ARG = "TAB_URL";
     private final static String prefix = "tab_fragment_";
     protected String tabUrl = "";
@@ -162,11 +165,11 @@ public class TabFragment extends RxFragment implements ITabFragment {
 
         if (getArguments() != null) {
             setTitle(getArguments().getString(TITLE_ARG, title));
+            setSubtitle(getArguments().getString(SUBTITLE_ARG, subtitle));
         } else {
             if (title != null)
                 setTitle(title);
         }
-        setSubtitle(subtitle);
 
         if (Client.getInstance().getNetworkState()) {
             loadData();
@@ -178,6 +181,17 @@ public class TabFragment extends RxFragment implements ITabFragment {
                 icNoNetwork.setVisibility(View.GONE);
             }
         });
+    }
+
+    protected void initFabBehavior(){
+        CoordinatorLayout.LayoutParams params =
+                (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+        params.setBehavior(new ScrollAwareFABBehavior(fab.getContext(), null));
+        fab.requestLayout();
+    }
+
+    protected void setWhiteBackground(){
+        view.findViewById(R.id.fragment_content).setBackgroundColor(Color.WHITE);
     }
 
     @Override

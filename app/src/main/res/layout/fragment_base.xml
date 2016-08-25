@@ -68,14 +68,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/white"
-                            android:textSize="18sp" />
+                            android:textSize="18sp"/>
 
                         <TextView
                             android:id="@+id/toolbar_subtitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="#ccffffff"
-                            android:textSize="16sp"
+                            android:textSize="12sp"
                             android:visibility="gone" />
                     </LinearLayout>
 
@@ -113,7 +113,6 @@
         android:layout_margin="@dimen/fab_margin"
         android:clickable="true"
         android:visibility="gone"
-        app:fabSize="normal"
-        app:layout_behavior="forpdateam.ru.forpda.ScrollAwareFABBehavior" />
+        app:fabSize="normal"/>
 
 </android.support.design.widget.CoordinatorLayout>

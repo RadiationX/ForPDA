@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.api.qms.models;
 
+import android.text.Spanned;
+
 import forpdateam.ru.forpda.api.qms.interfaces.IQmsChatItem;
 
 /**
@@ -8,7 +10,8 @@ import forpdateam.ru.forpda.api.qms.interfaces.IQmsChatItem;
 public class QmsChatItem implements IQmsChatItem {
     private boolean whoseMessage = false;
     private boolean isDate = false;
-    private String id, readStatus, time, avatar, date, content;
+    private String id, readStatus, time, avatar, date;
+    private Spanned content;
 
     @Override
     public boolean getWhoseMessage() {
@@ -36,7 +39,7 @@ public class QmsChatItem implements IQmsChatItem {
     }
 
     @Override
-    public String getContent() {
+    public Spanned getContent() {
         return content;
     }
 
@@ -66,7 +69,7 @@ public class QmsChatItem implements IQmsChatItem {
         this.avatar = avatar;
     }
 
-    public void setContent(String content) {
+    public void setContent(Spanned content) {
         this.content = content;
     }
 

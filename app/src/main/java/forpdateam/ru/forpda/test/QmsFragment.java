@@ -95,7 +95,7 @@ public class QmsFragment extends TabFragment {
     }
 
     private void loadChat(String url) {
-        getCompositeSubscription().add(Api.Qms().getChat(url)
+        getCompositeSubscription().add(Api.Qms().getChat("", "")
                 .onErrorReturn(throwable -> {
                     throwable.printStackTrace();
                     return new ArrayList<>();

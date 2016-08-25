@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.api.qms.interfaces;
 
+import android.text.Spanned;
+
 /**
  * Created by radiationx on 03.08.16.
  */
@@ -14,7 +16,7 @@ public interface IQmsChatItem {
 
     String getAvatar();
 
-    String getContent();
+    Spanned getContent();
 
     boolean isDate();
 

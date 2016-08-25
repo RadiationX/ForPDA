@@ -59,9 +59,9 @@ public class Qms {
         return list;
     }
 
-    private ArrayList<QmsChatItem> chatItemsList(final String url) throws Exception {
+    private ArrayList<QmsChatItem> chatItemsList(final String userId, final String themeId) throws Exception {
         ArrayList<QmsChatItem> list = new ArrayList<>();
-        final String response = Client.getInstance().get(url);
+        final String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=qms&mid=" + userId + "&t=" + themeId);
         final Matcher matcher = chatPattern.matcher(response);
         QmsChatItem item;
         while (matcher.find()) {
@@ -75,7 +75,7 @@ public class Qms {
                 item.setReadStatus(matcher.group(3));
                 item.setTime(matcher.group(4));
                 item.setAvatar(matcher.group(5));
-                item.setContent(matcher.group(6).trim());
+                item.setContent(Html.fromHtml(matcher.group(6).trim()));
             }
             list.add(item);
         }
@@ -115,12 +115,12 @@ public class Qms {
         });
     }
 
-    public Observable<ArrayList<QmsChatItem>> getChat(final String url) {
+    public Observable<ArrayList<QmsChatItem>> getChat(final String userId, final String themeId) {
         return Observable.create(new Observable.OnSubscribe<ArrayList<QmsChatItem>>() {
             @Override
             public void call(Subscriber<? super ArrayList<QmsChatItem>> subscriber) {
                 try {
-                    subscriber.onNext(chatItemsList(url));
+                    subscriber.onNext(chatItemsList(userId, themeId));
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);
