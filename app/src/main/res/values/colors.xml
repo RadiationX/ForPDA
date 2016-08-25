@@ -19,6 +19,7 @@
 
     <color name="white">#ffffff</color>
 
+    <color name="divider_color">#eeeeee</color>
     <color name="background">#eeeeee</color>
 
 </resources>

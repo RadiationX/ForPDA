@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.d("kek", "onnewintent "+intent);
+        Log.d("kek", "onnewintent " + intent);
     }
 
     @Override
@@ -119,12 +119,22 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
     @Override
     public void onBackPressed() {
+        Log.d("kek", "onbackpressed activity");
         backHandler();
     }
-    public void backHandler(){
-        if (TabManager.getInstance().getSize() > 1) {
+
+    public void backHandler() {
+        if (TabManager.getInstance().getSize() > 0) {
             if (!TabManager.getInstance().getActive().onBackPressed()) {
-                TabManager.getInstance().remove(TabManager.getInstance().getActive());
+                if (TabManager.getInstance().getSize() > 1) {
+                    TabManager.getInstance().remove(TabManager.getInstance().getActive());
+                } else {
+                    new AlertDialog.Builder(this)
+                            .setPositiveButton("yes", (dialogInterface, i) -> {
+                                super.onBackPressed();
+                            })
+                            .show();
+                }
             }
         } else {
             new AlertDialog.Builder(this)

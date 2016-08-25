@@ -4,6 +4,8 @@ import android.text.Html;
 import android.util.Pair;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -117,12 +119,33 @@ public class Profile implements IProfileApi {
         return s == null ? null : s.trim();
     }
 
-    public Observable<ProfileModel> get(final String url) {
+    private boolean saveNote(String note) throws Exception {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("note", note);
+        String response = Client.getInstance().post("http://4pda.ru/forum/index.php?act=profile-xhr&action=save-note", headers);
+        return response.equals("1");
+    }
+
+    public Observable<ProfileModel> get(String url) {
         return Observable.create(new Observable.OnSubscribe<ProfileModel>() {
             @Override
             public void call(Subscriber<? super ProfileModel> subscriber) {
                 try {
                     subscriber.onNext(parse(url));
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    public Observable<Boolean> saveNoteRx(final String note) {
+        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                try {
+                    subscriber.onNext(saveNote(note));
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

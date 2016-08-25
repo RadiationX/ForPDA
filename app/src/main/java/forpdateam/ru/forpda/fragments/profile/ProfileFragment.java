@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.test;
+package forpdateam.ru.forpda.fragments.profile;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.content.res.AppCompatResources;
 import android.text.method.LinkMovementMethod;
@@ -19,8 +20,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
@@ -44,18 +43,18 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.utils.ErrorHandler;
 import forpdateam.ru.forpda.utils.BlurUtil;
+import forpdateam.ru.forpda.utils.ErrorHandler;
+import forpdateam.ru.forpda.utils.IntentHandler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by radiationx on 03.08.16.
  */
 public class ProfileFragment extends TabFragment {
     private static final String LINk = "http://4pda.ru/forum/index.php?showuser=2556269#";
-    private CompositeSubscription compositeSubscription = new CompositeSubscription();
+
     private LayoutInflater inflater;
 
     private TextView nick, group, sign, about;
@@ -104,6 +103,9 @@ public class ProfileFragment extends TabFragment {
         collapsingToolbarLayout.setExpandedTitleColor(Color.TRANSPARENT);
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.TRANSPARENT);
         collapsingToolbarLayout.setTitleEnabled(true);
+        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams();
+        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED); // list other flags here by |
+        collapsingToolbarLayout.setLayoutParams(params);
         /*collapsingToolbarLayout.setExpandedTitleGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL);
         collapsingToolbarLayout.setExpandedTitleMarginTop(dpToPx(216));
         collapsingToolbarLayout.setScrimVisibleHeightTrigger(dpToPx(144));
@@ -111,10 +113,14 @@ public class ProfileFragment extends TabFragment {
         collapsingToolbarLayout.setScrimAnimationDuration(225);
 */
         noteText = (EditText) findViewById(R.id.profile_note_text);
-        findViewById(R.id.profile_save_note).setOnClickListener(view1 -> Toast.makeText(getContext(), "save : " + noteText.getText().toString(), Toast.LENGTH_SHORT).show());
+        findViewById(R.id.profile_save_note).setOnClickListener(view1 -> saveNote());
         //toolbar.setTitleTextColor(Color.TRANSPARENT);
 
-
+        Log.d("kek", "menu " + toolbar.getMenu());
+        toolbar.getMenu().add("Ссылка").setOnMenuItemClickListener(menuItem -> {
+            Toast.makeText(getContext(), profileId + " lolka", Toast.LENGTH_SHORT).show();
+            return false;
+        });
         return view;
     }
 
@@ -124,38 +130,8 @@ public class ProfileFragment extends TabFragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.d("kek", "oncreate menu");
-        menu.add("Ссылка").setOnMenuItemClickListener(menuItem -> {
-            Toast.makeText(getContext(), profileId + " lolka", Toast.LENGTH_SHORT).show();
-            return false;
-        });
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        Log.d("kek", "onprepare menu");
-        super.onPrepareOptionsMenu(menu);
-
-    }
-
-
-    @Override
-    public void onOptionsMenuClosed(Menu menu) {
-        Log.d("kek", "onclose menu");
-        super.onOptionsMenuClosed(menu);
-    }
-
-    @Override
-    public void onDestroyOptionsMenu() {
-        Log.d("kek", "ondestroy menu");
-        super.onDestroyOptionsMenu();
-    }
-
-    @Override
     public void loadData() {
-        compositeSubscription.add(
+        getCompositeSubscription().add(
                 Api.Profile().get(getTabUrl())
                         .onErrorReturn(throwable -> {
                             ErrorHandler.handle(this, throwable, view1 -> loadData());
@@ -163,15 +139,32 @@ public class ProfileFragment extends TabFragment {
                         })
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(this::bindUi)
+                        .subscribe(this::onProfileLoad)
         );
+    }
+
+    public void saveNote() {
+        getCompositeSubscription().add(
+                Api.Profile().saveNoteRx(noteText.getText().toString())
+                        .onErrorReturn(throwable -> {
+                            ErrorHandler.handle(this, throwable, view1 -> loadData());
+                            return false;
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::onNoteSave)
+        );
+    }
+
+    private void onNoteSave(boolean b) {
+        Toast.makeText(getContext(), b ? "Запись сохранена" : "Возникла ошибка, запись не сохранена", Toast.LENGTH_SHORT).show();
     }
 
     private void addCountItem(String title, Pair<String, String> data) {
         CountItem countItem = new CountItem(getContext());
         countItem.setTitle(title);
         countItem.setDesc(data.second);
-        countItem.setOnClickListener(view1 -> Toast.makeText(getContext(), data.first + "", Toast.LENGTH_SHORT).show());
+        countItem.setOnClickListener(view1 -> IntentHandler.handle(data.first));
         countList.addView(countItem);
     }
 
@@ -185,14 +178,14 @@ public class ProfileFragment extends TabFragment {
     private void addContactItem(int iconRes, String data) {
         ContactItem contactItem = new ContactItem(getContext());
         contactItem.setIcon(iconRes);
-        contactItem.setOnClickListener(view1 -> Toast.makeText(getContext(), data + "", Toast.LENGTH_SHORT).show());
+        contactItem.setOnClickListener(view1 -> IntentHandler.handle(data));
         contactList.addView(contactItem);
     }
 
     private void addDeviceItem(String text, String link) {
         DeviceItem deviceItem = new DeviceItem(getContext());
         deviceItem.setText(text);
-        deviceItem.setOnClickListener(view1 -> Toast.makeText(getContext(), link + "", Toast.LENGTH_SHORT).show());
+        deviceItem.setOnClickListener(view1 -> IntentHandler.handle(link));
         devicesList.addView(deviceItem);
     }
 
@@ -221,7 +214,7 @@ public class ProfileFragment extends TabFragment {
         }
     }
 
-    private void bindUi(ProfileModel profile) {
+    private void onProfileLoad(ProfileModel profile) {
         if (profile.getNick() == null) return;
         ImageLoader.getInstance().displayImage(profile.getAvatar(), avatar, new ImageLoadingListener() {
 
@@ -298,7 +291,7 @@ public class ProfileFragment extends TabFragment {
 
         if (profile.getContacts().size() > 0) {
             fab.setVisibility(View.VISIBLE);
-            fab.setOnClickListener(view1 -> Toast.makeText(getContext(), "qms : " + profile.getContacts().get(0).first, Toast.LENGTH_SHORT).show());
+            fab.setOnClickListener(view1 -> IntentHandler.handle(profile.getContacts().get(0).first));
         }
         if (profile.getContacts().size() > 1) {
             for (int i = 1; i < profile.getContacts().size(); i++)
@@ -322,12 +315,6 @@ public class ProfileFragment extends TabFragment {
             findViewById(R.id.profile_block_about).setVisibility(View.VISIBLE);
         }
 
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        compositeSubscription.unsubscribe();
     }
 
     class CountItem extends LinearLayout {

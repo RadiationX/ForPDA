@@ -9,7 +9,8 @@ import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.test.ProfileFragment;
+import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
+import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
 import forpdateam.ru.forpda.test.ThemeFragment;
 
 /**
@@ -57,9 +58,8 @@ public class IntentHandler {
     private final static String SPECIAL_PATH = "forum";
 
     public static boolean handle(String url) {
-        Log.d("kek", url.hashCode() + " hash : " + url);
-
         Uri uri = Uri.parse(url.toLowerCase());
+        Log.d("kek", "HANDLE URL " + uri.toString());
         if (uri.getHost() != null && uri.getHost().matches("4pda.ru")) {
             switch (uri.getPathSegments().get(0)) {
                 case "forum":
@@ -72,18 +72,20 @@ public class IntentHandler {
                                 return true;
                             }
                             run("devdb models");
+                            return true;
                         } else {
                             run("devdb device");
+                            return true;
                         }
                     } else {
                         run("devdb categories");
+                        return true;
                     }
-                    return true;
                 default:
-                    handleSite(uri);
-                    break;
+                    return handleSite(uri);
             }
         }
+        run("unhandled url: " + uri.toString());
         return false;
     }
 
@@ -125,6 +127,7 @@ public class IntentHandler {
                 case "qms":
                     if (uri.getQueryParameter("mid") == null) {
                         run("qms contacts");
+                        TabManager.getInstance().add(new TabFragment.Builder<>(QmsContactsFragment.class).build());
                     } else {
                         if (uri.getQueryParameter("t") != null) {
                             run("qms chat " + uri.getQueryParameter("mid") + " : " + uri.getQueryParameter("t"));
@@ -154,7 +157,7 @@ public class IntentHandler {
     }
 
     public static boolean handleSite(Uri uri) {
-        if (Pattern.compile("\\d{4}/\\d{2}/\\d{2}/\\d").matcher(uri.toString()).find()) {
+        if (Pattern.compile("\\d{4}/\\d{2}/\\d{2}/\\d+").matcher(uri.toString()).find()) {
             run("show news");
             return true;
         }

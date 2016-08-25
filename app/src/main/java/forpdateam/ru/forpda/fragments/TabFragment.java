@@ -21,6 +21,7 @@ import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.client.Client;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by radiationx on 07.08.16.
@@ -36,16 +37,21 @@ public class TabFragment extends RxFragment implements ITabFragment {
     protected CoordinatorLayout coordinatorLayout;
     protected FloatingActionButton fab;
     private int UID = 0;
-    private String title = this.getClass().getSimpleName();
+    private String title = getDefaultTitle();
     private String subtitle;
     private String parentTag;
     private ImageView icNoNetwork;
+    private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     public TabFragment() {
         parentTag = TabManager.getActiveTag();
         setUID();
     }
 
+    @Override
+    public String getDefaultTitle(){
+        return this.getClass().getSimpleName();
+    }
     /* For TabManager etc */
     @Override
     public String getTitle() {
@@ -84,6 +90,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
 
     @Override
     public boolean onBackPressed() {
+        Log.d("kek", "onbackpressed tab");
         return false;
     }
 
@@ -99,6 +106,10 @@ public class TabFragment extends RxFragment implements ITabFragment {
 
     public CoordinatorLayout getCoordinatorLayout() {
         return coordinatorLayout;
+    }
+
+    public CompositeSubscription getCompositeSubscription() {
+        return compositeSubscription;
     }
 
     @Override
@@ -222,6 +233,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        compositeSubscription.unsubscribe();
     }
 
     /* Experiment */

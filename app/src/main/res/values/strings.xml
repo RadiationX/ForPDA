@@ -25,4 +25,5 @@
     <string name="profile_item_text_reg">Регистрация</string>
     <string name="profile_item_text_last_online">Последнее посещение</string>
     <string name="profile_item_text_alerts">Предупреждения</string>
+    <string name="refresh">Обновить</string>
 </resources>

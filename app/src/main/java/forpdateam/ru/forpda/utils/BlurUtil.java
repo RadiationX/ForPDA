@@ -3,17 +3,11 @@ package forpdateam.ru.forpda.utils;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.renderscript.Allocation;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.util.Log;
-import android.widget.ImageView;
-
-import forpdateam.ru.forpda.R;
 
 /**
  * Created by radiationx on 23.08.16.

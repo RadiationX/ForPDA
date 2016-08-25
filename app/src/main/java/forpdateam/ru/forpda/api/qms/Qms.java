@@ -22,15 +22,15 @@ public class Qms {
     private final static Pattern threadName = Pattern.compile("([\\s\\S]*?) \\((\\d+)(?= / (\\d+)|)");
     private final static Pattern chatPattern = Pattern.compile("group-item([^\"]*?)\" data-message-id=\"([^\"]*?)\"[^>]*?data-unread-status=\"([^\"]*?)\">[\\s\\S]*?</b> ([^ <]*?) [\\s\\S]*?src=\"([^\"]*?)\"[\\s\\S]*?msg-content[^>]*?>([\\s\\S]*?)(</div>[^<]*?</div>[^<]*?<div (class=\"list|id=\"threa|class=\"date))|<div class=\"text\">([^<]*?)</div>");
 
-    private ArrayList<QmsContact> contactsList(final String url) throws Throwable {
+    private ArrayList<QmsContact> contactsList() throws Throwable {
         ArrayList<QmsContact> list = new ArrayList<>();
-        final String response = Client.getInstance().get(url);
+        final String response = Client.getInstance().get("http://4pda.ru/forum/index.php?&act=qms-xhr&action=userlist");
         final Matcher matcher = contactsPattern.matcher(response);
         QmsContact contact;
         while (matcher.find()) {
             contact = new QmsContact();
             contact.setId(matcher.group(1));
-            contact.setCount(matcher.group(2) == null ? "" : matcher.group(2));
+            contact.setCount(matcher.group(2));
             contact.setAvatar(matcher.group(3));
             contact.setNick(matcher.group(4));
             list.add(contact);
@@ -87,12 +87,12 @@ public class Qms {
         return response.split(" |\n");
     }
 
-    public Observable<ArrayList<QmsContact>> getContactList(final String url) {
+    public Observable<ArrayList<QmsContact>> getContactList() {
         return Observable.create(new Observable.OnSubscribe<ArrayList<QmsContact>>() {
             @Override
             public void call(Subscriber<? super ArrayList<QmsContact>> subscriber) {
                 try {
-                    subscriber.onNext(contactsList(url));
+                    subscriber.onNext(contactsList());
                     subscriber.onCompleted();
                 } catch (Throwable e) {
                     subscriber.onError(e);
