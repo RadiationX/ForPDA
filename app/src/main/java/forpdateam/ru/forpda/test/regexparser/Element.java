@@ -8,7 +8,10 @@ import java.util.HashMap;
  */
 public class Element {
     private ArrayList<Element> elements = new ArrayList<>();
+    private Element parent;
     private HashMap<String, String> attributes = new HashMap<>();
+    private String text = "";
+    private String afterText = "";
     private String tag = "";
     private int level = 0;
 
@@ -61,5 +64,29 @@ public class Element {
 
     public HashMap<String, String> getAttributes() {
         return attributes;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setAfterText(String afterText) {
+        this.afterText = afterText;
+    }
+
+    public String getAfterText() {
+        return afterText;
+    }
+
+    public void setParent(Element parent) {
+        this.parent = parent;
+    }
+
+    public Element getParent(){
+        return parent;
     }
 }
