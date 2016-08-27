@@ -29,4 +29,12 @@ public class Document {
     public Element getRoot() {
         return root;
     }
+
+    public String getHtml(){
+        return root.getHtml();
+    }
+
+    public String getAllText(){
+        return root.getAllText();
+    }
 }

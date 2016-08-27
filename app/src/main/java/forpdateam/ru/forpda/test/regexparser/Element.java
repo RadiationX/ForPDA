@@ -2,12 +2,13 @@ package forpdateam.ru.forpda.test.regexparser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by radiationx on 26.08.16.
  */
 public class Element {
-    private ArrayList<Element> elements = new ArrayList<>();
+    private List<Element> elements = new ArrayList<>();
     private Element parent;
     private HashMap<String, String> attributes = new HashMap<>();
     private String text = "";
@@ -86,7 +87,65 @@ public class Element {
         this.parent = parent;
     }
 
-    public Element getParent(){
+    public Element getParent() {
         return parent;
     }
+
+    public String getHtml() {
+        return getHtml(this);
+    }
+
+    public String getHtml(Element element) {
+        String html = "";
+        if (!element.getTag().matches("a|meta|p|span|img")) {
+            html = html.concat("\n");
+            for (int k = 0; k < element.getLevel(); k++)
+                html = html.concat("\t");
+        }
+
+        html = html.concat("<").concat(element.getTag());
+        if (!element.getTag().matches("br|img"))
+            html = html.concat(" class=\"").concat(element.getAttr("class")==null?"null":element.getAttr("class")).concat("\"");
+        html = html.concat(">");
+        if (!element.getText().isEmpty()) {
+            html = html.concat(element.getText());
+        }
+
+        for (int i = 0; i < element.getSize(); i++) {
+            html = html.concat(getHtml(element.get(i)));
+        }
+
+        if (!element.getTag().matches("br|meta|a|p|span|img")) {
+            html = html.concat("\n");
+            for (int k = 0; k < element.getLevel(); k++)
+                html = html.concat("\t");
+        }
+        if (!element.getTag().matches("br|img|meta")) {
+            html = html.concat("</").concat(element.getTag()).concat(">");
+        }
+        if (!element.getAfterText().isEmpty()) {
+            html = html.concat(element.getAfterText());
+        }
+        return html;
+    }
+
+    public String getAllText() {
+        return getAllText(this);
+    }
+
+    private final static String probel = " ";
+
+    public String getAllText(Element element) {
+        String text = "";
+        //text+=" "+element.getText();
+        text = text.concat(probel).concat(element.getText());
+
+        for (int i = 0; i < element.getSize(); i++) {
+            text = text.concat(getAllText(element.get(i)));
+        }
+        text = text.concat(probel).concat(element.getAfterText());
+
+        return text;
+    }
+
 }

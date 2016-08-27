@@ -25,7 +25,7 @@ public class ParserExample {
 
     boolean replaced = false;
     private void func2() {
-        if(!replaced){
+        if (!replaced) {
             html = html.replaceAll("(<(area|base|br|col|colgroup|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)[^>]*?>)", "$1</$2>");
             replaced = true;
         }
@@ -61,8 +61,9 @@ public class ParserExample {
                 level--;
             }
         }
-        //Log.d("kek", "recurse\n" + recurseNode(document.getRoot()));
+        Log.d("kek", "recurse\n" + document.getAllText());
 
+        //Log.d("kek", "recurse\n" + document.getRoot().get(1).get(1).getAllText());
     }
 
 
