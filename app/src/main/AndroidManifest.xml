@@ -24,13 +24,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".test.testdevdb.TestDevDbActivity"
-            android:label="DevDb"
-            android:theme="@style/AppTheme">
+        <activity android:name=".test.testdevdb.TestDevDbActivity" />
+        <activity android:name=".test.chatpanel.EditPanelActivity" />
+        <activity android:name=".test.sample_bus.TestBusActivity"
+            android:label="Bus">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <!--Так проще тестировать-->
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

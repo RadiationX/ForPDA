@@ -15,6 +15,7 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.rxbus.RxBus;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -33,6 +34,8 @@ public class App extends android.app.Application {
         INSTANCE = this;
     }
 
+    private RxBus rxBus;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -40,8 +43,12 @@ public class App extends android.app.Application {
         //init
         Client.getInstance();
         initImageLoader(this);
-        RealmConfiguration configuration = new RealmConfiguration.Builder(this).build();
+        RealmConfiguration configuration = new RealmConfiguration.Builder(this)
+                .name("forpda.realm")
+                .schemaVersion(1)
+                .build();
         Realm.setDefaultConfiguration(configuration);
+        rxBus = new RxBus();
     }
 
     private static DisplayImageOptions.Builder options = new DisplayImageOptions.Builder()
@@ -77,5 +84,9 @@ public class App extends android.app.Application {
         if (preferences == null)
             preferences = PreferenceManager.getDefaultSharedPreferences(this);
         return preferences;
+    }
+
+    public RxBus bus() {
+        return rxBus;
     }
 }

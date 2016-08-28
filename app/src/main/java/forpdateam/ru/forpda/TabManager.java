@@ -7,6 +7,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.annimon.stream.Stream;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,11 +93,12 @@ public class TabManager {
 
     private void hideTabs(FragmentTransaction transaction) {
         if (fragmentManager.getFragments() == null) return;
-        for (Fragment fragment : fragmentManager.getFragments())
-            if (fragment != null && !fragment.isHidden()) {
-                transaction.hide(fragment);
-                fragment.onPause();
-            }
+        Stream.of(fragmentManager.getFragments()) // Шоб жизнь сахаром не казалась. Ыы :)
+                .filter(fragment -> fragment != null && !fragment.isHidden())
+                .forEach(fragment -> {
+                    transaction.hide(fragment);
+                    fragment.onPause();
+        });
     }
 
     private TabFragment findTabByTag(String tag) {
