@@ -16,7 +16,7 @@ public interface IQmsChatItem {
 
     String getAvatar();
 
-    Spanned getContent();
+    String getContent();
 
     boolean isDate();
 

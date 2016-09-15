@@ -4,7 +4,7 @@ apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    buildToolsVersion "24.0.2"
 
     def versionPropsFile = file('version.properties')
     if (versionPropsFile.canRead()) {
@@ -70,7 +70,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '24.2.0'
+    supportLibVersion = '24.2.1'
     okHttpVersion = '3.4.1'
     rxbindingVersion = '0.4.0'
     rxlifecycleVersion = '0.6.1'
@@ -81,7 +81,6 @@ dependencies {
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
     compile "com.android.support:support-annotations:${supportLibVersion}"
     compile "com.android.support:support-v4:${supportLibVersion}"
-    compile "com.android.support:appcompat-v7:${supportLibVersion}"
     compile "com.android.support:design:${supportLibVersion}"
     compile "com.android.support:cardview-v7:${supportLibVersion}"
     compile "com.android.support:recyclerview-v7:${supportLibVersion}"
@@ -97,4 +96,5 @@ dependencies {
     compile 'org.jsoup:jsoup:1.9.1'
     compile 'com.github.rahatarmanahmed:circularprogressview:2.5.0'
     compile 'de.hdodenhof:circleimageview:2.1.0'
+    compile group: 'org.ccil.cowan.tagsoup', name: 'tagsoup', version: '1.2'
 }

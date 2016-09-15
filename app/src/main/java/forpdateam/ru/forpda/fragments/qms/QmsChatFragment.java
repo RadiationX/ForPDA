@@ -1,13 +1,10 @@
 package forpdateam.ru.forpda.fragments.qms;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,15 +15,21 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.trello.rxlifecycle.FragmentEvent;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.ScrollAwareFABBehavior;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsChatItem;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsChatAdapter;
-import forpdateam.ru.forpda.fragments.qms.adapters.QmsContactsAdapter;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.ourparser.Element;
+import forpdateam.ru.forpda.utils.ourparser.htmltags.BaseTag;
+import forpdateam.ru.forpda.utils.ourparser.htmltags.H1Tag;
+import forpdateam.ru.forpda.utils.ourparser.htmltags.H2Tag;
+import forpdateam.ru.forpda.utils.ourparser.htmltags.LiTag;
+import forpdateam.ru.forpda.utils.ourparser.htmltags.UlTag;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -41,7 +44,6 @@ public class QmsChatFragment extends TabFragment {
     private String userId;
     private String avatar;
     private String themeId;
-    private TextView textView;
     private RecyclerView recyclerView;
     private QmsChatAdapter adapter;
 
@@ -67,10 +69,14 @@ public class QmsChatFragment extends TabFragment {
         inflater.inflate(R.layout.fragment_qms_chat, (ViewGroup) view.findViewById(R.id.fragment_content), true);
         ImageLoader.getInstance().displayImage(avatar, toolbarImageView);
         toolbarImageView.setVisibility(View.VISIBLE);
-        toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser="+userId));
+        toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + userId));
+        //listView = (ListView) findViewById(R.id.qms_chat);
         recyclerView = (RecyclerView) findViewById(R.id.qms_chat);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        //llm.setReverseLayout(true);
+        llm.setStackFromEnd(true);
+        recyclerView.setLayoutManager(llm);
         return view;
     }
 
@@ -89,8 +95,10 @@ public class QmsChatFragment extends TabFragment {
                 }));
     }
 
+
     private void onLoadChat(ArrayList<QmsChatItem> qmsChatItems) {
-        adapter = new QmsChatAdapter(qmsChatItems);
+        adapter = new QmsChatAdapter(qmsChatItems, getContext());
         recyclerView.setAdapter(adapter);
     }
+
 }

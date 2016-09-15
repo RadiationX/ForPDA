@@ -1,11 +1,18 @@
-package forpdateam.ru.forpda.test.regexparser;
+package forpdateam.ru.forpda.utils.ourparser;
+
+import android.util.Log;
+
+import com.nostra13.universalimageloader.utils.L;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- * Created by radiationx on 26.08.16.
+ * Created by radiationx on 13.09.16.
  */
 public class Element {
     private List<Element> elements = new ArrayList<>();
@@ -13,16 +20,16 @@ public class Element {
     private HashMap<String, String> attributes = new HashMap<>();
     private String text = "";
     private String afterText = "";
-    private String tag = "";
+    private String tagName = "";
     private int level = 0;
 
-    public Element(String tag, int level) {
-        this.tag = tag;
+    public Element(String tagName, int level) {
+        this.tagName = tagName;
         this.level = level;
     }
 
-    public Element(String tag) {
-        this.tag = tag;
+    public Element(String tagName) {
+        this.tagName = tagName;
     }
 
     public int getSize() {
@@ -39,6 +46,10 @@ public class Element {
         return elements.get(elements.size() - 1);
     }
 
+    public List<Element> getElements(){
+        return elements;
+    }
+
     public void add(Element element) {
         elements.add(element);
     }
@@ -51,15 +62,15 @@ public class Element {
         this.level = level;
     }
 
-    public String getTag() {
-        return tag;
+    public String tagName() {
+        return tagName;
     }
 
     public void addAttr(String key, String value) {
         attributes.put(key, value);
     }
 
-    public String getAttr(String key) {
+    public String attr(String key) {
         return attributes.get(key);
     }
 
@@ -91,41 +102,57 @@ public class Element {
         return parent;
     }
 
-    public String getHtml() {
-        return getHtml(this);
+    public String html() {
+        return html(this, true);
+    }
+    public String htmlNoParent() {
+        return html(this, false);
     }
 
-    public String getHtml(Element element) {
+    Pattern pattern = Pattern.compile("br|img|meta");
+    Matcher matcher;
+    public String html(Element element, boolean withParent) {
         String html = "";
-        if (!element.getTag().matches("a|meta|p|span|img")) {
+        /*if (!element.tagName().matches("a|meta|p|span|img")) {
             html = html.concat("\n");
             for (int k = 0; k < element.getLevel(); k++)
                 html = html.concat("\t");
+        }*/
+
+        if(withParent){
+            html = html.concat("<").concat(element.tagName());
+            for(Map.Entry<String, String> entry : element.getAttributes().entrySet()) {
+                html = html.concat(" ").concat(entry.getKey()).concat("=\"").concat(entry.getValue()).concat("\"");
+            }
+            html = html.concat(">");
         }
 
-        html = html.concat("<").concat(element.getTag());
-        if (!element.getTag().matches("br|img"))
-            html = html.concat(" class=\"").concat(element.getAttr("class")==null?"null":element.getAttr("class")).concat("\"");
-        html = html.concat(">");
         if (!element.getText().isEmpty()) {
+            //html = html.concat(probel);
             html = html.concat(element.getText());
         }
 
         for (int i = 0; i < element.getSize(); i++) {
-            html = html.concat(getHtml(element.get(i)));
+            html = html.concat(html(element.get(i), true));
         }
 
-        if (!element.getTag().matches("br|meta|a|p|span|img")) {
+        /*if (!element.tagName().matches("br|meta|a|p|span|img")) {
             html = html.concat("\n");
             for (int k = 0; k < element.getLevel(); k++)
                 html = html.concat("\t");
+        }*/
+        if(withParent){
+            matcher = pattern.matcher(element.tagName());
+            if (!matcher.matches()) {
+                html = html.concat("</").concat(element.tagName()).concat(">");
+            }
+            if (!element.getAfterText().isEmpty()) {
+                html = html.concat(probel);
+                html = html.concat(element.getAfterText());
+            }
         }
-        if (!element.getTag().matches("br|img|meta")) {
-            html = html.concat("</").concat(element.getTag()).concat(">");
-        }
-        if (!element.getAfterText().isEmpty()) {
-            html = html.concat(element.getAfterText());
-        }
+
+        html = html.concat(probel);
         return html;
     }
 
@@ -148,4 +175,28 @@ public class Element {
         return text;
     }
 
+    public static void fixSpace(Element element){
+        element.setText(element.getText().replaceAll(" ", "&nbsp;"));
+        for (int i = 0; i < element.getSize(); i++)
+            fixSpace(element.get(i));
+        element.setAfterText(element.getAfterText().replaceAll(" ", "&nbsp;"));
+    }
+
+
+    public Element selectLink(){
+        for(Element element:elements){
+            if(element.tagName().equals("a"))
+                return element;
+        }
+        return null;
+    }
+
+
+    public String ownText(){
+        String text = getText();
+        for(Element element:elements){
+            text+=" "+element.getAfterText();
+        }
+        return text.trim();
+    }
 }

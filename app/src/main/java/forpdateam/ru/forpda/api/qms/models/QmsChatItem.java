@@ -10,8 +10,7 @@ import forpdateam.ru.forpda.api.qms.interfaces.IQmsChatItem;
 public class QmsChatItem implements IQmsChatItem {
     private boolean whoseMessage = false;
     private boolean isDate = false;
-    private String id, readStatus, time, avatar, date;
-    private Spanned content;
+    private String id, readStatus, time, avatar, date, content;
 
     @Override
     public boolean getWhoseMessage() {
@@ -39,7 +38,7 @@ public class QmsChatItem implements IQmsChatItem {
     }
 
     @Override
-    public Spanned getContent() {
+    public String getContent() {
         return content;
     }
 
@@ -69,7 +68,7 @@ public class QmsChatItem implements IQmsChatItem {
         this.avatar = avatar;
     }
 
-    public void setContent(Spanned content) {
+    public void setContent(String content) {
         this.content = content;
     }
 
