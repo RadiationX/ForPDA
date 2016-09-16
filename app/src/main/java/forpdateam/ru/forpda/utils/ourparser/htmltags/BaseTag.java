@@ -2,7 +2,7 @@ package forpdateam.ru.forpda.utils.ourparser.htmltags;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.text.Html;
+
 import android.text.Spanned;
 import android.util.DisplayMetrics;
 import android.widget.ImageView;
@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.utils.ourparser.Html;
 
 /**
  * Created by radiationx on 28.08.16.
@@ -41,7 +42,7 @@ public class BaseTag extends LinearLayout {
         textView.setLayoutParams(params);
         //new FormatTextTask(textView, text).execute();
         //textView.setText(Html.fromHtml(text));
-        textView.setText(forpdateam.ru.forpda.utils.ourparser.Html.fromHtml(text));
+        textView.setText(Html.fromHtml(text, Html.FROM_HTML_OPTION_USE_CSS_COLORS));
 
         textView.setTextSize(size());
         addView(textView);
@@ -59,7 +60,7 @@ public class BaseTag extends LinearLayout {
         }
 
         protected Void doInBackground(Void... urls) {
-            spanned = Html.fromHtml(text);
+            spanned = Html.fromHtml(text, Html.FROM_HTML_OPTION_USE_CSS_COLORS);
             return null;
         }
 

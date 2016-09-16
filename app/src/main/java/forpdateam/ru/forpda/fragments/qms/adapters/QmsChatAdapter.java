@@ -2,7 +2,7 @@ package forpdateam.ru.forpda.fragments.qms.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
+
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -25,6 +25,7 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.qms.models.QmsChatItem;
 import forpdateam.ru.forpda.utils.ourparser.Document;
 import forpdateam.ru.forpda.utils.ourparser.Element;
+import forpdateam.ru.forpda.utils.ourparser.Html;
 import forpdateam.ru.forpda.utils.ourparser.htmltags.BaseTag;
 import forpdateam.ru.forpda.utils.ourparser.htmltags.CodePostBlock;
 import forpdateam.ru.forpda.utils.ourparser.htmltags.H1Tag;
@@ -173,7 +174,7 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 thisView = new PostBlock(getContext());
             }
             if (!element.get(0).htmlNoParent().trim().equals(""))
-                ((PostBlock) thisView).setTitle(Html.fromHtml(element.get(0).htmlNoParent().trim()));
+                ((PostBlock) thisView).setTitle(Html.fromHtml(element.get(0).htmlNoParent().trim(),Html.FROM_HTML_OPTION_USE_CSS_COLORS));
             else
                 ((PostBlock) thisView).hideTitle();
             ((PostBlock) thisView).addBody(recurseUi(element.getLast()));
