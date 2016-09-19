@@ -13,6 +13,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.utils.ourparser.Html;
+import forpdateam.ru.forpda.utils.ourparser.LinkMovementMethod;
 
 /**
  * Created by radiationx on 28.08.16.
@@ -38,13 +39,11 @@ public class BaseTag extends LinearLayout {
     public TextView setHtmlText(String text) {
         TextView textView = new TextView(getContext());
         LayoutParams params = new LayoutParams(
-                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         textView.setLayoutParams(params);
-        //new FormatTextTask(textView, text).execute();
-        //textView.setText(Html.fromHtml(text));
         textView.setText(Html.fromHtml(text, Html.FROM_HTML_OPTION_USE_CSS_COLORS));
-
         textView.setTextSize(size());
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
         addView(textView);
         return textView;
     }

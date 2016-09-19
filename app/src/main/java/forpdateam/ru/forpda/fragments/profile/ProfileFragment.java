@@ -15,7 +15,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.content.res.AppCompatResources;
-import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
@@ -46,6 +45,7 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.BlurUtil;
 import forpdateam.ru.forpda.utils.ErrorHandler;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.ourparser.LinkMovementMethod;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -232,6 +232,8 @@ public class ProfileFragment extends TabFragment {
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                 //Нужен handler, иначе при повторном создании фрагмента неверно вычисляется высота вьюхи
                 new Handler().post(() -> {
+                    if(!isAdded())
+                        return;
                     toolbarBackground.setBackground(new BitmapDrawable(getResources(), centerCrop(loadedImage, view.getWidth(), view.getHeight(), 1)));
                     AlphaAnimation animation1 = new AlphaAnimation(0, 1);
                     animation1.setDuration(500);
@@ -265,15 +267,21 @@ public class ProfileFragment extends TabFragment {
             sign.setText(profile.getSign());
             sign.setVisibility(View.VISIBLE);
             Log.d("kek", "view sign setted");
-            sign.setMovementMethod(new LinkMovementMethod());
+            sign.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
-        addCountItem(getContext().getString(R.string.profile_item_text_posts), profile.getPosts());
-        addCountItem(getContext().getString(R.string.profile_item_text_themes), profile.getTopics());
-        addCountItem(getContext().getString(R.string.profile_item_text_rep), profile.getReputation());
-        addCountItem(getContext().getString(R.string.profile_item_text_karma), profile.getKarma());
-        addCountItem(getContext().getString(R.string.profile_item_text_site_posts), profile.getSitePosts());
-        addCountItem(getContext().getString(R.string.profile_item_text_comments), profile.getComments());
+        if (profile.getPosts() != null)
+            addCountItem(getContext().getString(R.string.profile_item_text_posts), profile.getPosts());
+        if (profile.getTopics() != null)
+            addCountItem(getContext().getString(R.string.profile_item_text_themes), profile.getTopics());
+        if (profile.getReputation() != null)
+            addCountItem(getContext().getString(R.string.profile_item_text_rep), profile.getReputation());
+        if (profile.getKarma() != null)
+            addCountItem(getContext().getString(R.string.profile_item_text_karma), profile.getKarma());
+        if (profile.getSitePosts() != null)
+            addCountItem(getContext().getString(R.string.profile_item_text_site_posts), profile.getSitePosts());
+        if (profile.getComments() != null)
+            addCountItem(getContext().getString(R.string.profile_item_text_comments), profile.getComments());
 
         if (profile.getGender() != null)
             addInfoItem(getContext().getString(R.string.profile_item_text_gender), profile.getGender());
@@ -313,7 +321,7 @@ public class ProfileFragment extends TabFragment {
         }
         if (profile.getAbout() != null) {
             about.setText(profile.getAbout());
-            about.setMovementMethod(new LinkMovementMethod());
+            about.setMovementMethod(LinkMovementMethod.getInstance());
             findViewById(R.id.profile_block_about).setVisibility(View.VISIBLE);
         }
 

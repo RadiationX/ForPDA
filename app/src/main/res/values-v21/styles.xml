@@ -4,6 +4,10 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:statusBarColor">#00000000</item>
+        <item name="ProfileToolbarTextStyle">@style/ProfileToolbarTextStyle</item>
+        <item name="ProfileCardStyle">@style/ProfileCardStyle</item>
+        <item name="ProfileCardTitleStyle">@style/ProfileCardTitleStyle</item>
+        <item name="android:textColorLink">@color/colorPrimary</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="AppTheme">

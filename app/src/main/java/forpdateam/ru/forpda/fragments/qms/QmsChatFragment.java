@@ -74,7 +74,7 @@ public class QmsChatFragment extends TabFragment {
         recyclerView = (RecyclerView) findViewById(R.id.qms_chat);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
-        //llm.setReverseLayout(true);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
         llm.setStackFromEnd(true);
         recyclerView.setLayoutManager(llm);
         return view;

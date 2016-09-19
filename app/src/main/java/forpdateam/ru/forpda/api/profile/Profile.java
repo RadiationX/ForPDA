@@ -38,7 +38,7 @@ public class Profile implements IProfileApi {
         final Matcher mainMatcher = mainPattern.matcher(response);
         if (mainMatcher.find()) {
             profile.setAvatar(safe(mainMatcher.group(1)));
-            profile.setNick(safe(mainMatcher.group(2)));
+            profile.setNick(Html.fromHtml(safe(mainMatcher.group(2))).toString());
             profile.setStatus(safe(mainMatcher.group(3)));
             profile.setGroup(safe(mainMatcher.group(4)));
 

@@ -7,12 +7,16 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import forpdateam.ru.forpda.utils.ourparser.Html;
+import forpdateam.ru.forpda.utils.ourparser.LinkMovementMethod;
+
 /**
  * Created by radiationx on 14.09.16.
  */
 public class PostBlock extends BaseTag {
     protected LinearLayout blockTitle;
     protected LinearLayout blockBody;
+
     public PostBlock(Context context) {
         super(context);
         setBackgroundColor(Color.RED);
@@ -24,31 +28,31 @@ public class PostBlock extends BaseTag {
                 LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         blockBody.setLayoutParams(new LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        blockTitle.setPadding(px3,px3, px3, px3);
-        blockBody.setPadding(px3,px3, px3, px3);
+        blockTitle.setPadding(px3, px3, px3, px3);
+        blockBody.setPadding(px3, px3, px3, px3);
         addView(blockTitle);
         addView(blockBody);
-        blockTitle.setBackgroundColor(Color.argb(24,0,0,0));
+        blockTitle.setBackgroundColor(Color.argb(24, 0, 0, 0));
         LayoutParams params = new LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, px2,0, px2);
+        params.setMargins(0, px2, 0, px2);
         setLayoutParams(params);
     }
 
-    public void hideTitle(){
+    public void hideTitle() {
         blockTitle.setVisibility(GONE);
     }
-    public void setTitle(String title){
+
+    public void setTitle(Spanned title) {
         TextView textView = new TextView(getContext());
+        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        textView.setLayoutParams(params);
         textView.setText(title);
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
         blockTitle.addView(textView);
     }
-    public void setTitle(Spanned title){
-        TextView textView = new TextView(getContext());
-        textView.setText(title);
-        blockTitle.addView(textView);
-    }
-    public void addBody(View v){
+
+    public void addBody(View v) {
         blockBody.addView(v);
     }
 }
