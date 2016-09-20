@@ -107,7 +107,7 @@ public class QmsContactsFragment extends TabFragment {
         });
 
         fab.setImageDrawable(AppCompatResources.getDrawable(App.getContext(), R.drawable.ic_create_white_24dp));
-        fab.setOnClickListener(view1 -> Toast.makeText(getContext(), "Create new dialog", Toast.LENGTH_SHORT).show());
+        fab.setOnClickListener(view1 -> TabManager.getInstance().add(new TabFragment.Builder<>(QmsNewThemeFragment.class).build()));
         fab.setVisibility(View.VISIBLE);
         return view;
     }

@@ -42,7 +42,7 @@ import forpdateam.ru.forpda.utils.ourparser.htmltags.UlTag;
  */
 public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private ArrayList<QmsChatItem> chatItems = new ArrayList<>();
+    private List<QmsChatItem> chatItems;
     private final static int TYPE_DATE = 0, TYPE_MESSAGE = 1, TYPE_MY_MESSAGE = 2;
     private Context context;
 
@@ -68,7 +68,7 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     }
 
-    public QmsChatAdapter(ArrayList<QmsChatItem> chatItems, Context context) {
+    public QmsChatAdapter(List<QmsChatItem> chatItems, Context context) {
         this.chatItems = chatItems;
         this.context = context;
     }
@@ -175,7 +175,7 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 thisView = new PostBlock(getContext());
             }
             if (!element.get(0).htmlNoParent().trim().equals(""))
-                ((PostBlock) thisView).setTitle(Html.fromHtml(element.get(0).htmlNoParent().trim(),Html.FROM_HTML_OPTION_USE_CSS_COLORS));
+                ((PostBlock) thisView).setTitle(Html.fromHtml(element.get(0).htmlNoParent().trim(), Html.FROM_HTML_OPTION_USE_CSS_COLORS));
             else
                 ((PostBlock) thisView).hideTitle();
             ((PostBlock) thisView).addBody(recurseUi(element.getLast()));

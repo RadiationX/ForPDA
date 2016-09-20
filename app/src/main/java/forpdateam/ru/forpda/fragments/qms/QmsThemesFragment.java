@@ -51,7 +51,7 @@ public class QmsThemesFragment extends TabFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getArguments()!=null){
+        if (getArguments() != null) {
             userId = getArguments().getString(USER_ID_ARG);
             avatar = getArguments().getString(USER_AVATAR_ARG);
         }
@@ -66,13 +66,18 @@ public class QmsThemesFragment extends TabFragment {
         inflater.inflate(R.layout.fragment_qms_themes, (ViewGroup) view.findViewById(R.id.fragment_content), true);
         ImageLoader.getInstance().displayImage(avatar, toolbarImageView);
         toolbarImageView.setVisibility(View.VISIBLE);
-        toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser="+userId));
+        toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + userId));
         recyclerView = (RecyclerView) findViewById(R.id.qms_list_themes);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         fab.setImageDrawable(AppCompatResources.getDrawable(App.getContext(), R.drawable.ic_create_white_24dp));
-        fab.setOnClickListener(view1 -> Toast.makeText(getContext(), "Create new dialog", Toast.LENGTH_SHORT).show());
+        fab.setOnClickListener(view1 -> {
+            Bundle args = new Bundle();
+            args.putString(QmsNewThemeFragment.USER_ID_ARG, userId);
+            args.putString(QmsNewThemeFragment.USER_NICK_ARG, getTitle());
+            TabManager.getInstance().add(new TabFragment.Builder<>(QmsNewThemeFragment.class).setArgs(args).build());
+        });
         fab.setVisibility(View.VISIBLE);
         return view;
     }

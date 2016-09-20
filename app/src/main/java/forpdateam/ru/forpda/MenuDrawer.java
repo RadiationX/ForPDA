@@ -22,7 +22,6 @@ import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
 import forpdateam.ru.forpda.test.AuthFragment;
 import forpdateam.ru.forpda.test.NewsListFragment;
-import forpdateam.ru.forpda.test.QmsFragment;
 import forpdateam.ru.forpda.test.ThemeFragment;
 
 /**
@@ -85,9 +84,7 @@ public class MenuDrawer {
         menuItems.add(new MenuItem<>("News List", android.R.drawable.ic_input_add, NewsListFragment.class));
         menuItems.add(new MenuItem<>("Profile", android.R.drawable.ic_input_add, ProfileFragment.class));
         if (Api.Auth().getState()) {
-            menuItems.add(new MenuItem<>("QMS", android.R.drawable.ic_input_add, QmsFragment.class));
             menuItems.add(new MenuItem<>("QMS Contacts", android.R.drawable.ic_input_add, QmsContactsFragment.class));
-
         }
         menuItems.add(new MenuItem<>("Theme", android.R.drawable.ic_input_add, ThemeFragment.class));
     }

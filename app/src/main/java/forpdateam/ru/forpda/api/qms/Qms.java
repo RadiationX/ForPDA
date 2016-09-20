@@ -1,12 +1,16 @@
 package forpdateam.ru.forpda.api.qms;
 
 import android.text.Html;
+import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.qms.models.QmsChatItem;
+import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsTheme;
 import forpdateam.ru.forpda.client.Client;
@@ -41,7 +45,7 @@ public class Qms {
 
     private ArrayList<QmsTheme> themesList(final String id) throws Exception {
         ArrayList<QmsTheme> list = new ArrayList<>();
-        final String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=qms&mid="+id);
+        final String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=qms&mid=" + id);
         final Matcher matcher = threadPattern.matcher(response);
         QmsTheme thread;
         while (matcher.find()) {
@@ -59,10 +63,11 @@ public class Qms {
         return list;
     }
 
-    private ArrayList<QmsChatItem> chatItemsList(final String userId, final String themeId) throws Exception {
-        ArrayList<QmsChatItem> list = new ArrayList<>();
+    private QmsChatModel chatItemsList(final String userId, final String themeId) throws Exception {
+        QmsChatModel chat = new QmsChatModel();
+
         final String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=qms&mid=" + userId + "&t=" + themeId);
-        final Matcher matcher = chatPattern.matcher(response);
+        Matcher matcher = chatPattern.matcher(response);
         QmsChatItem item;
         while (matcher.find()) {
             item = new QmsChatItem();
@@ -77,14 +82,39 @@ public class Qms {
                 item.setAvatar(matcher.group(5));
                 item.setContent(matcher.group(6).trim());
             }
-            list.add(item);
+            chat.addChatItem(item);
         }
-        return list;
+        matcher = Pattern.compile("<div class=\"nav\">[\\s\\S]*?<b>(<a[^>]*?href=\"[^\"]*?showuser[^\"]*?\"[^>]*?>([\\s\\S]*?)</a>|[^:]*?):</b>([\\s\\S]*?)</span>").matcher(response);
+        if (matcher.find()) {
+            chat.setNick(matcher.group(2) != null ? matcher.group(2).trim() : matcher.group(1).trim());
+            chat.setTitle(matcher.group(3).trim());
+        }
+        matcher = Pattern.compile("=\"list-group-item\"[\\s\\S]*?class=\"avatar\"[^>]*?src=\"([^\"]*?)\"").matcher(response);
+        if (matcher.find()) {
+            chat.setAvatarUrl(matcher.group(1));
+        }
+        return chat;
     }
 
     private String[] findUser(final String nick) throws Exception {
         String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=" + nick + "&limit=150&timestamp=" + System.currentTimeMillis());
         return response.split(" |\n");
+    }
+
+    private String newTheme(String nick, String title, String mess) throws Exception {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("username", nick);
+        headers.put("title", title);
+        headers.put("message", mess);
+        String response = Client.getInstance().post("http://4pda.ru/forum/index.php?act=qms&action=create-thread&xhr=body&do=1", headers);
+        /*Pattern errorPattern = Pattern.compile("<div class=\"list-group-item msgbox error\">([^<]*<a[^>]*?>[^<]*?<[^>]*a>|)([\\s\\S]*?)</div>");
+        Matcher matcher = errorPattern.matcher(response);
+        if (matcher.find()) {
+            return matcher.group(2);
+        } else {
+            return null;
+        }*/
+        return response;
     }
 
     public Observable<ArrayList<QmsContact>> getContactList() {
@@ -115,10 +145,10 @@ public class Qms {
         });
     }
 
-    public Observable<ArrayList<QmsChatItem>> getChat(final String userId, final String themeId) {
-        return Observable.create(new Observable.OnSubscribe<ArrayList<QmsChatItem>>() {
+    public Observable<QmsChatModel> getChat(final String userId, final String themeId) {
+        return Observable.create(new Observable.OnSubscribe<QmsChatModel>() {
             @Override
-            public void call(Subscriber<? super ArrayList<QmsChatItem>> subscriber) {
+            public void call(Subscriber<? super QmsChatModel> subscriber) {
                 try {
                     subscriber.onNext(chatItemsList(userId, themeId));
                     subscriber.onCompleted();
@@ -135,6 +165,20 @@ public class Qms {
             public void call(Subscriber<? super String[]> subscriber) {
                 try {
                     subscriber.onNext(findUser(nick));
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    public Observable<String> sendNewTheme(String nick, String title, String mess) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    subscriber.onNext(newTheme(nick, title, mess));
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);
