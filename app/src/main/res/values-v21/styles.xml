@@ -8,6 +8,7 @@
         <item name="ProfileCardStyle">@style/ProfileCardStyle</item>
         <item name="ProfileCardTitleStyle">@style/ProfileCardTitleStyle</item>
         <item name="android:textColorLink">@color/colorPrimary</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="AppTheme">

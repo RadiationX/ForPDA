@@ -103,23 +103,6 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private void bindMessageHolder(MessageViewHolder holder, int position) {
         QmsChatItem item = chatItems.get(position);
-
-       /* String html = document.htmlNoParent();
-        Log.d("kek", "HTML SUKA "+html);
-        holder.messageText.setText(html);*/
-        /*holder.root.removeAllViews();
-        if (!createdTrees.containsKey(position)) {
-            Document document = Document.parse(item.getContent());
-            createdTrees.put(position, document);
-            BaseTag view = recurseUi(document.getRoot());
-            holder.root.addView(view);
-        } else {
-            Document document = createdTrees.get(position);
-            BaseTag view = recurseUi(document.getRoot());
-            holder.root.addView(view);
-
-        }*/
-
         BaseTag view;
         if (!createdTrees.containsKey(position)) {
             Document document = Document.parse(chatItems.get(position).getContent());
@@ -131,14 +114,12 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 ((ViewGroup) view.getParent()).removeView(view);
             }
         }
-        //Log.d("kek", "parent childs " + holder.root.getChildCount());
         holder.root.removeAllViews();
         holder.root.addView(view);
-
         holder.time.setText(item.getTime());
     }
 
-    HashMap<Integer, BaseTag> createdTrees = new HashMap<>();
+    private HashMap<Integer, BaseTag> createdTrees = new HashMap<>();
 
     @Override
     public int getItemCount() {
@@ -155,10 +136,6 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private final static Pattern p2 = Pattern.compile("^(b|i|u|del|s|strike|sub|sup|span|a|br)$");
-    private Matcher matcher;
-    private int iViews = 0;
-    private int iTextViews = 0;
-    int iterations = 0;
 
     private BaseTag recurseUi(final Element element) {
         BaseTag thisView = null;
@@ -166,6 +143,17 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (elClassios != null && elClassios.contains("post-block")) {
             if (elClassios.contains("quote")) {
                 thisView = new QuotePostBlock(getContext());
+                if (element.get(0).getSize() > 0) {
+                    for (int i = 0; i < element.get(0).getSize(); i++) {
+                        if (element.get(0).get(i).attr("title").contains("Перейти")) {
+                            String url = element.get(0).get(i).attr("href");
+                            ((QuotePostBlock) thisView).setTitleOnClickListener(v -> Toast.makeText(getContext(), url, Toast.LENGTH_SHORT).show());
+                            ((QuotePostBlock) thisView).addQuoteArrow();
+                            element.get(0).getElements().remove(i);
+                            break;
+                        }
+                    }
+                }
             } else if (elClassios.contains("code")) {
                 thisView = new CodePostBlock(getContext());
                 Element.fixSpace(element.getLast());
@@ -219,7 +207,6 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     html = html.trim();
                     if (!html.isEmpty()) {
                         thisView.setHtmlText(html);
-                        iTextViews++;
                         html = "";
                     }
                 }
@@ -228,8 +215,6 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
             if (newView != null)
                 thisView.addView(newView);
-
-            iterations++;
         }
         html = html.trim();
         if (!html.isEmpty()) {
@@ -238,7 +223,6 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             html = html.trim();
             html = html.concat(element.getAfterText());
             thisView.setHtmlText(html);
-            iTextViews++;
             html = "";
         }
         return thisView;

@@ -17,7 +17,7 @@ public class H1Tag extends BaseTag {
         super(context);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, px4,0, px3);
+        params.setMargins(0, px32,0, px16);
         setLayoutParams(params);
         setGravity(Gravity.CENTER_HORIZONTAL);
     }

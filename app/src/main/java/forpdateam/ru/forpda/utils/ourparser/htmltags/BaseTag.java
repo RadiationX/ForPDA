@@ -24,7 +24,7 @@ public class BaseTag extends LinearLayout {
         return (int) ((dp * displayMetrics.density) + 0.5);
     }
 
-    protected int px1 = dpToPx(4), px2 = dpToPx(8), px3 = dpToPx(16), px4 = dpToPx(32), px5 = dpToPx(48);
+    protected int px4 = dpToPx(4), px8 = dpToPx(8), px16 = dpToPx(16), px32 = dpToPx(32), px12 = dpToPx(12), px48 = dpToPx(48), px24 = dpToPx(24);
     public TextView textView;
 
     protected float size() {
@@ -80,7 +80,7 @@ public class BaseTag extends LinearLayout {
         ImageLoader.getInstance().displayImage(url, imageView);
         LayoutParams params = new LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, px2, 0, px2);
+        params.setMargins(0, px8, 0, px8);
         imageView.setLayoutParams(params);
         imageView.setAdjustViewBounds(true);
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);

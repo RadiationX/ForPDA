@@ -9,6 +9,6 @@ public class UlTag extends BaseTag {
     public UlTag(Context context) {
         super(context);
         //setBackgroundColor(red);
-        setPadding(px2, px2, 0, px1);
+        setPadding(px8, px8, 0, px4);
     }
 }

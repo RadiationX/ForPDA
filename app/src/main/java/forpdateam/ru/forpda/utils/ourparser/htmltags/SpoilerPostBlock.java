@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
 
+import forpdateam.ru.forpda.R;
+
 /**
  * Created by radiationx on 14.09.16.
  */
@@ -12,18 +14,16 @@ public class SpoilerPostBlock extends PostBlock {
 
     public SpoilerPostBlock(Context context) {
         super(context);
-        setBackgroundColor(Color.parseColor("#e4eaf2"));
+        setBackgroundResource(R.drawable.post_block_spoiler_bg);
+        textAppearanceRes = R.style.SpoilerTitleTextStyle;
         blockBody.setVisibility(GONE);
-        blockTitle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (open) {
-                    blockBody.setVisibility(GONE);
-                    open = false;
-                } else {
-                    blockBody.setVisibility(VISIBLE);
-                    open = true;
-                }
+        setTitleOnClickListener(v -> {
+            if (open) {
+                blockBody.setVisibility(GONE);
+                open = false;
+            } else {
+                blockBody.setVisibility(VISIBLE);
+                open = true;
             }
         });
     }

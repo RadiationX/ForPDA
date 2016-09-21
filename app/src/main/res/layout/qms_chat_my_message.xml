@@ -24,7 +24,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_toEndOf="@+id/time"
-        android:background="@color/white"
+        android:background="@drawable/qms_chat_my_message_bg"
         android:orientation="vertical"
         android:padding="12dp" />
 </RelativeLayout>

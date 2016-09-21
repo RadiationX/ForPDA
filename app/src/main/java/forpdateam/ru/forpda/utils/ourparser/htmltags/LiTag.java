@@ -12,7 +12,7 @@ public class LiTag extends BaseTag {
         //setBackgroundColor(red);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(px2, 0, 0, px2);
+        params.setMargins(px8, 0, 0, px8);
 
         setLayoutParams(params);
     }

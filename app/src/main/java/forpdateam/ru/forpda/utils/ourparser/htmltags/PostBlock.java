@@ -2,12 +2,15 @@ package forpdateam.ru.forpda.utils.ourparser.htmltags;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.text.Spanned;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import forpdateam.ru.forpda.utils.ourparser.Html;
+import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.utils.ourparser.LinkMovementMethod;
 
 /**
@@ -16,6 +19,8 @@ import forpdateam.ru.forpda.utils.ourparser.LinkMovementMethod;
 public class PostBlock extends BaseTag {
     protected LinearLayout blockTitle;
     protected LinearLayout blockBody;
+    protected View.OnClickListener titleOnClickListener;
+    protected int textAppearanceRes = android.R.style.TextAppearance;
 
     public PostBlock(Context context) {
         super(context);
@@ -28,15 +33,20 @@ public class PostBlock extends BaseTag {
                 LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         blockBody.setLayoutParams(new LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        blockTitle.setPadding(px3, px3, px3, px3);
-        blockBody.setPadding(px3, px3, px3, px3);
+        blockTitle.setPadding(px16, px12, px16, px12);
+        blockBody.setPadding(px16, px16, px16, px16);
         addView(blockTitle);
         addView(blockBody);
-        blockTitle.setBackgroundColor(Color.argb(24, 0, 0, 0));
+        //blockTitle.setBackgroundColor(Color.argb(24, 0, 0, 0));
         LayoutParams params = new LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, px2, 0, px2);
+        params.setMargins(0, px8, 0, px8);
         setLayoutParams(params);
+    }
+
+    public void setTitleOnClickListener(OnClickListener titleOnClickListener) {
+        this.titleOnClickListener = titleOnClickListener;
+        blockTitle.setOnClickListener(this.titleOnClickListener);
     }
 
     public void hideTitle() {
@@ -46,13 +56,26 @@ public class PostBlock extends BaseTag {
     public void setTitle(Spanned title) {
         TextView textView = new TextView(getContext());
         LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.CENTER_VERTICAL;
         textView.setLayoutParams(params);
         textView.setText(title);
-        textView.setMovementMethod(LinkMovementMethod.getInstance());
+        if (Build.VERSION.SDK_INT < 23) {
+            textView.setTextAppearance(App.getContext(), textAppearanceRes);
+        } else {
+            textView.setTextAppearance(textAppearanceRes);
+        }
+        if (titleOnClickListener == null)
+            textView.setMovementMethod(LinkMovementMethod.getInstance());
+        else
+            textView.setOnClickListener(titleOnClickListener);
         blockTitle.addView(textView);
     }
 
     public void addBody(View v) {
         blockBody.addView(v);
+    }
+
+    public LinearLayout getBlockTitle() {
+        return blockTitle;
     }
 }

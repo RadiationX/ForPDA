@@ -15,7 +15,7 @@ public class H2Tag extends BaseTag {
         super(context);
         LayoutParams params = new LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, px4, 0, px3);
+        params.setMargins(0, px32, 0, px16);
 
         setLayoutParams(params);
     }
