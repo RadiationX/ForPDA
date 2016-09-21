@@ -3,8 +3,10 @@ package forpdateam.ru.forpda;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v7.content.res.AppCompatResources;
 
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
@@ -12,6 +14,9 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+
+import java.lang.reflect.Field;
+import java.util.HashMap;
 
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.client.Client;
@@ -49,6 +54,35 @@ public class App extends android.app.Application {
                 .build();
         Realm.setDefaultConfiguration(configuration);
         rxBus = new RxBus();
+        px2 = getContext().getResources().getDimensionPixelSize(R.dimen.dp2);
+        px4 = getContext().getResources().getDimensionPixelSize(R.dimen.dp4);
+        px6 = getContext().getResources().getDimensionPixelSize(R.dimen.dp6);
+        px8 = getContext().getResources().getDimensionPixelSize(R.dimen.dp8);
+        px12 = getContext().getResources().getDimensionPixelSize(R.dimen.dp12);
+        px14 = getContext().getResources().getDimensionPixelSize(R.dimen.dp14);
+        px16 = getContext().getResources().getDimensionPixelSize(R.dimen.dp16);
+        px24 = getContext().getResources().getDimensionPixelSize(R.dimen.dp24);
+        px32 = getContext().getResources().getDimensionPixelSize(R.dimen.dp32);
+        px36 = getContext().getResources().getDimensionPixelSize(R.dimen.dp36);
+        px40 = getContext().getResources().getDimensionPixelSize(R.dimen.dp40);
+        px48 = getContext().getResources().getDimensionPixelSize(R.dimen.dp48);
+        px56 = getContext().getResources().getDimensionPixelSize(R.dimen.dp56);
+        px64 = getContext().getResources().getDimensionPixelSize(R.dimen.dp64);
+
+        //Для более быстрого доступа к drawable при работе программы
+        for (Field f : R.drawable.class.getFields()) {
+            try {
+                if (!f.getName().contains("abc_"))
+                    drawableHashMap.put(f.getInt(f), AppCompatResources.getDrawable(App.getContext(), f.getInt(f)));
+            } catch (Exception ignore) {
+            }
+        }
+    }
+
+    public static HashMap<Integer, Drawable> drawableHashMap = new HashMap<>();
+
+    public static Drawable getAppDrawable(int id) {
+        return drawableHashMap.get(id);
     }
 
     private static DisplayImageOptions.Builder options = new DisplayImageOptions.Builder()
@@ -89,4 +123,6 @@ public class App extends android.app.Application {
     public RxBus bus() {
         return rxBus;
     }
+
+    public static int px2, px4, px6, px8, px12, px14, px16, px24, px32, px36, px40, px48, px56, px64;
 }

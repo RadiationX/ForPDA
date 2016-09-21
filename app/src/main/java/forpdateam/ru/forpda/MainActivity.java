@@ -123,10 +123,15 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         backHandler();
     }
 
+    public void hidePopupWindows(){
+        ((InputMethodManager) MainActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE))
+                .hideSoftInputFromWindow(MainActivity.this.getCurrentFocus().getWindowToken(), 0);
+    }
     public void backHandler() {
         if (TabManager.getInstance().getSize() > 0) {
             if (!TabManager.getInstance().getActive().onBackPressed()) {
                 if (TabManager.getInstance().getSize() > 1) {
+                    hidePopupWindows();
                     TabManager.getInstance().remove(TabManager.getInstance().getActive());
                 } else {
                     new AlertDialog.Builder(this)

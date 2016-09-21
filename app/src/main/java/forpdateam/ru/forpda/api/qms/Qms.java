@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.api.qms;
 
 import android.text.Html;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -128,6 +127,14 @@ public class Qms {
         }*/
         return response;
     }
+    private String delDialog(String mid) throws Exception{
+        Map<String, String> headers = new HashMap<>();
+        headers.put("act", "qms-xhr");
+        headers.put("action", "del-member");
+        headers.put("del-mid", mid);
+        String response = Client.getInstance().post("http://4pda.ru/forum/index.php", headers);
+        return response;
+    }
 
     public Observable<ArrayList<QmsContact>> getContactList() {
         return Observable.create(new Observable.OnSubscribe<ArrayList<QmsContact>>() {
@@ -191,6 +198,20 @@ public class Qms {
             public void call(Subscriber<? super String> subscriber) {
                 try {
                     subscriber.onNext(newTheme(nick, title, mess));
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    public Observable<String> deleteDialog(String mid) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    subscriber.onNext(delDialog(mid));
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

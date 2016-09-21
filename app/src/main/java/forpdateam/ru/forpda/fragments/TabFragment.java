@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -103,7 +102,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
 
     @Override
     public void hidePopupWindows() {
-
+        getMainActivity().hidePopupWindows();
     }
 
     @Override
@@ -140,8 +139,6 @@ public class TabFragment extends RxFragment implements ITabFragment {
         toolbarTitleView = (TextView) toolbar.findViewById(R.id.toolbar_title);
         toolbarSubitleView = (TextView) toolbar.findViewById(R.id.toolbar_subtitle);
         toolbarImageView = (ImageView) toolbar.findViewById(R.id.toolbar_image_icon);
-        //For work menu in toolbar
-        //getMainActivity().setSupportActionBar(toolbar);
         toolbarBackground = (ImageView) findViewById(R.id.toolbar_image_background);
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
         icNoNetwork = (ImageView) view.findViewById(R.id.ic_no_network);
@@ -154,7 +151,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
             iconRes = R.drawable.ic_arrow_back_white_24dp;
             toolbar.setNavigationOnClickListener(getMainActivity().getRemoveTabListener());
         }
-        toolbar.setNavigationIcon(AppCompatResources.getDrawable(App.getContext(), iconRes));
+        toolbar.setNavigationIcon(App.getAppDrawable(iconRes));
 
 
         if (!Client.getInstance().getNetworkState()) {
@@ -171,16 +168,18 @@ public class TabFragment extends RxFragment implements ITabFragment {
                 setTitle(title);
         }
 
-        if (Client.getInstance().getNetworkState()) {
-            loadData();
-        }
-
         Client.getInstance().addNetworkObserver((observable, o) -> {
             if (icNoNetwork.getVisibility() == View.VISIBLE && (boolean) o) {
                 loadData();
                 icNoNetwork.setVisibility(View.GONE);
             }
         });
+    }
+
+    protected void viewsReady(){
+        if (Client.getInstance().getNetworkState()) {
+            loadData();
+        }
     }
 
     protected void initFabBehavior(){

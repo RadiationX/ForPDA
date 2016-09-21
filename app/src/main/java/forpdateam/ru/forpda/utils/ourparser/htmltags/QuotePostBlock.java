@@ -1,8 +1,6 @@
 package forpdateam.ru.forpda.utils.ourparser.htmltags;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.support.v7.content.res.AppCompatResources;
 import android.view.Gravity;
 import android.widget.ImageView;
 
@@ -22,15 +20,15 @@ public class QuotePostBlock extends PostBlock {
     public void addQuoteArrow() {
         blockTitle.setOrientation(HORIZONTAL);
         ImageView imageView = new ImageView(getContext());
-        imageView.setImageDrawable(AppCompatResources.getDrawable(App.getContext(), R.drawable.ic_chevron_left_black_24dp));
+        imageView.setImageDrawable(App.getAppDrawable(R.drawable.ic_create_white_24dp));
         //imageView.setPadding(px12, px12, px12, px12);
         LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        params.rightMargin = px16;
+        params.rightMargin = App.px16;
         params.gravity = Gravity.CENTER_VERTICAL;
         imageView.setLayoutParams(params);
         //imageView.setPadding(0,0,px8,0);
-        imageView.setMinimumHeight(px24);
-        imageView.setMinimumWidth(px24);
+        imageView.setMinimumHeight(App.px24);
+        imageView.setMinimumWidth(App.px24);
         blockTitle.addView(imageView);
     }
 }

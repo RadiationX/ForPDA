@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.api.qms.models;
 
-import android.text.Spanned;
-
 import forpdateam.ru.forpda.api.qms.interfaces.IQmsChatItem;
 
 /**

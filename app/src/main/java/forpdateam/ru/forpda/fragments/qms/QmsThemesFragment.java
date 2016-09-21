@@ -3,7 +3,7 @@ package forpdateam.ru.forpda.fragments.qms;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v7.content.res.AppCompatResources;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -35,6 +35,7 @@ public class QmsThemesFragment extends TabFragment {
     private String userId;
     private String avatarUrl;
     private String userNick;
+    private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
     private QmsThemesAdapter adapter;
     private QmsThemesAdapter.OnItemClickListener onItemClickListener =
@@ -70,11 +71,14 @@ public class QmsThemesFragment extends TabFragment {
         setWhiteBackground();
         inflater.inflate(R.layout.fragment_qms_themes, (ViewGroup) view.findViewById(R.id.fragment_content), true);
         tryShowAvatar();
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         recyclerView = (RecyclerView) findViewById(R.id.qms_list_themes);
+        viewsReady();
+        refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        fab.setImageDrawable(AppCompatResources.getDrawable(App.getContext(), R.drawable.ic_create_white_24dp));
+        fab.setImageDrawable(App.getAppDrawable(R.drawable.ic_create_white_24dp));
         fab.setOnClickListener(view1 -> {
             Bundle args = new Bundle();
             args.putString(QmsNewThemeFragment.USER_ID_ARG, userId);
@@ -97,6 +101,8 @@ public class QmsThemesFragment extends TabFragment {
 
     @Override
     public void loadData() {
+        if (refreshLayout != null)
+            refreshLayout.setRefreshing(true);
         getCompositeSubscription().add(Api.Qms().getThemesList(userId)
                 .onErrorReturn(throwable -> {
                     ErrorHandler.handle(this, throwable, view1 -> loadData());
@@ -122,6 +128,7 @@ public class QmsThemesFragment extends TabFragment {
         adapter.setOnItemClickListener(onItemClickListener);
         recyclerView.setAdapter(adapter);
         setTitle(createTitle(userNick));
+        refreshLayout.setRefreshing(false);
     }
 
     public static String createTitle(String userNick) {

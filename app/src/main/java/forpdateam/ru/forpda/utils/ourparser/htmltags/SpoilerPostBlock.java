@@ -1,8 +1,6 @@
 package forpdateam.ru.forpda.utils.ourparser.htmltags;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.view.View;
 
 import forpdateam.ru.forpda.R;
 

@@ -1,9 +1,5 @@
 package forpdateam.ru.forpda.utils.ourparser;
 
-import android.util.Log;
-
-import com.nostra13.universalimageloader.utils.L;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

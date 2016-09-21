@@ -20,7 +20,6 @@ package forpdateam.ru.forpda.utils.ourparser;
  */
 
 import android.app.Application;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;

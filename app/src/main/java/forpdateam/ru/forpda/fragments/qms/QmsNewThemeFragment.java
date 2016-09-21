@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.fragments.qms;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
@@ -89,7 +88,7 @@ public class QmsNewThemeFragment extends TabFragment {
             });
         }
 
-        toolbar.getMenu().add("Отправить").setIcon(AppCompatResources.getDrawable(App.getContext(), R.drawable.ic_send_white_24dp)).setOnMenuItemClickListener(menuItem -> {
+        toolbar.getMenu().add("Отправить").setIcon(App.getAppDrawable(R.drawable.ic_send_white_24dp)).setOnMenuItemClickListener(menuItem -> {
             sendNewTheme();
             return false;
         }).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
@@ -149,6 +148,7 @@ public class QmsNewThemeFragment extends TabFragment {
             args.putString(QmsChatFragment.USER_ID_ARG, matcher.group(1));
             args.putString(QmsChatFragment.THEME_ID_ARG, matcher.group(2));
             TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).setArgs(args).build());
+            new Handler().postDelayed(() -> TabManager.getInstance().remove(getTag()), 500);
         }
     }
 }

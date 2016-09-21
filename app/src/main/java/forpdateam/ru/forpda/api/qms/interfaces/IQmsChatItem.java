@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.api.qms.interfaces;
 
-import android.text.Spanned;
-
 /**
  * Created by radiationx on 03.08.16.
  */

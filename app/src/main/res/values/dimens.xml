@@ -4,4 +4,18 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">0dp</dimen>
     <dimen name="card_margin_horizontal">-3dp</dimen>
+    <dimen name="dp2">2dp</dimen>
+    <dimen name="dp4">4dp</dimen>
+    <dimen name="dp6">6dp</dimen>
+    <dimen name="dp8">8dp</dimen>
+    <dimen name="dp12">12dp</dimen>
+    <dimen name="dp14">14dp</dimen>
+    <dimen name="dp16">16dp</dimen>
+    <dimen name="dp24">24dp</dimen>
+    <dimen name="dp32">32dp</dimen>
+    <dimen name="dp36">36dp</dimen>
+    <dimen name="dp40">40dp</dimen>
+    <dimen name="dp48">48dp</dimen>
+    <dimen name="dp56">56dp</dimen>
+    <dimen name="dp64">64dp</dimen>
 </resources>

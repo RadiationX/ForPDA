@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.utils.ourparser.LinkMovementMethod;
 
 /**
@@ -33,14 +32,14 @@ public class PostBlock extends BaseTag {
                 LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         blockBody.setLayoutParams(new LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        blockTitle.setPadding(px16, px12, px16, px12);
-        blockBody.setPadding(px16, px16, px16, px16);
+        blockTitle.setPadding(App.px16, App.px12, App.px16, App.px12);
+        blockBody.setPadding(App.px16, App.px16, App.px16, App.px16);
         addView(blockTitle);
         addView(blockBody);
         //blockTitle.setBackgroundColor(Color.argb(24, 0, 0, 0));
         LayoutParams params = new LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, px8, 0, px8);
+        params.setMargins(0, App.px8, 0, App.px8);
         setLayoutParams(params);
     }
 

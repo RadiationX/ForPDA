@@ -2,24 +2,15 @@ package forpdateam.ru.forpda.fragments.qms.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-
-import android.text.method.LinkMovementMethod;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.R;
@@ -171,7 +162,7 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else {
             thisView = getViewByTag(element.tagName());
         }
-        if (element.tagName().equals("img")) {
+        /*if (element.tagName().equals("img")) {
             thisView.setImage("http://beardycast.com/".concat(element.attr("src")));
             thisView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -186,7 +177,7 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
 
             return thisView;
-        }
+        }*/
 
         String html = element.getText();
 

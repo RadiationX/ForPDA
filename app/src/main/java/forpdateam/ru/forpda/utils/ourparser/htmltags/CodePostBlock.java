@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.utils.ourparser.htmltags;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 

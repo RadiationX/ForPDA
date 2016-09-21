@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v7.content.res.AppCompatResources;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
@@ -46,6 +45,7 @@ import forpdateam.ru.forpda.utils.BlurUtil;
 import forpdateam.ru.forpda.utils.ErrorHandler;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.ourparser.LinkMovementMethod;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -98,8 +98,9 @@ public class ProfileFragment extends TabFragment {
         contactList = (LinearLayout) findViewById(R.id.profile_list_contacts);
         devicesList = (LinearLayout) findViewById(R.id.profile_list_devices);
         progressView = (CircularProgressView) findViewById(R.id.profile_progress);
+        viewsReady();
 
-        fab.setImageDrawable(AppCompatResources.getDrawable(App.getContext(), R.drawable.contact_qms));
+        fab.setImageDrawable(App.getAppDrawable(R.drawable.contact_qms));
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         collapsingToolbarLayout.setExpandedTitleColor(Color.TRANSPARENT);
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.TRANSPARENT);
@@ -157,6 +158,7 @@ public class ProfileFragment extends TabFragment {
                         .subscribe(this::onNoteSave)
         );
     }
+
 
     private void onNoteSave(boolean b) {
         Toast.makeText(getContext(), b ? "Запись сохранена" : "Возникла ошибка, запись не сохранена", Toast.LENGTH_SHORT).show();
@@ -218,6 +220,7 @@ public class ProfileFragment extends TabFragment {
 
     private void onProfileLoad(ProfileModel profile) {
         if (profile.getNick() == null) return;
+        long time = System.currentTimeMillis();
         ImageLoader.getInstance().displayImage(profile.getAvatar(), avatar, new ImageLoadingListener() {
 
             @Override
@@ -232,18 +235,12 @@ public class ProfileFragment extends TabFragment {
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                 //Нужен handler, иначе при повторном создании фрагмента неверно вычисляется высота вьюхи
                 new Handler().post(() -> {
-                    if(!isAdded())
+                    if (!isAdded())
                         return;
-                    toolbarBackground.setBackground(new BitmapDrawable(getResources(), centerCrop(loadedImage, view.getWidth(), view.getHeight(), 1)));
-                    AlphaAnimation animation1 = new AlphaAnimation(0, 1);
-                    animation1.setDuration(500);
-                    animation1.setFillAfter(true);
-                    toolbarBackground.startAnimation(animation1);
-                    blur(loadedImage, toolbarBackground, imageUri);
+                    blur(loadedImage);
                 });
                 AlphaAnimation animation1 = new AlphaAnimation(1, 0);
                 animation1.setDuration(500);
-                //animation1.setStartOffset(5000);
                 animation1.setFillAfter(true);
                 progressView.startAnimation(animation1);
                 new Handler().postDelayed(() -> {
@@ -257,8 +254,7 @@ public class ProfileFragment extends TabFragment {
             }
         });
 
-        findViewById(R.id.profile_block_counts).setVisibility(View.VISIBLE);
-        findViewById(R.id.profile_block_information).setVisibility(View.VISIBLE);
+
         setTitle(profile.getNick());
         nick.setText(profile.getNick());
         group.setText(profile.getGroup());
@@ -269,7 +265,7 @@ public class ProfileFragment extends TabFragment {
             Log.d("kek", "view sign setted");
             sign.setMovementMethod(LinkMovementMethod.getInstance());
         }
-
+        Log.d("kek", "check 1 "+(System.currentTimeMillis()-time));
         if (profile.getPosts() != null)
             addCountItem(getContext().getString(R.string.profile_item_text_posts), profile.getPosts());
         if (profile.getTopics() != null)
@@ -282,7 +278,7 @@ public class ProfileFragment extends TabFragment {
             addCountItem(getContext().getString(R.string.profile_item_text_site_posts), profile.getSitePosts());
         if (profile.getComments() != null)
             addCountItem(getContext().getString(R.string.profile_item_text_comments), profile.getComments());
-
+        Log.d("kek", "check 2 "+(System.currentTimeMillis()-time));
         if (profile.getGender() != null)
             addInfoItem(getContext().getString(R.string.profile_item_text_gender), profile.getGender());
         if (profile.getBirthDay() != null)
@@ -298,16 +294,17 @@ public class ProfileFragment extends TabFragment {
             addInfoItem(getContext().getString(R.string.profile_item_text_last_online), profile.getOnlineDate());
         if (profile.getAlerts() != null)
             addInfoItem(getContext().getString(R.string.profile_item_text_alerts), profile.getAlerts());
-
+        Log.d("kek", "check 3 "+(System.currentTimeMillis()-time));
         if (profile.getContacts().size() > 0) {
-            fab.setVisibility(View.VISIBLE);
             fab.setOnClickListener(view1 -> IntentHandler.handle(profile.getContacts().get(0).first));
+            fab.setVisibility(View.VISIBLE);
         }
         if (profile.getContacts().size() > 1) {
             for (int i = 1; i < profile.getContacts().size(); i++)
                 addContactItem(getIconRes(profile.getContacts().get(i).second), profile.getContacts().get(i).first);
             findViewById(R.id.profile_block_contacts).setVisibility(View.VISIBLE);
         }
+        Log.d("kek", "check 4 "+(System.currentTimeMillis()-time));
         if (profile.getDevices().size() > 0) {
             for (Pair<String, String> device : profile.getDevices()) {
                 addDeviceItem(device.second, device.first);
@@ -325,6 +322,9 @@ public class ProfileFragment extends TabFragment {
             findViewById(R.id.profile_block_about).setVisibility(View.VISIBLE);
         }
 
+        findViewById(R.id.profile_block_counts).setVisibility(View.VISIBLE);
+        findViewById(R.id.profile_block_information).setVisibility(View.VISIBLE);
+        Log.d("kek", "full time "+(System.currentTimeMillis()-time));
     }
 
     class CountItem extends LinearLayout {
@@ -368,7 +368,7 @@ public class ProfileFragment extends TabFragment {
                 int px = dpToPx(20);
                 findViewById(R.id.icon).setPadding(px, px, px, px);
             }
-            ((ImageView) findViewById(R.id.icon)).setImageDrawable(AppCompatResources.getDrawable(App.getContext(), iconRes));
+            ((ImageView) findViewById(R.id.icon)).setImageDrawable(App.getAppDrawable(iconRes));
         }
     }
 
@@ -384,16 +384,26 @@ public class ProfileFragment extends TabFragment {
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    private void blur(Bitmap bkg, ImageView view, String url) {
-        long startMs = System.currentTimeMillis();
+    private void blur(Bitmap bkg) {
         float scaleFactor = 3;
         int radius = 4;
-        Bitmap overlay = centerCrop(bkg, view.getWidth(), view.getHeight(), scaleFactor);
-        Log.d("kek", "sizes " + overlay.getWidth() + " : " + overlay.getHeight() + " : " + view.getWidth() + " : " + view.getHeight() + " : " + url);
-        BlurUtil.fastBlur(overlay, radius, true);
-        //overlay = BlurUtil.rsBlur(getContext(), overlay, radius);
-        view.setBackground(new BitmapDrawable(getResources(), overlay));
-        Log.d("kek", "time blur " + (System.currentTimeMillis() - startMs + "ms"));
+
+        getCompositeSubscription().add(
+                Observable.create((Observable.OnSubscribe<Bitmap>) subscriber -> {
+                    Bitmap overlay = centerCrop(bkg, toolbarBackground.getWidth(), toolbarBackground.getHeight(), scaleFactor);
+                    BlurUtil.fastBlur(overlay, radius, true);
+                    subscriber.onNext(overlay);
+                })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(bitmap -> {
+                            AlphaAnimation animation1 = new AlphaAnimation(0, 1);
+                            animation1.setDuration(500);
+                            animation1.setFillAfter(true);
+                            toolbarBackground.setBackground(new BitmapDrawable(getResources(), bitmap));
+                            toolbarBackground.startAnimation(animation1);
+                        })
+        );
     }
 
     public static Bitmap centerCrop(final Bitmap src, int w, int h, float scaleFactor) {

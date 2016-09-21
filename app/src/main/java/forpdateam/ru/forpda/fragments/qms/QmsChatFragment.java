@@ -12,12 +12,9 @@ import android.widget.Toast;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.trello.rxlifecycle.FragmentEvent;
 
-import java.util.ArrayList;
-
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.qms.models.QmsChatItem;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsChatAdapter;
@@ -60,13 +57,13 @@ public class QmsChatFragment extends TabFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         initBaseView(inflater, container);
         inflater.inflate(R.layout.fragment_qms_chat, (ViewGroup) view.findViewById(R.id.fragment_content), true);
-        tryShowAvatar();
-        //listView = (ListView) findViewById(R.id.qms_chat);
         recyclerView = (RecyclerView) findViewById(R.id.qms_chat);
+        viewsReady();
+        tryShowAvatar();
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
-        llm.setStackFromEnd(true);
+        //llm.setStackFromEnd(true);
         recyclerView.setLayoutManager(llm);
         return view;
     }
@@ -105,8 +102,9 @@ public class QmsChatFragment extends TabFragment {
         if (avatarUrl == null) {
             avatarUrl = chat.getAvatarUrl();
             tryShowAvatar();
-            TabManager.getInstance().remove(getParentTag());
+            //TabManager.getInstance().remove(getParentTag());
         }
+        recyclerView.scrollToPosition(adapter.getItemCount()-1);
     }
 
 }

@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -173,7 +172,7 @@ public class TabManager {
         update();
 
         TabFragment parent = null;
-        if (tabFragment.getParentTag() != null && tabFragment.getParentTag().equals(""))
+        if (tabFragment.getParentTag() != null && !tabFragment.getParentTag().equals(""))
             parent = findTabByTag(tabFragment.getParentTag());
 
         if (parent == null) {

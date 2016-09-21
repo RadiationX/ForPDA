@@ -2,10 +2,10 @@ package forpdateam.ru.forpda.fragments.qms;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.content.res.AppCompatResources;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -40,6 +40,7 @@ public class QmsContactsFragment extends TabFragment {
         return defaultTitle;
     }
 
+    private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
     private QmsContactsAdapter adapter;
     private QmsContactsAdapter.OnItemClickListener onItemClickListener =
@@ -50,7 +51,15 @@ public class QmsContactsFragment extends TabFragment {
                 args.putString(QmsThemesFragment.USER_AVATAR_ARG, adapter1.getItem(position).getAvatar());
                 TabManager.getInstance().add(new TabFragment.Builder<>(QmsThemesFragment.class).setArgs(args).build());
             };
-    //private QmsContactsAdapter.OnLongItemClickListener onLongItemClickListener = (view1, position, adapter1) -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + adapter1.getItem(position).getId());
+    private QmsContactsAdapter.OnLongItemClickListener onLongItemClickListener = (view1, position, adapter1) -> {
+        CharSequence[] items = {"Удалить"};
+        new AlertDialog.Builder(getContext())
+                .setItems(items, (dialog, which) -> {
+                    if (which == 0) {
+                        deleteDialog(adapter1.getItem(position).getId());
+                    }
+                }).show();
+    };
 
     @Nullable
     @Override
@@ -59,13 +68,12 @@ public class QmsContactsFragment extends TabFragment {
         initFabBehavior();
         setWhiteBackground();
         inflater.inflate(R.layout.fragment_qms_contacts, (ViewGroup) view.findViewById(R.id.fragment_content), true);
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         recyclerView = (RecyclerView) findViewById(R.id.qms_list_contacts);
+        viewsReady();
+        refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        toolbar.getMenu().add(R.string.refresh).setOnMenuItemClickListener(menuItem -> {
-            loadData();
-            return false;
-        });
         toolbar.inflateMenu(R.menu.qms_contacts_menu);
         MenuItem searchItem = toolbar.getMenu().findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
@@ -74,7 +82,7 @@ public class QmsContactsFragment extends TabFragment {
         if (null != searchManager) {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getMainActivity().getComponentName()));
         }
-        searchView.setIconifiedByDefault(false);
+        searchView.setIconifiedByDefault(true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             private ArrayList<QmsContact> searchContacts = new ArrayList<>();
             private QmsContactsAdapter searchAdapter;
@@ -96,7 +104,7 @@ public class QmsContactsFragment extends TabFragment {
                     }
                     searchAdapter = new QmsContactsAdapter(searchContacts);
                     searchAdapter.setOnItemClickListener(onItemClickListener);
-                    //adapter.setOnLongItemClickListener(onLongItemClickListener);
+                    adapter.setOnLongItemClickListener(onLongItemClickListener);
                     recyclerView.setAdapter(searchAdapter);
                 } else {
                     recyclerView.setAdapter(adapter);
@@ -106,7 +114,7 @@ public class QmsContactsFragment extends TabFragment {
             }
         });
 
-        fab.setImageDrawable(AppCompatResources.getDrawable(App.getContext(), R.drawable.ic_create_white_24dp));
+        fab.setImageDrawable(App.getAppDrawable(R.drawable.ic_create_white_24dp));
         fab.setOnClickListener(view1 -> TabManager.getInstance().add(new TabFragment.Builder<>(QmsNewThemeFragment.class).build()));
         fab.setVisibility(View.VISIBLE);
         return view;
@@ -126,6 +134,8 @@ public class QmsContactsFragment extends TabFragment {
 
     @Override
     public void loadData() {
+        if (refreshLayout != null)
+            refreshLayout.setRefreshing(true);
         getCompositeSubscription().add(Api.Qms().getContactList()
                 .onErrorReturn(throwable -> {
                     ErrorHandler.handle(this, throwable, view1 -> loadData());
@@ -138,12 +148,32 @@ public class QmsContactsFragment extends TabFragment {
                 }));
     }
 
+    public void deleteDialog(String mid) {
+        if (refreshLayout != null)
+            refreshLayout.setRefreshing(true);
+        getCompositeSubscription().add(Api.Qms().deleteDialog(mid)
+                .onErrorReturn(throwable -> {
+                    ErrorHandler.handle(this, throwable, view1 -> loadData());
+                    return "";
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onDeletedDialog, throwable -> {
+                    Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                }));
+    }
+
     private void onLoadContacts(ArrayList<QmsContact> contacts) {
         Log.d("kek", "contacts loaded");
         adapter = new QmsContactsAdapter(contacts);
-        //adapter.setOnLongItemClickListener(onLongItemClickListener);
+        adapter.setOnLongItemClickListener(onLongItemClickListener);
         adapter.setOnItemClickListener(onItemClickListener);
         recyclerView.setAdapter(adapter);
+        refreshLayout.setRefreshing(false);
+    }
+
+    private void onDeletedDialog(String res) {
+        loadData();
     }
 
 }
