@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.fragments.qms;
 
-import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,13 +13,11 @@ import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import java.util.ArrayList;
-
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.qms.models.QmsTheme;
+import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsThemesAdapter;
 import forpdateam.ru.forpda.utils.ErrorHandler;
@@ -31,10 +29,12 @@ import rx.schedulers.Schedulers;
  * Created by radiationx on 25.08.16.
  */
 public class QmsThemesFragment extends TabFragment {
+    public final static String defaultTitle = "Диалоги";
     public final static String USER_ID_ARG = "USER_ID_ARG";
     public final static String USER_AVATAR_ARG = "USER_AVATAR_ARG";
     private String userId;
-    private String avatar;
+    private String avatarUrl;
+    private String userNick;
     private RecyclerView recyclerView;
     private QmsThemesAdapter adapter;
     private QmsThemesAdapter.OnItemClickListener onItemClickListener =
@@ -43,17 +43,22 @@ public class QmsThemesFragment extends TabFragment {
                 args.putString(TabFragment.TITLE_ARG, adapter1.getItem(position).getName());
                 args.putString(TabFragment.SUBTITLE_ARG, getTitle());
                 args.putString(QmsChatFragment.USER_ID_ARG, userId);
-                args.putString(QmsChatFragment.USER_AVATAR_ARG, avatar);
+                args.putString(QmsChatFragment.USER_AVATAR_ARG, avatarUrl);
                 args.putString(QmsChatFragment.THEME_ID_ARG, adapter1.getItem(position).getId());
                 TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).setArgs(args).build());
             };
+
+    @Override
+    public String getDefaultTitle() {
+        return defaultTitle;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             userId = getArguments().getString(USER_ID_ARG);
-            avatar = getArguments().getString(USER_AVATAR_ARG);
+            avatarUrl = getArguments().getString(USER_AVATAR_ARG);
         }
     }
 
@@ -64,9 +69,7 @@ public class QmsThemesFragment extends TabFragment {
         initFabBehavior();
         setWhiteBackground();
         inflater.inflate(R.layout.fragment_qms_themes, (ViewGroup) view.findViewById(R.id.fragment_content), true);
-        ImageLoader.getInstance().displayImage(avatar, toolbarImageView);
-        toolbarImageView.setVisibility(View.VISIBLE);
-        toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + userId));
+        tryShowAvatar();
         recyclerView = (RecyclerView) findViewById(R.id.qms_list_themes);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -75,11 +78,21 @@ public class QmsThemesFragment extends TabFragment {
         fab.setOnClickListener(view1 -> {
             Bundle args = new Bundle();
             args.putString(QmsNewThemeFragment.USER_ID_ARG, userId);
-            args.putString(QmsNewThemeFragment.USER_NICK_ARG, getTitle());
+            args.putString(QmsNewThemeFragment.USER_NICK_ARG, userNick);
             TabManager.getInstance().add(new TabFragment.Builder<>(QmsNewThemeFragment.class).setArgs(args).build());
         });
         fab.setVisibility(View.VISIBLE);
         return view;
+    }
+
+    private void tryShowAvatar() {
+        if (avatarUrl != null) {
+            ImageLoader.getInstance().displayImage(avatarUrl, toolbarImageView);
+            toolbarImageView.setVisibility(View.VISIBLE);
+            toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + userId));
+        } else {
+            toolbarImageView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -87,7 +100,7 @@ public class QmsThemesFragment extends TabFragment {
         getCompositeSubscription().add(Api.Qms().getThemesList(userId)
                 .onErrorReturn(throwable -> {
                     ErrorHandler.handle(this, throwable, view1 -> loadData());
-                    return new ArrayList<>();
+                    return new QmsThemes();
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -96,11 +109,23 @@ public class QmsThemesFragment extends TabFragment {
                 }));
     }
 
-    private void onLoadThemes(ArrayList<QmsTheme> qmsThemes) {
-
-        adapter = new QmsThemesAdapter(qmsThemes);
+    private void onLoadThemes(QmsThemes qmsThemes) {
+        userNick = qmsThemes.getNick();
+        if (qmsThemes.getThemes().size() == 0 && userNick != null) {
+            Bundle args = new Bundle();
+            args.putString(QmsNewThemeFragment.USER_ID_ARG, userId);
+            args.putString(QmsNewThemeFragment.USER_NICK_ARG, userNick);
+            TabManager.getInstance().add(new TabFragment.Builder<>(QmsNewThemeFragment.class).setArgs(args).build());
+            new Handler().postDelayed(() -> TabManager.getInstance().remove(getTag()), 500);
+        }
+        adapter = new QmsThemesAdapter(qmsThemes.getThemes());
         adapter.setOnItemClickListener(onItemClickListener);
         recyclerView.setAdapter(adapter);
+        setTitle(createTitle(userNick));
+    }
+
+    public static String createTitle(String userNick) {
+        return defaultTitle.concat(" с ").concat(userNick);
     }
 
 }

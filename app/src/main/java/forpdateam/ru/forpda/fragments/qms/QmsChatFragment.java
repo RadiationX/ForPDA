@@ -105,8 +105,8 @@ public class QmsChatFragment extends TabFragment {
         if (avatarUrl == null) {
             avatarUrl = chat.getAvatarUrl();
             tryShowAvatar();
+            TabManager.getInstance().remove(getParentTag());
         }
-        TabManager.getInstance().remove(getParentTag());
     }
 
 }

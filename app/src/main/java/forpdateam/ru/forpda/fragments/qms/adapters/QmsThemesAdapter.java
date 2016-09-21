@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.qms.models.QmsTheme;
@@ -16,7 +17,7 @@ import forpdateam.ru.forpda.api.qms.models.QmsTheme;
  */
 public class QmsThemesAdapter extends RecyclerView.Adapter<QmsThemesAdapter.ViewHolder> {
 
-    private ArrayList<QmsTheme> qmsContacts = new ArrayList<>();
+    private List<QmsTheme> qmsContacts;
 
     private OnItemClickListener itemClickListener;
     private OnLongItemClickListener longItemClickListener;
@@ -66,7 +67,7 @@ public class QmsThemesAdapter extends RecyclerView.Adapter<QmsThemesAdapter.View
         }
     }
 
-    public QmsThemesAdapter(ArrayList<QmsTheme> qmsContacts) {
+    public QmsThemesAdapter(List<QmsTheme> qmsContacts) {
         this.qmsContacts = qmsContacts;
     }
 

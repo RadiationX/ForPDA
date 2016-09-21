@@ -45,7 +45,7 @@ public class QmsContactsFragment extends TabFragment {
     private QmsContactsAdapter.OnItemClickListener onItemClickListener =
             (view1, position, adapter1) -> {
                 Bundle args = new Bundle();
-                args.putString(TabFragment.TITLE_ARG, adapter1.getItem(position).getNick());
+                args.putString(TabFragment.TITLE_ARG, QmsThemesFragment.createTitle(adapter1.getItem(position).getNick()));
                 args.putString(QmsThemesFragment.USER_ID_ARG, adapter1.getItem(position).getId());
                 args.putString(QmsThemesFragment.USER_AVATAR_ARG, adapter1.getItem(position).getAvatar());
                 TabManager.getInstance().add(new TabFragment.Builder<>(QmsThemesFragment.class).setArgs(args).build());

@@ -13,6 +13,7 @@ import forpdateam.ru.forpda.api.qms.models.QmsChatItem;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsTheme;
+import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import forpdateam.ru.forpda.client.Client;
 import rx.Observable;
 import rx.Subscriber;
@@ -43,10 +44,12 @@ public class Qms {
         return list;
     }
 
-    private ArrayList<QmsTheme> themesList(final String id) throws Exception {
-        ArrayList<QmsTheme> list = new ArrayList<>();
-        final String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=qms&mid=" + id);
-        final Matcher matcher = threadPattern.matcher(response);
+    private QmsThemes themesList(final String id) throws Exception {
+        QmsThemes qmsThemes = new QmsThemes();
+        Map<String, String> headers = new HashMap<>();
+        headers.put("xhr", "body");
+        final String response = Client.getInstance().post("http://4pda.ru/forum/index.php?act=qms&mid=" + id, headers);
+        Matcher matcher = threadPattern.matcher(response);
         QmsTheme thread;
         while (matcher.find()) {
             thread = new QmsTheme();
@@ -58,15 +61,24 @@ public class Qms {
                 thread.setCountMessages(nameMatcher.group(2));
                 thread.setCountNew(nameMatcher.group(3));
             }
-            list.add(thread);
+            qmsThemes.addTheme(thread);
         }
-        return list;
+        matcher = Pattern.compile("<div class=\"nav\">[\\s\\S]*?<b>(<a[^>]*?href=\"[^\"]*?showuser[^\"]*?\"[^>]*?>([\\s\\S]*?)</a>|[^<]*?)</b>").matcher(response);
+        if (matcher.find()) {
+            if (matcher.group(2) != null) {
+                qmsThemes.setNick(matcher.group(2));
+            } else {
+                qmsThemes.setNick(matcher.group(1));
+            }
+        }
+        return qmsThemes;
     }
 
     private QmsChatModel chatItemsList(final String userId, final String themeId) throws Exception {
         QmsChatModel chat = new QmsChatModel();
-
-        final String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=qms&mid=" + userId + "&t=" + themeId);
+        Map<String, String> headers = new HashMap<>();
+        headers.put("xhr", "body");
+        final String response = Client.getInstance().post("http://4pda.ru/forum/index.php?act=qms&mid=" + userId + "&t=" + themeId, headers);
         Matcher matcher = chatPattern.matcher(response);
         QmsChatItem item;
         while (matcher.find()) {
@@ -131,10 +143,10 @@ public class Qms {
         });
     }
 
-    public Observable<ArrayList<QmsTheme>> getThemesList(final String id) {
-        return Observable.create(new Observable.OnSubscribe<ArrayList<QmsTheme>>() {
+    public Observable<QmsThemes> getThemesList(final String id) {
+        return Observable.create(new Observable.OnSubscribe<QmsThemes>() {
             @Override
-            public void call(Subscriber<? super ArrayList<QmsTheme>> subscriber) {
+            public void call(Subscriber<? super QmsThemes> subscriber) {
                 try {
                     subscriber.onNext(themesList(id));
                     subscriber.onCompleted();

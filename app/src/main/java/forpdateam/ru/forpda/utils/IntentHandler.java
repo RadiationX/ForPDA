@@ -2,15 +2,19 @@ package forpdateam.ru.forpda.utils;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.TabManager;
+import forpdateam.ru.forpda.api.qms.models.QmsTheme;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
+import forpdateam.ru.forpda.fragments.qms.QmsChatFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
+import forpdateam.ru.forpda.fragments.qms.QmsThemesFragment;
 import forpdateam.ru.forpda.test.ThemeFragment;
 
 /**
@@ -62,8 +66,9 @@ public class IntentHandler {
     }
 
     public static boolean handle(String url, Bundle args) {
+        url = Html.fromHtml(url).toString();
         Uri uri = Uri.parse(url.toLowerCase());
-        Log.d("kek", "HANDLE URL " + uri.toString());
+        Log.d("kek", "HANDLE URL " + uri.toString()+" : "+url);
         if (uri.getHost() != null && uri.getHost().matches("4pda.ru")) {
             if(args==null) args = new Bundle();
             switch (uri.getPathSegments().get(0)) {
@@ -128,14 +133,20 @@ public class IntentHandler {
         if (param != null) {
             switch (param) {
                 case "qms":
+                    Log.d("kek", uri.getQueryParameter("mid"));
                     if (uri.getQueryParameter("mid") == null) {
                         run("qms contacts");
                         TabManager.getInstance().add(new TabFragment.Builder<>(QmsContactsFragment.class).build());
                     } else {
                         if (uri.getQueryParameter("t") != null) {
                             run("qms chat " + uri.getQueryParameter("mid") + " : " + uri.getQueryParameter("t"));
+                            args.putString(QmsChatFragment.THEME_ID_ARG, uri.getQueryParameter("t"));
+                            args.putString(QmsChatFragment.USER_ID_ARG, uri.getQueryParameter("mid"));
+                            TabManager.getInstance().add(new TabFragment.Builder<>(QmsContactsFragment.class).setArgs(args).build());
                         } else {
                             run("qms thread " + uri.getQueryParameter("mid"));
+                            args.putString(QmsThemesFragment.USER_ID_ARG, uri.getQueryParameter("mid"));
+                            TabManager.getInstance().add(new TabFragment.Builder<>(QmsThemesFragment.class).setArgs(args).build());
                         }
                     }
                     return true;
