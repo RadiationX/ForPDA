@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
 import forpdateam.ru.forpda.test.AuthFragment;
@@ -85,6 +86,7 @@ public class MenuDrawer {
         menuItems.add(new MenuItem<>("Profile", android.R.drawable.ic_input_add, ProfileFragment.class));
         if (Api.Auth().getState()) {
             menuItems.add(new MenuItem<>("QMS Contacts", android.R.drawable.ic_input_add, QmsContactsFragment.class));
+            menuItems.add(new MenuItem<>("Favorites", android.R.drawable.ic_input_add, FavoritesFragment.class));
         }
         menuItems.add(new MenuItem<>("Theme", android.R.drawable.ic_input_add, ThemeFragment.class));
     }

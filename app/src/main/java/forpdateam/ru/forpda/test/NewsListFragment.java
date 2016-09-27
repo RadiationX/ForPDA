@@ -46,6 +46,7 @@ public class NewsListFragment extends TabFragment {
         initBaseView(inflater, container);
         inflater.inflate(R.layout.activity_newslist, (ViewGroup) view.findViewById(R.id.fragment_content), true);
         text = (TextView) findViewById(R.id.textView2);
+        viewsReady();
         date = new Date();
         return view;
     }

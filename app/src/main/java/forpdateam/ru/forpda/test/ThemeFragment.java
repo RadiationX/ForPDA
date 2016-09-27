@@ -42,6 +42,7 @@ public class ThemeFragment extends TabFragment {
         inflater.inflate(R.layout.activity_newslist, (ViewGroup) view.findViewById(R.id.fragment_content), true);
         //toolbar = (Toolbar) findViewById(R.id.toolbar);
         text = (TextView) findViewById(R.id.textView2);
+        viewsReady();
         date = new Date();
         //findViewById(R.id.search_field).setVisibility(View.VISIBLE);
         /*searchText = (EditText) findViewById(R.id.search);

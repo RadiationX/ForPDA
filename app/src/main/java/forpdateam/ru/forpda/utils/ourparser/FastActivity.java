@@ -56,7 +56,7 @@ public class FastActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //parse(html);
+        //_getFav(html);
     }
 
     private Pattern pattern = Pattern.compile("(<div class=\"article-entry\"[^>]*?>[\\s\\S]*?</div>)[^<]*?<footer");
@@ -82,9 +82,9 @@ public class FastActivity extends AppCompatActivity {
                 public void run() {
 
                     final long time = System.currentTimeMillis();
-                    //Document document = Document.parse(Jsoup.parse(finalHtml).body().html());
+                    //Document document = Document._getFav(Jsoup._getFav(finalHtml).body().html());
                     Document document = Document.parse(finalHtml);
-                    Log.d("kek", "time parse: " + Math.floor((System.currentTimeMillis() - time) * coef));
+                    Log.d("kek", "time _getFav: " + Math.floor((System.currentTimeMillis() - time) * coef));
                     final long time2 = System.currentTimeMillis();
                     list.addView(recurseUi(document.getRoot()));
                     Log.d("kek", "time recurse ui:  " + Math.floor((System.currentTimeMillis() - time2) * coef));

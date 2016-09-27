@@ -26,6 +26,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="4dp"
         android:layout_marginEnd="16dp"
+        android:textColor="@color/text_second_color"
         android:text="23:00" />
 
 </RelativeLayout>

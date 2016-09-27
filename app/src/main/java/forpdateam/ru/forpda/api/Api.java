@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.api;
 
 import forpdateam.ru.forpda.api.auth.Auth;
+import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.newslist.NewsList;
 import forpdateam.ru.forpda.api.profile.Profile;
 import forpdateam.ru.forpda.api.qms.Qms;
@@ -16,6 +17,7 @@ public class Api {
     private static NewsList newsListApi = null;
     private static Profile profileApi = null;
     private static Theme themeApi = null;
+    private static Favorites favoritesApi = null;
 
     public Api() {
         INSTANCE = this;
@@ -48,6 +50,11 @@ public class Api {
     public static Theme Theme() {
         if (themeApi == null) themeApi = new Theme();
         return themeApi;
+    }
+
+    public static Favorites Favorites() {
+        if (favoritesApi == null) favoritesApi = new Favorites();
+        return favoritesApi;
     }
 
     /*public static Api get() {

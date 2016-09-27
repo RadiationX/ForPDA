@@ -53,6 +53,7 @@ public class AuthFragment extends TabFragment{
         password = (EditText) findViewById(R.id.editText2);
         captcha = (EditText) findViewById(R.id.editText3);
         captchaImage = (ImageView) findViewById(R.id.captchaImage);
+        viewsReady();
         send = (Button) findViewById(R.id.button2);
         send.setOnClickListener(view -> tryLogin());
         return view;
