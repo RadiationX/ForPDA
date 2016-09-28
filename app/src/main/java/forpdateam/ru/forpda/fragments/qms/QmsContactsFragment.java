@@ -26,8 +26,9 @@ import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsContactsAdapter;
 import forpdateam.ru.forpda.utils.ErrorHandler;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 25.08.16.
@@ -136,7 +137,7 @@ public class QmsContactsFragment extends TabFragment {
     public void loadData() {
         if (refreshLayout != null)
             refreshLayout.setRefreshing(true);
-        getCompositeSubscription().add(Api.Qms().getContactList()
+        getCompositeDisposable().add(Api.Qms().getContactList()
                 .onErrorReturn(throwable -> {
                     ErrorHandler.handle(this, throwable, view1 -> loadData());
                     return new ArrayList<>();
@@ -151,13 +152,14 @@ public class QmsContactsFragment extends TabFragment {
     public void deleteDialog(String mid) {
         if (refreshLayout != null)
             refreshLayout.setRefreshing(true);
-        getCompositeSubscription().add(Api.Qms().deleteDialog(mid)
+        getCompositeDisposable().add(Api.Qms().deleteDialog(mid)
                 .onErrorReturn(throwable -> {
                     ErrorHandler.handle(this, throwable, view1 -> loadData());
                     return "";
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .compose(this.getLifeCycle(BackpressureStrategy.LATEST))
                 .subscribe(this::onDeletedDialog, throwable -> {
                     Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
                 }));

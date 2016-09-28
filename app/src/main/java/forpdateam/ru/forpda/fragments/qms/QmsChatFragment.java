@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.trello.rxlifecycle.FragmentEvent;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
@@ -18,8 +17,8 @@ import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsChatAdapter;
 import forpdateam.ru.forpda.utils.IntentHandler;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 25.08.16.
@@ -79,14 +78,13 @@ public class QmsChatFragment extends TabFragment {
 
     @Override
     public void loadData() {
-        getCompositeSubscription().add(Api.Qms().getChat(userId, themeId)
+        getCompositeDisposable().add(Api.Qms().getChat(userId, themeId)
                 .onErrorReturn(throwable -> {
                     throwable.printStackTrace();
                     return new QmsChatModel();
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(this.bindUntilEvent(FragmentEvent.PAUSE))
                 .subscribe(this::onLoadChat, throwable -> {
                     Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
                 }));

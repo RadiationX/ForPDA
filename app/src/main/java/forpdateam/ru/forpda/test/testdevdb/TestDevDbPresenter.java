@@ -5,8 +5,8 @@ import android.support.annotation.NonNull;
 import forpdateam.ru.forpda.api.devdb.ApiImpl;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.mvp.MvpPresenter;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by isanechek on 04.08.16.

@@ -45,9 +45,11 @@ import forpdateam.ru.forpda.utils.BlurUtil;
 import forpdateam.ru.forpda.utils.ErrorHandler;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.ourparser.LinkMovementMethod;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 03.08.16.
@@ -134,7 +136,7 @@ public class ProfileFragment extends TabFragment {
 
     @Override
     public void loadData() {
-        getCompositeSubscription().add(
+        getCompositeDisposable().add(
                 Api.Profile().get(getTabUrl())
                         .onErrorReturn(throwable -> {
                             ErrorHandler.handle(this, throwable, view1 -> loadData());
@@ -147,7 +149,7 @@ public class ProfileFragment extends TabFragment {
     }
 
     public void saveNote() {
-        getCompositeSubscription().add(
+        getCompositeDisposable().add(
                 Api.Profile().saveNoteRx(noteText.getText().toString())
                         .onErrorReturn(throwable -> {
                             ErrorHandler.handle(this, throwable, view1 -> loadData());
@@ -155,6 +157,7 @@ public class ProfileFragment extends TabFragment {
                         })
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
+                        .compose(this.getLifeCycle(BackpressureStrategy.LATEST))
                         .subscribe(this::onNoteSave)
         );
     }
@@ -388,8 +391,8 @@ public class ProfileFragment extends TabFragment {
         float scaleFactor = 3;
         int radius = 4;
 
-        getCompositeSubscription().add(
-                Observable.create((Observable.OnSubscribe<Bitmap>) subscriber -> {
+        getCompositeDisposable().add(
+                Observable.create((ObservableOnSubscribe<Bitmap>) subscriber -> {
                     Bitmap overlay = centerCrop(bkg, toolbarBackground.getWidth(), toolbarBackground.getHeight(), scaleFactor);
                     BlurUtil.fastBlur(overlay, radius, true);
                     subscriber.onNext(overlay);

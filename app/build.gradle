@@ -67,13 +67,16 @@ android {
         targetCompatibility 1.8
         sourceCompatibility 1.8
     }
+    packagingOptions {
+        pickFirst 'META-INF/rxjava.properties'
+    }
 }
 
 ext {
     supportLibVersion = '24.2.1'
     okHttpVersion = '3.4.1'
     rxbindingVersion = '0.4.0'
-    rxlifecycleVersion = '0.6.1'
+    rxlifecycleVersion = '0.8.0'
 }
 
 dependencies {
@@ -87,13 +90,15 @@ dependencies {
     compile "com.squareup.okhttp3:okhttp:${okHttpVersion}"
     compile "com.squareup.okhttp3:okhttp-urlconnection:${okHttpVersion}"
     compile 'com.annimon:stream:1.0.9'
-    compile 'io.reactivex:rxandroid:1.2.1'
-    compile 'io.reactivex:rxjava:1.1.6'
-    compile "com.jakewharton.rxbinding:rxbinding:${rxbindingVersion}"
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.0-RC1'
+    compile 'io.reactivex.rxjava2:rxjava:2.0.0-RC3'
+    // Этот iterop нужен пока мучачес и трелло необновит свое творение до нового rx
+    compile 'com.github.VictorAlbertos:RxLifecycleInterop:0.0.2'
+//    compile "com.jakewharton.rxbinding:rxbinding:${rxbindingVersion}"
     compile "com.trello:rxlifecycle:${rxlifecycleVersion}"
     compile "com.trello:rxlifecycle-components:${rxlifecycleVersion}"
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
-    compile 'org.jsoup:jsoup:1.9.1'
+    compile 'org.jsoup:jsoup:1.9.2'
     compile 'com.github.rahatarmanahmed:circularprogressview:2.5.0'
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile group: 'org.ccil.cowan.tagsoup', name: 'tagsoup', version: '1.2'

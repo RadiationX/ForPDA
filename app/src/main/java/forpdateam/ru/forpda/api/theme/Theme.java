@@ -9,8 +9,7 @@ import java.util.regex.Pattern;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.client.Client;
-import rx.Observable;
-import rx.Subscriber;
+import io.reactivex.Observable;
 
 /**
  * Created by radiationx on 04.08.16.
@@ -83,15 +82,12 @@ public class Theme {
     }
 
     public Observable<ThemePage> getPage(final String url) {
-        return Observable.create(new Observable.OnSubscribe<ThemePage>() {
-            @Override
-            public void call(Subscriber<? super ThemePage> subscriber) {
-                try {
-                    subscriber.onNext(get(url));
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
+        return Observable.create(subscriber -> {
+            try {
+                subscriber.onNext(get(url));
+                subscriber.onComplete();
+            } catch (Exception e) {
+                subscriber.onError(e);
             }
         });
     }

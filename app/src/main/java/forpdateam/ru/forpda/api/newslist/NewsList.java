@@ -1,14 +1,15 @@
 package forpdateam.ru.forpda.api.newslist;
 
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.newslist.models.NewsItem;
 import forpdateam.ru.forpda.client.Client;
-import rx.Observable;
-import rx.Subscriber;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 
 /**
  * Created by radiationx on 31.07.16.
@@ -44,16 +45,14 @@ public class NewsList {
     }
 
     public Observable<ArrayList<NewsItem>> getRx(final String url) {
-        return Observable.create(new Observable.OnSubscribe<ArrayList<NewsItem>>() {
-            @Override
-            public void call(Subscriber<? super ArrayList<NewsItem>> subscriber) {
-                try {
-                    subscriber.onNext(Api.NewsList().get(url));
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
-            }
+        return Observable.create(s -> {
+           try {
+               s.onNext(Api.NewsList().get(url));
+               s.onComplete();
+           } catch (Exception e) {
+               s.onError(e);
+           }
         });
+
     }
 }

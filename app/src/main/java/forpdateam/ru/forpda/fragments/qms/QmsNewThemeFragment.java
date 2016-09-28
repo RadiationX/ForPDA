@@ -14,8 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import com.trello.rxlifecycle.FragmentEvent;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,8 +22,9 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 20.09.16.
@@ -103,14 +102,14 @@ public class QmsNewThemeFragment extends TabFragment {
         } else if (messField.getText().toString().isEmpty()) {
             Toast.makeText(getContext(), "Введите сообщение", Toast.LENGTH_SHORT).show();
         } else {
-            getCompositeSubscription().add(Api.Qms().sendNewTheme(userNick, titleField.getText().toString(), messField.getText().toString())
+            getCompositeDisposable().add(Api.Qms().sendNewTheme(userNick, titleField.getText().toString(), messField.getText().toString())
                     .onErrorReturn(throwable -> {
                         throwable.printStackTrace();
                         return "";
                     })
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .compose(this.bindUntilEvent(FragmentEvent.PAUSE))
+                    .compose(this.getLifeCycle(BackpressureStrategy.LATEST))
                     .subscribe(this::onCreateNewTheme, throwable -> {
                         Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
                     }));
@@ -118,14 +117,13 @@ public class QmsNewThemeFragment extends TabFragment {
     }
 
     private void searchUser(String nick) {
-        getCompositeSubscription().add(Api.Qms().search(nick)
+        getCompositeDisposable().add(Api.Qms().search(nick)
                 .onErrorReturn(throwable -> {
                     throwable.printStackTrace();
                     return new String[]{};
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(this.bindUntilEvent(FragmentEvent.PAUSE))
                 .subscribe(this::onShowSearchRes, throwable -> {
                     Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
                 }));

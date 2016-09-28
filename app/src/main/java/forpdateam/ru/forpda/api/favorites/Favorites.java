@@ -7,13 +7,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.utils.ourparser.Html;
-import rx.Observable;
-import rx.Subscriber;
+import io.reactivex.Observable;
+
 
 /**
  * Created by radiationx on 22.09.16.
@@ -93,39 +91,33 @@ public class Favorites {
     }
 
     public Observable<FavData> get() {
-        return Observable.create(new Observable.OnSubscribe<FavData>() {
-            @Override
-            public void call(Subscriber<? super FavData> subscriber) {
-                try {
-                    subscriber.onNext(_getFav());
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
+        return Observable.create(subscriber -> {
+            try {
+                subscriber.onNext(_getFav());
+                subscriber.onComplete();
+            } catch (Exception e) {
+                subscriber.onError(e);
             }
         });
     }
 
     public Observable<Void> changeFav(int act, String type, int id) {
-        return Observable.create(new Observable.OnSubscribe<Void>() {
-            @Override
-            public void call(Subscriber<? super Void> subscriber) {
-                try {
-                    switch (act) {
-                        case 0:
-                            subscriber.onNext(_changeSubType(type, id));
-                            break;
-                        case 1:
-                            subscriber.onNext(_setPinState(type, id));
-                            break;
-                        case 2:
-                            subscriber.onNext(_delete(id));
-                            break;
-                    }
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
+        return Observable.create(subscriber -> {
+            try {
+                switch (act) {
+                    case 0:
+                        subscriber.onNext(_changeSubType(type, id));
+                        break;
+                    case 1:
+                        subscriber.onNext(_setPinState(type, id));
+                        break;
+                    case 2:
+                        subscriber.onNext(_delete(id));
+                        break;
                 }
+                subscriber.onComplete();
+            } catch (Exception e) {
+                subscriber.onError(e);
             }
         });
     }

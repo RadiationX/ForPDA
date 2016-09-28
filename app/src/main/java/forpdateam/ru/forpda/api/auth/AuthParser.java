@@ -11,8 +11,7 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.auth.models.AuthForm;
 import forpdateam.ru.forpda.client.Client;
-import rx.Observable;
-import rx.Subscriber;
+import io.reactivex.Observable;
 
 /**
  * Created by radiationx on 29.07.16.
@@ -89,31 +88,23 @@ public class AuthParser {
     }
 
     public Observable<AuthForm> getForm() {
-        return Observable.create(new Observable.OnSubscribe<AuthForm>() {
-            @Override
-            public void call(Subscriber<? super AuthForm> subscriber) {
-                try {
-                    subscriber.onNext(doLoadForm());
-                    subscriber.onCompleted();
-                } catch (Throwable e) {
-                    subscriber.onError(e);
-                }
+        return Observable.create(s -> {
+            try {
+                s.onNext(doLoadForm());
+                s.onComplete();
+            } catch (Throwable throwable) {
+                s.onError(throwable);
             }
         });
-
-
     }
 
     public Observable<Boolean> tryLogin(final AuthForm authForm) {
-        return Observable.create(new Observable.OnSubscribe<Boolean>() {
-            @Override
-            public void call(Subscriber<? super Boolean> subscriber) {
-                try {
-                    subscriber.onNext(doLogin(authForm));
-                    subscriber.onCompleted();
-                } catch (Throwable e) {
-                    subscriber.onError(e);
-                }
+        return Observable.create(s -> {
+            try {
+                s.onNext(doLogin(authForm));
+                s.onComplete();
+            } catch (Throwable throwable) {
+                s.onError(throwable);
             }
         });
     }

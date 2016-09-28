@@ -15,20 +15,22 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.trello.rxlifecycle.components.support.RxFragment;
-
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.ScrollAwareFABBehavior;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.client.Client;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.disposables.CompositeDisposable;
+import io.victoralbertos.rxlifecycle_interop.LifecycleTransformer2x;
+import io.victoralbertos.rxlifecycle_interop.Rx2LifecycleAndroid;
+import io.victoralbertos.rxlifecycle_interop.support.Rx2Fragment;
 
 /**
  * Created by radiationx on 07.08.16.
  */
-public class TabFragment extends RxFragment implements ITabFragment {
+public class TabFragment extends Rx2Fragment implements ITabFragment {
     public final static String TITLE_ARG = "TAB_TITLE";
     public final static String SUBTITLE_ARG = "TAB_SUBTITLE";
     public final static String URL_ARG = "TAB_URL";
@@ -47,7 +49,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
     protected TextView toolbarTitleView;
     protected TextView toolbarSubitleView;
     protected ImageView toolbarImageView;
-    private CompositeSubscription compositeSubscription = new CompositeSubscription();
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public TabFragment() {
         parentTag = TabManager.getActiveTag();
@@ -114,8 +116,8 @@ public class TabFragment extends RxFragment implements ITabFragment {
         return coordinatorLayout;
     }
 
-    public CompositeSubscription getCompositeSubscription() {
-        return compositeSubscription;
+    public CompositeDisposable getCompositeDisposable() {
+        return compositeDisposable;
     }
 
     @Override
@@ -260,7 +262,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        compositeSubscription.unsubscribe();
+        compositeDisposable.clear();
     }
 
     /* Experiment */
@@ -289,5 +291,10 @@ public class TabFragment extends RxFragment implements ITabFragment {
             tClass.setUID();
             return tClass;
         }
+    }
+
+    @Override
+    public <T> LifecycleTransformer2x<T> getLifeCycle(BackpressureStrategy strategy) {
+        return Rx2LifecycleAndroid.bindFragment(lifecycle2x(), strategy);
     }
 }

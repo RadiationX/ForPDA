@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.test;
+package forpdateam.ru.forpda.fragments.news;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,19 +16,19 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.newslist.models.NewsItem;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.ErrorHandler;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import io.realm.Realm;
 
 /**
  * Created by radiationx on 31.07.16.
  */
 public class NewsListFragment extends TabFragment {
-    private static final String LINk = "http://4pda.ru/article/";
-    private Subscription subscription;
+    private static final String LINk = "http://4pda.ru";
 
     private Date date;
     private TextView text;
+    private Realm realm;
 
     @Override
     public String getTabUrl() {
@@ -38,6 +38,12 @@ public class NewsListFragment extends TabFragment {
     @Override
     public boolean isAlone() {
         return true;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        realm = Realm.getDefaultInstance();
     }
 
     @Nullable
@@ -53,14 +59,14 @@ public class NewsListFragment extends TabFragment {
 
     @Override
     public void loadData() {
-        subscription = Api.NewsList().getRx(LINk)
+        getCompositeDisposable().add(Api.NewsList().getRx(LINk)
                 .onErrorReturn(throwable -> {
                     ErrorHandler.handle(this, throwable, view1 -> loadData());
                     return new ArrayList<>();
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::bindUi);
+                .subscribe(this::bindUi));
     }
 
     private void bindUi(ArrayList<NewsItem> list) {
@@ -72,11 +78,5 @@ public class NewsListFragment extends TabFragment {
         }
         text.setText(titles);
         Log.d("kek", "time: " + (new Date().getTime() - date.getTime()));
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        subscription.unsubscribe();
     }
 }

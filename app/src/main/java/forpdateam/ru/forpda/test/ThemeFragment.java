@@ -18,15 +18,13 @@ import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.ErrorHandler;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 05.08.16.
  */
 public class ThemeFragment extends TabFragment {
-    private CompositeSubscription mCompositeSubscription = new CompositeSubscription();
 
     private Date date;
     private TextView text;
@@ -56,7 +54,7 @@ public class ThemeFragment extends TabFragment {
 
     @Override
     public void loadData() {
-        mCompositeSubscription.add(Api.Theme().getPage(getTabUrl())
+        getCompositeDisposable().add(Api.Theme().getPage(getTabUrl())
                 .onErrorReturn(throwable -> {
                     ErrorHandler.handle(this, throwable, view1 -> loadData());
                     return new ThemePage();
@@ -103,11 +101,5 @@ public class ThemeFragment extends TabFragment {
         }
         text.setText(temp);
         Log.d("kek", "time " + (new Date().getTime() - date.getTime()));
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mCompositeSubscription.unsubscribe();
     }
 }
