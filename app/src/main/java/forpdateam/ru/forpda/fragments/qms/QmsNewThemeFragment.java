@@ -22,7 +22,6 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -109,7 +108,6 @@ public class QmsNewThemeFragment extends TabFragment {
                     })
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .compose(this.getLifeCycle(BackpressureStrategy.LATEST))
                     .subscribe(this::onCreateNewTheme, throwable -> {
                         Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
                     }));

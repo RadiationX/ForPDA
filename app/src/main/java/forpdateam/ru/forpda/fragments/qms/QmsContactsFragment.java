@@ -159,7 +159,6 @@ public class QmsContactsFragment extends TabFragment {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(this.getLifeCycle(BackpressureStrategy.LATEST))
                 .subscribe(this::onDeletedDialog, throwable -> {
                     Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
                 }));

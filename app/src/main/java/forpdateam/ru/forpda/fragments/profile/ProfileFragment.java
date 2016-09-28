@@ -45,7 +45,6 @@ import forpdateam.ru.forpda.utils.BlurUtil;
 import forpdateam.ru.forpda.utils.ErrorHandler;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.ourparser.LinkMovementMethod;
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -157,7 +156,6 @@ public class ProfileFragment extends TabFragment {
                         })
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .compose(this.getLifeCycle(BackpressureStrategy.LATEST))
                         .subscribe(this::onNoteSave)
         );
     }
