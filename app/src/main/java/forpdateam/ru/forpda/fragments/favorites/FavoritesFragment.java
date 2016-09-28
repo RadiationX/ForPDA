@@ -23,7 +23,6 @@ import forpdateam.ru.forpda.utils.ErrorHandler;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
@@ -106,23 +105,7 @@ public class FavoritesFragment extends TabFragment {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(this.getLifeCycle(BackpressureStrategy.LATEST))
-                .subscribeWith(new DisposableObserver<FavData>() {
-                    @Override
-                    public void onNext(FavData value) {
-                        onLoadThemes(value);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                }));
+                .subscribe(this::onLoadThemes));
     }
 
     public void changeFav(int act, String type, int id) {
