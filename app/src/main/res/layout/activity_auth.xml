@@ -1,45 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:theme="@style/AUTH">
 
-    <EditText
+    <RelativeLayout
+        android:id="@+id/auth_complete"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:hint="Login"
-        android:ems="10"
-        android:id="@+id/editText"
-        android:layout_gravity="center_horizontal" />
+        android:layout_centerInParent="true"
+        android:padding="@dimen/dp32"
+        android:visibility="gone">
 
-    <EditText
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/auth_avatar"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="2dp"
+            android:scaleType="centerCrop"
+            app:civ_border_color="#00000000"
+            app:civ_border_width="0dp" />
+
+        <com.github.rahatarmanahmed.cpv.CircularProgressView
+            android:id="@+id/auth_progress"
+            android:layout_width="132dp"
+            android:layout_height="132dp"
+            android:layout_centerHorizontal="true"
+            android:scaleType="centerCrop"
+            app:cpv_animAutostart="true"
+            app:cpv_color="#ffffffff"
+            app:cpv_indeterminate="true" />
+
+        <TextView
+            android:id="@+id/auth_complete_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/auth_avatar"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/dp32"
+            android:textColor="@android:color/white"
+            android:textSize="26sp"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/auth_main_form"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:id="@+id/editText2"
-        android:layout_gravity="center_horizontal"
-        android:hint="Password"/>
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:padding="@dimen/dp32">
 
-    <ImageView
-        android:id="@+id/captchaImage"
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        android:layout_width="match_parent"
-        android:layout_height="160dp"
-        android:scaleType="fitCenter" />
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:id="@+id/editText3"
-        android:layout_gravity="center_horizontal"
-        android:hint="Captcha" />
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/auth_login"
+                style="@style/Widget.AppCompat.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:ems="10"
+                android:hint="Логин"
+                android:inputType="textPersonName"
+                android:maxLines="1"
+                android:scrollHorizontally="true"
+                android:textColor="@color/white" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Login"
-        android:id="@+id/button2"
-        android:layout_gravity="center_horizontal" />
-</LinearLayout>
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/auth_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:hint="Пароль"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:scrollHorizontally="true"
+                android:textColor="@color/white" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:animateLayoutChanges="true">
+
+            <ImageView
+                android:id="@+id/captchaImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:padding="@dimen/dp8"
+                android:scaleType="fitXY" />
+
+        </android.support.v7.widget.CardView>
+
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/auth_captcha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:hint="Введите число"
+                android:inputType="number"
+                android:maxLines="1"
+                android:scrollHorizontally="true"
+                android:maxLength="4"
+                android:textColor="@color/white" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/auth_send"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:enabled="false"
+            android:text="Login" />
+    </LinearLayout>
+</RelativeLayout>

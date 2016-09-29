@@ -2,6 +2,8 @@ package forpdateam.ru.forpda.test;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,7 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.qms.adapters.QmsChatAdapter;
 import forpdateam.ru.forpda.utils.ErrorHandler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -26,37 +29,27 @@ import rx.subscriptions.CompositeSubscription;
  * Created by radiationx on 05.08.16.
  */
 public class ThemeFragment extends TabFragment {
-    private CompositeSubscription mCompositeSubscription = new CompositeSubscription();
-
-    private Date date;
-    private TextView text;
-    private EditText searchText;
-    private Button search;
-    //private String thisUrl = "http://4pda.ru/forum/index.php?showtopic=84979&view=getnewpost";
-
+    private RecyclerView recyclerView;
+    private ThemeAdapter adapter;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         initBaseView(inflater, container);
-        inflater.inflate(R.layout.activity_newslist, (ViewGroup) view.findViewById(R.id.fragment_content), true);
-        //toolbar = (Toolbar) findViewById(R.id.toolbar);
-        text = (TextView) findViewById(R.id.textView2);
+        inflater.inflate(R.layout.fragment_theme_test, (ViewGroup) view.findViewById(R.id.fragment_content), true);
+        recyclerView = (RecyclerView) findViewById(R.id.theme);
         viewsReady();
-        date = new Date();
-        //findViewById(R.id.search_field).setVisibility(View.VISIBLE);
-        /*searchText = (EditText) findViewById(R.id.search);
-        search = (Button) findViewById(R.id.search_nick);
-        search.setOnClickListener(view -> {
-            thisUrl = searchText.getText().toString();
-            loadData();
-        });*/
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        //llm.setStackFromEnd(true);
+        recyclerView.setLayoutManager(llm);
         return view;
     }
 
     @Override
     public void loadData() {
-        mCompositeSubscription.add(Api.Theme().getPage(getTabUrl())
+        getCompositeSubscription().add(Api.Theme().getPage(getTabUrl())
                 .onErrorReturn(throwable -> {
                     ErrorHandler.handle(this, throwable, view1 -> loadData());
                     return new ThemePage();
@@ -72,7 +65,8 @@ public class ThemeFragment extends TabFragment {
             "%s : %s : %s : %s";
 
     private void bindUi(ThemePage page) {
-        Log.d("kek", "bindui");
+
+        /*Log.d("kek", "bindui");
 
         setTitle(page.getTitle());
         setSubtitle(page.getDesc());
@@ -102,12 +96,13 @@ public class ThemeFragment extends TabFragment {
             temp += "\n\n";
         }
         text.setText(temp);
-        Log.d("kek", "time " + (new Date().getTime() - date.getTime()));
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mCompositeSubscription.unsubscribe();
+        Log.d("kek", "time " + (new Date().getTime() - date.getTime()));*/
+        Date date = new Date();
+        setTitle(page.getTitle());
+        setSubtitle(page.getDesc());
+        adapter = new ThemeAdapter(page.getPosts(), getContext());
+        recyclerView.setAdapter(adapter);
+        Log.d("kek", "theme UI CREATE time " + (new Date().getTime() - date.getTime()));
+        //recyclerView.scrollToPosition(adapter.getItemCount()-1);
     }
 }

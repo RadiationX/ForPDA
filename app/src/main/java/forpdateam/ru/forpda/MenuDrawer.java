@@ -51,9 +51,11 @@ public class MenuDrawer {
             menuItems.clear();
             initMenuItems();
             adapter.notifyDataSetChanged();
-            Toast.makeText(activity, o + " result of update", Toast.LENGTH_SHORT).show();
+            if ((boolean) o && TabManager.getInstance().getSize() <= 1) {
+                select(findByClassName(NewsListFragment.class.getSimpleName()));
+            }
         });
-        String last = App.getInstance().getPreferences().getString("menu_drawer_last", NewsListFragment.class.getSimpleName());
+        String last = App.getInstance().getPreferences().getString("menu_drawer_last", Api.Auth().getState() ? NewsListFragment.class.getSimpleName() : AuthFragment.class.getSimpleName());
         if (last != null)
             select(findByClassName(last));
     }

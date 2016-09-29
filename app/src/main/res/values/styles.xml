@@ -52,4 +52,8 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/colorPrimary</item>
     </style>
+
+    <style name="AUTH" parent="AppTheme">
+        <item name="colorControlActivated">@color/white</item>
+    </style>
 </resources>

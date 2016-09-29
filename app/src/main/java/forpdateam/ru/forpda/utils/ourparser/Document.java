@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.utils.ourparser;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -32,31 +34,34 @@ public class Document {
         html = html.replaceAll("<script[^>]*>[\\s\\S]*?</script>", "");*/
 
         html = nonClosedTags.matcher(html).replaceAll("<$2$3></$2>");
-        html = strongOpenTag.matcher(html).replaceAll("<b$1>");
+        /*html = strongOpenTag.matcher(html).replaceAll("<b$1>");
         html = strongCloseTag.matcher(html).replaceAll("</b>");
         html = emOpenTag.matcher(html).replaceAll("<i$1>");
         html = emCloseTag.matcher(html).replaceAll("</i>");
         html = delOpenTag.matcher(html).replaceAll("<strike$1>");
-        html = delCloseTag.matcher(html).replaceAll("</strike>");
+        html = delCloseTag.matcher(html).replaceAll("</strike>");*/
         html = commentTag.matcher(html).replaceAll("");
         html = scriptBlock.matcher(html).replaceAll("");
-
         int level = 0;
         Document document = new Document();
-        final Matcher matcher = mainPattern.matcher(html);
+        Matcher matcher = mainPattern.matcher(html);
+
         Matcher attrMatcher;
         Element last = null;
-        List<Element> lasts = new ArrayList<>();
+        ArrayList<Element> lasts = new ArrayList<>(25);
+        Element element;
         while (matcher.find()) {
             if (lasts.size() > 0) {
                 last = lasts.get(lasts.size() - 1);
             }
             if (matcher.group(1) != null) {
-                Element element = new Element(matcher.group(1).toLowerCase());
+                element = new Element(matcher.group(1).toLowerCase());
 
-                attrMatcher = attrPattern.matcher(matcher.group(2));
-                while (attrMatcher.find())
-                    element.addAttr(attrMatcher.group(1), attrMatcher.group(2));
+                if (!matcher.group(2).isEmpty()) {
+                    attrMatcher = attrPattern.matcher(matcher.group(2));
+                    while (attrMatcher.find())
+                        element.addAttr(attrMatcher.group(1), attrMatcher.group(2));
+                }
 
                 element.setText(matcher.group(3));
                 element.setLevel(level);
@@ -67,10 +72,12 @@ public class Document {
                 lasts.add(element);
                 level++;
             } else {
-                if (last != null && last.tagName().equals(matcher.group(4)))
-                    last.setAfterText(matcher.group(5));
-                if (lasts.size() > 0)
-                    lasts.remove(lasts.size() - 1);
+                if(lasts.size()>0){
+                    assert last != null;
+                    if(last.tagName().compareTo(matcher.group(4)) == 0)
+                        last.setAfterText(matcher.group(5));
+                    lasts.remove(last);
+                }
                 level--;
             }
         }

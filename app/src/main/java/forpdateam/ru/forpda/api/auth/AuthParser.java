@@ -66,10 +66,9 @@ public class AuthParser {
     private boolean checkLogin(String response) {
         boolean result = false;
         //System.out.print(response);
-        Matcher matcher = Pattern.compile("<a[^>]*?act=login&CODE=03&k=([^&]*?)&").matcher(response);
+        Matcher matcher = Pattern.compile("<a href=\"[^\"]*?showuser=(\\d*)\"[\\s\\S]*?<a[^>]*?act=login&CODE=03&k=([^&]*?)&").matcher(response);
         if (matcher.find()) {
             result = true;
-            App.getInstance().getPreferences().edit().putString("logout_key", matcher.group(1)).apply();
         }
         return result;
     }

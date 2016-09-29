@@ -116,19 +116,19 @@ public class QmsThemesFragment extends TabFragment {
     }
 
     private void onLoadThemes(QmsThemes qmsThemes) {
+        refreshLayout.setRefreshing(false);
         userNick = qmsThemes.getNick();
         if (qmsThemes.getThemes().size() == 0 && userNick != null) {
             Bundle args = new Bundle();
             args.putString(QmsNewThemeFragment.USER_ID_ARG, userId);
             args.putString(QmsNewThemeFragment.USER_NICK_ARG, userNick);
             TabManager.getInstance().add(new TabFragment.Builder<>(QmsNewThemeFragment.class).setArgs(args).build());
-            new Handler().postDelayed(() -> TabManager.getInstance().remove(getTag()), 500);
+            //new Handler().postDelayed(() -> TabManager.getInstance().remove(getTag()), 500);
         }
         adapter = new QmsThemesAdapter(qmsThemes.getThemes());
         adapter.setOnItemClickListener(onItemClickListener);
         recyclerView.setAdapter(adapter);
         setTitle(createTitle(userNick));
-        refreshLayout.setRefreshing(false);
     }
 
     public static String createTitle(String userNick) {

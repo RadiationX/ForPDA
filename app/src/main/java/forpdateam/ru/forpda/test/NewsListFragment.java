@@ -24,7 +24,7 @@ import rx.schedulers.Schedulers;
  * Created by radiationx on 31.07.16.
  */
 public class NewsListFragment extends TabFragment {
-    private static final String LINk = "http://4pda.ru/article/";
+    private static final String LINk = "http://4pda.ru/";
     private Subscription subscription;
 
     private Date date;

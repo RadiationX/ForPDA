@@ -34,12 +34,15 @@ public class Client {
     private static List<Cookie> cookies = new ArrayList<>();
     private NetworkObservable networkObserver = new NetworkObservable();
 
+    public static String member_id;
+
     //Class
     public Client() {
         INSTANCE = this;
         msCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
         String member_id = App.getInstance().getPreferences().getString("cookie_member_id", null);
         String pass_hash = App.getInstance().getPreferences().getString("cookie_pass_hash", null);
+        Client.member_id = App.getInstance().getPreferences().getString("member_id", null);
         if (member_id != null && pass_hash != null) {
             Api.Auth().setState(true);
             msCookieManager.getCookieStore().add(domain, parseCookie(member_id));
@@ -71,6 +74,10 @@ public class Client {
                             if (cookie.name().matches("member_id|pass_hash")) {
                                 String toSave = cookie.name() + "|:|" + cookie.value() + "|:|" + cookie.domain() + "|:|" + cookie.path() + "|:|";
                                 App.getInstance().getPreferences().edit().putString("cookie_" + cookie.name(), toSave).apply();
+                                if(cookie.name().equals("member_id")){
+                                    App.getInstance().getPreferences().edit().putString("member_id", cookie.value()).apply();
+                                    Client.member_id = cookie.value();
+                                }
                                 HttpCookie tempCookie = new HttpCookie(cookie.name(), cookie.value());
                                 tempCookie.setDomain(cookie.domain());
                                 tempCookie.setPath(cookie.path());

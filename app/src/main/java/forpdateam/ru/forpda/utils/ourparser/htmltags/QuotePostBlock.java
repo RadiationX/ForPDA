@@ -20,7 +20,7 @@ public class QuotePostBlock extends PostBlock {
     public void addQuoteArrow() {
         blockTitle.setOrientation(HORIZONTAL);
         ImageView imageView = new ImageView(getContext());
-        imageView.setImageDrawable(App.getAppDrawable(R.drawable.ic_create_white_24dp));
+        imageView.setImageDrawable(App.getAppDrawable(R.drawable.ic_chevron_left_black_24dp));
         //imageView.setPadding(px12, px12, px12, px12);
         LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         params.rightMargin = App.px16;
