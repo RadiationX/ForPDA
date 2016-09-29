@@ -120,9 +120,7 @@ public class AuthFragment extends TabFragment {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::bindUi, throwable -> {
-                    Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                }));
+                .subscribe(this::bindUi, throwable -> Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show()));
     }
 
     private void bindUi(AuthForm authForm) {
@@ -149,9 +147,7 @@ public class AuthFragment extends TabFragment {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::showLoginResult, throwable -> {
-                    Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                }));
+                .subscribe(this::showLoginResult, throwable -> Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show()));
         //showLoginResult(false);
     }
 
@@ -233,9 +229,7 @@ public class AuthFragment extends TabFragment {
             if (throwable != null) {
                 new AlertDialog.Builder(getContext())
                         .setMessage(throwable.getMessage())
-                        .setPositiveButton("Ok", (dialogInterface, i) -> {
-                            loadData();
-                        })
+                        .setPositiveButton("Ok", (dialogInterface, i) -> loadData())
                         .show();
             }
         }

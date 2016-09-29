@@ -101,5 +101,6 @@ dependencies {
     compile 'org.jsoup:jsoup:1.9.2'
     compile 'com.github.rahatarmanahmed:circularprogressview:2.5.0'
     compile 'de.hdodenhof:circleimageview:2.1.0'
+    compile 'com.nineoldandroids:library:2.4.0'
     compile group: 'org.ccil.cowan.tagsoup', name: 'tagsoup', version: '1.2'
 }

@@ -16,6 +16,7 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="adjustResize"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -25,7 +26,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".test.testdevdb.TestDevDbActivity" />
-        <activity android:name=".test.chatpanel.EditPanelActivity" />
         <activity android:name=".test.sample_bus.TestBusActivity"
             android:label="Bus">
             <intent-filter>

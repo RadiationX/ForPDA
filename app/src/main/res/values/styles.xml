@@ -54,6 +54,7 @@
     </style>
 
     <style name="AUTH" parent="AppTheme">
+        <item name="colorControlNormal">@color/white</item>
         <item name="colorControlActivated">@color/white</item>
     </style>
 </resources>

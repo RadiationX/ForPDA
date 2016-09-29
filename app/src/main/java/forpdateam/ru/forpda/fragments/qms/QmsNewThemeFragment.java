@@ -3,16 +3,25 @@ package forpdateam.ru.forpda.fragments.qms;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.CardView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
+
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.view.ViewPropertyAnimator;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,6 +46,9 @@ public class QmsNewThemeFragment extends TabFragment {
     private AppCompatAutoCompleteTextView nickField;
     private AppCompatEditText titleField;
     private AppCompatEditText messField;
+    private CardView messagePanel;
+    private ViewStub viewStub;
+    private MenuItem sendItem, doneItem, editItem;
 
     private String userId, userNick;
 
@@ -59,12 +71,19 @@ public class QmsNewThemeFragment extends TabFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         initBaseView(inflater, container);
         inflater.inflate(R.layout.fragment_qms_new_theme, (ViewGroup) view.findViewById(R.id.fragment_content), true);
+        viewStub = (ViewStub) findViewById(R.id.toolbar_content);
+        viewStub.setLayoutResource(R.layout.qms_new_theme_toolbar);
+        viewStub.inflate();
         nickField = (AppCompatAutoCompleteTextView) findViewById(R.id.qms_theme_nick_field);
         titleField = (AppCompatEditText) findViewById(R.id.qms_theme_title_field);
         messField = (AppCompatEditText) findViewById(R.id.qms_theme_mess_field);
+        messagePanel = (CardView) findViewById(R.id.qms_message_panel);
+        toolbarTitleView.setVisibility(View.GONE);
+        titleField.addTextChangedListener(textWatcher);
+        messField.addTextChangedListener(textWatcher);
         if (userId != null || userNick != null) {
             nickField.setVisibility(View.GONE);
-            setTitle(defaultTitle.concat(" с ").concat(userNick != null ? userNick : userId));
+            ((View) nickField.getParent()).setVisibility(View.GONE);
         } else {
             nickField.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -75,8 +94,8 @@ public class QmsNewThemeFragment extends TabFragment {
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     searchUser(s.toString());
-                    setTitle(defaultTitle.concat(s.length() > 0 ? " с " : "").concat(s.toString()));
-                    userNick = s.toString();
+                    if (userId == null)
+                        userNick = nickField.getText().toString();
                 }
 
                 @Override
@@ -86,11 +105,67 @@ public class QmsNewThemeFragment extends TabFragment {
             });
         }
 
-        toolbar.getMenu().add("Отправить").setIcon(App.getAppDrawable(R.drawable.ic_send_white_24dp)).setOnMenuItemClickListener(menuItem -> {
+        editItem = toolbar.getMenu().add("Изменить").setIcon(App.getAppDrawable(R.drawable.ic_create_white_24dp)).setOnMenuItemClickListener(menuItem -> {
+            hideMessagePanel();
+            return false;
+        });
+        doneItem = toolbar.getMenu().add("Ок").setIcon(App.getAppDrawable(R.drawable.ic_done_white_24dp)).setOnMenuItemClickListener(menuItem -> {
+            showMessagePanel();
+            return false;
+        });
+        sendItem = toolbar.getMenu().add("Отправить").setIcon(App.getAppDrawable(R.drawable.ic_send_white_24dp)).setOnMenuItemClickListener(menuItem -> {
             sendNewTheme();
             return false;
-        }).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        });
+        doneItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        editItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        sendItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        editItem.setVisible(false);
+        sendItem.setVisible(false);
+
         return view;
+    }
+
+    private TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if ((userId != null || userNick.length() > 0) && titleField.getText().length() > 0 && messField.getText().length() > 0) {
+                sendItem.setVisible(true);
+            } else {
+                sendItem.setVisible(false);
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
+    private void showMessagePanel() {
+        messagePanel.setVisibility(View.VISIBLE);
+        viewStub.setVisibility(View.GONE);
+        editItem.setVisible(true);
+        doneItem.setVisible(false);
+        toolbarSubitleView.setVisibility(View.VISIBLE);
+        toolbarTitleView.setVisibility(View.VISIBLE);
+        setTitle(titleField.getText().toString());
+        setSubtitle(userNick != null ? userNick.length() > 0 ? userNick : null : null);
+    }
+
+    private void hideMessagePanel() {
+        messagePanel.setVisibility(View.GONE);
+        viewStub.setVisibility(View.VISIBLE);
+        doneItem.setVisible(true);
+        editItem.setVisible(false);
+        toolbarTitleView.setVisibility(View.GONE);
+        toolbarSubitleView.setVisibility(View.GONE);
     }
 
     private void sendNewTheme() {
@@ -138,7 +213,7 @@ public class QmsNewThemeFragment extends TabFragment {
             return;
         }
         matcher = Pattern.compile("<form[^>]*?mid=(\\d*)&t=(\\d*)[^>]*>").matcher(res);
-        if(matcher.find()){
+        if (matcher.find()) {
             Toast.makeText(getContext(), "Диалог успешно создан", Toast.LENGTH_SHORT).show();
             Bundle args = new Bundle();
             args.putString(QmsChatFragment.USER_ID_ARG, matcher.group(1));

@@ -3,50 +3,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
+    android:clipToPadding="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?ProfileCardStyle">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <android.support.v7.widget.AppCompatAutoCompleteTextView
-                android:id="@+id/qms_theme_nick_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Ник пользователя"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:visibility="gone"
-                android:background="@color/divider_color" />
-
-            <android.support.v7.widget.AppCompatEditText
-                android:id="@+id/qms_theme_title_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Тема"/>
-        </LinearLayout>
-
-    </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
+        android:id="@+id/qms_message_panel"
+        android:visibility="gone"
+        style="?ProfileCardStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        style="?ProfileCardStyle"
         android:layout_marginBottom="0dp">
 
         <android.support.v7.widget.AppCompatEditText
             android:id="@+id/qms_theme_mess_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Сообщение"/>
+            android:background="@android:color/transparent"
+            android:hint="Сообщение"
+            android:padding="@dimen/dp16" />
     </android.support.v7.widget.CardView>
 </FrameLayout>

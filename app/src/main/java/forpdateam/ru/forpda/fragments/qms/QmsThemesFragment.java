@@ -131,7 +131,8 @@ public class QmsThemesFragment extends TabFragment {
     }
 
     public static String createTitle(String userNick) {
-        return defaultTitle.concat(" с ").concat(userNick);
+        //return defaultTitle.concat(" с ").concat(userNick);
+        return userNick;
     }
 
 }

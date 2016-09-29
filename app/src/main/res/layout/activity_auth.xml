@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:padding="@dimen/dp32"
+        android:paddingStart="@dimen/dp32"
+        android:paddingEnd="@dimen/dp32"
         android:visibility="gone">
 
         <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -52,7 +53,8 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:orientation="vertical"
-        android:padding="@dimen/dp32">
+        android:paddingStart="@dimen/dp32"
+        android:paddingEnd="@dimen/dp32">
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -100,7 +102,6 @@
                 android:id="@+id/captchaImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
                 android:padding="@dimen/dp8"
                 android:scaleType="fitXY" />
 
@@ -131,6 +132,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:enabled="false"
-            android:text="Login" />
+            android:text="Войти" />
     </LinearLayout>
 </RelativeLayout>
