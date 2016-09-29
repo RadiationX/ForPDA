@@ -48,7 +48,8 @@ public class App extends android.app.Application {
         //init
         Client.getInstance();
         initImageLoader(this);
-        RealmConfiguration configuration = new RealmConfiguration.Builder(this)
+        Realm.init(this);
+        RealmConfiguration configuration = new RealmConfiguration.Builder()
                 .name("forpda.realm")
                 .schemaVersion(1)
                 .build();

@@ -3,7 +3,7 @@ package forpdateam.ru.forpda.api.auth;
 import java.util.Observer;
 
 import forpdateam.ru.forpda.api.auth.models.AuthForm;
-import rx.Observable;
+import io.reactivex.Observable;
 
 /**
  * Created by RadiationX on 12.08.2016.

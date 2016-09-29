@@ -12,8 +12,7 @@ import java.util.regex.Pattern;
 import forpdateam.ru.forpda.api.profile.interfaces.IProfileApi;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.client.Client;
-import rx.Observable;
-import rx.Subscriber;
+import io.reactivex.Observable;
 
 /**
  * Created by radiationx on 03.08.16.
@@ -127,29 +126,23 @@ public class Profile implements IProfileApi {
     }
 
     public Observable<ProfileModel> get(String url) {
-        return Observable.create(new Observable.OnSubscribe<ProfileModel>() {
-            @Override
-            public void call(Subscriber<? super ProfileModel> subscriber) {
-                try {
-                    subscriber.onNext(parse(url));
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
+        return Observable.create(subscriber -> {
+            try {
+                subscriber.onNext(parse(url));
+                subscriber.onComplete();
+            } catch (Exception e) {
+                subscriber.onError(e);
             }
         });
     }
 
     public Observable<Boolean> saveNoteRx(final String note) {
-        return Observable.create(new Observable.OnSubscribe<Boolean>() {
-            @Override
-            public void call(Subscriber<? super Boolean> subscriber) {
-                try {
-                    subscriber.onNext(saveNote(note));
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
+        return Observable.create(subscriber -> {
+            try {
+                subscriber.onNext(saveNote(note));
+                subscriber.onComplete();
+            } catch (Exception e) {
+                subscriber.onError(e);
             }
         });
     }

@@ -22,8 +22,8 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsThemesAdapter;
 import forpdateam.ru.forpda.utils.ErrorHandler;
 import forpdateam.ru.forpda.utils.IntentHandler;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 25.08.16.
@@ -103,7 +103,7 @@ public class QmsThemesFragment extends TabFragment {
     public void loadData() {
         if (refreshLayout != null)
             refreshLayout.setRefreshing(true);
-        getCompositeSubscription().add(Api.Qms().getThemesList(userId)
+        getCompositeDisposable().add(Api.Qms().getThemesList(userId)
                 .onErrorReturn(throwable -> {
                     ErrorHandler.handle(this, throwable, view1 -> loadData());
                     return new QmsThemes();

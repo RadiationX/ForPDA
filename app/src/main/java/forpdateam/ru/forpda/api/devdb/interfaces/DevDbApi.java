@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 import forpdateam.ru.forpda.api.devdb.models.DevCatalog;
 import forpdateam.ru.forpda.client.Client;
-import rx.Observable;
+import io.reactivex.Observable;
+
 
 /**
  * Created by isanechek on 30.07.16.

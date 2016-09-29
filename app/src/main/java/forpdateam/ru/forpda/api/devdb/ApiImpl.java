@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import forpdateam.ru.forpda.api.devdb.interfaces.DevDbApi;
 import forpdateam.ru.forpda.api.devdb.models.DevCatalog;
 import forpdateam.ru.forpda.client.Client;
-import rx.Observable;
-import rx.Subscriber;
+import io.reactivex.Observable;
+
 
 /**
  * Created by isanechek on 30.07.16.
@@ -24,16 +24,13 @@ public class ApiImpl implements DevDbApi {
     }
 
     @Override
-    public Observable<ArrayList<DevCatalog>> getBrands(final Client client, final String devicesTypeUrl) {
-        return Observable.create(new Observable.OnSubscribe<ArrayList<DevCatalog>>() {
-            @Override
-            public void call(Subscriber<? super ArrayList<DevCatalog>> subscriber) {
-                try {
-                    subscriber.onNext(Parser.parseBrands(client, devicesTypeUrl));
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
+    public Observable<ArrayList<DevCatalog>> getBrands(Client client, String devicesTypeUrl) {
+        return Observable.create(s -> {
+            try {
+                s.onNext(Parser.parseBrands(client, devicesTypeUrl));
+                s.onComplete();
+            } catch (Exception e) {
+                s.onError(e);
             }
         });
     }

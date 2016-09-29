@@ -14,8 +14,7 @@ import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsTheme;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import forpdateam.ru.forpda.client.Client;
-import rx.Observable;
-import rx.Subscriber;
+import io.reactivex.Observable;
 
 /**
  * Created by radiationx on 29.07.16.
@@ -137,85 +136,67 @@ public class Qms {
     }
 
     public Observable<ArrayList<QmsContact>> getContactList() {
-        return Observable.create(new Observable.OnSubscribe<ArrayList<QmsContact>>() {
-            @Override
-            public void call(Subscriber<? super ArrayList<QmsContact>> subscriber) {
-                try {
-                    subscriber.onNext(contactsList());
-                    subscriber.onCompleted();
-                } catch (Throwable e) {
-                    subscriber.onError(e);
-                }
+        return Observable.create(subscriber -> {
+            try {
+                subscriber.onNext(contactsList());
+                subscriber.onComplete();
+            } catch (Throwable e) {
+                subscriber.onError(e);
             }
         });
     }
 
     public Observable<QmsThemes> getThemesList(final String id) {
-        return Observable.create(new Observable.OnSubscribe<QmsThemes>() {
-            @Override
-            public void call(Subscriber<? super QmsThemes> subscriber) {
-                try {
-                    subscriber.onNext(themesList(id));
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
+        return Observable.create(subscriber -> {
+            try {
+                subscriber.onNext(themesList(id));
+                subscriber.onComplete();
+            } catch (Exception e) {
+                subscriber.onError(e);
             }
         });
     }
 
     public Observable<QmsChatModel> getChat(final String userId, final String themeId) {
-        return Observable.create(new Observable.OnSubscribe<QmsChatModel>() {
-            @Override
-            public void call(Subscriber<? super QmsChatModel> subscriber) {
-                try {
-                    subscriber.onNext(chatItemsList(userId, themeId));
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
+        return Observable.create(subscriber -> {
+            try {
+                subscriber.onNext(chatItemsList(userId, themeId));
+                subscriber.onComplete();
+            } catch (Exception e) {
+                subscriber.onError(e);
             }
         });
     }
 
     public Observable<String[]> search(final String nick) {
-        return Observable.create(new Observable.OnSubscribe<String[]>() {
-            @Override
-            public void call(Subscriber<? super String[]> subscriber) {
-                try {
-                    subscriber.onNext(findUser(nick));
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
+        return Observable.create(subscriber -> {
+            try {
+                subscriber.onNext(findUser(nick));
+                subscriber.onComplete();
+            } catch (Exception e) {
+                subscriber.onError(e);
             }
         });
     }
 
     public Observable<String> sendNewTheme(String nick, String title, String mess) {
-        return Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                try {
-                    subscriber.onNext(newTheme(nick, title, mess));
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
+        return Observable.create(subscriber -> {
+            try {
+                subscriber.onNext(newTheme(nick, title, mess));
+                subscriber.onComplete();
+            } catch (Exception e) {
+                subscriber.onError(e);
             }
         });
     }
 
     public Observable<String> deleteDialog(String mid) {
-        return Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                try {
-                    subscriber.onNext(delDialog(mid));
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
+        return Observable.create(subscriber -> {
+            try {
+                subscriber.onNext(delDialog(mid));
+                subscriber.onComplete();
+            } catch (Exception e) {
+                subscriber.onError(e);
             }
         });
     }

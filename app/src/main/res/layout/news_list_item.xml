@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="@dimen/dp4"
+    android:layout_marginLeft="@dimen/dp4"
+    android:layout_marginRight="@dimen/dp4"
+    android:layout_marginBottom="@dimen/dp4"
+    app:cardElevation="@dimen/dp6"
+    app:cardCornerRadius="@dimen/dp2"
+    android:id="@+id/news_list_item_root_card">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/news_list_item_pic"
+            android:layout_width="150dp"
+            android:layout_height="160dp"
+            android:scaleType="centerCrop"
+            android:padding="@dimen/dp6"
+            app:srcCompat="@drawable/contact_google_plus" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/news_list_item_title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/dp8"
+                android:layout_marginLeft="@dimen/dp8"
+                android:layout_marginRight="@dimen/dp8"
+                android:layout_marginBottom="@dimen/dp4"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textSize="14sp"
+                android:textStyle="bold|italic"
+                android:visibility="visible"
+                tools:text="Какая-та чуп-чуп новостя. Читай быстрей если не из ряда плятей."/>
+
+            <TextView
+                android:id="@+id/news_list_item_description_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/dp8"
+                android:paddingEnd="@dimen/dp8"
+                android:maxLines="5"
+                android:ellipsize="end"
+                android:textSize="10sp"
+                android:layout_gravity="center"
+                android:visibility="visible"
+                tools:text="На поле пушки грохотали, И виндовс по небу плыла. Кроме линукс мы ничего не знали, И эта сучка всех с ума свела... Еху... Яху... Всех гомосеков к туфтуням на плаху!"/>
+
+            <TextView
+                android:id="@+id/news_list_item_date_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:gravity="bottom"
+                android:paddingStart="@dimen/dp4"
+                android:paddingTop="@dimen/dp4"
+                android:paddingEnd="@dimen/dp12"
+                android:paddingBottom="@dimen/dp4"
+                android:textSize="8sp"
+                tools:text="25 cентября 2016" />
+        </LinearLayout>
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>
