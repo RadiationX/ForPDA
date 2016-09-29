@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.api.newslist;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
@@ -37,6 +39,7 @@ public class NewsList {
             item.setImageUrl(matcher.group(3));
             item.setCommentsCount(matcher.group(4));
             item.setDate(matcher.group(5));
+            Log.e("News", "Test date: " + matcher.group(5));
             item.setAuthor(matcher.group(6));
             item.setDescription(matcher.group(7));
             list.add(item);
@@ -44,7 +47,7 @@ public class NewsList {
         return list;
     }
 
-    public Observable<ArrayList<NewsItem>> getRx(final String url) {
+    public Observable<ArrayList<NewsItem>> getNews(final String url) {
         return Observable.create(s -> {
            try {
                s.onNext(Api.NewsList().get(url));
