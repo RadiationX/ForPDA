@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.trello.rxlifecycle.FragmentEvent;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
@@ -33,8 +32,8 @@ import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.ErrorHandler;
 import forpdateam.ru.forpda.utils.ourparser.Html;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 29.07.16.
@@ -113,7 +112,7 @@ public class AuthFragment extends TabFragment {
 
     @Override
     public void loadData() {
-        getCompositeSubscription().add(Api.Auth().getForm()
+        getCompositeDisposable().add(Api.Auth().getForm()
                 .onErrorReturn(throwable -> {
                     this.throwable = throwable;
                     throwable.printStackTrace();
@@ -142,7 +141,7 @@ public class AuthFragment extends TabFragment {
         authForm.setCaptcha(captcha.getText().toString());
         authForm.setNick(nick.getText().toString());
         authForm.setPassword(password.getText().toString());
-        getCompositeSubscription().add(Api.Auth().tryLogin(authForm)
+        getCompositeDisposable().add(Api.Auth().tryLogin(authForm)
                 .onErrorReturn(throwable -> {
                     this.throwable = throwable;
                     throwable.printStackTrace();
@@ -150,7 +149,6 @@ public class AuthFragment extends TabFragment {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(this.bindUntilEvent(FragmentEvent.PAUSE))
                 .subscribe(this::showLoginResult, throwable -> {
                     Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
                 }));
@@ -183,7 +181,7 @@ public class AuthFragment extends TabFragment {
         animation1.setDuration(375);
         complete.startAnimation(animation1);
 
-        getCompositeSubscription().add(
+        getCompositeDisposable().add(
                 Api.Profile().get("http://4pda.ru/forum/index.php?showuser=" + Client.member_id)
                         .onErrorReturn(throwable -> {
                             ErrorHandler.handle(this, throwable, view1 -> loadData());

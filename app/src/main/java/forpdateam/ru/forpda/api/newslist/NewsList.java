@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.api.newslist;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,7 +10,6 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.newslist.models.NewsItem;
 import forpdateam.ru.forpda.client.Client;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 
 /**
  * Created by radiationx on 31.07.16.

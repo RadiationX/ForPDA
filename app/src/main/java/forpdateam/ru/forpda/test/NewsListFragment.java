@@ -16,16 +16,14 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.newslist.models.NewsItem;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.ErrorHandler;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 31.07.16.
  */
 public class NewsListFragment extends TabFragment {
     private static final String LINk = "http://4pda.ru/article/";
-    private Subscription subscription;
 
     private Date date;
     private TextView text;
@@ -53,14 +51,14 @@ public class NewsListFragment extends TabFragment {
 
     @Override
     public void loadData() {
-        subscription = Api.NewsList().getRx(LINk)
+        getCompositeDisposable().add(Api.NewsList().getNews(LINk)
                 .onErrorReturn(throwable -> {
                     ErrorHandler.handle(this, throwable, view1 -> loadData());
                     return new ArrayList<>();
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::bindUi);
+                .subscribe(this::bindUi));
     }
 
     private void bindUi(ArrayList<NewsItem> list) {
@@ -74,9 +72,4 @@ public class NewsListFragment extends TabFragment {
         Log.d("kek", "time: " + (new Date().getTime() - date.getTime()));
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        subscription.unsubscribe();
-    }
 }
