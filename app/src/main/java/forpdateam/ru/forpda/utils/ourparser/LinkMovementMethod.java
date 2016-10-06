@@ -203,21 +203,19 @@ public class LinkMovementMethod extends ScrollingMovementMethod {
 
             if (link.length != 0) {
                 if (action == MotionEvent.ACTION_UP) {
-                    String url = ((URLSpan)link[0]).getURL();
-                    if(!IntentHandler.handle(url))
+                    String url = ((URLSpan) link[0]).getURL();
+                    if (!IntentHandler.handle(url))
                         link[0].onClick(widget);
                 } else if (action == MotionEvent.ACTION_DOWN) {
                     Selection.setSelection(buffer,
                             buffer.getSpanStart(link[0]),
                             buffer.getSpanEnd(link[0]));
                 }
-
                 return true;
             } else {
                 Selection.removeSelection(buffer);
             }
         }
-
         return super.onTouchEvent(widget, buffer, event);
     }
 

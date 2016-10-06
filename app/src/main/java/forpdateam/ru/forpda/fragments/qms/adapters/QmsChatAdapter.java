@@ -36,8 +36,26 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private List<QmsChatItem> chatItems;
     private final static int TYPE_DATE = 0, TYPE_MESSAGE = 1, TYPE_MY_MESSAGE = 2;
     private Context context;
+    private QmsChatAdapter.OnItemClickListener itemClickListener;
+    private QmsChatAdapter.OnLongItemClickListener longItemClickListener;
 
-    public class MessageViewHolder extends RecyclerView.ViewHolder {
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position, QmsChatAdapter adapter);
+    }
+
+    public void setOnItemClickListener(final QmsChatAdapter.OnItemClickListener mItemClickListener) {
+        this.itemClickListener = mItemClickListener;
+    }
+
+    public interface OnLongItemClickListener {
+        void onLongItemClick(View view, int position, QmsChatAdapter adapter);
+    }
+
+    public void setOnLongItemClickListener(final QmsChatAdapter.OnLongItemClickListener longItemClickListener) {
+        this.longItemClickListener = longItemClickListener;
+    }
+
+    public class MessageViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public TextView time;
         public LinearLayout root;
 
@@ -45,8 +63,25 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             super(v);
             time = (TextView) v.findViewById(R.id.time);
             root = (LinearLayout) v.findViewById(R.id.chat_item_wrapper);
+            v.setOnClickListener(this);
+            v.setOnLongClickListener(this);
         }
 
+        @Override
+        public void onClick(View view) {
+            if (itemClickListener != null) {
+                itemClickListener.onItemClick(view, getLayoutPosition(), QmsChatAdapter.this);
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+            if (longItemClickListener != null) {
+                longItemClickListener.onLongItemClick(view, getLayoutPosition(), QmsChatAdapter.this);
+                return true;
+            }
+            return false;
+        }
     }
 
     public class DateViewHolder extends RecyclerView.ViewHolder {

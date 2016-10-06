@@ -4,10 +4,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
@@ -191,5 +193,6 @@ public class IntentHandler {
 
     private static void run(String s) {
         Log.d("kek", "run: " + s);
+        Toast.makeText(App.getContext(), "ForPDA should run "+s, Toast.LENGTH_SHORT).show();
     }
 }

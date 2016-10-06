@@ -6,10 +6,6 @@ import android.net.NetworkInfo;
 import android.util.Log;
 import android.webkit.WebSettings;
 
-import java.net.CookieManager;
-import java.net.CookiePolicy;
-import java.net.HttpCookie;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,26 +23,23 @@ import okhttp3.Response;
 
 public class Client {
     private static final String userAgent = WebSettings.getDefaultUserAgent(App.getContext());
-    private static final URI domain = URI.create("http://4pda.ru/");
-    private static final CookieManager msCookieManager = new CookieManager();
     private static Client INSTANCE = new Client();
     public static final String minimalPage = "http://4pda.ru/forum/index.php?showforum=200";
-    private static List<Cookie> cookies = new ArrayList<>();
+    private static List<Cookie> cookies;
     private NetworkObservable networkObserver = new NetworkObservable();
-
     public static String member_id;
 
     //Class
     public Client() {
         INSTANCE = this;
-        msCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+        cookies = new ArrayList<>();
         String member_id = App.getInstance().getPreferences().getString("cookie_member_id", null);
         String pass_hash = App.getInstance().getPreferences().getString("cookie_pass_hash", null);
         Client.member_id = App.getInstance().getPreferences().getString("member_id", null);
         if (member_id != null && pass_hash != null) {
             Api.Auth().setState(true);
-            msCookieManager.getCookieStore().add(domain, parseCookie(member_id));
-            msCookieManager.getCookieStore().add(domain, parseCookie(pass_hash));
+            cookies.add(parseCookie(member_id));
+            cookies.add(parseCookie(pass_hash));
         }
     }
 
@@ -54,37 +47,27 @@ public class Client {
         return INSTANCE;
     }
 
-    private HttpCookie parseCookie(String cookie) {
-        String[] fields = cookie.split("\\|:\\|");
-        HttpCookie httpCookie = new HttpCookie(fields[0], fields[1]);
-        httpCookie.setDomain(fields[2]);
-        httpCookie.setPath(fields[3]);
-        return httpCookie;
+    private Cookie parseCookie(String cookieFields) {
+        String[] fields = cookieFields.split("\\|:\\|");
+        return Cookie.parse(HttpUrl.parse(fields[0]), fields[1]);
     }
 
-    private static final OkHttpClient client = new OkHttpClient.Builder()
+    private final OkHttpClient client = new OkHttpClient.Builder()
             .cookieJar(new CookieJar() {
                 @Override
                 public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
                     Log.d("kek", "response cookies size " + cookies.size());
                     try {
-                        msCookieManager.getCookieStore().removeAll();
-
                         for (Cookie cookie : cookies) {
                             if (cookie.name().matches("member_id|pass_hash")) {
-                                String toSave = cookie.name() + "|:|" + cookie.value() + "|:|" + cookie.domain() + "|:|" + cookie.path() + "|:|";
-                                App.getInstance().getPreferences().edit().putString("cookie_" + cookie.name(), toSave).apply();
-                                if(cookie.name().equals("member_id")){
+                                App.getInstance().getPreferences().edit().putString("cookie_".concat(cookie.name()), url.toString().concat("|:|").concat(cookie.toString())).apply();
+                                if (cookie.name().equals("member_id")) {
                                     App.getInstance().getPreferences().edit().putString("member_id", cookie.value()).apply();
                                     Client.member_id = cookie.value();
                                 }
-                                HttpCookie tempCookie = new HttpCookie(cookie.name(), cookie.value());
-                                tempCookie.setDomain(cookie.domain());
-                                tempCookie.setPath(cookie.path());
-                                if (!msCookieManager.getCookieStore().getCookies().contains(tempCookie))
-                                    msCookieManager.getCookieStore().add(domain, tempCookie);
                             }
-                            Client.cookies.add(cookie);
+                            if (!Client.cookies.contains(cookie))
+                                Client.cookies.add(cookie);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -93,26 +76,11 @@ public class Client {
 
                 @Override
                 public List<Cookie> loadForRequest(HttpUrl url) {
-                    try {
-                        for (HttpCookie cookie : msCookieManager.getCookieStore().getCookies()) {
-                            Cookie tempCookie = new Cookie.Builder()
-                                    .name(cookie.getName())
-                                    .value(cookie.getValue())
-                                    .domain(cookie.getDomain())
-                                    .build();
-                            if (!cookies.contains(tempCookie))
-                                cookies.add(tempCookie);
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                     Log.d("kek", "cookies size " + cookies.size());
                     return cookies;
                 }
             })
             .build();
-
 
     //Network
     public String get(String url) throws Exception {
@@ -146,7 +114,6 @@ public class Client {
         } finally {
             response.close();
         }
-
         return res;
     }
 

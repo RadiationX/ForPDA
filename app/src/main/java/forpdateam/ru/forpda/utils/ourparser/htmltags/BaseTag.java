@@ -17,8 +17,6 @@ import forpdateam.ru.forpda.utils.ourparser.LinkMovementMethod;
  * Created by radiationx on 28.08.16.
  */
 public class BaseTag extends LinearLayout {
-    public TextView textView;
-
     protected float size() {
         return 16;
     }
@@ -77,9 +75,5 @@ public class BaseTag extends LinearLayout {
         imageView.setAdjustViewBounds(true);
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         addView(imageView);
-    }
-
-    public TextView getTextView() {
-        return textView;
     }
 }

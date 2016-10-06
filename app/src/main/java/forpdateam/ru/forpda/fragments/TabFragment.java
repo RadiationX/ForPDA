@@ -1,12 +1,14 @@
 package forpdateam.ru.forpda.fragments;
 
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,12 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.ScrollAwareFABBehavior;
 import forpdateam.ru.forpda.TabManager;
+import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.client.Client;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.disposables.CompositeDisposable;
@@ -182,8 +186,42 @@ public class TabFragment extends Rx2Fragment implements ITabFragment {
         if (Client.getInstance().getNetworkState()) {
             loadData();
         }
+        toolbar.getMenu().add("logout").setOnMenuItemClickListener(menuItem -> {
+            new Task().execute();
+            return false;
+        });
     }
+    class Task extends AsyncTask {
+        Exception exception;
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            try {
+                Api.Auth().tryLogout();
+            } catch (Exception e) {
+                exception = e;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            if (exception != null) {
+                new AlertDialog.Builder(getMainActivity())
+                        .setMessage(exception.getMessage())
+                        .create()
+                        .show();
+            } else {
+                Toast.makeText(getContext(), "logout complete", Toast.LENGTH_LONG).show();
+                Api.Auth().doOnLogout();
+            }
+        }
+    }
     protected void initFabBehavior(){
         CoordinatorLayout.LayoutParams params =
                 (CoordinatorLayout.LayoutParams) fab.getLayoutParams();

@@ -35,6 +35,13 @@ public class QmsChatFragment extends TabFragment {
     private RecyclerView recyclerView;
     private QmsChatAdapter adapter;
 
+    private QmsChatAdapter.OnItemClickListener onItemClickListener = (view1, position, adapter1) -> {
+        Toast.makeText(getContext(), "ONCLICK " + position, Toast.LENGTH_SHORT).show();
+    };
+    private QmsChatAdapter.OnLongItemClickListener onLongItemClickListener = (view1, position, adapter1) -> {
+        Toast.makeText(getContext(), "ON LONG CLICK " + position, Toast.LENGTH_SHORT).show();
+    };
+
     @Override
     public String getDefaultTitle() {
         return defaultTitle;
@@ -93,6 +100,8 @@ public class QmsChatFragment extends TabFragment {
 
     private void onLoadChat(QmsChatModel chat) {
         adapter = new QmsChatAdapter(chat.getChatItemsList(), getContext());
+        adapter.setOnItemClickListener(onItemClickListener);
+        adapter.setOnLongItemClickListener(onLongItemClickListener);
         recyclerView.setAdapter(adapter);
         setTitle(chat.getTitle());
         setSubtitle(chat.getNick());
@@ -101,7 +110,7 @@ public class QmsChatFragment extends TabFragment {
             tryShowAvatar();
             //TabManager.getInstance().remove(getParentTag());
         }
-        recyclerView.scrollToPosition(adapter.getItemCount()-1);
+        recyclerView.scrollToPosition(adapter.getItemCount() - 1);
     }
 
 }
