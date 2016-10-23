@@ -63,7 +63,7 @@ public class Favorites {
             item.setDate(matcher.group(23));
             favData.addItem(item);
         }
-        Log.d("kek", "parsing time " + ((System.currentTimeMillis() - time) * 8.2));
+        Log.d("kek", "parsing time " + ((System.currentTimeMillis() - time)));
 
         return favData;
     }

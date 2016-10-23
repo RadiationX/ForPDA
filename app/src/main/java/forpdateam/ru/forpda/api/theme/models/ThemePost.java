@@ -6,11 +6,12 @@ import forpdateam.ru.forpda.api.theme.interfaces.IThemePost;
  * Created by radiationx on 04.08.16.
  */
 public class ThemePost implements IThemePost {
-    private String id, date, number, userAvatar, userName, groupColor, group, userId, reputation, body;
+    private String date, avatar, nick, groupColor, group, reputation, body;
     private boolean curator, online, minus, plus, report, edit, delete, qoute;
+    private int id, number, userId;
 
     @Override
-    public String getId() {
+    public int getId() {
         return id;
     }
 
@@ -20,18 +21,16 @@ public class ThemePost implements IThemePost {
     }
 
     @Override
-    public String getNumber() {
+    public int getNumber() {
         return number;
     }
 
-    @Override
-    public String getUserAvatar() {
-        return userAvatar;
+    public String getAvatar() {
+        return avatar;
     }
 
-    @Override
-    public String getUserName() {
-        return userName;
+    public String getNick() {
+        return nick;
     }
 
     @Override
@@ -45,7 +44,7 @@ public class ThemePost implements IThemePost {
     }
 
     @Override
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
@@ -99,7 +98,7 @@ public class ThemePost implements IThemePost {
         return qoute;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -107,16 +106,16 @@ public class ThemePost implements IThemePost {
         this.date = date;
     }
 
-    public void setNumber(String number) {
+    public void setNumber(int number) {
         this.number = number;
     }
 
-    public void setUserAvatar(String userAvatar) {
-        this.userAvatar = userAvatar;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setNick(String nick) {
+        this.nick = nick;
     }
 
     public void setGroupColor(String groupColor) {
@@ -127,7 +126,7 @@ public class ThemePost implements IThemePost {
         this.group = group;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 

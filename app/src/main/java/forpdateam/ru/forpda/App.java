@@ -15,9 +15,13 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 
+import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.rxbus.RxBus;
@@ -40,10 +44,23 @@ public class App extends android.app.Application {
     }
 
     private RxBus rxBus;
+    private MiniTemplator templator;
+
+    public MiniTemplator getTemplator() {
+        return templator;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        InputStream stream = null;
+        try {
+            stream = App.getInstance().getAssets().open("temp.html");
+            templator = new MiniTemplator.Builder().build(stream, Charset.forName("utf-8"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         Api.Init();
         //init
         Client.getInstance();

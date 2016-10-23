@@ -3,7 +3,7 @@ apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'realm-android'
 
 android {
-    compileSdkVersion 24
+    compileSdkVersion 25
     buildToolsVersion "24.0.2"
 
     def versionPropsFile = file('version.properties')
@@ -73,7 +73,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '24.2.1'
+    supportLibVersion = '25.0.0'
     okHttpVersion = '3.4.1'
     rxbindingVersion = '0.4.0'
     rxlifecycleVersion = '0.8.0'
@@ -103,4 +103,5 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.nineoldandroids:library:2.4.0'
     compile group: 'org.ccil.cowan.tagsoup', name: 'tagsoup', version: '1.2'
+    compile 'org.bsc.util:minitemplator-repackaged:1.2'
 }

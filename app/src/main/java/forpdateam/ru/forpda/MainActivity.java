@@ -2,26 +2,28 @@ package forpdateam.ru.forpda;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.menu.MenuBuilder;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
+import android.webkit.WebView;
 
-import forpdateam.ru.forpda.api.Api;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
 
 public class MainActivity extends AppCompatActivity implements TabManager.TabListener {
     public final static String DEF_TITLE = "ForPDA";
+    private Queue<WebView> webViews = new LinkedList<>();
+    private Timer webViewCleaner = new Timer();
     private TabDrawer tabDrawer;
     private MenuDrawer menuDrawer;
     private final View.OnClickListener toggleListener = view -> menuDrawer.toggleState();
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     }
 
     public MainActivity() {
+        webViewCleaner.schedule(new WebViewCleanerTask(), 0, 60000);
         TabManager.init(this, this);
     }
 
@@ -123,10 +126,11 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         backHandler();
     }
 
-    public void hidePopupWindows(){
+    public void hidePopupWindows() {
         ((InputMethodManager) MainActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(MainActivity.this.getCurrentFocus().getWindowToken(), 0);
     }
+
     public void backHandler() {
         if (TabManager.getInstance().getSize() > 0) {
             if (!TabManager.getInstance().getActive().onBackPressed()) {
@@ -150,6 +154,10 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         }
     }
 
+    public Queue<WebView> getWebViews() {
+        return webViews;
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -157,51 +165,16 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (menu != null)
-            menu.clear();
-        else
-            menu = new MenuBuilder(this);
-
-        menu.add("logout").setOnMenuItemClickListener(menuItem -> {
-            new Task().execute();
-            return false;
-        });
-        menu.add("test").setOnMenuItemClickListener(menuItem -> {
-            IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=84979&view=getnewpost");
-            return false;
-        });
-        return true;
+    protected void onPause() {
+        super.onPause();
     }
 
-    class Task extends AsyncTask {
-        Exception exception;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Object doInBackground(Object[] objects) {
-            try {
-                Api.Auth().tryLogout();
-            } catch (Exception e) {
-                exception = e;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            if (exception != null) {
-                new AlertDialog.Builder(MainActivity.this)
-                        .setMessage(exception.getMessage())
-                        .create()
-                        .show();
-            } else {
-                Toast.makeText(MainActivity.this, "logout complete", Toast.LENGTH_LONG).show();
-                Api.Auth().doOnLogout();
+    class WebViewCleanerTask extends TimerTask {
+        public void run() {
+            Log.d("kek", "try remove webview ");
+            if (webViews.size() > 0) {
+                Log.d("kek", "remove webview " + webViews.element().getTag());
+                webViews.remove();
             }
         }
     }

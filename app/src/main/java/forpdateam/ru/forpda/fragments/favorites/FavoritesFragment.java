@@ -77,6 +77,11 @@ public class FavoritesFragment extends TabFragment {
         return defaultTitle;
     }
 
+    @Override
+    public boolean isAlone() {
+        return true;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

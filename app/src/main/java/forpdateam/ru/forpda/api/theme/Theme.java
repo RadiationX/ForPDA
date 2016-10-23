@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import biz.source_code.miniTemplator.MiniTemplator;
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.client.Client;
@@ -26,7 +28,7 @@ public class Theme {
 
     private final static Pattern newsPattern = Pattern.compile("<section[^>]*?><article[^>]*?>[^<]*?<div class=\"container\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\" alt=\"([\\s\\S]*?)\"[\\s\\S]*?<em[^>]*>([^<]*?)</em>[\\s\\S]*?<a href=\"([^\"]*?)\">([\\s\\S]*?)</a>[\\s\\S]*?<a[^>]*?>([^<]*?)</a><div[^>]*?># ([\\s\\S]*?)</div>[\\s\\S]*?<div class=\"content-box\"[^>]*?>([\\s\\S]*?)</div></div></div>[^<]*?<div class=\"materials-box\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?<div class=\"comment-box\" id=\"comments\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[^<]*?<form");
 
-    private ThemePage get(final String url) throws Exception {
+    private ThemePage get(final String url, boolean generateHtml) throws Exception {
         ThemePage page = new ThemePage();
         Log.d("kek", "page start get");
         String response = Client.getInstance().get(url);
@@ -34,14 +36,14 @@ public class Theme {
         Date date = new Date();
         Matcher matcher = countsPattern.matcher(response);
         if (matcher.find()) {
-            page.setAllPagesCount(Integer.parseInt(matcher.group(1)));
+            page.setAllPagesCount(Integer.parseInt(matcher.group(1)) + 1);
             page.setPostsOnPageCount(Integer.parseInt(matcher.group(2)));
         }
         Log.d("kek", "check 1");
         matcher = paginationPattern.matcher(response);
         if (matcher.find()) {
-            page.setIsFirstPage(!matcher.group(1).matches("<a[^>]*?>&lt;</a>"));
-            page.setIsLastPage(!matcher.group(1).matches("<a[^>]*?>&gt;</a>"));
+            /*page.setIsFirstPage(!matcher.group(1).matches("<a[^>]*?>&lt;</a>"));
+            page.setIsLastPage(!matcher.group(1).matches("<a[^>]*?>&gt;</a>"));*/
             page.setCurrentPage(Integer.parseInt(matcher.group(2)));
         }
         Log.d("kek", "check 2");
@@ -57,16 +59,16 @@ public class Theme {
         Log.d("kek", "check 4");
         while (matcher.find()) {
             ThemePost post = new ThemePost();
-            post.setId(matcher.group(1));
+            post.setId(Integer.parseInt(matcher.group(1)));
             post.setDate(matcher.group(2));
-            post.setNumber(matcher.group(3));
-            post.setUserAvatar(matcher.group(4));
-            post.setUserName(matcher.group(5));
+            post.setNumber(Integer.parseInt(matcher.group(3)));
+            post.setAvatar(matcher.group(4));
+            post.setNick(matcher.group(5));
             post.setCurator(!matcher.group(6).isEmpty());
             post.setGroupColor(matcher.group(8));
             post.setGroup(matcher.group(9));
             post.setOnline(matcher.group(10).contains("green"));
-            post.setUserId(matcher.group(11));
+            post.setUserId(Integer.parseInt(matcher.group(11)));
             post.setReputation(matcher.group(12));
             post.setCanMinus(!matcher.group(13).isEmpty());
             post.setCanPlus(!matcher.group(14).isEmpty());
@@ -77,14 +79,118 @@ public class Theme {
             post.setBody(matcher.group(19));
             page.addPost(post);
         }
+
+        if (generateHtml) {
+            MiniTemplator t = App.getInstance().getTemplator();
+            boolean prevDisabled = page.getCurrentPage() == 1;
+            boolean nextDisabled = page.getCurrentPage() == page.getAllPagesCount();
+
+            if (t.variableExists("topic_title"))
+                t.setVariable("topic_title", page.getTitle());
+
+            if (t.variableExists("body_type"))
+                t.setVariable("body_type", "topic");
+
+            if (t.variableExists("navigation_disable"))
+                t.setVariable("navigation_disable", "");
+
+            if (t.variableExists("first_disable"))
+                t.setVariable("first_disable", getDisableStr(prevDisabled));
+
+            if (t.variableExists("prev_disable"))
+                t.setVariable("prev_disable", getDisableStr(prevDisabled));
+
+            if (t.variableExists("next_disable"))
+                t.setVariable("next_disable", getDisableStr(nextDisabled));
+
+            if (t.variableExists("last_disable"))
+                t.setVariable("last_disable", getDisableStr(nextDisabled));
+
+            if (t.variableExists("topic_url"))
+                t.setVariable("topic_url", url);
+
+            if (t.variableExists("disable_avatar"))
+                t.setVariable("disable_avatar", true ? "" : "disable_avatar");
+
+            if (t.variableExists("avatar_type"))
+                t.setVariable("avatar_type", true ? "" : "avatar_circle");
+
+            int hatPostId = page.getPosts().get(0).getId();
+            boolean existAvatar = t.variableExists("avatar");
+            boolean existNick = t.variableExists("nick");
+            boolean existGroupColor = t.variableExists("group_color");
+            boolean existGroup = t.variableExists("group");
+            boolean existReputation = t.variableExists("reputation");
+            boolean existDate = t.variableExists("date");
+            boolean existNumber = t.variableExists("number");
+            boolean existBody = t.variableExists("body");
+            boolean existReportDisable = t.variableExists("report_disable");
+            boolean existNickDisable = t.variableExists("nick_disable");
+            boolean existQuoteDisable = t.variableExists("quote_disable");
+            boolean existVoteDisable = t.variableExists("vote_disable");
+            boolean existDeleteDisable = t.variableExists("delete_disable");
+            boolean existEditDisable = t.variableExists("edit_disable");
+            for (ThemePost post : page.getPosts()) {
+                //Post header
+                if (existAvatar)
+                    t.setVariable("avatar", "http://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
+                if (existNick)
+                    t.setVariable("nick", post.getNick());
+                if (existGroupColor)
+                    t.setVariable("group_color", post.getGroupColor());
+                if (existGroup)
+                    t.setVariable("group", post.getGroup());
+                if (existReputation)
+                    t.setVariable("reputation", post.getReputation());
+                if (existDate)
+                    t.setVariable("date", post.getDate());
+                if (existNumber)
+                    t.setVariable("number", post.getNumber());
+
+                //Post body
+                if (hatPostId == post.getId()) {
+                    if (t.blockExists("hat_button"))
+                        t.addBlock("hat_button");
+                }
+                if (existBody)
+                    t.setVariable("body", post.getBody());
+
+                //Post footer
+                if (existReportDisable)
+                    t.setVariable("report_disable", getDisableStr(post.canReport()));
+                if (existNickDisable)
+                    t.setVariable("nick_disable", getDisableStr(true));
+                if (existQuoteDisable)
+                    t.setVariable("quote_disable", getDisableStr(post.canQuote()));
+                if (existVoteDisable)
+                    t.setVariable("vote_disable", getDisableStr(true));
+                if (existDeleteDisable)
+                    t.setVariable("delete_disable", getDisableStr(post.canDelete()));
+                if (existEditDisable)
+                    t.setVariable("edit_disable", getDisableStr(post.canEdit()));
+
+                t.addBlock("post");
+            }
+            page.setHtml(t.generateOutput());
+            t.reset();
+        }
+
         Log.d("kek", "theme parsing time " + (new Date().getTime() - date.getTime()));
         return page;
     }
 
+    private String getDisableStr(boolean b) {
+        return b ? "" : "disable";
+    }
+
     public Observable<ThemePage> getPage(final String url) {
+        return getPage(url, false);
+    }
+
+    public Observable<ThemePage> getPage(final String url, boolean generateHtml) {
         return Observable.create(subscriber -> {
             try {
-                subscriber.onNext(get(url));
+                subscriber.onNext(get(url, generateHtml));
                 subscriber.onComplete();
             } catch (Exception e) {
                 subscriber.onError(e);

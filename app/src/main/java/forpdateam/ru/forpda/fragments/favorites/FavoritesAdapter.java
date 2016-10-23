@@ -1,6 +1,8 @@
 package forpdateam.ru.forpda.fragments.favorites;
 
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
 
@@ -43,7 +46,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public TextView title, lastNick, date;
-        public ImageView pinIcon;
+        public ImageView pinIcon, lockIcon, pollIcon;
 
         public ViewHolder(View v) {
             super(v);
@@ -51,6 +54,9 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
             lastNick = (TextView) v.findViewById(R.id.fav_item_last_nick);
             date = (TextView) v.findViewById(R.id.fav_item_date);
             pinIcon = (ImageView) v.findViewById(R.id.fav_item_pin_icon);
+            lockIcon = (ImageView) v.findViewById(R.id.fav_item_lock_icon);
+            pollIcon = (ImageView) v.findViewById(R.id.fav_item_poll_icon);
+
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
         }
@@ -89,6 +95,13 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         holder.title.setText(item.getTopicTitle());
         holder.title.setTypeface(null, item.isNewMessages() ? Typeface.BOLD : Typeface.NORMAL);
         holder.pinIcon.setVisibility(item.isPin() ? View.VISIBLE : View.GONE);
+        holder.lockIcon.setVisibility(item.getInfo().contains("X") ? View.VISIBLE : View.GONE);
+        holder.pollIcon.setVisibility(item.getInfo().contains("^") ? View.VISIBLE : View.GONE);
+        if (item.getInfo().contains("+^"))
+            holder.pollIcon.setColorFilter(ContextCompat.getColor(App.getContext(), R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
+        else
+            holder.pollIcon.clearColorFilter();
+
         holder.lastNick.setText(item.getLastUserNick());
         holder.date.setText(item.getDate());
     }

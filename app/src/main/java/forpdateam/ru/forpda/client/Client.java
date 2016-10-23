@@ -38,6 +38,7 @@ public class Client {
         Client.member_id = App.getInstance().getPreferences().getString("member_id", null);
         if (member_id != null && pass_hash != null) {
             Api.Auth().setState(true);
+            //Первичная загрузка кукисов
             cookies.add(parseCookie(member_id));
             cookies.add(parseCookie(pass_hash));
         }
@@ -48,6 +49,7 @@ public class Client {
     }
 
     private Cookie parseCookie(String cookieFields) {
+        /*Хранение: Url|:|Cookie*/
         String[] fields = cookieFields.split("\\|:\\|");
         return Cookie.parse(HttpUrl.parse(fields[0]), fields[1]);
     }
@@ -60,8 +62,10 @@ public class Client {
                     try {
                         for (Cookie cookie : cookies) {
                             if (cookie.name().matches("member_id|pass_hash")) {
+                                //Сохранение кукисов cookie_member_id и cookie_pass_hash
                                 App.getInstance().getPreferences().edit().putString("cookie_".concat(cookie.name()), url.toString().concat("|:|").concat(cookie.toString())).apply();
                                 if (cookie.name().equals("member_id")) {
+                                    //Сохранение и обновление member_id
                                     App.getInstance().getPreferences().edit().putString("member_id", cookie.value()).apply();
                                     Client.member_id = cookie.value();
                                 }

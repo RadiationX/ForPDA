@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.test;
+package forpdateam.ru.forpda.fragments.theme;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -98,10 +98,10 @@ public class ThemeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
         holder.root.removeAllViews();
         holder.root.addView(view);
-        holder.nick.setText(item.getUserName());
+        holder.nick.setText(item.getNick());
         holder.group.setText(item.getGroup());
         holder.date.setText(item.getDate());
-        ImageLoader.getInstance().displayImage("http://s.4pda.to/forum/uploads/" + item.getUserAvatar(), holder.avatar);
+        ImageLoader.getInstance().displayImage("http://s.4pda.to/forum/uploads/" + item.getAvatar(), holder.avatar);
     }
 
     private HashMap<Integer, BaseTag> createdTrees = new HashMap<>();

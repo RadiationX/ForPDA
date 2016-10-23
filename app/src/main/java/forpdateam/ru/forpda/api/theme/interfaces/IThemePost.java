@@ -4,21 +4,21 @@ package forpdateam.ru.forpda.api.theme.interfaces;
  * Created by radiationx on 04.08.16.
  */
 public interface IThemePost {
-    String getId();
+    int getId();
 
     String getDate();
 
-    String getNumber();
+    int getNumber();
 
-    String getUserAvatar();
+    String getAvatar();
 
-    String getUserName();
+    String getNick();
 
     String getGroupColor();
 
     String getGroup();
 
-    String getUserId();
+    int getUserId();
 
     String getReputation();
 

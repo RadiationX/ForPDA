@@ -8,8 +8,8 @@ import forpdateam.ru.forpda.api.theme.interfaces.IThemePage;
  * Created by radiationx on 04.08.16.
  */
 public class ThemePage implements IThemePage {
-    private String title, desc;
-    private boolean inFavorite, firstPage = true, lastPage = true;
+    private String title, desc, html;
+    private boolean inFavorite;
     private int postsOnPageCount = 20, allPagesCount = 0, currentPage = 0;
     private ArrayList<ThemePost> posts = new ArrayList<>();
 
@@ -44,16 +44,6 @@ public class ThemePage implements IThemePage {
     }
 
     @Override
-    public boolean isFirstPage() {
-        return firstPage;
-    }
-
-    @Override
-    public boolean isLastPage() {
-        return lastPage;
-    }
-
-    @Override
     public ArrayList<ThemePost> getPosts() {
         return posts;
     }
@@ -82,15 +72,15 @@ public class ThemePage implements IThemePage {
         posts.add(post);
     }
 
-    public void setIsFirstPage(boolean firstPage) {
-        this.firstPage = firstPage;
-    }
-
-    public void setIsLastPage(boolean lastPage) {
-        this.lastPage = lastPage;
-    }
-
     public void setCurrentPage(int currentPage) {
         this.currentPage = currentPage;
+    }
+
+    public String getHtml() {
+        return html;
+    }
+
+    public void setHtml(String html) {
+        this.html = html;
     }
 }

@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.test;
+package forpdateam.ru.forpda.fragments.theme;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,7 +14,6 @@ import java.util.Date;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
-import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.ErrorHandler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -22,7 +21,7 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Created by radiationx on 05.08.16.
  */
-public class ThemeFragment extends TabFragment {
+public class ThemeFragmentNative extends ThemeFragment {
     private RecyclerView recyclerView;
     private ThemeAdapter adapter;
 
@@ -65,16 +64,16 @@ public class ThemeFragment extends TabFragment {
         setTitle(page.getTitle());
         setSubtitle(page.getDesc());
         String temp = "";
-        temp += page.getCurrentPage() + " : " + page.isFirstPage() + " : " + page.isLastPage() + " : " + page.getAllPagesCount() + " : " + page.getPostsOnPageCount() + "\n\n\n";
+        temp += page.getCurrentPage() + " : " + page.isHaveFirstPage() + " : " + page.isHaveLastPage() + " : " + page.getAllPagesCount() + " : " + page.getPostsOnPageCount() + "\n\n\n";
         String postFix = " : ";
         for (ThemePost post : page.getPosts()) {
-            temp += String.format(template, post.getId(), post.getDate(), post.getNumber(), post.getUserAvatar());
+            temp += String.format(template, post.getId(), post.getDate(), post.getNumber(), post.getAvatar());
             temp += "\n\n";
             temp += post.getId() + postFix;
             temp += post.getDate() + postFix;
             temp += post.getNumber() + postFix;
-            temp += post.getUserAvatar() + postFix;
-            temp += post.getUserName() + postFix;
+            temp += post.getAvatar() + postFix;
+            temp += post.getNick() + postFix;
             temp += post.getGroupColor() + postFix;
             temp += post.getGroup() + postFix;
             temp += post.getUserId() + postFix;

@@ -16,7 +16,7 @@ import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsChatFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsThemesFragment;
-import forpdateam.ru.forpda.test.ThemeFragment;
+import forpdateam.ru.forpda.fragments.theme.ThemeFragmentWeb;
 
 /**
  * Created by radiationx on 04.08.16.
@@ -122,7 +122,7 @@ public class IntentHandler {
             run("showtopic " + tid + " : " + view + " : " + st + " : " + pid);
             args.putString(TabFragment.URL_ARG, uri.toString());
             args.putString(TabFragment.TITLE_ARG, "lolka");
-            TabManager.getInstance().add(new TabFragment.Builder<>(ThemeFragment.class).setArgs(args).build());
+            TabManager.getInstance().add(new TabFragment.Builder<>(ThemeFragmentWeb.class).setArgs(args).build());
             return true;
         }
         param = uri.getQueryParameter("showforum");

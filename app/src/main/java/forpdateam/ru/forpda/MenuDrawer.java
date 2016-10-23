@@ -22,7 +22,6 @@ import forpdateam.ru.forpda.fragments.news.NewsListFragment;
 import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
 import forpdateam.ru.forpda.test.AuthFragment;
-import forpdateam.ru.forpda.test.ThemeFragment;
 
 /**
  * Created by radiationx on 07.08.16.
@@ -89,7 +88,6 @@ public class MenuDrawer {
             menuItems.add(new MenuItem<>("QMS Contacts", android.R.drawable.ic_input_add, QmsContactsFragment.class));
             menuItems.add(new MenuItem<>("Favorites", android.R.drawable.ic_input_add, FavoritesFragment.class));
         }
-        menuItems.add(new MenuItem<>("Theme", android.R.drawable.ic_input_add, ThemeFragment.class));
     }
 
     public void toggleState() {

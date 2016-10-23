@@ -20,9 +20,7 @@ public interface IThemePage {
 
     int getCurrentPage();
 
-    boolean isFirstPage();
-
-    boolean isLastPage();
-
     ArrayList<ThemePost> getPosts();
+
+    String getHtml();
 }

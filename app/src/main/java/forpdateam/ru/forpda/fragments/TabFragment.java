@@ -18,6 +18,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.PriorityQueue;
+import java.util.Queue;
+
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.R;
@@ -60,10 +63,12 @@ public class TabFragment extends Rx2Fragment implements ITabFragment {
         setUID();
     }
 
+    //Титл по умолчанию, отображается в тулбаре, когда ничего не задано
     @Override
-    public String getDefaultTitle(){
+    public String getDefaultTitle() {
         return this.getClass().getSimpleName();
     }
+
     /* For TabManager etc */
     @Override
     public String getTitle() {
@@ -81,11 +86,13 @@ public class TabFragment extends Rx2Fragment implements ITabFragment {
         Log.d("UID", "" + UID);
     }
 
+    //Одинокий фрагмент не будет дублироваться в списке вкладок
     @Override
     public boolean isAlone() {
         return false;
     }
 
+    //Сомнительная штука, возможно даже выпилить надо будет
     @Override
     public String getTabUrl() {
         return tabUrl;
@@ -111,6 +118,7 @@ public class TabFragment extends Rx2Fragment implements ITabFragment {
         getMainActivity().hidePopupWindows();
     }
 
+    //Загрузка каких-то данных, выполняется только при наличии сети
     @Override
     public void loadData() {
 
@@ -132,14 +140,15 @@ public class TabFragment extends Rx2Fragment implements ITabFragment {
             title = savedInstanceState.getString(prefix + "title");
             subtitle = savedInstanceState.getString(prefix + "subtitle");
         }
-        if(getArguments()!=null)
+        if (getArguments() != null)
             setTabUrl(getArguments().getString(URL_ARG));
         setHasOptionsMenu(true);
         Log.d("kek", "oncreate " + getArguments() + " : " + savedInstanceState + " : " + title);
     }
 
+    //Загрузка основной вьюхи со всеми нужными элементами вроде тулбара, фаба и фич в тулбаре
     protected void initBaseView(LayoutInflater inflater, @Nullable ViewGroup container) {
-        Log.d("kek", "view "+view);
+        Log.d("kek", "view " + view);
         view = inflater.inflate(R.layout.fragment_base, container, false);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbarTitleView = (TextView) toolbar.findViewById(R.id.toolbar_title);
@@ -182,7 +191,10 @@ public class TabFragment extends Rx2Fragment implements ITabFragment {
         });
     }
 
-    protected void viewsReady(){
+    Queue<String> q = new PriorityQueue<>(10);
+    int i = 0;
+
+    protected void viewsReady() {
         if (Client.getInstance().getNetworkState()) {
             loadData();
         }
@@ -191,6 +203,7 @@ public class TabFragment extends Rx2Fragment implements ITabFragment {
             return false;
         });
     }
+
     class Task extends AsyncTask {
         Exception exception;
 
@@ -222,14 +235,15 @@ public class TabFragment extends Rx2Fragment implements ITabFragment {
             }
         }
     }
-    protected void initFabBehavior(){
+
+    protected void initFabBehavior() {
         CoordinatorLayout.LayoutParams params =
                 (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
         params.setBehavior(new ScrollAwareFABBehavior(fab.getContext(), null));
         fab.requestLayout();
     }
 
-    protected void setWhiteBackground(){
+    protected void setWhiteBackground() {
         view.findViewById(R.id.fragment_content).setBackgroundColor(Color.WHITE);
     }
 
@@ -263,9 +277,9 @@ public class TabFragment extends Rx2Fragment implements ITabFragment {
 
     protected final void setSubtitle(String subtitle) {
         this.subtitle = subtitle;
-        if(subtitle==null){
+        if (subtitle == null) {
             toolbarSubitleView.setVisibility(View.GONE);
-        }else {
+        } else {
             toolbarSubitleView.setText(subtitle);
             toolbarSubitleView.setVisibility(View.VISIBLE);
         }
