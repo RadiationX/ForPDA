@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.fragments.theme;
+package forpdateam.ru.forpda.fragments.theme.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

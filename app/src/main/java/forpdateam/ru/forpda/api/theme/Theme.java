@@ -28,9 +28,9 @@ public class Theme {
 
     private final static Pattern newsPattern = Pattern.compile("<section[^>]*?><article[^>]*?>[^<]*?<div class=\"container\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\" alt=\"([\\s\\S]*?)\"[\\s\\S]*?<em[^>]*>([^<]*?)</em>[\\s\\S]*?<a href=\"([^\"]*?)\">([\\s\\S]*?)</a>[\\s\\S]*?<a[^>]*?>([^<]*?)</a><div[^>]*?># ([\\s\\S]*?)</div>[\\s\\S]*?<div class=\"content-box\"[^>]*?>([\\s\\S]*?)</div></div></div>[^<]*?<div class=\"materials-box\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?<div class=\"comment-box\" id=\"comments\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[^<]*?<form");
 
-    private ThemePage get(final String url, boolean generateHtml) throws Exception {
+    private ThemePage _getPage(final String url, boolean generateHtml) throws Exception {
         ThemePage page = new ThemePage();
-        Log.d("kek", "page start get");
+        Log.d("kek", "page start _getPage");
         String response = Client.getInstance().get(url);
         Log.d("kek", "page getted");
         Date date = new Date();
@@ -82,7 +82,7 @@ public class Theme {
 
         if (generateHtml) {
             MiniTemplator t = App.getInstance().getTemplator();
-            boolean prevDisabled = page.getCurrentPage() == 1;
+            boolean prevDisabled = page.getCurrentPage() <= 1;
             boolean nextDisabled = page.getCurrentPage() == page.getAllPagesCount();
 
             if (t.variableExists("topic_title"))
@@ -92,7 +92,7 @@ public class Theme {
                 t.setVariable("body_type", "topic");
 
             if (t.variableExists("navigation_disable"))
-                t.setVariable("navigation_disable", "");
+                t.setVariable("navigation_disable", prevDisabled && nextDisabled ? "navigation_disable" : "");
 
             if (t.variableExists("first_disable"))
                 t.setVariable("first_disable", getDisableStr(prevDisabled));
@@ -116,6 +116,9 @@ public class Theme {
                 t.setVariable("avatar_type", true ? "" : "avatar_circle");
 
             int hatPostId = page.getPosts().get(0).getId();
+            boolean existOnline = t.variableExists("user_online");
+            boolean existPostId = t.variableExists("post_id");
+            boolean existUserId = t.variableExists("user_id");
             boolean existAvatar = t.variableExists("avatar");
             boolean existNick = t.variableExists("nick");
             boolean existGroupColor = t.variableExists("group_color");
@@ -124,13 +127,21 @@ public class Theme {
             boolean existDate = t.variableExists("date");
             boolean existNumber = t.variableExists("number");
             boolean existBody = t.variableExists("body");
-            boolean existReportDisable = t.variableExists("report_disable");
-            boolean existNickDisable = t.variableExists("nick_disable");
-            boolean existQuoteDisable = t.variableExists("quote_disable");
-            boolean existVoteDisable = t.variableExists("vote_disable");
-            boolean existDeleteDisable = t.variableExists("delete_disable");
-            boolean existEditDisable = t.variableExists("edit_disable");
+
+            boolean existReportBlock = t.blockExists("report_block");
+            boolean existNickBlock = t.blockExists("nick_block");
+            boolean existQuoteBlock = t.blockExists("quote_block");
+            boolean existVoteBlock = t.blockExists("vote_block");
+            boolean existDeleteBlock = t.blockExists("delete_block");
+            boolean existEditBlock = t.blockExists("edit_block");
             for (ThemePost post : page.getPosts()) {
+                if (existOnline)
+                    t.setVariable("user_online", post.isOnline() ? "online" : "");
+                if (existPostId)
+                    t.setVariable("post_id", post.getId());
+                if (existUserId)
+                    t.setVariable("user_id", post.getUserId());
+
                 //Post header
                 if (existAvatar)
                     t.setVariable("avatar", "http://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
@@ -148,26 +159,25 @@ public class Theme {
                     t.setVariable("number", post.getNumber());
 
                 //Post body
-                if (hatPostId == post.getId()) {
+                if (hatPostId == post.getId())
                     if (t.blockExists("hat_button"))
                         t.addBlock("hat_button");
-                }
                 if (existBody)
                     t.setVariable("body", post.getBody());
 
                 //Post footer
-                if (existReportDisable)
-                    t.setVariable("report_disable", getDisableStr(post.canReport()));
-                if (existNickDisable)
-                    t.setVariable("nick_disable", getDisableStr(true));
-                if (existQuoteDisable)
-                    t.setVariable("quote_disable", getDisableStr(post.canQuote()));
-                if (existVoteDisable)
-                    t.setVariable("vote_disable", getDisableStr(true));
-                if (existDeleteDisable)
-                    t.setVariable("delete_disable", getDisableStr(post.canDelete()));
-                if (existEditDisable)
-                    t.setVariable("edit_disable", getDisableStr(post.canEdit()));
+                if (existReportBlock && post.canReport())
+                    t.addBlock("report_block");
+                if (existNickBlock)
+                    t.addBlock("nick_block");
+                if (existQuoteBlock)
+                    t.addBlock("quote_block");
+                if (existVoteBlock)
+                    t.addBlock("vote_block");
+                if (existDeleteBlock && post.canDelete())
+                    t.addBlock("delete_block");
+                if (existEditBlock && post.canDelete())
+                    t.addBlock("edit_block");
 
                 t.addBlock("post");
             }
@@ -180,7 +190,7 @@ public class Theme {
     }
 
     private String getDisableStr(boolean b) {
-        return b ? "" : "disable";
+        return b ? "disabled" : "";
     }
 
     public Observable<ThemePage> getPage(final String url) {
@@ -190,7 +200,7 @@ public class Theme {
     public Observable<ThemePage> getPage(final String url, boolean generateHtml) {
         return Observable.create(subscriber -> {
             try {
-                subscriber.onNext(get(url, generateHtml));
+                subscriber.onNext(_getPage(url, generateHtml));
                 subscriber.onComplete();
             } catch (Exception e) {
                 subscriber.onError(e);

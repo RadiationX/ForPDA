@@ -14,6 +14,7 @@ import java.util.Date;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
+import forpdateam.ru.forpda.fragments.theme.adapters.ThemeAdapter;
 import forpdateam.ru.forpda.utils.ErrorHandler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;

@@ -5,53 +5,66 @@
     <link rel="stylesheet" type="text/css" href="file:///android_asset/4pda_light_blue.css">
 </head>
 <body id="${body_type}">
-<div class="panel top">
-    <div class="navi top ${navigation_disable}">
-        <a class="button first ${first_disable}" onclick="FORPDA.firstPage()"><b>&lt;&lt;</b></a>
-        <a class="button prev ${prev_disable}" onclick="FORPDA.prevPage()"><b>&lt;</b></a>
-        <a class="button page ${page_disable}" onclick="FORPDA.jumpToPage()"><b>Выбор</b></a>
-        <a class="button next ${next_disable}" onclick="FORPDA.nextPage()"><b>&gt;</b></a>
-        <a class="button last ${last_disable}" onclick="FORPDA.lastPage()"><b>&gt;&gt;</b></a>
+<div class="panel top ${navigation_disable}">
+    <div class="navigation">
+        <button class="button first" onclick="ITheme.firstPage()" ${first_disable}><b>&lt;&lt;</b></button>
+        <button class="button prev" onclick="ITheme.prevPage()" ${prev_disable}><b>&lt;</b></button>
+        <button class="button page" onclick="ITheme.selectPage()"><b>Выбор</b></button>
+        <button class="button next" onclick="ITheme.nextPage()" ${next_disable}><b>&gt;</b></button>
+        <button class="button last" onclick="ITheme.lastPage()" ${last_disable}><b>&gt;&gt;</b></button>
     </div>
 </div>
 <div class="posts_list">
     <!-- $BeginBlock post -->
-    <div class="post_container ${disable_avatar} ${avatar_type}">
+    <div class="post_container ${user_online} ${disable_avatar} ${avatar_type}"
+         data-post-id="${post_id}" data-user-id="${user_id}" data-nick="${nick}">
         <div class="post_header">
             <div class="header_wrapper">
-                <div class="avatar">
+                <div class="avatar" onclick="ITheme.showUserMenu(${post_id})">
                     <div class="img" style="background-image:url(${avatar});"></div>
                 </div>
-                <span class="inf nick "><span><b>${nick}</b></span></span>
+                <span class="inf nick" onclick="ITheme.showUserMenu(${post_id})"><span><b>${nick}</b></span></span>
                 <div class="inf group"><span style="${group_color}">${group}</span></div>
-                <span class="inf reputation"><span>${reputation}</span></span>
+                <span class="inf reputation" onclick="ITheme.showReputationMenu(${post_id})"><span>${reputation}</span></span>
                 <span class="inf date"><span>${date}</span></span>
-                <button class="inf menu"><span>Меню</span></button>
+                <button class="inf menu" onclick="ITheme.showPostMenu(${post_id})"><span>Меню</span></button>
             </div>
         </div>
         <!-- $BeginBlock hat_button -->
-        <button class="hat_button close"><b>Показать шапку</b></button>
+        <button class="hat_button close" onclick="toggleHat(this)"><b>Показать шапку</b></button>
         <!-- $EndBlock hat_button -->
         <div class="post_body">${body}</div>
         <div class="post_footer">
-            <button class="report ${report_disable}"><span>Жалоба</span></button>
-            <button class="nick ${nick_disable}"><span>Ник</span></button>
-            <button class="quote ${quote_disable}"><span>Цитата</span></button>
-            <button class="vote bad ${vote_disable}"><span>Плохо</span></button>
-            <button class="vote good ${vote_disable}"><span>Хорошо</span></button>
-            <button class="delete ${delete_disable}"><span>Удалить</span></button>
-            <button class="edit ${edit_disable}"><span>Изменить</span></button>
+            <!-- $BeginBlock report_block -->
+            <button class="report" onclick="ITheme.reportPost(${post_id})"><span>Жалоба</span></button>
+            <!-- $EndBlock report_block -->
+            <!-- $BeginBlock nick_block -->
+            <button class="nick" onclick="ITheme.insertNick(${post_id})"><span>Ник</span></button>
+            <!-- $EndBlock nick_block -->
+            <!-- $BeginBlock quote_block -->
+            <button class="quote" onclick="ITheme.quotePost(${post_id})"><span>Цитата</span></button>
+            <!-- $EndBlock quote_block -->
+            <!-- $BeginBlock vote_block -->
+            <button class="vote bad" onclick="ITheme.votePost(${post_id}, false)"><span>Плохо</span></button>
+            <button class="vote good" onclick="ITheme.votePost(${post_id}, true)"><span>Хорошо</span></button>
+            <!-- $EndBlock vote_block -->
+            <!-- $BeginBlock delete_block -->
+            <button class="delete" onclick="ITheme.deletePost(${post_id})"><span>Удалить</span></button>
+            <!-- $EndBlock delete_block -->
+            <!-- $BeginBlock edit_block -->
+            <button class="edit" onclick="ITheme.editPost(${post_id})"><span>Изменить</span></button>
+            <!-- $EndBlock edit_block -->
         </div>
     </div>
     <!-- $EndBlock post -->
 </div>
-<div class="panel bottom">
-    <div class="navi bottom ${navigation_disable}">
-        <a class="button first ${first_disable}" onclick="FORPDA.firstPage()"><b>&lt;&lt;</b></a>
-        <a class="button prev ${prev_disable}" onclick="FORPDA.prevPage()"><b>&lt;</b></a>
-        <a class="button page ${page_disable}" onclick="FORPDA.jumpToPage()"><b>Выбор</b></a>
-        <a class="button next ${next_disable}" onclick="FORPDA.nextPage()"><b>&gt;</b></a>
-        <a class="button last ${last_disable}" onclick="FORPDA.lastPage()"><b>&gt;&gt;</b></a>
+<div class="panel bottom ${navigation_disable}">
+    <div class="navigation">
+        <button class="button first" onclick="ITheme.firstPage()" ${first_disable}><b>&lt;&lt;</b></button>
+        <button class="button prev" onclick="ITheme.prevPage()" ${prev_disable}><b>&lt;</b></button>
+        <button class="button page" onclick="ITheme.selectPage()"><b>Выбор</b></button>
+        <button class="button next" onclick="ITheme.nextPage()" ${next_disable}><b>&gt;</b></button>
+        <button class="button last" onclick="ITheme.lastPage()" ${last_disable}><b>&gt;&gt;</b></button>
     </div>
 </div>
 </body>
