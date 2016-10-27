@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.client.Client;
@@ -54,7 +55,7 @@ public class Theme {
         }
         Log.d("kek", "check 3");
         matcher = alreadyInFavPattern.matcher(response);
-        page.setInFavorite(matcher.matches());
+        page.setInFavorite(matcher.find());
         matcher = postsPattern.matcher(response);
         Log.d("kek", "check 4");
         while (matcher.find()) {
@@ -82,6 +83,7 @@ public class Theme {
 
         if (generateHtml) {
             MiniTemplator t = App.getInstance().getTemplator();
+            boolean authorized = Api.Auth().getState();
             boolean prevDisabled = page.getCurrentPage() <= 1;
             boolean nextDisabled = page.getCurrentPage() == page.getAllPagesCount();
 
@@ -166,17 +168,17 @@ public class Theme {
                     t.setVariable("body", post.getBody());
 
                 //Post footer
-                if (existReportBlock && post.canReport())
+                if (existReportBlock && post.canReport() && authorized)
                     t.addBlock("report_block");
-                if (existNickBlock)
+                if (existNickBlock && post.canQuote() && authorized)
                     t.addBlock("nick_block");
-                if (existQuoteBlock)
+                if (existQuoteBlock && post.canQuote() && authorized)
                     t.addBlock("quote_block");
-                if (existVoteBlock)
+                if (existVoteBlock && authorized)
                     t.addBlock("vote_block");
-                if (existDeleteBlock && post.canDelete())
+                if (existDeleteBlock && post.canDelete() && authorized)
                     t.addBlock("delete_block");
-                if (existEditBlock && post.canDelete())
+                if (existEditBlock && post.canDelete() && authorized)
                     t.addBlock("edit_block");
 
                 t.addBlock("post");

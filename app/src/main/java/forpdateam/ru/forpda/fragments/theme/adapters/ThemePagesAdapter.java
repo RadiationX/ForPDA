@@ -1,19 +1,11 @@
 package forpdateam.ru.forpda.fragments.theme.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.TabDrawer;
-import forpdateam.ru.forpda.TabManager;
-import forpdateam.ru.forpda.fragments.TabFragment;
 
 /**
  * Created by radiationx on 26.10.16.
