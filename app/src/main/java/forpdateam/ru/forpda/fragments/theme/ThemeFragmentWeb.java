@@ -4,7 +4,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,8 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
-import android.webkit.WebView;
-import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -30,6 +32,7 @@ import forpdateam.ru.forpda.fragments.theme.adapters.ThemePagesAdapter;
 import forpdateam.ru.forpda.utils.CustomSwipeRefreshLayout;
 import forpdateam.ru.forpda.utils.ErrorHandler;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.NestedWebView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -38,9 +41,8 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class ThemeFragmentWeb extends ThemeFragment implements CustomSwipeRefreshLayout.CanChildScrollUpCallback {
-    private CustomSwipeRefreshLayout refreshLayout;
-    FrameLayout container2;
-    WebView webView;
+    private SwipeRefreshLayout refreshLayout;
+    NestedWebView webView;
     ThemePage pageData;
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -49,23 +51,29 @@ public class ThemeFragmentWeb extends ThemeFragment implements CustomSwipeRefres
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         initBaseView(inflater, container);
         inflater.inflate(R.layout.fragment_theme, (ViewGroup) view.findViewById(R.id.fragment_content), true);
-        refreshLayout = (CustomSwipeRefreshLayout) findViewById(R.id.swiperefresh);
-        container2 = (FrameLayout) findViewById(R.id.theme_view_container);
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         if (getMainActivity().getWebViews().size() > 0) {
             webView = getMainActivity().getWebViews().element();
             getMainActivity().getWebViews().remove();
         } else {
-            webView = new WebView(getContext());
+            webView = new NestedWebView(getContext());
             webView.setTag("WebView_tag ".concat(Long.toString(System.currentTimeMillis())));
         }
         webView.loadUrl("about:blank");
-        container2.addView(webView);
+        refreshLayout.addView(webView);
         viewsReady();
+
+
+        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams();
+        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
+        collapsingToolbarLayout.setLayoutParams(params);
+
         refreshLayout.setOnRefreshListener(this::loadData);
 
         webView.addJavascriptInterface(this, "ITheme");
         webView.getSettings().setJavaScriptEnabled(true);
-        refreshLayout.setCanChildScrollUpCallback(this);
+        //refreshLayout.setCanChildScrollUpCallback(this);
         return view;
     }
 
@@ -136,14 +144,26 @@ public class ThemeFragmentWeb extends ThemeFragment implements CustomSwipeRefres
         setTitle(themePage.getTitle());
         setSubtitle(String.valueOf(themePage.getCurrentPage()).concat("/").concat(String.valueOf(themePage.getAllPagesCount())));
         webView.loadDataWithBaseURL(getTabUrl(), themePage.getHtml(), "text/html", "utf-8", null);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        }, 2000);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
-        ((ViewGroup) webView.getParent()).removeAllViews();
+        webView.scrollTo(0,200);
         webView.loadUrl("about:blank");
+        webView.clearHistory();
+        webView.clearSslPreferences();
+        webView.clearDisappearingChildren();
+        webView.clearFocus();
+        webView.clearFormData();
+        webView.clearMatches();
+        ((ViewGroup) webView.getParent()).removeAllViews();
         if (getMainActivity().getWebViews().size() < 10) {
             getMainActivity().getWebViews().add(webView);
         }

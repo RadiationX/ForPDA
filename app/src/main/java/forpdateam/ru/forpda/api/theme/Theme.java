@@ -20,7 +20,7 @@ import io.reactivex.Observable;
 public class Theme {
     //y: Oh God... Why?
     //g: Because it is faster
-    private final static Pattern postsPattern = Pattern.compile("<a name=\"entry([^\"]*?)\"[^>]*?></a><div class=\"post_header_container\"><div class=\"post_header\"><span class=\"post_date\">([^&]*?)&[^<]*?<a[^>]*?>#(\\d+)</a>\\|</span>[\\s\\S]*?<span[^>]*?><a[^>]*?data-av=\"([^\"]*?)\">([^<]*?)</a></span><br[^>]*?>[\\s\\S]*?<span[^>]*?>(<[^>]*?>([^<]*?)</[^>]*?><br[^>]*?>|)[^<]*?<span[^>]*?color:([^;']*?)'>([^<]*?)</span><br[^>]*?><font color=\"([^\"]*?)\">[^<]*?</font>[\\s\\S]*?<a[^>]*?showuser=([^\"]*?)\">[^<]*?</a>[\\s\\S]*?ajaxrep[^>]*?>([^<]*?)</span></a>\\) [\\s\\S]*?(<a[^>]*?win_minus[^>]*?><img[^>]*?></a>|)[^<]*(<a[^>]*?win_add[^>]*?><img[^>]*?></a>|)<br[^>]*?>[^<]*?<span class=\"post_action\">(<a[^>]*?report[^>]*?>[^<]*?</a>|)[^<]*(<a[^>]*?edit_post[^>]*?>[^<]*?</a>|)[^<]*(<a[^>]*?delete[^>]*?>[^<]*?</a>|)[^<]*(<a[^>]*?CODE=02[^>]*?>[^<]*?</a>|)[^<]*[^<]*[\\s\\S]*?(<div class=\"post_body[^>]*?>[\\s\\S]*?</div>)</div>(<div data-post=|<!-- TABLE FOOTER -->)");
+    private final static Pattern postsPattern = Pattern.compile("<a name=\"entry([^\"]*?)\"[^>]*?></a><div class=\"post_header_container\"><div class=\"post_header\"><span class=\"post_date\">([^&]*?)&[^<]*?<a[^>]*?>#(\\d+)</a>\\|</span>[\\s\\S]*?<span[^>]*?><a[^>]*?data-av=\"([^\"]*?)\">([^<]*?)</a></span><br[^>]*?>[\\s\\S]*?<span[^>]*?>(<[^>]*?>([^<]*?)</[^>]*?><br[^>]*?>|)[^<]*?<span[^>]*?color:([^;']*?)'>([^<]*?)</span>[\\s\\S]*?<br[^>]*?><font color=\"([^\"]*?)\">[^<]*?</font>[\\s\\S]*?<a[^>]*?showuser=([^\"]*?)\">[^<]*?</a>[\\s\\S]*?ajaxrep[^>]*?>([^<]*?)</span></a>\\) [\\s\\S]*?(<a[^>]*?win_minus[^>]*?><img[^>]*?></a>|)[^<]*(<a[^>]*?win_add[^>]*?><img[^>]*?></a>|)<br[^>]*?>[^<]*?<span class=\"post_action\">(<a[^>]*?report[^>]*?>[^<]*?</a>|)[^<]*(<a[^>]*?edit_post[^>]*?>[^<]*?</a>|)[^<]*(<a[^>]*?delete[^>]*?>[^<]*?</a>|)[^<]*(<a[^>]*?CODE=02[^>]*?>[^<]*?</a>|)[^<]*[^<]*[\\s\\S]*?(<div class=\"post_body[^>]*?>[\\s\\S]*?</div>)</div>(<div data-post=|<!-- TABLE FOOTER -->)");
     private final static Pattern countsPattern = Pattern.compile("parseInt\\((\\d*)\\)[\\s\\S]*?parseInt\\(st\\*(\\d*)\\)");
     private final static Pattern titlePattern = Pattern.compile("<div class=\"topic_title_post\">([^,<]*)(, ([^<]*)|)<");
     private final static Pattern alreadyInFavPattern = Pattern.compile("Тема уже добавлена в <a href=\"[^\"]*act=fav\">");
@@ -137,6 +137,7 @@ public class Theme {
             boolean existDeleteBlock = t.blockExists("delete_block");
             boolean existEditBlock = t.blockExists("edit_block");
             for (ThemePost post : page.getPosts()) {
+                Log.d("kek", post.getNick());
                 if (existOnline)
                     t.setVariable("user_online", post.isOnline() ? "online" : "");
                 if (existPostId)

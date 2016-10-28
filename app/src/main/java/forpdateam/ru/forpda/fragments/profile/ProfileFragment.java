@@ -108,7 +108,7 @@ public class ProfileFragment extends TabFragment {
         collapsingToolbarLayout.setTitleEnabled(true);
         toolbarTitleView.setVisibility(View.GONE);
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams();
-        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED); // list other flags here by |
+        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS); // list other flags here by |
         collapsingToolbarLayout.setLayoutParams(params);
         /*collapsingToolbarLayout.setExpandedTitleGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL);
         collapsingToolbarLayout.setExpandedTitleMarginTop(dpToPx(216));

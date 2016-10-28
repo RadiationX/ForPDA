@@ -6,6 +6,7 @@ import android.net.NetworkInfo;
 import android.util.Log;
 import android.webkit.WebSettings;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -104,7 +105,8 @@ public class Client {
         if (headers != null) {
             FormBody.Builder formBodyBuilder = new FormBody.Builder();
             for (Map.Entry<String, String> entry : headers.entrySet()) {
-                formBodyBuilder.add(entry.getKey(), entry.getValue());
+                formBodyBuilder.addEncoded(entry.getKey(), URLEncoder.encode(entry.getValue(), "CP1251"));
+                //formBodyBuilder.add(entry.getKey(), );
             }
             builder.post(formBodyBuilder.build());
         }

@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebView;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -18,11 +17,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.utils.NestedWebView;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
 
 public class MainActivity extends AppCompatActivity implements TabManager.TabListener {
     public final static String DEF_TITLE = "ForPDA";
-    private Queue<WebView> webViews = new LinkedList<>();
+    private Queue<NestedWebView> webViews = new LinkedList<>();
     private Timer webViewCleaner = new Timer();
     private TabDrawer tabDrawer;
     private MenuDrawer menuDrawer;
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         }
     }
 
-    public Queue<WebView> getWebViews() {
+    public Queue<NestedWebView> getWebViews() {
         return webViews;
     }
 
