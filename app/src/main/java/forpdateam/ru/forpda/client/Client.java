@@ -8,6 +8,7 @@ import android.webkit.WebSettings;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observer;
@@ -117,10 +118,17 @@ public class Client {
             if (!response.isSuccessful())
                 throw new OkHttpResponseException(response.code(), response.message(), url);
             res = response.body().string();
+            redirects.put(url, response.request().url().toString());
         } finally {
             response.close();
         }
         return res;
+    }
+
+    private Map<String, String> redirects = new HashMap<>();
+
+    public String getRedirect(String url){
+        return redirects.get(url);
     }
 
     public static List<Cookie> getCookies() {

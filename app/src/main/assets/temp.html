@@ -3,6 +3,11 @@
 <head>
     <title>${topic_title}</title>
     <link rel="stylesheet" type="text/css" href="file:///android_asset/4pda_light_blue.css">
+    <script type="text/javascript">
+        var elemToScroll = "${elem_to_scroll}";
+        console.log("intemp "+elemToScroll);
+    </script>
+    <script type="text/javascript" src="file:///android_asset/theme.js"></script>
 </head>
 <body id="${body_type}">
 <div class="panel top ${navigation_disable}">
@@ -16,7 +21,7 @@
 </div>
 <div class="posts_list">
     <!-- $BeginBlock post -->
-    <div class="post_container ${user_online} ${disable_avatar} ${avatar_type}"
+    <div name="entry${post_id}" class="post_container ${user_online} ${disable_avatar} ${avatar_type}"
          data-post-id="${post_id}" data-user-id="${user_id}" data-nick="${nick}">
         <div class="post_header">
             <div class="header_wrapper">

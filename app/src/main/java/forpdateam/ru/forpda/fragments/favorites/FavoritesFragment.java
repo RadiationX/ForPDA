@@ -37,7 +37,7 @@ public class FavoritesFragment extends TabFragment {
     private FavoritesAdapter adapter;
     private FavoritesAdapter.OnItemClickListener onItemClickListener =
             (view1, position, adapter1) -> {
-                IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic="+adapter1.getItem(position).getTopicId()+"&view=getlastpost");
+                IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic="+adapter1.getItem(position).getTopicId()+"&view=getnewpost");
             };
     private FavoritesAdapter.OnLongItemClickListener onLongItemClickListener =
             (view1, position, adapter1) -> {

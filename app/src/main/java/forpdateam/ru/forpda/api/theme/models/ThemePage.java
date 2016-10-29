@@ -8,10 +8,35 @@ import forpdateam.ru.forpda.api.theme.interfaces.IThemePage;
  * Created by radiationx on 04.08.16.
  */
 public class ThemePage implements IThemePage {
-    private String title, desc, html;
+    private String title, desc, html, url, elementToScroll;
     private boolean inFavorite;
-    private int postsOnPageCount = 20, allPagesCount = 0, currentPage = 0;
+    private int postsOnPageCount = 20, allPagesCount = 0, currentPage = 0, scrollY = 0;
+
+    public int getScrollY() {
+        return scrollY;
+    }
+
+    public void setScrollY(int scrollY) {
+        this.scrollY = scrollY;
+    }
+
     private ArrayList<ThemePost> posts = new ArrayList<>();
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getElementToScroll() {
+        return elementToScroll;
+    }
+
+    public void setElementToScroll(String elementToScroll) {
+        this.elementToScroll = elementToScroll;
+    }
 
     @Override
     public String getTitle() {

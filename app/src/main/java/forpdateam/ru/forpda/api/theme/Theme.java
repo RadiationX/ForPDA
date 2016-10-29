@@ -25,6 +25,7 @@ public class Theme {
     private final static Pattern titlePattern = Pattern.compile("<div class=\"topic_title_post\">([^,<]*)(, ([^<]*)|)<");
     private final static Pattern alreadyInFavPattern = Pattern.compile("Тема уже добавлена в <a href=\"[^\"]*act=fav\">");
     private final static Pattern paginationPattern = Pattern.compile("pagination\">([\\s\\S]*?<span[^>]*?>([^<]*?)</span>[\\s\\S]*?)</div><br");
+    public final static Pattern elemToScrollPattern = Pattern.compile("(?:anchor=|#)([^&\\n\\=\\?\\.\\#]*)");
 
 
     private final static Pattern newsPattern = Pattern.compile("<section[^>]*?><article[^>]*?>[^<]*?<div class=\"container\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\" alt=\"([\\s\\S]*?)\"[\\s\\S]*?<em[^>]*>([^<]*?)</em>[\\s\\S]*?<a href=\"([^\"]*?)\">([\\s\\S]*?)</a>[\\s\\S]*?<a[^>]*?>([^<]*?)</a><div[^>]*?># ([\\s\\S]*?)</div>[\\s\\S]*?<div class=\"content-box\"[^>]*?>([\\s\\S]*?)</div></div></div>[^<]*?<div class=\"materials-box\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?<div class=\"comment-box\" id=\"comments\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[^<]*?<form");
@@ -33,9 +34,18 @@ public class Theme {
         ThemePage page = new ThemePage();
         Log.d("kek", "page start _getPage");
         String response = Client.getInstance().get(url);
+        String redirectUrl = Client.getInstance().getRedirect(url);
+        if (redirectUrl == null)
+            redirectUrl = url;
+        page.setUrl(redirectUrl);
+
         Log.d("kek", "page getted");
-        Date date = new Date();
-        Matcher matcher = countsPattern.matcher(response);
+        long time = System.currentTimeMillis();
+        Matcher matcher = elemToScrollPattern.matcher(redirectUrl);
+        while (matcher.find()) {
+            page.setElementToScroll(matcher.group(1));
+        }
+        matcher = countsPattern.matcher(response);
         if (matcher.find()) {
             page.setAllPagesCount(Integer.parseInt(matcher.group(1)) + 1);
             page.setPostsOnPageCount(Integer.parseInt(matcher.group(2)));
@@ -90,6 +100,9 @@ public class Theme {
             if (t.variableExists("topic_title"))
                 t.setVariable("topic_title", page.getTitle());
 
+            if (t.variableExists("elem_to_scroll"))
+                t.setVariable("elem_to_scroll", page.getElementToScroll());
+
             if (t.variableExists("body_type"))
                 t.setVariable("body_type", "topic");
 
@@ -109,7 +122,7 @@ public class Theme {
                 t.setVariable("last_disable", getDisableStr(nextDisabled));
 
             if (t.variableExists("topic_url"))
-                t.setVariable("topic_url", url);
+                t.setVariable("topic_url", redirectUrl);
 
             if (t.variableExists("disable_avatar"))
                 t.setVariable("disable_avatar", true ? "" : "disable_avatar");
@@ -137,7 +150,6 @@ public class Theme {
             boolean existDeleteBlock = t.blockExists("delete_block");
             boolean existEditBlock = t.blockExists("edit_block");
             for (ThemePost post : page.getPosts()) {
-                Log.d("kek", post.getNick());
                 if (existOnline)
                     t.setVariable("user_online", post.isOnline() ? "online" : "");
                 if (existPostId)
@@ -188,7 +200,7 @@ public class Theme {
             t.reset();
         }
 
-        Log.d("kek", "theme parsing time " + (new Date().getTime() - date.getTime()));
+        Log.d("kek", "theme parsing time " + (System.currentTimeMillis() - time));
         return page;
     }
 

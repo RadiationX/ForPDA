@@ -1,6 +1,9 @@
 package forpdateam.ru.forpda.utils;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
+import android.support.v4.BuildConfig;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingChildHelper;
@@ -125,6 +128,14 @@ public class NestedWebView extends WebView implements NestedScrollingChild {
     @Override
     public boolean dispatchNestedPreFling(float velocityX, float velocityY) {
         return mChildHelper.dispatchNestedPreFling(velocityX, velocityY);
+    }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    public void evalJs(String js) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+            evaluateJavascript(js, null);
+        else
+            loadUrl("javascript:" + js);
     }
 
 }

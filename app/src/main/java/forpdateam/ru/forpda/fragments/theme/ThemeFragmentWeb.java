@@ -1,15 +1,18 @@
 package forpdateam.ru.forpda.fragments.theme;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,18 +21,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.theme.Theme;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.fragments.theme.adapters.ThemePagesAdapter;
-import forpdateam.ru.forpda.utils.CustomSwipeRefreshLayout;
 import forpdateam.ru.forpda.utils.ErrorHandler;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.NestedWebView;
@@ -40,10 +50,16 @@ import io.reactivex.schedulers.Schedulers;
  * Created by radiationx on 20.10.16.
  */
 
-public class ThemeFragmentWeb extends ThemeFragment implements CustomSwipeRefreshLayout.CanChildScrollUpCallback {
+public class ThemeFragmentWeb extends ThemeFragment {
+    //Указывают на произведенное действие: переход назад, обновление, обычный переход по ссылке
+    private final static int BACK_ACTION = 0, REFRESH_ACTION = 1, NORMAL_ACTION = 2;
+    private int action = NORMAL_ACTION;
     private SwipeRefreshLayout refreshLayout;
-    NestedWebView webView;
-    ThemePage pageData;
+    private NestedWebView webView;
+    private ThemePage pageData;
+    private WebViewClient webViewClient;
+    private WebChromeClient chromeClient;
+    private List<ThemePage> history = new ArrayList<>();
 
     @SuppressLint("SetJavaScriptEnabled")
     @Nullable
@@ -73,7 +89,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements CustomSwipeRefres
 
         webView.addJavascriptInterface(this, "ITheme");
         webView.getSettings().setJavaScriptEnabled(true);
-        //refreshLayout.setCanChildScrollUpCallback(this);
+
         return view;
     }
 
@@ -82,6 +98,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements CustomSwipeRefres
         Menu menu = toolbar.getMenu();
         menu.clear();
         menu.add("Обновить").setIcon(R.drawable.ic_refresh_white_24dp).setOnMenuItemClickListener(menuItem -> {
+            action = REFRESH_ACTION;
             loadData();
             return false;
         }).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
@@ -137,25 +154,62 @@ public class ThemeFragmentWeb extends ThemeFragment implements CustomSwipeRefres
     }
 
     private void bindUi(ThemePage themePage) throws IOException {
+        setTabUrl(themePage.getUrl());
+        if (pageData != null) {
+            if (pageData.getUrl().equals(getTabUrl())) {
+                themePage.setScrollY(webView.getScrollY());
+            } else {
+                pageData.setScrollY(webView.getScrollY());
+                history.add(pageData);
+                webView.evalJs("ITheme.setHistoryBody(" + (history.size() - 1) + ",'<!DOCTYPE html><html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');");
+            }
+        }
+        pageData = themePage;
+        if (webViewClient == null) {
+            webViewClient = new ThemeWebViewClient();
+            webView.setWebViewClient(webViewClient);
+        }
+        if (chromeClient == null) {
+            chromeClient = new ThemeChromeClient();
+            webView.setWebChromeClient(chromeClient);
+        }
         if (refreshLayout != null)
             refreshLayout.setRefreshing(false);
-        pageData = themePage;
-        refreshOptionsMenu();
-        setTitle(themePage.getTitle());
-        setSubtitle(String.valueOf(themePage.getCurrentPage()).concat("/").concat(String.valueOf(themePage.getAllPagesCount())));
-        webView.loadDataWithBaseURL(getTabUrl(), themePage.getHtml(), "text/html", "utf-8", null);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
 
-            }
-        }, 2000);
+        updateView();
+    }
+
+    private void updateTitle() {
+        setTitle(pageData.getTitle());
+    }
+
+    private void updateSubTitle() {
+        setSubtitle(String.valueOf(pageData.getCurrentPage()).concat("/").concat(String.valueOf(pageData.getAllPagesCount())));
+    }
+
+    private void updateView() {
+        setTabUrl(pageData.getUrl());
+        updateTitle();
+        updateSubTitle();
+        refreshOptionsMenu();
+        webView.loadDataWithBaseURL(getTabUrl(), pageData.getHtml(), "text/html", "utf-8", null);
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (history.size() > 0) {
+            action = BACK_ACTION;
+            pageData = history.get(history.size() - 1);
+            history.remove(history.size() - 1);
+            updateView();
+            return true;
+        }
+        return false;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        webView.scrollTo(0,200);
         webView.loadUrl("about:blank");
         webView.clearHistory();
         webView.clearSslPreferences();
@@ -163,6 +217,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements CustomSwipeRefres
         webView.clearFocus();
         webView.clearFormData();
         webView.clearMatches();
+        webView.clearCache(true);
         ((ViewGroup) webView.getParent()).removeAllViews();
         if (getMainActivity().getWebViews().size() < 10) {
             getMainActivity().getWebViews().add(webView);
@@ -174,11 +229,94 @@ public class ThemeFragmentWeb extends ThemeFragment implements CustomSwipeRefres
         super.onDestroy();
     }
 
-    @Override
-    public boolean canSwipeRefreshChildScrollUp() {
-        return webView.getScrollY() > 0;
+    private class ThemeWebViewClient extends WebViewClient {
+
+        @SuppressWarnings("deprecation")
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            return handleUri(Uri.parse(url));
+        }
+
+        @TargetApi(Build.VERSION_CODES.N)
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            return handleUri(request.getUrl());
+        }
+
+
+        private boolean handleUri(Uri uri) {
+            Log.d("kek", "handle " + uri);
+            if (uri.getHost() != null && uri.getHost().matches("4pda.ru")) {
+                if (uri.getPathSegments().get(0).equals("forum")) {
+                    String param = uri.getQueryParameter("showtopic");
+                    Log.d("kek", "param" + param);
+                    if (param != null && !param.equals(Uri.parse(getTabUrl()).getQueryParameter("showtopic"))) {
+                        load(uri);
+                        return true;
+                    }
+                    param = uri.getQueryParameter("act");
+                    if (param == null)
+                        param = uri.getQueryParameter("view");
+                    Log.d("kek", "param" + param);
+                    if (param != null && param.equals("findpost")) {
+                        String postId = uri.getQueryParameter("pid");
+                        if (postId == null)
+                            postId = uri.getQueryParameter("p");
+                        Log.d("kek", "param" + postId);
+                        if (postId != null && getPostById(Integer.parseInt(postId)) != null) {
+                            Log.d("kek", " scroll to " + postId);
+                            Matcher matcher = Theme.elemToScrollPattern.matcher(uri.toString());
+                            String elem = null;
+                            while (matcher.find()) {
+                                elem = matcher.group(1);
+                            }
+                            webView.evalJs("scrollToElement(\"".concat(elem == null ? "entry" : "").concat(elem != null ? elem : postId).concat("\")"));
+                            return true;
+                        } else {
+                            load(uri);
+                            return true;
+                        }
+                    }
+                }
+            }
+            IntentHandler.handle(uri.toString());
+
+            return true;
+        }
+
+        private void load(Uri uri) {
+            action = NORMAL_ACTION;
+            setTabUrl(uri.toString());
+            loadData();
+        }
+
+        @Override
+        public void onLoadResource(WebView view, String url) {
+            super.onLoadResource(view, url);
+            if (action == NORMAL_ACTION)
+                webView.evalJs("onProgressChanged()");
+        }
+
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            super.onPageStarted(view, url, favicon);
+            if (action == BACK_ACTION || action == REFRESH_ACTION)
+                webView.evalJs("window.doOnLoadScroll = false");
+            if (action == BACK_ACTION)
+                webView.scrollTo(0, pageData.getScrollY());
+        }
+
     }
 
+    private class ThemeChromeClient extends WebChromeClient {
+        @Override
+        public void onProgressChanged(WebView view, int progress) {
+            if (action == NORMAL_ACTION)
+                webView.evalJs("onProgressChanged()");
+            else if (action == BACK_ACTION || action == REFRESH_ACTION)
+                webView.scrollTo(0, pageData.getScrollY());
+        }
+    }
 
 
     /*
@@ -227,7 +365,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements CustomSwipeRefres
         for (ThemePost post : pageData.getPosts())
             if (post.getId() == postId)
                 return post;
-        return new ThemePost();
+        return null;
     }
 
     private void jumpToPage(int st) {
@@ -420,5 +558,10 @@ public class ThemeFragmentWeb extends ThemeFragment implements CustomSwipeRefres
     @JavascriptInterface
     public void votePost(final int postId, final boolean type) {
         run(() -> votePost(getPostById(postId), type));
+    }
+
+    @JavascriptInterface
+    public void setHistoryBody(final String index, final String body) {
+        run(() -> history.get(Integer.parseInt(index)).setHtml(body.replaceAll("data-block-init=\"1\"", "")));
     }
 }
