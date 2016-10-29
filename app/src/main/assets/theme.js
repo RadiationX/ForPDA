@@ -33,7 +33,7 @@ function onProgressChanged() {
 //name может быть EventObject или строкок
 //name это аттрибут тега html, может быть просто якорем или entry+post_id
 //Вызывается из джавы, если находится на той-же странице, и в ссылке есть entry или якорь, а также при загрузке страницы
-//elemToScroll - переменная, заданная в шаблоне в теге script, содержит в себе якорь или entry
+//PageInfo.elemToScroll - переменная, заданная в шаблоне в теге script, содержит в себе якорь или entry
 //doOnLoadScroll - объект в window, задаётся false только когда была сделана перезагрузка страницы или переход назад
 function scrollToElement(name) {
     console.log("call scroll to");
@@ -41,7 +41,7 @@ function scrollToElement(name) {
         if (doOnLoadScroll == false)
             return;
 
-    if (typeof name != 'string') name = elemToScroll;
+    if (typeof name != 'string') name = PageInfo.elemToScroll;
     console.log("do scroll to " + name);
     anchorElem = document.querySelector('[name="' + name + '"]');
     var p = anchorElem;

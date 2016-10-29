@@ -4,8 +4,22 @@
     <title>${topic_title}</title>
     <link rel="stylesheet" type="text/css" href="file:///android_asset/4pda_light_blue.css">
     <script type="text/javascript">
-        var elemToScroll = "${elem_to_scroll}";
-        console.log("intemp "+elemToScroll);
+        var PageInfo = {
+            url: "${topic_url}",
+            title: "${topic_title}",
+            description: "${topic_description}",
+            inFavorite: ${in_favorite},
+            elemToScroll: "${elem_to_scroll}",
+            bodyType: "${body_type}",
+            disableAvatar: "${disable_avatar_js}",
+            avatarType: "${avatar_type}",
+            allPagesCount: ${all_pages},
+            postsOnPageCount: ${posts_on_page},
+            currentPage: ${current_page},
+            authorized: ${authorized},
+            isCurator: ${is_curator},
+            memberId: ${member_id}
+        }
     </script>
     <script type="text/javascript" src="file:///android_asset/theme.js"></script>
 </head>

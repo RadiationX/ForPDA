@@ -9,7 +9,16 @@ import forpdateam.ru.forpda.api.theme.interfaces.IThemePage;
  */
 public class ThemePage implements IThemePage {
     private String title, desc, html, url, elementToScroll;
-    private boolean inFavorite;
+    private boolean inFavorite = false, curator = false;
+
+    public boolean isCurator() {
+        return curator;
+    }
+
+    public void setCurator(boolean curator) {
+        this.curator = curator;
+    }
+
     private int postsOnPageCount = 20, allPagesCount = 0, currentPage = 0, scrollY = 0;
 
     public int getScrollY() {

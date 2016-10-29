@@ -54,6 +54,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
     //Указывают на произведенное действие: переход назад, обновление, обычный переход по ссылке
     private final static int BACK_ACTION = 0, REFRESH_ACTION = 1, NORMAL_ACTION = 2;
     private int action = NORMAL_ACTION;
+
     private SwipeRefreshLayout refreshLayout;
     private NestedWebView webView;
     private ThemePage pageData;
@@ -150,10 +151,10 @@ public class ThemeFragmentWeb extends ThemeFragment {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::bindUi, throwable -> ErrorHandler.handle(this, throwable, null)));
+                .subscribe(this::onLoadData, throwable -> ErrorHandler.handle(this, throwable, null)));
     }
 
-    private void bindUi(ThemePage themePage) throws IOException {
+    private void onLoadData(ThemePage themePage) throws IOException {
         setTabUrl(themePage.getUrl());
         if (pageData != null) {
             if (pageData.getUrl().equals(getTabUrl())) {
@@ -210,6 +211,8 @@ public class ThemeFragmentWeb extends ThemeFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        webView.setWebChromeClient(null);
+        webView.setWebChromeClient(null);
         webView.loadUrl("about:blank");
         webView.clearHistory();
         webView.clearSslPreferences();
@@ -217,7 +220,6 @@ public class ThemeFragmentWeb extends ThemeFragment {
         webView.clearFocus();
         webView.clearFormData();
         webView.clearMatches();
-        webView.clearCache(true);
         ((ViewGroup) webView.getParent()).removeAllViews();
         if (getMainActivity().getWebViews().size() < 10) {
             getMainActivity().getWebViews().add(webView);

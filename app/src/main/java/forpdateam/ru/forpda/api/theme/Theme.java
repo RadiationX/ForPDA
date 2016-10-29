@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.api.theme;
 
 import android.util.Log;
 
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,9 +19,9 @@ import io.reactivex.Observable;
 public class Theme {
     //y: Oh God... Why?
     //g: Because it is faster
-    private final static Pattern postsPattern = Pattern.compile("<a name=\"entry([^\"]*?)\"[^>]*?></a><div class=\"post_header_container\"><div class=\"post_header\"><span class=\"post_date\">([^&]*?)&[^<]*?<a[^>]*?>#(\\d+)</a>\\|</span>[\\s\\S]*?<span[^>]*?><a[^>]*?data-av=\"([^\"]*?)\">([^<]*?)</a></span><br[^>]*?>[\\s\\S]*?<span[^>]*?>(<[^>]*?>([^<]*?)</[^>]*?><br[^>]*?>|)[^<]*?<span[^>]*?color:([^;']*?)'>([^<]*?)</span>[\\s\\S]*?<br[^>]*?><font color=\"([^\"]*?)\">[^<]*?</font>[\\s\\S]*?<a[^>]*?showuser=([^\"]*?)\">[^<]*?</a>[\\s\\S]*?ajaxrep[^>]*?>([^<]*?)</span></a>\\) [\\s\\S]*?(<a[^>]*?win_minus[^>]*?><img[^>]*?></a>|)[^<]*(<a[^>]*?win_add[^>]*?><img[^>]*?></a>|)<br[^>]*?>[^<]*?<span class=\"post_action\">(<a[^>]*?report[^>]*?>[^<]*?</a>|)[^<]*(<a[^>]*?edit_post[^>]*?>[^<]*?</a>|)[^<]*(<a[^>]*?delete[^>]*?>[^<]*?</a>|)[^<]*(<a[^>]*?CODE=02[^>]*?>[^<]*?</a>|)[^<]*[^<]*[\\s\\S]*?(<div class=\"post_body[^>]*?>[\\s\\S]*?</div>)</div>(<div data-post=|<!-- TABLE FOOTER -->)");
+    private final static Pattern postsPattern = Pattern.compile("<a name=\"entry([^\"]*?)\"[^>]*?><\\/a><div class=\"post_header_container\"><div class=\"post_header\"><span class=\"post_date\">([^&]*?)&[^<]*?<a[^>]*?>#(\\d+)<\\/a>\\|<\\/span>[\\s\\S]*?<span[^>]*?><a[^>]*?data-av=\"([^\"]*?)\">([^<]*?)<\\/a><\\/span><br[^>]*?>[\\s\\S]*?<span[^>]*?>(?:<[^>]*?>([^<]*?|)<\\/[^>]*?><br[^>]*?>|)[^<]*?<span[^>]*?color:([^;']*?)'>([^<]*?)<\\/span>[\\s\\S]*?<br[^>]*?><font color=\"([^\"]*?)\">[^<]*?<\\/font>[\\s\\S]*?<a[^>]*?showuser=([^\"]*?)\">[^<]*?<\\/a>[\\s\\S]*?ajaxrep[^>]*?>([^<]*?)<\\/span><\\/a>\\) [\\s\\S]*?(<a[^>]*?win_minus[^>]*?><img[^>]*?><\\/a>|)[^<]*(<a[^>]*?win_add[^>]*?><img[^>]*?><\\/a>|)<br[^>]*?>[^<]*?<span class=\"post_action\">(<a[^>]*?report[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?edit_post[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?delete[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?CODE=02[^>]*?>[^<]*?<\\/a>|)[^<]*[^<]*[\\s\\S]*?(<div class=\"post_body[^>]*?>[\\s\\S]*?<\\/div>)<\\/div>(?:<div data-post=|<!-- TABLE FOOTER -->)");
     private final static Pattern countsPattern = Pattern.compile("parseInt\\((\\d*)\\)[\\s\\S]*?parseInt\\(st\\*(\\d*)\\)");
-    private final static Pattern titlePattern = Pattern.compile("<div class=\"topic_title_post\">([^,<]*)(, ([^<]*)|)<");
+    private final static Pattern titlePattern = Pattern.compile("<div class=\"topic_title_post\">([^,<]*)(?:, ([^<]*)|)<br");
     private final static Pattern alreadyInFavPattern = Pattern.compile("Тема уже добавлена в <a href=\"[^\"]*act=fav\">");
     private final static Pattern paginationPattern = Pattern.compile("pagination\">([\\s\\S]*?<span[^>]*?>([^<]*?)</span>[\\s\\S]*?)</div><br");
     public final static Pattern elemToScrollPattern = Pattern.compile("(?:anchor=|#)([^&\\n\\=\\?\\.\\#]*)");
@@ -61,7 +60,7 @@ public class Theme {
         matcher = titlePattern.matcher(response);
         if (matcher.find()) {
             page.setTitle(matcher.group(1));
-            page.setDesc(matcher.group(3));
+            page.setDesc(matcher.group(2));
         }
         Log.d("kek", "check 3");
         matcher = alreadyInFavPattern.matcher(response);
@@ -75,23 +74,26 @@ public class Theme {
             post.setNumber(Integer.parseInt(matcher.group(3)));
             post.setAvatar(matcher.group(4));
             post.setNick(matcher.group(5));
-            post.setCurator(!matcher.group(6).isEmpty());
-            post.setGroupColor(matcher.group(8));
-            post.setGroup(matcher.group(9));
-            post.setOnline(matcher.group(10).contains("green"));
-            post.setUserId(Integer.parseInt(matcher.group(11)));
-            post.setReputation(matcher.group(12));
-            post.setCanMinus(!matcher.group(13).isEmpty());
-            post.setCanPlus(!matcher.group(14).isEmpty());
-            post.setCanReport(!matcher.group(15).isEmpty());
-            post.setCanEdit(!matcher.group(16).isEmpty());
-            post.setCanDelete(!matcher.group(17).isEmpty());
-            post.setCanQoute(!matcher.group(18).isEmpty());
-            post.setBody(matcher.group(19));
+            post.setCurator(matcher.group(6) != null);
+            post.setGroupColor(matcher.group(7));
+            post.setGroup(matcher.group(8));
+            post.setOnline(matcher.group(9).contains("green"));
+            post.setUserId(Integer.parseInt(matcher.group(10)));
+            post.setReputation(matcher.group(11));
+            post.setCanMinus(!matcher.group(12).isEmpty());
+            post.setCanPlus(!matcher.group(13).isEmpty());
+            post.setCanReport(!matcher.group(14).isEmpty());
+            post.setCanEdit(!matcher.group(15).isEmpty());
+            post.setCanDelete(!matcher.group(16).isEmpty());
+            post.setCanQoute(!matcher.group(17).isEmpty());
+            post.setBody(matcher.group(18));
+            if (post.isCurator() && post.getUserId() == Integer.parseInt(Client.member_id))
+                page.setCurator(true);
             page.addPost(post);
         }
-
+        Log.d("kek", "end created page obj " + (System.currentTimeMillis() - time));
         if (generateHtml) {
+            long time2 = System.currentTimeMillis();
             MiniTemplator t = App.getInstance().getTemplator();
             boolean authorized = Api.Auth().getState();
             boolean prevDisabled = page.getCurrentPage() <= 1;
@@ -99,6 +101,33 @@ public class Theme {
 
             if (t.variableExists("topic_title"))
                 t.setVariable("topic_title", page.getTitle());
+
+            if (t.variableExists("topic_url"))
+                t.setVariable("topic_url", redirectUrl);
+
+            if (t.variableExists("topic_description"))
+                t.setVariable("topic_description", page.getDesc());
+
+            if (t.variableExists("in_favorite"))
+                t.setVariable("in_favorite", Boolean.toString(page.isInFavorite()));
+
+            if (t.variableExists("all_pages"))
+                t.setVariable("all_pages", page.getAllPagesCount());
+
+            if (t.variableExists("posts_on_page"))
+                t.setVariable("posts_on_page", page.getPostsOnPageCount());
+
+            if (t.variableExists("current_page"))
+                t.setVariable("current_page", page.getCurrentPage());
+
+            if (t.variableExists("authorized"))
+                t.setVariable("authorized", Boolean.toString(authorized));
+
+            if (t.variableExists("is_curator"))
+                t.setVariable("is_curator", Boolean.toString(page.isCurator()));
+
+            if (t.variableExists("member_id"))
+                t.setVariable("member_id", Client.member_id);
 
             if (t.variableExists("elem_to_scroll"))
                 t.setVariable("elem_to_scroll", page.getElementToScroll());
@@ -121,8 +150,8 @@ public class Theme {
             if (t.variableExists("last_disable"))
                 t.setVariable("last_disable", getDisableStr(nextDisabled));
 
-            if (t.variableExists("topic_url"))
-                t.setVariable("topic_url", redirectUrl);
+            if (t.variableExists("disable_avatar_js"))
+                t.setVariable("disable_avatar_js", Boolean.toString(true));
 
             if (t.variableExists("disable_avatar"))
                 t.setVariable("disable_avatar", true ? "" : "disable_avatar");
@@ -130,12 +159,15 @@ public class Theme {
             if (t.variableExists("avatar_type"))
                 t.setVariable("avatar_type", true ? "" : "avatar_circle");
 
+            Log.d("kek", "template check 1 " + (System.currentTimeMillis() - time2));
+
             int hatPostId = page.getPosts().get(0).getId();
             boolean existOnline = t.variableExists("user_online");
             boolean existPostId = t.variableExists("post_id");
             boolean existUserId = t.variableExists("user_id");
             boolean existAvatar = t.variableExists("avatar");
             boolean existNick = t.variableExists("nick");
+            boolean existCurator = t.variableExists("curator");
             boolean existGroupColor = t.variableExists("group_color");
             boolean existGroup = t.variableExists("group");
             boolean existReputation = t.variableExists("reputation");
@@ -149,6 +181,7 @@ public class Theme {
             boolean existVoteBlock = t.blockExists("vote_block");
             boolean existDeleteBlock = t.blockExists("delete_block");
             boolean existEditBlock = t.blockExists("edit_block");
+            Log.d("kek", "template check 2 " + (System.currentTimeMillis() - time2));
             for (ThemePost post : page.getPosts()) {
                 if (existOnline)
                     t.setVariable("user_online", post.isOnline() ? "online" : "");
@@ -162,6 +195,8 @@ public class Theme {
                     t.setVariable("avatar", "http://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
                 if (existNick)
                     t.setVariable("nick", post.getNick());
+                if (existCurator)
+                    t.setVariable("curator", post.isCurator() ? "curator" : "");
                 if (existGroupColor)
                     t.setVariable("group_color", post.getGroupColor());
                 if (existGroup)
@@ -196,8 +231,11 @@ public class Theme {
 
                 t.addBlock("post");
             }
+            Log.d("kek", "template check 3 " + (System.currentTimeMillis() - time2));
             page.setHtml(t.generateOutput());
+            Log.d("kek", "template check 4 " + (System.currentTimeMillis() - time2));
             t.reset();
+            Log.d("kek", "template check 5 " + (System.currentTimeMillis() - time2));
         }
 
         Log.d("kek", "theme parsing time " + (System.currentTimeMillis() - time));

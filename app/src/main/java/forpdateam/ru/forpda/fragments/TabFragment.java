@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.trello.rxlifecycle.components.support.RxFragment;
+
 import java.util.PriorityQueue;
 import java.util.Queue;
 
@@ -28,16 +30,12 @@ import forpdateam.ru.forpda.ScrollAwareFABBehavior;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.client.Client;
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.disposables.CompositeDisposable;
-import io.victoralbertos.rxlifecycle_interop.LifecycleTransformer2x;
-import io.victoralbertos.rxlifecycle_interop.Rx2LifecycleAndroid;
-import io.victoralbertos.rxlifecycle_interop.support.Rx2Fragment;
 
 /**
  * Created by radiationx on 07.08.16.
  */
-public class TabFragment extends Rx2Fragment implements ITabFragment {
+public class TabFragment extends RxFragment implements ITabFragment {
     public final static String TITLE_ARG = "TAB_TITLE";
     public final static String SUBTITLE_ARG = "TAB_SUBTITLE";
     public final static String URL_ARG = "TAB_URL";
@@ -343,10 +341,5 @@ public class TabFragment extends Rx2Fragment implements ITabFragment {
             tClass.setUID();
             return tClass;
         }
-    }
-
-    @Override
-    public <T> LifecycleTransformer2x<T> getLifeCycle(BackpressureStrategy strategy) {
-        return Rx2LifecycleAndroid.bindFragment(lifecycle2x(), strategy);
     }
 }

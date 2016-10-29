@@ -38,18 +38,15 @@ android {
             minSdkVersion 18
             targetSdkVersion 25
             vectorDrawables.useSupportLibrary = true
-            renderscriptTargetApi 19
-            renderscriptSupportModeEnabled true
         }
+
 
         applicationVariants.all { variant ->
             variant.outputs.each { output ->
-                def fileNaming = "apk/RELEASES"
-                variant.outputs.each { output1 ->
-                    def outputFile = output1.outputFile
-                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                        output1.outputFile = new File(getProject().getRootDir(), "${fileNaming}-${versionMajor}.${versionMinor}.${versionPatch}-${outputFile.name}")
-                    }
+                def fileNaming = "apk/ForPDA"
+                def outputFile = output.outputFile
+                if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                    output.outputFile = new File(getProject().getRootDir(), "${fileNaming}-${versionMajor}.${versionMinor}.${versionPatch}-${outputFile.name}")
                 }
             }
         }
@@ -63,12 +60,33 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    dexOptions {
+        dexInProcess = true
+        preDexLibraries = true
+    }
     compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8
     }
     packagingOptions {
         pickFirst 'META-INF/rxjava.properties'
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+    }
+    splits {
+        abi {
+            enable false
+            reset()
+            include 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+            universalApk false
+        }
     }
 }
 
@@ -82,23 +100,22 @@ ext {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
-    compile "com.android.support:support-annotations:${supportLibVersion}"
-    compile "com.android.support:support-v4:${supportLibVersion}"
+    //compile "com.android.support:support-annotations:${supportLibVersion}"
     compile "com.android.support:design:${supportLibVersion}"
     compile "com.android.support:cardview-v7:${supportLibVersion}"
     compile "com.android.support:recyclerview-v7:${supportLibVersion}"
     compile "com.squareup.okhttp3:okhttp:${okHttpVersion}"
     compile "com.squareup.okhttp3:okhttp-urlconnection:${okHttpVersion}"
     compile 'com.annimon:stream:1.1.3'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.0-RC1'
-    compile 'io.reactivex.rxjava2:rxjava:2.0.0-RC3'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.0'
+    compile 'io.reactivex.rxjava2:rxjava:2.0.0'
     // Этот iterop нужен пока мучачес и трелло необновит свое творение до нового rx
-    compile 'com.github.VictorAlbertos:RxLifecycleInterop:0.0.2'
-//    compile "com.jakewharton.rxbinding:rxbinding:${rxbindingVersion}"
+    //compile 'com.github.VictorAlbertos:RxLifecycleInterop:0.0.3'
+    //compile "com.jakewharton.rxbinding:rxbinding:${rxbindingVersion}"
     compile "com.trello:rxlifecycle:${rxlifecycleVersion}"
     compile "com.trello:rxlifecycle-components:${rxlifecycleVersion}"
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
-    compile 'org.jsoup:jsoup:1.9.2'
+    compile 'org.jsoup:jsoup:1.10.1'
     compile 'com.github.rahatarmanahmed:circularprogressview:2.5.0'
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.nineoldandroids:library:2.4.0'
