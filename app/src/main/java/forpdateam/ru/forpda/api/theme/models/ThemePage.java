@@ -10,6 +10,15 @@ import forpdateam.ru.forpda.api.theme.interfaces.IThemePage;
 public class ThemePage implements IThemePage {
     private String title, desc, html, url, elementToScroll;
     private boolean inFavorite = false, curator = false;
+    private int id = 0;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public boolean isCurator() {
         return curator;

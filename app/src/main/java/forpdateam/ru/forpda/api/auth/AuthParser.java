@@ -69,13 +69,13 @@ public class AuthParser {
         Matcher matcher = Pattern.compile("<a href=\"[^\"]*?showuser=(\\d*)\"[\\s\\S]*?<a[^>]*?act=login&CODE=03&k=([^&]*?)&").matcher(response);
         if (matcher.find()) {
             result = true;
-            App.getInstance().getPreferences().edit().putString("logout_key", matcher.group(2)).apply();
+            App.getInstance().getPreferences().edit().putString("auth_key", matcher.group(2)).apply();
         }
         return result;
     }
 
     public boolean tryLogout() throws Exception {
-        String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=login&CODE=03&k=" + App.getInstance().getPreferences().getString("logout_key", "0"));
+        String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=login&CODE=03&k=" + App.getInstance().getPreferences().getString("auth_key", "0"));
 
         Matcher matcher = Pattern.compile("wr va-m text").matcher(response);
         if (matcher.find())

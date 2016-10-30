@@ -25,7 +25,9 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -34,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.theme.Theme;
@@ -327,10 +330,126 @@ public class ThemeFragmentWeb extends ThemeFragment {
     *
     * */
 
-    public void reportPost(ThemePost post) {
+    //Жалоба на сообщение
+    private final static String reportWarningText = "Вам не нужно указывать здесь тему и сообщение, модератор автоматически получит эту информацию.\n\n" +
+            "Пожалуйста, используйте эту возможность форума только для жалоб о некорректном сообщении!\n" +
+            "Для связи с модератором используйте личные сообщения.";
 
+    public void reportPost(ThemePost post) {
+        if (App.getInstance().getPreferences().getBoolean("show_report_warning", true)) {
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Внимание!")
+                    .setMessage(reportWarningText)
+                    .setPositiveButton("Ок", (dialogInterface, i) -> {
+                        App.getInstance().getPreferences().edit().putBoolean("show_report_warning", false).apply();
+                        showReportDialog(pageData.getId(), post.getId());
+                    })
+                    .show();
+        } else {
+            showReportDialog(pageData.getId(), post.getId());
+        }
     }
 
+    @SuppressLint("InflateParams")
+    public void showReportDialog(int themeId, int postId) {
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.report_layout, null);
+
+        assert layout != null;
+        final EditText messageField = (EditText) layout.findViewById(R.id.report_text_field);
+
+        new AlertDialog.Builder(getContext())
+                .setTitle("Жалоба на пост ".concat(getPostById(postId).getNick()))
+                .setView(layout)
+                .setPositiveButton("Отправить", (dialogInterface, i) -> doReportPost(themeId, postId, messageField.getText().toString()))
+                .setNegativeButton("Отмена", null)
+                .show();
+    }
+
+    private void doReportPost(int themeId, int postId, String message) {
+        getCompositeDisposable().add(Api.Theme().reportPost(themeId, postId, message)
+                .onErrorReturn(throwable -> {
+                    ErrorHandler.handle(this, throwable, null);
+                    return null;
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(s -> {
+                    Toast.makeText(getContext(), s == null ? "Неизвестная ошибка" : s, Toast.LENGTH_SHORT).show();
+                }));
+    }
+
+    //Удаление сообщения
+    public void deletePost(ThemePost post) {
+        new AlertDialog.Builder(getContext())
+                .setMessage("Удалить пост ".concat(post.getNick()).concat(" ?"))
+                .setPositiveButton("Да", (dialogInterface, i) -> doDeletePost(post.getId()))
+                .setNegativeButton("Отмена", null)
+                .show();
+    }
+
+    private void doDeletePost(int postId) {
+        getCompositeDisposable().add(Api.Theme().deletePost(postId)
+                .onErrorReturn(throwable -> {
+                    ErrorHandler.handle(this, throwable, null);
+                    return false;
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aBoolean -> {
+                    Toast.makeText(getContext(), aBoolean ? "Сообщение удалено" : "Ошибка", Toast.LENGTH_SHORT).show();
+                    /*if (aBoolean) {
+                        webView.evalJs("document.querySelector('div[name*=del" + postId + "]').remove();");
+                    }*/
+                }));
+    }
+
+    //Изменение репутации сообщения
+    public void votePost(ThemePost post, boolean type) {
+        getCompositeDisposable().add(Api.Theme().votePost(post.getId(), type)
+                .onErrorReturn(throwable -> {
+                    ErrorHandler.handle(this, throwable, null);
+                    return null;
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(s -> {
+                    Toast.makeText(getContext(), s == null ? "Неизвестная ошибка" : s, Toast.LENGTH_SHORT).show();
+                }));
+    }
+
+    //Изменение репутации пользователя
+    @SuppressLint("InflateParams")
+    public void changeReputation(ThemePost post, boolean type) {
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.reputation_change_layout, null);
+
+        assert layout != null;
+        final TextView text = (TextView) layout.findViewById(R.id.reputation_text);
+        final EditText messageField = (EditText) layout.findViewById(R.id.reputation_text_field);
+        text.setText((type ? "Повысить" : "Понизить").concat(" репутацию ").concat(post.getNick()).concat(" ?"));
+
+        new AlertDialog.Builder(getContext())
+                .setView(layout)
+                .setPositiveButton("Да", (dialogInterface, i) -> doChangeReputation(post.getId(), post.getUserId(), type, messageField.getText().toString()))
+                .setNegativeButton("Отмена", null)
+                .show();
+    }
+
+    private void doChangeReputation(int postId, int userId, boolean type, String message) {
+        getCompositeDisposable().add(Api.Theme().changeReputation(postId, userId, type, message)
+                .onErrorReturn(throwable -> {
+                    ErrorHandler.handle(this, throwable, null);
+                    return null;
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(s -> {
+                    Toast.makeText(getContext(), s == null ? "Репутация изменена" : s, Toast.LENGTH_SHORT).show();
+                }));
+    }
+
+    //Вставка ответа пользователю
     public void insertNick(ThemePost post) {
         String insert = String.format(Locale.getDefault(), "[SNAPBACK]%s[/SNAPBACK] [b]%s,[/b]\n", post.getId(), post.getNick());
         Toast.makeText(getContext(), insert, Toast.LENGTH_SHORT).show();
@@ -340,19 +459,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
     }
 
-    public void deletePost(ThemePost post) {
-
-    }
-
     public void editPost(ThemePost post) {
-
-    }
-
-    public void votePost(ThemePost post, boolean type) {
-
-    }
-
-    public void reputationAction(ThemePost post, boolean type) {
 
     }
 
@@ -485,7 +592,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
                 int index = reputationMenu.containsIndex("Повысить");
                 if (index == -1) {
                     if (post.canPlusRep())
-                        reputationMenu.addItem(0, "Повысить", data -> reputationAction(post, true));
+                        reputationMenu.addItem(0, "Повысить", data -> changeReputation(post, true));
                 } else {
                     if (!post.canPlusRep())
                         reputationMenu.remove(index);
@@ -494,7 +601,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
                 index = reputationMenu.containsIndex("Понизить");
                 if (index == -1) {
                     if (post.canPlusRep())
-                        reputationMenu.addItem(2, "Понизить", data -> reputationAction(post, false));
+                        reputationMenu.addItem(2, "Понизить", data -> changeReputation(post, false));
                 } else {
                     if (!post.canPlusRep())
                         reputationMenu.remove(index);

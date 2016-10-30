@@ -1,7 +1,15 @@
 package forpdateam.ru.forpda.api.theme;
 
+import android.text.TextUtils;
 import android.util.Log;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,6 +19,7 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.utils.ourparser.Html;
 import io.reactivex.Observable;
 
 /**
@@ -24,10 +33,25 @@ public class Theme {
     private final static Pattern titlePattern = Pattern.compile("<div class=\"topic_title_post\">([^,<]*)(?:, ([^<]*)|)<br");
     private final static Pattern alreadyInFavPattern = Pattern.compile("Тема уже добавлена в <a href=\"[^\"]*act=fav\">");
     private final static Pattern paginationPattern = Pattern.compile("pagination\">([\\s\\S]*?<span[^>]*?>([^<]*?)</span>[\\s\\S]*?)</div><br");
+    private final static Pattern themeIdPattern = Pattern.compile("showtopic=([\\d][^&]*)");
     public final static Pattern elemToScrollPattern = Pattern.compile("(?:anchor=|#)([^&\\n\\=\\?\\.\\#]*)");
+    //private final static Pattern newsPattern = Pattern.compile("<section[^>]*?><article[^>]*?>[^<]*?<div class=\"container\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\" alt=\"([\\s\\S]*?)\"[\\s\\S]*?<em[^>]*>([^<]*?)</em>[\\s\\S]*?<a href=\"([^\"]*?)\">([\\s\\S]*?)</a>[\\s\\S]*?<a[^>]*?>([^<]*?)</a><div[^>]*?># ([\\s\\S]*?)</div>[\\s\\S]*?<div class=\"content-box\"[^>]*?>([\\s\\S]*?)</div></div></div>[^<]*?<div class=\"materials-box\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?<div class=\"comment-box\" id=\"comments\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[^<]*?<form");
 
 
-    private final static Pattern newsPattern = Pattern.compile("<section[^>]*?><article[^>]*?>[^<]*?<div class=\"container\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\" alt=\"([\\s\\S]*?)\"[\\s\\S]*?<em[^>]*>([^<]*?)</em>[\\s\\S]*?<a href=\"([^\"]*?)\">([\\s\\S]*?)</a>[\\s\\S]*?<a[^>]*?>([^<]*?)</a><div[^>]*?># ([\\s\\S]*?)</div>[\\s\\S]*?<div class=\"content-box\"[^>]*?>([\\s\\S]*?)</div></div></div>[^<]*?<div class=\"materials-box\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?<div class=\"comment-box\" id=\"comments\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[^<]*?<form");
+    public Observable<ThemePage> getPage(final String url) {
+        return getPage(url, false);
+    }
+
+    public Observable<ThemePage> getPage(final String url, boolean generateHtml) {
+        return Observable.create(subscriber -> {
+            try {
+                subscriber.onNext(_getPage(url, generateHtml));
+                subscriber.onComplete();
+            } catch (Exception e) {
+                subscriber.onError(e);
+            }
+        });
+    }
 
     private ThemePage _getPage(final String url, boolean generateHtml) throws Exception {
         ThemePage page = new ThemePage();
@@ -43,6 +67,10 @@ public class Theme {
         Matcher matcher = elemToScrollPattern.matcher(redirectUrl);
         while (matcher.find()) {
             page.setElementToScroll(matcher.group(1));
+        }
+        matcher = themeIdPattern.matcher(redirectUrl);
+        if (matcher.find()) {
+            page.setId(Integer.parseInt(matcher.group(1)));
         }
         matcher = countsPattern.matcher(response);
         if (matcher.find()) {
@@ -246,18 +274,120 @@ public class Theme {
         return b ? "disabled" : "";
     }
 
-    public Observable<ThemePage> getPage(final String url) {
-        return getPage(url, false);
-    }
 
-    public Observable<ThemePage> getPage(final String url, boolean generateHtml) {
+    public Observable<String> reportPost(int themeId, int postId, String message) {
         return Observable.create(subscriber -> {
             try {
-                subscriber.onNext(_getPage(url, generateHtml));
+                subscriber.onNext(_reportPost(themeId, postId, message));
                 subscriber.onComplete();
             } catch (Exception e) {
                 subscriber.onError(e);
             }
         });
     }
+
+    private String _reportPost(int topicId, int postId, String message) throws Exception {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("act", "report");
+        headers.put("send", "1");
+        headers.put("t", Integer.toString(topicId));
+        headers.put("p", Integer.toString(postId));
+        headers.put("message", message);
+
+        String response = Client.getInstance().post("http://4pda.ru/forum/index.php?act=report&amp;send=1&amp;t=" + topicId + "&amp;p=" + postId, headers);
+
+        Pattern p = Pattern.compile("<div class=\"errorwrap\">\n" +
+                "\\s*<h4>Причина:</h4>\n" +
+                "\\s*\n" +
+                "\\s*<p>(.*)</p>", Pattern.MULTILINE);
+        Matcher m = p.matcher(response);
+        return m.find() ? "Ошибка отправки жалобы: ".concat(m.group(1)) : "Жалоба отправлена";
+    }
+
+
+    public Observable<Boolean> deletePost(int postId) {
+        return Observable.create(subscriber -> {
+            try {
+                subscriber.onNext(_deletePost(postId));
+                subscriber.onComplete();
+            } catch (Exception e) {
+                subscriber.onError(e);
+            }
+        });
+    }
+
+    private boolean _deletePost(int postId) throws Exception {
+        String url = "http://4pda.ru/forum/index.php?act=zmod&auth_key=".concat(App.getInstance().getPreferences().getString("auth_key", null)).concat("&code=postchoice&tact=delete&selectedpids=").concat(Integer.toString(postId));
+        String response = Client.getInstance().get(url);
+        return response.equals("ok");
+    }
+
+
+    public Observable<String> votePost(int postId, boolean type) {
+        return Observable.create(subscriber -> {
+            try {
+                subscriber.onNext(_votePost(postId, type));
+                subscriber.onComplete();
+            } catch (Exception e) {
+                subscriber.onError(e);
+            }
+        });
+    }
+
+    private String _votePost(int postId, boolean type) throws Exception {
+        String response = Client.getInstance().get("http://4pda.ru/forum/zka.php?i=".concat(Integer.toString(postId)).concat("&v=").concat(type ? "1" : "-1"));
+        String result = null;
+
+        Matcher m = Pattern.compile("ok:\\s*?((?:\\+|\\-)?\\d+)").matcher(response);
+        if (m.find()) {
+            int code = Integer.parseInt(m.group(1));
+            switch (code) {
+                case 0:
+                    result = "Ошибка: Вы уже голосовали за это сообщение";
+                    break;
+                case 1:
+                    result = "Репутация поста повышена";
+                    break;
+                case -1:
+                    result = "Репутация поста понижена";
+                    break;
+            }
+        }
+        if (result == null) result = "Ошибка изменения репутации поста";
+        return result;
+    }
+
+    public Observable<String> changeReputation(int postId, int userId, boolean type, String message) {
+        return Observable.create(subscriber -> {
+            try {
+                subscriber.onNext(_changeReputation(postId, userId, type, message));
+                subscriber.onComplete();
+            } catch (Exception e) {
+                subscriber.onError(e);
+            }
+        });
+    }
+
+    private String _changeReputation(int postId, int userId, boolean type, String message) throws Exception {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("act", "rep");
+        headers.put("p", Integer.toString(postId));
+        headers.put("mid", Integer.toString(userId));
+        headers.put("type", type ? "add" : "minus");
+        headers.put("message", message);
+
+        String response = Client.getInstance().post("http://4pda.ru/forum/index.php", headers);
+
+        Pattern p = Pattern.compile("<title>(.*?)(?: - 4PDA|)</title>[\\s\\S]*?wr va-m text\">([\\s\\S]*?)</div></div></div></div><div class=\"footer\">");
+        Matcher m = p.matcher(response);
+        String result = null;
+        if (m.find()) {
+            if (m.group(1).contains("Ошибка"))
+                result = Html.fromHtml(m.group(2)).toString();
+        }
+        return result;
+
+    }
+
+
 }
