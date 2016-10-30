@@ -2,14 +2,27 @@ package forpdateam.ru.forpda.utils;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewParent;
 import android.webkit.WebView;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import forpdateam.ru.forpda.R;
 
 /**
  * Created by radiationx on 28.10.16.
@@ -137,4 +150,49 @@ public class NestedWebView extends WebView implements NestedScrollingChild {
             loadUrl("javascript:" + js);
     }
 
+    private ActionMode actionMode;
+
+    @Override
+    public ActionMode startActionMode(ActionMode.Callback callback) {
+        return myActionMode(callback, 0);
+    }
+
+    @Override
+    public ActionMode startActionMode(ActionMode.Callback callback, int type) {
+        return myActionMode(callback, type);
+    }
+
+    private ActionMode myActionMode(ActionMode.Callback callback, int type) {
+        ViewParent parent = getParent();
+        if (parent == null) {
+            return null;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            actionMode = super.startActionMode(callback, type);
+        } else {
+            actionMode = super.startActionMode(callback);
+        }
+        Menu menu = actionMode.getMenu();
+        for (int i = 0; i < menu.size(); i++) {
+            MenuItem menuItem = menu.getItem(i);
+
+            Log.d("kek", "" + menuItem.getTitle());
+            if (i == 0) {
+                menuItem.setAlphabeticShortcut('\0');
+                menuItem.setIcon(R.drawable.ic_format_quote_black_24dp);
+                menuItem.setTitle("Цитата");
+                menuItem.setOnMenuItemClickListener(item -> {
+                    evalJs("selectionToQuote()");
+                    actionMode.finish();
+                    return true;
+                });
+            }
+            menuItem.getIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+            Log.d("kek", "act prov " + menuItem.getMenuInfo());
+        }
+        Log.d("kek", "start menu " + menu.size());
+
+
+        return actionMode;
+    }
 }

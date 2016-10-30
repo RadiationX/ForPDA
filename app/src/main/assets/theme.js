@@ -141,3 +141,19 @@ function getCoordinates(elem) {
         left: left
     };
 }
+
+function selectionToQuote() {
+    var selObj = window.getSelection();
+    var selectedText = selObj.toString();
+
+
+    var p = selObj.anchorNode.parentNode;
+    while (p.classList && !p.classList.contains('post_container')) {
+        p = p.parentNode;
+    }
+    var postId = p.dataset.postId;
+    console.log(selectedText+" : "+postId);
+    if (selectedText != null && selectedText != '' && postId != null && postId != ''){
+        ITheme.quotePost(selectedText, postId);
+    }
+}

@@ -9,6 +9,7 @@
         <item name="ProfileCardTitleStyle">@style/ProfileCardTitleStyle</item>
         <item name="android:textColorLink">@color/colorPrimary</item>
         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="AppTheme">

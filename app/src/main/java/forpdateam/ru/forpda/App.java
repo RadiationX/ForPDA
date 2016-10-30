@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.content.res.AppCompatResources;
+import android.util.Log;
 
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
@@ -20,6 +21,8 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.api.Api;
@@ -50,9 +53,39 @@ public class App extends android.app.Application {
         return templator;
     }
 
+
+    /*private final static Pattern p = Pattern.compile("(?:[^\\s\\-—.,:;&?=#@><\\{\\}\\[\\]!~`*^%$\\|\"'\\/][\\s\\S][^\\s\\-—.,:;&?=#@><\\{\\}\\[\\]!~`*^%$\\|\"'\\/]*)");
+    private Matcher matcher1;
+    private Matcher matcher2;
+
+    public boolean notStrictEquals(final String s1, final String s2) {
+        matcher1 = matcher1 == null ? p.matcher(s1) : matcher1.reset(s1);
+        matcher2 = matcher2 == null ? p.matcher(s2) : matcher2.reset(s2);
+        while (matcher1.find() & matcher2.find())
+            if (!matcher1.group().equalsIgnoreCase(matcher2.group())) return false;
+        return true;
+    }
+
+    final String s1 = "Искусственная гравитация в Sci-Fi. Ищем истину";
+    final String s2 = "Искусственная гравитация в Sci-Fi — ищем истину";*/
+
     @Override
     public void onCreate() {
         super.onCreate();
+        /*long time = System.currentTimeMillis();
+        for (int i = 0; i < 100000; i++) {
+            //Log.d("kek", "eq1 "+notStrictEquals(s1,s2));
+            notStrictEquals(s1, s2);
+        }
+        Log.d("kek", "eq1 time: " + (System.currentTimeMillis() - time));
+        *//*time = System.currentTimeMillis();
+        for (int i = 0; i < 100000; i++) {
+            //Log.d("kek", "eq1 "+notStrictEquals(s1,s2));
+            notStrictEquals2(s1, s2);
+        }
+        Log.d("kek", "eq2 time: " + (System.currentTimeMillis() - time));*//*
+        //Log.d("kek", "eq2 "+notStrictEquals2(s1,s2));*/
+
         InputStream stream = null;
         try {
             stream = App.getInstance().getAssets().open("temp.html");

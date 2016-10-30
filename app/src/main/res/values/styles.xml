@@ -8,6 +8,8 @@
         <item name="ProfileCardStyle">@style/ProfileCardStyle</item>
         <item name="ProfileCardTitleStyle">@style/ProfileCardTitleStyle</item>
         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeStyle">@style/ActionModeStyle</item>
     </style>
 
     <style name="MyTextViewStyle" parent="android:Widget.TextView">
@@ -22,6 +24,15 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="ActionModeStyle" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="background">@color/colorPrimary</item>
+        <item name="titleTextStyle">@style/ActionModeTitleTextStyle</item>
+    </style>
+
+    <style name="ActionModeTitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionMode.Title">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
 
     <style name="ProfileToolbarTextStyle">
         <item name="android:textColorLink">@color/white</item>

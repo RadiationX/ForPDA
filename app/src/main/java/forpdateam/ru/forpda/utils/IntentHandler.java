@@ -62,16 +62,18 @@ public class IntentHandler {
     private final static String DEVDB_PATH = "forum";
     private final static String SPECIAL_PATH = "forum";
 
-    public static boolean handle(String url){
+    public static boolean handle(String url) {
         return handle(url, null);
     }
 
     public static boolean handle(String url, Bundle args) {
+        /*Log.d("kek", "input url " + url);
         url = Html.fromHtml(url).toString();
+        Log.d("kek", "after html url " + url);*/
         Uri uri = Uri.parse(url.toLowerCase());
-        Log.d("kek", "HANDLE URL " + uri.toString()+" : "+url);
+        Log.d("kek", "HANDLE URL " + uri.toString() + " : " + url);
         if (uri.getHost() != null && uri.getHost().matches("4pda.ru")) {
-            if(args==null) args = new Bundle();
+            if (args == null) args = new Bundle();
             switch (uri.getPathSegments().get(0)) {
                 case "forum":
                     return handleForum(uri, args);
@@ -193,6 +195,6 @@ public class IntentHandler {
 
     private static void run(String s) {
         Log.d("kek", "run: " + s);
-        Toast.makeText(App.getContext(), "ForPDA should run "+s, Toast.LENGTH_SHORT).show();
+        Toast.makeText(App.getContext(), "ForPDA should run " + s, Toast.LENGTH_SHORT).show();
     }
 }

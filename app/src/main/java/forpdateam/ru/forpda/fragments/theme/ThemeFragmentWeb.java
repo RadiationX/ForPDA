@@ -13,6 +13,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -93,7 +94,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
         webView.addJavascriptInterface(this, "ITheme");
         webView.getSettings().setJavaScriptEnabled(true);
-
+        registerForContextMenu(webView);
         return view;
     }
 
@@ -144,6 +145,15 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
 
     @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        WebView.HitTestResult result = webView.getHitTestResult();
+
+        Log.d("kek", "context " + result.getType() + " : " + result.getExtra());
+    }
+
+    @Override
     public void loadData() {
         if (refreshLayout != null)
             refreshLayout.setRefreshing(true);
@@ -157,7 +167,12 @@ public class ThemeFragmentWeb extends ThemeFragment {
                 .subscribe(this::onLoadData, throwable -> ErrorHandler.handle(this, throwable, null)));
     }
 
-    private void onLoadData(ThemePage themePage) throws IOException {
+    private void onLoadData(ThemePage themePage) throws Exception {
+        if (refreshLayout != null)
+            refreshLayout.setRefreshing(false);
+        if (themePage == null || themePage.getId() == 0 || themePage.getUrl() == null) {
+            return;
+        }
         setTabUrl(themePage.getUrl());
         if (pageData != null) {
             if (pageData.getUrl().equals(getTabUrl())) {
@@ -177,9 +192,6 @@ public class ThemeFragmentWeb extends ThemeFragment {
             chromeClient = new ThemeChromeClient();
             webView.setWebChromeClient(chromeClient);
         }
-        if (refreshLayout != null)
-            refreshLayout.setRefreshing(false);
-
         updateView();
     }
 
@@ -198,6 +210,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
         refreshOptionsMenu();
         webView.loadDataWithBaseURL(getTabUrl(), pageData.getHtml(), "text/html", "utf-8", null);
     }
+
 
     @Override
     public boolean onBackPressed() {
@@ -455,8 +468,9 @@ public class ThemeFragmentWeb extends ThemeFragment {
         Toast.makeText(getContext(), insert, Toast.LENGTH_SHORT).show();
     }
 
-    public void quotePost(ThemePost post) {
-
+    public void quotePost(String text, ThemePost post) {
+        String insert = String.format(Locale.getDefault(), "[quote name=\"%s\" date=\"%s\" post=%S]%s[/quote]", post.getNick(), post.getDate(), post.getId(), text);
+        Toast.makeText(getContext(), insert, Toast.LENGTH_SHORT).show();
     }
 
     public void editPost(ThemePost post) {
@@ -559,9 +573,9 @@ public class ThemeFragmentWeb extends ThemeFragment {
     private ThemePopupMenu<ThemePost> userMenu;
 
     @JavascriptInterface
-    public void showUserMenu(final int postId) {
+    public void showUserMenu(final String postId) {
         run(() -> {
-            final ThemePost post = getPostById(postId);
+            final ThemePost post = getPostById(Integer.parseInt(postId));
             if (userMenu == null) {
                 userMenu = new ThemePopupMenu<>();
                 userMenu.addItem("Профиль", data -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + ((ThemePost) data).getUserId()));
@@ -581,9 +595,9 @@ public class ThemeFragmentWeb extends ThemeFragment {
     private ThemePopupMenu<ThemePost> reputationMenu;
 
     @JavascriptInterface
-    public void showReputationMenu(final int postId) {
+    public void showReputationMenu(final String postId) {
         run(() -> {
-            final ThemePost post = getPostById(postId);
+            final ThemePost post = getPostById(Integer.parseInt(postId));
             if (reputationMenu == null) {
                 reputationMenu = new ThemePopupMenu<>();
                 reputationMenu.addItem("Посмотреть", data -> Toast.makeText(getContext(), "Слепой", Toast.LENGTH_SHORT).show());
@@ -617,15 +631,15 @@ public class ThemeFragmentWeb extends ThemeFragment {
     private ThemePopupMenu<ThemePost> postMenu;
 
     @JavascriptInterface
-    public void showPostMenu(final int postId) {
+    public void showPostMenu(final String postId) {
         run(() -> {
-            final ThemePost post = getPostById(postId);
+            final ThemePost post = getPostById(Integer.parseInt(postId));
             if (postMenu == null) {
                 postMenu = new ThemePopupMenu<>();
                 if (Api.Auth().getState()) {
                     if (post.canQuote()) {
                         postMenu.addItem("Ответить", data -> insertNick(post));
-                        postMenu.addItem("Цитировать", data -> quotePost(post));
+                        postMenu.addItem("Цитировать", data -> quotePost(null, post));
                     }
                     if (post.canReport()) {
                         postMenu.addItem("Пожаловаться", data -> reportPost(post));
@@ -640,33 +654,33 @@ public class ThemeFragmentWeb extends ThemeFragment {
     }
 
     @JavascriptInterface
-    public void reportPost(final int postId) {
-        run(() -> reportPost(getPostById(postId)));
+    public void reportPost(final String postId) {
+        run(() -> reportPost(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
-    public void insertNick(final int postId) {
-        run(() -> insertNick(getPostById(postId)));
+    public void insertNick(final String postId) {
+        run(() -> insertNick(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
-    public void quotePost(final int postId) {
-        run(() -> quotePost(getPostById(postId)));
+    public void quotePost(final String text, final String postId) {
+        run(() -> quotePost(text, getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
-    public void deletePost(final int postId) {
-        run(() -> deletePost(getPostById(postId)));
+    public void deletePost(final String postId) {
+        run(() -> deletePost(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
-    public void editPost(final int postId) {
-        run(() -> editPost(getPostById(postId)));
+    public void editPost(final String postId) {
+        run(() -> editPost(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
-    public void votePost(final int postId, final boolean type) {
-        run(() -> votePost(getPostById(postId), type));
+    public void votePost(final String postId, final boolean type) {
+        run(() -> votePost(getPostById(Integer.parseInt(postId)), type));
     }
 
     @JavascriptInterface
