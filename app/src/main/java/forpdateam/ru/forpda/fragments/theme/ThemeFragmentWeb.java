@@ -2,6 +2,8 @@ package forpdateam.ru.forpda.fragments.theme;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -50,6 +52,8 @@ import forpdateam.ru.forpda.utils.NestedWebView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
+import static android.content.Context.CLIPBOARD_SERVICE;
+
 /**
  * Created by radiationx on 20.10.16.
  */
@@ -95,6 +99,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
         webView.addJavascriptInterface(this, "ITheme");
         webView.getSettings().setJavaScriptEnabled(true);
         registerForContextMenu(webView);
+
         return view;
     }
 
@@ -147,6 +152,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
+        Log.d("kek", "onCreateContextMenu from fragment "+menu);
 
         WebView.HitTestResult result = webView.getHitTestResult();
 
@@ -686,5 +692,19 @@ public class ThemeFragmentWeb extends ThemeFragment {
     @JavascriptInterface
     public void setHistoryBody(final String index, final String body) {
         run(() -> history.get(Integer.parseInt(index)).setHtml(body.replaceAll("data-block-init=\"1\"", "")));
+    }
+
+    @JavascriptInterface
+    public void copySelectedText(final String text) {
+        run(() -> {
+            ClipboardManager clipboard = (ClipboardManager) getMainActivity().getSystemService(CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("What? Label?", text);
+            clipboard.setPrimaryClip(clip);
+        });
+    }
+
+    @JavascriptInterface
+    public void toast(final String text) {
+        run(() -> Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show());
     }
 }

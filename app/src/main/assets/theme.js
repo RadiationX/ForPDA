@@ -151,9 +151,46 @@ function selectionToQuote() {
     while (p.classList && !p.classList.contains('post_container')) {
         p = p.parentNode;
     }
+    if (typeof p === "undefined" || typeof p.dataset === "undefined") {
+        ITheme.toast("Для этого действия необходимо выбрать текст сообщения");
+        return;
+    }
     var postId = p.dataset.postId;
-    console.log(selectedText+" : "+postId);
-    if (selectedText != null && selectedText != '' && postId != null && postId != ''){
+    if (selectedText != null && postId != null) {
         ITheme.quotePost(selectedText, postId);
+    } else {
+        ITheme.toast("Ошибка создания цитаты: [" + selectedText + ", " + postId + "]");
+        return;
+    }
+}
+
+function copySelectedText() {
+    var selectedText = window.getSelection().toString();
+    if (selectedText != null && selectedText) {
+        ITheme.copySelectedText(selectedText);
+    }
+}
+
+function selectAllPostText() {
+    var selObj = window.getSelection();
+    var p = selObj.anchorNode.parentNode;
+    while (p.classList && !p.classList.contains('post_body')) {
+        p = p.parentNode;
+    }
+    if (typeof p.classList === "undefined" || !p.classList.contains('post_body')) {
+        ITheme.toast("Для этого действия необходимо выбрать текст сообщения");
+        return;
+    }
+    var rng, sel;
+    if (document.createRange) {
+        rng = document.createRange();
+        rng.selectNode(p);
+        sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(rng);
+    } else {
+        rng = document.body.createTextRange();
+        rng.moveToElementText(p);
+        rng.select();
     }
 }
