@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.fragments.theme;
+package forpdateam.ru.forpda.utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.List;
  * Created by radiationx on 27.10.16.
  */
 
-class ThemePopupMenu<E> {
+class AlertDialogMenu<E> {
     private List<MenuItem> items = new ArrayList<>();
     private List<CharSequence> titlesList = new ArrayList<>();
 
