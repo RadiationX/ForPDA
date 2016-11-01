@@ -7,52 +7,68 @@ import java.util.List;
  * Created by radiationx on 27.10.16.
  */
 
-class AlertDialogMenu<E> {
+public class AlertDialogMenu<E> {
     private List<MenuItem> items = new ArrayList<>();
-    private List<CharSequence> titlesList = new ArrayList<>();
 
-    void addItem(CharSequence title, OnClickListener listener) {
-        items.add(new MenuItem(listener));
-        titlesList.add(title);
+    public void addItem(CharSequence title, OnClickListener<E> listener) {
+        items.add(new MenuItem(title, listener));
     }
 
-    void addItem(int index, CharSequence title, OnClickListener listener) {
+    public void addItem(int index, CharSequence title, OnClickListener<E> listener) {
         if (index < 0) index = 0;
         if (index > items.size()) index = items.size() - 1;
 
-        items.add(index, new MenuItem(listener));
-        titlesList.add(index, title);
+        items.add(index, new MenuItem(title, listener));
+    }
+
+    public void addItem(MenuItem item){
+        items.add(item);
     }
 
     public boolean contains(CharSequence title) {
-        return titlesList.contains(title);
+        for (int i = 0; i < items.size(); i++)
+            if (items.get(i).title.equals(title))
+                return true;
+        return false;
     }
 
     public void remove(int i) {
         items.remove(i);
-        titlesList.remove(i);
     }
 
     public int containsIndex(CharSequence title) {
-        for (int i = 0; i < titlesList.size(); i++)
-            if (titlesList.get(i).equals(title))
+        for (int i = 0; i < items.size(); i++)
+            if (items.get(i).title.equals(title))
                 return i;
         return -1;
     }
 
+    public void changeTitle(int i, CharSequence title) {
+        items.get(i).setTitle(title);
+    }
+
     public CharSequence[] getTitles() {
-        return titlesList.toArray(new CharSequence[titlesList.size()]);
+        CharSequence[] result = new CharSequence[items.size()];
+        for (int i = 0; i < items.size(); i++)
+            result[i] = items.get(i).title;
+        return result;
     }
 
     public void onClick(int i, E data) {
         items.get(i).onClick(data);
     }
 
-    class MenuItem implements OnClickListener<E> {
-        private OnClickListener listener;
+    public class MenuItem implements OnClickListener<E> {
+        private OnClickListener<E> listener;
+        private CharSequence title;
 
-        public MenuItem(OnClickListener listener) {
+        public MenuItem(CharSequence title, OnClickListener<E> listener) {
+            this.title = title;
             this.listener = listener;
+        }
+
+        public void setTitle(CharSequence title) {
+            this.title = title;
         }
 
         @Override
@@ -62,7 +78,7 @@ class AlertDialogMenu<E> {
         }
     }
 
-    interface OnClickListener<E> {
+    public interface OnClickListener<E> {
         void onClick(E data);
     }
 }

@@ -7,7 +7,7 @@ import forpdateam.ru.forpda.api.theme.interfaces.IThemePost;
  */
 public class ThemePost implements IThemePost {
     private String date, avatar, nick, groupColor, group, reputation, body;
-    private boolean curator, online, minus, plus, report, edit, delete, qoute;
+    private boolean curator, online, minus, plus, report, edit, delete;
     private int id, number, userId;
 
     @Override
@@ -93,10 +93,6 @@ public class ThemePost implements IThemePost {
         return delete;
     }
 
-    @Override
-    public boolean canQuote() {
-        return qoute;
-    }
 
     public void setId(int id) {
         this.id = id;
@@ -164,9 +160,5 @@ public class ThemePost implements IThemePost {
 
     public void setCanDelete(boolean delete) {
         this.delete = delete;
-    }
-
-    public void setCanQoute(boolean qoute) {
-        this.qoute = qoute;
     }
 }

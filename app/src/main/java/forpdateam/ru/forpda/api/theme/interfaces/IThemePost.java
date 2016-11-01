@@ -37,6 +37,4 @@ public interface IThemePost {
     boolean canEdit();
 
     boolean canDelete();
-
-    boolean canQuote();
 }

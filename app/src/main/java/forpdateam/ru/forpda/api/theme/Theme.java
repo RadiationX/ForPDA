@@ -1,13 +1,7 @@
 package forpdateam.ru.forpda.api.theme;
 
-import android.text.TextUtils;
 import android.util.Log;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -95,6 +89,7 @@ public class Theme {
         page.setInFavorite(matcher.find());
         matcher = postsPattern.matcher(response);
         Log.d("kek", "check 4");
+        int memberId = Integer.parseInt(Client.member_id);
         while (matcher.find()) {
             ThemePost post = new ThemePost();
             post.setId(Integer.parseInt(matcher.group(1)));
@@ -113,9 +108,9 @@ public class Theme {
             post.setCanReport(!matcher.group(14).isEmpty());
             post.setCanEdit(!matcher.group(15).isEmpty());
             post.setCanDelete(!matcher.group(16).isEmpty());
-            post.setCanQoute(!matcher.group(17).isEmpty());
+            page.setCanQuote(!matcher.group(17).isEmpty());
             post.setBody(matcher.group(18));
-            if (post.isCurator() && post.getUserId() == Integer.parseInt(Client.member_id))
+            if (post.isCurator() && post.getUserId() == memberId)
                 page.setCurator(true);
             page.addPost(post);
         }
@@ -204,8 +199,7 @@ public class Theme {
             boolean existBody = t.variableExists("body");
 
             boolean existReportBlock = t.blockExists("report_block");
-            boolean existNickBlock = t.blockExists("nick_block");
-            boolean existQuoteBlock = t.blockExists("quote_block");
+            boolean existReplyBlock = t.blockExists("reply_block");
             boolean existVoteBlock = t.blockExists("vote_block");
             boolean existDeleteBlock = t.blockExists("delete_block");
             boolean existEditBlock = t.blockExists("edit_block");
@@ -237,7 +231,7 @@ public class Theme {
                     t.setVariable("number", post.getNumber());
 
                 //Post body
-                if (hatPostId == post.getId())
+                if (hatPostId == post.getId() && page.getPosts().size() > 1)
                     if (t.blockExists("hat_button"))
                         t.addBlock("hat_button");
                 if (existBody)
@@ -246,11 +240,9 @@ public class Theme {
                 //Post footer
                 if (existReportBlock && post.canReport() && authorized)
                     t.addBlock("report_block");
-                if (existNickBlock && post.canQuote() && authorized)
-                    t.addBlock("nick_block");
-                if (existQuoteBlock && post.canQuote() && authorized)
-                    t.addBlock("quote_block");
-                if (existVoteBlock && authorized)
+                if (existReplyBlock && page.canQuote() && authorized)
+                    t.addBlock("reply_block");
+                if (existVoteBlock && authorized && post.getUserId() != memberId)
                     t.addBlock("vote_block");
                 if (existDeleteBlock && post.canDelete() && authorized)
                     t.addBlock("delete_block");

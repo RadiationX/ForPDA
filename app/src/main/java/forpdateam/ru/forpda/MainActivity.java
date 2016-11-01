@@ -17,12 +17,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.utils.NestedWebView;
+import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
 
 public class MainActivity extends AppCompatActivity implements TabManager.TabListener {
     public final static String DEF_TITLE = "ForPDA";
-    private Queue<NestedWebView> webViews = new LinkedList<>();
+    private Queue<ExtendedWebView> webViews = new LinkedList<>();
     private Timer webViewCleaner = new Timer();
     private TabDrawer tabDrawer;
     private MenuDrawer menuDrawer;
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         }
     }
 
-    public Queue<NestedWebView> getWebViews() {
+    public Queue<ExtendedWebView> getWebViews() {
         return webViews;
     }
 

@@ -9,7 +9,16 @@ import forpdateam.ru.forpda.api.theme.interfaces.IThemePage;
  */
 public class ThemePage implements IThemePage {
     private String title, desc, html, url, elementToScroll;
-    private boolean inFavorite = false, curator = false;
+    private boolean inFavorite = false, curator = false, quote = false;
+
+    public boolean canQuote() {
+        return quote;
+    }
+
+    public void setCanQuote(boolean quote) {
+        this.quote = quote;
+    }
+
     private int id = 0;
 
     public int getId() {

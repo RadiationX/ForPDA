@@ -18,6 +18,7 @@ import io.reactivex.Observable;
 
 public class Favorites {
     private final static Pattern mainPattern = Pattern.compile("<div data-item-fid=\"([^\"]*)\" data-item-track=\"([^\"]*)\" data-item-pin=\"([^\"]*)\">[\\s\\S]*?<br[^>]*>[^<]*?(<font color=\"([^\"]*)\">|)([^< ]*)(</font>|)[^<]*<a href=\"[^\"]*=(\\d*)[^\"]*?\"[^>]*?>(<strong>|)([^<]*)(</strong>|)</a>[\\s\\S]*?(<a href=\"[^\"]*=(\\d*)\">\\((\\d*?)\\)[^<]*?</a>|)</div>[\\s\\S]*?topic_desc\">([^<]*|)(<br[^>]*>|)[\\s\\S]*?showforum=([^\"]*?)\">([^<]*)</a><br[^>]*>[\\s\\S]*?showuser=([^\"]*)\">([^<]*)</a>[\\s\\S]*?showuser=([^\"]*)\">([^<]*)</a> ([^<]*?)<");
+    private final static Pattern checkPattern = Pattern.compile("<div style=\"[^\"]*background:#dff0d8[^\"]*\">[\\s\\S]*<div id=\"navstrip");
     private final static String url = "http://4pda.ru/forum/index.php?act=fav";
     public final static String[] SUB_TYPES = {"none", "delayed", "immediate", "daily", "weekly", "pinned"};
     public final static CharSequence[] SUB_NAMES = {"Не уведомлять", "Первый раз", "Каждый раз", "Каждый день", "Каждую неделю", "При изменении первого поста"};
@@ -68,25 +69,29 @@ public class Favorites {
         return favData;
     }
 
-    private Void _changeSubType(String type, int id) throws Exception {
-        Client.getInstance().get("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0&tact=" + type + "&selectedtids=" + id);
-        return null;
+    private boolean _changeSubType(String type, int id) throws Exception {
+        String result = Client.getInstance().get("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0&tact=" + type + "&selectedtids=" + id);
+        return checkIsComplete(result);
     }
 
-    private Void _setPinState(String type, int id) throws Exception {
+    private boolean _setPinState(String type, int id) throws Exception {
         Map<String, String> headers = new HashMap<>();
         headers.put("selectedtids", "" + id);
         headers.put("tact", type);
-        Client.getInstance().post("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0", headers);
-        return null;
+        String result = Client.getInstance().post("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0", headers);
+        return checkIsComplete(result);
     }
 
-    private Void _delete(int id) throws Exception {
+    private boolean _delete(int id) throws Exception {
         Map<String, String> headers = new HashMap<>();
         headers.put("selectedtids", "" + id);
         headers.put("tact", "delete");
-        Client.getInstance().post("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0", headers);
-        return null;
+        String result = Client.getInstance().post("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0", headers);
+        return checkIsComplete(result);
+    }
+
+    private boolean checkIsComplete(String result){
+        return checkPattern.matcher(result).find();
     }
 
     public Observable<FavData> get() {
@@ -100,7 +105,7 @@ public class Favorites {
         });
     }
 
-    public Observable<Void> changeFav(int act, String type, int id) {
+    public Observable<Boolean> changeFav(int act, String type, int id) {
         return Observable.create(subscriber -> {
             try {
                 switch (act) {

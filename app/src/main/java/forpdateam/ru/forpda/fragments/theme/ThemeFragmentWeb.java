@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -22,18 +23,15 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -45,10 +43,9 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.theme.Theme;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
-import forpdateam.ru.forpda.fragments.theme.adapters.ThemePagesAdapter;
 import forpdateam.ru.forpda.utils.ErrorHandler;
+import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
-import forpdateam.ru.forpda.utils.NestedWebView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -64,8 +61,8 @@ public class ThemeFragmentWeb extends ThemeFragment {
     private int action = NORMAL_ACTION;
 
     private SwipeRefreshLayout refreshLayout;
-    private NestedWebView webView;
-    private ThemePage pageData;
+    private ExtendedWebView webView;
+    public ThemePage pageData;
     private WebViewClient webViewClient;
     private WebChromeClient chromeClient;
     private List<ThemePage> history = new ArrayList<>();
@@ -81,7 +78,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
             webView = getMainActivity().getWebViews().element();
             getMainActivity().getWebViews().remove();
         } else {
-            webView = new NestedWebView(getContext());
+            webView = new ExtendedWebView(getContext());
             webView.setTag("WebView_tag ".concat(Long.toString(System.currentTimeMillis())));
         }
         webView.loadUrl("about:blank");
@@ -99,6 +96,37 @@ public class ThemeFragmentWeb extends ThemeFragment {
         webView.addJavascriptInterface(this, "ITheme");
         webView.getSettings().setJavaScriptEnabled(true);
         registerForContextMenu(webView);
+
+        //Кастомизация менюхи при выделении текста
+        webView.setActionModeListener((actionMode, callback, type) -> {
+            Menu menu = actionMode.getMenu();
+            menu.clear();
+
+            menu.add("Копировать")
+                    .setIcon(App.getAppDrawable(R.drawable.ic_content_copy_white_24dp))
+                    .setOnMenuItemClickListener(item -> {
+                        webView.evalJs("copySelectedText()");
+                        actionMode.finish();
+                        return true;
+                    })
+                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            if (pageData.canQuote())
+                menu.add("Цитировать")
+                        .setIcon(App.getAppDrawable(R.drawable.ic_quote_post_white_24dp))
+                        .setOnMenuItemClickListener(item -> {
+                            webView.evalJs("selectionToQuote()");
+                            actionMode.finish();
+                            return true;
+                        })
+                        .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            menu.add("Весь текст")
+                    .setIcon(App.getAppDrawable(R.drawable.ic_select_all_white_24dp))
+                    .setOnMenuItemClickListener(item -> {
+                        webView.evalJs("selectAllPostText()");
+                        return true;
+                    })
+                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        });
 
         return view;
     }
@@ -152,11 +180,11 @@ public class ThemeFragmentWeb extends ThemeFragment {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        Log.d("kek", "onCreateContextMenu from fragment "+menu);
-
-        WebView.HitTestResult result = webView.getHitTestResult();
-
-        Log.d("kek", "context " + result.getType() + " : " + result.getExtra());
+        webView.requestFocusNodeHref(new Handler(msg -> {
+            WebView.HitTestResult result = webView.getHitTestResult();
+            ThemeDialogsHelper.handleContextMenu(getContext(), result.getType(), result.getExtra(), (String) msg.getData().get("url"));
+            return true;
+        }).obtainMessage());
     }
 
     @Override
@@ -497,7 +525,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
         return null;
     }
 
-    private void jumpToPage(int st) {
+    public void jumpToPage(int st) {
         String url = "http://4pda.ru/forum/index.php?showtopic=";
         url = url.concat(Uri.parse(getTabUrl()).getQueryParameter("showtopic"));
         if (st != 0) url = url.concat("&st=").concat(Integer.toString(st));
@@ -541,122 +569,22 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
     @JavascriptInterface
     public void selectPage() {
-        run(() -> {
-            final int[] pages = new int[pageData.getAllPagesCount()];
-
-            for (int i = 0; i < pageData.getAllPagesCount(); i++)
-                pages[i] = i + 1;
-
-            LayoutInflater inflater = (LayoutInflater) getMainActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            @SuppressLint("InflateParams")
-            View view = inflater.inflate(R.layout.select_page_layout, null);
-
-            assert view != null;
-            final ListView listView = (ListView) view.findViewById(R.id.listview);
-            listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-            listView.setAdapter(new ThemePagesAdapter(getContext(), pages));
-            listView.setItemChecked(pageData.getCurrentPage() - 1, true);
-            listView.setSelection(pageData.getCurrentPage() - 1);
-
-            AlertDialog dialog = new AlertDialog.Builder(getMainActivity())
-                    .setView(view)
-                    .show();
-
-            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
-            listView.setOnItemClickListener((adapterView, view1, i2, l) -> {
-                if (listView.getTag() != null && !((Boolean) listView.getTag())) {
-                    return;
-                }
-                jumpToPage(i2 * pageData.getPostsOnPageCount());
-                dialog.cancel();
-            });
-
-        });
+        run(() -> ThemeDialogsHelper.selectPage(this, pageData));
     }
-
-
-    private ThemePopupMenu<ThemePost> userMenu;
 
     @JavascriptInterface
     public void showUserMenu(final String postId) {
-        run(() -> {
-            final ThemePost post = getPostById(Integer.parseInt(postId));
-            if (userMenu == null) {
-                userMenu = new ThemePopupMenu<>();
-                userMenu.addItem("Профиль", data -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + ((ThemePost) data).getUserId()));
-                if (Api.Auth().getState())
-                    userMenu.addItem("Личные сообщения QMS", data -> IntentHandler.handle("http://4pda.ru/forum/index.php?act=qms&mid=" + ((ThemePost) data).getUserId()));
-                userMenu.addItem("Темы пользователя", data -> Toast.makeText(getContext(), "Не умею", Toast.LENGTH_SHORT).show());
-                userMenu.addItem("Сообщения в этой теме", data -> Toast.makeText(getContext(), "Не умею", Toast.LENGTH_SHORT).show());
-                userMenu.addItem("Сообщения пользователя", data -> Toast.makeText(getContext(), "Не умею", Toast.LENGTH_SHORT).show());
-            }
-            new AlertDialog.Builder(getContext())
-                    .setTitle(post.getNick())
-                    .setItems(userMenu.getTitles(), (dialogInterface, i) -> userMenu.onClick(i, post))
-                    .show();
-        });
+        run(() -> ThemeDialogsHelper.showUserMenu(this, getPostById(Integer.parseInt(postId))));
     }
-
-    private ThemePopupMenu<ThemePost> reputationMenu;
 
     @JavascriptInterface
     public void showReputationMenu(final String postId) {
-        run(() -> {
-            final ThemePost post = getPostById(Integer.parseInt(postId));
-            if (reputationMenu == null) {
-                reputationMenu = new ThemePopupMenu<>();
-                reputationMenu.addItem("Посмотреть", data -> Toast.makeText(getContext(), "Слепой", Toast.LENGTH_SHORT).show());
-            }
-            if (Api.Auth().getState()) {
-                int index = reputationMenu.containsIndex("Повысить");
-                if (index == -1) {
-                    if (post.canPlusRep())
-                        reputationMenu.addItem(0, "Повысить", data -> changeReputation(post, true));
-                } else {
-                    if (!post.canPlusRep())
-                        reputationMenu.remove(index);
-                }
-
-                index = reputationMenu.containsIndex("Понизить");
-                if (index == -1) {
-                    if (post.canPlusRep())
-                        reputationMenu.addItem(2, "Понизить", data -> changeReputation(post, false));
-                } else {
-                    if (!post.canPlusRep())
-                        reputationMenu.remove(index);
-                }
-            }
-            new AlertDialog.Builder(getContext())
-                    .setTitle("Репутация ".concat(post.getNick()))
-                    .setItems(reputationMenu.getTitles(), (dialogInterface, i) -> reputationMenu.onClick(i, post))
-                    .show();
-        });
+        run(() -> ThemeDialogsHelper.showReputationMenu(this, getPostById(Integer.parseInt(postId))));
     }
-
-    private ThemePopupMenu<ThemePost> postMenu;
 
     @JavascriptInterface
     public void showPostMenu(final String postId) {
-        run(() -> {
-            final ThemePost post = getPostById(Integer.parseInt(postId));
-            if (postMenu == null) {
-                postMenu = new ThemePopupMenu<>();
-                if (Api.Auth().getState()) {
-                    if (post.canQuote()) {
-                        postMenu.addItem("Ответить", data -> insertNick(post));
-                        postMenu.addItem("Цитировать", data -> quotePost(null, post));
-                    }
-                    if (post.canReport()) {
-                        postMenu.addItem("Пожаловаться", data -> reportPost(post));
-                    }
-                }
-                postMenu.addItem("Ссылка на сообщение", data -> Toast.makeText(getContext(), "Не умею", Toast.LENGTH_SHORT).show());
-            }
-            new AlertDialog.Builder(getContext())
-                    .setItems(postMenu.getTitles(), (dialogInterface, i) -> postMenu.onClick(i, post))
-                    .show();
-        });
+        run(() -> ThemeDialogsHelper.showPostMenu(this, getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface

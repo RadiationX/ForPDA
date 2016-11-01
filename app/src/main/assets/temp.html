@@ -55,14 +55,11 @@
         <div class="post_body">${body}</div>
         <div class="post_footer">
             <!-- $BeginBlock report_block -->
-            <button class="report" onclick="ITheme.reportPost(${post_id})"><span>Жалоба</span></button>
+            <!--<button class="report" onclick="ITheme.reportPost(${post_id})"><span>Жалоба</span></button>-->
             <!-- $EndBlock report_block -->
-            <!-- $BeginBlock nick_block -->
-            <button class="nick" onclick="ITheme.insertNick(${post_id})"><span>Ник</span></button>
-            <!-- $EndBlock nick_block -->
-            <!-- $BeginBlock quote_block -->
-            <button class="quote" onclick="ITheme.quotePost(${post_id})"><span>Цитата</span></button>
-            <!-- $EndBlock quote_block -->
+            <!-- $BeginBlock reply_block -->
+            <button class="nick" onclick="ITheme.insertNick(${post_id})"><span>Ответить</span></button>
+            <!-- $EndBlock reply_block -->
             <!-- $BeginBlock vote_block -->
             <button class="vote bad" onclick="ITheme.votePost(${post_id}, false)"><span>Плохо</span></button>
             <button class="vote good" onclick="ITheme.votePost(${post_id}, true)"><span>Хорошо</span></button>
