@@ -3,9 +3,12 @@ package forpdateam.ru.forpda.utils;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.ActionMode;
+import android.view.ContextMenu;
 import android.view.ViewParent;
+import android.webkit.WebView;
 
 /**
  * Created by radiationx on 01.11.16.
@@ -65,5 +68,15 @@ public class ExtendedWebView extends NestedWebView {
         }
         actionModeListener.OnStart(actionMode, callback, type);
         return actionMode;
+    }
+
+    @Override
+    protected void onCreateContextMenu(ContextMenu menu) {
+        super.onCreateContextMenu(menu);
+        requestFocusNodeHref(new Handler(msg -> {
+            WebView.HitTestResult result = getHitTestResult();
+            DialogsHelper.handleContextMenu(getContext(), result.getType(), result.getExtra(), (String) msg.getData().get("url"));
+            return true;
+        }).obtainMessage());
     }
 }
