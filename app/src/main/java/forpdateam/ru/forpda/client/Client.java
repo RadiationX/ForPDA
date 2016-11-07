@@ -15,6 +15,7 @@ import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.api.Api;
+import okhttp3.Call;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.FormBody;
@@ -37,7 +38,7 @@ public class Client {
         cookies = new ArrayList<>();
         String member_id = App.getInstance().getPreferences().getString("cookie_member_id", null);
         String pass_hash = App.getInstance().getPreferences().getString("cookie_pass_hash", null);
-        Client.member_id = App.getInstance().getPreferences().getString("member_id", null);
+        Api.Auth().setUserId(App.getInstance().getPreferences().getString("member_id", null));
         if (member_id != null && pass_hash != null) {
             Api.Auth().setState(true);
             //Первичная загрузка кукисов
@@ -69,7 +70,7 @@ public class Client {
                                 if (cookie.name().equals("member_id")) {
                                     //Сохранение и обновление member_id
                                     App.getInstance().getPreferences().edit().putString("member_id", cookie.value()).apply();
-                                    Client.member_id = cookie.value();
+                                    Api.Auth().setUserId(cookie.value());
                                 }
                             }
                             if (!Client.cookies.contains(cookie))
@@ -125,9 +126,16 @@ public class Client {
         return res;
     }
 
+    public void cancelCallByUrl(String url) {
+        for (Call call : client.dispatcher().queuedCalls()) {
+            if (call.request().url().toString().equals(url))
+                call.cancel();
+        }
+    }
+
     private Map<String, String> redirects = new HashMap<>();
 
-    public String getRedirect(String url){
+    public String getRedirect(String url) {
         return redirects.get(url);
     }
 

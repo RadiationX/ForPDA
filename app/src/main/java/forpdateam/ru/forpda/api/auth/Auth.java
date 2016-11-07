@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.api.auth;
 
+import android.util.Log;
+
 import java.util.Observer;
 
 import forpdateam.ru.forpda.api.auth.models.AuthForm;
@@ -12,9 +14,8 @@ public class Auth {
     private AuthParser parser = new AuthParser();
     private LoginObservable observable = new LoginObservable();
     private boolean authState = false;
-
-    public Auth() {
-    }
+    private String userId;
+    private int userIdInt = 0;
 
     public boolean getState() {
         return authState;
@@ -22,6 +23,23 @@ public class Auth {
 
     public void setState(boolean b) {
         authState = b;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public int getUserIdInt() {
+        return userIdInt;
+    }
+
+    public void setUserId(String userId1) {
+        userId = userId1;
+        Log.d("kek", "userid 1: "+ userId1);
+        try{
+            if (userId1 != null)
+                userIdInt = Integer.parseInt(userId1);
+        }catch (NumberFormatException ignore){}
     }
 
     public Observable<AuthForm> getForm() {

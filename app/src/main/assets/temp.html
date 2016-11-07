@@ -39,14 +39,14 @@
          data-post-id="${post_id}" data-user-id="${user_id}" data-nick="${nick}">
         <div class="post_header">
             <div class="header_wrapper">
-                <div class="avatar" onclick="ITheme.showUserMenu(${post_id})">
+                <div class="avatar" onclick="ITheme.showUserMenu('${post_id}')">
                     <div class="img" style="background-image:url(${avatar});"></div>
                 </div>
-                <span class="inf nick" onclick="ITheme.showUserMenu(${post_id})"><span><b>${nick}</b></span></span>
+                <span class="inf nick" onclick="ITheme.showUserMenu('${post_id}')"><span><b>${nick}</b></span></span>
                 <div class="inf group"><span style="${group_color}">${group}</span></div>
-                <span class="inf reputation" onclick="ITheme.showReputationMenu(${post_id})"><span>${reputation}</span></span>
+                <span class="inf reputation" onclick="ITheme.showReputationMenu('${post_id}')"><span>${reputation}</span></span>
                 <span class="inf date"><span>${date}</span></span>
-                <button class="inf menu" onclick="ITheme.showPostMenu(${post_id})"><span>Меню</span></button>
+                <button class="inf menu" onclick="ITheme.showPostMenu('${post_id}')"><span>Меню</span></button>
             </div>
         </div>
         <!-- $BeginBlock hat_button -->
@@ -58,17 +58,17 @@
             <!--<button class="report" onclick="ITheme.reportPost(${post_id})"><span>Жалоба</span></button>-->
             <!-- $EndBlock report_block -->
             <!-- $BeginBlock reply_block -->
-            <button class="nick" onclick="ITheme.insertNick(${post_id})"><span>Ответить</span></button>
+            <button class="nick" onclick="ITheme.insertNick('${post_id}')"><span>Ответить</span></button>
             <!-- $EndBlock reply_block -->
             <!-- $BeginBlock vote_block -->
-            <button class="vote bad" onclick="ITheme.votePost(${post_id}, false)"><span>Плохо</span></button>
-            <button class="vote good" onclick="ITheme.votePost(${post_id}, true)"><span>Хорошо</span></button>
+            <button class="vote bad" onclick="ITheme.votePost('${post_id}', false)"><span>Плохо</span></button>
+            <button class="vote good" onclick="ITheme.votePost('${post_id}', true)"><span>Хорошо</span></button>
             <!-- $EndBlock vote_block -->
             <!-- $BeginBlock delete_block -->
-            <button class="delete" onclick="ITheme.deletePost(${post_id})"><span>Удалить</span></button>
+            <button class="delete" onclick="ITheme.deletePost('${post_id}')"><span>Удалить</span></button>
             <!-- $EndBlock delete_block -->
             <!-- $BeginBlock edit_block -->
-            <button class="edit" onclick="ITheme.editPost(${post_id})"><span>Изменить</span></button>
+            <button class="edit" onclick="ITheme.editPost('${post_id}')"><span>Изменить</span></button>
             <!-- $EndBlock edit_block -->
         </div>
     </div>

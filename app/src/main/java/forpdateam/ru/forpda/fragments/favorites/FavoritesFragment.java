@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.fragments.favorites;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -24,23 +22,22 @@ import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.DividerItemDecoration;
 import forpdateam.ru.forpda.utils.ErrorHandler;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.Utils;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-
-import static android.content.Context.CLIPBOARD_SERVICE;
 
 /**
  * Created by radiationx on 22.09.16.
  */
 
 public class FavoritesFragment extends TabFragment {
-    public final static String defaultTitle = "Избранное";
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
-    private FavoritesAdapter adapter;
     private FavoritesAdapter.OnItemClickListener onItemClickListener =
             (view1, position, adapter1) -> {
-                IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=" + adapter1.getItem(position).getTopicId() + "&view=getnewpost");
+                Bundle args = new Bundle();
+                args.putString(TabFragment.TITLE_ARG, adapter1.getItem(position).getTopicTitle());
+                IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=" + adapter1.getItem(position).getTopicId() + "&view=getnewpost", args);
             };
     private AlertDialogMenu<FavItem> favoriteDialogMenu;
     private FavoritesAdapter.OnLongItemClickListener onLongItemClickListener =
@@ -49,28 +46,14 @@ public class FavoritesFragment extends TabFragment {
 
                 if (favoriteDialogMenu == null) {
                     favoriteDialogMenu = new AlertDialogMenu<>();
-                    favoriteDialogMenu.addItem("Скопировать ссылку", data -> {
-                        ClipboardManager clipboard = (ClipboardManager) getMainActivity().getSystemService(CLIPBOARD_SERVICE);
-                        ClipData clip = ClipData.newPlainText("What? Label?", "http://4pda.ru/forum/index.php?showtopic=" + data.getTopicId());
-                        clipboard.setPrimaryClip(clip);
-                    });
-                    favoriteDialogMenu.addItem("Вложения", data -> {
-                        IntentHandler.handle("http://4pda.ru/forum/index.php?act=attach&code=showtopic&tid=" + data.getTopicId());
-                    });
-                    favoriteDialogMenu.addItem("Открыть форум темы", data -> {
-                        IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + data.getForumId());
-                    });
-                    favoriteDialogMenu.addItem("Изменить тип подписки", data -> {
-                        new AlertDialog.Builder(getContext())
-                                .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> changeFav(0, Favorites.SUB_TYPES[which1], data.getFavId()))
-                                .show();
-                    });
-                    favoriteDialogMenu.addItem(getPinText(favItem.isPin()), data -> {
-                        changeFav(1, data.isPin() ? "unpin" : "pin", data.getFavId());
-                    });
-                    favoriteDialogMenu.addItem("Удалить", data -> {
-                        changeFav(2, null, data.getFavId());
-                    });
+                    favoriteDialogMenu.addItem("Скопировать ссылку", data -> Utils.copyToClipBoard("http://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data.getTopicId()))));
+                    favoriteDialogMenu.addItem("Вложения", data -> IntentHandler.handle("http://4pda.ru/forum/index.php?act=attach&code=showtopic&tid=" + data.getTopicId()));
+                    favoriteDialogMenu.addItem("Открыть форум темы", data -> IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + data.getForumId()));
+                    favoriteDialogMenu.addItem("Изменить тип подписки", data -> new AlertDialog.Builder(getContext())
+                            .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> changeFav(0, Favorites.SUB_TYPES[which1], data.getFavId()))
+                            .show());
+                    favoriteDialogMenu.addItem(getPinText(favItem.isPin()), data -> changeFav(1, data.isPin() ? "unpin" : "pin", data.getFavId()));
+                    favoriteDialogMenu.addItem("Удалить", data -> changeFav(2, null, data.getFavId()));
                 }
 
                 int index = favoriteDialogMenu.containsIndex(getPinText(!favItem.isPin()));
@@ -91,7 +74,7 @@ public class FavoritesFragment extends TabFragment {
 
     @Override
     public String getDefaultTitle() {
-        return defaultTitle;
+        return "Избранное";
     }
 
     @Override
@@ -104,7 +87,7 @@ public class FavoritesFragment extends TabFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         initBaseView(inflater, container);
         setWhiteBackground();
-        inflater.inflate(R.layout.fragment_qms_themes, (ViewGroup) view.findViewById(R.id.fragment_content), true);
+        baseInflateFragment(inflater, R.layout.fragment_qms_themes);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         recyclerView = (RecyclerView) findViewById(R.id.qms_list_themes);
         viewsReady();
@@ -126,9 +109,7 @@ public class FavoritesFragment extends TabFragment {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onLoadThemes, throwable -> {
-                    Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                }));
+                .subscribe(this::onLoadThemes, throwable -> Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show()));
     }
 
     public void changeFav(int act, String type, int id) {
@@ -139,13 +120,11 @@ public class FavoritesFragment extends TabFragment {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onChangeFav, throwable -> {
-                    Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                }));
+                .subscribe(this::onChangeFav, throwable -> Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show()));
     }
 
     private void onLoadThemes(FavData data) {
-        adapter = new FavoritesAdapter(data.getFavItems());
+        FavoritesAdapter adapter = new FavoritesAdapter(data.getFavItems());
         adapter.setOnItemClickListener(onItemClickListener);
         adapter.setOnLongItemClickListener(onLongItemClickListener);
         recyclerView.setAdapter(adapter);

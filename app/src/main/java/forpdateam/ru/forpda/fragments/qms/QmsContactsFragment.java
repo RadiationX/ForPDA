@@ -33,12 +33,7 @@ import io.reactivex.schedulers.Schedulers;
  * Created by radiationx on 25.08.16.
  */
 public class QmsContactsFragment extends TabFragment {
-    public final static String defaultTitle = "Контакты";
 
-    @Override
-    public String getDefaultTitle() {
-        return defaultTitle;
-    }
 
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
@@ -66,13 +61,18 @@ public class QmsContactsFragment extends TabFragment {
         return true;
     }
 
+    @Override
+    public String getDefaultTitle() {
+        return "Контакты";
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         initBaseView(inflater, container);
         initFabBehavior();
         setWhiteBackground();
-        inflater.inflate(R.layout.fragment_qms_contacts, (ViewGroup) view.findViewById(R.id.fragment_content), true);
+        baseInflateFragment(inflater, R.layout.fragment_qms_contacts);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         recyclerView = (RecyclerView) findViewById(R.id.qms_list_contacts);
         viewsReady();

@@ -63,7 +63,7 @@ public class QmsNewThemeFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         initBaseView(inflater, container);
-        inflater.inflate(R.layout.fragment_qms_new_theme, (ViewGroup) view.findViewById(R.id.fragment_content), true);
+        baseInflateFragment(inflater, R.layout.fragment_qms_new_theme);
         viewStub = (ViewStub) findViewById(R.id.toolbar_content);
         viewStub.setLayoutResource(R.layout.qms_new_theme_toolbar);
         viewStub.inflate();

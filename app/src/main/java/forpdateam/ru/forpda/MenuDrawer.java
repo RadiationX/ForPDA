@@ -58,6 +58,10 @@ public class MenuDrawer {
             select(findByClassName(last));
     }
 
+    public void select(String className){
+        select(findByClassName(className));
+    }
+
     private void select(MenuItem item) {
         if (item == null) return;
         try {

@@ -2,8 +2,6 @@ package forpdateam.ru.forpda.fragments.theme;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -44,10 +42,9 @@ import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.utils.ErrorHandler;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.Utils;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-
-import static android.content.Context.CLIPBOARD_SERVICE;
 
 /**
  * Created by radiationx on 20.10.16.
@@ -56,6 +53,7 @@ import static android.content.Context.CLIPBOARD_SERVICE;
 public class ThemeFragmentWeb extends ThemeFragment {
     //Указывают на произведенное действие: переход назад, обновление, обычный переход по ссылке
     private final static int BACK_ACTION = 0, REFRESH_ACTION = 1, NORMAL_ACTION = 2;
+    private final static String JS_INTERFACE = "ITheme";
     private int action = NORMAL_ACTION;
 
     private SwipeRefreshLayout refreshLayout;
@@ -70,7 +68,8 @@ public class ThemeFragmentWeb extends ThemeFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         initBaseView(inflater, container);
-        inflater.inflate(R.layout.fragment_theme, (ViewGroup) view.findViewById(R.id.fragment_content), true);
+        initFabBehavior();
+        baseInflateFragment(inflater, R.layout.fragment_theme);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         if (getMainActivity().getWebViews().size() > 0) {
             webView = getMainActivity().getWebViews().element();
@@ -91,7 +90,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
         refreshLayout.setOnRefreshListener(this::loadData);
 
-        webView.addJavascriptInterface(this, "ITheme");
+        webView.addJavascriptInterface(this, JS_INTERFACE);
         webView.getSettings().setJavaScriptEnabled(true);
         registerForContextMenu(webView);
 
@@ -125,7 +124,8 @@ public class ThemeFragmentWeb extends ThemeFragment {
                     })
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         });
-
+        fab.setImageDrawable(App.getAppDrawable(R.drawable.ic_create_white_24dp));
+        fab.setVisibility(View.VISIBLE);
         return view;
     }
 
@@ -133,44 +133,27 @@ public class ThemeFragmentWeb extends ThemeFragment {
     public void refreshOptionsMenu() {
         Menu menu = toolbar.getMenu();
         menu.clear();
-        menu.add("Обновить").setIcon(R.drawable.ic_refresh_white_24dp).setOnMenuItemClickListener(menuItem -> {
+        menu.add("Обновить").setIcon(App.getAppDrawable(R.drawable.ic_refresh_white_24dp)).setOnMenuItemClickListener(menuItem -> {
             action = REFRESH_ACTION;
             loadData();
             return false;
         }).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         if (pageData != null) {
-            menu.add("Ссылка").setOnMenuItemClickListener(menuItem -> {
-                return false;
-            });
-            menu.add("Найти на странице").setOnMenuItemClickListener(menuItem -> {
-                return false;
-            });
-            menu.add("Найти в теме").setOnMenuItemClickListener(menuItem -> {
-                return false;
-            });
+            menu.add("Ссылка").setOnMenuItemClickListener(menuItem -> false);
+            menu.add("Найти на странице").setOnMenuItemClickListener(menuItem -> false);
+            menu.add("Найти в теме").setOnMenuItemClickListener(menuItem -> false);
         }
 
         SubMenu subMenu = menu.addSubMenu("Опции темы");
         if (pageData != null) {
             if (pageData.isInFavorite()) {
-                subMenu.add("Удалить из избранного").setOnMenuItemClickListener(menuItem -> {
-                    return false;
-                });
+                subMenu.add("Удалить из избранного").setOnMenuItemClickListener(menuItem -> false);
             } else {
-                subMenu.add("Добавить в избранное").setOnMenuItemClickListener(menuItem -> {
-                    return false;
-                });
+                subMenu.add("Добавить в избранное").setOnMenuItemClickListener(menuItem -> false);
             }
-            subMenu.add("Открыть форум темы").setOnMenuItemClickListener(menuItem -> {
-                return false;
-            });
-            subMenu.add("Кто читает тему").setOnMenuItemClickListener(menuItem -> {
-                return false;
-            });
-            subMenu.add("Кто писал сообщения").setOnMenuItemClickListener(menuItem -> {
-                return false;
-            });
-
+            subMenu.add("Открыть форум темы").setOnMenuItemClickListener(menuItem -> false);
+            subMenu.add("Кто читает тему").setOnMenuItemClickListener(menuItem -> false);
+            subMenu.add("Кто писал сообщения").setOnMenuItemClickListener(menuItem -> false);
         }
     }
 
@@ -248,6 +231,9 @@ public class ThemeFragmentWeb extends ThemeFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        unregisterForContextMenu(webView);
+        webView.setActionModeListener(null);
+        webView.removeJavascriptInterface(JS_INTERFACE);
         webView.setWebChromeClient(null);
         webView.setWebChromeClient(null);
         webView.loadUrl("about:blank");
@@ -265,6 +251,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
     @Override
     public void onDestroy() {
+        history.clear();
         super.onDestroy();
     }
 
@@ -495,7 +482,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
     }
 
     public void editPost(ThemePost post) {
-
+        Toast.makeText(getContext(), "editpost ".concat(Integer.toString(post.getId())), Toast.LENGTH_SHORT).show();
     }
 
 
@@ -611,11 +598,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
     @JavascriptInterface
     public void copySelectedText(final String text) {
-        run(() -> {
-            ClipboardManager clipboard = (ClipboardManager) getMainActivity().getSystemService(CLIPBOARD_SERVICE);
-            ClipData clip = ClipData.newPlainText("What? Label?", text);
-            clipboard.setPrimaryClip(clip);
-        });
+        run(() -> Utils.copyToClipBoard(text));
     }
 
     @JavascriptInterface

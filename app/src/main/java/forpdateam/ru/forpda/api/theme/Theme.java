@@ -89,14 +89,14 @@ public class Theme {
         page.setInFavorite(matcher.find());
         matcher = postsPattern.matcher(response);
         Log.d("kek", "check 4");
-        int memberId = Integer.parseInt(Client.member_id);
+        int memberId = Api.Auth().getUserIdInt();
         while (matcher.find()) {
             ThemePost post = new ThemePost();
             post.setId(Integer.parseInt(matcher.group(1)));
             post.setDate(matcher.group(2));
             post.setNumber(Integer.parseInt(matcher.group(3)));
             post.setAvatar(matcher.group(4));
-            post.setNick(matcher.group(5));
+            post.setNick(Html.fromHtml(matcher.group(5)).toString());
             post.setCurator(matcher.group(6) != null);
             post.setGroupColor(matcher.group(7));
             post.setGroup(matcher.group(8));
@@ -150,7 +150,7 @@ public class Theme {
                 t.setVariable("is_curator", Boolean.toString(page.isCurator()));
 
             if (t.variableExists("member_id"))
-                t.setVariable("member_id", Client.member_id);
+                t.setVariable("member_id", Api.Auth().getUserIdInt());
 
             if (t.variableExists("elem_to_scroll"))
                 t.setVariable("elem_to_scroll", page.getElementToScroll());

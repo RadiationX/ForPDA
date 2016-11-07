@@ -30,7 +30,7 @@ public class ThemeFragmentNative extends ThemeFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         initBaseView(inflater, container);
-        inflater.inflate(R.layout.fragment_theme_test, (ViewGroup) view.findViewById(R.id.fragment_content), true);
+        baseInflateFragment(inflater, R.layout.fragment_theme_test);
         recyclerView = (RecyclerView) findViewById(R.id.theme);
         viewsReady();
         recyclerView.setHasFixedSize(true);

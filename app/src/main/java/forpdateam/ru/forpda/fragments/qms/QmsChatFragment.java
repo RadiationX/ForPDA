@@ -24,7 +24,6 @@ import io.reactivex.schedulers.Schedulers;
  * Created by radiationx on 25.08.16.
  */
 public class QmsChatFragment extends TabFragment {
-    public final static String defaultTitle = "Чат";
     public final static String USER_ID_ARG = "USER_ID_ARG";
     public final static String USER_AVATAR_ARG = "USER_AVATAR_ARG";
     public final static String THEME_ID_ARG = "THEME_ID_ARG";
@@ -33,7 +32,6 @@ public class QmsChatFragment extends TabFragment {
     private String avatarUrl;
     private String themeId;
     private RecyclerView recyclerView;
-    private QmsChatAdapter adapter;
 
     private QmsChatAdapter.OnItemClickListener onItemClickListener = (view1, position, adapter1) -> {
         Toast.makeText(getContext(), "ONCLICK " + position, Toast.LENGTH_SHORT).show();
@@ -44,7 +42,7 @@ public class QmsChatFragment extends TabFragment {
 
     @Override
     public String getDefaultTitle() {
-        return defaultTitle;
+        return "Чат";
     }
 
     @Override
@@ -61,7 +59,7 @@ public class QmsChatFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         initBaseView(inflater, container);
-        inflater.inflate(R.layout.fragment_qms_chat, (ViewGroup) view.findViewById(R.id.fragment_content), true);
+        baseInflateFragment(inflater, R.layout.fragment_qms_chat);
         recyclerView = (RecyclerView) findViewById(R.id.qms_chat);
         viewsReady();
         tryShowAvatar();
@@ -99,7 +97,7 @@ public class QmsChatFragment extends TabFragment {
 
 
     private void onLoadChat(QmsChatModel chat) {
-        adapter = new QmsChatAdapter(chat.getChatItemsList(), getContext());
+        QmsChatAdapter adapter = new QmsChatAdapter(chat.getChatItemsList(), getContext());
         adapter.setOnItemClickListener(onItemClickListener);
         adapter.setOnLongItemClickListener(onLongItemClickListener);
         recyclerView.setAdapter(adapter);

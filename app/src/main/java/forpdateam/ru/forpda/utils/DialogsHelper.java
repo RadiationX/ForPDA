@@ -48,11 +48,17 @@ public class DialogsHelper {
 
         if (anchor) {
             if (alertDialogMenu.containsIndex(openNewTab) == -1)
-                alertDialogMenu.addItem(openNewTab, null);
+                alertDialogMenu.addItem(openNewTab, new AlertDialogMenu.OnClickListener<Pair<String, String>>() {
+                    @Override
+                    public void onClick(Pair<String, String> data) {
+
+                        IntentHandler.handle(data.second);
+                    }
+                });
             if (alertDialogMenu.containsIndex(openBrowser) == -1)
                 alertDialogMenu.addItem(openBrowser, null);
             if (alertDialogMenu.containsIndex(copyUrl) == -1)
-                alertDialogMenu.addItem(copyUrl, null);
+                alertDialogMenu.addItem(copyUrl, data -> Utils.copyToClipBoard(data.second));
         } else {
             index = alertDialogMenu.containsIndex(openNewTab);
             if (index != -1)
@@ -70,7 +76,7 @@ public class DialogsHelper {
             if (alertDialogMenu.containsIndex(saveImage) == -1)
                 alertDialogMenu.addItem(saveImage, null);
             if (alertDialogMenu.containsIndex(copyImageUrl) == -1)
-                alertDialogMenu.addItem(copyImageUrl, null);
+                alertDialogMenu.addItem(copyImageUrl, data -> Utils.copyToClipBoard(data.first));
         } else {
             index = alertDialogMenu.containsIndex(openImage);
             if (index != -1)

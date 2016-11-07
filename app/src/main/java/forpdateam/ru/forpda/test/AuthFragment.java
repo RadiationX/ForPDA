@@ -28,7 +28,6 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.auth.AuthParser;
 import forpdateam.ru.forpda.api.auth.models.AuthForm;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
-import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.ErrorHandler;
 import forpdateam.ru.forpda.utils.ourparser.Html;
@@ -64,7 +63,7 @@ public class AuthFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         initBaseView(inflater, container);
-        inflater.inflate(R.layout.activity_auth, (ViewGroup) view.findViewById(R.id.fragment_content), true);
+        baseInflateFragment(inflater, R.layout.activity_auth);
         nick = (EditText) findViewById(R.id.auth_login);
         password = (EditText) findViewById(R.id.auth_password);
         captcha = (EditText) findViewById(R.id.auth_captcha);
@@ -178,7 +177,7 @@ public class AuthFragment extends TabFragment {
         complete.startAnimation(animation1);
 
         getCompositeDisposable().add(
-                Api.Profile().get("http://4pda.ru/forum/index.php?showuser=" + Client.member_id)
+                Api.Profile().get("http://4pda.ru/forum/index.php?showuser=".concat(Api.Auth().getUserId()))
                         .onErrorReturn(throwable -> {
                             ErrorHandler.handle(this, throwable, view1 -> loadData());
                             return new ProfileModel();

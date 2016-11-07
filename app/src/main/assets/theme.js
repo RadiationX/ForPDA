@@ -157,7 +157,7 @@ function selectionToQuote() {
     }
     var postId = p.dataset.postId;
     if (selectedText != null && postId != null) {
-        ITheme.quotePost(selectedText, postId);
+        ITheme.quotePost(selectedText, ""+postId);
     } else {
         ITheme.toast("Ошибка создания цитаты: [" + selectedText + ", " + postId + "]");
         return;

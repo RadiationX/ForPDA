@@ -33,9 +33,6 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
@@ -44,6 +41,7 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.BlurUtil;
 import forpdateam.ru.forpda.utils.ErrorHandler;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.ourparser.LinkMovementMethod;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
@@ -54,29 +52,18 @@ import io.reactivex.schedulers.Schedulers;
  * Created by radiationx on 03.08.16.
  */
 public class ProfileFragment extends TabFragment {
-    private static final String LINk = "http://4pda.ru/forum/index.php?showuser=2556269#";
-
     private LayoutInflater inflater;
-
     private TextView nick, group, sign, about;
     private ImageView avatar;
     private LinearLayout countList, infoBlock, contactList, devicesList;
     private EditText noteText;
     private CircularProgressView progressView;
-    private int profileId = 0;
-
-
-    public ProfileFragment() {
-        setTabUrl(LINk);
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-        Matcher matcher = Pattern.compile("showuser=(\\d*)").matcher(getTabUrl());
-        if (matcher.find())
-            profileId = Integer.parseInt(matcher.group(1));
+        if (getTabUrl().isEmpty())
+            setTabUrl("http://4pda.ru/forum/index.php?showuser=".concat(Api.Auth().getUserId() == null ? "2556269" : Api.Auth().getUserId()));
     }
 
     @Nullable
@@ -85,7 +72,7 @@ public class ProfileFragment extends TabFragment {
         this.inflater = inflater;
         initBaseView(inflater, container);
         initFabBehavior();
-        inflater.inflate(R.layout.fragment_profile, (ViewGroup) view.findViewById(R.id.fragment_content), true);
+        baseInflateFragment(inflater, R.layout.fragment_profile);
         ViewStub viewStub = (ViewStub) findViewById(R.id.toolbar_content);
         viewStub.setLayoutResource(R.layout.profile_toolbar);
         viewStub.inflate();
@@ -117,12 +104,12 @@ public class ProfileFragment extends TabFragment {
         collapsingToolbarLayout.setScrimAnimationDuration(225);
 */
         noteText = (EditText) findViewById(R.id.profile_note_text);
+        noteText.clearFocus();
         findViewById(R.id.profile_save_note).setOnClickListener(view1 -> saveNote());
         //toolbar.setTitleTextColor(Color.TRANSPARENT);
 
-        Log.d("kek", "menu " + toolbar.getMenu());
         toolbar.getMenu().add("Ссылка").setOnMenuItemClickListener(menuItem -> {
-            Toast.makeText(getContext(), profileId + " lolka", Toast.LENGTH_SHORT).show();
+            Utils.copyToClipBoard(getTabUrl());
             return false;
         });
         return view;
@@ -266,7 +253,7 @@ public class ProfileFragment extends TabFragment {
             Log.d("kek", "view sign setted");
             sign.setMovementMethod(LinkMovementMethod.getInstance());
         }
-        Log.d("kek", "check 1 "+(System.currentTimeMillis()-time));
+        Log.d("kek", "check 1 " + (System.currentTimeMillis() - time));
         if (profile.getPosts() != null)
             addCountItem(getContext().getString(R.string.profile_item_text_posts), profile.getPosts());
         if (profile.getTopics() != null)
@@ -279,7 +266,7 @@ public class ProfileFragment extends TabFragment {
             addCountItem(getContext().getString(R.string.profile_item_text_site_posts), profile.getSitePosts());
         if (profile.getComments() != null)
             addCountItem(getContext().getString(R.string.profile_item_text_comments), profile.getComments());
-        Log.d("kek", "check 2 "+(System.currentTimeMillis()-time));
+        Log.d("kek", "check 2 " + (System.currentTimeMillis() - time));
         if (profile.getGender() != null)
             addInfoItem(getContext().getString(R.string.profile_item_text_gender), profile.getGender());
         if (profile.getBirthDay() != null)
@@ -295,7 +282,7 @@ public class ProfileFragment extends TabFragment {
             addInfoItem(getContext().getString(R.string.profile_item_text_last_online), profile.getOnlineDate());
         if (profile.getAlerts() != null)
             addInfoItem(getContext().getString(R.string.profile_item_text_alerts), profile.getAlerts());
-        Log.d("kek", "check 3 "+(System.currentTimeMillis()-time));
+        Log.d("kek", "check 3 " + (System.currentTimeMillis() - time));
         if (profile.getContacts().size() > 0) {
             fab.setOnClickListener(view1 -> IntentHandler.handle(profile.getContacts().get(0).first));
             fab.setVisibility(View.VISIBLE);
@@ -305,7 +292,7 @@ public class ProfileFragment extends TabFragment {
                 addContactItem(getIconRes(profile.getContacts().get(i).second), profile.getContacts().get(i).first);
             findViewById(R.id.profile_block_contacts).setVisibility(View.VISIBLE);
         }
-        Log.d("kek", "check 4 "+(System.currentTimeMillis()-time));
+        Log.d("kek", "check 4 " + (System.currentTimeMillis() - time));
         if (profile.getDevices().size() > 0) {
             for (Pair<String, String> device : profile.getDevices()) {
                 addDeviceItem(device.second, device.first);
@@ -325,7 +312,7 @@ public class ProfileFragment extends TabFragment {
 
         findViewById(R.id.profile_block_counts).setVisibility(View.VISIBLE);
         findViewById(R.id.profile_block_information).setVisibility(View.VISIBLE);
-        Log.d("kek", "full time "+(System.currentTimeMillis()-time));
+        Log.d("kek", "full time " + (System.currentTimeMillis() - time));
     }
 
     class CountItem extends LinearLayout {

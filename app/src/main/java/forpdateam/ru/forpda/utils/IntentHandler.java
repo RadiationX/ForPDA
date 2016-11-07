@@ -122,7 +122,6 @@ public class IntentHandler {
             }
             run("showtopic " + tid + " : " + view + " : " + st + " : " + pid);
             args.putString(TabFragment.URL_ARG, uri.toString());
-            args.putString(TabFragment.TITLE_ARG, "lolka");
             TabManager.getInstance().add(new TabFragment.Builder<>(ThemeFragmentWeb.class).setArgs(args).build());
             return true;
         }
@@ -162,7 +161,8 @@ public class IntentHandler {
                     run("rep " + uri.toString());
                     return true;
                 case "findpost":
-                    run("redirect " + uri.toString());
+                    args.putString(TabFragment.URL_ARG, uri.toString());
+                    TabManager.getInstance().add(new TabFragment.Builder<>(ThemeFragmentWeb.class).setArgs(args).build());
                     return true;
                 case "fav":
                     run("favorites");

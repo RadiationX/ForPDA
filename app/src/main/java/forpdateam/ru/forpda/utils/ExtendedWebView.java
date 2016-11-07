@@ -66,7 +66,8 @@ public class ExtendedWebView extends NestedWebView {
         } else {
             actionMode = super.startActionMode(callback);
         }
-        actionModeListener.OnStart(actionMode, callback, type);
+        if (actionModeListener != null)
+            actionModeListener.OnStart(actionMode, callback, type);
         return actionMode;
     }
 

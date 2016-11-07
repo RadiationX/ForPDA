@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -187,6 +188,10 @@ public class TabFragment extends RxFragment implements ITabFragment {
                 icNoNetwork.setVisibility(View.GONE);
             }
         });
+    }
+
+    protected void baseInflateFragment(LayoutInflater inflater, @LayoutRes int res){
+        inflater.inflate(res, (ViewGroup) view.findViewById(R.id.fragment_content), true);
     }
 
     Queue<String> q = new PriorityQueue<>(10);

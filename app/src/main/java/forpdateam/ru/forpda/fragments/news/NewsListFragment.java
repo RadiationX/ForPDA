@@ -72,7 +72,7 @@ public class NewsListFragment extends TabFragment implements NewsListAdapter.OnI
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         initBaseView(inflater, container);
-        inflater.inflate(R.layout.news_list_fragment, (ViewGroup) view.findViewById(R.id.fragment_content), true);
+        baseInflateFragment(inflater, R.layout.news_list_fragment);
 //        text = (TextView) findViewById(R.id.textView2);
         listProgress = findViewById(R.id.news_list_progress);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.news_refresh_layout);
