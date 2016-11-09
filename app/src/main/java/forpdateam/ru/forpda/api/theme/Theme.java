@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,6 +16,8 @@ import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.utils.ourparser.Html;
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 
 /**
  * Created by radiationx on 04.08.16.
@@ -37,17 +40,10 @@ public class Theme {
     }
 
     public Observable<ThemePage> getPage(final String url, boolean generateHtml) {
-        return Observable.create(subscriber -> {
-            try {
-                subscriber.onNext(_getPage(url, generateHtml));
-                subscriber.onComplete();
-            } catch (Exception e) {
-                subscriber.onError(e);
-            }
-        });
+        return Observable.fromCallable(() -> _getPage(url, generateHtml));
     }
 
-    private ThemePage _getPage(final String url, boolean generateHtml) throws Exception {
+    public ThemePage _getPage(final String url, boolean generateHtml) throws Exception {
         ThemePage page = new ThemePage();
         Log.d("kek", "page start _getPage");
         String response = Client.getInstance().get(url);

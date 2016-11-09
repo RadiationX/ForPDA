@@ -114,14 +114,16 @@ public class Client {
         }
 
         String res;
-        Response response = client.newCall(builder.build()).execute();
+        Response response = null;
         try {
+            response = client.newCall(builder.build()).execute();
             if (!response.isSuccessful())
                 throw new OkHttpResponseException(response.code(), response.message(), url);
             res = response.body().string();
             redirects.put(url, response.request().url().toString());
         } finally {
-            response.close();
+            if (response != null)
+                response.close();
         }
         return res;
     }

@@ -8,16 +8,16 @@ var lastTop = 0,
 //По идеи должна верно скроллить к нужному элементу, даже если пользователь прокрутил страницу
 //Как оно работает и работает ли вообще - объяснить не могу
 function onProgressChanged() {
-    console.log("call onprogress");
+    //ITheme.log("call onprogress");
     var newTop = getCoordinates(anchorElem).top;
-    var newScrollTop = window.pageYOffset || document.scrollTop;
+    var newScrollTop = (window.pageYOffset || document.documentElement.scrollTop)  - (document.documentElement.clientTop || 0);
     var tempDeltaTop = newTop - lastTop;
     var tempDeltaScroll = newScrollTop - lastScrollTop;
-
     var delta = tempDeltaTop;
     if (lastDeltaTop != 0)
         delta = delta + (lastDeltaTop - tempDeltaScroll + lastDeltaScroll);
 
+    //ITheme.log("new: "+newTop+"  :  "+newScrollTop+"  :  "+tempDeltaTop+"  :  "+tempDeltaScroll+ "  :  "+delta);
     //console.log("prch: "+tempDeltaTop+"  :  "+tempDeltaScroll+"  :  "+lastDeltaTop+"  :  "+lastDeltaScroll+ "  :  "+delta);
     if (delta != 0) {
         window.scrollBy(0, delta);
@@ -36,13 +36,13 @@ function onProgressChanged() {
 //PageInfo.elemToScroll - переменная, заданная в шаблоне в теге script, содержит в себе якорь или entry
 //doOnLoadScroll - объект в window, задаётся false только когда была сделана перезагрузка страницы или переход назад
 function scrollToElement(name) {
-    console.log("call scroll to");
+    //ITheme.log("call scroll to");
     if (typeof doOnLoadScroll !== "undefined")
         if (doOnLoadScroll == false)
             return;
 
     if (typeof name != 'string') name = PageInfo.elemToScroll;
-    console.log("do scroll to " + name);
+    //ITheme.log("do scroll to " + name);
     anchorElem = document.querySelector('[name="' + name + '"]');
     var p = anchorElem;
     if (anchorElem) {
@@ -56,8 +56,17 @@ function scrollToElement(name) {
     }
     anchorElem.scrollIntoView();
     lastTop = getCoordinates(anchorElem).top;
-    lastScrollTop = window.pageYOffset || document.scrollTop;
+    //window.scrollBy(0, lastTop);
 
+    lastScrollTop = (window.pageYOffset || document.documentElement.scrollTop)  - (document.documentElement.clientTop || 0);
+    if(lastScrollTop==0){
+        var temas = lastTop;
+        window.addEventListener('load', function() {
+            lastScrollTop = temas;
+            lastTop = temas;
+            onProgressChanged();
+        });
+    }
 
     //Активация элементов, убирается класс active с уже активированных
     if(elemToActivation)

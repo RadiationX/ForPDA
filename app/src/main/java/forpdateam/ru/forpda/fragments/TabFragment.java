@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -31,7 +32,13 @@ import forpdateam.ru.forpda.ScrollAwareFABBehavior;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.utils.ErrorHandler;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 07.08.16.
@@ -190,12 +197,10 @@ public class TabFragment extends RxFragment implements ITabFragment {
         });
     }
 
-    protected void baseInflateFragment(LayoutInflater inflater, @LayoutRes int res){
+    protected void baseInflateFragment(LayoutInflater inflater, @LayoutRes int res) {
         inflater.inflate(res, (ViewGroup) view.findViewById(R.id.fragment_content), true);
     }
 
-    Queue<String> q = new PriorityQueue<>(10);
-    int i = 0;
 
     protected void viewsReady() {
         if (Client.getInstance().getNetworkState()) {
@@ -317,7 +322,34 @@ public class TabFragment extends RxFragment implements ITabFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Client.getInstance().cancelCallByUrl(getTabUrl());
+        //compositeDisposable.clear();
+    }
+
+    public void clearDisposables() {
+        Log.e("kek", "clear disposables");
         compositeDisposable.clear();
+    }
+
+    protected void handleErrorRx(Throwable throwable) {
+        handleErrorRx(throwable, null);
+    }
+
+    protected void handleErrorRx(Throwable throwable, View.OnClickListener listener) {
+        ErrorHandler.handle(this, throwable, listener);
+        clearDisposables();
+    }
+
+    public class Subscriber<T> {
+        public Disposable subscribe(@NonNull Class<T> dataClass, @NonNull Observable<T> observable, @NonNull Consumer<T> onNext) {
+            return observable.onErrorReturn(throwable -> {
+                handleErrorRx(throwable);
+                return dataClass.newInstance();
+            })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(onNext, TabFragment.this::handleErrorRx, TabFragment.this::clearDisposables);
+        }
     }
 
     /* Experiment */

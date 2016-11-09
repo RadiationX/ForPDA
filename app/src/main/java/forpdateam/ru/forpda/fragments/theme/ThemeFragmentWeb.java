@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -161,15 +162,22 @@ public class ThemeFragmentWeb extends ThemeFragment {
     public void loadData() {
         if (refreshLayout != null)
             refreshLayout.setRefreshing(true);
-        getCompositeDisposable().add(Api.Theme().getPage(getTabUrl(), true)
+        //new Handler().postDelayed(() -> TabManager.getInstance().remove(getTag()), 15);
+        /*getCompositeDisposable().add(Api.Theme().getPage(getTabUrl(), true)
                 .onErrorReturn(throwable -> {
-                    ErrorHandler.handle(this, throwable, view1 -> loadData());
+                    handleErrorRx(throwable, v -> loadData());
                     return new ThemePage();
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onLoadData, throwable -> ErrorHandler.handle(this, throwable, null)));
+                .subscribe(this::onLoadData, this::handleErrorRx, this::clearDisposables));*/
+
+        Subscriber<ThemePage> generator = new Subscriber<>();
+
+        //"подписка"
+        generator.subscribe(ThemePage.class, Api.Theme().getPage(getTabUrl(), true), this::onLoadData);
     }
+
 
     private void onLoadData(ThemePage themePage) throws Exception {
         if (refreshLayout != null)
@@ -316,11 +324,19 @@ public class ThemeFragmentWeb extends ThemeFragment {
             loadData();
         }
 
+        private final Pattern p = Pattern.compile("\\.(jpg|png|gif|bmp)");
+        private Matcher m = p.matcher("");
+
         @Override
         public void onLoadResource(WebView view, String url) {
             super.onLoadResource(view, url);
-            if (action == NORMAL_ACTION)
-                webView.evalJs("onProgressChanged()");
+
+            //Log.d("kek", "IThemeJ: " + url);
+            if (action == NORMAL_ACTION) {
+                if (!url.contains("style_images") && m.reset(url).find()) {
+                    webView.evalJs("onProgressChanged()");
+                }
+            }
         }
 
         @Override
@@ -604,5 +620,10 @@ public class ThemeFragmentWeb extends ThemeFragment {
     @JavascriptInterface
     public void toast(final String text) {
         run(() -> Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show());
+    }
+
+    @JavascriptInterface
+    public void log(final String text) {
+        Log.d("kek", "ITheme: ".concat(text));
     }
 }

@@ -1666,18 +1666,19 @@ a[href*=findpost][title="Перейти к сообщению"]:after {
   position: relative;
 }
 .post_container:before {
-  content: "";
+
+}
+.post_container.active:before {
+content: "";
   position: absolute;
   left: 0;
   top: 0;
-  height: 100%;
-  width: 100%;
+  right: 0;
+  bottom: 0;
   background: #0277bd;
   z-index: 10;
   opacity: 0;
   pointer-events: none;
-}
-.post_container.active:before {
   /*transform: scale(1);
             opacity: 0.25;*/
   -webkit-animation: highlight 1s;
