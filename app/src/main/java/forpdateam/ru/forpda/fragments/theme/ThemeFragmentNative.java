@@ -41,7 +41,7 @@ public class ThemeFragmentNative extends ThemeFragment {
 
     @Override
     public void loadData() {
-        mainSubscriber.subscribe(Api.Theme().getPage(getTabUrl()), this::bindUi, null, v -> loadData());
+        mainSubscriber.subscribe(Api.Theme().getPage(getTabUrl()), this::bindUi, new ThemePage(), v -> loadData());
     }
 
     private void bindUi(ThemePage page) {

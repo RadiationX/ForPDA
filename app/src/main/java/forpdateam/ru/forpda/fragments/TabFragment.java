@@ -22,9 +22,6 @@ import android.widget.Toast;
 
 import com.trello.rxlifecycle.components.support.RxFragment;
 
-import java.util.PriorityQueue;
-import java.util.Queue;
-
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.R;
@@ -35,7 +32,6 @@ import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.utils.ErrorHandler;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
@@ -317,8 +313,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Client.getInstance().cancelCallByUrl(getTabUrl());
-        //compositeDisposable.clear();
+        //Client.getInstance().cancelCallByUrl(getTabUrl());
     }
 
     protected void handleErrorRx(Throwable throwable) {
@@ -330,11 +325,11 @@ public class TabFragment extends RxFragment implements ITabFragment {
     }
 
     public class Subscriber<T> {
-        public Disposable subscribe(@NonNull Observable<T> observable, @NonNull Consumer<T> onNext, T onErrorReturn) {
+        public Disposable subscribe(@NonNull Observable<T> observable, @NonNull Consumer<T> onNext, @NonNull T onErrorReturn) {
             return subscribe(observable, onNext, onErrorReturn, null);
         }
 
-        public Disposable subscribe(@NonNull Observable<T> observable, @NonNull Consumer<T> onNext, T onErrorReturn, View.OnClickListener onErrorAction) {
+        public Disposable subscribe(@NonNull Observable<T> observable, @NonNull Consumer<T> onNext, @NonNull T onErrorReturn, View.OnClickListener onErrorAction) {
             return observable.onErrorReturn(throwable -> {
                 handleErrorRx(throwable, onErrorAction);
                 return onErrorReturn;

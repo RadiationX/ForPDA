@@ -10,6 +10,7 @@
         <item name="android:textColorLink">@color/colorPrimary</item>
         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeStyle">@style/ActionModeStyle</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="AppTheme">

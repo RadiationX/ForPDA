@@ -4,7 +4,6 @@ import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,8 +15,6 @@ import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.utils.ourparser.Html;
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 
 /**
  * Created by radiationx on 04.08.16.
@@ -210,7 +207,7 @@ public class Theme {
 
                 //Post header
                 if (existAvatar)
-                    t.setVariable("avatar", "http://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
+                    t.setVariable("avatar", post.getAvatar().isEmpty() ? "file:///android_asset/av.png" : "http://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
                 if (existNick)
                     t.setVariable("nick", post.getNick());
                 if (existCurator)
@@ -293,7 +290,7 @@ public class Theme {
     private String _deletePost(int postId) throws Exception {
         String url = "http://4pda.ru/forum/index.php?act=zmod&auth_key=".concat(App.getInstance().getPreferences().getString("auth_key", null)).concat("&code=postchoice&tact=delete&selectedpids=").concat(Integer.toString(postId));
         String response = Client.getInstance().get(url);
-        return response.equals("ok") ? "" : null;
+        return response.equals("ok") ? response : "";
     }
 
 
@@ -340,7 +337,7 @@ public class Theme {
 
         Pattern p = Pattern.compile("<title>(.*?)(?: - 4PDA|)</title>[\\s\\S]*?wr va-m text\">([\\s\\S]*?)</div></div></div></div><div class=\"footer\">");
         Matcher m = p.matcher(response);
-        String result = null;
+        String result = "";
         if (m.find()) {
             if (m.group(1).contains("Ошибка"))
                 result = Html.fromHtml(m.group(2)).toString();

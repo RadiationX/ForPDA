@@ -179,7 +179,7 @@ public class QmsNewThemeFragment extends TabFragment {
     }
 
     private void onShowSearchRes(String[] res) {
-        nickField.setAdapter(new ArrayAdapter(getContext(), android.R.layout.simple_dropdown_item_1line, res));
+        nickField.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, res));
     }
 
     private void onCreateNewTheme(String res) {

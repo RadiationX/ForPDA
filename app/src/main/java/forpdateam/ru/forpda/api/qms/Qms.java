@@ -13,7 +13,6 @@ import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsTheme;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
-import forpdateam.ru.forpda.client.Client;
 import io.reactivex.Observable;
 
 import static forpdateam.ru.forpda.client.Client.getInstance;

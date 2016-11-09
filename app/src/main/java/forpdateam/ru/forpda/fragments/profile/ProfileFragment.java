@@ -368,7 +368,7 @@ public class ProfileFragment extends TabFragment {
             animation1.setFillAfter(true);
             toolbarBackground.setBackground(new BitmapDrawable(getResources(), bitmap));
             toolbarBackground.startAnimation(animation1);
-        }, null);
+        }, bkg);
     }
 
     public static Bitmap centerCrop(final Bitmap src, int w, int h, float scaleFactor) {

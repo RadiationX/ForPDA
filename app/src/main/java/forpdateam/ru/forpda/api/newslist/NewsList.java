@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.newslist.models.NewsItem;
 import forpdateam.ru.forpda.client.Client;
 import io.reactivex.Observable;

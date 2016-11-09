@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.utils;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -66,9 +67,9 @@ public class IntentHandler {
     }
 
     public static boolean handle(String url, Bundle args) {
-        /*Log.d("kek", "input url " + url);
+        Log.d("kek", "input url " + url);
         url = Html.fromHtml(url).toString();
-        Log.d("kek", "after html url " + url);*/
+        Log.d("kek", "after html url " + url);
         Uri uri = Uri.parse(url.toLowerCase());
         Log.d("kek", "HANDLE URL " + uri.toString() + " : " + url);
         if (uri.getHost() != null && uri.getHost().matches("4pda.ru")) {
@@ -134,7 +135,6 @@ public class IntentHandler {
         if (param != null) {
             switch (param) {
                 case "qms":
-                    Log.d("kek", uri.getQueryParameter("mid"));
                     if (uri.getQueryParameter("mid") == null) {
                         run("qms contacts");
                         TabManager.getInstance().add(new TabFragment.Builder<>(QmsContactsFragment.class).build());

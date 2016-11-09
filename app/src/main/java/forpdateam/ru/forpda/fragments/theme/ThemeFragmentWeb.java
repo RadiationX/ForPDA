@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.fragments.theme;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.SearchManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -12,7 +13,10 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatImageButton;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +29,8 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,6 +68,9 @@ public class ThemeFragmentWeb extends ThemeFragment {
     private List<ThemePage> history = new ArrayList<>();
     private Subscriber<ThemePage> mainSubscriber = new Subscriber<>();
     private Subscriber<String> helperSubscriber = new Subscriber<>();
+
+    //Тег для вьюхи поиска. Чтобы создавались кнопки и т.д, только при вызове поиска, а не при каждом создании меню.
+    private int searchViewTag = 0;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Nullable
@@ -139,8 +148,11 @@ public class ThemeFragmentWeb extends ThemeFragment {
             return false;
         })/*.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)*/;
         if (pageData != null) {
-            menu.add("Ссылка").setOnMenuItemClickListener(menuItem -> false);
-            menu.add("Найти на странице").setOnMenuItemClickListener(menuItem -> false);
+            menu.add("Ссылка").setOnMenuItemClickListener(menuItem -> {
+                Utils.copyToClipBoard(getTabUrl());
+                return false;
+            });
+            addSearchOnPageItem(menu);
             menu.add("Найти в теме").setOnMenuItemClickListener(menuItem -> false);
         }
 
@@ -157,11 +169,62 @@ public class ThemeFragmentWeb extends ThemeFragment {
         }
     }
 
+    private void addSearchOnPageItem(Menu menu) {
+        toolbar.inflateMenu(R.menu.theme_search_menu);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setTag(searchViewTag);
+
+        searchView.setOnSearchClickListener(v -> {
+            if (searchView.getTag().equals(searchViewTag)) {
+                ImageView searchClose = (ImageView) searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
+                if (searchClose != null)
+                    ((ViewGroup) searchClose.getParent()).removeView(searchClose);
+
+                ViewGroup.LayoutParams navButtonsParams = new ViewGroup.LayoutParams(App.px48, App.px48);
+                TypedValue outValue = new TypedValue();
+                getContext().getTheme().resolveAttribute(android.R.attr.actionBarItemBackground, outValue, true);
+
+                AppCompatImageButton btnNext = new AppCompatImageButton(searchView.getContext());
+                btnNext.setImageDrawable(App.getAppDrawable(R.drawable.ic_search_next_white_24dp));
+                btnNext.setBackgroundResource(outValue.resourceId);
+
+                AppCompatImageButton btnPrev = new AppCompatImageButton(searchView.getContext());
+                btnPrev.setImageDrawable(App.getAppDrawable(R.drawable.ic_search_prev_white_24dp));
+                btnPrev.setBackgroundResource(outValue.resourceId);
+
+                ((LinearLayout) searchView.getChildAt(0)).addView(btnPrev, navButtonsParams);
+                ((LinearLayout) searchView.getChildAt(0)).addView(btnNext, navButtonsParams);
+
+                btnNext.setOnClickListener(v1 -> webView.findNext(true));
+                btnPrev.setOnClickListener(v1 -> webView.findNext(false));
+                searchViewTag++;
+            }
+        });
+
+        SearchManager searchManager = (SearchManager) getMainActivity().getSystemService(Context.SEARCH_SERVICE);
+        if (null != searchManager)
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getMainActivity().getComponentName()));
+
+        searchView.setIconifiedByDefault(true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                webView.findAllAsync(newText);
+                return false;
+            }
+        });
+    }
+
     @Override
     public void loadData() {
         if (refreshLayout != null)
             refreshLayout.setRefreshing(true);
-        mainSubscriber.subscribe(Api.Theme().getPage(getTabUrl(), true), this::onLoadData, null, v -> loadData());
+        mainSubscriber.subscribe(Api.Theme().getPage(getTabUrl(), true), this::onLoadData, new ThemePage(), v -> loadData());
     }
 
 
@@ -212,6 +275,10 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
     @Override
     public boolean onBackPressed() {
+        if (toolbar.getMenu().findItem(R.id.action_search).isActionViewExpanded()) {
+            toolbar.collapseActionView();
+            return true;
+        }
         if (history.size() > 0) {
             action = BACK_ACTION;
             pageData = history.get(history.size() - 1);
@@ -391,8 +458,8 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
     private void doReportPost(int themeId, int postId, String message) {
         helperSubscriber.subscribe(Api.Theme().reportPost(themeId, postId, message), s -> {
-            Toast.makeText(getContext(), s == null ? "Неизвестная ошибка" : s, Toast.LENGTH_SHORT).show();
-        }, null, v -> doReportPost(themeId, postId, message));
+            Toast.makeText(getContext(), s.isEmpty() ? "Неизвестная ошибка" : s, Toast.LENGTH_SHORT).show();
+        }, "", v -> doReportPost(themeId, postId, message));
     }
 
     //Удаление сообщения
@@ -406,15 +473,15 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
     private void doDeletePost(int postId) {
         helperSubscriber.subscribe(Api.Theme().deletePost(postId), s -> {
-            Toast.makeText(getContext(), s != null ? "Сообщение удалено" : "Ошибка", Toast.LENGTH_SHORT).show();
-        }, null, v -> doDeletePost(postId));
+            Toast.makeText(getContext(), !s.isEmpty() ? "Сообщение удалено" : "Ошибка", Toast.LENGTH_SHORT).show();
+        }, "", v -> doDeletePost(postId));
     }
 
     //Изменение репутации сообщения
     public void votePost(ThemePost post, boolean type) {
         helperSubscriber.subscribe(Api.Theme().votePost(post.getId(), type), s -> {
-            Toast.makeText(getContext(), s == null ? "Неизвестная ошибка" : s, Toast.LENGTH_SHORT).show();
-        }, null, v -> votePost(post, type));
+            Toast.makeText(getContext(), s.isEmpty() ? "Неизвестная ошибка" : s, Toast.LENGTH_SHORT).show();
+        }, "", v -> votePost(post, type));
     }
 
     //Изменение репутации пользователя
@@ -437,8 +504,8 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
     private void doChangeReputation(int postId, int userId, boolean type, String message) {
         helperSubscriber.subscribe(Api.Theme().changeReputation(postId, userId, type, message), s -> {
-            Toast.makeText(getContext(), s == null ? "Репутация изменена" : s, Toast.LENGTH_SHORT).show();
-        }, null, v -> doChangeReputation(postId, userId, type, message));
+            Toast.makeText(getContext(), s.isEmpty() ? "Репутация изменена" : s, Toast.LENGTH_SHORT).show();
+        }, "error", v -> doChangeReputation(postId, userId, type, message));
     }
 
     //Вставка ответа пользователю

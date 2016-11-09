@@ -139,7 +139,7 @@ public class QmsContactsFragment extends TabFragment {
     public void loadData() {
         if (refreshLayout != null)
             refreshLayout.setRefreshing(true);
-        mainSubscriber.subscribe(Api.Qms().getContactList(), this::onLoadContacts, null, v -> loadData());
+        mainSubscriber.subscribe(Api.Qms().getContactList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
     }
 
     public void deleteDialog(String mid) {
