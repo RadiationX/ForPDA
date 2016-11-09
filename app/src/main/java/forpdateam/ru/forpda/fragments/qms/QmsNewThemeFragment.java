@@ -24,8 +24,6 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 20.09.16.
@@ -44,6 +42,9 @@ public class QmsNewThemeFragment extends TabFragment {
     private MenuItem sendItem, doneItem, editItem;
 
     private String userId, userNick;
+
+    private Subscriber<String> newThemeSubscriber = new Subscriber<>();
+    private Subscriber<String[]> searchUserSubscriber = new Subscriber<>();
 
     @Override
     public String getDefaultTitle() {
@@ -169,30 +170,12 @@ public class QmsNewThemeFragment extends TabFragment {
         } else if (messField.getText().toString().isEmpty()) {
             Toast.makeText(getContext(), "Введите сообщение", Toast.LENGTH_SHORT).show();
         } else {
-            getCompositeDisposable().add(Api.Qms().sendNewTheme(userNick, titleField.getText().toString(), messField.getText().toString())
-                    .onErrorReturn(throwable -> {
-                        throwable.printStackTrace();
-                        return "";
-                    })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(this::onCreateNewTheme, throwable -> {
-                        Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                    }));
+            newThemeSubscriber.subscribe(Api.Qms().sendNewTheme(userNick, titleField.getText().toString(), messField.getText().toString()), this::onCreateNewTheme, "");
         }
     }
 
     private void searchUser(String nick) {
-        getCompositeDisposable().add(Api.Qms().search(nick)
-                .onErrorReturn(throwable -> {
-                    throwable.printStackTrace();
-                    return new String[]{};
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onShowSearchRes, throwable -> {
-                    Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                }));
+        searchUserSubscriber.subscribe(Api.Qms().search(nick), this::onShowSearchRes, new String[]{});
     }
 
     private void onShowSearchRes(String[] res) {

@@ -15,9 +15,6 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.fragments.theme.adapters.ThemeAdapter;
-import forpdateam.ru.forpda.utils.ErrorHandler;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 05.08.16.
@@ -25,6 +22,7 @@ import io.reactivex.schedulers.Schedulers;
 public class ThemeFragmentNative extends ThemeFragment {
     private RecyclerView recyclerView;
     private ThemeAdapter adapter;
+    private Subscriber<ThemePage> mainSubscriber = new Subscriber<>();
 
     @Nullable
     @Override
@@ -43,20 +41,8 @@ public class ThemeFragmentNative extends ThemeFragment {
 
     @Override
     public void loadData() {
-        getCompositeDisposable().add(Api.Theme().getPage(getTabUrl())
-                .onErrorReturn(throwable -> {
-                    ErrorHandler.handle(this, throwable, view1 -> loadData());
-                    return new ThemePage();
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::bindUi, throwable -> {
-                    ErrorHandler.handle(this, throwable, null);
-                }));
+        mainSubscriber.subscribe(Api.Theme().getPage(getTabUrl()), this::bindUi, null, v -> loadData());
     }
-
-    String template =
-            "%s : %s : %s : %s";
 
     private void bindUi(ThemePage page) {
 

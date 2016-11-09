@@ -90,38 +90,24 @@ public class Favorites {
         return checkIsComplete(result);
     }
 
-    private boolean checkIsComplete(String result){
+    private boolean checkIsComplete(String result) {
         return checkPattern.matcher(result).find();
     }
 
     public Observable<FavData> get() {
-        return Observable.create(subscriber -> {
-            try {
-                subscriber.onNext(_getFav());
-                subscriber.onComplete();
-            } catch (Exception e) {
-                subscriber.onError(e);
-            }
-        });
+        return Observable.fromCallable(this::_getFav);
     }
 
     public Observable<Boolean> changeFav(int act, String type, int id) {
-        return Observable.create(subscriber -> {
-            try {
-                switch (act) {
-                    case 0:
-                        subscriber.onNext(_changeSubType(type, id));
-                        break;
-                    case 1:
-                        subscriber.onNext(_setPinState(type, id));
-                        break;
-                    case 2:
-                        subscriber.onNext(_delete(id));
-                        break;
-                }
-            } catch (Exception e) {
-                subscriber.onError(e);
-            }
-        });
+        switch (act) {
+            case 0:
+                return Observable.fromCallable(() -> _changeSubType(type, id));
+            case 1:
+                return Observable.fromCallable(() -> _setPinState(type, id));
+            case 2:
+                return Observable.fromCallable(() -> _delete(id));
+            default:
+                return Observable.just(false);
+        }
     }
 }

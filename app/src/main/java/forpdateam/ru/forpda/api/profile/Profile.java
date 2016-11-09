@@ -126,24 +126,10 @@ public class Profile implements IProfileApi {
     }
 
     public Observable<ProfileModel> get(String url) {
-        return Observable.create(subscriber -> {
-            try {
-                subscriber.onNext(parse(url));
-                subscriber.onComplete();
-            } catch (Exception e) {
-                subscriber.onError(e);
-            }
-        });
+        return Observable.fromCallable(() -> parse(url));
     }
 
     public Observable<Boolean> saveNoteRx(final String note) {
-        return Observable.create(subscriber -> {
-            try {
-                subscriber.onNext(saveNote(note));
-                subscriber.onComplete();
-            } catch (Exception e) {
-                subscriber.onError(e);
-            }
-        });
+        return Observable.fromCallable(() -> saveNote(note));
     }
 }

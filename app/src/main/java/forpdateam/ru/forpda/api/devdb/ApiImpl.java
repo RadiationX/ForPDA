@@ -25,13 +25,6 @@ public class ApiImpl implements DevDbApi {
 
     @Override
     public Observable<ArrayList<DevCatalog>> getBrands(Client client, String devicesTypeUrl) {
-        return Observable.create(s -> {
-            try {
-                s.onNext(Parser.parseBrands(client, devicesTypeUrl));
-                s.onComplete();
-            } catch (Exception e) {
-                s.onError(e);
-            }
-        });
+        return Observable.fromCallable(() -> Parser.parseBrands(client, devicesTypeUrl));
     }
 }

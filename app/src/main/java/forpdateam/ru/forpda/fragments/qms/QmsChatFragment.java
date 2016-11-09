@@ -17,8 +17,6 @@ import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsChatAdapter;
 import forpdateam.ru.forpda.utils.IntentHandler;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 25.08.16.
@@ -39,6 +37,8 @@ public class QmsChatFragment extends TabFragment {
     private QmsChatAdapter.OnLongItemClickListener onLongItemClickListener = (view1, position, adapter1) -> {
         Toast.makeText(getContext(), "ON LONG CLICK " + position, Toast.LENGTH_SHORT).show();
     };
+
+    private Subscriber<QmsChatModel> mainSubscriber = new Subscriber<>();
 
     @Override
     public String getDefaultTitle() {
@@ -83,16 +83,7 @@ public class QmsChatFragment extends TabFragment {
 
     @Override
     public void loadData() {
-        getCompositeDisposable().add(Api.Qms().getChat(userId, themeId)
-                .onErrorReturn(throwable -> {
-                    throwable.printStackTrace();
-                    return new QmsChatModel();
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onLoadChat, throwable -> {
-                    Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                }));
+        mainSubscriber.subscribe(Api.Qms().getChat(userId, themeId), this::onLoadChat, new QmsChatModel(), v -> loadData());
     }
 
 

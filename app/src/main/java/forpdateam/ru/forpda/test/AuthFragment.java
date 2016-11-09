@@ -17,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -29,10 +28,7 @@ import forpdateam.ru.forpda.api.auth.AuthParser;
 import forpdateam.ru.forpda.api.auth.models.AuthForm;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.utils.ErrorHandler;
 import forpdateam.ru.forpda.utils.ourparser.Html;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 29.07.16.
@@ -48,6 +44,9 @@ public class AuthFragment extends TabFragment {
     private RelativeLayout complete;
     private TextView completeText;
     private CircularProgressView progressView;
+    private Subscriber<AuthForm> mainSubscriber = new Subscriber<>();
+    private Subscriber<Boolean> loginSubscriber = new Subscriber<>();
+    private Subscriber<ProfileModel> profileSubscriber = new Subscriber<>();
 
     @Override
     public String getTabUrl() {
@@ -111,18 +110,10 @@ public class AuthFragment extends TabFragment {
 
     @Override
     public void loadData() {
-        getCompositeDisposable().add(Api.Auth().getForm()
-                .onErrorReturn(throwable -> {
-                    this.throwable = throwable;
-                    throwable.printStackTrace();
-                    return new AuthForm();
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::bindUi, throwable -> Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show()));
+        mainSubscriber.subscribe(Api.Auth().getForm(), this::onLoadForm, new AuthForm());
     }
 
-    private void bindUi(AuthForm authForm) {
+    private void onLoadForm(AuthForm authForm) {
         this.authForm = authForm;
         if (throwable != null) {
             new AlertDialog.Builder(getContext())
@@ -138,15 +129,7 @@ public class AuthFragment extends TabFragment {
         authForm.setCaptcha(captcha.getText().toString());
         authForm.setNick(nick.getText().toString());
         authForm.setPassword(password.getText().toString());
-        getCompositeDisposable().add(Api.Auth().tryLogin(authForm)
-                .onErrorReturn(throwable -> {
-                    this.throwable = throwable;
-                    throwable.printStackTrace();
-                    return false;
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::showLoginResult, throwable -> Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show()));
+        loginSubscriber.subscribe(Api.Auth().tryLogin(authForm), this::showLoginResult, false);
         //showLoginResult(false);
     }
 
@@ -176,16 +159,7 @@ public class AuthFragment extends TabFragment {
         animation1.setDuration(375);
         complete.startAnimation(animation1);
 
-        getCompositeDisposable().add(
-                Api.Profile().get("http://4pda.ru/forum/index.php?showuser=".concat(Api.Auth().getUserId()))
-                        .onErrorReturn(throwable -> {
-                            ErrorHandler.handle(this, throwable, view1 -> loadData());
-                            return new ProfileModel();
-                        })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(this::onProfileLoad)
-        );
+        profileSubscriber.subscribe(Api.Profile().get("http://4pda.ru/forum/index.php?showuser=".concat(Api.Auth().getUserId())), this::onProfileLoad, new ProfileModel());
     }
 
     private void onProfileLoad(ProfileModel profile) {

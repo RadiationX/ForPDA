@@ -264,14 +264,7 @@ public class Theme {
 
 
     public Observable<String> reportPost(int themeId, int postId, String message) {
-        return Observable.create(subscriber -> {
-            try {
-                subscriber.onNext(_reportPost(themeId, postId, message));
-                subscriber.onComplete();
-            } catch (Exception e) {
-                subscriber.onError(e);
-            }
-        });
+        return Observable.fromCallable(() -> _reportPost(themeId, postId, message));
     }
 
     private String _reportPost(int topicId, int postId, String message) throws Exception {
@@ -293,33 +286,19 @@ public class Theme {
     }
 
 
-    public Observable<Boolean> deletePost(int postId) {
-        return Observable.create(subscriber -> {
-            try {
-                subscriber.onNext(_deletePost(postId));
-                subscriber.onComplete();
-            } catch (Exception e) {
-                subscriber.onError(e);
-            }
-        });
+    public Observable<String> deletePost(int postId) {
+        return Observable.fromCallable(() -> _deletePost(postId));
     }
 
-    private boolean _deletePost(int postId) throws Exception {
+    private String _deletePost(int postId) throws Exception {
         String url = "http://4pda.ru/forum/index.php?act=zmod&auth_key=".concat(App.getInstance().getPreferences().getString("auth_key", null)).concat("&code=postchoice&tact=delete&selectedpids=").concat(Integer.toString(postId));
         String response = Client.getInstance().get(url);
-        return response.equals("ok");
+        return response.equals("ok") ? "" : null;
     }
 
 
     public Observable<String> votePost(int postId, boolean type) {
-        return Observable.create(subscriber -> {
-            try {
-                subscriber.onNext(_votePost(postId, type));
-                subscriber.onComplete();
-            } catch (Exception e) {
-                subscriber.onError(e);
-            }
-        });
+        return Observable.fromCallable(() -> _votePost(postId, type));
     }
 
     private String _votePost(int postId, boolean type) throws Exception {
@@ -346,14 +325,7 @@ public class Theme {
     }
 
     public Observable<String> changeReputation(int postId, int userId, boolean type, String message) {
-        return Observable.create(subscriber -> {
-            try {
-                subscriber.onNext(_changeReputation(postId, userId, type, message));
-                subscriber.onComplete();
-            } catch (Exception e) {
-                subscriber.onError(e);
-            }
-        });
+        return Observable.fromCallable(() -> _changeReputation(postId, userId, type, message));
     }
 
     private String _changeReputation(int postId, int userId, boolean type, String message) throws Exception {

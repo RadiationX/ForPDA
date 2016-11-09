@@ -144,16 +144,14 @@ public class NewsListFragment extends TabFragment implements NewsListAdapter.OnI
 
     private void bindData(String url) {
         log("bindData");
-        getCompositeDisposable().add(Api.NewsList().getNews(url)
+        Api.NewsList().getNews(url)
                 .onErrorReturn(throwable -> {
                     ErrorHandler.handle(this, throwable, view1 -> loadData());
                     return new ArrayList<>();
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::processAndAddData));
-
-
+                .subscribe(this::processAndAddData);
     }
 
     private void processAndAddData(ArrayList<NewsItem> items) {

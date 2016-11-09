@@ -20,11 +20,8 @@ import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.DividerItemDecoration;
-import forpdateam.ru.forpda.utils.ErrorHandler;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 22.09.16.
@@ -68,6 +65,9 @@ public class FavoritesFragment extends TabFragment {
                         .show();
             };
 
+    private Subscriber<FavData> mainSubscriber = new Subscriber<>();
+    private Subscriber<Boolean> helperSubscriber = new Subscriber<>();
+
     private CharSequence getPinText(boolean b) {
         return b ? "Открепить" : "Закрепить";
     }
@@ -102,25 +102,11 @@ public class FavoritesFragment extends TabFragment {
     public void loadData() {
         if (refreshLayout != null)
             refreshLayout.setRefreshing(true);
-        getCompositeDisposable().add(Api.Favorites().get()
-                .onErrorReturn(throwable -> {
-                    ErrorHandler.handle(this, throwable, view1 -> loadData());
-                    return new FavData();
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onLoadThemes, throwable -> Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show()));
+        mainSubscriber.subscribe(Api.Favorites().get(), this::onLoadThemes, new FavData(), v -> loadData());
     }
 
     public void changeFav(int act, String type, int id) {
-        getCompositeDisposable().add(Api.Favorites().changeFav(act, type, id)
-                .onErrorReturn(throwable -> {
-                    ErrorHandler.handle(this, throwable, view1 -> loadData());
-                    return false;
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onChangeFav, throwable -> Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show()));
+        helperSubscriber.subscribe(Api.Favorites().changeFav(act, type, id), this::onChangeFav, false);
     }
 
     private void onLoadThemes(FavData data) {

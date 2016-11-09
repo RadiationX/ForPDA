@@ -51,14 +51,14 @@ public class NewsListFragment extends TabFragment {
 
     @Override
     public void loadData() {
-        getCompositeDisposable().add(Api.NewsList().getNews(LINk)
+        Api.NewsList().getNews(LINk)
                 .onErrorReturn(throwable -> {
                     ErrorHandler.handle(this, throwable, view1 -> loadData());
                     return new ArrayList<>();
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::bindUi));
+                .subscribe(this::bindUi);
     }
 
     private void bindUi(ArrayList<NewsItem> list) {

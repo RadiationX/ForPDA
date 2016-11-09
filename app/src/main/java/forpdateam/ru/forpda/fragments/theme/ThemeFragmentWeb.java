@@ -40,12 +40,9 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.theme.Theme;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
-import forpdateam.ru.forpda.utils.ErrorHandler;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 20.10.16.
@@ -63,6 +60,8 @@ public class ThemeFragmentWeb extends ThemeFragment {
     private WebViewClient webViewClient;
     private WebChromeClient chromeClient;
     private List<ThemePage> history = new ArrayList<>();
+    private Subscriber<ThemePage> mainSubscriber = new Subscriber<>();
+    private Subscriber<String> helperSubscriber = new Subscriber<>();
 
     @SuppressLint("SetJavaScriptEnabled")
     @Nullable
@@ -138,7 +137,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
             action = REFRESH_ACTION;
             loadData();
             return false;
-        }).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        })/*.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)*/;
         if (pageData != null) {
             menu.add("Ссылка").setOnMenuItemClickListener(menuItem -> false);
             menu.add("Найти на странице").setOnMenuItemClickListener(menuItem -> false);
@@ -162,20 +161,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
     public void loadData() {
         if (refreshLayout != null)
             refreshLayout.setRefreshing(true);
-        //new Handler().postDelayed(() -> TabManager.getInstance().remove(getTag()), 15);
-        /*getCompositeDisposable().add(Api.Theme().getPage(getTabUrl(), true)
-                .onErrorReturn(throwable -> {
-                    handleErrorRx(throwable, v -> loadData());
-                    return new ThemePage();
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onLoadData, this::handleErrorRx, this::clearDisposables));*/
-
-        Subscriber<ThemePage> generator = new Subscriber<>();
-
-        //"подписка"
-        generator.subscribe(ThemePage.class, Api.Theme().getPage(getTabUrl(), true), this::onLoadData);
+        mainSubscriber.subscribe(Api.Theme().getPage(getTabUrl(), true), this::onLoadData, null, v -> loadData());
     }
 
 
@@ -404,16 +390,9 @@ public class ThemeFragmentWeb extends ThemeFragment {
     }
 
     private void doReportPost(int themeId, int postId, String message) {
-        getCompositeDisposable().add(Api.Theme().reportPost(themeId, postId, message)
-                .onErrorReturn(throwable -> {
-                    ErrorHandler.handle(this, throwable, null);
-                    return null;
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> {
-                    Toast.makeText(getContext(), s == null ? "Неизвестная ошибка" : s, Toast.LENGTH_SHORT).show();
-                }));
+        helperSubscriber.subscribe(Api.Theme().reportPost(themeId, postId, message), s -> {
+            Toast.makeText(getContext(), s == null ? "Неизвестная ошибка" : s, Toast.LENGTH_SHORT).show();
+        }, null, v -> doReportPost(themeId, postId, message));
     }
 
     //Удаление сообщения
@@ -426,33 +405,16 @@ public class ThemeFragmentWeb extends ThemeFragment {
     }
 
     private void doDeletePost(int postId) {
-        getCompositeDisposable().add(Api.Theme().deletePost(postId)
-                .onErrorReturn(throwable -> {
-                    ErrorHandler.handle(this, throwable, null);
-                    return false;
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(aBoolean -> {
-                    Toast.makeText(getContext(), aBoolean ? "Сообщение удалено" : "Ошибка", Toast.LENGTH_SHORT).show();
-                    /*if (aBoolean) {
-                        webView.evalJs("document.querySelector('div[name*=del" + postId + "]').remove();");
-                    }*/
-                }));
+        helperSubscriber.subscribe(Api.Theme().deletePost(postId), s -> {
+            Toast.makeText(getContext(), s != null ? "Сообщение удалено" : "Ошибка", Toast.LENGTH_SHORT).show();
+        }, null, v -> doDeletePost(postId));
     }
 
     //Изменение репутации сообщения
     public void votePost(ThemePost post, boolean type) {
-        getCompositeDisposable().add(Api.Theme().votePost(post.getId(), type)
-                .onErrorReturn(throwable -> {
-                    ErrorHandler.handle(this, throwable, null);
-                    return null;
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> {
-                    Toast.makeText(getContext(), s == null ? "Неизвестная ошибка" : s, Toast.LENGTH_SHORT).show();
-                }));
+        helperSubscriber.subscribe(Api.Theme().votePost(post.getId(), type), s -> {
+            Toast.makeText(getContext(), s == null ? "Неизвестная ошибка" : s, Toast.LENGTH_SHORT).show();
+        }, null, v -> votePost(post, type));
     }
 
     //Изменение репутации пользователя
@@ -474,16 +436,9 @@ public class ThemeFragmentWeb extends ThemeFragment {
     }
 
     private void doChangeReputation(int postId, int userId, boolean type, String message) {
-        getCompositeDisposable().add(Api.Theme().changeReputation(postId, userId, type, message)
-                .onErrorReturn(throwable -> {
-                    ErrorHandler.handle(this, throwable, null);
-                    return null;
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> {
-                    Toast.makeText(getContext(), s == null ? "Репутация изменена" : s, Toast.LENGTH_SHORT).show();
-                }));
+        helperSubscriber.subscribe(Api.Theme().changeReputation(postId, userId, type, message), s -> {
+            Toast.makeText(getContext(), s == null ? "Репутация изменена" : s, Toast.LENGTH_SHORT).show();
+        }, null, v -> doChangeReputation(postId, userId, type, message));
     }
 
     //Вставка ответа пользователю

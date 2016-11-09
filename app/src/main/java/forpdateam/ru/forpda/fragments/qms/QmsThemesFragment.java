@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -19,10 +18,7 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsThemesAdapter;
-import forpdateam.ru.forpda.utils.ErrorHandler;
 import forpdateam.ru.forpda.utils.IntentHandler;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 25.08.16.
@@ -47,6 +43,7 @@ public class QmsThemesFragment extends TabFragment {
                 args.putString(QmsChatFragment.THEME_ID_ARG, adapter1.getItem(position).getId());
                 TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).setArgs(args).build());
             };
+    private Subscriber<QmsThemes> mainSubscriber = new Subscriber<>();
 
     @Override
     public String getDefaultTitle() {
@@ -102,16 +99,7 @@ public class QmsThemesFragment extends TabFragment {
     public void loadData() {
         if (refreshLayout != null)
             refreshLayout.setRefreshing(true);
-        getCompositeDisposable().add(Api.Qms().getThemesList(userId)
-                .onErrorReturn(throwable -> {
-                    ErrorHandler.handle(this, throwable, view1 -> loadData());
-                    return new QmsThemes();
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onLoadThemes, throwable -> {
-                    Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                }));
+        mainSubscriber.subscribe(Api.Qms().getThemesList(userId), this::onLoadThemes, new QmsThemes(), v -> loadData());
     }
 
     private void onLoadThemes(QmsThemes qmsThemes) {

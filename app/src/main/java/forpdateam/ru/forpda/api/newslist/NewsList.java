@@ -46,14 +46,6 @@ public class NewsList {
     }
 
     public Observable<ArrayList<NewsItem>> getNews(final String url) {
-        return Observable.create(s -> {
-           try {
-               s.onNext(Api.NewsList().get(url));
-               s.onComplete();
-           } catch (Exception e) {
-               s.onError(e);
-           }
-        });
-
+        return Observable.fromCallable(() -> get(url));
     }
 }

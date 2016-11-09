@@ -21,7 +21,7 @@ public class AuthParser {
     private final static Pattern captchaPattern = Pattern.compile("captcha-time\" value=\"([^\"]*?)\"[\\s\\S]*?captcha-sig\" value=\"([^\"]*?)\"[\\s\\S]*?src=\"([^\"]*?)\"");
     private final static Pattern errorPattern = Pattern.compile("errors-list\">([\\s\\S]*?)</ul>");
 
-    private AuthForm doLoadForm() throws Throwable {
+    private AuthForm doLoadForm() throws Exception {
         String response = Client.getInstance().get(authFormUrl);
 
         if (response == null || response.isEmpty())
@@ -43,7 +43,7 @@ public class AuthParser {
         return form;
     }
 
-    private Boolean doLogin(final AuthForm form) throws Throwable {
+    private Boolean doLogin(final AuthForm form) throws Exception {
         Map<String, String> headers = new HashMap<>();
         headers.put("captcha-time", form.getCaptchaTime());
         headers.put("captcha-sig", form.getCaptchaSig());
@@ -89,24 +89,10 @@ public class AuthParser {
     }
 
     public Observable<AuthForm> getForm() {
-        return Observable.create(s -> {
-            try {
-                s.onNext(doLoadForm());
-                s.onComplete();
-            } catch (Throwable throwable) {
-                s.onError(throwable);
-            }
-        });
+        return Observable.fromCallable(this::doLoadForm);
     }
 
     public Observable<Boolean> tryLogin(final AuthForm authForm) {
-        return Observable.create(s -> {
-            try {
-                s.onNext(doLogin(authForm));
-                s.onComplete();
-            } catch (Throwable throwable) {
-                s.onError(throwable);
-            }
-        });
+        return Observable.fromCallable(() -> doLogin(authForm));
     }
 }

@@ -62,7 +62,6 @@ public class TabFragment extends RxFragment implements ITabFragment {
     protected TextView toolbarTitleView;
     protected TextView toolbarSubitleView;
     protected ImageView toolbarImageView;
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public TabFragment() {
         parentTag = TabManager.getActiveTag();
@@ -132,10 +131,6 @@ public class TabFragment extends RxFragment implements ITabFragment {
 
     public CoordinatorLayout getCoordinatorLayout() {
         return coordinatorLayout;
-    }
-
-    public CompositeDisposable getCompositeDisposable() {
-        return compositeDisposable;
     }
 
     @Override
@@ -326,29 +321,27 @@ public class TabFragment extends RxFragment implements ITabFragment {
         //compositeDisposable.clear();
     }
 
-    public void clearDisposables() {
-        Log.e("kek", "clear disposables");
-        compositeDisposable.clear();
-    }
-
     protected void handleErrorRx(Throwable throwable) {
         handleErrorRx(throwable, null);
     }
 
     protected void handleErrorRx(Throwable throwable, View.OnClickListener listener) {
         ErrorHandler.handle(this, throwable, listener);
-        clearDisposables();
     }
 
     public class Subscriber<T> {
-        public Disposable subscribe(@NonNull Class<T> dataClass, @NonNull Observable<T> observable, @NonNull Consumer<T> onNext) {
+        public Disposable subscribe(@NonNull Observable<T> observable, @NonNull Consumer<T> onNext, T onErrorReturn) {
+            return subscribe(observable, onNext, onErrorReturn, null);
+        }
+
+        public Disposable subscribe(@NonNull Observable<T> observable, @NonNull Consumer<T> onNext, T onErrorReturn, View.OnClickListener onErrorAction) {
             return observable.onErrorReturn(throwable -> {
-                handleErrorRx(throwable);
-                return dataClass.newInstance();
+                handleErrorRx(throwable, onErrorAction);
+                return onErrorReturn;
             })
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(onNext, TabFragment.this::handleErrorRx, TabFragment.this::clearDisposables);
+                    .subscribe(onNext, TabFragment.this::handleErrorRx);
         }
     }
 

@@ -39,14 +39,10 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.BlurUtil;
-import forpdateam.ru.forpda.utils.ErrorHandler;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.ourparser.LinkMovementMethod;
 import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 03.08.16.
@@ -58,6 +54,10 @@ public class ProfileFragment extends TabFragment {
     private LinearLayout countList, infoBlock, contactList, devicesList;
     private EditText noteText;
     private CircularProgressView progressView;
+
+    private Subscriber<ProfileModel> mainSubscriber = new Subscriber<>();
+    private Subscriber<Boolean> saveNoteSubscriber = new Subscriber<>();
+    private Subscriber<Bitmap> blurAvatarSubscriber = new Subscriber<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,29 +122,11 @@ public class ProfileFragment extends TabFragment {
 
     @Override
     public void loadData() {
-        getCompositeDisposable().add(
-                Api.Profile().get(getTabUrl())
-                        .onErrorReturn(throwable -> {
-                            ErrorHandler.handle(this, throwable, view1 -> loadData());
-                            return new ProfileModel();
-                        })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(this::onProfileLoad)
-        );
+        mainSubscriber.subscribe(Api.Profile().get(getTabUrl()), this::onProfileLoad, new ProfileModel(), v -> loadData());
     }
 
     public void saveNote() {
-        getCompositeDisposable().add(
-                Api.Profile().saveNoteRx(noteText.getText().toString())
-                        .onErrorReturn(throwable -> {
-                            ErrorHandler.handle(this, throwable, view1 -> loadData());
-                            return false;
-                        })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(this::onNoteSave)
-        );
+        saveNoteSubscriber.subscribe(Api.Profile().saveNoteRx(noteText.getText().toString()), this::onNoteSave, false, v -> saveNote());
     }
 
 
@@ -375,23 +357,18 @@ public class ProfileFragment extends TabFragment {
     private void blur(Bitmap bkg) {
         float scaleFactor = 3;
         int radius = 4;
-
-        getCompositeDisposable().add(
-                Observable.create((ObservableOnSubscribe<Bitmap>) subscriber -> {
-                    Bitmap overlay = centerCrop(bkg, toolbarBackground.getWidth(), toolbarBackground.getHeight(), scaleFactor);
-                    BlurUtil.fastBlur(overlay, radius, true);
-                    subscriber.onNext(overlay);
-                })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(bitmap -> {
-                            AlphaAnimation animation1 = new AlphaAnimation(0, 1);
-                            animation1.setDuration(500);
-                            animation1.setFillAfter(true);
-                            toolbarBackground.setBackground(new BitmapDrawable(getResources(), bitmap));
-                            toolbarBackground.startAnimation(animation1);
-                        })
-        );
+        Observable<Bitmap> observable = Observable.fromCallable(() -> {
+            Bitmap overlay = centerCrop(bkg, toolbarBackground.getWidth(), toolbarBackground.getHeight(), scaleFactor);
+            BlurUtil.fastBlur(overlay, radius, true);
+            return overlay;
+        });
+        blurAvatarSubscriber.subscribe(observable, bitmap -> {
+            AlphaAnimation animation1 = new AlphaAnimation(0, 1);
+            animation1.setDuration(500);
+            animation1.setFillAfter(true);
+            toolbarBackground.setBackground(new BitmapDrawable(getResources(), bitmap));
+            toolbarBackground.startAnimation(animation1);
+        }, null);
     }
 
     public static Bitmap centerCrop(final Bitmap src, int w, int h, float scaleFactor) {

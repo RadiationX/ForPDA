@@ -16,6 +16,8 @@ import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import forpdateam.ru.forpda.client.Client;
 import io.reactivex.Observable;
 
+import static forpdateam.ru.forpda.client.Client.getInstance;
+
 /**
  * Created by radiationx on 29.07.16.
  */
@@ -25,9 +27,9 @@ public class Qms {
     private final static Pattern threadName = Pattern.compile("([\\s\\S]*?) \\((\\d+)(?= / (\\d+)|)");
     private final static Pattern chatPattern = Pattern.compile("group-item([^\"]*?)\" data-message-id=\"([^\"]*?)\"[^>]*?data-unread-status=\"([^\"]*?)\">[\\s\\S]*?</b> ([^ <]*?) [\\s\\S]*?src=\"([^\"]*?)\"[\\s\\S]*?(<div[^>]*?msg-content[^>]*?>[\\s\\S]*?</div>)([^<]*?</div>[^<]*?<div (class=\"list|id=\"threa|class=\"date))|<div class=\"text\">([^<]*?)</div>");
 
-    private ArrayList<QmsContact> contactsList() throws Throwable {
+    private ArrayList<QmsContact> contactsList() throws Exception {
         ArrayList<QmsContact> list = new ArrayList<>();
-        final String response = Client.getInstance().get("http://4pda.ru/forum/index.php?&act=qms-xhr&action=userlist");
+        final String response = getInstance().get("http://4pda.ru/forum/index.php?&act=qms-xhr&action=userlist");
         final Matcher matcher = contactsPattern.matcher(response);
         QmsContact contact;
         while (matcher.find()) {
@@ -46,7 +48,7 @@ public class Qms {
         QmsThemes qmsThemes = new QmsThemes();
         Map<String, String> headers = new HashMap<>();
         headers.put("xhr", "body");
-        final String response = Client.getInstance().post("http://4pda.ru/forum/index.php?act=qms&mid=" + id, headers);
+        final String response = getInstance().post("http://4pda.ru/forum/index.php?act=qms&mid=" + id, headers);
         Matcher matcher = threadPattern.matcher(response);
         QmsTheme thread;
         while (matcher.find()) {
@@ -76,7 +78,7 @@ public class Qms {
         QmsChatModel chat = new QmsChatModel();
         Map<String, String> headers = new HashMap<>();
         headers.put("xhr", "body");
-        final String response = Client.getInstance().post("http://4pda.ru/forum/index.php?act=qms&mid=" + userId + "&t=" + themeId, headers);
+        final String response = getInstance().post("http://4pda.ru/forum/index.php?act=qms&mid=" + userId + "&t=" + themeId, headers);
         Matcher matcher = chatPattern.matcher(response);
         QmsChatItem item;
         while (matcher.find()) {
@@ -107,7 +109,7 @@ public class Qms {
     }
 
     private String[] findUser(final String nick) throws Exception {
-        String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=" + nick + "&limit=150&timestamp=" + System.currentTimeMillis());
+        String response = getInstance().get("http://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=" + nick + "&limit=150&timestamp=" + System.currentTimeMillis());
         return response.split(" |\n");
     }
 
@@ -116,7 +118,7 @@ public class Qms {
         headers.put("username", nick);
         headers.put("title", title);
         headers.put("message", mess);
-        String response = Client.getInstance().post("http://4pda.ru/forum/index.php?act=qms&action=create-thread&xhr=body&do=1", headers);
+        String response = getInstance().post("http://4pda.ru/forum/index.php?act=qms&action=create-thread&xhr=body&do=1", headers);
         /*Pattern errorPattern = Pattern.compile("<div class=\"list-group-item msgbox error\">([^<]*<a[^>]*?>[^<]*?<[^>]*a>|)([\\s\\S]*?)</div>");
         Matcher matcher = errorPattern.matcher(response);
         if (matcher.find()) {
@@ -126,78 +128,36 @@ public class Qms {
         }*/
         return response;
     }
-    private String delDialog(String mid) throws Exception{
+
+    private String delDialog(String mid) throws Exception {
         Map<String, String> headers = new HashMap<>();
         headers.put("act", "qms-xhr");
         headers.put("action", "del-member");
         headers.put("del-mid", mid);
-        String response = Client.getInstance().post("http://4pda.ru/forum/index.php", headers);
-        return response;
+        return getInstance().post("http://4pda.ru/forum/index.php", headers);
     }
 
     public Observable<ArrayList<QmsContact>> getContactList() {
-        return Observable.create(subscriber -> {
-            try {
-                subscriber.onNext(contactsList());
-                subscriber.onComplete();
-            } catch (Throwable e) {
-                subscriber.onError(e);
-            }
-        });
+        return Observable.fromCallable(this::contactsList);
     }
 
     public Observable<QmsThemes> getThemesList(final String id) {
-        return Observable.create(subscriber -> {
-            try {
-                subscriber.onNext(themesList(id));
-                subscriber.onComplete();
-            } catch (Exception e) {
-                subscriber.onError(e);
-            }
-        });
+        return Observable.fromCallable(() -> themesList(id));
     }
 
     public Observable<QmsChatModel> getChat(final String userId, final String themeId) {
-        return Observable.create(subscriber -> {
-            try {
-                subscriber.onNext(chatItemsList(userId, themeId));
-                subscriber.onComplete();
-            } catch (Exception e) {
-                subscriber.onError(e);
-            }
-        });
+        return Observable.fromCallable(() -> chatItemsList(userId, themeId));
     }
 
     public Observable<String[]> search(final String nick) {
-        return Observable.create(subscriber -> {
-            try {
-                subscriber.onNext(findUser(nick));
-                subscriber.onComplete();
-            } catch (Exception e) {
-                subscriber.onError(e);
-            }
-        });
+        return Observable.fromCallable(() -> findUser(nick));
     }
 
     public Observable<String> sendNewTheme(String nick, String title, String mess) {
-        return Observable.create(subscriber -> {
-            try {
-                subscriber.onNext(newTheme(nick, title, mess));
-                subscriber.onComplete();
-            } catch (Exception e) {
-                subscriber.onError(e);
-            }
-        });
+        return Observable.fromCallable(() -> newTheme(nick, title, mess));
     }
 
     public Observable<String> deleteDialog(String mid) {
-        return Observable.create(subscriber -> {
-            try {
-                subscriber.onNext(delDialog(mid));
-                subscriber.onComplete();
-            } catch (Exception e) {
-                subscriber.onError(e);
-            }
-        });
+        return Observable.fromCallable(() -> delDialog(mid));
     }
 }
