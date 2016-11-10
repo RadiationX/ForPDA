@@ -3,7 +3,7 @@ apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'realm-android'
 
 android {
-    compileSdkVersion 24
+    compileSdkVersion 25
     buildToolsVersion "25.0.0"
 
     def versionPropsFile = file('version.properties')
@@ -36,7 +36,7 @@ android {
             versionCode versionNumber
             versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})"
             minSdkVersion 17
-            targetSdkVersion 24
+            targetSdkVersion 25
             vectorDrawables.useSupportLibrary = true
         }
 

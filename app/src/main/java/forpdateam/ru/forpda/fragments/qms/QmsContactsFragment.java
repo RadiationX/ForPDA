@@ -24,6 +24,7 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsContactsAdapter;
+import forpdateam.ru.forpda.utils.AlertDialogMenu;
 
 /**
  * Created by radiationx on 25.08.16.
@@ -42,14 +43,14 @@ public class QmsContactsFragment extends TabFragment {
                 args.putString(QmsThemesFragment.USER_AVATAR_ARG, adapter1.getItem(position).getAvatar());
                 TabManager.getInstance().add(new TabFragment.Builder<>(QmsThemesFragment.class).setArgs(args).build());
             };
+    private AlertDialogMenu<QmsContact> contactDialogMenu;
     private QmsContactsAdapter.OnLongItemClickListener onLongItemClickListener = (view1, position, adapter1) -> {
-        CharSequence[] items = {"Удалить"};
+        if (contactDialogMenu == null) {
+            contactDialogMenu = new AlertDialogMenu<>();
+            contactDialogMenu.addItem("Удалить", data -> deleteDialog(data.getId()));
+        }
         new AlertDialog.Builder(getContext())
-                .setItems(items, (dialog, which) -> {
-                    if (which == 0) {
-                        deleteDialog(adapter1.getItem(position).getId());
-                    }
-                }).show();
+                .setItems(contactDialogMenu.getTitles(), (dialog, which) -> contactDialogMenu.onClick(which, adapter1.getItem(position))).show();
     };
     private Subscriber<ArrayList<QmsContact>> mainSubscriber = new Subscriber<>();
     private Subscriber<String> helperSubscriber = new Subscriber<>();
