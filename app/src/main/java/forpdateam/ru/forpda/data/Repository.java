@@ -71,8 +71,6 @@ public class Repository implements DataSource.NetworkDataSource, DataSource.Loca
     public Observable<RealmResults<NewsModel>> getListNewsCategory(@NonNull String category) {
         checkNotNull(category, "Get List News Category! Category Cannot Be Null");
 
-
-
         return null;
     }
 

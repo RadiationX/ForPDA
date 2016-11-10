@@ -28,7 +28,6 @@ public class NetworkRepository implements DataSource.NetworkDataSource {
     @Nullable
     private final Qms qms;
 
-
     private NetworkRepository() {
         qms = new Qms();
 
