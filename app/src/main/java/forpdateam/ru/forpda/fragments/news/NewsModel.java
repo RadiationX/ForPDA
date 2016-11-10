@@ -7,16 +7,21 @@ import io.realm.annotations.PrimaryKey;
  * Created by isanechek on 28.09.16.
  */
 
-public class News extends RealmObject {
+public class NewsModel extends RealmObject {
 
     @PrimaryKey
     private String link;
+    private String category;
     private String imgLink;
     private String title;
     private String commentsCount;
     private String date;
     private String author;
     private String description;
+    private String source;
+    private boolean read;
+    private boolean offline;
+
 
     public String getLink() {
         return link;
@@ -24,6 +29,14 @@ public class News extends RealmObject {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getImgLink() {
@@ -72,5 +85,29 @@ public class News extends RealmObject {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public boolean isRead() {
+        return read;
+    }
+
+    public void setRead(boolean read) {
+        this.read = read;
+    }
+
+    public boolean isOffline() {
+        return offline;
+    }
+
+    public void setOffline(boolean offline) {
+        this.offline = offline;
     }
 }

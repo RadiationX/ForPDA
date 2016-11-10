@@ -22,4 +22,18 @@ public class Utils {
         ClipData clip = ClipData.newPlainText("label", s);
         clipboard.setPrimaryClip(clip);
     }
+
+    public static <T> T checkNotNull(T value, String message) {
+        if (value == null) {
+            throw new NullPointerException(message);
+        }
+        return value;
+    }
+
+    public static <T> T checkNotNull(T value) {
+        if (value == null) {
+            throw new NullPointerException();
+        }
+        return value;
+    }
 }

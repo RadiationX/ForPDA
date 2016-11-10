@@ -26,7 +26,10 @@ public class Qms {
     private final static Pattern threadName = Pattern.compile("([\\s\\S]*?) \\((\\d+)(?= / (\\d+)|)");
     private final static Pattern chatPattern = Pattern.compile("group-item([^\"]*?)\" data-message-id=\"([^\"]*?)\"[^>]*?data-unread-status=\"([^\"]*?)\">[\\s\\S]*?</b> ([^ <]*?) [\\s\\S]*?src=\"([^\"]*?)\"[\\s\\S]*?(<div[^>]*?msg-content[^>]*?>[\\s\\S]*?</div>)([^<]*?</div>[^<]*?<div (class=\"list|id=\"threa|class=\"date))|<div class=\"text\">([^<]*?)</div>");
 
+    public Qms() {
+    }
     private ArrayList<QmsContact> contactsList() throws Exception {
+
         ArrayList<QmsContact> list = new ArrayList<>();
         final String response = getInstance().get("http://4pda.ru/forum/index.php?&act=qms-xhr&action=userlist");
         final Matcher matcher = contactsPattern.matcher(response);

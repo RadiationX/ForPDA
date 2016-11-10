@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.api.newslist;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import java.util.regex.Pattern;
 import forpdateam.ru.forpda.api.newslist.models.NewsItem;
 import forpdateam.ru.forpda.client.Client;
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 
 /**
  * Created by radiationx on 31.07.16.
@@ -36,7 +39,7 @@ public class NewsList {
             item.setImageUrl(matcher.group(3));
             item.setCommentsCount(matcher.group(4));
             item.setDate(matcher.group(5));
-            Log.e("News", "Test date: " + matcher.group(5));
+            Log.e("NewsModel", "Test date: " + matcher.group(5));
             item.setAuthor(matcher.group(6));
             item.setDescription(matcher.group(7));
             list.add(item);
@@ -46,5 +49,17 @@ public class NewsList {
 
     public Observable<ArrayList<NewsItem>> getNews(final String url) {
         return Observable.fromCallable(() -> get(url));
+    }
+
+    public Observable<String> getNewsSource(@NonNull String urlNews) {
+        return Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> e) throws Exception {
+                if (!e.isDisposed()) {
+                    e.onNext(Client.getInstance().get(urlNews));
+                    e.onComplete();
+                }
+            }
+        });
     }
 }

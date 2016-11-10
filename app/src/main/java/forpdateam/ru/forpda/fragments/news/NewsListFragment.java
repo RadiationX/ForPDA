@@ -46,7 +46,7 @@ public class NewsListFragment extends TabFragment implements NewsListAdapter.OnI
     private LinearLayoutManager manager;
     private View listProgress;
     private Realm realm;
-    private RealmResults<News> results;
+    private RealmResults<NewsModel> results;
     private boolean mIsLastPage = false;
     private boolean mIsLoading = false;
     private int mCurrentPage = 1;
@@ -121,7 +121,7 @@ public class NewsListFragment extends TabFragment implements NewsListAdapter.OnI
 
     private void bindView() {
         log("bindView");
-        results = realm.where(News.class).findAllAsync();
+        results = realm.where(NewsModel.class).findAllAsync();
         results = results.sort("date", Sort.DESCENDING);
         if (results.size() == 0) {
             if (listProgress.getVisibility() == View.GONE) {
@@ -135,11 +135,6 @@ public class NewsListFragment extends TabFragment implements NewsListAdapter.OnI
             recyclerView.setVisibility(View.VISIBLE);
             adapter.addAll(results);
         }
-
-//        Stream.of(results).forEach(value -> {
-//            log("item: " + value.getTitle());
-//            log("item: " + value.getDate());
-//        });
     }
 
     private void bindData(String url) {
@@ -172,7 +167,7 @@ public class NewsListFragment extends TabFragment implements NewsListAdapter.OnI
                 .forEach(news -> realm.executeTransactionAsync(r -> r.copyToRealmOrUpdate(news)));
     }
 
-    private ArrayList<NewsItem> checkNewNews(ArrayList<NewsItem> list, RealmResults<News> results) {
+    private ArrayList<NewsItem> checkNewNews(ArrayList<NewsItem> list, RealmResults<NewsModel> results) {
         ArrayList<NewsItem> cache = new ArrayList<>();
         cache.clear();
         Stream.of(list)
@@ -182,18 +177,7 @@ public class NewsListFragment extends TabFragment implements NewsListAdapter.OnI
         return cache;
     }
 
-//    private void bindUi(ArrayList<NewsItem> list) {
-//        Log.d("kek", (list == null) + "? " + (list == null ? "" : list.size()));
-//        if (list == null) return;
-//        String titles = "";
-//        for (NewsItem item : list) {
-//            titles += item.getTitle() + ";" + "\n\n";
-//        }
-//        text.setText(titles);
-//        Log.d("kek", "time: " + (new Date().getTime() - date.getTime()));
-//    }
-
     private void log(String text) {
-        Log.e("News", text);
+        Log.e("NewsModel", text);
     }
 }

@@ -86,7 +86,7 @@ public class MenuDrawer {
     private void initMenuItems() {
         if (!Api.Auth().getState())
             menuItems.add(new MenuItem<>("Auth", android.R.drawable.ic_input_add, AuthFragment.class));
-        menuItems.add(new MenuItem<>("News List", android.R.drawable.ic_input_add, NewsListFragment.class));
+        menuItems.add(new MenuItem<>("NewsModel List", android.R.drawable.ic_input_add, NewsListFragment.class));
         menuItems.add(new MenuItem<>("Profile", android.R.drawable.ic_input_add, ProfileFragment.class));
         if (Api.Auth().getState()) {
             menuItems.add(new MenuItem<>("QMS Contacts", android.R.drawable.ic_input_add, QmsContactsFragment.class));
