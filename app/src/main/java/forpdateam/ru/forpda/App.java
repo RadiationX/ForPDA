@@ -98,6 +98,7 @@ public class App extends android.app.Application {
         RealmConfiguration configuration = new RealmConfiguration.Builder()
                 .name("forpda.realm")
                 .schemaVersion(1)
+                .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(configuration);
         rxBus = new RxBus();
