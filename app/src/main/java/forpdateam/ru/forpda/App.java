@@ -91,7 +91,6 @@ public class App extends android.app.Application {
             e.printStackTrace();
         }
 
-        Api.Init();
         //init
         Client.getInstance();
         initImageLoader(this);

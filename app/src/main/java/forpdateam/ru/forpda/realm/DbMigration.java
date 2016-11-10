@@ -24,7 +24,7 @@ public class DbMigration implements RealmMigration {
         /*------------------------------NEWS MIGRATION SCHEMA------------------------------*/
         /*Версия 2 это только для примера*/
         if (oldVersion == 2) {
-            RealmObjectSchema schemaNews = schema.get("News");// Тут какой класс(таблицу) будем ломать
+            RealmObjectSchema schemaNews = schema.get("NewsModel");// Тут какой класс(таблицу) будем ломать
             schemaNews
                     .addField("insetTime", long.class, FieldAttribute.REQUIRED)
                     .transform(obj -> obj.setLong("insertTime", 0L)); // Тут мы добавляем long поле

@@ -11,7 +11,6 @@ import forpdateam.ru.forpda.api.theme.Theme;
  * Created by radiationx on 29.07.16.
  */
 public class Api {
-    private static Api INSTANCE = null;
     private static Qms qmsApi = null;
     private static Auth authApi = null;
     private static NewsList newsListApi = null;
@@ -19,19 +18,13 @@ public class Api {
     private static Theme themeApi = null;
     private static Favorites favoritesApi = null;
 
-    public Api() {
-        INSTANCE = this;
-    }
-
-    public static void Init() {
-        INSTANCE = new Api();
-    }
-
     public static Qms Qms() {
         if (qmsApi == null) qmsApi = new Qms();
         return qmsApi;
     }
 
+
+    /*Позже*/
     public static Auth Auth() {
         if (authApi == null) authApi = new Auth();
         return authApi;

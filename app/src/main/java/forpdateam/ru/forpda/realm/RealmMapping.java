@@ -1,7 +1,15 @@
 package forpdateam.ru.forpda.realm;
 
+import com.annimon.stream.Stream;
+import com.annimon.stream.function.Consumer;
+import com.annimon.stream.function.Function;
+
+import java.util.ArrayList;
+
 import forpdateam.ru.forpda.api.newslist.models.NewsItem;
-import forpdateam.ru.forpda.fragments.news.News;
+import forpdateam.ru.forpda.fragments.news.NewsModel;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 
 /**
  * Created by isanechek on 28.09.16.
@@ -9,15 +17,21 @@ import forpdateam.ru.forpda.fragments.news.News;
 
 public class RealmMapping {
 
-    public static News mappingNews(NewsItem item) {
-        News news = new News();
-        news.setLink(item.getLink());
-        news.setImgLink(item.getImageUrl());
-        news.setAuthor(item.getAuthor());
-        news.setCommentsCount(item.getCommentsCount());
-        news.setDate(item.getDate());
-        news.setDescription(item.getDescription());
-        news.setTitle(item.getTitle());
-        return news;
+    public static NewsModel mappingNews(NewsItem item) {
+        NewsModel newsModel = new NewsModel();
+        newsModel.setLink(item.getLink());
+        newsModel.setImgLink(item.getImageUrl());
+        newsModel.setAuthor(item.getAuthor());
+        newsModel.setCommentsCount(item.getCommentsCount());
+        newsModel.setDate(item.getDate());
+        newsModel.setDescription(item.getDescription());
+        newsModel.setTitle(item.getTitle());
+        return newsModel;
+    }
+
+    public static RealmList<NewsModel> mappingNews(ArrayList<NewsItem> items) {
+        RealmList<NewsModel> results = new RealmList<>();
+        Stream.of(items).map(RealmMapping::mappingNews).forEach(results::add);
+        return results;
     }
 }
