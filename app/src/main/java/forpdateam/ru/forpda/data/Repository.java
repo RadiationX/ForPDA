@@ -70,10 +70,6 @@ public class Repository implements DataSource.NetworkDataSource, DataSource.Loca
         return null;
     }
 
-    private Observable<RealmResults<NewsModel>> getAndSaveNewsFromSite(@NonNull String category) {
-        return null;
-    }
-
     @Override
     public Observable<String> getNews(@NonNull String newsUrl) {
         checkNotNull(newsUrl);
@@ -186,11 +182,13 @@ public class Repository implements DataSource.NetworkDataSource, DataSource.Loca
     /*Profile*/
     @Override
     public Observable<ProfileModel> getProfile(@NonNull String url) {
-        return null;
+        checkNotNull(url);
+        return Api.Profile().get(url);
     }
 
     @Override
     public Observable<Boolean> saveNoteRx(@NonNull String note) {
-        return null;
+        checkNotNull(note);
+        return Api.Profile().saveNoteRx(note);
     }
 }
