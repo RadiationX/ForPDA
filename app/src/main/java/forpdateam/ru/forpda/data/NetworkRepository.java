@@ -13,6 +13,9 @@ import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import io.reactivex.Observable;
 
+import static forpdateam.ru.forpda.Constants.CNBN;
+import static forpdateam.ru.forpda.utils.Utils.checkNotNull;
+
 /**
  * Created by isanechek on 11/10/16.
  */
@@ -26,7 +29,7 @@ public class NetworkRepository implements DataSource.NetworkDataSource {
     private final Qms qms;
 
 
-    public NetworkRepository() {
+    private NetworkRepository() {
         qms = new Qms();
 
     }
@@ -92,33 +95,48 @@ public class NetworkRepository implements DataSource.NetworkDataSource {
         return null;
     }
 
+    /*QMS*/
     @Override
     public Observable<String> deleteDialog(@NonNull String mid) {
-        return null;
+        checkNotNull(mid, "Delete Dialog! Mid " + CNBN);
+        checkNotNull(qms, "Delete Dialog! Qms Instance "+ CNBN);
+        return qms.deleteDialog(mid);
     }
 
     @Override
     public Observable<String> sendNewTheme(@NonNull String nick, @NonNull String title, @NonNull String mess) {
-        return null;
+        checkNotNull(nick, "Send New Theme! Nick " + CNBN);
+        checkNotNull(title, "Send New Theme! Title " + CNBN);
+        checkNotNull(mess, "Send New Theme! Mess " + CNBN);
+        checkNotNull(qms, "Send New Theme! Qms Instance "+ CNBN);
+        return qms.sendNewTheme(nick, title, mess);
     }
 
     @Override
     public Observable<String[]> search(@NonNull String nick) {
-        return null;
+        checkNotNull(nick, "Search! Nick " + CNBN);
+        checkNotNull(qms, "Search! Qms Instance " + CNBN);
+        return qms.search(nick);
     }
 
     @Override
     public Observable<QmsChatModel> getChat(@NonNull String userId, @NonNull String themeId) {
-        return null;
+        checkNotNull(userId, "Get Chat! User Id " + CNBN);
+        checkNotNull(themeId, "Get Chat! Theme Id " + CNBN);
+        checkNotNull(qms, "Get Chat! Qms Instance " + CNBN);
+        return qms.getChat(userId, themeId);
     }
 
     @Override
     public Observable<QmsThemes> getThemesList(@NonNull String id) {
-        return null;
+        checkNotNull(id, "Get Theme List! Id " + CNBN);
+        checkNotNull(qms, "Get Theme List! QMS Instance " + CNBN);
+        return qms.getThemesList(id);
     }
 
     @Override
     public Observable<ArrayList<QmsContact>> getContactList() {
-        return null;
+        checkNotNull(qms, "get Contact List! Qms Instance " + CNBN);
+        return qms.getContactList();
     }
 }

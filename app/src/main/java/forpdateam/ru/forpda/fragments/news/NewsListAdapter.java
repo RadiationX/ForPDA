@@ -25,7 +25,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public static final int ITEM = 0;
     public static final int LOADING = 1;
 
-    private RealmList<News> list;
+    private RealmList<NewsModel> list;
     private OnItemClickListener mOnItemClickListener;
     private OnItemLongClickListener mOnItemLongClickListener;
     private boolean mIsLoadingFooterAdded = false;
@@ -54,7 +54,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //                viewHolder = createLoadingViewHolder(parent);
                 break;
             default:
-                Log.e("News Adapter", "[ERR] type is not supported!!! type is %d: " + viewType);
+                Log.e("NewsModel Adapter", "[ERR] type is not supported!!! type is %d: " + viewType);
                 break;
         }
 
@@ -84,24 +84,24 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return (position == list.size()-1 && mIsLoadingFooterAdded) ? LOADING : ITEM;
     }
 
-    private void add(News news) {
-        list.add(news);
+    private void add(NewsModel newsModel) {
+        list.add(newsModel);
         notifyItemInserted(list.size()-1);
     }
 
-    public void addAll(RealmResults<News> results) {
+    public void addAll(RealmResults<NewsModel> results) {
         Stream.of(results).forEach(this::add);
     }
 
-    public void remove(News news) {
-        int position = list.indexOf(news);
+    public void remove(NewsModel newsModel) {
+        int position = list.indexOf(newsModel);
         if (position > -1) {
             list.remove(position);
             notifyItemRemoved(position);
         }
     }
 
-    public News getNews(int position) {
+    public NewsModel getNews(int position) {
         return list.get(position);
     }
 
@@ -118,16 +118,16 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public void addLoading(){
         mIsLoadingFooterAdded = true;
-        add(new News());
+        add(new NewsModel());
     }
 
     public void removeLoading() {
         mIsLoadingFooterAdded = false;
 
         int position = list.size() - 1;
-        News news = getNews(position);
+        NewsModel newsModel = getNews(position);
 
-        if (news != null) {
+        if (newsModel != null) {
             list.remove(position);
             notifyItemRemoved(position);
         }
@@ -160,12 +160,12 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private void bindNewsViewHolder(RecyclerView.ViewHolder viewHolder, int position){
         NewsViewHolder holder = (NewsViewHolder) viewHolder;
-        final News news = list.get(position);
-        holder.title.setText(news.getTitle());
-        holder.description.setText(news.getDescription());
-        holder.date.setText(news.getDate());
+        final NewsModel newsModel = list.get(position);
+        holder.title.setText(newsModel.getTitle());
+        holder.description.setText(newsModel.getDescription());
+        holder.date.setText(newsModel.getDate());
 
-        ImageLoader.getInstance().displayImage(news.getImgLink(), holder.pic);
+        ImageLoader.getInstance().displayImage(newsModel.getImgLink(), holder.pic);
     }
 
     private static class NewsViewHolder extends RecyclerView.ViewHolder {

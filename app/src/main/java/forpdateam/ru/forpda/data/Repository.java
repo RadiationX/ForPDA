@@ -14,6 +14,7 @@ import forpdateam.ru.forpda.fragments.news.NewsModel;
 import io.reactivex.Observable;
 import io.realm.RealmResults;
 
+import static forpdateam.ru.forpda.Constants.CNBN;
 import static forpdateam.ru.forpda.utils.Utils.checkNotNull;
 
 /**
@@ -25,14 +26,22 @@ public class Repository implements DataSource.NetworkDataSource, DataSource.Loca
     @Nullable
     private static Repository INSTANCE = null;
 
+    @NonNull
+    private final DataSource.NetworkDataSource mNetworkDataSource;
 
+    @NonNull
+    private final DataSource.LocalDataSource mLocalDataSource;
 
-    public Repository() {
+    private Repository(@NonNull DataSource.NetworkDataSource networkDataSource,
+                       @NonNull DataSource.LocalDataSource localDataSource) {
+        this.mNetworkDataSource = checkNotNull(networkDataSource, "Network Repository " + CNBN);
+        this.mLocalDataSource = checkNotNull(localDataSource, "Local Repository " + CNBN);
     }
 
-    public static Repository getInstance() {
+    public static Repository getInstance(@NonNull DataSource.NetworkDataSource networkDataSource,
+                                         @NonNull DataSource.LocalDataSource localDataSource) {
         if (INSTANCE == null) {
-            INSTANCE = new Repository();
+            INSTANCE = new Repository(networkDataSource, localDataSource);
         }
         return INSTANCE;
     }
@@ -95,11 +104,7 @@ public class Repository implements DataSource.NetworkDataSource, DataSource.Loca
 
     }
 
-
-    /**
-     * Theme
-     */
-
+    /*Theme*/
     @Override
     public Observable<String> changeReputation(@NonNull int postId, @NonNull int userId, @NonNull boolean type, String message) {
         return null;
@@ -148,34 +153,35 @@ public class Repository implements DataSource.NetworkDataSource, DataSource.Loca
     /*QMS*/
     @Override
     public Observable<String> deleteDialog(@NonNull String mid) {
-        return null;
+        return mNetworkDataSource.deleteDialog(mid);
     }
 
     @Override
     public Observable<String> sendNewTheme(@NonNull String nick, @NonNull String title, @NonNull String mess) {
-        return null;
+        return mNetworkDataSource.sendNewTheme(nick, title, mess);
     }
 
     @Override
     public Observable<String[]> search(@NonNull String nick) {
-        return null;
+        return mNetworkDataSource.search(nick);
     }
 
     @Override
     public Observable<QmsChatModel> getChat(@NonNull String userId, @NonNull String themeId) {
-        return null;
+        return mNetworkDataSource.getChat(userId, themeId);
     }
 
     @Override
     public Observable<QmsThemes> getThemesList(@NonNull String id) {
-        return null;
+        return mNetworkDataSource.getThemesList(id);
     }
 
     @Override
     public Observable<ArrayList<QmsContact>> getContactList() {
-        return null;
+        return mNetworkDataSource.getContactList();
     }
 
+    /*Profile*/
     @Override
     public Observable<ProfileModel> getProfile(@NonNull String url) {
         return null;
