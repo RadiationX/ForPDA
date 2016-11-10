@@ -4,18 +4,18 @@ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 
 /**
  * Created by radiationx on 22.09.16.
@@ -23,7 +23,11 @@ import forpdateam.ru.forpda.api.favorites.models.FavItem;
 
 public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.ViewHolder> {
 
-    private List<FavItem> favItems = new ArrayList<>();
+    private RealmList<FavItem> list;
+
+    public FavoritesAdapter(){
+        list = new RealmList<>();
+    }
 
     private FavoritesAdapter.OnItemClickListener itemClickListener;
     private FavoritesAdapter.OnLongItemClickListener longItemClickListener;
@@ -78,10 +82,25 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         }
     }
 
-    public FavoritesAdapter(List<FavItem> favItems) {
-        this.favItems = favItems;
+    /*public FavoritesAdapter(List<FavItem> list) {
+        this.list = list;
+    }
+    public FavoritesAdapter() {
+        this.list = new RealmList<>();
+    }*/
+
+    public void addAll(RealmResults<FavItem> results) {
+        list.addAll(results);
+        notifyDataSetChanged();
+    }
+    public void clear() {
+        list.clear();
     }
 
+    private void add(FavItem item) {
+        list.add(item);
+        notifyItemInserted(list.size() - 1);
+    }
 
     @Override
     public FavoritesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -91,7 +110,8 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
 
     @Override
     public void onBindViewHolder(FavoritesAdapter.ViewHolder holder, int position) {
-        FavItem item = favItems.get(position);
+        FavItem item = list.get(position);
+        Log.d("kek", "bind view holder " + position + " : " + item.getFavId());
         holder.title.setText(item.getTopicTitle());
         holder.title.setTypeface(null, item.isNewMessages() ? Typeface.BOLD : Typeface.NORMAL);
         holder.pinIcon.setVisibility(item.isPin() ? View.VISIBLE : View.GONE);
@@ -108,11 +128,11 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
 
     @Override
     public int getItemCount() {
-        return favItems.size();
+        return list.size();
     }
 
     public FavItem getItem(int position) {
-        return favItems.get(position);
+        return list.get(position);
     }
 
     @Override

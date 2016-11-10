@@ -22,6 +22,8 @@ import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.DividerItemDecoration;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by radiationx on 22.09.16.
@@ -65,6 +67,9 @@ public class FavoritesFragment extends TabFragment {
                         .show();
             };
 
+    private Realm realm;
+    private RealmResults<FavItem> results;
+    private FavoritesAdapter adapter;
     private Subscriber<FavData> mainSubscriber = new Subscriber<>();
     private Subscriber<Boolean> helperSubscriber = new Subscriber<>();
 
@@ -82,6 +87,17 @@ public class FavoritesFragment extends TabFragment {
         return true;
     }
 
+    @Override
+    public boolean isUseCache() {
+        return true;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        realm = Realm.getDefaultInstance();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -95,6 +111,12 @@ public class FavoritesFragment extends TabFragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext()));
+        adapter = new FavoritesAdapter();
+        adapter.setOnItemClickListener(onItemClickListener);
+        adapter.setOnLongItemClickListener(onLongItemClickListener);
+        recyclerView.setAdapter(adapter);
+
+        bindView();
         return view;
     }
 
@@ -105,16 +127,30 @@ public class FavoritesFragment extends TabFragment {
         mainSubscriber.subscribe(Api.Favorites().get(), this::onLoadThemes, new FavData(), v -> loadData());
     }
 
-    public void changeFav(int act, String type, int id) {
-        helperSubscriber.subscribe(Api.Favorites().changeFav(act, type, id), this::onChangeFav, false);
+    private void onLoadThemes(FavData data) {
+        Log.d("kek", "loaded itms " + data.getFavItems().size() + " : " + results.size());
+        if (refreshLayout != null)
+            refreshLayout.setRefreshing(false);
+
+        if (data.getFavItems().size() == 0)
+            return;
+
+        realm.executeTransactionAsync(r -> {
+            r.delete(FavItem.class);
+            r.copyToRealmOrUpdate(data.getFavItems());
+        }, this::bindView);
     }
 
-    private void onLoadThemes(FavData data) {
-        FavoritesAdapter adapter = new FavoritesAdapter(data.getFavItems());
-        adapter.setOnItemClickListener(onItemClickListener);
-        adapter.setOnLongItemClickListener(onLongItemClickListener);
-        recyclerView.setAdapter(adapter);
-        refreshLayout.setRefreshing(false);
+    private void bindView() {
+        results = realm.where(FavItem.class).findAll();
+        if (results.size() != 0) {
+            adapter.clear();
+            adapter.addAll(results);
+        }
+    }
+
+    public void changeFav(int act, String type, int id) {
+        helperSubscriber.subscribe(Api.Favorites().changeFav(act, type, id), this::onChangeFav, false);
     }
 
     private void onChangeFav(boolean v) {

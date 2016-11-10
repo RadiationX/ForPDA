@@ -18,6 +18,8 @@ public interface ITabFragment {
 
     boolean isAlone();
 
+    boolean isUseCache();
+
     boolean onBackPressed();
 
     void hidePopupWindows();

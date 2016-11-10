@@ -16,6 +16,7 @@ import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import forpdateam.ru.forpda.client.NetworkStateReceiver;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
@@ -41,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         webViewCleaner.schedule(new WebViewCleanerTask(), 0, 60000);
         TabManager.init(this, this);
     }
+
+    private NetworkStateReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
         TabManager.getInstance().loadState(savedInstanceState);
         TabManager.getInstance().update();
+        receiver = new NetworkStateReceiver(this);
+        receiver.registerReceiver();
         //IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=84979&view=getnewpost");
     }
 
@@ -162,11 +167,19 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     protected void onResume() {
         super.onResume();
         Log.d("kekos", "ACTIVE TAB " + TabManager.getActiveIndex() + " : " + TabManager.getActiveTag());
+        receiver.registerReceiver();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        receiver.unregisterReceiver();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        receiver.unregisterReceiver();
     }
 
     class WebViewCleanerTask extends TimerTask {

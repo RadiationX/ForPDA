@@ -1,15 +1,12 @@
 package forpdateam.ru.forpda.realm;
 
 import com.annimon.stream.Stream;
-import com.annimon.stream.function.Consumer;
-import com.annimon.stream.function.Function;
 
 import java.util.ArrayList;
 
 import forpdateam.ru.forpda.api.newslist.models.NewsItem;
 import forpdateam.ru.forpda.fragments.news.NewsModel;
 import io.realm.RealmList;
-import io.realm.RealmResults;
 
 /**
  * Created by isanechek on 28.09.16.

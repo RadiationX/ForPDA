@@ -93,6 +93,12 @@ public class TabFragment extends RxFragment implements ITabFragment {
         return false;
     }
 
+    //Для фрагментов с использование кеша, чтобы не отображалась иконка отсутствия интернета
+    @Override
+    public boolean isUseCache() {
+        return false;
+    }
+
     //Сомнительная штука, возможно даже выпилить надо будет
     @Override
     public String getTabUrl() {
@@ -167,7 +173,8 @@ public class TabFragment extends RxFragment implements ITabFragment {
 
 
         if (!Client.getInstance().getNetworkState()) {
-            icNoNetwork.setVisibility(View.VISIBLE);
+            if (!isUseCache())
+                icNoNetwork.setVisibility(View.VISIBLE);
             if (!getTag().equals(TabManager.getActiveTag())) return;
             Snackbar.make(getCoordinatorLayout(), "No network connection", Snackbar.LENGTH_LONG).show();
         }
@@ -181,7 +188,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
         }
 
         Client.getInstance().addNetworkObserver((observable, o) -> {
-            if (icNoNetwork.getVisibility() == View.VISIBLE && (boolean) o) {
+            if ((isUseCache() || icNoNetwork.getVisibility() == View.VISIBLE) && (boolean) o) {
                 loadData();
                 icNoNetwork.setVisibility(View.GONE);
             }

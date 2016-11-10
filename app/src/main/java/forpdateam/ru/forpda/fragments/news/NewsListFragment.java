@@ -62,6 +62,11 @@ public class NewsListFragment extends TabFragment implements NewsListAdapter.OnI
     }
 
     @Override
+    public boolean isUseCache() {
+        return true;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         realm = Realm.getDefaultInstance();

@@ -42,8 +42,21 @@ function scrollToElement(name) {
             return;
 
     if (typeof name != 'string') name = PageInfo.elemToScroll;
-    //ITheme.log("do scroll to " + name);
-    anchorElem = document.querySelector('[name="' + name + '"]');
+
+    if(/([^-]*)-([\d]*)-(\d+)/g.test(name)){
+        var data = /([^-]*)-([\d]*)-(\d+)/g.exec(name);
+        data[1] = data[1].toLowerCase();
+
+        if(data[1]==="spoiler") data[1] = "spoil";
+        if(data[1]==="hide") data[1] = "hidden";
+
+        name = 'entry' + data[2];
+        var post = document.querySelector('[name="' + name + '"]');
+        anchorElem = post.querySelectorAll(".post-block."+data[1])[Number(data[3])-1];
+    }else{
+        anchorElem = document.querySelector('[name="' + name + '"]');
+    }
+    //console.log(anchorElem);
     var p = anchorElem;
     if (anchorElem) {
         while (p.classList && !p.classList.contains('post_body')) {

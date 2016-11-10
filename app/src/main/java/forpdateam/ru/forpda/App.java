@@ -22,7 +22,6 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 
 import biz.source_code.miniTemplator.MiniTemplator;
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.rxbus.RxBus;
 import io.realm.Realm;

@@ -5,8 +5,6 @@ import android.support.annotation.NonNull;
 import forpdateam.ru.forpda.data.Repository;
 import forpdateam.ru.forpda.utils.schedulers.BaseSchedulerProvider;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.observers.DisposableObserver;
-import io.realm.RealmResults;
 
 import static forpdateam.ru.forpda.utils.Utils.checkNotNull;
 

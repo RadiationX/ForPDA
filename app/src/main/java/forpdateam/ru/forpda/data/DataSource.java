@@ -10,7 +10,6 @@ import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.fragments.news.NewsModel;
-import forpdateam.ru.forpda.fragments.theme.ThemeModel;
 import io.reactivex.Observable;
 import io.realm.RealmResults;
 

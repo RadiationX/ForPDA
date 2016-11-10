@@ -351,12 +351,12 @@ public class ThemeFragmentWeb extends ThemeFragment {
                             postId = uri.getQueryParameter("p");
                         Log.d("kek", "param" + postId);
                         if (postId != null && getPostById(Integer.parseInt(postId)) != null) {
-                            Log.d("kek", " scroll to " + postId);
                             Matcher matcher = Theme.elemToScrollPattern.matcher(uri.toString());
                             String elem = null;
                             while (matcher.find()) {
                                 elem = matcher.group(1);
                             }
+                            Log.d("kek", " scroll to " + postId + " : " + elem);
                             webView.evalJs("scrollToElement(\"".concat(elem == null ? "entry" : "").concat(elem != null ? elem : postId).concat("\")"));
                             return true;
                         } else {
