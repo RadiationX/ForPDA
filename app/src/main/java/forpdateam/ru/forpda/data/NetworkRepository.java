@@ -81,7 +81,6 @@ public class NetworkRepository implements DataSource.NetworkDataSource {
 
     @Override
     public void refreshNewsList(@NonNull String category) {
-
     }
 
     @Override

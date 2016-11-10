@@ -24,7 +24,6 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public static final int ITEM = 0;
     public static final int LOADING = 1;
-
     private RealmList<NewsModel> list;
     private OnItemClickListener mOnItemClickListener;
     private OnItemLongClickListener mOnItemLongClickListener;

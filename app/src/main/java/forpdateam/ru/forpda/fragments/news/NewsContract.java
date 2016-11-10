@@ -11,7 +11,6 @@ import io.realm.RealmResults;
  */
 
 public interface NewsContract {
-
     interface View extends BaseView<Presenter> {
         void setLoadingIndicator(boolean active);
         void showNews(RealmResults<NewsModel> news);

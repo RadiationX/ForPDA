@@ -135,11 +135,6 @@ public class NewsListFragment extends TabFragment implements NewsListAdapter.OnI
             recyclerView.setVisibility(View.VISIBLE);
             adapter.addAll(results);
         }
-
-//        Stream.of(results).forEach(value -> {
-//            log("item: " + value.getTitle());
-//            log("item: " + value.getDate());
-//        });
     }
 
     private void bindData(String url) {

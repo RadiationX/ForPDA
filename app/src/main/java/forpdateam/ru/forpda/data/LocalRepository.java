@@ -45,7 +45,6 @@ public class LocalRepository implements DataSource.LocalDataSource {
 
     @Override
     public void saveOfflineNews(@NonNull String idNews, @NonNull String source) {
-
     }
 
     @Override

@@ -22,6 +22,7 @@ public class NewsModel extends RealmObject {
     private boolean read;
     private boolean offline;
 
+
     public String getLink() {
         return link;
     }

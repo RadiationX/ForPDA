@@ -74,6 +74,5 @@ public class NewsPresenter implements NewsContract.Presenter {
 
         subscriptions.clear();
 
-
     }
 }
