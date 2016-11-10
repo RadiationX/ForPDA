@@ -78,6 +78,7 @@ public class NetworkRepository implements DataSource.NetworkDataSource {
     public void refreshNewsList(@NonNull String category) {
     }
 
+    /*Profile*/
     @Override
     public Observable<ProfileModel> getProfile(@NonNull String url) {
         return null;

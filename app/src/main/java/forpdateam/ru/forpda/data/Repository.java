@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 
+import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
@@ -26,22 +27,17 @@ public class Repository implements DataSource.NetworkDataSource, DataSource.Loca
     @Nullable
     private static Repository INSTANCE = null;
 
-    @NonNull
-    private final DataSource.NetworkDataSource mNetworkDataSource;
 
     @NonNull
     private final DataSource.LocalDataSource mLocalDataSource;
 
-    private Repository(@NonNull DataSource.NetworkDataSource networkDataSource,
-                       @NonNull DataSource.LocalDataSource localDataSource) {
-        this.mNetworkDataSource = checkNotNull(networkDataSource, "Network Repository " + CNBN);
+    private Repository(@NonNull DataSource.LocalDataSource localDataSource) {
         this.mLocalDataSource = checkNotNull(localDataSource, "Local Repository " + CNBN);
     }
 
-    public static Repository getInstance(@NonNull DataSource.NetworkDataSource networkDataSource,
-                                         @NonNull DataSource.LocalDataSource localDataSource) {
+    public static Repository getInstance(@NonNull DataSource.LocalDataSource localDataSource) {
         if (INSTANCE == null) {
-            INSTANCE = new Repository(networkDataSource, localDataSource);
+            INSTANCE = new Repository(localDataSource);
         }
         return INSTANCE;
     }
@@ -151,32 +147,40 @@ public class Repository implements DataSource.NetworkDataSource, DataSource.Loca
     /*QMS*/
     @Override
     public Observable<String> deleteDialog(@NonNull String mid) {
-        return mNetworkDataSource.deleteDialog(mid);
+        checkNotNull(mid, "Delete Dialog! Mid " + CNBN);
+        return Api.Qms().deleteDialog(mid);
     }
 
     @Override
     public Observable<String> sendNewTheme(@NonNull String nick, @NonNull String title, @NonNull String mess) {
-        return mNetworkDataSource.sendNewTheme(nick, title, mess);
+        checkNotNull(nick, "Send New Theme! Nick " + CNBN);
+        checkNotNull(title, "Send New Theme! Title " + CNBN);
+        checkNotNull(mess, "Send New Theme! Mess " + CNBN);
+        return Api.Qms().sendNewTheme(nick, title, mess);
     }
 
     @Override
     public Observable<String[]> search(@NonNull String nick) {
-        return mNetworkDataSource.search(nick);
+        checkNotNull(nick, "Search! Nick " + CNBN);
+        return Api.Qms().search(nick);
     }
 
     @Override
     public Observable<QmsChatModel> getChat(@NonNull String userId, @NonNull String themeId) {
-        return mNetworkDataSource.getChat(userId, themeId);
+        checkNotNull(userId, "Get Chat! User Id " + CNBN);
+        checkNotNull(themeId, "Get Chat! Theme Id " + CNBN);
+        return Api.Qms().getChat(userId, themeId);
     }
 
     @Override
     public Observable<QmsThemes> getThemesList(@NonNull String id) {
-        return mNetworkDataSource.getThemesList(id);
+        checkNotNull(id, "Get Theme List! Id " + CNBN);
+        return Api.Qms().getThemesList(id);
     }
 
     @Override
     public Observable<ArrayList<QmsContact>> getContactList() {
-        return mNetworkDataSource.getContactList();
+        return Api.Qms().getContactList();
     }
 
     /*Profile*/
