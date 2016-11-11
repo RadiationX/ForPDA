@@ -34,7 +34,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
     private FavoritesAdapter.OnLongItemClickListener longItemClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(View view, int position, FavoritesAdapter adapter);
+        void onItemClick(FavItem favItem);
     }
 
     public void setOnItemClickListener(final FavoritesAdapter.OnItemClickListener mItemClickListener) {
@@ -42,7 +42,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
     }
 
     public interface OnLongItemClickListener {
-        void onLongItemClick(View view, int position, FavoritesAdapter adapter);
+        void onLongItemClick(FavItem favItem);
     }
 
     public void setOnLongItemClickListener(final FavoritesAdapter.OnLongItemClickListener longItemClickListener) {
@@ -69,14 +69,14 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         @Override
         public void onClick(View view) {
             if (itemClickListener != null) {
-                itemClickListener.onItemClick(view, getLayoutPosition(), FavoritesAdapter.this);
+                itemClickListener.onItemClick(getItem(getLayoutPosition()));
             }
         }
 
         @Override
         public boolean onLongClick(View view) {
             if (longItemClickListener != null) {
-                longItemClickListener.onLongItemClick(view, getLayoutPosition(), FavoritesAdapter.this);
+                longItemClickListener.onLongItemClick(getItem(getLayoutPosition()));
                 return true;
             }
             return false;

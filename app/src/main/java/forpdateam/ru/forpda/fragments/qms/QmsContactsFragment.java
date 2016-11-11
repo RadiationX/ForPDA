@@ -171,7 +171,7 @@ public class QmsContactsFragment extends TabFragment {
             return;
 
         realm.executeTransactionAsync(r -> {
-            r.delete(FavItem.class);
+            r.delete(QmsContact.class);
             r.copyToRealmOrUpdate(data);
         }, this::bindView);
     }

@@ -102,7 +102,7 @@ public class QmsContactsAdapter extends RecyclerView.Adapter<QmsContactsAdapter.
         if (item.getCount() == 0) {
             holder.count.setVisibility(View.GONE);
         } else {
-            holder.count.setText(item.getCount());
+            holder.count.setText(Integer.toString(item.getCount()));
             holder.count.setVisibility(View.VISIBLE);
         }
     }

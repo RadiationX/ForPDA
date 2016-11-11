@@ -33,15 +33,14 @@ public class FavoritesFragment extends TabFragment {
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
     private FavoritesAdapter.OnItemClickListener onItemClickListener =
-            (view1, position, adapter1) -> {
+            favItem -> {
                 Bundle args = new Bundle();
-                args.putString(TabFragment.TITLE_ARG, adapter1.getItem(position).getTopicTitle());
-                IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=" + adapter1.getItem(position).getTopicId() + "&view=getnewpost", args);
+                args.putString(TabFragment.TITLE_ARG, favItem.getTopicTitle());
+                IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=" + favItem.getTopicId() + "&view=getnewpost", args);
             };
     private AlertDialogMenu<FavItem> favoriteDialogMenu;
     private FavoritesAdapter.OnLongItemClickListener onLongItemClickListener =
-            (view1, position, adapter1) -> {
-                FavItem favItem = adapter1.getItem(position);
+            favItem -> {
 
                 if (favoriteDialogMenu == null) {
                     favoriteDialogMenu = new AlertDialogMenu<>();

@@ -3,15 +3,25 @@ package forpdateam.ru.forpda.api.qms.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by radiationx on 21.09.16.
  */
 
-public class QmsThemes {
-    private List<QmsTheme> themes = new ArrayList<>();
+public class QmsThemes extends RealmObject {
+    @PrimaryKey
+    private int userId;
     private String nick;
+    private RealmList<QmsTheme> themes = new RealmList<>();
 
-    public List<QmsTheme> getThemes() {
+    public QmsThemes() {
+    }
+
+    public RealmList<QmsTheme> getThemes() {
         return themes;
     }
 
@@ -25,5 +35,13 @@ public class QmsThemes {
 
     public void setNick(String nick) {
         this.nick = nick;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }

@@ -6,18 +6,36 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.Collection;
 import java.util.List;
 
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsTheme;
+import io.realm.RealmList;
 
 /**
  * Created by radiationx on 25.08.16.
  */
 public class QmsThemesAdapter extends RecyclerView.Adapter<QmsThemesAdapter.ViewHolder> {
-    private List<QmsTheme> themes;
+    private RealmList<QmsTheme> list = new RealmList<>();
     private OnItemClickListener itemClickListener;
     private OnLongItemClickListener longItemClickListener;
+
+    public void addAll(Collection<QmsTheme> results) {
+        addAll(results, true);
+    }
+
+    public void addAll(Collection<QmsTheme> results, boolean clearList) {
+        if (clearList)
+            clear();
+        list.addAll(results);
+        notifyDataSetChanged();
+    }
+
+    public void clear() {
+        list.clear();
+    }
 
     public interface OnItemClickListener {
         void onItemClick(QmsTheme theme);
@@ -64,11 +82,6 @@ public class QmsThemesAdapter extends RecyclerView.Adapter<QmsThemesAdapter.View
         }
     }
 
-    public QmsThemesAdapter(List<QmsTheme> themes) {
-        this.themes = themes;
-    }
-
-
     @Override
     public QmsThemesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.qms_theme_item, parent, false);
@@ -77,24 +90,24 @@ public class QmsThemesAdapter extends RecyclerView.Adapter<QmsThemesAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        QmsTheme item = themes.get(position);
+        QmsTheme item = list.get(position);
 
         holder.name.setText(item.getName());
         if (item.getCountNew() == 0) {
             holder.count.setVisibility(View.GONE);
         } else {
-            holder.count.setText(item.getCountNew());
+            holder.count.setText(Integer.toString(item.getCountNew()));
             holder.count.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public int getItemCount() {
-        return themes.size();
+        return list.size();
     }
 
     public QmsTheme getItem(int position) {
-        return themes.get(position);
+        return list.get(position);
     }
 
     @Override

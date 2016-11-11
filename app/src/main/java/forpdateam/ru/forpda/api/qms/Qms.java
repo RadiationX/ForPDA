@@ -80,6 +80,7 @@ public class Qms {
                 qmsThemes.setNick(matcher.group(1));
             }
         }
+        qmsThemes.setUserId(id);
         return qmsThemes;
     }
 

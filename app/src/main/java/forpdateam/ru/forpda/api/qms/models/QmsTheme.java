@@ -1,13 +1,19 @@
 package forpdateam.ru.forpda.api.qms.models;
 
 import forpdateam.ru.forpda.api.qms.interfaces.IQmsTheme;
+import io.realm.RealmObject;
 
 /**
  * Created by radiationx on 03.08.16.
  */
-public class QmsTheme implements IQmsTheme {
-    private int id, countMessages, countNew;
+public class QmsTheme extends RealmObject implements IQmsTheme {
+
+    private int id;
+    private int countMessages, countNew;
     private String name, date;
+
+    public QmsTheme() {
+    }
 
     @Override
     public int getId() {
