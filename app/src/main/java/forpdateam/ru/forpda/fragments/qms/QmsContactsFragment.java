@@ -21,39 +21,49 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsContactsAdapter;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by radiationx on 25.08.16.
  */
 public class QmsContactsFragment extends TabFragment {
-
-
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
     private QmsContactsAdapter adapter;
+    private Subscriber<ArrayList<QmsContact>> mainSubscriber = new Subscriber<>();
+    private Subscriber<String> helperSubscriber = new Subscriber<>();
+    private Realm realm;
+    private RealmResults<QmsContact> results;
+    private AlertDialogMenu<QmsContact> contactDialogMenu;
     private QmsContactsAdapter.OnItemClickListener onItemClickListener =
-            (view1, position, adapter1) -> {
+            contact -> {
                 Bundle args = new Bundle();
-                args.putString(TabFragment.TITLE_ARG, QmsThemesFragment.createTitle(adapter1.getItem(position).getNick()));
-                args.putString(QmsThemesFragment.USER_ID_ARG, adapter1.getItem(position).getId());
-                args.putString(QmsThemesFragment.USER_AVATAR_ARG, adapter1.getItem(position).getAvatar());
+                args.putString(TabFragment.TITLE_ARG, QmsThemesFragment.createTitle(contact.getNick()));
+                args.putInt(QmsThemesFragment.USER_ID_ARG, contact.getId());
+                args.putString(QmsThemesFragment.USER_AVATAR_ARG, contact.getAvatar());
                 TabManager.getInstance().add(new TabFragment.Builder<>(QmsThemesFragment.class).setArgs(args).build());
             };
-    private AlertDialogMenu<QmsContact> contactDialogMenu;
-    private QmsContactsAdapter.OnLongItemClickListener onLongItemClickListener = (view1, position, adapter1) -> {
+
+    private QmsContactsAdapter.OnLongItemClickListener onLongItemClickListener = contact -> {
         if (contactDialogMenu == null) {
             contactDialogMenu = new AlertDialogMenu<>();
             contactDialogMenu.addItem("Удалить", data -> deleteDialog(data.getId()));
         }
         new AlertDialog.Builder(getContext())
-                .setItems(contactDialogMenu.getTitles(), (dialog, which) -> contactDialogMenu.onClick(which, adapter1.getItem(position))).show();
+                .setItems(contactDialogMenu.getTitles(), (dialog, which) -> contactDialogMenu.onClick(which, contact)).show();
     };
-    private Subscriber<ArrayList<QmsContact>> mainSubscriber = new Subscriber<>();
-    private Subscriber<String> helperSubscriber = new Subscriber<>();
+
+
+    @Override
+    public boolean isUseCache() {
+        return true;
+    }
 
     @Override
     public boolean isAlone() {
@@ -63,6 +73,12 @@ public class QmsContactsFragment extends TabFragment {
     @Override
     public String getDefaultTitle() {
         return "Контакты";
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        realm = Realm.getDefaultInstance();
     }
 
     @Nullable
@@ -86,10 +102,10 @@ public class QmsContactsFragment extends TabFragment {
         if (null != searchManager) {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getMainActivity().getComponentName()));
         }
+
         searchView.setIconifiedByDefault(true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             private ArrayList<QmsContact> searchContacts = new ArrayList<>();
-            private QmsContactsAdapter searchAdapter;
 
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -101,17 +117,13 @@ public class QmsContactsFragment extends TabFragment {
                 Log.d("kek", "on query changed start");
                 searchContacts.clear();
                 if (!newText.isEmpty()) {
-                    for (int i = 0; i < adapter.getItemCount(); i++) {
-                        if (adapter.getItem(i).getNick().toLowerCase().contains(newText.toLowerCase())) {
-                            searchContacts.add(adapter.getItem(i));
-                        }
+                    for (QmsContact contact : results) {
+                        if (contact.getNick().toLowerCase().contains(newText.toLowerCase()))
+                            searchContacts.add(contact);
                     }
-                    searchAdapter = new QmsContactsAdapter(searchContacts);
-                    searchAdapter.setOnItemClickListener(onItemClickListener);
-                    adapter.setOnLongItemClickListener(onLongItemClickListener);
-                    recyclerView.setAdapter(searchAdapter);
+                    adapter.addAll(searchContacts);
                 } else {
-                    recyclerView.setAdapter(adapter);
+                    adapter.addAll(results);
                 }
                 Log.d("kek", "on query changed end");
                 return false;
@@ -121,6 +133,13 @@ public class QmsContactsFragment extends TabFragment {
         fab.setImageDrawable(App.getAppDrawable(R.drawable.ic_create_white_24dp));
         fab.setOnClickListener(view1 -> TabManager.getInstance().add(new TabFragment.Builder<>(QmsNewThemeFragment.class).build()));
         fab.setVisibility(View.VISIBLE);
+
+        adapter = new QmsContactsAdapter();
+        adapter.setOnLongItemClickListener(onLongItemClickListener);
+        adapter.setOnItemClickListener(onItemClickListener);
+        recyclerView.setAdapter(adapter);
+
+        bindView();
         return view;
     }
 
@@ -143,20 +162,31 @@ public class QmsContactsFragment extends TabFragment {
         mainSubscriber.subscribe(Api.Qms().getContactList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
     }
 
-    public void deleteDialog(String mid) {
+    private void onLoadContacts(ArrayList<QmsContact> data) {
+        Log.d("kek", "loaded itms " + data.size() + " : " + results.size());
+        if (refreshLayout != null)
+            refreshLayout.setRefreshing(false);
+
+        if (data.size() == 0)
+            return;
+
+        realm.executeTransactionAsync(r -> {
+            r.delete(FavItem.class);
+            r.copyToRealmOrUpdate(data);
+        }, this::bindView);
+    }
+
+    private void bindView() {
+        results = realm.where(QmsContact.class).findAll();
+        if (results.size() != 0) {
+            adapter.addAll(results);
+        }
+    }
+
+    public void deleteDialog(int mid) {
         if (refreshLayout != null)
             refreshLayout.setRefreshing(true);
         helperSubscriber.subscribe(Api.Qms().deleteDialog(mid), this::onDeletedDialog, "");
-    }
-
-    private void onLoadContacts(ArrayList<QmsContact> contacts) {
-        if (contacts == null) return;
-        Log.d("kek", "contacts loaded");
-        adapter = new QmsContactsAdapter(contacts);
-        adapter.setOnLongItemClickListener(onLongItemClickListener);
-        adapter.setOnItemClickListener(onItemClickListener);
-        recyclerView.setAdapter(adapter);
-        refreshLayout.setRefreshing(false);
     }
 
     private void onDeletedDialog(String res) {

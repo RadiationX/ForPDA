@@ -6,9 +6,9 @@ package forpdateam.ru.forpda.api.qms.interfaces;
 public interface IQmsContact {
     String getNick();
 
-    String getId();
+    int getId();
 
-    String getCount();
+    int getCount();
 
     String getAvatar();
 }

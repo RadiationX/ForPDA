@@ -3,14 +3,14 @@ package forpdateam.ru.forpda.api.qms.interfaces;
 /**
  * Created by radiationx on 03.08.16.
  */
-public interface IQmsThread {
-    String getId();
+public interface IQmsTheme {
+    int getId();
 
     String getName();
 
     String getDate();
 
-    String getCountMessages();
+    int getCountMessages();
 
-    String getCountNew();
+    int getCountNew();
 }

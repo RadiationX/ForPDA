@@ -52,11 +52,11 @@ public interface DataSource {
         Observable<Boolean> saveNoteRx(@NonNull String note);
 
         /*QMS*/
-        Observable<String> deleteDialog(@NonNull String mid);
+        Observable<String> deleteDialog(@NonNull int mid);
         Observable<String> sendNewTheme(@NonNull String nick, @NonNull String title, @NonNull String mess);
         Observable<String[]> search(@NonNull String nick);
-        Observable<QmsChatModel> getChat(@NonNull String userId, @NonNull String themeId);
-        Observable<QmsThemes> getThemesList(@NonNull String id);
+        Observable<QmsChatModel> getChat(@NonNull int userId, @NonNull int themeId);
+        Observable<QmsThemes> getThemesList(@NonNull int id);
         Observable<ArrayList<QmsContact>> getContactList();
 
     }

@@ -27,20 +27,20 @@ public class QmsThemesFragment extends TabFragment {
     public final static String defaultTitle = "Диалоги";
     public final static String USER_ID_ARG = "USER_ID_ARG";
     public final static String USER_AVATAR_ARG = "USER_AVATAR_ARG";
-    private String userId;
+    private int userId;
     private String avatarUrl;
     private String userNick;
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
     private QmsThemesAdapter adapter;
     private QmsThemesAdapter.OnItemClickListener onItemClickListener =
-            (view1, position, adapter1) -> {
+            theme -> {
                 Bundle args = new Bundle();
-                args.putString(TabFragment.TITLE_ARG, adapter1.getItem(position).getName());
+                args.putString(TabFragment.TITLE_ARG, theme.getName());
                 args.putString(TabFragment.SUBTITLE_ARG, getTitle());
-                args.putString(QmsChatFragment.USER_ID_ARG, userId);
+                args.putInt(QmsChatFragment.USER_ID_ARG, userId);
                 args.putString(QmsChatFragment.USER_AVATAR_ARG, avatarUrl);
-                args.putString(QmsChatFragment.THEME_ID_ARG, adapter1.getItem(position).getId());
+                args.putInt(QmsChatFragment.THEME_ID_ARG, theme.getId());
                 TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).setArgs(args).build());
             };
     private Subscriber<QmsThemes> mainSubscriber = new Subscriber<>();
@@ -54,7 +54,7 @@ public class QmsThemesFragment extends TabFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            userId = getArguments().getString(USER_ID_ARG);
+            userId = getArguments().getInt(USER_ID_ARG);
             avatarUrl = getArguments().getString(USER_AVATAR_ARG);
         }
     }
@@ -77,7 +77,7 @@ public class QmsThemesFragment extends TabFragment {
         fab.setImageDrawable(App.getAppDrawable(R.drawable.ic_create_white_24dp));
         fab.setOnClickListener(view1 -> {
             Bundle args = new Bundle();
-            args.putString(QmsNewThemeFragment.USER_ID_ARG, userId);
+            args.putInt(QmsNewThemeFragment.USER_ID_ARG, userId);
             args.putString(QmsNewThemeFragment.USER_NICK_ARG, userNick);
             TabManager.getInstance().add(new TabFragment.Builder<>(QmsNewThemeFragment.class).setArgs(args).build());
         });
@@ -107,7 +107,7 @@ public class QmsThemesFragment extends TabFragment {
         userNick = qmsThemes.getNick();
         if (qmsThemes.getThemes().size() == 0 && userNick != null) {
             Bundle args = new Bundle();
-            args.putString(QmsNewThemeFragment.USER_ID_ARG, userId);
+            args.putInt(QmsNewThemeFragment.USER_ID_ARG, userId);
             args.putString(QmsNewThemeFragment.USER_NICK_ARG, userNick);
             TabManager.getInstance().add(new TabFragment.Builder<>(QmsNewThemeFragment.class).setArgs(args).build());
             //new Handler().postDelayed(() -> TabManager.getInstance().remove(getTag()), 500);

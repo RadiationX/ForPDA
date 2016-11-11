@@ -5,7 +5,7 @@ import forpdateam.ru.forpda.api.qms.interfaces.IQmsChatItem;
 /**
  * Created by radiationx on 03.08.16.
  */
-public class QmsChatItem implements IQmsChatItem {
+public class QmsMessage implements IQmsChatItem {
     private boolean whoseMessage = false;
     private boolean isDate = false;
     private String id, readStatus, time, avatar, date, content;

@@ -141,12 +141,12 @@ public class IntentHandler {
                     } else {
                         if (uri.getQueryParameter("t") != null) {
                             run("qms chat " + uri.getQueryParameter("mid") + " : " + uri.getQueryParameter("t"));
-                            args.putString(QmsChatFragment.THEME_ID_ARG, uri.getQueryParameter("t"));
-                            args.putString(QmsChatFragment.USER_ID_ARG, uri.getQueryParameter("mid"));
+                            args.putInt(QmsChatFragment.THEME_ID_ARG, Integer.parseInt(uri.getQueryParameter("t")));
+                            args.putInt(QmsChatFragment.USER_ID_ARG, Integer.parseInt(uri.getQueryParameter("mid")));
                             TabManager.getInstance().add(new TabFragment.Builder<>(QmsContactsFragment.class).setArgs(args).build());
                         } else {
                             run("qms thread " + uri.getQueryParameter("mid"));
-                            args.putString(QmsThemesFragment.USER_ID_ARG, uri.getQueryParameter("mid"));
+                            args.putInt(QmsThemesFragment.USER_ID_ARG, Integer.parseInt(uri.getQueryParameter("mid")));
                             TabManager.getInstance().add(new TabFragment.Builder<>(QmsThemesFragment.class).setArgs(args).build());
                         }
                     }

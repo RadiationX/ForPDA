@@ -144,7 +144,6 @@ public class FavoritesFragment extends TabFragment {
     private void bindView() {
         results = realm.where(FavItem.class).findAll();
         if (results.size() != 0) {
-            adapter.clear();
             adapter.addAll(results);
         }
     }

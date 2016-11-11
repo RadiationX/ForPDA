@@ -15,14 +15,12 @@ import forpdateam.ru.forpda.api.qms.models.QmsTheme;
  * Created by radiationx on 25.08.16.
  */
 public class QmsThemesAdapter extends RecyclerView.Adapter<QmsThemesAdapter.ViewHolder> {
-
-    private List<QmsTheme> qmsContacts;
-
+    private List<QmsTheme> themes;
     private OnItemClickListener itemClickListener;
     private OnLongItemClickListener longItemClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(View view, int position, QmsThemesAdapter adapter);
+        void onItemClick(QmsTheme theme);
     }
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
@@ -30,7 +28,7 @@ public class QmsThemesAdapter extends RecyclerView.Adapter<QmsThemesAdapter.View
     }
 
     public interface OnLongItemClickListener {
-        void onItemClick(View view, int position, QmsThemesAdapter adapter);
+        void onItemClick(QmsTheme theme);
     }
 
     public void setOnLongItemClickListener(final OnLongItemClickListener longItemClickListener) {
@@ -52,22 +50,22 @@ public class QmsThemesAdapter extends RecyclerView.Adapter<QmsThemesAdapter.View
         @Override
         public void onClick(View view) {
             if (itemClickListener != null) {
-                itemClickListener.onItemClick(view, getLayoutPosition(), QmsThemesAdapter.this);
+                itemClickListener.onItemClick(getItem(getLayoutPosition()));
             }
         }
 
         @Override
         public boolean onLongClick(View view) {
             if (longItemClickListener != null) {
-                longItemClickListener.onItemClick(view, getLayoutPosition(), QmsThemesAdapter.this);
+                longItemClickListener.onItemClick(getItem(getLayoutPosition()));
                 return true;
             }
             return false;
         }
     }
 
-    public QmsThemesAdapter(List<QmsTheme> qmsContacts) {
-        this.qmsContacts = qmsContacts;
+    public QmsThemesAdapter(List<QmsTheme> themes) {
+        this.themes = themes;
     }
 
 
@@ -79,10 +77,10 @@ public class QmsThemesAdapter extends RecyclerView.Adapter<QmsThemesAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        QmsTheme item = qmsContacts.get(position);
+        QmsTheme item = themes.get(position);
 
         holder.name.setText(item.getName());
-        if (item.getCountNew() == null) {
+        if (item.getCountNew() == 0) {
             holder.count.setVisibility(View.GONE);
         } else {
             holder.count.setText(item.getCountNew());
@@ -92,11 +90,11 @@ public class QmsThemesAdapter extends RecyclerView.Adapter<QmsThemesAdapter.View
 
     @Override
     public int getItemCount() {
-        return qmsContacts.size();
+        return themes.size();
     }
 
     public QmsTheme getItem(int position) {
-        return qmsContacts.get(position);
+        return themes.get(position);
     }
 
     @Override

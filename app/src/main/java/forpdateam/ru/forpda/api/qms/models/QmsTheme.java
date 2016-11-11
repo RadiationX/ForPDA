@@ -1,15 +1,16 @@
 package forpdateam.ru.forpda.api.qms.models;
 
-import forpdateam.ru.forpda.api.qms.interfaces.IQmsThread;
+import forpdateam.ru.forpda.api.qms.interfaces.IQmsTheme;
 
 /**
  * Created by radiationx on 03.08.16.
  */
-public class QmsTheme implements IQmsThread {
-    String id, name, date, countMessages, countNew;
+public class QmsTheme implements IQmsTheme {
+    private int id, countMessages, countNew;
+    private String name, date;
 
     @Override
-    public String getId() {
+    public int getId() {
         return id;
     }
 
@@ -24,16 +25,16 @@ public class QmsTheme implements IQmsThread {
     }
 
     @Override
-    public String getCountMessages() {
+    public int getCountMessages() {
         return countMessages;
     }
 
     @Override
-    public String getCountNew() {
+    public int getCountNew() {
         return countNew;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -45,11 +46,11 @@ public class QmsTheme implements IQmsThread {
         this.date = date;
     }
 
-    public void setCountMessages(String countMessages) {
+    public void setCountMessages(int countMessages) {
         this.countMessages = countMessages;
     }
 
-    public void setCountNew(String countNew) {
+    public void setCountNew(int countNew) {
         this.countNew = countNew;
     }
 }

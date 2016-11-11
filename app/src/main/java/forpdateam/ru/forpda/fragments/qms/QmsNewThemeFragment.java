@@ -41,7 +41,8 @@ public class QmsNewThemeFragment extends TabFragment {
     private ViewStub viewStub;
     private MenuItem sendItem, doneItem, editItem;
 
-    private String userId, userNick;
+    private int userId;
+    private String userNick;
 
     private Subscriber<String> newThemeSubscriber = new Subscriber<>();
     private Subscriber<String[]> searchUserSubscriber = new Subscriber<>();
@@ -55,7 +56,7 @@ public class QmsNewThemeFragment extends TabFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            userId = getArguments().getString(USER_ID_ARG);
+            userId = getArguments().getInt(USER_ID_ARG);
             userNick = getArguments().getString(USER_NICK_ARG);
         }
     }
@@ -75,7 +76,7 @@ public class QmsNewThemeFragment extends TabFragment {
         toolbarTitleView.setVisibility(View.GONE);
         titleField.addTextChangedListener(textWatcher);
         messField.addTextChangedListener(textWatcher);
-        if (userId != null || userNick != null) {
+        if (userId != 0 || userNick != null) {
             nickField.setVisibility(View.GONE);
             ((View) nickField.getParent()).setVisibility(View.GONE);
         } else {
@@ -88,7 +89,7 @@ public class QmsNewThemeFragment extends TabFragment {
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     searchUser(s.toString());
-                    if (userId == null)
+                    if (userId == 0)
                         userNick = nickField.getText().toString();
                 }
 
@@ -129,7 +130,7 @@ public class QmsNewThemeFragment extends TabFragment {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if ((userId != null || userNick.length() > 0) && titleField.getText().length() > 0 && messField.getText().length() > 0) {
+            if ((userId != 0 || userNick.length() > 0) && titleField.getText().length() > 0 && messField.getText().length() > 0) {
                 sendItem.setVisible(true);
             } else {
                 sendItem.setVisible(false);
@@ -192,8 +193,8 @@ public class QmsNewThemeFragment extends TabFragment {
         if (matcher.find()) {
             Toast.makeText(getContext(), "Диалог успешно создан", Toast.LENGTH_SHORT).show();
             Bundle args = new Bundle();
-            args.putString(QmsChatFragment.USER_ID_ARG, matcher.group(1));
-            args.putString(QmsChatFragment.THEME_ID_ARG, matcher.group(2));
+            args.putInt(QmsChatFragment.USER_ID_ARG, Integer.parseInt(matcher.group(1)));
+            args.putInt(QmsChatFragment.THEME_ID_ARG, Integer.parseInt(matcher.group(2)));
             TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).setArgs(args).build());
             new Handler().postDelayed(() -> TabManager.getInstance().remove(getTag()), 500);
         }

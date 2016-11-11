@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.qms.models.QmsChatItem;
+import forpdateam.ru.forpda.api.qms.models.QmsMessage;
 import forpdateam.ru.forpda.utils.ourparser.Document;
 import forpdateam.ru.forpda.utils.ourparser.Element;
 import forpdateam.ru.forpda.utils.ourparser.Html;
@@ -33,14 +33,14 @@ import forpdateam.ru.forpda.utils.ourparser.htmltags.UlTag;
  */
 public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<QmsChatItem> chatItems;
+    private List<QmsMessage> chatItems;
     private final static int TYPE_DATE = 0, TYPE_MESSAGE = 1, TYPE_MY_MESSAGE = 2;
     private Context context;
     private QmsChatAdapter.OnItemClickListener itemClickListener;
     private QmsChatAdapter.OnLongItemClickListener longItemClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(View view, int position, QmsChatAdapter adapter);
+        void onItemClick(QmsMessage message);
     }
 
     public void setOnItemClickListener(final QmsChatAdapter.OnItemClickListener mItemClickListener) {
@@ -48,7 +48,7 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public interface OnLongItemClickListener {
-        void onLongItemClick(View view, int position, QmsChatAdapter adapter);
+        void onLongItemClick(QmsMessage message);
     }
 
     public void setOnLongItemClickListener(final QmsChatAdapter.OnLongItemClickListener longItemClickListener) {
@@ -70,14 +70,14 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         @Override
         public void onClick(View view) {
             if (itemClickListener != null) {
-                itemClickListener.onItemClick(view, getLayoutPosition(), QmsChatAdapter.this);
+                itemClickListener.onItemClick(getItem(getLayoutPosition()));
             }
         }
 
         @Override
         public boolean onLongClick(View view) {
             if (longItemClickListener != null) {
-                longItemClickListener.onLongItemClick(view, getLayoutPosition(), QmsChatAdapter.this);
+                longItemClickListener.onLongItemClick(getItem(getLayoutPosition()));
                 return true;
             }
             return false;
@@ -94,7 +94,7 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     }
 
-    public QmsChatAdapter(List<QmsChatItem> chatItems, Context context) {
+    public QmsChatAdapter(List<QmsMessage> chatItems, Context context) {
         this.chatItems = chatItems;
         this.context = context;
     }
@@ -123,12 +123,12 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private void bindDateHolder(DateViewHolder holder, int position) {
-        QmsChatItem item = chatItems.get(position);
+        QmsMessage item = chatItems.get(position);
         holder.date.setText(item.getDate());
     }
 
     private void bindMessageHolder(MessageViewHolder holder, int position) {
-        QmsChatItem item = chatItems.get(position);
+        QmsMessage item = chatItems.get(position);
         BaseTag view;
         if (!createdTrees.containsKey(position)) {
             Document document = Document.parse(chatItems.get(position).getContent());
@@ -152,7 +152,7 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return chatItems.size();
     }
 
-    public QmsChatItem getItem(int position) {
+    public QmsMessage getItem(int position) {
         return chatItems.get(position);
     }
 

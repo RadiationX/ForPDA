@@ -1,12 +1,21 @@
 package forpdateam.ru.forpda.api.qms.models;
 
 import forpdateam.ru.forpda.api.qms.interfaces.IQmsContact;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by radiationx on 03.08.16.
  */
-public class QmsContact implements IQmsContact {
-    private String nick, id, count, avatar;
+public class QmsContact extends RealmObject implements IQmsContact {
+
+    @PrimaryKey
+    private String nick;
+    private String avatar;
+    private int id, count;
+
+    public QmsContact() {
+    }
 
     @Override
     public String getNick() {
@@ -14,12 +23,12 @@ public class QmsContact implements IQmsContact {
     }
 
     @Override
-    public String getId() {
+    public int getId() {
         return id;
     }
 
     @Override
-    public String getCount() {
+    public int getCount() {
         return count;
     }
 
@@ -36,11 +45,11 @@ public class QmsContact implements IQmsContact {
         this.avatar = avatar;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public void setCount(String count) {
+    public void setCount(int count) {
         this.count = count;
     }
 }

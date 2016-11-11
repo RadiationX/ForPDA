@@ -8,16 +8,16 @@ import java.util.List;
  */
 
 public class QmsChatModel {
-    private List<QmsChatItem> chatItemsList = new ArrayList<>();
+    private List<QmsMessage> chatItemsList = new ArrayList<>();
     private String title;
     private String nick;
     private String avatarUrl;
 
-    public void addChatItem(QmsChatItem item) {
+    public void addChatItem(QmsMessage item) {
         chatItemsList.add(item);
     }
 
-    public List<QmsChatItem> getChatItemsList() {
+    public List<QmsMessage> getChatItemsList() {
         return chatItemsList;
     }
 

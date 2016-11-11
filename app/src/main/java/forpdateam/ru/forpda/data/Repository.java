@@ -142,7 +142,7 @@ public class Repository implements DataSource.NetworkDataSource, DataSource.Loca
 
     /*QMS*/
     @Override
-    public Observable<String> deleteDialog(@NonNull String mid) {
+    public Observable<String> deleteDialog(@NonNull int mid) {
         checkNotNull(mid, "Delete Dialog! Mid " + CNBN);
         return Api.Qms().deleteDialog(mid);
     }
@@ -162,14 +162,14 @@ public class Repository implements DataSource.NetworkDataSource, DataSource.Loca
     }
 
     @Override
-    public Observable<QmsChatModel> getChat(@NonNull String userId, @NonNull String themeId) {
+    public Observable<QmsChatModel> getChat(@NonNull int userId, @NonNull int themeId) {
         checkNotNull(userId, "Get Chat! User Id " + CNBN);
         checkNotNull(themeId, "Get Chat! Theme Id " + CNBN);
         return Api.Qms().getChat(userId, themeId);
     }
 
     @Override
-    public Observable<QmsThemes> getThemesList(@NonNull String id) {
+    public Observable<QmsThemes> getThemesList(@NonNull int id) {
         checkNotNull(id, "Get Theme List! Id " + CNBN);
         return Api.Qms().getThemesList(id);
     }

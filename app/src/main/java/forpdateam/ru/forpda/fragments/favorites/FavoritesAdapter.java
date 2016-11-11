@@ -11,11 +11,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Collection;
+
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import io.realm.RealmList;
-import io.realm.RealmResults;
 
 /**
  * Created by radiationx on 22.09.16.
@@ -89,17 +90,18 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         this.list = new RealmList<>();
     }*/
 
-    public void addAll(RealmResults<FavItem> results) {
+    public void addAll(Collection<FavItem> results) {
+        addAll(results, true);
+    }
+
+    public void addAll(Collection<FavItem> results, boolean clearList) {
+        if (clearList)
+            clear();
         list.addAll(results);
         notifyDataSetChanged();
     }
     public void clear() {
         list.clear();
-    }
-
-    private void add(FavItem item) {
-        list.add(item);
-        notifyItemInserted(list.size() - 1);
     }
 
     @Override

@@ -26,16 +26,16 @@ public class QmsChatFragment extends TabFragment {
     public final static String USER_AVATAR_ARG = "USER_AVATAR_ARG";
     public final static String THEME_ID_ARG = "THEME_ID_ARG";
     public final static String TAB_TAG_FOR_REMOVE = "TAB_TAG_FOR_REMOVE";
-    private String userId;
+    private int userId;
     private String avatarUrl;
-    private String themeId;
+    private int themeId;
     private RecyclerView recyclerView;
 
-    private QmsChatAdapter.OnItemClickListener onItemClickListener = (view1, position, adapter1) -> {
-        Toast.makeText(getContext(), "ONCLICK " + position, Toast.LENGTH_SHORT).show();
+    private QmsChatAdapter.OnItemClickListener onItemClickListener = message -> {
+        Toast.makeText(getContext(), "ONCLICK " + message.getId(), Toast.LENGTH_SHORT).show();
     };
-    private QmsChatAdapter.OnLongItemClickListener onLongItemClickListener = (view1, position, adapter1) -> {
-        Toast.makeText(getContext(), "ON LONG CLICK " + position, Toast.LENGTH_SHORT).show();
+    private QmsChatAdapter.OnLongItemClickListener onLongItemClickListener = message -> {
+        Toast.makeText(getContext(), "ON LONG CLICK " + message.getId(), Toast.LENGTH_SHORT).show();
     };
 
     private Subscriber<QmsChatModel> mainSubscriber = new Subscriber<>();
@@ -49,8 +49,8 @@ public class QmsChatFragment extends TabFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            userId = getArguments().getString(USER_ID_ARG);
-            themeId = getArguments().getString(THEME_ID_ARG);
+            userId = getArguments().getInt(USER_ID_ARG);
+            themeId = getArguments().getInt(THEME_ID_ARG);
             avatarUrl = getArguments().getString(USER_AVATAR_ARG);
         }
     }

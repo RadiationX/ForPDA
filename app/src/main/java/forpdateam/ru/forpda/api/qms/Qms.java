@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import forpdateam.ru.forpda.api.qms.models.QmsChatItem;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
+import forpdateam.ru.forpda.api.qms.models.QmsMessage;
 import forpdateam.ru.forpda.api.qms.models.QmsTheme;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import io.reactivex.Observable;
@@ -28,6 +28,7 @@ public class Qms {
 
     public Qms() {
     }
+
     private ArrayList<QmsContact> contactsList() throws Exception {
 
         ArrayList<QmsContact> list = new ArrayList<>();
@@ -36,8 +37,11 @@ public class Qms {
         QmsContact contact;
         while (matcher.find()) {
             contact = new QmsContact();
-            contact.setId(matcher.group(1));
-            contact.setCount(matcher.group(2));
+            contact.setId(Integer.parseInt(matcher.group(1)));
+            String count = matcher.group(2);
+            if (count == null || count.isEmpty())
+                count = "0";
+            contact.setCount(Integer.parseInt(count));
             contact.setAvatar(matcher.group(3));
             contact.setNick(matcher.group(4));
             list.add(contact);
@@ -46,7 +50,7 @@ public class Qms {
         return list;
     }
 
-    private QmsThemes themesList(final String id) throws Exception {
+    private QmsThemes themesList(final int id) throws Exception {
         QmsThemes qmsThemes = new QmsThemes();
         Map<String, String> headers = new HashMap<>();
         headers.put("xhr", "body");
@@ -55,13 +59,16 @@ public class Qms {
         QmsTheme thread;
         while (matcher.find()) {
             thread = new QmsTheme();
-            thread.setId(matcher.group(1));
+            thread.setId(Integer.parseInt(matcher.group(1)));
             thread.setDate(matcher.group(2));
             Matcher nameMatcher = threadName.matcher(Html.fromHtml(matcher.group(3).trim()));
             if (nameMatcher.find()) {
                 thread.setName(nameMatcher.group(1));
-                thread.setCountMessages(nameMatcher.group(2));
-                thread.setCountNew(nameMatcher.group(3));
+                thread.setCountMessages(Integer.parseInt(nameMatcher.group(2)));
+                String countNew = nameMatcher.group(3);
+                if (countNew == null || countNew.isEmpty())
+                    countNew = "0";
+                thread.setCountNew(Integer.parseInt(countNew));
             }
             qmsThemes.addTheme(thread);
         }
@@ -76,15 +83,15 @@ public class Qms {
         return qmsThemes;
     }
 
-    private QmsChatModel chatItemsList(final String userId, final String themeId) throws Exception {
+    private QmsChatModel chatItemsList(final int userId, final int themeId) throws Exception {
         QmsChatModel chat = new QmsChatModel();
         Map<String, String> headers = new HashMap<>();
         headers.put("xhr", "body");
         final String response = getInstance().post("http://4pda.ru/forum/index.php?act=qms&mid=" + userId + "&t=" + themeId, headers);
         Matcher matcher = chatPattern.matcher(response);
-        QmsChatItem item;
+        QmsMessage item;
         while (matcher.find()) {
-            item = new QmsChatItem();
+            item = new QmsMessage();
             if (matcher.group(1) == null && matcher.group(9) != null) {
                 item.setIsDate(true);
                 item.setDate(matcher.group(9).trim());
@@ -131,11 +138,11 @@ public class Qms {
         return response;
     }
 
-    private String delDialog(String mid) throws Exception {
+    private String delDialog(int mid) throws Exception {
         Map<String, String> headers = new HashMap<>();
         headers.put("act", "qms-xhr");
         headers.put("action", "del-member");
-        headers.put("del-mid", mid);
+        headers.put("del-mid", Integer.toString(mid));
         return getInstance().post("http://4pda.ru/forum/index.php", headers);
     }
 
@@ -143,11 +150,11 @@ public class Qms {
         return Observable.fromCallable(this::contactsList);
     }
 
-    public Observable<QmsThemes> getThemesList(final String id) {
+    public Observable<QmsThemes> getThemesList(final int id) {
         return Observable.fromCallable(() -> themesList(id));
     }
 
-    public Observable<QmsChatModel> getChat(final String userId, final String themeId) {
+    public Observable<QmsChatModel> getChat(final int userId, final int themeId) {
         return Observable.fromCallable(() -> chatItemsList(userId, themeId));
     }
 
@@ -159,7 +166,7 @@ public class Qms {
         return Observable.fromCallable(() -> newTheme(nick, title, mess));
     }
 
-    public Observable<String> deleteDialog(String mid) {
+    public Observable<String> deleteDialog(int mid) {
         return Observable.fromCallable(() -> delDialog(mid));
     }
 }
