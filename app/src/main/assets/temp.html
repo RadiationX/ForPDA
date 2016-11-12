@@ -33,6 +33,47 @@
         <button class="button last" onclick="ITheme.lastPage()" ${last_disable}><b>&gt;&gt;</b></button>
     </div>
 </div>
+<!-- $BeginBlock poll_block -->
+<div class="poll ${poll_type}">
+    <button class="title" onclick="togglePoll(this)">${poll_title}</button>
+    <div class="body close">
+        <div class="questions">
+            <!-- $BeginBlock poll_question_block -->
+            <div class="question">
+                <div class="title">${question_title}</div>
+                <div class="items">
+                    <!-- $BeginBlock poll_default_item -->
+                    <label class="item ${poll_type}"><input type="${question_item_type}" name="${question_item_name}" value="${question_item_value}"><span class="title">${question_item_title}</span></label>
+                    <!-- $EndBlock poll_default_item -->
+                    <!-- $BeginBlock poll_result_item -->
+                    <div class="item ${poll_type}"><span class="name">${question_item_title}</span><span class="num_votes">${question_item_votes}</span>
+                        <div class="range_bar">
+                            <div class="range" style="width:${question_item_percent}%;"></div><span class="value">${question_item_percent}%</span>
+                        </div>
+                    </div>
+                    <!-- $EndBlock poll_result_item -->
+                </div>
+            </div>
+            <!-- $EndBlock poll_question_block -->
+        </div>
+        <div class="votes_info">Всего голосов: ${poll_votes_count}</div>
+        <!-- $BeginBlock poll_buttons -->
+        <div class="buttons">
+            <!-- $BeginBlock poll_vote_button -->
+            <button class="vote">Голосовать</button>
+            <!-- $EndBlock poll_vote_button -->
+            <!-- $BeginBlock poll_show_results_button -->
+            <button class="show_results">Показать результаты</button>
+            <!-- $EndBlock poll_show_results_button -->
+            <!-- $BeginBlock poll_show_poll_button -->
+            <button class="show_poll">Показать пункты опроса</button>
+            <!-- $EndBlock poll_show_poll_button -->
+        </div>
+        <!-- $EndBlock poll_buttons -->
+
+    </div>
+</div>
+<!-- $EndBlock poll_block -->
 <div class="posts_list">
     <!-- $BeginBlock post -->
     <div name="entry${post_id}" class="post_container ${user_online} ${disable_avatar} ${avatar_type}"
@@ -50,9 +91,9 @@
             </div>
         </div>
         <!-- $BeginBlock hat_button -->
-        <button class="hat_button close" onclick="toggleHat(this)"><b>Показать шапку</b></button>
+        <button class="hat_button" onclick="toggleHat(this)"><b>Показать шапку</b></button>
         <!-- $EndBlock hat_button -->
-        <div class="post_body">${body}</div>
+        <div class="post_body close">${body}</div>
         <div class="post_footer">
             <!-- $BeginBlock report_block -->
             <!--<button class="report" onclick="ITheme.reportPost(${post_id})"><span>Жалоба</span></button>-->

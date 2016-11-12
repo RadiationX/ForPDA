@@ -10,6 +10,9 @@ import java.util.regex.Pattern;
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.theme.models.Poll;
+import forpdateam.ru.forpda.api.theme.models.PollQuestion;
+import forpdateam.ru.forpda.api.theme.models.PollQuestionItem;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.client.Client;
@@ -31,6 +34,10 @@ public class Theme {
     public final static Pattern elemToScrollPattern = Pattern.compile("(?:anchor=|#)([^&\\n\\=\\?\\.\\#]*)");
     //private final static Pattern newsPattern = Pattern.compile("<section[^>]*?><article[^>]*?>[^<]*?<div class=\"container\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\" alt=\"([\\s\\S]*?)\"[\\s\\S]*?<em[^>]*>([^<]*?)</em>[\\s\\S]*?<a href=\"([^\"]*?)\">([\\s\\S]*?)</a>[\\s\\S]*?<a[^>]*?>([^<]*?)</a><div[^>]*?># ([\\s\\S]*?)</div>[\\s\\S]*?<div class=\"content-box\"[^>]*?>([\\s\\S]*?)</div></div></div>[^<]*?<div class=\"materials-box\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?<div class=\"comment-box\" id=\"comments\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[^<]*?<form");
 
+    private final static Pattern pollMainPattern = Pattern.compile("<form[^>]*?addpoll[^>]*?post[^>]*?>[\\s\\S]*?<tr[^>]*?>[^<]*?<th[^>]*?>(?:<[^>]*>)([^>]*?)(?:<[^>]*>)<\\/th>[^<]*?<\\/tr>([\\s\\S]*?)<tr>[^<]*?<td[^>]*?>[^<]*?(?:<b>)Всего голосов: ([\\d]*?)(?:<\\/b>)[\\s\\S]*?<td[^>]*?formbuttonrow[^>]*?>([\\s\\S]*?)<\\/td>[\\s\\S]*?<\\/form>");
+    private final static Pattern pollQuestions = Pattern.compile("<tr><td[^>]*?><div class[\\s\\S]*?<strong>([\\s\\S]*?)<\\/strong>[\\s\\S]*?<table[^>]*?>([\\s\\S]*?)<\\/table>");
+    private final static Pattern pollQuestionItems = Pattern.compile("<tr>(?:<td[^>]*?colspan[^>]*?><input type=\"([^\"]*?)\" name=\"([^\"]*?)\" value=\"([^\"]*?)\"[^>]*?>[^<]*?<b>([\\s\\S]*?)<\\/b>[\\s\\S]*?|<td[^>]*?width[^>]*?>([\\s\\S]*?)<\\/td><td[^>]*?>[^<]*?<b>([\\s\\S]*?)<\\/b>[^\\[]*?\\[([^\\%]*?)\\%[\\s\\S]*?)<\\/tr>");
+    private final static Pattern pollButtons = Pattern.compile("<input[^>]*?value=\"([^\"]*?)\"");
 
     public Theme() {
     }
@@ -67,24 +74,19 @@ public class Theme {
             page.setAllPagesCount(Integer.parseInt(matcher.group(1)) + 1);
             page.setPostsOnPageCount(Integer.parseInt(matcher.group(2)));
         }
-        Log.d("kek", "check 1");
         matcher = paginationPattern.matcher(response);
         if (matcher.find()) {
-            /*page.setIsFirstPage(!matcher.group(1).matches("<a[^>]*?>&lt;</a>"));
-            page.setIsLastPage(!matcher.group(1).matches("<a[^>]*?>&gt;</a>"));*/
             page.setCurrentPage(Integer.parseInt(matcher.group(2)));
         }
-        Log.d("kek", "check 2");
         matcher = titlePattern.matcher(response);
         if (matcher.find()) {
             page.setTitle(matcher.group(1));
             page.setDesc(matcher.group(2));
         }
-        Log.d("kek", "check 3");
         matcher = alreadyInFavPattern.matcher(response);
         page.setInFavorite(matcher.find());
         matcher = postsPattern.matcher(response);
-        Log.d("kek", "check 4");
+        Log.d("kek", "posts matcher " + (System.currentTimeMillis() - time));
         int memberId = Api.Auth().getUserIdInt();
         while (matcher.find()) {
             ThemePost post = new ThemePost();
@@ -110,6 +112,48 @@ public class Theme {
                 page.setCurator(true);
             page.addPost(post);
         }
+        Log.d("kek", "poll matcher " + (System.currentTimeMillis() - time));
+        matcher = pollMainPattern.matcher(response);
+        if (matcher.find()) {
+            Poll poll = new Poll();
+            final boolean isResult = matcher.group().contains("img");
+            poll.setIsResult(isResult);
+            poll.setTitle(matcher.group(1));
+            Matcher matcher1 = pollQuestions.matcher(matcher.group(2));
+            while (matcher1.find()) {
+                PollQuestion pollQuestion = new PollQuestion();
+                pollQuestion.setTitle(matcher1.group(1));
+                Matcher itemsMatcher = pollQuestionItems.matcher(matcher1.group(2));
+                while (itemsMatcher.find()) {
+                    PollQuestionItem questionItem = new PollQuestionItem();
+                    if (!isResult) {
+                        questionItem.setType(itemsMatcher.group(1));
+                        questionItem.setName(itemsMatcher.group(2));
+                        questionItem.setValue(Integer.parseInt(itemsMatcher.group(3)));
+                        questionItem.setTitle(itemsMatcher.group(4));
+                    } else {
+                        questionItem.setTitle(itemsMatcher.group(5));
+                        questionItem.setVotes(Integer.parseInt(itemsMatcher.group(6)));
+                        questionItem.setPercent(Float.parseFloat(itemsMatcher.group(7).replace(",", ".")));
+                    }
+                    pollQuestion.addItem(questionItem);
+                }
+                poll.addQuestion(pollQuestion);
+            }
+            matcher1 = pollButtons.matcher(matcher.group(4));
+            while (matcher1.find()) {
+                String value = matcher1.group(1);
+                if (value.contains("Голосовать")) {
+                    poll.setVoteButton();
+                } else if (value.contains("результаты")) {
+                    poll.setShowResultButton();
+                } else if (value.contains("пункты опроса")) {
+                    poll.setShowPollButton();
+                }
+            }
+            poll.setVotesCount(Integer.parseInt(matcher.group(3)));
+            page.setPoll(poll);
+        }
         Log.d("kek", "end created page obj " + (System.currentTimeMillis() - time));
         if (generateHtml) {
             long time2 = System.currentTimeMillis();
@@ -118,135 +162,107 @@ public class Theme {
             boolean prevDisabled = page.getCurrentPage() <= 1;
             boolean nextDisabled = page.getCurrentPage() == page.getAllPagesCount();
 
-            if (t.variableExists("topic_title"))
-                t.setVariable("topic_title", page.getTitle());
-
-            if (t.variableExists("topic_url"))
-                t.setVariable("topic_url", redirectUrl);
-
-            if (t.variableExists("topic_description"))
-                t.setVariable("topic_description", page.getDesc());
-
-            if (t.variableExists("in_favorite"))
-                t.setVariable("in_favorite", Boolean.toString(page.isInFavorite()));
-
-            if (t.variableExists("all_pages"))
-                t.setVariable("all_pages", page.getAllPagesCount());
-
-            if (t.variableExists("posts_on_page"))
-                t.setVariable("posts_on_page", page.getPostsOnPageCount());
-
-            if (t.variableExists("current_page"))
-                t.setVariable("current_page", page.getCurrentPage());
-
-            if (t.variableExists("authorized"))
-                t.setVariable("authorized", Boolean.toString(authorized));
-
-            if (t.variableExists("is_curator"))
-                t.setVariable("is_curator", Boolean.toString(page.isCurator()));
-
-            if (t.variableExists("member_id"))
-                t.setVariable("member_id", Api.Auth().getUserIdInt());
-
-            if (t.variableExists("elem_to_scroll"))
-                t.setVariable("elem_to_scroll", page.getElementToScroll());
-
-            if (t.variableExists("body_type"))
-                t.setVariable("body_type", "topic");
-
-            if (t.variableExists("navigation_disable"))
-                t.setVariable("navigation_disable", prevDisabled && nextDisabled ? "navigation_disable" : "");
-
-            if (t.variableExists("first_disable"))
-                t.setVariable("first_disable", getDisableStr(prevDisabled));
-
-            if (t.variableExists("prev_disable"))
-                t.setVariable("prev_disable", getDisableStr(prevDisabled));
-
-            if (t.variableExists("next_disable"))
-                t.setVariable("next_disable", getDisableStr(nextDisabled));
-
-            if (t.variableExists("last_disable"))
-                t.setVariable("last_disable", getDisableStr(nextDisabled));
-
-            if (t.variableExists("disable_avatar_js"))
-                t.setVariable("disable_avatar_js", Boolean.toString(true));
-
-            if (t.variableExists("disable_avatar"))
-                t.setVariable("disable_avatar", true ? "" : "disable_avatar");
-
-            if (t.variableExists("avatar_type"))
-                t.setVariable("avatar_type", true ? "" : "avatar_circle");
+            t.setVariableOpt("topic_title", page.getTitle());
+            t.setVariableOpt("topic_url", redirectUrl);
+            t.setVariableOpt("topic_description", page.getDesc());
+            t.setVariableOpt("in_favorite", Boolean.toString(page.isInFavorite()));
+            t.setVariableOpt("all_pages", page.getAllPagesCount());
+            t.setVariableOpt("posts_on_page", page.getPostsOnPageCount());
+            t.setVariableOpt("current_page", page.getCurrentPage());
+            t.setVariableOpt("authorized", Boolean.toString(authorized));
+            t.setVariableOpt("is_curator", Boolean.toString(page.isCurator()));
+            t.setVariableOpt("member_id", Api.Auth().getUserIdInt());
+            t.setVariableOpt("elem_to_scroll", page.getElementToScroll());
+            t.setVariableOpt("body_type", "topic");
+            t.setVariableOpt("navigation_disable", prevDisabled && nextDisabled ? "navigation_disable" : "");
+            t.setVariableOpt("first_disable", getDisableStr(prevDisabled));
+            t.setVariableOpt("prev_disable", getDisableStr(prevDisabled));
+            t.setVariableOpt("next_disable", getDisableStr(nextDisabled));
+            t.setVariableOpt("last_disable", getDisableStr(nextDisabled));
+            t.setVariableOpt("disable_avatar_js", Boolean.toString(true));
+            t.setVariableOpt("disable_avatar", true ? "" : "disable_avatar");
+            t.setVariableOpt("avatar_type", true ? "" : "avatar_circle");
 
             Log.d("kek", "template check 1 " + (System.currentTimeMillis() - time2));
 
             int hatPostId = page.getPosts().get(0).getId();
-            boolean existOnline = t.variableExists("user_online");
-            boolean existPostId = t.variableExists("post_id");
-            boolean existUserId = t.variableExists("user_id");
-            boolean existAvatar = t.variableExists("avatar");
-            boolean existNick = t.variableExists("nick");
-            boolean existCurator = t.variableExists("curator");
-            boolean existGroupColor = t.variableExists("group_color");
-            boolean existGroup = t.variableExists("group");
-            boolean existReputation = t.variableExists("reputation");
-            boolean existDate = t.variableExists("date");
-            boolean existNumber = t.variableExists("number");
-            boolean existBody = t.variableExists("body");
-
-            boolean existReportBlock = t.blockExists("report_block");
-            boolean existReplyBlock = t.blockExists("reply_block");
-            boolean existVoteBlock = t.blockExists("vote_block");
-            boolean existDeleteBlock = t.blockExists("delete_block");
-            boolean existEditBlock = t.blockExists("edit_block");
             Log.d("kek", "template check 2 " + (System.currentTimeMillis() - time2));
             for (ThemePost post : page.getPosts()) {
-                if (existOnline)
-                    t.setVariable("user_online", post.isOnline() ? "online" : "");
-                if (existPostId)
-                    t.setVariable("post_id", post.getId());
-                if (existUserId)
-                    t.setVariable("user_id", post.getUserId());
+                t.setVariableOpt("user_online", post.isOnline() ? "online" : "");
+                t.setVariableOpt("post_id", post.getId());
+                t.setVariableOpt("user_id", post.getUserId());
 
                 //Post header
-                if (existAvatar)
-                    t.setVariable("avatar", post.getAvatar().isEmpty() ? "file:///android_asset/av.png" : "http://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
-                if (existNick)
-                    t.setVariable("nick", post.getNick());
-                if (existCurator)
-                    t.setVariable("curator", post.isCurator() ? "curator" : "");
-                if (existGroupColor)
-                    t.setVariable("group_color", post.getGroupColor());
-                if (existGroup)
-                    t.setVariable("group", post.getGroup());
-                if (existReputation)
-                    t.setVariable("reputation", post.getReputation());
-                if (existDate)
-                    t.setVariable("date", post.getDate());
-                if (existNumber)
-                    t.setVariable("number", post.getNumber());
+                t.setVariableOpt("avatar", post.getAvatar().isEmpty() ? "file:///android_asset/av.png" : "http://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
+                t.setVariableOpt("nick", post.getNick());
+                t.setVariableOpt("curator", post.isCurator() ? "curator" : "");
+                t.setVariableOpt("group_color", post.getGroupColor());
+                t.setVariableOpt("group", post.getGroup());
+                t.setVariableOpt("reputation", post.getReputation());
+                t.setVariableOpt("date", post.getDate());
+                t.setVariableOpt("number", post.getNumber());
 
                 //Post body
                 if (hatPostId == post.getId() && page.getPosts().size() > 1)
-                    if (t.blockExists("hat_button"))
-                        t.addBlock("hat_button");
-                if (existBody)
-                    t.setVariable("body", post.getBody());
+                    t.addBlockOpt("hat_button");
+                t.setVariableOpt("body", post.getBody());
 
                 //Post footer
-                if (existReportBlock && post.canReport() && authorized)
-                    t.addBlock("report_block");
-                if (existReplyBlock && page.canQuote() && authorized)
-                    t.addBlock("reply_block");
-                if (existVoteBlock && authorized && post.getUserId() != memberId)
-                    t.addBlock("vote_block");
-                if (existDeleteBlock && post.canDelete() && authorized)
-                    t.addBlock("delete_block");
-                if (existEditBlock && post.canDelete() && authorized)
-                    t.addBlock("edit_block");
+                if (post.canReport() && authorized)
+                    t.addBlockOpt("report_block");
+                if (page.canQuote() && authorized)
+                    t.addBlockOpt("reply_block");
+                if (authorized && post.getUserId() != memberId)
+                    t.addBlockOpt("vote_block");
+                if (post.canDelete() && authorized)
+                    t.addBlockOpt("delete_block");
+                if (post.canDelete() && authorized)
+                    t.addBlockOpt("edit_block");
 
-                t.addBlock("post");
+                t.addBlockOpt("post");
             }
+
+            //Poll block
+
+            if (page.getPoll() != null) {
+                Poll poll = page.getPoll();
+                boolean isResult = poll.isResult();
+                t.setVariableOpt("poll_type", isResult ? "result" : "default");
+                t.setVariableOpt("poll_title", poll.getTitle().isEmpty() || poll.getTitle().equals("-") ? "Опрос" : poll.getTitle());
+
+                for (PollQuestion question : poll.getQuestions()) {
+                    t.setVariableOpt("question_title", question.getTitle());
+
+                    for (PollQuestionItem questionItem : question.getQuestionItems()) {
+                        t.setVariableOpt("question_item_title", questionItem.getTitle());
+
+                        if (isResult) {
+                            t.setVariableOpt("question_item_votes", questionItem.getVotes());
+                            t.setVariableOpt("question_item_percent", Float.toString(questionItem.getPercent()));
+                            t.addBlockOpt("poll_result_item");
+                        } else {
+                            t.setVariableOpt("question_item_type", questionItem.getType());
+                            t.setVariableOpt("question_item_name", questionItem.getName());
+                            t.setVariableOpt("question_item_value", questionItem.getValue());
+                            t.addBlockOpt("poll_default_item");
+                        }
+                    }
+                    t.addBlockOpt("poll_question_block");
+                }
+                t.setVariableOpt("poll_votes_count", poll.getVotesCount());
+                if (poll.haveButtons()) {
+                    if (poll.haveVoteButton())
+                        t.addBlockOpt("poll_vote_button");
+                    if (poll.haveShowResultsButton())
+                        t.addBlockOpt("poll_show_results_button");
+                    if (poll.haveShowPollButton())
+                        t.addBlockOpt("poll_show_poll_button");
+                    t.addBlockOpt("poll_buttons");
+                }
+                t.addBlockOpt("poll_block");
+            }
+
+
             Log.d("kek", "template check 3 " + (System.currentTimeMillis() - time2));
             page.setHtml(t.generateOutput());
             Log.d("kek", "template check 4 " + (System.currentTimeMillis() - time2));

@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.content.res.AppCompatResources;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
@@ -15,9 +16,11 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 
@@ -85,7 +88,13 @@ public class App extends android.app.Application {
         InputStream stream = null;
         try {
             stream = App.getInstance().getAssets().open("temp.html");
-            templator = new MiniTemplator.Builder().build(stream, Charset.forName("utf-8"));
+            try {
+                templator = new MiniTemplator.Builder().build(stream, Charset.forName("utf-8"));
+            } catch (Exception e) {
+                Toast.makeText(getContext(), "Ошибка шаблона: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                //создание пустого шаблона
+                templator = new MiniTemplator.Builder().build(new ByteArrayInputStream("Template error!".getBytes(Charset.forName("utf-8"))), Charset.forName("utf-8"));
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

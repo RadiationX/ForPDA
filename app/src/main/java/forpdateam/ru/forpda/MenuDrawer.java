@@ -21,7 +21,7 @@ import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.news.NewsListFragment;
 import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
-import forpdateam.ru.forpda.test.AuthFragment;
+import forpdateam.ru.forpda.fragments.auth.AuthFragment;
 
 /**
  * Created by radiationx on 07.08.16.

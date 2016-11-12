@@ -10,6 +10,8 @@ import forpdateam.ru.forpda.api.theme.interfaces.IThemePage;
 public class ThemePage implements IThemePage {
     private String title, desc, html, url, elementToScroll;
     private boolean inFavorite = false, curator = false, quote = false;
+    private ArrayList<ThemePost> posts = new ArrayList<>();
+    private Poll poll;
 
     public boolean canQuote() {
         return quote;
@@ -46,8 +48,6 @@ public class ThemePage implements IThemePage {
     public void setScrollY(int scrollY) {
         this.scrollY = scrollY;
     }
-
-    private ArrayList<ThemePost> posts = new ArrayList<>();
 
     public String getUrl() {
         return url;
@@ -134,5 +134,13 @@ public class ThemePage implements IThemePage {
 
     public void setHtml(String html) {
         this.html = html;
+    }
+
+    public Poll getPoll() {
+        return poll;
+    }
+
+    public void setPoll(Poll poll) {
+        this.poll = poll;
     }
 }

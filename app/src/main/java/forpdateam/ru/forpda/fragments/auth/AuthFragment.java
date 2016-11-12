@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.test;
+package forpdateam.ru.forpda.fragments.auth;
 
 import android.os.Bundle;
 import android.os.Handler;

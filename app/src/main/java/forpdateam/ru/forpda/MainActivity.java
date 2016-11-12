@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     private TabDrawer tabDrawer;
     private MenuDrawer menuDrawer;
     private final View.OnClickListener toggleListener = view -> menuDrawer.toggleState();
-    private final View.OnClickListener removeTabListener = view -> backHandler();
+    private final View.OnClickListener removeTabListener = view -> backHandler(true);
 
     public View.OnClickListener getToggleListener() {
         return toggleListener;
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     @Override
     public void onBackPressed() {
         Log.d("kek", "onbackpressed activity");
-        backHandler();
+        backHandler(false);
     }
 
     public void hidePopupWindows() {
@@ -136,26 +136,14 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
                 .hideSoftInputFromWindow(MainActivity.this.getCurrentFocus().getWindowToken(), 0);
     }
 
-    public void backHandler() {
-        if (TabManager.getInstance().getSize() > 0) {
-            if (!TabManager.getInstance().getActive().onBackPressed()) {
-                if (TabManager.getInstance().getSize() > 1) {
-                    hidePopupWindows();
-                    TabManager.getInstance().remove(TabManager.getInstance().getActive());
-                } else {
-                    new AlertDialog.Builder(this)
-                            .setPositiveButton("yes", (dialogInterface, i) -> {
-                                super.onBackPressed();
-                            })
-                            .show();
-                }
-            }
+    public void backHandler(boolean isToolbarButton) {
+        if (TabManager.getInstance().getSize() <= 1) {
+            super.onBackPressed();
         } else {
-            new AlertDialog.Builder(this)
-                    .setPositiveButton("yes", (dialogInterface, i) -> {
-                        super.onBackPressed();
-                    })
-                    .show();
+            if (isToolbarButton || !TabManager.getInstance().getActive().onBackPressed()) {
+                hidePopupWindows();
+                TabManager.getInstance().remove(TabManager.getInstance().getActive());
+            }
         }
     }
 
