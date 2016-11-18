@@ -3,14 +3,20 @@ var lastTop = 0,
     lastScrollTop = 0,
     lastDeltaTop = 0,
     lastDeltaScroll = 0;
+//Костыль, чтобы нормально открывалась шапка, если скрыт post_header
+var blockProgressChange = false;
 
 //Вызывается при обновлении прогресса загрузке страницы и при загрузке её ресурсов
 //По идеи должна верно скроллить к нужному элементу, даже если пользователь прокрутил страницу
 //Как оно работает и работает ли вообще - объяснить не могу
 function onProgressChanged() {
+    if(blockProgressChange){
+        blockProgressChange = false;
+        return;
+    }
     //ITheme.log("call onprogress");
     var newTop = getCoordinates(anchorElem).top;
-    var newScrollTop = (window.pageYOffset || document.documentElement.scrollTop)  - (document.documentElement.clientTop || 0);
+    var newScrollTop = (window.pageYOffset || document.documentElement.scrollTop) - (document.documentElement.clientTop || 0);
     var tempDeltaTop = newTop - lastTop;
     var tempDeltaScroll = newScrollTop - lastScrollTop;
     var delta = tempDeltaTop;
@@ -43,17 +49,17 @@ function scrollToElement(name) {
 
     if (typeof name != 'string') name = PageInfo.elemToScroll;
 
-    if(/([^-]*)-([\d]*)-(\d+)/g.test(name)){
+    if (/([^-]*)-([\d]*)-(\d+)/g.test(name)) {
         var data = /([^-]*)-([\d]*)-(\d+)/g.exec(name);
         data[1] = data[1].toLowerCase();
 
-        if(data[1]==="spoiler") data[1] = "spoil";
-        if(data[1]==="hide") data[1] = "hidden";
+        if (data[1] === "spoiler") data[1] = "spoil";
+        if (data[1] === "hide") data[1] = "hidden";
 
         name = 'entry' + data[2];
         var post = document.querySelector('[name="' + name + '"]');
-        anchorElem = post.querySelectorAll(".post-block."+data[1])[Number(data[3])-1];
-    }else{
+        anchorElem = post.querySelectorAll(".post-block." + data[1])[Number(data[3]) - 1];
+    } else {
         anchorElem = document.querySelector('[name="' + name + '"]');
     }
     //console.log(anchorElem);
@@ -71,10 +77,10 @@ function scrollToElement(name) {
     lastTop = getCoordinates(anchorElem).top;
     //window.scrollBy(0, lastTop);
 
-    lastScrollTop = (window.pageYOffset || document.documentElement.scrollTop)  - (document.documentElement.clientTop || 0);
-    if(lastScrollTop==0){
+    lastScrollTop = (window.pageYOffset || document.documentElement.scrollTop) - (document.documentElement.clientTop || 0);
+    if (lastScrollTop == 0) {
         var temas = lastTop;
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             lastScrollTop = temas;
             lastTop = temas;
             onProgressChanged();
@@ -82,10 +88,10 @@ function scrollToElement(name) {
     }
 
     //Активация элементов, убирается класс active с уже активированных
-    if(elemToActivation)
+    if (elemToActivation)
         elemToActivation.classList.remove('active');
 
-    elemToActivation = document.querySelector('.post_container[name="'+name+'"]');
+    elemToActivation = document.querySelector('.post_container[name="' + name + '"]');
     elemToActivation.classList.add('active');
 }
 
@@ -179,7 +185,7 @@ function selectionToQuote() {
     }
     var postId = p.dataset.postId;
     if (selectedText != null && postId != null) {
-        ITheme.quotePost(selectedText, ""+postId);
+        ITheme.quotePost(selectedText, "" + postId);
     } else {
         ITheme.toast("Ошибка создания цитаты: [" + selectedText + ", " + postId + "]");
         return;
@@ -214,5 +220,30 @@ function selectAllPostText() {
         rng = document.body.createTextRange();
         rng.moveToElementText(p);
         rng.select();
+    }
+}
+
+function toggleButton(button, bodyClass) {
+    blockProgressChange = true;
+    var parent = button.parentNode;
+    var body;
+    if (bodyClass !== undefined)
+        body = parent.querySelector("." + bodyClass);
+    if (parent.classList.contains("close") | body.style.display == "none") {
+        parent.classList.remove("close");
+        parent.classList.add("open");
+        if (body !== undefined){
+            body.removeAttribute("hidden");
+            //body.removeAttribute("style");
+        }
+    } else {
+        parent.classList.remove("open");
+        parent.classList.add("close");
+        if (body !== undefined){
+            body.setAttribute("hidden","");
+            //body.style.overflow = "hidden";
+            //body.style.height = "0";
+            //body.style.visibility = "hidden";
+        }
     }
 }

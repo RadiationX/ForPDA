@@ -25,7 +25,7 @@ import io.reactivex.Observable;
 public class Theme {
     //y: Oh God... Why?
     //g: Because it is faster
-    private final static Pattern postsPattern = Pattern.compile("<a name=\"entry([^\"]*?)\"[^>]*?><\\/a><div class=\"post_header_container\"><div class=\"post_header\"><span class=\"post_date\">([^&]*?)&[^<]*?<a[^>]*?>#(\\d+)<\\/a>\\|<\\/span>[\\s\\S]*?<span[^>]*?><a[^>]*?data-av=\"([^\"]*?)\">([^<]*?)<\\/a><\\/span><br[^>]*?>[\\s\\S]*?<span[^>]*?>(?:<[^>]*?>([^<]*?|)<\\/[^>]*?><br[^>]*?>|)[^<]*?<span[^>]*?color:([^;']*?)'>([^<]*?)<\\/span>[\\s\\S]*?<br[^>]*?><font color=\"([^\"]*?)\">[^<]*?<\\/font>[\\s\\S]*?<a[^>]*?showuser=([^\"]*?)\">[^<]*?<\\/a>[\\s\\S]*?ajaxrep[^>]*?>([^<]*?)<\\/span><\\/a>\\) [\\s\\S]*?(<a[^>]*?win_minus[^>]*?><img[^>]*?><\\/a>|)[^<]*(<a[^>]*?win_add[^>]*?><img[^>]*?><\\/a>|)<br[^>]*?>[^<]*?<span class=\"post_action\">(<a[^>]*?report[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?edit_post[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?delete[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?CODE=02[^>]*?>[^<]*?<\\/a>|)[^<]*[^<]*[\\s\\S]*?(<div class=\"post_body[^>]*?>[\\s\\S]*?<\\/div>)<\\/div>(?:<div data-post=|<!-- TABLE FOOTER -->)");
+    private final static Pattern postsPattern = Pattern.compile("<a name=\"entry([^\"]*?)\"[^>]*?><\\/a><div class=\"post_header_container\"><div class=\"post_header\"><span class=\"post_date\">([^&]*?)&[^<]*?<a[^>]*?>#(\\d+)<\\/a>\\|<\\/span>[\\s\\S]*?<span[^>]*?><a[^>]*?data-av=\"([^\"]*?)\">([^<]*?)<\\/a><\\/span><br[^>]*?>[\\s\\S]*?<span[^>]*?>(?:<[^>]*?>([^<]*?|)<\\/[^>]*?><br[^>]*?>|)[^<]*?<span[^>]*?color:([^;']*?)'>([^<]*?)<\\/span>[\\s\\S]*?<br[^>]*?><font color=\"([^\"]*?)\">[^<]*?<\\/font>[\\s\\S]*?<a[^>]*?showuser=([^\"]*?)\">[^<]*?<\\/a>[\\s\\S]*?ajaxrep[^>]*?>([^<]*?)<\\/span><\\/a>\\) [\\s\\S]*?(<a[^>]*?win_minus[^>]*?><img[^>]*?><\\/a>|)[^<]*(<a[^>]*?win_add[^>]*?><img[^>]*?><\\/a>|)<br[^>]*?>[^<]*?<span class=\"post_action\">(<a[^>]*?report[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?edit_post[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?delete[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?CODE=02[^>]*?>[^<]*?<\\/a>|)[^<]*[^<]*[\\s\\S]*?<div class=\"post_body[^>]*?>([\\s\\S]*?)<\\/div><\\/div>(?:<div data-post=|<!-- TABLE FOOTER -->)");
     private final static Pattern countsPattern = Pattern.compile("parseInt\\((\\d*)\\)[\\s\\S]*?parseInt\\(st\\*(\\d*)\\)");
     private final static Pattern titlePattern = Pattern.compile("<div class=\"topic_title_post\">([^,<]*)(?:, ([^<]*)|)<br");
     private final static Pattern alreadyInFavPattern = Pattern.compile("Тема уже добавлена в <a href=\"[^\"]*act=fav\">");
@@ -181,7 +181,7 @@ public class Theme {
             t.setVariableOpt("last_disable", getDisableStr(nextDisabled));
             t.setVariableOpt("disable_avatar_js", Boolean.toString(true));
             t.setVariableOpt("disable_avatar", true ? "" : "disable_avatar");
-            t.setVariableOpt("avatar_type", true ? "" : "avatar_circle");
+            t.setVariableOpt("avatar_type", true ? "avatar_circle" : "");
 
             Log.d("kek", "template check 1 " + (System.currentTimeMillis() - time2));
 
@@ -203,8 +203,14 @@ public class Theme {
                 t.setVariableOpt("number", post.getNumber());
 
                 //Post body
-                if (hatPostId == post.getId() && page.getPosts().size() > 1)
+                if (hatPostId == post.getId() && page.getPosts().size() > 1) {
+                    t.setVariableOpt("hat_state_class", "close");
                     t.addBlockOpt("hat_button");
+                    t.addBlockOpt("hat_content_start");
+                    t.addBlockOpt("hat_content_end");
+                } else {
+                    t.setVariableOpt("hat_state_class", "");
+                }
                 t.setVariableOpt("body", post.getBody());
 
                 //Post footer
@@ -271,6 +277,16 @@ public class Theme {
         }
 
         Log.d("kek", "theme parsing time " + (System.currentTimeMillis() - time));
+        final String veryLongString = page.getHtml();
+
+        int maxLogSize = 1000;
+        for (int i = 0; i <= veryLongString.length() / maxLogSize; i++) {
+            int start = i * maxLogSize;
+            int end = (i + 1) * maxLogSize;
+            end = end > veryLongString.length() ? veryLongString.length() : end;
+            Log.v("SUKA", veryLongString.substring(start, end));
+        }
+
         return page;
     }
 

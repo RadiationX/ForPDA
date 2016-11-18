@@ -384,7 +384,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
         public void onLoadResource(WebView view, String url) {
             super.onLoadResource(view, url);
 
-            //Log.d("kek", "IThemeJ: " + url);
+            Log.d("kek", "IThemeJ: " + url);
             if (action == NORMAL_ACTION) {
                 if (!url.contains("style_images") && m.reset(url).find()) {
                     webView.evalJs("onProgressChanged()");

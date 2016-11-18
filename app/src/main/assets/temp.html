@@ -26,29 +26,29 @@
 <body id="${body_type}">
 <div class="panel top ${navigation_disable}">
     <div class="navigation">
-        <button class="button first" onclick="ITheme.firstPage()" ${first_disable}><b>&lt;&lt;</b></button>
-        <button class="button prev" onclick="ITheme.prevPage()" ${prev_disable}><b>&lt;</b></button>
-        <button class="button page" onclick="ITheme.selectPage()"><b>Выбор</b></button>
-        <button class="button next" onclick="ITheme.nextPage()" ${next_disable}><b>&gt;</b></button>
-        <button class="button last" onclick="ITheme.lastPage()" ${last_disable}><b>&gt;&gt;</b></button>
+        <a class="btn first" onclick="ITheme.firstPage()" ${first_disable}><i class="icon"></i></a>
+        <a class="btn prev" onclick="ITheme.prevPage()" ${prev_disable}><i class="icon"></i></a>
+        <a class="btn page" onclick="ITheme.selectPage()"><b>Выбор</b><i class="icon"></i></a>
+        <a class="btn next" onclick="ITheme.nextPage()" ${next_disable}><i class="icon"></i></a>
+        <a class="btn last" onclick="ITheme.lastPage()" ${last_disable}><i class="icon"></i></a>
     </div>
 </div>
 <!-- $BeginBlock poll_block -->
-<div class="poll ${poll_type}">
-    <button class="title" onclick="togglePoll(this)">${poll_title}</button>
-    <div class="body close">
+<div class="poll ${poll_type} close">
+    <a class="btn title" onclick="toggleButton(this, 'body')"><span>${poll_title}</span><i class="icon"></i></a>
+    <div class="body" hidden>
         <div class="questions">
             <!-- $BeginBlock poll_question_block -->
             <div class="question">
                 <div class="title">${question_title}</div>
                 <div class="items">
                     <!-- $BeginBlock poll_default_item -->
-                    <label class="item ${poll_type}"><input type="${question_item_type}" name="${question_item_name}" value="${question_item_value}"><span class="title">${question_item_title}</span></label>
+                    <label class="item ${poll_type}"><input type="${question_item_type}" name="${question_item_name}" value="${question_item_value}"><i class="icon"><i class="add"></i></i><span class="title"><span>${question_item_title}</span></span></label>
                     <!-- $EndBlock poll_default_item -->
                     <!-- $BeginBlock poll_result_item -->
-                    <div class="item ${poll_type}"><span class="name">${question_item_title}</span><span class="num_votes">${question_item_votes}</span>
+                    <div class="item ${poll_type}"><span class="title"><span>${question_item_title}</span></span><span class="num_votes"><span>${question_item_votes}</span></span>
                         <div class="range_bar">
-                            <div class="range" style="width:${question_item_percent}%;"></div><span class="value">${question_item_percent}%</span>
+                            <div class="range" style="min-width:${question_item_percent}%;"><span class="value">${question_item_percent}%</span></div>
                         </div>
                     </div>
                     <!-- $EndBlock poll_result_item -->
@@ -56,18 +56,12 @@
             </div>
             <!-- $EndBlock poll_question_block -->
         </div>
-        <div class="votes_info">Всего голосов: ${poll_votes_count}</div>
+        <div class="votes_info"><span>Всего голосов: ${poll_votes_count}</span></div>
         <!-- $BeginBlock poll_buttons -->
         <div class="buttons">
-            <!-- $BeginBlock poll_vote_button -->
-            <button class="vote">Голосовать</button>
-            <!-- $EndBlock poll_vote_button -->
-            <!-- $BeginBlock poll_show_results_button -->
-            <button class="show_results">Показать результаты</button>
-            <!-- $EndBlock poll_show_results_button -->
-            <!-- $BeginBlock poll_show_poll_button -->
-            <button class="show_poll">Показать пункты опроса</button>
-            <!-- $EndBlock poll_show_poll_button -->
+            <!-- $BeginBlock poll_vote_button --><a class="btn vote"><span>Голосовать</span></a><!-- $EndBlock poll_vote_button -->
+            <!-- $BeginBlock poll_show_results_button --><a class="btn show_results"><span>Результаты</span></a><!-- $EndBlock poll_show_results_button -->
+            <!-- $BeginBlock poll_show_poll_button --><a class="btn show_poll"><span>Пункты опроса</span></a><!-- $EndBlock poll_show_poll_button -->
         </div>
         <!-- $EndBlock poll_buttons -->
 
@@ -76,9 +70,10 @@
 <!-- $EndBlock poll_block -->
 <div class="posts_list">
     <!-- $BeginBlock post -->
-    <div name="entry${post_id}" class="post_container ${user_online} ${disable_avatar} ${avatar_type}"
+    <div name="entry${post_id}" class="post_container ${user_online} ${disable_avatar} ${avatar_type} ${hat_state_class}"
          data-post-id="${post_id}" data-user-id="${user_id}" data-nick="${nick}">
-        <div class="post_header">
+        <!-- $BeginBlock hat_button --><a class="btn hat_button" onclick="toggleButton(this, 'hat_content')"><span>Шапка темы</span><i class="icon"></i></a><!-- $EndBlock hat_button -->
+        <!-- $BeginBlock hat_content_start --><div class="hat_content" hidden><!-- $EndBlock hat_content_start --><div class="post_header">
             <div class="header_wrapper">
                 <div class="avatar" onclick="ITheme.showUserMenu('${post_id}')">
                     <div class="img" style="background-image:url(${avatar});"></div>
@@ -87,41 +82,28 @@
                 <div class="inf group"><span style="${group_color}">${group}</span></div>
                 <span class="inf reputation" onclick="ITheme.showReputationMenu('${post_id}')"><span>${reputation}</span></span>
                 <span class="inf date"><span>${date}</span></span>
-                <button class="inf menu" onclick="ITheme.showPostMenu('${post_id}')"><span>Меню</span></button>
+                <a class="btn inf menu" onclick="ITheme.showPostMenu('${post_id}')"><span>Меню</span></a>
             </div>
         </div>
-        <!-- $BeginBlock hat_button -->
-        <button class="hat_button" onclick="toggleHat(this)"><b>Показать шапку</b></button>
-        <!-- $EndBlock hat_button -->
-        <div class="post_body close">${body}</div>
+        <div class="post_body">${body}</div>
         <div class="post_footer">
-            <!-- $BeginBlock report_block -->
-            <!--<button class="report" onclick="ITheme.reportPost(${post_id})"><span>Жалоба</span></button>-->
-            <!-- $EndBlock report_block -->
-            <!-- $BeginBlock reply_block -->
-            <button class="nick" onclick="ITheme.insertNick('${post_id}')"><span>Ответить</span></button>
-            <!-- $EndBlock reply_block -->
-            <!-- $BeginBlock vote_block -->
-            <button class="vote bad" onclick="ITheme.votePost('${post_id}', false)"><span>Плохо</span></button>
-            <button class="vote good" onclick="ITheme.votePost('${post_id}', true)"><span>Хорошо</span></button>
-            <!-- $EndBlock vote_block -->
-            <!-- $BeginBlock delete_block -->
-            <button class="delete" onclick="ITheme.deletePost('${post_id}')"><span>Удалить</span></button>
-            <!-- $EndBlock delete_block -->
-            <!-- $BeginBlock edit_block -->
-            <button class="edit" onclick="ITheme.editPost('${post_id}')"><span>Изменить</span></button>
-            <!-- $EndBlock edit_block -->
-        </div>
+            <!-- $BeginBlock report_block --><!--<a class="btn report" onclick="ITheme.reportPost(${post_id})"><span>Жалоба</span></a>--><!-- $EndBlock report_block -->
+            <!-- $BeginBlock reply_block --><a class="btn nick" onclick="ITheme.insertNick('${post_id}')"><span>Ответить</span></a><!-- $EndBlock reply_block -->
+            <!-- $BeginBlock vote_block --><a class="btn vote good" onclick="ITheme.votePost('${post_id}', true)"><span>Плохо</span></a>
+            <a class="btn vote bad" onclick="ITheme.votePost('${post_id}', false)"><span>Хорошо</span></a><!-- $EndBlock vote_block -->
+            <!-- $BeginBlock delete_block --><a class="btn delete" onclick="ITheme.deletePost('${post_id}')"><span>Удалить</span></a><!-- $EndBlock delete_block -->
+            <!-- $BeginBlock edit_block --><a class="btn edit" onclick="ITheme.editPost('${post_id}')"><span>Изменить</span></a><!-- $EndBlock edit_block -->
+        </div><!-- $BeginBlock hat_content_end --></div><!-- $EndBlock hat_content_end -->
     </div>
     <!-- $EndBlock post -->
 </div>
 <div class="panel bottom ${navigation_disable}">
     <div class="navigation">
-        <button class="button first" onclick="ITheme.firstPage()" ${first_disable}><b>&lt;&lt;</b></button>
-        <button class="button prev" onclick="ITheme.prevPage()" ${prev_disable}><b>&lt;</b></button>
-        <button class="button page" onclick="ITheme.selectPage()"><b>Выбор</b></button>
-        <button class="button next" onclick="ITheme.nextPage()" ${next_disable}><b>&gt;</b></button>
-        <button class="button last" onclick="ITheme.lastPage()" ${last_disable}><b>&gt;&gt;</b></button>
+        <a class="btn first" onclick="ITheme.firstPage()" ${first_disable}><i class="icon"></i></a>
+        <a class="btn prev" onclick="ITheme.prevPage()" ${prev_disable}><i class="icon"></i></a>
+        <a class="btn page" onclick="ITheme.selectPage()"><b>Выбор</b><i class="icon"></i></a>
+        <a class="btn next" onclick="ITheme.nextPage()" ${next_disable}><i class="icon"></i></a>
+        <a class="btn last" onclick="ITheme.lastPage()" ${last_disable}><i class="icon"></i></a>
     </div>
 </div>
 </body>
