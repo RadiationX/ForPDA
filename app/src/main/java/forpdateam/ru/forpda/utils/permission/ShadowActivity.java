@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.utils.permission;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,7 +10,8 @@ import android.os.Bundle;
  */
 
 @TargetApi(Build.VERSION_CODES.M)
-public class ShadowActivity extends Activity {
+public class ShadowActivity extends BasePermissionActivity {
+    private boolean[] shouldShowRequestPermissionRationale;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +33,10 @@ public class ShadowActivity extends Activity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        shouldShowRequestPermissionRationale = new boolean[permissions.length];
+        for (int i = 0; i < permissions.length; i++) {
+            shouldShowRequestPermissionRationale[i] = shouldShowRequestPermissionRationale(permissions[i]);
+        }
         RxPermissions.getInstance(this).onRequestPermissionsResult(requestCode, permissions, grantResults);
         finish();
     }

@@ -26,7 +26,6 @@ import java.util.HashMap;
 
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.rxbus.RxBus;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -45,7 +44,6 @@ public class App extends android.app.Application {
         INSTANCE = this;
     }
 
-    private RxBus rxBus;
     private MiniTemplator templator;
 
     public MiniTemplator getTemplator() {
@@ -109,7 +107,6 @@ public class App extends android.app.Application {
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(configuration);
-        rxBus = new RxBus();
         px2 = getContext().getResources().getDimensionPixelSize(R.dimen.dp2);
         px4 = getContext().getResources().getDimensionPixelSize(R.dimen.dp4);
         px6 = getContext().getResources().getDimensionPixelSize(R.dimen.dp6);
@@ -174,10 +171,6 @@ public class App extends android.app.Application {
         if (preferences == null)
             preferences = PreferenceManager.getDefaultSharedPreferences(this);
         return preferences;
-    }
-
-    public RxBus bus() {
-        return rxBus;
     }
 
     public static int px2, px4, px6, px8, px12, px14, px16, px24, px32, px36, px40, px48, px56, px64;

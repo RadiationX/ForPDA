@@ -28,13 +28,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import rx.Observable;
-import rx.functions.Func1;
-import rx.subjects.PublishSubject;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.ObservableTransformer;
+import io.reactivex.functions.Function;
+import io.reactivex.subjects.PublishSubject;
 
 public class RxPermissions {
 
     public static final String TAG = "RxPermissions";
+    static final Object TRIGGER = new Object();
     static RxPermissions sSingleton;
 
     public static RxPermissions getInstance(Context ctx) {
@@ -72,21 +75,21 @@ public class RxPermissions {
      * If one or several permissions have never been requested, invoke the related framework method
      * to ask the user if he allows the permissions.
      */
-    public Observable.Transformer<Object, Boolean> ensure(final String... permissions) {
+    public <T> ObservableTransformer<T, Boolean> ensure(final String... permissions) {
         return o -> request(o, permissions)
                 // Transform Observable<Permission> to Observable<Boolean>
                 .buffer(permissions.length)
-                .flatMap(new Func1<List<Permission>, Observable<Boolean>>() {
+                .flatMap(new Function<List<Permission>, ObservableSource<Boolean>>() {
                     @Override
-                    public Observable<Boolean> call(List<Permission> permissions1) {
-                        if (permissions1.isEmpty()) {
+                    public ObservableSource<Boolean> apply(List<Permission> permissions) throws Exception {
+                        if (permissions.isEmpty()) {
                             // Occurs during orientation change, when the subject receives onComplete.
                             // In that case we don't want to propagate that empty list to the
                             // subscriber, only the onComplete.
                             return Observable.empty();
                         }
                         // Return true if all permissions are granted.
-                        for (Permission p : permissions1) {
+                        for (Permission p : permissions) {
                             if (!p.granted) {
                                 return Observable.just(false);
                             }
@@ -103,8 +106,8 @@ public class RxPermissions {
      * If one or several permissions have never been requested, invoke the related framework method
      * to ask the user if he allows the permissions.
      */
-    public Observable.Transformer<Object, Permission> ensureEach(final String... permissions) {
-        return o -> request(o, permissions);
+    public <T> ObservableTransformer<T, Permission> ensureEach(final String... permissions) {
+        return upstream -> request(upstream, permissions);
     }
 
     /**
@@ -112,7 +115,7 @@ public class RxPermissions {
      * of your application</b>.
      */
     public Observable<Boolean> request(final String... permissions) {
-        return Observable.just(null).compose(ensure(permissions));
+        return Observable.just(TRIGGER).compose(ensure(permissions));
     }
 
     /**
@@ -120,7 +123,7 @@ public class RxPermissions {
      * of your application</b>.
      */
     public Observable<Permission> requestEach(final String... permissions) {
-        return Observable.just(null).compose(ensureEach(permissions));
+        return Observable.just(TRIGGER).compose(ensureEach(permissions));
     }
 
     private Observable<Permission> request(final Observable<?> trigger,
@@ -129,12 +132,7 @@ public class RxPermissions {
             throw new IllegalArgumentException("RxPermissions.request/requestEach requires at least one input permission");
         }
         return oneOf(trigger, pending(permissions))
-                .flatMap(new Func1<Object, Observable<Permission>>() {
-                    @Override
-                    public Observable<Permission> call(Object o) {
-                        return request_(permissions);
-                    }
-                });
+                .flatMap((Function<Object, ObservableSource<Permission>>) o -> request_(permissions));
     }
 
     private Observable<?> pending(final String... permissions) {
@@ -143,12 +141,12 @@ public class RxPermissions {
                 return Observable.empty();
             }
         }
-        return Observable.just(null);
+        return Observable.just(TRIGGER);
     }
 
     private Observable<?> oneOf(Observable<?> trigger, Observable<?> pending) {
         if (trigger == null) {
-            return Observable.just(null);
+            return Observable.just(TRIGGER);
         }
         return Observable.merge(trigger, pending);
     }
@@ -191,7 +189,7 @@ public class RxPermissions {
             startShadowActivity(unrequestedPermissions
                     .toArray(new String[unrequestedPermissions.size()]));
         }
-        return Observable.concat(Observable.from(list));
+        return Observable.concat(Observable.fromIterable(list));
     }
 
     /**
@@ -278,7 +276,7 @@ public class RxPermissions {
             mSubjects.remove(permissions[i]);
             boolean granted = grantResults[i] == PackageManager.PERMISSION_GRANTED;
             subject.onNext(new Permission(permissions[i], granted));
-            subject.onCompleted();
+            subject.onComplete();
         }
     }
 }
