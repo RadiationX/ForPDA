@@ -3,6 +3,8 @@ package forpdateam.ru.forpda.client;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.webkit.WebSettings;
 
@@ -12,9 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.utils.ourparser.Html;
 import okhttp3.Call;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
@@ -120,12 +125,40 @@ public class Client {
             if (!response.isSuccessful())
                 throw new OkHttpResponseException(response.code(), response.message(), url);
             res = response.body().string();
+            getCounts(res);
+            checkForumErrors(res);
             redirects.put(url, response.request().url().toString());
         } finally {
             if (response != null)
                 response.close();
         }
         return res;
+    }
+
+    private void checkForumErrors(String res) throws Exception {
+        Pattern pattern = Pattern.compile("^[\\s\\S]*?wr va-m text\">([\\s\\S]*?)</div></div></div></div><div class=\"footer\">");
+        Matcher m = pattern.matcher(res);
+        if(m.find()){
+            throw new OnlyShowException(Html.fromHtml(m.group(1)).toString());
+        }
+    }
+
+    private final static Pattern countsPattern = Pattern.compile("^[\\s\\S]*?(?:<a[^>]*?>Упоминания(?:.*\\((\\d+)\\)|)[^<]*?<\\/a>[\\s\\S]*?<a[^>]*?>Сообщения(?:.*\\((\\d+)\\)|)[^<]*?<\\/a>|<a href=\"[^\"]*?mentions\"[^>]*?><i[^>]*?>(\\d+)<\\/i>[\\s\\S]*?<a href=\"[\\s\\S]*?act=qms\"[^>]*?>[^<]*?<[^>]*?data-count=\"(\\d+)\")");
+    private Matcher countsMatcher;
+
+    private void getCounts(String res) {
+        if (countsMatcher == null)
+            countsMatcher = countsPattern.matcher(res);
+        else
+            countsMatcher.reset(res);
+
+        if (countsMatcher.find()) {
+            String group = countsMatcher.group(1);
+            Api.get().setMentionsCount(group == null ? 0 : Integer.parseInt(group));
+            group = countsMatcher.group(2);
+            Api.get().setQmsCount(group == null ? 0 : Integer.parseInt(group));
+            new Handler(Looper.getMainLooper()).post(() -> Api.get().notifyObservers());
+        }
     }
 
     public void cancelCallByUrl(String url) {

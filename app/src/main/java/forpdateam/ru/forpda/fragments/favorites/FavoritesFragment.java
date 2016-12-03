@@ -145,6 +145,7 @@ public class FavoritesFragment extends TabFragment {
         if (results.size() != 0) {
             adapter.addAll(results);
         }
+        Api.get().notifyObservers();
     }
 
     public void changeFav(int act, String type, int id) {

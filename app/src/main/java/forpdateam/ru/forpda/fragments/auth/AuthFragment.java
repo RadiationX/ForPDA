@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -34,7 +36,6 @@ import forpdateam.ru.forpda.utils.ourparser.Html;
  * Created by radiationx on 29.07.16.
  */
 public class AuthFragment extends TabFragment {
-    private Throwable throwable = null;
     private EditText nick, password, captcha;
     private ImageView captchaImage, avatar;
     private AuthForm authForm;
@@ -110,27 +111,27 @@ public class AuthFragment extends TabFragment {
 
     @Override
     public void loadData() {
-        mainSubscriber.subscribe(Api.Auth().getForm(), this::onLoadForm, new AuthForm());
+        mainSubscriber.subscribe(Api.Auth().getForm(), this::onLoadForm, new AuthForm(), view1 -> loadData());
     }
 
     private void onLoadForm(AuthForm authForm) {
+        if (authForm.getBody() == null) return;
         this.authForm = authForm;
-        if (throwable != null) {
-            new AlertDialog.Builder(getContext())
-                    .setMessage(throwable.getMessage())
-                    .setPositiveButton("Ok", null)
-                    .show();
-        } else {
-            ImageLoader.getInstance().displayImage(authForm.getCaptchaImageUrl(), captchaImage);
-        }
+        ImageLoader.getInstance().displayImage(authForm.getCaptchaImageUrl(), captchaImage);
     }
 
     private void tryLogin() {
         authForm.setCaptcha(captcha.getText().toString());
         authForm.setNick(nick.getText().toString());
         authForm.setPassword(password.getText().toString());
-        loginSubscriber.subscribe(Api.Auth().tryLogin(authForm), this::showLoginResult, false);
+        loginSubscriber.subscribe(Api.Auth().tryLogin(authForm), this::showLoginResult, false, view1 -> loadData());
         //showLoginResult(false);
+    }
+
+    private void showLoginResult(boolean b) {
+        if (b) {
+            loadProfile();
+        }
     }
 
     public void loadProfile() {
@@ -193,19 +194,5 @@ public class AuthFragment extends TabFragment {
             Api.Auth().doOnLogin();
             TabManager.getInstance().remove(getTag());
         }, 2500);
-    }
-
-    private void showLoginResult(boolean b) {
-        if (b) {
-            loadProfile();
-        } else {
-            if (throwable != null) {
-                new AlertDialog.Builder(getContext())
-                        .setMessage(throwable.getMessage())
-                        .setPositiveButton("Ok", (dialogInterface, i) -> loadData())
-                        .show();
-            }
-        }
-        throwable = null;
     }
 }

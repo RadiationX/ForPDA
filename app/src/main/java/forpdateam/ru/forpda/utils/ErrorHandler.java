@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.client.OkHttpResponseException;
+import forpdateam.ru.forpda.client.OnlyShowException;
 import forpdateam.ru.forpda.fragments.TabFragment;
 
 /**
@@ -39,15 +40,18 @@ public class ErrorHandler {
             OkHttpResponseException exception = (OkHttpResponseException) throwable;
             text = exception.getName() + " : " + exception.getCode();
             isNetworkEx = true;
+        } else if (c == OnlyShowException.class) {
+            listener = null;
+            text = throwable.getMessage();
         } else {
             text = throwable.getMessage();
         }
 
 
         //if (isNetworkEx) {
-        Snackbar snackbar = Snackbar.make(fragment.getCoordinatorLayout(), text, listener != null && isNetworkEx ? Snackbar.LENGTH_INDEFINITE : Snackbar.LENGTH_LONG);
-        if (listener != null && isNetworkEx)
-            snackbar.setAction("Retry", listener);
+        Snackbar snackbar = Snackbar.make(fragment.getCoordinatorLayout(), text, listener != null /*&& isNetworkEx*/ ? Snackbar.LENGTH_INDEFINITE : Snackbar.LENGTH_LONG);
+        if (listener != null /*&& isNetworkEx*/)
+            snackbar.setAction("Повторить", listener);
         snackbar.show();
         /*} else {
 

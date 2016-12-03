@@ -25,7 +25,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:padding="12dp"
-        app:srcCompat="@android:drawable/ic_delete"
+        app:srcCompat="@drawable/ic_clear_gray_24dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:layout_alignParentTop="true"

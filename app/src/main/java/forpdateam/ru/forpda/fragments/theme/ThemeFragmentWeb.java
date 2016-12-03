@@ -5,12 +5,19 @@ import android.annotation.TargetApi;
 import android.app.SearchManager;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.TabLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatImageButton;
@@ -23,9 +30,11 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
@@ -68,9 +77,10 @@ public class ThemeFragmentWeb extends ThemeFragment {
     private List<ThemePage> history = new ArrayList<>();
     private Subscriber<ThemePage> mainSubscriber = new Subscriber<>();
     private Subscriber<String> helperSubscriber = new Subscriber<>();
-
+    TabLayout tabLayout;
     //Тег для вьюхи поиска. Чтобы создавались кнопки и т.д, только при вызове поиска, а не при каждом создании меню.
     private int searchViewTag = 0;
+    private final ColorFilter colorFilter = new PorterDuffColorFilter(Color.argb(128, 255, 255, 255), PorterDuff.Mode.DST_IN);
 
     @SuppressLint("SetJavaScriptEnabled")
     @Nullable
@@ -89,6 +99,48 @@ public class ThemeFragmentWeb extends ThemeFragment {
         }
         webView.loadUrl("about:blank");
         refreshLayout.addView(webView);
+        tabLayout = (TabLayout) inflater.inflate(R.layout.theme_toolbar, (ViewGroup) toolbar.getParent(), false);
+        ((ViewGroup) toolbar.getParent()).addView(tabLayout, ((ViewGroup) toolbar.getParent()).indexOfChild(toolbar));
+        tabLayout.addTab(tabLayout.newTab().setIcon(App.getAppDrawable(R.drawable.chevron_double_left)).setTag("first"));
+        tabLayout.addTab(tabLayout.newTab().setIcon(App.getAppDrawable(R.drawable.chevron_left)).setTag("prev"));
+        tabLayout.addTab(tabLayout.newTab().setText("Выбор").setTag("selectPage"));
+        tabLayout.addTab(tabLayout.newTab().setIcon(App.getAppDrawable(R.drawable.chevron_right)).setTag("next"));
+        tabLayout.addTab(tabLayout.newTab().setIcon(App.getAppDrawable(R.drawable.chevron_double_right)).setTag("last"));
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (refreshLayout.isRefreshing()) return;
+                assert tab.getTag() != null;
+                switch ((String) tab.getTag()) {
+                    case "first":
+                        firstPage();
+                        break;
+                    case "prev":
+                        prevPage();
+                        break;
+                    case "selectPage":
+                        selectPage();
+                        break;
+                    case "next":
+                        nextPage();
+                        break;
+                    case "last":
+                        lastPage();
+                        break;
+                }
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                onTabSelected(tab);
+            }
+        });
         viewsReady();
 
 
@@ -96,6 +148,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams();
         params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
         collapsingToolbarLayout.setLayoutParams(params);
+        collapsingToolbarLayout.setScrimVisibleHeightTrigger(App.px56 + App.px24);
 
         refreshLayout.setOnRefreshListener(this::loadData);
 
@@ -254,7 +307,23 @@ public class ThemeFragmentWeb extends ThemeFragment {
             webView.setWebChromeClient(chromeClient);
         }
         updateView();
+        updateNavigation(themePage);
     }
+
+    private void updateNavigation(ThemePage themePage) {
+        tabLayout.setVisibility(View.VISIBLE);
+        boolean prevDisabled = themePage.getCurrentPage() <= 1;
+        boolean nextDisabled = themePage.getCurrentPage() == themePage.getAllPagesCount();
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            if (i == 2) continue;
+            boolean b = i < 2 ? prevDisabled : nextDisabled;
+            if (b)
+                tabLayout.getTabAt(i).getIcon().setColorFilter(colorFilter);
+            else
+                tabLayout.getTabAt(i).getIcon().clearColorFilter();
+        }
+    }
+
 
     private void updateTitle() {
         setTitle(pageData.getTitle());
@@ -333,6 +402,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
         private boolean handleUri(Uri uri) {
             Log.d("kek", "handle " + uri);
+            if (checkIsPoll(uri.toString())) return true;
             if (uri.getHost() != null && uri.getHost().matches("4pda.ru")) {
                 if (uri.getPathSegments().get(0).equals("forum")) {
                     String param = uri.getQueryParameter("showtopic");
@@ -371,6 +441,20 @@ public class ThemeFragmentWeb extends ThemeFragment {
             return true;
         }
 
+        private boolean checkIsPoll(String url) {
+            Matcher m = Pattern.compile("4pda.ru.*?addpoll=1").matcher(url);
+            if (m.find()) {
+                Uri uri = Uri.parse(url);
+                uri = uri.buildUpon()
+                        .appendQueryParameter("showtopic", Integer.toString(pageData.getId()))
+                        .appendQueryParameter("st", "" + pageData.getCurrentPage() * pageData.getPostsOnPageCount())
+                        .build();
+                load(uri);
+                return true;
+            }
+            return false;
+        }
+
         private void load(Uri uri) {
             action = NORMAL_ACTION;
             setTabUrl(uri.toString());
@@ -400,7 +484,6 @@ public class ThemeFragmentWeb extends ThemeFragment {
             if (action == BACK_ACTION)
                 webView.scrollTo(0, pageData.getScrollY());
         }
-
     }
 
     private class ThemeChromeClient extends WebChromeClient {
@@ -647,5 +730,23 @@ public class ThemeFragmentWeb extends ThemeFragment {
     @JavascriptInterface
     public void log(final String text) {
         Log.d("kek", "ITheme: ".concat(text));
+    }
+
+    @JavascriptInterface
+    public void showPollResults() {
+        run(() -> {
+            setTabUrl(getTabUrl().replace("&mode=show","").replace("&poll_open=true", "").concat("&mode=show&poll_open=true"));
+            loadData();
+        });
+
+    }
+
+    @JavascriptInterface
+    public void showPoll() {
+        run(() -> {
+            setTabUrl(getTabUrl().replace("&mode=show","").replace("&poll_open=true", "").concat("&poll_open=true"));
+            loadData();
+        });
+
     }
 }

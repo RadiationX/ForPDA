@@ -73,7 +73,8 @@ function scrollToElement(name) {
             p = p.parentNode;
         }
     }
-    anchorElem.scrollIntoView();
+    if(anchorElem)
+        anchorElem.scrollIntoView();
     lastTop = getCoordinates(anchorElem).top;
     //window.scrollBy(0, lastTop);
 
@@ -92,7 +93,8 @@ function scrollToElement(name) {
         elemToActivation.classList.remove('active');
 
     elemToActivation = document.querySelector('.post_container[name="' + name + '"]');
-    elemToActivation.classList.add('active');
+    if(elemToActivation)
+        elemToActivation.classList.add('active');
 }
 
 document.addEventListener('DOMContentLoaded', scrollToElement);
@@ -146,6 +148,12 @@ function blocksOpenClose() {
 document.addEventListener('DOMContentLoaded', blocksOpenClose);
 
 function getCoordinates(elem) {
+    if(!elem){
+        return {
+            top: 0,
+            left: 0
+        }
+    }
     // (1)
     var box = elem.getBoundingClientRect();
 

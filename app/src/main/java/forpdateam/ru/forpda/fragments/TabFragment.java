@@ -343,7 +343,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
             })
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(onNext, TabFragment.this::handleErrorRx);
+                    .subscribe(onNext, throwable -> handleErrorRx(throwable, onErrorAction));
         }
     }
 

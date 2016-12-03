@@ -24,7 +24,7 @@
     <script type="text/javascript" src="file:///android_asset/theme.js"></script>
 </head>
 <body id="${body_type}">
-<div class="panel top ${navigation_disable}">
+<!--<div class="panel top ${navigation_disable}">
     <div class="navigation">
         <a class="btn first" onclick="ITheme.firstPage()" ${first_disable}><i class="icon"></i></a>
         <a class="btn prev" onclick="ITheme.prevPage()" ${prev_disable}><i class="icon"></i></a>
@@ -32,11 +32,11 @@
         <a class="btn next" onclick="ITheme.nextPage()" ${next_disable}><i class="icon"></i></a>
         <a class="btn last" onclick="ITheme.lastPage()" ${last_disable}><i class="icon"></i></a>
     </div>
-</div>
+</div>-->
 <!-- $BeginBlock poll_block -->
 <div class="poll ${poll_type} close">
     <a class="btn title" onclick="toggleButton(this, 'body')"><span>${poll_title}</span><i class="icon"></i></a>
-    <div class="body" hidden>
+    <form action="index.php" method="get" class="body" hidden>
         <div class="questions">
             <!-- $BeginBlock poll_question_block -->
             <div class="question">
@@ -59,13 +59,13 @@
         <div class="votes_info"><span>Всего голосов: ${poll_votes_count}</span></div>
         <!-- $BeginBlock poll_buttons -->
         <div class="buttons">
-            <!-- $BeginBlock poll_vote_button --><a class="btn vote"><span>Голосовать</span></a><!-- $EndBlock poll_vote_button -->
-            <!-- $BeginBlock poll_show_results_button --><a class="btn show_results"><span>Результаты</span></a><!-- $EndBlock poll_show_results_button -->
-            <!-- $BeginBlock poll_show_poll_button --><a class="btn show_poll"><span>Пункты опроса</span></a><!-- $EndBlock poll_show_poll_button -->
+            <!-- $BeginBlock poll_vote_button --><button type="submit" class="btn vote"><span>Голосовать</span></button><!-- $EndBlock poll_vote_button -->
+            <!-- $BeginBlock poll_show_results_button --><a class="btn show_results" onclick="ITheme.showPollResults()"><span>Результаты</span></a><!-- $EndBlock poll_show_results_button -->
+            <!-- $BeginBlock poll_show_poll_button --><a class="btn show_poll" onclick="ITheme.showPoll()"><span>Пункты опроса</span></a><!-- $EndBlock poll_show_poll_button -->
         </div>
         <!-- $EndBlock poll_buttons -->
-
-    </div>
+        <input type="hidden" name="addpoll" value="1">
+    </form>
 </div>
 <!-- $EndBlock poll_block -->
 <div class="posts_list">
@@ -91,13 +91,13 @@
             <!-- $BeginBlock reply_block --><a class="btn nick" onclick="ITheme.insertNick('${post_id}')"><span>Ответить</span></a><!-- $EndBlock reply_block -->
             <!-- $BeginBlock vote_block --><a class="btn vote good" onclick="ITheme.votePost('${post_id}', false)"><span>Плохо</span></a>
             <a class="btn vote bad" onclick="ITheme.votePost('${post_id}', true)"><span>Хорошо</span></a><!-- $EndBlock vote_block -->
-            <!-- $BeginBlock delete_block --><a class="btn delete" onclick="ITheme.deletePost('${post_id}')"><span>Удалить</span></a><!-- $EndBlock delete_block -->
-            <!-- $BeginBlock edit_block --><a class="btn edit" onclick="ITheme.editPost('${post_id}')"><span>Изменить</span></a><!-- $EndBlock edit_block -->
+            <!-- $BeginBlock delete_block --><!--<a class="btn delete" onclick="ITheme.deletePost('${post_id}')"><span>Удалить</span></a>--><!-- $EndBlock delete_block -->
+            <!-- $BeginBlock edit_block --><!--<a class="btn edit" onclick="ITheme.editPost('${post_id}')"><span>Изменить</span></a>--><!-- $EndBlock edit_block -->
         </div><!-- $BeginBlock hat_content_end --></div><!-- $EndBlock hat_content_end -->
     </div>
     <!-- $EndBlock post -->
 </div>
-<div class="panel bottom ${navigation_disable}">
+<!--<div class="panel bottom ${navigation_disable}">
     <div class="navigation">
         <a class="btn first" onclick="ITheme.firstPage()" ${first_disable}><i class="icon"></i></a>
         <a class="btn prev" onclick="ITheme.prevPage()" ${prev_disable}><i class="icon"></i></a>
@@ -105,6 +105,6 @@
         <a class="btn next" onclick="ITheme.nextPage()" ${next_disable}><i class="icon"></i></a>
         <a class="btn last" onclick="ITheme.lastPage()" ${last_disable}><i class="icon"></i></a>
     </div>
-</div>
+</div>-->
 </body>
 </html>

@@ -2,6 +2,9 @@ package forpdateam.ru.forpda;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -16,12 +19,16 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.news.NewsListFragment;
 import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
 import forpdateam.ru.forpda.fragments.auth.AuthFragment;
+import forpdateam.ru.forpda.fragments.theme.ThemeFragment;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by radiationx on 07.08.16.
@@ -32,8 +39,10 @@ public class MenuDrawer {
     private ArrayList<MenuItem> menuItems = new ArrayList<>();
     private MenuAdapter adapter;
     private int active = -1;
+    private Realm realm;
 
     public MenuDrawer(MainActivity activity, DrawerLayout drawerLayout) {
+        realm = Realm.getDefaultInstance();
         initMenuItems();
         ListView menuList = (ListView) activity.findViewById(R.id.menu_list);
         drawer = (NavigationView) activity.findViewById(R.id.menu_drawer);
@@ -53,12 +62,37 @@ public class MenuDrawer {
                 select(findByClassName(NewsListFragment.class.getSimpleName()));
             }
         });
+        Api.get().addObserver((observable1, o) -> {
+            new Handler().post(() -> {
+
+            });
+            MenuItem item = getByClass(QmsContactsFragment.class);
+            if (item != null) {
+                item.count = Api.get().getQmsCount();
+            }
+            item = getByClass(ThemeFragment.class);
+            if (item != null) {
+                item.count = Api.get().getMentionsCount();
+            }
+            item = getByClass(FavoritesFragment.class);
+            if (item != null) {
+                item.count = 0;
+                RealmResults<FavItem> results = realm.where(FavItem.class).findAll();
+                for (FavItem favItem : results) {
+                    if (favItem.isNewMessages()) {
+                        item.count++;
+                    }
+                }
+            }
+            adapter.notifyDataSetChanged();
+        });
         String last = App.getInstance().getPreferences().getString("menu_drawer_last", Api.Auth().getState() ? NewsListFragment.class.getSimpleName() : AuthFragment.class.getSimpleName());
         if (last != null)
             select(findByClassName(last));
     }
 
-    public void select(String className){
+
+    public void select(String className) {
         select(findByClassName(className));
     }
 
@@ -85,12 +119,13 @@ public class MenuDrawer {
 
     private void initMenuItems() {
         if (!Api.Auth().getState())
-            menuItems.add(new MenuItem<>("Auth", android.R.drawable.ic_input_add, AuthFragment.class));
-        menuItems.add(new MenuItem<>("NewsModel List", android.R.drawable.ic_input_add, NewsListFragment.class));
-        menuItems.add(new MenuItem<>("Profile", android.R.drawable.ic_input_add, ProfileFragment.class));
+            menuItems.add(new MenuItem<>("Авторизация", R.drawable.ic_person_add_gray_24dp, AuthFragment.class));
+        menuItems.add(new MenuItem<>("Новости", R.drawable.ic_newspaper_gray, NewsListFragment.class));
         if (Api.Auth().getState()) {
-            menuItems.add(new MenuItem<>("QMS Contacts", android.R.drawable.ic_input_add, QmsContactsFragment.class));
-            menuItems.add(new MenuItem<>("Favorites", android.R.drawable.ic_input_add, FavoritesFragment.class));
+            menuItems.add(new MenuItem<>("Профиль", R.drawable.ic_person_grary_24dp, ProfileFragment.class));
+            menuItems.add(new MenuItem<>("Сообщения", R.drawable.ic_mail_gray_24dp, QmsContactsFragment.class));
+            menuItems.add(new MenuItem<>("Избранное", R.drawable.ic_star_black_24dp, FavoritesFragment.class));
+            menuItems.add(new MenuItem<>("Упоминания", R.drawable.ic_hearing_gray_24dp, ThemeFragment.class));
         }
     }
 
@@ -122,7 +157,7 @@ public class MenuDrawer {
     public class MenuAdapter extends ArrayAdapter<MenuItem> {
         private final static int item_res = R.layout.drawer_menu_item;
         private final LayoutInflater inflater;
-        private int color = Color.argb(128, 255, 128, 65);
+        private int color = Color.argb(48, 128, 128, 128);
 
         public MenuAdapter(Context context) {
             super(context, item_res, menuItems);
@@ -134,8 +169,9 @@ public class MenuDrawer {
             return menuItems.size();
         }
 
+        @NonNull
         @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
             final ViewHolder holder;
 
             if (convertView == null) {
@@ -143,6 +179,7 @@ public class MenuDrawer {
                 holder = new ViewHolder();
                 assert convertView != null;
                 holder.text = (TextView) convertView.findViewById(R.id.text);
+                holder.count = (TextView) convertView.findViewById(R.id.count);
                 holder.icon = (ImageView) convertView.findViewById(R.id.icon);
                 convertView.setTag(holder);
             } else {
@@ -151,24 +188,46 @@ public class MenuDrawer {
 
             MenuItem item = menuItems.get(position);
 
-            if (position == active)
-                convertView.setBackgroundColor(color);
-            else
-                convertView.setBackgroundColor(Color.TRANSPARENT);
+            if (item.getCount() > 0) {
+                holder.count.setVisibility(View.VISIBLE);
+                holder.count.setText(Integer.toString(item.count));
+            } else {
+                holder.count.setVisibility(View.GONE);
+            }
 
-            holder.icon.setImageDrawable(App.getContext().getResources().getDrawable(item.getDrawable()));
+            if (position == active){
+                convertView.setBackgroundColor(color);
+                holder.text.setTextColor(App.getContext().getResources().getColor(R.color.colorPrimary));
+                holder.icon.setColorFilter(App.getContext().getResources().getColor(R.color.colorPrimary));
+            }else {
+                convertView.setBackgroundColor(Color.TRANSPARENT);
+                holder.text.setTextColor(App.getContext().getResources().getColor(R.color.text_drawer_item_color));
+                holder.icon.clearColorFilter();
+            }
+
+            holder.icon.setImageDrawable(App.getAppDrawable(item.getDrawable()));
             holder.text.setText(item.getName());
             return convertView;
         }
 
         public class ViewHolder {
             public TextView text;
+            public TextView count;
             public ImageView icon;
         }
     }
 
+    private MenuItem getByClass(Class className) {
+        for (MenuItem item : menuItems) {
+            if (item.gettClass() == className)
+                return item;
+        }
+        return null;
+    }
+
     private class MenuItem<T extends TabFragment> {
         private String name;
+        private int count = 0;
         private int drawable = R.drawable.adf;
         private Class<T> tClass;
 
@@ -180,6 +239,10 @@ public class MenuDrawer {
 
         public String getName() {
             return name;
+        }
+
+        public int getCount() {
+            return count;
         }
 
         public int getDrawable() {

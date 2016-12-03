@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.TabLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tabs"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:layout_gravity="bottom"
+    android:layout_marginTop="?attr/actionBarSize"
+    android:visibility="gone"
+    app:layout_collapseMode="pin"
+    app:tabGravity="fill"
+    app:tabIndicatorColor="@android:color/transparent"
+    app:tabMode="fixed"
+    app:tabPaddingEnd="0dp"
+    app:tabPaddingStart="0dp"
+    app:tabSelectedTextColor="@color/white"
+    app:tabTextColor="@color/white" />
