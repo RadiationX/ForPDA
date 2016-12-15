@@ -3,6 +3,8 @@ package forpdateam.ru.forpda.utils;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.util.Log;
 
 import forpdateam.ru.forpda.App;
 
@@ -35,5 +37,9 @@ public class Utils {
             throw new NullPointerException();
         }
         return value;
+    }
+
+    public static void log(@NonNull String msg) {
+        Log.e("TEST", msg);
     }
 }
