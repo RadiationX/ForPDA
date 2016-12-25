@@ -1,137 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:theme="@style/AUTH">
-
+    android:layout_height="match_parent">
     <RelativeLayout
-        android:id="@+id/auth_complete"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:paddingStart="@dimen/dp32"
-        android:paddingEnd="@dimen/dp32"
-        android:visibility="gone">
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:theme="@style/AUTH"
+        android:layout_gravity="center">
 
-        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/auth_avatar"
-            android:layout_width="128dp"
-            android:layout_height="128dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="2dp"
-            android:scaleType="centerCrop"
-            app:civ_border_color="#00000000"
-            app:civ_border_width="0dp" />
-
-        <com.github.rahatarmanahmed.cpv.CircularProgressView
-            android:id="@+id/auth_progress"
-            android:layout_width="132dp"
-            android:layout_height="132dp"
-            android:layout_centerHorizontal="true"
-            android:scaleType="centerCrop"
-            app:cpv_animAutostart="true"
-            app:cpv_color="#ffffffff"
-            app:cpv_indeterminate="true" />
-
-        <TextView
-            android:id="@+id/auth_complete_text"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/auth_complete"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/auth_avatar"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/dp32"
-            android:textColor="@android:color/white"
-            android:textSize="26sp"
-            android:visibility="gone" />
+            android:layout_centerInParent="true"
+            android:paddingStart="@dimen/dp32"
+            android:paddingEnd="@dimen/dp32"
+            android:visibility="gone">
+
+            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/auth_avatar"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="2dp"
+                android:scaleType="centerCrop"
+                app:civ_border_color="#00000000"
+                app:civ_border_width="0dp" />
+
+            <com.github.rahatarmanahmed.cpv.CircularProgressView
+                android:id="@+id/auth_progress"
+                android:layout_width="132dp"
+                android:layout_height="132dp"
+                android:layout_centerHorizontal="true"
+                android:scaleType="centerCrop"
+                app:cpv_animAutostart="true"
+                app:cpv_color="#ffffffff"
+                app:cpv_indeterminate="true" />
+
+            <TextView
+                android:id="@+id/auth_complete_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/auth_avatar"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/dp32"
+                android:textColor="@android:color/white"
+                android:textSize="26sp"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:id="@+id/auth_main_form"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/dp32"
+            android:paddingEnd="@dimen/dp32">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/auth_login"
+                    style="@style/Widget.AppCompat.EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:ems="10"
+                    android:hint="Логин"
+                    android:inputType="textPersonName"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:textColor="@color/white" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/auth_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:hint="Пароль"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:textColor="@color/white" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:animateLayoutChanges="true">
+
+                <ImageView
+                    android:id="@+id/captchaImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/dp8"
+                    android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"/>
+
+            </android.support.v7.widget.CardView>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/auth_captcha"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:hint="Введите число"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:maxLength="4"
+                    android:textColor="@color/white" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/auth_send"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:enabled="false"
+                android:text="Войти" />
+        </LinearLayout>
     </RelativeLayout>
-
-
-    <LinearLayout
-        android:id="@+id/auth_main_form"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical"
-        android:paddingStart="@dimen/dp32"
-        android:paddingEnd="@dimen/dp32">
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.v7.widget.AppCompatEditText
-                android:id="@+id/auth_login"
-                style="@style/Widget.AppCompat.EditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:ems="10"
-                android:hint="Логин"
-                android:inputType="textPersonName"
-                android:maxLines="1"
-                android:scrollHorizontally="true"
-                android:textColor="@color/white" />
-
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.v7.widget.AppCompatEditText
-                android:id="@+id/auth_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:hint="Пароль"
-                android:inputType="textPassword"
-                android:maxLines="1"
-                android:scrollHorizontally="true"
-                android:textColor="@color/white" />
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:animateLayoutChanges="true">
-
-            <ImageView
-                android:id="@+id/captchaImage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/dp8"
-                android:scaleType="fitXY" />
-
-        </android.support.v7.widget.CardView>
-
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.v7.widget.AppCompatEditText
-                android:id="@+id/auth_captcha"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:hint="Введите число"
-                android:inputType="number"
-                android:maxLines="1"
-                android:scrollHorizontally="true"
-                android:maxLength="4"
-                android:textColor="@color/white" />
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/auth_send"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:enabled="false"
-            android:text="Войти" />
-    </LinearLayout>
-</RelativeLayout>
+</ScrollView>

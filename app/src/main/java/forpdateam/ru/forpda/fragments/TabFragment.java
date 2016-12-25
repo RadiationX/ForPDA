@@ -245,7 +245,8 @@ public class TabFragment extends RxFragment implements ITabFragment {
     protected void initFabBehavior() {
         CoordinatorLayout.LayoutParams params =
                 (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
-        params.setBehavior(new ScrollAwareFABBehavior(fab.getContext(), null));
+        // TODO: 20.12.16 not work in 25.1.0
+        //params.setBehavior(new ScrollAwareFABBehavior(fab.getContext(), null));
         fab.requestLayout();
     }
 

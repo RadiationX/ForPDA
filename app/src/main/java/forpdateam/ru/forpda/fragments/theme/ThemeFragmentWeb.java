@@ -18,6 +18,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatImageButton;
@@ -51,10 +52,12 @@ import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.theme.Theme;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
+import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
@@ -306,8 +309,16 @@ public class ThemeFragmentWeb extends ThemeFragment {
             chromeClient = new ThemeChromeClient();
             webView.setWebChromeClient(chromeClient);
         }
+        updateFavorites(themePage);
         updateView();
         updateNavigation(themePage);
+    }
+
+    private void updateFavorites(ThemePage themePage) {
+        if (themePage.getCurrentPage() < themePage.getAllPagesCount()) return;
+        String tag = TabManager.getInstance().getTagContainClass(FavoritesFragment.class);
+        if (tag == null) return;
+        ((FavoritesFragment) TabManager.getInstance().get(tag)).markRead(themePage.getId());
     }
 
     private void updateNavigation(ThemePage themePage) {
@@ -735,7 +746,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
     @JavascriptInterface
     public void showPollResults() {
         run(() -> {
-            setTabUrl(getTabUrl().replace("&mode=show","").replace("&poll_open=true", "").concat("&mode=show&poll_open=true"));
+            setTabUrl(getTabUrl().replace("&mode=show", "").replace("&poll_open=true", "").concat("&mode=show&poll_open=true"));
             loadData();
         });
 
@@ -744,7 +755,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
     @JavascriptInterface
     public void showPoll() {
         run(() -> {
-            setTabUrl(getTabUrl().replace("&mode=show","").replace("&poll_open=true", "").concat("&poll_open=true"));
+            setTabUrl(getTabUrl().replace("&mode=show", "").replace("&poll_open=true", "").concat("&poll_open=true"));
             loadData();
         });
 

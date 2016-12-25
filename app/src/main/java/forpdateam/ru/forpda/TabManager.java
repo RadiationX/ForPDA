@@ -124,10 +124,13 @@ public class TabManager {
         if (tabFragment == null)
             return;
         String check;
-        if (tabFragment.isAlone())
-            check = getTagContainClass(tabFragment.getClass().getSimpleName());
-        else
+        if (tabFragment.isAlone()){
+            check = getTagContainClass(tabFragment.getClass());
+        }
+        else{
             check = getTagByUID(tabFragment.getUID());
+
+        }
         Log.d("kek", "add ID "+tabFragment.getUID() );
 
         if (check != null) {
@@ -153,7 +156,8 @@ public class TabManager {
         return null;
     }
 
-    private String getTagContainClass(final String className) {
+    public String getTagContainClass(final Class aClass) {
+        String className = aClass.getSimpleName();
         for (TabFragment fragment : existingFragments)
             if (fragment.getClass().getSimpleName().equals(className)) return fragment.getTag();
         return null;

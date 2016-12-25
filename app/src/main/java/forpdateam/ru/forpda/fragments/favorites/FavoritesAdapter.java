@@ -119,10 +119,10 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         holder.pinIcon.setVisibility(item.isPin() ? View.VISIBLE : View.GONE);
         holder.lockIcon.setVisibility(item.getInfo().contains("X") ? View.VISIBLE : View.GONE);
         holder.pollIcon.setVisibility(item.getInfo().contains("^") ? View.VISIBLE : View.GONE);
-        if (item.getInfo().contains("+^"))
+        /*if (item.getInfo().contains("+^"))
             holder.pollIcon.setColorFilter(ContextCompat.getColor(App.getContext(), R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
         else
-            holder.pollIcon.clearColorFilter();
+            holder.pollIcon.clearColorFilter();*/
 
         holder.lastNick.setText(item.getLastUserNick());
         holder.date.setText(item.getDate());

@@ -141,7 +141,7 @@ public class ThemeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 }
             } else if (elClassios.contains("code")) {
                 thisView = new CodePostBlock(getContext());
-                Element.fixSpace(element.getLast());
+                element.getLast().fixSpace();
             } else if (elClassios.contains("spoil")) {
                 thisView = new SpoilerPostBlock(getContext());
             } else {

@@ -88,6 +88,10 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         //IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=84979&view=getnewpost");
     }
 
+    public MenuDrawer getMenuDrawer() {
+        return menuDrawer;
+    }
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);

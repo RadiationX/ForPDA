@@ -26,7 +26,8 @@ import io.reactivex.Observable;
 public class Theme {
     //y: Oh God... Why?
     //g: Because it is faster
-    private final static Pattern postsPattern = Pattern.compile("<a name=\"entry([^\"]*?)\"[^>]*?><\\/a><div class=\"post_header_container\"><div class=\"post_header\"><span class=\"post_date\">([^&]*?)&[^<]*?<a[^>]*?>#(\\d+)<\\/a>[^<]*?<\\/span>[\\s\\S]*?<span[^>]*?><a[^>]*?data-av=\"([^\"]*?)\">([^<]*?)<\\/a><\\/span><br[^>]*?>[\\s\\S]*?<span[^>]*?>(?:<[^>]*?>([^<]*?|)<\\/[^>]*?><br[^>]*?>|)[^<]*?<span[^>]*?color:([^;']*?)'>([^<]*?)<\\/span>[\\s\\S]*?<br[^>]*?><font color=\"([^\"]*?)\">[^<]*?<\\/font>[\\s\\S]*?<a[^>]*?showuser=([^\"]*?)\">[^<]*?<\\/a>[\\s\\S]*?ajaxrep[^>]*?>([^<]*?)<\\/span><\\/a>\\) [\\s\\S]*?(<a[^>]*?win_minus[^>]*?><img[^>]*?><\\/a>|)[^<]*(<a[^>]*?win_add[^>]*?><img[^>]*?><\\/a>|)<br[^>]*?>[^<]*?<span class=\"post_action\">(<a[^>]*?report[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?edit_post[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?delete[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?CODE=02[^>]*?>[^<]*?<\\/a>|)[^<]*[^<]*[\\s\\S]*?<div class=\"post_body[^>]*?>([\\s\\S]*?)<\\/div><\\/div>(?:<div data-post=|<!-- TABLE FOOTER -->)");
+    private final static Pattern postsPattern = Pattern.compile("<a name=\"entry([^\"]*?)\"[^>]*?><\\/a><div class=\"post_header_container\"><div class=\"post_header\"><span class=\"post_date\">([^&]*?)&[^<]*?<a[^>]*?>#(\\d+)<\\/a>[^<]*?<\\/span>[\\s\\S]*?<font color=\"([^\"]*?)\">[^<]*?<\\/font> <a[^>]*?data-av=\"([^\"]*?)\">([^<]*?)<\\/a>[\\s\\S]*?<a[^>]*?showuser=([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[\\s\\S]*?<br[^>]*?>[\\s\\S]*?<span[^>]*?>(?:<[^>]*?>([^<]*?|)<\\/[^>]*?><br[^>]*?>|)[^<]*?<span[^>]*?color:([^;']*?)'>([^<]*?)<\\/span>[\\s\\S]*?<br[^>]*?>[\\s\\S]*?(<a[^>]*?win_minus[^>]*?>[\\s\\S]*?<\\/a>|) \\([\\s\\S]*?ajaxrep[^>]*?>([^<]*?)<\\/span><\\/a>\\) [^<]*(<a[^>]*?win_add[^>]*?>[\\s\\S]*?<\\/a>|)<br[^>]*?>[^<]*?<span class=\"post_action\">(<a[^>]*?report[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?edit_post[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?delete[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?CODE=02[^>]*?>[^<]*?<\\/a>|)[^<]*[^<]*[\\s\\S]*?<div class=\"post_body[^>]*?>([\\s\\S]*?)<\\/div><\\/div>(?:<div data-post|<!-- TABLE FOOTER -->)");
+
     private final static Pattern countsPattern = Pattern.compile("parseInt\\((\\d*)\\)[\\s\\S]*?parseInt\\(st\\*(\\d*)\\)");
     private final static Pattern titlePattern = Pattern.compile("<div class=\"topic_title_post\">([^,<]*)(?:, ([^<]*)|)<br");
     private final static Pattern alreadyInFavPattern = Pattern.compile("Тема уже добавлена в <a href=\"[^\"]*act=fav\">");
@@ -39,6 +40,9 @@ public class Theme {
     private final static Pattern pollQuestions = Pattern.compile("<tr><td[^>]*?><div class[\\s\\S]*?<strong>([\\s\\S]*?)<\\/strong>[\\s\\S]*?<table[^>]*?>([\\s\\S]*?)<\\/table>");
     private final static Pattern pollQuestionItems = Pattern.compile("<tr>(?:<td[^>]*?colspan[^>]*?><input type=\"([^\"]*?)\" name=\"([^\"]*?)\" value=\"([^\"]*?)\"[^>]*?>[^<]*?<b>([\\s\\S]*?)<\\/b>[\\s\\S]*?|<td[^>]*?width[^>]*?>([\\s\\S]*?)<\\/td><td[^>]*?>[^<]*?<b>([\\s\\S]*?)<\\/b>[^\\[]*?\\[([^\\%]*?)\\%[\\s\\S]*?)<\\/tr>");
     private final static Pattern pollButtons = Pattern.compile("<input[^>]*?value=\"([^\"]*?)\"");
+
+
+    private final static Pattern mentionsPattern = Pattern.compile("<a[^>]*?>([\\s\\S]*?)<\\/a>[^<]*?<\\/div><div[^>]*? class=\" ([^\"]*)\"><a name=\"([^\"]*?)\"[^>]*?><\\/a><div class=\"post_header_container\"><div class=\"post_header\"><span class=\"post_date\"><a href=\"([^\"]*?)\">([^&|]*)[\\s\\S]*?<\\/span>[\\s\\S]*?<span[^>]*?><a[^>]*?data-av=\"([^\"]*?)\" href=\"[\\s\\S]*?(\\d+)\"[^>]*?>([^<]*?)<\\/a><\\/span><br[^>]*?>[\\s\\S]*?<span[^>]*?>(?:<[^>]*?>([^<]*?|)<\\/[^>]*?><br[^>]*?>|)[^<]*?<span[^>]*?color:([^;']*?)'>([^<]*?)<\\/span>[\\s\\S]*?<br[^>]*?><font color=\"([^\"]*?)\">[^<]*?<\\/font>[\\s\\S]*?<a[^>]*?>[^<]*?<\\/a>[\\s\\S]*?ajaxrep[^>]*?>([^<]*?)<\\/span><\\/a>\\) [\\s\\S]*?(<a[^>]*?win_minus[^>]*?><img[^>]*?><\\/a>|)[^<]*(<a[^>]*?win_add[^>]*?><img[^>]*?><\\/a>|)<br[^>]*?>[^<]*?<span class=\"post_action\">(<a[^>]*?report[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?edit_post[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?delete[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?CODE=02[^>]*?>[^<]*?<\\/a>|)[^<]*[^<]*[\\s\\S]*?(<div class=\"post_body(?: [^ \"]*|) ([^\"]*?)\"[^>]*?>[\\s\\S]*?<\\/div>)<\\/div>[^<]*?(?:<div class=\"topic_title_post|<div><div class=\"pagination\">)");
 
     public Theme() {
     }
@@ -94,15 +98,15 @@ public class Theme {
             post.setId(Integer.parseInt(matcher.group(1)));
             post.setDate(matcher.group(2));
             post.setNumber(Integer.parseInt(matcher.group(3)));
-            post.setAvatar(matcher.group(4));
-            post.setNick(Html.fromHtml(matcher.group(5)).toString());
-            post.setCurator(matcher.group(6) != null);
-            post.setGroupColor(matcher.group(7));
-            post.setGroup(matcher.group(8));
-            post.setOnline(matcher.group(9).contains("green"));
-            post.setUserId(Integer.parseInt(matcher.group(10)));
-            post.setReputation(matcher.group(11));
-            post.setCanMinus(!matcher.group(12).isEmpty());
+            post.setOnline(matcher.group(4).contains("green"));
+            post.setAvatar(matcher.group(5));
+            post.setNick(Html.fromHtml(matcher.group(6)).toString());
+            post.setUserId(Integer.parseInt(matcher.group(7)));
+            post.setCurator(matcher.group(8) != null);
+            post.setGroupColor(matcher.group(9));
+            post.setGroup(matcher.group(10));
+            post.setCanMinus(!matcher.group(11).isEmpty());
+            post.setReputation(matcher.group(12));
             post.setCanPlus(!matcher.group(13).isEmpty());
             post.setCanReport(!matcher.group(14).isEmpty());
             post.setCanEdit(!matcher.group(15).isEmpty());
@@ -204,7 +208,7 @@ public class Theme {
                 t.setVariableOpt("number", post.getNumber());
 
                 //Post body
-                if (hatPostId == post.getId() && page.getPosts().size() > 1) {
+                if (page.getPosts().size() > 1 && hatPostId == post.getId()) {
                     t.setVariableOpt("hat_state_class", "close");
                     t.addBlockOpt("hat_button");
                     t.addBlockOpt("hat_content_start");
@@ -371,7 +375,7 @@ public class Theme {
 
         try {
             Client.getInstance().post("http://4pda.ru/forum/index.php", headers);
-        }catch (OnlyShowException exception){
+        } catch (OnlyShowException exception) {
             return exception.getMessage();
         }
         return "";

@@ -63,15 +63,12 @@ public class AuthParser {
     }
 
     private boolean checkLogin(String response) {
-        boolean result = false;
-
-        System.out.print(response);
-        Matcher matcher = Pattern.compile("<a href=\"[^\"]*?showuser=(\\d*)\"[\\s\\S]*?<a[^>]*?act=login&CODE=03&k=([^&]*?)&").matcher(response);
+        Matcher matcher = Pattern.compile("<i class=\"icon-profile\">[\\s\\S]*?<ul class=\"dropdown-menu\">[\\s\\S]*?showuser=(\\d+)\"[\\s\\S]*?action=logout[^\"]*?k=([a-z0-9]{32})").matcher(response);
         if (matcher.find()) {
-            result = true;
             App.getInstance().getPreferences().edit().putString("auth_key", matcher.group(2)).apply();
+            return true;
         }
-        return result;
+        return false;
     }
 
     public boolean tryLogout() throws Exception {

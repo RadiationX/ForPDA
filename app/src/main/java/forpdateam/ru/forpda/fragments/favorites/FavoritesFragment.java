@@ -71,6 +71,7 @@ public class FavoritesFragment extends TabFragment {
     private FavoritesAdapter adapter;
     private Subscriber<FavData> mainSubscriber = new Subscriber<>();
     private Subscriber<Boolean> helperSubscriber = new Subscriber<>();
+    boolean markedRead = false;
 
     private CharSequence getPinText(boolean b) {
         return b ? "Открепить" : "Закрепить";
@@ -150,6 +151,20 @@ public class FavoritesFragment extends TabFragment {
 
     public void changeFav(int act, String type, int id) {
         helperSubscriber.subscribe(Api.Favorites().changeFav(act, type, id), this::onChangeFav, false);
+    }
+
+    public void markRead(int themeId) {
+        realm.executeTransactionAsync(realm1 -> realm1.where(FavItem.class).equalTo("topicId", themeId).findFirst().setNewMessages(false));
+        markedRead = true;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (markedRead) {
+            bindView();
+            markedRead = false;
+        }
     }
 
     private void onChangeFav(boolean v) {
