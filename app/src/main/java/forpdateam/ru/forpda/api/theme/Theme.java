@@ -29,7 +29,7 @@ public class Theme {
     private final static Pattern postsPattern = Pattern.compile("<a name=\"entry([^\"]*?)\"[^>]*?><\\/a><div class=\"post_header_container\"><div class=\"post_header\"><span class=\"post_date\">([^&]*?)&[^<]*?<a[^>]*?>#(\\d+)<\\/a>[^<]*?<\\/span>[\\s\\S]*?<font color=\"([^\"]*?)\">[^<]*?<\\/font> <a[^>]*?data-av=\"([^\"]*?)\">([^<]*?)<\\/a>[\\s\\S]*?<a[^>]*?showuser=([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[\\s\\S]*?<br[^>]*?>[\\s\\S]*?<span[^>]*?>(?:<[^>]*?>([^<]*?|)<\\/[^>]*?><br[^>]*?>|)[^<]*?<span[^>]*?color:([^;']*?)'>([^<]*?)<\\/span>[\\s\\S]*?<br[^>]*?>[\\s\\S]*?(<a[^>]*?win_minus[^>]*?>[\\s\\S]*?<\\/a>|) \\([\\s\\S]*?ajaxrep[^>]*?>([^<]*?)<\\/span><\\/a>\\) [^<]*(<a[^>]*?win_add[^>]*?>[\\s\\S]*?<\\/a>|)<br[^>]*?>[^<]*?<span class=\"post_action\">(<a[^>]*?report[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?edit_post[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?delete[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?CODE=02[^>]*?>[^<]*?<\\/a>|)[^<]*[^<]*[\\s\\S]*?<div class=\"post_body[^>]*?>([\\s\\S]*?)<\\/div><\\/div>(?:<div data-post|<!-- TABLE FOOTER -->)");
 
     private final static Pattern countsPattern = Pattern.compile("parseInt\\((\\d*)\\)[\\s\\S]*?parseInt\\(st\\*(\\d*)\\)");
-    private final static Pattern titlePattern = Pattern.compile("<div class=\"topic_title_post\">([^,<]*)(?:, ([^<]*)|)<br");
+    private final static Pattern titlePattern = Pattern.compile("<div class=\"topic_title_post\">(?:([^<]*?)(?:, ([^<]*?)|))<br");
     private final static Pattern alreadyInFavPattern = Pattern.compile("Тема уже добавлена в <a href=\"[^\"]*act=fav\">");
     private final static Pattern paginationPattern = Pattern.compile("pagination\">([\\s\\S]*?<span[^>]*?>([^<]*?)</span>[\\s\\S]*?)</div><br");
     private final static Pattern themeIdPattern = Pattern.compile("showtopic=([\\d][^&]*)");
@@ -185,8 +185,8 @@ public class Theme {
             t.setVariableOpt("next_disable", getDisableStr(nextDisabled));
             t.setVariableOpt("last_disable", getDisableStr(nextDisabled));
             t.setVariableOpt("disable_avatar_js", Boolean.toString(true));
-            t.setVariableOpt("disable_avatar", true ? "" : "disable_avatar");
-            t.setVariableOpt("avatar_type", true ? "avatar_circle" : "");
+            t.setVariableOpt("disable_avatar", App.getInstance().getPreferences().getBoolean("theme.show_avatars", true) ? "" : "disable_avatar");
+            t.setVariableOpt("avatar_type", App.getInstance().getPreferences().getBoolean("theme.circle_avatars", true) ? "avatar_circle" : "");
 
             Log.d("kek", "template check 1 " + (System.currentTimeMillis() - time2));
 

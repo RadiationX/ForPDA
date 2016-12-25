@@ -70,6 +70,7 @@
                             android:textColor="@color/white"
                             android:maxLines="1"
                             android:ellipsize="end"
+                            android:textStyle="bold"
                             android:textSize="18sp"/>
 
                         <TextView
@@ -84,6 +85,14 @@
                 </LinearLayout>
 
             </android.support.v7.widget.Toolbar>
+            <View
+                android:id="@+id/notify_dot"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:background="@drawable/notify_dot"
+                android:layout_marginTop="18dp"
+                android:layout_marginStart="32dp"
+                android:visibility="gone"/>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 

@@ -63,9 +63,6 @@ public class MenuDrawer {
             }
         });
         Api.get().addObserver((observable1, o) -> {
-            new Handler().post(() -> {
-
-            });
             MenuItem item = getByClass(QmsContactsFragment.class);
             if (item != null) {
                 item.count = Api.get().getQmsCount();
@@ -76,13 +73,7 @@ public class MenuDrawer {
             }
             item = getByClass(FavoritesFragment.class);
             if (item != null) {
-                item.count = 0;
-                RealmResults<FavItem> results = realm.where(FavItem.class).findAll();
-                for (FavItem favItem : results) {
-                    if (favItem.isNewMessages()) {
-                        item.count++;
-                    }
-                }
+                item.count = Api.get().getFavoritesCount();
             }
             adapter.notifyDataSetChanged();
         });
@@ -195,11 +186,11 @@ public class MenuDrawer {
                 holder.count.setVisibility(View.GONE);
             }
 
-            if (position == active){
+            if (position == active) {
                 convertView.setBackgroundColor(color);
                 holder.text.setTextColor(App.getContext().getResources().getColor(R.color.colorPrimary));
                 holder.icon.setColorFilter(App.getContext().getResources().getColor(R.color.colorPrimary));
-            }else {
+            } else {
                 convertView.setBackgroundColor(Color.TRANSPARENT);
                 holder.text.setTextColor(App.getContext().getResources().getColor(R.color.text_drawer_item_color));
                 holder.icon.clearColorFilter();

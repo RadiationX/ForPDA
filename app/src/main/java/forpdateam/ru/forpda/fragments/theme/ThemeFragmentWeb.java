@@ -746,7 +746,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
     @JavascriptInterface
     public void showPollResults() {
         run(() -> {
-            setTabUrl(getTabUrl().replace("&mode=show", "").replace("&poll_open=true", "").concat("&mode=show&poll_open=true"));
+            setTabUrl(getTabUrl().replaceFirst("#[^&]*","").replace("&mode=show", "").replace("&poll_open=true", "").concat("&mode=show&poll_open=true"));
             loadData();
         });
 
@@ -755,7 +755,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
     @JavascriptInterface
     public void showPoll() {
         run(() -> {
-            setTabUrl(getTabUrl().replace("&mode=show", "").replace("&poll_open=true", "").concat("&poll_open=true"));
+            setTabUrl(getTabUrl().replaceFirst("#[^&]*","").replace("&mode=show", "").replace("&poll_open=true", "").concat("&poll_open=true"));
             loadData();
         });
 

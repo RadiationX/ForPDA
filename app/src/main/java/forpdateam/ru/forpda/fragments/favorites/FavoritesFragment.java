@@ -153,8 +153,13 @@ public class FavoritesFragment extends TabFragment {
         helperSubscriber.subscribe(Api.Favorites().changeFav(act, type, id), this::onChangeFav, false);
     }
 
-    public void markRead(int themeId) {
-        realm.executeTransactionAsync(realm1 -> realm1.where(FavItem.class).equalTo("topicId", themeId).findFirst().setNewMessages(false));
+    public void markRead(int topicId) {
+        realm.executeTransactionAsync(realm1 -> {
+            FavItem favItem = realm1.where(FavItem.class).equalTo("topicId", topicId).findFirst();
+            if (favItem != null) {
+                favItem.setNewMessages(false);
+            }
+        });
         markedRead = true;
     }
 

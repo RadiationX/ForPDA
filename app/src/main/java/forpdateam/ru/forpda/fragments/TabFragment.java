@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.fragments;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,6 +23,8 @@ import android.widget.Toast;
 
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
+import java.util.Observer;
+
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.R;
@@ -29,6 +32,7 @@ import forpdateam.ru.forpda.ScrollAwareFABBehavior;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.settings.SettingsActivity;
 import forpdateam.ru.forpda.utils.ErrorHandler;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -45,7 +49,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
     public final static String URL_ARG = "TAB_URL";
     private final static String prefix = "tab_fragment_";
     protected String tabUrl = "";
-    protected View view;
+    protected View view, notifyDot;
     protected Toolbar toolbar;
     protected ImageView toolbarBackground;
     protected CoordinatorLayout coordinatorLayout;
@@ -153,6 +157,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
     protected void initBaseView(LayoutInflater inflater, @Nullable ViewGroup container) {
         Log.d("kek", "view " + view);
         view = inflater.inflate(R.layout.fragment_base, container, false);
+        notifyDot = findViewById(R.id.notify_dot);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbarTitleView = (TextView) toolbar.findViewById(R.id.toolbar_title);
         toolbarSubitleView = (TextView) toolbar.findViewById(R.id.toolbar_subtitle);
@@ -187,6 +192,9 @@ public class TabFragment extends RxFragment implements ITabFragment {
                 setTitle(title);
         }
 
+        updateNotifyDot();
+        Api.get().addObserver((observable, o) -> updateNotifyDot());
+
         Client.getInstance().addNetworkObserver((observable, o) -> {
             if ((isUseCache() || icNoNetwork.getVisibility() == View.VISIBLE) && (boolean) o) {
                 loadData();
@@ -208,6 +216,21 @@ public class TabFragment extends RxFragment implements ITabFragment {
             new Task().execute();
             return false;
         });
+        toolbar.getMenu().add("SETTINGS").setOnMenuItemClickListener(menuItem -> {
+            getMainActivity().startActivity(new Intent(getContext(), SettingsActivity.class));
+            return false;
+        });
+    }
+
+    private void updateNotifyDot() {
+        if (!App.getInstance().getPreferences().getBoolean("main.show_notify_dot", true)){
+            notifyDot.setVisibility(View.GONE);
+            return;
+        }
+        if (Api.get().getAllCounts() > 0)
+            notifyDot.setVisibility(View.VISIBLE);
+        else
+            notifyDot.setVisibility(View.GONE);
     }
 
     class Task extends AsyncTask {

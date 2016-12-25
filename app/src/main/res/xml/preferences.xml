@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Общие">
+        <SwitchPreference
+            android:key="main.show_notify_dot"
+            android:title="Показывать точку уведомлений"
+            android:defaultValue="true"/>
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Темы">
+        <SwitchPreference
+            android:key="theme.show_avatars"
+            android:title="Показывать аватарки"
+            android:defaultValue="true"/>
+        <SwitchPreference
+            android:key="theme.circle_avatars"
+            android:title="Круглые аватарки"
+            android:defaultValue="true"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

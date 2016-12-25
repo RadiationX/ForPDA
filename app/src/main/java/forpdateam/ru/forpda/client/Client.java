@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.settings.SettingsActivity;
 import forpdateam.ru.forpda.utils.ourparser.Html;
 import okhttp3.Call;
 import okhttp3.Cookie;
@@ -143,8 +144,10 @@ public class Client {
         }
     }
 
-    private final static Pattern countsPattern = Pattern.compile("^[\\s\\S]*?(?:<a[^>]*?>Упоминания(?:.*\\((\\d+)\\)|)[^<]*?<\\/a>[\\s\\S]*?<a[^>]*?>Сообщения(?:.*\\((\\d+)\\)|)[^<]*?<\\/a>|<a href=\"[^\"]*?mentions\"[^>]*?><i[^>]*?>(\\d+)<\\/i>[\\s\\S]*?<a href=\"[\\s\\S]*?act=qms\"[^>]*?>[^<]*?<[^>]*?data-count=\"(\\d+)\")");
+    private final static Pattern countsPattern = Pattern.compile("act=mentions[^>]*?><i[^>]*?>([^<]*?)<\\/i>[\\s\\S]*?act=fav[^>]*?><i[^>]*?>([^<]*?)<\\/i>[\\s\\S]*?act=qms[^>]*?data-count=\"([^\">]*?)\">");
     private Matcher countsMatcher;
+    private String tempGroup;
+    private Handler observerHandler = new Handler(Looper.getMainLooper());
 
     private void getCounts(String res) {
         if (countsMatcher == null)
@@ -153,11 +156,16 @@ public class Client {
             countsMatcher.reset(res);
 
         if (countsMatcher.find()) {
-            String group = countsMatcher.group(1);
-            Api.get().setMentionsCount(group == null ? 0 : Integer.parseInt(group));
-            group = countsMatcher.group(2);
-            Api.get().setQmsCount(group == null ? 0 : Integer.parseInt(group));
-            new Handler(Looper.getMainLooper()).post(() -> Api.get().notifyObservers());
+            tempGroup = countsMatcher.group(1);
+            Api.get().setMentionsCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
+
+            tempGroup = countsMatcher.group(2);
+            Api.get().setFavoritesCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
+
+            tempGroup = countsMatcher.group(3);
+            Api.get().setQmsCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
+
+            observerHandler.post(() -> Api.get().notifyObservers());
         }
     }
 

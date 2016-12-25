@@ -21,7 +21,7 @@ public class Api {
     private static Theme themeApi = null;
     private static Favorites favoritesApi = null;
     private CountsObservable observable = new CountsObservable();
-    private int qmsCount = 0, mentionsCount = 0;
+    private int qmsCount = 0, mentionsCount = 0, favoritesCount = 0;
 
     public static Qms Qms() {
         if (qmsApi == null) qmsApi = new Qms();
@@ -69,12 +69,24 @@ public class Api {
         this.qmsCount = qmsCount;
     }
 
+    public int getFavoritesCount() {
+        return favoritesCount;
+    }
+
+    public void setFavoritesCount(int favoritesCount) {
+        this.favoritesCount = favoritesCount;
+    }
+
     public int getMentionsCount() {
         return mentionsCount;
     }
 
     public void setMentionsCount(int mentionsCount) {
         this.mentionsCount = mentionsCount;
+    }
+
+    public int getAllCounts() {
+        return qmsCount + favoritesCount + mentionsCount;
     }
 
     public void addObserver(Observer observer) {

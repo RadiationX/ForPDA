@@ -1,6 +1,5 @@
 <resources>
-
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="BaseAppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -10,22 +9,30 @@
         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeStyle">@style/ActionModeStyle</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
+    <style name="BaseAppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
 
     <style name="MyTextViewStyle" parent="android:Widget.TextView">
         <item name="android:textColor">@color/text_color</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <style name="BaseAppTheme.Settings">
+
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
-        <item name="android:singleLine">true</item>
-        </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
 
     <style name="ActionModeStyle" parent="@style/Widget.AppCompat.ActionMode">
         <item name="background">@color/colorPrimary</item>
