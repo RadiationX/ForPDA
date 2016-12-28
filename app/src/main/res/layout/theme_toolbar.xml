@@ -13,5 +13,5 @@
     app:tabMode="fixed"
     app:tabPaddingEnd="0dp"
     app:tabPaddingStart="0dp"
-    app:tabSelectedTextColor="@color/white"
-    app:tabTextColor="@color/white" />
+    app:tabSelectedTextColor="#212121"
+    app:tabTextColor="#212121" />

@@ -40,7 +40,7 @@ public class ThemePagesAdapter extends BaseAdapter {
         final ViewHolder holder;
 
         if (convertView == null) {
-            convertView = inflater.inflate(android.R.layout.select_dialog_singlechoice, parent, false);
+            convertView = inflater.inflate(android.R.layout.simple_list_item_single_choice, parent, false);
             holder = new ViewHolder();
             assert convertView != null;
             holder.text = (TextView) convertView.findViewById(android.R.id.text1);

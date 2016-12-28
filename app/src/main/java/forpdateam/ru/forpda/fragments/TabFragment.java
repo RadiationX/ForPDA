@@ -12,6 +12,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.graphics.drawable.DrawerArrowDrawable;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,12 +24,9 @@ import android.widget.Toast;
 
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
-import java.util.Observer;
-
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.ScrollAwareFABBehavior;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.client.Client;
@@ -168,10 +166,10 @@ public class TabFragment extends RxFragment implements ITabFragment {
         fab = (FloatingActionButton) findViewById(R.id.fab);
         int iconRes;
         if (isAlone()) {
-            iconRes = R.drawable.ic_menu_white_24dp;
+            iconRes = R.drawable.ic_menu_gray_24dp;
             toolbar.setNavigationOnClickListener(getMainActivity().getToggleListener());
         } else {
-            iconRes = R.drawable.ic_arrow_back_white_24dp;
+            iconRes = R.drawable.ic_arrow_back_gray_24dp;
             toolbar.setNavigationOnClickListener(getMainActivity().getRemoveTabListener());
         }
         toolbar.setNavigationIcon(App.getAppDrawable(iconRes));

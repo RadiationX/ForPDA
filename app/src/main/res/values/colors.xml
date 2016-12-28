@@ -20,8 +20,10 @@
 
 
     <color name="white">#ffffff</color>
+    <color name="gray">#757575</color>
+    <color name="black">#000000</color>
 
-    <color name="divider_color">#eeeeee</color>
-    <color name="background">#eeeeee</color>
+    <color name="divider_color">@android:color/transparent</color>
+    <color name="background">#fafafa</color>
 
 </resources>

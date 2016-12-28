@@ -1,7 +1,8 @@
 <resources>
+
     <style name="BaseAppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryDark">#ddd</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="ProfileToolbarTextStyle">@style/ProfileToolbarTextStyle</item>
         <item name="ProfileCardStyle">@style/ProfileCardStyle</item>
@@ -11,15 +12,23 @@
         <item name="actionModeStyle">@style/ActionModeStyle</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
-    <style name="BaseAppTheme.NoActionBar">
+
+    <style name="BaseAppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
+
+    <style name="BaseAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:singleLine">true</item>
     </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="BaseAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="AppTheme.AppBarOverlay" parent="BaseAppTheme.AppBarOverlay" />
+
+    <style name="AppTheme.PopupOverlay" parent="BaseAppTheme.PopupOverlay">
+        <item name="elevation">0dp</item>
+    </style>
 
 
     <style name="MyTextViewStyle" parent="android:Widget.TextView">
@@ -30,8 +39,8 @@
 
     </style>
 
-
-
+    <style name="AppTheme" parent="BaseAppTheme"/>
+    <style name="AppTheme.NoActionBar" parent="BaseAppTheme.NoActionBar"/>
 
 
     <style name="ActionModeStyle" parent="@style/Widget.AppCompat.ActionMode">
@@ -68,13 +77,14 @@
         <item name="android:textStyle">bold|italic</item>
         <item name="android:textColor">@color/text_color</item>
     </style>
+
     <style name="SpoilerTitleTextStyle">
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
     <style name="AUTH" parent="AppTheme">
-        <item name="colorControlNormal">@color/white</item>
-        <item name="colorControlActivated">@color/white</item>
+        <item name="colorControlNormal">@color/gray</item>
+        <item name="colorControlActivated">@color/black</item>
     </style>
 </resources>

@@ -9,16 +9,13 @@ import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatImageButton;
@@ -31,11 +28,9 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
@@ -83,7 +78,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
     TabLayout tabLayout;
     //Тег для вьюхи поиска. Чтобы создавались кнопки и т.д, только при вызове поиска, а не при каждом создании меню.
     private int searchViewTag = 0;
-    private final ColorFilter colorFilter = new PorterDuffColorFilter(Color.argb(128, 255, 255, 255), PorterDuff.Mode.DST_IN);
+    private final ColorFilter colorFilter = new PorterDuffColorFilter(Color.argb(80, 255, 255, 255), PorterDuff.Mode.DST_IN);
 
     @SuppressLint("SetJavaScriptEnabled")
     @Nullable
@@ -100,6 +95,8 @@ public class ThemeFragmentWeb extends ThemeFragment {
             webView = new ExtendedWebView(getContext());
             webView.setTag("WebView_tag ".concat(Long.toString(System.currentTimeMillis())));
         }
+        /*webView.setClipToPadding(false);
+        webView.setPadding(0, 0, 0, App.px64);*/
         webView.loadUrl("about:blank");
         refreshLayout.addView(webView);
         tabLayout = (TabLayout) inflater.inflate(R.layout.theme_toolbar, (ViewGroup) toolbar.getParent(), false);
@@ -165,7 +162,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
             menu.clear();
 
             menu.add("Копировать")
-                    .setIcon(App.getAppDrawable(R.drawable.ic_content_copy_white_24dp))
+                    .setIcon(App.getAppDrawable(R.drawable.ic_content_copy_gray_24dp))
                     .setOnMenuItemClickListener(item -> {
                         webView.evalJs("copySelectedText()");
                         actionMode.finish();
@@ -174,7 +171,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
             if (pageData.canQuote())
                 menu.add("Цитировать")
-                        .setIcon(App.getAppDrawable(R.drawable.ic_quote_post_white_24dp))
+                        .setIcon(App.getAppDrawable(R.drawable.ic_quote_post_gray_24dp))
                         .setOnMenuItemClickListener(item -> {
                             webView.evalJs("selectionToQuote()");
                             actionMode.finish();
@@ -182,7 +179,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
                         })
                         .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
             menu.add("Весь текст")
-                    .setIcon(App.getAppDrawable(R.drawable.ic_select_all_white_24dp))
+                    .setIcon(App.getAppDrawable(R.drawable.ic_select_all_gray_24dp))
                     .setOnMenuItemClickListener(item -> {
                         webView.evalJs("selectAllPostText()");
                         return true;
@@ -198,7 +195,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
     public void refreshOptionsMenu() {
         Menu menu = toolbar.getMenu();
         menu.clear();
-        menu.add("Обновить").setIcon(App.getAppDrawable(R.drawable.ic_refresh_white_24dp)).setOnMenuItemClickListener(menuItem -> {
+        menu.add("Обновить").setIcon(App.getAppDrawable(R.drawable.ic_refresh_gray_24dp)).setOnMenuItemClickListener(menuItem -> {
             action = REFRESH_ACTION;
             loadData();
             return false;
@@ -241,11 +238,11 @@ public class ThemeFragmentWeb extends ThemeFragment {
                 getContext().getTheme().resolveAttribute(android.R.attr.actionBarItemBackground, outValue, true);
 
                 AppCompatImageButton btnNext = new AppCompatImageButton(searchView.getContext());
-                btnNext.setImageDrawable(App.getAppDrawable(R.drawable.ic_search_next_white_24dp));
+                btnNext.setImageDrawable(App.getAppDrawable(R.drawable.ic_search_next_gray_24dp));
                 btnNext.setBackgroundResource(outValue.resourceId);
 
                 AppCompatImageButton btnPrev = new AppCompatImageButton(searchView.getContext());
-                btnPrev.setImageDrawable(App.getAppDrawable(R.drawable.ic_search_prev_white_24dp));
+                btnPrev.setImageDrawable(App.getAppDrawable(R.drawable.ic_search_prev_gray_24dp));
                 btnPrev.setBackgroundResource(outValue.resourceId);
 
                 ((LinearLayout) searchView.getChildAt(0)).addView(btnPrev, navButtonsParams);
@@ -746,7 +743,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
     @JavascriptInterface
     public void showPollResults() {
         run(() -> {
-            setTabUrl(getTabUrl().replaceFirst("#[^&]*","").replace("&mode=show", "").replace("&poll_open=true", "").concat("&mode=show&poll_open=true"));
+            setTabUrl(getTabUrl().replaceFirst("#[^&]*", "").replace("&mode=show", "").replace("&poll_open=true", "").concat("&mode=show&poll_open=true"));
             loadData();
         });
 
@@ -755,7 +752,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
     @JavascriptInterface
     public void showPoll() {
         run(() -> {
-            setTabUrl(getTabUrl().replaceFirst("#[^&]*","").replace("&mode=show", "").replace("&poll_open=true", "").concat("&poll_open=true"));
+            setTabUrl(getTabUrl().replaceFirst("#[^&]*", "").replace("&mode=show", "").replace("&poll_open=true", "").concat("&poll_open=true"));
             loadData();
         });
 

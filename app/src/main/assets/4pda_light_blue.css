@@ -97,6 +97,9 @@ body {
   overflow-wrap: break-word;
   word-wrap: break-word;
 }
+body#topic{
+    margin-bottom: 5em;
+}
 a {
   text-decoration: none;
   color: #0277bd;

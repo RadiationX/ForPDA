@@ -110,7 +110,7 @@ public class FavoritesFragment extends TabFragment {
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.addItemDecoration(new DividerItemDecoration(getContext()));
+        //recyclerView.addItemDecoration(new DividerItemDecoration(getContext()));
         adapter = new FavoritesAdapter();
         adapter.setOnItemClickListener(onItemClickListener);
         adapter.setOnLongItemClickListener(onLongItemClickListener);

@@ -100,15 +100,15 @@ public class QmsNewThemeFragment extends TabFragment {
             });
         }
 
-        editItem = toolbar.getMenu().add("Изменить").setIcon(App.getAppDrawable(R.drawable.ic_create_white_24dp)).setOnMenuItemClickListener(menuItem -> {
+        editItem = toolbar.getMenu().add("Изменить").setIcon(App.getAppDrawable(R.drawable.ic_create_gray_24dp)).setOnMenuItemClickListener(menuItem -> {
             hideMessagePanel();
             return false;
         });
-        doneItem = toolbar.getMenu().add("Ок").setIcon(App.getAppDrawable(R.drawable.ic_done_white_24dp)).setOnMenuItemClickListener(menuItem -> {
+        doneItem = toolbar.getMenu().add("Ок").setIcon(App.getAppDrawable(R.drawable.ic_done_gray_24dp)).setOnMenuItemClickListener(menuItem -> {
             showMessagePanel();
             return false;
         });
-        sendItem = toolbar.getMenu().add("Отправить").setIcon(App.getAppDrawable(R.drawable.ic_send_white_24dp)).setOnMenuItemClickListener(menuItem -> {
+        sendItem = toolbar.getMenu().add("Отправить").setIcon(App.getAppDrawable(R.drawable.ic_send_gray_24dp)).setOnMenuItemClickListener(menuItem -> {
             sendNewTheme();
             return false;
         });

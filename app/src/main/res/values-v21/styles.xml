@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="BaseAppTheme"/>
+
+    <style name="AppTheme.NoActionBar" parent="BaseAppTheme.NoActionBar">
+        <item name="android:statusBarColor">#00000000</item>
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="BaseAppTheme.PopupOverlay">
+        <!--<item name="android:elevation">0dp</item>
+        <item name="elevation">0dp</item>-->
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="BaseAppTheme.AppBarOverlay">
+        <!--<item name="android:elevation">0dp</item>
+        <item name="elevation">0dp</item>-->
+    </style>
+</resources>

@@ -39,7 +39,7 @@ public class ThemePage implements IThemePage {
         this.curator = curator;
     }
 
-    private int postsOnPageCount = 20, allPagesCount = 0, currentPage = 0, scrollY = 0;
+    private int postsOnPageCount = 20, allPagesCount = 1, currentPage = 1, scrollY = 0;
 
     public int getScrollY() {
         return scrollY;
