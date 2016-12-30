@@ -115,6 +115,8 @@ public class ThemePost implements IThemePost {
     }
 
     public void setGroupColor(String groupColor) {
+        if (groupColor == null)
+            groupColor = "black";
         this.groupColor = groupColor;
     }
 

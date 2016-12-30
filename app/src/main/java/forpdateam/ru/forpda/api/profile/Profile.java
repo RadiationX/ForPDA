@@ -19,7 +19,7 @@ import io.reactivex.Observable;
  */
 public class Profile implements IProfileApi {
 
-    private static final Pattern mainPattern = Pattern.compile("<div[^>]*?user-box[\\s\\S]*?<img src=\"([^\"]*?)\"[\\s\\S]*?<h1>([^<]*?)</h1>[\\s\\S]*?(?=<span class=\"title\">([^<]*?)</span>| )[\\s\\S]*?<h2><span style[^>]*?>([^\"]*?)</span></h2>[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?<div class=\"u-note\">([\\s\\S]*?)</div>[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?(<ul[\\s\\S]*?/ul>)");
+    private static final Pattern mainPattern = Pattern.compile("<div[^>]*?user-box[\\s\\S]*?<img src=\"([^\"]*?)\"[\\s\\S]*?<h1>([^<]*?)<\\/h1>[\\s\\S]*?(?=<span class=\"title\">([^<]*?)<\\/span>| )[\\s\\S]*?<h2>(?:<span style[^>]*?>|)([^\"<]*?)(?:<\\/span>|)<\\/h2>[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?<div class=\"u-note\">([\\s\\S]*?)<\\/div>[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)");
     private static final Pattern info = Pattern.compile("<li[\\s\\S]*?title[^>]*?>([^>]*?)<[\\s\\S]*?div[^>]*>([\\s\\S]*?)</div>");
     private static final Pattern personal = Pattern.compile("<li[\\s\\S]*?title[^>]*?>([^>]*?)<[\\s\\S]*?(?=<div[^>]*>([^<]*)[\\s\\S]*?</div>|)<");
     private static final Pattern contacts = Pattern.compile("<a[^>]*?href=\"([^\"]*?)\"[^>]*?>(?=<strong>([\\s\\S]*?)</strong>|([\\s\\S]*?)</a>)");

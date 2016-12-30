@@ -1,0 +1,499 @@
+@charset "UTF-8";
+@pollRangeBg: rgba(128, 128, 128, 0.2);
+.mainBox {
+    background: #fafafa;
+    margin: 8/16em 0;
+    box-shadow: 0 0px 1px rgba(0,0,0,0.24);
+    //box-shadow: 0 3px 10px -3px @mainShadowColor;
+    //-webkit-box-shadow: 0 3px 10px -3px @mainShadowColor;
+}
+
+.mdButton {
+    font-size: 0.875em;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.contrast {
+    color: @contrastColor;
+    background: @mainColor;
+}
+
+.bRad(@param) {
+    -webkit-border-radius: @param;
+    border-radius: @param;
+}
+
+//Конец быстрых настроек
+.fs(@pt) {
+    font-size: (@pt * 1.625)/16em!important;
+    line-height: 1.25em!important;
+}
+
+.fsi {
+    font-size: inherit!important
+}
+
+[style*="font-size:36pt"] {
+    .fs(36);
+    * {
+        .fsi;
+    }
+}
+
+[style*="font-size:24pt"] {
+    .fs(24);
+    * {
+        .fsi;
+    }
+}
+
+[style*="font-size:18pt"] {
+    .fs(18);
+    * {
+        .fsi;
+    }
+}
+
+[style*="font-size:14pt"] {
+    .fs(14);
+    * {
+        .fsi;
+    }
+}
+
+[style*="font-size:12pt"] {
+    .fs(12);
+    * {
+        .fsi;
+    }
+}
+
+[style*="font-size:10pt"] {
+    .fs(10);
+    * {
+        .fsi;
+    }
+}
+
+[style*="font-size:8pt"] {
+    .fs(8);
+    * {
+        .fsi;
+    }
+}
+
+[style*="font-size:9px"] {
+    line-height: 1.25em!important;
+    font-size: 0.75em!important;
+}
+
+HTML {
+    font-size: 1rem;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background: @pageBg;
+    font-family: @font;
+    font-size: 1em;
+    color: @textColor;
+    line-height: 1.25em;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+a {
+    text-decoration: none;
+    color: @linkColor;
+}
+
+* {
+    box-sizing: border-box;
+}
+@import "modules/themes";
+li .post-block {
+    .bRad(2px);
+    margin-left: 0!important;
+    margin-right: 0!important;
+    border-left: @border1;
+    border-right: @border1;
+}
+
+.post-block {
+    margin: 0.5rem -1rem;
+    position: relative;
+    border-top: @border1;
+    border-bottom: @border1;
+    >.block-title {
+        padding: 0.875em;
+        position: relative;
+        z-index: 2;
+        font-weight: bold;
+        text-align: left!important;
+        min-height: 3em;
+        * {
+            color: @contrLinkColor!important;
+            font-size: 1em!important;
+            font-style: normal!important;
+            line-height: 1.25em!important;
+        }
+    }
+    >.block-body {
+        padding: 0.5em 1em 1em 1em;
+        position: relative;
+        z-index: 1;
+    }
+    &.spoil {
+        margin-left: -1em;
+        margin-right: -1em;
+        border-top: @border1;
+        border-bottom: @border1;
+        border-color: @spoilColorBlock;
+        box-shadow: none;
+        background: @spoilColorBlock;
+        >.block-title {
+            padding-right: 3em;
+            color: @accentColor;
+            * {
+                color: @accentColor!important;
+            }
+            &:before {
+                content: "";
+                position: absolute;
+                height: 100%;
+                width: 100%;
+                top: 0;
+                left: 0;
+                padding: 0.875em;
+                box-sizing: border-box;
+            }
+            &:active:before {
+                background: @tapColor;
+            }
+            &:empty {
+                &:before {
+                    content: "Спойлер";
+                }
+            }
+            &:after {
+                content: "";
+                position: absolute;
+                right: 1em;
+                bottom: 1.25em;
+                border-left: @borderInput;
+                border-bottom: @borderInput;
+                box-sizing: border-box;
+                height: 0.75em;
+                width: 0.75em;
+                border-color: @accentColor;
+                -webkit-transform: rotate(-45deg) translateY(-0) translateX(0) translateZ(0);
+                transform: rotate(-45deg) translateY(-0) translateX(0) translateZ(0);
+                -webkit-transition: 0.25s;
+                transition: 0.25s;
+                -webkit-transform-origin: center;
+                transform-origin: center;
+            }
+        }
+        >.block-body {
+            >.post-block.spoil {
+                background: fade(@spoilColor, 3%);
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+        }
+        &.close {
+            >.block-title {
+                border-radius: 2px;
+                &:first-letter {
+                    text-transform: uppercase;
+                }
+                &:after {}
+            }
+            >.block-body {
+                display: none;
+            }
+        }
+        &.open {
+            >.block-title {
+                &:first-letter {
+                    text-transform: uppercase;
+                }
+                &:after {
+                    transform: rotate(135deg) translateY(-0.25em) translateX(0.25em);
+                    -webkit-transform: rotate(135deg) translateY(-0.25em) translateX(0.25em);
+                }
+            }
+            >.block-body {
+                display: block;
+            }
+        }
+        &:after {
+            position: relative;
+            content: "";
+            width: 100%;
+            height: 100%;
+            display: block;
+            z-index: 10;
+        }
+    }
+    &.quote {
+        background: @quoteColorBlock;
+        border-color: @quoteColorBlock;
+        >.block-title {
+            padding: 0.875em 1em;
+            padding-left: 3em;
+            min-height: 0;
+            font-style: italic;
+            //text-align: right!important;;
+            //color: @quoteColorTitleText;
+            &:empty {
+                padding-left: 1em;
+                &:before {
+                    content: "Цитата";
+                }
+            }
+            a[href*=findpost] {
+                background: none;
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                &:before {
+                    border-color: @quoteColor;
+                    left: 1.5em;
+                    width: 0.5625em;
+                    height: 0.5625em;
+                    margin-top: -0.25em;
+                }
+                &:after {
+                    display: none;
+                }
+                &:before,
+                &:after {
+                    //display: none;
+                }
+            }
+        }
+        >.block-body {
+            padding: 0.5em 1em 1em 1em;
+        }
+    }
+    &.code {
+        border-color: @codeColorBlock;
+        background: @codeColorBlock;
+        overflow: hidden;
+        >.block-title {
+            color: @codeColorTitleText;
+            width: 100%;
+            &:after {
+                content: "";
+                position: absolute;
+                height: 100%;
+                width: 100%;
+                top: 0;
+                left: 0;
+            }
+            &:active:after {
+                background: @tapColor;
+            }
+            &:before {
+                content: "Показать код";
+            }
+        }
+        .toggle-btn{
+            height: 2.25em;
+            width: 2.25em;
+            position: absolute;
+            top:0;
+            right: 0;
+            z-index: 100;
+            background-image: url(../style_images/wrap_text.svg);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 1.5em 1.5em;
+            margin: 0.375em;
+            border: @border1;
+            border-color: @codeColorBlock;
+            .bRad(2px);
+            span{
+                display: none;
+            }
+        }
+        >.block-body {
+            font-family: Courier, Courier New, Verdana, Arial;
+            font-size: 0.875em;
+            background: linear-gradient(transparent 20/14em, rgba(130, 130, 130, 0.1) 20/14em);
+            background-size: 100% 40/14em;
+            background-position: 28px 0;
+            background-repeat: repeat-y;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+            counter-reset: count;
+            overflow-x: auto;
+            padding-left: 32px;
+            position: static;
+            white-space: pre;
+            word-break: normal;
+            word-wrap: normal;
+            div{
+                position: relative;
+                &:before{
+                    text-align: center;
+                    counter-increment: count;
+                    content: counter(count);
+                    position: absolute;
+                    width: 28px;
+                    left: -32px;
+                    opacity: 0;
+                    pointer-events: none;
+                    font-family: @font;
+                    color: @secondTextColor;
+                }
+            }
+        }
+        &:before{
+            content: "";
+            position: absolute;
+            width: 28/16em;
+            top: 3em;
+            bottom: 0;
+            background: @codeColorBlock;
+            border: @border1;
+            border-color: @codeColorBlock;
+            border-left: none;
+            box-sizing: content-box;
+        }
+        .num-pre {
+            position: absolute;
+            width: 28/14em;
+            white-space:pre-line;
+            text-align: center;
+            top: 48/14em;
+            font-size: 0.875em;
+            margin-top: 0.5em;
+            margin-bottom: 1em;
+            color: @secondTextColor;
+           
+        }
+        &.box {
+            >.block-body {
+                max-height: 11.5em;
+                overflow: hidden;
+                position: relative;
+                &:after {
+                    position: absolute;
+                    //content: "";
+                    bottom: -1em;
+                    height: 1em;
+                    left: 0;
+                    right: 0;
+                    width: 100%;
+                    -webkit-box-shadow: 0 -0.5em 1em @codeColorBlock;
+                    box-shadow: 0 -0.5em 1em @codeColorBlock;
+                }
+            }
+        }
+        &.unbox {
+            >.block-title {
+                &:before {
+                    content: "Скрыть код";
+                }
+            }
+        }
+        &.break{
+            .toggle-btn{
+                background-color: @codeColorBlock;
+            }
+            .block-body{
+                white-space: pre-wrap;
+                word-break: break-word;
+                word-wrap: normal;
+                div{
+                    &:before{
+                        opacity: 1;
+                        pointer-events: auto;
+                    }
+                }
+            }
+            .num-pre {
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+    }
+    &.hidden {
+        background: @hiddenColorBlock;
+        border-color: @hiddenColorBlock;
+        >.block-title {
+            display: none;
+            color: @hiddenColorTitleText;
+            &:before {
+                content: "Скрытый текст";
+            }
+        }
+        >.block-body {
+            padding: 0.5em 1em;
+        }
+    }
+    &.tbl {
+        position: relative;
+        display: table;
+        width: 100%;
+        background: @bgColor1;
+        margin-left: 0;
+        margin-right: 0;
+        .bRad(2px);
+        >* {
+            vertical-align: middle;
+        }
+        a {
+            color: @linkColor!important;
+            >* {
+                color: @linkColor!important;
+            }
+        }
+        >.block-title {
+            display: table-cell;
+            .bRad(2px 0 0 2px);
+            text-align: center!important;
+            font-size: 1.5em;
+            background: none;
+            width: 2em;
+        }
+        >.block-body {
+            display: table-cell;
+            .bRad(0 2px 2px 0);
+            border: none;
+            background: none;
+        }
+        &.ex {
+            background: @exColorBlock;
+            border: 1px solid @exColorBlock;
+            >.block-title {
+                color: @exColor;
+            }
+        }
+        &.cur {
+            background: @curColorBlock;
+            border: 1px solid @curColorBlock;
+            >.block-title {
+                color: @curColor;
+            }
+        }
+        &.mod {
+            background: @modColorBlock;
+            border: 1px solid @modColorBlock;
+            >.block-title {
+                color: @modColor;
+            }
+        }
+    }
+}

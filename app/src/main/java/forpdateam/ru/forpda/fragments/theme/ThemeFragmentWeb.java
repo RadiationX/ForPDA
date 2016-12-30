@@ -15,11 +15,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatImageButton;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.SearchView;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -53,6 +56,7 @@ import forpdateam.ru.forpda.api.theme.Theme;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
+import forpdateam.ru.forpda.fragments.qms.QmsChatFragment;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
@@ -88,6 +92,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
         initFabBehavior();
         baseInflateFragment(inflater, R.layout.fragment_theme);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+        cardView = (CardView) findViewById(R.id.qms_chat_input_block);
         if (getMainActivity().getWebViews().size() > 0) {
             webView = getMainActivity().getWebViews().element();
             getMainActivity().getWebViews().remove();
@@ -186,11 +191,45 @@ public class ThemeFragmentWeb extends ThemeFragment {
                     })
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         });
-        fab.setImageDrawable(App.getAppDrawable(R.drawable.ic_create_white_24dp));
-        fab.setVisibility(View.VISIBLE);
+        /*fab.setImageDrawable(App.getAppDrawable(R.drawable.ic_create_white_24dp));
+        fab.setVisibility(View.VISIBLE);*/
+        initField();
         return view;
     }
+    CardView cardView;
+    private void initField() {
+        cardView.setVisibility(View.VISIBLE);
+        CoordinatorLayout.LayoutParams params =
+                (CoordinatorLayout.LayoutParams) cardView.getLayoutParams();
+        // TODO: 20.12.16 not work in 25.1.0
+        params.setBehavior(new InputFieldBehavior(cardView.getContext(), null));
+        cardView.requestLayout();
+    }
+    public class InputFieldBehavior extends CoordinatorLayout.Behavior<CardView> {
+        private int scrolled = 0;
 
+        public InputFieldBehavior(Context context, AttributeSet attrs) {
+            super();
+        }
+
+        @Override
+        public boolean onStartNestedScroll(final CoordinatorLayout coordinatorLayout, final CardView child,
+                                           final View directTargetChild, final View target, final int nestedScrollAxes) {
+            return true;
+        }
+
+        @Override
+        public void onNestedScroll(final CoordinatorLayout coordinatorLayout,
+                                   final CardView child,
+                                   final View target, final int dxConsumed, final int dyConsumed,
+                                   final int dxUnconsumed, final int dyUnconsumed) {
+            super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+            scrolled += dyConsumed + dyUnconsumed;
+            scrolled = Math.max(scrolled, -child.getMeasuredHeight() - (2 * App.px8));
+            scrolled = Math.min(scrolled, 0);
+            child.setTranslationY(-(float) scrolled);
+        }
+    }
 
     public void refreshOptionsMenu() {
         Menu menu = toolbar.getMenu();
