@@ -1,14 +1,10 @@
 package forpdateam.ru.forpda.fragments.qms;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.CardView;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +13,9 @@ import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import forpdateam.ru.forpda.AdvancedInputWindow;
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.QuickMessagePanel;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
@@ -37,7 +35,7 @@ public class QmsChatFragment extends TabFragment {
     private String avatarUrl;
     private int themeId;
     private RecyclerView recyclerView;
-    private CardView cardView;
+    private AdvancedInputWindow advancedInputWindow;
 
     private QmsChatAdapter.OnItemClickListener onItemClickListener = message -> {
         Toast.makeText(getContext(), "ONCLICK " + message.getId(), Toast.LENGTH_SHORT).show();
@@ -63,22 +61,70 @@ public class QmsChatFragment extends TabFragment {
         }
     }
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         initBaseView(inflater, container);
         baseInflateFragment(inflater, R.layout.fragment_qms_chat);
         recyclerView = (RecyclerView) findViewById(R.id.qms_chat);
-        cardView = (CardView) findViewById(R.id.qms_chat_input_block);
+        QuickMessagePanel qmp = new QuickMessagePanel(getContext());
+        coordinatorLayout.addView(qmp, coordinatorLayout.getChildCount() - 1);
+        qmp.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+            recyclerView.setPadding(recyclerView.getPaddingLeft(), recyclerView.getPaddingTop(), recyclerView.getPaddingRight(), qmp.getHeight() + App.px16);
+        });
+
         viewsReady();
-        initField();
         tryShowAvatar();
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         //llm.setStackFromEnd(true);
         recyclerView.setLayoutManager(llm);
+        advancedInputWindow = new AdvancedInputWindow(getContext(), (ViewGroup) findViewById(R.id.fragment_container), qmp);
+        advancedInputWindow.setStateListener(new AdvancedInputWindow.StateListener() {
+            @Override
+            public void onShow() {
+                Log.d("SUKA", "ONSHOW");
+            }
+
+            @Override
+            public void onHide() {
+                Log.d("SUKA", "ONHIDE");
+            }
+        });
+
         return view;
+    }
+
+
+    @Override
+    public boolean onBackPressed() {
+        return advancedInputWindow.onBackPressed();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        advancedInputWindow.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        advancedInputWindow.onDestroy();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        advancedInputWindow.onPause();
+    }
+
+    @Override
+    public void hidePopupWindows() {
+        super.hidePopupWindows();
+        advancedInputWindow.hidePopupWindows();
     }
 
     private void tryShowAvatar() {
@@ -112,40 +158,5 @@ public class QmsChatFragment extends TabFragment {
         recyclerView.scrollToPosition(adapter.getItemCount() - 1);
     }
 
-
-    private void initField() {
-        cardView.setVisibility(View.VISIBLE);
-        CoordinatorLayout.LayoutParams params =
-                (CoordinatorLayout.LayoutParams) cardView.getLayoutParams();
-        // TODO: 20.12.16 not work in 25.1.0
-        params.setBehavior(new InputFieldBehavior(cardView.getContext(), null));
-        cardView.requestLayout();
-    }
-
-    public class InputFieldBehavior extends CoordinatorLayout.Behavior<CardView> {
-        private int scrolled = 0;
-
-        public InputFieldBehavior(Context context, AttributeSet attrs) {
-            super();
-        }
-
-        @Override
-        public boolean onStartNestedScroll(final CoordinatorLayout coordinatorLayout, final CardView child,
-                                           final View directTargetChild, final View target, final int nestedScrollAxes) {
-            return true;
-        }
-
-        @Override
-        public void onNestedScroll(final CoordinatorLayout coordinatorLayout,
-                                   final CardView child,
-                                   final View target, final int dxConsumed, final int dyConsumed,
-                                   final int dxUnconsumed, final int dyUnconsumed) {
-            super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
-            scrolled += dyConsumed + dyUnconsumed;
-            scrolled = Math.max(scrolled, -child.getMeasuredHeight() - (2 * App.px8));
-            scrolled = Math.min(scrolled, 0);
-            child.setTranslationY(-(float) scrolled);
-        }
-    }
 
 }

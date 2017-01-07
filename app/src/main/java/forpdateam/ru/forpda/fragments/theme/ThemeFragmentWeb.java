@@ -49,6 +49,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.QuickMessagePanel;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
@@ -92,7 +93,8 @@ public class ThemeFragmentWeb extends ThemeFragment {
         initFabBehavior();
         baseInflateFragment(inflater, R.layout.fragment_theme);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-        cardView = (CardView) findViewById(R.id.qms_chat_input_block);
+        QuickMessagePanel qmp = new QuickMessagePanel(getContext());
+        coordinatorLayout.addView(qmp, coordinatorLayout.getChildCount() - 1);
         if (getMainActivity().getWebViews().size() > 0) {
             webView = getMainActivity().getWebViews().element();
             getMainActivity().getWebViews().remove();
@@ -193,42 +195,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
         });
         /*fab.setImageDrawable(App.getAppDrawable(R.drawable.ic_create_white_24dp));
         fab.setVisibility(View.VISIBLE);*/
-        initField();
         return view;
-    }
-    CardView cardView;
-    private void initField() {
-        cardView.setVisibility(View.VISIBLE);
-        CoordinatorLayout.LayoutParams params =
-                (CoordinatorLayout.LayoutParams) cardView.getLayoutParams();
-        // TODO: 20.12.16 not work in 25.1.0
-        params.setBehavior(new InputFieldBehavior(cardView.getContext(), null));
-        cardView.requestLayout();
-    }
-    public class InputFieldBehavior extends CoordinatorLayout.Behavior<CardView> {
-        private int scrolled = 0;
-
-        public InputFieldBehavior(Context context, AttributeSet attrs) {
-            super();
-        }
-
-        @Override
-        public boolean onStartNestedScroll(final CoordinatorLayout coordinatorLayout, final CardView child,
-                                           final View directTargetChild, final View target, final int nestedScrollAxes) {
-            return true;
-        }
-
-        @Override
-        public void onNestedScroll(final CoordinatorLayout coordinatorLayout,
-                                   final CardView child,
-                                   final View target, final int dxConsumed, final int dyConsumed,
-                                   final int dxUnconsumed, final int dyUnconsumed) {
-            super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
-            scrolled += dyConsumed + dyUnconsumed;
-            scrolled = Math.max(scrolled, -child.getMeasuredHeight() - (2 * App.px8));
-            scrolled = Math.min(scrolled, 0);
-            child.setTranslationY(-(float) scrolled);
-        }
     }
 
     public void refreshOptionsMenu() {
