@@ -32,6 +32,7 @@ import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -191,16 +192,7 @@ public class ProfileFragment extends TabFragment {
     private void onProfileLoad(ProfileModel profile) {
         if (profile.getNick() == null) return;
         long time = System.currentTimeMillis();
-        ImageLoader.getInstance().displayImage(profile.getAvatar(), avatar, new ImageLoadingListener() {
-
-            @Override
-            public void onLoadingStarted(String imageUri, View view) {
-            }
-
-            @Override
-            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-            }
-
+        ImageLoader.getInstance().displayImage(profile.getAvatar(), avatar, new SimpleImageLoadingListener() {
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                 //Нужен handler, иначе при повторном создании фрагмента неверно вычисляется высота вьюхи
@@ -217,10 +209,6 @@ public class ProfileFragment extends TabFragment {
                     progressView.stopAnimation();
                     progressView.setVisibility(View.GONE);
                 }, 500);
-            }
-
-            @Override
-            public void onLoadingCancelled(String imageUri, View view) {
             }
         });
 

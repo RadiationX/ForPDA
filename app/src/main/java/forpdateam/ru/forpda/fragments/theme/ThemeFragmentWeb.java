@@ -46,7 +46,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.tools.QuickMessagePanel;
+import forpdateam.ru.forpda.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
@@ -80,6 +80,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
     //Тег для вьюхи поиска. Чтобы создавались кнопки и т.д, только при вызове поиска, а не при каждом создании меню.
     private int searchViewTag = 0;
     private final ColorFilter colorFilter = new PorterDuffColorFilter(Color.argb(80, 255, 255, 255), PorterDuff.Mode.DST_IN);
+    private MessagePanel messagePanel;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Nullable
@@ -89,8 +90,9 @@ public class ThemeFragmentWeb extends ThemeFragment {
         initFabBehavior();
         baseInflateFragment(inflater, R.layout.fragment_theme);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-        QuickMessagePanel qmp = new QuickMessagePanel(getContext());
-        coordinatorLayout.addView(qmp, coordinatorLayout.getChildCount() - 1);
+        messagePanel = new MessagePanel(getContext(), (ViewGroup) findViewById(R.id.fragment_container));
+        messagePanel.setHeightChangeListener(newHeight -> webView.evalJs("setPaddingBottom(" + (newHeight / getResources().getDisplayMetrics().density) + ");"));
+        coordinatorLayout.addView(messagePanel, coordinatorLayout.getChildCount() - 1);
         if (getMainActivity().getWebViews().size() > 0) {
             webView = getMainActivity().getWebViews().element();
             getMainActivity().getWebViews().remove();
@@ -192,6 +194,24 @@ public class ThemeFragmentWeb extends ThemeFragment {
         /*fab.setImageDrawable(App.getAppDrawable(R.drawable.ic_create_white_24dp));
         fab.setVisibility(View.VISIBLE);*/
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        messagePanel.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        messagePanel.onPause();
+    }
+
+    @Override
+    public void hidePopupWindows() {
+        super.hidePopupWindows();
+        messagePanel.hidePopupWindows();
     }
 
     public void refreshOptionsMenu() {
@@ -354,6 +374,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
     @Override
     public boolean onBackPressed() {
+        if (messagePanel.onBackPressed()) return true;
         if (toolbar.getMenu().findItem(R.id.action_search).isActionViewExpanded()) {
             toolbar.collapseActionView();
             return true;
@@ -393,6 +414,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
     public void onDestroy() {
         history.clear();
         super.onDestroy();
+        messagePanel.onDestroy();
     }
 
     private class ThemeWebViewClient extends WebViewClient {

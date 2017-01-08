@@ -1,12 +1,10 @@
-package forpdateam.ru.forpda.tools;
+package forpdateam.ru.forpda.messagepanel.advanced;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import forpdateam.ru.forpda.R;
 

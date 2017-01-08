@@ -1,10 +1,7 @@
-package forpdateam.ru.forpda.tools;
+package forpdateam.ru.forpda.messagepanel;
 
-import android.content.Context;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.CardView;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import forpdateam.ru.forpda.App;

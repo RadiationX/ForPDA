@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +11,7 @@ import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import forpdateam.ru.forpda.tools.AdvancedInputWindow;
-import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.tools.QuickMessagePanel;
+import forpdateam.ru.forpda.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
@@ -34,7 +31,7 @@ public class QmsChatFragment extends TabFragment {
     private String avatarUrl;
     private int themeId;
     private RecyclerView recyclerView;
-    private AdvancedInputWindow advancedInputWindow;
+    private MessagePanel messagePanel;
 
     private QmsChatAdapter.OnItemClickListener onItemClickListener = message -> {
         Toast.makeText(getContext(), "ONCLICK " + message.getId(), Toast.LENGTH_SHORT).show();
@@ -67,11 +64,9 @@ public class QmsChatFragment extends TabFragment {
         initBaseView(inflater, container);
         baseInflateFragment(inflater, R.layout.fragment_qms_chat);
         recyclerView = (RecyclerView) findViewById(R.id.qms_chat);
-        QuickMessagePanel qmp = new QuickMessagePanel(getContext());
-        coordinatorLayout.addView(qmp, coordinatorLayout.getChildCount() - 1);
-        qmp.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-            recyclerView.setPadding(recyclerView.getPaddingLeft(), recyclerView.getPaddingTop(), recyclerView.getPaddingRight(), qmp.getHeight() + App.px16);
-        });
+        messagePanel = new MessagePanel(getContext(), (ViewGroup) findViewById(R.id.fragment_container));
+        coordinatorLayout.addView(messagePanel, coordinatorLayout.getChildCount() - 1);
+        messagePanel.setHeightChangeListener(newHeight -> recyclerView.setPadding(recyclerView.getPaddingLeft(), recyclerView.getPaddingTop(), recyclerView.getPaddingRight(), newHeight));
 
         viewsReady();
         tryShowAvatar();
@@ -80,18 +75,6 @@ public class QmsChatFragment extends TabFragment {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         //llm.setStackFromEnd(true);
         recyclerView.setLayoutManager(llm);
-        advancedInputWindow = new AdvancedInputWindow(getContext(), (ViewGroup) findViewById(R.id.fragment_container), qmp);
-        advancedInputWindow.setStateListener(new AdvancedInputWindow.StateListener() {
-            @Override
-            public void onShow() {
-                Log.d("SUKA", "ONSHOW");
-            }
-
-            @Override
-            public void onHide() {
-                Log.d("SUKA", "ONHIDE");
-            }
-        });
 
         return view;
     }
@@ -99,31 +82,31 @@ public class QmsChatFragment extends TabFragment {
 
     @Override
     public boolean onBackPressed() {
-        return advancedInputWindow.onBackPressed();
+        return messagePanel.onBackPressed();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        advancedInputWindow.onResume();
+        messagePanel.onResume();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        advancedInputWindow.onDestroy();
+        messagePanel.onDestroy();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        advancedInputWindow.onPause();
+        messagePanel.onPause();
     }
 
     @Override
     public void hidePopupWindows() {
         super.hidePopupWindows();
-        advancedInputWindow.hidePopupWindows();
+        messagePanel.hidePopupWindows();
     }
 
     private void tryShowAvatar() {

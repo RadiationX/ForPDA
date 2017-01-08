@@ -20,6 +20,9 @@
             isCurator: ${is_curator},
             memberId: ${member_id}
         }
+        function setPaddingBottom(newPadding){
+            document.getElementById("padding_for_message_panel").style.paddingBottom = Number(newPadding)+"px";
+        }
     </script>
     <script type="text/javascript" src="file:///android_asset/theme.js"></script>
 </head>
@@ -106,6 +109,6 @@
         <a class="btn last" onclick="ITheme.lastPage()" ${last_disable}><i class="icon"></i></a>
     </div>
 </div>-->
-<div style="height: 4em;"></div>
+<div id="padding_for_message_panel" style="padding-bottom: 4em;"></div>
 </body>
 </html>

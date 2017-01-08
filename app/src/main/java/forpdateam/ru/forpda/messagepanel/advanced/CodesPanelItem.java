@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.tools;
+package forpdateam.ru.forpda.messagepanel.advanced;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

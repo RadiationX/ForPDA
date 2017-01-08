@@ -1,17 +1,17 @@
-package forpdateam.ru.forpda.tools;
+package forpdateam.ru.forpda.messagepanel.advanced;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.util.List;
@@ -26,7 +26,7 @@ import forpdateam.ru.forpda.R;
 public class PanelItemAdapter extends RecyclerView.Adapter<PanelItemAdapter.ViewHolder> {
     public final static int TYPE_ASSET = 0;
     public final static int TYPE_DRAWABLE = 1;
-
+    private final ColorFilter colorFilter = new PorterDuffColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
     private List<ButtonData> items;
     private List<String> urlsToAssets;
     private int type = -1;
@@ -54,6 +54,7 @@ public class PanelItemAdapter extends RecyclerView.Adapter<PanelItemAdapter.View
             });
         } else if (type == TYPE_DRAWABLE) {
             holder.button.setImageDrawable(App.getAppDrawable(items.get(position).getIconRes()));
+            holder.button.setColorFilter(colorFilter);
         }
     }
 

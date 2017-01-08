@@ -1,7 +1,6 @@
-package forpdateam.ru.forpda.tools;
+package forpdateam.ru.forpda.messagepanel.advanced;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
@@ -18,19 +17,20 @@ import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.messagepanel.MessagePanel;
 
 /**
  * Created by radiationx on 07.01.17.
  */
 
-public class AdvancedInputWindow {
+public class AdvancedPopupWindow {
     private PopupWindow popupWindow;
     private ViewGroup fragmentContainer;
     private boolean isShowingKeyboard = false;
     private StateListener stateListener;
     private int newKeyboardHeight = 0;
-    private QuickMessagePanel quickMessagePanel;
-    private int primaryColor = Color.parseColor("#0277bd");
+    private MessagePanel messagePanel;
+
 
     private ViewTreeObserver.OnGlobalLayoutListener globalLayoutListener = () -> {
         newKeyboardHeight = fragmentContainer.getRootView().getHeight() - fragmentContainer.getHeight() - App.getStatusBarHeight();
@@ -55,75 +55,46 @@ public class AdvancedInputWindow {
 
             isShowingKeyboard = false;
         }
-        quickMessagePanel.setCanScrolling(!(isShowingKeyboard || popupWindow.isShowing()));
+        messagePanel.setCanScrolling(!(isShowingKeyboard || popupWindow.isShowing()));
         Log.d("SUKA", "AFTER " + fragmentContainer.getPaddingBottom());
     };
 
-    public AdvancedInputWindow(Context context, ViewGroup container, QuickMessagePanel qmp) {
-        fragmentContainer = container;
-        quickMessagePanel = qmp;
-        quickMessagePanel.addAdvancedOnClickListener(v -> {
+    public AdvancedPopupWindow(Context context, MessagePanel panel) {
+        fragmentContainer = panel.getFragmentContainer();
+        messagePanel = panel;
+
+        View popupView = View.inflate(context, R.layout.testpopup, null);
+        ViewPager viewPager = (ViewPager) popupView.findViewById(R.id.pager);
+
+        List<BasePanelItem> viewList = new ArrayList<>();
+        viewList.add(new CodesPanelItem(context, messagePanel.getMessageField()));
+        viewList.add(new SmilesPanelItem(context, messagePanel.getMessageField()));
+        viewPager.setAdapter(new MyPagerAdapter(viewList));
+
+        ((TabLayout) popupView.findViewById(R.id.tab_layout)).setupWithViewPager(viewPager);
+
+        popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, App.getKeyboardHeight(), false);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            popupWindow.setElevation(App.px2);
+        }
+
+        popupView.findViewById(R.id.delete_button).setOnClickListener(v -> {
+            int length = messagePanel.getMessageField().getText().length();
+            if (length > 0) {
+                messagePanel.getMessageField().getText().delete(length - 1, length);
+            }
+        });
+
+        messagePanel.addAdvancedOnClickListener(v -> {
             if (popupWindow.isShowing())
                 hidePopup();
             else
                 showPopup();
         });
-        View popupView = View.inflate(context, R.layout.testpopup, null);
-        popupView.findViewById(R.id.delete_button).setOnClickListener(v -> {
-            int length = quickMessagePanel.getMessageField().getText().length();
-            if (length > 0)
-                quickMessagePanel.getMessageField().getText().delete(length - 1, length);
-        });
-        ViewPager viewPager = (ViewPager) popupView.findViewById(R.id.pager);
-        List<BasePanelItem> viewList = new ArrayList<>();
-        viewList.add(new CodesPanelItem(context, quickMessagePanel.getMessageField()));
-        viewList.add(new SmilesPanelItem(context, quickMessagePanel.getMessageField()));
-        viewPager.setAdapter(new MyPagerAdapter(viewList));
-        TabLayout tabLayout = (TabLayout) popupView.findViewById(R.id.tab_layout);
-        tabLayout.setupWithViewPager(viewPager);
-        popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, App.getKeyboardHeight(), false);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            popupWindow.setElevation(App.px2);
-        }
-    }
-
-    private class MyPagerAdapter extends PagerAdapter {
-        List<BasePanelItem> pages = null;
-
-        public MyPagerAdapter(List<BasePanelItem> pages) {
-            this.pages = pages;
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            View v = pages.get(position);
-            container.addView(v, 0);
-            return v;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((View) object);
-        }
-
-        @Override
-        public int getCount() {
-            return pages.size();
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view.equals(object);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return pages.get(position).getTitle();
-        }
     }
 
     private void hidePopup() {
-        quickMessagePanel.getAdvancedButton().clearColorFilter();
+        messagePanel.getAdvancedButton().clearColorFilter();
 
         if (popupWindow.isShowing())
             popupWindow.dismiss();
@@ -134,11 +105,11 @@ public class AdvancedInputWindow {
         if (stateListener != null)
             stateListener.onHide();
 
-        quickMessagePanel.setCanScrolling(true);
+        messagePanel.setCanScrolling(true);
     }
 
     private void showPopup() {
-        quickMessagePanel.getAdvancedButton().setColorFilter(primaryColor);
+        messagePanel.getAdvancedButton().setColorFilter(messagePanel.primaryColor);
 
         if (!popupWindow.isShowing())
             popupWindow.showAtLocation(fragmentContainer, Gravity.BOTTOM, 0, 0);
@@ -149,7 +120,7 @@ public class AdvancedInputWindow {
         if (stateListener != null)
             stateListener.onShow();
 
-        quickMessagePanel.setCanScrolling(false);
+        messagePanel.setCanScrolling(false);
     }
 
 
@@ -186,5 +157,40 @@ public class AdvancedInputWindow {
         void onShow();
 
         void onHide();
+    }
+
+    private class MyPagerAdapter extends PagerAdapter {
+        List<BasePanelItem> pages = null;
+
+        MyPagerAdapter(List<BasePanelItem> pages) {
+            this.pages = pages;
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            View v = pages.get(position);
+            container.addView(v, 0);
+            return v;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((View) object);
+        }
+
+        @Override
+        public int getCount() {
+            return pages.size();
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view.equals(object);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return pages.get(position).getTitle();
+        }
     }
 }
