@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.utils;
+package forpdateam.ru.forpda.tools;
 
 import android.content.Context;
 import android.support.design.widget.CoordinatorLayout;

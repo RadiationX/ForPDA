@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.fragments.qms;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,9 +12,9 @@ import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import forpdateam.ru.forpda.AdvancedInputWindow;
+import forpdateam.ru.forpda.tools.AdvancedInputWindow;
 import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.QuickMessagePanel;
+import forpdateam.ru.forpda.tools.QuickMessagePanel;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;

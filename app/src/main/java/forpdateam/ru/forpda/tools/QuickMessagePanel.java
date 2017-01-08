@@ -1,9 +1,7 @@
-package forpdateam.ru.forpda;
+package forpdateam.ru.forpda.tools;
 
-import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.CardView;
@@ -18,7 +16,8 @@ import android.widget.ImageButton;
 import java.util.ArrayList;
 import java.util.List;
 
-import forpdateam.ru.forpda.utils.MessagePanelBehavior;
+import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.R;
 
 /**
  * Created by radiationx on 07.01.17.
@@ -32,16 +31,6 @@ public class QuickMessagePanel extends CardView {
 
     public QuickMessagePanel(Context context) {
         super(context);
-        init();
-    }
-
-    public QuickMessagePanel(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
-
-    public QuickMessagePanel(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
         init();
     }
 
