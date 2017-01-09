@@ -11,12 +11,12 @@ import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import forpdateam.ru.forpda.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsChatAdapter;
+import forpdateam.ru.forpda.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.utils.IntentHandler;
 
 /**
@@ -65,7 +65,6 @@ public class QmsChatFragment extends TabFragment {
         baseInflateFragment(inflater, R.layout.fragment_qms_chat);
         recyclerView = (RecyclerView) findViewById(R.id.qms_chat);
         messagePanel = new MessagePanel(getContext(), (ViewGroup) findViewById(R.id.fragment_container));
-        coordinatorLayout.addView(messagePanel, coordinatorLayout.getChildCount() - 1);
         messagePanel.setHeightChangeListener(newHeight -> recyclerView.setPadding(recyclerView.getPaddingLeft(), recyclerView.getPaddingTop(), recyclerView.getPaddingRight(), newHeight));
 
         viewsReady();

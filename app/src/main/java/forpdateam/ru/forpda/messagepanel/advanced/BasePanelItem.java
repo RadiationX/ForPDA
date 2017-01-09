@@ -23,7 +23,7 @@ public class BasePanelItem extends FrameLayout {
         messageField = editText;
         this.title = title;
         inflate(getContext(), R.layout.testbasepanel, this);
-        recyclerView = (RecyclerView) findViewById(R.id.afrv);
+        recyclerView = (RecyclerView) findViewById(R.id.auto_fit_recycler_view);
     }
 
     public String getTitle() {

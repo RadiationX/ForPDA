@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.utils.ourparser;
 
-import android.graphics.Color;
-import android.text.style.BackgroundColorSpan;
 import android.util.Log;
 
 import java.util.ArrayList;

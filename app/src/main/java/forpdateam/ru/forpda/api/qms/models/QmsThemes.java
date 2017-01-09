@@ -1,9 +1,5 @@
 package forpdateam.ru.forpda.api.qms.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;

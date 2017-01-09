@@ -13,6 +13,10 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
+    <style name="BaseAppTheme.BottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog"/>
+
+    <style name="AppTheme.BottomSheetDialog" parent="BaseAppTheme.BottomSheetDialog"/>
+
     <style name="BaseAppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

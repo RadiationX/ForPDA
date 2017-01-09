@@ -3,11 +3,7 @@ package forpdateam.ru.forpda.utils.ourparser;
 import android.util.Pair;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by radiationx on 13.09.16.

@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.CardView;
-import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;

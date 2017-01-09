@@ -1,8 +1,6 @@
 package forpdateam.ru.forpda.fragments.favorites;
 
-import android.graphics.PorterDuff;
 import android.graphics.Typeface;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,7 +11,6 @@ import android.widget.TextView;
 
 import java.util.Collection;
 
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import io.realm.RealmList;

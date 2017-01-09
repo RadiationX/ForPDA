@@ -17,6 +17,7 @@ import java.util.List;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.messagepanel.advanced.AdvancedPopupWindow;
+import forpdateam.ru.forpda.messagepanel.attachments.AttachmentsPopup;
 import forpdateam.ru.forpda.utils.SimpleTextWatcher;
 
 /**
@@ -39,6 +40,9 @@ public class MessagePanel extends CardView {
         super(context);
         this.fragmentContainer = fragmentContainer;
         init();
+        CoordinatorLayout coordinatorLayout = (CoordinatorLayout) this.getFragmentContainer().findViewById(R.id.coordinator_layout);
+        coordinatorLayout.addView(this, coordinatorLayout.getChildCount() - 1);
+        onCreatePanel();
     }
 
     private void init() {
@@ -69,13 +73,7 @@ public class MessagePanel extends CardView {
                 listener.onClick(v);
         });
 
-        /*BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
 
-        addAttachmentsOnClickListener(v -> {
-            bottomSheetDialog.setContentView(R.layout.test_bottomsheet);
-            bottomSheetDialog.show();
-        });*/
-        advancedPopupWindow = new AdvancedPopupWindow(getContext(), this);
         lastHeight = getHeight() + App.px16;
         addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
             if (heightChangeListener == null) return;
@@ -97,6 +95,11 @@ public class MessagePanel extends CardView {
                 }
             }
         });
+    }
+
+    private void onCreatePanel(){
+        AttachmentsPopup attachmentsPopup = new AttachmentsPopup(getContext(), this);
+        advancedPopupWindow = new AdvancedPopupWindow(getContext(), this);
     }
 
 

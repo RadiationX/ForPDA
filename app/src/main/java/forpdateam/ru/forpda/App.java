@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.content.res.AppCompatResources;
+import android.util.DisplayMetrics;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
@@ -152,6 +153,11 @@ public class App extends android.app.Application {
         }
         keyboardHeight = getPreferences().getInt("keyboard_height", getContext().getResources().getDimensionPixelSize(R.dimen.default_keyboard_height));
         savedKeyboardHeight = keyboardHeight;
+    }
+
+    public int dpToPx(int dp) {
+        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
     public static HashMap<Integer, Drawable> drawableHashMap = new HashMap<>();

@@ -19,7 +19,6 @@ import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
-import forpdateam.ru.forpda.utils.DividerItemDecoration;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import io.realm.Realm;

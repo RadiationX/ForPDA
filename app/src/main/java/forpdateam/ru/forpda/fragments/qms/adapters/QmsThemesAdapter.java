@@ -7,10 +7,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.Collection;
-import java.util.List;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsTheme;
 import io.realm.RealmList;
 

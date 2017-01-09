@@ -46,7 +46,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
@@ -54,6 +53,7 @@ import forpdateam.ru.forpda.api.theme.Theme;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
+import forpdateam.ru.forpda.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
@@ -92,7 +92,6 @@ public class ThemeFragmentWeb extends ThemeFragment {
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         messagePanel = new MessagePanel(getContext(), (ViewGroup) findViewById(R.id.fragment_container));
         messagePanel.setHeightChangeListener(newHeight -> webView.evalJs("setPaddingBottom(" + (newHeight / getResources().getDisplayMetrics().density) + ");"));
-        coordinatorLayout.addView(messagePanel, coordinatorLayout.getChildCount() - 1);
         if (getMainActivity().getWebViews().size() > 0) {
             webView = getMainActivity().getWebViews().element();
             getMainActivity().getWebViews().remove();

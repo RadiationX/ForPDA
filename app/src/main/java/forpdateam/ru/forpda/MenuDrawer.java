@@ -2,8 +2,6 @@ package forpdateam.ru.forpda;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -19,16 +17,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.auth.AuthFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.news.NewsListFragment;
 import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
-import forpdateam.ru.forpda.fragments.auth.AuthFragment;
 import forpdateam.ru.forpda.fragments.theme.ThemeFragment;
 import io.realm.Realm;
-import io.realm.RealmResults;
 
 /**
  * Created by radiationx on 07.08.16.
