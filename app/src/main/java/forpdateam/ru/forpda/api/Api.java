@@ -8,6 +8,7 @@ import forpdateam.ru.forpda.api.newslist.NewsList;
 import forpdateam.ru.forpda.api.profile.Profile;
 import forpdateam.ru.forpda.api.qms.Qms;
 import forpdateam.ru.forpda.api.theme.Theme;
+import forpdateam.ru.forpda.api.theme.editpost.EditPost;
 
 /**
  * Created by radiationx on 29.07.16.
@@ -19,6 +20,7 @@ public class Api {
     private static NewsList newsListApi = null;
     private static Profile profileApi = null;
     private static Theme themeApi = null;
+    private static EditPost editPost = null;
     private static Favorites favoritesApi = null;
     private CountsObservable observable = new CountsObservable();
     private int qmsCount = 0, mentionsCount = 0, favoritesCount = 0;
@@ -48,6 +50,11 @@ public class Api {
     public static Theme Theme() {
         if (themeApi == null) themeApi = new Theme();
         return themeApi;
+    }
+
+    public static EditPost EditPost() {
+        if (editPost == null) editPost = new EditPost();
+        return editPost;
     }
 
     public static Favorites Favorites() {

@@ -96,12 +96,15 @@ public class MessagePanel extends CardView {
             }
         });
     }
-
+    AttachmentsPopup attachmentsPopup;
     private void onCreatePanel(){
-        AttachmentsPopup attachmentsPopup = new AttachmentsPopup(getContext(), this);
+        attachmentsPopup = new AttachmentsPopup(getContext(), this);
         advancedPopupWindow = new AdvancedPopupWindow(getContext(), this);
     }
 
+    public AttachmentsPopup getAttachmentsPopup() {
+        return attachmentsPopup;
+    }
 
     public void addAdvancedOnClickListener(View.OnClickListener listener) {
         advancedListeners.add(listener);

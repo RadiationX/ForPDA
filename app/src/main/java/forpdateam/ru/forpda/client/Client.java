@@ -1,13 +1,18 @@
 package forpdateam.ru.forpda.client;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 import android.webkit.WebSettings;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,11 +28,17 @@ import forpdateam.ru.forpda.utils.ourparser.Html;
 import okhttp3.Call;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
-import okhttp3.FormBody;
 import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.internal.Util;
+import okio.BufferedSink;
+import okio.Okio;
+import okio.Source;
 
 public class Client {
     private static final String userAgent = WebSettings.getDefaultUserAgent(App.getContext());
@@ -94,26 +105,49 @@ public class Client {
             })
             .build();
 
+    public String getMimeType(Uri uri) {
+        String mimeType = null;
+        if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
+            ContentResolver cr = App.getContext().getContentResolver();
+            mimeType = cr.getType(uri);
+        } else {
+            String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri
+                    .toString());
+            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    fileExtension.toLowerCase());
+        }
+        return mimeType;
+    }
+
     //Network
     public String get(String url) throws Exception {
-        return request(url, null);
+        return request(url, null, null);
     }
 
     public String post(String url, Map<String, String> headers) throws Exception {
-        return request(url, headers);
+        return request(url, headers, null);
     }
 
-    private String request(String url, Map<String, String> headers) throws Exception {
+    public String post(String url, Map<String, String> headers, RequestFile file) throws Exception {
+        return request(url, headers, file);
+    }
+
+    private String request(String url, Map<String, String> headers, RequestFile file) throws Exception {
         Log.d("kek", "request url " + url);
 
         Request.Builder builder = new Request.Builder()
                 .url(url)
                 .header("User-Agent", userAgent);
-        if (headers != null) {
-            FormBody.Builder formBodyBuilder = new FormBody.Builder();
-            for (Map.Entry<String, String> entry : headers.entrySet()) {
-                formBodyBuilder.addEncoded(entry.getKey(), URLEncoder.encode(entry.getValue(), "CP1251"));
-                //formBodyBuilder.add(entry.getKey(), );
+        if (headers != null || file != null) {
+            MultipartBody.Builder formBodyBuilder = new MultipartBody.Builder();
+            formBodyBuilder.setType(MultipartBody.FORM);
+            if (headers != null) {
+                for (Map.Entry<String, String> entry : headers.entrySet()) {
+                    formBodyBuilder.addFormDataPart(entry.getKey(), URLEncoder.encode(entry.getValue(), "CP1251"));
+                }
+            }
+            if (file != null) {
+                formBodyBuilder.addFormDataPart(file.getRequestName(), URLEncoder.encode(file.getFileName(), "CP1251"), RequestBodyUtil.create(MediaType.parse(file.getFileScheme()), file.getFileStream()));
             }
             builder.post(formBodyBuilder.build());
         }
@@ -138,7 +172,7 @@ public class Client {
     private void checkForumErrors(String res) throws Exception {
         Pattern pattern = Pattern.compile("^[\\s\\S]*?wr va-m text\">([\\s\\S]*?)</div></div></div></div><div class=\"footer\">");
         Matcher m = pattern.matcher(res);
-        if(m.find()){
+        if (m.find()) {
             throw new OnlyShowException(Html.fromHtml(m.group(1)).toString());
         }
     }

@@ -1,9 +1,16 @@
 package forpdateam.ru.forpda.fragments.qms;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +18,19 @@ import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.List;
+
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
+import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
+import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsChatAdapter;
 import forpdateam.ru.forpda.messagepanel.MessagePanel;
+import forpdateam.ru.forpda.messagepanel.attachments.AttachmentsPopup;
 import forpdateam.ru.forpda.utils.IntentHandler;
 
 /**
@@ -27,11 +41,13 @@ public class QmsChatFragment extends TabFragment {
     public final static String USER_AVATAR_ARG = "USER_AVATAR_ARG";
     public final static String THEME_ID_ARG = "THEME_ID_ARG";
     public final static String TAB_TAG_FOR_REMOVE = "TAB_TAG_FOR_REMOVE";
+    private static final int PICK_IMAGE = 1228;
     private int userId;
     private String avatarUrl;
     private int themeId;
     private RecyclerView recyclerView;
     private MessagePanel messagePanel;
+    private AttachmentsPopup attachmentsPopup;
 
     private QmsChatAdapter.OnItemClickListener onItemClickListener = message -> {
         Toast.makeText(getContext(), "ONCLICK " + message.getId(), Toast.LENGTH_SHORT).show();
@@ -41,6 +57,7 @@ public class QmsChatFragment extends TabFragment {
     };
 
     private Subscriber<QmsChatModel> mainSubscriber = new Subscriber<>();
+    private Subscriber<EditPostForm> formSubscriber = new Subscriber<>();
 
     @Override
     public String getDefaultTitle() {
@@ -66,6 +83,12 @@ public class QmsChatFragment extends TabFragment {
         recyclerView = (RecyclerView) findViewById(R.id.qms_chat);
         messagePanel = new MessagePanel(getContext(), (ViewGroup) findViewById(R.id.fragment_container));
         messagePanel.setHeightChangeListener(newHeight -> recyclerView.setPadding(recyclerView.getPaddingLeft(), recyclerView.getPaddingTop(), recyclerView.getPaddingRight(), newHeight));
+        attachmentsPopup = messagePanel.getAttachmentsPopup();
+
+        attachmentsPopup.setAddOnClickListener(v -> pickImage());
+        attachmentsPopup.setDeleteOnClickListener(v -> removeFiles());
+        loadAttaches();
+
 
         viewsReady();
         tryShowAvatar();
@@ -139,5 +162,74 @@ public class QmsChatFragment extends TabFragment {
         recyclerView.scrollToPosition(adapter.getItemCount() - 1);
     }
 
+    public void pickImage() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, PICK_IMAGE);
+    }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
+            if (data == null) {
+                //Display an error
+                return;
+            }
+            Log.d("SUKA", "DATA URI " + getFileName(data.getData()) + " : " + getContext().getContentResolver().getType(data.getData()));
+            try {
+                uploadFile(getFileName(data.getData()), getContext().getContentResolver().getType(data.getData()), getContext().getContentResolver().openInputStream(data.getData()));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            /*try {
+                InputStream inputStream = getContext().getContentResolver().openInputStream(data.getData());
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }*/
+            //Now you can do whatever you want with your inpustream, save it as file, upload to a server, decode a bitmap...
+        }
+    }
+
+    public String getFileName(Uri uri) {
+        Log.d("suka", uri.getScheme() + " : " + getContext().getContentResolver().getType(uri));
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        if (result == null) {
+            Log.d("suka", "res " + uri.getPath());
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
+    }
+
+    private void loadAttaches() {
+        formSubscriber.subscribe(Api.EditPost().loadForm(56965580), form -> attachmentsPopup.onLoadAttachments(form), new EditPostForm(), null);
+    }
+
+    public void uploadFile(String name, String scheme, InputStream inputStream) {
+        attachmentsPopup.preUploadFile(name);
+        formSubscriber.subscribe(Api.EditPost().uploadFile(56965580, name, scheme, inputStream), form -> attachmentsPopup.onUploadFile(form), new EditPostForm(), null);
+    }
+
+    public void removeFiles() {
+        attachmentsPopup.preDeleteFiles();
+        List<AttachmentItem> selectedFiles = attachmentsPopup.getSelected();
+        new Handler().postDelayed(()->{
+            attachmentsPopup.onDeleteFiles(null);
+        }, 3000);
+
+    }
 }
