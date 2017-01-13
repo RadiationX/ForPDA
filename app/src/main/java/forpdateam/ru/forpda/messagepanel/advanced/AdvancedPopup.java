@@ -23,7 +23,7 @@ import forpdateam.ru.forpda.messagepanel.MessagePanel;
  * Created by radiationx on 07.01.17.
  */
 
-public class AdvancedPopupWindow {
+public class AdvancedPopup {
     private PopupWindow popupWindow;
     private ViewGroup fragmentContainer;
     private boolean isShowingKeyboard = false;
@@ -59,7 +59,7 @@ public class AdvancedPopupWindow {
         Log.d("SUKA", "AFTER " + fragmentContainer.getPaddingBottom());
     };
 
-    public AdvancedPopupWindow(Context context, MessagePanel panel) {
+    public AdvancedPopup(Context context, MessagePanel panel) {
         fragmentContainer = panel.getFragmentContainer();
         messagePanel = panel;
 
@@ -67,8 +67,8 @@ public class AdvancedPopupWindow {
         ViewPager viewPager = (ViewPager) popupView.findViewById(R.id.pager);
 
         List<BasePanelItem> viewList = new ArrayList<>();
-        viewList.add(new CodesPanelItem(context, messagePanel.getMessageField()));
-        viewList.add(new SmilesPanelItem(context, messagePanel.getMessageField()));
+        viewList.add(new CodesPanelItem(context, messagePanel));
+        viewList.add(new SmilesPanelItem(context, messagePanel));
         viewPager.setAdapter(new MyPagerAdapter(viewList));
 
         ((TabLayout) popupView.findViewById(R.id.tab_layout)).setupWithViewPager(viewPager);
@@ -134,15 +134,15 @@ public class AdvancedPopupWindow {
         fragmentContainer.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener);
     }
 
-    public void onDestroy() {
-        hidePopup();
-        popupWindow = null;
+    public void onPause() {
         fragmentContainer.getViewTreeObserver().removeOnGlobalLayoutListener(globalLayoutListener);
+        hidePopup();
     }
 
-    public void onPause() {
-        hidePopup();
+    public void onDestroy() {
         fragmentContainer.getViewTreeObserver().removeOnGlobalLayoutListener(globalLayoutListener);
+        hidePopup();
+        popupWindow = null;
     }
 
     public void hidePopupWindows() {

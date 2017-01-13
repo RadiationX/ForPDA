@@ -1,88 +1,44 @@
 package forpdateam.ru.forpda.api.theme.editpost.models;
 
+import java.util.regex.Pattern;
+
 /**
  * Created by radiationx on 09.01.17.
  */
 
 public class AttachmentItem {
+    private final static Pattern imageTypes = Pattern.compile("gif|jpg|jpeg|png", Pattern.CASE_INSENSITIVE);
     public final static int TYPE_FILE = 0;
     public final static int TYPE_IMAGE = 1;
+
     public final static int STATE_NOT_LOADED = 0;
     public final static int STATE_LOADING = 1;
     public final static int STATE_LOADED = 2;
+
+    public final static int STATUS_REMOVED = 0;
+    public final static int STATUS_NO_FILE = 1;
+    public final static int STATUS_UPLOADED = 2;
+    public final static int STATUS_READY = 3;
+    public final static int STATUS_UNKNOWN = 4;
+
+    private boolean isError = false;
     private boolean selected = false;
-    private int id = 0, type = TYPE_FILE, loadState = STATE_LOADING;
-    private String name, format, weight, forumUrl, localUrl, errorMessage;
 
-    //already added
-    public AttachmentItem(int id, String name, String weight, String type) {
-        this.id = id;
-        this.name = name;
-        this.weight = weight;
-        if (type.equals("gif"))
-            this.type = TYPE_IMAGE;
-        this.loadState = STATE_LOADED;
-    }
+    private int id = -1;
+    private int typeFile = TYPE_FILE;
+    private int loadState = STATE_LOADING;
+    private int status = STATUS_READY;
 
-    //load new file
-    public AttachmentItem(String name, String type) {
-        this.name = name;
-        if (type.contains("image"))
-            this.type = TYPE_IMAGE;
-        this.loadState = STATE_LOADING;
-    }
+    private String name;
+    private String format;
+    private String weight;
+    private String imageUrl;
 
     public AttachmentItem(String name) {
         this.name = name;
     }
 
     public AttachmentItem() {
-    }
-
-    public void createImageUrl() {
-        if (type == AttachmentItem.TYPE_IMAGE)
-            forumUrl = "http://cs5-2.4pda.to/".concat(Integer.toString(id)).concat(".").concat(format);
-    }
-
-    public String getForumUrl() {
-        return forumUrl;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
-    public void setWeight(String weight) {
-        this.weight = weight;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        if (type.contains("gif"))
-            this.type = TYPE_IMAGE;
-    }
-
-    public String getWeight() {
-        return weight;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public boolean isSelected() {
@@ -93,20 +49,46 @@ public class AttachmentItem {
         selected = !selected;
     }
 
-    public void setLocalUrl(String localUrl) {
-        this.localUrl = localUrl;
+    public int getId() {
+        return id;
     }
 
-    public String getLocalUrl() {
-        return localUrl;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+    public String getName() {
+        return name;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+        if (imageTypes.matcher(format).matches())
+            this.typeFile = TYPE_IMAGE;
+    }
+
+    public String getWeight() {
+        return weight;
+    }
+
+    public void setWeight(String weight) {
+        this.weight = weight;
+    }
+
+    public int getTypeFile() {
+        return typeFile;
+    }
+
+    public void setTypeFile(int typeFile) {
+        this.typeFile = typeFile;
     }
 
     public int getLoadState() {
@@ -117,7 +99,27 @@ public class AttachmentItem {
         this.loadState = loadState;
     }
 
-    public String getFormat() {
-        return format;
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public void setError(boolean error) {
+        isError = error;
+    }
+
+    public boolean isError() {
+        return isError;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

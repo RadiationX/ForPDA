@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.messagepanel;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.CardView;
 import android.view.Gravity;
@@ -16,7 +17,7 @@ import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.messagepanel.advanced.AdvancedPopupWindow;
+import forpdateam.ru.forpda.messagepanel.advanced.AdvancedPopup;
 import forpdateam.ru.forpda.messagepanel.attachments.AttachmentsPopup;
 import forpdateam.ru.forpda.utils.SimpleTextWatcher;
 
@@ -30,18 +31,18 @@ public class MessagePanel extends CardView {
     private List<View.OnClickListener> advancedListeners = new ArrayList<>(), attachmentsListeners = new ArrayList<>(), sendListeners = new ArrayList<>();
     private EditText messageField;
     private MessagePanelBehavior panelBehavior;
-    private AdvancedPopupWindow advancedPopupWindow;
+    private AdvancedPopup advancedPopup;
+    private AttachmentsPopup attachmentsPopup;
     private ViewGroup fragmentContainer;
     private int lastHeight = 0;
     private HeightChangeListener heightChangeListener;
     public int primaryColor = Color.parseColor("#0277bd");
 
-    public MessagePanel(Context context, ViewGroup fragmentContainer) {
+    public MessagePanel(Context context, ViewGroup fragmentContainer, ViewGroup targetContainer) {
         super(context);
         this.fragmentContainer = fragmentContainer;
         init();
-        CoordinatorLayout coordinatorLayout = (CoordinatorLayout) this.getFragmentContainer().findViewById(R.id.coordinator_layout);
-        coordinatorLayout.addView(this, coordinatorLayout.getChildCount() - 1);
+        targetContainer.addView(this, targetContainer.getChildCount() - 1);
         onCreatePanel();
     }
 
@@ -87,19 +88,47 @@ public class MessagePanel extends CardView {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() > 0) {
-                    if (sendButton.getColorFilter() == null)
+                    if (sendButton.getColorFilter() == null){
+                        sendButton.setEnabled(true);
                         sendButton.setColorFilter(primaryColor);
+                    }
                 } else {
-                    if (sendButton.getColorFilter() != null)
+                    if (sendButton.getColorFilter() != null){
+                        sendButton.setEnabled(false);
                         sendButton.clearColorFilter();
+                    }
                 }
             }
         });
+        messageField.setTypeface(Typeface.MONOSPACE);
     }
-    AttachmentsPopup attachmentsPopup;
-    private void onCreatePanel(){
+
+
+    public boolean insertText(String text) {
+        return insertText(text, null);
+    }
+
+    public boolean insertText(String startText, String endText) {
+        int selectionStart = messageField.getSelectionStart();
+        int selectionEnd = messageField.getSelectionEnd();
+        if (selectionEnd < selectionStart && selectionEnd != -1) {
+            int c = selectionStart;
+            selectionStart = selectionEnd;
+            selectionEnd = c;
+        }
+        if (endText != null && selectionStart != -1 && selectionStart != selectionEnd) {
+            messageField.getText().insert(selectionStart, startText);
+            messageField.getText().insert(selectionEnd + endText.length() - 1, endText);
+            return true;
+        }
+        messageField.getText().insert(selectionStart, startText);
+        return false;
+    }
+
+
+    private void onCreatePanel() {
         attachmentsPopup = new AttachmentsPopup(getContext(), this);
-        advancedPopupWindow = new AdvancedPopupWindow(getContext(), this);
+        advancedPopup = new AdvancedPopup(getContext(), this);
     }
 
     public AttachmentsPopup getAttachmentsPopup() {
@@ -116,18 +145,6 @@ public class MessagePanel extends CardView {
 
     public void addSendOnClickListener(View.OnClickListener listener) {
         sendListeners.add(listener);
-    }
-
-    public void removeAdvancedOnClickListener(View.OnClickListener listener) {
-        advancedListeners.remove(listener);
-    }
-
-    public void removeAttachmentsOnClickListener(View.OnClickListener listener) {
-        attachmentsListeners.remove(listener);
-    }
-
-    public void removeSendOnClickListener(View.OnClickListener listener) {
-        sendListeners.remove(listener);
     }
 
     public ImageButton getAdvancedButton() {
@@ -163,22 +180,26 @@ public class MessagePanel extends CardView {
     }
 
     public boolean onBackPressed() {
-        return advancedPopupWindow.onBackPressed();
+        return advancedPopup == null || advancedPopup.onBackPressed();
     }
 
     public void onResume() {
-        advancedPopupWindow.onResume();
+        if (advancedPopup != null)
+            advancedPopup.onResume();
     }
 
     public void onDestroy() {
-        advancedPopupWindow.onDestroy();
+        if (advancedPopup != null)
+            advancedPopup.onDestroy();
     }
 
     public void onPause() {
-        advancedPopupWindow.onPause();
+        if (advancedPopup != null)
+            advancedPopup.onPause();
     }
 
     public void hidePopupWindows() {
-        advancedPopupWindow.hidePopupWindows();
+        if (advancedPopup != null)
+            advancedPopup.hidePopupWindows();
     }
 }

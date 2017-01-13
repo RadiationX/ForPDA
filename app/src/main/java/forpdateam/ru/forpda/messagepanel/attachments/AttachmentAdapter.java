@@ -57,13 +57,28 @@ public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.Vi
             onDataChangeListener.onChange(items.size());
     }
 
-    public void removeSelected() {
-        for (AttachmentItem item : selected)
-            items.remove(item);
-        selected.clear();
-        notifyDataSetChanged();
-        if (onDataChangeListener != null)
+    public void deleteSelected() {
+        for (AttachmentItem item : selected) {
+            if (item.getStatus() == AttachmentItem.STATUS_REMOVED) {
+                int index = items.indexOf(item);
+                items.remove(index);
+                notifyItemRemoved(index);
+            }
+        }
+        unSelectItems();
+        if (onDataChangeListener != null) {
             onDataChangeListener.onChange(items.size());
+        }
+    }
+
+    public void unSelectItems() {
+        for (AttachmentItem item : selected) {
+            if (item != null) {
+                if(item.isSelected()) item.toggle();
+                notifyItemChanged(items.indexOf(item));
+            }
+        }
+        selected.clear();
         if (onSelectedListener != null)
             onSelectedListener.onSelected(null, -1, 0);
     }
@@ -103,11 +118,13 @@ public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.Vi
                 holder.description.setVisibility(View.GONE);
                 holder.progressBar.setVisibility(View.VISIBLE);
                 holder.reload.setVisibility(View.GONE);
+                holder.imageView.setVisibility(View.GONE);
                 break;
             case AttachmentItem.STATE_NOT_LOADED:
                 holder.description.setVisibility(View.GONE);
                 holder.progressBar.setVisibility(View.GONE);
                 holder.reload.setVisibility(View.VISIBLE);
+                holder.imageView.setVisibility(View.GONE);
                 break;
             case AttachmentItem.STATE_LOADED:
                 holder.description.setVisibility(View.VISIBLE);
@@ -115,8 +132,9 @@ public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.Vi
                 holder.attributes.setText(item.getFormat().concat(", ").concat(item.getWeight()));
                 holder.progressBar.setVisibility(View.GONE);
                 holder.reload.setVisibility(View.GONE);
-                if (item.getType() == AttachmentItem.TYPE_IMAGE) {
-                    ImageLoader.getInstance().displayImage(item.getForumUrl(), holder.imageView);
+                holder.imageView.setVisibility(View.VISIBLE);
+                if (item.getTypeFile() == AttachmentItem.TYPE_IMAGE) {
+                    ImageLoader.getInstance().displayImage(item.getImageUrl(), holder.imageView);
                 } else {
                     holder.imageView.setImageDrawable(App.getAppDrawable(R.drawable.ic_insert_drive_file_gray_24dp));
                 }
@@ -165,12 +183,12 @@ public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.Vi
 
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public ImageView imageView;
-        public RadioButton radioButton;
-        public View overlay;
-        public ProgressBar progressBar;
-        public ImageButton reload;
-        public TextView name, attributes;
+        ImageView imageView;
+        RadioButton radioButton;
+        View overlay;
+        ProgressBar progressBar;
+        ImageButton reload;
+        TextView name, attributes;
         public LinearLayout description;
 
         public ViewHolder(View view) {

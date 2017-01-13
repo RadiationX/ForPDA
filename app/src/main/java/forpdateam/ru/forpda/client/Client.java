@@ -11,8 +11,6 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.webkit.WebSettings;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,12 +31,7 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.internal.Util;
-import okio.BufferedSink;
-import okio.Okio;
-import okio.Source;
 
 public class Client {
     private static final String userAgent = WebSettings.getDefaultUserAgent(App.getContext());
@@ -147,7 +140,7 @@ public class Client {
                 }
             }
             if (file != null) {
-                formBodyBuilder.addFormDataPart(file.getRequestName(), URLEncoder.encode(file.getFileName(), "CP1251"), RequestBodyUtil.create(MediaType.parse(file.getFileScheme()), file.getFileStream()));
+                formBodyBuilder.addFormDataPart(file.getRequestName(), URLEncoder.encode(file.getFileName(), "CP1251"), RequestBodyUtil.create(MediaType.parse(file.getMimeType()), file.getFileStream()));
             }
             builder.post(formBodyBuilder.build());
         }
@@ -165,6 +158,8 @@ public class Client {
         } finally {
             if (response != null)
                 response.close();
+            if(file!=null&&file.getFileStream()!=null)
+                file.getFileStream().close();
         }
         return res;
     }

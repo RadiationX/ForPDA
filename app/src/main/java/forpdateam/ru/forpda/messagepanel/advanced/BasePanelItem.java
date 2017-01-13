@@ -7,6 +7,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.messagepanel.MessagePanel;
 
 /**
  * Created by radiationx on 08.01.17.
@@ -15,12 +16,12 @@ import forpdateam.ru.forpda.R;
 @SuppressLint("ViewConstructor")
 public class BasePanelItem extends FrameLayout {
     private String title;
-    protected EditText messageField;
+    protected MessagePanel messagePanel;
     protected RecyclerView recyclerView;
 
-    public BasePanelItem(Context context, EditText editText, String title) {
+    public BasePanelItem(Context context, MessagePanel messagePanel, String title) {
         super(context);
-        messageField = editText;
+        this.messagePanel = messagePanel;
         this.title = title;
         inflate(getContext(), R.layout.testbasepanel, this);
         recyclerView = (RecyclerView) findViewById(R.id.auto_fit_recycler_view);

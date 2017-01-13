@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,12 +13,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import forpdateam.ru.forpda.R;
@@ -27,6 +30,7 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
+import forpdateam.ru.forpda.client.RequestFile;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsChatAdapter;
 import forpdateam.ru.forpda.messagepanel.MessagePanel;
@@ -58,6 +62,7 @@ public class QmsChatFragment extends TabFragment {
 
     private Subscriber<QmsChatModel> mainSubscriber = new Subscriber<>();
     private Subscriber<EditPostForm> formSubscriber = new Subscriber<>();
+    private Subscriber<List<AttachmentItem>> attachmentSubscriber = new Subscriber<>();
 
     @Override
     public String getDefaultTitle() {
@@ -81,8 +86,8 @@ public class QmsChatFragment extends TabFragment {
         initBaseView(inflater, container);
         baseInflateFragment(inflater, R.layout.fragment_qms_chat);
         recyclerView = (RecyclerView) findViewById(R.id.qms_chat);
-        messagePanel = new MessagePanel(getContext(), (ViewGroup) findViewById(R.id.fragment_container));
-        messagePanel.setHeightChangeListener(newHeight -> recyclerView.setPadding(recyclerView.getPaddingLeft(), recyclerView.getPaddingTop(), recyclerView.getPaddingRight(), newHeight));
+        messagePanel = new MessagePanel(getContext(), (ViewGroup) findViewById(R.id.fragment_container), coordinatorLayout);
+        messagePanel.setHeightChangeListener(newHeight -> recyclerView.setPadding(0, 0, 0, newHeight));
         attachmentsPopup = messagePanel.getAttachmentsPopup();
 
         attachmentsPopup.setAddOnClickListener(v -> pickImage());
@@ -163,9 +168,19 @@ public class QmsChatFragment extends TabFragment {
     }
 
     public void pickImage() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        /*Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image*//*");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        }
+        startActivityForResult(intent, PICK_IMAGE)*/
+        ;
+
+        Intent intent = new Intent();
         intent.setType("image/*");
-        startActivityForResult(intent, PICK_IMAGE);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
     }
 
     @Override
@@ -176,9 +191,23 @@ public class QmsChatFragment extends TabFragment {
                 //Display an error
                 return;
             }
+            Uri uri = data.getData();
             Log.d("SUKA", "DATA URI " + getFileName(data.getData()) + " : " + getContext().getContentResolver().getType(data.getData()));
             try {
-                uploadFile(getFileName(data.getData()), getContext().getContentResolver().getType(data.getData()), getContext().getContentResolver().openInputStream(data.getData()));
+                InputStream inputStream = null;
+                String name = getFileName(data.getData());
+                String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(name));
+
+                if (uri.getScheme().equals("content")) {
+                    inputStream = getContext().getContentResolver().openInputStream(uri);
+                } else if (uri.getScheme().equals("file")) {
+                    inputStream = new FileInputStream(new File(uri.getPath()));
+                }
+
+                List<RequestFile> files = new ArrayList<>();
+                files.add(new RequestFile(name, mimeType, inputStream));
+                uploadFiles(files);
+
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -219,17 +248,14 @@ public class QmsChatFragment extends TabFragment {
         formSubscriber.subscribe(Api.EditPost().loadForm(56965580), form -> attachmentsPopup.onLoadAttachments(form), new EditPostForm(), null);
     }
 
-    public void uploadFile(String name, String scheme, InputStream inputStream) {
-        attachmentsPopup.preUploadFile(name);
-        formSubscriber.subscribe(Api.EditPost().uploadFile(56965580, name, scheme, inputStream), form -> attachmentsPopup.onUploadFile(form), new EditPostForm(), null);
+    public void uploadFiles(List<RequestFile> files) {
+        attachmentsPopup.preUploadFiles(files);
+        attachmentSubscriber.subscribe(Api.EditPost().uploadFiles(56965580, files), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
     }
 
     public void removeFiles() {
         attachmentsPopup.preDeleteFiles();
         List<AttachmentItem> selectedFiles = attachmentsPopup.getSelected();
-        new Handler().postDelayed(()->{
-            attachmentsPopup.onDeleteFiles(null);
-        }, 3000);
-
+        attachmentSubscriber.subscribe(Api.EditPost().deleteFiles(56965580, selectedFiles), item -> attachmentsPopup.onDeleteFiles(item), selectedFiles, null);
     }
 }

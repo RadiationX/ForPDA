@@ -48,48 +48,24 @@ public class NestedWebView extends WebView implements NestedScrollingChild {
         event.offsetLocation(0, mNestedOffsetY);
         switch (action) {
             case MotionEvent.ACTION_MOVE:
-                /*int deltaY = mLastY - eventY;
-                // NestedPreScroll
-                if (dispatchNestedPreScroll(0, deltaY, mScrollConsumed, mScrollOffset)) {
-                    deltaY -= mScrollConsumed[1];
-                    mLastY = eventY - mScrollOffset[1];
-                    event.offsetLocation(0, -mScrollOffset[1]);
-                    mNestedOffsetY += mScrollOffset[1];
-                }
-                returnValue = super.onTouchEvent(event);
-
-                // NestedScroll
-                if (dispatchNestedScroll(0, mScrollOffset[1], 0, deltaY, mScrollOffset)) {
-                    event.offsetLocation(0, mScrollOffset[1]);
-                    mNestedOffsetY += mScrollOffset[1];
-                    mLastY -= mScrollOffset[1];
-                }*/
-
                 int deltaY = mLastY - eventY;
                 // NestedPreScroll
-                //Log.d("NESTEDWW", "PreScroll "+deltaY+" : "+mScrollConsumed[1]+" : "+mScrollOffset[1]+" : "+mNestedOffsetY);
                 if (dispatchNestedPreScroll(0, deltaY, mScrollConsumed, mScrollOffset)) {
                     deltaY -= mScrollConsumed[1];
                     mLastY = eventY - mScrollOffset[1];
                     event.offsetLocation(0, -mScrollOffset[1]);
                     mNestedOffsetY = mScrollOffset[1];
-                    //Log.d("NESTEDWW", "PreScroll true");
-                }else {
-                    //Log.d("NESTEDWW", "PreScroll false");
                 }
                 returnValue = super.onTouchEvent(event);
 
                 // NestedScroll
-                //Log.d("NESTEDWW", "NestedScroll "+" : "+deltaY+" : "+mScrollOffset[1]+" : "+mNestedOffsetY);
                 if (dispatchNestedScroll(0, mScrollConsumed[1], 0, deltaY, mScrollOffset)) {
                     event.offsetLocation(0, mScrollOffset[1]);
                     mNestedOffsetY = mScrollOffset[1];
                     mLastY -= deltaY;
                     nestedScrolled = true;
-                    //Log.d("NESTEDWW", "NestedScroll true");
                 }else {
                     nestedScrolled = false;
-                    //Log.d("NESTEDWW", "NestedScroll false");
                 }
 
                 break;

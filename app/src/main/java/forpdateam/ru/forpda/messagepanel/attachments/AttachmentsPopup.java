@@ -1,37 +1,23 @@
 package forpdateam.ru.forpda.messagepanel.attachments;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
-import android.net.Uri;
-import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
-import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.client.RequestFile;
-import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.messagepanel.AutoFitRecyclerView;
 import forpdateam.ru.forpda.messagepanel.MessagePanel;
 import io.reactivex.Observable;
@@ -56,6 +42,9 @@ public class AttachmentsPopup {
     private RelativeLayout textControls;
     private ImageButton addFile, deleteFile;
     private Button addToSpoiler, addToText;
+    private FrameLayout progressOverlay;
+
+    private OnInsertAttachmentListener insertAttachmentListener;
 
     public AttachmentsPopup(Context context, MessagePanel panel) {
         messagePanel = panel;
@@ -64,6 +53,7 @@ public class AttachmentsPopup {
 
         bottomSheet = View.inflate(context, R.layout.test_bottomsheet, null);
         recyclerView = (AutoFitRecyclerView) bottomSheet.findViewById(R.id.auto_fit_recycler_view);
+        progressOverlay = (FrameLayout) bottomSheet.findViewById(R.id.progress_overlay);
 
         noAttachments = (TextView) bottomSheet.findViewById(R.id.no_attachments_text);
         textControls = (RelativeLayout) bottomSheet.findViewById(R.id.text_controls);
@@ -76,13 +66,13 @@ public class AttachmentsPopup {
         recyclerView.setAdapter(adapter);
 
         /*addFile.setOnClickListener(v -> {
-            uploadFile();
+            uploadFiles();
         });*/
-        //deleteFile.setOnClickListener(v -> adapter.removeSelected());
+        //deleteFile.setOnClickListener(v -> adapter.deleteSelected());
 
         adapter.setOnSelectedListener(this::onSelected);
         adapter.setOnDataChangeListener(this::onDataChange);
-        adapter.setReloadOnClickListener(item -> {
+        /*adapter.setReloadOnClickListener(item -> {
             if (item.getLoadState() == AttachmentItem.STATE_NOT_LOADED) {
                 item.setLoadState(AttachmentItem.STATE_LOADING);
                 adapter.notifyItemLoadResult(item);
@@ -91,9 +81,11 @@ public class AttachmentsPopup {
                     adapter.notifyItemLoadResult(item);
                 }, 3000);
             }
-        });
+        });*/
         onDataChange(0);
 
+        addToText.setOnClickListener(v -> insertAttachment(false));
+        addToSpoiler.setOnClickListener(v -> insertAttachment(true));
 
         messagePanel.addAttachmentsOnClickListener(v -> {
             if (bottomSheet != null && bottomSheet.getParent() != null && bottomSheet.getParent() instanceof ViewGroup) {
@@ -102,6 +94,23 @@ public class AttachmentsPopup {
             dialog.setContentView(bottomSheet);
             dialog.show();
         });
+    }
+
+    private void insertAttachment(boolean toSpoiler) {
+        StringBuilder text = new StringBuilder();
+        if (toSpoiler)
+            text.append("[spoiler]");
+        for (AttachmentItem item : adapter.getSelected()) {
+            if (insertAttachmentListener != null) {
+                text.append(insertAttachmentListener.onInsert(item));
+            } else {
+                text.append("[attachment=").append(item.getId()).append(":").append(item.getName()).append("]");
+            }
+        }
+        if (toSpoiler)
+            text.append("[/spoiler]");
+        messagePanel.insertText(text.toString());
+        adapter.unSelectItems();
     }
 
     private void onDataChange(int count) {
@@ -127,10 +136,14 @@ public class AttachmentsPopup {
         if (deleteFile.getVisibility() != secondGroup)
             deleteFile.setVisibility(secondGroup);
 
+        tryLockControls(!adapter.containNotLoaded());
+    }
+
+    private void tryLockControls(boolean enable) {
         if (textControls.getVisibility() == View.VISIBLE) {
-            boolean enabledTextControls = !adapter.containNotLoaded();
-            addToSpoiler.setEnabled(enabledTextControls);
-            addToText.setEnabled(enabledTextControls);
+            addToSpoiler.setEnabled(enable);
+            addToText.setEnabled(enable);
+            deleteFile.setEnabled(enable);
         }
     }
 
@@ -146,35 +159,41 @@ public class AttachmentsPopup {
         adapter.add(form.getLoadedAttachments());
     }
 
-    public void preUploadFile(String name) {
-        AttachmentItem item = new AttachmentItem(name);
-        adapter.add(item);
-        loadingItems.add(item);
-    }
-
-    public void onUploadFile(EditPostForm form) {
-        AttachmentItem item = form.getLoadedAttachments().get(0);
-        AttachmentItem loadingItem = getItemByName(item.getName());
-        if (item.getLoadState() == AttachmentItem.STATE_NOT_LOADED){
-            adapter.removeItem(loadingItem);
-            //SHOW ERROR
-        }else{
-            adapter.replaceItem(loadingItem, item);
+    public void preUploadFiles(List<RequestFile> files) {
+        for (RequestFile file : files) {
+            AttachmentItem item = new AttachmentItem(file.getFileName());
+            adapter.add(item);
+            loadingItems.add(item);
         }
-        loadingItems.remove(loadingItem);
     }
 
-    public void preDeleteFiles(){
+    public void onUploadFiles(List<AttachmentItem> items) {
+        for (AttachmentItem item : items) {
+            AttachmentItem loadingItem = getItemByName(item.getName());
+            if (item.getLoadState() == AttachmentItem.STATE_NOT_LOADED) {
+                adapter.removeItem(loadingItem);
+                //SHOW ERROR
+            } else {
+                adapter.replaceItem(loadingItem, item);
+            }
+            loadingItems.remove(loadingItem);
+        }
+    }
+
+    public void preDeleteFiles() {
         //block ui
-
+        progressOverlay.setVisibility(View.VISIBLE);
+        tryLockControls(false);
     }
 
-    public void onDeleteFiles(EditPostForm form) {
+    public void onDeleteFiles(List<AttachmentItem> deletedItems) {
         //unblock ui
 
+        progressOverlay.setVisibility(View.GONE);
+        adapter.deleteSelected();
     }
 
-    public List<AttachmentItem> getSelected(){
+    public List<AttachmentItem> getSelected() {
         return adapter.getSelected();
     }
 
@@ -185,26 +204,11 @@ public class AttachmentsPopup {
         return null;
     }
 
+    public void setInsertAttachmentListener(OnInsertAttachmentListener insertAttachmentListener) {
+        this.insertAttachmentListener = insertAttachmentListener;
+    }
 
-    Subscriber<EditPostForm> mainSubscriber = new Subscriber<>();
-
-
-
-
-    public class Subscriber<T> {
-        public Disposable subscribe(@NonNull Observable<T> observable, @NonNull Consumer<T> onNext, @NonNull T onErrorReturn) {
-            return subscribe(observable, onNext, onErrorReturn, null);
-        }
-
-        public Disposable subscribe(@NonNull Observable<T> observable, @NonNull Consumer<T> onNext, @NonNull T onErrorReturn, View.OnClickListener onErrorAction) {
-            return observable.onErrorReturn(throwable -> {
-                //handleErrorRx(throwable, onErrorAction);
-                throwable.printStackTrace();
-                return onErrorReturn;
-            })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(onNext/*, throwable -> handleErrorRx(throwable, onErrorAction)*/);
-        }
+    interface OnInsertAttachmentListener {
+        String onInsert(AttachmentItem item);
     }
 }

@@ -7,6 +7,8 @@ import android.widget.EditText;
 import java.util.ArrayList;
 import java.util.List;
 
+import forpdateam.ru.forpda.messagepanel.MessagePanel;
+
 /**
  * Created by radiationx on 08.01.17.
  */
@@ -16,18 +18,11 @@ public class SmilesPanelItem extends BasePanelItem {
     private static List<ButtonData> smiles = null;
     private static List<String> urlToAssets = null;
 
-    public SmilesPanelItem(Context context, EditText editText) {
-        super(context, editText, "Смайлы");
+    public SmilesPanelItem(Context context, MessagePanel panel) {
+        super(context, panel, "Смайлы");
         PanelItemAdapter adapter = new PanelItemAdapter(getSmiles(), getUrlToAssets(), PanelItemAdapter.TYPE_ASSET);
         adapter.setOnItemClickListener(item -> {
-            int selectionStart = messageField.getSelectionStart();
-            int selectionEnd = messageField.getSelectionEnd();
-            if (selectionEnd < selectionStart && selectionEnd != -1) {
-                int c = selectionStart;
-                selectionStart = selectionEnd;
-                selectionEnd = c;
-            }
-            messageField.getText().insert(selectionStart, " ".concat(item.getText()).concat(""));
+            messagePanel.insertText(" ".concat(item.getText()).concat(" "));
         });
         recyclerView.setAdapter(adapter);
     }

@@ -8,19 +8,19 @@ import java.io.InputStream;
 
 public class RequestFile {
     private InputStream fileStream;
-    private String fileName, fileScheme, requestName;
+    private String fileName, mimeType, requestName;
 
-    public RequestFile(String fileName, String fileScheme, InputStream fileStream) {
+    public RequestFile(String fileName, String mimeType, InputStream fileStream) {
         this.fileStream = fileStream;
         this.fileName = fileName;
-        this.fileScheme = fileScheme;
+        this.mimeType = mimeType;
     }
 
-    public RequestFile(String requestName, String fileName, String fileScheme, InputStream fileStream) {
+    public RequestFile(String requestName, String fileName, String mimeType, InputStream fileStream) {
         this.requestName = requestName;
         this.fileStream = fileStream;
         this.fileName = fileName;
-        this.fileScheme = fileScheme;
+        this.mimeType = mimeType;
     }
 
     public void setRequestName(String requestName) {
@@ -35,8 +35,8 @@ public class RequestFile {
         return fileName;
     }
 
-    public String getFileScheme() {
-        return fileScheme;
+    public String getMimeType() {
+        return mimeType;
     }
 
     public String getRequestName() {

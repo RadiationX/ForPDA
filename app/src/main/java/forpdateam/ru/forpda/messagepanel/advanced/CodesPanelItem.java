@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.messagepanel.MessagePanel;
 
 
 /**
@@ -19,27 +20,18 @@ public class CodesPanelItem extends BasePanelItem {
     private static List<ButtonData> codes = null;
     private List<String> openedCodes = new ArrayList<>();
 
-    public CodesPanelItem(Context context, EditText editText) {
-        super(context, editText, "Оформление");
+    public CodesPanelItem(Context context, MessagePanel panel) {
+        super(context, panel, "Оформление");
         PanelItemAdapter adapter = new PanelItemAdapter(getCodes(), null, PanelItemAdapter.TYPE_DRAWABLE);
         adapter.setOnItemClickListener(item -> {
-            String tag = item.getText();
-
-            int selectionStart = messageField.getSelectionStart();
-            int selectionEnd = messageField.getSelectionEnd();
-            if (selectionEnd < selectionStart && selectionEnd != -1) {
-                int c = selectionStart;
-                selectionStart = selectionEnd;
-                selectionEnd = c;
-            }
-            if (selectionStart != -1 && selectionStart != selectionEnd) {
-                messageField.getText().insert(selectionStart, "[".concat(tag).concat("]"));
-                messageField.getText().insert(selectionEnd + tag.length() + 2, "[/".concat(tag).concat("]"));
-                return;
-            }
-
             int indexOf = openedCodes.indexOf(item.getText());
-            messageField.getText().insert(selectionStart, "[".concat(indexOf >= 0 ? "/" : "").concat(tag).concat("]"));
+            String startText, endText = null, tag = item.getText();
+            startText = "[".concat(indexOf >= 0 ? "/" : "").concat(tag).concat("]");
+            if (indexOf < 0)
+                endText = "[/".concat(tag).concat("]");
+
+            if (messagePanel.insertText(startText, endText)) return;
+
             if (indexOf >= 0) {
                 openedCodes.remove(indexOf);
             } else {
@@ -48,6 +40,7 @@ public class CodesPanelItem extends BasePanelItem {
         });
         recyclerView.setAdapter(adapter);
     }
+
 
     public static List<ButtonData> getCodes() {
         if (codes != null) return codes;

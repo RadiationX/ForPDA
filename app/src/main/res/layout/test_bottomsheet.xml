@@ -96,5 +96,17 @@
         </FrameLayout>
     </RelativeLayout>
 
+    <FrameLayout
+        android:id="@+id/progress_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#21000000"
+        android:visibility="gone">
+        <ProgressBar
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"/>
+    </FrameLayout>
+
 
 </RelativeLayout>

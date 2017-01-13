@@ -90,7 +90,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
         initFabBehavior();
         baseInflateFragment(inflater, R.layout.fragment_theme);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-        messagePanel = new MessagePanel(getContext(), (ViewGroup) findViewById(R.id.fragment_container));
+        messagePanel = new MessagePanel(getContext(), (ViewGroup) findViewById(R.id.fragment_container), coordinatorLayout);
         messagePanel.setHeightChangeListener(newHeight -> webView.evalJs("setPaddingBottom(" + (newHeight / getResources().getDisplayMetrics().density) + ");"));
         if (getMainActivity().getWebViews().size() > 0) {
             webView = getMainActivity().getWebViews().element();
@@ -329,7 +329,6 @@ public class ThemeFragmentWeb extends ThemeFragment {
         }
         updateFavorites(themePage);
         updateView();
-        updateNavigation(themePage);
     }
 
     private void updateFavorites(ThemePage themePage) {
@@ -363,6 +362,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
     }
 
     private void updateView() {
+        updateNavigation(pageData);
         setTabUrl(pageData.getUrl());
         updateTitle();
         updateSubTitle();
