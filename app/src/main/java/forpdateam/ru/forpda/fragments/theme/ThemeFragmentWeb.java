@@ -2,8 +2,11 @@ package forpdateam.ru.forpda.fragments.theme;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -12,6 +15,8 @@ import android.graphics.PorterDuffColorFilter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -29,6 +34,7 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
+import android.webkit.MimeTypeMap;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -39,6 +45,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -50,13 +60,21 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.theme.Theme;
+import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
+import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
+import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.client.RequestFile;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.messagepanel.MessagePanel;
+import forpdateam.ru.forpda.messagepanel.attachments.AttachmentsPopup;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
+import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
+import io.reactivex.functions.Consumer;
+import okhttp3.Cookie;
 
 /**
  * Created by radiationx on 20.10.16.
@@ -81,6 +99,10 @@ public class ThemeFragmentWeb extends ThemeFragment {
     private int searchViewTag = 0;
     private final ColorFilter colorFilter = new PorterDuffColorFilter(Color.argb(80, 255, 255, 255), PorterDuff.Mode.DST_IN);
     private MessagePanel messagePanel;
+    private AttachmentsPopup attachmentsPopup;
+    private Subscriber<EditPostForm> formSubscriber = new Subscriber<>();
+    private Subscriber<List<AttachmentItem>> attachmentSubscriber = new Subscriber<>();
+    private static final int PICK_IMAGE = 1228;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Nullable
@@ -92,6 +114,13 @@ public class ThemeFragmentWeb extends ThemeFragment {
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         messagePanel = new MessagePanel(getContext(), (ViewGroup) findViewById(R.id.fragment_container), coordinatorLayout);
         messagePanel.setHeightChangeListener(newHeight -> webView.evalJs("setPaddingBottom(" + (newHeight / getResources().getDisplayMetrics().density) + ");"));
+        messagePanel.addSendOnClickListener(v -> {
+            sendMessage();
+        });
+        attachmentsPopup = messagePanel.getAttachmentsPopup();
+        attachmentsPopup.setAddOnClickListener(v -> pickImage());
+        attachmentsPopup.setDeleteOnClickListener(v -> removeFiles());
+
         if (getMainActivity().getWebViews().size() > 0) {
             webView = getMainActivity().getWebViews().element();
             getMainActivity().getWebViews().remove();
@@ -193,6 +222,66 @@ public class ThemeFragmentWeb extends ThemeFragment {
         /*fab.setImageDrawable(App.getAppDrawable(R.drawable.ic_create_white_24dp));
         fab.setVisibility(View.VISIBLE);*/
         return view;
+    }
+
+
+    private void sendMessage() {
+        EditPostForm form = new EditPostForm();
+        form.setForumId(pageData.getForumId());
+        form.setTopicId(pageData.getId());
+        form.setSt(pageData.getCurrentPage() * pageData.getPostsOnPageCount());
+        form.setMessage(messagePanel.getMessage());
+        List<AttachmentItem> attachments = messagePanel.getAttachments();
+        int[] ids = new int[attachments.size()];
+        for (int i = 0; i < attachments.size(); i++) {
+            ids[i] = attachments.get(i).getId();
+        }
+        form.setAttachments(ids);
+        //emulate
+        /*new Handler().postDelayed(() -> {
+            try {
+                onLoadData(pageData);
+
+            } catch (Exception ignore) {
+            }
+        }, 1500);*/
+        mainSubscriber.subscribe(Api.EditPost().sendPost(form), new Consumer<ThemePage>() {
+            @Override
+            public void accept(ThemePage s) throws Exception {
+                onLoadData(s);
+                messagePanel.clearAttachments();
+                messagePanel.clearMessage();
+            }
+        }, pageData, v -> loadData());
+    }
+
+    public void pickImage() {
+        startActivityForResult(FilePickHelper.pickImage(PICK_IMAGE), PICK_IMAGE);
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
+            if (data == null) {
+                //Display an error
+                return;
+            }
+            uploadFiles(FilePickHelper.onActivityResult(getContext(), data.getData()));
+        }
+    }
+
+
+    public void uploadFiles(List<RequestFile> files) {
+        attachmentsPopup.preUploadFiles(files);
+        attachmentSubscriber.subscribe(Api.EditPost().uploadFiles(56965580, files), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
+    }
+
+    public void removeFiles() {
+        attachmentsPopup.preDeleteFiles();
+        List<AttachmentItem> selectedFiles = attachmentsPopup.getSelected();
+        attachmentSubscriber.subscribe(Api.EditPost().deleteFiles(56965580, selectedFiles), item -> attachmentsPopup.onDeleteFiles(item), selectedFiles, null);
     }
 
     @Override
@@ -303,6 +392,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
 
     private void onLoadData(ThemePage themePage) throws Exception {
+        Log.d("suka", "check theme " + themePage + " : " + themePage.getPosts().size() + " : " + themePage.getId() + " : " + themePage.getForumId() + " : " + themePage.getUrl());
         if (refreshLayout != null)
             refreshLayout.setRefreshing(false);
         if (themePage == null || themePage.getId() == 0 || themePage.getUrl() == null) {
@@ -367,7 +457,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
         updateTitle();
         updateSubTitle();
         refreshOptionsMenu();
-        webView.loadDataWithBaseURL(getTabUrl(), pageData.getHtml(), "text/html", "utf-8", null);
+        webView.loadDataWithBaseURL(null, pageData.getHtml(), "text/html", "utf-8", null);
     }
 
 

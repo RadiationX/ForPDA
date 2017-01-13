@@ -56,6 +56,10 @@ public class Client {
         }
     }
 
+    public static String getAuthKey(){
+        return App.getInstance().getPreferences().getString("auth_key", "0");
+    }
+
     public static Client getInstance() {
         return INSTANCE;
     }
@@ -136,7 +140,9 @@ public class Client {
             formBodyBuilder.setType(MultipartBody.FORM);
             if (headers != null) {
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
-                    formBodyBuilder.addFormDataPart(entry.getKey(), URLEncoder.encode(entry.getValue(), "CP1251"));
+                    //formBodyBuilder.addFormDataPart(entry.getKey(), URLEncoder.encode(entry.getValue(), "CP1251"));
+                    formBodyBuilder.addFormDataPart(entry.getKey(), entry.getValue());
+                    Log.d("SUKA", "ADD FORM DATA PART "+entry.getKey()+" : "+entry.getValue());
                 }
             }
             if (file != null) {

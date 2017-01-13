@@ -43,6 +43,10 @@ public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.Vi
     public AttachmentAdapter() {
     }
 
+    public List<AttachmentItem> getItems() {
+        return items;
+    }
+
     public void add(Collection<AttachmentItem> items) {
         this.items.addAll(items);
         notifyDataSetChanged();
@@ -55,6 +59,14 @@ public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.Vi
         notifyItemInserted(items.size() - 1);
         if (onDataChangeListener != null)
             onDataChangeListener.onChange(items.size());
+    }
+
+    public void clear(){
+        items.clear();
+        unSelectItems();
+        if (onDataChangeListener != null) {
+            onDataChangeListener.onChange(items.size());
+        }
     }
 
     public void deleteSelected() {

@@ -32,7 +32,7 @@ public class Theme {
     private final static Pattern titlePattern = Pattern.compile("<div class=\"topic_title_post\">(?:([^<]*?)(?:, ([^<]*?)|))<br");
     private final static Pattern alreadyInFavPattern = Pattern.compile("Тема уже добавлена в <a href=\"[^\"]*act=fav\">");
     private final static Pattern paginationPattern = Pattern.compile("pagination\">([\\s\\S]*?<span[^>]*?>([^<]*?)</span>[\\s\\S]*?)</div><br");
-    private final static Pattern themeIdPattern = Pattern.compile("showtopic=([\\d][^&]*)");
+    private final static Pattern themeIdPattern = Pattern.compile("showforum=(\\d+)[^>]*?>[^<]*?<\\/a>[^<]*?<\\/div>[^<]*?<script[^>]*?>[\\s\\S]*?showtopic=(\\d+)&st");
     public final static Pattern elemToScrollPattern = Pattern.compile("(?:anchor=|#)([^&\\n\\=\\?\\.\\#]*)");
     //private final static Pattern newsPattern = Pattern.compile("<section[^>]*?><article[^>]*?>[^<]*?<div class=\"container\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\" alt=\"([\\s\\S]*?)\"[\\s\\S]*?<em[^>]*>([^<]*?)</em>[\\s\\S]*?<a href=\"([^\"]*?)\">([\\s\\S]*?)</a>[\\s\\S]*?<a[^>]*?>([^<]*?)</a><div[^>]*?># ([\\s\\S]*?)</div>[\\s\\S]*?<div class=\"content-box\"[^>]*?>([\\s\\S]*?)</div></div></div>[^<]*?<div class=\"materials-box\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?<div class=\"comment-box\" id=\"comments\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[^<]*?<form");
 
@@ -55,10 +55,17 @@ public class Theme {
         return Observable.fromCallable(() -> _getPage(url, generateHtml));
     }
 
+
     public ThemePage _getPage(final String url, boolean generateHtml) throws Exception {
-        ThemePage page = new ThemePage();
         Log.d("kek", "page start _getPage");
         String response = Client.getInstance().get(url);
+
+
+        return parsePage(url, response, generateHtml);
+    }
+
+    public ThemePage parsePage(String url, String response, boolean generateHtml){
+        ThemePage page = new ThemePage();
         String redirectUrl = Client.getInstance().getRedirect(url);
         if (redirectUrl == null)
             redirectUrl = url;
@@ -70,9 +77,11 @@ public class Theme {
         while (matcher.find()) {
             page.setElementToScroll(matcher.group(1));
         }
-        matcher = themeIdPattern.matcher(redirectUrl);
+        matcher = themeIdPattern.matcher(response);
         if (matcher.find()) {
-            page.setId(Integer.parseInt(matcher.group(1)));
+            Log.d("suka", "IDS PARSING " + matcher.group(1) + " : " + matcher.group(2));
+            page.setForumId(Integer.parseInt(matcher.group(1)));
+            page.setId(Integer.parseInt(matcher.group(2)));
         }
         matcher = countsPattern.matcher(response);
         if (matcher.find()) {
@@ -115,6 +124,7 @@ public class Theme {
             post.setBody(matcher.group(18));
             if (post.isCurator() && post.getUserId() == memberId)
                 page.setCurator(true);
+            Log.d("suka", "ADD POST " + post.getId() + " : " + post.getNick());
             page.addPost(post);
         }
         Log.d("kek", "poll matcher " + (System.currentTimeMillis() - time));
@@ -328,7 +338,7 @@ public class Theme {
     }
 
     private String _deletePost(int postId) throws Exception {
-        String url = "http://4pda.ru/forum/index.php?act=zmod&auth_key=".concat(App.getInstance().getPreferences().getString("auth_key", "null")).concat("&code=postchoice&tact=delete&selectedpids=").concat(Integer.toString(postId));
+        String url = "http://4pda.ru/forum/index.php?act=zmod&auth_key=".concat(Client.getAuthKey()).concat("&code=postchoice&tact=delete&selectedpids=").concat(Integer.toString(postId));
         String response = Client.getInstance().get(url);
         return response.equals("ok") ? response : "";
     }

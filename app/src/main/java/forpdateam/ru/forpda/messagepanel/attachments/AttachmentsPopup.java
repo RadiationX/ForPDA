@@ -186,6 +186,10 @@ public class AttachmentsPopup {
         tryLockControls(false);
     }
 
+    public void clearAttachments(){
+        adapter.clear();
+    }
+
     public void onDeleteFiles(List<AttachmentItem> deletedItems) {
         //unblock ui
 
@@ -193,6 +197,9 @@ public class AttachmentsPopup {
         adapter.deleteSelected();
     }
 
+    public List<AttachmentItem> getAttachments(){
+        return adapter.getItems();
+    }
     public List<AttachmentItem> getSelected() {
         return adapter.getSelected();
     }

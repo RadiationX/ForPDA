@@ -72,7 +72,7 @@ public class AuthParser {
     }
 
     public boolean tryLogout() throws Exception {
-        String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=login&CODE=03&k=" + App.getInstance().getPreferences().getString("auth_key", "0"));
+        String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=login&CODE=03&k=".concat(Client.getAuthKey()));
 
         Matcher matcher = Pattern.compile("wr va-m text").matcher(response);
         if (matcher.find())

@@ -17,6 +17,7 @@ import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.messagepanel.advanced.AdvancedPopup;
 import forpdateam.ru.forpda.messagepanel.attachments.AttachmentsPopup;
 import forpdateam.ru.forpda.utils.SimpleTextWatcher;
@@ -88,12 +89,12 @@ public class MessagePanel extends CardView {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() > 0) {
-                    if (sendButton.getColorFilter() == null){
+                    if (sendButton.getColorFilter() == null) {
                         sendButton.setEnabled(true);
                         sendButton.setColorFilter(primaryColor);
                     }
                 } else {
-                    if (sendButton.getColorFilter() != null){
+                    if (sendButton.getColorFilter() != null) {
                         sendButton.setEnabled(false);
                         sendButton.clearColorFilter();
                     }
@@ -125,6 +126,21 @@ public class MessagePanel extends CardView {
         return false;
     }
 
+    public String getMessage() {
+        return messageField.getText().toString();
+    }
+
+    public void clearMessage() {
+        messageField.setText("");
+    }
+
+    public void clearAttachments(){
+        attachmentsPopup.clearAttachments();
+    }
+
+    public List<AttachmentItem> getAttachments() {
+        return attachmentsPopup.getAttachments();
+    }
 
     private void onCreatePanel() {
         attachmentsPopup = new AttachmentsPopup(getContext(), this);

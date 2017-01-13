@@ -13,6 +13,8 @@ public class ThemePage implements IThemePage {
     private ArrayList<ThemePost> posts = new ArrayList<>();
     private Poll poll;
 
+    private int id = 0, forumId = 0;
+
     public boolean canQuote() {
         return quote;
     }
@@ -20,8 +22,6 @@ public class ThemePage implements IThemePage {
     public void setCanQuote(boolean quote) {
         this.quote = quote;
     }
-
-    private int id = 0;
 
     public int getId() {
         return id;
@@ -142,5 +142,13 @@ public class ThemePage implements IThemePage {
 
     public void setPoll(Poll poll) {
         this.poll = poll;
+    }
+
+    public int getForumId() {
+        return forumId;
+    }
+
+    public void setForumId(int forumId) {
+        this.forumId = forumId;
     }
 }
