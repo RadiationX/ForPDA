@@ -11,19 +11,21 @@ import android.support.v4.view.AccessibilityDelegateCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
 import android.support.v7.app.AppCompatDialog;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.FrameLayout;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 
 /**
  * Created by radiationx on 09.01.17.
  */
 //This almost a full copy android.support.design.widget.BottomSheetDialog;
-public class CustomBottomSheetDialog extends AppCompatDialog{
+public class CustomBottomSheetDialog extends AppCompatDialog {
     private BottomSheetBehavior<FrameLayout> mBehavior;
 
     private boolean mCancelable = true;
@@ -33,7 +35,7 @@ public class CustomBottomSheetDialog extends AppCompatDialog{
 
     public void setPeekHeight(int peekHeight) {
         this.peekHeight = peekHeight;
-        if(mBehavior!=null)
+        if (mBehavior != null)
             mBehavior.setPeekHeight(peekHeight);
     }
 
@@ -84,12 +86,14 @@ public class CustomBottomSheetDialog extends AppCompatDialog{
         mCanceledOnTouchOutsideSet = true;
     }
 
+    private FrameLayout bottomSheet;
+
     private View wrapInBottomSheet(int layoutResId, View view, ViewGroup.LayoutParams params) {
         final CoordinatorLayout coordinator = (CoordinatorLayout) View.inflate(getContext(), R.layout.test_bottom_sheet_dialog, null);
         if (layoutResId != 0 && view == null) {
             view = getLayoutInflater().inflate(layoutResId, coordinator, false);
         }
-        FrameLayout bottomSheet = (FrameLayout) coordinator.findViewById(R.id.design_bottom_sheet);
+        bottomSheet = (FrameLayout) coordinator.findViewById(R.id.design_bottom_sheet);
         mBehavior = BottomSheetBehavior.from(bottomSheet);
         mBehavior.setBottomSheetCallback(mBottomSheetCallback);
         mBehavior.setHideable(mCancelable);
@@ -161,6 +165,7 @@ public class CustomBottomSheetDialog extends AppCompatDialog{
             }
         }
         return themeId;
+        //return R.style.AppTheme_BottomSheetDialog;
     }
 
     private BottomSheetBehavior.BottomSheetCallback mBottomSheetCallback = new BottomSheetBehavior.BottomSheetCallback() {
@@ -173,6 +178,8 @@ public class CustomBottomSheetDialog extends AppCompatDialog{
 
         @Override
         public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+            if (slideOffset > 0)
+                bottomSheet.setPadding(0, (int) (slideOffset * App.getStatusBarHeight()), 0, 0);
         }
     };
 }
