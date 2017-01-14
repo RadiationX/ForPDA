@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,32 +36,37 @@ public class MessagePanel extends CardView {
     private AdvancedPopup advancedPopup;
     private AttachmentsPopup attachmentsPopup;
     private ViewGroup fragmentContainer;
+    private ProgressBar sendProgress;
     private int lastHeight = 0;
     private HeightChangeListener heightChangeListener;
     public int primaryColor = Color.parseColor("#0277bd");
+    private boolean fullForm = false;
 
-    public MessagePanel(Context context, ViewGroup fragmentContainer, ViewGroup targetContainer) {
+    public MessagePanel(Context context, ViewGroup fragmentContainer, ViewGroup targetContainer, boolean fullForm) {
         super(context);
         this.fragmentContainer = fragmentContainer;
+        this.fullForm = fullForm;
         init();
         targetContainer.addView(this, targetContainer.getChildCount() - 1);
         onCreatePanel();
     }
 
     private void init() {
-        inflate(getContext(), R.layout.quick_message_panel, this);
+        inflate(getContext(), fullForm ? R.layout.message_panel_full : R.layout.message_panel_quick, this);
         advancedButton = (ImageButton) findViewById(R.id.button_advanced_input);
         attachmentsButton = (ImageButton) findViewById(R.id.button_attachments);
         sendButton = (ImageButton) findViewById(R.id.button_send);
         messageField = (EditText) findViewById(R.id.message_field);
+        sendProgress = (ProgressBar) findViewById(R.id.send_progress);
         panelBehavior = new MessagePanelBehavior();
-        CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, fullForm ? ViewGroup.LayoutParams.MATCH_PARENT : ViewGroup.LayoutParams.WRAP_CONTENT);
         params.setBehavior(panelBehavior);
         params.gravity = Gravity.BOTTOM;
-        params.setMargins(App.px8, App.px8, App.px8, App.px8);
+        if (!fullForm)
+            params.setMargins(App.px8, App.px8, App.px8, App.px8);
         setLayoutParams(params);
         setClipToPadding(true);
-        setRadius(App.px24);
+        setRadius(fullForm ? 0 : App.px24);
         //На случай, когда добавляются несколько слушателей
         advancedButton.setOnClickListener(v -> {
             for (OnClickListener listener : advancedListeners)
@@ -104,7 +110,12 @@ public class MessagePanel extends CardView {
         messageField.setTypeface(Typeface.MONOSPACE);
     }
 
-    public void show(){
+    public void setProgressState(boolean state) {
+        sendProgress.setVisibility(state ? VISIBLE : GONE);
+        sendButton.setVisibility(state ? GONE : VISIBLE);
+    }
+
+    public void show() {
         this.setTranslationY(0);
     }
 
@@ -139,7 +150,7 @@ public class MessagePanel extends CardView {
         messageField.setText("");
     }
 
-    public void clearAttachments(){
+    public void clearAttachments() {
         attachmentsPopup.clearAttachments();
     }
 

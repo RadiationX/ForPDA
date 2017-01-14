@@ -1,26 +1,35 @@
 package forpdateam.ru.forpda.api.theme.editpost.models;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by radiationx on 10.01.17.
  */
 
 public class EditPostForm {
-    private List<AttachmentItem> loadedAttachments = new ArrayList<>();
-    private boolean canUpload = false, error = true;
-    private String statusFile;
-    private String status;
-    private String message;
+    public final static String ARG_TYPE = "type";
+    public final static int TYPE_NEW_POST = 0;
+    public final static int TYPE_EDIT_POST = 1;
+    private int type = TYPE_NEW_POST;
+    private ArrayList<AttachmentItem> attachments = new ArrayList<>();
+    private String editReason = "default_edit_reason", message = "";
 
     private int forumId = 0, topicId = 0, postId = 0, st = 0;
-    private int[] attachments;
 
-    public EditPostForm() {}
+    public EditPostForm() {
+    }
 
-    public void setLoadedAttachments(List<AttachmentItem> loadedAttachments) {
-        this.loadedAttachments = loadedAttachments;
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setAttachments(ArrayList<AttachmentItem> attachments) {
+        this.attachments = attachments;
     }
 
     public String getMessage() {
@@ -63,51 +72,19 @@ public class EditPostForm {
         this.st = st;
     }
 
-    public int[] getAttachments() {
+    public void addAttachment(AttachmentItem item) {
+        attachments.add(item);
+    }
+
+    public ArrayList<AttachmentItem> getAttachments() {
         return attachments;
     }
 
-    public void setAttachments(int[] attachments) {
-        this.attachments = attachments;
+    public String getEditReason() {
+        return editReason;
     }
 
-    public void addAttachment(AttachmentItem item) {
-        loadedAttachments.add(item);
-    }
-
-    public List<AttachmentItem> getLoadedAttachments() {
-        return loadedAttachments;
-    }
-
-    public boolean isCanUpload() {
-        return canUpload;
-    }
-
-    public void setCanUpload(boolean canUpload) {
-        this.canUpload = canUpload;
-    }
-
-    public boolean isError() {
-        return error;
-    }
-
-    public void setError(boolean error) {
-        this.error = error;
-    }
-
-    public String getStatusFile() {
-        return statusFile;
-    }
-
-    public void setStatusFile(String statusFile) {
-        this.statusFile = statusFile;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+    public void setEditReason(String editReason) {
+        this.editReason = editReason;
     }
 }

@@ -10,6 +10,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.EditText;
 import android.widget.PopupWindow;
 
 import java.util.ArrayList;
@@ -33,6 +34,9 @@ public class AdvancedPopup {
 
 
     private ViewTreeObserver.OnGlobalLayoutListener globalLayoutListener = () -> {
+        if (messagePanel == null || popupWindow == null) {
+            return;
+        }
         newKeyboardHeight = fragmentContainer.getRootView().getHeight() - fragmentContainer.getHeight() - App.getStatusBarHeight();
         Log.d("SUKA", "TREE OBSERVER " + newKeyboardHeight + " : " + fragmentContainer.getRootView().getHeight() + " : " + fragmentContainer.getHeight() + " : " + App.getStatusBarHeight());
         if (newKeyboardHeight > 100) {
@@ -79,10 +83,25 @@ public class AdvancedPopup {
         }
 
         popupView.findViewById(R.id.delete_button).setOnClickListener(v -> {
-            int length = messagePanel.getMessageField().getText().length();
+            EditText messageField = messagePanel.getMessageField();
+            int selectionStart = messageField.getSelectionStart();
+            int selectionEnd = messageField.getSelectionEnd();
+            if (selectionEnd < selectionStart && selectionEnd != -1) {
+                int c = selectionStart;
+                selectionStart = selectionEnd;
+                selectionEnd = c;
+            }
+            if (selectionStart != -1 && selectionStart != selectionEnd) {
+                messageField.getText().delete(selectionStart, selectionEnd);
+                return;
+            }
+            if (selectionStart > 0) {
+                messageField.getText().delete(selectionStart - 1, selectionStart);
+            }
+            /*int length = messagePanel.getMessageField().getText().length();
             if (length > 0) {
                 messagePanel.getMessageField().getText().delete(length - 1, length);
-            }
+            }*/
         });
 
         messagePanel.addAdvancedOnClickListener(v -> {

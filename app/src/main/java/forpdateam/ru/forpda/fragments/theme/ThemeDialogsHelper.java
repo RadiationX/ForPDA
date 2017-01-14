@@ -77,9 +77,9 @@ public class ThemeDialogsHelper {
             postMenu = new AlertDialogMenu<>();
             showedPostMenu = new AlertDialogMenu<>();
             postMenu.addItem("Ответить", (context, data) -> context.insertNick(data));
-            postMenu.addItem("Пожаловаться", (context, data) -> context.insertNick(data));
-            postMenu.addItem("Изменить", (context, data) -> context.insertNick(data));
-            postMenu.addItem("Удалить", (context, data) -> context.insertNick(data));
+            postMenu.addItem("Пожаловаться", (context, data) -> context.reportPost(data));
+            postMenu.addItem("Изменить", (context, data) -> context.editPost(data));
+            postMenu.addItem("Удалить", (context, data) -> context.deletePost(data));
             postMenu.addItem("Ссылка на сообщение", (context, data) -> Toast.makeText(context.getContext(), "Не умею", Toast.LENGTH_SHORT).show());
         }
         showedPostMenu.clear();

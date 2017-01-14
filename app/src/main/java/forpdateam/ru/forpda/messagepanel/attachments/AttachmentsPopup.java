@@ -1,10 +1,7 @@
 package forpdateam.ru.forpda.messagepanel.attachments;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -25,11 +22,6 @@ import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.client.RequestFile;
 import forpdateam.ru.forpda.messagepanel.AutoFitRecyclerView;
 import forpdateam.ru.forpda.messagepanel.MessagePanel;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 09.01.17.
@@ -171,7 +163,7 @@ public class AttachmentsPopup {
     }
 
     public void onLoadAttachments(EditPostForm form) {
-        adapter.add(form.getLoadedAttachments());
+        adapter.add(form.getAttachments());
     }
 
     public void preUploadFiles(List<RequestFile> files) {

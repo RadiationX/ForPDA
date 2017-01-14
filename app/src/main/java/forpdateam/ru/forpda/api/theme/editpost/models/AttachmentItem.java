@@ -1,12 +1,16 @@
 package forpdateam.ru.forpda.api.theme.editpost.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
 import java.util.regex.Pattern;
 
 /**
  * Created by radiationx on 09.01.17.
  */
 
-public class AttachmentItem {
+public class AttachmentItem implements Parcelable {
     private final static Pattern imageTypes = Pattern.compile("gif|jpg|jpeg|png", Pattern.CASE_INSENSITIVE);
     public final static int TYPE_FILE = 0;
     public final static int TYPE_IMAGE = 1;
@@ -121,5 +125,57 @@ public class AttachmentItem {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    //PARCELABLE !!!!!!!!AAA!!!!!
+    public int describeContents() {
+        return 0;
+    }
+
+    public void writeToParcel(Parcel parcel, int flags) {
+        Log.d("SUKA", "writeToParcel");
+        parcel.writeByte((byte) (isError ? 1 : 0));
+        parcel.writeByte((byte) (selected ? 1 : 0));
+        parcel.writeInt(id);
+        parcel.writeInt(typeFile);
+        parcel.writeInt(loadState);
+        parcel.writeInt(status);
+        writeStringToParcel(parcel, name);
+        writeStringToParcel(parcel, format);
+        writeStringToParcel(parcel, weight);
+        writeStringToParcel(parcel, imageUrl);
+    }
+
+    public static final Parcelable.Creator<AttachmentItem> CREATOR = new Parcelable.Creator<AttachmentItem>() {
+        public AttachmentItem createFromParcel(Parcel in) {
+            Log.d("SUKA", "createFromParcel");
+            return new AttachmentItem(in);
+        }
+
+        public AttachmentItem[] newArray(int size) {
+            return new AttachmentItem[size];
+        }
+    };
+
+    private AttachmentItem(Parcel parcel) {
+        isError = parcel.readByte() != 0;
+        selected = parcel.readByte() != 0;
+        id = parcel.readInt();
+        typeFile = parcel.readInt();
+        loadState = parcel.readInt();
+        status = parcel.readInt();
+        name = readStringFromParcel(parcel);
+        format = readStringFromParcel(parcel);
+        weight = readStringFromParcel(parcel);
+        imageUrl = readStringFromParcel(parcel);
+    }
+
+    private void writeStringToParcel(Parcel parcel, String string) {
+        parcel.writeByte((byte) (string != null ? 1 : 0));
+        parcel.writeString(string);
+    }
+
+    private String readStringFromParcel(Parcel parcel) {
+        return parcel.readByte() != 0 ? parcel.readString() : null;
     }
 }

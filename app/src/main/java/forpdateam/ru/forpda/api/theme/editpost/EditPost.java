@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.api.theme.editpost;
 
-import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,7 +10,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.auth.Auth;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
@@ -23,11 +22,12 @@ import io.reactivex.Observable;
  */
 
 public class EditPost {
+    private final static Pattern postPattern = Pattern.compile("<div[^>]*?>[^<]*?<textarea[^>]*>([\\s\\S]*?)<\\/textarea>[^<]*?<\\/div>[\\s\\S]*?<input[^>]*?name=\"post_edit_reason\" value=\"([\\s\\S]*?)\" \\/>");
     private final static Pattern loadedAttachments = Pattern.compile("add_current_item\\([^'\"]*?['\"](\\d+)['\"],[^'\"]*?['\"]([^'\"]*\\.(\\w*))['\"],[^'\"]*?['\"]([^'\"]*?)['\"],[^'\"]*?['\"][^'\"]*\\/(\\w*)\\.[^\"']*?['\"]");
     private final static Pattern statusInfo = Pattern.compile("can_upload = parseInt\\([\"'](\\d+)'\\)[\\s\\S]*?status_msg_files = .([\\s\\S]*?).;[\\s\\S]*?status_msg = .([\\s\\S]*?).;[\\s\\S]*?status_is_error = ([\\s\\S]*?);");
 
-    public Observable<EditPostForm> loadForm(int id) {
-        return Observable.fromCallable(() -> _loadForm(id));
+    public Observable<EditPostForm> loadForm(int postId) {
+        return Observable.fromCallable(() -> _loadForm(postId));
     }
 
     public Observable<List<AttachmentItem>> uploadFiles(List<RequestFile> files) {
@@ -47,8 +47,26 @@ public class EditPost {
     }
 
     private EditPostForm _loadForm(int postId) throws Exception {
-        String response = Client.getInstance().get("http://4pda.ru/forum/index.php?&act=attach&code=attach_upload_show&attach_rel_id=".concat(Integer.toString(postId)));
-        return parseForm(response);
+        Log.d("SUKA", "START LOAD FORM");
+        EditPostForm form = new EditPostForm();
+        String url = "http://4pda.ru/forum/index.php?s=&act=post&do=post-edit-show&p=".concat(Integer.toString(postId));
+        //url = url.concat("&t=").concat(Integer.toString(topicId)).concat("&f=").concat(Integer.toString(forumId));
+
+        String response = Client.getInstance().get(url);
+        Matcher matcher = postPattern.matcher(response);
+        if (matcher.find()) {
+            Log.d("SUKA", "MESSAGE " + matcher.group(1));
+            form.setMessage(matcher.group(1));
+            Log.d("SUKA", "REASON " + matcher.group(2));
+            form.setEditReason(matcher.group(2));
+        }
+
+        response = Client.getInstance().get("http://4pda.ru/forum/index.php?&act=attach&code=attach_upload_show&attach_rel_id=".concat(Integer.toString(postId)));
+        matcher = loadedAttachments.matcher(response);
+        while (matcher.find())
+            form.addAttachment(fillAttachment(new AttachmentItem(), matcher));
+        Log.d("SUKA", "ATTACHES " + form.getAttachments().size());
+        return form;
     }
 
     private List<AttachmentItem> _uploadFiles(int postId, List<RequestFile> files) throws Exception {
@@ -72,23 +90,6 @@ public class EditPost {
             items.add(item);
         }
         return items;
-    }
-
-    private EditPostForm parseForm(String response) {
-        EditPostForm form = new EditPostForm();
-        Matcher matcher = statusInfo.matcher(response);
-        if (matcher.find()) {
-            form.setCanUpload(matcher.group(1).equals("1"));
-            form.setStatusFile(matcher.group(2));
-            form.setStatus(matcher.group(3));
-            form.setError(!matcher.group(4).equals("0"));
-        }
-
-        matcher = loadedAttachments.matcher(response);
-        while (matcher.find())
-            form.addAttachment(fillAttachment(new AttachmentItem(), matcher));
-
-        return form;
     }
 
     private List<AttachmentItem> _deleteFiles(int postId, List<AttachmentItem> items) throws Exception {
@@ -142,28 +143,11 @@ public class EditPost {
     private ThemePage _sendPost(EditPostForm form) throws Exception {
         String url = "http://4pda.ru/forum/index.php";
         Map<String, String> headers = new HashMap<>();
-        /*headers.put("act", "post");
-        headers.put("code", "03");
-        headers.put("f", Integer.toString(form.getForumId()));
-        headers.put("t", Integer.toString(form.getTopicId()));
-        headers.put("st", Integer.toString(form.getSt()));
-        headers.put("auth_key", Client.getAuthKey());
-        headers.put("fast_reply_used", "1");
-        headers.put("ed-0_wysiwyg_used", "0");
-        headers.put("editor_ids[]", "ed-0");
-        headers.put("post", form.getMessage());
-        headers.put("enableemo", "yes");
-        headers.put("enablesig", "yes");
-
-        headers.put("submit", "Отправить");
-        headers.put("dosubmit", "Отправить");
-        headers.put("removeattachid", "0");
-        headers.put("MAX_FILE_SIZE", "0");
-        headers.put("p", "0");*/
-
-
         headers.put("act", "Post");
-        headers.put("CODE", "03");
+        Log.d("SUKA", "FORM TYPE " + form.getType());
+        headers.put("CODE", form.getType() == EditPostForm.TYPE_NEW_POST ? "03" : "9");
+        if (form.getPostId() != 0)
+            headers.put("p", "" + form.getPostId());
         headers.put("f", "" + form.getForumId());
         headers.put("t", "" + form.getTopicId());
 
@@ -174,7 +158,7 @@ public class EditPost {
         headers.put("enableemo", "yes");
 
 
-        headers.put("st", "0");
+        headers.put("st", ""+form.getSt());
         headers.put("removeattachid", "0");
         headers.put("MAX_FILE_SIZE", "0");
         headers.put("parent_id", "0");
@@ -183,21 +167,21 @@ public class EditPost {
         headers.put("iconid", "0");
         headers.put("_upload_single_file", "1");
         //headers.put("file-list", addedFileList);
+        if (form.getType() == EditPostForm.TYPE_EDIT_POST)
+            headers.put("post_edit_reason", form.getEditReason());
 
 
-        if (form.getAttachments() != null) {
-            StringBuilder ids = new StringBuilder();
-            for (int i = 0; i < form.getAttachments().length; i++) {
-                int id = form.getAttachments()[i];
+        StringBuilder ids = new StringBuilder();
+        if (form.getAttachments() != null && form.getAttachments().size() > 0) {
+            for (int i = 0; i < form.getAttachments().size(); i++) {
+                int id = form.getAttachments().get(i).getId();
                 ids.append(id);
-                if (i < form.getAttachments().length - 1) {
+                if (i < form.getAttachments().size() - 1) {
                     ids.append(",");
                 }
             }
-            headers.put("file-list", ids.toString());
-        } else {
-            headers.put("file-list", "");
         }
+        headers.put("file-list", ids.toString());
         return Api.Theme().parsePage(url, Client.getInstance().post(url, headers), true);
     }
 }

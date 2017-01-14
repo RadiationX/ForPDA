@@ -67,6 +67,7 @@ import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.RequestFile;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
+import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
 import forpdateam.ru.forpda.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.messagepanel.attachments.AttachmentsPopup;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
@@ -112,10 +113,24 @@ public class ThemeFragmentWeb extends ThemeFragment {
         initFabBehavior();
         baseInflateFragment(inflater, R.layout.fragment_theme);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-        messagePanel = new MessagePanel(getContext(), (ViewGroup) findViewById(R.id.fragment_container), coordinatorLayout);
+        messagePanel = new MessagePanel(getContext(), (ViewGroup) findViewById(R.id.fragment_container), coordinatorLayout, false);
         messagePanel.setHeightChangeListener(newHeight -> webView.evalJs("setPaddingBottom(" + (newHeight / getResources().getDisplayMetrics().density) + ");"));
         messagePanel.addSendOnClickListener(v -> {
             sendMessage();
+        });
+        messagePanel.getSendButton().setOnLongClickListener(v -> {
+            EditPostForm form = new EditPostForm();
+            form.setForumId(pageData.getForumId());
+            form.setTopicId(pageData.getId());
+            form.setSt(pageData.getSt());
+            form.setMessage(messagePanel.getMessage());
+            messagePanel.getAttachments().clear();
+            List<AttachmentItem> attachments = messagePanel.getAttachments();
+            for (AttachmentItem item : attachments) {
+                form.addAttachment(item);
+            }
+            TabManager.getInstance().add(EditPostFragment.newInstance(form));
+            return true;
         });
         attachmentsPopup = messagePanel.getAttachmentsPopup();
         attachmentsPopup.setAddOnClickListener(v -> pickImage());
@@ -226,17 +241,16 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
 
     private void sendMessage() {
+        messagePanel.setProgressState(true);
         EditPostForm form = new EditPostForm();
         form.setForumId(pageData.getForumId());
         form.setTopicId(pageData.getId());
         form.setSt(pageData.getCurrentPage() * pageData.getPostsOnPageCount());
         form.setMessage(messagePanel.getMessage());
         List<AttachmentItem> attachments = messagePanel.getAttachments();
-        int[] ids = new int[attachments.size()];
-        for (int i = 0; i < attachments.size(); i++) {
-            ids[i] = attachments.get(i).getId();
+        for (AttachmentItem item : attachments) {
+            form.addAttachment(item);
         }
-        form.setAttachments(ids);
         //emulate
         /*new Handler().postDelayed(() -> {
             try {
@@ -245,13 +259,11 @@ public class ThemeFragmentWeb extends ThemeFragment {
             } catch (Exception ignore) {
             }
         }, 1500);*/
-        mainSubscriber.subscribe(Api.EditPost().sendPost(form), new Consumer<ThemePage>() {
-            @Override
-            public void accept(ThemePage s) throws Exception {
-                onLoadData(s);
-                messagePanel.clearAttachments();
-                messagePanel.clearMessage();
-            }
+        mainSubscriber.subscribe(Api.EditPost().sendPost(form), s -> {
+            messagePanel.setProgressState(false);
+            onLoadData(s);
+            messagePanel.clearAttachments();
+            messagePanel.clearMessage();
         }, pageData, v -> loadData());
     }
 
@@ -390,6 +402,16 @@ public class ThemeFragmentWeb extends ThemeFragment {
         mainSubscriber.subscribe(Api.Theme().getPage(getTabUrl(), true), this::onLoadData, new ThemePage(), v -> loadData());
     }
 
+    public void onSendPostCompleted(ThemePage themePage) throws Exception{
+        messagePanel.clearAttachments();
+        messagePanel.clearMessage();
+
+        onLoadData(themePage);
+    }
+
+    public void onEditPostCompleted(ThemePage themePage) throws Exception {
+        onLoadData(themePage);
+    }
 
     private void onLoadData(ThemePage themePage) throws Exception {
         Log.d("suka", "check theme " + themePage + " : " + themePage.getPosts().size() + " : " + themePage.getId() + " : " + themePage.getForumId() + " : " + themePage.getUrl());
@@ -724,6 +746,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
     }
 
     public void editPost(ThemePost post) {
+        TabManager.getInstance().add(EditPostFragment.newInstance(post.getId(), pageData.getId(), pageData.getForumId(), pageData.getSt()));
         Toast.makeText(getContext(), "editpost ".concat(Integer.toString(post.getId())), Toast.LENGTH_SHORT).show();
     }
 

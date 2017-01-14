@@ -151,4 +151,8 @@ public class ThemePage implements IThemePage {
     public void setForumId(int forumId) {
         this.forumId = forumId;
     }
+
+    public int getSt() {
+        return currentPage * postsOnPageCount;
+    }
 }

@@ -46,4 +46,14 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="false"
         app:srcCompat="@drawable/ic_send_gray_24dp" />
+
+    <ProgressBar
+        android:id="@+id/send_progress"
+        android:layout_width="@dimen/dp48"
+        android:layout_height="@dimen/dp48"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@+id/message_field"
+        android:clickable="false"
+        android:padding="@dimen/dp8"
+        android:visibility="gone"/>
 </RelativeLayout>

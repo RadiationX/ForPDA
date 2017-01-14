@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/message_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/controls"
+        android:fillViewport="true"
+        android:scrollbars="vertical">
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/message_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:gravity="top"
+            android:hint="Сообщение"
+            android:imeOptions="flagNoFullscreen"
+            android:minHeight="@dimen/dp48"
+            android:padding="@dimen/dp16"
+            android:textSize="16sp" />
+
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <android.support.v7.widget.AppCompatImageButton
+            android:id="@+id/button_advanced_input"
+            android:layout_width="@dimen/dp48"
+            android:layout_height="@dimen/dp48"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:srcCompat="@drawable/ic_add_gray_24dp" />
+
+        <android.support.v7.widget.AppCompatImageButton
+            android:id="@+id/button_attachments"
+            android:layout_width="@dimen/dp48"
+            android:layout_height="@dimen/dp48"
+            android:layout_marginStart="-8dp"
+            android:layout_toEndOf="@+id/button_advanced_input"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:srcCompat="@drawable/ic_attachment_gray_24dp" />
+
+        <android.support.v7.widget.AppCompatImageButton
+            android:id="@+id/button_send"
+            android:layout_width="@dimen/dp48"
+            android:layout_height="@dimen/dp48"
+            android:layout_alignParentEnd="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="false"
+            app:srcCompat="@drawable/ic_send_gray_24dp" />
+
+        <ProgressBar
+            android:id="@+id/send_progress"
+            android:layout_width="@dimen/dp48"
+            android:layout_height="@dimen/dp48"
+            android:layout_alignParentEnd="true"
+            android:clickable="false"
+            android:padding="@dimen/dp8"
+            android:visibility="gone"/>
+    </RelativeLayout>
+
+
+</RelativeLayout>
