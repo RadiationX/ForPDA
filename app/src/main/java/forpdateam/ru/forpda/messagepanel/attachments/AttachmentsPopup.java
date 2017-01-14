@@ -1,9 +1,14 @@
 package forpdateam.ru.forpda.messagepanel.attachments;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -94,6 +99,16 @@ public class AttachmentsPopup {
             dialog.setContentView(bottomSheet);
             dialog.show();
         });
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Window window = dialog.getWindow();
+            if (window != null) {
+                window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                }
+            }
+        }
     }
 
     private void insertAttachment(boolean toSpoiler) {
@@ -186,7 +201,7 @@ public class AttachmentsPopup {
         tryLockControls(false);
     }
 
-    public void clearAttachments(){
+    public void clearAttachments() {
         adapter.clear();
     }
 
@@ -197,9 +212,10 @@ public class AttachmentsPopup {
         adapter.deleteSelected();
     }
 
-    public List<AttachmentItem> getAttachments(){
+    public List<AttachmentItem> getAttachments() {
         return adapter.getItems();
     }
+
     public List<AttachmentItem> getSelected() {
         return adapter.getSelected();
     }

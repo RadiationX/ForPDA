@@ -13,7 +13,7 @@ Edited by: RadiationX|*or you nick*
   color: #212121 !important;
 }
 .mainBox {
-  background: #fafafa;
+  background: #fff;
   margin: 0.5em 0;
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
 }
@@ -183,7 +183,7 @@ button:active,
     }
 }*/
 .poll {
-  background: #fafafa;
+  background: #fff;
   margin: 0.5em 0;
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
 }
@@ -541,7 +541,7 @@ button:active,
   -webkit-animation-fill-mode: forwards;
 }
 .panel {
-  background: #fafafa;
+  background: #fff;
   margin: 0.5em 0;
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
   margin: 0;
@@ -797,7 +797,7 @@ button:active,
   }
 }
 .post_container {
-  background: #fafafa;
+  background: #fff;
   margin: 0.5em 0;
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
   position: relative;
@@ -872,21 +872,76 @@ button:active,
   color: #12b557;
 }
 .post_container .post_header {
-  padding: 1em;
+  padding: 0.75em 1em 0 1em;
 }
 .post_container .post_header .header_wrapper {
   position: relative;
 }
 .post_container .post_header .avatar {
-  width: 4em;
+  width: 3.5em;
+  height: 3.5em;
   position: relative;
+  color: darkgray;
 }
 .post_container .post_header .avatar .img {
-  height: 4em;
-  width: 4em;
+  position: relative;
+  height: 3.5em;
+  width: 3.5em;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  -webkit-border-radius: 3.5em;
+  border-radius: 3.5em;
+}
+.post_container .post_header .avatar .img > .letter {
+  color: white;
+  position: absolute;
+  text-align: center;
+  width: 1.75em;
+  height: 1.75em;
+  line-height: 1.75em;
+  text-transform: uppercase;
+  font-size: 2em;
+  font-weight: bold;
+  top: 0;
+  left: 0;
+  -webkit-border-radius: 3.5em;
+  border-radius: 3.5em;
+  background-color: #ccc;
+  display: none;
+}
+.post_container .post_header .avatar.none_avatar .img > .letter {
+  display: block;
+}
+.post_container .post_header .avatar .reputation {
+  position: absolute;
+  background: #757575;
+  z-index: 1;
+  height: 1.125em;
+  line-height: 1.125em;
+  min-width: 1.125em;
+  text-align: center;
+  vertical-align: text-top;
+  padding: 0 0.375em;
+  -webkit-border-radius: 1.25em;
+  border-radius: 1.25em;
+  right: -0.25em;
+  bottom: 0.25em;
+  right: 0;
+  bottom: 0;
+  box-shadow: 0 0 0 0.125em white;
+}
+.post_container .post_header .avatar .reputation > span {
+  color: white;
+  font-size: 0.625em;
+  font-weight: bold;
+  vertical-align: middle;
+  /* &:before {
+                        content: "Реп (";
+                    }
+                    &:after {
+                        content: ")";
+                    }*/
 }
 .post_container .post_header .avatar.disable .img {
   width: 0;
@@ -900,9 +955,9 @@ button:active,
 }
 .post_container .post_header .inf {
   position: absolute;
-  left: 5em;
+  left: 4.5em;
   max-width: 100%;
-  overflow: hidden;
+  margin-top: 0.5em;
 }
 .post_container .post_header .inf.nick {
   top: 0;
@@ -912,46 +967,42 @@ button:active,
 .post_container .post_header .inf.nick.online {
   color: #12b557;
 }
-.post_container .post_header .inf.group {
+.post_container .post_header .inf.nick .group {
+  position: absolute;
   top: 50%;
-  margin-top: -0.625em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  margin-top: -0.25em;
+  right: -0.75em;
+  height: 0.5em;
+  width: 0.5em;
+  background-color: currentColor;
+  -webkit-border-radius: 100%;
+  border-radius: 100%;
 }
-.post_container .post_header .inf.group > span {
+.post_container .post_header .inf.nick .group:after {
+  content: "";
+  position: absolute;
+  height: 2.25em;
+  width: 2.25em;
+  left: 0;
+  top: -0.875em;
+}
+.post_container .post_header .inf.nick .group > span {
   font-size: 0.875em;
   color: #212121 !important;
   font-weight: normal!important;
-}
-.post_container .post_header .inf.reputation {
-  bottom: 0;
-  background: #ffffff;
-  box-shadow: 0.5em 0 0.5em -0.125em #ffffff;
-  z-index: 1;
-  color: #0277bd;
-}
-.post_container .post_header .inf.reputation > span {
-  font-size: 0.875em;
-  font-weight: bold;
-  text-transform: uppercase;
-}
-.post_container .post_header .inf.reputation > span:before {
-  content: "Реп (";
-}
-.post_container .post_header .inf.reputation > span:after {
-  content: ")";
+  display: none;
 }
 .post_container .post_header .inf.menu {
   left: auto;
   right: -1em;
-  top: -1em;
+  top: -0.75em;
   height: 3em;
   width: 2.5em;
-  background-image: url(file:///android_asset/forum/style_images/dots-vertical.svg), url(../../res/dots-vertical.svg);
+  background-image: url(file:///android_asset/forum/style_images/dots-vertical.svg), url(../res/dots-vertical.svg);
   background-size: 1.5em;
   background-position: center;
   background-repeat: no-repeat;
+  margin: 0;
 }
 .post_container .post_header .inf.menu > span {
   display: none;
@@ -983,9 +1034,7 @@ button:active,
   transform: scale(1) translateZ(0);
 }
 .post_container .post_header .inf.date {
-  left: auto;
-  right: 0;
-  bottom: 0;
+  top: 1.25em;
 }
 .post_container .post_header .inf.date > span {
   font-size: 0.875em;
@@ -1060,7 +1109,7 @@ button:active,
   line-height: 1.5em;
 }
 .posts_list.search-results .bad-search-result {
-  background: #fafafa;
+  background: #fff;
   margin: 0.5em 0;
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
   padding: 1em;

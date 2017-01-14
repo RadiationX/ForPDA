@@ -7,22 +7,26 @@ import java.util.List;
  * Created by radiationx on 27.10.16.
  */
 
-public class AlertDialogMenu<E> {
+public class AlertDialogMenu<T, E> {
     private List<MenuItem> items = new ArrayList<>();
 
-    public void addItem(CharSequence title, OnClickListener<E> listener) {
+    public void addItem(CharSequence title, OnClickListener<T, E> listener) {
         items.add(new MenuItem(title, listener));
     }
 
-    public void addItem(int index, CharSequence title, OnClickListener<E> listener) {
+    public void addItem(int index, CharSequence title, OnClickListener<T, E> listener) {
         if (index < 0) index = 0;
         if (index > items.size()) index = items.size() - 1;
 
         items.add(index, new MenuItem(title, listener));
     }
 
-    public void addItem(MenuItem item){
+    public void addItem(MenuItem item) {
         items.add(item);
+    }
+
+    public MenuItem get(int index) {
+        return items.get(index);
     }
 
     public boolean contains(CharSequence title) {
@@ -34,6 +38,10 @@ public class AlertDialogMenu<E> {
 
     public void remove(int i) {
         items.remove(i);
+    }
+
+    public void clear() {
+        items.clear();
     }
 
     public int containsIndex(CharSequence title) {
@@ -54,15 +62,15 @@ public class AlertDialogMenu<E> {
         return result;
     }
 
-    public void onClick(int i, E data) {
-        items.get(i).onClick(data);
+    public void onClick(int i, T context, E data) {
+        items.get(i).onClick(context, data);
     }
 
-    public class MenuItem implements OnClickListener<E> {
-        private OnClickListener<E> listener;
+    public class MenuItem implements OnClickListener<T, E> {
+        private OnClickListener<T, E> listener;
         private CharSequence title;
 
-        public MenuItem(CharSequence title, OnClickListener<E> listener) {
+        public MenuItem(CharSequence title, OnClickListener<T, E> listener) {
             this.title = title;
             this.listener = listener;
         }
@@ -72,13 +80,13 @@ public class AlertDialogMenu<E> {
         }
 
         @Override
-        public void onClick(E data) {
+        public void onClick(T context, E data) {
             if (listener != null)
-                listener.onClick(data);
+                listener.onClick(context, data);
         }
     }
 
-    public interface OnClickListener<E> {
-        void onClick(E data);
+    public interface OnClickListener<T, E> {
+        void onClick(T context, E data);
     }
 }

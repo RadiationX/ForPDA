@@ -78,12 +78,13 @@
         <!-- $BeginBlock hat_button --><a class="btn hat_button" onclick="toggleButton(this, 'hat_content')"><span>Шапка темы</span><i class="icon"></i></a><!-- $EndBlock hat_button -->
         <!-- $BeginBlock hat_content_start --><div class="hat_content" hidden><!-- $EndBlock hat_content_start --><div class="post_header">
             <div class="header_wrapper">
-                <div class="avatar" onclick="ITheme.showUserMenu('${post_id}')">
-                    <div class="img" style="background-image:url(${avatar});"></div>
+                <div class="avatar ${none_avatar}">
+                    <div class="img" style="background-image:url(${avatar});" onclick="ITheme.showUserMenu('${post_id}')"><span class="letter">${nick_letter}</span></div>
+                    <div class="reputation" onclick="ITheme.showReputationMenu('${post_id}')"><span>${reputation}</span></div>
                 </div>
-                <span class="inf nick" onclick="ITheme.showUserMenu('${post_id}')"><span><b>${nick}</b></span></span>
-                <div class="inf group"><span style="${group_color}">${group}</span></div>
-                <span class="inf reputation" onclick="ITheme.showReputationMenu('${post_id}')"><span>${reputation}</span></span>
+                <span class="inf nick">
+                    <span onclick="ITheme.showUserMenu('${post_id}')"><b>${nick}</b></span>
+                    <span class="group" style="color:${group_color};" onclick="ITheme.toast('Группа: ${group}')"><span>${group}</span></span></span>
                 <span class="inf date"><span>${date}</span></span>
                 <a class="btn inf menu" onclick="ITheme.showPostMenu('${post_id}')"><span>Меню</span></a>
             </div>

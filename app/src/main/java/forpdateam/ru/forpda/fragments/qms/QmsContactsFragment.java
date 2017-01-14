@@ -39,7 +39,7 @@ public class QmsContactsFragment extends TabFragment {
     private Subscriber<String> helperSubscriber = new Subscriber<>();
     private Realm realm;
     private RealmResults<QmsContact> results;
-    private AlertDialogMenu<QmsContact> contactDialogMenu;
+    private AlertDialogMenu<QmsContactsFragment, QmsContact> contactDialogMenu;
     private QmsContactsAdapter.OnItemClickListener onItemClickListener =
             contact -> {
                 Bundle args = new Bundle();
@@ -52,10 +52,10 @@ public class QmsContactsFragment extends TabFragment {
     private QmsContactsAdapter.OnLongItemClickListener onLongItemClickListener = contact -> {
         if (contactDialogMenu == null) {
             contactDialogMenu = new AlertDialogMenu<>();
-            contactDialogMenu.addItem("Удалить", data -> deleteDialog(data.getId()));
+            contactDialogMenu.addItem("Удалить", (context, data) -> context.deleteDialog(data.getId()));
         }
         new AlertDialog.Builder(getContext())
-                .setItems(contactDialogMenu.getTitles(), (dialog, which) -> contactDialogMenu.onClick(which, contact)).show();
+                .setItems(contactDialogMenu.getTitles(), (dialog, which) -> contactDialogMenu.onClick(which, QmsContactsFragment.this, contact)).show();
     };
 
 

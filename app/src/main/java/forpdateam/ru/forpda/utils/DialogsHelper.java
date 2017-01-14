@@ -11,7 +11,8 @@ import android.webkit.WebView;
  */
 
 public class DialogsHelper {
-    private static AlertDialogMenu<Pair<String, String>> alertDialogMenu = new AlertDialogMenu<>();
+    private static AlertDialogMenu<Context, Pair<String, String>> alertDialogMenu;
+    private static AlertDialogMenu<Context, Pair<String, String>> showedAlertDialogMenu;
     private final static String openNewTab = "Открыть в новой вкладке";
     private final static String openBrowser = "Открыть в браузере";
     private final static String copyUrl = "Скопировать ссылку";
@@ -20,6 +21,7 @@ public class DialogsHelper {
     private final static String copyImageUrl = "Скопировать ссылку изображения";
 
     public static void handleContextMenu(Context context, int type, String extra, String nodeHref) {
+
         Log.d("kek", "context " + type + " : " + extra + " : " + nodeHref);
         if (type == WebView.HitTestResult.UNKNOWN_TYPE || type == WebView.HitTestResult.EDIT_TEXT_TYPE)
             return;
@@ -46,50 +48,31 @@ public class DialogsHelper {
         if (!anchor && !image)
             return;
 
-        if (anchor) {
-            if (alertDialogMenu.containsIndex(openNewTab) == -1)
-                alertDialogMenu.addItem(openNewTab, new AlertDialogMenu.OnClickListener<Pair<String, String>>() {
-                    @Override
-                    public void onClick(Pair<String, String> data) {
+        if (alertDialogMenu == null) {
+            alertDialogMenu = new AlertDialogMenu<>();
+            showedAlertDialogMenu = new AlertDialogMenu<>();
 
-                        IntentHandler.handle(data.second);
-                    }
-                });
-            if (alertDialogMenu.containsIndex(openBrowser) == -1)
-                alertDialogMenu.addItem(openBrowser, null);
-            if (alertDialogMenu.containsIndex(copyUrl) == -1)
-                alertDialogMenu.addItem(copyUrl, data -> Utils.copyToClipBoard(data.second));
-        } else {
-            index = alertDialogMenu.containsIndex(openNewTab);
-            if (index != -1)
-                alertDialogMenu.remove(index);
-            index = alertDialogMenu.containsIndex(openBrowser);
-            if (index != -1)
-                alertDialogMenu.remove(index);
-            index = alertDialogMenu.containsIndex(copyUrl);
-            if (index != -1)
-                alertDialogMenu.remove(index);
+            alertDialogMenu.addItem(openNewTab, (context1, data) -> IntentHandler.handle(data.second));
+            alertDialogMenu.addItem(openBrowser, null);
+            alertDialogMenu.addItem(copyUrl, (context1, data) -> Utils.copyToClipBoard(data.second));
+            alertDialogMenu.addItem(openImage, null);
+            alertDialogMenu.addItem(saveImage, null);
+            alertDialogMenu.addItem(copyImageUrl, (context1, data) -> Utils.copyToClipBoard(data.first));
+        }
+        showedAlertDialogMenu.clear();
+
+        if (anchor) {
+            showedAlertDialogMenu.addItem(alertDialogMenu.get(0));
+            showedAlertDialogMenu.addItem(alertDialogMenu.get(1));
+            showedAlertDialogMenu.addItem(alertDialogMenu.get(2));
         }
         if (image) {
-            if (alertDialogMenu.containsIndex(openImage) == -1)
-                alertDialogMenu.addItem(openImage, null);
-            if (alertDialogMenu.containsIndex(saveImage) == -1)
-                alertDialogMenu.addItem(saveImage, null);
-            if (alertDialogMenu.containsIndex(copyImageUrl) == -1)
-                alertDialogMenu.addItem(copyImageUrl, data -> Utils.copyToClipBoard(data.first));
-        } else {
-            index = alertDialogMenu.containsIndex(openImage);
-            if (index != -1)
-                alertDialogMenu.remove(index);
-            index = alertDialogMenu.containsIndex(saveImage);
-            if (index != -1)
-                alertDialogMenu.remove(index);
-            index = alertDialogMenu.containsIndex(copyImageUrl);
-            if (index != -1)
-                alertDialogMenu.remove(index);
+            showedAlertDialogMenu.addItem(alertDialogMenu.get(3));
+            showedAlertDialogMenu.addItem(alertDialogMenu.get(4));
+            showedAlertDialogMenu.addItem(alertDialogMenu.get(5));
         }
         new AlertDialog.Builder(context)
-                .setItems(alertDialogMenu.getTitles(), (dialog, which) -> alertDialogMenu.onClick(which, new Pair<>(extra, nodeHref)))
+                .setItems(showedAlertDialogMenu.getTitles(), (dialog, which) -> showedAlertDialogMenu.onClick(which, context, new Pair<>(extra, nodeHref)))
                 .show();
     }
 }

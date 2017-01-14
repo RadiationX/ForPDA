@@ -76,7 +76,7 @@ button,
 .poll {
     .mainBox();
     >.title {
-        color: @mainColor;
+        color: @accentColor;
         width: 100%;
         position: relative;
         text-align: left;
@@ -857,20 +857,84 @@ button,
         }
     }
     .post_header {
-        padding: 1em;
+        padding: 0.75em 1em 0 1em;
         .header_wrapper {
             position: relative;
         }
+        @avatarSize: 56/16em;
+        @fullAvatarSize: (56+2)/16em;
         .avatar {
-            width: 4em;
+            width: @avatarSize;
+            height: @avatarSize;
             position: relative;
+            color: darkgray;
             .img {
-                height: 4em;
-                width: 4em;
+                position: relative;
+                height: @avatarSize;
+                width: @avatarSize;
                 background-repeat: no-repeat;
                 background-size: cover;
                 background-position: center;
+                .bRad(@avatarSize);
+                >.letter{
+                    color: white;
+                    position: absolute;
+                    text-align: center;
+                    width: @avatarSize/2;
+                    height: @avatarSize/2;
+                    line-height: @avatarSize/2;
+                    text-transform: uppercase;
+                    font-size: 2em;
+                    font-weight: bold;
+                    top: 0;
+                    left: 0;
+                    .bRad(@avatarSize);
+                    background-color: #ccc;
+                    display: none;
+                }
             }
+            
+            &.none_avatar{
+                .img{
+                    >.letter{
+                        display: block;
+                    }
+                }
+                
+            }
+            
+            .reputation {
+                position: absolute;
+                
+                background: #757575;
+                z-index: 1;
+                height: 18/16em;
+                line-height: 18/16em;
+                min-width: 18/16em;
+                text-align: center;
+                vertical-align: text-top;
+                padding: 0 6/16em;
+                .bRad(1.25em);
+                right: -4/16em;
+                bottom: 4/16em;
+                right: 0;
+                bottom: 0;
+                box-shadow: 0 0 0 2/16em white;
+                
+                >span {
+                    color: white;
+                    font-size: 10/16em;
+                    font-weight: bold;
+                    vertical-align: middle;
+                   /* &:before {
+                        content: "Реп (";
+                    }
+                    &:after {
+                        content: ")";
+                    }*/
+                }
+            }
+            
             &.disable {
                 .img {
                     width: 0;
@@ -884,12 +948,13 @@ button,
                     .bRad(4em);
                 }
             }
+            
         }
         .inf {
             position: absolute;
-            left: 5em;
+            left: @avatarSize+1em;
             max-width: 100%;
-            overflow: hidden;
+            margin-top: 8/16em;
             >span {}
             &.nick {
                 top: 0;
@@ -898,45 +963,44 @@ button,
                 &.online {
                     color: @curColor;
                 }
-            }
-            &.group {
-                top: 50%;
-                margin-top: -10/16em;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                >span {
-                    font-size: 14/16em;
-                    color: @textColor!important;
-                    font-weight: normal!important;
-                }
-            }
-            &.reputation {
-                bottom: 0;
-                background: @mainBoxBgColor;
-                box-shadow: 8/16em 0 8/16em -2/16em @mainBoxBgColor;
-                z-index: 1;
-                color: @accentColor;
-                >span {
-                    .mdButton;
-                    &:before {
-                        content: "Реп (";
+                
+                .group {
+                    position: absolute;
+                    top: 50%;
+                    margin-top: -4/16em;
+                    right: -12/16em;
+                    height: 8/16em;
+                    width: 8/16em;
+                    background-color: currentColor;
+                    .bRad(100%);
+                    &:after{
+                        content: "";
+                        position: absolute;
+                        height: 2.25em;
+                        width: 2.25em;
+                        left: 0;
+                        top: -1.125em+(4/16em);
                     }
-                    &:after {
-                        content: ")";
+                    >span {
+                        font-size: 14/16em;
+                        color: @textColor!important;
+                        font-weight: normal!important;
+                        display: none;
                     }
                 }
             }
+            
             &.menu {
                 left: auto;
                 right: -16/16em;
-                top: -16/16em;
+                top: -12/16em;
                 height: 48/16em;
                 width: 40/16em;
-                background-image: url(file:///android_asset/forum/style_images/dots-vertical.svg), url(../../res/dots-vertical.svg);
+                background-image: url(file:///android_asset/forum/style_images/dots-vertical.svg), url(../res/dots-vertical.svg);
                 background-size: 24/16em;
                 background-position: center;
                 background-repeat: no-repeat;
+                margin: 0;
                 >span {
                     display: none;
                 }
@@ -967,9 +1031,7 @@ button,
                 }
             }
             &.date {
-                left: auto;
-                right: 0;
-                bottom: 0;
+                top: 1.25em;
                 >span {
                     font-size: 14/16em;
                 }

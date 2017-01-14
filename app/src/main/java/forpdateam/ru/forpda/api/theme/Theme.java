@@ -26,13 +26,13 @@ import io.reactivex.Observable;
 public class Theme {
     //y: Oh God... Why?
     //g: Because it is faster
-    private final static Pattern postsPattern = Pattern.compile("<a name=\"entry([^\"]*?)\"[^>]*?><\\/a><div class=\"post_header_container\"><div class=\"post_header\"><span class=\"post_date\">([^&]*?)&[^<]*?<a[^>]*?>#(\\d+)<\\/a>[^<]*?<\\/span>[\\s\\S]*?<font color=\"([^\"]*?)\">[^<]*?<\\/font>[\\s\\S]*?<a[^>]*?data-av=\"([^\"]*?)\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<a[^>]*?showuser=([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[\\s\\S]*?<span[^>]*?post_user_info[^>]>(<strong[\\s\\S]*?<\\/strong>(?:<br[^>]*?>))?(?:<span[^<]*?color:([^;']*)[^>]*?>)?([\\s\\S]*?)(?:<\\/span>|)(?:  \\| [^<]*?)?<\\/span>[\\s\\S]*?(<a[^>]*?win_minus[^>]*?>[\\s\\S]*?<\\/a>|) \\([\\s\\S]*?ajaxrep[^>]*?>([^<]*?)<\\/span><\\/a>\\)[^<]*(<a[^>]*?win_add[^>]*?>[\\s\\S]*?<\\/a>|)<br[^>]*?>[^<]*?<span class=\"post_action\">(<a[^>]*?report[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?edit_post[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?delete[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?CODE=02[^>]*?>[^<]*?<\\/a>|)[^<]*[^<]*[\\s\\S]*?<div class=\"post_body[^>]*?>([\\s\\S]*?)<\\/div><\\/div>(?:<div data-post|<!-- TABLE FOOTER -->)");
+    private final static Pattern postsPattern = Pattern.compile("<a name=\"entry([^\"]*?)\"[^>]*?><\\/a><div class=\"post_header_container\"><div class=\"post_header\"><span class=\"post_date\">([^&]*?)&[^<]*?<a[^>]*?>#(\\d+)<\\/a>[^<]*?<\\/span>[\\s\\S]*?<font color=\"([^\"]*?)\">[^<]*?<\\/font>[\\s\\S]*?<a[^>]*?data-av=\"([^\"]*?)\"[^>]*?>([^<]*?)<[\\s\\S]*?<a[^>]*?showuser=([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[\\s\\S]*?<span[^>]*?post_user_info[^>]>(<strong[\\s\\S]*?<\\/strong>(?:<br[^>]*?>))?(?:<span[^<]*?color:([^;']*)[^>]*?>)?([\\s\\S]*?)(?:<\\/span>|)(?:  \\| [^<]*?)?<\\/span>[\\s\\S]*?(<a[^>]*?win_minus[^>]*?>[\\s\\S]*?<\\/a>|) \\([\\s\\S]*?ajaxrep[^>]*?>([^<]*?)<\\/span><\\/a>\\)[^<]*(<a[^>]*?win_add[^>]*?>[\\s\\S]*?<\\/a>|)<br[^>]*?>[^<]*?<span class=\"post_action\">(<a[^>]*?report[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?edit_post[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?delete[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?CODE=02[^>]*?>[^<]*?<\\/a>|)[^<]*[^<]*[\\s\\S]*?<div class=\"post_body[^>]*?>([\\s\\S]*?)<\\/div><\\/div>(?:<div data-post|<!-- TABLE FOOTER -->)");
 
     private final static Pattern countsPattern = Pattern.compile("parseInt\\((\\d*)\\)[\\s\\S]*?parseInt\\(st\\*(\\d*)\\)");
     private final static Pattern titlePattern = Pattern.compile("<div class=\"topic_title_post\">(?:([^<]*?)(?:, ([^<]*?)|))<br");
     private final static Pattern alreadyInFavPattern = Pattern.compile("Тема уже добавлена в <a href=\"[^\"]*act=fav\">");
     private final static Pattern paginationPattern = Pattern.compile("pagination\">([\\s\\S]*?<span[^>]*?>([^<]*?)</span>[\\s\\S]*?)</div><br");
-    private final static Pattern themeIdPattern = Pattern.compile("showforum=(\\d+)[^>]*?>[^<]*?<\\/a>[^<]*?<\\/div>[^<]*?<script[^>]*?>[\\s\\S]*?showtopic=(\\d+)&st");
+    private final static Pattern themeIdPattern = Pattern.compile("ipb_input_f:(\\d+),[\\s\\S]*?ipb_input_t:(\\d+),");
     public final static Pattern elemToScrollPattern = Pattern.compile("(?:anchor=|#)([^&\\n\\=\\?\\.\\#]*)");
     //private final static Pattern newsPattern = Pattern.compile("<section[^>]*?><article[^>]*?>[^<]*?<div class=\"container\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\" alt=\"([\\s\\S]*?)\"[\\s\\S]*?<em[^>]*>([^<]*?)</em>[\\s\\S]*?<a href=\"([^\"]*?)\">([\\s\\S]*?)</a>[\\s\\S]*?<a[^>]*?>([^<]*?)</a><div[^>]*?># ([\\s\\S]*?)</div>[\\s\\S]*?<div class=\"content-box\"[^>]*?>([\\s\\S]*?)</div></div></div>[^<]*?<div class=\"materials-box\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?<div class=\"comment-box\" id=\"comments\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[^<]*?<form");
 
@@ -64,7 +64,9 @@ public class Theme {
         return parsePage(url, response, generateHtml);
     }
 
-    public ThemePage parsePage(String url, String response, boolean generateHtml){
+    private final static Pattern firstLetter = Pattern.compile("[^a-zA-Z]*?([a-zA-Z])");
+
+    public ThemePage parsePage(String url, String response, boolean generateHtml) {
         ThemePage page = new ThemePage();
         String redirectUrl = Client.getInstance().getRedirect(url);
         if (redirectUrl == null)
@@ -124,7 +126,6 @@ public class Theme {
             post.setBody(matcher.group(18));
             if (post.isCurator() && post.getUserId() == memberId)
                 page.setCurator(true);
-            Log.d("suka", "ADD POST " + post.getId() + " : " + post.getNick());
             page.addPost(post);
         }
         Log.d("kek", "poll matcher " + (System.currentTimeMillis() - time));
@@ -202,13 +203,35 @@ public class Theme {
 
             int hatPostId = page.getPosts().get(0).getId();
             Log.d("kek", "template check 2 " + (System.currentTimeMillis() - time2));
+            String letter;
+            Matcher letterMatcher = null;
             for (ThemePost post : page.getPosts()) {
                 t.setVariableOpt("user_online", post.isOnline() ? "online" : "");
                 t.setVariableOpt("post_id", post.getId());
                 t.setVariableOpt("user_id", post.getUserId());
 
                 //Post header
-                t.setVariableOpt("avatar", post.getAvatar().isEmpty() ? "file:///android_asset/av.png" : "http://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
+                //t.setVariableOpt("avatar", post.getAvatar().isEmpty() ? "file:///android_asset/av.png" : "http://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
+                t.setVariableOpt("avatar", post.getAvatar().isEmpty() ? "" : "http://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
+                t.setVariableOpt("none_avatar", post.getAvatar().isEmpty() ? "none_avatar" : "");
+
+                if (post.getAvatar().isEmpty()) {
+                    letter = post.getNick().substring(0, 1);
+                    if (letterMatcher != null) {
+                        letterMatcher = letterMatcher.reset(letter);
+                    } else {
+                        letterMatcher = firstLetter.matcher(letter);
+                    }
+                    if (!letterMatcher.find()) {
+                        letterMatcher = letterMatcher.reset(post.getNick());
+                        if (letterMatcher.find()) {
+                            letter = letterMatcher.group(1);
+                        }
+                    }
+                } else {
+                    letter = "";
+                }
+                t.setVariableOpt("nick_letter", letter);
                 t.setVariableOpt("nick", post.getNick());
                 t.setVariableOpt("curator", post.isCurator() ? "curator" : "");
                 t.setVariableOpt("group_color", post.getGroupColor());
@@ -229,6 +252,8 @@ public class Theme {
                 t.setVariableOpt("body", post.getBody());
 
                 //Post footer
+
+                Log.d("SUKA", "CHECK "+authorized+" : "+post.canReport()+" : "+page.canQuote()+" : "+post.canDelete()+" : "+post.canEdit());
                 if (post.canReport() && authorized)
                     t.addBlockOpt("report_block");
                 if (page.canQuote() && authorized)
@@ -237,7 +262,7 @@ public class Theme {
                     t.addBlockOpt("vote_block");
                 if (post.canDelete() && authorized)
                     t.addBlockOpt("delete_block");
-                if (post.canDelete() && authorized)
+                if (post.canEdit() && authorized)
                     t.addBlockOpt("edit_block");
 
                 t.addBlockOpt("post");

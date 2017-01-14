@@ -37,20 +37,21 @@ public class FavoritesFragment extends TabFragment {
                 args.putString(TabFragment.TITLE_ARG, favItem.getTopicTitle());
                 IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=" + favItem.getTopicId() + "&view=getnewpost", args);
             };
-    private AlertDialogMenu<FavItem> favoriteDialogMenu;
+    private AlertDialogMenu<FavoritesFragment, FavItem> favoriteDialogMenu;
     private FavoritesAdapter.OnLongItemClickListener onLongItemClickListener =
             favItem -> {
-
                 if (favoriteDialogMenu == null) {
                     favoriteDialogMenu = new AlertDialogMenu<>();
-                    favoriteDialogMenu.addItem("Скопировать ссылку", data -> Utils.copyToClipBoard("http://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data.getTopicId()))));
-                    favoriteDialogMenu.addItem("Вложения", data -> IntentHandler.handle("http://4pda.ru/forum/index.php?act=attach&code=showtopic&tid=" + data.getTopicId()));
-                    favoriteDialogMenu.addItem("Открыть форум темы", data -> IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + data.getForumId()));
-                    favoriteDialogMenu.addItem("Изменить тип подписки", data -> new AlertDialog.Builder(getContext())
-                            .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> changeFav(0, Favorites.SUB_TYPES[which1], data.getFavId()))
-                            .show());
-                    favoriteDialogMenu.addItem(getPinText(favItem.isPin()), data -> changeFav(1, data.isPin() ? "unpin" : "pin", data.getFavId()));
-                    favoriteDialogMenu.addItem("Удалить", data -> changeFav(2, null, data.getFavId()));
+                    favoriteDialogMenu.addItem("Скопировать ссылку", (context, data) -> Utils.copyToClipBoard("http://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data.getTopicId()))));
+                    favoriteDialogMenu.addItem("Вложения", (context, data) -> IntentHandler.handle("http://4pda.ru/forum/index.php?act=attach&code=showtopic&tid=" + data.getTopicId()));
+                    favoriteDialogMenu.addItem("Открыть форум темы", (context, data) -> IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + data.getForumId()));
+                    favoriteDialogMenu.addItem("Изменить тип подписки", (context, data) -> {
+                        new AlertDialog.Builder(context.getContext())
+                                .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> context.changeFav(0, Favorites.SUB_TYPES[which1], data.getFavId()))
+                                .show();
+                    });
+                    favoriteDialogMenu.addItem(getPinText(favItem.isPin()), (context, data) -> context.changeFav(1, data.isPin() ? "unpin" : "pin", data.getFavId()));
+                    favoriteDialogMenu.addItem("Удалить", (context, data) -> context.changeFav(2, null, data.getFavId()));
                 }
 
                 int index = favoriteDialogMenu.containsIndex(getPinText(!favItem.isPin()));
@@ -60,7 +61,7 @@ public class FavoritesFragment extends TabFragment {
                 new AlertDialog.Builder(getContext())
                         .setItems(favoriteDialogMenu.getTitles(), (dialog, which) -> {
                             Log.d("kek", "ocnlicl " + favItem + " : " + favItem.getFavId());
-                            favoriteDialogMenu.onClick(which, favItem);
+                            favoriteDialogMenu.onClick(which, FavoritesFragment.this, favItem);
                         })
                         .show();
             };

@@ -457,7 +457,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
         updateTitle();
         updateSubTitle();
         refreshOptionsMenu();
-        webView.loadDataWithBaseURL(null, pageData.getHtml(), "text/html", "utf-8", null);
+        webView.loadDataWithBaseURL("http://4pda.ru/forum/", pageData.getHtml(), "text/html", "utf-8", null);
     }
 
 
@@ -714,13 +714,13 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
     //Вставка ответа пользователю
     public void insertNick(ThemePost post) {
-        String insert = String.format(Locale.getDefault(), "[SNAPBACK]%s[/SNAPBACK] [b]%s,[/b]\n", post.getId(), post.getNick());
-        Toast.makeText(getContext(), insert, Toast.LENGTH_SHORT).show();
+        String insert = String.format(Locale.getDefault(), "[snapback]%s[/snapback] [b]%s,[/b]\n", post.getId(), post.getNick());
+        messagePanel.insertText(insert);
     }
 
     public void quotePost(String text, ThemePost post) {
         String insert = String.format(Locale.getDefault(), "[quote name=\"%s\" date=\"%s\" post=%S]%s[/quote]", post.getNick(), post.getDate(), post.getId(), text);
-        Toast.makeText(getContext(), insert, Toast.LENGTH_SHORT).show();
+        messagePanel.insertText(insert);
     }
 
     public void editPost(ThemePost post) {

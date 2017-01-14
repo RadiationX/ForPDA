@@ -104,12 +104,17 @@ public class MessagePanel extends CardView {
         messageField.setTypeface(Typeface.MONOSPACE);
     }
 
+    public void show(){
+        this.setTranslationY(0);
+    }
+
 
     public boolean insertText(String text) {
         return insertText(text, null);
     }
 
     public boolean insertText(String startText, String endText) {
+        show();
         int selectionStart = messageField.getSelectionStart();
         int selectionEnd = messageField.getSelectionEnd();
         if (selectionEnd < selectionStart && selectionEnd != -1) {
