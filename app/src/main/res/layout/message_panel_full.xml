@@ -20,6 +20,7 @@
             android:gravity="top"
             android:hint="Сообщение"
             android:imeOptions="flagNoFullscreen"
+            android:inputType="textCapSentences|textMultiLine"
             android:minHeight="@dimen/dp48"
             android:padding="@dimen/dp16"
             android:textSize="16sp" />
@@ -63,7 +64,7 @@
             android:layout_alignParentEnd="true"
             android:clickable="false"
             android:padding="@dimen/dp8"
-            android:visibility="gone"/>
+            android:visibility="gone" />
     </RelativeLayout>
 
 

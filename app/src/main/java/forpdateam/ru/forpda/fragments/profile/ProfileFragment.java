@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.fragments.profile;
 
+import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +16,8 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.graphics.Palette;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
@@ -21,7 +25,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.view.Window;
 import android.view.animation.AlphaAnimation;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -53,6 +59,10 @@ public class ProfileFragment extends TabFragment {
     private LinearLayout countList, infoBlock, contactList, devicesList;
     private EditText noteText;
     private CircularProgressView progressView;
+    private Window window;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
+    private int statusBarColor = -1, standardColor = -1;
+    private ValueAnimator statusBarValueAnimator;
 
     private Subscriber<ProfileModel> mainSubscriber = new Subscriber<>();
     private Subscriber<Boolean> saveNoteSubscriber = new Subscriber<>();
@@ -88,7 +98,7 @@ public class ProfileFragment extends TabFragment {
         viewsReady();
 
         fab.setImageDrawable(App.getAppDrawable(R.drawable.contact_qms));
-        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         collapsingToolbarLayout.setExpandedTitleColor(Color.TRANSPARENT);
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.TRANSPARENT);
         collapsingToolbarLayout.setTitleEnabled(true);
@@ -111,7 +121,34 @@ public class ProfileFragment extends TabFragment {
             Utils.copyToClipBoard(getTabUrl());
             return false;
         });
+        if (getActivity() != null && getActivity().getWindow() != null) {
+            window = getActivity().getWindow();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                standardColor = ContextCompat.getColor(getContext(), R.color.status_bar_color);
+            }
+        }
+        toolbar.getNavigationIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+        toolbar.getOverflowIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(standardColor);
+            if(statusBarValueAnimator!=null){
+                statusBarValueAnimator.cancel();
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(statusBarColor);
+        }
     }
 
     public int dpToPx(int dp) {
@@ -190,7 +227,7 @@ public class ProfileFragment extends TabFragment {
     private void onProfileLoad(ProfileModel profile) {
         if (profile.getNick() == null) return;
         long time = System.currentTimeMillis();
-        ImageLoader.getInstance().displayImage(profile.getAvatar(), avatar, new SimpleImageLoadingListener() {
+        ImageLoader.getInstance().loadImage(profile.getAvatar(), new SimpleImageLoadingListener() {
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                 //Нужен handler, иначе при повторном создании фрагмента неверно вычисляется высота вьюхи
@@ -198,15 +235,57 @@ public class ProfileFragment extends TabFragment {
                     if (!isAdded())
                         return;
                     blur(loadedImage);
+                    Palette.from(loadedImage).generate(palette -> {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            Palette.Swatch swatch = palette.getDarkMutedSwatch();
+                            Log.d("SUKA", "COLOR 1");
+                            if (swatch == null) {
+                                Log.d("SUKA", "COLOR 2");
+                                swatch = palette.getMutedSwatch();
+                            }
+                            if (swatch == null) {
+                                Log.d("SUKA", "COLOR 3");
+                                swatch = palette.getDarkVibrantSwatch();
+                            }
+                            statusBarColor = swatch == null ? standardColor : swatch.getRgb();
+                            Log.d("SUKA", "COLOR " + (swatch != null) + " : " + statusBarColor);
+                            if (!isDetached() && isAdded() && isVisible() && !isHidden()) {
+                                if (swatch == null) {
+                                    window.setStatusBarColor(statusBarColor);
+                                } else {
+                                    statusBarValueAnimator = new ValueAnimator();
+                                    statusBarValueAnimator.setIntValues(0, 255);
+                                    statusBarValueAnimator.setDuration(500);
+                                    statusBarValueAnimator.setInterpolator(new DecelerateInterpolator());
+                                    statusBarValueAnimator.addUpdateListener(animation -> {
+                                        window.setStatusBarColor(Color.argb(((Integer) animation.getAnimatedValue()), Color.red(statusBarColor), Color.green(statusBarColor), Color.blue(statusBarColor)));
+                                    });
+                                    statusBarValueAnimator.start();
+                                }
+                                collapsingToolbarLayout.setContentScrimColor(statusBarColor);
+                            }
+                        }
+                    });
+                    Bitmap overlay = Bitmap.createBitmap(loadedImage.getWidth(), loadedImage.getHeight(), Bitmap.Config.RGB_565);
+                    overlay.eraseColor(Color.WHITE);
+                    Canvas canvas = new Canvas(overlay);
+                    canvas.drawBitmap(loadedImage, 0, 0, new Paint(Paint.FILTER_BITMAP_FLAG));
+                    AlphaAnimation animation = new AlphaAnimation(0, 1);
+                    animation.setDuration(500);
+                    animation.setFillAfter(true);
+                    avatar.setImageBitmap(overlay);
+                    avatar.startAnimation(animation);
+
+                    AlphaAnimation animation1 = new AlphaAnimation(1, 0);
+                    animation1.setDuration(500);
+                    animation1.setFillAfter(true);
+                    progressView.startAnimation(animation1);
+                    new Handler().postDelayed(() -> {
+                        progressView.stopAnimation();
+                        progressView.setVisibility(View.GONE);
+                    }, 500);
                 });
-                AlphaAnimation animation1 = new AlphaAnimation(1, 0);
-                animation1.setDuration(500);
-                animation1.setFillAfter(true);
-                progressView.startAnimation(animation1);
-                new Handler().postDelayed(() -> {
-                    progressView.stopAnimation();
-                    progressView.setVisibility(View.GONE);
-                }, 500);
+
             }
         });
 

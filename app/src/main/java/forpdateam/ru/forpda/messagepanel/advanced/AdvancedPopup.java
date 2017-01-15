@@ -67,7 +67,7 @@ public class AdvancedPopup {
         fragmentContainer = panel.getFragmentContainer();
         messagePanel = panel;
 
-        View popupView = View.inflate(context, R.layout.testpopup, null);
+        View popupView = View.inflate(context, R.layout.message_panel_advanced, null);
         ViewPager viewPager = (ViewPager) popupView.findViewById(R.id.pager);
 
         List<BasePanelItem> viewList = new ArrayList<>();

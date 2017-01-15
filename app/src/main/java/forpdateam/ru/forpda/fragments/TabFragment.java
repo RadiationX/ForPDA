@@ -172,7 +172,8 @@ public class TabFragment extends RxFragment implements ITabFragment {
             iconRes = R.drawable.ic_arrow_back_gray_24dp;
             toolbar.setNavigationOnClickListener(getMainActivity().getRemoveTabListener());
         }
-        toolbar.setNavigationIcon(App.getAppDrawable(iconRes));
+        //toolbar.setNavigationIcon(App.getAppDrawable(iconRes));
+        toolbar.setNavigationIcon(iconRes);
 
 
         if (!Client.getInstance().getNetworkState()) {

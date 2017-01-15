@@ -48,7 +48,7 @@ public class AttachmentsPopup {
         dialog = new CustomBottomSheetDialog(context);
         dialog.setPeekHeight(App.getKeyboardHeight());
 
-        bottomSheet = View.inflate(context, R.layout.test_bottomsheet, null);
+        bottomSheet = View.inflate(context, R.layout.message_panel_attachments, null);
         recyclerView = (AutoFitRecyclerView) bottomSheet.findViewById(R.id.auto_fit_recycler_view);
         progressOverlay = (FrameLayout) bottomSheet.findViewById(R.id.progress_overlay);
 

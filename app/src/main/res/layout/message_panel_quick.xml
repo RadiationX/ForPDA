@@ -31,8 +31,9 @@
         android:background="@android:color/transparent"
         android:gravity="center_vertical"
         android:hint="Сообщение"
-        android:maxLines="4"
         android:imeOptions="flagNoFullscreen"
+        android:inputType="textCapSentences|textMultiLine"
+        android:maxLines="4"
         android:minHeight="@dimen/dp48"
         android:padding="@dimen/dp8"
         android:textSize="16sp" />
@@ -50,9 +51,9 @@
         android:id="@+id/send_progress"
         android:layout_width="@dimen/dp48"
         android:layout_height="@dimen/dp48"
-        android:layout_alignParentEnd="true"
         android:layout_alignBottom="@+id/message_field"
+        android:layout_alignParentEnd="true"
         android:clickable="false"
         android:padding="@dimen/dp8"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 </RelativeLayout>

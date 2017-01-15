@@ -5,7 +5,7 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.widget.FrameLayout;
 
-import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.messagepanel.AutoFitRecyclerView;
 import forpdateam.ru.forpda.messagepanel.MessagePanel;
 
 /**
@@ -22,8 +22,8 @@ public class BasePanelItem extends FrameLayout {
         super(context);
         this.messagePanel = messagePanel;
         this.title = title;
-        inflate(getContext(), R.layout.testbasepanel, this);
-        recyclerView = (RecyclerView) findViewById(R.id.auto_fit_recycler_view);
+        recyclerView = new AutoFitRecyclerView(context);
+        addView(recyclerView);
     }
 
     public String getTitle() {

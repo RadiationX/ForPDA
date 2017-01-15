@@ -39,7 +39,7 @@ public class PanelItemAdapter extends RecyclerView.Adapter<PanelItemAdapter.View
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_panel, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.message_panel_advanced_item, parent, false);
         return new ViewHolder(view);
     }
 

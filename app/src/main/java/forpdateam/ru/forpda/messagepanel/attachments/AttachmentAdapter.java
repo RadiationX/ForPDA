@@ -117,7 +117,7 @@ public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.Vi
 
     @Override
     public AttachmentAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_attachment, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.message_panel_attachment_item, parent, false);
         return new AttachmentAdapter.ViewHolder(view);
     }
 

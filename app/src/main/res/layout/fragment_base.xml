@@ -25,6 +25,7 @@
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
                 app:contentScrim="?attr/colorPrimary"
+                app:statusBarScrim="@android:color/transparent"
                 app:titleEnabled="false">
 
                 <ImageView

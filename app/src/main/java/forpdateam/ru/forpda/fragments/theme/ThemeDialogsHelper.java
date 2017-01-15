@@ -1,15 +1,10 @@
 package forpdateam.ru.forpda.fragments.theme;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.support.v7.app.AlertDialog;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
@@ -104,19 +99,18 @@ class ThemeDialogsHelper {
         for (int i = 0; i < pageData.getAllPagesCount(); i++)
             pages[i] = i + 1;
 
-        LayoutInflater inflater = (LayoutInflater) theme.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        @SuppressLint("InflateParams")
-        View view = inflater.inflate(R.layout.select_page_layout, null);
+        final ListView listView = new ListView(theme.getContext());
+        listView.setDivider(null);
+        listView.setDividerHeight(0);
+        listView.setFastScrollEnabled(true);
 
-        assert view != null;
-        final ListView listView = (ListView) view.findViewById(R.id.listview);
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         listView.setAdapter(new ThemePagesAdapter(theme.getContext(), pages));
         listView.setItemChecked(pageData.getCurrentPage() - 1, true);
         listView.setSelection(pageData.getCurrentPage() - 1);
 
         AlertDialog dialog = new AlertDialog.Builder(theme.getActivity())
-                .setView(view)
+                .setView(listView)
                 .show();
 
         if (dialog.getWindow() != null)
