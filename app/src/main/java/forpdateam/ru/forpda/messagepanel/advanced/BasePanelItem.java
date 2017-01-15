@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.messagepanel.advanced;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 
 import forpdateam.ru.forpda.R;

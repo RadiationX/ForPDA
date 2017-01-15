@@ -54,7 +54,6 @@
             android:layout_height="@dimen/dp48"
             android:layout_alignParentEnd="true"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="false"
             app:srcCompat="@drawable/ic_send_gray_24dp" />
 
         <ProgressBar

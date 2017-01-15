@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;

@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.messagepanel.advanced;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.List;

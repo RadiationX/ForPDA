@@ -32,7 +32,6 @@ import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
 import forpdateam.ru.forpda.settings.SettingsActivity;
 import forpdateam.ru.forpda.utils.ErrorHandler;
-import forpdateam.ru.forpda.utils.IntentHandler;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;

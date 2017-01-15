@@ -13,7 +13,6 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
-import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.fragments.theme.adapters.ThemePagesAdapter;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -22,11 +21,11 @@ import forpdateam.ru.forpda.utils.IntentHandler;
  * Created by radiationx on 01.11.16.
  */
 
-public class ThemeDialogsHelper {
-    private static AlertDialogMenu<ThemeFragmentWeb, ThemePost> userMenu, reputationMenu, postMenu;
-    private static AlertDialogMenu<ThemeFragmentWeb, ThemePost> showedUserMenu, showedReputationMenu, showedPostMenu;
+class ThemeDialogsHelper {
+    private static AlertDialogMenu<ThemeFragment, ThemePost> userMenu, reputationMenu, postMenu;
+    private static AlertDialogMenu<ThemeFragment, ThemePost> showedUserMenu, showedReputationMenu, showedPostMenu;
 
-    public static void showUserMenu(ThemeFragmentWeb theme, ThemePost post) {
+    static void showUserMenu(ThemeFragment theme, ThemePost post) {
         if (userMenu == null) {
             userMenu = new AlertDialogMenu<>();
             showedUserMenu = new AlertDialogMenu<>();
@@ -49,7 +48,7 @@ public class ThemeDialogsHelper {
                 .show();
     }
 
-    public static void showReputationMenu(ThemeFragmentWeb theme, ThemePost post) {
+    static void showReputationMenu(ThemeFragment theme, ThemePost post) {
         if (reputationMenu == null) {
             reputationMenu = new AlertDialogMenu<>();
             showedReputationMenu = new AlertDialogMenu<>();
@@ -72,14 +71,14 @@ public class ThemeDialogsHelper {
     }
 
 
-    public static void showPostMenu(ThemeFragmentWeb theme, ThemePost post) {
+    static void showPostMenu(ThemeFragment theme, ThemePost post) {
         if (postMenu == null) {
             postMenu = new AlertDialogMenu<>();
             showedPostMenu = new AlertDialogMenu<>();
-            postMenu.addItem("Ответить", (context, data) -> context.insertNick(data));
-            postMenu.addItem("Пожаловаться", (context, data) -> context.reportPost(data));
-            postMenu.addItem("Изменить", (context, data) -> context.editPost(data));
-            postMenu.addItem("Удалить", (context, data) -> context.deletePost(data));
+            postMenu.addItem("Ответить", ThemeFragment::insertNick);
+            postMenu.addItem("Пожаловаться", ThemeFragment::reportPost);
+            postMenu.addItem("Изменить", ThemeFragment::editPost);
+            postMenu.addItem("Удалить", ThemeFragment::deletePost);
             postMenu.addItem("Ссылка на сообщение", (context, data) -> Toast.makeText(context.getContext(), "Не умею", Toast.LENGTH_SHORT).show());
         }
         showedPostMenu.clear();
@@ -99,7 +98,7 @@ public class ThemeDialogsHelper {
                 .show();
     }
 
-    public static void selectPage(ThemeFragmentWeb theme, ThemePage pageData) {
+    static void selectPage(ThemeFragment theme, ThemePage pageData) {
         final int[] pages = new int[pageData.getAllPagesCount()];
 
         for (int i = 0; i < pageData.getAllPagesCount(); i++)
@@ -120,7 +119,8 @@ public class ThemeDialogsHelper {
                 .setView(view)
                 .show();
 
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        if (dialog.getWindow() != null)
+            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         listView.setOnItemClickListener((adapterView, view1, i2, l) -> {
             if (listView.getTag() != null && !((Boolean) listView.getTag())) {

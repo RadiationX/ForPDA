@@ -44,7 +44,6 @@
         android:layout_alignBottom="@+id/message_field"
         android:layout_alignParentEnd="true"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:clickable="false"
         app:srcCompat="@drawable/ic_send_gray_24dp" />
 
     <ProgressBar

@@ -96,12 +96,10 @@ public class MessagePanel extends CardView {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() > 0) {
                     if (sendButton.getColorFilter() == null) {
-                        sendButton.setEnabled(true);
                         sendButton.setColorFilter(primaryColor);
                     }
                 } else {
                     if (sendButton.getColorFilter() != null) {
-                        sendButton.setEnabled(false);
                         sendButton.clearColorFilter();
                     }
                 }

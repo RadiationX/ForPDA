@@ -4,7 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatEditText;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
@@ -20,11 +22,10 @@ import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.client.RequestFile;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.fragments.theme.ThemeFragmentWeb;
+import forpdateam.ru.forpda.fragments.theme.ThemeFragment;
 import forpdateam.ru.forpda.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.messagepanel.attachments.AttachmentsPopup;
 import forpdateam.ru.forpda.utils.FilePickHelper;
-import io.reactivex.functions.Consumer;
 
 import static forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm.ARG_TYPE;
 import static forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm.TYPE_EDIT_POST;
@@ -94,7 +95,11 @@ public class EditPostFragment extends TabFragment {
         //baseInflateFragment(inflater, R.layout.fragment_qms_chat);
         messagePanel = new MessagePanel(getContext(), (ViewGroup) findViewById(R.id.fragment_container), (ViewGroup) view.findViewById(R.id.fragment_content), true);
         messagePanel.addSendOnClickListener(v -> {
-            sendMessage();
+            if (postForm.getType() == TYPE_EDIT_POST) {
+                showReasonDialog();
+            } else {
+                sendMessage();
+            }
         });
         attachmentsPopup = messagePanel.getAttachmentsPopup();
         attachmentsPopup.setAddOnClickListener(v -> pickImage());
@@ -158,22 +163,17 @@ public class EditPostFragment extends TabFragment {
         for (AttachmentItem item : attachments) {
             postForm.addAttachment(item);
         }
-        sendSubscriber.subscribe(Api.EditPost().sendPost(postForm), new Consumer<ThemePage>() {
-            @Override
-            public void accept(ThemePage s) throws Exception {
-                messagePanel.setProgressState(false);
-                Log.d("SUKA", "POST SENDED " + s + " : " + s.getUrl());
-                ThemeFragmentWeb fragment = (ThemeFragmentWeb) TabManager.getInstance().get(getParentTag());
-                if (fragment != null) {
-                    if (postForm.getType() == TYPE_EDIT_POST) {
-                        fragment.onEditPostCompleted(s);
-                    } else {
-                        fragment.onSendPostCompleted(s);
-                    }
+        sendSubscriber.subscribe(Api.EditPost().sendPost(postForm), s -> {
+            messagePanel.setProgressState(false);
+            ThemeFragment fragment = (ThemeFragment) TabManager.getInstance().get(getParentTag());
+            if (fragment != null) {
+                if (postForm.getType() == TYPE_EDIT_POST) {
+                    fragment.onEditPostCompleted(s);
+                } else {
+                    fragment.onSendPostCompleted(s);
                 }
-
-                TabManager.getInstance().remove(EditPostFragment.this);
             }
+            TabManager.getInstance().remove(EditPostFragment.this);
         }, new ThemePage(), v -> loadData());
     }
 
@@ -215,6 +215,19 @@ public class EditPostFragment extends TabFragment {
             }
             uploadFiles(FilePickHelper.onActivityResult(getContext(), data.getData()));
         }
+    }
+
+    private void showReasonDialog() {
+        AppCompatEditText editText = new AppCompatEditText(getContext());
+        editText.setPadding(App.px24, 0, App.px24, 0);
+        editText.setHint("Причина редактирования");
+        editText.setText(postForm.getEditReason());
+        new AlertDialog.Builder(getContext())
+                .setView(editText)
+                .setTitle("Причина редактирования")
+                .setPositiveButton("Ок", (dialog, which) -> sendMessage())
+                .setNegativeButton("Отмена", null)
+                .show();
     }
 
 }
