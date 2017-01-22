@@ -16,6 +16,7 @@ import forpdateam.ru.forpda.fragments.qms.QmsChatFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsThemesFragment;
 import forpdateam.ru.forpda.fragments.theme.ThemeFragmentWeb;
+import forpdateam.ru.forpda.utils.ourparser.Html;
 
 /**
  * Created by radiationx on 04.08.16.
@@ -66,8 +67,12 @@ public class IntentHandler {
     }
 
     public static boolean handle(String url, Bundle args) {
+        if (url.substring(0, 2).equals("//"))
+            url = "http:".concat(url);
         Log.d("kek", "input url " + url);
         //url = Html.fromHtml(url).toString();
+        url = Html.fromHtml(url).toString();
+
         Log.d("kek", "after html url " + url);
         Uri uri = Uri.parse(url.toLowerCase());
         Log.d("kek", "HANDLE URL " + uri.toString() + " : " + url);

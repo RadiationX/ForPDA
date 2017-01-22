@@ -22,8 +22,9 @@ import static forpdateam.ru.forpda.client.Client.getInstance;
  */
 public class Qms {
     private final static Pattern contactsPattern = Pattern.compile("<a class=\"list-group-item[^>]*?data-member-id=\"([^\"]*?)\" (?=data-unread-count=\"([^\"]*?)\"|)[^>]*?>[^<]*?<div[^>]*?>[^<]*?<i[^>]*?></i>[^<]*?</div>[^<]*?<span[^>]*?>[^<]*?<div[^>]*?><img[^>]*?src=\"([^\"]*?)\" title=\"([^\"]*?)\"");
-    private final static Pattern threadPattern = Pattern.compile("<a class=\"list-group-item[^>]*?data-thread-id=\"([^\"]*?)\"[\\s\\S]*?<div[^>]*?>([^<]*?)</div>[^<]*?([\\s\\S]*?)</a>");
-    private final static Pattern threadName = Pattern.compile("([\\s\\S]*?) \\((\\d+)(?= / (\\d+)|)");
+    private final static Pattern threadPattern = Pattern.compile("<a class=\"list-group-item[^>]*?data-thread-id=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div class=\"bage[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?(?:<strong>)?([^<]*?)\\((\\d+)(?: \\/ (\\d+))?\\)");
+    private final static Pattern threadNickPattern = Pattern.compile("<div class=\"nav\">[\\s\\S]*?<b>(?:<a[^>]*?>)?([\\s\\S]*?)(?:<\\/a>)?<\\/b>");
+    private final static Pattern chatInfoPattern = Pattern.compile("<div class=\"nav\">[\\s\\S]*?<b>(?:<a[^>]*?>)?([\\s\\S]*?)(?:<\\/a>)?:<\\/b>([\\s\\S]*?)<\\/span>(?:[\\s\\S]*?class=\"avatar\"[^>]*?src=\"([^\"]*?)\")?");
     private final static Pattern chatPattern = Pattern.compile("group-item([^\"]*?)\" data-message-id=\"([^\"]*?)\"[^>]*?data-unread-status=\"([^\"]*?)\">[\\s\\S]*?</b> ([^ <]*?) [\\s\\S]*?src=\"([^\"]*?)\"[\\s\\S]*?(<div[^>]*?msg-content[^>]*?>[\\s\\S]*?</div>)([^<]*?</div>[^<]*?<div (class=\"list|id=\"threa|class=\"date))|<div class=\"text\">([^<]*?)</div>");
 
     public Qms() {
@@ -38,12 +39,13 @@ public class Qms {
         while (matcher.find()) {
             contact = new QmsContact();
             contact.setId(Integer.parseInt(matcher.group(1)));
-            String count = matcher.group(2);
-            if (count == null || count.isEmpty())
-                count = "0";
-            contact.setCount(Integer.parseInt(count));
-            contact.setAvatar(matcher.group(3));
-            contact.setNick(matcher.group(4));
+            String temp = matcher.group(2);
+            contact.setCount(temp == null || temp.isEmpty() ? 0 : Integer.parseInt(temp));
+            temp = matcher.group(3);
+            if (temp.substring(0, 2).equals("//"))
+                temp = "http:".concat(temp);
+            contact.setAvatar(temp);
+            contact.setNick(Html.fromHtml(matcher.group(4).trim()).toString());
             list.add(contact);
         }
 
@@ -61,24 +63,15 @@ public class Qms {
             thread = new QmsTheme();
             thread.setId(Integer.parseInt(matcher.group(1)));
             thread.setDate(matcher.group(2));
-            Matcher nameMatcher = threadName.matcher(Html.fromHtml(matcher.group(3).trim()));
-            if (nameMatcher.find()) {
-                thread.setName(nameMatcher.group(1));
-                thread.setCountMessages(Integer.parseInt(nameMatcher.group(2)));
-                String countNew = nameMatcher.group(3);
-                if (countNew == null || countNew.isEmpty())
-                    countNew = "0";
-                thread.setCountNew(Integer.parseInt(countNew));
-            }
+            thread.setName(Html.fromHtml(matcher.group(3).trim()).toString());
+            thread.setCountMessages(Integer.parseInt(matcher.group(4)));
+            String countNew = matcher.group(5);
+            thread.setCountNew(countNew == null || countNew.isEmpty() ? 0 : Integer.parseInt(countNew));
             qmsThemes.addTheme(thread);
         }
-        matcher = Pattern.compile("<div class=\"nav\">[\\s\\S]*?<b>(<a[^>]*?href=\"[^\"]*?showuser[^\"]*?\"[^>]*?>([\\s\\S]*?)</a>|[^<]*?)</b>").matcher(response);
+        matcher = threadNickPattern.matcher(response);
         if (matcher.find()) {
-            if (matcher.group(2) != null) {
-                qmsThemes.setNick(matcher.group(2));
-            } else {
-                qmsThemes.setNick(matcher.group(1));
-            }
+            qmsThemes.setNick(matcher.group(1));
         }
         qmsThemes.setUserId(id);
         return qmsThemes;
@@ -106,14 +99,11 @@ public class Qms {
             }
             chat.addChatItem(item);
         }
-        matcher = Pattern.compile("<div class=\"nav\">[\\s\\S]*?<b>(<a[^>]*?href=\"[^\"]*?showuser[^\"]*?\"[^>]*?>([\\s\\S]*?)</a>|[^:]*?):</b>([\\s\\S]*?)</span>").matcher(response);
+        matcher = chatInfoPattern.matcher(response);
         if (matcher.find()) {
-            chat.setNick(matcher.group(2) != null ? matcher.group(2).trim() : matcher.group(1).trim());
-            chat.setTitle(matcher.group(3).trim());
-        }
-        matcher = Pattern.compile("=\"list-group-item\"[\\s\\S]*?class=\"avatar\"[^>]*?src=\"([^\"]*?)\"").matcher(response);
-        if (matcher.find()) {
-            chat.setAvatarUrl(matcher.group(1));
+            chat.setNick(Html.fromHtml(matcher.group(1).trim()).toString());
+            chat.setTitle(Html.fromHtml(matcher.group(2).trim()).toString());
+            chat.setAvatarUrl(matcher.group(3));
         }
         return chat;
     }

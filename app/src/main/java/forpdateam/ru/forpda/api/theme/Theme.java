@@ -41,9 +41,6 @@ public class Theme {
     private final static Pattern pollQuestionItems = Pattern.compile("<tr>(?:<td[^>]*?colspan[^>]*?><input type=\"([^\"]*?)\" name=\"([^\"]*?)\" value=\"([^\"]*?)\"[^>]*?>[^<]*?<b>([\\s\\S]*?)<\\/b>[\\s\\S]*?|<td[^>]*?width[^>]*?>([\\s\\S]*?)<\\/td><td[^>]*?>[^<]*?<b>([\\s\\S]*?)<\\/b>[^\\[]*?\\[([^\\%]*?)\\%[\\s\\S]*?)<\\/tr>");
     private final static Pattern pollButtons = Pattern.compile("<input[^>]*?value=\"([^\"]*?)\"");
 
-
-    private final static Pattern mentionsPattern = Pattern.compile("<a[^>]*?>([\\s\\S]*?)<\\/a>[^<]*?<\\/div><div[^>]*? class=\" ([^\"]*)\"><a name=\"([^\"]*?)\"[^>]*?><\\/a><div class=\"post_header_container\"><div class=\"post_header\"><span class=\"post_date\"><a href=\"([^\"]*?)\">([^&|]*)[\\s\\S]*?<\\/span>[\\s\\S]*?<span[^>]*?><a[^>]*?data-av=\"([^\"]*?)\" href=\"[\\s\\S]*?(\\d+)\"[^>]*?>([^<]*?)<\\/a><\\/span><br[^>]*?>[\\s\\S]*?<span[^>]*?>(?:<[^>]*?>([^<]*?|)<\\/[^>]*?><br[^>]*?>|)[^<]*?<span[^>]*?color:([^;']*?)'>([^<]*?)<\\/span>[\\s\\S]*?<br[^>]*?><font color=\"([^\"]*?)\">[^<]*?<\\/font>[\\s\\S]*?<a[^>]*?>[^<]*?<\\/a>[\\s\\S]*?ajaxrep[^>]*?>([^<]*?)<\\/span><\\/a>\\) [\\s\\S]*?(<a[^>]*?win_minus[^>]*?><img[^>]*?><\\/a>|)[^<]*(<a[^>]*?win_add[^>]*?><img[^>]*?><\\/a>|)<br[^>]*?>[^<]*?<span class=\"post_action\">(<a[^>]*?report[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?edit_post[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?delete[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?CODE=02[^>]*?>[^<]*?<\\/a>|)[^<]*[^<]*[\\s\\S]*?(<div class=\"post_body(?: [^ \"]*|) ([^\"]*?)\"[^>]*?>[\\s\\S]*?<\\/div>)<\\/div>[^<]*?(?:<div class=\"topic_title_post|<div><div class=\"pagination\">)");
-
     public Theme() {
     }
 
@@ -215,21 +212,17 @@ public class Theme {
                 t.setVariableOpt("avatar", post.getAvatar().isEmpty() ? "" : "http://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
                 t.setVariableOpt("none_avatar", post.getAvatar().isEmpty() ? "none_avatar" : "");
 
-                if (post.getAvatar().isEmpty()) {
-                    letter = post.getNick().substring(0, 1);
-                    if (letterMatcher != null) {
-                        letterMatcher = letterMatcher.reset(letter);
-                    } else {
-                        letterMatcher = firstLetter.matcher(letter);
-                    }
-                    if (!letterMatcher.find()) {
-                        letterMatcher = letterMatcher.reset(post.getNick());
-                        if (letterMatcher.find()) {
-                            letter = letterMatcher.group(1);
-                        }
-                    }
+                letter = post.getNick().substring(0, 1);
+                if (letterMatcher != null) {
+                    letterMatcher = letterMatcher.reset(letter);
                 } else {
-                    letter = "";
+                    letterMatcher = firstLetter.matcher(letter);
+                }
+                if (!letterMatcher.find()) {
+                    letterMatcher = letterMatcher.reset(post.getNick());
+                    if (letterMatcher.find()) {
+                        letter = letterMatcher.group(1);
+                    }
                 }
                 t.setVariableOpt("nick_letter", letter);
                 t.setVariableOpt("nick", post.getNick());
@@ -253,10 +246,9 @@ public class Theme {
 
                 //Post footer
 
-                Log.d("SUKA", "CHECK "+authorized+" : "+post.canReport()+" : "+page.canQuote()+" : "+post.canDelete()+" : "+post.canEdit());
                 if (post.canReport() && authorized)
                     t.addBlockOpt("report_block");
-                if (page.canQuote() && authorized)
+                if (page.canQuote() && authorized && post.getUserId() != memberId)
                     t.addBlockOpt("reply_block");
                 if (authorized && post.getUserId() != memberId)
                     t.addBlockOpt("vote_block");

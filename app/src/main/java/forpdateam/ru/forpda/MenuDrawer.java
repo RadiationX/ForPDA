@@ -20,6 +20,7 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.auth.AuthFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
+import forpdateam.ru.forpda.fragments.mentions.MentionsFragment;
 import forpdateam.ru.forpda.fragments.news.NewsListFragment;
 import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
@@ -112,7 +113,7 @@ public class MenuDrawer {
             menuItems.add(new MenuItem<>("Профиль", R.drawable.ic_person_grary_24dp, ProfileFragment.class));
             menuItems.add(new MenuItem<>("Сообщения", R.drawable.ic_mail_gray_24dp, QmsContactsFragment.class));
             menuItems.add(new MenuItem<>("Избранное", R.drawable.ic_star_black_24dp, FavoritesFragment.class));
-            menuItems.add(new MenuItem<>("Упоминания", R.drawable.ic_hearing_gray_24dp, ThemeFragment.class));
+            menuItems.add(new MenuItem<>("Упоминания", R.drawable.ic_hearing_gray_24dp, MentionsFragment.class));
         }
     }
 

@@ -4,6 +4,7 @@ import java.util.Observer;
 
 import forpdateam.ru.forpda.api.auth.Auth;
 import forpdateam.ru.forpda.api.favorites.Favorites;
+import forpdateam.ru.forpda.api.mentions.Mentions;
 import forpdateam.ru.forpda.api.newslist.NewsList;
 import forpdateam.ru.forpda.api.profile.Profile;
 import forpdateam.ru.forpda.api.qms.Qms;
@@ -22,6 +23,7 @@ public class Api {
     private static Theme themeApi = null;
     private static EditPost editPost = null;
     private static Favorites favoritesApi = null;
+    private static Mentions mentions = null;
     private CountsObservable observable = new CountsObservable();
     private int qmsCount = 0, mentionsCount = 0, favoritesCount = 0;
 
@@ -60,6 +62,11 @@ public class Api {
     public static Favorites Favorites() {
         if (favoritesApi == null) favoritesApi = new Favorites();
         return favoritesApi;
+    }
+
+    public static Mentions Mentions() {
+        if (mentions == null) mentions = new Mentions();
+        return mentions;
     }
 
     public static Api get() {

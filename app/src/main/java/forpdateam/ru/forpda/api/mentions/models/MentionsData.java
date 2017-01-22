@@ -1,23 +1,22 @@
-package forpdateam.ru.forpda.api.favorites.models;
+package forpdateam.ru.forpda.api.mentions.models;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by radiationx on 22.09.16.
+ * Created by radiationx on 21.01.17.
  */
 
-public class FavData {
-    private List<FavItem> items = new ArrayList<>();
-
+public class MentionsData {
+    private List<MentionItem> items = new ArrayList<>();
     private int itemsPerPage = 20, allPagesCount = 1, currentPage = 1;
 
-    public void addItem(FavItem item) {
-        items.add(item);
+    public List<MentionItem> getItems() {
+        return items;
     }
 
-    public List<FavItem> getItems() {
-        return items;
+    public void addItem(MentionItem item) {
+        items.add(item);
     }
 
     public int getItemsPerPage() {

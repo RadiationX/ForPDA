@@ -76,7 +76,8 @@ button,
 .poll {
     .mainBox();
     >.title {
-        color: @accentColor;
+        .noselect;
+        color: #000;
         width: 100%;
         position: relative;
         text-align: left;
@@ -102,7 +103,7 @@ button,
                 box-sizing: border-box;
                 height: 8/16em;
                 width: 8/16em;
-                border-color: @accentColor;
+                border-color: #000;
                 -webkit-transform: rotate(-45deg) translateY(-1/16em) translateX(1/16em);
                 transform: rotate(-45deg) translateY(-1/16em) translateX(1/16em);
                 -webkit-transform-origin: center;
@@ -233,7 +234,7 @@ button,
                                             width: 20/16em;
                                             margin-top: -10/16em;
                                             margin-left: -10/16em;
-                                            border: 6/16em solid @mainColor;
+                                            border: 6/16em solid #000;
                                             -webkit-transform: scale(2);
                                             transform: scale(2);
                                         }
@@ -241,7 +242,7 @@ button,
                                 }
                                 &:checked {
                                     + .icon {
-                                        border-color: @accentColor;
+                                        border-color: #000;
                                         -webkit-transition: 0s 0s border-color @curveStandard;
                                         transition: 0s 0s border-color @curveStandard;
                                         /*-webkit-animation: radAnim1 @dur @curveStandard;
@@ -293,7 +294,7 @@ button,
                                                 }
                                             }
                                             &:before{
-                                                background: @mainColor;
+                                                background: #000;
                                             }
                                         }
                                     }
@@ -328,7 +329,7 @@ button,
                                     width: 20/16em;
                                     margin-top: -10/16em;
                                     margin-left: -10/16em;
-                                    border: 6/16em solid @mainColor;
+                                    border: 6/16em solid #000;
                                     opacity: 0;
                                     -webkit-transform: scale(2.25);
                                     transform: scale(2.25);
@@ -344,7 +345,7 @@ button,
                                     width: 10/16em;
                                     margin-top: -5/16em;
                                     margin-left: -5/16em;
-                                    border: 3/16em solid @mainColor;
+                                    border: 3/16em solid #000;
                                     -webkit-transform: scale(4);
                                     transform: scale(4);
                                     -webkit-transition:
@@ -425,7 +426,7 @@ button,
                                     top: 0;
                                     height: 100%;
                                     width: auto;
-                                    background: @mainColor;
+                                    background: #000;
                                     text-align: right;
                                     .bRad(2px);
                                     padding: 0 0.5em;
@@ -460,11 +461,12 @@ button,
             }
         }
         .buttons {
+            .noselect;
             //border-top: @border1;
             >* {
                 float: right;
                 text-align: right;
-                color: @mainColor;
+                color: #000;
             }
             .vote {}
             .show_results {}
@@ -774,8 +776,9 @@ button,
     .mainBox;
     position: relative;
     .hat_button {
+        .noselect;
         width: 100%;
-        color: @accentColor;
+        color: #000;
         position: relative;
         text-align: left;
         .icon {
@@ -800,7 +803,7 @@ button,
                 box-sizing: border-box;
                 height: 8/16em;
                 width: 8/16em;
-                border-color: @accentColor;
+                border-color: #000;
                 -webkit-transform: rotate(-45deg) translateY(-1/16em) translateX(1/16em);
                 transform: rotate(-45deg) translateY(-1/16em) translateX(1/16em);
                 -webkit-transform-origin: center;
@@ -830,6 +833,9 @@ button,
                 -webkit-transform: scale(1) translateZ(0);
                 transform: scale(1) translateZ(0);
             }
+        }
+        &+.hat_content{
+            padding-top: 0.5em;
         }
     }
     &.open {
@@ -864,6 +870,7 @@ button,
         @avatarSize: 56/16em;
         @fullAvatarSize: (56+2)/16em;
         .avatar {
+            .noselect;
             width: @avatarSize;
             height: @avatarSize;
             position: relative;
@@ -876,31 +883,29 @@ button,
                 background-size: cover;
                 background-position: center;
                 .bRad(@avatarSize);
-                >.letter{
-                    color: white;
-                    position: absolute;
-                    text-align: center;
-                    width: @avatarSize/2;
-                    height: @avatarSize/2;
-                    line-height: @avatarSize/2;
-                    text-transform: uppercase;
-                    font-size: 2em;
-                    font-weight: bold;
-                    top: 0;
-                    left: 0;
-                    .bRad(@avatarSize);
-                    background-color: #ccc;
-                    display: none;
-                }
             }
             
             &.none_avatar{
-                .img{
-                    >.letter{
-                        display: block;
-                    }
-                }
                 
+                >.letter{
+                    display: block;
+                }
+            }
+            >.letter{
+                color: white;
+                position: absolute;
+                text-align: center;
+                width: @avatarSize/2;
+                height: @avatarSize/2;
+                line-height: @avatarSize/2;
+                text-transform: uppercase;
+                font-size: 2em;
+                font-weight: bold;
+                top: 0;
+                left: 0;
+                .bRad(@avatarSize);
+                background-color: #ccc;
+                display: none;
             }
             
             .reputation {
@@ -991,6 +996,7 @@ button,
             }
             
             &.menu {
+                .noselect;
                 left: auto;
                 right: -16/16em;
                 top: -12/16em;
@@ -1039,8 +1045,9 @@ button,
         }
     }
     .post_footer {
+        .noselect;
         .btn {
-            color: @accentColor;
+            color: #000;
             &.nick {
                 float: right
             }
@@ -1145,44 +1152,43 @@ button,
     }
 }
 a[href*=findpost][title="Перейти к сообщению"] {
-    .contrast;
-    .bRad(2px);
-    background: @snapBackColor;
-    //line-height: 1.4em;
-    width: 1.25em;
-    height: 1.25em;
+    width: 1.25rem;
+    height: 1.25rem;
     display: inline-block;
     text-align: center;
     vertical-align: text-bottom;
     position: relative;
-    margin: 0 0.1875em;
+    margin-right: 0/16rem;
     img {
         display: none;
     }
     &:before {
         content: "";
         display: block;
-        height: 0.4375em;
-        width: 0.4375em;
+        height: 0.4375rem;
+        width: 0.4375rem;
         box-sizing: border-box;
         border: @borderInput;
         border-color: white;
         border-top: none;
         border-right: none;
         top: 50%;
-        margin-top: -0.1875em;
+        margin-top: -0.1875rem;
         left: 50%;
-        margin-left: -0.125em;
+        margin-left: -0.125rem;
         position: absolute;
         transform: rotate(45deg);
         -webkit-transform: rotate(45deg);
+        z-index: 1;
     }
     &:after {
         content: "";
         position: absolute;
-        height: 2.25em;
-        width: 2.25em;
-        top: -0.5em;
-        left: -0.5em;
+        width: 20/16rem;
+        height: 20/16rem;
+        background: black;
+        top: 0rem;
+        left: 0rem;
+        .bRad(20/16rem);
     }
 }

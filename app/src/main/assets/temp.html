@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>${topic_title}</title>
+    <link rel="stylesheet" type="text/css" href="file:///android_asset/forpda_dev/fonts/roboto/import_mono.css">
     <link rel="stylesheet" type="text/css" href="file:///android_asset/forpda_dev/styles/4pda_light_blue.css">
     <script type="text/javascript">
         var PageInfo = {
@@ -24,7 +25,8 @@
             document.getElementById("padding_for_message_panel").style.paddingBottom = Number(newPadding)+"px";
         }
     </script>
-    <script type="text/javascript" src="file:///android_asset/theme.js"></script>
+    <script type="text/javascript" src="file:///android_asset/forpda_dev/theme.js"></script>
+    <script type="text/javascript" src="file:///android_asset/z_emoticons.js"></script>
 </head>
 <body id="${body_type}">
 <!--<div class="panel top ${navigation_disable}">
@@ -79,7 +81,8 @@
         <!-- $BeginBlock hat_content_start --><div class="hat_content" hidden><!-- $EndBlock hat_content_start --><div class="post_header">
             <div class="header_wrapper">
                 <div class="avatar ${none_avatar}">
-                    <div class="img" style="background-image:url(${avatar});" onclick="ITheme.showUserMenu('${post_id}')"><span class="letter">${nick_letter}</span></div>
+                    <b class="letter">${nick_letter}</b>
+                    <div class="img" style="background-image:url(${avatar});" onclick="ITheme.showUserMenu('${post_id}')"></div>
                     <div class="reputation" onclick="ITheme.showReputationMenu('${post_id}')"><span>${reputation}</span></div>
                 </div>
                 <span class="inf nick">
@@ -89,7 +92,7 @@
                 <a class="btn inf menu" onclick="ITheme.showPostMenu('${post_id}')"><span>Меню</span></a>
             </div>
         </div>
-        <div class="post_body">${body}</div>
+        <div class="post_body emoticons">${body}</div>
         <div class="post_footer">
             <!-- $BeginBlock report_block --><!--<a class="btn report" onclick="ITheme.reportPost(${post_id})"><span>Жалоба</span></a>--><!-- $EndBlock report_block -->
             <!-- $BeginBlock reply_block --><a class="btn nick" onclick="ITheme.insertNick('${post_id}')"><span>Ответить</span></a><!-- $EndBlock reply_block -->
@@ -111,5 +114,6 @@
     </div>
 </div>-->
 <div id="padding_for_message_panel" style="padding-bottom: 4em;"></div>
+<script type="text/javascript">jsEmoticons.parseAll("file:///android_asset/smiles/")</script>
 </body>
 </html>

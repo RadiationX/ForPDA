@@ -1,25 +1,32 @@
-package forpdateam.ru.forpda.fragments.favorites;
+package forpdateam.ru.forpda.fragments.mentions;
 
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -27,8 +34,14 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
+import forpdateam.ru.forpda.api.mentions.Mentions;
+import forpdateam.ru.forpda.api.mentions.models.MentionItem;
 import forpdateam.ru.forpda.api.mentions.models.MentionsData;
+import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.favorites.FavoritesAdapter;
+import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
+import forpdateam.ru.forpda.fragments.theme.ThemeFragment;
 import forpdateam.ru.forpda.fragments.theme.adapters.ThemePagesAdapter;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -37,62 +50,29 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 
 /**
- * Created by radiationx on 22.09.16.
+ * Created by radiationx on 21.01.17.
  */
 
-public class FavoritesFragment extends TabFragment {
+public class MentionsFragment extends TabFragment {
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
-    private FavoritesAdapter.OnItemClickListener onItemClickListener =
+    private MentionsAdapter adapter;
+    private MentionsAdapter.OnItemClickListener onItemClickListener =
             favItem -> {
                 Bundle args = new Bundle();
-                args.putString(TabFragment.TITLE_ARG, favItem.getTopicTitle());
-                IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=" + favItem.getTopicId() + "&view=getnewpost", args);
-            };
-    private AlertDialogMenu<FavoritesFragment, FavItem> favoriteDialogMenu;
-    private FavoritesAdapter.OnLongItemClickListener onLongItemClickListener =
-            favItem -> {
-                if (favoriteDialogMenu == null) {
-                    favoriteDialogMenu = new AlertDialogMenu<>();
-                    favoriteDialogMenu.addItem("Скопировать ссылку", (context, data) -> Utils.copyToClipBoard("http://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data.getTopicId()))));
-                    favoriteDialogMenu.addItem("Вложения", (context, data) -> IntentHandler.handle("http://4pda.ru/forum/index.php?act=attach&code=showtopic&tid=" + data.getTopicId()));
-                    favoriteDialogMenu.addItem("Открыть форум темы", (context, data) -> IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + data.getForumId()));
-                    favoriteDialogMenu.addItem("Изменить тип подписки", (context, data) -> {
-                        new AlertDialog.Builder(context.getContext())
-                                .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> context.changeFav(0, Favorites.SUB_TYPES[which1], data.getFavId()))
-                                .show();
-                    });
-                    favoriteDialogMenu.addItem(getPinText(favItem.isPin()), (context, data) -> context.changeFav(1, data.isPin() ? "unpin" : "pin", data.getFavId()));
-                    favoriteDialogMenu.addItem("Удалить", (context, data) -> context.changeFav(2, null, data.getFavId()));
-                }
-
-                int index = favoriteDialogMenu.containsIndex(getPinText(!favItem.isPin()));
-                if (index != -1)
-                    favoriteDialogMenu.changeTitle(index, getPinText(favItem.isPin()));
-
-                new AlertDialog.Builder(getContext())
-                        .setItems(favoriteDialogMenu.getTitles(), (dialog, which) -> {
-                            Log.d("kek", "ocnlicl " + favItem + " : " + favItem.getFavId());
-                            favoriteDialogMenu.onClick(which, FavoritesFragment.this, favItem);
-                        })
-                        .show();
+                args.putString(TabFragment.TITLE_ARG, favItem.getTitle());
+                IntentHandler.handle(favItem.getLink(), args);
             };
 
-    private Realm realm;
-    private RealmResults<FavItem> results;
-    private FavoritesAdapter adapter;
-    private Subscriber<FavData> mainSubscriber = new Subscriber<>();
-    private Subscriber<Boolean> helperSubscriber = new Subscriber<>();
-    boolean markedRead = false;
-    private FavData data;
+    private Subscriber<MentionsData> mainSubscriber = new Subscriber<>();
 
-    private CharSequence getPinText(boolean b) {
-        return b ? "Открепить" : "Закрепить";
-    }
+    protected TabLayout tabLayout;
+    private MentionsData data;
+    private int currentSt = 0;
 
     @Override
     public String getDefaultTitle() {
-        return "Избранное";
+        return "Упоминания";
     }
 
     @Override
@@ -100,18 +80,6 @@ public class FavoritesFragment extends TabFragment {
         return true;
     }
 
-    @Override
-    public boolean isUseCache() {
-        return true;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        realm = Realm.getDefaultInstance();
-    }
-    protected TabLayout tabLayout;
-    private int currentSt = 0;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -124,11 +92,6 @@ public class FavoritesFragment extends TabFragment {
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        //recyclerView.addItemDecoration(new DividerItemDecoration(getContext()));
-        adapter = new FavoritesAdapter();
-        adapter.setOnItemClickListener(onItemClickListener);
-        adapter.setOnLongItemClickListener(onLongItemClickListener);
-        recyclerView.setAdapter(adapter);
 
         tabLayout = (TabLayout) inflater.inflate(R.layout.theme_toolbar, (ViewGroup) toolbar.getParent(), false);
         ((ViewGroup) toolbar.getParent()).addView(tabLayout, ((ViewGroup) toolbar.getParent()).indexOfChild(toolbar));
@@ -180,7 +143,9 @@ public class FavoritesFragment extends TabFragment {
         collapsingToolbarLayout.setLayoutParams(params);
         collapsingToolbarLayout.setScrimVisibleHeightTrigger(App.px56 + App.px24);
 
-        bindView();
+        //recyclerView.addItemDecoration(new DividerItemDecoration(getContext()));
+
+
         return view;
     }
 
@@ -237,7 +202,7 @@ public class FavoritesFragment extends TabFragment {
         }
     }
 
-    private void selectPage(FavData pageData) {
+    private void selectPage(MentionsData pageData) {
         final int[] pages = new int[pageData.getAllPagesCount()];
 
         for (int i = 0; i < pageData.getAllPagesCount(); i++)
@@ -273,60 +238,17 @@ public class FavoritesFragment extends TabFragment {
     public void loadData() {
         if (refreshLayout != null)
             refreshLayout.setRefreshing(true);
-        mainSubscriber.subscribe(Api.Favorites().get(currentSt), this::onLoadThemes, new FavData(), v -> loadData());
+        mainSubscriber.subscribe(Api.Mentions().getMentions(currentSt), this::onLoadThemes, new MentionsData(), v -> loadData());
     }
 
-    private void onLoadThemes(FavData data) {
-        Log.d("kek", "loaded itms " + data.getItems().size() + " : " + results.size());
+    private void onLoadThemes(MentionsData data) {
         if (refreshLayout != null)
             refreshLayout.setRefreshing(false);
-
         this.data = data;
-        if (data.getItems().size() == 0)
-            return;
-
-        realm.executeTransactionAsync(r -> {
-            r.delete(FavItem.class);
-            r.copyToRealmOrUpdate(data.getItems());
-        }, this::bindView);
+        adapter = new MentionsAdapter(data.getItems());
+        adapter.setOnItemClickListener(onItemClickListener);
+        recyclerView.setAdapter(adapter);
         updateNavigation();
         setSubtitle("" + data.getCurrentPage() + "/" + data.getAllPagesCount());
-    }
-
-    private void bindView() {
-        results = realm.where(FavItem.class).findAll();
-        if (results.size() != 0) {
-            adapter.addAll(results);
-        }
-        Api.get().notifyObservers();
-    }
-
-    public void changeFav(int act, String type, int id) {
-        helperSubscriber.subscribe(Api.Favorites().changeFav(act, type, id), this::onChangeFav, false);
-    }
-
-    public void markRead(int topicId) {
-        realm.executeTransactionAsync(realm1 -> {
-            FavItem favItem = realm1.where(FavItem.class).equalTo("topicId", topicId).findFirst();
-            if (favItem != null) {
-                favItem.setNewMessages(false);
-            }
-        });
-        markedRead = true;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (markedRead) {
-            bindView();
-            markedRead = false;
-        }
-    }
-
-    private void onChangeFav(boolean v) {
-        if (!v)
-            Toast.makeText(getContext(), "При выполнении операции произошла ошибка", Toast.LENGTH_SHORT).show();
-        loadData();
     }
 }

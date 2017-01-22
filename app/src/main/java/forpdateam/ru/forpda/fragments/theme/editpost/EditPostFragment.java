@@ -36,6 +36,7 @@ import static forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm.TYPE_N
  */
 
 public class EditPostFragment extends TabFragment {
+    private final static String ARG_THEME_NAME = "theme_name";
     private final static String ARG_ATTACHMENTS = "attachments";
     private final static String ARG_MESSAGE = "message";
     private final static String ARG_FORUM_ID = "forumId";
@@ -47,8 +48,10 @@ public class EditPostFragment extends TabFragment {
     private MessagePanel messagePanel;
 
 
-    public static EditPostFragment newInstance(int postId, int topicId, int forumId, int st) {
+    public static EditPostFragment newInstance(int postId, int topicId, int forumId, int st, String themeName) {
         Bundle args = new Bundle();
+        if (themeName != null)
+            args.putString(ARG_THEME_NAME, themeName);
         args.putInt(ARG_TYPE, TYPE_EDIT_POST);
         args.putInt(ARG_FORUM_ID, forumId);
         args.putInt(ARG_TOPIC_ID, topicId);
@@ -59,8 +62,10 @@ public class EditPostFragment extends TabFragment {
         return fragment;
     }
 
-    public static EditPostFragment newInstance(EditPostForm form) {
+    public static EditPostFragment newInstance(EditPostForm form, String themeName) {
         Bundle args = new Bundle();
+        if (themeName != null)
+            args.putString(ARG_THEME_NAME, themeName);
         args.putInt(ARG_TYPE, TYPE_NEW_POST);
         args.putParcelableArrayList(ARG_ATTACHMENTS, form.getAttachments());
         args.putString(ARG_MESSAGE, form.getMessage());
@@ -76,8 +81,8 @@ public class EditPostFragment extends TabFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            Bundle args = getArguments();
+        Bundle args = getArguments();
+        if (args != null) {
             postForm.setType(args.getInt(ARG_TYPE));
             postForm.setAttachments(args.getParcelableArrayList(ARG_ATTACHMENTS));
             postForm.setMessage(args.getString(ARG_MESSAGE));
@@ -104,9 +109,12 @@ public class EditPostFragment extends TabFragment {
         attachmentsPopup = messagePanel.getAttachmentsPopup();
         attachmentsPopup.setAddOnClickListener(v -> pickImage());
         attachmentsPopup.setDeleteOnClickListener(v -> removeFiles());
-
-
         viewsReady();
+        Bundle args = getArguments();
+        if (args != null) {
+            String title = args.getString(ARG_THEME_NAME);
+            setTitle((postForm.getType() == TYPE_NEW_POST ? "Ответ" : "Редактирование").concat(title != null ? " в ".concat(title) : ""));
+        }
 
         return view;
     }

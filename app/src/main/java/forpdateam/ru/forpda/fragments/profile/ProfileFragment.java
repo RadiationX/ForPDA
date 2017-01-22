@@ -22,6 +22,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
@@ -37,6 +38,8 @@ import android.widget.Toast;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+
+import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -80,7 +83,6 @@ public class ProfileFragment extends TabFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         this.inflater = inflater;
         initBaseView(inflater, container);
-        initFabBehavior();
         baseInflateFragment(inflater, R.layout.fragment_profile);
         ViewStub viewStub = (ViewStub) findViewById(R.id.toolbar_content);
         viewStub.setLayoutResource(R.layout.profile_toolbar);
@@ -97,7 +99,6 @@ public class ProfileFragment extends TabFragment {
         progressView = (CircularProgressView) findViewById(R.id.profile_progress);
         viewsReady();
 
-        fab.setImageDrawable(App.getAppDrawable(R.drawable.contact_qms));
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         collapsingToolbarLayout.setExpandedTitleColor(Color.TRANSPARENT);
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.TRANSPARENT);
@@ -137,7 +138,7 @@ public class ProfileFragment extends TabFragment {
         super.onPause();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.setStatusBarColor(standardColor);
-            if(statusBarValueAnimator!=null){
+            if (statusBarValueAnimator != null) {
                 statusBarValueAnimator.cancel();
             }
         }
@@ -147,7 +148,8 @@ public class ProfileFragment extends TabFragment {
     public void onResume() {
         super.onResume();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.setStatusBarColor(statusBarColor);
+            if (!isDetached() && isAdded() && isVisible() && !isHidden())
+                window.setStatusBarColor(statusBarColor);
         }
     }
 
@@ -331,8 +333,12 @@ public class ProfileFragment extends TabFragment {
             addInfoItem(getContext().getString(R.string.profile_item_text_alerts), profile.getAlerts());
         Log.d("kek", "check 3 " + (System.currentTimeMillis() - time));
         if (profile.getContacts().size() > 0) {
-            fab.setOnClickListener(view1 -> IntentHandler.handle(profile.getContacts().get(0).first));
-            fab.setVisibility(View.VISIBLE);
+            if (!Pattern.compile("showuser=" + Api.Auth().getUserId()).matcher(getTabUrl()).find()) {
+                toolbar.getMenu().add("Написать").setIcon(App.getAppDrawable(R.drawable.ic_create_white_24dp)).setOnMenuItemClickListener(item -> {
+                    IntentHandler.handle(profile.getContacts().get(0).first);
+                    return false;
+                }).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            }
         }
         if (profile.getContacts().size() > 1) {
             for (int i = 1; i < profile.getContacts().size(); i++)

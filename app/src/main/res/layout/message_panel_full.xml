@@ -49,23 +49,25 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             app:srcCompat="@drawable/ic_attachment_gray_24dp" />
 
-        <android.support.v7.widget.AppCompatImageButton
-            android:id="@+id/button_send"
+        <FrameLayout
+            android:id="@+id/send_container"
             android:layout_width="@dimen/dp48"
             android:layout_height="@dimen/dp48"
-            android:layout_alignParentEnd="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:srcCompat="@drawable/ic_send_gray_24dp" />
+            android:layout_alignParentEnd="true">
+            <android.support.v7.widget.AppCompatImageButton
+                android:id="@+id/button_send"
+                android:layout_width="@dimen/dp48"
+                android:layout_height="@dimen/dp48"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_send_gray_24dp" />
 
-        <ProgressBar
-            android:id="@+id/send_progress"
-            android:layout_width="@dimen/dp48"
-            android:layout_height="@dimen/dp48"
-            android:layout_alignParentEnd="true"
-            android:clickable="false"
-            android:padding="@dimen/dp8"
-            android:visibility="gone" />
+            <ProgressBar
+                android:id="@+id/send_progress"
+                android:layout_width="@dimen/dp48"
+                android:layout_height="@dimen/dp48"
+                android:clickable="false"
+                android:padding="@dimen/dp8"
+                android:visibility="gone" />
+        </FrameLayout>
     </RelativeLayout>
-
-
 </RelativeLayout>

@@ -162,6 +162,12 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     }
 
     @Override
+    protected void onResumeFragments() {
+        Log.e("SUKA", "ONRESUME_FRAGMENTS");
+        super.onResumeFragments();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         Log.d("kekos", "ACTIVE TAB " + TabManager.getActiveIndex() + " : " + TabManager.getActiveTag());

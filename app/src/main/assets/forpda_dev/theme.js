@@ -73,7 +73,8 @@ function scrollToElement(name) {
             p = p.parentNode;
         }
     }
-    anchorElem.scrollIntoView();
+    if(anchorElem)
+        anchorElem.scrollIntoView();
     lastTop = getCoordinates(anchorElem).top;
     //window.scrollBy(0, lastTop);
 
@@ -92,7 +93,8 @@ function scrollToElement(name) {
         elemToActivation.classList.remove('active');
 
     elemToActivation = document.querySelector('.post_container[name="' + name + '"]');
-    elemToActivation.classList.add('active');
+    if(elemToActivation)
+        elemToActivation.classList.add('active');
 }
 
 document.addEventListener('DOMContentLoaded', scrollToElement);
@@ -146,6 +148,12 @@ function blocksOpenClose() {
 document.addEventListener('DOMContentLoaded', blocksOpenClose);
 
 function getCoordinates(elem) {
+    if(!elem){
+        return {
+            top: 0,
+            left: 0
+        }
+    }
     // (1)
     var box = elem.getBoundingClientRect();
 
@@ -244,6 +252,79 @@ function toggleButton(button, bodyClass) {
             //body.style.overflow = "hidden";
             //body.style.height = "0";
             //body.style.visibility = "hidden";
+        }
+    }
+}
+
+
+document.addEventListener('DOMContentLoaded', improveCodeBlock);
+
+function improveCodeBlock() {
+	var codeBlockAll = document.querySelectorAll('.post-block.code');
+	for (var i = 0; i < codeBlockAll.length; i++) {
+        try{
+            var codeBlock = codeBlockAll[i],
+                codeTitle = codeBlock.querySelector('.block-title'),
+                codeBody = codeBlock.querySelector('.block-body'),
+                splitLines = codeBody.innerHTML.split("<br>"),
+                count = '',
+                lines = '';
+
+            for(var j = 0; j<splitLines.length; j++){
+                lines += '<span class="line">' + splitLines[j] + '</span><br>';
+                count += (j + 1) + '\n';
+            }
+
+            codeBlock.classList.add('wrap');
+            codeTitle.insertAdjacentHTML("afterEnd", '<div class="block-controls"><div class="control wrap"></div><div class="control select_all"></div></div><div class="num-pre">' + count + '</div>');
+            codeBlock.querySelector('.control.wrap').addEventListener('click', onClickToggleButton);
+            codeBlock.querySelector('.control.select_all').addEventListener('click', SelectText);
+            codeBody.innerHTML = lines;
+        }catch(error){
+            alert(error);
+        }
+	}
+
+	function onClickToggleButton(e) {
+		e.stopPropagation();
+        var button = e.target;
+        var block;
+		for (var i = 0; i < codeBlockAll.length; i++) {
+            if(button==codeBlockAll[i].querySelector('.control.wrap')){
+                block = codeBlockAll[i];
+                break;
+            }
+		}
+        if(!block)return;
+        if (block.classList.contains('wrap')) {
+            block.classList.remove('wrap');
+		} else{
+            block.classList.add('wrap');
+        }
+	}
+    
+    function SelectText(e) {
+        e.stopPropagation();
+        var button = e.target;
+        var block;
+		for (var i = 0; i < codeBlockAll.length; i++) {
+            if(button==codeBlockAll[i].querySelector('.control.select_all')){
+                block = codeBlockAll[i];
+                break;
+            }
+		}
+        var text = block.querySelector(".block-body");
+        var range, selection  
+        if (document.body.createTextRange) {
+            range = document.body.createTextRange();
+            range.moveToElementText(text);
+            range.select();
+        } else if (window.getSelection) {
+            selection = window.getSelection();        
+            range = document.createRange();
+            range.selectNodeContents(text);
+            selection.removeAllRanges();
+            selection.addRange(range);
         }
     }
 }

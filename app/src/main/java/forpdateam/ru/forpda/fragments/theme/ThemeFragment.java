@@ -95,7 +95,7 @@ public abstract class ThemeFragment extends TabFragment {
         messagePanel = new MessagePanel(getContext(), (ViewGroup) findViewById(R.id.fragment_container), coordinatorLayout, false);
         messagePanel.addSendOnClickListener(v -> sendMessage());
         messagePanel.getSendButton().setOnLongClickListener(v -> {
-            TabManager.getInstance().add(EditPostFragment.newInstance(createEditPostForm()));
+            TabManager.getInstance().add(EditPostFragment.newInstance(createEditPostForm(), pageData.getTitle()));
             return true;
         });
         attachmentsPopup = messagePanel.getAttachmentsPopup();
@@ -104,11 +104,11 @@ public abstract class ThemeFragment extends TabFragment {
 
         tabLayout = (TabLayout) inflater.inflate(R.layout.theme_toolbar, (ViewGroup) toolbar.getParent(), false);
         ((ViewGroup) toolbar.getParent()).addView(tabLayout, ((ViewGroup) toolbar.getParent()).indexOfChild(toolbar));
-        tabLayout.addTab(tabLayout.newTab().setIcon(App.getAppDrawable(R.drawable.chevron_double_left)).setTag("first"));
-        tabLayout.addTab(tabLayout.newTab().setIcon(App.getAppDrawable(R.drawable.chevron_left)).setTag("prev"));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_double_left).setTag("first"));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_left).setTag("prev"));
         tabLayout.addTab(tabLayout.newTab().setText("Выбор").setTag("selectPage"));
-        tabLayout.addTab(tabLayout.newTab().setIcon(App.getAppDrawable(R.drawable.chevron_right)).setTag("next"));
-        tabLayout.addTab(tabLayout.newTab().setIcon(App.getAppDrawable(R.drawable.chevron_double_right)).setTag("last"));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_right).setTag("next"));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_double_right).setTag("last"));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -526,7 +526,7 @@ public abstract class ThemeFragment extends TabFragment {
     }
 
     public void editPost(ThemePost post) {
-        TabManager.getInstance().add(EditPostFragment.newInstance(post.getId(), pageData.getId(), pageData.getForumId(), pageData.getSt()));
+        TabManager.getInstance().add(EditPostFragment.newInstance(post.getId(), pageData.getId(), pageData.getForumId(), pageData.getSt(), pageData.getTitle()));
         Toast.makeText(getContext(), "editpost ".concat(Integer.toString(post.getId())), Toast.LENGTH_SHORT).show();
     }
 

@@ -19,7 +19,7 @@ import io.reactivex.Observable;
 public class Favorites {
     private final static Pattern mainPattern = Pattern.compile("<div data-item-fid=\"([^\"]*)\" data-item-track=\"([^\"]*)\" data-item-pin=\"([^\"]*)\">[\\s\\S]*?class=\"modifier\">(<font color=\"([^\"]*)\">|)([^< ]*)(<\\/font>|)<\\/span><a href=\"[^\"]*=(\\d*)[^\"]*?\"[^>]*?>(<strong>|)([^<]*)(<\\/strong>|)<\\/a>[\\s\\S]*?(<a href=\"[^\"]*=(\\d*)\">\\((\\d*?)\\)[^<]*?<\\/a>|)<\\/div>[\\s\\S]*?topic_desc\">([^<]*|)(<br[^>]*>|)[\\s\\S]*?showforum=([^\"]*?)\">([^<]*)<\\/a><br[^>]*>[\\s\\S]*?showuser=([^\"]*)\">([^<]*)<\\/a>[\\s\\S]*?showuser=([^\"]*)\">([^<]*)<\\/a> ([^<]*?)<");
     private final static Pattern checkPattern = Pattern.compile("<div style=\"[^\"]*background:#dff0d8[^\"]*\">[\\s\\S]*<div id=\"navstrip");
-    private final static String url = "http://4pda.ru/forum/index.php?act=fav";
+    private final static Pattern pagesPattern = Pattern.compile("parseInt\\((\\d*)\\)[\\s\\S]*?parseInt\\(st\\*(\\d*)\\)[\\s\\S]*?pagination\">[\\s\\S]*?<span[^>]*?>([^<]*?)<\\/span>");
     public final static String[] SUB_TYPES = {"none", "delayed", "immediate", "daily", "weekly", "pinned"};
     public final static CharSequence[] SUB_NAMES = {"Не уведомлять", "Первый раз", "Каждый раз", "Каждый день", "Каждую неделю", "При изменении первого поста"};
 
@@ -32,9 +32,9 @@ public class Favorites {
         public final static String PINNED = "pinned";
     }
 
-    private FavData _getFav() throws Exception {
-        FavData favData = new FavData();
-        final String response = Client.getInstance().get(url);
+    private FavData _getFav(int st) throws Exception {
+        FavData data = new FavData();
+        final String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=fav&st=".concat(Integer.toString(st)));
         long time = System.currentTimeMillis();
         Matcher matcher = mainPattern.matcher(response);
         FavItem item;
@@ -62,11 +62,17 @@ public class Favorites {
             item.setLastUserId(Integer.parseInt(matcher.group(21)));
             item.setLastUserNick(matcher.group(22));
             item.setDate(matcher.group(23));
-            favData.addItem(item);
+            data.addItem(item);
+        }
+        matcher = pagesPattern.matcher(response);
+        if (matcher.find()) {
+            data.setAllPagesCount(Integer.parseInt(matcher.group(1)) + 1);
+            data.setItemsPerPage(Integer.parseInt(matcher.group(2)));
+            data.setCurrentPage(Integer.parseInt(matcher.group(3)));
         }
         Log.d("kek", "parsing time " + ((System.currentTimeMillis() - time)));
 
-        return favData;
+        return data;
     }
 
     private boolean _changeSubType(String type, int id) throws Exception {
@@ -94,8 +100,8 @@ public class Favorites {
         return checkPattern.matcher(result).find();
     }
 
-    public Observable<FavData> get() {
-        return Observable.fromCallable(this::_getFav);
+    public Observable<FavData> get(int st) {
+        return Observable.fromCallable(() -> _getFav(st));
     }
 
     public Observable<Boolean> changeFav(int act, String type, int id) {
