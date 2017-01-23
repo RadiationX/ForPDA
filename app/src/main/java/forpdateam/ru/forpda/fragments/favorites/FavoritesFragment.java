@@ -27,7 +27,6 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
-import forpdateam.ru.forpda.api.mentions.models.MentionsData;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.theme.adapters.ThemePagesAdapter;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
@@ -110,8 +109,10 @@ public class FavoritesFragment extends TabFragment {
         super.onCreate(savedInstanceState);
         realm = Realm.getDefaultInstance();
     }
+
     protected TabLayout tabLayout;
     private int currentSt = 0;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -290,7 +291,7 @@ public class FavoritesFragment extends TabFragment {
             r.copyToRealmOrUpdate(data.getItems());
         }, this::bindView);
         updateNavigation();
-        setSubtitle("" + data.getCurrentPage() + "/" + data.getAllPagesCount());
+        setSubtitle(data.getAllPagesCount() <= 1 ? null : "" + data.getCurrentPage() + "/" + data.getAllPagesCount());
     }
 
     private void bindView() {

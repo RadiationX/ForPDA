@@ -99,6 +99,11 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.context = context;
     }
 
+    public void addMessage(QmsMessage message) {
+        chatItems.add(message);
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemViewType(int position) {
         return chatItems.get(position).isDate() ? TYPE_DATE : chatItems.get(position).getWhoseMessage() ? TYPE_MY_MESSAGE : TYPE_MESSAGE;

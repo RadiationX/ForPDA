@@ -1,20 +1,11 @@
 package forpdateam.ru.forpda.api.mentions;
 
-import android.util.Log;
-
-import org.jsoup.Jsoup;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.mentions.models.MentionItem;
 import forpdateam.ru.forpda.api.mentions.models.MentionsData;
-import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.utils.ourparser.Html;
 import io.reactivex.Observable;
 
 /**

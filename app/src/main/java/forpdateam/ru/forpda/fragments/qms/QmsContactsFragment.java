@@ -130,7 +130,7 @@ public class QmsContactsFragment extends TabFragment {
         });
 
         fab.setImageDrawable(App.getAppDrawable(R.drawable.ic_create_white_24dp));
-        fab.setOnClickListener(view1 -> TabManager.getInstance().add(new TabFragment.Builder<>(QmsNewThemeFragment.class).build()));
+        fab.setOnClickListener(view1 -> TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).build()));
         fab.setVisibility(View.VISIBLE);
 
         adapter = new QmsContactsAdapter();

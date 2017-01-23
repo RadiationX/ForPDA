@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.fragments.mentions;
 
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +11,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.favorites.models.FavItem;
-import forpdateam.ru.forpda.api.mentions.Mentions;
 import forpdateam.ru.forpda.api.mentions.models.MentionItem;
-import forpdateam.ru.forpda.fragments.favorites.FavoritesAdapter;
 
 /**
  * Created by radiationx on 21.01.17.

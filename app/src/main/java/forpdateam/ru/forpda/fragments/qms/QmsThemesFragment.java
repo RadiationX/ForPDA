@@ -45,6 +45,7 @@ public class QmsThemesFragment extends TabFragment {
                 args.putInt(QmsChatFragment.USER_ID_ARG, userId);
                 args.putString(QmsChatFragment.USER_AVATAR_ARG, avatarUrl);
                 args.putInt(QmsChatFragment.THEME_ID_ARG, theme.getId());
+                args.putString(QmsChatFragment.THEME_TITLE_ARG, theme.getName());
                 TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).setArgs(args).build());
             };
     private Subscriber<QmsThemes> mainSubscriber = new Subscriber<>();
@@ -87,9 +88,10 @@ public class QmsThemesFragment extends TabFragment {
         fab.setImageDrawable(App.getAppDrawable(R.drawable.ic_create_white_24dp));
         fab.setOnClickListener(view1 -> {
             Bundle args = new Bundle();
-            args.putInt(QmsNewThemeFragment.USER_ID_ARG, userId);
-            args.putString(QmsNewThemeFragment.USER_NICK_ARG, userNick);
-            TabManager.getInstance().add(new TabFragment.Builder<>(QmsNewThemeFragment.class).setArgs(args).build());
+            args.putInt(QmsChatFragment.USER_ID_ARG, userId);
+            args.putString(QmsChatFragment.USER_NICK_ARG, userNick);
+            args.putString(QmsChatFragment.USER_AVATAR_ARG, avatarUrl);
+            TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).setArgs(args).build());
         });
         fab.setVisibility(View.VISIBLE);
         adapter = new QmsThemesAdapter();
@@ -126,9 +128,10 @@ public class QmsThemesFragment extends TabFragment {
         setTitle(createTitle(userNick));
         if (data.getThemes().size() == 0 && userNick != null) {
             Bundle args = new Bundle();
-            args.putInt(QmsNewThemeFragment.USER_ID_ARG, userId);
-            args.putString(QmsNewThemeFragment.USER_NICK_ARG, userNick);
-            TabManager.getInstance().add(new TabFragment.Builder<>(QmsNewThemeFragment.class).setArgs(args).build());
+            args.putInt(QmsChatFragment.USER_ID_ARG, userId);
+            args.putString(QmsChatFragment.USER_NICK_ARG, userNick);
+            args.putString(QmsChatFragment.USER_AVATAR_ARG, avatarUrl);
+            TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).setArgs(args).build());
             //new Handler().postDelayed(() -> TabManager.getInstance().remove(getTag()), 500);
         }
         if (results != null) {

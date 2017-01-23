@@ -24,8 +24,8 @@ public class Qms {
     private final static Pattern contactsPattern = Pattern.compile("<a class=\"list-group-item[^>]*?data-member-id=\"([^\"]*?)\" (?=data-unread-count=\"([^\"]*?)\"|)[^>]*?>[^<]*?<div[^>]*?>[^<]*?<i[^>]*?></i>[^<]*?</div>[^<]*?<span[^>]*?>[^<]*?<div[^>]*?><img[^>]*?src=\"([^\"]*?)\" title=\"([^\"]*?)\"");
     private final static Pattern threadPattern = Pattern.compile("<a class=\"list-group-item[^>]*?data-thread-id=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div class=\"bage[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?(?:<strong>)?([^<]*?)\\((\\d+)(?: \\/ (\\d+))?\\)");
     private final static Pattern threadNickPattern = Pattern.compile("<div class=\"nav\">[\\s\\S]*?<b>(?:<a[^>]*?>)?([\\s\\S]*?)(?:<\\/a>)?<\\/b>");
-    private final static Pattern chatInfoPattern = Pattern.compile("<div class=\"nav\">[\\s\\S]*?<b>(?:<a[^>]*?>)?([\\s\\S]*?)(?:<\\/a>)?:<\\/b>([\\s\\S]*?)<\\/span>(?:[\\s\\S]*?class=\"avatar\"[^>]*?src=\"([^\"]*?)\")?");
-    private final static Pattern chatPattern = Pattern.compile("group-item([^\"]*?)\" data-message-id=\"([^\"]*?)\"[^>]*?data-unread-status=\"([^\"]*?)\">[\\s\\S]*?</b> ([^ <]*?) [\\s\\S]*?src=\"([^\"]*?)\"[\\s\\S]*?(<div[^>]*?msg-content[^>]*?>[\\s\\S]*?</div>)([^<]*?</div>[^<]*?<div (class=\"list|id=\"threa|class=\"date))|<div class=\"text\">([^<]*?)</div>");
+    private final static Pattern chatInfoPattern = Pattern.compile("<div class=\"nav\">[\\s\\S]*?<b>(?:<a[^>]*?>)?([\\s\\S]*?)(?:<\\/a>)?:<\\/b>([\\s\\S]*?)<\\/span>[\\s\\S]*?<input[^>]*?name=\"mid\" value=\"(\\d+)\"[^>]*>[\\s\\S]*?<input[^>]*?name=\"t\" value=\"(\\d+)\"[^>]*>[\\s\\S]*?(?:[\\s\\S]*?class=\"avatar\"[^>]*?src=\"([^\"]*?)\")?");
+    private final static Pattern chatPattern = Pattern.compile("group-item([^\"]*?)\" data-message-id=\"([^\"]*?)\"[^>]*?data-unread-status=\"([^\"]*?)\">[\\s\\S]*?<\\/b> ([^ <]*?) [\\s\\S]*?src=\"([^\"]*?)\"[\\s\\S]*?(<div[^>]*?msg-content[^>]*?>[\\s\\S]*?<\\/div>)([^<]*?<\\/div>[^<]*?<div (class=\"list|id=\"threa|class=\"date))?|<div class=\"text\">([^<]*?)<\\/div>");
 
     public Qms() {
     }
@@ -78,10 +78,15 @@ public class Qms {
     }
 
     private QmsChatModel chatItemsList(final int userId, final int themeId) throws Exception {
-        QmsChatModel chat = new QmsChatModel();
+
         Map<String, String> headers = new HashMap<>();
         headers.put("xhr", "body");
         final String response = getInstance().post("http://4pda.ru/forum/index.php?act=qms&mid=" + userId + "&t=" + themeId, headers);
+        return parseChat(response);
+    }
+
+    private QmsChatModel parseChat(String response) {
+        QmsChatModel chat = new QmsChatModel();
         Matcher matcher = chatPattern.matcher(response);
         QmsMessage item;
         while (matcher.find()) {
@@ -103,7 +108,9 @@ public class Qms {
         if (matcher.find()) {
             chat.setNick(Html.fromHtml(matcher.group(1).trim()).toString());
             chat.setTitle(Html.fromHtml(matcher.group(2).trim()).toString());
-            chat.setAvatarUrl(matcher.group(3));
+            chat.setUserId(Integer.parseInt(matcher.group(3)));
+            chat.setThemeId(Integer.parseInt(matcher.group(4)));
+            chat.setAvatarUrl(matcher.group(5));
         }
         return chat;
     }
@@ -113,20 +120,44 @@ public class Qms {
         return response.split(" |\n");
     }
 
-    private String newTheme(String nick, String title, String mess) throws Exception {
+    private QmsChatModel newTheme(String nick, String title, String mess) throws Exception {
         Map<String, String> headers = new HashMap<>();
         headers.put("username", nick);
         headers.put("title", title);
         headers.put("message", mess);
         String response = getInstance().post("http://4pda.ru/forum/index.php?act=qms&action=create-thread&xhr=body&do=1", headers);
-        /*Pattern errorPattern = Pattern.compile("<div class=\"list-group-item msgbox error\">([^<]*<a[^>]*?>[^<]*?<[^>]*a>|)([\\s\\S]*?)</div>");
-        Matcher matcher = errorPattern.matcher(response);
+        return parseChat(response);
+    }
+
+    private QmsMessage _sendMessage(int userId, int themeId, String text) throws Exception {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("act", "qms-xhr");
+        headers.put("action", "send-message");
+        headers.put("mid", Integer.toString(userId));
+        headers.put("t", Integer.toString(themeId));
+        headers.put("message", text);
+        String response = getInstance().post("http://4pda.ru/forum/index.php", headers);
+        Matcher matcher = chatPattern.matcher(response);
+        QmsMessage item = new QmsMessage();
         if (matcher.find()) {
-            return matcher.group(2);
+            if (matcher.group(1) == null && matcher.group(9) != null) {
+                item.setIsDate(true);
+                item.setDate(matcher.group(9).trim());
+            } else {
+                item.setWhoseMessage(!matcher.group(1).isEmpty());
+                item.setId(matcher.group(2));
+                item.setReadStatus(matcher.group(3));
+                item.setTime(matcher.group(4));
+                item.setAvatar(matcher.group(5));
+                item.setContent(matcher.group(6).trim());
+            }
         } else {
-            return null;
-        }*/
-        return response;
+            matcher = Pattern.compile("class=\"list-group-item[^\"]*?error\"[\\s\\S]*?<\\/a>([\\s\\S]*?)<\\/div>").matcher(response);
+            if (matcher.find()) {
+                throw new Exception(matcher.group(1).trim());
+            }
+        }
+        return item;
     }
 
     private String delDialog(int mid) throws Exception {
@@ -153,8 +184,12 @@ public class Qms {
         return Observable.fromCallable(() -> findUser(nick));
     }
 
-    public Observable<String> sendNewTheme(String nick, String title, String mess) {
+    public Observable<QmsChatModel> sendNewTheme(String nick, String title, String mess) {
         return Observable.fromCallable(() -> newTheme(nick, title, mess));
+    }
+
+    public Observable<QmsMessage> sendMessage(int userId, int themeID, String text) {
+        return Observable.fromCallable(() -> _sendMessage(userId, themeID, text));
     }
 
     public Observable<String> deleteDialog(int mid) {

@@ -9,9 +9,8 @@ import java.util.List;
 
 public class QmsChatModel {
     private List<QmsMessage> chatItemsList = new ArrayList<>();
-    private String title;
-    private String nick;
-    private String avatarUrl;
+    private int themeId, userId;
+    private String title, nick, avatarUrl;
 
     public void addChatItem(QmsMessage item) {
         chatItemsList.add(item);
@@ -43,5 +42,21 @@ public class QmsChatModel {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public int getThemeId() {
+        return themeId;
+    }
+
+    public void setThemeId(int themeId) {
+        this.themeId = themeId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }
