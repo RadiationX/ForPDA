@@ -5,7 +5,7 @@ import java.util.Observer;
 import forpdateam.ru.forpda.api.auth.Auth;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.mentions.Mentions;
-import forpdateam.ru.forpda.api.newslist.NewsList;
+import forpdateam.ru.forpda.api.news.NewsParser;
 import forpdateam.ru.forpda.api.profile.Profile;
 import forpdateam.ru.forpda.api.qms.Qms;
 import forpdateam.ru.forpda.api.theme.Theme;
@@ -18,7 +18,7 @@ public class Api {
     private static Api INSTANCE = null;
     private static Qms qmsApi = null;
     private static Auth authApi = null;
-    private static NewsList newsListApi = null;
+    private static NewsParser newsListApi = null;
     private static Profile profileApi = null;
     private static Theme themeApi = null;
     private static EditPost editPost = null;
@@ -39,8 +39,8 @@ public class Api {
         return authApi;
     }
 
-    public static NewsList NewsList() {
-        if (newsListApi == null) newsListApi = new NewsList();
+    public static NewsParser NewsList() {
+        if (newsListApi == null) newsListApi = new NewsParser();
         return newsListApi;
     }
 

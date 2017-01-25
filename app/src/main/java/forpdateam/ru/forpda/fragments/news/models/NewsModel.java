@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.fragments.news;
+package forpdateam.ru.forpda.fragments.news.models;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -8,6 +8,7 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class NewsModel extends RealmObject {
+    public static final String CATEGORY = "category";
 
     @PrimaryKey
     private String link;
@@ -18,9 +19,8 @@ public class NewsModel extends RealmObject {
     private String date;
     private String author;
     private String description;
-    private String source;
     private boolean read;
-    private boolean offline;
+    private boolean newNews;
 
 
     public String getLink() {
@@ -87,14 +87,6 @@ public class NewsModel extends RealmObject {
         this.description = description;
     }
 
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
     public boolean isRead() {
         return read;
     }
@@ -103,11 +95,11 @@ public class NewsModel extends RealmObject {
         this.read = read;
     }
 
-    public boolean isOffline() {
-        return offline;
+    public boolean isNewNews() {
+        return newNews;
     }
 
-    public void setOffline(boolean offline) {
-        this.offline = offline;
+    public void setNewNews(boolean newNews) {
+        this.newNews = newNews;
     }
 }

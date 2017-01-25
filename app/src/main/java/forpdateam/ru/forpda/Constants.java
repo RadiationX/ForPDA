@@ -10,8 +10,19 @@ public class Constants {
 
     public static final int FORPDA_WRITE_EXTERNAL_STORAGE_RERMISSION = 1;
 
+
     /**
-     * News Category Url
+     * Errors
+     */
+    public static final String ERROR_LOAD_DATA = "error_load_data";
+    public static final String ERROR_UPDATE_DATA = "error_update_data";
+    public static final String ERROR_LOAD_MORE_DATA = "error_load_more_data";
+    public static final String ERROR_LOAD_MORE_NEW_DATA = "error_load_more_new_data";
+    public static final String ERROR_NO_INTERNET = "error_no_internet";
+    public static final String ERROR_OTHER_ERRORS = "error_other_errors";
+
+    /**
+     * NewsParser Category Url
      */
     public static final String NEWS_CATEGORY_ALL = "all_news";
     public static final String NEWS_URL_ALL = "http://4pda.ru/news/";
@@ -25,7 +36,7 @@ public class Constants {
     public static final String NEWS_URL_GAMES = "http://4pda.ru/games/";
 
     /**
-     * News Subcategory Url
+     * NewsParser Subcategory Url
      */
     /*GAMES*/
     public static final String NEWS_SUBCATEGORY_DEVSTORY_GAMES = "ds_games_news";

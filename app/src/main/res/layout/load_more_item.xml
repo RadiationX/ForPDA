@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="100dp" >
+
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/error_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ошибка"
+        android:textSize="16sp"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/progressBar"
+        android:layout_marginStart="128dp"
+        tools:ignore="HardcodedText"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/retry_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="27dp"
+        android:text="Повторить"
+        tools:ignore="HardcodedText"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/error_tv"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/error_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/error_tv"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="65dp"
+        app:srcCompat="@drawable/ic_mood_bad_black_24dp"
+        android:visibility="gone"/>
+
+</RelativeLayout>

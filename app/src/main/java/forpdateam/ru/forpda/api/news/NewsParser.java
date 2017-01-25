@@ -1,19 +1,18 @@
-package forpdateam.ru.forpda.api.newslist;
+package forpdateam.ru.forpda.api.news;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import forpdateam.ru.forpda.api.newslist.models.NewsItem;
+import forpdateam.ru.forpda.api.news.models.NewsNetworkModel;
 import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.fragments.news.NewsModel;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
+import forpdateam.ru.forpda.fragments.news.models.NewsExceptionModel;
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleOnSubscribe;
 
 import static forpdateam.ru.forpda.Constants.NEWS_CATEGORY_ALL;
 import static forpdateam.ru.forpda.Constants.NEWS_CATEGORY_ARTICLES;
@@ -61,11 +60,12 @@ import static forpdateam.ru.forpda.Constants.NEWS_URL_SOFTWARE;
 import static forpdateam.ru.forpda.Constants.NEWS_URL_TABLETS_REVIEWS;
 import static forpdateam.ru.forpda.Constants.NEWS_URL_WP7_GAME;
 import static forpdateam.ru.forpda.Constants.NEWS_URL_WP7_SOFTWARE;
+import static forpdateam.ru.forpda.utils.Utils.log;
 
 /**
  * Created by radiationx on 31.07.16.
  */
-public class NewsList {
+public class NewsParser {
     /* Groups:
     * 1. Link
     * 2. Title
@@ -76,80 +76,39 @@ public class NewsList {
     * 7. Description */
     private static final Pattern pattern = Pattern.compile("<article[^>]*?class=\"post\"[^>]*?data-ztm=\"[^ ]+\"[^>]*>[\\s\\S]*?<a[^>]*?href=\"([^\"]*)\"[^>]*?title=\"([^\"]*?)\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\"[\\s\\S]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[\\s\\S]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?itemprop=\"description\">([\\s\\S]*?)<\\/div>[\\s\\S]*?<\\/article>");
 
-    public ArrayList<NewsItem> get(String url) throws Exception {
-        ArrayList<NewsItem> list = new ArrayList<>();
-        String response = Client.getInstance().get(url);
-
-        Matcher matcher = pattern.matcher(response);
-        while (matcher.find()) {
-            NewsItem item = new NewsItem();
-            item.setLink(matcher.group(1));
-            item.setTitle(matcher.group(2));
-            item.setImageUrl(matcher.group(3));
-            item.setCommentsCount(matcher.group(4));
-            item.setDate(matcher.group(5));
-            Log.e("NewsModel", "Test date: " + matcher.group(5));
-            item.setAuthor(matcher.group(6));
-            item.setDescription(matcher.group(7));
-            list.add(item);
-        }
-        return list;
-    }
-
-    public Observable<ArrayList<NewsItem>> getNews(final String url) {
-        return Observable.fromCallable(() -> get(url));
-    }
-
-    public Observable<String> getNewsSource(@NonNull String urlNews) {
-        return Observable.create(new ObservableOnSubscribe<String>() {
-            @Override
-            public void subscribe(ObservableEmitter<String> e) throws Exception {
-                if (!e.isDisposed()) {
-                    e.onNext(Client.getInstance().get(urlNews));
-                    e.onComplete();
-                }
-            }
-        });
-    }
-
-
-
-    /*Experimental*/
-    public static List<NewsModel> getNewsItems(@NonNull String category, int number) {
-        List<NewsModel> cache = new ArrayList<>();
+    private ArrayList<NewsNetworkModel> getNewsListFromNetwork2(@NonNull String category, int pageNumber) {
+        ArrayList<NewsNetworkModel> cache = new ArrayList<>();
         String url = getUrlCategory(category);
-        if (number >= 2) {
-            url = url + "page/" + number + "/";
-        }
-        String response = null;
+        if (pageNumber >= 2) { url = url + "page/" + pageNumber + "/"; }
+
+        log("getNewsListFromNetwork2 ->> " + category + " " + pageNumber + " " + url);
         try {
-            response = Client.getInstance().get(url);
+            String response = Client.getInstance().get(url);
+            if (response == null) return new ArrayList<>();
+            Matcher matcher = pattern.matcher(response);
+            while (matcher.find()) {
+                NewsNetworkModel model = new NewsNetworkModel();
+                model.setLink(matcher.group(1));
+                model.setImageUrl(matcher.group(3));
+                model.setTitle(matcher.group(2));
+                model.setCommentsCount(matcher.group(4));
+                model.setDate(matcher.group(5));
+                model.setAuthor(matcher.group(6));
+                model.setDescription(matcher.group(7));
+                model.setCategory(category);
+                cache.add(model);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-
-        if (response == null) return new ArrayList<>();
-
-        Matcher matcher = pattern.matcher(response);
-        while (matcher.find()) {
-            NewsModel model = new NewsModel();
-            model.setLink(matcher.group(1));
-            model.setCategory(category);
-            model.setImgLink(matcher.group(3));
-            model.setTitle(matcher.group(2));
-            model.setCommentsCount(matcher.group(4));
-            model.setDate(matcher.group(5));
-            model.setAuthor(matcher.group(6));
-            model.setDescription(matcher.group(7));
-            model.setRead(false);
-            model.setOffline(false);
-            cache.add(model);
-
         }
         return cache;
     }
 
-    private static String getUrlCategory(@NonNull String category) {
+    public Single<ArrayList<NewsNetworkModel>> getNewsListFromNetwork1(@NonNull String category, int pageNumber) {
+        return Single.fromCallable(() -> getNewsListFromNetwork2(category, pageNumber));
+    }
+
+    private String getUrlCategory(@NonNull String category) {
         switch (category) {
             case NEWS_CATEGORY_ALL:
                 return NEWS_URL_ALL;

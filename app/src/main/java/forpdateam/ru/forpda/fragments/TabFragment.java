@@ -102,6 +102,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
     }
 
     //Сомнительная штука, возможно даже выпилить надо будет
+    // Согласен.
     @Override
     public String getTabUrl() {
         return tabUrl;

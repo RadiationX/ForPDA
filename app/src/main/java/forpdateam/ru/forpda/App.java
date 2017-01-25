@@ -26,6 +26,7 @@ import java.util.HashMap;
 
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.data.Repository;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -119,8 +120,6 @@ public class App extends android.app.Application {
         }
 
         //init
-        Client.getInstance();
-        initImageLoader(this);
         Realm.init(this);
         RealmConfiguration configuration = new RealmConfiguration.Builder()
                 .name("forpda.realm")
@@ -128,6 +127,9 @@ public class App extends android.app.Application {
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(configuration);
+        Repository.createInstance();
+        Client.getInstance();
+        initImageLoader(this);
         px2 = getContext().getResources().getDimensionPixelSize(R.dimen.dp2);
         px4 = getContext().getResources().getDimensionPixelSize(R.dimen.dp4);
         px6 = getContext().getResources().getDimensionPixelSize(R.dimen.dp6);

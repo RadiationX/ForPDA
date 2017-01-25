@@ -1,55 +1,49 @@
 package forpdateam.ru.forpda.fragments.news;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.annimon.stream.Stream;
+import java.util.List;
 
-import java.util.ArrayList;
-import java.util.Date;
-
+import forpdateam.ru.forpda.Constants;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.newslist.models.NewsItem;
+import forpdateam.ru.forpda.data.Repository;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.realm.RealmMapping;
-import forpdateam.ru.forpda.utils.ErrorHandler;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
-import io.realm.Realm;
-import io.realm.RealmResults;
-import io.realm.Sort;
+import forpdateam.ru.forpda.fragments.news.models.NewsCallbackModel;
+import forpdateam.ru.forpda.fragments.news.models.NewsModel;
+import forpdateam.ru.forpda.fragments.news.presenter.NewsPresenter;
+
+import static forpdateam.ru.forpda.utils.Utils.log;
 
 /**
  * Created by radiationx on 31.07.16.
  */
-public class NewsListFragment extends TabFragment implements NewsListAdapter.OnItemClickListener,
-        NewsListAdapter.OnItemLongClickListener {
+public class NewsListFragment extends TabFragment implements INewsView, NewsListAdapter.OnItemClickListener,
+        NewsListAdapter.OnItemLongClickListener, NewsListAdapter.OnLoadMoreCallback,
+        NewsListAdapter.OnReloadDataListener {
     private static final String LINk = "http://4pda.ru";
+    private static final String TAG = "NewsListFragment";
 
-    private Date date;
     private TextView text;
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
     private NewsListAdapter adapter;
     private LinearLayoutManager manager;
-    private View listProgress;
-    private Realm realm;
-    private RealmResults<NewsModel> results;
-    private boolean mIsLastPage = false;
-    private boolean mIsLoading = false;
-    private int mCurrentPage = 1;
+    private View srProgress;
+    private int pageSize = 1;
+    private NewsPresenter presenter;
+
 
     @Override
     public String getTabUrl() {
@@ -66,12 +60,6 @@ public class NewsListFragment extends TabFragment implements NewsListAdapter.OnI
         return true;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        realm = Realm.getDefaultInstance();
-        log("onCreate");
-    }
 
     @Nullable
     @Override
@@ -79,39 +67,40 @@ public class NewsListFragment extends TabFragment implements NewsListAdapter.OnI
         initBaseView(inflater, container);
         baseInflateFragment(inflater, R.layout.news_list_fragment);
 //        text = (TextView) findViewById(R.id.textView2);
-        listProgress = findViewById(R.id.news_list_progress);
+        log("onCreateView");
+        srProgress = findViewById(R.id.news_list_progress);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.news_refresh_layout);
         refreshLayout.setColorSchemeColors(ContextCompat.getColor(getContext(), R.color.colorAccent));
         recyclerView = (RecyclerView) findViewById(R.id.news_list);
+        presenter = new NewsPresenter();
+        presenter.bindView(this, Repository.getInstance());
 
-        log("onCreateView");
+        refreshLayout.setOnRefreshListener(() -> presenter.updateData(Constants.NEWS_CATEGORY_ALL, false));
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        refreshLayout.setOnRefreshListener(this::loadData);
-
         manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
-
         adapter = new NewsListAdapter();
+        adapter.bindRecyclerView(recyclerView);
         adapter.setOnItemClickListener(this);
         adapter.setOnItemLongClickListener(this);
+        adapter.setOnLoadMoreListener(this);
+        adapter.setOnReloadDataListener(this);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
         viewsReady();
-        bindView();
-        date = new Date();
-        log("onViewCreated");
     }
 
     @Override
     public void loadData() {
-        bindData(LINk);
-        log("loadDate");
+        log(TAG + " loadData");
+        presenter.loadData(Constants.NEWS_CATEGORY_ALL);
+
     }
 
     @Override
@@ -124,65 +113,77 @@ public class NewsListFragment extends TabFragment implements NewsListAdapter.OnI
 
     }
 
-    private void bindView() {
-        log("bindView");
-        results = realm.where(NewsModel.class).findAllAsync();
-        results = results.sort("date", Sort.DESCENDING);
-        if (results.size() == 0) {
-            if (listProgress.getVisibility() == View.GONE) {
-                listProgress.setVisibility(View.VISIBLE);
-            }
+    @Override
+    public void onPause() {
+        super.onPause();
+        presenter.unbindView();
+    }
+
+    @Override
+    public void onLoadMore() {
+        pageSize++;
+        log("Load More " + pageSize);
+        adapter.addMoreLoadingProgress();
+        presenter.loadMore(Constants.NEWS_CATEGORY_ALL, pageSize);
+    }
+
+    @Override
+    public void showData(List<NewsModel> list) {
+        refreshLayout.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.VISIBLE);
+        log("show data -> " + list.size());
+        adapter.addAll(list, false);
+    }
+
+    @Override
+    public void showUpdateData(NewsCallbackModel model) {
+        int size = model.getCache().size();
+        if (size > 0) {
+            Toast.makeText(getActivity(), size + " новых новостей", Toast.LENGTH_SHORT).show();
+            adapter.addAll(model.getCache(), false);
+            adapter.addMoreNewsLoadingItem(model.isShowMore());
         } else {
-            if (listProgress.getVisibility() == View.VISIBLE) {
-                listProgress.setVisibility(View.GONE);
-            }
-            refreshLayout.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.VISIBLE);
-            adapter.addAll(results);
+            Toast.makeText(getActivity(), "Нет новых новостей", Toast.LENGTH_SHORT).show();
         }
+
     }
 
-    private void bindData(String url) {
-        log("bindData");
-        Api.NewsList().getNews(url)
-                .onErrorReturn(throwable -> {
-                    ErrorHandler.handle(this, throwable, view1 -> loadData());
-                    return new ArrayList<>();
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::processAndAddData);
-    }
-
-    private void processAndAddData(ArrayList<NewsItem> items) {
-
-        if (results.size() == 0) {
-            insertData(items);
+    @Override
+    public void showLoadMore(List<NewsModel> list, boolean hide) {
+        if (!hide) {
+            adapter.removeMoreLoadingProgress();
+            adapter.addAll(list, true);
         } else {
-            insertData(checkNewNews(items, results));
-        }
-
-        if (refreshLayout.isRefreshing()) {
-            refreshLayout.setRefreshing(false);
+            adapter.removeMoreLoadingProgress();
         }
     }
 
-    private void insertData(ArrayList<NewsItem> items) {
-        Stream.of(items).map(RealmMapping::mappingNews)
-                .forEach(news -> realm.executeTransactionAsync(r -> r.copyToRealmOrUpdate(news)));
+    @Override
+    public void showMoreNewNews(NewsCallbackModel model) {
+
     }
 
-    private ArrayList<NewsItem> checkNewNews(ArrayList<NewsItem> list, RealmResults<NewsModel> results) {
-        ArrayList<NewsItem> cache = new ArrayList<>();
-        cache.clear();
-        Stream.of(list)
-                .filterNot(newNews -> Stream.of(results).anyMatch(oldNews -> newNews.getLink().equals(oldNews.getLink())))
-                .forEach(cache::add);
-        Toast.makeText(getContext(), cache.size() + " new news", Toast.LENGTH_SHORT).show();
-        return cache;
+    @Override
+    public void showUpdateProgress(boolean show) {
+        refreshLayout.setRefreshing(show);
     }
 
-    private void log(String text) {
-        Log.e("NewsModel", text);
+    @Override
+    public void showBackgroundWorkProgress(boolean show) {
+    }
+
+    @Override
+    public void showErrorView(Throwable throwable, @NonNull String codeError) {
+    }
+
+
+    @Override
+    public void showPopUp(@NonNull String viewCode) {
+
+    }
+
+    @Override
+    public void onReloadDataClick() {
+
     }
 }
