@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.fragments.auth;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -35,7 +37,8 @@ public class AuthFragment extends TabFragment {
     private EditText nick, password, captcha;
     private ImageView captchaImage, avatar;
     private AuthForm authForm;
-    private Button send;
+    private Button sendButton;
+    private ProgressBar loginProgress;
 
     private LinearLayout mainForm;
     private RelativeLayout complete;
@@ -69,11 +72,13 @@ public class AuthFragment extends TabFragment {
         complete = (RelativeLayout) findViewById(R.id.auth_complete);
         completeText = (TextView) findViewById(R.id.auth_complete_text);
         progressView = (CircularProgressView) findViewById(R.id.auth_progress);
+        loginProgress = (ProgressBar) findViewById(R.id.login_progress);
         viewsReady();
-        view.findViewById(R.id.fragment_content).setBackgroundResource(R.color.colorPrimary);
+        view.findViewById(R.id.fragment_content).setBackgroundResource(R.color.white);
         toolbar.setVisibility(View.GONE);
-        send = (Button) findViewById(R.id.auth_send);
-        send.setOnClickListener(view -> tryLogin());
+        notifyDot.setVisibility(View.GONE);
+        sendButton = (Button) findViewById(R.id.auth_send);
+        sendButton.setOnClickListener(view -> tryLogin());
         MyTW myTW = new MyTW();
         nick.addTextChangedListener(myTW);
         password.addTextChangedListener(myTW);
@@ -85,13 +90,18 @@ public class AuthFragment extends TabFragment {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             if (!nick.getText().toString().isEmpty() && !password.getText().toString().isEmpty() && captcha.getText().toString().length() == 4) {
-                if (!send.isEnabled())
-                    send.setEnabled(true);
+                if (!sendButton.isEnabled())
+                    sendButton.setEnabled(true);
             } else {
-                if (send.isEnabled())
-                    send.setEnabled(false);
+                if (sendButton.isEnabled())
+                    sendButton.setEnabled(false);
             }
         }
+    }
+
+    @Override
+    protected void updateNotifyDot() {
+        //Чтобы не показывалась точка.
     }
 
     @Override
@@ -109,14 +119,23 @@ public class AuthFragment extends TabFragment {
         authForm.setCaptcha(captcha.getText().toString());
         authForm.setNick(nick.getText().toString());
         authForm.setPassword(password.getText().toString());
+        loginProgress.setVisibility(View.VISIBLE);
+        sendButton.setVisibility(View.INVISIBLE);
         loginSubscriber.subscribe(Api.Auth().tryLogin(authForm), this::showLoginResult, false, view1 -> loadData());
         //showLoginResult(false);
     }
 
     private void showLoginResult(boolean b) {
+        Log.d("SUKA", "LOGIN RESULT = "+b);
         if (b) {
             loadProfile();
+        } else {
+            loadData();
+            captcha.setText("");
+            password.setText("");
         }
+        loginProgress.setVisibility(View.GONE);
+        sendButton.setVisibility(View.VISIBLE);
     }
 
     public void loadProfile() {

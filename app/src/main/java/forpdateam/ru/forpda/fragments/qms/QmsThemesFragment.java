@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -122,8 +123,7 @@ public class QmsThemesFragment extends TabFragment {
         if (refreshLayout != null)
             refreshLayout.setRefreshing(false);
 
-        if (data.getThemes().size() == 0)
-            return;
+
         userNick = data.getNick();
         setTitle(createTitle(userNick));
         if (data.getThemes().size() == 0 && userNick != null) {
@@ -133,7 +133,10 @@ public class QmsThemesFragment extends TabFragment {
             args.putString(QmsChatFragment.USER_AVATAR_ARG, avatarUrl);
             TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).setArgs(args).build());
             //new Handler().postDelayed(() -> TabManager.getInstance().remove(getTag()), 500);
+            return;
         }
+        if (data.getThemes().size() == 0)
+            return;
         if (results != null) {
             realm.beginTransaction();
             try {

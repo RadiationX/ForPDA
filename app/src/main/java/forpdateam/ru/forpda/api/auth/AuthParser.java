@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.api.auth;
 
 import android.text.Html;
+import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,11 +53,13 @@ public class AuthParser {
         headers.put("login", form.getNick());
         headers.put("password", form.getPassword());
         headers.put("remember", form.getRememberField());
-        String response = Client.getInstance().post("http://4pda.ru/forum/index.php?act=auth", headers);
+        String response = Client.getInstance().post("https://4pda.ru/forum/index.php?act=auth", headers);
         Matcher matcher = errorPattern.matcher(response);
-        if (matcher.find())
+        if (matcher.find()){
             throw new Exception(Html.fromHtml(matcher.group(1)).toString().replaceAll("\\.", ".\n").trim());
+        }
 
+        Log.d("SUKA", "RESPONSE "+response);
         form.setBody(response);
 
         return checkLogin(response);
@@ -78,7 +81,7 @@ public class AuthParser {
         if (matcher.find())
             throw new Exception("You already logout");
 
-        Client.getCookies().clear();
+        Client.clearCookies();
         App.getInstance().getPreferences().edit().remove("cookie_member_id").remove("cookie_pass_hash").apply();
         Api.Auth().setState(false);
 

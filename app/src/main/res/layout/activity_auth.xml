@@ -3,21 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp"
+        android:layout_gravity="center"
         android:paddingBottom="8dp"
-        android:theme="@style/AUTH"
-        android:layout_gravity="center">
+        android:paddingTop="8dp"
+        android:theme="@style/AUTH">
 
         <RelativeLayout
             android:id="@+id/auth_complete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:paddingStart="@dimen/dp32"
             android:paddingEnd="@dimen/dp32"
+            android:paddingStart="@dimen/dp32"
             android:visibility="gone">
 
             <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -37,7 +38,7 @@
                 android:layout_centerHorizontal="true"
                 android:scaleType="centerCrop"
                 app:cpv_animAutostart="true"
-                app:cpv_color="#ffffffff"
+                app:cpv_color="#000000"
                 app:cpv_indeterminate="true" />
 
             <TextView
@@ -47,7 +48,6 @@
                 android:layout_below="@id/auth_avatar"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/dp32"
-                android:textColor="@android:color/white"
                 android:textSize="26sp"
                 android:visibility="gone" />
         </RelativeLayout>
@@ -59,8 +59,8 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:orientation="vertical"
-            android:paddingStart="@dimen/dp32"
-            android:paddingEnd="@dimen/dp32">
+            android:paddingEnd="@dimen/dp32"
+            android:paddingStart="@dimen/dp32">
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -76,14 +76,15 @@
                     android:hint="Логин"
                     android:inputType="textPersonName"
                     android:maxLines="1"
-                    android:scrollHorizontally="true"
-                    android:textColor="@color/white" />
+                    android:scrollHorizontally="true" />
 
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                app:passwordToggleDrawable="@drawable/ic_visibility_black_24dp"
+                app:passwordToggleEnabled="true">
 
                 <android.support.v7.widget.AppCompatEditText
                     android:id="@+id/auth_password"
@@ -93,26 +94,25 @@
                     android:hint="Пароль"
                     android:inputType="textPassword"
                     android:maxLines="1"
-                    android:scrollHorizontally="true"
-                    android:textColor="@color/white" />
+                    android:scrollHorizontally="true" />
             </android.support.design.widget.TextInputLayout>
 
-            <android.support.v7.widget.CardView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:animateLayoutChanges="true">
+
+                android:animateLayoutChanges="true"
+                android:orientation="vertical">
 
                 <ImageView
                     android:id="@+id/captchaImage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
                     android:padding="@dimen/dp8"
-                    android:scaleType="centerCrop"
-                    android:adjustViewBounds="true"/>
+                    android:scaleType="centerCrop" />
 
-            </android.support.v7.widget.CardView>
+            </LinearLayout>
 
 
             <android.support.design.widget.TextInputLayout
@@ -126,20 +126,31 @@
                     android:layout_gravity="center_horizontal"
                     android:hint="Введите число"
                     android:inputType="number"
-                    android:maxLines="1"
-                    android:scrollHorizontally="true"
                     android:maxLength="4"
-                    android:textColor="@color/white" />
+                    android:maxLines="1"
+                    android:scrollHorizontally="true" />
             </android.support.design.widget.TextInputLayout>
 
-            <android.support.v7.widget.AppCompatButton
-                android:id="@+id/auth_send"
-                style="@style/Widget.AppCompat.Button.Borderless"
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:enabled="false"
-                android:text="Войти" />
+                android:layout_gravity="end">
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/auth_send"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:text="Войти" />
+                <ProgressBar
+                    android:id="@+id/login_progress"
+                    android:layout_width="@dimen/dp36"
+                    android:layout_height="@dimen/dp36"
+                    android:layout_gravity="center"
+                    android:visibility="gone"/>
+            </FrameLayout>
+
         </LinearLayout>
     </RelativeLayout>
 </ScrollView>

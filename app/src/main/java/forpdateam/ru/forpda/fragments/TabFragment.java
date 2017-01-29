@@ -231,7 +231,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
 
     }
 
-    private void updateNotifyDot() {
+    protected void updateNotifyDot() {
         if (!App.getInstance().getPreferences().getBoolean("main.show_notify_dot", true)){
             notifyDot.setVisibility(View.GONE);
             return;

@@ -37,26 +37,28 @@ public class Client {
     private static final String userAgent = WebSettings.getDefaultUserAgent(App.getContext());
     private static Client INSTANCE = new Client();
     public static final String minimalPage = "http://4pda.ru/forum/index.php?showforum=200";
-    private static List<Cookie> cookies;
+    private static Map<String, Cookie> cookies;
+    private static List<Cookie> listCookies;
     private NetworkObservable networkObserver = new NetworkObservable();
     public static String member_id;
 
     //Class
     public Client() {
         INSTANCE = this;
-        cookies = new ArrayList<>();
+        cookies = new HashMap<>();
+        listCookies = new ArrayList<>();
         String member_id = App.getInstance().getPreferences().getString("cookie_member_id", null);
         String pass_hash = App.getInstance().getPreferences().getString("cookie_pass_hash", null);
         Api.Auth().setUserId(App.getInstance().getPreferences().getString("member_id", null));
         if (member_id != null && pass_hash != null) {
             Api.Auth().setState(true);
             //Первичная загрузка кукисов
-            cookies.add(parseCookie(member_id));
-            cookies.add(parseCookie(pass_hash));
+            cookies.put("member_id", parseCookie(member_id));
+            cookies.put("pass_hash", parseCookie(pass_hash));
         }
     }
 
-    public static String getAuthKey(){
+    public static String getAuthKey() {
         return App.getInstance().getPreferences().getString("auth_key", "0");
     }
 
@@ -77,6 +79,9 @@ public class Client {
                     Log.d("kek", "response cookies size " + cookies.size());
                     try {
                         for (Cookie cookie : cookies) {
+                            Log.d("SUKA", "FROM RESPONSE " + cookie.name() + " : " + cookie.value());
+                        }
+                        for (Cookie cookie : cookies) {
                             if (cookie.name().matches("member_id|pass_hash")) {
                                 //Сохранение кукисов cookie_member_id и cookie_pass_hash
                                 App.getInstance().getPreferences().edit().putString("cookie_".concat(cookie.name()), url.toString().concat("|:|").concat(cookie.toString())).apply();
@@ -86,8 +91,7 @@ public class Client {
                                     Api.Auth().setUserId(cookie.value());
                                 }
                             }
-                            if (!Client.cookies.contains(cookie))
-                                Client.cookies.add(cookie);
+                            Client.cookies.put(cookie.name(), cookie);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -96,8 +100,14 @@ public class Client {
 
                 @Override
                 public List<Cookie> loadForRequest(HttpUrl url) {
+                    listCookies.clear();
+                    listCookies.addAll(cookies.values());
                     Log.d("kek", "cookies size " + cookies.size());
-                    return cookies;
+
+                    for (Cookie cookie : listCookies) {
+                        Log.d("SUKA", "FOR REQUEST " + cookie.name() + " : " + cookie.value());
+                    }
+                    return listCookies;
                 }
             })
             .build();
@@ -142,7 +152,7 @@ public class Client {
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
                     //formBodyBuilder.addFormDataPart(entry.getKey(), URLEncoder.encode(entry.getValue(), "CP1251"));
                     formBodyBuilder.addFormDataPart(entry.getKey(), entry.getValue());
-                    Log.d("SUKA", "ADD FORM DATA PART "+entry.getKey()+" : "+entry.getValue());
+                    Log.d("SUKA", "ADD FORM DATA PART " + entry.getKey() + " : " + entry.getValue());
                 }
             }
             if (file != null) {
@@ -164,7 +174,7 @@ public class Client {
         } finally {
             if (response != null)
                 response.close();
-            if(file!=null&&file.getFileStream()!=null)
+            if (file != null && file.getFileStream() != null)
                 file.getFileStream().close();
         }
         return res;
@@ -216,8 +226,10 @@ public class Client {
         return redirects.get(url);
     }
 
-    public static List<Cookie> getCookies() {
-        return cookies;
+    public static void clearCookies() {
+        cookies.clear();
+        listCookies.clear();
+        ;
     }
 
     public void addNetworkObserver(Observer observer) {

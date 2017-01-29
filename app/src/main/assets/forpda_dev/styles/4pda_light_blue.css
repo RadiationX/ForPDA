@@ -30,57 +30,57 @@ Edited by: RadiationX|*or you nick*
   font-size: inherit !important;
 }
 [style*="font-size:36pt"] {
-  font-size: 3.65625em !important;
-  line-height: 1.25rem!important;
+  font-size: 3.375em !important;
+  line-height: 1.25em!important;
 }
 [style*="font-size:36pt"] * {
   font-size: inherit !important;
 }
 [style*="font-size:24pt"] {
-  font-size: 2.4375em !important;
-  line-height: 1.25rem!important;
+  font-size: 2.25em !important;
+  line-height: 1.25em!important;
 }
 [style*="font-size:24pt"] * {
   font-size: inherit !important;
 }
 [style*="font-size:18pt"] {
-  font-size: 1.828125em !important;
-  line-height: 1.25rem!important;
+  font-size: 1.6875em !important;
+  line-height: 1.25em!important;
 }
 [style*="font-size:18pt"] * {
   font-size: inherit !important;
 }
 [style*="font-size:14pt"] {
-  font-size: 1.421875em !important;
-  line-height: 1.25rem!important;
+  font-size: 1.3125em !important;
+  line-height: 1.25em!important;
 }
 [style*="font-size:14pt"] * {
   font-size: inherit !important;
 }
 [style*="font-size:12pt"] {
-  font-size: 1.21875em !important;
-  line-height: 1.25rem!important;
+  font-size: 1.125em !important;
+  line-height: 1.25em!important;
 }
 [style*="font-size:12pt"] * {
   font-size: inherit !important;
 }
 [style*="font-size:10pt"] {
-  font-size: 1.015625em !important;
-  line-height: 1.25rem!important;
+  font-size: 0.9375em !important;
+  line-height: 1.25em!important;
 }
 [style*="font-size:10pt"] * {
   font-size: inherit !important;
 }
 [style*="font-size:8pt"] {
-  font-size: 0.8125em !important;
-  line-height: 1.25rem!important;
+  font-size: 0.75em !important;
+  line-height: 1.25em!important;
 }
 [style*="font-size:8pt"] * {
   font-size: inherit !important;
 }
 [style*="font-size:9px"] {
   line-height: 1.25em!important;
-  font-size: 0.75em!important;
+  font-size: 0.5625em !important;
 }
 HTML {
   font-size: 1rem;

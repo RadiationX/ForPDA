@@ -72,38 +72,9 @@ public class App extends android.app.Application {
         return templator;
     }
 
-
-    /*private final static Pattern p = Pattern.compile("(?:[^\\s\\-—.,:;&?=#@><\\{\\}\\[\\]!~`*^%$\\|\"'\\/][\\s\\S][^\\s\\-—.,:;&?=#@><\\{\\}\\[\\]!~`*^%$\\|\"'\\/]*)");
-    private Matcher matcher1;
-    private Matcher matcher2;
-
-    public boolean notStrictEquals(final String s1, final String s2) {
-        matcher1 = matcher1 == null ? p.matcher(s1) : matcher1.reset(s1);
-        matcher2 = matcher2 == null ? p.matcher(s2) : matcher2.reset(s2);
-        while (matcher1.find() & matcher2.find())
-            if (!matcher1.group().equalsIgnoreCase(matcher2.group())) return false;
-        return true;
-    }
-
-    final String s1 = "Искусственная гравитация в Sci-Fi. Ищем истину";
-    final String s2 = "Искусственная гравитация в Sci-Fi — ищем истину";*/
-
     @Override
     public void onCreate() {
         super.onCreate();
-        /*long time = System.currentTimeMillis();
-        for (int i = 0; i < 100000; i++) {
-            //Log.d("kek", "eq1 "+notStrictEquals(s1,s2));
-            notStrictEquals(s1, s2);
-        }
-        Log.d("kek", "eq1 time: " + (System.currentTimeMillis() - time));
-        *//*time = System.currentTimeMillis();
-        for (int i = 0; i < 100000; i++) {
-            //Log.d("kek", "eq1 "+notStrictEquals(s1,s2));
-            notStrictEquals2(s1, s2);
-        }
-        Log.d("kek", "eq2 time: " + (System.currentTimeMillis() - time));*//*
-        //Log.d("kek", "eq2 "+notStrictEquals2(s1,s2));*/
 
         InputStream stream = null;
         try {
