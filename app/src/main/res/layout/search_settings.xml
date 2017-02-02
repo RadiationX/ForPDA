@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/search_settings_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/dp16"
+        android:background="@color/white">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/search_nick_block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/dp12"
+            android:paddingStart="@dimen/dp12">
+
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/search_nick_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:hint="Ник пользователя"
+                android:maxLines="1"
+                android:textSize="16sp" />
+        </android.support.design.widget.TextInputLayout>
+
+        <LinearLayout
+            android:id="@+id/search_resource_block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp8"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/dp16"
+                android:paddingStart="@dimen/dp16"
+                android:text="Место поиска"
+                android:textColor="@color/text_second_color" />
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/search_resource_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp48"
+                android:paddingEnd="@dimen/dp8"
+                android:paddingStart="@dimen/dp8" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/search_result_block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp8"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/dp16"
+                android:paddingStart="@dimen/dp16"
+                android:text="Отображение"
+                android:textColor="@color/text_second_color" />
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/search_result_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp48"
+                android:paddingEnd="@dimen/dp8"
+                android:paddingStart="@dimen/dp8" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/search_sort_block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp8"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/dp16"
+                android:paddingStart="@dimen/dp16"
+                android:text="Сортировка"
+                android:textColor="@color/text_second_color" />
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/search_sort_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp48"
+                android:paddingEnd="@dimen/dp8"
+                android:paddingStart="@dimen/dp8" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/search_source_block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp8"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/dp16"
+                android:paddingStart="@dimen/dp16"
+                android:text="Искать"
+                android:textColor="@color/text_second_color" />
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/search_source_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp48"
+                android:paddingEnd="@dimen/dp8"
+                android:paddingStart="@dimen/dp8" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/search_submit"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Поиск" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#eee"/>
+    </LinearLayout>
+</ScrollView>

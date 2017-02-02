@@ -15,6 +15,7 @@ import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsChatFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsThemesFragment;
+import forpdateam.ru.forpda.fragments.search.SearchFragment;
 import forpdateam.ru.forpda.fragments.theme.ThemeFragmentWeb;
 import forpdateam.ru.forpda.utils.ourparser.Html;
 
@@ -67,9 +68,6 @@ public class IntentHandler {
     }
 
     public static boolean handle(String url, Bundle args) {
-        if (url.substring(0, 2).equals("//"))
-            url = "http:".concat(url);
-        Log.d("kek", "input url " + url);
         //url = Html.fromHtml(url).toString();
         url = Html.fromHtml(url).toString();
 
@@ -160,6 +158,8 @@ public class IntentHandler {
                     return true;
                 case "search":
                     run("search " + uri.toString());
+                    args.putString(TabFragment.URL_ARG, uri.toString());
+                    TabManager.getInstance().add(new TabFragment.Builder<>(SearchFragment.class).setArgs(args).build());
                     return true;
                 case "rep":
                     run("rep " + uri.toString());

@@ -123,4 +123,5 @@ dependencies {
     compile 'com.nineoldandroids:library:2.4.0'
     compile group: 'org.ccil.cowan.tagsoup', name: 'tagsoup', version: '1.2'
     compile 'org.bsc.util:minitemplator-repackaged:1.2'
+    compile 'com.lapism:searchview:4.0'
 }

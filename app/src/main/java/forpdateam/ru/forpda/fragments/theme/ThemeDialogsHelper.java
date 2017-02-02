@@ -6,6 +6,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.search.models.SearchSettings;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.fragments.theme.adapters.ThemePagesAdapter;
@@ -26,9 +27,31 @@ class ThemeDialogsHelper {
             showedUserMenu = new AlertDialogMenu<>();
             userMenu.addItem("Профиль", (context, data) -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + data.getUserId()));
             userMenu.addItem("Личные сообщения QMS", (context, data) -> IntentHandler.handle("http://4pda.ru/forum/index.php?act=qms&mid=" + data.getUserId()));
-            userMenu.addItem("Темы пользователя", (context, data) -> Toast.makeText(context.getContext(), "Не умею", Toast.LENGTH_SHORT).show());
-            userMenu.addItem("Сообщения в этой теме", (context, data) -> Toast.makeText(context.getContext(), "Не умею", Toast.LENGTH_SHORT).show());
-            userMenu.addItem("Сообщения пользователя", (context, data) -> Toast.makeText(context.getContext(), "Не умею", Toast.LENGTH_SHORT).show());
+            userMenu.addItem("Темы пользователя", (context, data) -> {
+                SearchSettings settings = new SearchSettings();
+                settings.setSource(SearchSettings.SOURCE_ALL.first);
+                settings.setNick(data.getNick());
+                settings.setResult(SearchSettings.RESULT_TOPICS.first);
+                IntentHandler.handle(settings.toUrl());
+            });
+            userMenu.addItem("Сообщения в этой теме", (context, data) -> {
+                SearchSettings settings = new SearchSettings();
+                settings.addForum(context.pageData.getForumId());
+                settings.addTopic(context.pageData.getId());
+                settings.setSource(SearchSettings.SOURCE_CONTENT.first);
+                settings.setNick(data.getNick());
+                settings.setResult(SearchSettings.RESULT_POSTS.first);
+                settings.setSubforums(SearchSettings.SUB_FORUMS_FALSE);
+                IntentHandler.handle(settings.toUrl());
+            });
+            userMenu.addItem("Сообщения пользователя", (context, data) -> {
+                SearchSettings settings = new SearchSettings();
+                settings.setSource(SearchSettings.SOURCE_CONTENT.first);
+                settings.setNick(data.getNick());
+                settings.setResult(SearchSettings.RESULT_POSTS.first);
+                settings.setSubforums(SearchSettings.SUB_FORUMS_FALSE);
+                IntentHandler.handle(settings.toUrl());
+            });
         }
         showedUserMenu.clear();
         showedUserMenu.addItem(userMenu.get(0));

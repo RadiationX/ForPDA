@@ -3,16 +3,12 @@ package forpdateam.ru.forpda.api.news;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.news.models.NewsNetworkModel;
 import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.fragments.news.models.NewsExceptionModel;
 import io.reactivex.Single;
-import io.reactivex.SingleEmitter;
-import io.reactivex.SingleOnSubscribe;
 
 import static forpdateam.ru.forpda.Constants.NEWS_CATEGORY_ALL;
 import static forpdateam.ru.forpda.Constants.NEWS_CATEGORY_ARTICLES;

@@ -29,7 +29,6 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
 import forpdateam.ru.forpda.settings.SettingsActivity;
 import forpdateam.ru.forpda.utils.ErrorHandler;
 import io.reactivex.Observable;
@@ -216,10 +215,10 @@ public class TabFragment extends RxFragment implements ITabFragment {
             IntentHandler.handle("http://4pda.ru/forum/index.php?act=qms&mid=5106086&t=3472875");
             return false;
         });*/
-        toolbar.getMenu().add("TEST FULLFORM").setOnMenuItemClickListener(menuItem -> {
+        /*toolbar.getMenu().add("TEST FULLFORM").setOnMenuItemClickListener(menuItem -> {
             TabManager.getInstance().add(new TabFragment.Builder<>(EditPostFragment.class).build());
             return false;
-        });
+        });*/
         toolbar.getMenu().add("SETTINGS").setOnMenuItemClickListener(menuItem -> {
             getMainActivity().startActivity(new Intent(getContext(), SettingsActivity.class));
             return false;

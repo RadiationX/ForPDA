@@ -85,7 +85,7 @@ public class ProfileFragment extends TabFragment {
         initBaseView(inflater, container);
         baseInflateFragment(inflater, R.layout.fragment_profile);
         ViewStub viewStub = (ViewStub) findViewById(R.id.toolbar_content);
-        viewStub.setLayoutResource(R.layout.profile_toolbar);
+        viewStub.setLayoutResource(R.layout.toolbar_profile);
         viewStub.inflate();
         nick = (TextView) findViewById(R.id.profile_nick);
         group = (TextView) findViewById(R.id.profile_group);

@@ -83,7 +83,7 @@ public class QmsChatFragment extends TabFragment {
         initBaseView(inflater, container);
         baseInflateFragment(inflater, R.layout.fragment_qms_chat);
         viewStub = (ViewStub) findViewById(R.id.toolbar_content);
-        viewStub.setLayoutResource(R.layout.qms_new_theme_toolbar);
+        viewStub.setLayoutResource(R.layout.toolbar_qms_new_theme);
         viewStub.inflate();
         nickField = (AppCompatAutoCompleteTextView) findViewById(R.id.qms_theme_nick_field);
         titleField = (AppCompatEditText) findViewById(R.id.qms_theme_title_field);

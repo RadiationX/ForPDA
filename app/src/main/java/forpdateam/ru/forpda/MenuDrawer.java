@@ -24,7 +24,7 @@ import forpdateam.ru.forpda.fragments.mentions.MentionsFragment;
 import forpdateam.ru.forpda.fragments.news.NewsListFragment;
 import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
-import forpdateam.ru.forpda.fragments.theme.ThemeFragment;
+import forpdateam.ru.forpda.fragments.search.SearchFragment;
 import io.realm.Realm;
 
 /**
@@ -64,7 +64,7 @@ public class MenuDrawer {
             if (item != null) {
                 item.count = Api.get().getQmsCount();
             }
-            item = getByClass(ThemeFragment.class);
+            item = getByClass(MentionsFragment.class);
             if (item != null) {
                 item.count = Api.get().getMentionsCount();
             }
@@ -109,6 +109,7 @@ public class MenuDrawer {
         if (!Api.Auth().getState())
             menuItems.add(new MenuItem<>("Авторизация", R.drawable.ic_person_add_gray_24dp, AuthFragment.class));
         menuItems.add(new MenuItem<>("Новости", R.drawable.ic_newspaper_gray, NewsListFragment.class));
+        menuItems.add(new MenuItem<>("Поиск", R.drawable.ic_search_gray_24dp, SearchFragment.class));
         if (Api.Auth().getState()) {
             menuItems.add(new MenuItem<>("Профиль", R.drawable.ic_person_grary_24dp, ProfileFragment.class));
             menuItems.add(new MenuItem<>("Сообщения", R.drawable.ic_mail_gray_24dp, QmsContactsFragment.class));

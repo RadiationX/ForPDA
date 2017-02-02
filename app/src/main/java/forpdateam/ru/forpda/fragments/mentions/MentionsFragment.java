@@ -71,7 +71,7 @@ public class MentionsFragment extends TabFragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        tabLayout = (TabLayout) inflater.inflate(R.layout.theme_toolbar, (ViewGroup) toolbar.getParent(), false);
+        tabLayout = (TabLayout) inflater.inflate(R.layout.toolbar_theme, (ViewGroup) toolbar.getParent(), false);
         ((ViewGroup) toolbar.getParent()).addView(tabLayout, ((ViewGroup) toolbar.getParent()).indexOfChild(toolbar));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_double_left).setTag("first"));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_left).setTag("prev"));

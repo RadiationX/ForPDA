@@ -16,6 +16,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -153,6 +154,14 @@ public class App extends android.app.Application {
 
     public static void initImageLoader(Context context) {
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+                .imageDownloader(new BaseImageDownloader(context) {
+                    @Override
+                    public InputStream getStream(String imageUri, Object extra) throws IOException {
+                        if (imageUri.substring(0, 2).equals("//"))
+                            imageUri = "http:".concat(imageUri);
+                        return super.getStream(imageUri, extra);
+                    }
+                })
                 .threadPoolSize(5)
                 .threadPriority(Thread.MIN_PRIORITY)
                 .denyCacheImageMultipleSizesInMemory()

@@ -7,7 +7,6 @@ import java.util.List;
 import forpdateam.ru.forpda.fragments.news.models.NewsModel;
 import io.reactivex.Single;
 import io.realm.Realm;
-import io.realm.RealmResults;
 
 import static forpdateam.ru.forpda.utils.Utils.log;
 

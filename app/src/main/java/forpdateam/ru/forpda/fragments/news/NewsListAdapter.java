@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.annimon.stream.Stream;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;

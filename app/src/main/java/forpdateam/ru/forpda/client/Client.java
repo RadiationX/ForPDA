@@ -79,9 +79,6 @@ public class Client {
                     Log.d("kek", "response cookies size " + cookies.size());
                     try {
                         for (Cookie cookie : cookies) {
-                            Log.d("SUKA", "FROM RESPONSE " + cookie.name() + " : " + cookie.value());
-                        }
-                        for (Cookie cookie : cookies) {
                             if (cookie.name().matches("member_id|pass_hash")) {
                                 //Сохранение кукисов cookie_member_id и cookie_pass_hash
                                 App.getInstance().getPreferences().edit().putString("cookie_".concat(cookie.name()), url.toString().concat("|:|").concat(cookie.toString())).apply();
@@ -102,11 +99,7 @@ public class Client {
                 public List<Cookie> loadForRequest(HttpUrl url) {
                     listCookies.clear();
                     listCookies.addAll(cookies.values());
-                    Log.d("kek", "cookies size " + cookies.size());
-
-                    for (Cookie cookie : listCookies) {
-                        Log.d("SUKA", "FOR REQUEST " + cookie.name() + " : " + cookie.value());
-                    }
+                    Log.d("kek", "cookies size " + listCookies.size());
                     return listCookies;
                 }
             })
@@ -141,6 +134,10 @@ public class Client {
 
     private String request(String url, Map<String, String> headers, RequestFile file) throws Exception {
         Log.d("kek", "request url " + url);
+        if (url.substring(0, 2).equals("//")) {
+            url = "http:".concat(url);
+            Log.d("kek", "fixed request url " + url);
+        }
 
         Request.Builder builder = new Request.Builder()
                 .url(url)

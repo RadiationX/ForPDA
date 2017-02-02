@@ -102,7 +102,7 @@ public abstract class ThemeFragment extends TabFragment {
         attachmentsPopup.setAddOnClickListener(v -> pickImage());
         attachmentsPopup.setDeleteOnClickListener(v -> removeFiles());
 
-        tabLayout = (TabLayout) inflater.inflate(R.layout.theme_toolbar, (ViewGroup) toolbar.getParent(), false);
+        tabLayout = (TabLayout) inflater.inflate(R.layout.toolbar_theme, (ViewGroup) toolbar.getParent(), false);
         ((ViewGroup) toolbar.getParent()).addView(tabLayout, ((ViewGroup) toolbar.getParent()).indexOfChild(toolbar));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_double_left).setTag("first"));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_left).setTag("prev"));
@@ -189,7 +189,7 @@ public abstract class ThemeFragment extends TabFragment {
     @Override
     public boolean onBackPressed() {
         if (messagePanel.onBackPressed()) return true;
-        if (toolbar.getMenu().findItem(R.id.action_search).isActionViewExpanded()) {
+        if (toolbar.getMenu().findItem(R.id.action_search) != null && toolbar.getMenu().findItem(R.id.action_search).isActionViewExpanded()) {
             toolbar.collapseActionView();
             return true;
         }

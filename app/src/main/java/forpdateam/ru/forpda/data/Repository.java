@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.news.NewsParser;
-import forpdateam.ru.forpda.api.news.models.NewsNetworkModel;
 import forpdateam.ru.forpda.data.local.LocalRepository;
 import forpdateam.ru.forpda.fragments.news.models.NewsCallbackModel;
 import forpdateam.ru.forpda.fragments.news.models.NewsModel;

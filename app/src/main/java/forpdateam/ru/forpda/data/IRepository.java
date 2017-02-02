@@ -4,8 +4,8 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
-import forpdateam.ru.forpda.fragments.news.models.NewsModel;
 import forpdateam.ru.forpda.fragments.news.models.NewsCallbackModel;
+import forpdateam.ru.forpda.fragments.news.models.NewsModel;
 import io.reactivex.Single;
 
 /**

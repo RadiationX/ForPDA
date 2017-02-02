@@ -36,15 +36,13 @@ public class Qms {
         final String response = getInstance().get("http://4pda.ru/forum/index.php?&act=qms-xhr&action=userlist");
         final Matcher matcher = contactsPattern.matcher(response);
         QmsContact contact;
+        String temp;
         while (matcher.find()) {
             contact = new QmsContact();
             contact.setId(Integer.parseInt(matcher.group(1)));
-            String temp = matcher.group(2);
+            temp = matcher.group(2);
             contact.setCount(temp == null || temp.isEmpty() ? 0 : Integer.parseInt(temp));
-            temp = matcher.group(3);
-            if (temp.substring(0, 2).equals("//"))
-                temp = "http:".concat(temp);
-            contact.setAvatar(temp);
+            contact.setAvatar(matcher.group(3));
             contact.setNick(Html.fromHtml(matcher.group(4).trim()).toString());
             list.add(contact);
         }
