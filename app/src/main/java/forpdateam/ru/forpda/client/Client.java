@@ -34,13 +34,18 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class Client {
-    private static final String userAgent = WebSettings.getDefaultUserAgent(App.getContext());
+    public final static String minimalPage = "http://4pda.ru/forum/index.php?showforum=200";
+    private final static String userAgent = WebSettings.getDefaultUserAgent(App.getContext());
+    private final static Pattern countsPattern = Pattern.compile("act=mentions[^>]*?><i[^>]*?>([^<]*?)<\\/i>[\\s\\S]*?act=fav[^>]*?><i[^>]*?>([^<]*?)<\\/i>[\\s\\S]*?act=qms[^>]*?data-count=\"([^\">]*?)\">");
+    private final static Pattern errorPattern = Pattern.compile("^[\\s\\S]*?wr va-m text\">([\\s\\S]*?)</div></div></div></div><div class=\"footer\">");
     private static Client INSTANCE = new Client();
-    public static final String minimalPage = "http://4pda.ru/forum/index.php?showforum=200";
     private static Map<String, Cookie> cookies;
     private static List<Cookie> listCookies;
+    private Map<String, String> redirects = new HashMap<>();
     private NetworkObservable networkObserver = new NetworkObservable();
-    public static String member_id;
+    private Handler observerHandler = new Handler(Looper.getMainLooper());
+    private Matcher countsMatcher, errorMatcher;
+    private String tempGroup;
 
     //Class
     public Client() {
@@ -105,20 +110,6 @@ public class Client {
             })
             .build();
 
-    public String getMimeType(Uri uri) {
-        String mimeType = null;
-        if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
-            ContentResolver cr = App.getContext().getContentResolver();
-            mimeType = cr.getType(uri);
-        } else {
-            String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri
-                    .toString());
-            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                    fileExtension.toLowerCase());
-        }
-        return mimeType;
-    }
-
     //Network
     public String get(String url) throws Exception {
         return request(url, null, null);
@@ -178,17 +169,16 @@ public class Client {
     }
 
     private void checkForumErrors(String res) throws Exception {
-        Pattern pattern = Pattern.compile("^[\\s\\S]*?wr va-m text\">([\\s\\S]*?)</div></div></div></div><div class=\"footer\">");
-        Matcher m = pattern.matcher(res);
-        if (m.find()) {
-            throw new OnlyShowException(Html.fromHtml(m.group(1)).toString());
+        if (errorMatcher == null)
+            errorMatcher = errorPattern.matcher(res);
+        else
+            errorMatcher.reset(res);
+
+        if (errorMatcher.find()) {
+            throw new OnlyShowException(Html.fromHtml(errorMatcher.group(1)).toString());
         }
     }
 
-    private final static Pattern countsPattern = Pattern.compile("act=mentions[^>]*?><i[^>]*?>([^<]*?)<\\/i>[\\s\\S]*?act=fav[^>]*?><i[^>]*?>([^<]*?)<\\/i>[\\s\\S]*?act=qms[^>]*?data-count=\"([^\">]*?)\">");
-    private Matcher countsMatcher;
-    private String tempGroup;
-    private Handler observerHandler = new Handler(Looper.getMainLooper());
 
     private void getCounts(String res) {
         if (countsMatcher == null)
@@ -210,14 +200,6 @@ public class Client {
         }
     }
 
-    public void cancelCallByUrl(String url) {
-        for (Call call : client.dispatcher().queuedCalls()) {
-            if (call.request().url().toString().equals(url))
-                call.cancel();
-        }
-    }
-
-    private Map<String, String> redirects = new HashMap<>();
 
     public String getRedirect(String url) {
         return redirects.get(url);
@@ -226,7 +208,6 @@ public class Client {
     public static void clearCookies() {
         cookies.clear();
         listCookies.clear();
-        ;
     }
 
     public void addNetworkObserver(Observer observer) {

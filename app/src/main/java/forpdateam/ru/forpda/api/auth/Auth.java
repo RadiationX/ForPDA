@@ -14,7 +14,7 @@ public class Auth {
     private AuthParser parser = new AuthParser();
     private LoginObservable observable = new LoginObservable();
     private boolean authState = false;
-    private String userId;
+    private String userId = "0";
     private int userIdInt = 0;
 
     public boolean getState() {

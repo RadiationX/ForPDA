@@ -2,11 +2,17 @@ package forpdateam.ru.forpda.fragments.search;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.TabLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -16,9 +22,11 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -28,16 +36,18 @@ import java.util.List;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.theme.adapters.ThemePagesAdapter;
 
 /**
  * Created by radiationx on 29.01.17.
  */
 
 public class SearchFragment extends TabFragment {
-    private ViewGroup searchSettings;
+    private ViewGroup searchSettingsView;
     private ViewGroup nickBlock, resourceBlock, resultBlock, sortBlock, sourceBlock;
     private Spinner resourceSpinner, resultSpinner, sortSpinner, sourceSpinner;
     private TextView nickField;
@@ -50,9 +60,13 @@ public class SearchFragment extends TabFragment {
 
     private SearchSettings settings = new SearchSettings();
 
-    protected Subscriber<SearchResult> mainSubscriber = new Subscriber<>();
+    private Subscriber<SearchResult> mainSubscriber = new Subscriber<>();
     private RecyclerView recyclerView;
     private SwipeRefreshLayout refreshLayout;
+    private SearchAdapter adapter = new SearchAdapter();
+
+    private StringBuilder titleBuilder = new StringBuilder();
+    private TabLayout tabLayout;
 
     @Override
     public String getDefaultTitle() {
@@ -69,7 +83,9 @@ public class SearchFragment extends TabFragment {
         }
     }
 
-    SearchView searchView;
+    private SearchView searchView;
+    private MenuItem searchItem;
+    private SearchResult data;
 
     @Nullable
     @Override
@@ -78,9 +94,11 @@ public class SearchFragment extends TabFragment {
         baseInflateFragment(inflater, R.layout.fragment_search);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         recyclerView = (RecyclerView) findViewById(R.id.qms_list_themes);
-        /*searchSettings = (ViewGroup) inflater.inflate(R.layout.search_settings, (ViewGroup) toolbar.getParent(), false);
-        ((ViewGroup) toolbar.getParent()).addView(searchSettings, ((ViewGroup) toolbar.getParent()).indexOfChild(toolbar));*/
-        searchSettings = (ViewGroup) findViewById(R.id.search_settings_container);
+        tabLayout = (TabLayout) inflater.inflate(R.layout.toolbar_theme, (ViewGroup) toolbar.getParent(), false);
+        ((ViewGroup) toolbar.getParent()).addView(tabLayout, ((ViewGroup) toolbar.getParent()).indexOfChild(toolbar));
+        /*searchSettingsView = (ViewGroup) inflater.inflate(R.layout.search_settings, (ViewGroup) toolbar.getParent(), false);
+        ((ViewGroup) toolbar.getParent()).addView(searchSettingsView, ((ViewGroup) toolbar.getParent()).indexOfChild(toolbar));*/
+        searchSettingsView = (ViewGroup) findViewById(R.id.search_settings_container);
 
         nickBlock = (ViewGroup) findViewById(R.id.search_nick_block);
         resourceBlock = (ViewGroup) findViewById(R.id.search_resource_block);
@@ -98,16 +116,80 @@ public class SearchFragment extends TabFragment {
         submitButton = (Button) findViewById(R.id.search_submit);
 
         viewsReady();
+
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_double_left).setTag("first"));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_left).setTag("prev"));
+        tabLayout.addTab(tabLayout.newTab().setText("Выбор").setTag("selectPage"));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_right).setTag("next"));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_double_right).setTag("last"));
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (refreshLayout.isRefreshing()) return;
+                assert tab.getTag() != null;
+                switch ((String) tab.getTag()) {
+                    case "first":
+                        firstPage();
+                        break;
+                    case "prev":
+                        prevPage();
+                        break;
+                    case "selectPage":
+                        selectPage(data);
+                        break;
+                    case "next":
+                        nextPage();
+                        break;
+                    case "last":
+                        lastPage();
+                        break;
+                }
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                onTabSelected(tab);
+            }
+        });
+
+        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams();
+        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
+        collapsingToolbarLayout.setLayoutParams(params);
+        collapsingToolbarLayout.setScrimVisibleHeightTrigger(App.px56 + App.px24);
+
+        searchSettingsView.setVisibility(View.GONE);
         toolbar.getMenu().clear();
         toolbar.inflateMenu(R.menu.qms_contacts_menu);
-        MenuItem searchItem = toolbar.getMenu().findItem(R.id.action_search);
+        toolbar.getMenu().add("Настройки").setIcon(R.drawable.ic_tune_gray_24dp).setOnMenuItemClickListener(menuItem -> {
+            if (searchSettingsView.getVisibility() == View.VISIBLE) {
+                searchSettingsView.setVisibility(View.GONE);
+            } else {
+                searchSettingsView.setVisibility(View.VISIBLE);
+            }
+            return false;
+        }).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        searchItem = toolbar.getMenu().findItem(R.id.action_search);
         searchView = (SearchView) searchItem.getActionView();
+        searchView.setIconifiedByDefault(true);
+
+        setItems(resourceSpinner, (String[]) resourceItems.toArray(), 0);
+        setItems(resultSpinner, (String[]) resultItems.toArray(), 0);
+        setItems(sortSpinner, (String[]) sortItems.toArray(), 0);
+        setItems(sourceSpinner, (String[]) sourceItems.toArray(), 1);
+        fillSettingsData();
 
         SearchManager searchManager = (SearchManager) getMainActivity().getSystemService(Context.SEARCH_SERVICE);
         if (null != searchManager) {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getMainActivity().getComponentName()));
         }
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -117,52 +199,126 @@ public class SearchFragment extends TabFragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.d("kek", "on query changed start " + newText);
                 return false;
             }
         });
-        searchView.setIconifiedByDefault(true);
+
+        searchView.setQueryHint("Ключевые слова");
         searchItem.expandActionView();
-        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
-        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams();
-        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
-        collapsingToolbarLayout.setLayoutParams(params);
-        collapsingToolbarLayout.setScrimVisibleHeightTrigger(App.px56 + App.px24);
-        searchSettings.setVisibility(View.GONE);
-        toolbar.getMenu().add("SUKA").setIcon(R.drawable.ic_tune_black_24dp).setOnMenuItemClickListener(menuItem -> {
-            if (searchSettings.getVisibility() == View.VISIBLE) {
-                searchSettings.setVisibility(View.GONE);
-            } else {
-                searchSettings.setVisibility(View.VISIBLE);
-            }
-            return false;
-        }).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-        setItems(resourceSpinner, (String[]) resourceItems.toArray(), 0);
-        setItems(resultSpinner, (String[]) resultItems.toArray(), 0);
-        setItems(sortSpinner, (String[]) sortItems.toArray(), 0);
-        setItems(sourceSpinner, (String[]) sourceItems.toArray(), 1);
-
-        resourceSpinner.setOnItemSelectedListener(listener);
-        resultSpinner.setOnItemSelectedListener(listener);
-        sortSpinner.setOnItemSelectedListener(listener);
-        sourceSpinner.setOnItemSelectedListener(listener);
-
-        fillData();
         submitButton.setOnClickListener(v -> startSearch());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(adapter);
         refreshLayout.setOnRefreshListener(this::loadData);
         return view;
     }
 
-    private void startSearch() {
-        if (searchSettings.getVisibility() == View.VISIBLE)
-            searchSettings.setVisibility(View.GONE);
-        settings.setQuery(searchView.getQuery().toString());
-        settings.setNick(nickField.getText().toString());
-        Log.d("SUKA", settings.toUrl());
+    public void jumpToPage(int st) {
+        settings.setSt(st);
         loadData();
+    }
+
+
+    public void firstPage() {
+        if (data.getCurrentPage() <= 0) return;
+        if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
+            jumpToPage(1);
+        } else {
+            jumpToPage(0);
+        }
+    }
+
+
+    public void prevPage() {
+        if (data.getCurrentPage() <= 1) return;
+
+        if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
+            jumpToPage(data.getCurrentPage() - 1);
+        } else {
+            jumpToPage((data.getCurrentPage() - 2) * data.getPostsOnPageCount());
+        }
+    }
+
+
+    public void nextPage() {
+        if (data.getCurrentPage() == data.getAllPagesCount()) return;
+        if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
+            jumpToPage(data.getCurrentPage() + 1);
+        } else {
+            jumpToPage(data.getCurrentPage() * data.getPostsOnPageCount());
+        }
+    }
+
+
+    public void lastPage() {
+        if (data.getCurrentPage() == data.getAllPagesCount()) return;
+
+        if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
+            jumpToPage(data.getAllPagesCount());
+        } else {
+            jumpToPage((data.getAllPagesCount() - 1) * data.getPostsOnPageCount());
+        }
+    }
+
+    protected final ColorFilter colorFilter = new PorterDuffColorFilter(Color.argb(80, 255, 255, 255), PorterDuff.Mode.DST_IN);
+
+    protected void updateNavigation() {
+        if (data.getAllPagesCount() <= 1) {
+            tabLayout.setVisibility(View.GONE);
+            return;
+        }
+        tabLayout.setVisibility(View.VISIBLE);
+        boolean prevDisabled = data.getCurrentPage() <= 1;
+        boolean nextDisabled = data.getCurrentPage() == data.getAllPagesCount();
+        TabLayout.Tab tab;
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            if (i == 2) continue;
+            boolean b = i < 2 ? prevDisabled : nextDisabled;
+            tab = tabLayout.getTabAt(i);
+            if (tab != null && tab.getIcon() != null) {
+                if (b)
+                    tab.getIcon().setColorFilter(colorFilter);
+                else
+                    tab.getIcon().clearColorFilter();
+            }
+        }
+    }
+
+    private void selectPage(SearchResult pageData) {
+        final int[] pages = new int[pageData.getAllPagesCount()];
+
+        for (int i = 0; i < pageData.getAllPagesCount(); i++)
+            pages[i] = i + 1;
+
+        final ListView listView = new ListView(getContext());
+        listView.setDivider(null);
+        listView.setDividerHeight(0);
+        listView.setFastScrollEnabled(true);
+
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        listView.setAdapter(new ThemePagesAdapter(getContext(), pages));
+        listView.setItemChecked(pageData.getCurrentPage() - 1, true);
+        listView.setSelection(pageData.getCurrentPage() - 1);
+
+        AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                .setView(listView)
+                .show();
+
+        if (dialog.getWindow() != null)
+            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
+        listView.setOnItemClickListener((adapterView, view1, i2, l) -> {
+            if (listView.getTag() != null && !((Boolean) listView.getTag())) {
+                return;
+            }
+
+            if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
+                jumpToPage(i2 + 1);
+            } else {
+                jumpToPage(i2 * pageData.getPostsOnPageCount());
+            }
+            dialog.cancel();
+        });
     }
 
     private boolean checkArg(String arg, Pair<String, String> pair) {
@@ -177,7 +333,7 @@ public class SearchFragment extends TabFragment {
         spinner.setSelection(items.indexOf(pair.second));
     }
 
-    private void fillData() {
+    private void fillSettingsData() {
         searchView.setQuery(settings.getQuery(), false);
         nickField.setText(settings.getNick());
 
@@ -258,7 +414,6 @@ public class SearchFragment extends TabFragment {
     };
 
     private void setNewsMode() {
-        resourceBlock.setVisibility(View.VISIBLE);
         nickBlock.setVisibility(View.GONE);
         resultBlock.setVisibility(View.GONE);
         sortBlock.setVisibility(View.GONE);
@@ -266,7 +421,6 @@ public class SearchFragment extends TabFragment {
     }
 
     private void setForumMode() {
-        resourceBlock.setVisibility(View.VISIBLE);
         nickBlock.setVisibility(View.VISIBLE);
         resultBlock.setVisibility(View.VISIBLE);
         sortBlock.setVisibility(View.VISIBLE);
@@ -278,6 +432,35 @@ public class SearchFragment extends TabFragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setSelection(selection);
+        spinner.setOnItemSelectedListener(listener);
+    }
+
+    private void startSearch() {
+        settings.setSt(0);
+        settings.setQuery(searchView.getQuery().toString());
+        settings.setNick(nickField.getText().toString());
+        loadData();
+    }
+
+    private void buildTitle() {
+        titleBuilder.setLength(0);
+        titleBuilder.append("Поиск");
+        if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
+            titleBuilder.append(" новостей");
+        } else {
+            if (settings.getResult().equals(SearchSettings.RESULT_POSTS.first)) {
+                titleBuilder.append(" сообщений");
+            } else {
+                titleBuilder.append(" тем");
+            }
+            if (!settings.getNick().isEmpty()) {
+                titleBuilder.append(" пользователя \"").append(settings.getNick()).append("\"");
+            }
+        }
+        if (!settings.getQuery().isEmpty()) {
+            titleBuilder.append(" по запросу \"").append(settings.getQuery()).append("\"");
+        }
+        setTitle(titleBuilder.toString());
     }
 
     @Override
@@ -285,34 +468,21 @@ public class SearchFragment extends TabFragment {
         if (settings.getQuery().isEmpty() && settings.getNick().isEmpty()) {
             return;
         }
+        buildTitle();
         hidePopupWindows();
+        if (searchSettingsView.getVisibility() == View.VISIBLE) {
+            searchSettingsView.setVisibility(View.GONE);
+        }
         refreshLayout.setRefreshing(true);
-        StringBuilder title = new StringBuilder();
-        title.append("Поиск");
-        if(settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)){
-            title.append(" новостей");
-        }else {
-            if(settings.getResult().equals(SearchSettings.RESULT_POSTS.first)){
-                title.append(" сообщений");
-            }else {
-                title.append(" тем");
-            }
-            if(!settings.getNick().isEmpty()){
-                title.append(" пользователя \"").append(settings.getNick()).append("\"");
-            }
-        }
-        if(!settings.getQuery().isEmpty()){
-            title.append(" по запросу \"").append(settings.getQuery()).append("\"");
-        }
-        setTitle(title.toString());
         mainSubscriber.subscribe(Api.Search().parse(settings), this::onLoadData, new SearchResult(), v -> loadData());
     }
 
     private void onLoadData(SearchResult searchResult) {
-        refreshLayout.setRefreshing(false);
+        data = searchResult;
         Log.d("SUKA", "" + searchResult + " : " + searchResult.getAllPagesCount() + " : " + searchResult.getCurrentPage() + " : " + searchResult.getPostsOnPageCount() + " : " + searchResult.getItems().size());
-        SearchAdapter adapter = new SearchAdapter();
-        adapter.addAll(searchResult.getItems());
-        recyclerView.setAdapter(adapter);
+        refreshLayout.setRefreshing(false);
+        adapter.clear();
+        adapter.addAll(data.getItems());
+        updateNavigation();
     }
 }

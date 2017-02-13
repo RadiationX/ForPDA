@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.api.auth;
 import android.text.Html;
 import android.util.Log;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -50,8 +51,8 @@ public class AuthParser {
         headers.put("captcha-sig", form.getCaptchaSig());
         headers.put("captcha", form.getCaptcha());
         headers.put("return", form.getReturnField());
-        headers.put("login", form.getNick());
-        headers.put("password", form.getPassword());
+        headers.put("login", URLEncoder.encode(form.getNick(), "windows-1251"));
+        headers.put("password", URLEncoder.encode(form.getPassword(), "windows-1251"));
         headers.put("remember", form.getRememberField());
         String response = Client.getInstance().post("https://4pda.ru/forum/index.php?act=auth", headers);
         Matcher matcher = errorPattern.matcher(response);

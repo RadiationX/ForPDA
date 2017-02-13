@@ -32,6 +32,7 @@ public class SearchSettings {
     public final static String ARG_TOPICS = "topics%5B%5D";
     public final static String ARG_SUB_FORUMS = "subforums";
     public final static String ARG_NO_FORM = "noform";
+    public final static String ARG_ST = "st";
 
     public final static Pair<String, String> RESULT_TOPICS = new Pair<>("topics", "Темы");
     public final static Pair<String, String> RESULT_POSTS = new Pair<>("posts", "Сообщения");
@@ -49,13 +50,14 @@ public class SearchSettings {
 
     private String resourceType, result, sort, source, query, nick;
     private int subforums;
+    private int st = 0;
     private List<Integer> forums, topics;
 
     public SearchSettings() {
         resourceType = RESOURCE_FORUM.first;
-        result = RESULT_TOPICS.first;
+        result = RESULT_POSTS.first;
         sort = SORT_DD.first;
-        source = SOURCE_TITLES.first;
+        source = SOURCE_ALL.first;
         query = "";
         nick = "";
         subforums = SUB_FORUMS_FALSE;
@@ -147,6 +149,9 @@ public class SearchSettings {
             name = matcher.group(1);
             value = matcher.group(2);
             switch (name) {
+                case SearchSettings.ARG_ST:
+                    settings.setSt(Integer.parseInt(value));
+                    break;
                 case SearchSettings.ARG_RESULT:
                     settings.setResult(value);
                     break;
@@ -204,7 +209,13 @@ public class SearchSettings {
         builder.scheme("http")
                 .authority("4pda.ru");
         if (settings.getResourceType().equals(RESOURCE_NEWS.first)) {
-            builder.appendQueryParameter(ARG_QUERY_NEWS, settings.getQuery());
+            builder.appendPath("page");
+            builder.appendPath(Integer.toString(settings.getSt()));
+            try {
+                builder.appendQueryParameter(ARG_QUERY_NEWS, URLEncoder.encode(settings.getQuery(), "windows-1251"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         } else {
             builder.appendPath("forum");
             builder.appendQueryParameter("act", "search");
@@ -234,6 +245,7 @@ public class SearchSettings {
 
             builder.appendQueryParameter(ARG_SUB_FORUMS, Integer.toString(settings.getSubforums()));
             builder.appendQueryParameter(ARG_NO_FORM, "1");
+            builder.appendQueryParameter(ARG_ST, Integer.toString(settings.getSt()));
         }
 
         String url = builder.build().toString();
@@ -243,5 +255,13 @@ public class SearchSettings {
             e.printStackTrace();
         }
         return url;
+    }
+
+    public int getSt() {
+        return st;
+    }
+
+    public void setSt(int st) {
+        this.st = st;
     }
 }
