@@ -4,6 +4,7 @@ import java.util.Observer;
 
 import forpdateam.ru.forpda.api.auth.Auth;
 import forpdateam.ru.forpda.api.favorites.Favorites;
+import forpdateam.ru.forpda.api.forum.Forum;
 import forpdateam.ru.forpda.api.mentions.Mentions;
 import forpdateam.ru.forpda.api.news.NewsParser;
 import forpdateam.ru.forpda.api.profile.Profile;
@@ -26,6 +27,7 @@ public class Api {
     private static Favorites favoritesApi = null;
     private static Mentions mentions = null;
     private static Search search = null;
+    private static Forum forum = null;
     private CountsObservable observable = new CountsObservable();
     private int qmsCount = 0, mentionsCount = 0, favoritesCount = 0;
 
@@ -70,10 +72,17 @@ public class Api {
         if (mentions == null) mentions = new Mentions();
         return mentions;
     }
+
     public static Search Search() {
         if (search == null) search = new Search();
         return search;
     }
+
+    public static Forum Forum() {
+        if (forum == null) forum = new Forum();
+        return forum;
+    }
+
 
     public static Api get() {
         if (INSTANCE == null) INSTANCE = new Api();

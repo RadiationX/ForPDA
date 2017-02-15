@@ -26,6 +26,7 @@ import forpdateam.ru.forpda.utils.ourparser.Html;
 import okhttp3.Call;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
+import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -130,29 +131,34 @@ public class Client {
             Log.d("kek", "fixed request url " + url);
         }
 
-        Request.Builder builder = new Request.Builder()
+        Request.Builder requestBuilder = new Request.Builder()
                 .url(url)
                 .header("User-Agent", userAgent);
         if (headers != null || file != null) {
-            MultipartBody.Builder formBodyBuilder = new MultipartBody.Builder();
-            formBodyBuilder.setType(MultipartBody.FORM);
-            if (headers != null) {
+            //FormBody нужен, т.к не все формы корректно работают с MultipartBody
+            if (file == null) {
+                FormBody.Builder formBuilder = new FormBody.Builder();
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
-                    //formBodyBuilder.addFormDataPart(entry.getKey(), URLEncoder.encode(entry.getValue(), "CP1251"));
-                    formBodyBuilder.addFormDataPart(entry.getKey(), entry.getValue());
-                    Log.d("SUKA", "ADD FORM DATA PART " + entry.getKey() + " : " + entry.getValue());
+                    formBuilder.addEncoded(entry.getKey(), entry.getValue());
                 }
+                requestBuilder.post(formBuilder.build());
+            } else {
+                MultipartBody.Builder multipartBuilder = new MultipartBody.Builder();
+                multipartBuilder.setType(MultipartBody.FORM);
+                if (headers != null) {
+                    for (Map.Entry<String, String> entry : headers.entrySet()) {
+                        multipartBuilder.addFormDataPart(entry.getKey(), entry.getValue());
+                    }
+                }
+                multipartBuilder.addFormDataPart(file.getRequestName(), URLEncoder.encode(file.getFileName(), "CP1251"), RequestBodyUtil.create(MediaType.parse(file.getMimeType()), file.getFileStream()));
+                requestBuilder.post(multipartBuilder.build());
             }
-            if (file != null) {
-                formBodyBuilder.addFormDataPart(file.getRequestName(), URLEncoder.encode(file.getFileName(), "CP1251"), RequestBodyUtil.create(MediaType.parse(file.getMimeType()), file.getFileStream()));
-            }
-            builder.post(formBodyBuilder.build());
         }
 
         String res;
         Response response = null;
         try {
-            response = client.newCall(builder.build()).execute();
+            response = client.newCall(requestBuilder.build()).execute();
             if (!response.isSuccessful())
                 throw new OkHttpResponseException(response.code(), response.message(), url);
             res = response.body().string();
@@ -162,8 +168,6 @@ public class Client {
         } finally {
             if (response != null)
                 response.close();
-            if (file != null && file.getFileStream() != null)
-                file.getFileStream().close();
         }
         return res;
     }

@@ -53,6 +53,8 @@ public class AuthParser {
         headers.put("return", form.getReturnField());
         headers.put("login", URLEncoder.encode(form.getNick(), "windows-1251"));
         headers.put("password", URLEncoder.encode(form.getPassword(), "windows-1251"));
+        /*headers.put("login", form.getNick());
+        headers.put("password", form.getPassword());*/
         headers.put("remember", form.getRememberField());
         String response = Client.getInstance().post("https://4pda.ru/forum/index.php?act=auth", headers);
         Matcher matcher = errorPattern.matcher(response);
