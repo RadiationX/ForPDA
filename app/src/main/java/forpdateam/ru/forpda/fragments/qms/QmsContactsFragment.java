@@ -90,6 +90,7 @@ public class QmsContactsFragment extends TabFragment {
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         recyclerView = (RecyclerView) findViewById(R.id.qms_list_contacts);
         viewsReady();
+        loadData();
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

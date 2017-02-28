@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.content.res.AppCompatResources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -111,7 +112,7 @@ public class MenuDrawer {
             menuItems.add(new MenuItem<>("Авторизация", R.drawable.ic_person_add_gray_24dp, AuthFragment.class));
         menuItems.add(new MenuItem<>("Новости", R.drawable.ic_newspaper_gray, NewsListFragment.class));
         menuItems.add(new MenuItem<>("Поиск", R.drawable.ic_search_gray_24dp, SearchFragment.class));
-        menuItems.add(new MenuItem<>("ФОРУМ", R.drawable.contact_vk, ForumFragment.class));
+        menuItems.add(new MenuItem<>("Форум", R.drawable.ic_forum_gray_24dp, ForumFragment.class));
         if (Api.Auth().getState()) {
             menuItems.add(new MenuItem<>("Профиль", R.drawable.ic_person_grary_24dp, ProfileFragment.class));
             menuItems.add(new MenuItem<>("Сообщения", R.drawable.ic_mail_gray_24dp, QmsContactsFragment.class));
@@ -188,15 +189,15 @@ public class MenuDrawer {
 
             if (position == active) {
                 convertView.setBackgroundColor(color);
-                holder.text.setTextColor(App.getContext().getResources().getColor(R.color.colorPrimary));
-                holder.icon.setColorFilter(App.getContext().getResources().getColor(R.color.colorPrimary));
+                holder.text.setTextColor(App.getContext().getResources().getColor(R.color.black));
+                holder.icon.setColorFilter(App.getContext().getResources().getColor(R.color.black));
             } else {
                 convertView.setBackgroundColor(Color.TRANSPARENT);
                 holder.text.setTextColor(App.getContext().getResources().getColor(R.color.text_drawer_item_color));
                 holder.icon.clearColorFilter();
             }
 
-            holder.icon.setImageDrawable(App.getAppDrawable(item.getDrawable()));
+            holder.icon.setImageDrawable(AppCompatResources.getDrawable(App.getContext(), item.getDrawable()));
             holder.text.setText(item.getName());
             return convertView;
         }

@@ -1,15 +1,12 @@
 package forpdateam.ru.forpda.api.forum;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import forpdateam.ru.forpda.api.forum.models.ForumItem;
-import forpdateam.ru.forpda.api.forum.models.ForumItemSecond;
-import forpdateam.ru.forpda.api.mentions.models.MentionsData;
+import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
+import forpdateam.ru.forpda.api.forum.models.ForumItemFlat;
 import forpdateam.ru.forpda.client.Client;
 import io.reactivex.Observable;
 
@@ -25,66 +22,26 @@ public class Forum {
     Pattern forumItemFromSearch = Pattern.compile("<option[^>]*?value=[\"'](\\d+)['\"][^>]*?>[^-\\s]*?(-*?) ([\\s\\S]*?)<\\/option>");
 
 
-    public Observable<ForumItem> getForums() {
-        return Observable.fromCallable(this::parse);
-    }
-
-    public Observable<ForumItem> getForumsSearch() {
+    public Observable<ForumItemTree> getForums() {
         return Observable.fromCallable(this::parseFromSearch);
     }
 
-    private ForumItem parse() throws Exception {
-        String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=idx");
-        Matcher rootMatcher = rootPattern.matcher(response);
-        ForumItem root = new ForumItem();
-        while (rootMatcher.find()) {
-            suka();
-            ForumItem item = new ForumItem();
-            item.setId(Integer.parseInt(rootMatcher.group(1)));
-            item.setTitle(rootMatcher.group(2));
-            root.addForum(recourse(item, rootMatcher.group(3)));
-        }
-        return root;
-    }
-
-    private ForumItem recourse(ForumItem root, String body) throws Exception {
-        suka();
-        Matcher boards = boardsPattern.matcher(body);
-        while (boards.find()) {
-            ForumItem item = new ForumItem();
-            item.setId(Integer.parseInt(boards.group(1)));
-            item.setTitle(boards.group(2));
-            if (item.getTitle().contains("редирект"))
-                continue;
-            String response = Client.getInstance().get("http://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(item.getId())));
-            root.addForum(recourse(item, response));
-        }
-        return root;
-    }
-
-    private int i = 0;
-
-    private void suka() {
-        i++;
-        Log.d("SUKA", "FORUM ITERATOR" + i);
-    }
-
-    private ForumItem parseFromSearch() throws Exception {
+    private ForumItemTree parseFromSearch() throws Exception {
         String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=search");
         Matcher matcher = forumsFromSearch.matcher(response);
-        final ForumItem root = new ForumItem();
+        final ForumItemTree root = new ForumItemTree();
         if (matcher.find()) {
             matcher = forumItemFromSearch.matcher(matcher.group(1));
-
-            List<ForumItem> parentsList = new ArrayList<>();
-            ForumItem lastParent = root;
+            List<ForumItemTree> parentsList = new ArrayList<>();
+            ForumItemTree lastParent = root;
             parentsList.add(lastParent);
             while (matcher.find()) {
-                ForumItem item = new ForumItem();
+                ForumItemTree item = new ForumItemTree();
                 item.setId(Integer.parseInt(matcher.group(1)));
                 item.setLevel(matcher.group(2).length() / 2);
                 item.setTitle(matcher.group(3));
                 if (item.getLevel() <= lastParent.getLevel()) {
+                    //Удаление элементов, учитывая случай с резким скачком уровня вложенности
                     for (int i = 0; i < (lastParent.getLevel() - item.getLevel() + 1); i++)
                         parentsList.remove(parentsList.size() - 1);
                     lastParent = parentsList.get(parentsList.size() - 1);
@@ -99,5 +56,34 @@ public class Forum {
             parentsList.clear();
         }
         return root;
+    }
+
+    public void transformToList(List<ForumItemFlat> list, ForumItemTree rootForum) {
+        if (rootForum.getForums() == null) return;
+        for (ForumItemTree item : rootForum.getForums()) {
+            list.add(new ForumItemFlat(item));
+            transformToList(list, item);
+        }
+    }
+
+    public void transformToTree(List<ForumItemFlat> list, ForumItemTree rootForum) {
+        List<ForumItemTree> parentsList = new ArrayList<>();
+        ForumItemTree lastParent = rootForum;
+        parentsList.add(lastParent);
+        for (ForumItemFlat item : list) {
+            ForumItemTree newItem = new ForumItemTree(item);
+            if (item.getLevel() <= lastParent.getLevel()) {
+                //Удаление элементов, учитывая случай с резким скачком уровня вложенности
+                for (int i = 0; i < (lastParent.getLevel() - item.getLevel() + 1); i++)
+                    parentsList.remove(parentsList.size() - 1);
+                lastParent = parentsList.get(parentsList.size() - 1);
+            }
+            lastParent.addForum(newItem);
+            if (item.getLevel() > lastParent.getLevel()) {
+                lastParent = newItem;
+                parentsList.add(lastParent);
+            }
+        }
+        parentsList.clear();
     }
 }

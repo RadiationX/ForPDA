@@ -97,7 +97,7 @@ public class TabManager {
                 .forEach(fragment -> {
                     transaction.hide(fragment);
                     fragment.onPause();
-        });
+                });
     }
 
     private TabFragment findTabByTag(String tag) {
@@ -124,14 +124,12 @@ public class TabManager {
         if (tabFragment == null)
             return;
         String check;
-        if (tabFragment.isAlone()){
+        if (tabFragment.isAlone()) {
             check = getTagContainClass(tabFragment.getClass());
-        }
-        else{
+        } else {
             check = getTagByUID(tabFragment.getUID());
-
         }
-        Log.d("kek", "add ID "+tabFragment.getUID() );
+        Log.d("kek", "add ID " + tabFragment.getUID());
 
         if (check != null) {
             select(check);

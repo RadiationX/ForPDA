@@ -81,6 +81,7 @@ public class QmsThemesFragment extends TabFragment {
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         recyclerView = (RecyclerView) findViewById(R.id.qms_list_themes);
         viewsReady();
+        loadData();
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -151,7 +152,6 @@ public class QmsThemesFragment extends TabFragment {
     private void bindView() {
         results = realm.where(QmsThemes.class).equalTo("userId", userId).findAll();
 
-        if (results == null) return;
         if (results.size() != 0 && results.last().getThemes().size() != 0) {
             adapter.addAll(results.last().getThemes());
         }

@@ -36,7 +36,6 @@ import java.util.List;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
 import forpdateam.ru.forpda.fragments.TabFragment;

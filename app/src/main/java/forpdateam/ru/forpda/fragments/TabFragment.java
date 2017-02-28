@@ -195,7 +195,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
         Api.get().addObserver((observable, o) -> updateNotifyDot());
 
         Client.getInstance().addNetworkObserver((observable, o) -> {
-            if ((isUseCache() || icNoNetwork.getVisibility() == View.VISIBLE) && (boolean) o) {
+            if ((!isUseCache() || icNoNetwork.getVisibility() == View.VISIBLE) && (boolean) o) {
                 loadData();
                 icNoNetwork.setVisibility(View.GONE);
             }
@@ -208,7 +208,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
 
 
     protected void viewsReady() {
-        if (Client.getInstance().getNetworkState()) {
+        if (Client.getInstance().getNetworkState() && !isUseCache()) {
             loadData();
         }
         /*toolbar.getMenu().add("TESTQMS").setOnMenuItemClickListener(menuItem -> {
@@ -231,7 +231,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
     }
 
     protected void updateNotifyDot() {
-        if (!App.getInstance().getPreferences().getBoolean("main.show_notify_dot", true)){
+        if (!App.getInstance().getPreferences().getBoolean("main.show_notify_dot", true)) {
             notifyDot.setVisibility(View.GONE);
             return;
         }

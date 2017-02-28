@@ -1,14 +1,11 @@
 package forpdateam.ru.forpda.client;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.webkit.MimeTypeMap;
 import android.webkit.WebSettings;
 
 import java.net.URLEncoder;
@@ -23,7 +20,6 @@ import java.util.regex.Pattern;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.utils.ourparser.Html;
-import okhttp3.Call;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.FormBody;

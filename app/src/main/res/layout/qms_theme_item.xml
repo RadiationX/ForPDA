@@ -24,7 +24,7 @@
         android:layout_marginEnd="16dp"
         android:paddingStart="6dp"
         android:paddingEnd="6dp"
-        android:background="@drawable/qms_count_backgroud"
+        android:background="@drawable/qms_count_background"
         android:textColor="@color/white"
         android:textStyle="bold"
         android:text="5" />

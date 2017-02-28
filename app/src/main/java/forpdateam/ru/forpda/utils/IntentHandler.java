@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.forum.ForumFragment;
 import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsChatFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
@@ -130,7 +131,14 @@ public class IntentHandler {
         }
         param = uri.getQueryParameter("showforum");
         if (param != null || uri.toString().matches("act=idx")) {
-            run("showforum " + (param == null ? "0" : param));
+            run("showforum " + (param == null ? "-1" : param));
+            args.putInt(ForumFragment.ARG_FORUM_ID, param == null ? -1 : Integer.parseInt(param));
+            boolean islink = ForumFragment.checkIsLink(param == null ? -1 : Integer.parseInt(param));
+            if(!islink){
+                TabManager.getInstance().add(new TabFragment.Builder<>(ForumFragment.class).setArgs(args).build());
+            }else {
+                run("show topics in forum");
+            }
             return true;
         }
         param = uri.getQueryParameter("act");

@@ -1,91 +1,260 @@
 package forpdateam.ru.forpda.fragments.forum;
 
-import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.TabLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
+import com.nostra13.universalimageloader.utils.L;
 import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.forum.Forum;
-import forpdateam.ru.forpda.api.forum.models.ForumItem;
-import forpdateam.ru.forpda.api.forum.models.ForumItemSecond;
-import forpdateam.ru.forpda.api.mentions.models.MentionsData;
-import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
+import forpdateam.ru.forpda.api.forum.models.ForumItemFlat;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.Utils;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by radiationx on 15.02.17.
  */
 
 public class ForumFragment extends TabFragment {
-    private Subscriber<ForumItem> mainSubscriber = new Subscriber<>();
+    public final static String ARG_FORUM_ID = "ARG_FORUM_ID";
+    private Subscriber<ForumItemTree> mainSubscriber = new Subscriber<>();
+    private NestedScrollView treeContainer;
+    private Realm realm;
+    private RealmResults<ForumItemFlat> results;
+    private static AlertDialogMenu<ForumFragment, ForumItemTree> forumMenu, showedForumMenu;
+    private AlertDialog updateDialog;
+    boolean firstLoad = true;
+    private TreeNode.TreeNodeClickListener nodeClickListener = (node, value) -> {
+        ForumItemTree item = (ForumItemTree) value;
+        if (item.getForums() == null) {
+            Log.d("SUKA", "open " + item.getTitle() + " : " + item.getId());
+        }
+    };
+    private TreeNode.TreeNodeLongClickListener nodeLongClickListener = (node, value) -> {
+        ForumItemTree item = (ForumItemTree) value;
+        if (forumMenu == null) {
+            forumMenu = new AlertDialogMenu<>();
+            showedForumMenu = new AlertDialogMenu<>();
+            forumMenu.addItem("Открыть форум", (context, data) -> {
+
+            });
+            forumMenu.addItem("Скопировать ссылку", (context, data) -> Utils.copyToClipBoard("http://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getId()))));
+            forumMenu.addItem("Отметить прочитанным", (context, data) -> {
+
+            });
+        }
+        showedForumMenu.clear();
+        if (item.getLevel() > 0)
+            showedForumMenu.addItem(forumMenu.get(0));
+        showedForumMenu.addItem(forumMenu.get(1));
+        showedForumMenu.addItem(forumMenu.get(2));
+        new AlertDialog.Builder(getContext())
+                .setItems(showedForumMenu.getTitles(), (dialogInterface, i) -> showedForumMenu.onClick(i, ForumFragment.this, item))
+                .show();
+        return false;
+    };
+    TreeNode root;
+    AndroidTreeView tView;
+    int forumId = -1;
+
 
     @Override
     public String getDefaultTitle() {
-        return "forum))))";
+        return "Форум";
+    }
+
+
+    @Override
+    public boolean isUseCache() {
+        return true;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        realm = Realm.getDefaultInstance();
+        if (getArguments() != null) {
+            forumId = getArguments().getInt(ARG_FORUM_ID, -1);
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         initBaseView(inflater, container);
+        setWhiteBackground();
+        baseInflateFragment(inflater, R.layout.fragment_forum);
+        treeContainer = (NestedScrollView) findViewById(R.id.nested_scroll_view);
+
         viewsReady();
+        toolbar.getMenu().add("Обновить").setOnMenuItemClickListener(item -> {
+            loadData();
+            return false;
+        });
+
+        bindView();
         return view;
     }
 
+
     @Override
     public void loadData() {
-        mainSubscriber.subscribe(Api.Forum().getForumsSearch(), this::onLoadThemes, new ForumItem(), null);
+        firstLoad = false;
+        updateDialog = new AlertDialog.Builder(getContext())
+                .setTitle("Обновление")
+                .setMessage("Загрузка данных")
+                .setCancelable(false)
+                .show();
+        mainSubscriber.subscribe(Api.Forum().getForums(), this::onLoadThemes, new ForumItemTree(), null);
+    }
+
+    private void onLoadThemes(ForumItemTree forumRoot) {
+        updateDialog.setMessage("Обновление базы данных");
+
+        if (forumRoot.getForums() == null) {
+            updateDialog.setMessage("Произошла ошибка");
+            new Handler().postDelayed(() -> {
+                if (updateDialog != null)
+                    updateDialog.cancel();
+            }, 500);
+            return;
+        }
+
+
+        realm.executeTransactionAsync(r -> {
+            r.delete(ForumItemFlat.class);
+            List<ForumItemFlat> items = new ArrayList<>();
+            Api.Forum().transformToList(items, forumRoot);
+            r.copyToRealmOrUpdate(items);
+        }, this::bindView);
+        //setSubtitle(data.getAllPagesCount() <= 1 ? null : "" + data.getCurrentPage() + "/" + data.getAllPagesCount());
+
+
+    }
+
+    private void bindView() {
+        results = realm.where(ForumItemFlat.class).findAll();
+        if (updateDialog != null && updateDialog.isShowing()) {
+            if (results.size() != 0) {
+                updateDialog.setMessage("Обновление прошло успешно");
+            } else {
+                updateDialog.setMessage("Произошла ошибка");
+            }
+            new Handler().postDelayed(() -> {
+                if (updateDialog != null)
+                    updateDialog.cancel();
+            }, 500);
+        }
+        if (results.size() == 0) {
+            if (firstLoad)
+                loadData();
+        } else {
+            //adapter.addAll(results);
+            ForumItemTree rootForum = new ForumItemTree();
+
+            Api.Forum().transformToTree(results, rootForum);
+
+            tView = new AndroidTreeView(getContext());
+            root = TreeNode.root();
+            recourse(rootForum, root);
+            tView.setRoot(root);
+
+            tView.setDefaultContainerStyle(R.style.TreeNodeStyleCustom);
+            tView.setDefaultViewHolder(DefaultForumHolder.class);
+            tView.setDefaultNodeClickListener(nodeClickListener);
+            tView.setDefaultNodeLongClickListener(nodeLongClickListener);
+            treeContainer.removeAllViews();
+            View suka = tView.getView();
+            treeContainer.addView(suka);
+
+            //int id = 427;
+            //int id = 828;
+            //int id = 282;
+            //int id = 269;
+            if (forumId != -1) {
+                scrollToForum(forumId);
+                forumId = -1;
+            }
+        }
     }
 
 
-    private void onLoadThemes(ForumItem forumRoot) {
-        TreeNode root = TreeNode.root();
-        recourse(forumRoot, root);
-        AndroidTreeView tView = new AndroidTreeView(getActivity(), root);
-        ((ViewGroup) view.findViewById(R.id.fragment_content)).addView(tView.getView());
-        List<ForumItem> list = new ArrayList<>();
-        transformToList(list, forumRoot);
-        Log.d("SUKA", "TRANSFORM SIZE "+list.size());
+    private void scrollToForum(int id) {
+        final TreeNode targetNode = findNodeById(id, root);
+
+        if (targetNode != null) {
+            TreeNode upToParent = targetNode;
+            while (upToParent.getParent() != null) {
+                tView.expandNode(upToParent);
+                upToParent = upToParent.getParent();
+            }
+            //ebanarot sho ce take?
+            /*upToParent = targetNode;
+            int i = 0;
+            while (upToParent.getParent() != null) {
+                if (upToParent.getParent() == null) break;
+                upToParent = upToParent.getParent();
+                i++;
+            }
+            if (targetNode.getViewHolder() != null) {
+                TreeNode finalUpToParent = upToParent;
+                int finalI = i;
+                targetNode.getViewHolder().getView().post(() -> {
+                    Log.d("SUKA", "SAJDKL " + finalUpToParent + " : " + root + " indexof " + root.getChildren().indexOf(finalUpToParent) + " : " + finalI);
+                    Log.d("SUKA", "ASD " + treeContainer.getChildAt(0) + " : " + treeContainer.getChildAt(0).getHeight() + " : " + treeContainer.getParent() + " : " + ((ViewGroup) treeContainer.getParent()).getHeight());
+                    Log.d("SUKA", "FINDED BOTTOM " + targetNode.getViewHolder().getView() + " : " + targetNode.getViewHolder().getView().getHeight() + " : " + ((ForumItemTree) targetNode.getValue()).getTitle());
+                    Log.d("SUKA", "asjdkl " + targetNode.getViewHolder().getView().getHeight() + " : " + targetNode.getViewHolder().getView().getBottom() + " : " + targetNode.getViewHolder().getView().getTop() + " : " + ((ViewGroup) treeContainer.getParent()).getTop());
+                    int scrollTo = targetNode.getViewHolder().getView().getBottom() + targetNode.getViewHolder().getView().getTop() - ((ViewGroup) treeContainer.getParent()).getTop();
+                    scrollTo = treeContainer.getChildAt(0).getBottom() - scrollTo;
+                    //int scrollTo = targetNode.getViewHolder().getView().getTop()+targetNode.getViewHolder().getView().getHeight()*finalI;
+                    int scrollTo = targetNode.getViewHolder().getView().getTop() + App.px48 * finalI;
+                    int finalScrollTo = scrollTo;
+                    treeContainer.post(() -> treeContainer.scrollTo(0, finalScrollTo));
+                    Log.d("SUKA", "SCROLL TO " + scrollTo);
+                });
+            }*/
+
+        }
     }
 
-    private void recourse(ForumItem rootForum, TreeNode rootNode) {
+    private TreeNode findNodeById(int id, TreeNode root) {
+        if (root.getValue() != null && ((ForumItemTree) root.getValue()).getId() == id) return root;
+        if (root.getChildren() == null && root.getChildren().size() == 0) return null;
+        for (TreeNode item : root.getChildren()) {
+            TreeNode node = findNodeById(id, item);
+            if (node != null) return node;
+        }
+        return null;
+    }
+
+    private void recourse(ForumItemTree rootForum, TreeNode rootNode) {
         if (rootForum.getForums() == null) return;
-        for (ForumItem item : rootForum.getForums()) {
-            String s = "";
-            for (int i = 0; i < item.getLevel(); s += "-", i++) ;
-            s += item.getTitle();
-            Log.d("SUKA", s);
-            TreeNode child = new TreeNode(s);
+        for (ForumItemTree item : rootForum.getForums()) {
+            TreeNode child = new TreeNode(item);
             recourse(item, child);
             rootNode.addChild(child);
         }
     }
 
-    private void transformToList(List<ForumItem> list, ForumItem rootForum) {
-        if (rootForum.getForums() == null) return;
-        for (ForumItem item : rootForum.getForums()) {
-            list.add(item);
-            transformToList(list, item);
-        }
+
+    public static boolean checkIsLink(int id) {
+        return Realm.getDefaultInstance().where(ForumItemFlat.class).equalTo("parentId", id).findAll().size() == 0;
     }
 }

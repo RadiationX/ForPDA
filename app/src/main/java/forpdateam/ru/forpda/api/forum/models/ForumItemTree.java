@@ -3,14 +3,28 @@ package forpdateam.ru.forpda.api.forum.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by radiationx on 15.02.17.
  */
 
-public class ForumItem {
-    private List<ForumItem> forums;
-    private int id = -1, parentId = -1, level = -1;
+public class ForumItemTree {
+    private int id = -1;
+    private int parentId = -1, level = -1;
     private String title;
+    private List<ForumItemTree> forums;
+
+    public ForumItemTree() {
+    }
+
+    public ForumItemTree(ForumItemFlat item) {
+        id = item.getId();
+        parentId = item.getParentId();
+        title = item.getTitle();
+        level = item.getLevel();
+    }
 
     public int getId() {
         return id;
@@ -44,11 +58,11 @@ public class ForumItem {
         this.level = level;
     }
 
-    public List<ForumItem> getForums() {
+    public List<ForumItemTree> getForums() {
         return forums;
     }
 
-    public void addForum(ForumItem item) {
+    public void addForum(ForumItemTree item) {
         if (forums == null)
             forums = new ArrayList<>();
         forums.add(item);
