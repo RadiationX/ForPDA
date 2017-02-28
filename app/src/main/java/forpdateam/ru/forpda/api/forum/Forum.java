@@ -29,7 +29,7 @@ public class Forum {
         return Observable.fromCallable(this::parse);
     }
 
-    public Observable<List<ForumItemSecond>> getForumsSearch() {
+    public Observable<ForumItem> getForumsSearch() {
         return Observable.fromCallable(this::parseFromSearch);
     }
 
@@ -69,44 +69,35 @@ public class Forum {
         Log.d("SUKA", "FORUM ITERATOR" + i);
     }
 
-    private List<ForumItemSecond> parseFromSearch() throws Exception {
+    private ForumItem parseFromSearch() throws Exception {
         String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=search");
         Matcher matcher = forumsFromSearch.matcher(response);
-        List<ForumItemSecond> forumList = new ArrayList<>();
+        final ForumItem root = new ForumItem();
         if (matcher.find()) {
             matcher = forumItemFromSearch.matcher(matcher.group(1));
 
-            final ForumItemSecond finalParent = new ForumItemSecond();
-            List<ForumItemSecond> parentsList = new ArrayList<>();
-            ForumItemSecond lastParent = finalParent;
+            List<ForumItem> parentsList = new ArrayList<>();
+            ForumItem lastParent = root;
+            parentsList.add(lastParent);
             while (matcher.find()) {
-                ForumItemSecond item = new ForumItemSecond();
+                ForumItem item = new ForumItem();
                 item.setId(Integer.parseInt(matcher.group(1)));
                 item.setLevel(matcher.group(2).length() / 2);
                 item.setTitle(matcher.group(3));
                 if (item.getLevel() <= lastParent.getLevel()) {
-                    if (lastParent.getLevel() == item.getLevel()) {
-                        parentsList.remove(lastParent);
-                    } else {
-                        for (int i = 0; i < (lastParent.getLevel() - item.getLevel() + 1); i++) {
-                            parentsList.remove(parentsList.size() - 1);
-                        }
-                    }
-                    if (parentsList.size() == 0) {
-                        lastParent = finalParent;
-                    } else if (parentsList.size() > 0) {
-                        lastParent = parentsList.get(parentsList.size() - 1);
-                    }
+                    for (int i = 0; i < (lastParent.getLevel() - item.getLevel() + 1); i++)
+                        parentsList.remove(parentsList.size() - 1);
+                    lastParent = parentsList.get(parentsList.size() - 1);
                 }
                 item.setParentId(lastParent.getId());
+                lastParent.addForum(item);
                 if (item.getLevel() > lastParent.getLevel()) {
                     lastParent = item;
                     parentsList.add(lastParent);
                 }
-                forumList.add(item);
             }
             parentsList.clear();
         }
-        return forumList;
+        return root;
     }
 }

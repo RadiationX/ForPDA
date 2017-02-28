@@ -91,7 +91,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '25.1.0'
+    supportLibVersion = '25.2.0'
     okHttpVersion = '3.5.0'
     rxbindingVersion = '0.4.0'
     rxlifecycleVersion = '2.0.1'
@@ -124,4 +124,5 @@ dependencies {
     compile group: 'org.ccil.cowan.tagsoup', name: 'tagsoup', version: '1.2'
     compile 'org.bsc.util:minitemplator-repackaged:1.2'
     compile 'com.lapism:searchview:4.0'
+    compile 'com.github.bmelnychuk:atv:1.2.9'
 }
