@@ -18,6 +18,7 @@ import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsThemesFragment;
 import forpdateam.ru.forpda.fragments.search.SearchFragment;
 import forpdateam.ru.forpda.fragments.theme.ThemeFragmentWeb;
+import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
 import forpdateam.ru.forpda.utils.ourparser.Html;
 
 /**
@@ -132,11 +133,13 @@ public class IntentHandler {
         param = uri.getQueryParameter("showforum");
         if (param != null || uri.toString().matches("act=idx")) {
             run("showforum " + (param == null ? "-1" : param));
-            args.putInt(ForumFragment.ARG_FORUM_ID, param == null ? -1 : Integer.parseInt(param));
-            boolean islink = ForumFragment.checkIsLink(param == null ? -1 : Integer.parseInt(param));
-            if(!islink){
+            int id = param == null ? -1 : Integer.parseInt(param);
+            if (!ForumFragment.checkIsLink(id)) {
+                args.putInt(ForumFragment.ARG_FORUM_ID, id);
                 TabManager.getInstance().add(new TabFragment.Builder<>(ForumFragment.class).setArgs(args).build());
-            }else {
+            } else {
+                args.putInt(TopicsFragment.TOPICS_ID_ARG, id);
+                TabManager.getInstance().add(new TabFragment.Builder<>(TopicsFragment.class).setArgs(args).build());
                 run("show topics in forum");
             }
             return true;

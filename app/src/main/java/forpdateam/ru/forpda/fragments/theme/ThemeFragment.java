@@ -51,6 +51,7 @@ import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
 import forpdateam.ru.forpda.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.messagepanel.attachments.AttachmentsPopup;
 import forpdateam.ru.forpda.utils.FilePickHelper;
+import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 
 /**
@@ -298,7 +299,10 @@ public abstract class ThemeFragment extends TabFragment {
             } else {
                 subMenu.add("Добавить в избранное").setOnMenuItemClickListener(menuItem -> false);
             }
-            subMenu.add("Открыть форум темы").setOnMenuItemClickListener(menuItem -> false);
+            subMenu.add("Открыть форум темы").setOnMenuItemClickListener(menuItem -> {
+                IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + pageData.getForumId());
+                return false;
+            });
             subMenu.add("Кто читает тему").setOnMenuItemClickListener(menuItem -> false);
             subMenu.add("Кто писал сообщения").setOnMenuItemClickListener(menuItem -> false);
         }

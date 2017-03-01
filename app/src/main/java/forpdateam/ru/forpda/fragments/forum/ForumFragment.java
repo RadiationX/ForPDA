@@ -19,11 +19,14 @@ import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
 import forpdateam.ru.forpda.api.forum.models.ForumItemFlat;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -44,7 +47,9 @@ public class ForumFragment extends TabFragment {
     private TreeNode.TreeNodeClickListener nodeClickListener = (node, value) -> {
         ForumItemTree item = (ForumItemTree) value;
         if (item.getForums() == null) {
-            Log.d("SUKA", "open " + item.getTitle() + " : " + item.getId());
+            Bundle args = new Bundle();
+            args.putInt(TopicsFragment.TOPICS_ID_ARG, item.getId());
+            TabManager.getInstance().add(new TabFragment.Builder<>(TopicsFragment.class).setArgs(args).build());
         }
     };
     private TreeNode.TreeNodeLongClickListener nodeLongClickListener = (node, value) -> {
@@ -53,7 +58,9 @@ public class ForumFragment extends TabFragment {
             forumMenu = new AlertDialogMenu<>();
             showedForumMenu = new AlertDialogMenu<>();
             forumMenu.addItem("Открыть форум", (context, data) -> {
-
+                Bundle args = new Bundle();
+                args.putInt(TopicsFragment.TOPICS_ID_ARG, data.getId());
+                TabManager.getInstance().add(new TabFragment.Builder<>(TopicsFragment.class).setArgs(args).build());
             });
             forumMenu.addItem("Скопировать ссылку", (context, data) -> Utils.copyToClipBoard("http://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getId()))));
             forumMenu.addItem("Отметить прочитанным", (context, data) -> {

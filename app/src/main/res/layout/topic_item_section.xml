@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/dp8"
+    android:paddingEnd="@dimen/dp16"
+    android:paddingStart="@dimen/dp16"
+    android:paddingTop="@dimen/dp16"
+    android:background="@color/background">
+
+    <TextView
+        android:id="@+id/topic_item_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAllCaps="true"
+        android:textSize="12sp"
+        android:textColor="@color/text_second_color"/>
+</LinearLayout>

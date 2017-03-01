@@ -1,0 +1,94 @@
+package forpdateam.ru.forpda.api.topcis;
+
+import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
+import forpdateam.ru.forpda.api.topcis.models.TopicItem;
+import forpdateam.ru.forpda.api.topcis.models.TopicsData;
+import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.utils.ourparser.Html;
+import io.reactivex.Observable;
+
+/**
+ * Created by radiationx on 01.03.17.
+ */
+
+public class Topics {
+    private final static Pattern titlePattern = Pattern.compile("<div[^>]*?navstrip[^>]*?>[\\s\\S]*?showforum=(\\d+)[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/div>");
+    private final static Pattern canNewTopicPattern = Pattern.compile("<a[^>]*?href=\"[^\"]*?do=new_post[^\"]*?\"[^>]*?>");
+    private final static Pattern announcePattern = Pattern.compile("<div[^>]*?anonce_body[^>]*?>[\\s\\S]*?<a[^>]*?href=['\"]([^\"']*?)[\"'][^>]*?>([\\s\\S]*?)<\\/a>[^<]*?<\\/div>");
+    private final static Pattern topicsPattern = Pattern.compile("<div[^>]*?data-topic=\"(\\d+)\"[^>]*?>[^<]*?<div[^>]*?class=\"topic_title\"[^>]*?>[^<]*?<span[^>]*?class=\"modifier\"[^>]*?>(?:[^<]*?<font[^>]*?>)?([^<]*?)(?:<\\/font>)?<\\/span>[^<]*?(\\(!\\))?[^<]*?<a[^>]*?href=\"[^\"]*?\"[^>]*?>([\\s\\S]*?)<\\/a>(?: ?&nbsp;[\\s\\S]*?<\\/div>|<\\/div>)[^<]*?<div[^>]*?class=\"topic_body\"[^>]*?>(?:[^<]*?<span[^>]*?class=\"topic_desc\"[^>]*?>(?!автор)([\\s\\S]*?)<br\\s?\\/>[^<]*?<\\/span>)?[^<]*?<span[^>]*?class=\"topic_desc\"[^>]*?>[^<]*?<a[^>]*?showuser=(\\d+)[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/span>[\\s\\S]*?showuser=(\\d+)[^>]*?>([^<]*?)<\\/a>\\s?([^<]*?)(?:<span[\\s\\S]*?showuser=(\\d+)[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/span>)?<\\/div>[^<]*?<\\/div>");
+
+    private final static Pattern pagesPattern = Pattern.compile("parseInt\\((\\d*)\\)[\\s\\S]*?parseInt\\(st\\*(\\d*)\\)[\\s\\S]*?pagination\">[\\s\\S]*?<span[^>]*?>([^<]*?)<\\/span>");
+
+    public Observable<TopicsData> getTopics(int id, int st) {
+        return Observable.fromCallable(() -> parse(id, st));
+    }
+
+    private TopicsData parse(int id, int st) throws Exception {
+        TopicsData data = new TopicsData();
+        String response = Client.getInstance().get("http://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(id)).concat("&st=").concat(Integer.toString(st)));
+
+        Matcher matcher = titlePattern.matcher(response);
+        if (matcher.find()) {
+            data.setId(Integer.parseInt(matcher.group(1)));
+            data.setTitle(matcher.group(2));
+        } else {
+            data.setId(id);
+        }
+
+        matcher = canNewTopicPattern.matcher(response);
+        data.setCanCreateTopic(matcher.find());
+
+        matcher = announcePattern.matcher(response);
+        while (matcher.find()) {
+            TopicItem item = new TopicItem();
+            item.setAnnounce(true);
+            item.setAnnounceUrl(matcher.group(1));
+            item.setTitle(matcher.group(2));
+            data.addAnnounceItem(item);
+        }
+
+        matcher = topicsPattern.matcher(response);
+        while (matcher.find()) {
+            TopicItem item = new TopicItem();
+            item.setId(Integer.parseInt(matcher.group(1)));
+            int p = 0;
+            String tmp = matcher.group(2);
+            if (tmp.contains("+")) p |= TopicItem.NEW_POST;
+            if (tmp.contains("-")) p |= TopicItem.NO_NEW_POST;
+            if (tmp.contains("^")) p |= TopicItem.POLL;
+            if (tmp.contains("Х")) p |= TopicItem.CLOSED;
+            item.setParams(p);
+            item.setPinned(matcher.group(3) != null);
+            item.setTitle(Html.fromHtml(matcher.group(4)).toString());
+            tmp = matcher.group(5);
+            if (tmp != null)
+                item.setDesc(Html.fromHtml(tmp).toString());
+            item.setAuthorId(Integer.parseInt(matcher.group(6)));
+            item.setAuthorNick(Html.fromHtml(matcher.group(7)).toString());
+            item.setLastUserId(Integer.parseInt(matcher.group(8)));
+            item.setLastUserNick(Html.fromHtml(matcher.group(9)).toString());
+            item.setDate(matcher.group(10));
+            tmp = matcher.group(11);
+            if (tmp != null) {
+                item.setCuratorId(Integer.parseInt(tmp));
+                item.setCuratorNick(Html.fromHtml(matcher.group(12)).toString());
+            }
+            if (item.isPinned()) {
+                data.addPinnedItem(item);
+            } else {
+                data.addTopicItem(item);
+            }
+        }
+        matcher = pagesPattern.matcher(response);
+        if (matcher.find()) {
+            data.setAllPagesCount(Integer.parseInt(matcher.group(1)) + 1);
+            data.setItemsPerPage(Integer.parseInt(matcher.group(2)));
+            data.setCurrentPage(Integer.parseInt(matcher.group(3)));
+        }
+        return data;
+    }
+}

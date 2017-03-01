@@ -12,6 +12,7 @@ import forpdateam.ru.forpda.api.qms.Qms;
 import forpdateam.ru.forpda.api.search.Search;
 import forpdateam.ru.forpda.api.theme.Theme;
 import forpdateam.ru.forpda.api.theme.editpost.EditPost;
+import forpdateam.ru.forpda.api.topcis.Topics;
 
 /**
  * Created by radiationx on 29.07.16.
@@ -28,6 +29,7 @@ public class Api {
     private static Mentions mentions = null;
     private static Search search = null;
     private static Forum forum = null;
+    private static Topics topics = null;
     private CountsObservable observable = new CountsObservable();
     private int qmsCount = 0, mentionsCount = 0, favoritesCount = 0;
 
@@ -83,6 +85,10 @@ public class Api {
         return forum;
     }
 
+    public static Topics Topics() {
+        if (topics == null) topics = new Topics();
+        return topics;
+    }
 
     public static Api get() {
         if (INSTANCE == null) INSTANCE = new Api();

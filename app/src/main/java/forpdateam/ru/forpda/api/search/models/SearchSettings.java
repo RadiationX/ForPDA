@@ -189,11 +189,17 @@ public class SearchSettings {
                     break;
             }
             if (name.contains(SearchSettings.ARG_FORUMS_SIMPLE)) {
-                settings.addForum(Integer.parseInt(value));
+                try {
+                    settings.addForum(Integer.parseInt(value));
+                } catch (NumberFormatException ignore) {
+                }
                 continue;
             }
             if (name.contains(SearchSettings.ARG_TOPICS_SIMPLE)) {
-                settings.addTopic(Integer.parseInt(value));
+                try {
+                    settings.addTopic(Integer.parseInt(value));
+                } catch (NumberFormatException ignore) {
+                }
                 continue;
             }
         }
