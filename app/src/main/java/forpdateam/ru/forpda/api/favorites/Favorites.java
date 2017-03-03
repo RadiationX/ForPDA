@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
+import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.client.Client;
 import io.reactivex.Observable;
 
@@ -64,12 +65,7 @@ public class Favorites {
             item.setDate(matcher.group(23));
             data.addItem(item);
         }
-        matcher = pagesPattern.matcher(response);
-        if (matcher.find()) {
-            data.setAllPagesCount(Integer.parseInt(matcher.group(1)) + 1);
-            data.setItemsPerPage(Integer.parseInt(matcher.group(2)));
-            data.setCurrentPage(Integer.parseInt(matcher.group(3)));
-        }
+        data.setPagination(Pagination.parseForum(response));
         Log.d("kek", "parsing time " + ((System.currentTimeMillis() - time)));
 
         return data;

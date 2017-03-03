@@ -2,44 +2,34 @@ package forpdateam.ru.forpda.fragments.search;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.Arrays;
 import java.util.List;
 
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.fragments.theme.adapters.ThemePagesAdapter;
+import forpdateam.ru.forpda.pagination.PaginationHelper;
 
 /**
  * Created by radiationx on 29.01.17.
@@ -65,7 +55,7 @@ public class SearchFragment extends TabFragment {
     private SearchAdapter adapter = new SearchAdapter();
 
     private StringBuilder titleBuilder = new StringBuilder();
-    private TabLayout tabLayout;
+    private PaginationHelper paginationHelper = new PaginationHelper();
 
     @Override
     public String getDefaultTitle() {
@@ -93,10 +83,6 @@ public class SearchFragment extends TabFragment {
         baseInflateFragment(inflater, R.layout.fragment_search);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         recyclerView = (RecyclerView) findViewById(R.id.qms_list_themes);
-        tabLayout = (TabLayout) inflater.inflate(R.layout.toolbar_theme, (ViewGroup) toolbar.getParent(), false);
-        ((ViewGroup) toolbar.getParent()).addView(tabLayout, ((ViewGroup) toolbar.getParent()).indexOfChild(toolbar));
-        /*searchSettingsView = (ViewGroup) inflater.inflate(R.layout.search_settings, (ViewGroup) toolbar.getParent(), false);
-        ((ViewGroup) toolbar.getParent()).addView(searchSettingsView, ((ViewGroup) toolbar.getParent()).indexOfChild(toolbar));*/
         searchSettingsView = (ViewGroup) findViewById(R.id.search_settings_container);
 
         nickBlock = (ViewGroup) findViewById(R.id.search_nick_block);
@@ -116,53 +102,20 @@ public class SearchFragment extends TabFragment {
 
         viewsReady();
 
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_double_left).setTag("first"));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_left).setTag("prev"));
-        tabLayout.addTab(tabLayout.newTab().setText("Выбор").setTag("selectPage"));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_right).setTag("next"));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_double_right).setTag("last"));
-
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        paginationHelper.inflatePagination(getContext(), inflater, toolbar);
+        paginationHelper.setupToolbar((CollapsingToolbarLayout) findViewById(R.id.toolbar_layout));
+        paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (refreshLayout.isRefreshing()) return;
-                assert tab.getTag() != null;
-                switch ((String) tab.getTag()) {
-                    case "first":
-                        firstPage();
-                        break;
-                    case "prev":
-                        prevPage();
-                        break;
-                    case "selectPage":
-                        selectPage(data);
-                        break;
-                    case "next":
-                        nextPage();
-                        break;
-                    case "last":
-                        lastPage();
-                        break;
-                }
-
+            public boolean onTabSelected(TabLayout.Tab tab) {
+                return refreshLayout.isRefreshing();
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                onTabSelected(tab);
+            public void onSelectedPage(int pageNumber) {
+                settings.setSt(pageNumber);
+                loadData();
             }
         });
-
-        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
-        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams();
-        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
-        collapsingToolbarLayout.setLayoutParams(params);
-        collapsingToolbarLayout.setScrimVisibleHeightTrigger(App.px56 + App.px24);
 
         searchSettingsView.setVisibility(View.GONE);
         toolbar.getMenu().clear();
@@ -215,109 +168,6 @@ public class SearchFragment extends TabFragment {
     public void jumpToPage(int st) {
         settings.setSt(st);
         loadData();
-    }
-
-
-    public void firstPage() {
-        if (data.getCurrentPage() <= 0) return;
-        if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
-            jumpToPage(1);
-        } else {
-            jumpToPage(0);
-        }
-    }
-
-
-    public void prevPage() {
-        if (data.getCurrentPage() <= 1) return;
-
-        if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
-            jumpToPage(data.getCurrentPage() - 1);
-        } else {
-            jumpToPage((data.getCurrentPage() - 2) * data.getPostsOnPageCount());
-        }
-    }
-
-
-    public void nextPage() {
-        if (data.getCurrentPage() == data.getAllPagesCount()) return;
-        if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
-            jumpToPage(data.getCurrentPage() + 1);
-        } else {
-            jumpToPage(data.getCurrentPage() * data.getPostsOnPageCount());
-        }
-    }
-
-
-    public void lastPage() {
-        if (data.getCurrentPage() == data.getAllPagesCount()) return;
-
-        if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
-            jumpToPage(data.getAllPagesCount());
-        } else {
-            jumpToPage((data.getAllPagesCount() - 1) * data.getPostsOnPageCount());
-        }
-    }
-
-    protected final ColorFilter colorFilter = new PorterDuffColorFilter(Color.argb(80, 255, 255, 255), PorterDuff.Mode.DST_IN);
-
-    protected void updateNavigation() {
-        if (data.getAllPagesCount() <= 1) {
-            tabLayout.setVisibility(View.GONE);
-            return;
-        }
-        tabLayout.setVisibility(View.VISIBLE);
-        boolean prevDisabled = data.getCurrentPage() <= 1;
-        boolean nextDisabled = data.getCurrentPage() == data.getAllPagesCount();
-        TabLayout.Tab tab;
-        for (int i = 0; i < tabLayout.getTabCount(); i++) {
-            if (i == 2) continue;
-            boolean b = i < 2 ? prevDisabled : nextDisabled;
-            tab = tabLayout.getTabAt(i);
-            if (tab != null && tab.getIcon() != null) {
-                if (b)
-                    tab.getIcon().setColorFilter(colorFilter);
-                else
-                    tab.getIcon().clearColorFilter();
-            }
-        }
-    }
-
-    private void selectPage(SearchResult pageData) {
-        final int[] pages = new int[pageData.getAllPagesCount()];
-
-        for (int i = 0; i < pageData.getAllPagesCount(); i++)
-            pages[i] = i + 1;
-
-        final ListView listView = new ListView(getContext());
-        listView.setDivider(null);
-        listView.setDividerHeight(0);
-        listView.setFastScrollEnabled(true);
-
-        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        listView.setAdapter(new ThemePagesAdapter(getContext(), pages));
-        listView.setItemChecked(pageData.getCurrentPage() - 1, true);
-        listView.setSelection(pageData.getCurrentPage() - 1);
-
-        AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                .setView(listView)
-                .show();
-
-        if (dialog.getWindow() != null)
-            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
-        listView.setOnItemClickListener((adapterView, view1, i2, l) -> {
-            if (listView.getTag() != null && !((Boolean) listView.getTag())) {
-                return;
-            }
-
-            if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
-                jumpToPage(i2 + 1);
-            } else {
-                jumpToPage(i2 * pageData.getPostsOnPageCount());
-            }
-            dialog.cancel();
-        });
     }
 
     private boolean checkArg(String arg, Pair<String, String> pair) {
@@ -478,10 +328,10 @@ public class SearchFragment extends TabFragment {
 
     private void onLoadData(SearchResult searchResult) {
         data = searchResult;
-        Log.d("SUKA", "" + searchResult + " : " + searchResult.getAllPagesCount() + " : " + searchResult.getCurrentPage() + " : " + searchResult.getPostsOnPageCount() + " : " + searchResult.getItems().size());
         refreshLayout.setRefreshing(false);
         adapter.clear();
         adapter.addAll(data.getItems());
-        updateNavigation();
+        paginationHelper.updatePagination(data.getPagination());
+        setSubtitle(paginationHelper.getString());
     }
 }

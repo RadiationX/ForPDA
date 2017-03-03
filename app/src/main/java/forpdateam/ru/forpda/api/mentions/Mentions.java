@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.mentions.models.MentionItem;
 import forpdateam.ru.forpda.api.mentions.models.MentionsData;
+import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.client.Client;
 import io.reactivex.Observable;
 
@@ -14,8 +15,6 @@ import io.reactivex.Observable;
 
 public class Mentions {
     private final static Pattern mentionsPattern = Pattern.compile("<div class=\"topic_title_post ([^\"]*?)\"[^>]*?>([^:]*?):[^<]*?<a[^>]*?href=\"([^\"]*?)\"[^>]*?>(?:([^<]*?)(?:, ([^<]*?)|))<\\/a>[\\s\\S]*?post_date[^\"]*?\"[^>]*?>[^<]*?<a[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?showuser[^>]*>([\\s\\S]*?)<");
-
-    private final static Pattern pagesPattern = Pattern.compile("parseInt\\((\\d*)\\)[\\s\\S]*?parseInt\\(st\\*(\\d*)\\)[\\s\\S]*?pagination\">[\\s\\S]*?<span[^>]*?>([^<]*?)<\\/span>");
 
     public Observable<MentionsData> getMentions(int st) {
         return Observable.fromCallable(() -> _getMentions(st));
@@ -36,12 +35,7 @@ public class Mentions {
             item.setNick(matcher.group(7));
             data.addItem(item);
         }
-        matcher = pagesPattern.matcher(response);
-        if (matcher.find()) {
-            data.setAllPagesCount(Integer.parseInt(matcher.group(1)) + 1);
-            data.setItemsPerPage(Integer.parseInt(matcher.group(2)));
-            data.setCurrentPage(Integer.parseInt(matcher.group(3)));
-        }
+        data.setPagination(Pagination.parseForum(response));
         return data;
     }
 }

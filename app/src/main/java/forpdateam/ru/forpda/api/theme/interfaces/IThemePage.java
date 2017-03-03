@@ -14,12 +14,6 @@ public interface IThemePage {
 
     boolean isInFavorite();
 
-    int getPostsOnPageCount();
-
-    int getAllPagesCount();
-
-    int getCurrentPage();
-
     ArrayList<ThemePost> getPosts();
 
     String getHtml();

@@ -3,6 +3,8 @@ package forpdateam.ru.forpda.api.topcis.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import forpdateam.ru.forpda.api.others.pagination.Pagination;
+
 /**
  * Created by radiationx on 01.03.17.
  */
@@ -14,7 +16,7 @@ public class TopicsData {
     private List<TopicItem> topicItems = new ArrayList<>();
     private List<TopicItem> pinnedItems = new ArrayList<>();
     private List<TopicItem> announceItems = new ArrayList<>();
-    private int itemsPerPage = 20, allPagesCount = 1, currentPage = 1;
+    private Pagination pagination = new Pagination();
 
     public boolean canCreateTopic() {
         return canCreateTopic;
@@ -40,30 +42,6 @@ public class TopicsData {
         this.title = title;
     }
 
-    public int getItemsPerPage() {
-        return itemsPerPage;
-    }
-
-    public void setItemsPerPage(int itemsPerPage) {
-        this.itemsPerPage = itemsPerPage;
-    }
-
-    public int getAllPagesCount() {
-        return allPagesCount;
-    }
-
-    public void setAllPagesCount(int allPagesCount) {
-        this.allPagesCount = allPagesCount;
-    }
-
-    public int getCurrentPage() {
-        return currentPage;
-    }
-
-    public void setCurrentPage(int currentPage) {
-        this.currentPage = currentPage;
-    }
-
     public List<TopicItem> getTopicItems() {
         return topicItems;
     }
@@ -86,5 +64,13 @@ public class TopicsData {
 
     public void addPinnedItem(TopicItem pinnedItem) {
         this.pinnedItems.add(pinnedItem);
+    }
+
+    public Pagination getPagination() {
+        return pagination;
+    }
+
+    public void setPagination(Pagination pagination) {
+        this.pagination = pagination;
     }
 }

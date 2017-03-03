@@ -203,7 +203,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
                 Uri uri = Uri.parse(url);
                 uri = uri.buildUpon()
                         .appendQueryParameter("showtopic", Integer.toString(pageData.getId()))
-                        .appendQueryParameter("st", "" + pageData.getCurrentPage() * pageData.getPostsOnPageCount())
+                        .appendQueryParameter("st", "" + pageData.getPagination().getCurrent() * pageData.getPagination().getPerPage())
                         .build();
                 load(uri);
                 return true;

@@ -3,9 +3,6 @@ package forpdateam.ru.forpda.api.forum.models;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 /**
  * Created by radiationx on 15.02.17.
  */

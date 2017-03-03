@@ -5,28 +5,24 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.nostra13.universalimageloader.utils.L;
 import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
 import forpdateam.ru.forpda.api.forum.models.ForumItemFlat;
+import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
-import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -111,7 +107,7 @@ public class ForumFragment extends TabFragment {
         treeContainer = (NestedScrollView) findViewById(R.id.nested_scroll_view);
 
         viewsReady();
-        toolbar.getMenu().add("Обновить").setOnMenuItemClickListener(item -> {
+        toolbar.getMenu().add("Обновить форумы").setOnMenuItemClickListener(item -> {
             loadData();
             return false;
         });
@@ -151,7 +147,7 @@ public class ForumFragment extends TabFragment {
             Api.Forum().transformToList(items, forumRoot);
             r.copyToRealmOrUpdate(items);
         }, this::bindView);
-        //setSubtitle(data.getAllPagesCount() <= 1 ? null : "" + data.getCurrentPage() + "/" + data.getAllPagesCount());
+        //setSubtitle(data.getAll() <= 1 ? null : "" + data.getCurrent() + "/" + data.getAll());
 
 
     }
@@ -212,32 +208,6 @@ public class ForumFragment extends TabFragment {
                 tView.expandNode(upToParent);
                 upToParent = upToParent.getParent();
             }
-            //ebanarot sho ce take?
-            /*upToParent = targetNode;
-            int i = 0;
-            while (upToParent.getParent() != null) {
-                if (upToParent.getParent() == null) break;
-                upToParent = upToParent.getParent();
-                i++;
-            }
-            if (targetNode.getViewHolder() != null) {
-                TreeNode finalUpToParent = upToParent;
-                int finalI = i;
-                targetNode.getViewHolder().getView().post(() -> {
-                    Log.d("SUKA", "SAJDKL " + finalUpToParent + " : " + root + " indexof " + root.getChildren().indexOf(finalUpToParent) + " : " + finalI);
-                    Log.d("SUKA", "ASD " + treeContainer.getChildAt(0) + " : " + treeContainer.getChildAt(0).getHeight() + " : " + treeContainer.getParent() + " : " + ((ViewGroup) treeContainer.getParent()).getHeight());
-                    Log.d("SUKA", "FINDED BOTTOM " + targetNode.getViewHolder().getView() + " : " + targetNode.getViewHolder().getView().getHeight() + " : " + ((ForumItemTree) targetNode.getValue()).getTitle());
-                    Log.d("SUKA", "asjdkl " + targetNode.getViewHolder().getView().getHeight() + " : " + targetNode.getViewHolder().getView().getBottom() + " : " + targetNode.getViewHolder().getView().getTop() + " : " + ((ViewGroup) treeContainer.getParent()).getTop());
-                    int scrollTo = targetNode.getViewHolder().getView().getBottom() + targetNode.getViewHolder().getView().getTop() - ((ViewGroup) treeContainer.getParent()).getTop();
-                    scrollTo = treeContainer.getChildAt(0).getBottom() - scrollTo;
-                    //int scrollTo = targetNode.getViewHolder().getView().getTop()+targetNode.getViewHolder().getView().getHeight()*finalI;
-                    int scrollTo = targetNode.getViewHolder().getView().getTop() + App.px48 * finalI;
-                    int finalScrollTo = scrollTo;
-                    treeContainer.post(() -> treeContainer.scrollTo(0, finalScrollTo));
-                    Log.d("SUKA", "SCROLL TO " + scrollTo);
-                });
-            }*/
-
         }
     }
 

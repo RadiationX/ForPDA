@@ -3,13 +3,15 @@ package forpdateam.ru.forpda.api.mentions.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import forpdateam.ru.forpda.api.others.pagination.Pagination;
+
 /**
  * Created by radiationx on 21.01.17.
  */
 
 public class MentionsData {
     private List<MentionItem> items = new ArrayList<>();
-    private int itemsPerPage = 20, allPagesCount = 1, currentPage = 1;
+    private Pagination pagination = new Pagination();
 
     public List<MentionItem> getItems() {
         return items;
@@ -19,27 +21,15 @@ public class MentionsData {
         items.add(item);
     }
 
-    public int getItemsPerPage() {
-        return itemsPerPage;
+    public void setItems(List<MentionItem> items) {
+        this.items = items;
     }
 
-    public void setItemsPerPage(int itemsPerPage) {
-        this.itemsPerPage = itemsPerPage;
+    public Pagination getPagination() {
+        return pagination;
     }
 
-    public int getAllPagesCount() {
-        return allPagesCount;
-    }
-
-    public void setAllPagesCount(int allPagesCount) {
-        this.allPagesCount = allPagesCount;
-    }
-
-    public int getCurrentPage() {
-        return currentPage;
-    }
-
-    public void setCurrentPage(int currentPage) {
-        this.currentPage = currentPage;
+    public void setPagination(Pagination pagination) {
+        this.pagination = pagination;
     }
 }

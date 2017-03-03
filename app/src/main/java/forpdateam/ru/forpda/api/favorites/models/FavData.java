@@ -3,14 +3,15 @@ package forpdateam.ru.forpda.api.favorites.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import forpdateam.ru.forpda.api.others.pagination.Pagination;
+
 /**
  * Created by radiationx on 22.09.16.
  */
 
 public class FavData {
     private List<FavItem> items = new ArrayList<>();
-
-    private int itemsPerPage = 20, allPagesCount = 1, currentPage = 1;
+    private Pagination pagination = new Pagination();
 
     public void addItem(FavItem item) {
         items.add(item);
@@ -20,27 +21,11 @@ public class FavData {
         return items;
     }
 
-    public int getItemsPerPage() {
-        return itemsPerPage;
+    public Pagination getPagination() {
+        return pagination;
     }
 
-    public void setItemsPerPage(int itemsPerPage) {
-        this.itemsPerPage = itemsPerPage;
-    }
-
-    public int getAllPagesCount() {
-        return allPagesCount;
-    }
-
-    public void setAllPagesCount(int allPagesCount) {
-        this.allPagesCount = allPagesCount;
-    }
-
-    public int getCurrentPage() {
-        return currentPage;
-    }
-
-    public void setCurrentPage(int currentPage) {
-        this.currentPage = currentPage;
+    public void setPagination(Pagination pagination) {
+        this.pagination = pagination;
     }
 }

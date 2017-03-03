@@ -12,7 +12,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -50,6 +49,7 @@ import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
 import forpdateam.ru.forpda.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.messagepanel.attachments.AttachmentsPopup;
+import forpdateam.ru.forpda.pagination.PaginationHelper;
 import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
@@ -68,7 +68,7 @@ public abstract class ThemeFragment extends TabFragment {
     protected List<ThemePage> history = new ArrayList<>();
     protected Subscriber<ThemePage> mainSubscriber = new Subscriber<>();
     protected Subscriber<String> helperSubscriber = new Subscriber<>();
-    protected TabLayout tabLayout;
+    private PaginationHelper paginationHelper = new PaginationHelper();
     //Тег для вьюхи поиска. Чтобы создавались кнопки и т.д, только при вызове поиска, а не при каждом создании меню.
     protected int searchViewTag = 0;
     protected final ColorFilter colorFilter = new PorterDuffColorFilter(Color.argb(80, 255, 255, 255), PorterDuff.Mode.DST_IN);
@@ -103,57 +103,25 @@ public abstract class ThemeFragment extends TabFragment {
         attachmentsPopup.setAddOnClickListener(v -> pickImage());
         attachmentsPopup.setDeleteOnClickListener(v -> removeFiles());
 
-        tabLayout = (TabLayout) inflater.inflate(R.layout.toolbar_theme, (ViewGroup) toolbar.getParent(), false);
-        ((ViewGroup) toolbar.getParent()).addView(tabLayout, ((ViewGroup) toolbar.getParent()).indexOfChild(toolbar));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_double_left).setTag("first"));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_left).setTag("prev"));
-        tabLayout.addTab(tabLayout.newTab().setText("Выбор").setTag("selectPage"));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_right).setTag("next"));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_double_right).setTag("last"));
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        paginationHelper.inflatePagination(getContext(), inflater, toolbar);
+        paginationHelper.setupToolbar((CollapsingToolbarLayout) findViewById(R.id.toolbar_layout));
+        paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (refreshLayout.isRefreshing()) return;
-                assert tab.getTag() != null;
-                switch ((String) tab.getTag()) {
-                    case "first":
-                        firstPage();
-                        break;
-                    case "prev":
-                        prevPage();
-                        break;
-                    case "selectPage":
-                        selectPage();
-                        break;
-                    case "next":
-                        nextPage();
-                        break;
-                    case "last":
-                        lastPage();
-                        break;
-                }
-
+            public boolean onTabSelected(TabLayout.Tab tab) {
+                return refreshLayout.isRefreshing();
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                onTabSelected(tab);
+            public void onSelectedPage(int pageNumber) {
+                String url = "http://4pda.ru/forum/index.php?showtopic=";
+                url = url.concat(Uri.parse(getTabUrl()).getQueryParameter("showtopic"));
+                if (pageNumber != 0) url = url.concat("&st=").concat(Integer.toString(pageNumber));
+                setTabUrl(url);
+                loadData();
             }
         });
         addShowingView();
         viewsReady();
-
-
-        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
-        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams();
-        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
-        collapsingToolbarLayout.setLayoutParams(params);
-        collapsingToolbarLayout.setScrimVisibleHeightTrigger(App.px56 + App.px24);
 
         refreshLayout.setOnRefreshListener(() -> {
             action = REFRESH_ACTION;
@@ -239,36 +207,18 @@ public abstract class ThemeFragment extends TabFragment {
     }
 
     protected void updateSubTitle() {
-        setSubtitle(String.valueOf(pageData.getCurrentPage()).concat("/").concat(String.valueOf(pageData.getAllPagesCount())));
+        setSubtitle(String.valueOf(pageData.getPagination().getCurrent()).concat("/").concat(String.valueOf(pageData.getPagination().getAll())));
     }
 
     protected void updateFavorites(ThemePage themePage) {
-        if (themePage.getCurrentPage() < themePage.getAllPagesCount()) return;
+        if (themePage.getPagination().getCurrent() < themePage.getPagination().getAll()) return;
         String tag = TabManager.getInstance().getTagContainClass(FavoritesFragment.class);
         if (tag == null) return;
         ((FavoritesFragment) TabManager.getInstance().get(tag)).markRead(themePage.getId());
     }
 
-    protected void updateNavigation(ThemePage themePage) {
-        tabLayout.setVisibility(View.VISIBLE);
-        boolean prevDisabled = themePage.getCurrentPage() <= 1;
-        boolean nextDisabled = themePage.getCurrentPage() == themePage.getAllPagesCount();
-        TabLayout.Tab tab;
-        for (int i = 0; i < tabLayout.getTabCount(); i++) {
-            if (i == 2) continue;
-            boolean b = i < 2 ? prevDisabled : nextDisabled;
-            tab = tabLayout.getTabAt(i);
-            if (tab != null && tab.getIcon() != null) {
-                if (b)
-                    tab.getIcon().setColorFilter(colorFilter);
-                else
-                    tab.getIcon().clearColorFilter();
-            }
-        }
-    }
-
     protected void updateView() {
-        updateNavigation(pageData);
+        paginationHelper.updatePagination(pageData.getPagination());
         setTabUrl(pageData.getUrl());
         updateTitle();
         updateSubTitle();
@@ -370,7 +320,7 @@ public abstract class ThemeFragment extends TabFragment {
         EditPostForm form = new EditPostForm();
         form.setForumId(pageData.getForumId());
         form.setTopicId(pageData.getId());
-        form.setSt(pageData.getCurrentPage() * pageData.getPostsOnPageCount());
+        form.setSt(pageData.getPagination().getCurrent() * pageData.getPagination().getPerPage());
         form.setMessage(messagePanel.getMessage());
         List<AttachmentItem> attachments = messagePanel.getAttachments();
         for (AttachmentItem item : attachments) {
@@ -444,63 +394,42 @@ public abstract class ThemeFragment extends TabFragment {
         return null;
     }
 
-    public void jumpToPage(int st) {
-        String url = "http://4pda.ru/forum/index.php?showtopic=";
-        url = url.concat(Uri.parse(getTabUrl()).getQueryParameter("showtopic"));
-        if (st != 0) url = url.concat("&st=").concat(Integer.toString(st));
-        setTabUrl(url);
-        loadData();
-    }
-
-
     public void firstPage() {
-        if (pageData.getCurrentPage() <= 0) return;
-        jumpToPage(0);
+        paginationHelper.firstPage();
     }
-
 
     public void prevPage() {
-        if (pageData.getCurrentPage() <= 1) return;
-        jumpToPage((pageData.getCurrentPage() - 2) * pageData.getPostsOnPageCount());
+        paginationHelper.prevPage();
     }
 
 
     public void nextPage() {
-        if (pageData.getCurrentPage() == pageData.getAllPagesCount()) return;
-        jumpToPage(pageData.getCurrentPage() * pageData.getPostsOnPageCount());
+        paginationHelper.nextPage();
     }
-
 
     public void lastPage() {
-        if (pageData.getCurrentPage() == pageData.getAllPagesCount()) return;
-        jumpToPage((pageData.getAllPagesCount() - 1) * pageData.getPostsOnPageCount());
+        paginationHelper.lastPage();
     }
-
 
     public void selectPage() {
-        ThemeDialogsHelper.selectPage(this, pageData);
+        paginationHelper.selectPageDialog();
     }
-
 
     public void showUserMenu(final String postId) {
         ThemeDialogsHelper.showUserMenu(this, getPostById(Integer.parseInt(postId)));
     }
 
-
     public void showReputationMenu(final String postId) {
         ThemeDialogsHelper.showReputationMenu(this, getPostById(Integer.parseInt(postId)));
     }
-
 
     public void showPostMenu(final String postId) {
         ThemeDialogsHelper.showPostMenu(this, getPostById(Integer.parseInt(postId)));
     }
 
-
     public void reportPost(final String postId) {
         reportPost(getPostById(Integer.parseInt(postId)));
     }
-
 
     public void insertNick(final String postId) {
         insertNick(getPostById(Integer.parseInt(postId)));

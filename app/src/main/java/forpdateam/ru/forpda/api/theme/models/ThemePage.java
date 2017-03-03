@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.api.theme.models;
 
 import java.util.ArrayList;
 
+import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.theme.interfaces.IThemePage;
 
 /**
@@ -11,6 +12,7 @@ public class ThemePage implements IThemePage {
     private String title, desc, html, url, elementToScroll;
     private boolean inFavorite = false, curator = false, quote = false;
     private ArrayList<ThemePost> posts = new ArrayList<>();
+    private Pagination pagination = new Pagination();
     private Poll poll;
 
     private int id = 0, forumId = 0;
@@ -39,7 +41,7 @@ public class ThemePage implements IThemePage {
         this.curator = curator;
     }
 
-    private int postsOnPageCount = 20, allPagesCount = 1, currentPage = 1, scrollY = 0;
+    private int scrollY = 0;
 
     public int getScrollY() {
         return scrollY;
@@ -81,21 +83,6 @@ public class ThemePage implements IThemePage {
     }
 
     @Override
-    public int getPostsOnPageCount() {
-        return postsOnPageCount;
-    }
-
-    @Override
-    public int getAllPagesCount() {
-        return allPagesCount;
-    }
-
-    @Override
-    public int getCurrentPage() {
-        return currentPage;
-    }
-
-    @Override
     public ArrayList<ThemePost> getPosts() {
         return posts;
     }
@@ -112,20 +99,8 @@ public class ThemePage implements IThemePage {
         this.inFavorite = inFavorite;
     }
 
-    public void setPostsOnPageCount(int postsOnPageCount) {
-        this.postsOnPageCount = postsOnPageCount;
-    }
-
-    public void setAllPagesCount(int allPagesCount) {
-        this.allPagesCount = allPagesCount;
-    }
-
     public void addPost(ThemePost post) {
         posts.add(post);
-    }
-
-    public void setCurrentPage(int currentPage) {
-        this.currentPage = currentPage;
     }
 
     public String getHtml() {
@@ -152,7 +127,15 @@ public class ThemePage implements IThemePage {
         this.forumId = forumId;
     }
 
+    public Pagination getPagination() {
+        return pagination;
+    }
+
+    public void setPagination(Pagination pagination) {
+        this.pagination = pagination;
+    }
+
     public int getSt() {
-        return currentPage * postsOnPageCount;
+        return pagination.getCurrent() * pagination.getPerPage();
     }
 }

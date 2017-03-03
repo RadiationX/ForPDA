@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.fragments.theme.adapters;
+package forpdateam.ru.forpda.pagination;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,12 +10,12 @@ import android.widget.TextView;
 /**
  * Created by radiationx on 26.10.16.
  */
-public class ThemePagesAdapter extends BaseAdapter {
+public class PaginationAdapter extends BaseAdapter {
     private final String page = "Страница №";
     private final LayoutInflater inflater;
     private final int[] data;
 
-    public ThemePagesAdapter(Context context, int[] data) {
+    public PaginationAdapter(Context context, int[] data) {
         this.data = data;
         inflater = LayoutInflater.from(context);
     }

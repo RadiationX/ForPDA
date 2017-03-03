@@ -1,15 +1,11 @@
 package forpdateam.ru.forpda.fragments.theme;
 
 import android.support.v7.app.AlertDialog;
-import android.view.WindowManager;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
-import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
-import forpdateam.ru.forpda.fragments.theme.adapters.ThemePagesAdapter;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 
@@ -114,38 +110,6 @@ class ThemeDialogsHelper {
         new AlertDialog.Builder(theme.getContext())
                 .setItems(showedPostMenu.getTitles(), (dialogInterface, i) -> showedPostMenu.onClick(i, theme, post))
                 .show();
-    }
-
-    static void selectPage(ThemeFragment theme, ThemePage pageData) {
-        final int[] pages = new int[pageData.getAllPagesCount()];
-
-        for (int i = 0; i < pageData.getAllPagesCount(); i++)
-            pages[i] = i + 1;
-
-        final ListView listView = new ListView(theme.getContext());
-        listView.setDivider(null);
-        listView.setDividerHeight(0);
-        listView.setFastScrollEnabled(true);
-
-        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        listView.setAdapter(new ThemePagesAdapter(theme.getContext(), pages));
-        listView.setItemChecked(pageData.getCurrentPage() - 1, true);
-        listView.setSelection(pageData.getCurrentPage() - 1);
-
-        AlertDialog dialog = new AlertDialog.Builder(theme.getActivity())
-                .setView(listView)
-                .show();
-
-        if (dialog.getWindow() != null)
-            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
-        listView.setOnItemClickListener((adapterView, view1, i2, l) -> {
-            if (listView.getTag() != null && !((Boolean) listView.getTag())) {
-                return;
-            }
-            theme.jumpToPage(i2 * pageData.getPostsOnPageCount());
-            dialog.cancel();
-        });
     }
 }
 

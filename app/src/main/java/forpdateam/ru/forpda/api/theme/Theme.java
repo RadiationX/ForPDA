@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.theme.models.Poll;
 import forpdateam.ru.forpda.api.theme.models.PollQuestion;
 import forpdateam.ru.forpda.api.theme.models.PollQuestionItem;
@@ -28,10 +29,8 @@ public class Theme {
     //g: Because it is faster
     private final static Pattern postsPattern = Pattern.compile("<a name=\"entry([^\"]*?)\"[^>]*?><\\/a><div class=\"post_header_container\"><div class=\"post_header\"><span class=\"post_date\">([^&]*?)&[^<]*?<a[^>]*?>#(\\d+)<\\/a>[^<]*?<\\/span>[\\s\\S]*?<font color=\"([^\"]*?)\">[^<]*?<\\/font>[\\s\\S]*?<a[^>]*?data-av=\"([^\"]*?)\"[^>]*?>([^<]*?)<[\\s\\S]*?<a[^>]*?showuser=([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[\\s\\S]*?<span[^>]*?post_user_info[^>]>(<strong[\\s\\S]*?<\\/strong>(?:<br[^>]*?>))?(?:<span[^<]*?color:([^;']*)[^>]*?>)?([\\s\\S]*?)(?:<\\/span>|)(?:  \\| [^<]*?)?<\\/span>[\\s\\S]*?(<a[^>]*?win_minus[^>]*?>[\\s\\S]*?<\\/a>|) \\([\\s\\S]*?ajaxrep[^>]*?>([^<]*?)<\\/span><\\/a>\\)[^<]*(<a[^>]*?win_add[^>]*?>[\\s\\S]*?<\\/a>|)<br[^>]*?>[^<]*?<span class=\"post_action\">(<a[^>]*?report[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?edit_post[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?delete[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?CODE=02[^>]*?>[^<]*?<\\/a>|)[^<]*[^<]*[\\s\\S]*?<div class=\"post_body[^>]*?>([\\s\\S]*?)<\\/div><\\/div>(?:<div data-post|<!-- TABLE FOOTER -->|<div class=\"topic_foot_nav\">)");
 
-    private final static Pattern countsPattern = Pattern.compile("parseInt\\((\\d*)\\)[\\s\\S]*?parseInt\\(st\\*(\\d*)\\)");
     private final static Pattern titlePattern = Pattern.compile("<div class=\"topic_title_post\">(?:([^<]*?)(?:, ([^<]*?)|))<br");
     private final static Pattern alreadyInFavPattern = Pattern.compile("Тема уже добавлена в <a href=\"[^\"]*act=fav\">");
-    private final static Pattern paginationPattern = Pattern.compile("pagination\">([\\s\\S]*?<span[^>]*?>([^<]*?)</span>[\\s\\S]*?)</div><br");
     private final static Pattern themeIdPattern = Pattern.compile("ipb_input_f:(\\d+),[\\s\\S]*?ipb_input_t:(\\d+),");
     public final static Pattern elemToScrollPattern = Pattern.compile("(?:anchor=|#)([^&\\n\\=\\?\\.\\#]*)");
     //private final static Pattern newsPattern = Pattern.compile("<section[^>]*?><article[^>]*?>[^<]*?<div class=\"container\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\" alt=\"([\\s\\S]*?)\"[\\s\\S]*?<em[^>]*>([^<]*?)</em>[\\s\\S]*?<a href=\"([^\"]*?)\">([\\s\\S]*?)</a>[\\s\\S]*?<a[^>]*?>([^<]*?)</a><div[^>]*?># ([\\s\\S]*?)</div>[\\s\\S]*?<div class=\"content-box\"[^>]*?>([\\s\\S]*?)</div></div></div>[^<]*?<div class=\"materials-box\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?<div class=\"comment-box\" id=\"comments\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[^<]*?<form");
@@ -82,15 +81,7 @@ public class Theme {
             page.setForumId(Integer.parseInt(matcher.group(1)));
             page.setId(Integer.parseInt(matcher.group(2)));
         }
-        matcher = countsPattern.matcher(response);
-        if (matcher.find()) {
-            page.setAllPagesCount(Integer.parseInt(matcher.group(1)) + 1);
-            page.setPostsOnPageCount(Integer.parseInt(matcher.group(2)));
-        }
-        matcher = paginationPattern.matcher(response);
-        if (matcher.find()) {
-            page.setCurrentPage(Integer.parseInt(matcher.group(2)));
-        }
+        page.setPagination(Pagination.parseForum(response));
         matcher = titlePattern.matcher(response);
         if (matcher.find()) {
             page.setTitle(matcher.group(1));
@@ -172,16 +163,16 @@ public class Theme {
             long time2 = System.currentTimeMillis();
             MiniTemplator t = App.getInstance().getTemplator();
             boolean authorized = Api.Auth().getState();
-            boolean prevDisabled = page.getCurrentPage() <= 1;
-            boolean nextDisabled = page.getCurrentPage() == page.getAllPagesCount();
+            boolean prevDisabled = page.getPagination().getCurrent() <= 1;
+            boolean nextDisabled = page.getPagination().getCurrent() == page.getPagination().getAll();
 
             t.setVariableOpt("topic_title", page.getTitle());
             t.setVariableOpt("topic_url", redirectUrl);
             t.setVariableOpt("topic_description", page.getDesc());
             t.setVariableOpt("in_favorite", Boolean.toString(page.isInFavorite()));
-            t.setVariableOpt("all_pages", page.getAllPagesCount());
-            t.setVariableOpt("posts_on_page", page.getPostsOnPageCount());
-            t.setVariableOpt("current_page", page.getCurrentPage());
+            t.setVariableOpt("all_pages", page.getPagination().getAll());
+            t.setVariableOpt("posts_on_page", page.getPagination().getPerPage());
+            t.setVariableOpt("current_page", page.getPagination().getCurrent());
             t.setVariableOpt("authorized", Boolean.toString(authorized));
             t.setVariableOpt("is_curator", Boolean.toString(page.isCurator()));
             t.setVariableOpt("member_id", Api.Auth().getUserIdInt());
