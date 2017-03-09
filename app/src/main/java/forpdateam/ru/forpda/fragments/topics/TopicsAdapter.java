@@ -56,15 +56,14 @@ public class TopicsAdapter extends SectionedRecyclerViewAdapter<TopicsAdapter.Vi
 
     private int[] getPosition(int layPos) {
         int result[] = new int[]{-1, -1};
-        int lastSectionSize = 0, sectionSize = 0;
+        int sumPrevSections = 0;
         for (int i = 0; i < getSectionCount(); i++) {
-            sectionSize = sections.get(i).second.size();
-            result[0]++;
-            result[1] = layPos - i - lastSectionSize - 1;
-            if (layPos <= sectionSize + 1) break;
-            lastSectionSize = sectionSize;
+            result[0] = i;
+            result[1] = layPos - i - sumPrevSections - 1;
+            sumPrevSections += getItemCount(i);
+            if (sumPrevSections + i >= layPos) break;
         }
-        if (result[1] < 0 || result[1] >= sectionSize) {
+        if (result[1] < 0) {
             result[0] = -1;
             result[1] = -1;
         }

@@ -46,7 +46,7 @@ public class ThemeFragmentNative extends ThemeFragment {
     protected void updateView() {
         super.updateView();
         Date date = new Date();
-        adapter = new ThemeAdapter(pageData.getPosts(), getContext());
+        adapter = new ThemeAdapter(currentPage.getPosts(), getContext());
         recyclerView.setAdapter(adapter);
         Log.d("kek", "theme UI CREATE time " + (new Date().getTime() - date.getTime()));
     }

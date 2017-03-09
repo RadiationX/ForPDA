@@ -22,7 +22,7 @@ class ThemeDialogsHelper {
             userMenu = new AlertDialogMenu<>();
             showedUserMenu = new AlertDialogMenu<>();
             userMenu.addItem("Профиль", (context, data) -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + data.getUserId()));
-            userMenu.addItem("Личные сообщения QMS", (context, data) -> IntentHandler.handle("http://4pda.ru/forum/index.php?act=qms&mid=" + data.getUserId()));
+            userMenu.addItem("Личные сообщения QMS", (context, data) -> IntentHandler.handle("http://4pda.ru/forum/index.php?act=qms&amp;mid=" + data.getUserId()));
             userMenu.addItem("Темы пользователя", (context, data) -> {
                 SearchSettings settings = new SearchSettings();
                 settings.setSource(SearchSettings.SOURCE_ALL.first);
@@ -32,8 +32,8 @@ class ThemeDialogsHelper {
             });
             userMenu.addItem("Сообщения в этой теме", (context, data) -> {
                 SearchSettings settings = new SearchSettings();
-                settings.addForum(context.pageData.getForumId());
-                settings.addTopic(context.pageData.getId());
+                settings.addForum(context.currentPage.getForumId());
+                settings.addTopic(context.currentPage.getId());
                 settings.setSource(SearchSettings.SOURCE_CONTENT.first);
                 settings.setNick(data.getNick());
                 settings.setResult(SearchSettings.RESULT_POSTS.first);
@@ -97,7 +97,7 @@ class ThemeDialogsHelper {
         }
         showedPostMenu.clear();
         if (Api.Auth().getState()) {
-            if (theme.pageData.canQuote())
+            if (theme.currentPage.canQuote())
                 showedPostMenu.addItem(postMenu.get(0));
             if (post.canReport())
                 showedPostMenu.addItem(postMenu.get(1));

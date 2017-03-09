@@ -271,6 +271,11 @@ public class QmsChatFragment extends TabFragment {
         adapter.setOnItemClickListener(onItemClickListener);
         adapter.setOnLongItemClickListener(onLongItemClickListener);
         recyclerView.setAdapter(adapter);
+        if (chat.getTitle().contains(chat.getNick())) {
+            setTabTitle("Диалог: ".concat(chat.getTitle()));
+        } else {
+            setTabTitle("Диалог c ".concat(chat.getNick()).concat(": ").concat(chat.getTitle()));
+        }
         setTitle(chat.getTitle());
         setSubtitle(chat.getNick());
         if (avatarUrl == null) {

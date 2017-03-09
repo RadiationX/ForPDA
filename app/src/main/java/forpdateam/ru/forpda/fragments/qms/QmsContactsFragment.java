@@ -43,7 +43,7 @@ public class QmsContactsFragment extends TabFragment {
     private QmsContactsAdapter.OnItemClickListener onItemClickListener =
             contact -> {
                 Bundle args = new Bundle();
-                args.putString(TabFragment.TITLE_ARG, QmsThemesFragment.createTitle(contact.getNick()));
+                args.putString(TabFragment.TITLE_ARG, contact.getNick());
                 args.putInt(QmsThemesFragment.USER_ID_ARG, contact.getId());
                 args.putString(QmsThemesFragment.USER_AVATAR_ARG, contact.getAvatar());
                 TabManager.getInstance().add(new TabFragment.Builder<>(QmsThemesFragment.class).setArgs(args).build());
@@ -157,15 +157,13 @@ public class QmsContactsFragment extends TabFragment {
 
     @Override
     public void loadData() {
-        if (refreshLayout != null)
-            refreshLayout.setRefreshing(true);
+        refreshLayout.setRefreshing(true);
         mainSubscriber.subscribe(Api.Qms().getContactList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
     }
 
     private void onLoadContacts(ArrayList<QmsContact> data) {
         Log.d("kek", "loaded itms " + data.size() + " : " + results.size());
-        if (refreshLayout != null)
-            refreshLayout.setRefreshing(false);
+        refreshLayout.setRefreshing(false);
 
         if (data.size() == 0)
             return;
@@ -184,8 +182,7 @@ public class QmsContactsFragment extends TabFragment {
     }
 
     public void deleteDialog(int mid) {
-        if (refreshLayout != null)
-            refreshLayout.setRefreshing(true);
+        refreshLayout.setRefreshing(true);
         helperSubscriber.subscribe(Api.Qms().deleteDialog(mid), this::onDeletedDialog, "");
     }
 

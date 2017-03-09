@@ -5,10 +5,6 @@ import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.view.ViewCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -70,7 +66,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
                         return true;
                     })
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-            if (pageData.canQuote())
+            if (currentPage.canQuote())
                 menu.add("Цитировать")
                         .setIcon(App.getAppDrawable(R.drawable.ic_quote_post_gray_24dp))
                         .setOnMenuItemClickListener(item -> {
@@ -110,16 +106,16 @@ public class ThemeFragmentWeb extends ThemeFragment {
             chromeClient = new ThemeFragmentWeb.ThemeChromeClient();
             webView.setWebChromeClient(chromeClient);
         }
-        webView.loadDataWithBaseURL("http://4pda.ru/forum/", pageData.getHtml(), "text/html", "utf-8", null);
+        webView.loadDataWithBaseURL("http://4pda.ru/forum/", currentPage.getHtml(), "text/html", "utf-8", null);
     }
 
     @Override
     protected void saveToHistory(ThemePage themePage) {
-        if (pageData.getUrl().equals(getTabUrl())) {
+        if (currentPage.getUrl().equals(getTabUrl())) {
             themePage.setScrollY(webView.getScrollY());
         } else {
-            pageData.setScrollY(webView.getScrollY());
-            history.add(pageData);
+            currentPage.setScrollY(webView.getScrollY());
+            history.add(currentPage);
             webView.evalJs("ITheme.setHistoryBody(" + (history.size() - 1) + ",'<!DOCTYPE html><html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');");
         }
     }
@@ -206,8 +202,8 @@ public class ThemeFragmentWeb extends ThemeFragment {
             if (m.find()) {
                 Uri uri = Uri.parse(url);
                 uri = uri.buildUpon()
-                        .appendQueryParameter("showtopic", Integer.toString(pageData.getId()))
-                        .appendQueryParameter("st", "" + pageData.getPagination().getCurrent() * pageData.getPagination().getPerPage())
+                        .appendQueryParameter("showtopic", Integer.toString(currentPage.getId()))
+                        .appendQueryParameter("st", "" + currentPage.getPagination().getCurrent() * currentPage.getPagination().getPerPage())
                         .build();
                 load(uri);
                 return true;
@@ -242,7 +238,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
             if (action == BACK_ACTION || action == REFRESH_ACTION)
                 webView.evalJs("window.doOnLoadScroll = false");
             if (action == BACK_ACTION)
-                webView.scrollTo(0, pageData.getScrollY());
+                webView.scrollTo(0, currentPage.getScrollY());
         }
     }
 
@@ -252,7 +248,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
             if (action == NORMAL_ACTION)
                 webView.evalJs("onProgressChanged()");
             else if (action == BACK_ACTION || action == REFRESH_ACTION)
-                webView.scrollTo(0, pageData.getScrollY());
+                webView.scrollTo(0, currentPage.getScrollY());
         }
     }
 

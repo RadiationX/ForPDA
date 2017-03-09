@@ -32,7 +32,7 @@ public class Theme {
     private final static Pattern titlePattern = Pattern.compile("<div class=\"topic_title_post\">(?:([^<]*?)(?:, ([^<]*?)|))<br");
     private final static Pattern alreadyInFavPattern = Pattern.compile("Тема уже добавлена в <a href=\"[^\"]*act=fav\">");
     private final static Pattern themeIdPattern = Pattern.compile("ipb_input_f:(\\d+),[\\s\\S]*?ipb_input_t:(\\d+),");
-    public final static Pattern elemToScrollPattern = Pattern.compile("(?:anchor=|#|p=|pid=)([^&\\n\\=\\?\\.\\#]*)");
+    public final static Pattern elemToScrollPattern = Pattern.compile("(?:anchor=|#)([^&\\n\\=\\?\\.\\#]*)");
     //private final static Pattern newsPattern = Pattern.compile("<section[^>]*?><article[^>]*?>[^<]*?<div class=\"container\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\" alt=\"([\\s\\S]*?)\"[\\s\\S]*?<em[^>]*>([^<]*?)</em>[\\s\\S]*?<a href=\"([^\"]*?)\">([\\s\\S]*?)</a>[\\s\\S]*?<a[^>]*?>([^<]*?)</a><div[^>]*?># ([\\s\\S]*?)</div>[\\s\\S]*?<div class=\"content-box\"[^>]*?>([\\s\\S]*?)</div></div></div>[^<]*?<div class=\"materials-box\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?<div class=\"comment-box\" id=\"comments\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[^<]*?<form");
 
     private final static Pattern pollMainPattern = Pattern.compile("<form[^>]*?addpoll[^>]*?post[^>]*?>[\\s\\S]*?<tr[^>]*?>[^<]*?<th[^>]*?>(?:<[^>]*>)([^>]*?)(?:<[^>]*>)<\\/th>[^<]*?<\\/tr>([\\s\\S]*?)<tr>[^<]*?<td[^>]*?>[^<]*?(?:<b>)Всего голосов: ([\\d]*?)(?:<\\/b>)[\\s\\S]*?<td[^>]*?formbuttonrow[^>]*?>([\\s\\S]*?)<\\/td>[\\s\\S]*?<\\/form>");

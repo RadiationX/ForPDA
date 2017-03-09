@@ -29,9 +29,8 @@ public class QmsThemesFragment extends TabFragment {
     public final static String defaultTitle = "Диалоги";
     public final static String USER_ID_ARG = "USER_ID_ARG";
     public final static String USER_AVATAR_ARG = "USER_AVATAR_ARG";
-    private int userId;
     private String avatarUrl;
-    private String userNick;
+    private QmsThemes currentThemes = new QmsThemes();
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
     private QmsThemesAdapter adapter;
@@ -42,7 +41,7 @@ public class QmsThemesFragment extends TabFragment {
                 Bundle args = new Bundle();
                 args.putString(TabFragment.TITLE_ARG, theme.getName());
                 args.putString(TabFragment.SUBTITLE_ARG, getTitle());
-                args.putInt(QmsChatFragment.USER_ID_ARG, userId);
+                args.putInt(QmsChatFragment.USER_ID_ARG, currentThemes.getUserId());
                 args.putString(QmsChatFragment.USER_AVATAR_ARG, avatarUrl);
                 args.putInt(QmsChatFragment.THEME_ID_ARG, theme.getId());
                 args.putString(QmsChatFragment.THEME_TITLE_ARG, theme.getName());
@@ -65,7 +64,7 @@ public class QmsThemesFragment extends TabFragment {
         super.onCreate(savedInstanceState);
         realm = Realm.getDefaultInstance();
         if (getArguments() != null) {
-            userId = getArguments().getInt(USER_ID_ARG);
+            currentThemes.setUserId(getArguments().getInt(USER_ID_ARG));
             avatarUrl = getArguments().getString(USER_AVATAR_ARG);
         }
     }
@@ -89,8 +88,8 @@ public class QmsThemesFragment extends TabFragment {
         fab.setImageDrawable(App.getAppDrawable(R.drawable.ic_create_white_24dp));
         fab.setOnClickListener(view1 -> {
             Bundle args = new Bundle();
-            args.putInt(QmsChatFragment.USER_ID_ARG, userId);
-            args.putString(QmsChatFragment.USER_NICK_ARG, userNick);
+            args.putInt(QmsChatFragment.USER_ID_ARG, currentThemes.getUserId());
+            args.putString(QmsChatFragment.USER_NICK_ARG, currentThemes.getNick());
             args.putString(QmsChatFragment.USER_AVATAR_ARG, avatarUrl);
             TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).setArgs(args).build());
         });
@@ -106,7 +105,7 @@ public class QmsThemesFragment extends TabFragment {
         if (avatarUrl != null) {
             ImageLoader.getInstance().displayImage(avatarUrl, toolbarImageView);
             toolbarImageView.setVisibility(View.VISIBLE);
-            toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + userId));
+            toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + currentThemes.getUserId()));
         } else {
             toolbarImageView.setVisibility(View.GONE);
         }
@@ -114,28 +113,27 @@ public class QmsThemesFragment extends TabFragment {
 
     @Override
     public void loadData() {
-        if (refreshLayout != null)
-            refreshLayout.setRefreshing(true);
-        mainSubscriber.subscribe(Api.Qms().getThemesList(userId), this::onLoadThemes, new QmsThemes(), v -> loadData());
+        refreshLayout.setRefreshing(true);
+        mainSubscriber.subscribe(Api.Qms().getThemesList(currentThemes.getUserId()), this::onLoadThemes, currentThemes, v -> loadData());
     }
 
-    private void onLoadThemes(QmsThemes data) {
-        if (refreshLayout != null)
-            refreshLayout.setRefreshing(false);
+    private void onLoadThemes(QmsThemes themes) {
+        refreshLayout.setRefreshing(false);
 
+        currentThemes = themes;
 
-        userNick = data.getNick();
-        setTitle(createTitle(userNick));
-        if (data.getThemes().size() == 0 && userNick != null) {
+        setTabTitle("Диалоги с ".concat(currentThemes.getNick()));
+        setTitle(currentThemes.getNick());
+        if (currentThemes.getThemes().size() == 0 && currentThemes.getNick() != null) {
             Bundle args = new Bundle();
-            args.putInt(QmsChatFragment.USER_ID_ARG, userId);
-            args.putString(QmsChatFragment.USER_NICK_ARG, userNick);
+            args.putInt(QmsChatFragment.USER_ID_ARG, currentThemes.getUserId());
+            args.putString(QmsChatFragment.USER_NICK_ARG, currentThemes.getNick());
             args.putString(QmsChatFragment.USER_AVATAR_ARG, avatarUrl);
             TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).setArgs(args).build());
             //new Handler().postDelayed(() -> TabManager.getInstance().remove(getTag()), 500);
             return;
         }
-        if (data.getThemes().size() == 0)
+        if (currentThemes.getThemes().size() == 0)
             return;
         if (results != null) {
             realm.beginTransaction();
@@ -146,20 +144,14 @@ public class QmsThemesFragment extends TabFragment {
                 realm.commitTransaction();
             }
         }
-        realm.executeTransactionAsync(r -> r.copyToRealmOrUpdate(data), this::bindView);
+        realm.executeTransactionAsync(r -> r.copyToRealmOrUpdate(currentThemes), this::bindView);
     }
 
     private void bindView() {
-        results = realm.where(QmsThemes.class).equalTo("userId", userId).findAll();
+        results = realm.where(QmsThemes.class).equalTo("userId", currentThemes.getUserId()).findAll();
 
         if (results.size() != 0 && results.last().getThemes().size() != 0) {
             adapter.addAll(results.last().getThemes());
         }
     }
-
-    public static String createTitle(String userNick) {
-        //return defaultTitle.concat(" с ").concat(userNick);
-        return userNick;
-    }
-
 }

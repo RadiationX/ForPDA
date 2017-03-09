@@ -102,7 +102,7 @@ public class PaginationHelper {
 
 
     public void firstPage() {
-        if (pagination.getCurrent() <= 0) return;
+        if (pagination.getCurrent() <= 1) return;
         selectPage(pagination.isForum() ? 0 : 1);
     }
 

@@ -292,6 +292,7 @@ public class ProfileFragment extends TabFragment {
         });
 
 
+        setTabTitle("Профиль ".concat(profile.getNick()));
         setTitle(profile.getNick());
         nick.setText(profile.getNick());
         group.setText(profile.getGroup());

@@ -83,14 +83,14 @@ public class TabDrawer {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            TabFragment item = TabManager.getInstance().get(position);
+            TabFragment fragment = TabManager.getInstance().get(position);
             if (position == TabManager.getActiveIndex())
                 convertView.setBackgroundColor(color);
             else
                 convertView.setBackgroundColor(Color.TRANSPARENT);
 
-            holder.text.setText(item.getTitle());
-            holder.close.setOnClickListener(view -> TabManager.getInstance().remove(item));
+            holder.text.setText(fragment.getTabTitle());
+            holder.close.setOnClickListener(view -> TabManager.getInstance().remove(fragment));
             return convertView;
         }
 

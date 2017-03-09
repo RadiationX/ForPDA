@@ -66,7 +66,7 @@ public abstract class ThemeFragment extends TabFragment {
     protected final static String JS_INTERFACE = "ITheme";
     protected int action = NORMAL_ACTION;
     protected SwipeRefreshLayout refreshLayout;
-    protected ThemePage pageData;
+    protected ThemePage currentPage;
     protected List<ThemePage> history = new ArrayList<>();
     protected Subscriber<ThemePage> mainSubscriber = new Subscriber<>();
     protected Subscriber<String> helperSubscriber = new Subscriber<>();
@@ -98,7 +98,7 @@ public abstract class ThemeFragment extends TabFragment {
         messagePanel = new MessagePanel(getContext(), (ViewGroup) findViewById(R.id.fragment_container), coordinatorLayout, false);
         messagePanel.addSendOnClickListener(v -> sendMessage());
         messagePanel.getSendButton().setOnLongClickListener(v -> {
-            TabManager.getInstance().add(EditPostFragment.newInstance(createEditPostForm(), pageData.getTitle()));
+            TabManager.getInstance().add(EditPostFragment.newInstance(createEditPostForm(), currentPage.getTitle()));
             return true;
         });
         attachmentsPopup = messagePanel.getAttachmentsPopup();
@@ -166,7 +166,7 @@ public abstract class ThemeFragment extends TabFragment {
         }
         if (history.size() > 0) {
             action = BACK_ACTION;
-            pageData = history.get(history.size() - 1);
+            currentPage = history.get(history.size() - 1);
             history.remove(history.size() - 1);
             updateView();
             return true;
@@ -188,28 +188,30 @@ public abstract class ThemeFragment extends TabFragment {
         mainSubscriber.subscribe(Api.Theme().getPage(getTabUrl(), true), this::onLoadData, new ThemePage(), v -> loadData());
     }
 
-    protected void onLoadData(ThemePage themePage) throws Exception {
-        //Log.d("suka", "check theme " + themePage + " : " + themePage.getPosts().size() + " : " + themePage.getId() + " : " + themePage.getForumId() + " : " + themePage.getUrl());
+    protected void onLoadData(ThemePage page) throws Exception {
+        //Log.d("suka", "check theme " + page + " : " + page.getPosts().size() + " : " + page.getId() + " : " + page.getForumId() + " : " + page.getUrl());
         if (refreshLayout != null)
             refreshLayout.setRefreshing(false);
-        if (themePage == null || themePage.getId() == 0 || themePage.getUrl() == null) {
+        if (page == null || page.getId() == 0 || page.getUrl() == null) {
             return;
         }
-        setTabUrl(themePage.getUrl());
-        if (pageData != null) {
-            saveToHistory(themePage);
+        if (currentPage == null)
+            new Handler().postDelayed(() -> ((AppBarLayout) findViewById(R.id.appbar_layout)).setExpanded(false, true), 300);
+        setTabUrl(page.getUrl());
+        if (currentPage != null) {
+            saveToHistory(page);
         }
-        pageData = themePage;
-        updateFavorites(themePage);
+        currentPage = page;
+        updateFavorites(page);
         updateView();
     }
 
     protected void updateTitle() {
-        setTitle(pageData.getTitle());
+        setTitle(currentPage.getTitle());
     }
 
     protected void updateSubTitle() {
-        setSubtitle(String.valueOf(pageData.getPagination().getCurrent()).concat("/").concat(String.valueOf(pageData.getPagination().getAll())));
+        setSubtitle(String.valueOf(currentPage.getPagination().getCurrent()).concat("/").concat(String.valueOf(currentPage.getPagination().getAll())));
     }
 
     protected void updateFavorites(ThemePage themePage) {
@@ -220,15 +222,11 @@ public abstract class ThemeFragment extends TabFragment {
     }
 
     protected void updateView() {
-        paginationHelper.updatePagination(pageData.getPagination());
-        setTabUrl(pageData.getUrl());
+        paginationHelper.updatePagination(currentPage.getPagination());
+        setTabUrl(currentPage.getUrl());
         updateTitle();
         updateSubTitle();
         refreshOptionsMenu();
-        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
-        new Handler().postDelayed(() -> {
-            appBarLayout.setExpanded(false, true);
-        }, 225);
     }
 
     public void refreshOptionsMenu() {
@@ -239,7 +237,7 @@ public abstract class ThemeFragment extends TabFragment {
             loadData();
             return false;
         })/*.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)*/;
-        if (pageData != null) {
+        if (currentPage != null) {
             menu.add("Ссылка").setOnMenuItemClickListener(menuItem -> {
                 Utils.copyToClipBoard(getTabUrl());
                 return false;
@@ -249,14 +247,14 @@ public abstract class ThemeFragment extends TabFragment {
         }
 
         SubMenu subMenu = menu.addSubMenu("Опции темы");
-        if (pageData != null) {
-            if (pageData.isInFavorite()) {
+        if (currentPage != null) {
+            if (currentPage.isInFavorite()) {
                 subMenu.add("Удалить из избранного").setOnMenuItemClickListener(menuItem -> false);
             } else {
                 subMenu.add("Добавить в избранное").setOnMenuItemClickListener(menuItem -> false);
             }
             subMenu.add("Открыть форум темы").setOnMenuItemClickListener(menuItem -> {
-                IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + pageData.getForumId());
+                IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + currentPage.getForumId());
                 return false;
             });
             subMenu.add("Кто читает тему").setOnMenuItemClickListener(menuItem -> false);
@@ -324,9 +322,9 @@ public abstract class ThemeFragment extends TabFragment {
 
     private EditPostForm createEditPostForm() {
         EditPostForm form = new EditPostForm();
-        form.setForumId(pageData.getForumId());
-        form.setTopicId(pageData.getId());
-        form.setSt(pageData.getPagination().getCurrent() * pageData.getPagination().getPerPage());
+        form.setForumId(currentPage.getForumId());
+        form.setTopicId(currentPage.getId());
+        form.setSt(currentPage.getPagination().getCurrent() * currentPage.getPagination().getPerPage());
         form.setMessage(messagePanel.getMessage());
         List<AttachmentItem> attachments = messagePanel.getAttachments();
         for (AttachmentItem item : attachments) {
@@ -353,7 +351,7 @@ public abstract class ThemeFragment extends TabFragment {
             onLoadData(s);
             messagePanel.clearAttachments();
             messagePanel.clearMessage();
-        }, pageData, v -> loadData());
+        }, currentPage, v -> loadData());
     }
 
     public void pickImage() {
@@ -394,7 +392,7 @@ public abstract class ThemeFragment extends TabFragment {
     * */
 
     public ThemePost getPostById(int postId) {
-        for (ThemePost post : pageData.getPosts())
+        for (ThemePost post : currentPage.getPosts())
             if (post.getId() == postId)
                 return post;
         return null;
@@ -465,7 +463,7 @@ public abstract class ThemeFragment extends TabFragment {
     }
 
     public void editPost(ThemePost post) {
-        TabManager.getInstance().add(EditPostFragment.newInstance(post.getId(), pageData.getId(), pageData.getForumId(), pageData.getSt(), pageData.getTitle()));
+        TabManager.getInstance().add(EditPostFragment.newInstance(post.getId(), currentPage.getId(), currentPage.getForumId(), currentPage.getSt(), currentPage.getTitle()));
         Toast.makeText(getContext(), "editpost ".concat(Integer.toString(post.getId())), Toast.LENGTH_SHORT).show();
     }
 
@@ -510,11 +508,11 @@ public abstract class ThemeFragment extends TabFragment {
                     .setMessage(reportWarningText)
                     .setPositiveButton("Ок", (dialogInterface, i) -> {
                         App.getInstance().getPreferences().edit().putBoolean("show_report_warning", false).apply();
-                        showReportDialog(pageData.getId(), post.getId());
+                        showReportDialog(currentPage.getId(), post.getId());
                     })
                     .show();
         } else {
-            showReportDialog(pageData.getId(), post.getId());
+            showReportDialog(currentPage.getId(), post.getId());
         }
     }
 

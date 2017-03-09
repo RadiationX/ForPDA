@@ -52,6 +52,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
     protected CoordinatorLayout coordinatorLayout;
     protected FloatingActionButton fab;
     private String title = getDefaultTitle();
+    private String tabTitle = null;
     private String subtitle;
     private String parentTag;
     private ImageView icNoNetwork;
@@ -73,6 +74,14 @@ public class TabFragment extends RxFragment implements ITabFragment {
     @Override
     public String getTitle() {
         return title;
+    }
+
+    public String getTabTitle() {
+        return tabTitle == null ? getTitle() : tabTitle;
+    }
+
+    public void setTabTitle(String tabTitle) {
+        this.tabTitle = tabTitle;
     }
 
     //Одинокий фрагмент не будет дублироваться в списке вкладок

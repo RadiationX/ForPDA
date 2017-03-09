@@ -27,7 +27,6 @@ import forpdateam.ru.forpda.fragments.news.NewsListFragment;
 import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
 import forpdateam.ru.forpda.fragments.search.SearchFragment;
-import io.realm.Realm;
 
 /**
  * Created by radiationx on 07.08.16.
@@ -120,8 +119,8 @@ public class MenuDrawer {
             createdMenuItems.add(new MenuItem<>("Новости", R.drawable.ic_newspaper_gray, NewsListFragment.class));
             createdMenuItems.add(new MenuItem<>("Поиск", R.drawable.ic_search_gray_24dp, SearchFragment.class));
             createdMenuItems.add(new MenuItem<>("Форум", R.drawable.ic_forum_gray_24dp, ForumFragment.class));
-            createdMenuItems.add(new MenuItem<>("Профиль", R.drawable.ic_person_grary_24dp, ProfileFragment.class));
-            createdMenuItems.add(new MenuItem<>("Сообщения", R.drawable.ic_mail_gray_24dp, QmsContactsFragment.class));
+            createdMenuItems.add(new MenuItem<>("Профиль", R.drawable.ic_person_gray_24dp, ProfileFragment.class));
+            createdMenuItems.add(new MenuItem<>("Контакты", R.drawable.ic_mail_gray_24dp, QmsContactsFragment.class));
             createdMenuItems.add(new MenuItem<>("Избранное", R.drawable.ic_star_black_24dp, FavoritesFragment.class));
             createdMenuItems.add(new MenuItem<>("Упоминания", R.drawable.ic_hearing_gray_24dp, MentionsFragment.class));
         }

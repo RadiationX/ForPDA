@@ -42,13 +42,14 @@ function onProgressChanged() {
 //PageInfo.elemToScroll - переменная, заданная в шаблоне в теге script, содержит в себе якорь или entry
 //doOnLoadScroll - объект в window, задаётся false только когда была сделана перезагрузка страницы или переход назад
 function scrollToElement(name) {
-    //ITheme.log("call scroll to");
+    ITheme.log("call scroll to");
+
     if (typeof doOnLoadScroll !== "undefined")
         if (doOnLoadScroll == false)
             return;
 
     if (typeof name != 'string') name = PageInfo.elemToScroll;
-
+    ITheme.log(name);
     if (/([^-]*)-([\d]*)-(\d+)/g.test(name)) {
         var data = /([^-]*)-([\d]*)-(\d+)/g.exec(name);
         data[1] = data[1].toLowerCase();
