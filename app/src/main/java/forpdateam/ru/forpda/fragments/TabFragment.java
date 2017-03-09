@@ -51,7 +51,6 @@ public class TabFragment extends RxFragment implements ITabFragment {
     protected ImageView toolbarBackground;
     protected CoordinatorLayout coordinatorLayout;
     protected FloatingActionButton fab;
-    private int UID = 0;
     private String title = getDefaultTitle();
     private String subtitle;
     private String parentTag;
@@ -62,7 +61,6 @@ public class TabFragment extends RxFragment implements ITabFragment {
 
     public TabFragment() {
         parentTag = TabManager.getActiveTag();
-        setUID();
     }
 
     //Титл по умолчанию, отображается в тулбаре, когда ничего не задано
@@ -75,17 +73,6 @@ public class TabFragment extends RxFragment implements ITabFragment {
     @Override
     public String getTitle() {
         return title;
-    }
-
-    @Override
-    public int getUID() {
-        return UID;
-    }
-
-    @Override
-    public void setUID() {
-        UID = (getArguments() + getTabUrl() + getClass().getSimpleName()).hashCode();
-        Log.d("UID", "" + UID);
     }
 
     //Одинокий фрагмент не будет дублироваться в списке вкладок
@@ -404,7 +391,6 @@ public class TabFragment extends RxFragment implements ITabFragment {
         }*/
 
         public T build() {
-            tClass.setUID();
             return tClass;
         }
     }

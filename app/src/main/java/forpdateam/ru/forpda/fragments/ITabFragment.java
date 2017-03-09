@@ -12,10 +12,6 @@ public interface ITabFragment {
 
     String getParentTag();
 
-    int getUID();
-
-    void setUID();
-
     boolean isAlone();
 
     boolean isUseCache();

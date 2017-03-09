@@ -3,6 +3,7 @@ package forpdateam.ru.forpda;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,7 @@ import forpdateam.ru.forpda.client.NetworkStateReceiver;
 import forpdateam.ru.forpda.data.Repository;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
+import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
 
 public class MainActivity extends AppCompatActivity implements TabManager.TabListener {
@@ -29,7 +31,6 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     private MenuDrawer menuDrawer;
     private final View.OnClickListener toggleListener = view -> menuDrawer.toggleState();
     private final View.OnClickListener removeTabListener = view -> backHandler(true);
-
 
 
     public View.OnClickListener getToggleListener() {
@@ -81,12 +82,13 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         RxPermissions.getInstance(this);
 
         TabManager.getInstance().loadState(savedInstanceState);
-        TabManager.getInstance().update();
+        TabManager.getInstance().updateFragmentList();
         receiver = new NetworkStateReceiver(this);
         receiver.registerReceiver();
         final View viewDiff = findViewById(R.id.fragments_container);
         viewDiff.post(() -> App.setStatusBarHeight(viewDiff.getRootView().getHeight() - viewDiff.getHeight()));
         //IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=84979&view=getnewpost");
+        checkIntent(getIntent());
     }
 
     public MenuDrawer getMenuDrawer() {
@@ -96,7 +98,17 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        checkIntent(intent);
         Log.d("kek", "onnewintent " + intent);
+    }
+
+    void checkIntent(Intent intent) {
+        if (intent == null || intent.getData() == null) return;
+
+        new Handler().post(() -> {
+            Log.d("kek", "POST onnewintent " + intent);
+            IntentHandler.handle(intent.getData().toString());
+        });
     }
 
     @Override
@@ -141,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             ((InputMethodManager) MainActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE))
                     .hideSoftInputFromWindow(MainActivity.this.getCurrentFocus().getWindowToken(), 0);
     }
+
     public void showKeyboard(View view) {
         if (MainActivity.this.getCurrentFocus() != null)
             ((InputMethodManager) MainActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE))

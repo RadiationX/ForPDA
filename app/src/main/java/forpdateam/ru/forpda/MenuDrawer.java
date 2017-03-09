@@ -36,12 +36,11 @@ public class MenuDrawer {
     private DrawerLayout drawerLayout;
     private NavigationView drawer;
     private ArrayList<MenuItem> menuItems = new ArrayList<>();
+    private ArrayList<MenuItem> createdMenuItems = new ArrayList<>();
     private MenuAdapter adapter;
     private int active = -1;
-    private Realm realm;
 
     public MenuDrawer(MainActivity activity, DrawerLayout drawerLayout) {
-        realm = Realm.getDefaultInstance();
         initMenuItems();
         ListView menuList = (ListView) activity.findViewById(R.id.menu_list);
         drawer = (NavigationView) activity.findViewById(R.id.menu_drawer);
@@ -89,7 +88,15 @@ public class MenuDrawer {
     private void select(MenuItem item) {
         if (item == null) return;
         try {
-            TabManager.getInstance().add((TabFragment) item.gettClass().newInstance());
+            TabFragment fragment = TabManager.getInstance().get(item.getCreatedTag());
+            if (fragment == null) {
+                fragment = (TabFragment) item.gettClass().newInstance();
+                TabManager.getInstance().add(fragment);
+                item.setCreatedTag(fragment.getTag());
+            } else {
+                TabManager.getInstance().select(fragment);
+            }
+
             active = menuItems.indexOf(item);
             Log.d("kek", "menu active " + active);
             adapter.notifyDataSetChanged();
@@ -108,7 +115,30 @@ public class MenuDrawer {
     }
 
     private void initMenuItems() {
-        if (!Api.Auth().getState())
+        if (createdMenuItems.size() == 0) {
+            createdMenuItems.add(new MenuItem<>("Авторизация", R.drawable.ic_person_add_gray_24dp, AuthFragment.class));
+            createdMenuItems.add(new MenuItem<>("Новости", R.drawable.ic_newspaper_gray, NewsListFragment.class));
+            createdMenuItems.add(new MenuItem<>("Поиск", R.drawable.ic_search_gray_24dp, SearchFragment.class));
+            createdMenuItems.add(new MenuItem<>("Форум", R.drawable.ic_forum_gray_24dp, ForumFragment.class));
+            createdMenuItems.add(new MenuItem<>("Профиль", R.drawable.ic_person_grary_24dp, ProfileFragment.class));
+            createdMenuItems.add(new MenuItem<>("Сообщения", R.drawable.ic_mail_gray_24dp, QmsContactsFragment.class));
+            createdMenuItems.add(new MenuItem<>("Избранное", R.drawable.ic_star_black_24dp, FavoritesFragment.class));
+            createdMenuItems.add(new MenuItem<>("Упоминания", R.drawable.ic_hearing_gray_24dp, MentionsFragment.class));
+        }
+
+        for (int i = 0; i < createdMenuItems.size(); i++) {
+            MenuItem item = createdMenuItems.get(i);
+            if (item.gettClass() == AuthFragment.class && Api.Auth().getState()) {
+                continue;
+            } else if (!Api.Auth().getState()) {
+                if (item.gettClass() == ProfileFragment.class || item.gettClass() == QmsContactsFragment.class || item.gettClass() == FavoritesFragment.class || item.gettClass() == MentionsFragment.class) {
+                    continue;
+                }
+            }
+            menuItems.add(item);
+
+        }
+        /*if (!Api.Auth().getState())
             menuItems.add(new MenuItem<>("Авторизация", R.drawable.ic_person_add_gray_24dp, AuthFragment.class));
         menuItems.add(new MenuItem<>("Новости", R.drawable.ic_newspaper_gray, NewsListFragment.class));
         menuItems.add(new MenuItem<>("Поиск", R.drawable.ic_search_gray_24dp, SearchFragment.class));
@@ -118,7 +148,7 @@ public class MenuDrawer {
             menuItems.add(new MenuItem<>("Сообщения", R.drawable.ic_mail_gray_24dp, QmsContactsFragment.class));
             menuItems.add(new MenuItem<>("Избранное", R.drawable.ic_star_black_24dp, FavoritesFragment.class));
             menuItems.add(new MenuItem<>("Упоминания", R.drawable.ic_hearing_gray_24dp, MentionsFragment.class));
-        }
+        }*/
     }
 
     public void toggleState() {
@@ -222,6 +252,8 @@ public class MenuDrawer {
         private int count = 0;
         private int drawable = R.drawable.adf;
         private Class<T> tClass;
+        private String createdTag = null;
+
 
         public MenuItem(String name, int res, Class<T> tClass) {
             this.name = name;
@@ -243,6 +275,14 @@ public class MenuDrawer {
 
         public Class<T> gettClass() {
             return tClass;
+        }
+
+        public void setCreatedTag(String createdTag) {
+            this.createdTag = createdTag;
+        }
+
+        public String getCreatedTag() {
+            return createdTag;
         }
     }
 }

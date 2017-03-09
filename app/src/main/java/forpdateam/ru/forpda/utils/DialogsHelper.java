@@ -1,10 +1,14 @@
 package forpdateam.ru.forpda.utils;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.webkit.WebView;
+
+import forpdateam.ru.forpda.App;
 
 /**
  * Created by radiationx on 01.11.16.
@@ -53,7 +57,7 @@ public class DialogsHelper {
             showedAlertDialogMenu = new AlertDialogMenu<>();
 
             alertDialogMenu.addItem(openNewTab, (context1, data) -> IntentHandler.handle(data.second));
-            alertDialogMenu.addItem(openBrowser, null);
+            alertDialogMenu.addItem(openBrowser, (context1, data) -> App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(data.second))));
             alertDialogMenu.addItem(copyUrl, (context1, data) -> Utils.copyToClipBoard(data.second));
             alertDialogMenu.addItem(openImage, null);
             alertDialogMenu.addItem(saveImage, null);

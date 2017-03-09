@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.utils;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -71,6 +72,8 @@ public class IntentHandler {
 
     public static boolean handle(String url, Bundle args) {
         //url = Html.fromHtml(url).toString();
+        if (url.substring(0, 2).equals("//"))
+            url = "http:".concat(url);
         url = Html.fromHtml(url).toString();
 
         Log.d("kek", "after html url " + url);
@@ -102,7 +105,7 @@ public class IntentHandler {
                     return handleSite(uri, args);
             }
         }
-        run("unhandled url: " + uri.toString());
+        App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(uri));
         return false;
     }
 

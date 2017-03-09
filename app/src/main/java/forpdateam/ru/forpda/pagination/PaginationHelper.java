@@ -56,8 +56,7 @@ public class PaginationHelper {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if (listener.onTabSelected(tab)) return;
-                assert tab.getTag() != null;
+                if (listener.onTabSelected(tab) || tab.getTag() == null) return;
                 switch ((Integer) tab.getTag()) {
                     case TAG_FIRST:
                         firstPage();
@@ -75,7 +74,6 @@ public class PaginationHelper {
                         selectPageDialog();
                         break;
                 }
-
             }
 
             @Override

@@ -1,12 +1,10 @@
 package forpdateam.ru.forpda;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-
-import com.annimon.stream.Stream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +48,7 @@ public class TabManager {
     public TabManager(AppCompatActivity activity, TabListener listener) {
         fragmentManager = activity.getSupportFragmentManager();
         tabListener = listener;
-        update();
+        updateFragmentList();
     }
 
     public void saveState(Bundle outState) {
@@ -81,7 +79,7 @@ public class TabManager {
         return existingFragments;
     }
 
-    public void update() {
+    public void updateFragmentList() {
         existingFragments.clear();
         if (fragmentManager.getFragments() == null) return;
         for (int i = 0; i < fragmentManager.getFragments().size(); i++) {
@@ -91,13 +89,12 @@ public class TabManager {
     }
 
     private void hideTabs(FragmentTransaction transaction) {
-        if (fragmentManager.getFragments() == null) return;
-        Stream.of(fragmentManager.getFragments()) // Шоб жизнь сахаром не казалась. Ыы :)
-                .filter(fragment -> fragment != null && !fragment.isHidden())
-                .forEach(fragment -> {
-                    transaction.hide(fragment);
-                    fragment.onPause();
-                });
+        for (Fragment fragment : existingFragments) {
+            if (fragment != null && !fragment.isHidden()) {
+                transaction.hide(fragment);
+                fragment.onPause();
+            }
+        }
     }
 
     private TabFragment findTabByTag(String tag) {
@@ -117,20 +114,20 @@ public class TabManager {
     }
 
     public TabFragment get(final String tag) {
-        return (TabFragment) fragmentManager.findFragmentByTag(tag);
+        if (tag == null) return null;
+        for (Fragment fragment : existingFragments)
+            if (fragment.getTag().equals(tag))
+                return (TabFragment) fragment;
+        return null;
     }
 
     public void add(TabFragment tabFragment) {
         if (tabFragment == null)
             return;
-        String check;
+        String check = null;
         if (tabFragment.isAlone()) {
             check = getTagContainClass(tabFragment.getClass());
-        } else {
-            check = getTagByUID(tabFragment.getUID());
         }
-        Log.d("kek", "add ID " + tabFragment.getUID());
-
         if (check != null) {
             select(check);
             return;
@@ -142,16 +139,10 @@ public class TabManager {
         hideTabs(transaction);
         transaction.add(containerViewId, tabFragment, activeTag).commit();
         fragmentManager.executePendingTransactions();
-        update();
+        updateFragmentList();
         activeIndex = existingFragments.indexOf(tabFragment);
         tabListener.onChange();
         tabListener.onAddTab(tabFragment);
-    }
-
-    private String getTagByUID(int uid) {
-        for (TabFragment fragment : existingFragments)
-            if (fragment.getUID() == uid) return fragment.getTag();
-        return null;
     }
 
     public String getTagContainClass(final Class aClass) {
@@ -171,7 +162,7 @@ public class TabManager {
 
         fragmentManager.beginTransaction().remove(tabFragment).commit();
         fragmentManager.executePendingTransactions();
-        update();
+        updateFragmentList();
 
         TabFragment parent = null;
         if (tabFragment.getParentTag() != null && !tabFragment.getParentTag().equals(""))
@@ -209,7 +200,7 @@ public class TabManager {
         transaction.show(tabFragment).commit();
         tabFragment.onResume();
         fragmentManager.executePendingTransactions();
-        update();
+        updateFragmentList();
         activeTag = tabFragment.getTag();
         activeIndex = existingFragments.indexOf(tabFragment);
         tabListener.onChange();

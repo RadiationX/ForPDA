@@ -11,7 +11,9 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -223,6 +225,10 @@ public abstract class ThemeFragment extends TabFragment {
         updateTitle();
         updateSubTitle();
         refreshOptionsMenu();
+        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
+        new Handler().postDelayed(() -> {
+            appBarLayout.setExpanded(false, true);
+        }, 225);
     }
 
     public void refreshOptionsMenu() {

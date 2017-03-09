@@ -160,6 +160,7 @@ public class Client {
             res = response.body().string();
             getCounts(res);
             checkForumErrors(res);
+            Log.d("kek", "redirected url " + response.request().url().toString());
             redirects.put(url, response.request().url().toString());
         } finally {
             if (response != null)
