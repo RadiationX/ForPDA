@@ -29,6 +29,7 @@ import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.SimpleTextWatcher;
 import forpdateam.ru.forpda.utils.ourparser.Html;
+import forpdateam.ru.forpda.utils.rx.Subscriber;
 
 /**
  * Created by radiationx on 29.07.16.
@@ -44,9 +45,9 @@ public class AuthFragment extends TabFragment {
     private RelativeLayout complete;
     private TextView completeText;
     private CircularProgressView progressView;
-    private Subscriber<AuthForm> mainSubscriber = new Subscriber<>();
-    private Subscriber<Boolean> loginSubscriber = new Subscriber<>();
-    private Subscriber<ProfileModel> profileSubscriber = new Subscriber<>();
+    private Subscriber<AuthForm> mainSubscriber = new Subscriber<>(this);
+    private Subscriber<Boolean> loginSubscriber = new Subscriber<>(this);
+    private Subscriber<ProfileModel> profileSubscriber = new Subscriber<>(this);
 
     @Override
     public String getTabUrl() {

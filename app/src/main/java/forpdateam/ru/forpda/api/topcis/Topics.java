@@ -7,6 +7,7 @@ import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.topcis.models.TopicItem;
 import forpdateam.ru.forpda.api.topcis.models.TopicsData;
 import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.ourparser.Html;
 import io.reactivex.Observable;
 
@@ -31,7 +32,7 @@ public class Topics {
         Matcher matcher = titlePattern.matcher(response);
         if (matcher.find()) {
             data.setId(Integer.parseInt(matcher.group(1)));
-            data.setTitle(matcher.group(2));
+            data.setTitle(Utils.fromHtml(matcher.group(2)));
         } else {
             data.setId(id);
         }
@@ -44,7 +45,7 @@ public class Topics {
             TopicItem item = new TopicItem();
             item.setAnnounce(true);
             item.setAnnounceUrl(matcher.group(1));
-            item.setTitle(matcher.group(2));
+            item.setTitle(Utils.fromHtml(matcher.group(2)));
             data.addAnnounceItem(item);
         }
 
@@ -60,19 +61,19 @@ public class Topics {
             if (tmp.contains("Х")) p |= TopicItem.CLOSED;
             item.setParams(p);
             item.setPinned(matcher.group(3) != null);
-            item.setTitle(Html.fromHtml(matcher.group(4)).toString());
+            item.setTitle(Utils.fromHtml(matcher.group(4)));
             tmp = matcher.group(5);
             if (tmp != null)
-                item.setDesc(Html.fromHtml(tmp).toString());
+                item.setDesc(Utils.fromHtml(tmp));
             item.setAuthorId(Integer.parseInt(matcher.group(6)));
-            item.setAuthorNick(Html.fromHtml(matcher.group(7)).toString());
+            item.setAuthorNick(Utils.fromHtml(matcher.group(7)));
             item.setLastUserId(Integer.parseInt(matcher.group(8)));
-            item.setLastUserNick(Html.fromHtml(matcher.group(9)).toString());
+            item.setLastUserNick(Utils.fromHtml(matcher.group(9)));
             item.setDate(matcher.group(10));
             tmp = matcher.group(11);
             if (tmp != null) {
                 item.setCuratorId(Integer.parseInt(tmp));
-                item.setCuratorNick(Html.fromHtml(matcher.group(12)).toString());
+                item.setCuratorNick(Utils.fromHtml(matcher.group(12)));
             }
             if (item.isPinned()) {
                 data.addPinnedItem(item);

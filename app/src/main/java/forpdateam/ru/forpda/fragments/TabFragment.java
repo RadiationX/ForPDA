@@ -353,29 +353,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
         //Client.getInstance().cancelCallByUrl(getTabUrl());
     }
 
-    protected void handleErrorRx(Throwable throwable) {
-        handleErrorRx(throwable, null);
-    }
 
-    protected void handleErrorRx(Throwable throwable, View.OnClickListener listener) {
-        ErrorHandler.handle(this, throwable, listener);
-    }
-
-    public class Subscriber<T> {
-        public Disposable subscribe(@NonNull Observable<T> observable, @NonNull Consumer<T> onNext, @NonNull T onErrorReturn) {
-            return subscribe(observable, onNext, onErrorReturn, null);
-        }
-
-        public Disposable subscribe(@NonNull Observable<T> observable, @NonNull Consumer<T> onNext, @NonNull T onErrorReturn, View.OnClickListener onErrorAction) {
-            return observable.onErrorReturn(throwable -> {
-                handleErrorRx(throwable, onErrorAction);
-                return onErrorReturn;
-            })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(onNext, throwable -> handleErrorRx(throwable, onErrorAction));
-        }
-    }
 
     /* Experiment */
     public static class Builder<T extends TabFragment> {

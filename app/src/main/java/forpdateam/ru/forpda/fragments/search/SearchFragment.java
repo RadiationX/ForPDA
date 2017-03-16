@@ -30,6 +30,7 @@ import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.pagination.PaginationHelper;
+import forpdateam.ru.forpda.utils.rx.Subscriber;
 
 /**
  * Created by radiationx on 29.01.17.
@@ -49,7 +50,7 @@ public class SearchFragment extends TabFragment {
 
     private SearchSettings settings = new SearchSettings();
 
-    private Subscriber<SearchResult> mainSubscriber = new Subscriber<>();
+    private Subscriber<SearchResult> mainSubscriber = new Subscriber<>(this);
     private RecyclerView recyclerView;
     private SwipeRefreshLayout refreshLayout;
     private SearchAdapter adapter = new SearchAdapter();
@@ -163,11 +164,6 @@ public class SearchFragment extends TabFragment {
         recyclerView.setAdapter(adapter);
         refreshLayout.setOnRefreshListener(this::loadData);
         return view;
-    }
-
-    public void jumpToPage(int st) {
-        settings.setSt(st);
-        loadData();
     }
 
     private boolean checkArg(String arg, Pair<String, String> pair) {
@@ -327,8 +323,9 @@ public class SearchFragment extends TabFragment {
     }
 
     private void onLoadData(SearchResult searchResult) {
-        data = searchResult;
         refreshLayout.setRefreshing(false);
+        hidePopupWindows();
+        data = searchResult;
         adapter.clear();
         adapter.addAll(data.getItems());
         paginationHelper.updatePagination(data.getPagination());

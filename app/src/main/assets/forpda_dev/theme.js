@@ -1,3 +1,8 @@
+/*var ITheme = {
+    log:function(arg){
+        console.log(arg);
+    }
+}*/
 var anchorElem, elemToActivation;
 var lastTop = 0,
     lastScrollTop = 0,

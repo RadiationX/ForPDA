@@ -25,6 +25,7 @@ import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsContactsAdapter;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.rx.Subscriber;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -35,8 +36,8 @@ public class QmsContactsFragment extends TabFragment {
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
     private QmsContactsAdapter adapter;
-    private Subscriber<ArrayList<QmsContact>> mainSubscriber = new Subscriber<>();
-    private Subscriber<String> helperSubscriber = new Subscriber<>();
+    private Subscriber<ArrayList<QmsContact>> mainSubscriber = new Subscriber<>(this);
+    private Subscriber<String> helperSubscriber = new Subscriber<>(this);
     private Realm realm;
     private RealmResults<QmsContact> results;
     private AlertDialogMenu<QmsContactsFragment, QmsContact> contactDialogMenu;

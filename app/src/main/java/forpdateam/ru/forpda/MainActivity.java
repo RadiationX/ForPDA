@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     private Timer webViewCleaner = new Timer();
     private TabDrawer tabDrawer;
     private MenuDrawer menuDrawer;
+    private DrawerHeader drawerHeader;
     private final View.OnClickListener toggleListener = view -> menuDrawer.toggleState();
     private final View.OnClickListener removeTabListener = view -> backHandler(true);
 
@@ -58,7 +59,10 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         tabDrawer = new TabDrawer(this, drawerLayout);
+        TabManager.getInstance().loadState(savedInstanceState);
+        TabManager.getInstance().updateFragmentList();
         menuDrawer = new MenuDrawer(this, drawerLayout);
+        drawerHeader = new DrawerHeader(this, drawerLayout);
 
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -81,12 +85,15 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         });
         RxPermissions.getInstance(this);
 
-        TabManager.getInstance().loadState(savedInstanceState);
-        TabManager.getInstance().updateFragmentList();
+
         receiver = new NetworkStateReceiver(this);
         receiver.registerReceiver();
         final View viewDiff = findViewById(R.id.fragments_container);
-        viewDiff.post(() -> App.setStatusBarHeight(viewDiff.getRootView().getHeight() - viewDiff.getHeight()));
+        viewDiff.post(() -> {
+            App.setStatusBarHeight(viewDiff.getRootView().getHeight() - viewDiff.getHeight());
+            menuDrawer.setStatusBarHeight(App.getStatusBarHeight());
+            tabDrawer.setStatusBarHeight(App.getStatusBarHeight());
+        });
         //IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=84979&view=getnewpost");
         checkIntent(getIntent());
     }

@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +61,10 @@ public class TabManager {
     public void loadState(Bundle state) {
         if (state == null) return;
         activeTag = state.getString(bundlePrefix + "active_tag", "");
-        activeIndex = state.getInt(bundlePrefix + "active_index", 0);
+        activeIndex = state.getInt(bundlePrefix + "active_index", -1);
+        activeIndex++;
+        count = activeIndex;
+        Log.d("SUKA", "LOAD STATE " + activeTag + " : " + activeIndex);
     }
 
     public int getSize() {
@@ -85,6 +89,10 @@ public class TabManager {
         for (int i = 0; i < fragmentManager.getFragments().size(); i++) {
             if (fragmentManager.getFragments().get(i) != null)
                 existingFragments.add((TabFragment) fragmentManager.getFragments().get(i));
+        }
+        Log.e("SUKA", "UPDATE");
+        for (TabFragment fragment : existingFragments) {
+            Log.e("SUKA", "RECOVERY FRAGMENT " + fragment);
         }
     }
 

@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.news.models.NewsNetworkModel;
 import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.utils.Utils;
 import io.reactivex.Single;
 
 import static forpdateam.ru.forpda.Constants.NEWS_CATEGORY_ALL;
@@ -86,11 +87,11 @@ public class NewsParser {
                 NewsNetworkModel model = new NewsNetworkModel();
                 model.setLink(matcher.group(1));
                 model.setImageUrl(matcher.group(3));
-                model.setTitle(matcher.group(2));
+                model.setTitle(Utils.fromHtml(matcher.group(2)));
                 model.setCommentsCount(matcher.group(4));
                 model.setDate(matcher.group(5));
-                model.setAuthor(matcher.group(6));
-                model.setDescription(matcher.group(7));
+                model.setAuthor(Utils.fromHtml(matcher.group(6)));
+                model.setDescription(Utils.fromHtml(matcher.group(7)));
                 model.setCategory(category);
                 cache.add(model);
             }

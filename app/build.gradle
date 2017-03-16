@@ -126,4 +126,5 @@ dependencies {
     compile 'com.lapism:searchview:4.0'
     compile 'com.github.bmelnychuk:atv:1.2.9'
     compile 'com.afollestad:sectioned-recyclerview:0.2.3'
+    compile 'ch.acra:acra:4.9.0'
 }

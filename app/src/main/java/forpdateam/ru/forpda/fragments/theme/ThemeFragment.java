@@ -55,6 +55,7 @@ import forpdateam.ru.forpda.pagination.PaginationHelper;
 import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
+import forpdateam.ru.forpda.utils.rx.Subscriber;
 
 /**
  * Created by radiationx on 20.10.16.
@@ -68,15 +69,15 @@ public abstract class ThemeFragment extends TabFragment {
     protected SwipeRefreshLayout refreshLayout;
     protected ThemePage currentPage;
     protected List<ThemePage> history = new ArrayList<>();
-    protected Subscriber<ThemePage> mainSubscriber = new Subscriber<>();
-    protected Subscriber<String> helperSubscriber = new Subscriber<>();
+    protected Subscriber<ThemePage> mainSubscriber = new Subscriber<>(this);
+    protected Subscriber<String> helperSubscriber = new Subscriber<>(this);
     private PaginationHelper paginationHelper = new PaginationHelper();
     //Тег для вьюхи поиска. Чтобы создавались кнопки и т.д, только при вызове поиска, а не при каждом создании меню.
     protected int searchViewTag = 0;
     protected final ColorFilter colorFilter = new PorterDuffColorFilter(Color.argb(80, 255, 255, 255), PorterDuff.Mode.DST_IN);
     protected MessagePanel messagePanel;
     protected AttachmentsPopup attachmentsPopup;
-    protected Subscriber<List<AttachmentItem>> attachmentSubscriber = new Subscriber<>();
+    protected Subscriber<List<AttachmentItem>> attachmentSubscriber = new Subscriber<>(this);
     protected static final int PICK_IMAGE = 1228;
 
 
@@ -218,6 +219,7 @@ public abstract class ThemeFragment extends TabFragment {
         if (themePage.getPagination().getCurrent() < themePage.getPagination().getAll()) return;
         String tag = TabManager.getInstance().getTagContainClass(FavoritesFragment.class);
         if (tag == null) return;
+        Log.e("SUKA", "UPDATE FOVARITE "+tag+" : "+TabManager.getInstance().get(tag));
         ((FavoritesFragment) TabManager.getInstance().get(tag)).markRead(themePage.getId());
     }
 

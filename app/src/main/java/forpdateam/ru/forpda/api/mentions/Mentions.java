@@ -7,6 +7,7 @@ import forpdateam.ru.forpda.api.mentions.models.MentionItem;
 import forpdateam.ru.forpda.api.mentions.models.MentionsData;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.utils.Utils;
 import io.reactivex.Observable;
 
 /**
@@ -29,10 +30,10 @@ public class Mentions {
             item.setState(matcher.group(1).equals("read") ? MentionItem.STATE_READ : MentionItem.STATE_UNREAD);
             item.setType(matcher.group(2).equalsIgnoreCase("Форум") ? MentionItem.TYPE_FORUM : MentionItem.TYPE_NEWS);
             item.setLink(matcher.group(3));
-            item.setTitle(matcher.group(4));
-            item.setDesc(matcher.group(5));
+            item.setTitle(Utils.fromHtml(matcher.group(4)));
+            item.setDesc(Utils.fromHtml(matcher.group(5)));
             item.setDate(matcher.group(6));
-            item.setNick(matcher.group(7));
+            item.setNick(Utils.fromHtml(matcher.group(7)));
             data.addItem(item);
         }
         data.setPagination(Pagination.parseForum(response));

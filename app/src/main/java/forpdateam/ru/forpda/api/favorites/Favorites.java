@@ -11,6 +11,7 @@ import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.utils.Utils;
 import io.reactivex.Observable;
 
 /**
@@ -49,19 +50,19 @@ public class Favorites {
             item.setInfo(matcher.group(6));
             item.setTopicId(Integer.parseInt(matcher.group(8)));
             item.setNewMessages(!matcher.group(9).isEmpty());
-            item.setTopicTitle(matcher.group(10));
+            item.setTopicTitle(Utils.fromHtml(matcher.group(10)));
             if (!matcher.group(12).isEmpty()) {
                 item.setStParam(Integer.parseInt(matcher.group(13)));
                 item.setPages(Integer.parseInt(matcher.group(14)));
             }
             if (!matcher.group(15).isEmpty())
-                item.setDesc(matcher.group(15));
+                item.setDesc(Utils.fromHtml(matcher.group(15)));
             item.setForumId(Integer.parseInt(matcher.group(17)));
-            item.setForumTitle(matcher.group(18));
+            item.setForumTitle(Utils.fromHtml(matcher.group(18)));
             item.setAuthorId(Integer.parseInt(matcher.group(19)));
-            item.setAuthorUserNick(matcher.group(20));
+            item.setAuthorUserNick(Utils.fromHtml(matcher.group(20)));
             item.setLastUserId(Integer.parseInt(matcher.group(21)));
-            item.setLastUserNick(matcher.group(22));
+            item.setLastUserNick(Utils.fromHtml(matcher.group(22)));
             item.setDate(matcher.group(23));
             data.addItem(item);
         }

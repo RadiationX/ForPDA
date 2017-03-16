@@ -26,6 +26,7 @@ import forpdateam.ru.forpda.fragments.theme.ThemeFragment;
 import forpdateam.ru.forpda.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.messagepanel.attachments.AttachmentsPopup;
 import forpdateam.ru.forpda.utils.FilePickHelper;
+import forpdateam.ru.forpda.utils.rx.Subscriber;
 
 import static forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm.ARG_TYPE;
 import static forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm.TYPE_EDIT_POST;
@@ -159,9 +160,9 @@ public class EditPostFragment extends TabFragment {
     }
 
     private AttachmentsPopup attachmentsPopup;
-    private Subscriber<ThemePage> sendSubscriber = new Subscriber<>();
-    private Subscriber<EditPostForm> formSubscriber = new Subscriber<>();
-    private Subscriber<List<AttachmentItem>> attachmentSubscriber = new Subscriber<>();
+    private Subscriber<ThemePage> sendSubscriber = new Subscriber<>(this);
+    private Subscriber<EditPostForm> formSubscriber = new Subscriber<>(this);
+    private Subscriber<List<AttachmentItem>> attachmentSubscriber = new Subscriber<>(this);
 
     private void sendMessage() {
         messagePanel.setProgressState(true);

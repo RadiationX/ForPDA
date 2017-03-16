@@ -11,7 +11,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/avatar"
+                android:id="@+id/drawer_header_avatar"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:layout_margin="@dimen/dp16"/>
@@ -19,15 +19,15 @@
                 android:id="@+id/nick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/avatar"
-                android:layout_alignTop="@id/avatar"
+                android:layout_toEndOf="@id/drawer_header_avatar"
+                android:layout_alignTop="@id/drawer_header_avatar"
                 android:textStyle="bold"
                 android:text="nick"/>
             <TextView
                 android:id="@+id/group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/avatar"
+                android:layout_toEndOf="@id/drawer_header_avatar"
                 android:layout_below="@id/nick"
                 android:textStyle="bold"
                 android:text="group"/>
@@ -35,7 +35,7 @@
                 android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/avatar"
+                android:layout_toEndOf="@id/drawer_header_avatar"
                 android:layout_below="@id/group"
                 android:textStyle="bold"
                 android:text="date"/>

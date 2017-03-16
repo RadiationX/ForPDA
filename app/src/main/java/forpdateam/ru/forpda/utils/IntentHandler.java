@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.acra.ACRA;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,40 +74,48 @@ public class IntentHandler {
 
     public static boolean handle(String url, Bundle args) {
         //url = Html.fromHtml(url).toString();
-        if (url.substring(0, 2).equals("//"))
-            url = "http:".concat(url);
-        url = Html.fromHtml(url).toString();
+        if (url != null && url.matches("(?:http?s?:)?\\/\\/4pda\\.ru[\\s\\S]*")) {
+            if (url == null || url.length() <= 1 || url.equals("#")) {
+                return false;
+            }
+            if (url.substring(0, 2).equals("//"))
+                url = "http:".concat(url);
+            if (!url.contains("4pda.ru")) {
+                url = "http://4pda.ru".concat(url.substring(0, 1).equals("/") ? "" : "/").concat(url);
+            }
+            url = Html.fromHtml(url).toString();
 
-        Log.d("kek", "after html url " + url);
-        Uri uri = Uri.parse(url.toLowerCase());
-        Log.d("kek", "HANDLE URL " + uri.toString() + " : " + url);
-        if (uri.getHost() != null && uri.getHost().matches("4pda.ru")) {
-            if (args == null) args = new Bundle();
-            switch (uri.getPathSegments().get(0)) {
-                case "forum":
-                    return handleForum(uri, args);
-                case "devdb":
-                    if (uri.getPathSegments().size() > 1) {
-                        if (uri.getPathSegments().get(1).matches("phones|pad|ebook|smartwatch")) {
-                            if (uri.getPathSegments().size() > 2 && !uri.getPathSegments().get(2).matches("new|select")) {
-                                run("devdb models brand");
+            Log.d("kek", "after html url " + url);
+            Uri uri = Uri.parse(url.toLowerCase());
+            Log.d("kek", "HANDLE URL " + uri.toString() + " : " + url);
+            if (uri.getHost() != null && uri.getHost().matches("4pda.ru")) {
+                if (args == null) args = new Bundle();
+                switch (uri.getPathSegments().get(0)) {
+                    case "forum":
+                        return handleForum(uri, args);
+                    case "devdb":
+                        if (uri.getPathSegments().size() > 1) {
+                            if (uri.getPathSegments().get(1).matches("phones|pad|ebook|smartwatch")) {
+                                if (uri.getPathSegments().size() > 2 && !uri.getPathSegments().get(2).matches("new|select")) {
+                                    run("devdb models brand");
+                                    return true;
+                                }
+                                run("devdb models");
+                                return true;
+                            } else {
+                                run("devdb device");
                                 return true;
                             }
-                            run("devdb models");
-                            return true;
                         } else {
-                            run("devdb device");
+                            run("devdb categories");
                             return true;
                         }
-                    } else {
-                        run("devdb categories");
-                        return true;
-                    }
-                default:
-                    return handleSite(uri, args);
+                    default:
+                        return handleSite(uri, args);
+                }
             }
         }
-        App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(uri));
+        App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));
         return false;
     }
 

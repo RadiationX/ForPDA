@@ -51,9 +51,11 @@
                     <label class="item ${poll_type}"><input type="${question_item_type}" name="${question_item_name}" value="${question_item_value}"><i class="icon"><i class="add"></i></i><span class="title"><span>${question_item_title}</span></span></label>
                     <!-- $EndBlock poll_default_item -->
                     <!-- $BeginBlock poll_result_item -->
-                    <div class="item ${poll_type}"><span class="title"><span>${question_item_title}</span></span><span class="num_votes"><span>${question_item_votes}</span></span>
+                    <div class="item ${poll_type}">
                         <div class="range_bar">
-                            <div class="range" style="min-width:${question_item_percent}%;"><span class="value">${question_item_percent}%</span></div>
+                            <div class="range" style="min-width:${question_item_percent}%;"></div>
+                            <span class="value">${question_item_percent}%<span class="num_votes"><span>${question_item_votes}</span></span></span>
+                            <span class="title"><span>${question_item_title}</span></span>
                         </div>
                     </div>
                     <!-- $EndBlock poll_result_item -->

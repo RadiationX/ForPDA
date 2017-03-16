@@ -49,7 +49,7 @@ public class ThemeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         public MessageViewHolder(View v) {
             super(v);
-            avatar = (ImageView) v.findViewById(R.id.avatar);
+            avatar = (ImageView) v.findViewById(R.id.drawer_header_avatar);
             nick = (TextView) v.findViewById(R.id.nick);
             group = (TextView) v.findViewById(R.id.group);
             date = (TextView) v.findViewById(R.id.date);

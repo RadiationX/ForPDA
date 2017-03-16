@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.content.res.AppCompatResources;
 import android.util.Log;
@@ -58,6 +59,9 @@ public class MenuDrawer {
             if ((boolean) o && TabManager.getInstance().getSize() <= 1) {
                 select(findByClassName(NewsListFragment.class.getSimpleName()));
             }
+            if (!(boolean) o) {
+                App.getInstance().getPreferences().edit().remove("menu_drawer_last").apply();
+            }
         });
         Api.get().addObserver((observable1, o) -> {
             MenuItem item = getByClass(QmsContactsFragment.class);
@@ -75,6 +79,7 @@ public class MenuDrawer {
             adapter.notifyDataSetChanged();
         });
         String last = App.getInstance().getPreferences().getString("menu_drawer_last", Api.Auth().getState() ? NewsListFragment.class.getSimpleName() : AuthFragment.class.getSimpleName());
+        Log.d("SUKA", "LAAST " + last);
         if (last != null)
             select(findByClassName(last));
     }
@@ -88,6 +93,11 @@ public class MenuDrawer {
         if (item == null) return;
         try {
             TabFragment fragment = TabManager.getInstance().get(item.getCreatedTag());
+            Log.e("SUKA", "MENU SELECT " + fragment);
+            if (fragment == null) {
+                fragment = TabManager.getInstance().get(TabManager.getInstance().getTagContainClass(item.gettClass()));
+            }
+            Log.e("SUKA", "MENU SELECT " + fragment);
             if (fragment == null) {
                 fragment = (TabFragment) item.gettClass().newInstance();
                 TabManager.getInstance().add(fragment);
@@ -117,12 +127,12 @@ public class MenuDrawer {
         if (createdMenuItems.size() == 0) {
             createdMenuItems.add(new MenuItem<>("Авторизация", R.drawable.ic_person_add_gray_24dp, AuthFragment.class));
             createdMenuItems.add(new MenuItem<>("Новости", R.drawable.ic_newspaper_gray, NewsListFragment.class));
-            createdMenuItems.add(new MenuItem<>("Поиск", R.drawable.ic_search_gray_24dp, SearchFragment.class));
-            createdMenuItems.add(new MenuItem<>("Форум", R.drawable.ic_forum_gray_24dp, ForumFragment.class));
-            createdMenuItems.add(new MenuItem<>("Профиль", R.drawable.ic_person_gray_24dp, ProfileFragment.class));
-            createdMenuItems.add(new MenuItem<>("Контакты", R.drawable.ic_mail_gray_24dp, QmsContactsFragment.class));
             createdMenuItems.add(new MenuItem<>("Избранное", R.drawable.ic_star_black_24dp, FavoritesFragment.class));
-            createdMenuItems.add(new MenuItem<>("Упоминания", R.drawable.ic_hearing_gray_24dp, MentionsFragment.class));
+            createdMenuItems.add(new MenuItem<>("Контакты", R.drawable.ic_mail_gray_24dp, QmsContactsFragment.class));
+            createdMenuItems.add(new MenuItem<>("Ответы", R.drawable.ic_notifications_gray_24dp, MentionsFragment.class));
+            createdMenuItems.add(new MenuItem<>("Форум", R.drawable.ic_forum_gray_24dp, ForumFragment.class));
+            createdMenuItems.add(new MenuItem<>("Поиск", R.drawable.ic_search_gray_24dp, SearchFragment.class));
+            //createdMenuItems.add(new MenuItem<>("Профиль", R.drawable.ic_person_gray_24dp, ProfileFragment.class));
         }
 
         for (int i = 0; i < createdMenuItems.size(); i++) {
@@ -208,6 +218,7 @@ public class MenuDrawer {
             }
 
             MenuItem item = menuItems.get(position);
+            //ViewCompat.setElevation(convertView, 16);
 
             if (item.getCount() > 0) {
                 holder.count.setVisibility(View.VISIBLE);
@@ -222,7 +233,7 @@ public class MenuDrawer {
                 holder.icon.setColorFilter(App.getContext().getResources().getColor(R.color.black));
             } else {
                 convertView.setBackgroundColor(Color.TRANSPARENT);
-                holder.text.setTextColor(App.getContext().getResources().getColor(R.color.text_drawer_item_color));
+                holder.text.setTextColor(App.getContext().getResources().getColor(R.color.text_color));
                 holder.icon.clearColorFilter();
             }
 
@@ -283,5 +294,9 @@ public class MenuDrawer {
         public String getCreatedTag() {
             return createdTag;
         }
+    }
+
+    public void setStatusBarHeight(int height) {
+        drawer.setPadding(0, height, 0, 0);
     }
 }

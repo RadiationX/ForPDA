@@ -50,6 +50,7 @@ import forpdateam.ru.forpda.utils.BlurUtil;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.ourparser.LinkMovementMethod;
+import forpdateam.ru.forpda.utils.rx.Subscriber;
 import io.reactivex.Observable;
 
 /**
@@ -67,9 +68,9 @@ public class ProfileFragment extends TabFragment {
     private int statusBarColor = -1, standardColor = -1;
     private ValueAnimator statusBarValueAnimator;
 
-    private Subscriber<ProfileModel> mainSubscriber = new Subscriber<>();
-    private Subscriber<Boolean> saveNoteSubscriber = new Subscriber<>();
-    private Subscriber<Bitmap> blurAvatarSubscriber = new Subscriber<>();
+    private Subscriber<ProfileModel> mainSubscriber = new Subscriber<>(this);
+    private Subscriber<Boolean> saveNoteSubscriber = new Subscriber<>(this);
+    private Subscriber<Bitmap> blurAvatarSubscriber = new Subscriber<>(this);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

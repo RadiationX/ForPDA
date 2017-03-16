@@ -10,7 +10,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="72dp"
-        android:layout_toLeftOf="@+id/count"
+        android:layout_toStartOf="@+id/count"
         android:gravity="center_vertical"
         android:minHeight="48dp"
         android:paddingBottom="8dp"
@@ -19,14 +19,15 @@
         android:paddingTop="8dp"
         android:textSize="14sp"
         android:textStyle="bold"
-        android:textColor="@color/text_drawer_item_color"/>
+        android:text="ASLKDJKLASDJKLASDk"
+        android:textColor="@color/text_color"/>
 
     <ImageView
         android:id="@+id/icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="12dp" />
 
     <TextView

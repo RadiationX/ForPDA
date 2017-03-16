@@ -396,7 +396,7 @@ button,
                             padding-top: 0.5em;
                             margin-bottom: 0.5em;
                             position: relative;
-                            .title {
+                            >.title {
                                 position: relative;
                                 z-index: 1;
                                 display: inline-block;
@@ -406,45 +406,58 @@ button,
                                 box-shadow: 12/16em 0 8/16em -4/16em white;
                                 line-height: 1.5em;
                             }
-                            .num_votes {
-                                position: absolute;
-                                right: 0;
-                                z-index: 0;
-                                line-height: 1.5em;
-                                &:after {
-                                    content: " votes";
-                                }
-                            }
+                            
                             .range_bar {
                                 background: rgba(0, 0, 0, 0.1);
                                 position: relative;
-                                height: 1.5em;
+                                min-height: 1.5em;
+                                padding: 4/16rem 8/16rem;
                                 .bRad(2px);
+                                text-shadow: 0 0px 10px rgba(0, 0, 0, 0.75);
+                                color: white;
+                                box-shadow: inset -6em 0 6em -6em rgba(0, 0, 0, 0.5);
                                 .range {
                                     position: absolute;
                                     left: 0;
                                     top: 0;
                                     height: 100%;
                                     width: auto;
-                                    background: #000;
-                                    text-align: right;
+                                    background: rgba(0, 0, 0, 1);
                                     .bRad(2px);
-                                    padding: 0 0.5em;
                                     -webkit-transform-origin: left center;
                                     transform-origin: left center;
                                     line-height: 1.5em;
-                                    height: 1.5em;
-                                    .value {
-                                        display: inline-block;
-                                        color: white;
-                                        font-size: 12/16em;
-                                        font-weight: bold;
-                                        opacity: 0;
-                                        -webkit-transform: translateZ(0);
-                                        transform: translateZ(0);
-                                        visibility: hidden;
-                                        vertical-align: bottom;
+                                }
+                                .value {
+                                    float: right;
+                                    display: inline-block;
+                                    font-size: 12/16em;
+                                    font-weight: bold;
+                                    opacity: 0;
+                                    -webkit-transform: translateZ(0);
+                                    transform: translateZ(0);
+                                    visibility: hidden;
+                                    vertical-align: bottom;
+                                    .num_votes {
+                                        &:before {
+                                            content: " (";
+                                        }
+                                        &:after {
+                                            content: ")";
+                                        }
                                     }
+                                }
+                                .title{
+                                    position: relative;
+                                    font-size: 14/16em;
+                                    display: block;
+                                    overflow: hidden;
+                                    padding-right: 8/16rem;
+                                }
+                                &:after{
+                                    content: "";
+                                    display: table;
+                                    clear: both;
                                 }
                             }
                         }
@@ -489,10 +502,10 @@ button,
         .range {
             -webkit-animation: pollRangeAnimation 0.375s @curveStandard;
             -webkit-animation-fill-mode: forwards;
-            .value {
-                -webkit-animation: pollRangeValueAnimation 0.225s @curveStandard 0.225s;
-                -webkit-animation-fill-mode: forwards;
-            }
+        }
+        .value {
+            -webkit-animation: pollRangeValueAnimation 0.225s @curveStandard 0.225s;
+            -webkit-animation-fill-mode: forwards;
         }
     }
     &.default {}

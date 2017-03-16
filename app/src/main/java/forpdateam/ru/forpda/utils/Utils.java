@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.utils.ourparser.Html;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
 
@@ -41,5 +42,10 @@ public class Utils {
 
     public static void log(@NonNull String msg) {
         Log.e("TEST", msg);
+    }
+
+    public static String fromHtml(String s) {
+        if (s == null) return null;
+        return Html.fromHtml(s).toString();
     }
 }

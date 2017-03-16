@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import forpdateam.ru.forpda.api.profile.interfaces.IProfileApi;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.utils.Utils;
 import io.reactivex.Observable;
 
 /**
@@ -37,7 +38,7 @@ public class Profile implements IProfileApi {
         final Matcher mainMatcher = mainPattern.matcher(response);
         if (mainMatcher.find()) {
             profile.setAvatar(safe(mainMatcher.group(1)));
-            profile.setNick(Html.fromHtml(safe(mainMatcher.group(2))).toString());
+            profile.setNick(Utils.fromHtml(safe(mainMatcher.group(2))));
             profile.setStatus(safe(mainMatcher.group(3)));
             profile.setGroup(safe(mainMatcher.group(4)));
 

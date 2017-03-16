@@ -28,6 +28,7 @@ import forpdateam.ru.forpda.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.messagepanel.attachments.AttachmentsPopup;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.SimpleTextWatcher;
+import forpdateam.ru.forpda.utils.rx.Subscriber;
 
 /**
  * Created by radiationx on 25.08.16.
@@ -53,8 +54,8 @@ public class QmsChatFragment extends TabFragment {
         Toast.makeText(getContext(), "ON LONG CLICK " + message.getId(), Toast.LENGTH_SHORT).show();
     };
 
-    private Subscriber<QmsChatModel> mainSubscriber = new Subscriber<>();
-    private Subscriber<QmsMessage> messageSubscriber = new Subscriber<>();
+    private Subscriber<QmsChatModel> mainSubscriber = new Subscriber<>(this);
+    private Subscriber<QmsMessage> messageSubscriber = new Subscriber<>(this);
 
     @Override
     public String getDefaultTitle() {
@@ -203,7 +204,7 @@ public class QmsChatFragment extends TabFragment {
     }
 
     private MenuItem doneItem, editItem;
-    private Subscriber<String[]> searchUserSubscriber = new Subscriber<>();
+    private Subscriber<String[]> searchUserSubscriber = new Subscriber<>(this);
 
     private void searchUser(String nick) {
         searchUserSubscriber.subscribe(Api.Qms().search(nick), this::onShowSearchRes, new String[]{});

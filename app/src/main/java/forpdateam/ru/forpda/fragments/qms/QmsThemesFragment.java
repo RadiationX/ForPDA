@@ -19,6 +19,7 @@ import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsThemesAdapter;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.rx.Subscriber;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -47,7 +48,7 @@ public class QmsThemesFragment extends TabFragment {
                 args.putString(QmsChatFragment.THEME_TITLE_ARG, theme.getName());
                 TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).setArgs(args).build());
             };
-    private Subscriber<QmsThemes> mainSubscriber = new Subscriber<>();
+    private Subscriber<QmsThemes> mainSubscriber = new Subscriber<>(this);
 
     @Override
     public String getDefaultTitle() {

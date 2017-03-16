@@ -17,6 +17,7 @@ import forpdateam.ru.forpda.api.mentions.models.MentionsData;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.pagination.PaginationHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.rx.Subscriber;
 
 /**
  * Created by radiationx on 21.01.17.
@@ -33,7 +34,7 @@ public class MentionsFragment extends TabFragment {
                 IntentHandler.handle(favItem.getLink(), args);
             };
 
-    private Subscriber<MentionsData> mainSubscriber = new Subscriber<>();
+    private Subscriber<MentionsData> mainSubscriber = new Subscriber<>(this);
 
     private PaginationHelper paginationHelper = new PaginationHelper();
     private MentionsData data;

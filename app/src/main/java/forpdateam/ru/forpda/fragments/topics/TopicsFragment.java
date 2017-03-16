@@ -18,6 +18,7 @@ import forpdateam.ru.forpda.api.topcis.models.TopicsData;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.pagination.PaginationHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.rx.Subscriber;
 
 /**
  * Created by radiationx on 01.03.17.
@@ -29,7 +30,7 @@ public class TopicsFragment extends TabFragment {
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
     private TopicsAdapter adapter;
-    private Subscriber<TopicsData> mainSubscriber = new Subscriber<>();
+    private Subscriber<TopicsData> mainSubscriber = new Subscriber<>(this);
 
     @Override
     public String getDefaultTitle() {

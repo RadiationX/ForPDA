@@ -24,6 +24,7 @@ import forpdateam.ru.forpda.pagination.PaginationHelper;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
+import forpdateam.ru.forpda.utils.rx.Subscriber;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -72,8 +73,8 @@ public class FavoritesFragment extends TabFragment {
     private Realm realm;
     private RealmResults<FavItem> results;
     private FavoritesAdapter adapter;
-    private Subscriber<FavData> mainSubscriber = new Subscriber<>();
-    private Subscriber<Boolean> helperSubscriber = new Subscriber<>();
+    private Subscriber<FavData> mainSubscriber = new Subscriber<>(this);
+    private Subscriber<Boolean> helperSubscriber = new Subscriber<>(this);
     boolean markedRead = false;
     private FavData data;
 

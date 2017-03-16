@@ -109,18 +109,23 @@ public class Client {
 
     //Network
     public String get(String url) throws Exception {
-        return request(url, null, null);
+        return request(url, null, null, true);
     }
 
     public String post(String url, Map<String, String> headers) throws Exception {
-        return request(url, headers, null);
+        return request(url, headers, null, false);
+    }
+
+    public String post(String url, Map<String, String> headers, boolean formBody) throws Exception {
+        return request(url, headers, null, formBody);
     }
 
     public String post(String url, Map<String, String> headers, RequestFile file) throws Exception {
-        return request(url, headers, file);
+        return request(url, headers, file, false);
     }
 
-    private String request(String url, Map<String, String> headers, RequestFile file) throws Exception {
+    //boolean formBody нужен для тех случаев, когда в хедерах есть строки с \n и т.д
+    private String request(String url, Map<String, String> headers, RequestFile file, boolean formBody) throws Exception {
         Log.d("kek", "request url " + url);
         if (url.substring(0, 2).equals("//")) {
             url = "http:".concat(url);
@@ -131,13 +136,15 @@ public class Client {
                 .url(url)
                 .header("User-Agent", userAgent);
         if (headers != null || file != null) {
-            //FormBody нужен, т.к не все формы корректно работают с MultipartBody
-            if (file == null) {
-                FormBody.Builder formBuilder = new FormBody.Builder();
-                for (Map.Entry<String, String> entry : headers.entrySet()) {
-                    formBuilder.addEncoded(entry.getKey(), entry.getValue());
+            if (formBody) {
+                if (headers != null) {
+                    //FormBody нужен, т.к не все формы корректно работают с MultipartBody
+                    FormBody.Builder formBuilder = new FormBody.Builder();
+                    for (Map.Entry<String, String> entry : headers.entrySet()) {
+                        formBuilder.add(entry.getKey(), entry.getValue());
+                    }
+                    requestBuilder.post(formBuilder.build());
                 }
-                requestBuilder.post(formBuilder.build());
             } else {
                 MultipartBody.Builder multipartBuilder = new MultipartBody.Builder();
                 multipartBuilder.setType(MultipartBody.FORM);
@@ -146,7 +153,9 @@ public class Client {
                         multipartBuilder.addFormDataPart(entry.getKey(), entry.getValue());
                     }
                 }
-                multipartBuilder.addFormDataPart(file.getRequestName(), URLEncoder.encode(file.getFileName(), "CP1251"), RequestBodyUtil.create(MediaType.parse(file.getMimeType()), file.getFileStream()));
+                if (file != null) {
+                    multipartBuilder.addFormDataPart(file.getRequestName(), URLEncoder.encode(file.getFileName(), "CP1251"), RequestBodyUtil.create(MediaType.parse(file.getMimeType()), file.getFileStream()));
+                }
                 requestBuilder.post(multipartBuilder.build());
             }
         }

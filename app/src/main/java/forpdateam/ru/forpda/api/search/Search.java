@@ -10,6 +10,7 @@ import forpdateam.ru.forpda.api.search.models.SearchItem;
 import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
 import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.utils.Utils;
 import io.reactivex.Observable;
 
 /**
@@ -41,8 +42,8 @@ public class Search {
                 item.setImage(matcher.group(2));
                 item.setDate(matcher.group(3));
                 item.setLastUserId(Integer.parseInt(matcher.group(4)));
-                item.setLastUserNick(matcher.group(5));
-                item.setTitle(matcher.group(6));
+                item.setLastUserNick(Utils.fromHtml(matcher.group(5)));
+                item.setTitle(Utils.fromHtml(matcher.group(6)));
                 item.setContent(matcher.group(7));
                 result.addItem(item);
             }
@@ -52,9 +53,9 @@ public class Search {
                 while (matcher.find()) {
                     item = new SearchItem();
                     item.setId(Integer.parseInt(matcher.group(1)));
-                    item.setTitle(matcher.group(4));
+                    item.setTitle(Utils.fromHtml(matcher.group(4)));
                     item.setLastUserId(Integer.parseInt(matcher.group(9)));
-                    item.setLastUserNick(matcher.group(10));
+                    item.setLastUserNick(Utils.fromHtml(matcher.group(10)));
                     item.setDate(matcher.group(11));
                     result.addItem(item);
                 }
@@ -64,11 +65,11 @@ public class Search {
                     item = new SearchItem();
                     item.setId(Integer.parseInt(matcher.group(1)));
                     item.setPostId(Integer.parseInt(matcher.group(2)));
-                    item.setTitle(matcher.group(3));
+                    item.setTitle(Utils.fromHtml(matcher.group(3)));
                     item.setDate(matcher.group(4));
                     item.setLastUserId(Integer.parseInt(matcher.group(5)));
                     item.setAvatar(matcher.group(6));
-                    item.setLastUserNick(matcher.group(7));
+                    item.setLastUserNick(Utils.fromHtml(matcher.group(7)));
                     item.setContent(matcher.group(8));
                     result.addItem(item);
                 }

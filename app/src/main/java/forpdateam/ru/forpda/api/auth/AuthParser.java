@@ -56,7 +56,7 @@ public class AuthParser {
         /*headers.put("login", form.getNick());
         headers.put("password", form.getPassword());*/
         headers.put("remember", form.getRememberField());
-        String response = Client.getInstance().post("https://4pda.ru/forum/index.php?act=auth", headers);
+        String response = Client.getInstance().post("https://4pda.ru/forum/index.php?act=auth", headers, true);
         Matcher matcher = errorPattern.matcher(response);
         if (matcher.find()){
             throw new Exception(Html.fromHtml(matcher.group(1)).toString().replaceAll("\\.", ".\n").trim());

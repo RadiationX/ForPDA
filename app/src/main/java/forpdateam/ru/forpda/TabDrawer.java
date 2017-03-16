@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -56,7 +57,7 @@ public class TabDrawer {
     public class TabAdapter extends ArrayAdapter<TabFragment> {
         private final static int item_res = R.layout.drawer_tab_item;
         private final LayoutInflater inflater;
-        private int color = Color.argb(128, 255, 128, 65);
+        private int color = Color.argb(48, 128, 128, 128);
 
         public TabAdapter(Context context) {
             super(context, item_res, TabManager.getInstance().getFragments());
@@ -77,7 +78,7 @@ public class TabDrawer {
                 holder = new ViewHolder();
                 assert convertView != null;
                 holder.text = (TextView) convertView.findViewById(R.id.text);
-                holder.close = (ImageView) convertView.findViewById(R.id.close);
+                holder.close = (ImageButton) convertView.findViewById(R.id.close);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
@@ -91,12 +92,17 @@ public class TabDrawer {
 
             holder.text.setText(fragment.getTabTitle());
             holder.close.setOnClickListener(view -> TabManager.getInstance().remove(fragment));
+            holder.close.setColorFilter(App.getContext().getResources().getColor(R.color.black));
             return convertView;
         }
 
         public class ViewHolder {
             public TextView text;
-            public ImageView close;
+            public ImageButton close;
         }
+    }
+
+    public void setStatusBarHeight(int height){
+        drawer.setPadding(0,height,0,0);
     }
 }

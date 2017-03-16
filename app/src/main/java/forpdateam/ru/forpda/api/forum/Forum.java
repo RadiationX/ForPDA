@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import forpdateam.ru.forpda.api.forum.models.ForumItemFlat;
 import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
 import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.utils.Utils;
 import io.reactivex.Observable;
 
 /**
@@ -39,7 +40,7 @@ public class Forum {
                 ForumItemTree item = new ForumItemTree();
                 item.setId(Integer.parseInt(matcher.group(1)));
                 item.setLevel(matcher.group(2).length() / 2);
-                item.setTitle(matcher.group(3));
+                item.setTitle(Utils.fromHtml(matcher.group(3)));
                 if (item.getLevel() <= lastParent.getLevel()) {
                     //Удаление элементов, учитывая случай с резким скачком уровня вложенности
                     for (int i = 0; i < (lastParent.getLevel() - item.getLevel() + 1); i++)

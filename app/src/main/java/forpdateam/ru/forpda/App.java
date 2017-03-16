@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.content.res.AppCompatResources;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
@@ -24,16 +25,36 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.Map;
 
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.data.Repository;
+import forpdateam.ru.forpda.utils.ourparser.Html;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import okhttp3.FormBody;
+
+import org.acra.*;
+import org.acra.annotation.*;
+
+import static org.acra.ReportField.*;
 
 /**
  * Created by radiationx on 28.07.16.
  */
+
+@ReportsCrashes(
+        mailTo = "ololosh10050@gmail.com",
+        customReportContent = {APP_VERSION_CODE, APP_VERSION_NAME, ANDROID_VERSION, PHONE_MODEL, CUSTOM_DATA, STACK_TRACE, LOGCAT},
+        mode = ReportingInteractionMode.NOTIFICATION,
+        resNotifTickerText = R.string.crash_notif_ticker_text,
+        resNotifTitle = R.string.crash_notif_title,
+        resNotifText = R.string.crash_notif_text,
+        resNotifIcon = android.R.drawable.stat_notify_error,
+        resDialogText = R.string.crash_toast_text
+)
+
 public class App extends android.app.Application {
     private static App INSTANCE = new App();
     private SharedPreferences preferences;
@@ -73,9 +94,11 @@ public class App extends android.app.Application {
         return templator;
     }
 
+
     @Override
     public void onCreate() {
         super.onCreate();
+        ACRA.init(this);
 
         InputStream stream = null;
         try {

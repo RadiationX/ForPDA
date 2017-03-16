@@ -13,6 +13,7 @@ import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsMessage;
 import forpdateam.ru.forpda.api.qms.models.QmsTheme;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
+import forpdateam.ru.forpda.utils.Utils;
 import io.reactivex.Observable;
 
 import static forpdateam.ru.forpda.client.Client.getInstance;
@@ -43,7 +44,7 @@ public class Qms {
             temp = matcher.group(2);
             contact.setCount(temp == null || temp.isEmpty() ? 0 : Integer.parseInt(temp));
             contact.setAvatar(matcher.group(3));
-            contact.setNick(Html.fromHtml(matcher.group(4).trim()).toString());
+            contact.setNick(Utils.fromHtml(matcher.group(4).trim()));
             list.add(contact);
         }
 
@@ -69,7 +70,7 @@ public class Qms {
         }
         matcher = threadNickPattern.matcher(response);
         if (matcher.find()) {
-            qmsThemes.setNick(matcher.group(1));
+            qmsThemes.setNick(Utils.fromHtml(matcher.group(1)));
         }
         qmsThemes.setUserId(id);
         return qmsThemes;
@@ -104,8 +105,8 @@ public class Qms {
         }
         matcher = chatInfoPattern.matcher(response);
         if (matcher.find()) {
-            chat.setNick(Html.fromHtml(matcher.group(1).trim()).toString());
-            chat.setTitle(Html.fromHtml(matcher.group(2).trim()).toString());
+            chat.setNick(Utils.fromHtml(matcher.group(1).trim()));
+            chat.setTitle(Utils.fromHtml(matcher.group(2).trim()));
             chat.setUserId(Integer.parseInt(matcher.group(3)));
             chat.setThemeId(Integer.parseInt(matcher.group(4)));
             chat.setAvatarUrl(matcher.group(5));

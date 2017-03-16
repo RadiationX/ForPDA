@@ -24,6 +24,7 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.Utils;
+import forpdateam.ru.forpda.utils.rx.Subscriber;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -33,7 +34,7 @@ import io.realm.RealmResults;
 
 public class ForumFragment extends TabFragment {
     public final static String ARG_FORUM_ID = "ARG_FORUM_ID";
-    private Subscriber<ForumItemTree> mainSubscriber = new Subscriber<>();
+    private Subscriber<ForumItemTree> mainSubscriber = new Subscriber<>(this);
     private NestedScrollView treeContainer;
     private Realm realm;
     private RealmResults<ForumItemFlat> results;

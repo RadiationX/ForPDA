@@ -67,6 +67,7 @@ public class MessagePanel extends CardView {
         setLayoutParams(params);
         setClipToPadding(true);
         setRadius(fullForm ? 0 : App.px24);
+        setPreventCornerOverlap(false);
         //На случай, когда добавляются несколько слушателей
         advancedButton.setOnClickListener(v -> {
             for (OnClickListener listener : advancedListeners)
