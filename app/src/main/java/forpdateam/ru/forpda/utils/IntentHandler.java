@@ -92,8 +92,12 @@ public class IntentHandler {
                 if (args == null) args = new Bundle();
                 switch (uri.getPathSegments().get(0)) {
                     case "forum":
+                        if (Pattern.compile("https?:\\/\\/4pda\\.ru\\/forum\\/dl\\/post\\/\\d+\\/[\\s\\S]*\\.").matcher(url).find()) {
+                            Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
+                            break;
+                        }
                         return handleForum(uri, args);
-                    case "devdb":
+                    /*case "devdb":
                         if (uri.getPathSegments().size() > 1) {
                             if (uri.getPathSegments().get(1).matches("phones|pad|ebook|smartwatch")) {
                                 if (uri.getPathSegments().size() > 2 && !uri.getPathSegments().get(2).matches("new|select")) {
@@ -111,7 +115,10 @@ public class IntentHandler {
                             return true;
                         }
                     default:
-                        return handleSite(uri, args);
+                        return handleSite(uri, args);*/
+                }
+                if (Pattern.compile("https?:\\/\\/cs\\d-\\d.4pda.to\\/\\d+").matcher(url).find()) {
+                    Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -222,6 +229,6 @@ public class IntentHandler {
 
     private static void run(String s) {
         Log.d("kek", "run: " + s);
-        Toast.makeText(App.getContext(), "ForPDA should run " + s, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(App.getContext(), "ForPDA should run " + s, Toast.LENGTH_SHORT).show();
     }
 }

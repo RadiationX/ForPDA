@@ -8,12 +8,14 @@ import android.os.Looper;
 import android.util.Log;
 import android.webkit.WebSettings;
 
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observer;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,6 +54,7 @@ public class Client {
         String member_id = App.getInstance().getPreferences().getString("cookie_member_id", null);
         String pass_hash = App.getInstance().getPreferences().getString("cookie_pass_hash", null);
         Api.Auth().setUserId(App.getInstance().getPreferences().getString("member_id", null));
+        Log.d("SUKA", "INIT AUTH DATA " + member_id + " : " + pass_hash + " : " + App.getInstance().getPreferences().getString("member_id", null));
         if (member_id != null && pass_hash != null) {
             Api.Auth().setState(true);
             //Первичная загрузка кукисов
@@ -75,6 +78,9 @@ public class Client {
     }
 
     private final OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
             .cookieJar(new CookieJar() {
                 @Override
                 public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
@@ -82,12 +88,16 @@ public class Client {
                     try {
                         for (Cookie cookie : cookies) {
                             if (cookie.name().matches("member_id|pass_hash")) {
-                                //Сохранение кукисов cookie_member_id и cookie_pass_hash
-                                App.getInstance().getPreferences().edit().putString("cookie_".concat(cookie.name()), url.toString().concat("|:|").concat(cookie.toString())).apply();
-                                if (cookie.name().equals("member_id")) {
-                                    //Сохранение и обновление member_id
-                                    App.getInstance().getPreferences().edit().putString("member_id", cookie.value()).apply();
-                                    Api.Auth().setUserId(cookie.value());
+                                if (cookie.value().equals("deleted")) {
+                                    App.getInstance().getPreferences().edit().remove("cookie_".concat(cookie.name())).apply();
+                                } else {
+                                    //Сохранение кукисов cookie_member_id и cookie_pass_hash
+                                    App.getInstance().getPreferences().edit().putString("cookie_".concat(cookie.name()), url.toString().concat("|:|").concat(cookie.toString())).apply();
+                                    if (cookie.name().equals("member_id")) {
+                                        //Сохранение и обновление member_id
+                                        App.getInstance().getPreferences().edit().putString("member_id", cookie.value()).apply();
+                                        Api.Auth().setUserId(cookie.value());
+                                    }
                                 }
                             }
                             Client.cookies.put(cookie.name(), cookie);
@@ -109,7 +119,7 @@ public class Client {
 
     //Network
     public String get(String url) throws Exception {
-        return request(url, null, null, true);
+        return request(url, null, null, false);
     }
 
     public String post(String url, Map<String, String> headers) throws Exception {
@@ -138,18 +148,22 @@ public class Client {
         if (headers != null || file != null) {
             if (formBody) {
                 if (headers != null) {
-                    //FormBody нужен, т.к не все формы корректно работают с MultipartBody
+                    //FormBody нужен, т.к не все формы корректно работают с MultipartBody (точнее только авторизация)
+                    Log.d("SUKA", "FORM BUILDER");
                     FormBody.Builder formBuilder = new FormBody.Builder();
                     for (Map.Entry<String, String> entry : headers.entrySet()) {
-                        formBuilder.add(entry.getKey(), entry.getValue());
+                        Log.d("SUKA", "HEADER " + entry.getKey() + " : " + entry.getValue());
+                        formBuilder.addEncoded(entry.getKey(), entry.getValue());
                     }
                     requestBuilder.post(formBuilder.build());
                 }
             } else {
                 MultipartBody.Builder multipartBuilder = new MultipartBody.Builder();
                 multipartBuilder.setType(MultipartBody.FORM);
+                Log.d("SUKA", "MULTIPART FORM BUILDER");
                 if (headers != null) {
                     for (Map.Entry<String, String> entry : headers.entrySet()) {
+                        Log.d("SUKA", "HEADER " + entry.getKey() + " : " + entry.getValue());
                         multipartBuilder.addFormDataPart(entry.getKey(), entry.getValue());
                     }
                 }

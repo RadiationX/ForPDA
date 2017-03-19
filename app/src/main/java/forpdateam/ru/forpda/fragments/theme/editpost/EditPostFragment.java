@@ -222,7 +222,7 @@ public class EditPostFragment extends TabFragment {
                 //Display an error
                 return;
             }
-            uploadFiles(FilePickHelper.onActivityResult(getContext(), data.getData()));
+            uploadFiles(FilePickHelper.onActivityResult(getContext(), data));
         }
     }
 

@@ -35,7 +35,7 @@ android {
             applicationId "ru.forpdateam.forpda"
             versionCode versionNumber
             versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})"
-            minSdkVersion 17
+            minSdkVersion 19
             targetSdkVersion 25
             vectorDrawables.useSupportLibrary = true
         }
@@ -91,7 +91,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '25.2.0'
+    supportLibVersion = '25.3.0'
     okHttpVersion = '3.5.0'
     rxbindingVersion = '0.4.0'
     rxlifecycleVersion = '2.0.1'

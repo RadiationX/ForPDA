@@ -8,6 +8,7 @@ import forpdateam.ru.forpda.api.search.models.SearchSettings;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.Utils;
 
 /**
  * Created by radiationx on 01.11.16.
@@ -93,7 +94,10 @@ class ThemeDialogsHelper {
             postMenu.addItem("Пожаловаться", ThemeFragment::reportPost);
             postMenu.addItem("Изменить", ThemeFragment::editPost);
             postMenu.addItem("Удалить", ThemeFragment::deletePost);
-            postMenu.addItem("Ссылка на сообщение", (context, data) -> Toast.makeText(context.getContext(), "Не умею", Toast.LENGTH_SHORT).show());
+            postMenu.addItem("Ссылка на сообщение", (context, data) -> {
+                String url = "http://4pda.ru/forum/index.php?s=&showtopic=" + context.currentPage.getId() + "&view=findpost&p=" + data.getId();
+                Utils.copyToClipBoard(url);
+            });
         }
         showedPostMenu.clear();
         if (Api.Auth().getState()) {

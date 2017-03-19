@@ -408,14 +408,14 @@ button,
                             }
                             
                             .range_bar {
-                                background: rgba(0, 0, 0, 0.1);
+                                background: rgba(0, 0, 0, 0.16);
                                 position: relative;
                                 min-height: 1.5em;
                                 padding: 4/16rem 8/16rem;
                                 .bRad(2px);
-                                text-shadow: 0 0px 10px rgba(0, 0, 0, 0.75);
+                                text-shadow: 0 0px 3/16rem rgba(0, 0, 0, 0.5);
                                 color: white;
-                                box-shadow: inset -6em 0 6em -6em rgba(0, 0, 0, 0.5);
+                                //box-shadow: inset -6em 0 6em -6em rgba(0, 0, 0, 0.5);
                                 .range {
                                     position: absolute;
                                     left: 0;
@@ -433,10 +433,10 @@ button,
                                     display: inline-block;
                                     font-size: 12/16em;
                                     font-weight: bold;
-                                    opacity: 0;
+                                    //opacity: 0;
                                     -webkit-transform: translateZ(0);
                                     transform: translateZ(0);
-                                    visibility: hidden;
+                                    //visibility: hidden;
                                     vertical-align: bottom;
                                     .num_votes {
                                         &:before {
@@ -504,8 +504,8 @@ button,
             -webkit-animation-fill-mode: forwards;
         }
         .value {
-            -webkit-animation: pollRangeValueAnimation 0.225s @curveStandard 0.225s;
-            -webkit-animation-fill-mode: forwards;
+            //-webkit-animation: pollRangeValueAnimation 0.225s @curveStandard 0.225s;
+            //-webkit-animation-fill-mode: forwards;
         }
     }
     &.default {}

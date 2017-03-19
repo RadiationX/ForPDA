@@ -26,8 +26,8 @@
     <string name="profile_item_text_last_online">Последнее посещение</string>
     <string name="profile_item_text_alerts">Предупреждения</string>
     <string name="refresh">Обновить</string>
-    <string name="crash_toast_text">Pizda rulyi</string>
+    <string name="crash_toast_text">Произошло нечто очень страшное. Помогите нам, отправьте отчет об ошибке, мы не хотим больше жить в страхе…</string>
     <string name="crash_notif_ticker_text">1val</string>
-    <string name="crash_notif_title">2val</string>
-    <string name="crash_notif_text">3val</string>
+    <string name="crash_notif_title">Ошибка в работе программы</string>
+    <string name="crash_notif_text">Помогите нам исправить её - отправьте отчет об ошибке</string>
 </resources>

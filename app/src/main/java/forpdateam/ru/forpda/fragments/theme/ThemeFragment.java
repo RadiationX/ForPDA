@@ -250,17 +250,17 @@ public abstract class ThemeFragment extends TabFragment {
 
         SubMenu subMenu = menu.addSubMenu("Опции темы");
         if (currentPage != null) {
-            if (currentPage.isInFavorite()) {
+            /*if (currentPage.isInFavorite()) {
                 subMenu.add("Удалить из избранного").setOnMenuItemClickListener(menuItem -> false);
             } else {
                 subMenu.add("Добавить в избранное").setOnMenuItemClickListener(menuItem -> false);
-            }
+            }*/
             subMenu.add("Открыть форум темы").setOnMenuItemClickListener(menuItem -> {
                 IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + currentPage.getForumId());
                 return false;
             });
-            subMenu.add("Кто читает тему").setOnMenuItemClickListener(menuItem -> false);
-            subMenu.add("Кто писал сообщения").setOnMenuItemClickListener(menuItem -> false);
+            //subMenu.add("Кто читает тему").setOnMenuItemClickListener(menuItem -> false);
+            //subMenu.add("Кто писал сообщения").setOnMenuItemClickListener(menuItem -> false);
         }
     }
 
@@ -369,7 +369,7 @@ public abstract class ThemeFragment extends TabFragment {
                 //Display an error
                 return;
             }
-            uploadFiles(FilePickHelper.onActivityResult(getContext(), data.getData()));
+            uploadFiles(FilePickHelper.onActivityResult(getContext(), data));
         }
     }
 
