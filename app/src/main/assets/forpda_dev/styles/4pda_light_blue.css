@@ -492,15 +492,14 @@ button:active,
   line-height: 1.5em;
 }
 .poll > .body .questions .question > .items .item.result .range_bar {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.16);
   position: relative;
   min-height: 1.5em;
   padding: 0.25rem 0.5rem;
   -webkit-border-radius: 2px;
   border-radius: 2px;
-  text-shadow: 0 0px 10px rgba(0, 0, 0, 0.75);
+  text-shadow: 0 0px 0.1875rem rgba(0, 0, 0, 0.5);
   color: white;
-  box-shadow: inset -6em 0 6em -6em rgba(0, 0, 0, 0.5);
 }
 .poll > .body .questions .question > .items .item.result .range_bar .range {
   position: absolute;
@@ -520,10 +519,8 @@ button:active,
   display: inline-block;
   font-size: 0.75em;
   font-weight: bold;
-  opacity: 0;
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
-  visibility: hidden;
   vertical-align: bottom;
 }
 .poll > .body .questions .question > .items .item.result .range_bar .value .num_votes:before {
@@ -581,10 +578,6 @@ button:active,
 }
 .poll.open .range {
   -webkit-animation: pollRangeAnimation 0.375s cubic-bezier(0.4, 0, 0.2, 1);
-  -webkit-animation-fill-mode: forwards;
-}
-.poll.open .value {
-  -webkit-animation: pollRangeValueAnimation 0.225s cubic-bezier(0.4, 0, 0.2, 1) 0.225s;
   -webkit-animation-fill-mode: forwards;
 }
 .panel {

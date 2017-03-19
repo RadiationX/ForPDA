@@ -57,7 +57,8 @@ public class MenuDrawer {
             initMenuItems();
             adapter.notifyDataSetChanged();
             if ((boolean) o && TabManager.getInstance().getSize() <= 1) {
-                select(findByClassName(NewsListFragment.class.getSimpleName()));
+                //select(findByClassName(NewsListFragment.class.getSimpleName()));
+                select(findByClassName(FavoritesFragment.class.getSimpleName()));
             }
             if (!(boolean) o) {
                 App.getInstance().getPreferences().edit().remove("menu_drawer_last").apply();
@@ -78,7 +79,8 @@ public class MenuDrawer {
             }
             adapter.notifyDataSetChanged();
         });
-        String last = App.getInstance().getPreferences().getString("menu_drawer_last", Api.Auth().getState() ? NewsListFragment.class.getSimpleName() : AuthFragment.class.getSimpleName());
+        //String last = App.getInstance().getPreferences().getString("menu_drawer_last", Api.Auth().getState() ? NewsListFragment.class.getSimpleName() : AuthFragment.class.getSimpleName());
+        String last = App.getInstance().getPreferences().getString("menu_drawer_last", Api.Auth().getState() ? FavoritesFragment.class.getSimpleName() : AuthFragment.class.getSimpleName());
         Log.d("SUKA", "LAAST " + last);
         if (last != null)
             select(findByClassName(last));
@@ -126,7 +128,7 @@ public class MenuDrawer {
     private void initMenuItems() {
         if (createdMenuItems.size() == 0) {
             createdMenuItems.add(new MenuItem<>("Авторизация", R.drawable.ic_person_add_gray_24dp, AuthFragment.class));
-            createdMenuItems.add(new MenuItem<>("Новости", R.drawable.ic_newspaper_gray, NewsListFragment.class));
+            //createdMenuItems.add(new MenuItem<>("Новости", R.drawable.ic_newspaper_gray, NewsListFragment.class));
             createdMenuItems.add(new MenuItem<>("Избранное", R.drawable.ic_star_black_24dp, FavoritesFragment.class));
             createdMenuItems.add(new MenuItem<>("Контакты", R.drawable.ic_mail_gray_24dp, QmsContactsFragment.class));
             createdMenuItems.add(new MenuItem<>("Ответы", R.drawable.ic_notifications_gray_24dp, MentionsFragment.class));

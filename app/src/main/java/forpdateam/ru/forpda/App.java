@@ -45,7 +45,7 @@ import static org.acra.ReportField.*;
  */
 
 @ReportsCrashes(
-        mailTo = "ololosh10050@gmail.com",
+        mailTo = "rxdevlab@gmail.com",
         customReportContent = {APP_VERSION_CODE, APP_VERSION_NAME, ANDROID_VERSION, PHONE_MODEL, CUSTOM_DATA, STACK_TRACE, LOGCAT},
         mode = ReportingInteractionMode.NOTIFICATION,
         resNotifTickerText = R.string.crash_notif_ticker_text,

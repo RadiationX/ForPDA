@@ -8,6 +8,8 @@ import android.provider.OpenableColumns;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import org.acra.ACRA;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -39,8 +41,25 @@ public class FilePickHelper {
         return Intent.createChooser(intent, "Select Picture");
     }
 
-    public static List<RequestFile> onActivityResult(Context context, Uri uri) {
+    public static List<RequestFile> onActivityResult(Context context, Intent data) {
         List<RequestFile> files = new ArrayList<>();
+        RequestFile tempFile = null;
+        if (data.getData() == null) {
+            if (data.getClipData() != null) {
+                for (int i = 0; i < data.getClipData().getItemCount(); i++) {
+                    tempFile = createFile(context, data.getClipData().getItemAt(i).getUri());
+                    if (tempFile != null) files.add(tempFile);
+                }
+            }
+        } else {
+            tempFile = createFile(context, data.getData());
+            if (tempFile != null) files.add(tempFile);
+        }
+        return files;
+    }
+
+    private static RequestFile createFile(Context context, Uri uri) {
+        RequestFile requestFile = null;
         try {
             InputStream inputStream = null;
             String name = getFileName(context, uri);
@@ -50,11 +69,11 @@ public class FilePickHelper {
             } else if (uri.getScheme().equals("file")) {
                 inputStream = new FileInputStream(new File(uri.getPath()));
             }
-            files.add(new RequestFile(name, mimeType, inputStream));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            requestFile = new RequestFile(name, mimeType, inputStream);
+        } catch (Exception e) {
+            ACRA.getErrorReporter().handleException(e);
         }
-        return files;
+        return requestFile;
     }
 
     private static String getFileName(Context context, Uri uri) {

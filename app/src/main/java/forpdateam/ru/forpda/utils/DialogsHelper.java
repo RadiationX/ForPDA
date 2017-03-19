@@ -59,8 +59,8 @@ public class DialogsHelper {
             alertDialogMenu.addItem(openNewTab, (context1, data) -> IntentHandler.handle(data.second));
             alertDialogMenu.addItem(openBrowser, (context1, data) -> App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(data.second))));
             alertDialogMenu.addItem(copyUrl, (context1, data) -> Utils.copyToClipBoard(data.second));
-            alertDialogMenu.addItem(openImage, null);
-            alertDialogMenu.addItem(saveImage, null);
+            alertDialogMenu.addItem(openImage, (context1, data) -> IntentHandler.handle(data.first));
+            alertDialogMenu.addItem(saveImage, (context1, data) -> IntentHandler.handle(data.second));
             alertDialogMenu.addItem(copyImageUrl, (context1, data) -> Utils.copyToClipBoard(data.first));
         }
         showedAlertDialogMenu.clear();
@@ -76,7 +76,7 @@ public class DialogsHelper {
             showedAlertDialogMenu.addItem(alertDialogMenu.get(5));
         }
         new AlertDialog.Builder(context)
-                .setItems(showedAlertDialogMenu.getTitles(), (dialog, which) -> showedAlertDialogMenu.onClick(which, context, new Pair<>(extra, nodeHref)))
+                .setItems(showedAlertDialogMenu.getTitles(), (dialog, which) -> showedAlertDialogMenu.onClick(which, context, new Pair<>(extra, nodeHref == null ? extra : nodeHref)))
                 .show();
     }
 }
