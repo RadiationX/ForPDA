@@ -33,7 +33,7 @@ public class Search {
         SearchItem item = null;
         boolean isNews = settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first);
         boolean resultTopics = settings.getResult().equals(SearchSettings.RESULT_TOPICS.first);
-        Log.d("SUKA", "params " + isNews + " : " + resultTopics + " : " + settings.getResourceType() + " : " + settings.getResult());
+        Log.d("FORPDA_LOG", "params " + isNews + " : " + resultTopics + " : " + settings.getResourceType() + " : " + settings.getResult());
         if (isNews) {
             matcher = newsListPattern.matcher(response);
             while (matcher.find()) {

@@ -30,7 +30,6 @@ public class TabDrawer {
         adapter = new TabAdapter(activity);
         tabsList.setAdapter(adapter);
         tabsList.setOnItemClickListener((adapterView, view, i, l) -> {
-            Log.d("SUKA", "CLICK SUKA LISTENER ALO");
             TabManager.getInstance().select(TabManager.getInstance().get(i));
             close();
         });

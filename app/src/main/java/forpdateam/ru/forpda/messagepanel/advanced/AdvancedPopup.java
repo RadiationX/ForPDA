@@ -38,7 +38,7 @@ public class AdvancedPopup {
             return;
         }
         newKeyboardHeight = fragmentContainer.getRootView().getHeight() - fragmentContainer.getHeight() - App.getStatusBarHeight();
-        Log.d("SUKA", "TREE OBSERVER " + newKeyboardHeight + " : " + fragmentContainer.getRootView().getHeight() + " : " + fragmentContainer.getHeight() + " : " + App.getStatusBarHeight());
+        Log.d("FORPDA_LOG", "TREE OBSERVER " + newKeyboardHeight + " : " + fragmentContainer.getRootView().getHeight() + " : " + fragmentContainer.getHeight() + " : " + App.getStatusBarHeight());
         if (newKeyboardHeight > 100) {
             int last = App.getKeyboardHeight();
             App.setKeyboardHeight(newKeyboardHeight);
@@ -60,7 +60,7 @@ public class AdvancedPopup {
             isShowingKeyboard = false;
         }
         messagePanel.setCanScrolling(!(isShowingKeyboard || popupWindow.isShowing()));
-        Log.d("SUKA", "AFTER " + fragmentContainer.getPaddingBottom());
+        Log.d("FORPDA_LOG", "AFTER " + fragmentContainer.getPaddingBottom());
     };
 
     public AdvancedPopup(Context context, MessagePanel panel) {

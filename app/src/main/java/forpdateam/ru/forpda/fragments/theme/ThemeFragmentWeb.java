@@ -157,12 +157,12 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
 
         private boolean handleUri(Uri uri) {
-            Log.d("kek", "handle " + uri);
+            Log.d("FORPDA_LOG", "handle " + uri);
             if (checkIsPoll(uri.toString())) return true;
             if (uri.getHost() != null && uri.getHost().matches("4pda.ru")) {
                 if (uri.getPathSegments().get(0).equals("forum")) {
                     String param = uri.getQueryParameter("showtopic");
-                    Log.d("kek", "param" + param);
+                    Log.d("FORPDA_LOG", "param" + param);
                     if (param != null && !param.equals(Uri.parse(getTabUrl()).getQueryParameter("showtopic"))) {
                         load(uri);
                         return true;
@@ -170,19 +170,19 @@ public class ThemeFragmentWeb extends ThemeFragment {
                     param = uri.getQueryParameter("act");
                     if (param == null)
                         param = uri.getQueryParameter("view");
-                    Log.d("kek", "param" + param);
+                    Log.d("FORPDA_LOG", "param" + param);
                     if (param != null && param.equals("findpost")) {
                         String postId = uri.getQueryParameter("pid");
                         if (postId == null)
                             postId = uri.getQueryParameter("p");
-                        Log.d("kek", "param" + postId);
+                        Log.d("FORPDA_LOG", "param" + postId);
                         if (postId != null && getPostById(Integer.parseInt(postId)) != null) {
                             Matcher matcher = Theme.elemToScrollPattern.matcher(uri.toString());
                             String elem = null;
                             while (matcher.find()) {
                                 elem = matcher.group(1);
                             }
-                            Log.d("kek", " scroll to " + postId + " : " + elem);
+                            Log.d("FORPDA_LOG", " scroll to " + postId + " : " + elem);
                             webView.evalJs("scrollToElement(\"".concat(elem == null ? "entry" : "").concat(elem != null ? elem : postId).concat("\")"));
                             return true;
                         } else {
@@ -224,7 +224,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
         public void onLoadResource(WebView view, String url) {
             super.onLoadResource(view, url);
 
-            Log.d("kek", "IThemeJ: " + url);
+            Log.d("FORPDA_LOG", "IThemeJ: " + url);
             if (action == NORMAL_ACTION) {
                 if (!url.contains("style_images") && m.reset(url).find()) {
                     webView.evalJs("onProgressChanged()");

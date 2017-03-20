@@ -73,7 +73,7 @@ public class FastActivity extends AppCompatActivity {
         });
 
         final Matcher matcher = pattern.matcher(html);
-        Log.d("kek", "check 3");
+        Log.d("FORPDA_LOG", "check 3");
         if (matcher.find()) {
             final String finalHtml = matcher.group(1);
 
@@ -84,14 +84,14 @@ public class FastActivity extends AppCompatActivity {
                     final long time = System.currentTimeMillis();
                     //Document document = Document._getFav(Jsoup._getFav(finalHtml).body().html());
                     Document document = Document.parse(finalHtml);
-                    Log.d("kek", "time _getFav: " + Math.floor((System.currentTimeMillis() - time) * coef));
+                    Log.d("FORPDA_LOG", "time _getFav: " + Math.floor((System.currentTimeMillis() - time) * coef));
                     final long time2 = System.currentTimeMillis();
                     list.addView(recurseUi(document.getRoot()));
-                    Log.d("kek", "time recurse ui:  " + Math.floor((System.currentTimeMillis() - time2) * coef));
-                    Log.d("kek", "point iterations: " + iterations);
-                    Log.d("kek", "point iterations views: " + iViews);
-                    Log.d("kek", "point iterations textviews: " + iTextViews);
-                    Log.d("kek", "time full:  " + Math.floor((System.currentTimeMillis() - time) * coef));
+                    Log.d("FORPDA_LOG", "time recurse ui:  " + Math.floor((System.currentTimeMillis() - time2) * coef));
+                    Log.d("FORPDA_LOG", "point iterations: " + iterations);
+                    Log.d("FORPDA_LOG", "point iterations views: " + iViews);
+                    Log.d("FORPDA_LOG", "point iterations textviews: " + iTextViews);
+                    Log.d("FORPDA_LOG", "time full:  " + Math.floor((System.currentTimeMillis() - time) * coef));
                     getSupportActionBar().setTitle("ui " + Math.floor((System.currentTimeMillis() - time) * coef));
                 }
             });
@@ -104,7 +104,7 @@ public class FastActivity extends AppCompatActivity {
     private Matcher matcher;
 
     private BaseTag recurseUi(final Element element) {
-        //Log.d("kek", "element "+element.tagName()+" : "+element.getLevel());
+        //Log.d("FORPDA_LOG", "element "+element.tagName()+" : "+element.getLevel());
         /*if (element.tagName().equals("br"))
             return null;*/
         BaseTag thisView = getViewByTag(element.tagName());
@@ -116,7 +116,7 @@ public class FastActivity extends AppCompatActivity {
                     Toast.makeText(FastActivity.this, element.attr("src"), Toast.LENGTH_SHORT).show();
                 }
             });
-            //Log.d("kek", "alt desc " + element.attr("alt"));
+            //Log.d("FORPDA_LOG", "alt desc " + element.attr("alt"));
             if (element.attr("alt") != null) {
                 TextView textView = thisView.setHtmlText(element.attr("alt"));
                 thisView.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -132,7 +132,7 @@ public class FastActivity extends AppCompatActivity {
 
         for (int i = 0; i < element.getElements().size(); i++) {
             Element child = element.get(i);
-            //Log.d("kek", "child "+child.tagName()+" : "+child.getLevel());
+            //Log.d("FORPDA_LOG", "child "+child.tagName()+" : "+child.getLevel());
             BaseTag newView = null;
             if (!text && child.tagName().equals("br"))
                 continue;

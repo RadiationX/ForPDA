@@ -1214,7 +1214,7 @@ class HtmlToSpannedConverter implements ContentHandler {
                 return i;
             }
         }
-        Log.d("kek", "kolor "+color);
+        Log.d("FORPDA_LOG", "kolor "+color);
         //TODO normal _getFav color
         return Color.CYAN;
     }

@@ -185,8 +185,7 @@ public class ForumFragment extends TabFragment {
             tView.setDefaultNodeClickListener(nodeClickListener);
             tView.setDefaultNodeLongClickListener(nodeLongClickListener);
             treeContainer.removeAllViews();
-            View suka = tView.getView();
-            treeContainer.addView(suka);
+            treeContainer.addView(tView.getView());
 
             //int id = 427;
             //int id = 828;

@@ -168,7 +168,6 @@ public class SearchFragment extends TabFragment {
         recyclerView.setAdapter(adapter);
         refreshLayout.setOnRefreshListener(this::loadData);
         adapter.setOnItemClickListener(item -> {
-            Log.d("SUKA", "ONCLICK BLYA AAAAAAAAAAAAAAAAAAAAAA");
             if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
                 IntentHandler.handle("http://4pda.ru/index.php?p=" + item.getId());
             } else {

@@ -78,25 +78,23 @@ public class MentionsFragment extends TabFragment {
             }
         });
         //recyclerView.addItemDecoration(new DividerItemDecoration(getContext()));
-
+        adapter = new MentionsAdapter();
+        adapter.setOnItemClickListener(onItemClickListener);
+        recyclerView.setAdapter(adapter);
 
         return view;
     }
 
     @Override
     public void loadData() {
-        if (refreshLayout != null)
-            refreshLayout.setRefreshing(true);
+        refreshLayout.setRefreshing(true);
         mainSubscriber.subscribe(Api.Mentions().getMentions(currentSt), this::onLoadThemes, new MentionsData(), v -> loadData());
     }
 
     private void onLoadThemes(MentionsData data) {
-        if (refreshLayout != null)
-            refreshLayout.setRefreshing(false);
+        refreshLayout.setRefreshing(false);
         this.data = data;
-        adapter = new MentionsAdapter(data.getItems());
-        adapter.setOnItemClickListener(onItemClickListener);
-        recyclerView.setAdapter(adapter);
+        adapter.addAll(data.getItems());
         paginationHelper.updatePagination(data.getPagination());
         setSubtitle(paginationHelper.getString());
     }

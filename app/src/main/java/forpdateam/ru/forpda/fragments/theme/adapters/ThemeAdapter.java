@@ -80,15 +80,15 @@ public class ThemeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         ThemePost item = postList.get(position);
         /*long time = System.currentTimeMillis();
         Document document = Document.parse(postList.get(position).getBody());
-        Log.d("kek", "theme parsing time document " + (System.currentTimeMillis() - time));*/
+        Log.d("FORPDA_LOG", "theme parsing time document " + (System.currentTimeMillis() - time));*/
         BaseTag view;
         if (!createdTrees.containsKey(position)) {
             long time = System.currentTimeMillis();
             Document document = Document.parse(postList.get(position).getBody());
-            Log.d("kek", "theme parsing time document " + (System.currentTimeMillis() - time));
+            Log.d("FORPDA_LOG", "theme parsing time document " + (System.currentTimeMillis() - time));
             time = System.currentTimeMillis();
             view = recurseUi(document.getRoot());
-            Log.d("kek", "theme parsing time layouts " + (System.currentTimeMillis() - time));
+            Log.d("FORPDA_LOG", "theme parsing time layouts " + (System.currentTimeMillis() - time));
             createdTrees.put(position, view);
         } else {
             view = createdTrees.get(position);

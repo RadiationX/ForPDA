@@ -60,7 +60,7 @@ public class AuthParser {
             throw new Exception(Html.fromHtml(matcher.group(1)).toString().replaceAll("\\.", ".\n").trim());
         }
 
-        Log.d("SUKA", "RESPONSE "+response);
+        Log.d("FORPDA_LOG", "RESPONSE "+response);
         form.setBody(response);
 
         return checkLogin(response);

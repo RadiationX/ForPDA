@@ -48,7 +48,7 @@ public class MenuDrawer {
         adapter = new MenuAdapter(activity);
         menuList.setAdapter(adapter);
         menuList.setOnItemClickListener((adapterView, view, i, l) -> {
-            Log.d("kek", "clicked " + i + " : " + menuItems.get(i).name);
+            Log.d("FORPDA_LOG", "clicked " + i + " : " + menuItems.get(i).name);
             select(menuItems.get(i));
             close();
         });
@@ -82,7 +82,7 @@ public class MenuDrawer {
         });
         //String last = App.getInstance().getPreferences().getString("menu_drawer_last", Api.Auth().getState() ? NewsListFragment.class.getSimpleName() : AuthFragment.class.getSimpleName());
         String last = App.getInstance().getPreferences().getString("menu_drawer_last", Api.Auth().getState() ? FavoritesFragment.class.getSimpleName() : AuthFragment.class.getSimpleName());
-        Log.d("SUKA", "LAAST " + last);
+        Log.d("FORPDA_LOG", "LAAST " + last);
         if (last != null)
             select(findByClassName(last));
     }
@@ -96,11 +96,11 @@ public class MenuDrawer {
         if (item == null) return;
         try {
             TabFragment fragment = TabManager.getInstance().get(item.getCreatedTag());
-            Log.e("SUKA", "MENU SELECT " + fragment);
+            Log.e("FORPDA_LOG", "MENU SELECT " + fragment);
             if (fragment == null) {
                 fragment = TabManager.getInstance().get(TabManager.getInstance().getTagContainClass(item.gettClass()));
             }
-            Log.e("SUKA", "MENU SELECT " + fragment);
+            Log.e("FORPDA_LOG", "MENU SELECT " + fragment);
             if (fragment == null) {
                 fragment = (TabFragment) item.gettClass().newInstance();
                 TabManager.getInstance().add(fragment);
@@ -110,7 +110,7 @@ public class MenuDrawer {
             }
 
             active = menuItems.indexOf(item);
-            Log.d("kek", "menu active " + active);
+            Log.d("FORPDA_LOG", "menu active " + active);
             adapter.notifyDataSetChanged();
             App.getInstance().getPreferences().edit().putString("menu_drawer_last", item.gettClass().getSimpleName()).apply();
         } catch (Exception e) {

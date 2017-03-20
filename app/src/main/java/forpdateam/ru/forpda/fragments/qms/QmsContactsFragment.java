@@ -115,7 +115,7 @@ public class QmsContactsFragment extends TabFragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.d("kek", "on query changed start");
+                Log.d("FORPDA_LOG", "on query changed start");
                 searchContacts.clear();
                 if (!newText.isEmpty()) {
                     for (QmsContact contact : results) {
@@ -126,7 +126,7 @@ public class QmsContactsFragment extends TabFragment {
                 } else {
                     adapter.addAll(results);
                 }
-                Log.d("kek", "on query changed end");
+                Log.d("FORPDA_LOG", "on query changed end");
                 return false;
             }
         });
@@ -146,7 +146,7 @@ public class QmsContactsFragment extends TabFragment {
 
     @Override
     public boolean onBackPressed() {
-        Log.d("kek", "onbackpressed qms");
+        Log.d("FORPDA_LOG", "onbackpressed qms");
         if (toolbar.getMenu().findItem(R.id.action_search).isActionViewExpanded()) {
             recyclerView.setAdapter(adapter);
             toolbar.collapseActionView();
@@ -163,7 +163,7 @@ public class QmsContactsFragment extends TabFragment {
     }
 
     private void onLoadContacts(ArrayList<QmsContact> data) {
-        Log.d("kek", "loaded itms " + data.size() + " : " + results.size());
+        Log.d("FORPDA_LOG", "loaded itms " + data.size() + " : " + results.size());
         refreshLayout.setRefreshing(false);
 
         if (data.size() == 0)

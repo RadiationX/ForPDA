@@ -133,7 +133,7 @@ public class AttachmentItem implements Parcelable {
     }
 
     public void writeToParcel(Parcel parcel, int flags) {
-        Log.d("SUKA", "writeToParcel");
+        Log.d("FORPDA_LOG", "writeToParcel");
         parcel.writeByte((byte) (isError ? 1 : 0));
         parcel.writeByte((byte) (selected ? 1 : 0));
         parcel.writeInt(id);
@@ -148,7 +148,7 @@ public class AttachmentItem implements Parcelable {
 
     public static final Parcelable.Creator<AttachmentItem> CREATOR = new Parcelable.Creator<AttachmentItem>() {
         public AttachmentItem createFromParcel(Parcel in) {
-            Log.d("SUKA", "createFromParcel");
+            Log.d("FORPDA_LOG", "createFromParcel");
             return new AttachmentItem(in);
         }
 

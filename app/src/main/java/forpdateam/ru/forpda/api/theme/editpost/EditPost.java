@@ -47,7 +47,7 @@ public class EditPost {
     }
 
     private EditPostForm _loadForm(int postId) throws Exception {
-        Log.d("SUKA", "START LOAD FORM");
+        Log.d("FORPDA_LOG", "START LOAD FORM");
         EditPostForm form = new EditPostForm();
         String url = "http://4pda.ru/forum/index.php?s=&act=post&do=post-edit-show&p=".concat(Integer.toString(postId));
         //url = url.concat("&t=").concat(Integer.toString(topicId)).concat("&f=").concat(Integer.toString(forumId));
@@ -55,9 +55,9 @@ public class EditPost {
         String response = Client.getInstance().get(url);
         Matcher matcher = postPattern.matcher(response);
         if (matcher.find()) {
-            Log.d("SUKA", "MESSAGE " + matcher.group(1));
+            Log.d("FORPDA_LOG", "MESSAGE " + matcher.group(1));
             form.setMessage(matcher.group(1));
-            Log.d("SUKA", "REASON " + matcher.group(2));
+            Log.d("FORPDA_LOG", "REASON " + matcher.group(2));
             form.setEditReason(matcher.group(2));
         }
 
@@ -65,7 +65,7 @@ public class EditPost {
         matcher = loadedAttachments.matcher(response);
         while (matcher.find())
             form.addAttachment(fillAttachment(new AttachmentItem(), matcher));
-        Log.d("SUKA", "ATTACHES " + form.getAttachments().size());
+        Log.d("FORPDA_LOG", "ATTACHES " + form.getAttachments().size());
         return form;
     }
 
@@ -144,7 +144,7 @@ public class EditPost {
         String url = "http://4pda.ru/forum/index.php";
         Map<String, String> headers = new HashMap<>();
         headers.put("act", "Post");
-        Log.d("SUKA", "FORM TYPE " + form.getType());
+        Log.d("FORPDA_LOG", "FORM TYPE " + form.getType());
         headers.put("CODE", form.getType() == EditPostForm.TYPE_NEW_POST ? "03" : "9");
         if (form.getPostId() != 0)
             headers.put("p", "" + form.getPostId());
