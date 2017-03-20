@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import org.acra.ACRA;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,6 +21,7 @@ import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsChatFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsThemesFragment;
+import forpdateam.ru.forpda.fragments.reputation.ReputationFragment;
 import forpdateam.ru.forpda.fragments.search.SearchFragment;
 import forpdateam.ru.forpda.fragments.theme.ThemeFragmentWeb;
 import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
@@ -74,18 +77,24 @@ public class IntentHandler {
 
     public static boolean handle(String url, Bundle args) {
         //url = Html.fromHtml(url).toString();
-        if (url != null && url.matches("(?:http?s?:)?\\/\\/4pda\\.ru[\\s\\S]*")) {
-            if (url == null || url.length() <= 1 || url.equals("#")) {
-                return false;
-            }
-            if (url.substring(0, 2).equals("//"))
-                url = "http:".concat(url);
+        Log.d("kek", "handle clear url "+url);
+        if (url == null || url.length() <= 1 || url.equals("#")) {
+            return false;
+        }
+        if (url.substring(0, 2).equals("//"))
+            url = "http:".concat(url);
+
+        try {
+            url = URLDecoder.decode(url, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        url = Utils.fromHtml(url);
+        Log.d("kek", "after html url " + url);
+        if (url.matches("(?:http?s?:)?\\/\\/4pda\\.ru[\\s\\S]*")) {
             if (!url.contains("4pda.ru")) {
                 url = "http://4pda.ru".concat(url.substring(0, 1).equals("/") ? "" : "/").concat(url);
             }
-            url = Html.fromHtml(url).toString();
-
-            Log.d("kek", "after html url " + url);
             Uri uri = Uri.parse(url.toLowerCase());
             Log.d("kek", "HANDLE URL " + uri.toString() + " : " + url);
             if (uri.getHost() != null && uri.getHost().matches("4pda.ru")) {
@@ -193,7 +202,8 @@ public class IntentHandler {
                     TabManager.getInstance().add(new TabFragment.Builder<>(SearchFragment.class).setArgs(args).build());
                     return true;
                 case "rep":
-                    run("rep " + uri.toString());
+                    args.putString(TabFragment.URL_ARG, uri.toString());
+                    TabManager.getInstance().add(new TabFragment.Builder<>(ReputationFragment.class).setArgs(args).build());
                     return true;
                 case "findpost":
                     args.putString(TabFragment.URL_ARG, uri.toString());

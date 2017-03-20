@@ -9,6 +9,7 @@ import forpdateam.ru.forpda.api.mentions.Mentions;
 import forpdateam.ru.forpda.api.news.NewsParser;
 import forpdateam.ru.forpda.api.profile.Profile;
 import forpdateam.ru.forpda.api.qms.Qms;
+import forpdateam.ru.forpda.api.reputation.Reputation;
 import forpdateam.ru.forpda.api.search.Search;
 import forpdateam.ru.forpda.api.theme.Theme;
 import forpdateam.ru.forpda.api.theme.editpost.EditPost;
@@ -30,6 +31,7 @@ public class Api {
     private static Search search = null;
     private static Forum forum = null;
     private static Topics topics = null;
+    private static Reputation reputation = null;
     private CountsObservable observable = new CountsObservable();
     private int qmsCount = 0, mentionsCount = 0, favoritesCount = 0;
 
@@ -88,6 +90,11 @@ public class Api {
     public static Topics Topics() {
         if (topics == null) topics = new Topics();
         return topics;
+    }
+
+    public static Reputation Reputation() {
+        if (reputation == null) reputation = new Reputation();
+        return reputation;
     }
 
     public static Api get() {

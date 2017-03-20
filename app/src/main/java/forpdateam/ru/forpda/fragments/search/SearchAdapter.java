@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.fragments.search;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     private OnLongItemClickListener longItemClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(SearchItem contact);
+        void onItemClick(SearchItem item);
     }
 
     public void addAll(Collection<SearchItem> results) {
@@ -64,12 +65,14 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             nick = (TextView) v.findViewById(R.id.search_item_last_nick);
             date = (TextView) v.findViewById(R.id.search_item_date);
             content = (TextView) v.findViewById(R.id.search_item_content);
+            Log.e("SUKA", "ADD BLYA CLICK LISTENER SEARCH");
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
+            Log.d("SUKA", "ONCLICK BLYA");
             if (itemClickListener != null) {
                 itemClickListener.onItemClick(getItem(getLayoutPosition()));
             }

@@ -41,6 +41,7 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
@@ -48,6 +49,7 @@ import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.client.RequestFile;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
+import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
 import forpdateam.ru.forpda.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.messagepanel.attachments.AttachmentsPopup;
@@ -219,7 +221,7 @@ public abstract class ThemeFragment extends TabFragment {
         if (themePage.getPagination().getCurrent() < themePage.getPagination().getAll()) return;
         String tag = TabManager.getInstance().getTagContainClass(FavoritesFragment.class);
         if (tag == null) return;
-        Log.e("SUKA", "UPDATE FOVARITE "+tag+" : "+TabManager.getInstance().get(tag));
+        Log.e("SUKA", "UPDATE FOVARITE " + tag + " : " + TabManager.getInstance().get(tag));
         ((FavoritesFragment) TabManager.getInstance().get(tag)).markRead(themePage.getId());
     }
 
@@ -250,11 +252,33 @@ public abstract class ThemeFragment extends TabFragment {
 
         SubMenu subMenu = menu.addSubMenu("Опции темы");
         if (currentPage != null) {
-            /*if (currentPage.isInFavorite()) {
-                subMenu.add("Удалить из избранного").setOnMenuItemClickListener(menuItem -> false);
+            if (currentPage.isInFavorite()) {
+                subMenu.add("Удалить из избранного").setOnMenuItemClickListener(menuItem -> {
+                    if (currentPage.getFavId() == 0) {
+                        Toast.makeText(getContext(), "ID темы не найден, попробуйте перезагрузить страницу", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                    FavoritesHelper.delete(aBoolean -> {
+                        Toast.makeText(getContext(), aBoolean ? "Тема удалена из избранного" : "Ошибка", Toast.LENGTH_SHORT).show();
+                        currentPage.setInFavorite(!aBoolean);
+                        refreshOptionsMenu();
+                    }, currentPage.getFavId());
+                    return false;
+                });
             } else {
-                subMenu.add("Добавить в избранное").setOnMenuItemClickListener(menuItem -> false);
-            }*/
+                subMenu.add("Добавить в избранное").setOnMenuItemClickListener(menuItem -> {
+                    new AlertDialog.Builder(getContext())
+                            .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> {
+                                FavoritesHelper.add(aBoolean -> {
+                                    Toast.makeText(getContext(), aBoolean ? "Тема добавлена в избранное" : "Ошибочка вышла", Toast.LENGTH_SHORT).show();
+                                    currentPage.setInFavorite(aBoolean);
+                                    refreshOptionsMenu();
+                                }, currentPage.getId(), Favorites.SUB_TYPES[which1]);
+                            })
+                            .show();
+                    return false;
+                });
+            }
             subMenu.add("Открыть форум темы").setOnMenuItemClickListener(menuItem -> {
                 IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + currentPage.getForumId());
                 return false;
@@ -575,6 +599,6 @@ public abstract class ThemeFragment extends TabFragment {
     }
 
     protected void doChangeReputation(int postId, int userId, boolean type, String message) {
-        helperSubscriber.subscribe(Api.Theme().changeReputation(postId, userId, type, message), s -> toast(s.isEmpty() ? "Репутация изменена" : s), "error", v -> doChangeReputation(postId, userId, type, message));
+        helperSubscriber.subscribe(Api.Reputation().changeReputation(postId, userId, type, message), s -> toast(s.isEmpty() ? "Репутация изменена" : s), "error", v -> doChangeReputation(postId, userId, type, message));
     }
 }

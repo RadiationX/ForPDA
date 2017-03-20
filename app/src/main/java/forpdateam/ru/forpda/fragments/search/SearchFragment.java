@@ -10,6 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -26,10 +27,12 @@ import java.util.List;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.search.models.SearchItem;
 import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.pagination.PaginationHelper;
+import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 
 /**
@@ -126,6 +129,7 @@ public class SearchFragment extends TabFragment {
                 searchSettingsView.setVisibility(View.GONE);
             } else {
                 searchSettingsView.setVisibility(View.VISIBLE);
+                hidePopupWindows();
             }
             return false;
         }).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
@@ -163,6 +167,18 @@ public class SearchFragment extends TabFragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
         refreshLayout.setOnRefreshListener(this::loadData);
+        adapter.setOnItemClickListener(item -> {
+            Log.d("SUKA", "ONCLICK BLYA AAAAAAAAAAAAAAAAAAAAAA");
+            if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
+                IntentHandler.handle("http://4pda.ru/index.php?p=" + item.getId());
+            } else {
+                String url = "http://4pda.ru/forum/index.php?showtopic=" + item.getId();
+                if (item.getPostId() != 0) {
+                    url += "&view=findpost&p=" + item.getPostId();
+                }
+                IntentHandler.handle(url);
+            }
+        });
         return view;
     }
 
