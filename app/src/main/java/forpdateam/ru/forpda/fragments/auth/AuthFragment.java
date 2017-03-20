@@ -122,12 +122,13 @@ public class AuthFragment extends TabFragment {
         authForm.setPassword(password.getText().toString());
         loginProgress.setVisibility(View.VISIBLE);
         sendButton.setVisibility(View.INVISIBLE);
+        hidePopupWindows();
         loginSubscriber.subscribe(Api.Auth().tryLogin(authForm), this::showLoginResult, false, view1 -> loadData());
         //showLoginResult(false);
     }
 
     private void showLoginResult(boolean b) {
-        Log.d("SUKA", "LOGIN RESULT = "+b);
+        Log.d("FORPDA_LOG", "LOGIN RESULT = "+b);
         if (b) {
             loadProfile();
         } else {

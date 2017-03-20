@@ -8,20 +8,25 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.mentions.models.MentionItem;
+import forpdateam.ru.forpda.api.reputation.models.RepItem;
 
 /**
  * Created by radiationx on 21.01.17.
  */
 
 public class MentionsAdapter extends RecyclerView.Adapter<MentionsAdapter.ViewHolder> {
-    private List<MentionItem> list = null;
+    private List<MentionItem> list = new ArrayList<>();
 
-    public MentionsAdapter(List<MentionItem> list) {
-        this.list = list;
+    public void addAll(Collection<MentionItem> results) {
+        list.clear();
+        list.addAll(results);
+        notifyDataSetChanged();
     }
 
     private MentionsAdapter.OnItemClickListener itemClickListener;
@@ -96,6 +101,7 @@ public class MentionsAdapter extends RecyclerView.Adapter<MentionsAdapter.ViewHo
             return false;
         }
     }
+
     public MentionItem getItem(int position) {
         return list.get(position);
     }

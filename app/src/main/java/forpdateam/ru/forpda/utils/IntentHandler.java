@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.utils;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -77,7 +78,7 @@ public class IntentHandler {
 
     public static boolean handle(String url, Bundle args) {
         //url = Html.fromHtml(url).toString();
-        Log.d("kek", "handle clear url "+url);
+        Log.d("FORPDA_LOG", "handle clear url " + url);
         if (url == null || url.length() <= 1 || url.equals("#")) {
             return false;
         }
@@ -90,13 +91,13 @@ public class IntentHandler {
             e.printStackTrace();
         }
         url = Utils.fromHtml(url);
-        Log.d("kek", "after html url " + url);
+        Log.d("FORPDA_LOG", "after html url " + url);
         if (url.matches("(?:http?s?:)?\\/\\/4pda\\.ru[\\s\\S]*")) {
             if (!url.contains("4pda.ru")) {
                 url = "http://4pda.ru".concat(url.substring(0, 1).equals("/") ? "" : "/").concat(url);
             }
             Uri uri = Uri.parse(url.toLowerCase());
-            Log.d("kek", "HANDLE URL " + uri.toString() + " : " + url);
+            Log.d("FORPDA_LOG", "HANDLE URL " + uri.toString() + " : " + url);
             if (uri.getHost() != null && uri.getHost().matches("4pda.ru")) {
                 if (args == null) args = new Bundle();
                 switch (uri.getPathSegments().get(0)) {
@@ -131,7 +132,11 @@ public class IntentHandler {
                 }
             }
         }
-        App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));
+        try {
+            App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));
+        } catch (ActivityNotFoundException e) {
+            ACRA.getErrorReporter().handleException(e);
+        }
         return false;
     }
 
@@ -238,7 +243,7 @@ public class IntentHandler {
     }
 
     private static void run(String s) {
-        Log.d("kek", "run: " + s);
+        Log.d("FORPDA_LOG", "run: " + s);
         //Toast.makeText(App.getContext(), "ForPDA should run " + s, Toast.LENGTH_SHORT).show();
     }
 }

@@ -192,7 +192,7 @@ public abstract class ThemeFragment extends TabFragment {
     }
 
     protected void onLoadData(ThemePage page) throws Exception {
-        //Log.d("suka", "check theme " + page + " : " + page.getPosts().size() + " : " + page.getId() + " : " + page.getForumId() + " : " + page.getUrl());
+        //Log.d("FORPDA_LOG", "check theme " + page + " : " + page.getPosts().size() + " : " + page.getId() + " : " + page.getForumId() + " : " + page.getUrl());
         if (refreshLayout != null)
             refreshLayout.setRefreshing(false);
         if (page == null || page.getId() == 0 || page.getUrl() == null) {
@@ -221,7 +221,7 @@ public abstract class ThemeFragment extends TabFragment {
         if (themePage.getPagination().getCurrent() < themePage.getPagination().getAll()) return;
         String tag = TabManager.getInstance().getTagContainClass(FavoritesFragment.class);
         if (tag == null) return;
-        Log.e("SUKA", "UPDATE FOVARITE " + tag + " : " + TabManager.getInstance().get(tag));
+        Log.e("FORPDA_LOG", "UPDATE FOVARITE " + tag + " : " + TabManager.getInstance().get(tag));
         ((FavoritesFragment) TabManager.getInstance().get(tag)).markRead(themePage.getId());
     }
 
@@ -510,7 +510,7 @@ public abstract class ThemeFragment extends TabFragment {
     }
 
     public void log(final String text) {
-        Log.d("kek", "ITheme: ".concat(text));
+        Log.d("FORPDA_LOG", "ITheme: ".concat(text));
     }
 
     public void showPollResults() {

@@ -54,7 +54,7 @@ public class Client {
         String member_id = App.getInstance().getPreferences().getString("cookie_member_id", null);
         String pass_hash = App.getInstance().getPreferences().getString("cookie_pass_hash", null);
         Api.Auth().setUserId(App.getInstance().getPreferences().getString("member_id", null));
-        Log.d("SUKA", "INIT AUTH DATA " + member_id + " : " + pass_hash + " : " + App.getInstance().getPreferences().getString("member_id", null));
+        Log.d("FORPDA_LOG", "INIT AUTH DATA " + member_id + " : " + pass_hash + " : " + App.getInstance().getPreferences().getString("member_id", null));
         if (member_id != null && pass_hash != null) {
             Api.Auth().setState(true);
             //Первичная загрузка кукисов
@@ -84,7 +84,7 @@ public class Client {
             .cookieJar(new CookieJar() {
                 @Override
                 public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-                    Log.d("kek", "response cookies size " + cookies.size());
+                    Log.d("FORPDA_LOG", "response cookies size " + cookies.size());
                     try {
                         for (Cookie cookie : cookies) {
                             if (cookie.name().matches("member_id|pass_hash")) {
@@ -111,7 +111,7 @@ public class Client {
                 public List<Cookie> loadForRequest(HttpUrl url) {
                     listCookies.clear();
                     listCookies.addAll(cookies.values());
-                    Log.d("kek", "cookies size " + listCookies.size());
+                    Log.d("FORPDA_LOG", "cookies size " + listCookies.size());
                     return listCookies;
                 }
             })
@@ -136,10 +136,10 @@ public class Client {
 
     //boolean formBody нужен для тех случаев, когда в хедерах есть строки с \n и т.д
     private String request(String url, Map<String, String> headers, RequestFile file, boolean formBody) throws Exception {
-        Log.d("kek", "request url " + url);
+        Log.d("FORPDA_LOG", "request url " + url);
         if (url.substring(0, 2).equals("//")) {
             url = "http:".concat(url);
-            Log.d("kek", "fixed request url " + url);
+            Log.d("FORPDA_LOG", "fixed request url " + url);
         }
 
         Request.Builder requestBuilder = new Request.Builder()
@@ -149,10 +149,10 @@ public class Client {
             if (formBody) {
                 if (headers != null) {
                     //FormBody нужен, т.к не все формы корректно работают с MultipartBody (точнее только авторизация)
-                    Log.d("SUKA", "FORM BUILDER");
+                    Log.d("FORPDA_LOG", "FORM BUILDER");
                     FormBody.Builder formBuilder = new FormBody.Builder();
                     for (Map.Entry<String, String> entry : headers.entrySet()) {
-                        Log.d("SUKA", "HEADER " + entry.getKey() + " : " + entry.getValue());
+                        Log.d("FORPDA_LOG", "HEADER " + entry.getKey() + " : " + entry.getValue());
                         formBuilder.addEncoded(entry.getKey(), entry.getValue());
                     }
                     requestBuilder.post(formBuilder.build());
@@ -160,10 +160,10 @@ public class Client {
             } else {
                 MultipartBody.Builder multipartBuilder = new MultipartBody.Builder();
                 multipartBuilder.setType(MultipartBody.FORM);
-                Log.d("SUKA", "MULTIPART FORM BUILDER");
+                Log.d("FORPDA_LOG", "MULTIPART FORM BUILDER");
                 if (headers != null) {
                     for (Map.Entry<String, String> entry : headers.entrySet()) {
-                        Log.d("SUKA", "HEADER " + entry.getKey() + " : " + entry.getValue());
+                        Log.d("FORPDA_LOG", "HEADER " + entry.getKey() + " : " + entry.getValue());
                         multipartBuilder.addFormDataPart(entry.getKey(), entry.getValue());
                     }
                 }
@@ -183,7 +183,7 @@ public class Client {
             res = response.body().string();
             getCounts(res);
             checkForumErrors(res);
-            Log.d("kek", "redirected url " + response.request().url().toString());
+            Log.d("FORPDA_LOG", "redirected url " + response.request().url().toString());
             redirects.put(url, response.request().url().toString());
         } finally {
             if (response != null)

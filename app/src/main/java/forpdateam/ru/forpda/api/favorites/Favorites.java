@@ -68,10 +68,14 @@ public class Favorites {
             item.setLastUserId(Integer.parseInt(matcher.group(21)));
             item.setLastUserNick(Utils.fromHtml(matcher.group(22)));
             item.setDate(matcher.group(23));
-            data.addItem(item);
+            if (item.isPin())
+                data.addPinnedItem(item);
+            else
+                data.addItem(item);
+            data.addToAllItem(item);
         }
         data.setPagination(Pagination.parseForum(response));
-        Log.d("kek", "parsing time " + ((System.currentTimeMillis() - time)));
+        Log.d("FORPDA_LOG", "parsing time " + ((System.currentTimeMillis() - time)));
 
         return data;
     }

@@ -49,7 +49,7 @@ public class DefaultForumHolder extends TreeNode.BaseNodeViewHolder<ForumItemTre
 
     @Override
     public void toggle(boolean active) {
-        Log.d("SUKA", "TOGGLE");
+        Log.d("FORPDA_LOG", "TOGGLE");
         if (currentValue.getForums() != null) {
             icon.setRotationY(active ? 1f : 0f);
             icon.setImageDrawable(App.getAppDrawable(active ? R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_more_black_24dp));

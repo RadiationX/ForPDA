@@ -78,7 +78,7 @@ public class BlurUtil {
         for (i = 0; i < 256 * divsum; i++) {
             dv[i] = (i / divsum);
         }
-        Log.d("kek", String.format("suka %d : %d : %d : %d : %d : %d : %d : %d : %d", w, h, wm, hm, wh, div, Math.max(w, h), divsum, divsum * 256));
+        Log.d("FORPDA_LOG", String.format("BLUR ARGS %d : %d : %d : %d : %d : %d : %d : %d : %d", w, h, wm, hm, wh, div, Math.max(w, h), divsum, divsum * 256));
 
         yw = yi = 0;
 
@@ -90,7 +90,7 @@ public class BlurUtil {
         int r1 = radius + 1;
         int routsum, goutsum, boutsum;
         int rinsum, ginsum, binsum;
-        //Log.d("kek", String.format("blya %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d", rsum, gsum, bsum, x, y, i, p, yp, yi, yw, stackpointer,stackstart, rbs, r1, routsum, goutsum, boutsum, rinsum, ginsum, binsum ));
+        //Log.d("FORPDA_LOG", String.format("BLUR ARGS %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d", rsum, gsum, bsum, x, y, i, p, yp, yi, yw, stackpointer,stackstart, rbs, r1, routsum, goutsum, boutsum, rinsum, ginsum, binsum ));
 
         for (y = 0; y < h; y++) {
             rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;

@@ -35,7 +35,7 @@ public class Auth {
 
     public void setUserId(String userId1) {
         userId = userId1;
-        Log.d("kek", "userid 1: "+ userId1);
+        Log.d("FORPDA_LOG", "userid 1: "+ userId1);
         try{
             if (userId1 != null)
                 userIdInt = Integer.parseInt(userId1);

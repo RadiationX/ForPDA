@@ -9,10 +9,13 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
@@ -64,7 +67,7 @@ public class FavoritesFragment extends TabFragment {
 
                 new AlertDialog.Builder(getContext())
                         .setItems(favoriteDialogMenu.getTitles(), (dialog, which) -> {
-                            Log.d("kek", "ocnlicl " + favItem + " : " + favItem.getFavId());
+                            Log.d("FORPDA_LOG", "ocnlicl " + favItem + " : " + favItem.getFavId());
                             favoriteDialogMenu.onClick(which, FavoritesFragment.this, favItem);
                         })
                         .show();
@@ -151,17 +154,17 @@ public class FavoritesFragment extends TabFragment {
     }
 
     private void onLoadThemes(FavData data) {
-        Log.d("kek", "loaded itms " + data.getItems().size() + " : " + results.size());
+        Log.d("FORPDA_LOG", "loaded itms " + data.getAllItems().size() + " : " + results.size());
         if (refreshLayout != null)
             refreshLayout.setRefreshing(false);
 
         this.data = data;
-        if (data.getItems().size() == 0)
+        if (data.getAllItems().size() == 0)
             return;
 
         realm.executeTransactionAsync(r -> {
             r.delete(FavItem.class);
-            r.copyToRealmOrUpdate(data.getItems());
+            r.copyToRealmOrUpdate(data.getAllItems());
         }, this::bindView);
         paginationHelper.updatePagination(data.getPagination());
         setSubtitle(paginationHelper.getString());
@@ -170,13 +173,28 @@ public class FavoritesFragment extends TabFragment {
     private void bindView() {
         results = realm.where(FavItem.class).findAll();
         if (results.size() != 0) {
-            adapter.addAll(results);
+            ArrayList<FavItem> pinned = new ArrayList<>();
+            ArrayList<FavItem> items = new ArrayList<>();
+
+            for (FavItem item : results) {
+                if (item.isPin()) {
+                    pinned.add(item);
+                } else {
+                    items.add(item);
+                }
+            }
+            adapter.clear();
+            if (pinned.size() > 0)
+                adapter.addItems(new Pair<>("Закрепленные темы", pinned));
+            adapter.addItems(new Pair<>("Темы", items));
+            //adapter.addAll(results);
+            adapter.notifyDataSetChanged();
         }
         Api.get().notifyObservers();
     }
 
     public void changeFav(int action, String type, int favId) {
-        FavoritesHelper.changeFav(this::onChangeFav, action, favId, -1,type);
+        FavoritesHelper.changeFav(this::onChangeFav, action, favId, -1, type);
     }
 
     public void markRead(int topicId) {

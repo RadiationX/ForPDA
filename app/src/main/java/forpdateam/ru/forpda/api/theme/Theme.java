@@ -55,7 +55,7 @@ public class Theme {
 
 
     public ThemePage _getPage(final String url, boolean generateHtml) throws Exception {
-        Log.d("kek", "page start _getPage");
+        Log.d("FORPDA_LOG", "page start _getPage");
         String response = Client.getInstance().get(url);
 
 
@@ -71,8 +71,8 @@ public class Theme {
             redirectUrl = url;
         page.setUrl(redirectUrl);
 
-        Log.d("kek", "page getted");
-        Log.d("kek", "page redirected " + redirectUrl);
+        Log.d("FORPDA_LOG", "page getted");
+        Log.d("FORPDA_LOG", "page redirected " + redirectUrl);
         long time = System.currentTimeMillis();
         Matcher matcher = elemToScrollPattern.matcher(redirectUrl);
         while (matcher.find()) {
@@ -80,7 +80,7 @@ public class Theme {
         }
         matcher = themeIdPattern.matcher(response);
         if (matcher.find()) {
-            Log.d("suka", "IDS PARSING " + matcher.group(1) + " : " + matcher.group(2));
+            Log.d("FORPDA_LOG", "IDS PARSING " + matcher.group(1) + " : " + matcher.group(2));
             page.setForumId(Integer.parseInt(matcher.group(1)));
             page.setId(Integer.parseInt(matcher.group(2)));
         }
@@ -99,7 +99,7 @@ public class Theme {
             }
         }
         matcher = postsPattern.matcher(response);
-        Log.d("kek", "posts matcher " + (System.currentTimeMillis() - time));
+        Log.d("FORPDA_LOG", "posts matcher " + (System.currentTimeMillis() - time));
         int memberId = Api.Auth().getUserIdInt();
         while (matcher.find()) {
             ThemePost post = new ThemePost();
@@ -125,7 +125,7 @@ public class Theme {
                 page.setCurator(true);
             page.addPost(post);
         }
-        Log.d("kek", "poll matcher " + (System.currentTimeMillis() - time));
+        Log.d("FORPDA_LOG", "poll matcher " + (System.currentTimeMillis() - time));
         matcher = pollMainPattern.matcher(response);
         if (matcher.find()) {
             Poll poll = new Poll();
@@ -167,7 +167,7 @@ public class Theme {
             poll.setVotesCount(Integer.parseInt(matcher.group(3)));
             page.setPoll(poll);
         }
-        Log.d("kek", "end created page obj " + (System.currentTimeMillis() - time));
+        Log.d("FORPDA_LOG", "end created page obj " + (System.currentTimeMillis() - time));
         if (generateHtml) {
             long time2 = System.currentTimeMillis();
             MiniTemplator t = App.getInstance().getTemplator();
@@ -196,10 +196,10 @@ public class Theme {
             t.setVariableOpt("disable_avatar", App.getInstance().getPreferences().getBoolean("theme.show_avatars", true) ? "" : "disable_avatar");
             t.setVariableOpt("avatar_type", App.getInstance().getPreferences().getBoolean("theme.circle_avatars", true) ? "avatar_circle" : "");
 
-            Log.d("kek", "template check 1 " + (System.currentTimeMillis() - time2));
+            Log.d("FORPDA_LOG", "template check 1 " + (System.currentTimeMillis() - time2));
 
             int hatPostId = page.getPosts().get(0).getId();
-            Log.d("kek", "template check 2 " + (System.currentTimeMillis() - time2));
+            Log.d("FORPDA_LOG", "template check 2 " + (System.currentTimeMillis() - time2));
             String letter;
             Matcher letterMatcher = null;
             for (ThemePost post : page.getPosts()) {
@@ -301,14 +301,14 @@ public class Theme {
             }
 
 
-            Log.d("kek", "template check 3 " + (System.currentTimeMillis() - time2));
+            Log.d("FORPDA_LOG", "template check 3 " + (System.currentTimeMillis() - time2));
             page.setHtml(t.generateOutput());
-            Log.d("kek", "template check 4 " + (System.currentTimeMillis() - time2));
+            Log.d("FORPDA_LOG", "template check 4 " + (System.currentTimeMillis() - time2));
             t.reset();
-            Log.d("kek", "template check 5 " + (System.currentTimeMillis() - time2));
+            Log.d("FORPDA_LOG", "template check 5 " + (System.currentTimeMillis() - time2));
         }
 
-        Log.d("kek", "theme parsing time " + (System.currentTimeMillis() - time));
+        Log.d("FORPDA_LOG", "theme parsing time " + (System.currentTimeMillis() - time));
         /*final String veryLongString = page.getHtml();
 
         int maxLogSize = 1000;
@@ -316,7 +316,7 @@ public class Theme {
             int start = i * maxLogSize;
             int end = (i + 1) * maxLogSize;
             end = end > veryLongString.length() ? veryLongString.length() : end;
-            Log.v("SUKA", veryLongString.substring(start, end));
+            Log.v("FORPDA_LOG", veryLongString.substring(start, end));
         }*/
 
         return page;

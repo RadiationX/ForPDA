@@ -48,6 +48,6 @@ public class ThemeFragmentNative extends ThemeFragment {
         Date date = new Date();
         adapter = new ThemeAdapter(currentPage.getPosts(), getContext());
         recyclerView.setAdapter(adapter);
-        Log.d("kek", "theme UI CREATE time " + (new Date().getTime() - date.getTime()));
+        Log.d("FORPDA_LOG", "theme UI CREATE time " + (new Date().getTime() - date.getTime()));
     }
 }

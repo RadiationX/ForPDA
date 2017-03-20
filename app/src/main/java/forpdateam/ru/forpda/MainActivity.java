@@ -106,14 +106,14 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         checkIntent(intent);
-        Log.d("kek", "onnewintent " + intent);
+        Log.d("FORPDA_LOG", "onnewintent " + intent);
     }
 
     void checkIntent(Intent intent) {
         if (intent == null || intent.getData() == null) return;
 
         new Handler().post(() -> {
-            Log.d("kek", "POST onnewintent " + intent);
+            Log.d("FORPDA_LOG", "POST onnewintent " + intent);
             IntentHandler.handle(intent.getData().toString());
         });
     }
@@ -130,18 +130,18 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
     @Override
     public void onAddTab(TabFragment fragment) {
-        Log.d("kek", "onadd " + fragment);
+        Log.d("FORPDA_LOG", "onadd " + fragment);
     }
 
     @Override
     public void onRemoveTab(TabFragment fragment) {
-        Log.d("kek", "onremove " + fragment);
+        Log.d("FORPDA_LOG", "onremove " + fragment);
     }
 
     @Override
     public void onSelectTab(TabFragment fragment) {
         menuDrawer.setActive(fragment.getClass().getSimpleName());
-        Log.d("kek", "onselect " + fragment);
+        Log.d("FORPDA_LOG", "onselect " + fragment);
     }
 
     @Override
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
     @Override
     public void onBackPressed() {
-        Log.d("kek", "onbackpressed activity");
+        Log.d("FORPDA_LOG", "onbackpressed activity");
         backHandler(false);
     }
 
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
     @Override
     protected void onResumeFragments() {
-        Log.e("SUKA", "ONRESUME_FRAGMENTS");
+        Log.e("FORPDA_LOG", "ONRESUME_FRAGMENTS");
         super.onResumeFragments();
     }
 
@@ -193,7 +193,8 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         super.onResume();
         Log.d("kekos", "ACTIVE TAB " + TabManager.getActiveIndex() + " : " + TabManager.getActiveTag());
         receiver.registerReceiver();
-
+        menuDrawer.setStatusBarHeight(App.getStatusBarHeight());
+        tabDrawer.setStatusBarHeight(App.getStatusBarHeight());
     }
 
     @Override
@@ -211,9 +212,9 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
     class WebViewCleanerTask extends TimerTask {
         public void run() {
-            Log.d("kek", "try remove webview ");
+            Log.d("FORPDA_LOG", "try remove webview ");
             if (webViews.size() > 0) {
-                Log.d("kek", "remove webview " + webViews.element().getTag());
+                Log.d("FORPDA_LOG", "remove webview " + webViews.element().getTag());
                 webViews.remove();
             }
         }

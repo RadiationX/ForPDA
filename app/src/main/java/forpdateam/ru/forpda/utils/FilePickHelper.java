@@ -77,7 +77,7 @@ public class FilePickHelper {
     }
 
     private static String getFileName(Context context, Uri uri) {
-        Log.d("suka", uri.getScheme() + " : " + context.getContentResolver().getType(uri));
+        Log.d("FORPDA_LOG", uri.getScheme() + " : " + context.getContentResolver().getType(uri));
         String result = null;
         if (uri.getScheme().equals("content")) {
             Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
@@ -90,7 +90,7 @@ public class FilePickHelper {
             }
         }
         if (result == null) {
-            Log.d("suka", "res " + uri.getPath());
+            Log.d("FORPDA_LOG", "res " + uri.getPath());
             result = uri.getPath();
             int cut = result.lastIndexOf('/');
             if (cut != -1) {

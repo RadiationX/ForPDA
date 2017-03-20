@@ -3,28 +3,40 @@ package forpdateam.ru.forpda.fragments.favorites;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afollestad.sectionedrecyclerview.SectionedRecyclerViewAdapter;
+
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
+import forpdateam.ru.forpda.api.topcis.models.TopicItem;
+import forpdateam.ru.forpda.fragments.topics.TopicsAdapter;
 import io.realm.RealmList;
 
 /**
  * Created by radiationx on 22.09.16.
  */
 
-public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.ViewHolder> {
+public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdapter.ViewHolder> {
+    private List<Pair<String, List<FavItem>>> sections = new ArrayList<>();
 
-    private RealmList<FavItem> list;
+    public void addItems(Pair<String, List<FavItem>> item) {
+        sections.add(item);
+    }
 
-    public FavoritesAdapter(){
-        list = new RealmList<>();
+    public void clear() {
+        for (Pair<String, List<FavItem>> pair : sections)
+            pair.second.clear();
+        sections.clear();
     }
 
     private FavoritesAdapter.OnItemClickListener itemClickListener;
@@ -46,71 +58,71 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         this.longItemClickListener = longItemClickListener;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        public TextView title, lastNick, date;
-        public ImageView pinIcon, lockIcon, pollIcon;
 
-        public ViewHolder(View v) {
-            super(v);
-            title = (TextView) v.findViewById(R.id.fav_item_title);
-            lastNick = (TextView) v.findViewById(R.id.fav_item_last_nick);
-            date = (TextView) v.findViewById(R.id.fav_item_date);
-            pinIcon = (ImageView) v.findViewById(R.id.fav_item_pin_icon);
-            lockIcon = (ImageView) v.findViewById(R.id.fav_item_lock_icon);
-            pollIcon = (ImageView) v.findViewById(R.id.fav_item_poll_icon);
+    //NEW---------------------------------------------------------------------------------------------------------
 
-            v.setOnClickListener(this);
-            v.setOnLongClickListener(this);
+
+    private int[] getPosition(int layPos) {
+        int result[] = new int[]{-1, -1};
+        int sumPrevSections = 0;
+        for (int i = 0; i < getSectionCount(); i++) {
+            result[0] = i;
+            result[1] = layPos - i - sumPrevSections - 1;
+            sumPrevSections += getItemCount(i);
+            if (sumPrevSections + i >= layPos) break;
         }
-
-        @Override
-        public void onClick(View view) {
-            if (itemClickListener != null) {
-                itemClickListener.onItemClick(getItem(getLayoutPosition()));
-            }
+        if (result[1] < 0) {
+            result[0] = -1;
+            result[1] = -1;
         }
-
-        @Override
-        public boolean onLongClick(View view) {
-            if (longItemClickListener != null) {
-                longItemClickListener.onLongItemClick(getItem(getLayoutPosition()));
-                return true;
-            }
-            return false;
-        }
+        return result;
     }
 
-    /*public FavoritesAdapter(List<FavItem> list) {
-        this.list = list;
-    }
-    public FavoritesAdapter() {
-        this.list = new RealmList<>();
-    }*/
-
-    public void addAll(Collection<FavItem> results) {
-        addAll(results, true);
+    @Override
+    public int getSectionCount() {
+        return sections.size(); // number of sections.
     }
 
-    public void addAll(Collection<FavItem> results, boolean clearList) {
-        if (clearList)
-            clear();
-        list.addAll(results);
-        notifyDataSetChanged();
-    }
-    public void clear() {
-        list.clear();
+    @Override
+    public int getItemCount(int section) {
+        return sections.get(section).second.size(); // number of items in section (section index is parameter).
     }
 
     @Override
     public FavoritesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.favorite_item, parent, false);
+        int layout = VIEW_TYPE_ITEM;
+        switch (viewType) {
+            case VIEW_TYPE_HEADER:
+                layout = R.layout.topic_item_section;
+                break;
+            case VIEW_TYPE_ITEM:
+                layout = R.layout.topic_item;
+                break;
+        }
+        View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
         return new FavoritesAdapter.ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(FavoritesAdapter.ViewHolder holder, int position) {
-        FavItem item = list.get(position);
-        Log.d("kek", "bind view holder " + position + " : " + item.getFavId());
+    public int getItemViewType(int section, int relativePosition, int absolutePosition) {
+        return super.getItemViewType(section, relativePosition, absolutePosition);
+    }
+
+    @Override
+    public void onBindHeaderViewHolder(FavoritesAdapter.ViewHolder holder, int section) {
+        // Setup header view.
+        /*if (sections.size() == 1) {
+            holder.itemView.setVisibility(View.GONE);
+        } else {
+            holder.itemView.setVisibility(View.VISIBLE);
+        }*/
+        holder.title.setText(sections.get(section).first);
+    }
+
+    @Override
+    public void onBindViewHolder(FavoritesAdapter.ViewHolder holder, int section, int relativePosition, int absolutePosition) {
+
+        FavItem item = sections.get(section).second.get(relativePosition);
         holder.title.setText(item.getTopicTitle());
         holder.title.setTypeface(null, item.isNewMessages() ? Typeface.BOLD : Typeface.NORMAL);
         holder.pinIcon.setVisibility(item.isPin() ? View.VISIBLE : View.GONE);
@@ -123,19 +135,56 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
 
         holder.lastNick.setText(item.getLastUserNick());
         holder.date.setText(item.getDate());
+        if (holder.desc.getVisibility() == View.VISIBLE) {
+            holder.desc.setVisibility(View.GONE);
+        }
+
+
+        // Setup non-header view.
+        // 'section' is section index.
+        // 'relativePosition' is index in this section.
+        // 'absolutePosition' is index out of all non-header items.
+        // See sample project for a visual of how these indices work.
     }
 
-    @Override
-    public int getItemCount() {
-        return list.size();
-    }
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+        public TextView title, lastNick, date, desc;
+        public ImageView pinIcon, lockIcon, pollIcon;
 
-    public FavItem getItem(int position) {
-        return list.get(position);
-    }
+        public ViewHolder(View v) {
+            super(v);
+            title = (TextView) v.findViewById(R.id.topic_item_title);
+            desc = (TextView) v.findViewById(R.id.topic_item_desc);
+            lastNick = (TextView) v.findViewById(R.id.topic_item_last_nick);
+            date = (TextView) v.findViewById(R.id.topic_item_date);
+            pinIcon = (ImageView) v.findViewById(R.id.topic_item_pin_icon);
+            lockIcon = (ImageView) v.findViewById(R.id.topic_item_lock_icon);
+            pollIcon = (ImageView) v.findViewById(R.id.topic_item_poll_icon);
 
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
+            v.setOnClickListener(this);
+            v.setOnLongClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (itemClickListener != null) {
+                int position[] = FavoritesAdapter.this.getPosition(getLayoutPosition());
+                if (position[0] != -1) {
+                    itemClickListener.onItemClick(sections.get(position[0]).second.get(position[1]));
+                }
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+            if (longItemClickListener != null) {
+                int position[] = FavoritesAdapter.this.getPosition(getLayoutPosition());
+                if (position[0] != -1) {
+                    longItemClickListener.onLongItemClick(sections.get(position[0]).second.get(position[1]));
+                }
+                return true;
+            }
+            return false;
+        }
     }
 }

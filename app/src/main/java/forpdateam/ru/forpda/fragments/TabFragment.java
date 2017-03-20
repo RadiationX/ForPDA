@@ -114,7 +114,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
 
     @Override
     public boolean onBackPressed() {
-        Log.d("kek", "onbackpressed tab");
+        Log.d("FORPDA_LOG", "onbackpressed tab");
         return false;
     }
 
@@ -144,12 +144,12 @@ public class TabFragment extends RxFragment implements ITabFragment {
         if (getArguments() != null)
             setTabUrl(getArguments().getString(URL_ARG));
         setHasOptionsMenu(true);
-        Log.d("kek", "oncreate " + getArguments() + " : " + savedInstanceState + " : " + title);
+        Log.d("FORPDA_LOG", "oncreate " + getArguments() + " : " + savedInstanceState + " : " + title);
     }
 
     //Загрузка основной вьюхи со всеми нужными элементами вроде тулбара, фаба и фич в тулбаре
     protected void initBaseView(LayoutInflater inflater, @Nullable ViewGroup container) {
-        Log.d("kek", "view " + view);
+        Log.d("FORPDA_LOG", "view " + view);
         view = inflater.inflate(R.layout.fragment_base, container, false);
         notifyDot = findViewById(R.id.notify_dot);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -284,7 +284,7 @@ public class TabFragment extends RxFragment implements ITabFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d("kek", "onactivitycreated " + getArguments() + " : " + savedInstanceState + " : " + title);
+        Log.d("FORPDA_LOG", "onactivitycreated " + getArguments() + " : " + savedInstanceState + " : " + title);
 
 
     }
@@ -336,14 +336,14 @@ public class TabFragment extends RxFragment implements ITabFragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("kek", this + " : onresume");
+        Log.d("FORPDA_LOG", this + " : onresume");
     }
 
     @Override
     public void onPause() {
         super.onPause();
         hidePopupWindows();
-        Log.d("kek", this + " : onpause");
+        Log.d("FORPDA_LOG", this + " : onpause");
     }
 
     @Override

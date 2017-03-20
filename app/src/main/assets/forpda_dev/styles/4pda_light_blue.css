@@ -1008,6 +1008,15 @@ button:active,
                         content: ")";
                     }*/
 }
+.post_container .post_header .avatar .reputation:after {
+  content: "";
+  position: absolute;
+  height: 2.25rem;
+  min-width: 2.25rem;
+  top: 0;
+  left: 0;
+  right: 0;
+}
 .post_container .post_header .avatar.disable .img {
   width: 0;
 }

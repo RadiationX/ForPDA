@@ -62,9 +62,10 @@ public class TabManager {
         if (state == null) return;
         activeTag = state.getString(bundlePrefix + "active_tag", "");
         activeIndex = state.getInt(bundlePrefix + "active_index", -1);
-        activeIndex++;
+        if (activeIndex == -1)
+            activeIndex = 0;
         count = activeIndex;
-        Log.d("SUKA", "LOAD STATE " + activeTag + " : " + activeIndex);
+        Log.d("FORPDA_LOG", "LOAD STATE " + activeTag + " : " + activeIndex);
     }
 
     public int getSize() {
@@ -90,9 +91,9 @@ public class TabManager {
             if (fragmentManager.getFragments().get(i) != null)
                 existingFragments.add((TabFragment) fragmentManager.getFragments().get(i));
         }
-        Log.e("SUKA", "UPDATE");
+        Log.e("FORPDA_LOG", "UPDATE");
         for (TabFragment fragment : existingFragments) {
-            Log.e("SUKA", "RECOVERY FRAGMENT " + fragment);
+            Log.e("FORPDA_LOG", "RECOVERY FRAGMENT " + fragment);
         }
     }
 

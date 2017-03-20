@@ -65,14 +65,12 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             nick = (TextView) v.findViewById(R.id.search_item_last_nick);
             date = (TextView) v.findViewById(R.id.search_item_date);
             content = (TextView) v.findViewById(R.id.search_item_content);
-            Log.e("SUKA", "ADD BLYA CLICK LISTENER SEARCH");
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            Log.d("SUKA", "ONCLICK BLYA");
             if (itemClickListener != null) {
                 itemClickListener.onItemClick(getItem(getLayoutPosition()));
             }
