@@ -6,7 +6,7 @@ package forpdateam.ru.forpda.api.search.models;
 
 public class SearchItem {
     private String title, date, authorNick, lastUserNick, content, avatar, image;
-    private int id, authorId, lastUserId, postId;
+    private int id = 0, authorId = 0, lastUserId = 0, postId = 0;
 
     public String getTitle() {
         return title;

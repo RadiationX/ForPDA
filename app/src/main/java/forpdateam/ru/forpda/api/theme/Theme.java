@@ -32,6 +32,7 @@ public class Theme {
 
     private final static Pattern titlePattern = Pattern.compile("<div class=\"topic_title_post\">(?:([^<]*?)(?:, ([^<]*?)|))<br");
     private final static Pattern alreadyInFavPattern = Pattern.compile("Тема уже добавлена в <a href=\"[^\"]*act=fav\">");
+    private final static Pattern favIdPatternt = Pattern.compile("href=\"[^\"]*?act=fav[^\"]*?tact=delete[^\"]*?selectedtids=(\\d+)");
     private final static Pattern themeIdPattern = Pattern.compile("ipb_input_f:(\\d+),[\\s\\S]*?ipb_input_t:(\\d+),");
     public final static Pattern elemToScrollPattern = Pattern.compile("(?:anchor=|#)([^&\\n\\=\\?\\.\\#]*)");
     //private final static Pattern newsPattern = Pattern.compile("<section[^>]*?><article[^>]*?>[^<]*?<div class=\"container\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\" alt=\"([\\s\\S]*?)\"[\\s\\S]*?<em[^>]*>([^<]*?)</em>[\\s\\S]*?<a href=\"([^\"]*?)\">([\\s\\S]*?)</a>[\\s\\S]*?<a[^>]*?>([^<]*?)</a><div[^>]*?># ([\\s\\S]*?)</div>[\\s\\S]*?<div class=\"content-box\"[^>]*?>([\\s\\S]*?)</div></div></div>[^<]*?<div class=\"materials-box\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[\\s\\S]*?<div class=\"comment-box\" id=\"comments\">[\\s\\S]*?(<ul[\\s\\S]*?/ul>)[^<]*?<form");
@@ -90,7 +91,13 @@ public class Theme {
             page.setDesc(Utils.fromHtml(matcher.group(2)));
         }
         matcher = alreadyInFavPattern.matcher(response);
-        page.setInFavorite(matcher.find());
+        if (matcher.find()) {
+            page.setInFavorite(true);
+            matcher = favIdPatternt.matcher(response);
+            if (matcher.find()) {
+                page.setFavId(Integer.parseInt(matcher.group(1)));
+            }
+        }
         matcher = postsPattern.matcher(response);
         Log.d("kek", "posts matcher " + (System.currentTimeMillis() - time));
         int memberId = Api.Auth().getUserIdInt();
@@ -380,26 +387,4 @@ public class Theme {
         if (result == null) result = "Ошибка изменения репутации поста";
         return result;
     }
-
-    public Observable<String> changeReputation(int postId, int userId, boolean type, String message) {
-        return Observable.fromCallable(() -> _changeReputation(postId, userId, type, message));
-    }
-
-    private String _changeReputation(int postId, int userId, boolean type, String message) throws Exception {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("act", "rep");
-        headers.put("p", Integer.toString(postId));
-        headers.put("mid", Integer.toString(userId));
-        headers.put("type", type ? "add" : "minus");
-        headers.put("message", message);
-
-        try {
-            Client.getInstance().post("http://4pda.ru/forum/index.php", headers);
-        } catch (OnlyShowException exception) {
-            return exception.getMessage();
-        }
-        return "";
-    }
-
-
 }

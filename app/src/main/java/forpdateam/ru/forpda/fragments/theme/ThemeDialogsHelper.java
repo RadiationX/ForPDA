@@ -68,7 +68,7 @@ class ThemeDialogsHelper {
             reputationMenu = new AlertDialogMenu<>();
             showedReputationMenu = new AlertDialogMenu<>();
             reputationMenu.addItem("Повысить", (context, data) -> context.changeReputation(data, true));
-            reputationMenu.addItem("Посмотреть", (context, data) -> Toast.makeText(context.getContext(), "Слепой", Toast.LENGTH_SHORT).show());
+            reputationMenu.addItem("Посмотреть", (context, data) -> IntentHandler.handle("http://4pda.ru/forum/index.php?act=rep&view=history&amp;mid=" + data.getUserId()));
             reputationMenu.addItem("Понизить", (context, data) -> context.changeReputation(data, false));
         }
         showedReputationMenu.clear();

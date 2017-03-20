@@ -15,7 +15,7 @@ public class ThemePage implements IThemePage {
     private Pagination pagination = new Pagination();
     private Poll poll;
 
-    private int id = 0, forumId = 0;
+    private int id = 0, forumId = 0, favId = 0;
 
     public boolean canQuote() {
         return quote;
@@ -137,5 +137,13 @@ public class ThemePage implements IThemePage {
 
     public int getSt() {
         return pagination.getCurrent() * pagination.getPerPage();
+    }
+
+    public int getFavId() {
+        return favId;
+    }
+
+    public void setFavId(int favId) {
+        this.favId = favId;
     }
 }

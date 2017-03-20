@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public class Pagination {
     private final static Pattern forumPaginationPattern = Pattern.compile("parseInt\\((\\d*)\\)[\\s\\S]*?parseInt\\(st\\*(\\d*)\\)[\\s\\S]*?pagination\">[\\s\\S]*?<span[^>]*?>([^<]*?)<\\/span>");
     private final static Pattern newsPaginationPattern = Pattern.compile("class=\"s-count[\\s\\S]*?<strong>(\\d+)<\\/strong>[\\s\\S]*?<ul class=\"page-nav[^>]*?>[\\s\\S]*?<li class=\"active\"><a[^>]*?>(\\d+)");
-    private int perPage = 20, all = 1, current = 1;
+    private int perPage = 20, all = 1, current = 1, st = 0;
     private boolean isForum = true;
 
     public boolean isForum() {
@@ -46,12 +46,15 @@ public class Pagination {
     }
 
     public int getPage(int page) {
-        if(!isForum) return page;
+        if (!isForum) return page;
         return page * perPage;
     }
 
     public static Pagination parseNews(String page) {
-        Pagination pagination = new Pagination();
+        return parseNews(new Pagination(), page);
+    }
+
+    public static Pagination parseNews(Pagination pagination, String page) {
         pagination.setForum(false);
         Matcher matcher = newsPaginationPattern.matcher(page);
         if (matcher.find()) {
@@ -63,7 +66,10 @@ public class Pagination {
     }
 
     public static Pagination parseForum(String page) {
-        Pagination pagination = new Pagination();
+        return parseForum(new Pagination(), page);
+    }
+
+    public static Pagination parseForum(Pagination pagination, String page) {
         Matcher matcher = forumPaginationPattern.matcher(page);
         if (matcher.find()) {
             pagination.setAll(Integer.parseInt(matcher.group(1)) + 1);
@@ -71,5 +77,13 @@ public class Pagination {
             pagination.setCurrent(Integer.parseInt(matcher.group(3)));
         }
         return pagination;
+    }
+
+    public int getSt() {
+        return st;
+    }
+
+    public void setSt(int st) {
+        this.st = st;
     }
 }

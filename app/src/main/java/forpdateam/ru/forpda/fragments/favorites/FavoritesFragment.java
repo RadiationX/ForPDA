@@ -51,11 +51,11 @@ public class FavoritesFragment extends TabFragment {
                     favoriteDialogMenu.addItem("Открыть форум темы", (context, data) -> IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + data.getForumId()));
                     favoriteDialogMenu.addItem("Изменить тип подписки", (context, data) -> {
                         new AlertDialog.Builder(context.getContext())
-                                .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> context.changeFav(0, Favorites.SUB_TYPES[which1], data.getFavId()))
+                                .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> context.changeFav(Favorites.ACTION_CHANGE_SUB_TYPE, Favorites.SUB_TYPES[which1], data.getFavId()))
                                 .show();
                     });
-                    favoriteDialogMenu.addItem(getPinText(favItem.isPin()), (context, data) -> context.changeFav(1, data.isPin() ? "unpin" : "pin", data.getFavId()));
-                    favoriteDialogMenu.addItem("Удалить", (context, data) -> context.changeFav(2, null, data.getFavId()));
+                    favoriteDialogMenu.addItem(getPinText(favItem.isPin()), (context, data) -> context.changeFav(Favorites.ACTION_CHANGE_PIN_STATE, data.isPin() ? "unpin" : "pin", data.getFavId()));
+                    favoriteDialogMenu.addItem("Удалить", (context, data) -> context.changeFav(Favorites.ACTION_DELETE, null, data.getFavId()));
                 }
 
                 int index = favoriteDialogMenu.containsIndex(getPinText(!favItem.isPin()));
@@ -74,7 +74,6 @@ public class FavoritesFragment extends TabFragment {
     private RealmResults<FavItem> results;
     private FavoritesAdapter adapter;
     private Subscriber<FavData> mainSubscriber = new Subscriber<>(this);
-    private Subscriber<Boolean> helperSubscriber = new Subscriber<>(this);
     boolean markedRead = false;
     private FavData data;
 
@@ -176,8 +175,8 @@ public class FavoritesFragment extends TabFragment {
         Api.get().notifyObservers();
     }
 
-    public void changeFav(int act, String type, int id) {
-        helperSubscriber.subscribe(Api.Favorites().changeFav(act, type, id), this::onChangeFav, false);
+    public void changeFav(int action, String type, int favId) {
+        FavoritesHelper.changeFav(this::onChangeFav, action, favId, -1,type);
     }
 
     public void markRead(int topicId) {

@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/item"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:orientation="horizontal">
+    android:layout_height="48dp">
 
     <TextView
         android:id="@+id/text"
@@ -17,10 +16,10 @@
         android:paddingEnd="8dp"
         android:paddingStart="0dp"
         android:paddingTop="8dp"
-        android:textSize="14sp"
-        android:textStyle="bold"
         android:text="ASLKDJKLASDJKLASDk"
-        android:textColor="@color/text_color"/>
+        android:textColor="@color/text_color"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/icon"

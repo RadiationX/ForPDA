@@ -5,18 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentStart="true"
+    android:layout_marginBottom="4dp"
     android:layout_marginLeft="0dp"
     android:layout_marginRight="0dp"
     android:layout_marginTop="4dp"
-    android:layout_marginBottom="4dp"
-    app:cardElevation="1dp"
-    app:cardCornerRadius="0dp">
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:minHeight="100dp"
+    app:cardCornerRadius="0dp"
+    app:cardElevation="1dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
         android:paddingBottom="@dimen/dp12"
         android:paddingEnd="@dimen/dp16"
         android:paddingStart="@dimen/dp16"
@@ -28,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:textSize="16sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/search_item_content"

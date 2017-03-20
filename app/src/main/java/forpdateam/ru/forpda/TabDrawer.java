@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ public class TabDrawer {
         adapter = new TabAdapter(activity);
         tabsList.setAdapter(adapter);
         tabsList.setOnItemClickListener((adapterView, view, i, l) -> {
+            Log.d("SUKA", "CLICK SUKA LISTENER ALO");
             TabManager.getInstance().select(TabManager.getInstance().get(i));
             close();
         });
@@ -78,7 +80,7 @@ public class TabDrawer {
                 holder = new ViewHolder();
                 assert convertView != null;
                 holder.text = (TextView) convertView.findViewById(R.id.text);
-                holder.close = (ImageButton) convertView.findViewById(R.id.close);
+                holder.close = (ImageView) convertView.findViewById(R.id.close);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
@@ -98,11 +100,11 @@ public class TabDrawer {
 
         public class ViewHolder {
             public TextView text;
-            public ImageButton close;
+            public ImageView close;
         }
     }
 
-    public void setStatusBarHeight(int height){
-        drawer.setPadding(0,height,0,0);
+    public void setStatusBarHeight(int height) {
+        drawer.setPadding(0, height, 0, 0);
     }
 }

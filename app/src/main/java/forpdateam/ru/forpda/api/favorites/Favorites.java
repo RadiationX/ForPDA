@@ -22,6 +22,10 @@ public class Favorites {
     private final static Pattern mainPattern = Pattern.compile("<div data-item-fid=\"([^\"]*)\" data-item-track=\"([^\"]*)\" data-item-pin=\"([^\"]*)\">[\\s\\S]*?class=\"modifier\">(<font color=\"([^\"]*)\">|)([^< ]*)(<\\/font>|)<\\/span><a href=\"[^\"]*=(\\d*)[^\"]*?\"[^>]*?>(<strong>|)([^<]*)(<\\/strong>|)<\\/a>[\\s\\S]*?(<a href=\"[^\"]*=(\\d*)\">\\((\\d*?)\\)[^<]*?<\\/a>|)<\\/div>[\\s\\S]*?topic_desc\">([^<]*|)(<br[^>]*>|)[\\s\\S]*?showforum=([^\"]*?)\">([^<]*)<\\/a><br[^>]*>[\\s\\S]*?showuser=([^\"]*)\">([^<]*)<\\/a>[\\s\\S]*?showuser=([^\"]*)\">([^<]*)<\\/a> ([^<]*?)<");
     private final static Pattern checkPattern = Pattern.compile("<div style=\"[^\"]*background:#dff0d8[^\"]*\">[\\s\\S]*<div id=\"navstrip");
     private final static Pattern pagesPattern = Pattern.compile("parseInt\\((\\d*)\\)[\\s\\S]*?parseInt\\(st\\*(\\d*)\\)[\\s\\S]*?pagination\">[\\s\\S]*?<span[^>]*?>([^<]*?)<\\/span>");
+    public final static int ACTION_CHANGE_SUB_TYPE = 0;
+    public final static int ACTION_CHANGE_PIN_STATE = 1;
+    public final static int ACTION_DELETE = 2;
+    public final static int ACTION_ADD = 3;
     public final static String[] SUB_TYPES = {"none", "delayed", "immediate", "daily", "weekly", "pinned"};
     public final static CharSequence[] SUB_NAMES = {"Не уведомлять", "Первый раз", "Каждый раз", "Каждый день", "Каждую неделю", "При изменении первого поста"};
 
@@ -72,24 +76,29 @@ public class Favorites {
         return data;
     }
 
-    private boolean _changeSubType(String type, int id) throws Exception {
-        String result = Client.getInstance().get("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0&tact=" + type + "&selectedtids=" + id);
+    private boolean _changeSubType(String type, int favId) throws Exception {
+        String result = Client.getInstance().get("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0&tact=" + type + "&selectedtids=" + favId);
         return checkIsComplete(result);
     }
 
-    private boolean _setPinState(String type, int id) throws Exception {
+    private boolean _setPinState(String type, int favId) throws Exception {
         Map<String, String> headers = new HashMap<>();
-        headers.put("selectedtids", "" + id);
+        headers.put("selectedtids", "" + favId);
         headers.put("tact", type);
         String result = Client.getInstance().post("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0", headers);
         return checkIsComplete(result);
     }
 
-    private boolean _delete(int id) throws Exception {
+    private boolean _delete(int favId) throws Exception {
         Map<String, String> headers = new HashMap<>();
-        headers.put("selectedtids", "" + id);
+        headers.put("selectedtids", "" + favId);
         headers.put("tact", "delete");
         String result = Client.getInstance().post("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0", headers);
+        return checkIsComplete(result);
+    }
+
+    private boolean _add(int id, String type) throws Exception {
+        String result = Client.getInstance().get("http://4pda.ru/forum/index.php?act=fav&type=add&t=" + id + "&track_type=" + type);
         return checkIsComplete(result);
     }
 
@@ -101,14 +110,16 @@ public class Favorites {
         return Observable.fromCallable(() -> _getFav(st));
     }
 
-    public Observable<Boolean> changeFav(int act, String type, int id) {
+    public Observable<Boolean> changeFav(int act, int favId, int id, String type) {
         switch (act) {
-            case 0:
-                return Observable.fromCallable(() -> _changeSubType(type, id));
-            case 1:
-                return Observable.fromCallable(() -> _setPinState(type, id));
-            case 2:
-                return Observable.fromCallable(() -> _delete(id));
+            case ACTION_CHANGE_SUB_TYPE:
+                return Observable.fromCallable(() -> _changeSubType(type, favId));
+            case ACTION_CHANGE_PIN_STATE:
+                return Observable.fromCallable(() -> _setPinState(type, favId));
+            case ACTION_DELETE:
+                return Observable.fromCallable(() -> _delete(favId));
+            case ACTION_ADD:
+                return Observable.fromCallable(() -> _add(id, type));
             default:
                 return Observable.just(false);
         }
