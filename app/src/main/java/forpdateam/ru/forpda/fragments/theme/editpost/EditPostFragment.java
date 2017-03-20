@@ -97,9 +97,9 @@ public class EditPostFragment extends TabFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        initBaseView(inflater, container);
+        super.onCreateView(inflater, container, savedInstanceState);
         //baseInflateFragment(inflater, R.layout.fragment_qms_chat);
-        messagePanel = new MessagePanel(getContext(), (ViewGroup) findViewById(R.id.fragment_container), (ViewGroup) view.findViewById(R.id.fragment_content), true);
+        messagePanel = new MessagePanel(getContext(), fragmentContainer, fragmentContent, true);
         messagePanel.addSendOnClickListener(v -> {
             if (postForm.getType() == TYPE_EDIT_POST) {
                 showReasonDialog();

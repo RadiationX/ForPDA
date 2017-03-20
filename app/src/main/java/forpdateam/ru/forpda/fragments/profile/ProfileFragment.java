@@ -64,7 +64,6 @@ public class ProfileFragment extends TabFragment {
     private EditText noteText;
     private CircularProgressView progressView;
     private Window window;
-    private CollapsingToolbarLayout collapsingToolbarLayout;
     private int statusBarColor = -1, standardColor = -1;
     private ValueAnimator statusBarValueAnimator;
 
@@ -72,18 +71,23 @@ public class ProfileFragment extends TabFragment {
     private Subscriber<Boolean> saveNoteSubscriber = new Subscriber<>(this);
     private Subscriber<Bitmap> blurAvatarSubscriber = new Subscriber<>(this);
 
+    private String tab_url = "";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getTabUrl().isEmpty())
-            setTabUrl("http://4pda.ru/forum/index.php?showuser=".concat(Api.Auth().getUserId() == null ? "2556269" : Api.Auth().getUserId()));
+        if (getArguments() != null) {
+            tab_url = getArguments().getString(ARG_TAB);
+        }
+        if (tab_url == null || tab_url.isEmpty())
+            tab_url = "http://4pda.ru/forum/index.php?showuser=".concat(Api.Auth().getUserId() == null ? "2556269" : Api.Auth().getUserId());
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         this.inflater = inflater;
-        initBaseView(inflater, container);
+        super.onCreateView(inflater, container, savedInstanceState);
         baseInflateFragment(inflater, R.layout.fragment_profile);
         ViewStub viewStub = (ViewStub) findViewById(R.id.toolbar_content);
         viewStub.setLayoutResource(R.layout.toolbar_profile);
@@ -100,19 +104,18 @@ public class ProfileFragment extends TabFragment {
         progressView = (CircularProgressView) findViewById(R.id.profile_progress);
         viewsReady();
 
-        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
-        collapsingToolbarLayout.setExpandedTitleColor(Color.TRANSPARENT);
-        collapsingToolbarLayout.setCollapsedTitleTextColor(Color.TRANSPARENT);
-        collapsingToolbarLayout.setTitleEnabled(true);
+        toolbarLayout.setExpandedTitleColor(Color.TRANSPARENT);
+        toolbarLayout.setCollapsedTitleTextColor(Color.TRANSPARENT);
+        toolbarLayout.setTitleEnabled(true);
         toolbarTitleView.setVisibility(View.GONE);
-        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams();
+        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) toolbarLayout.getLayoutParams();
         params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED); // list other flags here by |
-        collapsingToolbarLayout.setLayoutParams(params);
-        /*collapsingToolbarLayout.setExpandedTitleGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL);
-        collapsingToolbarLayout.setExpandedTitleMarginTop(dpToPx(216));
-        collapsingToolbarLayout.setScrimVisibleHeightTrigger(dpToPx(144));
-        collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.QText);
-        collapsingToolbarLayout.setScrimAnimationDuration(225);
+        toolbarLayout.setLayoutParams(params);
+        /*toolbarLayout.setExpandedTitleGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL);
+        toolbarLayout.setExpandedTitleMarginTop(dpToPx(216));
+        toolbarLayout.setScrimVisibleHeightTrigger(dpToPx(144));
+        toolbarLayout.setExpandedTitleTextAppearance(R.style.QText);
+        toolbarLayout.setScrimAnimationDuration(225);
 */
         noteText = (EditText) findViewById(R.id.profile_note_text);
         noteText.clearFocus();
@@ -120,7 +123,7 @@ public class ProfileFragment extends TabFragment {
         //toolbar.setTitleTextColor(Color.TRANSPARENT);
 
         toolbar.getMenu().add("Ссылка").setOnMenuItemClickListener(menuItem -> {
-            Utils.copyToClipBoard(getTabUrl());
+            Utils.copyToClipBoard(tab_url);
             return false;
         });
         if (getActivity() != null && getActivity().getWindow() != null) {
@@ -161,7 +164,7 @@ public class ProfileFragment extends TabFragment {
 
     @Override
     public void loadData() {
-        mainSubscriber.subscribe(Api.Profile().get(getTabUrl()), this::onProfileLoad, new ProfileModel(), v -> loadData());
+        mainSubscriber.subscribe(Api.Profile().get(tab_url), this::onProfileLoad, new ProfileModel(), v -> loadData());
     }
 
     public void saveNote() {
@@ -265,7 +268,7 @@ public class ProfileFragment extends TabFragment {
                                     });
                                     statusBarValueAnimator.start();
                                 }
-                                collapsingToolbarLayout.setContentScrimColor(statusBarColor);
+                                toolbarLayout.setContentScrimColor(statusBarColor);
                             }
                         }
                     });
@@ -335,7 +338,7 @@ public class ProfileFragment extends TabFragment {
             addInfoItem(getContext().getString(R.string.profile_item_text_alerts), profile.getAlerts());
         Log.d("FORPDA_LOG", "check 3 " + (System.currentTimeMillis() - time));
         if (profile.getContacts().size() > 0) {
-            if (!Pattern.compile("showuser=" + Api.Auth().getUserId()).matcher(getTabUrl()).find()) {
+            if (!Pattern.compile("showuser=" + Api.Auth().getUserId()).matcher(tab_url).find()) {
                 toolbar.getMenu().add("Написать").setIcon(App.getAppDrawable(R.drawable.ic_create_white_24dp)).setOnMenuItemClickListener(item -> {
                     IntentHandler.handle(profile.getContacts().get(0).first);
                     return false;

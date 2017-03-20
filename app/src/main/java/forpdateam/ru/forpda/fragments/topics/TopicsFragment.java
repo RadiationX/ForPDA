@@ -8,7 +8,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,14 +20,12 @@ import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.topcis.models.TopicItem;
 import forpdateam.ru.forpda.api.topcis.models.TopicsData;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.pagination.PaginationHelper;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
-import io.reactivex.functions.Consumer;
 
 /**
  * Created by radiationx on 01.03.17.
@@ -42,9 +39,8 @@ public class TopicsFragment extends TabFragment {
     private TopicsAdapter adapter;
     private Subscriber<TopicsData> mainSubscriber = new Subscriber<>(this);
 
-    @Override
-    public String getDefaultTitle() {
-        return "Темы форума";
+    public TopicsFragment() {
+        configuration.setDefaultTitle("Темы форума");
     }
 
     @Override
@@ -64,9 +60,7 @@ public class TopicsFragment extends TabFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        initBaseView(inflater, container);
-        initFabBehavior();
+        super.onCreateView(inflater, container, savedInstanceState);
         setWhiteBackground();
         baseInflateFragment(inflater, R.layout.fragment_qms_themes);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
@@ -81,7 +75,7 @@ public class TopicsFragment extends TabFragment {
         adapter.setOnItemClickListener(item -> {
             if (item.isAnnounce()) return;
             Bundle args = new Bundle();
-            args.putString(TabFragment.TITLE_ARG, item.getTitle());
+            args.putString(TabFragment.ARG_TITLE, item.getTitle());
             IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=" + item.getId() + "&view=getnewpost", args);
         });
         adapter.setOnLongItemClickListener(item -> {
@@ -107,7 +101,7 @@ public class TopicsFragment extends TabFragment {
         });
 
         paginationHelper.inflatePagination(getContext(), inflater, toolbar);
-        paginationHelper.setupToolbar((CollapsingToolbarLayout) findViewById(R.id.toolbar_layout));
+        paginationHelper.setupToolbar(toolbarLayout);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {

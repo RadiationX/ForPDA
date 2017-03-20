@@ -26,7 +26,6 @@ import forpdateam.ru.forpda.fragments.reputation.ReputationFragment;
 import forpdateam.ru.forpda.fragments.search.SearchFragment;
 import forpdateam.ru.forpda.fragments.theme.ThemeFragmentWeb;
 import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
-import forpdateam.ru.forpda.utils.ourparser.Html;
 
 /**
  * Created by radiationx on 04.08.16.
@@ -144,7 +143,7 @@ public class IntentHandler {
         String param = uri.getQueryParameter("showuser");
         if (param != null) {
             run("showuser " + param);
-            args.putString(TabFragment.URL_ARG, uri.toString());
+            args.putString(TabFragment.ARG_TAB, uri.toString());
             TabManager.getInstance().add(new TabFragment.Builder<>(ProfileFragment.class).setArgs(args).build());
             return true;
         }
@@ -160,7 +159,7 @@ public class IntentHandler {
                     pid = m.group(1);
             }
             run("showtopic " + tid + " : " + view + " : " + st + " : " + pid);
-            args.putString(TabFragment.URL_ARG, uri.toString());
+            args.putString(TabFragment.ARG_TAB, uri.toString());
             TabManager.getInstance().add(new TabFragment.Builder<>(ThemeFragmentWeb.class).setArgs(args).build());
             return true;
         }
@@ -203,15 +202,15 @@ public class IntentHandler {
                     return true;
                 case "search":
                     run("search " + uri.toString());
-                    args.putString(TabFragment.URL_ARG, uri.toString());
+                    args.putString(TabFragment.ARG_TAB, uri.toString());
                     TabManager.getInstance().add(new TabFragment.Builder<>(SearchFragment.class).setArgs(args).build());
                     return true;
                 case "rep":
-                    args.putString(TabFragment.URL_ARG, uri.toString());
+                    args.putString(TabFragment.ARG_TAB, uri.toString());
                     TabManager.getInstance().add(new TabFragment.Builder<>(ReputationFragment.class).setArgs(args).build());
                     return true;
                 case "findpost":
-                    args.putString(TabFragment.URL_ARG, uri.toString());
+                    args.putString(TabFragment.ARG_TAB, uri.toString());
                     TabManager.getInstance().add(new TabFragment.Builder<>(ThemeFragmentWeb.class).setArgs(args).build());
                     return true;
                 case "fav":

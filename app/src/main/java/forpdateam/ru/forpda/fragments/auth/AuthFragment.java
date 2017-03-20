@@ -49,20 +49,14 @@ public class AuthFragment extends TabFragment {
     private Subscriber<Boolean> loginSubscriber = new Subscriber<>(this);
     private Subscriber<ProfileModel> profileSubscriber = new Subscriber<>(this);
 
-    @Override
-    public String getTabUrl() {
-        return AuthParser.authFormUrl;
-    }
-
-    @Override
-    public boolean isAlone() {
-        return true;
+    public AuthFragment() {
+        configuration.setAlone(true);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        initBaseView(inflater, container);
+        super.onCreateView(inflater, container, savedInstanceState);
         baseInflateFragment(inflater, R.layout.activity_auth);
         nick = (EditText) findViewById(R.id.auth_login);
         password = (EditText) findViewById(R.id.auth_password);
@@ -75,7 +69,7 @@ public class AuthFragment extends TabFragment {
         progressView = (CircularProgressView) findViewById(R.id.auth_progress);
         loginProgress = (ProgressBar) findViewById(R.id.login_progress);
         viewsReady();
-        view.findViewById(R.id.fragment_content).setBackgroundResource(R.color.white);
+        setWhiteBackground();
         toolbar.setVisibility(View.GONE);
         notifyDot.setVisibility(View.GONE);
         sendButton = (Button) findViewById(R.id.auth_send);

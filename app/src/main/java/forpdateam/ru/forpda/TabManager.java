@@ -134,7 +134,7 @@ public class TabManager {
         if (tabFragment == null)
             return;
         String check = null;
-        if (tabFragment.isAlone()) {
+        if (tabFragment.getConfiguration().isAlone()) {
             check = getTagContainClass(tabFragment.getClass());
         }
         if (check != null) {

@@ -30,7 +30,7 @@ public class MentionsFragment extends TabFragment {
     private MentionsAdapter.OnItemClickListener onItemClickListener =
             favItem -> {
                 Bundle args = new Bundle();
-                args.putString(TabFragment.TITLE_ARG, favItem.getTitle());
+                args.putString(TabFragment.ARG_TITLE, favItem.getTitle());
                 IntentHandler.handle(favItem.getLink(), args);
             };
 
@@ -40,20 +40,16 @@ public class MentionsFragment extends TabFragment {
     private MentionsData data;
     private int currentSt = 0;
 
-    @Override
-    public String getDefaultTitle() {
-        return "Упоминания";
-    }
 
-    @Override
-    public boolean isAlone() {
-        return true;
+    public MentionsFragment(){
+        configuration.setAlone(true);
+        configuration.setDefaultTitle("Упоминания");
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        initBaseView(inflater, container);
+        super.onCreateView(inflater, container, savedInstanceState);
         setWhiteBackground();
         baseInflateFragment(inflater, R.layout.fragment_qms_themes);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
@@ -64,7 +60,7 @@ public class MentionsFragment extends TabFragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         paginationHelper.inflatePagination(getContext(), inflater, toolbar);
-        paginationHelper.setupToolbar((CollapsingToolbarLayout) findViewById(R.id.toolbar_layout));
+        paginationHelper.setupToolbar(toolbarLayout);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {

@@ -81,6 +81,7 @@ public abstract class ThemeFragment extends TabFragment {
     protected AttachmentsPopup attachmentsPopup;
     protected Subscriber<List<AttachmentItem>> attachmentSubscriber = new Subscriber<>(this);
     protected static final int PICK_IMAGE = 1228;
+    protected String tab_url = "";
 
 
     protected abstract void addShowingView();
@@ -91,14 +92,21 @@ public abstract class ThemeFragment extends TabFragment {
 
     protected abstract void saveToHistory(ThemePage themePage);
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            tab_url = getArguments().getString(ARG_TAB);
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        initBaseView(inflater, container);
-        initFabBehavior();
+        super.onCreateView(inflater, container, savedInstanceState);
         baseInflateFragment(inflater, R.layout.fragment_theme);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-        messagePanel = new MessagePanel(getContext(), (ViewGroup) findViewById(R.id.fragment_container), coordinatorLayout, false);
+        messagePanel = new MessagePanel(getContext(), fragmentContainer, coordinatorLayout, false);
         messagePanel.addSendOnClickListener(v -> sendMessage());
         messagePanel.getSendButton().setOnLongClickListener(v -> {
             TabManager.getInstance().add(EditPostFragment.newInstance(createEditPostForm(), currentPage.getTitle()));
@@ -109,7 +117,7 @@ public abstract class ThemeFragment extends TabFragment {
         attachmentsPopup.setDeleteOnClickListener(v -> removeFiles());
 
         paginationHelper.inflatePagination(getContext(), inflater, toolbar);
-        paginationHelper.setupToolbar((CollapsingToolbarLayout) findViewById(R.id.toolbar_layout));
+        paginationHelper.setupToolbar(toolbarLayout);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {
@@ -119,9 +127,9 @@ public abstract class ThemeFragment extends TabFragment {
             @Override
             public void onSelectedPage(int pageNumber) {
                 String url = "http://4pda.ru/forum/index.php?showtopic=";
-                url = url.concat(Uri.parse(getTabUrl()).getQueryParameter("showtopic"));
+                url = url.concat(Uri.parse(tab_url).getQueryParameter("showtopic"));
                 if (pageNumber != 0) url = url.concat("&st=").concat(Integer.toString(pageNumber));
-                setTabUrl(url);
+                tab_url = url;
                 loadData();
             }
         });
@@ -188,7 +196,7 @@ public abstract class ThemeFragment extends TabFragment {
     public void loadData() {
         if (refreshLayout != null)
             refreshLayout.setRefreshing(true);
-        mainSubscriber.subscribe(Api.Theme().getPage(getTabUrl(), true), this::onLoadData, new ThemePage(), v -> loadData());
+        mainSubscriber.subscribe(Api.Theme().getPage(tab_url, true), this::onLoadData, new ThemePage(), v -> loadData());
     }
 
     protected void onLoadData(ThemePage page) throws Exception {
@@ -199,8 +207,8 @@ public abstract class ThemeFragment extends TabFragment {
             return;
         }
         if (currentPage == null)
-            new Handler().postDelayed(() -> ((AppBarLayout) findViewById(R.id.appbar_layout)).setExpanded(false, true), 300);
-        setTabUrl(page.getUrl());
+            new Handler().postDelayed(() -> (appBarLayout).setExpanded(false, true), 300);
+        tab_url = page.getUrl();
         if (currentPage != null) {
             saveToHistory(page);
         }
@@ -227,7 +235,7 @@ public abstract class ThemeFragment extends TabFragment {
 
     protected void updateView() {
         paginationHelper.updatePagination(currentPage.getPagination());
-        setTabUrl(currentPage.getUrl());
+        tab_url = currentPage.getUrl();
         updateTitle();
         updateSubTitle();
         refreshOptionsMenu();
@@ -243,7 +251,7 @@ public abstract class ThemeFragment extends TabFragment {
         })/*.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)*/;
         if (currentPage != null) {
             menu.add("Ссылка").setOnMenuItemClickListener(menuItem -> {
-                Utils.copyToClipBoard(getTabUrl());
+                Utils.copyToClipBoard(tab_url);
                 return false;
             });
             addSearchOnPageItem(menu);
@@ -514,12 +522,12 @@ public abstract class ThemeFragment extends TabFragment {
     }
 
     public void showPollResults() {
-        setTabUrl(getTabUrl().replaceFirst("#[^&]*", "").replace("&mode=show", "").replace("&poll_open=true", "").concat("&mode=show&poll_open=true"));
+        tab_url = tab_url.replaceFirst("#[^&]*", "").replace("&mode=show", "").replace("&poll_open=true", "").concat("&mode=show&poll_open=true");
         loadData();
     }
 
     public void showPoll() {
-        setTabUrl(getTabUrl().replaceFirst("#[^&]*", "").replace("&mode=show", "").replace("&poll_open=true", "").concat("&poll_open=true"));
+        tab_url = tab_url.replaceFirst("#[^&]*", "").replace("&mode=show", "").replace("&poll_open=true", "").concat("&poll_open=true");
         loadData();
     }
 

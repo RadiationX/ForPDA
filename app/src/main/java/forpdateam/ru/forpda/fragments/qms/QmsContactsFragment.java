@@ -44,7 +44,7 @@ public class QmsContactsFragment extends TabFragment {
     private QmsContactsAdapter.OnItemClickListener onItemClickListener =
             contact -> {
                 Bundle args = new Bundle();
-                args.putString(TabFragment.TITLE_ARG, contact.getNick());
+                args.putString(TabFragment.ARG_TITLE, contact.getNick());
                 args.putInt(QmsThemesFragment.USER_ID_ARG, contact.getId());
                 args.putString(QmsThemesFragment.USER_AVATAR_ARG, contact.getAvatar());
                 TabManager.getInstance().add(new TabFragment.Builder<>(QmsThemesFragment.class).setArgs(args).build());
@@ -60,19 +60,10 @@ public class QmsContactsFragment extends TabFragment {
     };
 
 
-    @Override
-    public boolean isUseCache() {
-        return true;
-    }
-
-    @Override
-    public boolean isAlone() {
-        return true;
-    }
-
-    @Override
-    public String getDefaultTitle() {
-        return "Контакты";
+    public QmsContactsFragment(){
+        configuration.setAlone(true);
+        configuration.setMenu(true);
+        configuration.setDefaultTitle("Контакты");
     }
 
     @Override
@@ -84,7 +75,7 @@ public class QmsContactsFragment extends TabFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        initBaseView(inflater, container);
+        super.onCreateView(inflater, container, savedInstanceState);
         initFabBehavior();
         setWhiteBackground();
         baseInflateFragment(inflater, R.layout.fragment_qms_contacts);

@@ -24,16 +24,13 @@ import android.widget.Toast;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.auth.Auth;
 import forpdateam.ru.forpda.api.reputation.Reputation;
 import forpdateam.ru.forpda.api.reputation.models.RepData;
 import forpdateam.ru.forpda.api.reputation.models.RepItem;
-import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.pagination.PaginationHelper;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
-import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
@@ -54,16 +51,16 @@ public class ReputationFragment extends TabFragment {
     private static AlertDialogMenu<ReputationFragment, RepItem> repDialogMenu;
     private AlertDialogMenu<ReputationFragment, RepItem> showedRepDialogMenu;
 
-    @Override
-    public String getDefaultTitle() {
-        return "Репутация";
+
+    public ReputationFragment(){
+        configuration.setDefaultTitle("Репутация");
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            String url = getArguments().getString(URL_ARG);
+            String url = getArguments().getString(ARG_TAB);
             if (url != null) {
                 data = Reputation.fromUrl(data, url);
             }
@@ -74,9 +71,7 @@ public class ReputationFragment extends TabFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        initBaseView(inflater, container);
-        initFabBehavior();
+        super.onCreateView(inflater, container, savedInstanceState);
         setWhiteBackground();
         baseInflateFragment(inflater, R.layout.fragment_qms_themes);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
@@ -91,7 +86,7 @@ public class ReputationFragment extends TabFragment {
 
 
         paginationHelper.inflatePagination(getContext(), inflater, toolbar);
-        paginationHelper.setupToolbar((CollapsingToolbarLayout) findViewById(R.id.toolbar_layout));
+        paginationHelper.setupToolbar(toolbarLayout);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {
@@ -105,31 +100,28 @@ public class ReputationFragment extends TabFragment {
             }
         });
 
-        adapter.setOnItemClickListener(new ReputationAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(RepItem item) {
-                if (repDialogMenu == null) {
-                    repDialogMenu = new AlertDialogMenu<>();
-                    repDialogMenu.addItem("Профиль", (context, data1) -> {
-                        IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + data1.getUserId());
-                    });
-                    repDialogMenu.addItem("Перейти к сообщению", (context, data1) -> {
-                        IntentHandler.handle(data1.getSourceUrl());
-                    });
-                }
-                if (showedRepDialogMenu == null)
-                    showedRepDialogMenu = new AlertDialogMenu<>();
-
-                showedRepDialogMenu.clear();
-                showedRepDialogMenu.addItem(repDialogMenu.get(0));
-                if (item.getSourceUrl() != null)
-                    showedRepDialogMenu.addItem(repDialogMenu.get(1));
-
-                new AlertDialog.Builder(getContext())
-                        .setTitle(item.getUserNick())
-                        .setItems(showedRepDialogMenu.getTitles(), (dialog, which) -> showedRepDialogMenu.onClick(which, ReputationFragment.this, item))
-                        .show();
+        adapter.setOnItemClickListener(item -> {
+            if (repDialogMenu == null) {
+                repDialogMenu = new AlertDialogMenu<>();
+                repDialogMenu.addItem("Профиль", (context, data1) -> {
+                    IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + data1.getUserId());
+                });
+                repDialogMenu.addItem("Перейти к сообщению", (context, data1) -> {
+                    IntentHandler.handle(data1.getSourceUrl());
+                });
             }
+            if (showedRepDialogMenu == null)
+                showedRepDialogMenu = new AlertDialogMenu<>();
+
+            showedRepDialogMenu.clear();
+            showedRepDialogMenu.addItem(repDialogMenu.get(0));
+            if (item.getSourceUrl() != null)
+                showedRepDialogMenu.addItem(repDialogMenu.get(1));
+
+            new AlertDialog.Builder(getContext())
+                    .setTitle(item.getUserNick())
+                    .setItems(showedRepDialogMenu.getTitles(), (dialog, which) -> showedRepDialogMenu.onClick(which, ReputationFragment.this, item))
+                    .show();
         });
         refreshOptionsMenu();
 
