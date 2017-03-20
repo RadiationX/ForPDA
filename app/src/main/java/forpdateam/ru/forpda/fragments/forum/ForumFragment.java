@@ -79,15 +79,9 @@ public class ForumFragment extends TabFragment {
     int forumId = -1;
 
 
-    @Override
-    public String getDefaultTitle() {
-        return "Форум";
-    }
-
-
-    @Override
-    public boolean isUseCache() {
-        return true;
+    public ForumFragment() {
+        configuration.setUseCache(true);
+        configuration.setDefaultTitle("Форум");
     }
 
     @Override
@@ -102,7 +96,7 @@ public class ForumFragment extends TabFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        initBaseView(inflater, container);
+        super.onCreateView(inflater, container, savedInstanceState);
         setWhiteBackground();
         baseInflateFragment(inflater, R.layout.fragment_forum);
         treeContainer = (NestedScrollView) findViewById(R.id.nested_scroll_view);

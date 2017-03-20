@@ -45,26 +45,16 @@ public class NewsListFragment extends TabFragment implements INewsView, NewsList
     private NewsPresenter presenter;
 
 
-    @Override
-    public String getTabUrl() {
-        return LINk;
-    }
 
-    @Override
-    public boolean isAlone() {
-        return true;
+    public NewsListFragment(){
+        configuration.setAlone(true);
+        configuration.setUseCache(true);
     }
-
-    @Override
-    public boolean isUseCache() {
-        return true;
-    }
-
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        initBaseView(inflater, container);
+        super.onCreateView(inflater, container, savedInstanceState);
         baseInflateFragment(inflater, R.layout.news_list_fragment);
 //        text = (TextView) findViewById(R.id.textView2);
         log("onCreateView");

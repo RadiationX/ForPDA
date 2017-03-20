@@ -27,7 +27,6 @@ import io.realm.RealmResults;
  * Created by radiationx on 25.08.16.
  */
 public class QmsThemesFragment extends TabFragment {
-    public final static String defaultTitle = "Диалоги";
     public final static String USER_ID_ARG = "USER_ID_ARG";
     public final static String USER_AVATAR_ARG = "USER_AVATAR_ARG";
     private String avatarUrl;
@@ -40,8 +39,8 @@ public class QmsThemesFragment extends TabFragment {
     private QmsThemesAdapter.OnItemClickListener onItemClickListener =
             theme -> {
                 Bundle args = new Bundle();
-                args.putString(TabFragment.TITLE_ARG, theme.getName());
-                args.putString(TabFragment.SUBTITLE_ARG, getTitle());
+                args.putString(TabFragment.ARG_TITLE, theme.getName());
+                args.putString(TabFragment.TAB_SUBTITLE, getTitle());
                 args.putInt(QmsChatFragment.USER_ID_ARG, currentThemes.getUserId());
                 args.putString(QmsChatFragment.USER_AVATAR_ARG, avatarUrl);
                 args.putInt(QmsChatFragment.THEME_ID_ARG, theme.getId());
@@ -50,14 +49,9 @@ public class QmsThemesFragment extends TabFragment {
             };
     private Subscriber<QmsThemes> mainSubscriber = new Subscriber<>(this);
 
-    @Override
-    public String getDefaultTitle() {
-        return defaultTitle;
-    }
-
-    @Override
-    public boolean isUseCache() {
-        return true;
+    public QmsThemesFragment(){
+        configuration.setUseCache(true);
+        configuration.setDefaultTitle("Диалоги");
     }
 
     @Override
@@ -73,7 +67,7 @@ public class QmsThemesFragment extends TabFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        initBaseView(inflater, container);
+        super.onCreateView(inflater, container, savedInstanceState);
         initFabBehavior();
         setWhiteBackground();
         baseInflateFragment(inflater, R.layout.fragment_qms_themes);

@@ -10,7 +10,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -27,7 +26,6 @@ import java.util.List;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.search.models.SearchItem;
 import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -61,16 +59,15 @@ public class SearchFragment extends TabFragment {
     private StringBuilder titleBuilder = new StringBuilder();
     private PaginationHelper paginationHelper = new PaginationHelper();
 
-    @Override
-    public String getDefaultTitle() {
-        return "Поиск";
+    public SearchFragment(){
+        configuration.setDefaultTitle("Поиск");
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            String url = getArguments().getString(URL_ARG);
+            String url = getArguments().getString(ARG_TAB);
             if (url != null)
                 settings = SearchSettings.parseSettings(settings, url);
         }
@@ -83,7 +80,7 @@ public class SearchFragment extends TabFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        initBaseView(inflater, container);
+        super.onCreateView(inflater, container, savedInstanceState);
         baseInflateFragment(inflater, R.layout.fragment_search);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         recyclerView = (RecyclerView) findViewById(R.id.qms_list_themes);
@@ -107,7 +104,7 @@ public class SearchFragment extends TabFragment {
         viewsReady();
 
         paginationHelper.inflatePagination(getContext(), inflater, toolbar);
-        paginationHelper.setupToolbar((CollapsingToolbarLayout) findViewById(R.id.toolbar_layout));
+        paginationHelper.setupToolbar(toolbarLayout);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {

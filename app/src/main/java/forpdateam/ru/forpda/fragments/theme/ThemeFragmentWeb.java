@@ -111,7 +111,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
     @Override
     protected void saveToHistory(ThemePage themePage) {
-        if (currentPage.getUrl().equals(getTabUrl())) {
+        if (currentPage.getUrl().equals(tab_url)) {
             themePage.setScrollY(webView.getScrollY());
         } else {
             currentPage.setScrollY(webView.getScrollY());
@@ -163,7 +163,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
                 if (uri.getPathSegments().get(0).equals("forum")) {
                     String param = uri.getQueryParameter("showtopic");
                     Log.d("FORPDA_LOG", "param" + param);
-                    if (param != null && !param.equals(Uri.parse(getTabUrl()).getQueryParameter("showtopic"))) {
+                    if (param != null && !param.equals(Uri.parse(tab_url).getQueryParameter("showtopic"))) {
                         load(uri);
                         return true;
                     }
@@ -213,7 +213,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
         private void load(Uri uri) {
             action = NORMAL_ACTION;
-            setTabUrl(uri.toString());
+            tab_url = uri.toString();
             loadData();
         }
 

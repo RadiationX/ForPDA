@@ -41,7 +41,7 @@ public class FavoritesFragment extends TabFragment {
     private FavoritesAdapter.OnItemClickListener onItemClickListener =
             favItem -> {
                 Bundle args = new Bundle();
-                args.putString(TabFragment.TITLE_ARG, favItem.getTopicTitle());
+                args.putString(TabFragment.ARG_TITLE, favItem.getTopicTitle());
                 IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=" + favItem.getTopicId() + "&view=getnewpost", args);
             };
     private AlertDialogMenu<FavoritesFragment, FavItem> favoriteDialogMenu;
@@ -80,23 +80,14 @@ public class FavoritesFragment extends TabFragment {
     boolean markedRead = false;
     private FavData data;
 
+    public FavoritesFragment(){
+        configuration.setAlone(true);
+        configuration.setUseCache(true);
+        configuration.setDefaultTitle("Избранное");
+    }
+
     private CharSequence getPinText(boolean b) {
         return b ? "Открепить" : "Закрепить";
-    }
-
-    @Override
-    public String getDefaultTitle() {
-        return "Избранное";
-    }
-
-    @Override
-    public boolean isAlone() {
-        return true;
-    }
-
-    @Override
-    public boolean isUseCache() {
-        return true;
     }
 
     @Override
@@ -111,7 +102,7 @@ public class FavoritesFragment extends TabFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        initBaseView(inflater, container);
+        super.onCreateView(inflater, container, savedInstanceState);
         setWhiteBackground();
         baseInflateFragment(inflater, R.layout.fragment_qms_themes);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
@@ -128,7 +119,7 @@ public class FavoritesFragment extends TabFragment {
         recyclerView.setAdapter(adapter);
 
         paginationHelper.inflatePagination(getContext(), inflater, toolbar);
-        paginationHelper.setupToolbar((CollapsingToolbarLayout) findViewById(R.id.toolbar_layout));
+        paginationHelper.setupToolbar(toolbarLayout);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {
