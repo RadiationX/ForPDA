@@ -27,6 +27,8 @@ import forpdateam.ru.forpda.fragments.search.SearchFragment;
 import forpdateam.ru.forpda.fragments.theme.ThemeFragmentWeb;
 import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 /**
  * Created by radiationx on 04.08.16.
  */
@@ -132,7 +134,7 @@ public class IntentHandler {
             }
         }
         try {
-            App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));
+            App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK));
         } catch (ActivityNotFoundException e) {
             ACRA.getErrorReporter().handleException(e);
         }

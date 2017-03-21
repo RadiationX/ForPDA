@@ -41,4 +41,9 @@ public class TabConfiguration {
     public void setDefaultTitle(String defaultTitle) {
         this.defaultTitle = defaultTitle;
     }
+
+    @Override
+    public String toString() {
+        return "TabConfiguration{" + isAlone() + ", " + isMenu() + ", " + isUseCache() + ", " + getDefaultTitle() + "}";
+    }
 }

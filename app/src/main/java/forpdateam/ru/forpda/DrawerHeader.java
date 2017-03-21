@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.content.res.AppCompatResources;
@@ -55,12 +56,26 @@ public class DrawerHeader {
     private ImageButton openLinkButton;
     private MainActivity activity;
     private View.OnClickListener headerClickListener = v -> {
-        TabFragment fragment = TabManager.getInstance().get(TabManager.getInstance().getTagContainClass(ProfileFragment.class));
-        if (fragment == null) {
-            TabManager.getInstance().add(new TabFragment.Builder<>(ProfileFragment.class).build());
+        TabFragment tabFragment = null;
+        for (TabFragment fragment : TabManager.getInstance().getFragments()) {
+            if (fragment.getClass().getSimpleName().equals(ProfileFragment.class.getSimpleName()) && fragment.getConfiguration().isMenu()) {
+                tabFragment = fragment;
+                break;
+            }
+        }
+        if (tabFragment == null) {
+            tabFragment = new TabFragment.Builder<>(ProfileFragment.class).build();
+            tabFragment.getConfiguration().setMenu(true);
+            TabManager.getInstance().add(tabFragment);
+        } else {
+            TabManager.getInstance().select(tabFragment);;
+        }
+        /*TabFragment fragment = TabManager.getInstance().get(TabManager.getInstance().getTagContainClass(ProfileFragment.class));
+        if (fragment == null | (fragment != null && fragment.getConfiguration().isMenu())) {
+            TabManager.getInstance().add(new TabFragment.Builder<>(ProfileFragment.class).setIsMenu().build());
         } else {
             TabManager.getInstance().select(fragment);
-        }
+        }*/
         activity.getMenuDrawer().close();
     };
 
@@ -75,7 +90,7 @@ public class DrawerHeader {
             String url;
             url = readFromClipboard(activity);
             if (url == null) url = "";
-            final FrameLayout frameLayout  = new FrameLayout(activity);
+            final FrameLayout frameLayout = new FrameLayout(activity);
             frameLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             frameLayout.setPadding(App.px24, 0, App.px24, 0);
             final EditText linkField = new EditText(activity);
