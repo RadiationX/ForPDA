@@ -50,7 +50,7 @@ public class MentionsAdapter extends RecyclerView.Adapter<MentionsAdapter.ViewHo
 
     @Override
     public MentionsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.favorite_item, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.topic_item, parent, false);
         return new MentionsAdapter.ViewHolder(v);
     }
 
@@ -61,6 +61,9 @@ public class MentionsAdapter extends RecyclerView.Adapter<MentionsAdapter.ViewHo
         holder.title.setTypeface(null, item.getState() == MentionItem.STATE_UNREAD ? Typeface.BOLD : Typeface.NORMAL);
         holder.lastNick.setText(item.getNick());
         holder.date.setText(item.getDate());
+        if (holder.desc.getVisibility() == View.VISIBLE) {
+            holder.desc.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -69,17 +72,18 @@ public class MentionsAdapter extends RecyclerView.Adapter<MentionsAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        public TextView title, lastNick, date;
+        public TextView title, lastNick, date, desc;
         public ImageView pinIcon, lockIcon, pollIcon;
 
         public ViewHolder(View v) {
             super(v);
-            title = (TextView) v.findViewById(R.id.fav_item_title);
-            lastNick = (TextView) v.findViewById(R.id.fav_item_last_nick);
-            date = (TextView) v.findViewById(R.id.fav_item_date);
-            pinIcon = (ImageView) v.findViewById(R.id.fav_item_pin_icon);
-            lockIcon = (ImageView) v.findViewById(R.id.fav_item_lock_icon);
-            pollIcon = (ImageView) v.findViewById(R.id.fav_item_poll_icon);
+            title = (TextView) v.findViewById(R.id.topic_item_title);
+            desc = (TextView) v.findViewById(R.id.topic_item_desc);
+            lastNick = (TextView) v.findViewById(R.id.topic_item_last_nick);
+            date = (TextView) v.findViewById(R.id.topic_item_date);
+            pinIcon = (ImageView) v.findViewById(R.id.topic_item_pin_icon);
+            lockIcon = (ImageView) v.findViewById(R.id.topic_item_lock_icon);
+            pollIcon = (ImageView) v.findViewById(R.id.topic_item_poll_icon);
 
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);

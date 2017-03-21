@@ -13,10 +13,11 @@ import java.util.List;
 import forpdateam.ru.forpda.fragments.TabFragment;
 
 public class TabManager {
+    private final static String TAB_PREFIX = "tab_";
+    private final static String BUNDLE_PREFIX = "tab_manager_";
+    private final static String BUNDLE_ACTIVE_TAG = "active_tag";
+    private final static String BUNDLE_ACTIVE_INDEX = "active_index";
     private static TabManager instance;
-    private final static int containerViewId = R.id.fragments_container;
-    private final static String prefix = "tab_";
-    private final static String bundlePrefix = "tab_manager_";
     private FragmentManager fragmentManager;
     private TabListener tabListener;
     private int count = 0;
@@ -36,10 +37,18 @@ public class TabManager {
 
     public static TabManager init(AppCompatActivity activity, TabListener listener) {
         if (instance != null) {
+            instance.clear();
             instance = null;
         }
         instance = new TabManager(activity, listener);
         return instance;
+    }
+
+    private void clear() {
+        fragmentManager =null;
+        tabListener = null;
+        existingFragments.clear();
+        existingFragments = null;
     }
 
     public static TabManager getInstance() {
@@ -54,14 +63,14 @@ public class TabManager {
 
     public void saveState(Bundle outState) {
         if (outState == null) return;
-        outState.putString(bundlePrefix + "active_tag", activeTag);
-        outState.putInt(bundlePrefix + "active_index", activeIndex);
+        outState.putString(BUNDLE_PREFIX.concat(BUNDLE_ACTIVE_TAG), activeTag);
+        outState.putInt(BUNDLE_PREFIX.concat(BUNDLE_ACTIVE_INDEX), activeIndex);
     }
 
     public void loadState(Bundle state) {
         if (state == null) return;
-        activeTag = state.getString(bundlePrefix + "active_tag", "");
-        activeIndex = state.getInt(bundlePrefix + "active_index", -1);
+        activeTag = state.getString(BUNDLE_PREFIX.concat(BUNDLE_ACTIVE_TAG), "");
+        activeIndex = state.getInt(BUNDLE_PREFIX.concat(BUNDLE_ACTIVE_INDEX), -1);
         if (activeIndex == -1)
             activeIndex = 0;
         count = activeIndex;
@@ -142,11 +151,11 @@ public class TabManager {
             return;
         }
 
-        activeTag = prefix + count;
+        activeTag = TAB_PREFIX + count;
         count++;
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         hideTabs(transaction);
-        transaction.add(containerViewId, tabFragment, activeTag).commit();
+        transaction.add(R.id.fragments_container, tabFragment, activeTag).commit();
         fragmentManager.executePendingTransactions();
         updateFragmentList();
         activeIndex = existingFragments.indexOf(tabFragment);

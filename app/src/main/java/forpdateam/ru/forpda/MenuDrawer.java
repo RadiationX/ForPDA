@@ -48,7 +48,6 @@ public class MenuDrawer {
         adapter = new MenuAdapter(activity);
         menuList.setAdapter(adapter);
         menuList.setOnItemClickListener((adapterView, view, i, l) -> {
-            Log.d("FORPDA_LOG", "clicked " + i + " : " + menuItems.get(i).name);
             select(menuItems.get(i));
             close();
         });
@@ -87,26 +86,29 @@ public class MenuDrawer {
             select(findByClassName(last));
     }
 
-
-    public void select(String className) {
-        select(findByClassName(className));
-    }
-
     private void select(MenuItem item) {
         if (item == null) return;
         try {
-            TabFragment fragment = TabManager.getInstance().get(item.getCreatedTag());
-            Log.e("FORPDA_LOG", "MENU SELECT " + fragment);
-            if (fragment == null) {
-                fragment = TabManager.getInstance().get(TabManager.getInstance().getTagContainClass(item.gettClass()));
+
+
+            TabFragment tabFragment = TabManager.getInstance().get(item.getCreatedTag());
+            Log.e("FORPDA_LOG", "MENU SELECT " + tabFragment);
+            if (tabFragment == null) {
+                for (TabFragment fragment : TabManager.getInstance().getFragments()) {
+                    if (fragment.getClass().equals(item.gettClass()) && fragment.getConfiguration().isMenu()) {
+                        tabFragment = fragment;
+                        break;
+                    }
+                }
             }
-            Log.e("FORPDA_LOG", "MENU SELECT " + fragment);
-            if (fragment == null) {
-                fragment = (TabFragment) item.gettClass().newInstance();
-                TabManager.getInstance().add(fragment);
-                item.setCreatedTag(fragment.getTag());
+            Log.e("FORPDA_LOG", "MENU SELECT " + tabFragment);
+            if (tabFragment == null) {
+                tabFragment = (TabFragment) item.gettClass().newInstance();
+                tabFragment.getConfiguration().setMenu(true);
+                TabManager.getInstance().add(tabFragment);
+                item.setCreatedTag(tabFragment.getTag());
             } else {
-                TabManager.getInstance().select(fragment);
+                TabManager.getInstance().select(tabFragment);
             }
 
             active = menuItems.indexOf(item);
@@ -131,7 +133,6 @@ public class MenuDrawer {
             createdMenuItems.add(new MenuItem<>("Авторизация", R.drawable.ic_person_add_gray_24dp, AuthFragment.class));
             //createdMenuItems.add(new MenuItem<>("Новости", R.drawable.ic_newspaper_gray, NewsListFragment.class));
             createdMenuItems.add(new MenuItem<>("Избранное", R.drawable.ic_star_black_24dp, FavoritesFragment.class));
-            //createdMenuItems.add(new MenuItem<>("REPTEST", R.drawable.ic_mic, ReputationFragment.class));
             createdMenuItems.add(new MenuItem<>("Контакты", R.drawable.ic_mail_gray_24dp, QmsContactsFragment.class));
             createdMenuItems.add(new MenuItem<>("Ответы", R.drawable.ic_notifications_gray_24dp, MentionsFragment.class));
             createdMenuItems.add(new MenuItem<>("Форум", R.drawable.ic_forum_gray_24dp, ForumFragment.class));
@@ -151,17 +152,6 @@ public class MenuDrawer {
             menuItems.add(item);
 
         }
-        /*if (!Api.Auth().getState())
-            menuItems.add(new MenuItem<>("Авторизация", R.drawable.ic_person_add_gray_24dp, AuthFragment.class));
-        menuItems.add(new MenuItem<>("Новости", R.drawable.ic_newspaper_gray, NewsListFragment.class));
-        menuItems.add(new MenuItem<>("Поиск", R.drawable.ic_search_gray_24dp, SearchFragment.class));
-        menuItems.add(new MenuItem<>("Форум", R.drawable.ic_forum_gray_24dp, ForumFragment.class));
-        if (Api.Auth().getState()) {
-            menuItems.add(new MenuItem<>("Профиль", R.drawable.ic_person_grary_24dp, ProfileFragment.class));
-            menuItems.add(new MenuItem<>("Сообщения", R.drawable.ic_mail_gray_24dp, QmsContactsFragment.class));
-            menuItems.add(new MenuItem<>("Избранное", R.drawable.ic_star_black_24dp, FavoritesFragment.class));
-            menuItems.add(new MenuItem<>("Упоминания", R.drawable.ic_hearing_gray_24dp, MentionsFragment.class));
-        }*/
     }
 
     public void toggleState() {

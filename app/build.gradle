@@ -6,52 +6,18 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
 
+    def versionNumber = 5
+    def versionMajor = 0
+    def versionMinor = 1
+    def versionPatch = 2
+    def versionBuild = 0
     def versionPropsFile = file('version.properties')
     if (versionPropsFile.canRead()) {
         def Properties versionProps = new Properties()
-
         versionProps.load(new FileInputStream(versionPropsFile))
-
-        def value = 0
-
-        def runTasks = gradle.startParameter.taskNames
-        if ('assemble' in runTasks || 'assembleRelease' in runTasks || 'aR' in runTasks) {
-            value = 1;
-        }
-
-        def versionMajor = 0
-        def versionMinor = 1
-        def versionPatch = versionProps['VERSION_PATCH'].toInteger() + value
-        def versionBuild = versionProps['VERSION_BUILD'].toInteger() + 1
-        def versionNumber = versionProps['VERSION_NUMBER'].toInteger() + value
-
-        versionProps['VERSION_PATCH'] = versionPatch.toString()
+        versionBuild = versionProps['VERSION_BUILD'].toInteger() + 1
         versionProps['VERSION_BUILD'] = versionBuild.toString()
-        versionProps['VERSION_NUMBER'] = versionNumber.toString()
-
         versionProps.store(versionPropsFile.newWriter(), null)
-
-        defaultConfig {
-            applicationId "ru.forpdateam.forpda"
-            versionCode versionNumber
-            versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})"
-            minSdkVersion 19
-            targetSdkVersion 25
-            vectorDrawables.useSupportLibrary = true
-        }
-
-
-        applicationVariants.all { variant ->
-            variant.outputs.each { output ->
-                def fileNaming = "apk/ForPDA"
-                def outputFile = output.outputFile
-                if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                    output.outputFile = new File(getProject().getRootDir(), "${fileNaming}-${versionMajor}.${versionMinor}.${versionPatch}-${outputFile.name}")
-                }
-            }
-        }
-    } else {
-        throw new GradleException("Could not read version.properties!")
     }
 
     buildTypes {
@@ -60,6 +26,36 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    defaultConfig {
+        applicationId "ru.forpdateam.forpda"
+        versionCode versionNumber
+        versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})"
+        minSdkVersion 19
+        targetSdkVersion 25
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    productFlavors {
+        stable {}
+        beta {
+            applicationId 'ru.forpdateam.forpda.beta'
+            versionCode versionNumber
+            versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})beta"
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def fileNaming = "apk/ForPDA"
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                output.outputFile = new File(getProject().getRootDir(), "${fileNaming}-${versionMajor}.${versionMinor}.${versionPatch}-${outputFile.name}")
+            }
+        }
+    }
+
+
     dexOptions {
         dexInProcess = true
         preDexLibraries = true

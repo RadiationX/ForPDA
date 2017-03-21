@@ -100,32 +100,35 @@ public class ReputationFragment extends TabFragment {
             }
         });
 
-        adapter.setOnItemClickListener(item -> {
-            if (repDialogMenu == null) {
-                repDialogMenu = new AlertDialogMenu<>();
-                repDialogMenu.addItem("Профиль", (context, data1) -> {
-                    IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + data1.getUserId());
-                });
-                repDialogMenu.addItem("Перейти к сообщению", (context, data1) -> {
-                    IntentHandler.handle(data1.getSourceUrl());
-                });
-            }
-            if (showedRepDialogMenu == null)
-                showedRepDialogMenu = new AlertDialogMenu<>();
-
-            showedRepDialogMenu.clear();
-            showedRepDialogMenu.addItem(repDialogMenu.get(0));
-            if (item.getSourceUrl() != null)
-                showedRepDialogMenu.addItem(repDialogMenu.get(1));
-
-            new AlertDialog.Builder(getContext())
-                    .setTitle(item.getUserNick())
-                    .setItems(showedRepDialogMenu.getTitles(), (dialog, which) -> showedRepDialogMenu.onClick(which, ReputationFragment.this, item))
-                    .show();
-        });
+        adapter.setOnItemClickListener(this::someClick);
+        adapter.setOnLongItemClickListener(this::someClick);
         refreshOptionsMenu();
 
         return view;
+    }
+
+    private void someClick(RepItem item){
+        if (repDialogMenu == null) {
+            repDialogMenu = new AlertDialogMenu<>();
+            repDialogMenu.addItem("Профиль", (context, data1) -> {
+                IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + data1.getUserId());
+            });
+            repDialogMenu.addItem("Перейти к сообщению", (context, data1) -> {
+                IntentHandler.handle(data1.getSourceUrl());
+            });
+        }
+        if (showedRepDialogMenu == null)
+            showedRepDialogMenu = new AlertDialogMenu<>();
+
+        showedRepDialogMenu.clear();
+        showedRepDialogMenu.addItem(repDialogMenu.get(0));
+        if (item.getSourceUrl() != null)
+            showedRepDialogMenu.addItem(repDialogMenu.get(1));
+
+        new AlertDialog.Builder(getContext())
+                .setTitle(item.getUserNick())
+                .setItems(showedRepDialogMenu.getTitles(), (dialog, which) -> showedRepDialogMenu.onClick(which, ReputationFragment.this, item))
+                .show();
     }
 
     public void refreshOptionsMenu() {

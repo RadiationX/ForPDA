@@ -155,6 +155,7 @@ public class TabFragment extends RxFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.e("SUKA", configuration.toString());
         view = inflater.inflate(R.layout.fragment_base, container, false);
         //Осторожно! Чувствительно к структуре разметки! (по идеи так должно работать чуть быстрее)
         fragmentContainer = (RelativeLayout) findViewById(R.id.fragment_container);
@@ -166,14 +167,15 @@ public class TabFragment extends RxFragment {
         toolbarImageView = (ImageView) toolbar.findViewById(R.id.toolbar_image_icon);
         toolbarTitleView = (TextView) toolbar.findViewById(R.id.toolbar_title);
         toolbarSubtitleView = (TextView) toolbar.findViewById(R.id.toolbar_subtitle);
-        notifyDot = toolbarLayout.findViewById(R.id.notify_dot);
+        notifyDot = findViewById(R.id.notify_dot);
         fragmentContent = (RelativeLayout) coordinatorLayout.findViewById(R.id.fragment_content);
         icNoNetwork = (ImageView) fragmentContent.findViewById(R.id.ic_no_network);
         //// TODO: 20.03.17 удалить и юзать только там, где нужно
         fab = (FloatingActionButton) coordinatorLayout.findViewById(R.id.fab);
 
-        toolbar.setNavigationOnClickListener(configuration.isAlone() ? getMainActivity().getToggleListener() : getMainActivity().getRemoveTabListener());
-        toolbar.setNavigationIcon(configuration.isAlone() ? R.drawable.ic_menu_gray_24dp : R.drawable.ic_arrow_back_gray_24dp);
+        Log.e("SUKA", "ALO " + (configuration.isAlone() || configuration.isMenu()));
+        toolbar.setNavigationOnClickListener(configuration.isAlone() || configuration.isMenu() ? getMainActivity().getToggleListener() : getMainActivity().getRemoveTabListener());
+        toolbar.setNavigationIcon(configuration.isAlone() || configuration.isMenu() ? R.drawable.ic_menu_gray_24dp : R.drawable.ic_arrow_back_gray_24dp);
 
         if (!Client.getInstance().getNetworkState()) {
             if (!configuration.isUseCache())
@@ -334,6 +336,11 @@ public class TabFragment extends RxFragment {
 
         public Builder setArgs(Bundle args) {
             tClass.setArguments(args);
+            return this;
+        }
+
+        public Builder setIsMenu() {
+            tClass.configuration.setMenu(true);
             return this;
         }
 
