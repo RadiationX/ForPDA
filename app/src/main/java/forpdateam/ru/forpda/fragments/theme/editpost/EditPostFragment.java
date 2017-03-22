@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;

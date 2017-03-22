@@ -2,12 +2,15 @@ package forpdateam.ru.forpda.utils;
 
 import android.support.design.widget.Snackbar;
 import android.view.View;
+import android.widget.TextView;
 
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.client.OkHttpResponseException;
 import forpdateam.ru.forpda.client.OnlyShowException;
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -52,6 +55,11 @@ public class ErrorHandler {
         Snackbar snackbar = Snackbar.make(fragment.getCoordinatorLayout(), text, listener != null /*&& isNetworkEx*/ ? Snackbar.LENGTH_INDEFINITE : Snackbar.LENGTH_LONG);
         if (listener != null /*&& isNetworkEx*/)
             snackbar.setAction("Повторить", listener);
+        try {
+            TextView textView = (TextView)snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(App.getInstance().getResources().getColor(R.color.white));
+        }catch (Exception ignore){}
+
         snackbar.show();
         /*} else {
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.design.widget.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/dp16"
+    android:paddingEnd="@dimen/dp16"
+    android:paddingStart="@dimen/dp16"
+    android:paddingTop="56dp"
+    app:theme="@style/AUTH">
+
+    <android.support.v7.widget.AppCompatAutoCompleteTextView
+        android:id="@+id/qms_black_list_nick_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Добавить пользователя"
+        android:inputType="textPersonName"
+        android:maxLines="1"
+        android:scrollHorizontally="true" />
+
+</android.support.design.widget.TextInputLayout>

@@ -12,11 +12,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,10 +30,7 @@ import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.reputation.Reputation;
 import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.fragments.favorites.FavoritesAdapter;
-import forpdateam.ru.forpda.pagination.PaginationHelper;
 import forpdateam.ru.forpda.settings.SettingsActivity;
 
 /**

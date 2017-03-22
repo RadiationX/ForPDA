@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -53,6 +54,13 @@ public class QmsContactsFragment extends TabFragment {
     private QmsContactsAdapter.OnLongItemClickListener onLongItemClickListener = contact -> {
         if (contactDialogMenu == null) {
             contactDialogMenu = new AlertDialogMenu<>();
+            contactDialogMenu.addItem("В черный список", (context, data) -> {
+                mainSubscriber.subscribe(Api.Qms().blockUser(data.getNick()), qmsContacts -> {
+                    if (qmsContacts.size() > 0) {
+                        Toast.makeText(getContext(), "Пользователь добавлен в черный список", Toast.LENGTH_SHORT).show();
+                    }
+                }, new ArrayList<>());
+            });
             contactDialogMenu.addItem("Удалить", (context, data) -> context.deleteDialog(data.getId()));
         }
         new AlertDialog.Builder(getContext())
@@ -60,7 +68,7 @@ public class QmsContactsFragment extends TabFragment {
     };
 
 
-    public QmsContactsFragment(){
+    public QmsContactsFragment() {
         configuration.setAlone(true);
         configuration.setMenu(true);
         configuration.setDefaultTitle("Контакты");
@@ -130,6 +138,11 @@ public class QmsContactsFragment extends TabFragment {
         adapter.setOnLongItemClickListener(onLongItemClickListener);
         adapter.setOnItemClickListener(onItemClickListener);
         recyclerView.setAdapter(adapter);
+
+        toolbar.getMenu().add("Черный список").setOnMenuItemClickListener(item -> {
+            TabManager.getInstance().add(new Builder<>(QmsBlackListFragment.class).build());
+            return false;
+        });
 
         bindView();
         return view;

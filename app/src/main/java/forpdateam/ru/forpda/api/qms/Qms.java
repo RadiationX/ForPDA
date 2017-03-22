@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.api.qms;
 
 import android.text.Html;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +29,62 @@ public class Qms {
     private final static Pattern chatInfoPattern = Pattern.compile("<div class=\"nav\">[\\s\\S]*?<b>(?:<a[^>]*?>)?([\\s\\S]*?)(?:<\\/a>)?:<\\/b>([\\s\\S]*?)<\\/span>[\\s\\S]*?<input[^>]*?name=\"mid\" value=\"(\\d+)\"[^>]*>[\\s\\S]*?<input[^>]*?name=\"t\" value=\"(\\d+)\"[^>]*>[\\s\\S]*?(?:[\\s\\S]*?class=\"avatar\"[^>]*?src=\"([^\"]*?)\")?");
     private final static Pattern chatPattern = Pattern.compile("group-item([^\"]*?)\" data-message-id=\"([^\"]*?)\"[^>]*?data-unread-status=\"([^\"]*?)\">[\\s\\S]*?<\\/b> ([^ <]*?) [\\s\\S]*?src=\"([^\"]*?)\"[\\s\\S]*?(<div[^>]*?msg-content[^>]*?>[\\s\\S]*?<\\/div>)([^<]*?<\\/div>[^<]*?<div (class=\"list|id=\"threa|class=\"date))?|<div class=\"text\">([^<]*?)<\\/div>");
 
+    private final static Pattern blackListPattern = Pattern.compile("<a class=\"list-group-item[^>]*?showuser=(\\d+)[^>]*?>[\\s\\S]*?<img class=\"avatar\" src=\"([^\"]*?)\" title=\"([\\s\\S]*?)\" alt[^>]*?>");
+    private final static Pattern blackListMsgPattern = Pattern.compile("<div class=\"list-group-item msgbox ([^\"]*?)\"[^>]*?>[^<]*?<a[^>]*?>[^<]*?<\\/a>([\\s\\S]*?)<\\/div>");
+
     public Qms() {
+    }
+
+    private ArrayList<QmsContact> blackList() throws Exception {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("xhr", "body");
+        final String response = getInstance().post("http://4pda.ru/forum/index.php?act=qms&settings=blacklist", headers);
+        return parseBlackList(response);
+    }
+
+    private ArrayList<QmsContact> parseBlackList(String response) {
+        ArrayList<QmsContact> list = new ArrayList<>();
+        Matcher matcher = blackListPattern.matcher(response);
+        while (matcher.find()) {
+            Log.e("SUKA", "FIND USER");
+            QmsContact contact = new QmsContact();
+            contact.setId(Integer.parseInt(matcher.group(1)));
+            contact.setAvatar(matcher.group(2));
+            contact.setNick(Utils.fromHtml(matcher.group(3)));
+            list.add(contact);
+        }
+        return list;
+    }
+
+    private ArrayList<QmsContact> deleteBlocked(int[] ids) throws Exception {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("action", "delete-users");
+        String strId;
+        for (int id : ids) {
+            strId = Integer.toString(id);
+            headers.put("user-id[".concat(strId).concat("]"), strId);
+        }
+        final String response = getInstance().post("http://4pda.ru/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1", headers);
+        checkOperation(response);
+        return parseBlackList(response);
+    }
+
+    private ArrayList<QmsContact> addBlocked(String nick) throws Exception {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("action", "add-user");
+        headers.put("username", nick);
+        final String response = getInstance().post("http://4pda.ru/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1", headers);
+        checkOperation(response);
+        return parseBlackList(response);
+    }
+
+    private void checkOperation(String response) throws Exception {
+        Matcher matcher = blackListMsgPattern.matcher(response);
+        while (matcher.find()) {
+            if (!matcher.group(1).contains("success")) {
+                throw new Exception(Utils.fromHtml(matcher.group(2).trim()));
+            }
+        }
     }
 
     private ArrayList<QmsContact> contactsList() throws Exception {
@@ -193,5 +249,17 @@ public class Qms {
 
     public Observable<String> deleteDialog(int mid) {
         return Observable.fromCallable(() -> delDialog(mid));
+    }
+
+    public Observable<ArrayList<QmsContact>> getBlackList() {
+        return Observable.fromCallable(this::blackList);
+    }
+
+    public Observable<ArrayList<QmsContact>> blockUser(String nick) {
+        return Observable.fromCallable(() -> addBlocked(nick));
+    }
+
+    public Observable<ArrayList<QmsContact>> unBlockUsers(int[] userIds) {
+        return Observable.fromCallable(() -> deleteBlocked(userIds));
     }
 }
