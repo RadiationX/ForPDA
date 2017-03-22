@@ -14,7 +14,6 @@ import java.util.List;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.mentions.models.MentionItem;
-import forpdateam.ru.forpda.api.reputation.models.RepItem;
 
 /**
  * Created by radiationx on 21.01.17.

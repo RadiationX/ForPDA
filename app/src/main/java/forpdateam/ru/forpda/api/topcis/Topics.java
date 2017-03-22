@@ -8,7 +8,6 @@ import forpdateam.ru.forpda.api.topcis.models.TopicItem;
 import forpdateam.ru.forpda.api.topcis.models.TopicsData;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.utils.Utils;
-import forpdateam.ru.forpda.utils.ourparser.Html;
 import io.reactivex.Observable;
 
 /**

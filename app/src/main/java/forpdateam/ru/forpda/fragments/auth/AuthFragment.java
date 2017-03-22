@@ -23,7 +23,6 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.auth.AuthParser;
 import forpdateam.ru.forpda.api.auth.models.AuthForm;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.fragments.TabFragment;

@@ -17,9 +17,7 @@ import forpdateam.ru.forpda.api.theme.models.PollQuestionItem;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.client.OnlyShowException;
 import forpdateam.ru.forpda.utils.Utils;
-import forpdateam.ru.forpda.utils.ourparser.Html;
 import io.reactivex.Observable;
 
 /**

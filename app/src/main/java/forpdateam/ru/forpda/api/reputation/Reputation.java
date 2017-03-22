@@ -1,14 +1,12 @@
 package forpdateam.ru.forpda.api.reputation;
 
 import android.net.Uri;
-import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import forpdateam.ru.forpda.api.mentions.models.MentionsData;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.reputation.models.RepData;
 import forpdateam.ru.forpda.api.reputation.models.RepItem;
