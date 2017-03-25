@@ -55,6 +55,7 @@ public class ErrorHandler {
         Snackbar snackbar = Snackbar.make(fragment.getCoordinatorLayout(), text, listener != null /*&& isNetworkEx*/ ? Snackbar.LENGTH_INDEFINITE : Snackbar.LENGTH_LONG);
         if (listener != null /*&& isNetworkEx*/)
             snackbar.setAction("Повторить", listener);
+        snackbar.setActionTextColor(App.getInstance().getResources().getColor(R.color.white));
         try {
             TextView textView = (TextView)snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
             textView.setTextColor(App.getInstance().getResources().getColor(R.color.white));

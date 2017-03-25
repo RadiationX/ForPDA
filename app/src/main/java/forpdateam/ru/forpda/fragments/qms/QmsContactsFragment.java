@@ -86,9 +86,9 @@ public class QmsContactsFragment extends TabFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         initFabBehavior();
         setWhiteBackground();
-        baseInflateFragment(inflater, R.layout.fragment_qms_contacts);
-        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-        recyclerView = (RecyclerView) findViewById(R.id.qms_list_contacts);
+        baseInflateFragment(inflater, R.layout.fragment_base_list);
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
+        recyclerView = (RecyclerView) findViewById(R.id.base_list);
         viewsReady();
         loadData();
         refreshLayout.setOnRefreshListener(this::loadData);
