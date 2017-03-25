@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.api;
 
-import java.util.Observer;
-
 import forpdateam.ru.forpda.api.auth.Auth;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.forum.Forum;
@@ -32,14 +30,11 @@ public class Api {
     private static Forum forum = null;
     private static Topics topics = null;
     private static Reputation reputation = null;
-    private CountsObservable observable = new CountsObservable();
-    private int qmsCount = 0, mentionsCount = 0, favoritesCount = 0;
 
     public static Qms Qms() {
         if (qmsApi == null) qmsApi = new Qms();
         return qmsApi;
     }
-
 
     /*Позже*/
     public static Auth Auth() {
@@ -100,50 +95,5 @@ public class Api {
     public static Api get() {
         if (INSTANCE == null) INSTANCE = new Api();
         return INSTANCE;
-    }
-
-
-    public int getQmsCount() {
-        return qmsCount;
-    }
-
-    public void setQmsCount(int qmsCount) {
-        this.qmsCount = qmsCount;
-    }
-
-    public int getFavoritesCount() {
-        return favoritesCount;
-    }
-
-    public void setFavoritesCount(int favoritesCount) {
-        this.favoritesCount = favoritesCount;
-    }
-
-    public int getMentionsCount() {
-        return mentionsCount;
-    }
-
-    public void setMentionsCount(int mentionsCount) {
-        this.mentionsCount = mentionsCount;
-    }
-
-    public int getAllCounts() {
-        return qmsCount + favoritesCount + mentionsCount;
-    }
-
-    public void addObserver(Observer observer) {
-        observable.addObserver(observer);
-    }
-
-    public void notifyObservers() {
-        observable.notifyObservers();
-    }
-
-
-    private class CountsObservable extends java.util.Observable {
-        @Override
-        public synchronized boolean hasChanged() {
-            return true;
-        }
     }
 }

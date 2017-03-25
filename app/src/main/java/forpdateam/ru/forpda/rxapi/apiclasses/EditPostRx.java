@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.apirx.apiclasses;
+package forpdateam.ru.forpda.rxapi.apiclasses;
 
 import java.util.List;
 

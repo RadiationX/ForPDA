@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.auth.AuthFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
@@ -49,7 +49,7 @@ public class MenuDrawer {
             close();
         });
         this.drawerLayout = drawerLayout;
-        Api.Auth().addLoginObserver((observable, o) -> {
+        ClientHelper.getInstance().addLoginObserver((observable, o) -> {
             menuItems.clear();
             initMenuItems();
             adapter.notifyDataSetChanged();
@@ -61,23 +61,23 @@ public class MenuDrawer {
                 App.getInstance().getPreferences().edit().remove("menu_drawer_last").apply();
             }
         });
-        Api.get().addObserver((observable1, o) -> {
+        ClientHelper.getInstance().addCountsObserver((observable1, o) -> {
             MenuItem item = getByClass(QmsContactsFragment.class);
             if (item != null) {
-                item.count = Api.get().getQmsCount();
+                item.count = ClientHelper.getQmsCount();
             }
             item = getByClass(MentionsFragment.class);
             if (item != null) {
-                item.count = Api.get().getMentionsCount();
+                item.count = ClientHelper.getMentionsCount();
             }
             item = getByClass(FavoritesFragment.class);
             if (item != null) {
-                item.count = Api.get().getFavoritesCount();
+                item.count = ClientHelper.getFavoritesCount();
             }
             adapter.notifyDataSetChanged();
         });
-        //String last = App.getInstance().getPreferences().getString("menu_drawer_last", Api.Auth().getState() ? NewsListFragment.class.getSimpleName() : AuthFragment.class.getSimpleName());
-        String last = App.getInstance().getPreferences().getString("menu_drawer_last", Api.Auth().getState() ? FavoritesFragment.class.getSimpleName() : AuthFragment.class.getSimpleName());
+        //String last = App.getInstance().getPreferences().getString("menu_drawer_last", Api.Auth_Unclear().getAuthState() ? NewsListFragment.class.getSimpleName() : AuthFragment.class.getSimpleName());
+        String last = App.getInstance().getPreferences().getString("menu_drawer_last", ClientHelper.getAuthState() ? FavoritesFragment.class.getSimpleName() : AuthFragment.class.getSimpleName());
         Log.d("FORPDA_LOG", "LAAST " + last);
         if (last != null)
             select(findByClassName(last));
@@ -139,9 +139,9 @@ public class MenuDrawer {
 
         for (int i = 0; i < createdMenuItems.size(); i++) {
             MenuItem item = createdMenuItems.get(i);
-            if (item.gettClass() == AuthFragment.class && Api.Auth().getState()) {
+            if (item.gettClass() == AuthFragment.class && ClientHelper.getAuthState()) {
                 continue;
-            } else if (!Api.Auth().getState()) {
+            } else if (!ClientHelper.getAuthState()) {
                 if (item.gettClass() == ProfileFragment.class || item.gettClass() == QmsContactsFragment.class || item.gettClass() == FavoritesFragment.class || item.gettClass() == MentionsFragment.class) {
                     continue;
                 }

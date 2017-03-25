@@ -22,13 +22,13 @@ import android.widget.Toast;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.reputation.Reputation;
 import forpdateam.ru.forpda.api.reputation.models.RepData;
 import forpdateam.ru.forpda.api.reputation.models.RepItem;
-import forpdateam.ru.forpda.apirx.RxApi;
+import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.pagination.PaginationHelper;
+import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
@@ -156,7 +156,7 @@ public class ReputationFragment extends TabFragment {
                     loadData();
                     return false;
                 });
-        if (data.getId() != Api.Auth().getUserIdInt()) {
+        if (data.getId() != ClientHelper.getUserIdInt()) {
             menu.add("Повысить").setOnMenuItemClickListener(item -> {
                 changeReputation(true);
                 return false;

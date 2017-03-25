@@ -19,7 +19,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.utils.ourparser.Html;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
@@ -52,10 +51,10 @@ public class Client {
         listCookies = new ArrayList<>();
         String member_id = App.getInstance().getPreferences().getString("cookie_member_id", null);
         String pass_hash = App.getInstance().getPreferences().getString("cookie_pass_hash", null);
-        Api.Auth().setUserId(App.getInstance().getPreferences().getString("member_id", null));
+        ClientHelper.setUserId(App.getInstance().getPreferences().getString("member_id", null));
         Log.d("FORPDA_LOG", "INIT AUTH DATA " + member_id + " : " + pass_hash + " : " + App.getInstance().getPreferences().getString("member_id", null));
         if (member_id != null && pass_hash != null) {
-            Api.Auth().setState(true);
+            ClientHelper.setAuthState(true);
             //Первичная загрузка кукисов
             cookies.put("member_id", parseCookie(member_id));
             cookies.put("pass_hash", parseCookie(pass_hash));
@@ -95,7 +94,7 @@ public class Client {
                                     if (cookie.name().equals("member_id")) {
                                         //Сохранение и обновление member_id
                                         App.getInstance().getPreferences().edit().putString("member_id", cookie.value()).apply();
-                                        Api.Auth().setUserId(cookie.value());
+                                        ClientHelper.setUserId(cookie.value());
                                     }
                                 }
                             }
@@ -211,15 +210,15 @@ public class Client {
 
         if (countsMatcher.find()) {
             tempGroup = countsMatcher.group(1);
-            Api.get().setMentionsCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
+            ClientHelper.setMentionsCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
 
             tempGroup = countsMatcher.group(2);
-            Api.get().setFavoritesCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
+            ClientHelper.setFavoritesCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
 
             tempGroup = countsMatcher.group(3);
-            Api.get().setQmsCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
+            ClientHelper.setQmsCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
 
-            observerHandler.post(() -> Api.get().notifyObservers());
+            observerHandler.post(() -> ClientHelper.getInstance().notifyCountsChanged());
         }
     }
 
