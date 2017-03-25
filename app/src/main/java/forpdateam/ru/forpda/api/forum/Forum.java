@@ -1,10 +1,12 @@
 package forpdateam.ru.forpda.api.forum;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import forpdateam.ru.forpda.api.forum.interfaces.IForumItemFlat;
 import forpdateam.ru.forpda.api.forum.models.ForumItemFlat;
 import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
 import forpdateam.ru.forpda.client.Client;
@@ -19,7 +21,7 @@ public class Forum {
     private final static Pattern forumsFromSearch = Pattern.compile("<select[^>]*?name=[\"']forums(?:\\[\\])?[\"'][^>]*?>([\\s\\S]*?)<\\/select>");
     private final static Pattern forumItemFromSearch = Pattern.compile("<option[^>]*?value=[\"'](\\d+)['\"][^>]*?>[^-\\s]*?(-*?) ([\\s\\S]*?)<\\/option>");
 
-    //Для обхода по страницам, но чет там через попу всё работает, не все элементы находит
+    //Для обхода по страницам, но чет там через попу всё работает - не все элементы находит
     //private final static Pattern rootPattern = Pattern.compile("<div[^>]*?id=[\"']fo_(\\d+)[\"'][^>]*?>[^<]*?<div[^>]*?cat_name[^>]*?>[^<]*?<div[\\s\\S]*?\\/div>[^<]*?<a[^>]*?>([\\s\\S]*?)<\\/a>[^<]*?<\\/div>([\\s\\S]*?)<\\/div>[^<]*?(?=<div id=['\"]fc|<div class=[\"']stat)");
     //private final static Pattern boardsPattern = Pattern.compile("<div[^>]*?board_forum_row[^>]*><div[^>]*?forum_name[^>]*?>[\\s\\S]*?<a[^>]*?showforum=(\\d+)[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/div>");
 
@@ -67,11 +69,11 @@ public class Forum {
         }
     }
 
-    public void transformToTree(List<ForumItemFlat> list, ForumItemTree rootForum) {
+    public void transformToTree(Collection<? extends IForumItemFlat> list, ForumItemTree rootForum) {
         List<ForumItemTree> parentsList = new ArrayList<>();
         ForumItemTree lastParent = rootForum;
         parentsList.add(lastParent);
-        for (ForumItemFlat item : list) {
+        for (IForumItemFlat item : list) {
             ForumItemTree newItem = new ForumItemTree(item);
             if (item.getLevel() <= lastParent.getLevel()) {
                 //Удаление элементов, учитывая случай с резким скачком уровня вложенности

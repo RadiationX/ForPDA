@@ -1,16 +1,29 @@
-package forpdateam.ru.forpda.api.qms.models;
+package forpdateam.ru.forpda.bdobjects.qms;
 
 import forpdateam.ru.forpda.api.qms.interfaces.IQmsContact;
+import forpdateam.ru.forpda.api.qms.models.QmsContact;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
- * Created by radiationx on 03.08.16.
+ * Created by radiationx on 25.03.17.
  */
-public class QmsContact implements IQmsContact {
+
+public class QmsContactBd extends RealmObject implements IQmsContact {
+
+    @PrimaryKey
     private String nick;
     private String avatar;
     private int id, count;
 
-    public QmsContact() {
+    public QmsContactBd() {
+    }
+
+    public QmsContactBd(QmsContact contact) {
+        nick = contact.getNick();
+        avatar = contact.getAvatar();
+        id = contact.getId();
+        count = contact.getCount();
     }
 
     public String getNick() {

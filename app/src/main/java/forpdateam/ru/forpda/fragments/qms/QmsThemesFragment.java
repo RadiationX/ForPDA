@@ -16,6 +16,7 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
+import forpdateam.ru.forpda.bdobjects.qms.QmsThemesBd;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsThemesAdapter;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -35,7 +36,7 @@ public class QmsThemesFragment extends TabFragment {
     private RecyclerView recyclerView;
     private QmsThemesAdapter adapter;
     private Realm realm;
-    private RealmResults<QmsThemes> results;
+    private RealmResults<QmsThemesBd> results;
     private QmsThemesAdapter.OnItemClickListener onItemClickListener =
             theme -> {
                 Bundle args = new Bundle();
@@ -49,7 +50,7 @@ public class QmsThemesFragment extends TabFragment {
             };
     private Subscriber<QmsThemes> mainSubscriber = new Subscriber<>(this);
 
-    public QmsThemesFragment(){
+    public QmsThemesFragment() {
         configuration.setUseCache(true);
         configuration.setDefaultTitle("Диалоги");
     }
@@ -139,11 +140,15 @@ public class QmsThemesFragment extends TabFragment {
                 realm.commitTransaction();
             }
         }
-        realm.executeTransactionAsync(r -> r.copyToRealmOrUpdate(currentThemes), this::bindView);
+        realm.executeTransactionAsync(r -> {
+            QmsThemesBd qmsThemesBd = new QmsThemesBd(currentThemes);
+            r.copyToRealmOrUpdate(qmsThemesBd);
+            qmsThemesBd.getThemes().clear();
+        }, this::bindView);
     }
 
     private void bindView() {
-        results = realm.where(QmsThemes.class).equalTo("userId", currentThemes.getUserId()).findAll();
+        results = realm.where(QmsThemesBd.class).equalTo("userId", currentThemes.getUserId()).findAll();
 
         if (results.size() != 0 && results.last().getThemes().size() != 0) {
             adapter.addAll(results.last().getThemes());

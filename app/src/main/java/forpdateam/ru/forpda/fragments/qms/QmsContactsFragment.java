@@ -17,12 +17,15 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.qms.interfaces.IQmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
+import forpdateam.ru.forpda.bdobjects.qms.QmsContactBd;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsContactsAdapter;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
@@ -40,8 +43,8 @@ public class QmsContactsFragment extends TabFragment {
     private Subscriber<ArrayList<QmsContact>> mainSubscriber = new Subscriber<>(this);
     private Subscriber<String> helperSubscriber = new Subscriber<>(this);
     private Realm realm;
-    private RealmResults<QmsContact> results;
-    private AlertDialogMenu<QmsContactsFragment, QmsContact> contactDialogMenu;
+    private RealmResults<QmsContactBd> results;
+    private AlertDialogMenu<QmsContactsFragment, IQmsContact> contactDialogMenu;
     private QmsContactsAdapter.OnItemClickListener onItemClickListener =
             contact -> {
                 Bundle args = new Bundle();
@@ -105,7 +108,7 @@ public class QmsContactsFragment extends TabFragment {
 
         searchView.setIconifiedByDefault(true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            private ArrayList<QmsContact> searchContacts = new ArrayList<>();
+            private ArrayList<QmsContactBd> searchContacts = new ArrayList<>();
 
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -117,7 +120,7 @@ public class QmsContactsFragment extends TabFragment {
                 Log.d("FORPDA_LOG", "on query changed start");
                 searchContacts.clear();
                 if (!newText.isEmpty()) {
-                    for (QmsContact contact : results) {
+                    for (QmsContactBd contact : results) {
                         if (contact.getNick().toLowerCase().contains(newText.toLowerCase()))
                             searchContacts.add(contact);
                     }
@@ -174,13 +177,18 @@ public class QmsContactsFragment extends TabFragment {
             return;
 
         realm.executeTransactionAsync(r -> {
-            r.delete(QmsContact.class);
-            r.copyToRealmOrUpdate(data);
+            r.delete(QmsContactBd.class);
+            List<QmsContactBd> bdList = new ArrayList<>();
+            for (QmsContact contact : data) {
+                bdList.add(new QmsContactBd(contact));
+            }
+            r.copyToRealmOrUpdate(bdList);
+            bdList.clear();
         }, this::bindView);
     }
 
     private void bindView() {
-        results = realm.where(QmsContact.class).findAll();
+        results = realm.where(QmsContactBd.class).findAll();
         if (results.size() != 0) {
             adapter.addAll(results);
         }

@@ -1,23 +1,23 @@
 package forpdateam.ru.forpda.api.qms.models;
 
-import io.realm.RealmList;
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import java.util.ArrayList;
+import java.util.List;
+
+import forpdateam.ru.forpda.api.qms.interfaces.IQmsThemes;
 
 /**
  * Created by radiationx on 21.09.16.
  */
 
-public class QmsThemes extends RealmObject {
-    @PrimaryKey
+public class QmsThemes implements IQmsThemes {
     private int userId;
     private String nick;
-    private RealmList<QmsTheme> themes = new RealmList<>();
+    private List<QmsTheme> themes = new ArrayList<>();
 
     public QmsThemes() {
     }
 
-    public RealmList<QmsTheme> getThemes() {
+    public List<QmsTheme> getThemes() {
         return themes;
     }
 

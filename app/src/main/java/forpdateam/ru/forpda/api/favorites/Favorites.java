@@ -29,15 +29,6 @@ public class Favorites {
     public final static String[] SUB_TYPES = {"none", "delayed", "immediate", "daily", "weekly", "pinned"};
     public final static CharSequence[] SUB_NAMES = {"Не уведомлять", "Первый раз", "Каждый раз", "Каждый день", "Каждую неделю", "При изменении первого поста"};
 
-    public static class SubTypes {
-        public final static String NONE = "none";
-        public final static String DELAYED = "delayed";
-        public final static String IMMEDIATE = "immediate";
-        public final static String DAILY = "daily";
-        public final static String WEEKLY = "weekly";
-        public final static String PINNED = "pinned";
-    }
-
     private FavData _getFav(int st) throws Exception {
         FavData data = new FavData();
         final String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=fav&st=".concat(Integer.toString(st)));
@@ -68,11 +59,7 @@ public class Favorites {
             item.setLastUserId(Integer.parseInt(matcher.group(21)));
             item.setLastUserNick(Utils.fromHtml(matcher.group(22)));
             item.setDate(matcher.group(23));
-            if (item.isPin())
-                data.addPinnedItem(item);
-            else
-                data.addItem(item);
-            data.addToAllItem(item);
+            data.addItem(item);
         }
         data.setPagination(Pagination.parseForum(response));
         Log.d("FORPDA_LOG", "parsing time " + ((System.currentTimeMillis() - time)));

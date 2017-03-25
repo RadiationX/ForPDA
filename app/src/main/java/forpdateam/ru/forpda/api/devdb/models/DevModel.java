@@ -1,15 +1,12 @@
 package forpdateam.ru.forpda.api.devdb.models;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 /**
  * Created by isanechek on 30.07.16.
  */
 
-public class DevModel extends RealmObject {
+public class DevModel {
 
-    @PrimaryKey
+    //@PrimaryKey
     private String id;
 
     private String name;

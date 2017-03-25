@@ -9,31 +9,32 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.qms.models.QmsContact;
-import io.realm.RealmList;
+import forpdateam.ru.forpda.api.qms.interfaces.IQmsContact;
 
 /**
  * Created by radiationx on 25.08.16.
  */
 public class QmsContactsAdapter extends RecyclerView.Adapter<QmsContactsAdapter.ViewHolder> {
 
-    private RealmList<QmsContact> list = new RealmList<>();
+    private List<IQmsContact> list = new ArrayList<>();
 
     private OnItemClickListener itemClickListener;
     private OnLongItemClickListener longItemClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(QmsContact contact);
+        void onItemClick(IQmsContact contact);
     }
 
-    public void addAll(Collection<QmsContact> results) {
+    public void addAll(Collection<? extends IQmsContact> results) {
         addAll(results, true);
     }
 
-    public void addAll(Collection<QmsContact> results, boolean clearList) {
+    public void addAll(Collection<? extends IQmsContact> results, boolean clearList) {
         if (clearList)
             clear();
         list.addAll(results);
@@ -49,7 +50,7 @@ public class QmsContactsAdapter extends RecyclerView.Adapter<QmsContactsAdapter.
     }
 
     public interface OnLongItemClickListener {
-        void onLongItemClick(QmsContact contact);
+        void onLongItemClick(IQmsContact contact);
     }
 
     public void setOnLongItemClickListener(final OnLongItemClickListener longItemClickListener) {
@@ -95,7 +96,7 @@ public class QmsContactsAdapter extends RecyclerView.Adapter<QmsContactsAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        QmsContact item = list.get(position);
+        IQmsContact item = list.get(position);
 
         holder.nick.setText(item.getNick());
         ImageLoader.getInstance().displayImage(item.getAvatar(), holder.avatar);
@@ -112,7 +113,7 @@ public class QmsContactsAdapter extends RecyclerView.Adapter<QmsContactsAdapter.
         return list.size();
     }
 
-    public QmsContact getItem(int position) {
+    public IQmsContact getItem(int position) {
         return list.get(position);
     }
 

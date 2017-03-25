@@ -1,16 +1,29 @@
-package forpdateam.ru.forpda.api.qms.models;
+package forpdateam.ru.forpda.bdobjects.qms;
 
 import forpdateam.ru.forpda.api.qms.interfaces.IQmsTheme;
+import forpdateam.ru.forpda.api.qms.models.QmsTheme;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
- * Created by radiationx on 03.08.16.
+ * Created by radiationx on 25.03.17.
  */
-public class QmsTheme implements IQmsTheme {
+
+public class QmsThemeBd extends RealmObject implements IQmsTheme {
+    @PrimaryKey
     private int id;
     private int countMessages, countNew;
     private String name, date;
 
-    public QmsTheme() {
+    public QmsThemeBd() {
+    }
+
+    public QmsThemeBd(QmsTheme qmsTheme) {
+        id = qmsTheme.getId();
+        countMessages = qmsTheme.getCountMessages();
+        countNew = qmsTheme.getCountNew();
+        name = qmsTheme.getName();
+        date = qmsTheme.getDate();
     }
 
     public int getId() {

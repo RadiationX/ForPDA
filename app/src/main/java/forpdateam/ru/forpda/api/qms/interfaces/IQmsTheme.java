@@ -13,4 +13,14 @@ public interface IQmsTheme {
     int getCountMessages();
 
     int getCountNew();
+
+    void setId(int id);
+
+    void setName(String name);
+
+    void setDate(String date);
+
+    void setCountMessages(int countMessages);
+
+    void setCountNew(int countNew);
 }
