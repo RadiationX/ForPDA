@@ -22,11 +22,11 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.auth.models.AuthForm;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
-import forpdateam.ru.forpda.apirx.RxApi;
+import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.SimpleTextWatcher;
 import forpdateam.ru.forpda.utils.ourparser.Html;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
@@ -101,7 +101,7 @@ public class AuthFragment extends TabFragment {
 
     @Override
     public void loadData() {
-        mainSubscriber.subscribe(Api.Auth().getForm(), this::onLoadForm, new AuthForm(), view1 -> loadData());
+        mainSubscriber.subscribe(RxApi.Auth().getForm(), this::onLoadForm, new AuthForm(), view1 -> loadData());
     }
 
     private void onLoadForm(AuthForm authForm) {
@@ -117,7 +117,7 @@ public class AuthFragment extends TabFragment {
         loginProgress.setVisibility(View.VISIBLE);
         sendButton.setVisibility(View.INVISIBLE);
         hidePopupWindows();
-        loginSubscriber.subscribe(Api.Auth().tryLogin(authForm), this::showLoginResult, false, view1 -> loadData());
+        loginSubscriber.subscribe(RxApi.Auth().login(authForm), this::showLoginResult, false, view1 -> loadData());
         //showLoginResult(false);
     }
 
@@ -160,7 +160,7 @@ public class AuthFragment extends TabFragment {
         animation1.setDuration(375);
         complete.startAnimation(animation1);
 
-        profileSubscriber.subscribe(RxApi.Profile().getProfile("http://4pda.ru/forum/index.php?showuser=".concat(Api.Auth().getUserId())), this::onProfileLoad, new ProfileModel());
+        profileSubscriber.subscribe(RxApi.Profile().getProfile("http://4pda.ru/forum/index.php?showuser=".concat(ClientHelper.getUserId())), this::onProfileLoad, new ProfileModel());
     }
 
     private void onProfileLoad(ProfileModel profile) {
@@ -191,7 +191,7 @@ public class AuthFragment extends TabFragment {
         });
         progressView.startAnimation(animation1);
         new Handler().postDelayed(() -> {
-            Api.Auth().doOnLogin();
+            ClientHelper.getInstance().notifyAuthChanged(ClientHelper.AUTH_STATE_LOGIN);
             TabManager.getInstance().remove(getTag());
         }, 2500);
     }

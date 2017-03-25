@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.theme.models.Poll;
 import forpdateam.ru.forpda.api.theme.models.PollQuestion;
@@ -17,6 +16,7 @@ import forpdateam.ru.forpda.api.theme.models.PollQuestionItem;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.utils.Utils;
 
 /**
@@ -87,7 +87,7 @@ public class Theme {
         }
         matcher = postsPattern.matcher(response);
         Log.d("FORPDA_LOG", "posts matcher " + (System.currentTimeMillis() - time));
-        int memberId = Api.Auth().getUserIdInt();
+        int memberId = ClientHelper.getUserIdInt();
         while (matcher.find()) {
             ThemePost post = new ThemePost();
             post.setId(Integer.parseInt(matcher.group(1)));
@@ -158,7 +158,7 @@ public class Theme {
         if (generateHtml) {
             long time2 = System.currentTimeMillis();
             MiniTemplator t = App.getInstance().getTemplator();
-            boolean authorized = Api.Auth().getState();
+            boolean authorized = ClientHelper.getAuthState();
             boolean prevDisabled = page.getPagination().getCurrent() <= 1;
             boolean nextDisabled = page.getPagination().getCurrent() == page.getPagination().getAll();
 
@@ -171,7 +171,7 @@ public class Theme {
             t.setVariableOpt("current_page", page.getPagination().getCurrent());
             t.setVariableOpt("authorized", Boolean.toString(authorized));
             t.setVariableOpt("is_curator", Boolean.toString(page.isCurator()));
-            t.setVariableOpt("member_id", Api.Auth().getUserIdInt());
+            t.setVariableOpt("member_id", ClientHelper.getUserIdInt());
             t.setVariableOpt("elem_to_scroll", page.getElementToScroll());
             t.setVariableOpt("body_type", "topic");
             t.setVariableOpt("navigation_disable", prevDisabled && nextDisabled ? "navigation_disable" : "");

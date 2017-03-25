@@ -42,10 +42,10 @@ import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
-import forpdateam.ru.forpda.apirx.RxApi;
+import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.BlurUtil;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
@@ -80,7 +80,7 @@ public class ProfileFragment extends TabFragment {
             tab_url = getArguments().getString(ARG_TAB);
         }
         if (tab_url == null || tab_url.isEmpty())
-            tab_url = "http://4pda.ru/forum/index.php?showuser=".concat(Api.Auth().getUserId() == null ? "2556269" : Api.Auth().getUserId());
+            tab_url = "http://4pda.ru/forum/index.php?showuser=".concat(ClientHelper.getUserId() == null ? "2556269" : ClientHelper.getUserId());
     }
 
     @Nullable
@@ -338,7 +338,7 @@ public class ProfileFragment extends TabFragment {
             addInfoItem(getContext().getString(R.string.profile_item_text_alerts), profile.getAlerts());
         Log.d("FORPDA_LOG", "check 3 " + (System.currentTimeMillis() - time));
         if (profile.getContacts().size() > 0) {
-            if (!Pattern.compile("showuser=" + Api.Auth().getUserId()).matcher(tab_url).find()) {
+            if (!Pattern.compile("showuser=" + ClientHelper.getUserId()).matcher(tab_url).find()) {
                 toolbar.getMenu().add("Написать").setIcon(App.getAppDrawable(R.drawable.ic_create_white_24dp)).setOnMenuItemClickListener(item -> {
                     IntentHandler.handle(profile.getContacts().get(0).first);
                     return false;

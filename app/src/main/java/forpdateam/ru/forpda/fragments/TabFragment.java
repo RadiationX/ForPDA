@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.fragments;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
@@ -12,7 +11,6 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,9 +27,12 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.client.ClientHelper;
+import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.settings.SettingsActivity;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 07.08.16.
@@ -182,7 +183,7 @@ public class TabFragment extends RxFragment {
         setSubtitle(subtitle);
 
         updateNotifyDot();
-        Api.get().addObserver((observable, o) -> updateNotifyDot());
+        ClientHelper.getInstance().addCountsObserver((observable, o) -> updateNotifyDot());
 
         Client.getInstance().addNetworkObserver((observable, o) -> {
             if ((!configuration.isUseCache() || icNoNetwork.getVisibility() == View.VISIBLE) && (boolean) o) {
@@ -214,7 +215,17 @@ public class TabFragment extends RxFragment {
             return false;
         });
         toolbar.getMenu().add("logout").setOnMenuItemClickListener(menuItem -> {
-            new Task().execute();
+            RxApi.Auth().logout().onErrorReturn(throwable -> false)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(aBoolean -> {
+                        if (aBoolean) {
+                            Toast.makeText(getContext(), "logout complete", Toast.LENGTH_LONG).show();
+                            ClientHelper.getInstance().notifyAuthChanged(ClientHelper.AUTH_STATE_LOGOUT);
+                        } else {
+                            Toast.makeText(getContext(), "logout error", Toast.LENGTH_LONG).show();
+                        }
+                    });
             return false;
         });
     }
@@ -224,42 +235,10 @@ public class TabFragment extends RxFragment {
             notifyDot.setVisibility(View.GONE);
             return;
         }
-        if (Api.get().getAllCounts() > 0)
+        if (ClientHelper.getAllCounts() > 0)
             notifyDot.setVisibility(View.VISIBLE);
         else
             notifyDot.setVisibility(View.GONE);
-    }
-
-    class Task extends AsyncTask {
-        Exception exception;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Object doInBackground(Object[] objects) {
-            try {
-                Api.Auth().tryLogout();
-            } catch (Exception e) {
-                exception = e;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            if (exception != null) {
-                new AlertDialog.Builder(getMainActivity())
-                        .setMessage(exception.getMessage())
-                        .create()
-                        .show();
-            } else {
-                Toast.makeText(getContext(), "logout complete", Toast.LENGTH_LONG).show();
-                Api.Auth().doOnLogout();
-            }
-        }
     }
 
     protected void initFabBehavior() {
@@ -269,7 +248,6 @@ public class TabFragment extends RxFragment {
         //params.setBehavior(new ScrollAwareFABBehavior(fab.getContext(), null));
         fab.requestLayout();
     }
-
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {

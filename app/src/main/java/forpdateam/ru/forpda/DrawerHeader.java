@@ -17,11 +17,11 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
-import forpdateam.ru.forpda.apirx.RxApi;
+import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
+import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -86,10 +86,10 @@ public class DrawerHeader {
                     .setNegativeButton("Отмена", null)
                     .show();
         });
-        Api.Auth().addLoginObserver((observable, o) -> {
+        ClientHelper.getInstance().addLoginObserver((observable, o) -> {
             state((boolean) o);
         });
-        state(Api.Auth().getState());
+        state(ClientHelper.getAuthState());
     }
 
     public String readFromClipboard(Context context) {
@@ -116,7 +116,7 @@ public class DrawerHeader {
     }
 
     private void load() {
-        RxApi.Profile().getProfile("http://4pda.ru/forum/index.php?showuser=".concat(Api.Auth().getUserId() == null ? "2556269" : Api.Auth().getUserId())).onErrorReturn(throwable -> new ProfileModel())
+        RxApi.Profile().getProfile("http://4pda.ru/forum/index.php?showuser=".concat(ClientHelper.getUserId() == null ? "2556269" : ClientHelper.getUserId())).onErrorReturn(throwable -> new ProfileModel())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::onLoad);

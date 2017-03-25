@@ -1,17 +1,17 @@
-package forpdateam.ru.forpda.apirx;
+package forpdateam.ru.forpda.rxapi;
 
-import forpdateam.ru.forpda.api.auth.Auth;
 import forpdateam.ru.forpda.api.news.NewsParser;
-import forpdateam.ru.forpda.apirx.apiclasses.EditPostRx;
-import forpdateam.ru.forpda.apirx.apiclasses.FavoritesRx;
-import forpdateam.ru.forpda.apirx.apiclasses.ForumRx;
-import forpdateam.ru.forpda.apirx.apiclasses.MentionsRx;
-import forpdateam.ru.forpda.apirx.apiclasses.ProfileRx;
-import forpdateam.ru.forpda.apirx.apiclasses.QmsRx;
-import forpdateam.ru.forpda.apirx.apiclasses.ReputationRx;
-import forpdateam.ru.forpda.apirx.apiclasses.SearchRx;
-import forpdateam.ru.forpda.apirx.apiclasses.ThemeRx;
-import forpdateam.ru.forpda.apirx.apiclasses.TopicsRx;
+import forpdateam.ru.forpda.rxapi.apiclasses.AuthRx;
+import forpdateam.ru.forpda.rxapi.apiclasses.EditPostRx;
+import forpdateam.ru.forpda.rxapi.apiclasses.FavoritesRx;
+import forpdateam.ru.forpda.rxapi.apiclasses.ForumRx;
+import forpdateam.ru.forpda.rxapi.apiclasses.MentionsRx;
+import forpdateam.ru.forpda.rxapi.apiclasses.ProfileRx;
+import forpdateam.ru.forpda.rxapi.apiclasses.QmsRx;
+import forpdateam.ru.forpda.rxapi.apiclasses.ReputationRx;
+import forpdateam.ru.forpda.rxapi.apiclasses.SearchRx;
+import forpdateam.ru.forpda.rxapi.apiclasses.ThemeRx;
+import forpdateam.ru.forpda.rxapi.apiclasses.TopicsRx;
 
 /**
  * Created by radiationx on 25.03.17.
@@ -20,9 +20,9 @@ import forpdateam.ru.forpda.apirx.apiclasses.TopicsRx;
 public class RxApi {
     private static RxApi INSTANCE = null;
     private static QmsRx qmsApi = null;
-    private static Auth authApi = null;
+    private static AuthRx authApi = null;
     private static NewsParser newsListApi = null;
-    private static ProfileRx profileRxApi = null;
+    private static ProfileRx profileApi = null;
     private static ThemeRx themeApi = null;
     private static EditPostRx editPost = null;
     private static FavoritesRx favoritesApi = null;
@@ -37,8 +37,8 @@ public class RxApi {
         return qmsApi;
     }
 
-    public static Auth Auth() {
-        if (authApi == null) authApi = new Auth();
+    public static AuthRx Auth() {
+        if (authApi == null) authApi = new AuthRx();
         return authApi;
     }
 
@@ -48,8 +48,8 @@ public class RxApi {
     }
 
     public static ProfileRx Profile() {
-        if (profileRxApi == null) profileRxApi = new ProfileRx();
-        return profileRxApi;
+        if (profileApi == null) profileApi = new ProfileRx();
+        return profileApi;
     }
 
     public static ThemeRx Theme() {

@@ -2,9 +2,9 @@ package forpdateam.ru.forpda.fragments.theme;
 
 import android.support.v7.app.AlertDialog;
 
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
+import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
@@ -51,7 +51,7 @@ class ThemeDialogsHelper {
         }
         showedUserMenu.clear();
         showedUserMenu.addItem(userMenu.get(0));
-        if (Api.Auth().getState() && post.getUserId() != Api.Auth().getUserIdInt())
+        if (ClientHelper.getAuthState() && post.getUserId() != ClientHelper.getUserIdInt())
             showedUserMenu.addItem(userMenu.get(1));
         showedUserMenu.addItem(userMenu.get(2));
         showedUserMenu.addItem(userMenu.get(3));
@@ -71,7 +71,7 @@ class ThemeDialogsHelper {
             reputationMenu.addItem("Понизить", (context, data) -> context.changeReputation(data, false));
         }
         showedReputationMenu.clear();
-        if (Api.Auth().getState()) {
+        if (ClientHelper.getAuthState()) {
             if (post.canPlusRep())
                 showedReputationMenu.addItem(reputationMenu.get(0));
             showedReputationMenu.addItem(reputationMenu.get(1));
@@ -99,7 +99,7 @@ class ThemeDialogsHelper {
             });
         }
         showedPostMenu.clear();
-        if (Api.Auth().getState()) {
+        if (ClientHelper.getAuthState()) {
             if (theme.currentPage.canQuote())
                 showedPostMenu.addItem(postMenu.get(0));
             if (post.canReport())

@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.api.profile;
 import android.text.Html;
 import android.util.Pair;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;

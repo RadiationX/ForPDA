@@ -18,15 +18,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
 import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
-import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.bdobjects.favorites.FavItemBd;
+import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.pagination.PaginationHelper;
+import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
@@ -187,7 +187,7 @@ public class FavoritesFragment extends TabFragment {
             //adapter.addAll(results);
             adapter.notifyDataSetChanged();
         }
-        Api.get().notifyObservers();
+        ClientHelper.getInstance().notifyCountsChanged();
     }
 
     public void changeFav(int action, String type, int favId) {
