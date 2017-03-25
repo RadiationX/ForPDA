@@ -19,6 +19,7 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
+import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.bdobjects.forum.ForumItemFlatBd;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
@@ -120,7 +121,7 @@ public class ForumFragment extends TabFragment {
                 .setMessage("Загрузка данных")
                 .setCancelable(false)
                 .show();
-        mainSubscriber.subscribe(Api.Forum().getForums(), this::onLoadThemes, new ForumItemTree(), null);
+        mainSubscriber.subscribe(RxApi.Forum().getForums(), this::onLoadThemes, new ForumItemTree(), null);
     }
 
     private void onLoadThemes(ForumItemTree forumRoot) {

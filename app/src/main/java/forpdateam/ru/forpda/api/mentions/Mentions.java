@@ -8,7 +8,6 @@ import forpdateam.ru.forpda.api.mentions.models.MentionsData;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.utils.Utils;
-import io.reactivex.Observable;
 
 /**
  * Created by radiationx on 21.01.17.
@@ -17,11 +16,7 @@ import io.reactivex.Observable;
 public class Mentions {
     private final static Pattern mentionsPattern = Pattern.compile("<div class=\"topic_title_post ([^\"]*?)\"[^>]*?>([^:]*?):[^<]*?<a[^>]*?href=\"([^\"]*?)\"[^>]*?>(?:([^<]*?)(?:, ([^<]*?)|))<\\/a>[\\s\\S]*?post_date[^\"]*?\"[^>]*?>[^<]*?<a[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?showuser[^>]*>([\\s\\S]*?)<");
 
-    public Observable<MentionsData> getMentions(int st) {
-        return Observable.fromCallable(() -> _getMentions(st));
-    }
-
-    private MentionsData _getMentions(int st) throws Exception {
+    public MentionsData getMentions(int st) throws Exception {
         MentionsData data = new MentionsData();
         String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=mentions&st=".concat(Integer.toString(st)));
         Matcher matcher = mentionsPattern.matcher(response);

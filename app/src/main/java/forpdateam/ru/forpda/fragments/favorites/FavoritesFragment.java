@@ -23,6 +23,7 @@ import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
 import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
+import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.bdobjects.favorites.FavItemBd;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.pagination.PaginationHelper;
@@ -56,10 +57,10 @@ public class FavoritesFragment extends TabFragment {
                     favoriteDialogMenu.addItem("Открыть форум темы", (context, data) -> IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + data.getForumId()));
                     favoriteDialogMenu.addItem("Изменить тип подписки", (context, data) -> {
                         new AlertDialog.Builder(context.getContext())
-                                .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> context.changeFav(Favorites.ACTION_CHANGE_SUB_TYPE, Favorites.SUB_TYPES[which1], data.getFavId()))
+                                .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> context.changeFav(Favorites.ACTION_EDIT_SUB_TYPE, Favorites.SUB_TYPES[which1], data.getFavId()))
                                 .show();
                     });
-                    favoriteDialogMenu.addItem(getPinText(favItem.isPin()), (context, data) -> context.changeFav(Favorites.ACTION_CHANGE_PIN_STATE, data.isPin() ? "unpin" : "pin", data.getFavId()));
+                    favoriteDialogMenu.addItem(getPinText(favItem.isPin()), (context, data) -> context.changeFav(Favorites.ACTION_EDIT_PIN_STATE, data.isPin() ? "unpin" : "pin", data.getFavId()));
                     favoriteDialogMenu.addItem("Удалить", (context, data) -> context.changeFav(Favorites.ACTION_DELETE, null, data.getFavId()));
                 }
 
@@ -141,7 +142,7 @@ public class FavoritesFragment extends TabFragment {
     public void loadData() {
         Log.e("SUKA", "CALL LOAD DATA");
         refreshLayout.setRefreshing(true);
-        mainSubscriber.subscribe(Api.Favorites().get(currentSt), this::onLoadThemes, new FavData(), v -> loadData());
+        mainSubscriber.subscribe(RxApi.Favorites().getFavorites(currentSt), this::onLoadThemes, new FavData(), v -> loadData());
     }
 
     private void onLoadThemes(FavData data) {

@@ -44,6 +44,7 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
+import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.BlurUtil;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -163,11 +164,11 @@ public class ProfileFragment extends TabFragment {
 
     @Override
     public void loadData() {
-        mainSubscriber.subscribe(Api.Profile().get(tab_url), this::onProfileLoad, new ProfileModel(), v -> loadData());
+        mainSubscriber.subscribe(RxApi.Profile().getProfile(tab_url), this::onProfileLoad, new ProfileModel(), v -> loadData());
     }
 
     public void saveNote() {
-        saveNoteSubscriber.subscribe(Api.Profile().saveNoteRx(noteText.getText().toString()), this::onNoteSave, false, v -> saveNote());
+        saveNoteSubscriber.subscribe(RxApi.Profile().saveNote(noteText.getText().toString()), this::onNoteSave, false, v -> saveNote());
     }
 
 

@@ -23,7 +23,7 @@ public class Api {
     private static Qms qmsApi = null;
     private static Auth authApi = null;
     private static NewsParser newsListApi = null;
-    private static Profile profileApi = null;
+    private static Profile profileRxApi = null;
     private static Theme themeApi = null;
     private static EditPost editPost = null;
     private static Favorites favoritesApi = null;
@@ -53,8 +53,8 @@ public class Api {
     }
 
     public static Profile Profile() {
-        if (profileApi == null) profileApi = new Profile();
-        return profileApi;
+        if (profileRxApi == null) profileRxApi = new Profile();
+        return profileRxApi;
     }
 
     public static Theme Theme() {

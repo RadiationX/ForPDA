@@ -11,7 +11,6 @@ import forpdateam.ru.forpda.api.forum.models.ForumItemFlat;
 import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.utils.Utils;
-import io.reactivex.Observable;
 
 /**
  * Created by radiationx on 15.02.17.
@@ -25,11 +24,7 @@ public class Forum {
     //private final static Pattern rootPattern = Pattern.compile("<div[^>]*?id=[\"']fo_(\\d+)[\"'][^>]*?>[^<]*?<div[^>]*?cat_name[^>]*?>[^<]*?<div[\\s\\S]*?\\/div>[^<]*?<a[^>]*?>([\\s\\S]*?)<\\/a>[^<]*?<\\/div>([\\s\\S]*?)<\\/div>[^<]*?(?=<div id=['\"]fc|<div class=[\"']stat)");
     //private final static Pattern boardsPattern = Pattern.compile("<div[^>]*?board_forum_row[^>]*><div[^>]*?forum_name[^>]*?>[\\s\\S]*?<a[^>]*?showforum=(\\d+)[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/div>");
 
-    public Observable<ForumItemTree> getForums() {
-        return Observable.fromCallable(this::parseFromSearch);
-    }
-
-    private ForumItemTree parseFromSearch() throws Exception {
+    public ForumItemTree getForums() throws Exception {
         String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=search");
         Matcher matcher = forumsFromSearch.matcher(response);
         final ForumItemTree root = new ForumItemTree();

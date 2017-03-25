@@ -13,7 +13,6 @@ import forpdateam.ru.forpda.api.reputation.models.RepItem;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.OnlyShowException;
 import forpdateam.ru.forpda.utils.Utils;
-import io.reactivex.Observable;
 
 /**
  * Created by radiationx on 20.03.17.
@@ -27,15 +26,7 @@ public class Reputation {
     private final static Pattern listPattern = Pattern.compile("<tr>[^<]*?<td[^>]*?><strong><a [^>]*?showuser=(\\d+)[^\"]*\">([\\s\\S]*?)<\\/a><\\/strong><\\/td>[^<]*?<td[^>]*?>(?:<strong><a href=\"([^\"]*?)\">([\\s\\S]*?)<\\/a><\\/strong>)?[^<]*?<\\/td>[^<]*?<td[^>]*?>([\\s\\S]*?)<\\/td>[^<]*?<td[^>]*?><img[^>]*?src=\"([^\"]*?)\"[^>]*?><\\/td>[^<]*?<td[^>]*?>([\\s\\S]*?)<\\/td>[^<]*?<\\/tr>");
     private final static Pattern infoPattern = Pattern.compile("<div class=\"maintitle\">[\\s\\S]*?<a href=\"[^\"]*?showuser=(\\d+)\"[^>]*?>([\\s\\S]*?)<\\/a>[^\\[]*?\\[\\+(\\d+)\\/\\-(\\d+)\\]");
 
-    public Observable<RepData> getList(RepData data) {
-        return Observable.fromCallable(() -> _getList(data));
-    }
-
-    public Observable<String> changeReputation(int postId, int userId, boolean type, String message) {
-        return Observable.fromCallable(() -> _changeReputation(postId, userId, type, message));
-    }
-
-    private RepData _getList(RepData data) throws Exception {
+    public RepData getReputation(RepData data) throws Exception {
         if (data == null) return null;
         String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=rep&view=history&mid=" + data.getId() + "&mode=" + data.getMode() + "&order=" + data.getSort() + "&st=" + data.getPagination().getSt());
         Matcher matcher = infoPattern.matcher(response);
@@ -68,7 +59,7 @@ public class Reputation {
         return data;
     }
 
-    private String _changeReputation(int postId, int userId, boolean type, String message) throws Exception {
+    public String editReputation(int postId, int userId, boolean type, String message) throws Exception {
         Map<String, String> headers = new HashMap<>();
         headers.put("act", "rep");
         if (postId > 0)

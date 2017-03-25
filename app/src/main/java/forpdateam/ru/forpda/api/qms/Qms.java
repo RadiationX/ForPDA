@@ -15,7 +15,6 @@ import forpdateam.ru.forpda.api.qms.models.QmsMessage;
 import forpdateam.ru.forpda.api.qms.models.QmsTheme;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import forpdateam.ru.forpda.utils.Utils;
-import io.reactivex.Observable;
 
 import static forpdateam.ru.forpda.client.Client.getInstance;
 
@@ -32,10 +31,7 @@ public class Qms {
     private final static Pattern blackListPattern = Pattern.compile("<a class=\"list-group-item[^>]*?showuser=(\\d+)[^>]*?>[\\s\\S]*?<img class=\"avatar\" src=\"([^\"]*?)\" title=\"([\\s\\S]*?)\" alt[^>]*?>");
     private final static Pattern blackListMsgPattern = Pattern.compile("<div class=\"list-group-item msgbox ([^\"]*?)\"[^>]*?>[^<]*?<a[^>]*?>[^<]*?<\\/a>([\\s\\S]*?)<\\/div>");
 
-    public Qms() {
-    }
-
-    private ArrayList<QmsContact> blackList() throws Exception {
+    public ArrayList<QmsContact> getBlackList() throws Exception {
         Map<String, String> headers = new HashMap<>();
         headers.put("xhr", "body");
         final String response = getInstance().post("http://4pda.ru/forum/index.php?act=qms&settings=blacklist", headers);
@@ -56,7 +52,7 @@ public class Qms {
         return list;
     }
 
-    private ArrayList<QmsContact> deleteBlocked(int[] ids) throws Exception {
+    public ArrayList<QmsContact> unBlockUsers(int[] ids) throws Exception {
         Map<String, String> headers = new HashMap<>();
         headers.put("action", "delete-users");
         String strId;
@@ -69,7 +65,7 @@ public class Qms {
         return parseBlackList(response);
     }
 
-    private ArrayList<QmsContact> addBlocked(String nick) throws Exception {
+    public ArrayList<QmsContact> blockUser(String nick) throws Exception {
         Map<String, String> headers = new HashMap<>();
         headers.put("action", "add-user");
         headers.put("username", nick);
@@ -87,7 +83,7 @@ public class Qms {
         }
     }
 
-    private ArrayList<QmsContact> contactsList() throws Exception {
+    public ArrayList<QmsContact> getContactList() throws Exception {
 
         ArrayList<QmsContact> list = new ArrayList<>();
         final String response = getInstance().get("http://4pda.ru/forum/index.php?&act=qms-xhr&action=userlist");
@@ -107,7 +103,7 @@ public class Qms {
         return list;
     }
 
-    private QmsThemes themesList(final int id) throws Exception {
+    public QmsThemes getThemesList(final int id) throws Exception {
         QmsThemes qmsThemes = new QmsThemes();
         Map<String, String> headers = new HashMap<>();
         headers.put("xhr", "body");
@@ -132,8 +128,7 @@ public class Qms {
         return qmsThemes;
     }
 
-    private QmsChatModel chatItemsList(final int userId, final int themeId) throws Exception {
-
+    public QmsChatModel getChat(final int userId, final int themeId) throws Exception {
         Map<String, String> headers = new HashMap<>();
         headers.put("xhr", "body");
         final String response = getInstance().post("http://4pda.ru/forum/index.php?act=qms&mid=" + userId + "&t=" + themeId, headers);
@@ -170,12 +165,12 @@ public class Qms {
         return chat;
     }
 
-    private String[] findUser(final String nick) throws Exception {
+    public String[] findUser(final String nick) throws Exception {
         String response = getInstance().get("http://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=" + nick + "&limit=150&timestamp=" + System.currentTimeMillis());
         return response.split(" |\n");
     }
 
-    private QmsChatModel newTheme(String nick, String title, String mess) throws Exception {
+    public QmsChatModel sendNewTheme(String nick, String title, String mess) throws Exception {
         Map<String, String> headers = new HashMap<>();
         headers.put("username", nick);
         headers.put("title", title);
@@ -184,7 +179,7 @@ public class Qms {
         return parseChat(response);
     }
 
-    private QmsMessage _sendMessage(int userId, int themeId, String text) throws Exception {
+    public QmsMessage sendMessage(int userId, int themeId, String text) throws Exception {
         Map<String, String> headers = new HashMap<>();
         headers.put("act", "qms-xhr");
         headers.put("action", "send-message");
@@ -215,51 +210,11 @@ public class Qms {
         return item;
     }
 
-    private String delDialog(int mid) throws Exception {
+    public String deleteDialog(int mid) throws Exception {
         Map<String, String> headers = new HashMap<>();
         headers.put("act", "qms-xhr");
         headers.put("action", "del-member");
         headers.put("del-mid", Integer.toString(mid));
         return getInstance().post("http://4pda.ru/forum/index.php", headers);
-    }
-
-    public Observable<ArrayList<QmsContact>> getContactList() {
-        return Observable.fromCallable(this::contactsList);
-    }
-
-    public Observable<QmsThemes> getThemesList(final int id) {
-        return Observable.fromCallable(() -> themesList(id));
-    }
-
-    public Observable<QmsChatModel> getChat(final int userId, final int themeId) {
-        return Observable.fromCallable(() -> chatItemsList(userId, themeId));
-    }
-
-    public Observable<String[]> search(final String nick) {
-        return Observable.fromCallable(() -> findUser(nick));
-    }
-
-    public Observable<QmsChatModel> sendNewTheme(String nick, String title, String mess) {
-        return Observable.fromCallable(() -> newTheme(nick, title, mess));
-    }
-
-    public Observable<QmsMessage> sendMessage(int userId, int themeID, String text) {
-        return Observable.fromCallable(() -> _sendMessage(userId, themeID, text));
-    }
-
-    public Observable<String> deleteDialog(int mid) {
-        return Observable.fromCallable(() -> delDialog(mid));
-    }
-
-    public Observable<ArrayList<QmsContact>> getBlackList() {
-        return Observable.fromCallable(this::blackList);
-    }
-
-    public Observable<ArrayList<QmsContact>> blockUser(String nick) {
-        return Observable.fromCallable(() -> addBlocked(nick));
-    }
-
-    public Observable<ArrayList<QmsContact>> unBlockUsers(int[] userIds) {
-        return Observable.fromCallable(() -> deleteBlocked(userIds));
     }
 }

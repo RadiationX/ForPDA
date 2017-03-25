@@ -827,7 +827,7 @@ class HtmlToSpannedConverter implements ContentHandler {
             // We are reading from a string. There should not be IO problems.
             throw new RuntimeException(e);
         } catch (SAXException e) {
-            // TagSoup doesn't throw _getFav exceptions.
+            // TagSoup doesn't throw getFav exceptions.
             throw new RuntimeException(e);
         }
         // Fix flags and range for paragraph-type markup.
@@ -1215,7 +1215,7 @@ class HtmlToSpannedConverter implements ContentHandler {
             }
         }
         Log.d("FORPDA_LOG", "kolor "+color);
-        //TODO normal _getFav color
+        //TODO normal getFav color
         return Color.CYAN;
     }
     public void setDocumentLocator(Locator locator) {

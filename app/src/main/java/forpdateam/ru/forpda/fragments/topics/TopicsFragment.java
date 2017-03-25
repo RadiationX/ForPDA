@@ -14,10 +14,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.topcis.models.TopicItem;
 import forpdateam.ru.forpda.api.topcis.models.TopicsData;
+import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.pagination.PaginationHelper;
@@ -120,7 +120,7 @@ public class TopicsFragment extends TabFragment {
     @Override
     public void loadData() {
         refreshLayout.setRefreshing(true);
-        mainSubscriber.subscribe(Api.Topics().getTopics(id, currentSt), this::onLoadThemes, new TopicsData(), v -> loadData());
+        mainSubscriber.subscribe(RxApi.Topics().getTopics(id, currentSt), this::onLoadThemes, new TopicsData(), v -> loadData());
     }
 
     private void onLoadThemes(TopicsData data) {

@@ -26,6 +26,7 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.reputation.Reputation;
 import forpdateam.ru.forpda.api.reputation.models.RepData;
 import forpdateam.ru.forpda.api.reputation.models.RepItem;
+import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.pagination.PaginationHelper;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
@@ -189,7 +190,7 @@ public class ReputationFragment extends TabFragment {
     }
 
     public void changeReputation(@NonNull Consumer<String> onNext, int postId, int userId, boolean type, String message) {
-        Api.Reputation().changeReputation(postId, userId, type, message).onErrorReturn(throwable -> "error")
+        RxApi.Reputation().editReputation(postId, userId, type, message).onErrorReturn(throwable -> "error")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onNext);
@@ -198,7 +199,7 @@ public class ReputationFragment extends TabFragment {
     @Override
     public void loadData() {
         refreshLayout.setRefreshing(true);
-        mainSubscriber.subscribe(Api.Reputation().getList(data), this::onLoadThemes, data, v -> loadData());
+        mainSubscriber.subscribe(RxApi.Reputation().getReputation(data), this::onLoadThemes, data, v -> loadData());
     }
 
     private void onLoadThemes(RepData data) {
