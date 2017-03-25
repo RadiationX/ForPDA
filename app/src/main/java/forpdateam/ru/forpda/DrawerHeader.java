@@ -49,7 +49,8 @@ public class DrawerHeader {
             tabFragment.getConfiguration().setMenu(true);
             TabManager.getInstance().add(tabFragment);
         } else {
-            TabManager.getInstance().select(tabFragment);;
+            TabManager.getInstance().select(tabFragment);
+            ;
         }
         /*TabFragment fragment = TabManager.getInstance().get(TabManager.getInstance().getTagContainClass(ProfileFragment.class));
         if (fragment == null | (fragment != null && fragment.getConfiguration().isMenu())) {
@@ -89,7 +90,7 @@ public class DrawerHeader {
         ClientHelper.getInstance().addLoginObserver((observable, o) -> {
             state((boolean) o);
         });
-        state(ClientHelper.getAuthState());
+        state(ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN);
     }
 
     public String readFromClipboard(Context context) {
@@ -116,7 +117,7 @@ public class DrawerHeader {
     }
 
     private void load() {
-        RxApi.Profile().getProfile("http://4pda.ru/forum/index.php?showuser=".concat(ClientHelper.getUserId() == null ? "2556269" : ClientHelper.getUserId())).onErrorReturn(throwable -> new ProfileModel())
+        RxApi.Profile().getProfile("http://4pda.ru/forum/index.php?showuser=".concat(Integer.toString(ClientHelper.getUserId() == 0 ? 2556269 : ClientHelper.getUserId()))).onErrorReturn(throwable -> new ProfileModel())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::onLoad);

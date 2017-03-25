@@ -149,7 +149,6 @@ public class TabFragment extends RxFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.e("SUKA", configuration.toString());
         view = inflater.inflate(R.layout.fragment_base, container, false);
         //Осторожно! Чувствительно к структуре разметки! (по идеи так должно работать чуть быстрее)
         fragmentContainer = (RelativeLayout) findViewById(R.id.fragment_container);
@@ -167,7 +166,6 @@ public class TabFragment extends RxFragment {
         //// TODO: 20.03.17 удалить и юзать только там, где нужно
         fab = (FloatingActionButton) coordinatorLayout.findViewById(R.id.fab);
 
-        Log.e("SUKA", "ALO " + (configuration.isAlone() || configuration.isMenu()));
         toolbar.setNavigationOnClickListener(configuration.isAlone() || configuration.isMenu() ? getMainActivity().getToggleListener() : getMainActivity().getRemoveTabListener());
         toolbar.setNavigationIcon(configuration.isAlone() || configuration.isMenu() ? R.drawable.ic_menu_gray_24dp : R.drawable.ic_arrow_back_gray_24dp);
 

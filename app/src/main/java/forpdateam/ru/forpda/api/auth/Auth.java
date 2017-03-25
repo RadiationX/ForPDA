@@ -84,7 +84,7 @@ public class Auth {
 
         Client.clearCookies();
         App.getInstance().getPreferences().edit().remove("cookie_member_id").remove("cookie_pass_hash").apply();
-        ClientHelper.setAuthState(false);
+        ClientHelper.setAuthState(ClientHelper.AUTH_STATE_LOGOUT);
 
         return !checkLogin(Client.getInstance().get(Client.minimalPage));
     }

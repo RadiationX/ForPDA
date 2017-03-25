@@ -10,14 +10,14 @@ import java.util.Observer;
  */
 
 public class ClientHelper {
+    //Зачем? - Возможно в потом будет изменено на другой тип данных
     public final static boolean AUTH_STATE_LOGIN = true;
     public final static boolean AUTH_STATE_LOGOUT = false;
     private static ClientHelper clientHelper = null;
     private MyObservable loginObservable = new MyObservable();
     private MyObservable observable = new MyObservable();
     private static boolean authState = false;
-    private static String userId = "0";
-    private static int userIdInt = 0;
+    private static int userId = 0;
     private static int qmsCount = 0, mentionsCount = 0, favoritesCount = 0;
 
     public static ClientHelper getInstance() {
@@ -26,16 +26,16 @@ public class ClientHelper {
     }
 
     public void addLoginObserver(Observer observer) {
-        observable.addObserver(observer);
-    }
-
-    public void addCountsObserver(Observer observer) {
-        observable.addObserver(observer);
+        loginObservable.addObserver(observer);
     }
 
     public void notifyAuthChanged(boolean authState) {
         ClientHelper.setAuthState(authState);
         loginObservable.notifyObservers(authState);
+    }
+
+    public void addCountsObserver(Observer observer) {
+        observable.addObserver(observer);
     }
 
     public void notifyCountsChanged() {
@@ -46,25 +46,20 @@ public class ClientHelper {
         return authState;
     }
 
-    public static void setAuthState(boolean b) {
-        authState = b;
+    public static void setAuthState(boolean state) {
+        authState = state;
     }
 
-    public static String getUserId() {
+    public static int getUserId() {
         return userId;
     }
 
-    public static int getUserIdInt() {
-        return userIdInt;
-    }
-
-    public static void setUserId(String userId1) {
-        userId = userId1;
-        Log.d("FORPDA_LOG", "userid 1: " + userId1);
+    public static void setUserId(String newUserId) {
+        Log.d("FORPDA_LOG", "newUserId: " + newUserId);
         try {
-            if (userId1 != null)
-                userIdInt = Integer.parseInt(userId1);
-        } catch (NumberFormatException ignore) {
+            userId = Integer.parseInt(newUserId);
+        } catch (NumberFormatException e) {
+            userId = 0;
         }
     }
 

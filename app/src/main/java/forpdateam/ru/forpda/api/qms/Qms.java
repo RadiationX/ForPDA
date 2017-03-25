@@ -42,7 +42,6 @@ public class Qms {
         ArrayList<QmsContact> list = new ArrayList<>();
         Matcher matcher = blackListPattern.matcher(response);
         while (matcher.find()) {
-            Log.e("SUKA", "FIND USER");
             QmsContact contact = new QmsContact();
             contact.setId(Integer.parseInt(matcher.group(1)));
             contact.setAvatar(matcher.group(2));

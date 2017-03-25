@@ -87,7 +87,7 @@ public class Theme {
         }
         matcher = postsPattern.matcher(response);
         Log.d("FORPDA_LOG", "posts matcher " + (System.currentTimeMillis() - time));
-        int memberId = ClientHelper.getUserIdInt();
+        int memberId = ClientHelper.getUserId();
         while (matcher.find()) {
             ThemePost post = new ThemePost();
             post.setId(Integer.parseInt(matcher.group(1)));
@@ -171,7 +171,7 @@ public class Theme {
             t.setVariableOpt("current_page", page.getPagination().getCurrent());
             t.setVariableOpt("authorized", Boolean.toString(authorized));
             t.setVariableOpt("is_curator", Boolean.toString(page.isCurator()));
-            t.setVariableOpt("member_id", ClientHelper.getUserIdInt());
+            t.setVariableOpt("member_id", ClientHelper.getUserId());
             t.setVariableOpt("elem_to_scroll", page.getElementToScroll());
             t.setVariableOpt("body_type", "topic");
             t.setVariableOpt("navigation_disable", prevDisabled && nextDisabled ? "navigation_disable" : "");
