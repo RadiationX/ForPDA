@@ -42,7 +42,7 @@ public class MentionsFragment extends TabFragment {
 
     public MentionsFragment(){
         configuration.setAlone(true);
-        configuration.setDefaultTitle("Упоминания");
+        configuration.setDefaultTitle("Ответы");
     }
 
     @Nullable
@@ -50,9 +50,9 @@ public class MentionsFragment extends TabFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         setWhiteBackground();
-        baseInflateFragment(inflater, R.layout.fragment_qms_themes);
-        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-        recyclerView = (RecyclerView) findViewById(R.id.qms_list_themes);
+        baseInflateFragment(inflater, R.layout.fragment_base_list);
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
+        recyclerView = (RecyclerView) findViewById(R.id.base_list);
         viewsReady();
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setHasFixedSize(true);

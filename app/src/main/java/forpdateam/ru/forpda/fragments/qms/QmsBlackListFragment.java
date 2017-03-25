@@ -50,13 +50,13 @@ public class QmsBlackListFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        baseInflateFragment(inflater, R.layout.fragment_qms_contacts);
+        baseInflateFragment(inflater, R.layout.fragment_base_list);
         ViewStub viewStub = (ViewStub) findViewById(R.id.toolbar_content);
         viewStub.setLayoutResource(R.layout.toolbar_qms_black_list);
         viewStub.inflate();
         setWhiteBackground();
-        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-        recyclerView = (RecyclerView) findViewById(R.id.qms_list_contacts);
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
+        recyclerView = (RecyclerView) findViewById(R.id.base_list);
         nickField = (AppCompatAutoCompleteTextView) findViewById(R.id.qms_black_list_nick_field);
         viewsReady();
         nickField.addTextChangedListener(new SimpleTextWatcher() {
@@ -129,6 +129,7 @@ public class QmsBlackListFragment extends TabFragment {
         if (currentData == data) return;
         currentData = data;
         adapter.addAll(currentData);
+        nickField.setText("");
     }
 
     private void searchUser(String nick) {

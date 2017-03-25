@@ -120,7 +120,7 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
         FavItem item = sections.get(section).second.get(relativePosition);
         holder.title.setText(item.getTopicTitle());
         holder.title.setTypeface(null, item.isNewMessages() ? Typeface.BOLD : Typeface.NORMAL);
-        holder.pinIcon.setVisibility(item.isPin() ? View.VISIBLE : View.GONE);
+        //holder.pinIcon.setVisibility(item.isPin() ? View.VISIBLE : View.GONE);
         holder.lockIcon.setVisibility(item.getInfo().contains("X") ? View.VISIBLE : View.GONE);
         holder.pollIcon.setVisibility(item.getInfo().contains("^") ? View.VISIBLE : View.GONE);
         /*if (item.getInfo().contains("+^"))

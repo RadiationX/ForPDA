@@ -129,7 +129,7 @@ public class TopicsAdapter extends SectionedRecyclerViewAdapter<TopicsAdapter.Vi
             } else {
                 holder.desc.setVisibility(View.GONE);
             }
-            holder.pinIcon.setVisibility(item.isPinned() ? View.VISIBLE : View.GONE);
+            //holder.pinIcon.setVisibility(item.isPinned() ? View.VISIBLE : View.GONE);
             holder.lockIcon.setVisibility((item.getParams() & TopicItem.CLOSED) != 0 ? View.VISIBLE : View.GONE);
             holder.pollIcon.setVisibility((item.getParams() & TopicItem.POLL) != 0 ? View.VISIBLE : View.GONE);
             holder.lastNick.setText(item.getLastUserNick());

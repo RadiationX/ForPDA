@@ -81,8 +81,8 @@ public class SearchFragment extends TabFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         baseInflateFragment(inflater, R.layout.fragment_search);
-        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-        recyclerView = (RecyclerView) findViewById(R.id.qms_list_themes);
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
+        recyclerView = (RecyclerView) findViewById(R.id.base_list);
         searchSettingsView = (ViewGroup) findViewById(R.id.search_settings_container);
 
         nickBlock = (ViewGroup) findViewById(R.id.search_nick_block);
