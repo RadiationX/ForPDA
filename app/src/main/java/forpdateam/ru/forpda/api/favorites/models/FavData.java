@@ -10,30 +10,11 @@ import forpdateam.ru.forpda.api.others.pagination.Pagination;
  */
 
 public class FavData {
-    private List<FavItem> allItems = new ArrayList<>();
-    private List<FavItem> pinnedItems = new ArrayList<>();
     private List<FavItem> items = new ArrayList<>();
-
     private Pagination pagination = new Pagination();
-
-    public void addToAllItem(FavItem item) {
-        allItems.add(item);
-    }
-
-    public List<FavItem> getAllItems() {
-        return allItems;
-    }
 
     public List<FavItem> getItems() {
         return items;
-    }
-
-    public List<FavItem> getPinnedItems() {
-        return pinnedItems;
-    }
-
-    public void addPinnedItem(FavItem item) {
-        pinnedItems.add(item);
     }
 
     public void addItem(FavItem item) {

@@ -18,8 +18,8 @@ import java.util.List;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.forum.models.ForumItemFlat;
 import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
+import forpdateam.ru.forpda.bdobjects.forum.ForumItemFlatBd;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
@@ -37,7 +37,7 @@ public class ForumFragment extends TabFragment {
     private Subscriber<ForumItemTree> mainSubscriber = new Subscriber<>(this);
     private NestedScrollView treeContainer;
     private Realm realm;
-    private RealmResults<ForumItemFlat> results;
+    private RealmResults<ForumItemFlatBd> results;
     private static AlertDialogMenu<ForumFragment, ForumItemTree> forumMenu, showedForumMenu;
     private AlertDialog updateDialog;
     boolean firstLoad = true;
@@ -137,18 +137,27 @@ public class ForumFragment extends TabFragment {
 
 
         realm.executeTransactionAsync(r -> {
-            r.delete(ForumItemFlat.class);
-            List<ForumItemFlat> items = new ArrayList<>();
-            Api.Forum().transformToList(items, forumRoot);
+            r.delete(ForumItemFlatBd.class);
+            List<ForumItemFlatBd> items = new ArrayList<>();
+            transformToList(items, forumRoot);
             r.copyToRealmOrUpdate(items);
+            items.clear();
         }, this::bindView);
         //setSubtitle(data.getAll() <= 1 ? null : "" + data.getCurrent() + "/" + data.getAll());
 
 
     }
 
+    public void transformToList(List<ForumItemFlatBd> list, ForumItemTree rootForum) {
+        if (rootForum.getForums() == null) return;
+        for (ForumItemTree item : rootForum.getForums()) {
+            list.add(new ForumItemFlatBd(item));
+            transformToList(list, item);
+        }
+    }
+
     private void bindView() {
-        results = realm.where(ForumItemFlat.class).findAll();
+        results = realm.where(ForumItemFlatBd.class).findAll();
         if (updateDialog != null && updateDialog.isShowing()) {
             if (results.size() != 0) {
                 updateDialog.setMessage("Обновление прошло успешно");
@@ -226,6 +235,6 @@ public class ForumFragment extends TabFragment {
 
 
     public static boolean checkIsLink(int id) {
-        return Realm.getDefaultInstance().where(ForumItemFlat.class).equalTo("parentId", id).findAll().size() == 0;
+        return Realm.getDefaultInstance().where(ForumItemFlatBd.class).equalTo("parentId", id).findAll().size() == 0;
     }
 }

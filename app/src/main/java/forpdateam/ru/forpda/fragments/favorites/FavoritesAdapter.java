@@ -15,21 +15,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.favorites.models.FavItem;
+import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
 
 /**
  * Created by radiationx on 22.09.16.
  */
 
 public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdapter.ViewHolder> {
-    private List<Pair<String, List<FavItem>>> sections = new ArrayList<>();
+    private List<Pair<String, List<IFavItem>>> sections = new ArrayList<>();
 
-    public void addItems(Pair<String, List<FavItem>> item) {
+    public void addSection(Pair<String, List<IFavItem>> item) {
         sections.add(item);
     }
 
     public void clear() {
-        for (Pair<String, List<FavItem>> pair : sections)
+        for (Pair<String, List<IFavItem>> pair : sections)
             pair.second.clear();
         sections.clear();
     }
@@ -38,7 +38,7 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
     private FavoritesAdapter.OnLongItemClickListener longItemClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(FavItem favItem);
+        void onItemClick(IFavItem IFavItem);
     }
 
     public void setOnItemClickListener(final FavoritesAdapter.OnItemClickListener mItemClickListener) {
@@ -46,7 +46,7 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
     }
 
     public interface OnLongItemClickListener {
-        void onLongItemClick(FavItem favItem);
+        void onLongItemClick(IFavItem IFavItem);
     }
 
     public void setOnLongItemClickListener(final FavoritesAdapter.OnLongItemClickListener longItemClickListener) {
@@ -117,7 +117,7 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
     @Override
     public void onBindViewHolder(FavoritesAdapter.ViewHolder holder, int section, int relativePosition, int absolutePosition) {
 
-        FavItem item = sections.get(section).second.get(relativePosition);
+        IFavItem item = sections.get(section).second.get(relativePosition);
         holder.title.setText(item.getTopicTitle());
         holder.title.setTypeface(null, item.isNewMessages() ? Typeface.BOLD : Typeface.NORMAL);
         //holder.pinIcon.setVisibility(item.isPin() ? View.VISIBLE : View.GONE);

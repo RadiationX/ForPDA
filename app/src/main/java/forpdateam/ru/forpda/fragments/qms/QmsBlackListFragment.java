@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.qms.interfaces.IQmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsContactsAdapter;
@@ -38,7 +39,7 @@ public class QmsBlackListFragment extends TabFragment {
     private AppCompatAutoCompleteTextView nickField;
     private QmsContactsAdapter adapter;
     private Subscriber<ArrayList<QmsContact>> mainSubscriber = new Subscriber<>(this);
-    private AlertDialogMenu<QmsBlackListFragment, QmsContact> contactDialogMenu;
+    private AlertDialogMenu<QmsBlackListFragment, IQmsContact> contactDialogMenu;
     private ArrayList<QmsContact> currentData;
     private Subscriber<String[]> searchUserSubscriber = new Subscriber<>(this);
 
@@ -84,7 +85,7 @@ public class QmsBlackListFragment extends TabFragment {
         return view;
     }
 
-    private void someClick(QmsContact contact) {
+    private void someClick(IQmsContact contact) {
         if (contactDialogMenu == null) {
             contactDialogMenu = new AlertDialogMenu<>();
             contactDialogMenu.addItem("Профиль", (context, data) -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + data.getId()));

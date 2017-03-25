@@ -15,12 +15,15 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.favorites.Favorites;
+import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
 import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
+import forpdateam.ru.forpda.bdobjects.favorites.FavItemBd;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.pagination.PaginationHelper;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
@@ -43,7 +46,7 @@ public class FavoritesFragment extends TabFragment {
                 args.putString(TabFragment.ARG_TITLE, favItem.getTopicTitle());
                 IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=" + favItem.getTopicId() + "&view=getnewpost", args);
             };
-    private AlertDialogMenu<FavoritesFragment, FavItem> favoriteDialogMenu;
+    private AlertDialogMenu<FavoritesFragment, IFavItem> favoriteDialogMenu;
     private FavoritesAdapter.OnLongItemClickListener onLongItemClickListener =
             favItem -> {
                 if (favoriteDialogMenu == null) {
@@ -73,13 +76,12 @@ public class FavoritesFragment extends TabFragment {
             };
 
     private Realm realm;
-    private RealmResults<FavItem> results;
+    private RealmResults<FavItemBd> results;
     private FavoritesAdapter adapter;
     private Subscriber<FavData> mainSubscriber = new Subscriber<>(this);
     boolean markedRead = false;
-    private FavData data;
 
-    public FavoritesFragment(){
+    public FavoritesFragment() {
         configuration.setAlone(true);
         configuration.setUseCache(true);
         configuration.setDefaultTitle("Избранное");
@@ -107,7 +109,6 @@ public class FavoritesFragment extends TabFragment {
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
         recyclerView = (RecyclerView) findViewById(R.id.base_list);
         viewsReady();
-        loadData();
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -138,35 +139,40 @@ public class FavoritesFragment extends TabFragment {
 
     @Override
     public void loadData() {
-        if (refreshLayout != null)
-            refreshLayout.setRefreshing(true);
+        Log.e("SUKA", "CALL LOAD DATA");
+        refreshLayout.setRefreshing(true);
         mainSubscriber.subscribe(Api.Favorites().get(currentSt), this::onLoadThemes, new FavData(), v -> loadData());
     }
 
     private void onLoadThemes(FavData data) {
-        Log.d("FORPDA_LOG", "loaded itms " + data.getAllItems().size() + " : " + results.size());
-        if (refreshLayout != null)
-            refreshLayout.setRefreshing(false);
+        Log.d("FORPDA_LOG", "loaded itms " + data.getItems().size() + " : " + results.size());
+        refreshLayout.setRefreshing(false);
 
-        this.data = data;
-        if (data.getAllItems().size() == 0)
+        if (data.getItems().size() == 0)
             return;
 
         realm.executeTransactionAsync(r -> {
-            r.delete(FavItem.class);
-            r.copyToRealmOrUpdate(data.getAllItems());
+            r.delete(FavItemBd.class);
+            List<FavItemBd> bdList = new ArrayList<>();
+            for (FavItem item : data.getItems()) {
+                bdList.add(new FavItemBd(item));
+            }
+            r.copyToRealmOrUpdate(bdList);
+            bdList.clear();
         }, this::bindView);
         paginationHelper.updatePagination(data.getPagination());
         setSubtitle(paginationHelper.getString());
     }
 
     private void bindView() {
-        results = realm.where(FavItem.class).findAll();
+        Log.e("SUKA", "BINDVIEW");
+        results = realm.where(FavItemBd.class).findAll();
+        Log.e("SUKA", "RESULTS "+results.size());
         if (results.size() != 0) {
-            ArrayList<FavItem> pinned = new ArrayList<>();
-            ArrayList<FavItem> items = new ArrayList<>();
+            ArrayList<IFavItem> pinned = new ArrayList<>();
+            ArrayList<IFavItem> items = new ArrayList<>();
 
-            for (FavItem item : results) {
+            for (IFavItem item : results) {
                 if (item.isPin()) {
                     pinned.add(item);
                 } else {
@@ -175,8 +181,8 @@ public class FavoritesFragment extends TabFragment {
             }
             adapter.clear();
             if (pinned.size() > 0)
-                adapter.addItems(new Pair<>("Закрепленные темы", pinned));
-            adapter.addItems(new Pair<>("Темы", items));
+                adapter.addSection(new Pair<>("Закрепленные темы", pinned));
+            adapter.addSection(new Pair<>("Темы", items));
             //adapter.addAll(results);
             adapter.notifyDataSetChanged();
         }
@@ -189,7 +195,7 @@ public class FavoritesFragment extends TabFragment {
 
     public void markRead(int topicId) {
         realm.executeTransactionAsync(realm1 -> {
-            FavItem favItem = realm1.where(FavItem.class).equalTo("topicId", topicId).findFirst();
+            IFavItem favItem = realm1.where(FavItemBd.class).equalTo("topicId", topicId).findFirst();
             if (favItem != null) {
                 favItem.setNewMessages(false);
             }

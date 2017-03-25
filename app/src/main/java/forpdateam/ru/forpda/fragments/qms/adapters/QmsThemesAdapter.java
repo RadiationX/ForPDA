@@ -6,25 +6,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.qms.models.QmsTheme;
-import io.realm.RealmList;
+import forpdateam.ru.forpda.api.qms.interfaces.IQmsTheme;
 
 /**
  * Created by radiationx on 25.08.16.
  */
 public class QmsThemesAdapter extends RecyclerView.Adapter<QmsThemesAdapter.ViewHolder> {
-    private RealmList<QmsTheme> list = new RealmList<>();
+    private List<IQmsTheme> list = new ArrayList<>();
     private OnItemClickListener itemClickListener;
     private OnLongItemClickListener longItemClickListener;
 
-    public void addAll(Collection<QmsTheme> results) {
+    public void addAll(Collection<? extends IQmsTheme> results) {
         addAll(results, true);
     }
 
-    public void addAll(Collection<QmsTheme> results, boolean clearList) {
+    public void addAll(Collection<? extends IQmsTheme> results, boolean clearList) {
         if (clearList)
             clear();
         list.addAll(results);
@@ -36,7 +37,7 @@ public class QmsThemesAdapter extends RecyclerView.Adapter<QmsThemesAdapter.View
     }
 
     public interface OnItemClickListener {
-        void onItemClick(QmsTheme theme);
+        void onItemClick(IQmsTheme theme);
     }
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
@@ -44,7 +45,7 @@ public class QmsThemesAdapter extends RecyclerView.Adapter<QmsThemesAdapter.View
     }
 
     public interface OnLongItemClickListener {
-        void onItemClick(QmsTheme theme);
+        void onItemClick(IQmsTheme theme);
     }
 
     public void setOnLongItemClickListener(final OnLongItemClickListener longItemClickListener) {
@@ -88,7 +89,7 @@ public class QmsThemesAdapter extends RecyclerView.Adapter<QmsThemesAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        QmsTheme item = list.get(position);
+        IQmsTheme item = list.get(position);
 
         holder.name.setText(item.getName());
         if (item.getCountNew() == 0) {
@@ -104,7 +105,7 @@ public class QmsThemesAdapter extends RecyclerView.Adapter<QmsThemesAdapter.View
         return list.size();
     }
 
-    public QmsTheme getItem(int position) {
+    public IQmsTheme getItem(int position) {
         return list.get(position);
     }
 

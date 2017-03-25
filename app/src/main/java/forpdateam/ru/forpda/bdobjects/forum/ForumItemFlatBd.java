@@ -1,20 +1,22 @@
-package forpdateam.ru.forpda.api.forum.models;
+package forpdateam.ru.forpda.bdobjects.forum;
 
 import forpdateam.ru.forpda.api.forum.interfaces.IForumItemFlat;
+import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
+import io.realm.RealmObject;
 
 /**
- * Created by radiationx on 15.02.17.
+ * Created by radiationx on 25.03.17.
  */
 
-public class ForumItemFlat implements IForumItemFlat {
+public class ForumItemFlatBd extends RealmObject implements IForumItemFlat {
     private int id = -1;
     private int parentId = -1, level = -1;
     private String title;
 
-    public ForumItemFlat() {
+    public ForumItemFlatBd() {
     }
 
-    public ForumItemFlat(ForumItemTree item) {
+    public ForumItemFlatBd(ForumItemTree item) {
         id = item.getId();
         parentId = item.getParentId();
         title = item.getTitle();

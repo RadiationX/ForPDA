@@ -3,6 +3,8 @@ package forpdateam.ru.forpda.api.forum.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import forpdateam.ru.forpda.api.forum.interfaces.IForumItemFlat;
+
 /**
  * Created by radiationx on 15.02.17.
  */
@@ -16,7 +18,7 @@ public class ForumItemTree {
     public ForumItemTree() {
     }
 
-    public ForumItemTree(ForumItemFlat item) {
+    public ForumItemTree(IForumItemFlat item) {
         id = item.getId();
         parentId = item.getParentId();
         title = item.getTitle();

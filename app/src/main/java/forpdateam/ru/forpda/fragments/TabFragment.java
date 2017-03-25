@@ -202,7 +202,7 @@ public class TabFragment extends RxFragment {
     }
 
     protected void viewsReady() {
-        if (Client.getInstance().getNetworkState() && !configuration.isUseCache()) {
+        if (Client.getInstance().getNetworkState()/* && !configuration.isUseCache()*/) {
             loadData();
         }
         addBaseToolbarMenu();

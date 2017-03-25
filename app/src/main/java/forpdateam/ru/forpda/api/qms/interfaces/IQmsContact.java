@@ -11,4 +11,12 @@ public interface IQmsContact {
     int getCount();
 
     String getAvatar();
+
+    void setNick(String nick);
+
+    void setAvatar(String avatar);
+
+    void setId(int id);
+
+    void setCount(int count);
 }

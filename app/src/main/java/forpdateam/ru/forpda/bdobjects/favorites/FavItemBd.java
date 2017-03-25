@@ -1,16 +1,45 @@
-package forpdateam.ru.forpda.api.favorites.models;
+package forpdateam.ru.forpda.bdobjects.favorites;
 
 import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
+import forpdateam.ru.forpda.api.favorites.models.FavItem;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
- * Created by radiationx on 22.09.16.
+ * Created by radiationx on 25.03.17.
  */
 
-public class FavItem implements IFavItem {
+public class FavItemBd extends RealmObject implements IFavItem {
+    @PrimaryKey
     private int favId;
     private int topicId, forumId, authorId, lastUserId, stParam, pages;
     private String trackType, info, infoColor, topicTitle, forumTitle, authorUserNick, lastUserNick, date, desc;
     private boolean pin = false, isNewMessages = false;
+
+    public FavItemBd(){}
+
+    public FavItemBd(FavItem item){
+        favId = item.getFavId();
+        topicId = item.getTopicId();
+        forumId = item.getForumId();
+        authorId = item.getAuthorId();
+        lastUserId = item.getLastUserId();
+        stParam = item.getStParam();
+        pages = item.getPages();
+
+        trackType = item.getTrackType();
+        info = item.getInfo();
+        infoColor = item.getInfoColor();
+        topicTitle = item.getTopicTitle();
+        forumTitle = item.getForumTitle();
+        authorUserNick = item.getAuthorUserNick();
+        lastUserNick = item.getLastUserNick();
+        date = item.getDate();
+        desc = item.getDesc();
+
+        pin = item.isPin();
+        isNewMessages = item.isNewMessages();
+    }
 
     public String getDesc() {
         return desc;
@@ -155,4 +184,5 @@ public class FavItem implements IFavItem {
     public void setNewMessages(boolean newMessages) {
         isNewMessages = newMessages;
     }
+
 }
