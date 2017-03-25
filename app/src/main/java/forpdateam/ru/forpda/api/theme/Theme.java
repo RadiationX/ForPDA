@@ -18,7 +18,6 @@ import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.utils.Utils;
-import io.reactivex.Observable;
 
 /**
  * Created by radiationx on 04.08.16.
@@ -43,20 +42,10 @@ public class Theme {
     public Theme() {
     }
 
-    public Observable<ThemePage> getPage(final String url) {
-        return getPage(url, false);
-    }
 
-    public Observable<ThemePage> getPage(final String url, boolean generateHtml) {
-        return Observable.fromCallable(() -> _getPage(url, generateHtml));
-    }
-
-
-    public ThemePage _getPage(final String url, boolean generateHtml) throws Exception {
-        Log.d("FORPDA_LOG", "page start _getPage");
+    public ThemePage getTheme(final String url, boolean generateHtml) throws Exception {
+        Log.d("FORPDA_LOG", "page start getPage");
         String response = Client.getInstance().get(url);
-
-
         return parsePage(url, response, generateHtml);
     }
 
@@ -325,11 +314,7 @@ public class Theme {
     }
 
 
-    public Observable<String> reportPost(int themeId, int postId, String message) {
-        return Observable.fromCallable(() -> _reportPost(themeId, postId, message));
-    }
-
-    private String _reportPost(int topicId, int postId, String message) throws Exception {
+    public String reportPost(int topicId, int postId, String message) throws Exception {
         Map<String, String> headers = new HashMap<>();
         headers.put("act", "report");
         headers.put("send", "1");
@@ -348,22 +333,14 @@ public class Theme {
     }
 
 
-    public Observable<String> deletePost(int postId) {
-        return Observable.fromCallable(() -> _deletePost(postId));
-    }
-
-    private String _deletePost(int postId) throws Exception {
+    public String deletePost(int postId) throws Exception {
         String url = "http://4pda.ru/forum/index.php?act=zmod&auth_key=".concat(Client.getAuthKey()).concat("&code=postchoice&tact=delete&selectedpids=").concat(Integer.toString(postId));
         String response = Client.getInstance().get(url);
         return response.equals("ok") ? response : "";
     }
 
 
-    public Observable<String> votePost(int postId, boolean type) {
-        return Observable.fromCallable(() -> _votePost(postId, type));
-    }
-
-    private String _votePost(int postId, boolean type) throws Exception {
+    public String votePost(int postId, boolean type) throws Exception {
         String response = Client.getInstance().get("http://4pda.ru/forum/zka.php?i=".concat(Integer.toString(postId)).concat("&v=").concat(type ? "1" : "-1"));
         String result = null;
 

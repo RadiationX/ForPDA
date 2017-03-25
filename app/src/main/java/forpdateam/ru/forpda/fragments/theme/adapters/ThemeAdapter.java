@@ -79,7 +79,7 @@ public class ThemeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private void bindMessageHolder(ThemeAdapter.MessageViewHolder holder, int position) {
         ThemePost item = postList.get(position);
         /*long time = System.currentTimeMillis();
-        Document document = Document.parse(postList.get(position).getBody());
+        Document document = Document.getTopics(postList.get(position).getBody());
         Log.d("FORPDA_LOG", "theme parsing time document " + (System.currentTimeMillis() - time));*/
         BaseTag view;
         if (!createdTrees.containsKey(position)) {

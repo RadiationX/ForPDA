@@ -14,8 +14,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
+import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.bdobjects.qms.QmsThemesBd;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsThemesAdapter;
@@ -110,7 +110,7 @@ public class QmsThemesFragment extends TabFragment {
     @Override
     public void loadData() {
         refreshLayout.setRefreshing(true);
-        mainSubscriber.subscribe(Api.Qms().getThemesList(currentThemes.getUserId()), this::onLoadThemes, currentThemes, v -> loadData());
+        mainSubscriber.subscribe(RxApi.Qms().getThemesList(currentThemes.getUserId()), this::onLoadThemes, currentThemes, v -> loadData());
     }
 
     private void onLoadThemes(QmsThemes themes) {

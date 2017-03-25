@@ -9,17 +9,14 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import forpdateam.ru.forpda.api.profile.interfaces.IProfileApi;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.utils.Utils;
-import io.reactivex.Observable;
 
 /**
  * Created by radiationx on 03.08.16.
  */
-public class Profile implements IProfileApi {
-
+public class Profile {
     private static final Pattern mainPattern = Pattern.compile("<div[^>]*?user-box[\\s\\S]*?<img src=\"([^\"]*?)\"[\\s\\S]*?<h1>([^<]*?)<\\/h1>[\\s\\S]*?(?=<span class=\"title\">([^<]*?)<\\/span>| )[\\s\\S]*?<h2>(?:<span style[^>]*?>|)([^\"<]*?)(?:<\\/span>|)<\\/h2>[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?<div class=\"u-note\">([\\s\\S]*?)<\\/div>[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)");
     private static final Pattern info = Pattern.compile("<li[\\s\\S]*?title[^>]*?>([^>]*?)<[\\s\\S]*?div[^>]*>([\\s\\S]*?)</div>");
     private static final Pattern personal = Pattern.compile("<li[\\s\\S]*?title[^>]*?>([^>]*?)<[\\s\\S]*?(?=<div[^>]*>([^<]*)[\\s\\S]*?</div>|)<");
@@ -30,11 +27,10 @@ public class Profile implements IProfileApi {
     private static final Pattern note = Pattern.compile("<textarea[^>]*?profile-textarea\"[^>]*?>([\\s\\S]*?)</textarea>");
     private static final Pattern about = Pattern.compile("<div[^>]*?div-custom-about[^>]*?>([\\s\\S]*?)</div>");
 
-    private ProfileModel parse(String url) throws Exception {
+    public ProfileModel getProfile(String url) throws Exception {
         ProfileModel profile = new ProfileModel();
         final String response = Client.getInstance().get(url);
 
-        Date date = new Date();
         final Matcher mainMatcher = mainPattern.matcher(response);
         if (mainMatcher.find()) {
             profile.setAvatar(safe(mainMatcher.group(1)));
@@ -115,22 +111,14 @@ public class Profile implements IProfileApi {
         return profile;
     }
 
-    private static String safe(String s) {
-        return s == null ? null : s.trim();
-    }
-
-    private boolean saveNote(String note) throws Exception {
+    public boolean saveNote(String note) throws Exception {
         Map<String, String> headers = new HashMap<>();
         headers.put("note", note);
         String response = Client.getInstance().post("http://4pda.ru/forum/index.php?act=profile-xhr&action=save-note", headers);
         return response.equals("1");
     }
 
-    public Observable<ProfileModel> get(String url) {
-        return Observable.fromCallable(() -> parse(url));
-    }
-
-    public Observable<Boolean> saveNoteRx(final String note) {
-        return Observable.fromCallable(() -> saveNote(note));
+    private static String safe(String s) {
+        return s == null ? null : s.trim();
     }
 }

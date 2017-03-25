@@ -15,7 +15,6 @@ import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.RequestFile;
-import io.reactivex.Observable;
 
 /**
  * Created by radiationx on 10.01.17.
@@ -26,27 +25,9 @@ public class EditPost {
     private final static Pattern loadedAttachments = Pattern.compile("add_current_item\\([^'\"]*?['\"](\\d+)['\"],[^'\"]*?['\"]([^'\"]*\\.(\\w*))['\"],[^'\"]*?['\"]([^'\"]*?)['\"],[^'\"]*?['\"][^'\"]*\\/(\\w*)\\.[^\"']*?['\"]");
     private final static Pattern statusInfo = Pattern.compile("can_upload = parseInt\\([\"'](\\d+)'\\)[\\s\\S]*?status_msg_files = .([\\s\\S]*?).;[\\s\\S]*?status_msg = .([\\s\\S]*?).;[\\s\\S]*?status_is_error = ([\\s\\S]*?);");
 
-    public Observable<EditPostForm> loadForm(int postId) {
-        return Observable.fromCallable(() -> _loadForm(postId));
-    }
 
-    public Observable<List<AttachmentItem>> uploadFiles(List<RequestFile> files) {
-        return uploadFiles(0, files);
-    }
 
-    public Observable<List<AttachmentItem>> uploadFiles(final int id, List<RequestFile> files) {
-        return Observable.fromCallable(() -> _uploadFiles(id, files));
-    }
-
-    public Observable<List<AttachmentItem>> deleteFiles(List<AttachmentItem> items) {
-        return deleteFiles(0, items);
-    }
-
-    public Observable<List<AttachmentItem>> deleteFiles(final int id, List<AttachmentItem> items) {
-        return Observable.fromCallable(() -> _deleteFiles(id, items));
-    }
-
-    private EditPostForm _loadForm(int postId) throws Exception {
+    public EditPostForm loadForm(int postId) throws Exception {
         Log.d("FORPDA_LOG", "START LOAD FORM");
         EditPostForm form = new EditPostForm();
         String url = "http://4pda.ru/forum/index.php?s=&act=post&do=post-edit-show&p=".concat(Integer.toString(postId));
@@ -69,7 +50,7 @@ public class EditPost {
         return form;
     }
 
-    private List<AttachmentItem> _uploadFiles(int postId, List<RequestFile> files) throws Exception {
+    public List<AttachmentItem> uploadFiles(int postId, List<RequestFile> files) throws Exception {
         String url = "http://4pda.ru/forum/index.php?&act=attach&code=attach_upload_process&attach_rel_id=".concat(postId == 0 ? "" : Integer.toString(postId));
         List<AttachmentItem> items = new ArrayList<>();
         AttachmentItem item;
@@ -92,7 +73,7 @@ public class EditPost {
         return items;
     }
 
-    private List<AttachmentItem> _deleteFiles(int postId, List<AttachmentItem> items) throws Exception {
+    public List<AttachmentItem> deleteFiles(int postId, List<AttachmentItem> items) throws Exception {
         String response;
         Matcher matcher;
         for (AttachmentItem item : items) {
@@ -136,11 +117,9 @@ public class EditPost {
         return AttachmentItem.STATUS_UNKNOWN;
     }
 
-    public Observable<ThemePage> sendPost(EditPostForm form) {
-        return Observable.fromCallable(() -> _sendPost(form));
-    }
 
-    private ThemePage _sendPost(EditPostForm form) throws Exception {
+
+    public ThemePage sendPost(EditPostForm form) throws Exception {
         String url = "http://4pda.ru/forum/index.php";
         Map<String, String> headers = new HashMap<>();
         headers.put("act", "Post");

@@ -8,7 +8,6 @@ import forpdateam.ru.forpda.api.topcis.models.TopicItem;
 import forpdateam.ru.forpda.api.topcis.models.TopicsData;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.utils.Utils;
-import io.reactivex.Observable;
 
 /**
  * Created by radiationx on 01.03.17.
@@ -20,11 +19,7 @@ public class Topics {
     private final static Pattern announcePattern = Pattern.compile("<div[^>]*?anonce_body[^>]*?>[\\s\\S]*?<a[^>]*?href=['\"]([^\"']*?)[\"'][^>]*?>([\\s\\S]*?)<\\/a>[^<]*?<\\/div>");
     private final static Pattern topicsPattern = Pattern.compile("<div[^>]*?data-topic=\"(\\d+)\"[^>]*?>[^<]*?<div[^>]*?class=\"topic_title\"[^>]*?>[^<]*?<span[^>]*?class=\"modifier\"[^>]*?>(?:[^<]*?<font[^>]*?>)?([^<]*?)(?:<\\/font>)?<\\/span>[^<]*?(\\(!\\))?[^<]*?<a[^>]*?href=\"[^\"]*?\"[^>]*?>([\\s\\S]*?)<\\/a>(?: ?&nbsp;[\\s\\S]*?<\\/div>|<\\/div>)[^<]*?<div[^>]*?class=\"topic_body\"[^>]*?>(?:[^<]*?<span[^>]*?class=\"topic_desc\"[^>]*?>(?!автор)([\\s\\S]*?)<br\\s?\\/>[^<]*?<\\/span>)?[^<]*?<span[^>]*?class=\"topic_desc\"[^>]*?>[^<]*?<a[^>]*?showuser=(\\d+)[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/span>[\\s\\S]*?showuser=(\\d+)[^>]*?>([^<]*?)<\\/a>\\s?([^<]*?)(?:<span[\\s\\S]*?showuser=(\\d+)[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/span>)?<\\/div>[^<]*?<\\/div>");
 
-    public Observable<TopicsData> getTopics(int id, int st) {
-        return Observable.fromCallable(() -> parse(id, st));
-    }
-
-    private TopicsData parse(int id, int st) throws Exception {
+    public TopicsData getTopics(int id, int st) throws Exception {
         TopicsData data = new TopicsData();
         String response = Client.getInstance().get("http://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(id)).concat("&st=").concat(Integer.toString(st)));
 

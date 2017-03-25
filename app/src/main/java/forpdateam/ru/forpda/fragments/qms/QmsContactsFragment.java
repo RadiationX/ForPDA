@@ -25,6 +25,7 @@ import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.interfaces.IQmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
+import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.bdobjects.qms.QmsContactBd;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsContactsAdapter;
@@ -58,7 +59,7 @@ public class QmsContactsFragment extends TabFragment {
         if (contactDialogMenu == null) {
             contactDialogMenu = new AlertDialogMenu<>();
             contactDialogMenu.addItem("В черный список", (context, data) -> {
-                mainSubscriber.subscribe(Api.Qms().blockUser(data.getNick()), qmsContacts -> {
+                mainSubscriber.subscribe(RxApi.Qms().blockUser(data.getNick()), qmsContacts -> {
                     if (qmsContacts.size() > 0) {
                         Toast.makeText(getContext(), "Пользователь добавлен в черный список", Toast.LENGTH_SHORT).show();
                     }
@@ -166,7 +167,7 @@ public class QmsContactsFragment extends TabFragment {
     @Override
     public void loadData() {
         refreshLayout.setRefreshing(true);
-        mainSubscriber.subscribe(Api.Qms().getContactList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
+        mainSubscriber.subscribe(RxApi.Qms().getContactList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
     }
 
     private void onLoadContacts(ArrayList<QmsContact> data) {
@@ -196,7 +197,7 @@ public class QmsContactsFragment extends TabFragment {
 
     public void deleteDialog(int mid) {
         refreshLayout.setRefreshing(true);
-        helperSubscriber.subscribe(Api.Qms().deleteDialog(mid), this::onDeletedDialog, "");
+        helperSubscriber.subscribe(RxApi.Qms().deleteDialog(mid), this::onDeletedDialog, "");
     }
 
     private void onDeletedDialog(String res) {

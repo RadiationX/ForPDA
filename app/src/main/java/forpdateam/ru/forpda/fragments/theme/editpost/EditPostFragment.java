@@ -15,10 +15,10 @@ import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.TabManager;
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
+import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.client.RequestFile;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.theme.ThemeFragment;
@@ -171,7 +171,7 @@ public class EditPostFragment extends TabFragment {
         for (AttachmentItem item : attachments) {
             postForm.addAttachment(item);
         }
-        sendSubscriber.subscribe(Api.EditPost().sendPost(postForm), s -> {
+        sendSubscriber.subscribe(RxApi.EditPost().sendPost(postForm), s -> {
             messagePanel.setProgressState(false);
             ThemeFragment fragment = (ThemeFragment) TabManager.getInstance().get(getParentTag());
             if (fragment != null) {
@@ -186,7 +186,7 @@ public class EditPostFragment extends TabFragment {
     }
 
     private void loadForm() {
-        formSubscriber.subscribe(Api.EditPost().loadForm(postForm.getPostId()), form -> {
+        formSubscriber.subscribe(RxApi.EditPost().loadForm(postForm.getPostId()), form -> {
             postForm.setMessage(form.getMessage());
             postForm.setEditReason(form.getEditReason());
             postForm.setAttachments(form.getAttachments());
@@ -197,13 +197,13 @@ public class EditPostFragment extends TabFragment {
 
     public void uploadFiles(List<RequestFile> files) {
         attachmentsPopup.preUploadFiles(files);
-        attachmentSubscriber.subscribe(Api.EditPost().uploadFiles(postForm.getPostId(), files), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
+        attachmentSubscriber.subscribe(RxApi.EditPost().uploadFiles(postForm.getPostId(), files), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
     }
 
     public void removeFiles() {
         attachmentsPopup.preDeleteFiles();
         List<AttachmentItem> selectedFiles = attachmentsPopup.getSelected();
-        attachmentSubscriber.subscribe(Api.EditPost().deleteFiles(postForm.getPostId(), selectedFiles), item -> attachmentsPopup.onDeleteFiles(item), selectedFiles, null);
+        attachmentSubscriber.subscribe(RxApi.EditPost().deleteFiles(postForm.getPostId(), selectedFiles), item -> attachmentsPopup.onDeleteFiles(item), selectedFiles, null);
     }
 
     private static final int PICK_IMAGE = 1228;

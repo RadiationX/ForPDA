@@ -19,6 +19,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
+import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -115,7 +116,7 @@ public class DrawerHeader {
     }
 
     private void load() {
-        Api.Profile().get("http://4pda.ru/forum/index.php?showuser=".concat(Api.Auth().getUserId() == null ? "2556269" : Api.Auth().getUserId())).onErrorReturn(throwable -> new ProfileModel())
+        RxApi.Profile().getProfile("http://4pda.ru/forum/index.php?showuser=".concat(Api.Auth().getUserId() == null ? "2556269" : Api.Auth().getUserId())).onErrorReturn(throwable -> new ProfileModel())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::onLoad);

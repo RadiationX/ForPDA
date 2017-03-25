@@ -11,7 +11,6 @@ import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.utils.Utils;
-import io.reactivex.Observable;
 
 /**
  * Created by radiationx on 01.02.17.
@@ -22,11 +21,7 @@ public class Search {
     private final static Pattern forumPostsPattern = Pattern.compile("<div[^>]*?class=\"cat_name[^>]*?>[^<]*?<a[^>]*?showtopic=(\\d+)[^>]*?p=(\\d+)[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?post_date[^>]*>([^&]*?)&[\\s\\S]*?<a[^>]*?showuser=(\\d+)[^>]*?data-av=\"([^\"]*?)\"[^>]*?>([\\s\\S]*?)<\\/?[ia][\\s\\S]*?post_body[^>]*?>([\\s\\S]*?)<\\/div><\\/div>(?=<div[^>]*?class=\"cat_name[^>]*?>|<div><div[^>]*?class=\"pagination|<div><\\/div><br[^>]*?><\\/form>)");
     private final static Pattern newsListPattern = Pattern.compile("<li>[^<]*?<div[^>]*?class=\"photo\"[^>]*?>[\\s\\S]*?<a[^\"]*?href=\"[^\"]*?(\\d+)\\/\"[^>]*?>[\\s\\S]*?<img[^>]*?src=\"([\\s\\S]*?)\"[^>]*?>[\\s\\S]*?class=\"date[^>]*>([\\s\\S]*?)<\\/em>[\\s\\S]*?showuser=(\\d+)[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?<h\\d[^>]*>[^<]*?<a[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?<p>[^<]*?<a[^>]*>([\\s\\S]*?)<\\/a>[^<]*?<\\/p>");
 
-    public Observable<SearchResult> parse(SearchSettings settings) {
-        return Observable.fromCallable(() -> _parse(settings));
-    }
-
-    public SearchResult _parse(SearchSettings settings) throws Exception {
+    public SearchResult getSearch(SearchSettings settings) throws Exception {
         SearchResult result = new SearchResult();
         String response = Client.getInstance().get(settings.toUrl());
         Matcher matcher = null;

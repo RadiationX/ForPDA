@@ -25,6 +25,7 @@ import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.auth.models.AuthForm;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
+import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.SimpleTextWatcher;
 import forpdateam.ru.forpda.utils.ourparser.Html;
@@ -159,7 +160,7 @@ public class AuthFragment extends TabFragment {
         animation1.setDuration(375);
         complete.startAnimation(animation1);
 
-        profileSubscriber.subscribe(Api.Profile().get("http://4pda.ru/forum/index.php?showuser=".concat(Api.Auth().getUserId())), this::onProfileLoad, new ProfileModel());
+        profileSubscriber.subscribe(RxApi.Profile().getProfile("http://4pda.ru/forum/index.php?showuser=".concat(Api.Auth().getUserId())), this::onProfileLoad, new ProfileModel());
     }
 
     private void onProfileLoad(ProfileModel profile) {

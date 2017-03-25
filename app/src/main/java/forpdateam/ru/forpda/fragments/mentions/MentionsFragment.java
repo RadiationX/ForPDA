@@ -11,8 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.mentions.models.MentionsData;
+import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.pagination.PaginationHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -83,7 +83,7 @@ public class MentionsFragment extends TabFragment {
     @Override
     public void loadData() {
         refreshLayout.setRefreshing(true);
-        mainSubscriber.subscribe(Api.Mentions().getMentions(currentSt), this::onLoadThemes, new MentionsData(), v -> loadData());
+        mainSubscriber.subscribe(RxApi.Mentions().getMentions(currentSt), this::onLoadThemes, new MentionsData(), v -> loadData());
     }
 
     private void onLoadThemes(MentionsData data) {

@@ -19,9 +19,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.api.qms.models.QmsMessage;
+import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsChatAdapter;
 import forpdateam.ru.forpda.messagepanel.MessagePanel;
@@ -177,13 +177,13 @@ public class QmsChatFragment extends TabFragment {
         } else if (messagePanel.getMessage().isEmpty()) {
             Toast.makeText(getContext(), "Введите сообщение", Toast.LENGTH_SHORT).show();
         } else {
-            mainSubscriber.subscribe(Api.Qms().sendNewTheme(userNick, titleField.getText().toString(), messagePanel.getMessage()), this::onNewThemeCreate, new QmsChatModel());
+            mainSubscriber.subscribe(RxApi.Qms().sendNewTheme(userNick, titleField.getText().toString(), messagePanel.getMessage()), this::onNewThemeCreate, new QmsChatModel());
         }
     }
 
     private void sendMessage() {
         messagePanel.setProgressState(true);
-        messageSubscriber.subscribe(Api.Qms().sendMessage(userId, themeId, messagePanel.getMessage()), qmsMessage -> {
+        messageSubscriber.subscribe(RxApi.Qms().sendMessage(userId, themeId, messagePanel.getMessage()), qmsMessage -> {
             messagePanel.setProgressState(false);
             if (qmsMessage.getContent() != null) {
                 adapter.addMessage(qmsMessage);
@@ -206,7 +206,7 @@ public class QmsChatFragment extends TabFragment {
     private Subscriber<String[]> searchUserSubscriber = new Subscriber<>(this);
 
     private void searchUser(String nick) {
-        searchUserSubscriber.subscribe(Api.Qms().search(nick), this::onShowSearchRes, new String[]{});
+        searchUserSubscriber.subscribe(RxApi.Qms().findUser(nick), this::onShowSearchRes, new String[]{});
     }
 
     private void onShowSearchRes(String[] res) {
@@ -256,7 +256,7 @@ public class QmsChatFragment extends TabFragment {
     @Override
     public void loadData() {
         if (userId != -1 && themeId != -1) {
-            mainSubscriber.subscribe(Api.Qms().getChat(userId, themeId), this::onLoadChat, new QmsChatModel(), v -> loadData());
+            mainSubscriber.subscribe(RxApi.Qms().getChat(userId, themeId), this::onLoadChat, new QmsChatModel(), v -> loadData());
         }
     }
 

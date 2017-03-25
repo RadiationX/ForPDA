@@ -38,12 +38,12 @@ import java.util.Locale;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
+import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.client.RequestFile;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
@@ -194,7 +194,7 @@ public abstract class ThemeFragment extends TabFragment {
     public void loadData() {
         if (refreshLayout != null)
             refreshLayout.setRefreshing(true);
-        mainSubscriber.subscribe(Api.Theme().getPage(tab_url, true), this::onLoadData, new ThemePage(), v -> loadData());
+        mainSubscriber.subscribe(RxApi.Theme().getTheme(tab_url, true), this::onLoadData, new ThemePage(), v -> loadData());
     }
 
     protected void onLoadData(ThemePage page) throws Exception {
@@ -378,7 +378,7 @@ public abstract class ThemeFragment extends TabFragment {
     private void sendMessage() {
         messagePanel.setProgressState(true);
         EditPostForm form = createEditPostForm();
-        mainSubscriber.subscribe(Api.EditPost().sendPost(form), s -> {
+        mainSubscriber.subscribe(RxApi.EditPost().sendPost(form), s -> {
             messagePanel.setProgressState(false);
             onLoadData(s);
             messagePanel.clearAttachments();
@@ -406,13 +406,13 @@ public abstract class ThemeFragment extends TabFragment {
 
     public void uploadFiles(List<RequestFile> files) {
         attachmentsPopup.preUploadFiles(files);
-        attachmentSubscriber.subscribe(Api.EditPost().uploadFiles(56965580, files), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
+        attachmentSubscriber.subscribe(RxApi.EditPost().uploadFiles(56965580, files), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
     }
 
     public void removeFiles() {
         attachmentsPopup.preDeleteFiles();
         List<AttachmentItem> selectedFiles = attachmentsPopup.getSelected();
-        attachmentSubscriber.subscribe(Api.EditPost().deleteFiles(56965580, selectedFiles), item -> attachmentsPopup.onDeleteFiles(item), selectedFiles, null);
+        attachmentSubscriber.subscribe(RxApi.EditPost().deleteFiles(56965580, selectedFiles), item -> attachmentsPopup.onDeleteFiles(item), selectedFiles, null);
     }
 
 
@@ -565,7 +565,7 @@ public abstract class ThemeFragment extends TabFragment {
     }
 
     protected void doReportPost(int themeId, int postId, String message) {
-        helperSubscriber.subscribe(Api.Theme().reportPost(themeId, postId, message), s -> Toast.makeText(getContext(), s.isEmpty() ? "Неизвестная ошибка" : s, Toast.LENGTH_SHORT).show(), "", v -> doReportPost(themeId, postId, message));
+        helperSubscriber.subscribe(RxApi.Theme().reportPost(themeId, postId, message), s -> Toast.makeText(getContext(), s.isEmpty() ? "Неизвестная ошибка" : s, Toast.LENGTH_SHORT).show(), "", v -> doReportPost(themeId, postId, message));
     }
 
     //Удаление сообщения
@@ -578,12 +578,12 @@ public abstract class ThemeFragment extends TabFragment {
     }
 
     protected void doDeletePost(int postId) {
-        helperSubscriber.subscribe(Api.Theme().deletePost(postId), s -> toast(!s.isEmpty() ? "Сообщение удалено" : "Ошибка"), "", v -> doDeletePost(postId));
+        helperSubscriber.subscribe(RxApi.Theme().deletePost(postId), s -> toast(!s.isEmpty() ? "Сообщение удалено" : "Ошибка"), "", v -> doDeletePost(postId));
     }
 
     //Изменение репутации сообщения
     public void votePost(ThemePost post, boolean type) {
-        helperSubscriber.subscribe(Api.Theme().votePost(post.getId(), type), s -> toast(s.isEmpty() ? "Неизвестная ошибка" : s), "", v -> votePost(post, type));
+        helperSubscriber.subscribe(RxApi.Theme().votePost(post.getId(), type), s -> toast(s.isEmpty() ? "Неизвестная ошибка" : s), "", v -> votePost(post, type));
     }
 
     //Изменение репутации пользователя
@@ -605,6 +605,6 @@ public abstract class ThemeFragment extends TabFragment {
     }
 
     protected void doChangeReputation(int postId, int userId, boolean type, String message) {
-        helperSubscriber.subscribe(Api.Reputation().changeReputation(postId, userId, type, message), s -> toast(s.isEmpty() ? "Репутация изменена" : s), "error", v -> doChangeReputation(postId, userId, type, message));
+        helperSubscriber.subscribe(RxApi.Reputation().editReputation(postId, userId, type, message), s -> toast(s.isEmpty() ? "Репутация изменена" : s), "error", v -> doChangeReputation(postId, userId, type, message));
     }
 }

@@ -19,9 +19,9 @@ import java.util.ArrayList;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.interfaces.IQmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
+import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsContactsAdapter;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
@@ -106,7 +106,7 @@ public class QmsBlackListFragment extends TabFragment {
     @Override
     public void loadData() {
         refreshLayout.setRefreshing(true);
-        mainSubscriber.subscribe(Api.Qms().getBlackList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
+        mainSubscriber.subscribe(RxApi.Qms().getBlackList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
     }
 
     private void onLoadContacts(ArrayList<QmsContact> data) {
@@ -117,12 +117,12 @@ public class QmsBlackListFragment extends TabFragment {
 
     private void blockUser(String nick) {
         refreshLayout.setRefreshing(true);
-        mainSubscriber.subscribe(Api.Qms().blockUser(nick), this::onEditedList, currentData, null);
+        mainSubscriber.subscribe(RxApi.Qms().blockUser(nick), this::onEditedList, currentData, null);
     }
 
     private void unBlockUser(int[] userIds) {
         refreshLayout.setRefreshing(true);
-        mainSubscriber.subscribe(Api.Qms().unBlockUsers(userIds), this::onEditedList, currentData, null);
+        mainSubscriber.subscribe(RxApi.Qms().unBlockUsers(userIds), this::onEditedList, currentData, null);
     }
 
     private void onEditedList(ArrayList<QmsContact> data) {
@@ -134,7 +134,7 @@ public class QmsBlackListFragment extends TabFragment {
     }
 
     private void searchUser(String nick) {
-        searchUserSubscriber.subscribe(Api.Qms().search(nick), this::onShowSearchRes, new String[]{});
+        searchUserSubscriber.subscribe(RxApi.Qms().findUser(nick), this::onShowSearchRes, new String[]{});
     }
 
     private void onShowSearchRes(String[] res) {

@@ -24,9 +24,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
+import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.pagination.PaginationHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -330,7 +330,7 @@ public class SearchFragment extends TabFragment {
             searchSettingsView.setVisibility(View.GONE);
         }
         refreshLayout.setRefreshing(true);
-        mainSubscriber.subscribe(Api.Search().parse(settings), this::onLoadData, new SearchResult(), v -> loadData());
+        mainSubscriber.subscribe(RxApi.Search().getSearch(settings), this::onLoadData, new SearchResult(), v -> loadData());
     }
 
     private void onLoadData(SearchResult searchResult) {
