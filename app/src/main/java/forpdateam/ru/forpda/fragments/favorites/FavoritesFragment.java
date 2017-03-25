@@ -140,7 +140,6 @@ public class FavoritesFragment extends TabFragment {
 
     @Override
     public void loadData() {
-        Log.e("SUKA", "CALL LOAD DATA");
         refreshLayout.setRefreshing(true);
         mainSubscriber.subscribe(RxApi.Favorites().getFavorites(currentSt), this::onLoadThemes, new FavData(), v -> loadData());
     }
@@ -166,9 +165,7 @@ public class FavoritesFragment extends TabFragment {
     }
 
     private void bindView() {
-        Log.e("SUKA", "BINDVIEW");
         results = realm.where(FavItemBd.class).findAll();
-        Log.e("SUKA", "RESULTS "+results.size());
         if (results.size() != 0) {
             ArrayList<IFavItem> pinned = new ArrayList<>();
             ArrayList<IFavItem> items = new ArrayList<>();

@@ -156,7 +156,7 @@ public class ReputationFragment extends TabFragment {
                     loadData();
                     return false;
                 });
-        if (data.getId() != ClientHelper.getUserIdInt()) {
+        if (data.getId() != ClientHelper.getUserId()) {
             menu.add("Повысить").setOnMenuItemClickListener(item -> {
                 changeReputation(true);
                 return false;

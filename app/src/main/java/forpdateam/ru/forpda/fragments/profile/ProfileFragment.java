@@ -80,7 +80,7 @@ public class ProfileFragment extends TabFragment {
             tab_url = getArguments().getString(ARG_TAB);
         }
         if (tab_url == null || tab_url.isEmpty())
-            tab_url = "http://4pda.ru/forum/index.php?showuser=".concat(ClientHelper.getUserId() == null ? "2556269" : ClientHelper.getUserId());
+            tab_url = "http://4pda.ru/forum/index.php?showuser=".concat(Integer.toString(ClientHelper.getUserId() == 0 ? 2556269 : ClientHelper.getUserId()));
     }
 
     @Nullable
@@ -338,7 +338,7 @@ public class ProfileFragment extends TabFragment {
             addInfoItem(getContext().getString(R.string.profile_item_text_alerts), profile.getAlerts());
         Log.d("FORPDA_LOG", "check 3 " + (System.currentTimeMillis() - time));
         if (profile.getContacts().size() > 0) {
-            if (!Pattern.compile("showuser=" + ClientHelper.getUserId()).matcher(tab_url).find()) {
+            if (!Pattern.compile("showuser=".concat(Integer.toString(ClientHelper.getUserId()))).matcher(tab_url).find()) {
                 toolbar.getMenu().add("Написать").setIcon(App.getAppDrawable(R.drawable.ic_create_white_24dp)).setOnMenuItemClickListener(item -> {
                     IntentHandler.handle(profile.getContacts().get(0).first);
                     return false;

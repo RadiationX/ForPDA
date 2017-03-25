@@ -54,7 +54,7 @@ public class Client {
         ClientHelper.setUserId(App.getInstance().getPreferences().getString("member_id", null));
         Log.d("FORPDA_LOG", "INIT AUTH DATA " + member_id + " : " + pass_hash + " : " + App.getInstance().getPreferences().getString("member_id", null));
         if (member_id != null && pass_hash != null) {
-            ClientHelper.setAuthState(true);
+            ClientHelper.setAuthState(ClientHelper.AUTH_STATE_LOGIN);
             //Первичная загрузка кукисов
             cookies.put("member_id", parseCookie(member_id));
             cookies.put("pass_hash", parseCookie(pass_hash));

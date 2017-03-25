@@ -51,7 +51,7 @@ class ThemeDialogsHelper {
         }
         showedUserMenu.clear();
         showedUserMenu.addItem(userMenu.get(0));
-        if (ClientHelper.getAuthState() && post.getUserId() != ClientHelper.getUserIdInt())
+        if (ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN && post.getUserId() != ClientHelper.getUserId())
             showedUserMenu.addItem(userMenu.get(1));
         showedUserMenu.addItem(userMenu.get(2));
         showedUserMenu.addItem(userMenu.get(3));
@@ -71,7 +71,7 @@ class ThemeDialogsHelper {
             reputationMenu.addItem("Понизить", (context, data) -> context.changeReputation(data, false));
         }
         showedReputationMenu.clear();
-        if (ClientHelper.getAuthState()) {
+        if (ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN) {
             if (post.canPlusRep())
                 showedReputationMenu.addItem(reputationMenu.get(0));
             showedReputationMenu.addItem(reputationMenu.get(1));
@@ -99,7 +99,7 @@ class ThemeDialogsHelper {
             });
         }
         showedPostMenu.clear();
-        if (ClientHelper.getAuthState()) {
+        if (ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN) {
             if (theme.currentPage.canQuote())
                 showedPostMenu.addItem(postMenu.get(0));
             if (post.canReport())

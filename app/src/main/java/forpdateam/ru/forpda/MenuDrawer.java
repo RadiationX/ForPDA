@@ -77,7 +77,7 @@ public class MenuDrawer {
             adapter.notifyDataSetChanged();
         });
         //String last = App.getInstance().getPreferences().getString("menu_drawer_last", Api.Auth_Unclear().getAuthState() ? NewsListFragment.class.getSimpleName() : AuthFragment.class.getSimpleName());
-        String last = App.getInstance().getPreferences().getString("menu_drawer_last", ClientHelper.getAuthState() ? FavoritesFragment.class.getSimpleName() : AuthFragment.class.getSimpleName());
+        String last = App.getInstance().getPreferences().getString("menu_drawer_last", ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN ? FavoritesFragment.class.getSimpleName() : AuthFragment.class.getSimpleName());
         Log.d("FORPDA_LOG", "LAAST " + last);
         if (last != null)
             select(findByClassName(last));
@@ -139,9 +139,9 @@ public class MenuDrawer {
 
         for (int i = 0; i < createdMenuItems.size(); i++) {
             MenuItem item = createdMenuItems.get(i);
-            if (item.gettClass() == AuthFragment.class && ClientHelper.getAuthState()) {
+            if (item.gettClass() == AuthFragment.class && ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN) {
                 continue;
-            } else if (!ClientHelper.getAuthState()) {
+            } else if (ClientHelper.getAuthState() != ClientHelper.AUTH_STATE_LOGIN) {
                 if (item.gettClass() == ProfileFragment.class || item.gettClass() == QmsContactsFragment.class || item.gettClass() == FavoritesFragment.class || item.gettClass() == MentionsFragment.class) {
                     continue;
                 }
