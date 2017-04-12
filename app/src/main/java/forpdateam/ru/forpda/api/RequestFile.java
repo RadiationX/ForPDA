@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.client;
+package forpdateam.ru.forpda.api;
 
 import java.io.InputStream;
 

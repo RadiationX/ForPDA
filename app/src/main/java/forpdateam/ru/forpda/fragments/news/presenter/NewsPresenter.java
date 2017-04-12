@@ -7,9 +7,9 @@ import forpdateam.ru.forpda.fragments.news.INewsView;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 
-import static forpdateam.ru.forpda.Constants.ERROR_LOAD_DATA;
-import static forpdateam.ru.forpda.Constants.ERROR_LOAD_MORE_NEW_DATA;
-import static forpdateam.ru.forpda.Constants.ERROR_UPDATE_DATA;
+import static forpdateam.ru.forpda.api.news.Constants.ERROR_LOAD_DATA;
+import static forpdateam.ru.forpda.api.news.Constants.ERROR_LOAD_MORE_NEW_DATA;
+import static forpdateam.ru.forpda.api.news.Constants.ERROR_UPDATE_DATA;
 import static forpdateam.ru.forpda.utils.Utils.log;
 
 /**

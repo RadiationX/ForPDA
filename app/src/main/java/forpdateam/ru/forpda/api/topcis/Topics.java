@@ -3,11 +3,11 @@ package forpdateam.ru.forpda.api.topcis;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.topcis.models.TopicItem;
 import forpdateam.ru.forpda.api.topcis.models.TopicsData;
-import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.utils.Utils;
+import forpdateam.ru.forpda.api.Utils;
 
 /**
  * Created by radiationx on 01.03.17.
@@ -21,7 +21,7 @@ public class Topics {
 
     public TopicsData getTopics(int id, int st) throws Exception {
         TopicsData data = new TopicsData();
-        String response = Client.getInstance().get("http://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(id)).concat("&st=").concat(Integer.toString(st)));
+        String response = Api.getWebClient().get("http://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(id)).concat("&st=").concat(Integer.toString(st)));
 
         Matcher matcher = titlePattern.matcher(response);
         if (matcher.find()) {

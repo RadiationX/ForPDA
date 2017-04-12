@@ -30,6 +30,7 @@ public class ClientHelper {
     }
 
     public void notifyAuthChanged(boolean authState) {
+
         ClientHelper.setAuthState(authState);
         loginObservable.notifyObservers(authState);
     }
@@ -43,10 +44,12 @@ public class ClientHelper {
     }
 
     public static boolean getAuthState() {
+        Log.e("FORPDA_LOG", "getAuthState "+authState);
         return authState;
     }
 
     public static void setAuthState(boolean state) {
+        Log.e("FORPDA_LOG", "NEW AUTH STATE "+authState);
         authState = state;
     }
 

@@ -43,7 +43,7 @@ import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
-import forpdateam.ru.forpda.client.RequestFile;
+import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;

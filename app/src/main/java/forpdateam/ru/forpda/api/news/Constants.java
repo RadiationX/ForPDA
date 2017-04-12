@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda;
+package forpdateam.ru.forpda.api.news;
 
 /**
  * Created by isanechek on 11/10/16.

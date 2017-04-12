@@ -1,12 +1,11 @@
 package forpdateam.ru.forpda.api.auth.models;
 
-import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.api.IWebClient;
 
 /**
  * Created by radiationx on 29.07.16.
  */
 public class AuthForm {
-    private final static String returnField = Client.minimalPage;
     private final static String rememberField = "1";
     private String captchaImageUrl;
     private String captcha;
@@ -73,7 +72,7 @@ public class AuthForm {
     }
 
     public String getReturnField() {
-        return returnField;
+        return IWebClient.MINIMAL_PAGE;
     }
 
     public String getRememberField() {

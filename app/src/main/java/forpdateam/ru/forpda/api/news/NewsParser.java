@@ -1,63 +1,63 @@
 package forpdateam.ru.forpda.api.news;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.news.models.NewsNetworkModel;
-import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.utils.Utils;
+import forpdateam.ru.forpda.api.Utils;
 import io.reactivex.Single;
 
-import static forpdateam.ru.forpda.Constants.NEWS_CATEGORY_ALL;
-import static forpdateam.ru.forpda.Constants.NEWS_CATEGORY_ARTICLES;
-import static forpdateam.ru.forpda.Constants.NEWS_CATEGORY_GAMES;
-import static forpdateam.ru.forpda.Constants.NEWS_CATEGORY_REVIEWS;
-import static forpdateam.ru.forpda.Constants.NEWS_CATEGORY_SOFTWARE;
-import static forpdateam.ru.forpda.Constants.NEWS_SUBCATEGORY_ACCESSORIES_REVIEWS;
-import static forpdateam.ru.forpda.Constants.NEWS_SUBCATEGORY_ACOUSTICS_REVIEWS;
-import static forpdateam.ru.forpda.Constants.NEWS_SUBCATEGORY_ANDROID_GAME;
-import static forpdateam.ru.forpda.Constants.NEWS_SUBCATEGORY_ANDROID_SOFTWARE;
-import static forpdateam.ru.forpda.Constants.NEWS_SUBCATEGORY_DEVSTORY_GAMES;
-import static forpdateam.ru.forpda.Constants.NEWS_SUBCATEGORY_DEVSTORY_SOFTWARE;
-import static forpdateam.ru.forpda.Constants.NEWS_SUBCATEGORY_HOW_TO_ANDROID;
-import static forpdateam.ru.forpda.Constants.NEWS_SUBCATEGORY_HOW_TO_INTERVIEW;
-import static forpdateam.ru.forpda.Constants.NEWS_SUBCATEGORY_HOW_TO_IOS;
-import static forpdateam.ru.forpda.Constants.NEWS_SUBCATEGORY_HOW_TO_WP;
-import static forpdateam.ru.forpda.Constants.NEWS_SUBCATEGORY_IOS_GAME;
-import static forpdateam.ru.forpda.Constants.NEWS_SUBCATEGORY_IOS_SOFTWARE;
-import static forpdateam.ru.forpda.Constants.NEWS_SUBCATEGORY_NOTEBOOKS_REVIEWS;
-import static forpdateam.ru.forpda.Constants.NEWS_SUBCATEGORY_SMARTPHONES_REVIEWS;
-import static forpdateam.ru.forpda.Constants.NEWS_SUBCATEGORY_SMART_WATCH_REVIEWS;
-import static forpdateam.ru.forpda.Constants.NEWS_SUBCATEGORY_TABLETS_REVIEWS;
-import static forpdateam.ru.forpda.Constants.NEWS_SUBCATEGORY_WP7_GAME;
-import static forpdateam.ru.forpda.Constants.NEWS_SUBCATEGORY_WP7_SOFTWARE;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_ACCESSORIES_REVIEWS;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_ACOUSTICS_REVIEWS;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_ALL;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_ANDROID_GAME;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_ANDROID_SOFTWARE;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_ARTICLES;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_DEVSTORY_GAMES;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_DEVSTORY_SOFTWARE;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_GAMES;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_HOW_TO_ANDROID;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_HOW_TO_INTERVIEW;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_HOW_TO_IOS;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_HOW_TO_WP;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_IOS_GAME;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_IOS_SOFTWARE;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_NOTEBOOKS_REVIEWS;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_REVIEWS;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_SMARTPHONES_REVIEWS;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_SMART_WATCH_REVIEWS;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_SOFTWARE;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_TABLETS_REVIEWS;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_WP7_GAME;
-import static forpdateam.ru.forpda.Constants.NEWS_URL_WP7_SOFTWARE;
-import static forpdateam.ru.forpda.utils.Utils.log;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_ALL;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_ARTICLES;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_GAMES;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_REVIEWS;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_SOFTWARE;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_SUBCATEGORY_ACCESSORIES_REVIEWS;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_SUBCATEGORY_ACOUSTICS_REVIEWS;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_SUBCATEGORY_ANDROID_GAME;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_SUBCATEGORY_ANDROID_SOFTWARE;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_SUBCATEGORY_DEVSTORY_GAMES;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_SUBCATEGORY_DEVSTORY_SOFTWARE;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_SUBCATEGORY_HOW_TO_ANDROID;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_SUBCATEGORY_HOW_TO_INTERVIEW;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_SUBCATEGORY_HOW_TO_IOS;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_SUBCATEGORY_HOW_TO_WP;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_SUBCATEGORY_IOS_GAME;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_SUBCATEGORY_IOS_SOFTWARE;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_SUBCATEGORY_NOTEBOOKS_REVIEWS;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_SUBCATEGORY_SMARTPHONES_REVIEWS;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_SUBCATEGORY_SMART_WATCH_REVIEWS;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_SUBCATEGORY_TABLETS_REVIEWS;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_SUBCATEGORY_WP7_GAME;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_SUBCATEGORY_WP7_SOFTWARE;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_ACCESSORIES_REVIEWS;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_ACOUSTICS_REVIEWS;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_ALL;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_ANDROID_GAME;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_ANDROID_SOFTWARE;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_ARTICLES;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_DEVSTORY_GAMES;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_DEVSTORY_SOFTWARE;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_GAMES;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_HOW_TO_ANDROID;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_HOW_TO_INTERVIEW;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_HOW_TO_IOS;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_HOW_TO_WP;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_IOS_GAME;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_IOS_SOFTWARE;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_NOTEBOOKS_REVIEWS;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_REVIEWS;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_SMARTPHONES_REVIEWS;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_SMART_WATCH_REVIEWS;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_SOFTWARE;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_TABLETS_REVIEWS;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_WP7_GAME;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_WP7_SOFTWARE;
 
 /**
  * Created by radiationx on 31.07.16.
@@ -78,9 +78,9 @@ public class NewsParser {
         String url = getUrlCategory(category);
         if (pageNumber >= 2) { url = url + "page/" + pageNumber + "/"; }
 
-        log("getNewsListFromNetwork2 ->> " + category + " " + pageNumber + " " + url);
+        Log.d("LOG","getNewsListFromNetwork2 ->> " + category + " " + pageNumber + " " + url);
         try {
-            String response = Client.getInstance().get(url);
+            String response = Api.getWebClient().get(url);
             if (response == null) return new ArrayList<>();
             Matcher matcher = pattern.matcher(response);
             while (matcher.find()) {
@@ -158,6 +158,6 @@ public class NewsParser {
     }
 
     public static String getDetailsNewsItem(@NonNull String url) throws Exception {
-        return Client.getInstance().get(url);
+        return Api.getWebClient().get(url);
     }
 }

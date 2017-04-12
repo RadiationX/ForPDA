@@ -2,9 +2,9 @@ package forpdateam.ru.forpda.api.devdb;
 
 import java.util.ArrayList;
 
+import forpdateam.ru.forpda.api.IWebClient;
 import forpdateam.ru.forpda.api.devdb.interfaces.DevDbApi;
 import forpdateam.ru.forpda.api.devdb.models.DevCatalog;
-import forpdateam.ru.forpda.client.Client;
 import io.reactivex.Observable;
 
 
@@ -24,7 +24,7 @@ public class ApiImpl implements DevDbApi {
     }
 
     @Override
-    public Observable<ArrayList<DevCatalog>> getBrands(Client client, String devicesTypeUrl) {
+    public Observable<ArrayList<DevCatalog>> getBrands(IWebClient client, String devicesTypeUrl) {
         return Observable.fromCallable(() -> Parser.parseBrands(client, devicesTypeUrl));
     }
 }

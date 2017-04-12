@@ -15,7 +15,7 @@ var blockProgressChange = false;
 //По идеи должна верно скроллить к нужному элементу, даже если пользователь прокрутил страницу
 //Как оно работает и работает ли вообще - объяснить не могу
 function onProgressChanged() {
-    if(blockProgressChange){
+    if (blockProgressChange) {
         blockProgressChange = false;
         return;
     }
@@ -40,70 +40,84 @@ function onProgressChanged() {
     lastDeltaScroll = tempDeltaScroll
 }
 
-
+function getScrollTop() {
+    return (window.pageYOffset || document.documentElement.scrollTop) - (document.documentElement.clientTop || 0);
+}
 //name может быть EventObject или строкок
 //name это аттрибут тега html, может быть просто якорем или entry+post_id
 //Вызывается из джавы, если находится на той-же странице, и в ссылке есть entry или якорь, а также при загрузке страницы
 //PageInfo.elemToScroll - переменная, заданная в шаблоне в теге script, содержит в себе якорь или entry
 //doOnLoadScroll - объект в window, задаётся false только когда была сделана перезагрузка страницы или переход назад
+
+
+
 function scrollToElement(name) {
-    ITheme.log("call scroll to");
-
-    if (typeof doOnLoadScroll !== "undefined")
-        if (doOnLoadScroll == false)
-            return;
-
-    if (typeof name != 'string') name = PageInfo.elemToScroll;
-    ITheme.log(name);
-    if (/([^-]*)-([\d]*)-(\d+)/g.test(name)) {
-        var data = /([^-]*)-([\d]*)-(\d+)/g.exec(name);
+    if (typeof name != 'string') {
+        name = PageInfo.elemToScroll;
+    }
+    var data = /([^-]*)-([\d]*)-(\d+)/g.exec(name);
+    if (data) {
+        //data[1] - name (spoil, quote, etc)
+        //data[2] - post id
+        //data[3] - number block of post, begin with 1
         data[1] = data[1].toLowerCase();
-
         if (data[1] === "spoiler") data[1] = "spoil";
         if (data[1] === "hide") data[1] = "hidden";
-
-        name = 'entry' + data[2];
-        var post = document.querySelector('[name="' + name + '"]');
-        anchorElem = post.querySelectorAll(".post-block." + data[1])[Number(data[3]) - 1];
+        anchorElem = document.querySelector('[name="entry' + data[2] + '"]');
+        anchorElem = anchorElem.querySelectorAll(".post-block." + data[1])[Number(data[3]) - 1];
     } else {
         anchorElem = document.querySelector('[name="' + name + '"]');
     }
-    //console.log(anchorElem);
-    var p = anchorElem;
+    console.log(anchorElem);
     if (anchorElem) {
-        while (p.classList && !p.classList.contains('post_body')) {
-            if (p.classList.contains('spoil')) {
-                p.classList.remove('close');
-                p.classList.add('open');
+        //Открытие всех спойлеров
+        var block = anchorElem;
+        while (block.classList && !block.classList.contains('post_body')) {
+            if (block.classList.contains('spoil')) {
+                block.classList.remove('close');
+                block.classList.add('open');
             }
-            p = p.parentNode;
+            block = block.parentNode;
+        }
+        //Открытие шапки
+        block = anchorElem;
+        while(block.classList && !block.classList.contains('post_container')){
+            block = block.parentNode;
+        }
+        if(block.classList.contains("close")){
+            var button = block.querySelector(".hat_button");
+            toggleButton(button, "hat_content");
+        }
+        //Скролее к якорю/элементу
+        if (document.readyState == "complete") {
+            doScroll(anchorElem);
+        } else {
+            window.addEventListener("load", function () {
+                setTimeout(function () {
+                    doScroll(anchorElem);
+                    onProgressChanged();
+                }, 1);
+            });
         }
     }
-    if(anchorElem)
-        anchorElem.scrollIntoView();
-    lastTop = getCoordinates(anchorElem).top;
-    //window.scrollBy(0, lastTop);
+}
 
-    lastScrollTop = (window.pageYOffset || document.documentElement.scrollTop) - (document.documentElement.clientTop || 0);
-    if (lastScrollTop == 0) {
-        var temas = lastTop;
-        window.addEventListener('load', function () {
-            lastScrollTop = temas;
-            lastTop = temas;
-            onProgressChanged();
-        });
-    }
+function doScroll(tAnchorElem) {
+    console.log(tAnchorElem);
+    tAnchorElem.scrollIntoView();
 
+    lastTop = getCoordinates(tAnchorElem).top;
+    lastScrollTop = getScrollTop();
     //Активация элементов, убирается класс active с уже активированных
     if (elemToActivation)
         elemToActivation.classList.remove('active');
 
     elemToActivation = document.querySelector('.post_container[name="' + name + '"]');
-    if(elemToActivation)
+    if (elemToActivation)
         elemToActivation.classList.add('active');
 }
 
-document.addEventListener('DOMContentLoaded', scrollToElement);
+
 
 
 /**
@@ -113,14 +127,13 @@ document.addEventListener('DOMContentLoaded', scrollToElement);
  */
 
 function blocksOpenClose() {
-    var blockTitleAll = document.querySelectorAll('.post-block.spoil>.block-title,.post-block.code>.block-title'),
-        bt;
+    var blockTitleAll = document.querySelectorAll('.post-block.spoil>.block-title,.post-block.code>.block-title');
 
     if (!blockTitleAll[0]) return;
 
-    for (var i = 0; i < blockTitleAll.length; i++) {
+    for (var i = 0, bt, bb; i < blockTitleAll.length; i++) {
         bt = blockTitleAll[i];
-        var bb = bt.parentElement.querySelector('.block-body');
+        bb = bt.parentElement.querySelector('.block-body');
         if (bb.parentElement.classList.contains('code') && bb.scrollHeight <= bb.offsetHeight) bb.parentElement.classList.remove('box');
         bt.addEventListener('click', clickOnElement, false);
     }
@@ -151,10 +164,10 @@ function blocksOpenClose() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', blocksOpenClose);
+
 
 function getCoordinates(elem) {
-    if(!elem){
+    if (!elem) {
         return {
             top: 0,
             left: 0
@@ -246,29 +259,25 @@ function toggleButton(button, bodyClass) {
     if (parent.classList.contains("close") | body.style.display == "none") {
         parent.classList.remove("close");
         parent.classList.add("open");
-        if (body !== undefined){
+        if (body !== undefined) {
             body.removeAttribute("hidden");
-            //body.removeAttribute("style");
         }
     } else {
         parent.classList.remove("open");
         parent.classList.add("close");
-        if (body !== undefined){
-            body.setAttribute("hidden","");
-            //body.style.overflow = "hidden";
-            //body.style.height = "0";
-            //body.style.visibility = "hidden";
+        if (body !== undefined) {
+            body.setAttribute("hidden", "");
         }
     }
 }
 
 
-document.addEventListener('DOMContentLoaded', improveCodeBlock);
+
 
 function improveCodeBlock() {
-	var codeBlockAll = document.querySelectorAll('.post-block.code');
-	for (var i = 0; i < codeBlockAll.length; i++) {
-        try{
+    var codeBlockAll = document.querySelectorAll('.post-block.code');
+    for (var i = 0; i < codeBlockAll.length; i++) {
+        try {
             var codeBlock = codeBlockAll[i],
                 codeTitle = codeBlock.querySelector('.block-title'),
                 codeBody = codeBlock.querySelector('.block-body'),
@@ -276,7 +285,7 @@ function improveCodeBlock() {
                 count = '',
                 lines = '';
 
-            for(var j = 0; j<splitLines.length; j++){
+            for (var j = 0; j < splitLines.length; j++) {
                 lines += '<span class="line">' + splitLines[j] + '</span><br>';
                 count += (j + 1) + '\n';
             }
@@ -286,47 +295,47 @@ function improveCodeBlock() {
             codeBlock.querySelector('.control.wrap').addEventListener('click', onClickToggleButton);
             codeBlock.querySelector('.control.select_all').addEventListener('click', SelectText);
             codeBody.innerHTML = lines;
-        }catch(error){
+        } catch (error) {
             alert(error);
         }
-	}
+    }
 
-	function onClickToggleButton(e) {
-		e.stopPropagation();
+    function onClickToggleButton(e) {
+        e.stopPropagation();
         var button = e.target;
         var block;
-		for (var i = 0; i < codeBlockAll.length; i++) {
-            if(button==codeBlockAll[i].querySelector('.control.wrap')){
+        for (var i = 0; i < codeBlockAll.length; i++) {
+            if (button == codeBlockAll[i].querySelector('.control.wrap')) {
                 block = codeBlockAll[i];
                 break;
             }
-		}
-        if(!block)return;
+        }
+        if (!block) return;
         if (block.classList.contains('wrap')) {
             block.classList.remove('wrap');
-		} else{
+        } else {
             block.classList.add('wrap');
         }
-	}
-    
+    }
+
     function SelectText(e) {
         e.stopPropagation();
         var button = e.target;
         var block;
-		for (var i = 0; i < codeBlockAll.length; i++) {
-            if(button==codeBlockAll[i].querySelector('.control.select_all')){
+        for (var i = 0; i < codeBlockAll.length; i++) {
+            if (button == codeBlockAll[i].querySelector('.control.select_all')) {
                 block = codeBlockAll[i];
                 break;
             }
-		}
+        }
         var text = block.querySelector(".block-body");
-        var range, selection  
+        var range, selection
         if (document.body.createTextRange) {
             range = document.body.createTextRange();
             range.moveToElementText(text);
             range.select();
         } else if (window.getSelection) {
-            selection = window.getSelection();        
+            selection = window.getSelection();
             range = document.createRange();
             range.selectNodeContents(text);
             selection.removeAllRanges();
@@ -334,3 +343,9 @@ function improveCodeBlock() {
         }
     }
 }
+document.onreadystatechange = function () {
+    console.log(document.readyState);
+}
+document.addEventListener('DOMContentLoaded', scrollToElement);
+document.addEventListener('DOMContentLoaded', improveCodeBlock);
+document.addEventListener('DOMContentLoaded', blocksOpenClose);

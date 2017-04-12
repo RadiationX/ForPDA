@@ -19,6 +19,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.IWebClient;
+import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.utils.ourparser.Html;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
@@ -30,12 +33,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class Client {
-    public final static String minimalPage = "http://4pda.ru/forum/index.php?showforum=200";
+public class Client implements IWebClient {
     private final static String userAgent = WebSettings.getDefaultUserAgent(App.getContext());
     private final static Pattern countsPattern = Pattern.compile("act=mentions[^>]*?><i[^>]*?>([^<]*?)<\\/i>[\\s\\S]*?act=fav[^>]*?><i[^>]*?>([^<]*?)<\\/i>[\\s\\S]*?act=qms[^>]*?data-count=\"([^\">]*?)\">");
     private final static Pattern errorPattern = Pattern.compile("^[\\s\\S]*?wr va-m text\">([\\s\\S]*?)</div></div></div></div><div class=\"footer\">");
-    private static Client INSTANCE = new Client();
+    private static Client INSTANCE = null;
     private static Map<String, Cookie> cookies;
     private static List<Cookie> listCookies;
     private Map<String, String> redirects = new HashMap<>();
@@ -46,7 +48,7 @@ public class Client {
 
     //Class
     public Client() {
-        INSTANCE = this;
+        Api.setWebClient(this);
         cookies = new HashMap<>();
         listCookies = new ArrayList<>();
         String member_id = App.getInstance().getPreferences().getString("cookie_member_id", null);
@@ -61,11 +63,12 @@ public class Client {
         }
     }
 
-    public static String getAuthKey() {
+    public String getAuthKey() {
         return App.getInstance().getPreferences().getString("auth_key", "0");
     }
 
     public static Client getInstance() {
+        if (INSTANCE == null) INSTANCE = new Client();
         return INSTANCE;
     }
 
@@ -82,9 +85,11 @@ public class Client {
             .cookieJar(new CookieJar() {
                 @Override
                 public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                    Log.d("FORPDA_LOG", "response url " + url.toString());
                     Log.d("FORPDA_LOG", "response cookies size " + cookies.size());
                     try {
                         for (Cookie cookie : cookies) {
+                            Log.e("SUKA", "response " + cookie.name() + " : " + cookie.value());
                             if (cookie.name().matches("member_id|pass_hash")) {
                                 if (cookie.value().equals("deleted")) {
                                     App.getInstance().getPreferences().edit().remove("cookie_".concat(cookie.name())).apply();
@@ -107,33 +112,42 @@ public class Client {
 
                 @Override
                 public List<Cookie> loadForRequest(HttpUrl url) {
+                    Log.e("SUKA", "CLIENT JAR " + this);
                     listCookies.clear();
-                    listCookies.addAll(cookies.values());
+                    listCookies.addAll(Client.cookies.values());
                     Log.d("FORPDA_LOG", "cookies size " + listCookies.size());
+                    for (Cookie cookie : listCookies) {
+                        Log.e("SUKA", "COOOKA!!: " + cookie.toString());
+                    }
                     return listCookies;
                 }
             })
             .build();
 
     //Network
+    @Override
     public String get(String url) throws Exception {
         return request(url, null, null, false);
     }
 
+    @Override
     public String post(String url, Map<String, String> headers) throws Exception {
         return request(url, headers, null, false);
     }
 
+    @Override
     public String post(String url, Map<String, String> headers, boolean formBody) throws Exception {
         return request(url, headers, null, formBody);
     }
 
+    @Override
     public String post(String url, Map<String, String> headers, RequestFile file) throws Exception {
         return request(url, headers, file, false);
     }
 
     //boolean formBody нужен для тех случаев, когда в хедерах есть строки с \n и т.д
-    private String request(String url, Map<String, String> headers, RequestFile file, boolean formBody) throws Exception {
+    @Override
+    public String request(String url, Map<String, String> headers, RequestFile file, boolean formBody) throws Exception {
         Log.d("FORPDA_LOG", "request url " + url);
         if (url.substring(0, 2).equals("//")) {
             url = "http:".concat(url);
@@ -227,7 +241,7 @@ public class Client {
         return redirects.get(url);
     }
 
-    public static void clearCookies() {
+    public void clearCookies() {
         cookies.clear();
         listCookies.clear();
     }

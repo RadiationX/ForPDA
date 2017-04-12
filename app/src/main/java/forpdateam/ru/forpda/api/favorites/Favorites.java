@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
-import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.utils.Utils;
+import forpdateam.ru.forpda.api.Utils;
 
 /**
  * Created by radiationx on 22.09.16.
@@ -30,7 +30,7 @@ public class Favorites {
 
     public FavData getFavorites(int st) throws Exception {
         FavData data = new FavData();
-        final String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=fav&st=".concat(Integer.toString(st)));
+        final String response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=fav&st=".concat(Integer.toString(st)));
         long time = System.currentTimeMillis();
         Matcher matcher = mainPattern.matcher(response);
         FavItem item;
@@ -67,7 +67,7 @@ public class Favorites {
     }
 
     public boolean editSubscribeType(String type, int favId) throws Exception {
-        String result = Client.getInstance().get("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0&tact=" + type + "&selectedtids=" + favId);
+        String result = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0&tact=" + type + "&selectedtids=" + favId);
         return checkIsComplete(result);
     }
 
@@ -75,7 +75,7 @@ public class Favorites {
         Map<String, String> headers = new HashMap<>();
         headers.put("selectedtids", "" + favId);
         headers.put("tact", type);
-        String result = Client.getInstance().post("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0", headers);
+        String result = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0", headers);
         return checkIsComplete(result);
     }
 
@@ -83,12 +83,12 @@ public class Favorites {
         Map<String, String> headers = new HashMap<>();
         headers.put("selectedtids", "" + favId);
         headers.put("tact", "delete");
-        String result = Client.getInstance().post("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0", headers);
+        String result = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0", headers);
         return checkIsComplete(result);
     }
 
     public boolean add(int id, String type) throws Exception {
-        String result = Client.getInstance().get("http://4pda.ru/forum/index.php?act=fav&type=add&t=" + id + "&track_type=" + type);
+        String result = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=fav&type=add&t=" + id + "&track_type=" + type);
         return checkIsComplete(result);
     }
 

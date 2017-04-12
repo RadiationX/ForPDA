@@ -5,12 +5,12 @@ import android.util.Log;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.search.models.SearchItem;
 import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
-import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.utils.Utils;
+import forpdateam.ru.forpda.api.Utils;
 
 /**
  * Created by radiationx on 01.02.17.
@@ -23,7 +23,7 @@ public class Search {
 
     public SearchResult getSearch(SearchSettings settings) throws Exception {
         SearchResult result = new SearchResult();
-        String response = Client.getInstance().get(settings.toUrl());
+        String response = Api.getWebClient().get(settings.toUrl());
         Matcher matcher = null;
         SearchItem item = null;
         boolean isNews = settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first);

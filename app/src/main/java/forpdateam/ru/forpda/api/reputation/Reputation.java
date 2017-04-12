@@ -2,17 +2,17 @@ package forpdateam.ru.forpda.api.reputation;
 
 import android.net.Uri;
 
+import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.reputation.models.RepData;
 import forpdateam.ru.forpda.api.reputation.models.RepItem;
-import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.client.OnlyShowException;
-import forpdateam.ru.forpda.utils.Utils;
+import forpdateam.ru.forpda.api.Utils;
 
 /**
  * Created by radiationx on 20.03.17.
@@ -28,7 +28,7 @@ public class Reputation {
 
     public RepData getReputation(RepData data) throws Exception {
         if (data == null) return null;
-        String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=rep&view=history&mid=" + data.getId() + "&mode=" + data.getMode() + "&order=" + data.getSort() + "&st=" + data.getPagination().getSt());
+        String response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=rep&view=history&mid=" + data.getId() + "&mode=" + data.getMode() + "&order=" + data.getSort() + "&st=" + data.getPagination().getSt());
         Matcher matcher = infoPattern.matcher(response);
         if (matcher.find()) {
             data.setId(Integer.parseInt(matcher.group(1)));
@@ -69,8 +69,8 @@ public class Reputation {
         headers.put("message", message);
 
         try {
-            Client.getInstance().post("http://4pda.ru/forum/index.php", headers);
-        } catch (OnlyShowException exception) {
+            Api.getWebClient().post("http://4pda.ru/forum/index.php", headers);
+        } catch (Exception exception) {
             return exception.getMessage();
         }
         return "";
