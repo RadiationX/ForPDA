@@ -13,8 +13,7 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
-import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.client.RequestFile;
+import forpdateam.ru.forpda.api.RequestFile;
 
 /**
  * Created by radiationx on 10.01.17.
@@ -33,7 +32,7 @@ public class EditPost {
         String url = "http://4pda.ru/forum/index.php?s=&act=post&do=post-edit-show&p=".concat(Integer.toString(postId));
         //url = url.concat("&t=").concat(Integer.toString(topicId)).concat("&f=").concat(Integer.toString(forumId));
 
-        String response = Client.getInstance().get(url);
+        String response = Api.getWebClient().get(url);
         Matcher matcher = postPattern.matcher(response);
         if (matcher.find()) {
             Log.d("FORPDA_LOG", "MESSAGE " + matcher.group(1));
@@ -42,7 +41,7 @@ public class EditPost {
             form.setEditReason(matcher.group(2));
         }
 
-        response = Client.getInstance().get("http://4pda.ru/forum/index.php?&act=attach&code=attach_upload_show&attach_rel_id=".concat(Integer.toString(postId)));
+        response = Api.getWebClient().get("http://4pda.ru/forum/index.php?&act=attach&code=attach_upload_show&attach_rel_id=".concat(Integer.toString(postId)));
         matcher = loadedAttachments.matcher(response);
         while (matcher.find())
             form.addAttachment(fillAttachment(new AttachmentItem(), matcher));
@@ -60,7 +59,7 @@ public class EditPost {
             file.setRequestName("FILE_UPLOAD[]");
             item = new AttachmentItem();
 
-            response = Client.getInstance().post(url, null, file);
+            response = Api.getWebClient().post(url, null, file);
             matcher = loadedAttachments.matcher(response);
             if (matcher.find())
                 item = fillAttachment(item, matcher);
@@ -77,7 +76,7 @@ public class EditPost {
         String response;
         Matcher matcher;
         for (AttachmentItem item : items) {
-            response = Client.getInstance().get("http://4pda.ru/forum/index.php?&act=attach&code=attach_upload_remove&attach_rel_id=".concat(postId == 0 ? "" : Integer.toString(postId)).concat("&attach_id=").concat(Integer.toString(item.getId())));
+            response = Api.getWebClient().get("http://4pda.ru/forum/index.php?&act=attach&code=attach_upload_remove&attach_rel_id=".concat(postId == 0 ? "" : Integer.toString(postId)).concat("&attach_id=").concat(Integer.toString(item.getId())));
             matcher = statusInfo.matcher(response);
             if (matcher.find())
                 fillAttachmentStatus(item, matcher);
@@ -131,7 +130,7 @@ public class EditPost {
         headers.put("t", "" + form.getTopicId());
 
 
-        headers.put("auth_key", Client.getAuthKey());
+        headers.put("auth_key", Api.getWebClient().getAuthKey());
         headers.put("Post", form.getMessage());
         headers.put("enablesig", "yes");
         headers.put("enableemo", "yes");
@@ -161,6 +160,6 @@ public class EditPost {
             }
         }
         headers.put("file-list", ids.toString());
-        return Api.Theme().parsePage(url, Client.getInstance().post(url, headers), true);
+        return Api.Theme().parsePage(url, Api.getWebClient().post(url, headers), true);
     }
 }

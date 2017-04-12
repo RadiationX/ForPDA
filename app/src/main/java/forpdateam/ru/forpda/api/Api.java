@@ -31,6 +31,16 @@ public class Api {
     private static Topics topics = null;
     private static Reputation reputation = null;
 
+    private static IWebClient webClient = null;
+
+    public static void setWebClient(IWebClient webClient) {
+        Api.webClient = webClient;
+    }
+
+    public static IWebClient getWebClient() {
+        return webClient;
+    }
+
     public static Qms Qms() {
         if (qmsApi == null) qmsApi = new Qms();
         return qmsApi;

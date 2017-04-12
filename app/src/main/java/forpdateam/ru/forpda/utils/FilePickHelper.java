@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import forpdateam.ru.forpda.client.RequestFile;
+import forpdateam.ru.forpda.api.RequestFile;
 
 /**
  * Created by radiationx on 13.01.17.

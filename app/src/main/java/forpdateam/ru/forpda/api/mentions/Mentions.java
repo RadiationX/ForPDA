@@ -3,11 +3,11 @@ package forpdateam.ru.forpda.api.mentions;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.mentions.models.MentionItem;
 import forpdateam.ru.forpda.api.mentions.models.MentionsData;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
-import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.utils.Utils;
+import forpdateam.ru.forpda.api.Utils;
 
 /**
  * Created by radiationx on 21.01.17.
@@ -18,7 +18,7 @@ public class Mentions {
 
     public MentionsData getMentions(int st) throws Exception {
         MentionsData data = new MentionsData();
-        String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=mentions&st=".concat(Integer.toString(st)));
+        String response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=mentions&st=".concat(Integer.toString(st)));
         Matcher matcher = mentionsPattern.matcher(response);
         while (matcher.find()) {
             MentionItem item = new MentionItem();

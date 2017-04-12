@@ -6,7 +6,7 @@
     </style>
     <style name="BaseAppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/white</item>
-        <item name="colorPrimaryDark">#ddd</item>
+        <item name="colorPrimaryDark">#aaa</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="ProfileToolbarTextStyle">@style/ProfileToolbarTextStyle</item>
         <item name="ProfileCardStyle">@style/ProfileCardStyle</item>

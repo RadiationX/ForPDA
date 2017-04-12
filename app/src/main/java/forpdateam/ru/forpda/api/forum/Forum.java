@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.forum.interfaces.IForumItemFlat;
 import forpdateam.ru.forpda.api.forum.models.ForumItemFlat;
 import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
-import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.utils.Utils;
+import forpdateam.ru.forpda.api.Utils;
 
 /**
  * Created by radiationx on 15.02.17.
@@ -25,7 +25,7 @@ public class Forum {
     //private final static Pattern boardsPattern = Pattern.compile("<div[^>]*?board_forum_row[^>]*><div[^>]*?forum_name[^>]*?>[\\s\\S]*?<a[^>]*?showforum=(\\d+)[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/div>");
 
     public ForumItemTree getForums() throws Exception {
-        String response = Client.getInstance().get("http://4pda.ru/forum/index.php?act=search");
+        String response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=search");
         Matcher matcher = forumsFromSearch.matcher(response);
         final ForumItemTree root = new ForumItemTree();
         if (matcher.find()) {

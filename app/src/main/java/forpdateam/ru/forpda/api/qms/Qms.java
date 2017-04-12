@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.api.qms;
 
 import android.text.Html;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,14 +8,14 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsMessage;
 import forpdateam.ru.forpda.api.qms.models.QmsTheme;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
-import forpdateam.ru.forpda.utils.Utils;
+import forpdateam.ru.forpda.api.Utils;
 
-import static forpdateam.ru.forpda.client.Client.getInstance;
 
 /**
  * Created by radiationx on 29.07.16.
@@ -34,7 +33,7 @@ public class Qms {
     public ArrayList<QmsContact> getBlackList() throws Exception {
         Map<String, String> headers = new HashMap<>();
         headers.put("xhr", "body");
-        final String response = getInstance().post("http://4pda.ru/forum/index.php?act=qms&settings=blacklist", headers);
+        final String response = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=qms&settings=blacklist", headers);
         return parseBlackList(response);
     }
 
@@ -59,7 +58,7 @@ public class Qms {
             strId = Integer.toString(id);
             headers.put("user-id[".concat(strId).concat("]"), strId);
         }
-        final String response = getInstance().post("http://4pda.ru/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1", headers);
+        final String response = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1", headers);
         checkOperation(response);
         return parseBlackList(response);
     }
@@ -68,7 +67,7 @@ public class Qms {
         Map<String, String> headers = new HashMap<>();
         headers.put("action", "add-user");
         headers.put("username", nick);
-        final String response = getInstance().post("http://4pda.ru/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1", headers);
+        final String response = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1", headers);
         checkOperation(response);
         return parseBlackList(response);
     }
@@ -85,7 +84,7 @@ public class Qms {
     public ArrayList<QmsContact> getContactList() throws Exception {
 
         ArrayList<QmsContact> list = new ArrayList<>();
-        final String response = getInstance().get("http://4pda.ru/forum/index.php?&act=qms-xhr&action=userlist");
+        final String response = Api.getWebClient().get("http://4pda.ru/forum/index.php?&act=qms-xhr&action=userlist");
         final Matcher matcher = contactsPattern.matcher(response);
         QmsContact contact;
         String temp;
@@ -106,7 +105,7 @@ public class Qms {
         QmsThemes qmsThemes = new QmsThemes();
         Map<String, String> headers = new HashMap<>();
         headers.put("xhr", "body");
-        final String response = getInstance().post("http://4pda.ru/forum/index.php?act=qms&mid=" + id, headers);
+        final String response = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=qms&mid=" + id, headers);
         Matcher matcher = threadPattern.matcher(response);
         QmsTheme thread;
         while (matcher.find()) {
@@ -130,7 +129,7 @@ public class Qms {
     public QmsChatModel getChat(final int userId, final int themeId) throws Exception {
         Map<String, String> headers = new HashMap<>();
         headers.put("xhr", "body");
-        final String response = getInstance().post("http://4pda.ru/forum/index.php?act=qms&mid=" + userId + "&t=" + themeId, headers);
+        final String response = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=qms&mid=" + userId + "&t=" + themeId, headers);
         return parseChat(response);
     }
 
@@ -165,7 +164,7 @@ public class Qms {
     }
 
     public String[] findUser(final String nick) throws Exception {
-        String response = getInstance().get("http://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=" + nick + "&limit=150&timestamp=" + System.currentTimeMillis());
+        String response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=" + nick + "&limit=150&timestamp=" + System.currentTimeMillis());
         return response.split(" |\n");
     }
 
@@ -174,7 +173,7 @@ public class Qms {
         headers.put("username", nick);
         headers.put("title", title);
         headers.put("message", mess);
-        String response = getInstance().post("http://4pda.ru/forum/index.php?act=qms&action=create-thread&xhr=body&do=1", headers);
+        String response = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=qms&action=create-thread&xhr=body&do=1", headers);
         return parseChat(response);
     }
 
@@ -185,7 +184,7 @@ public class Qms {
         headers.put("mid", Integer.toString(userId));
         headers.put("t", Integer.toString(themeId));
         headers.put("message", text);
-        String response = getInstance().post("http://4pda.ru/forum/index.php", headers);
+        String response = Api.getWebClient().post("http://4pda.ru/forum/index.php", headers);
         Matcher matcher = chatPattern.matcher(response);
         QmsMessage item = new QmsMessage();
         if (matcher.find()) {
@@ -214,6 +213,6 @@ public class Qms {
         headers.put("act", "qms-xhr");
         headers.put("action", "del-member");
         headers.put("del-mid", Integer.toString(mid));
-        return getInstance().post("http://4pda.ru/forum/index.php", headers);
+        return Api.getWebClient().post("http://4pda.ru/forum/index.php", headers);
     }
 }

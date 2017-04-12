@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
-import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.utils.Utils;
+import forpdateam.ru.forpda.api.Utils;
 
 /**
  * Created by radiationx on 03.08.16.
@@ -28,7 +28,7 @@ public class Profile {
 
     public ProfileModel getProfile(String url) throws Exception {
         ProfileModel profile = new ProfileModel();
-        final String response = Client.getInstance().get(url);
+        final String response = Api.getWebClient().get(url);
 
         final Matcher mainMatcher = mainPattern.matcher(response);
         if (mainMatcher.find()) {
@@ -43,7 +43,7 @@ public class Profile {
                     profile.setRegDate(safe(data.group(2)));
 
                 if (data.group(1).contains("Последнее"))
-                    profile.setOnlineDate(safe(Html.fromHtml(data.group(2).trim()).toString()));
+                    profile.setOnlineDate(safe(Utils.fromHtml(data.group(2).trim())));
             }
 
             String signString = safe(mainMatcher.group(6));
@@ -99,7 +99,7 @@ public class Profile {
             }
             data = note.matcher(response);
             if (data.find()) {
-                profile.setNote(Html.fromHtml(data.group(1).replaceAll("\n", "<br></br>")).toString());
+                profile.setNote(Utils.fromHtml(data.group(1).replaceAll("\n", "<br></br>")));
             }
 
             data = about.matcher(response);
@@ -113,7 +113,7 @@ public class Profile {
     public boolean saveNote(String note) throws Exception {
         Map<String, String> headers = new HashMap<>();
         headers.put("note", note);
-        String response = Client.getInstance().post("http://4pda.ru/forum/index.php?act=profile-xhr&action=save-note", headers);
+        String response = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=profile-xhr&action=save-note", headers);
         return response.equals("1");
     }
 

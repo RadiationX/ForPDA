@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
-import forpdateam.ru.forpda.Constants;
+import forpdateam.ru.forpda.api.news.Constants;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.data.Repository;
 import forpdateam.ru.forpda.fragments.TabFragment;

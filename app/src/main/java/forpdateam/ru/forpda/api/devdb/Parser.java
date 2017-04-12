@@ -8,8 +8,8 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 
+import forpdateam.ru.forpda.api.IWebClient;
 import forpdateam.ru.forpda.api.devdb.models.DevCatalog;
-import forpdateam.ru.forpda.client.Client;
 
 /**
  * Created by isanechek on 30.07.16.
@@ -26,7 +26,7 @@ public class Parser {
         return res;
     }
 
-    public static ArrayList<DevCatalog> parseBrands(Client client, String devicesTypeUrl) throws Exception {
+    public static ArrayList<DevCatalog> parseBrands(IWebClient client, String devicesTypeUrl) throws Exception {
         String pageBody;
         ArrayList<DevCatalog> res = new ArrayList<>();
         pageBody = client.get(devicesTypeUrl + "all");
