@@ -4,40 +4,19 @@
     }
 }*/
 var anchorElem, elemToActivation;
-var lastTop = 0,
-    lastScrollTop = 0,
-    lastDeltaTop = 0,
-    lastDeltaScroll = 0;
-//Костыль, чтобы нормально открывалась шапка, если скрыт post_header
-var blockProgressChange = false;
-
+var corrector;
+document.addEventListener("DOMContentLoaded", function () {
+    corrector = new ScrollCorrector();
+});
+document.addEventListener('DOMContentLoaded', scrollToElement);
+document.addEventListener('DOMContentLoaded', improveCodeBlock);
+document.addEventListener('DOMContentLoaded', blocksOpenClose);
+document.addEventListener('DOMContentLoaded', removeImgesSrc);
 //Вызывается при обновлении прогресса загрузке страницы и при загрузке её ресурсов
 //По идеи должна верно скроллить к нужному элементу, даже если пользователь прокрутил страницу
 //Как оно работает и работает ли вообще - объяснить не могу
 function onProgressChanged() {
-    if (blockProgressChange) {
-        blockProgressChange = false;
-        return;
-    }
-    //ITheme.log("call onprogress");
-    var newTop = getCoordinates(anchorElem).top;
-    var newScrollTop = (window.pageYOffset || document.documentElement.scrollTop) - (document.documentElement.clientTop || 0);
-    var tempDeltaTop = newTop - lastTop;
-    var tempDeltaScroll = newScrollTop - lastScrollTop;
-    var delta = tempDeltaTop;
-    if (lastDeltaTop != 0)
-        delta = delta + (lastDeltaTop - tempDeltaScroll + lastDeltaScroll);
-
-    //ITheme.log("new: "+newTop+"  :  "+newScrollTop+"  :  "+tempDeltaTop+"  :  "+tempDeltaScroll+ "  :  "+delta);
-    //console.log("prch: "+tempDeltaTop+"  :  "+tempDeltaScroll+"  :  "+lastDeltaTop+"  :  "+lastDeltaScroll+ "  :  "+delta);
-    if (delta != 0) {
-        window.scrollBy(0, delta);
-    }
-
-    lastTop = newTop;
-    lastScrollTop = newScrollTop;
-    lastDeltaTop = tempDeltaTop;
-    lastDeltaScroll = tempDeltaScroll
+    corrector.startObserver();
 }
 
 function getScrollTop() {
@@ -68,7 +47,7 @@ function scrollToElement(name) {
     } else {
         anchorElem = document.querySelector('[name="' + name + '"]');
     }
-    console.log(anchorElem);
+    //console.log(anchorElem);
     if (anchorElem) {
         //Открытие всех спойлеров
         var block = anchorElem;
@@ -81,33 +60,34 @@ function scrollToElement(name) {
         }
         //Открытие шапки
         block = anchorElem;
-        while(block.classList && !block.classList.contains('post_container')){
+        while (block.classList && !block.classList.contains('post_container')) {
             block = block.parentNode;
         }
-        if(block.classList.contains("close")){
+        if (block.classList.contains("close")) {
             var button = block.querySelector(".hat_button");
             toggleButton(button, "hat_content");
         }
-        //Скролее к якорю/элементу
-        if (document.readyState == "complete") {
+        
+        //Скрол к якорю/элементу
+        setTimeout(function () {
+            doScroll(anchorElem);
+        }, 1);
+        window.addEventListener("load", function () {
+            setTimeout(function () {
+                doScroll(anchorElem);
+            }, 1);
+        });
+        /*if (document.readyState == "complete") {
             doScroll(anchorElem);
         } else {
-            window.addEventListener("load", function () {
-                setTimeout(function () {
-                    doScroll(anchorElem);
-                    onProgressChanged();
-                }, 1);
-            });
-        }
+            
+        }*/
     }
 }
 
 function doScroll(tAnchorElem) {
-    console.log(tAnchorElem);
     tAnchorElem.scrollIntoView();
-
-    lastTop = getCoordinates(tAnchorElem).top;
-    lastScrollTop = getScrollTop();
+    
     //Активация элементов, убирается класс active с уже активированных
     if (elemToActivation)
         elemToActivation.classList.remove('active');
@@ -118,52 +98,107 @@ function doScroll(tAnchorElem) {
 }
 
 
-
-
-/**
- *		===================
- *		blocks close & open
- *		===================
- */
-
 function blocksOpenClose() {
     var blockTitleAll = document.querySelectorAll('.post-block.spoil>.block-title,.post-block.code>.block-title');
 
     if (!blockTitleAll[0]) return;
 
-    for (var i = 0, bt, bb; i < blockTitleAll.length; i++) {
-        bt = blockTitleAll[i];
-        bb = bt.parentElement.querySelector('.block-body');
-        if (bb.parentElement.classList.contains('code') && bb.scrollHeight <= bb.offsetHeight) bb.parentElement.classList.remove('box');
+    for (var i = 0; i < blockTitleAll.length; i++) {
+        var bt = blockTitleAll[i];
+        var bb = bt.parentElement.querySelector('.block-body');
+        if (bb.parentElement.classList.contains('code') && bb.scrollHeight <= bb.offsetHeight) {
+            bb.parentElement.classList.remove('box');
+        }
         bt.addEventListener('click', clickOnElement, false);
     }
 
     function clickOnElement(event) {
-        var p = el().t.parentElement;
-
-        function el() {
-            var event = event || window.event;
-            var target = event.target || event.srcElement;
-            return {
-                e: event,
-                t: target
-            };
-        }
-        if (p.classList.contains('spoil')) toggler("close", "open");
-        if (p.classList.contains('code')) toggler("unbox", "box");
-
-        function toggler(c, o) {
-            if (p.classList.contains(c)) {
-                p.classList.remove(c);
-                p.classList.add(o);
-            } else if (p.classList.contains(o)) {
-                p.classList.remove(o);
-                p.classList.add(c);
+        var t = event.target;
+        while (!t.classList.contains('post_body') || !t.classList.contains('msg-content') || t != document.body) {
+            if (t.classList.contains('spoil')) {
+                event.stopPropagation();
+                toggler("close", "open", t);
+                spoilCloseButton(t);
+                return;
+            } else if (t.classList.contains('code')) {
+                event.stopPropagation();
+                toggler("unbox", "box", t);
+                return;
             }
+            t = t.parentElement;
+        }
+    }
+
+    function toggler(c, o, t) {
+        if (t.classList.contains(c)) {
+            t.classList.remove(c);
+            t.classList.add(o);
+            addImgesSrc(t);
+        } else if (t.classList.contains(o)) {
+            t.classList.remove(o);
+            t.classList.add(c);
         }
     }
 }
 
+/**
+ *		==================
+ *		SPOIL CLOSE BUTTON
+ *		==================
+ */
+
+function spoilCloseButton(t) {
+    var el = t;
+    while (!t.classList.contains('.post-body')) {
+        if (t.classList.contains('spoil') && !t.querySelector('.spoil_close')) {
+            if (t.querySelector('img[src]')) {
+                var images = t.querySelectorAll('img[src]');
+                images[images.length - 1].addEventListener("load", function () {
+                    spoilCloseButton(el);
+                });
+            }
+        }
+        t = t.parentElement;
+    }
+}
+
+/**
+ *		===============================
+ *		HIDE AND SHOW IMAGES IN SPOILER
+ *		===============================
+ */
+
+
+
+function removeImgesSrc() {
+    if (document.body.classList.contains("noimages")) return;
+    var postBlockSpoils = document.body.querySelectorAll('.post-block.spoil.close > .block-body');
+    for (var i = 0; i < postBlockSpoils.length; i++) {
+        var images = postBlockSpoils[i].querySelectorAll('img');
+        for (var j = 0; j < images.length; j++) {
+            var img = images[j];
+            if (!img.hasAttribute('src') || img.dataset.imageSrc) continue;
+            img.dataset.imageSrc = img.src;
+            img.removeAttribute('src');
+        }
+    }
+}
+
+function addImgesSrc(target) {
+    while (target != this) {
+        if (target.classList.contains('spoil')) {
+            var images = target.querySelectorAll('img');
+            for (var i = 0; i < images.length; i++) {
+                var img = images[i];
+                if (img.hasAttribute('src') || !img.dataset.imageSrc) continue;
+                img.src = img.dataset.imageSrc;
+                img.removeAttribute('data-image-src');
+            }
+            return;
+        }
+        target = target.parentNode;
+    }
+}
 
 
 function getCoordinates(elem) {
@@ -251,7 +286,6 @@ function selectAllPostText() {
 }
 
 function toggleButton(button, bodyClass) {
-    blockProgressChange = true;
     var parent = button.parentNode;
     var body;
     if (bodyClass !== undefined)
@@ -343,9 +377,124 @@ function improveCodeBlock() {
         }
     }
 }
-document.onreadystatechange = function () {
-    console.log(document.readyState);
+
+
+
+var pad = 100;
+
+
+function onsuka(elem) {
+    console.log("CLICK SUKA");
+    var suka = document.querySelector(".posts_list")
+    suka.style.paddingTop = pad + "px";
+    pad += 100;
+    corrector.startObserver();
 }
-document.addEventListener('DOMContentLoaded', scrollToElement);
-document.addEventListener('DOMContentLoaded', improveCodeBlock);
-document.addEventListener('DOMContentLoaded', blocksOpenClose);
+
+
+
+function ScrollCorrector() {
+    console.log("Correct init");
+    var postElements = document.querySelectorAll(".post_container");
+    var lastAnchorPosition;
+    var visibleElem;
+    var frames = 60 * 2;
+    var frame = 0;
+    var observerId = 0;
+
+    this.startObserver = function () {
+        startObserver();
+    }
+
+    window.addEventListener("scroll", function () {
+        console.log("onscroll");
+        setVisible();
+        updateLastPosition("scroll");
+        frame = 0;
+    });
+
+    function updateLastPosition(from) {
+        console.log("updateLastPosition " + from + ", last: " + lastAnchorPosition + ", new: " + getCoordinates(visibleElem).top);
+        lastAnchorPosition = getCoordinates(visibleElem).top;
+    }
+
+    function tryScroll() {
+        var delta = getCoordinates(visibleElem).top - lastAnchorPosition;
+        if (delta == 0)
+            return;
+        window.scrollBy(0, delta);
+        updateLastPosition("tryScroll");
+        frame = 0;
+    }
+
+    function startObserver() {
+        if (observerId == 1) {
+            return;
+        }
+        setVisible();
+        console.log("StartObserver");
+
+        function observerLoop() {
+            tryScroll();
+            if (frame < frames) {
+                requestAnimationFrame(observerLoop);
+                frame++;
+            } else {
+                cancelAnimationFrame(observerLoop);
+                observerId = 0;
+                frame = 0;
+            }
+        }
+        observerId = 1;
+        observerLoop();
+    }
+
+    function setVisible() {
+        var visibleElems = getVisiblePosts();
+        /*if (visibleElem) {
+            visibleElem.style.opacity = 1;
+        }*/
+        if (visibleElems.length > 0) {
+            visibleElem = getNearest(visibleElems);
+        }
+        //visibleElem.style.opacity = 0.5;
+    }
+
+    function getVisiblePosts() {
+        var scrollTop = getScrollTop();
+        var windowHeight = document.documentElement.clientHeight;
+        var result = [];
+        for (var i = 0; i < postElements.length; i++) {
+            var el = postElements[i];
+            if (el.offsetHeight + el.offsetTop < scrollTop || el.offsetTop > scrollTop + windowHeight)
+                continue;
+            result.push(el);
+        }
+        return result;
+    }
+
+    function getNearest(visibleElems) {
+        var scrollTop = getScrollTop();
+        var windowHeight = document.documentElement.clientHeight;
+        var nearest = visibleElems[0];
+        var deltaHeight = windowHeight;
+        var delta = 0;
+        for (var i = 0; i < visibleElems.length; i++) {
+            var el = visibleElems[i];
+            var bottomY = Math.abs(el.offsetTop + el.offsetHeight - scrollTop - windowHeight);
+            if (deltaHeight - bottomY < delta) {
+                break;
+            }
+            delta = deltaHeight - bottomY;
+            deltaHeight = bottomY;
+            nearest = el;
+        }
+        return nearest;
+    }
+}
+
+
+
+
+
+function suka() {}
