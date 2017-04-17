@@ -92,6 +92,9 @@ public class Client implements IWebClient {
                             Log.e("SUKA", "response " + cookie.name() + " : " + cookie.value());
                             if (cookie.name().matches("member_id|pass_hash")) {
                                 if (cookie.value().equals("deleted")) {
+                                    if(Client.cookies.containsKey(cookie.name())){
+                                        Client.cookies.remove(cookie.name());
+                                    }
                                     App.getInstance().getPreferences().edit().remove("cookie_".concat(cookie.name())).apply();
                                 } else {
                                     //Сохранение кукисов cookie_member_id и cookie_pass_hash
@@ -103,7 +106,9 @@ public class Client implements IWebClient {
                                     }
                                 }
                             }
-                            Client.cookies.put(cookie.name(), cookie);
+                            if(!Client.cookies.containsKey(cookie.name())){
+                                Client.cookies.put(cookie.name(), cookie);
+                            }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -116,9 +121,9 @@ public class Client implements IWebClient {
                     listCookies.clear();
                     listCookies.addAll(Client.cookies.values());
                     Log.d("FORPDA_LOG", "cookies size " + listCookies.size());
-                    for (Cookie cookie : listCookies) {
+                    /*for (Cookie cookie : listCookies) {
                         Log.e("SUKA", "COOOKA!!: " + cookie.toString());
-                    }
+                    }*/
                     return listCookies;
                 }
             })

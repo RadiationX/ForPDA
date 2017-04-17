@@ -516,7 +516,13 @@ public abstract class ThemeFragment extends TabFragment {
     }
 
     public void log(final String text) {
-        Log.d("FORPDA_LOG", "ITheme: ".concat(text));
+        int maxLogSize = 1000;
+        for (int i = 0; i <= text.length() / maxLogSize; i++) {
+            int start = i * maxLogSize;
+            int end = (i + 1) * maxLogSize;
+            end = end > text.length() ? text.length() : end;
+            Log.v("FORPDA_LOG", text.substring(start, end));
+        }
     }
 
     public void showPollResults() {

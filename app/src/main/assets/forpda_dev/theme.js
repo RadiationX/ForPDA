@@ -16,7 +16,8 @@ document.addEventListener('DOMContentLoaded', removeImgesSrc);
 //По идеи должна верно скроллить к нужному элементу, даже если пользователь прокрутил страницу
 //Как оно работает и работает ли вообще - объяснить не могу
 function onProgressChanged() {
-    corrector.startObserver();
+    if (corrector)
+        corrector.startObserver();
 }
 
 function getScrollTop() {
@@ -34,20 +35,19 @@ function scrollToElement(name) {
     if (typeof name != 'string') {
         name = PageInfo.elemToScroll;
     }
-    var data = /([^-]*)-([\d]*)-(\d+)/g.exec(name);
-    if (data) {
-        //data[1] - name (spoil, quote, etc)
-        //data[2] - post id
-        //data[3] - number block of post, begin with 1
-        data[1] = data[1].toLowerCase();
-        if (data[1] === "spoiler") data[1] = "spoil";
-        if (data[1] === "hide") data[1] = "hidden";
-        anchorElem = document.querySelector('[name="entry' + data[2] + '"]');
-        anchorElem = anchorElem.querySelectorAll(".post-block." + data[1])[Number(data[3]) - 1];
+    var anchorData = /([^-]*)-([\d]*)-(\d+)/g.exec(name);
+    if (anchorData) {
+        //anchorData[1] - name (spoil, quote, etc)
+        //anchorData[2] - post id
+        //anchorData[3] - number block of post, begin with 1
+        anchorData[1] = anchorData[1].toLowerCase();
+        if (anchorData[1] === "spoiler") anchorData[1] = "spoil";
+        if (anchorData[1] === "hide") anchorData[1] = "hidden";
+        anchorElem = document.querySelector('[name="entry' + anchorData[2] + '"]');
+        anchorElem = anchorElem.querySelectorAll(".post-block." + anchorData[1])[Number(anchorData[3]) - 1];
     } else {
         anchorElem = document.querySelector('[name="' + name + '"]');
     }
-    //console.log(anchorElem);
     if (anchorElem) {
         //Открытие всех спойлеров
         var block = anchorElem;
@@ -67,27 +67,31 @@ function scrollToElement(name) {
             var button = block.querySelector(".hat_button");
             toggleButton(button, "hat_content");
         }
-        
-        //Скрол к якорю/элементу
-        setTimeout(function () {
-            doScroll(anchorElem);
-        }, 1);
-        window.addEventListener("load", function () {
-            setTimeout(function () {
-                doScroll(anchorElem);
-            }, 1);
-        });
-        /*if (document.readyState == "complete") {
-            doScroll(anchorElem);
-        } else {
-            
-        }*/
+    } else {
+        anchorElem = document.documentElement;
     }
+    //Скрол к якорю/элементу
+    setTimeout(function () {
+        doScroll(anchorElem);
+    }, 1);
+    window.addEventListener("load", function () {
+        setTimeout(function () {
+            console.log("SCROLL BLYADSKIY");
+            console.log(getCoordinates(anchorElem).top+" : "+getScrollTop());
+            doScroll(anchorElem);
+            //ITheme.log(document.documentElement.innerHTML);
+        }, 1);
+    });
+    /*if (document.readyState == "complete") {
+        doScroll(anchorElem);
+    } else {
+        
+    }*/
 }
 
 function doScroll(tAnchorElem) {
     tAnchorElem.scrollIntoView();
-    
+
     //Активация элементов, убирается класс active с уже активированных
     if (elemToActivation)
         elemToActivation.classList.remove('active');
@@ -149,7 +153,7 @@ function blocksOpenClose() {
 
 function spoilCloseButton(t) {
     var el = t;
-    while (!t.classList.contains('.post-body')) {
+    while (t && !t.classList.contains('.post-body')) {
         if (t.classList.contains('spoil') && !t.querySelector('.spoil_close')) {
             if (t.querySelector('img[src]')) {
                 var images = t.querySelectorAll('img[src]');
@@ -193,6 +197,7 @@ function addImgesSrc(target) {
                 if (img.hasAttribute('src') || !img.dataset.imageSrc) continue;
                 img.src = img.dataset.imageSrc;
                 img.removeAttribute('data-image-src');
+                corrector.startObserver();
             }
             return;
         }
@@ -394,36 +399,57 @@ function onsuka(elem) {
 
 
 function ScrollCorrector() {
-    console.log("Correct init");
+    console.log("Scroll Corrector initialized");
     var postElements = document.querySelectorAll(".post_container");
-    var lastAnchorPosition;
-    var visibleElem;
-    var frames = 60 * 2;
+    var visibleElements = [];
+    var visibleElement = anchorElem;
+    var lastPosition = 0;
+    var frames = 60 * 1;
     var frame = 0;
     var observerId = 0;
+
+    for (var i = 0; i < postElements.length; i++) {
+        postElements[i].addEventListener("mousedown", downEvent);
+        postElements[i].addEventListener("touchdown", downEvent);
+    }
+
+    function downEvent(e) {
+
+        var elem = e.target;
+        while (!elem.classList.contains("post_container")) {
+            elem = elem.parentElement;
+        }
+        visibleElement = elem;
+        updateLastPosition();
+    }
 
     this.startObserver = function () {
         startObserver();
     }
 
     window.addEventListener("scroll", function () {
-        console.log("onscroll");
         setVisible();
-        updateLastPosition("scroll");
+        updateLastPosition();
         frame = 0;
     });
 
-    function updateLastPosition(from) {
-        console.log("updateLastPosition " + from + ", last: " + lastAnchorPosition + ", new: " + getCoordinates(visibleElem).top);
-        lastAnchorPosition = getCoordinates(visibleElem).top;
+    function updateLastPosition() {
+        lastPosition = getCoordinates(visibleElement).top;
+        //console.log("Update LastPosition: " + lastPosition);
     }
 
     function tryScroll() {
-        var delta = getCoordinates(visibleElem).top - lastAnchorPosition;
+
+        var delta = getCoordinates(visibleElement).top - lastPosition;
         if (delta == 0)
             return;
+        /*for (var i = 0; i < visibleElements.length; i++) {
+            var elem = visibleElements[i];
+            console.log("Elem [" + i + "]: " + getCoordinates(elem).top);
+        }*/
+        console.log("Scroll by delta: " + delta + ", lastPosition: " + lastPosition + ", visElemTop: " + getCoordinates(visibleElement).top);
         window.scrollBy(0, delta);
-        updateLastPosition("tryScroll");
+        updateLastPosition();
         frame = 0;
     }
 
@@ -432,7 +458,7 @@ function ScrollCorrector() {
             return;
         }
         setVisible();
-        console.log("StartObserver");
+        console.log("Start Scroll Observer");
 
         function observerLoop() {
             tryScroll();
@@ -443,44 +469,57 @@ function ScrollCorrector() {
                 cancelAnimationFrame(observerLoop);
                 observerId = 0;
                 frame = 0;
+                console.log("Stop Scroll Observer");
             }
         }
         observerId = 1;
         observerLoop();
     }
 
-    function setVisible() {
-        var visibleElems = getVisiblePosts();
-        /*if (visibleElem) {
-            visibleElem.style.opacity = 1;
-        }*/
-        if (visibleElems.length > 0) {
-            visibleElem = getNearest(visibleElems);
+    /*function setVisible(newVisible){
+        if (visibleElement) {
+            visibleElement.style.opacity = 1;
         }
-        //visibleElem.style.opacity = 0.5;
+        visibleElement = newVisible;
+        visibleElement.style.opacity = 0.5;
+    }*/
+
+    function setVisible() {
+        return;
+        visibleElements = getVisiblePosts();
+        if (visibleElement) {
+            visibleElement.style.opacity = 1;
+        }
+        /*if (visibleElements.length > 0) {
+            visibleElement = getNearest(visibleElements);
+        }*/
+        visibleElement = getNearest(visibleElements);
+        visibleElement.style.opacity = 0.5;
     }
 
     function getVisiblePosts() {
         var scrollTop = getScrollTop();
         var windowHeight = document.documentElement.clientHeight;
-        var result = [];
+        if (!visibleElement)
+            visibleElements = [];
+        visibleElements.length = 0;
         for (var i = 0; i < postElements.length; i++) {
             var el = postElements[i];
             if (el.offsetHeight + el.offsetTop < scrollTop || el.offsetTop > scrollTop + windowHeight)
                 continue;
-            result.push(el);
+            visibleElements.push(el);
         }
-        return result;
+        return visibleElements;
     }
 
-    function getNearest(visibleElems) {
+    function getNearest(visibleElements) {
         var scrollTop = getScrollTop();
         var windowHeight = document.documentElement.clientHeight;
-        var nearest = visibleElems[0];
+        var nearest = visibleElements[0];
         var deltaHeight = windowHeight;
         var delta = 0;
-        for (var i = 0; i < visibleElems.length; i++) {
-            var el = visibleElems[i];
+        for (var i = 0; i < visibleElements.length; i++) {
+            var el = visibleElements[i];
             var bottomY = Math.abs(el.offsetTop + el.offsetHeight - scrollTop - windowHeight);
             if (deltaHeight - bottomY < delta) {
                 break;

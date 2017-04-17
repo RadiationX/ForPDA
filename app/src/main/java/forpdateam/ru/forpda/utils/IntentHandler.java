@@ -11,6 +11,7 @@ import org.acra.ACRA;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,18 +87,27 @@ public class IntentHandler {
         if (url.substring(0, 2).equals("//"))
             url = "http:".concat(url);
 
-        try {
+        /*try {
             url = URLDecoder.decode(url, "UTF-8");
+            Log.d("FORPDA_LOG", "AFTER DECODE "+url);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-        }
+        }*/
         url = Utils.fromHtml(url);
+        /*try {
+            Log.d("FORPDA_LOG", "AFTER ENCODE "+URLEncoder.encode(url, "windows-1251"));
+            Log.d("FORPDA_LOG", "AFTER ENCODE "+URLEncoder.encode(url, "utf-8"));
+            url = URLEncoder.encode(url, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }*/
         Log.d("FORPDA_LOG", "after html url " + url);
         if (url.matches("(?:http?s?:)?\\/\\/4pda\\.ru[\\s\\S]*")) {
             if (!url.contains("4pda.ru")) {
                 url = "http://4pda.ru".concat(url.substring(0, 1).equals("/") ? "" : "/").concat(url);
             }
             Uri uri = Uri.parse(url.toLowerCase());
+            //Uri uri = Uri.parse(url);
             Log.d("FORPDA_LOG", "HANDLE URL " + uri.toString() + " : " + url);
             if (uri.getHost() != null && uri.getHost().matches("4pda.ru")) {
                 if (args == null) args = new Bundle();

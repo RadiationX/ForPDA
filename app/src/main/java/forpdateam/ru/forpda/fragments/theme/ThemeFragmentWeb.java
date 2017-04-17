@@ -226,7 +226,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
             Log.d("FORPDA_LOG", "IThemeJ: " + url);
             if (action == NORMAL_ACTION) {
-                if (!url.contains("style_images") && m.reset(url).find()) {
+                if (!url.contains("forum/uploads") && !url.contains("android_asset") && !url.contains("style_images") && m.reset(url).find()) {
                     webView.evalJs("onProgressChanged()");
                 }
             }
