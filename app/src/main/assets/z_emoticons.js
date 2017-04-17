@@ -237,7 +237,6 @@
             },
             parseAll: function (c,path) {
 				d.b = path;
-				console.log(c+" : "+path);
                 var a = n.querySelectorAll(".emoticons"),
                     b = a.length,
                     e = 0,
