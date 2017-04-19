@@ -169,6 +169,8 @@ public class TabFragment extends RxFragment {
         //// TODO: 20.03.17 удалить и юзать только там, где нужно
         fab = (FloatingActionButton) coordinatorLayout.findViewById(R.id.fab);
 
+        //fragmentContainer.setPadding(0, App.getStatusBarHeight(), 0, 0);
+
         toolbar.setNavigationOnClickListener(configuration.isAlone() || configuration.isMenu() ? getMainActivity().getToggleListener() : getMainActivity().getRemoveTabListener());
         toolbar.setNavigationIcon(configuration.isAlone() || configuration.isMenu() ? R.drawable.ic_menu_gray_24dp : R.drawable.ic_arrow_back_gray_24dp);
 

@@ -6,10 +6,17 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <RelativeLayout
-        android:id="@+id/fragments_container"
+    <View
+        android:id="@+id/pidor"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+    <FrameLayout
+        android:id="@+id/fragments_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+       >
+    </FrameLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/menu_drawer"
@@ -25,6 +32,11 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
             <include layout="@layout/drawer_header_layout"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#eee"
+                android:layout_marginBottom="@dimen/dp8"/>
             <ListView
                 android:id="@+id/menu_list"
                 android:layout_width="match_parent"

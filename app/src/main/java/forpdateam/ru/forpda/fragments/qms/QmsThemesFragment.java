@@ -76,7 +76,6 @@ public class QmsThemesFragment extends TabFragment {
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
         recyclerView = (RecyclerView) findViewById(R.id.base_list);
         viewsReady();
-        loadData();
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

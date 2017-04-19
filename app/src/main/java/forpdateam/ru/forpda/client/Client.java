@@ -133,13 +133,9 @@ public class Client implements IWebClient {
 
                 @Override
                 public List<Cookie> loadForRequest(HttpUrl url) {
-                    Log.e("SUKA", "CLIENT JAR " + this);
                     listCookies.clear();
                     listCookies.addAll(Client.cookies.values());
                     Log.d("FORPDA_LOG", "cookies size " + listCookies.size());
-                    for (Cookie cookie : listCookies) {
-                        Log.e("SUKA", "COOOKA!!: " + cookie.toString());
-                    }
                     return listCookies;
                 }
             })
@@ -220,7 +216,7 @@ public class Client implements IWebClient {
             res = response.body().string();
             getCounts(res);
             checkForumErrors(res);
-            Log.d("FORPDA_LOG", "redirected url " + response.request().url().toString());
+            //Log.d("FORPDA_LOG", "redirected url " + response.request().url().toString());
             redirects.put(url, response.request().url().toString());
         } finally {
             if (response != null)

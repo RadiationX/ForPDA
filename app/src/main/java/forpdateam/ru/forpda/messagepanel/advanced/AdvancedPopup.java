@@ -37,8 +37,8 @@ public class AdvancedPopup {
         if (messagePanel == null || popupWindow == null) {
             return;
         }
-        newKeyboardHeight = fragmentContainer.getRootView().getHeight() - fragmentContainer.getHeight() - App.getStatusBarHeight();
-        Log.d("FORPDA_LOG", "TREE OBSERVER " + newKeyboardHeight + " : " + fragmentContainer.getRootView().getHeight() + " : " + fragmentContainer.getHeight() + " : " + App.getStatusBarHeight());
+        newKeyboardHeight = fragmentContainer.getRootView().getHeight() - fragmentContainer.getHeight() - App.getStatusBarHeight() - App.getNavigationBarHeight();
+        Log.d("FORPDA_LOG", "TREE OBSERVER " + newKeyboardHeight + " = " + fragmentContainer.getRootView().getHeight() + " - " + fragmentContainer.getHeight() + " - " + App.getStatusBarHeight() + " - " + App.getNavigationBarHeight());
         if (newKeyboardHeight > 100) {
             int last = App.getKeyboardHeight();
             App.setKeyboardHeight(newKeyboardHeight);
