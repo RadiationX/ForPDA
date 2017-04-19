@@ -1,19 +1,29 @@
 package forpdateam.ru.forpda.fragments.theme.editpost;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatEditText;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
@@ -23,11 +33,14 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.theme.ThemeFragment;
 import forpdateam.ru.forpda.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.messagepanel.attachments.AttachmentsPopup;
+import forpdateam.ru.forpda.messagepanel.attachments.CustomBottomSheetDialog;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.FilePickHelper;
+import forpdateam.ru.forpda.utils.KeyboardUtil;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 
 import static forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm.ARG_TYPE;
+import static forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm.ERROR_NONE;
 import static forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm.TYPE_EDIT_POST;
 import static forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm.TYPE_NEW_POST;
 
@@ -149,7 +162,36 @@ public class EditPostFragment extends TabFragment {
 
     @Override
     public boolean onBackPressed() {
-        return messagePanel.onBackPressed();
+        if (messagePanel.onBackPressed())
+            return true;
+
+        if (postForm.getType() == TYPE_EDIT_POST){
+            new AlertDialog.Builder(getContext())
+                    .setMessage("Забыть изменения?")
+                    .setPositiveButton("Да", (dialog, which) -> {
+                        TabManager.getInstance().remove(EditPostFragment.this);
+                    })
+                    .setNegativeButton("Нет", null)
+                    .show();
+            return true;
+        }
+
+        //Синхронизация с полем в фрагменте темы
+        TabFragment fragment = TabManager.getInstance().get(getParentTag());
+        if (fragment != null && fragment instanceof ThemeFragment) {
+            ThemeFragment themeFragment = (ThemeFragment) fragment;
+            new AlertDialog.Builder(getContext())
+                    .setMessage("Синхронизировать изменения с полем ввода в теме?")
+                    .setPositiveButton("Да", (dialog, which) -> {
+                        themeFragment.getMessagePanel().setText(messagePanel.getMessage());
+                        themeFragment.getAttachmentsPopup().setAttachments(messagePanel.getAttachments());
+                        TabManager.getInstance().remove(EditPostFragment.this);
+                    })
+                    .setNegativeButton("Нет", null)
+                    .show();
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -186,7 +228,16 @@ public class EditPostFragment extends TabFragment {
     }
 
     private void loadForm() {
+        messagePanel.getFormProgress().setVisibility(View.VISIBLE);
+        messagePanel.getMessageField().setVisibility(View.GONE);
         formSubscriber.subscribe(RxApi.EditPost().loadForm(postForm.getPostId()), form -> {
+            messagePanel.getMessageField().setVisibility(View.VISIBLE);
+            messagePanel.getFormProgress().setVisibility(View.GONE);
+            if (form.getErrorCode() != ERROR_NONE) {
+                Toast.makeText(getContext(), "Вам нельзя редактировать это сообщение", Toast.LENGTH_SHORT).show();
+                TabManager.getInstance().remove(EditPostFragment.this);
+                return;
+            }
             postForm.setMessage(form.getMessage());
             postForm.setEditReason(form.getEditReason());
             postForm.setAttachments(form.getAttachments());
@@ -226,14 +277,17 @@ public class EditPostFragment extends TabFragment {
     }
 
     private void showReasonDialog() {
-        AppCompatEditText editText = new AppCompatEditText(getContext());
-        editText.setPadding(App.px24, 0, App.px24, 0);
-        editText.setHint("Причина редактирования");
+        View view = View.inflate(getContext(), R.layout.edit_post_reason, null);
+        EditText editText = (EditText) view.findViewById(R.id.edit_post_reason_field);
         editText.setText(postForm.getEditReason());
+
         new AlertDialog.Builder(getContext())
-                .setView(editText)
                 .setTitle("Причина редактирования")
-                .setPositiveButton("Ок", (dialog, which) -> sendMessage())
+                .setView(view)
+                .setPositiveButton("Отправить", (dialog1, which) -> {
+                    postForm.setEditReason(editText.getText().toString());
+                    sendMessage();
+                })
                 .setNegativeButton("Отмена", null)
                 .show();
     }

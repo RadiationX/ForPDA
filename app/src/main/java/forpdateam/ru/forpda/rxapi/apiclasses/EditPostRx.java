@@ -14,13 +14,6 @@ import io.reactivex.Observable;
  */
 
 public class EditPostRx {
-    public Observable<List<AttachmentItem>> uploadFiles(List<RequestFile> files) {
-        return uploadFiles(0, files);
-    }
-
-    public Observable<List<AttachmentItem>> deleteFiles(List<AttachmentItem> items) {
-        return deleteFiles(0, items);
-    }
 
     public Observable<EditPostForm> loadForm(int postId) {
         return Observable.fromCallable(() -> Api.EditPost().loadForm(postId));

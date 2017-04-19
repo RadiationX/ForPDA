@@ -63,6 +63,10 @@ public class FilePickHelper {
             InputStream inputStream = null;
             String name = getFileName(context, uri);
             String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(name));
+            if (mimeType == null) {
+                mimeType = context.getContentResolver().getType(uri);
+            }
+            Log.e("SUKA", "MIME TYPE " + mimeType);
             if (uri.getScheme().equals("content")) {
                 inputStream = context.getContentResolver().openInputStream(uri);
             } else if (uri.getScheme().equals("file")) {

@@ -57,6 +57,8 @@ import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 
+import static forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm.TYPE_EDIT_POST;
+
 /**
  * Created by radiationx on 20.10.16.
  */
@@ -168,7 +170,8 @@ public abstract class ThemeFragment extends TabFragment {
 
     @Override
     public boolean onBackPressed() {
-        if (messagePanel.onBackPressed()) return true;
+        if (messagePanel.onBackPressed())
+            return true;
         if (toolbar.getMenu().findItem(R.id.action_search) != null && toolbar.getMenu().findItem(R.id.action_search).isActionViewExpanded()) {
             toolbar.collapseActionView();
             return true;
@@ -178,6 +181,16 @@ public abstract class ThemeFragment extends TabFragment {
             currentPage = history.get(history.size() - 1);
             history.remove(history.size() - 1);
             updateView();
+            return true;
+        }
+        if ((messagePanel.getMessage() != null && !messagePanel.getMessage().isEmpty()) || messagePanel.getAttachments().size() > 0) {
+            new AlertDialog.Builder(getContext())
+                    .setMessage("Забыть изменения?")
+                    .setPositiveButton("Да", (dialog, which) -> {
+                        TabManager.getInstance().remove(ThemeFragment.this);
+                    })
+                    .setNegativeButton("Нет", null)
+                    .show();
             return true;
         }
         return false;
@@ -352,6 +365,14 @@ public abstract class ThemeFragment extends TabFragment {
     *
     * */
 
+    public MessagePanel getMessagePanel() {
+        return messagePanel;
+    }
+
+    public AttachmentsPopup getAttachmentsPopup() {
+        return attachmentsPopup;
+    }
+
     private EditPostForm createEditPostForm() {
         EditPostForm form = new EditPostForm();
         form.setForumId(currentPage.getForumId());
@@ -406,13 +427,13 @@ public abstract class ThemeFragment extends TabFragment {
 
     public void uploadFiles(List<RequestFile> files) {
         attachmentsPopup.preUploadFiles(files);
-        attachmentSubscriber.subscribe(RxApi.EditPost().uploadFiles(56965580, files), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
+        attachmentSubscriber.subscribe(RxApi.EditPost().uploadFiles(0, files), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
     }
 
     public void removeFiles() {
         attachmentsPopup.preDeleteFiles();
         List<AttachmentItem> selectedFiles = attachmentsPopup.getSelected();
-        attachmentSubscriber.subscribe(RxApi.EditPost().deleteFiles(56965580, selectedFiles), item -> attachmentsPopup.onDeleteFiles(item), selectedFiles, null);
+        attachmentSubscriber.subscribe(RxApi.EditPost().deleteFiles(0, selectedFiles), item -> attachmentsPopup.onDeleteFiles(item), selectedFiles, null);
     }
 
 

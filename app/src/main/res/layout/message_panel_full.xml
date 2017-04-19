@@ -12,18 +12,30 @@
         android:fillViewport="true"
         android:scrollbars="vertical">
 
-        <android.support.v7.widget.AppCompatEditText
-            android:id="@+id/message_field"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:gravity="top"
-            android:hint="Сообщение"
-            android:imeOptions="flagNoFullscreen"
-            android:inputType="textCapSentences|textMultiLine"
-            android:minHeight="@dimen/dp48"
-            android:padding="@dimen/dp16"
-            android:textSize="16sp" />
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/message_field"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:gravity="top"
+                android:hint="Сообщение"
+                android:imeOptions="flagNoFullscreen"
+                android:inputType="textCapSentences|textMultiLine"
+                android:minHeight="@dimen/dp48"
+                android:padding="@dimen/dp16"
+                android:textSize="16sp" />
+            <ProgressBar
+                android:id="@+id/form_load_progress"
+                android:layout_width="@dimen/dp48"
+                android:layout_height="@dimen/dp48"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+        </FrameLayout>
+
 
     </ScrollView>
 
@@ -54,6 +66,7 @@
             android:layout_width="@dimen/dp48"
             android:layout_height="@dimen/dp48"
             android:layout_alignParentEnd="true">
+
             <android.support.v7.widget.AppCompatImageButton
                 android:id="@+id/button_send"
                 android:layout_width="@dimen/dp48"

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="forpdateam.ru.forpda">
 
+
     <!-- Some Chromebooks don't support touch. Although not essential,
          it's a good idea to explicitly include this declaration. -->
     <uses-feature
@@ -12,8 +13,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_LOGS"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:name=".App"
@@ -33,6 +34,11 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <meta-data
+                android:name="android.max_aspect"
+                android:value="2.1" />
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -75,7 +81,11 @@
         <activity
             android:name=".settings.SettingsActivity"
             android:label="Settings"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop">
+            <meta-data
+                android:name="android.max_aspect"
+                android:value="2.1" />
+        </activity>
         <activity
             android:name=".utils.permission.ShadowActivity"
             android:launchMode="singleTop"
