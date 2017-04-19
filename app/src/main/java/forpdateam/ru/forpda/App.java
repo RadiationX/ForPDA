@@ -64,6 +64,7 @@ public class App extends android.app.Application {
     private static int savedKeyboardHeight = 0;
     public static int keyboardHeight = 0;
     public static int statusBarHeight = 0;
+    public static int navigationBarHeight = 0;
 
     public static int getStatusBarHeight() {
         return statusBarHeight;
@@ -71,6 +72,14 @@ public class App extends android.app.Application {
 
     public static void setStatusBarHeight(int statusBarHeight) {
         App.statusBarHeight = statusBarHeight;
+    }
+
+    public static int getNavigationBarHeight() {
+        return navigationBarHeight;
+    }
+
+    public static void setNavigationBarHeight(int navigationBarHeight) {
+        App.navigationBarHeight = navigationBarHeight;
     }
 
     public static int getKeyboardHeight() {

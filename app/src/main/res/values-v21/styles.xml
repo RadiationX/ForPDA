@@ -4,6 +4,7 @@
     <style name="AppTheme" parent="BaseAppTheme"/>
 
     <style name="AppTheme.NoActionBar" parent="BaseAppTheme.NoActionBar">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/status_bar_color</item>
     </style>
 

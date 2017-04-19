@@ -20,8 +20,9 @@
             android:visibility="gone">
 
             <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal">
 
                 <LinearLayout
                     android:id="@+id/profile_list_counts"
@@ -152,8 +153,9 @@
                     android:textStyle="bold" />
 
                 <HorizontalScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal">
 
                     <LinearLayout
                         android:id="@+id/profile_list_contacts"
