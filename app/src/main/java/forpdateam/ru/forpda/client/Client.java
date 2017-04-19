@@ -78,40 +78,56 @@ public class Client implements IWebClient {
         return Cookie.parse(HttpUrl.parse(fields[0]), fields[1]);
     }
 
+    private String cookieToPref(String url, Cookie cookie) {
+        return url.concat("|:|").concat(cookie.toString());
+    }
+
     private final OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .cookieJar(new CookieJar() {
+                Pattern authPattern = Pattern.compile("4pda\\.ru\\/forum\\/[\\s\\S]*?act=(?:auth|logout)");
+                Matcher matcher;
+
                 @Override
                 public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
                     Log.d("FORPDA_LOG", "response url " + url.toString());
                     Log.d("FORPDA_LOG", "response cookies size " + cookies.size());
-                    try {
+
+                    if (matcher == null)
+                        matcher = authPattern.matcher(url.toString());
+                    else
+                        matcher = matcher.reset(url.toString());
+
+                    if (matcher.find()) {
                         for (Cookie cookie : cookies) {
                             Log.e("SUKA", "response " + cookie.name() + " : " + cookie.value());
-                            if (cookie.name().matches("member_id|pass_hash")) {
+                            boolean isMemberId = cookie.name().equals("member_id");
+                            boolean isPassHash = cookie.name().equals("pass_hash");
+                            if (isMemberId || isPassHash) {
                                 if (cookie.value().equals("deleted")) {
-                                    if(Client.cookies.containsKey(cookie.name())){
+                                    App.getInstance().getPreferences().edit().remove("cookie_".concat(cookie.name())).apply();
+                                    if (Client.cookies.containsKey(cookie.name())) {
                                         Client.cookies.remove(cookie.name());
                                     }
-                                    App.getInstance().getPreferences().edit().remove("cookie_".concat(cookie.name())).apply();
                                 } else {
                                     //Сохранение кукисов cookie_member_id и cookie_pass_hash
-                                    App.getInstance().getPreferences().edit().putString("cookie_".concat(cookie.name()), url.toString().concat("|:|").concat(cookie.toString())).apply();
-                                    if (cookie.name().equals("member_id")) {
-                                        //Сохранение и обновление member_id
+                                    if (isMemberId) {
+                                        App.getInstance().getPreferences().edit().putString("cookie_member_id", cookieToPref(url.toString(), cookie)).apply();
                                         App.getInstance().getPreferences().edit().putString("member_id", cookie.value()).apply();
                                         ClientHelper.setUserId(cookie.value());
                                     }
+                                    if (isPassHash) {
+                                        App.getInstance().getPreferences().edit().putString("cookie_pass_hash", cookieToPref(url.toString(), cookie)).apply();
+                                        App.getInstance().getPreferences().edit().putString("auth_key", cookie.value()).apply();
+                                    }
+                                    if (!Client.cookies.containsKey(cookie.name())) {
+                                        Client.cookies.put(cookie.name(), cookie);
+                                    }
                                 }
                             }
-                            if(!Client.cookies.containsKey(cookie.name())){
-                                Client.cookies.put(cookie.name(), cookie);
-                            }
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
                 }
 
@@ -121,9 +137,9 @@ public class Client implements IWebClient {
                     listCookies.clear();
                     listCookies.addAll(Client.cookies.values());
                     Log.d("FORPDA_LOG", "cookies size " + listCookies.size());
-                    /*for (Cookie cookie : listCookies) {
+                    for (Cookie cookie : listCookies) {
                         Log.e("SUKA", "COOOKA!!: " + cookie.toString());
-                    }*/
+                    }
                     return listCookies;
                 }
             })
@@ -185,6 +201,10 @@ public class Client implements IWebClient {
                     }
                 }
                 if (file != null) {
+                    Log.e("SUKA", "FILE "+file.getRequestName());
+                    Log.e("SUKA", "FILE "+file.getFileName());
+                    Log.e("SUKA", "FILE "+file.getMimeType());
+                    Log.e("SUKA", "FILE "+file.getFileStream());
                     multipartBuilder.addFormDataPart(file.getRequestName(), URLEncoder.encode(file.getFileName(), "CP1251"), RequestBodyUtil.create(MediaType.parse(file.getMimeType()), file.getFileStream()));
                 }
                 requestBuilder.post(multipartBuilder.build());

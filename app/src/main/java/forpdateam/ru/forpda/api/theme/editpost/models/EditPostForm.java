@@ -10,7 +10,10 @@ public class EditPostForm {
     public final static String ARG_TYPE = "type";
     public final static int TYPE_NEW_POST = 0;
     public final static int TYPE_EDIT_POST = 1;
+    public final static int ERROR_NONE = 0;
+    public final static int ERROR_NO_PERMISSION = 1;
     private int type = TYPE_NEW_POST;
+    private int errorCode = 0;
     private ArrayList<AttachmentItem> attachments = new ArrayList<>();
     private String editReason = "default_edit_reason", message = "";
 
@@ -86,5 +89,13 @@ public class EditPostForm {
 
     public void setEditReason(String editReason) {
         this.editReason = editReason;
+    }
+
+    public int getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(int errorCode) {
+        this.errorCode = errorCode;
     }
 }

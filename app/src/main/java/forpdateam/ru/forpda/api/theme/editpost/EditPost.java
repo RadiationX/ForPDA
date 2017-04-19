@@ -2,6 +2,8 @@ package forpdateam.ru.forpda.api.theme.editpost;
 
 import android.util.Log;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
@@ -33,10 +36,14 @@ public class EditPost {
         //url = url.concat("&t=").concat(Integer.toString(topicId)).concat("&f=").concat(Integer.toString(forumId));
 
         String response = Api.getWebClient().get(url);
+        if(response.equals("nopermission")){
+            form.setErrorCode(EditPostForm.ERROR_NO_PERMISSION);
+            return form;
+        }
         Matcher matcher = postPattern.matcher(response);
         if (matcher.find()) {
             Log.d("FORPDA_LOG", "MESSAGE " + matcher.group(1));
-            form.setMessage(matcher.group(1));
+            form.setMessage(Utils.fromHtml(Utils.escapeNewLine(matcher.group(1))));
             Log.d("FORPDA_LOG", "REASON " + matcher.group(2));
             form.setEditReason(matcher.group(2));
         }
@@ -86,7 +93,11 @@ public class EditPost {
 
     private AttachmentItem fillAttachment(AttachmentItem item, Matcher matcher) {
         item.setId(Integer.parseInt(matcher.group(1)));
-        item.setName(matcher.group(2));
+        try {
+            item.setName(URLDecoder.decode(matcher.group(2), "utf-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         item.setFormat(matcher.group(3));
         item.setWeight(matcher.group(4));
         if (item.getTypeFile() == AttachmentItem.TYPE_IMAGE) {

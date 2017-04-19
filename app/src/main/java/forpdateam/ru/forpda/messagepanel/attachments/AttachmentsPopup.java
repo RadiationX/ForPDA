@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.messagepanel.attachments;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -13,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import forpdateam.ru.forpda.App;
@@ -169,6 +171,7 @@ public class AttachmentsPopup {
     public void preUploadFiles(List<RequestFile> files) {
         for (RequestFile file : files) {
             AttachmentItem item = new AttachmentItem(file.getFileName());
+            Log.e("SUKA", "ADD LOADING ITEM " + item);
             adapter.add(item);
             loadingItems.add(item);
         }
@@ -177,6 +180,7 @@ public class AttachmentsPopup {
     public void onUploadFiles(List<AttachmentItem> items) {
         for (AttachmentItem item : items) {
             AttachmentItem loadingItem = getItemByName(item.getName());
+            Log.e("SUKA", "LOADING ITEM " + loadingItem + " : " + item);
             if (item.getLoadState() == AttachmentItem.STATE_NOT_LOADED) {
                 adapter.removeItem(loadingItem);
                 //SHOW ERROR
@@ -191,6 +195,11 @@ public class AttachmentsPopup {
         //block ui
         progressOverlay.setVisibility(View.VISIBLE);
         tryLockControls(false);
+    }
+
+    public void setAttachments(Collection<AttachmentItem> items) {
+        adapter.clear();
+        adapter.add(items);
     }
 
     public void clearAttachments() {

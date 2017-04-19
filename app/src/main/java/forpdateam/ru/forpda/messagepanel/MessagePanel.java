@@ -37,6 +37,7 @@ public class MessagePanel extends CardView {
     private AttachmentsPopup attachmentsPopup;
     private ViewGroup fragmentContainer;
     private ProgressBar sendProgress;
+    private ProgressBar formProgress;
     private int lastHeight = 0;
     private HeightChangeListener heightChangeListener;
     public int primaryColor = Color.parseColor("#0277bd");
@@ -58,6 +59,7 @@ public class MessagePanel extends CardView {
         sendButton = (ImageButton) findViewById(R.id.button_send);
         messageField = (EditText) findViewById(R.id.message_field);
         sendProgress = (ProgressBar) findViewById(R.id.send_progress);
+        formProgress = (ProgressBar) findViewById(R.id.form_load_progress);
         panelBehavior = new MessagePanelBehavior();
         CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, fullForm ? ViewGroup.LayoutParams.MATCH_PARENT : ViewGroup.LayoutParams.WRAP_CONTENT);
         params.setBehavior(panelBehavior);
@@ -109,6 +111,10 @@ public class MessagePanel extends CardView {
         messageField.setTypeface(Typeface.MONOSPACE);
     }
 
+    public ProgressBar getFormProgress(){
+        return formProgress;
+    }
+
     public void setProgressState(boolean state) {
         sendProgress.setVisibility(state ? VISIBLE : GONE);
         sendButton.setVisibility(state ? GONE : VISIBLE);
@@ -118,6 +124,9 @@ public class MessagePanel extends CardView {
         this.setTranslationY(0);
     }
 
+    public void setText(String text) {
+        messageField.setText(text);
+    }
 
     public boolean insertText(String text) {
         return insertText(text, null);

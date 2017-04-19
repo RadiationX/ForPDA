@@ -18,4 +18,19 @@ public class Utils {
         if (s == null) return null;
         return TextUtils.htmlEncode(s);
     }
+
+    public static String escapeNewLine(String s) {
+        StringBuilder sb = new StringBuilder();
+        char c;
+        final int length = s.length();
+        for (int i = 0; i < length; i++) {
+            c = s.charAt(i);
+            if (c == '\n') {
+                sb.append("<br>");
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
 }

@@ -111,6 +111,9 @@ public class TabFragment extends RxFragment {
         getMainActivity().updateTabList();
     }
 
+
+    //False - можно закрывать
+    //True - еще нужно что-то сделать, не закрывать
     public boolean onBackPressed() {
         Log.d("FORPDA_LOG", "onbackpressed tab");
         return false;

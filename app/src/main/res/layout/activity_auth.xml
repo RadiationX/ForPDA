@@ -55,7 +55,7 @@
 
         <LinearLayout
             android:id="@+id/auth_main_form"
-            android:layout_width="match_parent"
+            android:layout_width="480dp"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:orientation="vertical"
@@ -108,6 +108,7 @@
                     android:id="@+id/captchaImage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
                     android:adjustViewBounds="true"
                     android:padding="@dimen/dp8"
                     android:scaleType="centerCrop" />
@@ -143,12 +144,13 @@
                     android:layout_height="wrap_content"
                     android:enabled="false"
                     android:text="Войти" />
+
                 <ProgressBar
                     android:id="@+id/login_progress"
                     android:layout_width="@dimen/dp36"
                     android:layout_height="@dimen/dp36"
                     android:layout_gravity="center"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
             </FrameLayout>
 
         </LinearLayout>
