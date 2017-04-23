@@ -171,7 +171,7 @@ public class AttachmentsPopup {
     public void preUploadFiles(List<RequestFile> files) {
         for (RequestFile file : files) {
             AttachmentItem item = new AttachmentItem(file.getFileName());
-            Log.e("SUKA", "ADD LOADING ITEM " + item);
+            Log.e("FORPDA_LOG", "ADD LOADING ITEM " + item);
             adapter.add(item);
             loadingItems.add(item);
         }
@@ -180,7 +180,7 @@ public class AttachmentsPopup {
     public void onUploadFiles(List<AttachmentItem> items) {
         for (AttachmentItem item : items) {
             AttachmentItem loadingItem = getItemByName(item.getName());
-            Log.e("SUKA", "LOADING ITEM " + loadingItem + " : " + item);
+            Log.e("FORPDA_LOG", "LOADING ITEM " + loadingItem + " : " + item);
             if (item.getLoadState() == AttachmentItem.STATE_NOT_LOADED) {
                 adapter.removeItem(loadingItem);
                 //SHOW ERROR

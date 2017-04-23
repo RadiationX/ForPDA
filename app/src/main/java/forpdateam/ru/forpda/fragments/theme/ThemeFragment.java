@@ -207,7 +207,7 @@ public abstract class ThemeFragment extends TabFragment {
     public void loadData() {
         if (refreshLayout != null)
             refreshLayout.setRefreshing(true);
-        mainSubscriber.subscribe(RxApi.Theme().getTheme(tab_url, true), this::onLoadData, new ThemePage(), v -> loadData());
+        mainSubscriber.subscribe(RxApi.Theme().getTheme(tab_url, true, false, false), this::onLoadData, new ThemePage(), v -> loadData());
     }
 
     protected void onLoadData(ThemePage page) throws Exception {
@@ -218,7 +218,7 @@ public abstract class ThemeFragment extends TabFragment {
             return;
         }
         if (currentPage == null)
-            new Handler().postDelayed(() -> (appBarLayout).setExpanded(false, true), 300);
+            new Handler().postDelayed(() -> (appBarLayout).setExpanded(false, true), 225);
         tab_url = page.getUrl();
         if (currentPage != null) {
             saveToHistory(page);
@@ -397,6 +397,7 @@ public abstract class ThemeFragment extends TabFragment {
     }
 
     private void sendMessage() {
+        hidePopupWindows();
         messagePanel.setProgressState(true);
         EditPostForm form = createEditPostForm();
         mainSubscriber.subscribe(RxApi.EditPost().sendPost(form), s -> {

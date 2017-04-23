@@ -28,6 +28,6 @@ public class EditPostRx {
     }
 
     public Observable<ThemePage> sendPost(EditPostForm form) {
-        return Observable.fromCallable(() -> Api.EditPost().sendPost(form));
+        return Observable.fromCallable(() -> ThemeRx.transform(Api.EditPost().sendPost(form), true));
     }
 }

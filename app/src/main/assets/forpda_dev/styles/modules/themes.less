@@ -408,12 +408,13 @@ button,
                             }
                             
                             .range_bar {
-                                background: rgba(0, 0, 0, 0.16);
+                                background: rgba(0, 0, 0, 0.10);
+                                box-sizing: border-box;
                                 position: relative;
-                                min-height: 1.5em;
-                                padding: 4/16rem 8/16rem;
+                                min-height: 24/16rem;
+                                padding: 6/16rem 12/16rem;
                                 .bRad(2px);
-                                text-shadow: 0 0px 3/16rem rgba(0, 0, 0, 0.5);
+                                //text-shadow: 0 0px 3/16rem rgba(0, 0, 0, 0.5);
                                 color: white;
                                 //box-shadow: inset -6em 0 6em -6em rgba(0, 0, 0, 0.5);
                                 .range {
@@ -422,11 +423,11 @@ button,
                                     top: 0;
                                     height: 100%;
                                     width: auto;
-                                    background: rgba(0, 0, 0, 1);
+                                    background: rgba(0, 0, 0, 0.13);
+                                    //border: 1px solid rgba(0, 0, 0, 0.1);
                                     .bRad(2px);
                                     -webkit-transform-origin: left center;
                                     transform-origin: left center;
-                                    line-height: 1.5em;
                                 }
                                 .value {
                                     float: right;
@@ -438,6 +439,7 @@ button,
                                     transform: translateZ(0);
                                     //visibility: hidden;
                                     vertical-align: bottom;
+                                    color: black;
                                     .num_votes {
                                         &:before {
                                             content: " (";
@@ -453,6 +455,8 @@ button,
                                     display: block;
                                     overflow: hidden;
                                     padding-right: 8/16rem;
+                                    color: black;
+                                    font-weight: bold;
                                 }
                                 &:after{
                                     content: "";
@@ -514,7 +518,10 @@ button,
 .panel {
     .mainBox;
     margin: 0;
-    margin-bottom: 2em;
+    margin-bottom: 40/16em;
+    margin-left: 8/16rem;
+    margin-right: 8/16rem;
+    .bRad(24/16rem);
     .navigation {
         display: table;
         width: 100%;
@@ -523,7 +530,7 @@ button,
             display: table-cell;
             min-width: 3em;
             text-align: center;
-            color: @accentColor;
+            color: black;
             position: relative;
             &.prev .icon,
             &.page .icon,
@@ -786,6 +793,8 @@ button,
     }
 }
 .post_container {
+    @avatarSize: 56/16em;
+    @fullAvatarSize: (56+2)/16em;
     .mainBox;
     position: relative;
     .hat_button {
@@ -863,7 +872,19 @@ button,
         .post_header {
             .avatar {
                 .img {
-                    .bRad(4em);
+                    .bRad(@avatarSize);
+                }
+                >.letter{
+                    .bRad(@avatarSize);
+                }
+            }
+        }
+    }
+    &.disable_avatar {
+        .post_header {
+            .avatar {
+                .img {
+                    display: none;
                 }
             }
         }
@@ -880,8 +901,7 @@ button,
         .header_wrapper {
             position: relative;
         }
-        @avatarSize: 56/16em;
-        @fullAvatarSize: (56+2)/16em;
+        
         .avatar {
             .noselect;
             width: @avatarSize;
@@ -895,11 +915,9 @@ button,
                 background-repeat: no-repeat;
                 background-size: cover;
                 background-position: center;
-                .bRad(@avatarSize);
             }
             
             &.none_avatar{
-                
                 >.letter{
                     display: block;
                 }
@@ -916,9 +934,8 @@ button,
                 font-weight: bold;
                 top: 0;
                 left: 0;
-                .bRad(@avatarSize);
                 background-color: #ccc;
-                display: none;
+                //display: none;
             }
             
             .reputation {
@@ -1066,6 +1083,7 @@ button,
             }
         }
     }
+    
     .post_footer {
         .noselect;
         .btn {
@@ -1098,7 +1116,7 @@ button,
         top: 0;
         height: 100%;
         width: 100%;
-        background: @accentColor;
+        background: black;
         z-index: 10;
         opacity: 0;
         pointer-events: none;

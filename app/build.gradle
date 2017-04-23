@@ -6,11 +6,11 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
 
-    def versionNumber = 8
+    def versionNumber = 9
 
     def versionMajor = 0
     def versionMinor = 1
-    def versionPatch = 5
+    def versionPatch = 6
 
     def versionBuild = -1
     def versionPropsFile = file('version.properties')
@@ -36,6 +36,9 @@ android {
         minSdkVersion 19
         targetSdkVersion 25
         vectorDrawables.useSupportLibrary = true
+        ndk {
+            abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+        }
     }
 
     productFlavors {
@@ -89,7 +92,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '25.3.0'
+    supportLibVersion = '25.3.1'
     okHttpVersion = '3.5.0'
     rxbindingVersion = '0.4.0'
     rxlifecycleVersion = '2.0.1'

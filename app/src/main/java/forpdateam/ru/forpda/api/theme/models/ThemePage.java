@@ -10,12 +10,27 @@ import forpdateam.ru.forpda.api.theme.interfaces.IThemePage;
  */
 public class ThemePage implements IThemePage {
     private String title, desc, html, url, elementToScroll;
-    private boolean inFavorite = false, curator = false, quote = false;
+    private int id = 0, forumId = 0, favId = 0, scrollY = 0;
+    private boolean inFavorite = false, curator = false, quote = false, hatOpen = false, pollOpen = false;
     private ArrayList<ThemePost> posts = new ArrayList<>();
     private Pagination pagination = new Pagination();
     private Poll poll;
 
-    private int id = 0, forumId = 0, favId = 0;
+    public boolean isHatOpen() {
+        return hatOpen;
+    }
+
+    public boolean isPollOpen() {
+        return pollOpen;
+    }
+
+    public void setHatOpen(boolean hatOpen) {
+        this.hatOpen = hatOpen;
+    }
+
+    public void setPollOpen(boolean pollOpen) {
+        this.pollOpen = pollOpen;
+    }
 
     public boolean canQuote() {
         return quote;
@@ -40,8 +55,6 @@ public class ThemePage implements IThemePage {
     public void setCurator(boolean curator) {
         this.curator = curator;
     }
-
-    private int scrollY = 0;
 
     public int getScrollY() {
         return scrollY;

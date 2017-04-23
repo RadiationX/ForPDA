@@ -102,7 +102,7 @@ public class Client implements IWebClient {
 
                     if (matcher.find()) {
                         for (Cookie cookie : cookies) {
-                            Log.e("SUKA", "response " + cookie.name() + " : " + cookie.value());
+                            Log.e("FORPDA_LOG", "response " + cookie.name() + " : " + cookie.value());
                             boolean isMemberId = cookie.name().equals("member_id");
                             boolean isPassHash = cookie.name().equals("pass_hash");
                             if (isMemberId || isPassHash) {
@@ -197,10 +197,10 @@ public class Client implements IWebClient {
                     }
                 }
                 if (file != null) {
-                    Log.e("SUKA", "FILE "+file.getRequestName());
-                    Log.e("SUKA", "FILE "+file.getFileName());
-                    Log.e("SUKA", "FILE "+file.getMimeType());
-                    Log.e("SUKA", "FILE "+file.getFileStream());
+                    Log.e("FORPDA_LOG", "FILE " + file.getRequestName());
+                    Log.e("FORPDA_LOG", "FILE " + file.getFileName());
+                    Log.e("FORPDA_LOG", "FILE " + file.getMimeType());
+                    Log.e("FORPDA_LOG", "FILE " + file.getFileStream());
                     multipartBuilder.addFormDataPart(file.getRequestName(), URLEncoder.encode(file.getFileName(), "CP1251"), RequestBodyUtil.create(MediaType.parse(file.getMimeType()), file.getFileStream()));
                 }
                 requestBuilder.post(multipartBuilder.build());
@@ -245,6 +245,7 @@ public class Client implements IWebClient {
 
         if (countsMatcher.find()) {
             tempGroup = countsMatcher.group(1);
+            int lastCounts[] = {ClientHelper.getMentionsCount(), ClientHelper.getFavoritesCount(), ClientHelper.getQmsCount()};
             ClientHelper.setMentionsCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
 
             tempGroup = countsMatcher.group(2);
@@ -253,7 +254,9 @@ public class Client implements IWebClient {
             tempGroup = countsMatcher.group(3);
             ClientHelper.setQmsCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
 
-            observerHandler.post(() -> ClientHelper.getInstance().notifyCountsChanged());
+            if (lastCounts[0] != ClientHelper.getMentionsCount()||lastCounts[1] != ClientHelper.getFavoritesCount()||lastCounts[2] != ClientHelper.getQmsCount()) {
+                observerHandler.post(() -> ClientHelper.getInstance().notifyCountsChanged());
+            }
         }
     }
 

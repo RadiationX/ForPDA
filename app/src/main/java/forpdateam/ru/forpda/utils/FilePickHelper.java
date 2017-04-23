@@ -66,7 +66,7 @@ public class FilePickHelper {
             if (mimeType == null) {
                 mimeType = context.getContentResolver().getType(uri);
             }
-            Log.e("SUKA", "MIME TYPE " + mimeType);
+            Log.e("FORPDA_LOG", "MIME TYPE " + mimeType);
             if (uri.getScheme().equals("content")) {
                 inputStream = context.getContentResolver().openInputStream(uri);
             } else if (uri.getScheme().equals("file")) {

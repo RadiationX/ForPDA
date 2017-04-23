@@ -44,16 +44,16 @@ public class Theme {
     }
 
 
-    public ThemePage getTheme(final String url, boolean generateHtml) throws Exception {
+    public ThemePage getTheme(final String url, boolean hatOpen, boolean pollOpen) throws Exception {
         Log.d("FORPDA_LOG", "page start getPage");
         String response = Api.getWebClient().get(url);
-        return parsePage(url, response, generateHtml);
+        return parsePage(url, response, hatOpen, pollOpen);
     }
 
-    private final static Pattern firstLetter = Pattern.compile("[^a-zA-Z]*?([a-zA-Z])");
-
-    public ThemePage parsePage(String url, String response, boolean generateHtml) {
+    public ThemePage parsePage(String url, String response, boolean hatOpen, boolean pollOpen) throws Exception {
         ThemePage page = new ThemePage();
+        page.setHatOpen(hatOpen);
+        page.setPollOpen(pollOpen);
         String redirectUrl = Api.getWebClient().getRedirect(url);
         if (redirectUrl == null)
             redirectUrl = url;
@@ -88,7 +88,6 @@ public class Theme {
         }
         matcher = postsPattern.matcher(response);
         Log.d("FORPDA_LOG", "posts matcher " + (System.currentTimeMillis() - time));
-        int memberId = ClientHelper.getUserId();
         while (matcher.find()) {
             ThemePost post = new ThemePost();
             post.setId(Integer.parseInt(matcher.group(1)));
@@ -109,7 +108,7 @@ public class Theme {
             post.setCanDelete(!matcher.group(16).isEmpty());
             page.setCanQuote(!matcher.group(17).isEmpty());
             post.setBody(matcher.group(18));
-            if (post.isCurator() && post.getUserId() == memberId)
+            if (post.isCurator() && post.getUserId() == ClientHelper.getUserId())
                 page.setCurator(true);
             page.addPost(post);
         }
@@ -156,164 +155,9 @@ public class Theme {
             page.setPoll(poll);
         }
         Log.d("FORPDA_LOG", "end created page obj " + (System.currentTimeMillis() - time));
-        if (generateHtml) {
-            long time2 = System.currentTimeMillis();
-            MiniTemplator t = App.getInstance().getTemplator();
-            boolean authorized = ClientHelper.getAuthState();
-            boolean prevDisabled = page.getPagination().getCurrent() <= 1;
-            boolean nextDisabled = page.getPagination().getCurrent() == page.getPagination().getAll();
-
-            t.setVariableOpt("topic_title", Utils.htmlEncode(page.getTitle()));
-            t.setVariableOpt("topic_description", Utils.htmlEncode(page.getDesc()));
-            t.setVariableOpt("topic_url", redirectUrl);
-            t.setVariableOpt("in_favorite", Boolean.toString(page.isInFavorite()));
-            t.setVariableOpt("all_pages", page.getPagination().getAll());
-            t.setVariableOpt("posts_on_page", page.getPagination().getPerPage());
-            t.setVariableOpt("current_page", page.getPagination().getCurrent());
-            t.setVariableOpt("authorized", Boolean.toString(authorized));
-            t.setVariableOpt("is_curator", Boolean.toString(page.isCurator()));
-            t.setVariableOpt("member_id", ClientHelper.getUserId());
-            t.setVariableOpt("elem_to_scroll", page.getElementToScroll());
-            t.setVariableOpt("body_type", "topic");
-            t.setVariableOpt("navigation_disable", prevDisabled && nextDisabled ? "navigation_disable" : "");
-            t.setVariableOpt("first_disable", getDisableStr(prevDisabled));
-            t.setVariableOpt("prev_disable", getDisableStr(prevDisabled));
-            t.setVariableOpt("next_disable", getDisableStr(nextDisabled));
-            t.setVariableOpt("last_disable", getDisableStr(nextDisabled));
-            t.setVariableOpt("disable_avatar_js", Boolean.toString(true));
-            t.setVariableOpt("disable_avatar", App.getInstance().getPreferences().getBoolean("theme.show_avatars", true) ? "" : "disable_avatar");
-            t.setVariableOpt("avatar_type", App.getInstance().getPreferences().getBoolean("theme.circle_avatars", true) ? "avatar_circle" : "");
-
-            Log.d("FORPDA_LOG", "template check 1 " + (System.currentTimeMillis() - time2));
-
-            int hatPostId = page.getPosts().get(0).getId();
-            Log.d("FORPDA_LOG", "template check 2 " + (System.currentTimeMillis() - time2));
-            String letter;
-            Matcher letterMatcher = null;
-            for (ThemePost post : page.getPosts()) {
-                t.setVariableOpt("user_online", post.isOnline() ? "online" : "");
-                t.setVariableOpt("post_id", post.getId());
-                t.setVariableOpt("user_id", post.getUserId());
-
-                //Post header
-                //t.setVariableOpt("avatar", post.getAvatar().isEmpty() ? "file:///android_asset/av.png" : "http://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
-                t.setVariableOpt("avatar", post.getAvatar().isEmpty() ? "" : "http://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
-                t.setVariableOpt("none_avatar", post.getAvatar().isEmpty() ? "none_avatar" : "");
-
-                letter = post.getNick().substring(0, 1);
-                if (letterMatcher != null) {
-                    letterMatcher = letterMatcher.reset(letter);
-                } else {
-                    letterMatcher = firstLetter.matcher(letter);
-                }
-                if (!letterMatcher.find()) {
-                    letterMatcher = letterMatcher.reset(post.getNick());
-                    if (letterMatcher.find()) {
-                        letter = letterMatcher.group(1);
-                    }
-                }
-                t.setVariableOpt("nick_letter", letter);
-                t.setVariableOpt("nick", Utils.htmlEncode(post.getNick()));
-                t.setVariableOpt("curator", post.isCurator() ? "curator" : "");
-                t.setVariableOpt("group_color", post.getGroupColor());
-                t.setVariableOpt("group", post.getGroup());
-                t.setVariableOpt("reputation", post.getReputation());
-                t.setVariableOpt("date", post.getDate());
-                t.setVariableOpt("number", post.getNumber());
-
-                //Post body
-                if (page.getPosts().size() > 1 && hatPostId == post.getId()) {
-                    t.setVariableOpt("hat_state_class", "close");
-                    t.addBlockOpt("hat_button");
-                    t.addBlockOpt("hat_content_start");
-                    t.addBlockOpt("hat_content_end");
-                } else {
-                    t.setVariableOpt("hat_state_class", "");
-                }
-                t.setVariableOpt("body", post.getBody());
-
-                //Post footer
-
-                if (post.canReport() && authorized)
-                    t.addBlockOpt("report_block");
-                if (page.canQuote() && authorized && post.getUserId() != memberId)
-                    t.addBlockOpt("reply_block");
-                if (authorized && post.getUserId() != memberId)
-                    t.addBlockOpt("vote_block");
-                if (post.canDelete() && authorized)
-                    t.addBlockOpt("delete_block");
-                if (post.canEdit() && authorized)
-                    t.addBlockOpt("edit_block");
-
-                t.addBlockOpt("post");
-            }
-
-            //Poll block
-
-            if (page.getPoll() != null) {
-                Poll poll = page.getPoll();
-                boolean isResult = poll.isResult();
-                t.setVariableOpt("poll_type", isResult ? "result" : "default");
-                t.setVariableOpt("poll_title", poll.getTitle().isEmpty() || poll.getTitle().equals("-") ? "Опрос" : poll.getTitle());
-
-                for (PollQuestion question : poll.getQuestions()) {
-                    t.setVariableOpt("question_title", question.getTitle());
-
-                    for (PollQuestionItem questionItem : question.getQuestionItems()) {
-                        t.setVariableOpt("question_item_title", questionItem.getTitle());
-
-                        if (isResult) {
-                            t.setVariableOpt("question_item_votes", questionItem.getVotes());
-                            t.setVariableOpt("question_item_percent", Float.toString(questionItem.getPercent()));
-                            t.addBlockOpt("poll_result_item");
-                        } else {
-                            t.setVariableOpt("question_item_type", questionItem.getType());
-                            t.setVariableOpt("question_item_name", questionItem.getName());
-                            t.setVariableOpt("question_item_value", questionItem.getValue());
-                            t.addBlockOpt("poll_default_item");
-                        }
-                    }
-                    t.addBlockOpt("poll_question_block");
-                }
-                t.setVariableOpt("poll_votes_count", poll.getVotesCount());
-                if (poll.haveButtons()) {
-                    if (poll.haveVoteButton())
-                        t.addBlockOpt("poll_vote_button");
-                    if (poll.haveShowResultsButton())
-                        t.addBlockOpt("poll_show_results_button");
-                    if (poll.haveShowPollButton())
-                        t.addBlockOpt("poll_show_poll_button");
-                    t.addBlockOpt("poll_buttons");
-                }
-                t.addBlockOpt("poll_block");
-            }
-
-
-            Log.d("FORPDA_LOG", "template check 3 " + (System.currentTimeMillis() - time2));
-            page.setHtml(t.generateOutput());
-            Log.d("FORPDA_LOG", "template check 4 " + (System.currentTimeMillis() - time2));
-            t.reset();
-            Log.d("FORPDA_LOG", "template check 5 " + (System.currentTimeMillis() - time2));
-        }
-
-        Log.d("FORPDA_LOG", "theme parsing time " + (System.currentTimeMillis() - time));
-        /*final String veryLongString = page.getHtml();
-
-        int maxLogSize = 1000;
-        for (int i = 0; i <= veryLongString.length() / maxLogSize; i++) {
-            int start = i * maxLogSize;
-            int end = (i + 1) * maxLogSize;
-            end = end > veryLongString.length() ? veryLongString.length() : end;
-            Log.v("FORPDA_LOG", veryLongString.substring(start, end));
-        }*/
 
         return page;
     }
-
-    private String getDisableStr(boolean b) {
-        return b ? "disabled" : "";
-    }
-
 
     public String reportPost(int topicId, int postId, String message) throws Exception {
         Map<String, String> headers = new HashMap<>();
