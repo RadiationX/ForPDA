@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.fragments.qms;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
@@ -17,15 +19,21 @@ import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.api.qms.models.QmsMessage;
+import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsChatAdapter;
 import forpdateam.ru.forpda.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.messagepanel.attachments.AttachmentsPopup;
 import forpdateam.ru.forpda.rxapi.RxApi;
+import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.SimpleTextWatcher;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
@@ -39,7 +47,6 @@ public class QmsChatFragment extends TabFragment {
     public final static String USER_AVATAR_ARG = "USER_AVATAR_ARG";
     public final static String THEME_ID_ARG = "THEME_ID_ARG";
     public final static String THEME_TITLE_ARG = "THEME_TITLE_ARG";
-    private static final int PICK_IMAGE = 1228;
 
     private int userId = -1, themeId = -1;
     private String avatarUrl, userNick, themeTitle;
@@ -57,7 +64,7 @@ public class QmsChatFragment extends TabFragment {
     private Subscriber<QmsChatModel> mainSubscriber = new Subscriber<>(this);
     private Subscriber<QmsMessage> messageSubscriber = new Subscriber<>(this);
 
-    public QmsChatFragment(){
+    public QmsChatFragment() {
         configuration.setDefaultTitle("Чат");
     }
 
@@ -91,6 +98,17 @@ public class QmsChatFragment extends TabFragment {
         messagePanel = new MessagePanel(getContext(), fragmentContainer, coordinatorLayout, false);
         messagePanel.setHeightChangeListener(newHeight -> recyclerView.setPadding(0, 0, 0, newHeight));
         attachmentsPopup = messagePanel.getAttachmentsPopup();
+        attachmentsPopup.setAddOnClickListener(v -> pickImage());
+        attachmentsPopup.setDeleteOnClickListener(v -> {
+            attachmentsPopup.preDeleteFiles();
+            List<AttachmentItem> selectedFiles = attachmentsPopup.getSelected();
+            for (AttachmentItem item : selectedFiles) {
+                item.setStatus(AttachmentItem.STATUS_REMOVED);
+            }
+            attachmentsPopup.onDeleteFiles(selectedFiles);
+        });
+        attachmentsPopup.setInsertAttachmentListener(item -> "[url=http://savepic.ru/" + item.getId() + "." + item.getFormat() + "]" +
+                "Файл: " + item.getName() + ", Размер: " + item.getWeight() + ", ID: " + item.getId() + "[/url]");
         messagePanel.addSendOnClickListener(v -> {
             if (themeId == -1) {
                 sendNewTheme();
@@ -284,5 +302,30 @@ public class QmsChatFragment extends TabFragment {
             //TabManager.getInstance().remove(getParentTag());
         }
         recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+    }
+
+    private Subscriber<List<AttachmentItem>> attachmentSubscriber = new Subscriber<>(this);
+
+    public void uploadFiles(List<RequestFile> files) {
+        attachmentsPopup.preUploadFiles(files);
+        attachmentSubscriber.subscribe(RxApi.Qms().uploadFiles(files), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
+    }
+
+    private static final int PICK_IMAGE = 1228;
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
+            if (data == null) {
+                //Display an error
+                return;
+            }
+            uploadFiles(FilePickHelper.onActivityResult(getContext(), data));
+        }
+    }
+
+    public void pickImage() {
+        startActivityForResult(FilePickHelper.pickImage(PICK_IMAGE), PICK_IMAGE);
     }
 }

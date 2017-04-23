@@ -1,12 +1,15 @@
 package forpdateam.ru.forpda.rxapi.apiclasses;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsMessage;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
+import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import io.reactivex.Observable;
 
 /**
@@ -52,5 +55,9 @@ public class QmsRx {
 
     public Observable<ArrayList<QmsContact>> unBlockUsers(int[] userIds) {
         return Observable.fromCallable(() -> Api.Qms().unBlockUsers(userIds));
+    }
+
+    public Observable<List<AttachmentItem>> uploadFiles(List<RequestFile> files) {
+        return Observable.fromCallable(() -> Api.Qms().uploadFiles(files));
     }
 }

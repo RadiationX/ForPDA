@@ -27,6 +27,8 @@ import android.widget.Toast;
 
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
+import org.acra.ACRA;
+
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.R;
