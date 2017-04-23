@@ -245,7 +245,7 @@ public class Client implements IWebClient {
 
         if (countsMatcher.find()) {
             tempGroup = countsMatcher.group(1);
-            int lastCounts[] = {ClientHelper.getMentionsCount(), ClientHelper.getFavoritesCount(), ClientHelper.getQmsCount()};
+            //int lastCounts[] = {ClientHelper.getMentionsCount(), ClientHelper.getFavoritesCount(), ClientHelper.getQmsCount()};
             ClientHelper.setMentionsCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
 
             tempGroup = countsMatcher.group(2);
@@ -254,9 +254,9 @@ public class Client implements IWebClient {
             tempGroup = countsMatcher.group(3);
             ClientHelper.setQmsCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
 
-            if (lastCounts[0] != ClientHelper.getMentionsCount()||lastCounts[1] != ClientHelper.getFavoritesCount()||lastCounts[2] != ClientHelper.getQmsCount()) {
-                observerHandler.post(() -> ClientHelper.getInstance().notifyCountsChanged());
-            }
+            /*if (lastCounts[0] != ClientHelper.getMentionsCount()||lastCounts[1] != ClientHelper.getFavoritesCount()||lastCounts[2] != ClientHelper.getQmsCount()) {
+            }*/
+            observerHandler.post(() -> ClientHelper.getInstance().notifyCountsChanged());
         }
     }
 

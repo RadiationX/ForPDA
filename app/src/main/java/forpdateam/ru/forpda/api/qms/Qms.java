@@ -1,20 +1,24 @@
 package forpdateam.ru.forpda.api.qms;
 
 import android.text.Html;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsMessage;
 import forpdateam.ru.forpda.api.qms.models.QmsTheme;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import forpdateam.ru.forpda.api.Utils;
+import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 
 
 /**
@@ -215,4 +219,65 @@ public class Qms {
         headers.put("del-mid", Integer.toString(mid));
         return Api.getWebClient().post("http://4pda.ru/forum/index.php", headers);
     }
+
+    public List<AttachmentItem> uploadFiles(List<RequestFile> files) throws Exception {
+        String url = "http://savepic.ru/index.php";
+        List<AttachmentItem> items = new ArrayList<>();
+        AttachmentItem item;
+        String response;
+        Matcher matcher = null;
+
+        HashMap<String, String> headers = new HashMap<>();
+        //headers.put("file","");
+        headers.put("note", "");
+        //decor, techno, strong, italic, neutral
+        headers.put("font1", "decor");
+        //14, 16, 18, 20, 22, 24, 26, 28
+        headers.put("font2", "20");
+        //h, v
+        headers.put("orient", "h");
+        //1, 2, 3, 4, x - коэфф уменьшения
+        headers.put("size1", "1");
+        //при size1=x, разрешение
+        headers.put("size2", "1024x768");
+        //90, 270, 180
+        headers.put("rotate", "00");
+        //vr, hr, 0
+        headers.put("flip", "0");
+        //200x150, 300x225, 400x300
+        headers.put("mini", "300x225");
+        //annot - отображать подпись в изображении, gallery - разместить в галлерее
+        headers.put("opt1[]", "");
+        //gray, negat
+        headers.put("opt2[]", "");
+        //zoom - надпись увеличить
+        headers.put("opt3[]", "zoom");
+        headers.put("email", "");
+        for (RequestFile file : files) {
+            item = new AttachmentItem();
+            file.setRequestName("file");
+            response = Api.getWebClient().post(url, headers, file);
+
+
+            if (matcher == null)
+                matcher = loadedAttachment.matcher(response);
+            else
+                matcher = matcher.reset(response);
+            if (matcher.find()) {
+                item.setName(file.getFileName());
+                item.setImageUrl("http://savepic.ru/".concat(matcher.group(1)));
+                item.setId(Integer.parseInt(matcher.group(2)));
+                item.setFormat(matcher.group(3));
+                item.setWeight(matcher.group(4));
+                item.setTypeFile(AttachmentItem.TYPE_IMAGE);
+                item.setLoadState(AttachmentItem.STATE_LOADED);
+                Log.e("FORPDA_LOG", item.getName() + " : " + item.getId() + " : " + item.getFormat() + " : " + item.getWeight() + " : " + item.getImageUrl());
+            }
+            items.add(item);
+        }
+
+        return items;
+    }
+
+    private final static Pattern loadedAttachment = Pattern.compile("<p class=\"[^\"]*?img[^\"]*?\"[^>]*?><a[^>]*?><img[^>]*?src=\"([^\"]*?(\\d+)m?\\.([^\"]*?))\"[^>]*?>[\\s\\S]*?<p class=\"[^\"]*?b-sign[^\"]*?\"[^>]*?>[\\s\\S]*?<strong>([^,<]*?),[^<]*?<\\/strong>\\.<\\/p>");
 }

@@ -232,7 +232,7 @@ public class AttachmentsPopup {
         this.insertAttachmentListener = insertAttachmentListener;
     }
 
-    interface OnInsertAttachmentListener {
+    public interface OnInsertAttachmentListener {
         String onInsert(AttachmentItem item);
     }
 }

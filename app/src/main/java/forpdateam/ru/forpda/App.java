@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.content.res.AppCompatResources;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
@@ -194,6 +195,7 @@ public class App extends android.app.Application {
                     public InputStream getStream(String imageUri, Object extra) throws IOException {
                         if (imageUri.substring(0, 2).equals("//"))
                             imageUri = "http:".concat(imageUri);
+                        Log.d("FORPDA_LOG", "UIL LOAD IMAGE: ".concat(imageUri));
                         return super.getStream(imageUri, extra);
                     }
                 })

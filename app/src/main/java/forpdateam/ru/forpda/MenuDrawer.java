@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.accessibility.AccessibilityRecordCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.content.res.AppCompatResources;
 import android.util.Log;
@@ -15,6 +16,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import org.acra.ACRA;
 
 import java.util.ArrayList;
 
@@ -93,8 +96,11 @@ public class MenuDrawer {
     private void select(MenuItem item) {
         Log.d("FORPDA_LOG", "select " + item);
         if (item == null) return;
+        if (item.gettClass() == null) {
+            ACRA.getErrorReporter().handleException(new Exception("Manual exception"));
+            return;
+        }
         try {
-
             TabFragment tabFragment = TabManager.getInstance().get(item.getCreatedTag());
             Log.e("FORPDA_LOG", "MENU SELECT " + tabFragment);
             if (tabFragment == null) {
@@ -142,6 +148,7 @@ public class MenuDrawer {
             createdMenuItems.add(new MenuItem<>("Ответы", R.drawable.ic_notifications_gray_24dp, MentionsFragment.class));
             createdMenuItems.add(new MenuItem<>("Форум", R.drawable.ic_forum_gray_24dp, ForumFragment.class));
             createdMenuItems.add(new MenuItem<>("Поиск", R.drawable.ic_search_gray_24dp, SearchFragment.class));
+            //createdMenuItems.add(new MenuItem<>("Сообщить об ошибке", R.drawable.ic_error_gray_24dp, null));
             //createdMenuItems.add(new MenuItem<>("Профиль", R.drawable.ic_person_gray_24dp, ProfileFragment.class));
         }
 
