@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.fragments;
 
+import android.animation.Animator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -16,6 +17,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -234,14 +238,22 @@ public class TabFragment extends RxFragment {
     }
 
     protected void updateNotifyDot() {
+        Log.e("FORPDA_LOG", "updateNotifyDot");
         if (!App.getInstance().getPreferences().getBoolean("main.show_notify_dot", true)) {
             notifyDot.setVisibility(View.GONE);
             return;
         }
-        if (ClientHelper.getAllCounts() > 0)
+        if (ClientHelper.getAllCounts() > 0) {
             notifyDot.setVisibility(View.VISIBLE);
-        else
+            /*AlphaAnimation blinkanimation = new AlphaAnimation(1, 0); // Change alpha from fully visible to invisible
+            blinkanimation.setDuration(1000); // duration
+            blinkanimation.setInterpolator(new LinearInterpolator()); // do not alter animation rate
+            blinkanimation.setRepeatCount(2); // Repeat animation infinitely
+            //blinkanimation.setRepeatMode(Animation.REVERSE);
+            notifyDot.startAnimation(blinkanimation);*/
+        } else {
             notifyDot.setVisibility(View.GONE);
+        }
     }
 
     protected void initFabBehavior() {

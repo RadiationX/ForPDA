@@ -29,19 +29,10 @@
     <script type="text/javascript" src="file:///android_asset/z_emoticons.js"></script>
 </head>
 <body id="${body_type}">
-<!--<div class="panel top ${navigation_disable}">
-    <div class="navigation">
-        <a class="btn first" onclick="ITheme.firstPage()" ${first_disable}><i class="icon"></i></a>
-        <a class="btn prev" onclick="ITheme.prevPage()" ${prev_disable}><i class="icon"></i></a>
-        <a class="btn page" onclick="ITheme.selectPage()"><b>Выбор</b><i class="icon"></i></a>
-        <a class="btn next" onclick="ITheme.nextPage()" ${next_disable}><i class="icon"></i></a>
-        <a class="btn last" onclick="ITheme.lastPage()" ${last_disable}><i class="icon"></i></a>
-    </div>
-</div>-->
 <!-- $BeginBlock poll_block -->
-<div class="poll ${poll_type} close">
+<div class="poll ${poll_type} ${poll_state_class}">
     <a class="btn title" onclick="toggleButton(this, 'body')"><span>${poll_title}</span><i class="icon"></i></a>
-    <form action="index.php" method="get" class="body" hidden>
+    <form action="index.php" method="get" class="body" ${poll_body_state}>
         <div class="questions">
             <!-- $BeginBlock poll_question_block -->
             <div class="question">
@@ -80,7 +71,7 @@
     <div name="entry${post_id}" class="post_container ${user_online} ${disable_avatar} ${avatar_type} ${hat_state_class}"
          data-post-id="${post_id}" data-user-id="${user_id}" data-nick="${nick}">
         <!-- $BeginBlock hat_button --><a class="btn hat_button" onclick="toggleButton(this, 'hat_content')"><span>Шапка темы</span><i class="icon"></i></a><!-- $EndBlock hat_button -->
-        <!-- $BeginBlock hat_content_start --><div class="hat_content" hidden><!-- $EndBlock hat_content_start --><div class="post_header">
+        <!-- $BeginBlock hat_content_start --><div class="hat_content" ${hat_body_state}><!-- $EndBlock hat_content_start --><div class="post_header">
             <div class="header_wrapper">
                 <div class="avatar ${none_avatar}">
                     <b class="letter">${nick_letter}</b>

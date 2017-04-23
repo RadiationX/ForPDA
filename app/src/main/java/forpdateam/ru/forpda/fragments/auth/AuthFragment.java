@@ -57,7 +57,7 @@ public class AuthFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        baseInflateFragment(inflater, R.layout.activity_auth);
+        baseInflateFragment(inflater, R.layout.fragment_auth);
         nick = (EditText) findViewById(R.id.auth_login);
         password = (EditText) findViewById(R.id.auth_password);
         captcha = (EditText) findViewById(R.id.auth_captcha);
@@ -70,7 +70,7 @@ public class AuthFragment extends TabFragment {
         loginProgress = (ProgressBar) findViewById(R.id.login_progress);
         viewsReady();
         setWhiteBackground();
-        toolbar.setVisibility(View.GONE);
+        appBarLayout.setVisibility(View.GONE);
         notifyDot.setVisibility(View.GONE);
         sendButton = (Button) findViewById(R.id.auth_send);
         sendButton.setOnClickListener(view -> tryLogin());

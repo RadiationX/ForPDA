@@ -23,6 +23,7 @@ import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
 import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import forpdateam.ru.forpda.bdobjects.favorites.FavItemBd;
+import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.pagination.PaginationHelper;
@@ -184,7 +185,9 @@ public class FavoritesFragment extends TabFragment {
             //adapter.addAll(results);
             adapter.notifyDataSetChanged();
         }
-        ClientHelper.getInstance().notifyCountsChanged();
+        if(!Client.getInstance().getNetworkState()){
+            ClientHelper.getInstance().notifyCountsChanged();
+        }
     }
 
     public void changeFav(int action, String type, int favId) {

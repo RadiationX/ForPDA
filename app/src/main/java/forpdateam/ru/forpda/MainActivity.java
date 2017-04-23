@@ -60,11 +60,10 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         tabDrawer = new TabDrawer(this, drawerLayout);
+        menuDrawer = new MenuDrawer(this, drawerLayout, savedInstanceState);
+        drawerHeader = new DrawerHeader(this, drawerLayout);
         TabManager.getInstance().loadState(savedInstanceState);
         TabManager.getInstance().updateFragmentList();
-        menuDrawer = new MenuDrawer(this, drawerLayout);
-        drawerHeader = new DrawerHeader(this, drawerLayout);
-
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
@@ -89,21 +88,11 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
         receiver = new NetworkStateReceiver(this);
         receiver.registerReceiver();
-        final View viewDiff = findViewById(R.id.pidor);
+        final View viewDiff = findViewById(R.id.fragments_container);
         viewDiff.post(() -> {
-            Resources resources = App.getInstance().getResources();
-            int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-            int navBarHeight = 0;
-            if (resourceId > 0) {
-                Log.e("SUKA", "NAVBAR HEIGHT " + resources.getDimensionPixelSize(resourceId));
-                navBarHeight = resources.getDimensionPixelSize(resourceId);
-            }
-
-            Log.e("SUKA", "" + ((View) viewDiff.getParent()) + " :_______: " + viewDiff);
-
             App.setStatusBarHeight(((View) viewDiff.getParent()).getHeight() - viewDiff.getHeight());
             App.setNavigationBarHeight(viewDiff.getRootView().getHeight() - viewDiff.getHeight() - App.getStatusBarHeight());
-            Log.e("SUKA", "SB: " + App.getStatusBarHeight() + ", NB: " + App.getNavigationBarHeight());
+            Log.e("FORPDA_LOG", "SB: " + App.getStatusBarHeight() + ", NB: " + App.getNavigationBarHeight());
             menuDrawer.setStatusBarHeight(App.getStatusBarHeight());
             tabDrawer.setStatusBarHeight(App.getStatusBarHeight());
             //IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=2556269");

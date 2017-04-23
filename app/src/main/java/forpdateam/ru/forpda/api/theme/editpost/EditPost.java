@@ -28,7 +28,6 @@ public class EditPost {
     private final static Pattern statusInfo = Pattern.compile("can_upload = parseInt\\([\"'](\\d+)'\\)[\\s\\S]*?status_msg_files = .([\\s\\S]*?).;[\\s\\S]*?status_msg = .([\\s\\S]*?).;[\\s\\S]*?status_is_error = ([\\s\\S]*?);");
 
 
-
     public EditPostForm loadForm(int postId) throws Exception {
         Log.d("FORPDA_LOG", "START LOAD FORM");
         EditPostForm form = new EditPostForm();
@@ -36,7 +35,7 @@ public class EditPost {
         //url = url.concat("&t=").concat(Integer.toString(topicId)).concat("&f=").concat(Integer.toString(forumId));
 
         String response = Api.getWebClient().get(url);
-        if(response.equals("nopermission")){
+        if (response.equals("nopermission")) {
             form.setErrorCode(EditPostForm.ERROR_NO_PERMISSION);
             return form;
         }
@@ -128,7 +127,6 @@ public class EditPost {
     }
 
 
-
     public ThemePage sendPost(EditPostForm form) throws Exception {
         String url = "http://4pda.ru/forum/index.php";
         Map<String, String> headers = new HashMap<>();
@@ -147,7 +145,7 @@ public class EditPost {
         headers.put("enableemo", "yes");
 
 
-        headers.put("st", ""+form.getSt());
+        headers.put("st", "" + form.getSt());
         headers.put("removeattachid", "0");
         headers.put("MAX_FILE_SIZE", "0");
         headers.put("parent_id", "0");
@@ -171,6 +169,6 @@ public class EditPost {
             }
         }
         headers.put("file-list", ids.toString());
-        return Api.Theme().parsePage(url, Api.getWebClient().post(url, headers), true);
+        return Api.Theme().parsePage(url, Api.getWebClient().post(url, headers), false, false);
     }
 }

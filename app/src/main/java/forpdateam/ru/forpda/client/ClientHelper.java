@@ -15,7 +15,7 @@ public class ClientHelper {
     public final static boolean AUTH_STATE_LOGOUT = false;
     private static ClientHelper clientHelper = null;
     private MyObservable loginObservable = new MyObservable();
-    private MyObservable observable = new MyObservable();
+    private MyObservable countsObservable = new MyObservable();
     private static boolean authState = false;
     private static int userId = 0;
     private static int qmsCount = 0, mentionsCount = 0, favoritesCount = 0;
@@ -36,11 +36,11 @@ public class ClientHelper {
     }
 
     public void addCountsObserver(Observer observer) {
-        observable.addObserver(observer);
+        countsObservable.addObserver(observer);
     }
 
     public void notifyCountsChanged() {
-        observable.notifyObservers();
+        countsObservable.notifyObservers();
     }
 
     public static boolean getAuthState() {

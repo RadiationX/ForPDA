@@ -76,9 +76,10 @@ function scrollToElement(name) {
     }, 1);
     window.addEventListener("load", function () {
         setTimeout(function () {
-            console.log("SCROLL BLYADSKIY");
-            console.log(getCoordinates(anchorElem).top+" : "+getScrollTop());
+            console.log("SCROLL");
+            console.log(getCoordinates(anchorElem).top + " : " + getScrollTop());
             doScroll(anchorElem);
+
             //ITheme.log(document.documentElement.innerHTML);
         }, 1);
     });
@@ -95,8 +96,14 @@ function doScroll(tAnchorElem) {
     //Активация элементов, убирается класс active с уже активированных
     if (elemToActivation)
         elemToActivation.classList.remove('active');
+    console.log(elemToActivation);
 
-    elemToActivation = document.querySelector('.post_container[name="' + name + '"]');
+    var postElem = tAnchorElem;
+    while (!postElem.classList.contains("post_container")) {
+        postElem = postElem.parentElement;
+    }
+    elemToActivation = postElem;
+    console.log(elemToActivation);
     if (elemToActivation)
         elemToActivation.classList.add('active');
 }

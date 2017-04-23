@@ -2,6 +2,7 @@ package forpdateam.ru.forpda;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -38,7 +39,7 @@ public class MenuDrawer {
     private MenuAdapter adapter;
     private int active = -1;
 
-    public MenuDrawer(MainActivity activity, DrawerLayout drawerLayout) {
+    public MenuDrawer(MainActivity activity, DrawerLayout drawerLayout, Bundle savedInstanceState) {
         initMenuItems();
         ListView menuList = (ListView) activity.findViewById(R.id.menu_list);
         drawer = (NavigationView) activity.findViewById(R.id.menu_drawer);
@@ -79,14 +80,20 @@ public class MenuDrawer {
         //String last = App.getInstance().getPreferences().getString("menu_drawer_last", Api.Auth_Unclear().getAuthState() ? NewsListFragment.class.getSimpleName() : AuthFragment.class.getSimpleName());
         String last = App.getInstance().getPreferences().getString("menu_drawer_last", ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN ? FavoritesFragment.class.getSimpleName() : AuthFragment.class.getSimpleName());
         Log.d("FORPDA_LOG", "LAAST " + last);
-        if (last != null)
-            select(findByClassName(last));
+
+        if (last != null) {
+            if (savedInstanceState == null) {
+                select(findByClassName(last));
+            } else {
+                setActive(last);
+            }
+        }
     }
 
     private void select(MenuItem item) {
+        Log.d("FORPDA_LOG", "select " + item);
         if (item == null) return;
         try {
-
 
             TabFragment tabFragment = TabManager.getInstance().get(item.getCreatedTag());
             Log.e("FORPDA_LOG", "MENU SELECT " + tabFragment);
@@ -107,6 +114,7 @@ public class MenuDrawer {
             } else {
                 TabManager.getInstance().select(tabFragment);
             }
+            Log.e("FORPDA_LOG", "YOUU BITCH CHO KAVO " + item.getName() + " : " + menuItems.indexOf(item));
 
             active = menuItems.indexOf(item);
             Log.d("FORPDA_LOG", "menu active " + active);
