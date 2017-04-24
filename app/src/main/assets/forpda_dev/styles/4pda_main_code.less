@@ -3,7 +3,7 @@
 .mainBox {
     background: #fff;
     margin: 8/16em 0;
-    box-shadow: 0 0px 1px rgba(0,0,0,0.24);
+    box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
     //box-shadow: 0 3px 10px -3px @mainShadowColor;
     //-webkit-box-shadow: 0 3px 10px -3px @mainShadowColor;
 }
@@ -104,27 +104,34 @@ body {
     overflow-wrap: break-word;
     word-wrap: break-word;
 }
+
 a {
     //text-decoration: none;
     color: @linkColor;
-    -webkit-tap-highlight-color: fade(@linkColor, 25%); 
+    -webkit-tap-highlight-color: fade(@linkColor, 25%);
 }
 
-.noselect{
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Chrome/Safari/Opera */
-     -khtml-user-select: none; /* Konqueror */
-       -moz-user-select: none; /* Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none;
+.noselect {
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Chrome/Safari/Opera */
+    -khtml-user-select: none;
+    /* Konqueror */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
 }
 
 * {
     box-sizing: border-box;
 }
+
 @import "modules/themes";
-li{
-    .post-block{
+li {
+    .post-block {
         .bRad(2px);
         margin-left: 0!important;
         margin-right: 0!important;
@@ -138,7 +145,7 @@ li{
     position: relative;
     border-top: @border1;
     border-bottom: @border1;
-    background: rgba(0,0,0,0.05);
+    background: rgba(0, 0, 0, 0.05);
     >.block-title {
         padding: 0.875rem;
         position: relative;
@@ -148,7 +155,7 @@ li{
         min-height: 3rem;
         font-size: 14/16rem;
         line-height: 1.25rem;
-        text-transform: uppercase;
+        //text-transform: uppercase;
         color: #000!important;
         * {
             color: #000!important;
@@ -164,13 +171,28 @@ li{
     }
     &.spoil {
         >.block-title {
-            padding-right: 3rem;
             color: #000;
+            
             * {
                 color: #000!important;
             }
+            &:first-letter{
+                text-transform: uppercase;
+            }
+            &.empty {
+                &:before {
+                    content: "Спойлер";
+                }
+            }
+            &:active {
+                .icon:before {
+                    opacity: 0.05;
+                    -webkit-transform: scale(1) translateZ(0);
+                    transform: scale(1) translateZ(0);
+                }
+                background: @tapColor;
+            }
             &:before {
-                content: "";
                 position: absolute;
                 height: 100%;
                 width: 100%;
@@ -179,31 +201,51 @@ li{
                 padding: 0.875rem;
                 box-sizing: border-box;
             }
-            &:active:before {
-                background: @tapColor;
-            }
-            &:empty {
-                &:before {
-                    content: "Спойлер";
-                }
-            }
-            &:after {
-                content: "";
+            .icon {
+                height: 48/16rem;
+                width: 40/16rem;
                 position: absolute;
-                right: 1rem;
-                bottom: 1.25rem;
-                border-left: @borderInput;
-                border-bottom: @borderInput;
-                box-sizing: border-box;
-                height: 0.75rem;
-                width: 0.75rem;
-                border-color: #000;
-                -webkit-transform: rotate(-45deg) translateY(-0) translateX(0) translateZ(0);
-                transform: rotate(-45deg) translateY(-0) translateX(0) translateZ(0);
-                -webkit-transition: 0.25s;
-                transition: 0.25s;
+                right: 0;
+                top: 0;
+                -webkit-transition: 0.225s @curveStandard;
+                transition: 0.225s @curveStandard;
                 -webkit-transform-origin: center;
                 transform-origin: center;
+                &:after {
+                    content: "";
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    margin-left: -4/16rem;
+                    margin-top: -4/16rem;
+                    border-left: @borderInput;
+                    border-bottom: @borderInput;
+                    box-sizing: border-box;
+                    height: 8/16rem;
+                    width: 8/16rem;
+                    border-color: #000;
+                    -webkit-transform: rotate(-45deg) translateY(-1/16rem) translateX(1/16rem);
+                    transform: rotate(-45deg) translateY(-1/16rem) translateX(1/16rem);
+                    -webkit-transform-origin: center;
+                    transform-origin: center;
+                }
+                &:before {
+                    content: "";
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    margin-left: -16/16rem;
+                    margin-top: -16/16rem;
+                    height: 32/16rem;
+                    width: 32/16rem;
+                    background: black;
+                    .bRad(100%);
+                    -webkit-transform: scale(0.5) translateZ(0);
+                    transform: scale(0.5) translateZ(0);
+                    opacity: 0;
+                    -webkit-transition: 0.15s @curveStandard;
+                    transition: 0.15s @curveStandard;
+                }
             }
         }
         >.block-body {
@@ -215,25 +257,19 @@ li{
             }
         }
         &.close {
-            >.block-title {
-                border-radius: 2px;
-                &:first-letter {
-                    text-transform: uppercase;
-                }
-                &:after {}
-            }
+            >.block-title {}
             >.block-body {
                 display: none;
             }
         }
         &.open {
             >.block-title {
+                .icon {
+                    -webkit-transform: rotateX(180deg) translateZ(0);
+                    transform: rotateX(180deg) translateZ(0);
+                }
                 &:first-letter {
                     text-transform: uppercase;
-                }
-                &:after {
-                    transform: rotate(135deg) translateY(-0.25em) translateX(0.25em);
-                    -webkit-transform: rotate(135deg) translateY(-0.25em) translateX(0.25em);
                 }
             }
             >.block-body {
@@ -250,13 +286,13 @@ li{
         }
     }
     &.quote {
-        >.block-title{
+        >.block-title {
             text-transform: none;
             font-style: italic;
             font-weight: bold;
             padding-left: 48/16rem;
-            &:empty {
-                text-transform: uppercase;
+            &.empty {
+                //text-transform: uppercase;
                 &:before {
                     content: "Цитата";
                 }
@@ -279,12 +315,11 @@ li{
                     left: 16/16rem;
                 }
             }
-            
         }
         >.block-body {
             //padding-top: 0;
         }
-        &:before{
+        &:before {
             content: "";
             display: inline-block;
             position: absolute;
@@ -292,7 +327,6 @@ li{
             top: 12/16rem;
             height: 24/16rem;
             width: 24/16rem;
-            
             background-image: url("../res/format-quote.svg");
             background-position: center;
             background-size: 24/16rem;
@@ -301,57 +335,97 @@ li{
     }
     &.code {
         overflow: hidden;
-        padding-top: 48/16rem;
+        //padding-top: 48/16rem;
+        &.small {
+            >.block-title {
+                .icon {
+                    display: none;
+                }
+            }
+        }
         >.block-title {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            &:empty{
+            &.empty {
                 &:before {
                     content: "Код";
                 }
             }
-            &:after {
-                content: "";
+            &:active {
+                .icon:before {
+                    opacity: 0.05;
+                    -webkit-transform: scale(1) translateZ(0);
+                    transform: scale(1) translateZ(0);
+                }
+                background: @tapColor;
+            }
+            >.block-controls {
                 position: absolute;
-                right: 112/16rem;
-                bottom: 1.25rem;
-                border-left: @borderInput;
-                border-bottom: @borderInput;
-                box-sizing: border-box;
-                height: 0.75rem;
-                width: 0.75rem;
-                border-color: #000;
-                -webkit-transform: rotate(-45deg) translateY(-0) translateX(0) translateZ(0);
-                transform: rotate(-45deg) translateY(-0) translateX(0) translateZ(0);
-                -webkit-transition: 0.25s;
-                transition: 0.25s;
+                float: right;
+                right: 0;
+                top: 0;
+                z-index: 3;
+                i {
+                    height: 36/16rem;
+                    width: 36/16rem;
+                    margin: 6/16rem;
+                    border: @border1;
+                    border-color: rgba(0, 0, 0, 0.1);
+                    .bRad(2px);
+                    float: right;
+                    background-size: 24/16rem;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    &.wrap {
+                        background-image: url(../res/wrap.svg);
+                    }
+                    &.select_all {
+                        background-image: url(../res/select-all.svg);
+                    }
+                }
+            }
+            .icon {
+                height: 48/16rem;
+                width: 40/16rem;
+                position: absolute;
+                right: 96/16rem;
+                top: 0;
+                -webkit-transition: 0.225s @curveStandard;
+                transition: 0.225s @curveStandard;
                 -webkit-transform-origin: center;
                 transform-origin: center;
-            }
-        }
-        >.block-controls{
-            position: absolute;
-            right: 0;
-            top: 0;
-            z-index: 3;
-            .control{
-                height: 36/16rem;
-                width: 36/16rem;
-                margin: 6/16rem;
-                border: @border1;
-                border-color: rgba(0,0,0,0.1);
-                .bRad(2px);
-                float: right;
-                background-size: 24/16rem;
-                background-position: center;
-                background-repeat: no-repeat;
-                &.wrap{
-                    background-image: url(../res/wrap.svg);
+                &:after {
+                    content: "";
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    margin-left: -4/16rem;
+                    margin-top: -4/16rem;
+                    border-left: @borderInput;
+                    border-bottom: @borderInput;
+                    box-sizing: border-box;
+                    height: 8/16rem;
+                    width: 8/16rem;
+                    border-color: #000;
+                    -webkit-transform: rotate(-45deg) translateY(-1/16rem) translateX(1/16rem);
+                    transform: rotate(-45deg) translateY(-1/16rem) translateX(1/16rem);
+                    -webkit-transform-origin: center;
+                    transform-origin: center;
                 }
-                &.select_all{
-                    background-image: url(../res/select-all.svg);
+                &:before {
+                    content: "";
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    margin-left: -16/16rem;
+                    margin-top: -16/16rem;
+                    height: 32/16rem;
+                    width: 32/16rem;
+                    background: black;
+                    .bRad(100%);
+                    -webkit-transform: scale(0.5) translateZ(0);
+                    transform: scale(0.5) translateZ(0);
+                    opacity: 0;
+                    -webkit-transition: 0.15s @curveStandard;
+                    transition: 0.15s @curveStandard;
                 }
             }
         }
@@ -374,10 +448,10 @@ li{
             white-space: pre;
             word-break: normal;
             word-wrap: normal;
-            color:#448d62;
-            .line{
+            color: #448d62;
+            .line {
                 position: relative;
-                &:before{
+                &:before {
                     text-align: center;
                     counter-increment: count;
                     content: counter(count);
@@ -391,14 +465,14 @@ li{
                 }
             }
         }
-        &:before{
-            content: "";
+        &:before {
+            //content: "";
             position: absolute;
             width: 36/16rem;
             top: 48/16rem;
             left: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.05);
+            background: rgba(0, 0, 0, 0.05);
             border: @border1;
             border-left: none;
             box-sizing: content-box;
@@ -407,11 +481,19 @@ li{
             font-family: @fontMono;
             position: absolute;
             width: 36/16rem;
-            white-space:pre-line;
+            white-space: pre-line;
             text-align: center;
             top: 48/16rem;
+            top: auto;
             font-size: 14/16em;
             color: #000;
+            background: red;
+            background: rgba(0, 0, 0, 0.05);
+            border: @border1;
+            border-left: none;
+            .nums{
+                pointer-events: none;
+            }
         }
         &.box {
             >.block-body {
@@ -433,30 +515,33 @@ li{
         }
         &.unbox {
             >.block-title {
-                &:after {
-                    transform: rotate(135deg) translateY(-0.25rem) translateX(0.25rem);
-                    -webkit-transform: rotate(135deg) translateY(-0.25rem) translateX(0.25rem);
+                .icon {
+                    -webkit-transform: rotateX(180deg) translateZ(0);
+                    transform: rotateX(180deg) translateZ(0);
                 }
             }
         }
-        &.wrap{
-            .block-controls .control.wrap{
-                background-color: rgba(0,0,0,0.05);
+        &.wrap {
+            >.block-title {
+                .block-controls .wrap {
+                    background-color: rgba(0, 0, 0, 0.05);
+                }
             }
-            .block-body{
+            .block-body {
                 white-space: pre-wrap;
                 word-break: break-word;
                 word-wrap: normal;
-                .line{
-                    &:before{
+                .line {
+                    &:before {
                         opacity: 1;
                         pointer-events: auto;
                     }
                 }
             }
             .num-pre {
-                opacity: 0;
-                pointer-events: none;
+                .nums{
+                    visibility: hidden;
+                }
             }
         }
     }
@@ -469,9 +554,8 @@ li{
             &:before {
                 content: "Только для авторизованных";
             }
-            
         }
-        >.block-body{
+        >.block-body {
             padding-top: 1em;
         }
     }
@@ -488,12 +572,13 @@ li{
         >.block-title {
             text-align: center!important;
             font-size: 0rem;
-            &:before{
+            text-transform: uppercase;
+            &:before {
                 font-size: 20/16rem;
             }
         }
         >.block-body {
-            .post-block{
+            .post-block {
                 .bRad(2px);
                 border-left: @border1;
                 border-right: @border1;
@@ -506,7 +591,7 @@ li{
             border: 1px solid @exColorBlock;
             >.block-title {
                 color: @exColor!important;
-                &:before{
+                &:before {
                     content: "Админ";
                 }
             }
@@ -516,7 +601,7 @@ li{
             border: 1px solid @modColorBlock;
             >.block-title {
                 color: @modColor!important;
-                &:before{
+                &:before {
                     content: "Модератор";
                 }
             }
@@ -526,7 +611,7 @@ li{
             border: 1px solid @curColorBlock;
             >.block-title {
                 color: @curColor!important;
-                &:before{
+                &:before {
                     content: "Куратор";
                 }
             }

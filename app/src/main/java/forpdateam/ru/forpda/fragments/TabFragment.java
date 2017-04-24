@@ -30,6 +30,7 @@ import com.trello.rxlifecycle2.components.support.RxFragment;
 import org.acra.ACRA;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.FontExampleActivity;
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
@@ -219,6 +220,10 @@ public class TabFragment extends RxFragment {
     }
 
     protected void addBaseToolbarMenu() {
+        toolbar.getMenu().add("FONTS").setOnMenuItemClickListener(menuItem -> {
+            getMainActivity().startActivity(new Intent(getContext(), FontExampleActivity.class));
+            return false;
+        });
         toolbar.getMenu().add("SETTINGS").setOnMenuItemClickListener(menuItem -> {
             getMainActivity().startActivity(new Intent(getContext(), SettingsActivity.class));
             return false;

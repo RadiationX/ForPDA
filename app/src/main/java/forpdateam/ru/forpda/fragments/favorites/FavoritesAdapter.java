@@ -1,7 +1,9 @@
 package forpdateam.ru.forpda.fragments.favorites;
 
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import com.afollestad.sectionedrecyclerview.SectionedRecyclerViewAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
 
@@ -23,6 +26,15 @@ import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
 
 public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdapter.ViewHolder> {
     private List<Pair<String, List<IFavItem>>> sections = new ArrayList<>();
+    private boolean showDot = App.getInstance().getPreferences().getBoolean("lists.topic.show_dot", false);
+
+    public void setShowDot(boolean showDot) {
+        this.showDot = showDot;
+    }
+
+    public boolean isShowDot() {
+        return showDot;
+    }
 
     public void addSection(Pair<String, List<IFavItem>> item) {
         sections.add(item);
@@ -52,7 +64,6 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
     public void setOnLongItemClickListener(final FavoritesAdapter.OnLongItemClickListener longItemClickListener) {
         this.longItemClickListener = longItemClickListener;
     }
-
 
     //NEW---------------------------------------------------------------------------------------------------------
 
@@ -119,7 +130,8 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
 
         IFavItem item = sections.get(section).second.get(relativePosition);
         holder.title.setText(item.getTopicTitle());
-        holder.title.setTypeface(null, item.isNewMessages() ? Typeface.BOLD : Typeface.NORMAL);
+        holder.title.setTypeface(item.isNewMessages() ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+        holder.dot.setVisibility(showDot && item.isNewMessages() ? View.VISIBLE : View.GONE);
         //holder.pinIcon.setVisibility(item.isPin() ? View.VISIBLE : View.GONE);
         holder.lockIcon.setVisibility(item.getInfo().contains("X") ? View.VISIBLE : View.GONE);
         holder.pollIcon.setVisibility(item.getInfo().contains("^") ? View.VISIBLE : View.GONE);
@@ -145,9 +157,11 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public TextView title, lastNick, date, desc;
         public ImageView pinIcon, lockIcon, pollIcon;
+        public View dot;
 
         public ViewHolder(View v) {
             super(v);
+            dot = v.findViewById(R.id.topic_item_dot);
             title = (TextView) v.findViewById(R.id.topic_item_title);
             desc = (TextView) v.findViewById(R.id.topic_item_desc);
             lastNick = (TextView) v.findViewById(R.id.topic_item_last_nick);

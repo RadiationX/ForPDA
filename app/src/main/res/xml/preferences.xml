@@ -4,20 +4,27 @@
     <PreferenceCategory android:title="Общие">
         <SwitchPreference
             android:key="main.show_notify_dot"
-            android:title="Показывать точку уведомлений"
+            android:title="Индикатор счетчиков"
             android:defaultValue="true"/>
 
     </PreferenceCategory>
     <PreferenceCategory android:title="Темы">
         <SwitchPreference
             android:key="theme.show_avatars"
-            android:title="Показывать аватарки"
+            android:title="Отображать аватарки"
             android:defaultValue="true"/>
         <SwitchPreference
             android:key="theme.circle_avatars"
             android:title="Круглые аватарки"
             android:defaultValue="true"/>
 
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Списки">
+        <SwitchPreference
+            android:key="lists.topic.show_dot"
+            android:title="Индикатор новых сообщений"
+            android:defaultValue="false"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

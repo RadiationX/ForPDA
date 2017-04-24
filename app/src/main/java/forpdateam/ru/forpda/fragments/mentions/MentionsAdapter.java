@@ -57,7 +57,7 @@ public class MentionsAdapter extends RecyclerView.Adapter<MentionsAdapter.ViewHo
     public void onBindViewHolder(MentionsAdapter.ViewHolder holder, int position) {
         MentionItem item = list.get(position);
         holder.title.setText(item.getTitle());
-        holder.title.setTypeface(null, item.getState() == MentionItem.STATE_UNREAD ? Typeface.BOLD : Typeface.NORMAL);
+        holder.title.setTypeface(item.getState() == MentionItem.STATE_UNREAD ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
         holder.lastNick.setText(item.getNick());
         holder.date.setText(item.getDate());
         if (holder.desc.getVisibility() == View.VISIBLE) {

@@ -122,7 +122,7 @@ public class TopicsAdapter extends SectionedRecyclerViewAdapter<TopicsAdapter.Vi
         TopicItem item = sections.get(section).second.get(relativePosition);
         holder.title.setText(item.getTitle());
         if (getItemViewType(section, relativePosition, absolutePosition) != VIEW_TYPE_ANNOUNCE) {
-            holder.title.setTypeface(null, (item.getParams() & TopicItem.NEW_POST) != 0 ? Typeface.BOLD : Typeface.NORMAL);
+            holder.title.setTypeface((item.getParams() & TopicItem.NEW_POST) != 0 ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
             if (false && item.getDesc() != null) {
                 holder.desc.setVisibility(View.VISIBLE);
                 holder.desc.setText(item.getDesc());

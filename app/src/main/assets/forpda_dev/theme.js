@@ -12,6 +12,21 @@ document.addEventListener('DOMContentLoaded', scrollToElement);
 document.addEventListener('DOMContentLoaded', improveCodeBlock);
 document.addEventListener('DOMContentLoaded', blocksOpenClose);
 document.addEventListener('DOMContentLoaded', removeImgesSrc);
+document.addEventListener('DOMContentLoaded', addIcons);
+
+function addIcons(e) {
+    var blockTitles = document.querySelectorAll(".post-block > .block-title");
+    var newIcon, blockTitle;
+    for (var i = 0; i < blockTitles.length; i++) {
+        blockTitle = blockTitles[i];
+        if (blockTitle.innerText.length == 0) {
+            blockTitle.classList.add("empty");
+        }
+        newIcon = document.createElement('i');
+        newIcon.classList.add("icon");
+        blockTitle.appendChild(newIcon);
+    }
+}
 //Вызывается при обновлении прогресса загрузке страницы и при загрузке её ресурсов
 //По идеи должна верно скроллить к нужному элементу, даже если пользователь прокрутил страницу
 //Как оно работает и работает ли вообще - объяснить не могу
@@ -96,14 +111,12 @@ function doScroll(tAnchorElem) {
     //Активация элементов, убирается класс active с уже активированных
     if (elemToActivation)
         elemToActivation.classList.remove('active');
-    console.log(elemToActivation);
 
     var postElem = tAnchorElem;
     while (!postElem.classList.contains("post_container")) {
         postElem = postElem.parentElement;
     }
     elemToActivation = postElem;
-    console.log(elemToActivation);
     if (elemToActivation)
         elemToActivation.classList.add('active');
 }
@@ -117,8 +130,9 @@ function blocksOpenClose() {
     for (var i = 0; i < blockTitleAll.length; i++) {
         var bt = blockTitleAll[i];
         var bb = bt.parentElement.querySelector('.block-body');
+        console.log(bb);
         if (bb.parentElement.classList.contains('code') && bb.scrollHeight <= bb.offsetHeight) {
-            bb.parentElement.classList.remove('box');
+            //bb.parentElement.classList.remove('box');
         }
         bt.addEventListener('click', clickOnElement, false);
     }
@@ -196,8 +210,8 @@ function removeImgesSrc() {
 }
 
 function addImgesSrc(target) {
-    while (target != this) {
-        if (target.classList.contains('spoil')) {
+    while (target != null) {
+        if (target.classList && target.classList.contains('spoil')) {
             var images = target.querySelectorAll('img');
             for (var i = 0; i < images.length; i++) {
                 var img = images[i];
@@ -327,7 +341,7 @@ function improveCodeBlock() {
             var codeBlock = codeBlockAll[i],
                 codeTitle = codeBlock.querySelector('.block-title'),
                 codeBody = codeBlock.querySelector('.block-body'),
-                splitLines = codeBody.innerHTML.split("<br>"),
+                splitLines = codeBody.innerHTML.split(/<br[^>]*?>/g),
                 count = '',
                 lines = '';
 
@@ -336,13 +350,18 @@ function improveCodeBlock() {
                 count += (j + 1) + '\n';
             }
 
+            if (splitLines.length < 5) {
+                codeBlock.classList.add("small");
+            }
+
             codeBlock.classList.add('wrap');
-            codeTitle.insertAdjacentHTML("afterEnd", '<div class="block-controls"><div class="control wrap"></div><div class="control select_all"></div></div><div class="num-pre">' + count + '</div>');
-            codeBlock.querySelector('.control.wrap').addEventListener('click', onClickToggleButton);
-            codeBlock.querySelector('.control.select_all').addEventListener('click', SelectText);
+            codeTitle.insertAdjacentHTML("beforeEnd", '<div class="block-controls"><i class="wrap"></i><i class="select_all"></i></div>');
+            codeTitle.insertAdjacentHTML("afterEnd", '<div class="num-pre"><span class="nums">' + count + '</span></div>');
+            codeTitle.querySelector('.wrap').addEventListener('click', onClickToggleButton);
+            codeTitle.querySelector('.select_all').addEventListener('click', SelectText);
             codeBody.innerHTML = lines;
         } catch (error) {
-            alert(error);
+            console.log(error);
         }
     }
 
@@ -351,7 +370,7 @@ function improveCodeBlock() {
         var button = e.target;
         var block;
         for (var i = 0; i < codeBlockAll.length; i++) {
-            if (button == codeBlockAll[i].querySelector('.control.wrap')) {
+            if (button == codeBlockAll[i].querySelector('.wrap')) {
                 block = codeBlockAll[i];
                 break;
             }
@@ -369,7 +388,7 @@ function improveCodeBlock() {
         var button = e.target;
         var block;
         for (var i = 0; i < codeBlockAll.length; i++) {
-            if (button == codeBlockAll[i].querySelector('.control.select_all')) {
+            if (button == codeBlockAll[i].querySelector('.select_all')) {
                 block = codeBlockAll[i];
                 break;
             }

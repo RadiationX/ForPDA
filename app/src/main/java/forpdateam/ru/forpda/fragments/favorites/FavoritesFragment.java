@@ -17,6 +17,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
@@ -185,7 +186,7 @@ public class FavoritesFragment extends TabFragment {
             //adapter.addAll(results);
             adapter.notifyDataSetChanged();
         }
-        if(!Client.getInstance().getNetworkState()){
+        if (!Client.getInstance().getNetworkState()) {
             ClientHelper.getInstance().notifyCountsChanged();
         }
     }
@@ -210,6 +211,11 @@ public class FavoritesFragment extends TabFragment {
         if (markedRead) {
             bindView();
             markedRead = false;
+        }
+        boolean newShowDot = App.getInstance().getPreferences().getBoolean("lists.topic.show_dot", false);
+        if (newShowDot != adapter.isShowDot()) {
+            adapter.setShowDot(newShowDot);
+            adapter.notifyDataSetChanged();
         }
     }
 
