@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_favorites"
+        android:shortcutId="shortcut_favorites"
+        android:shortcutLongLabel="@string/shortcut_favorites"
+        android:shortcutShortLabel="@string/shortcut_favorites">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="http://4pda.ru/forum/index.php?act=fav"
+            android:targetPackage="ru.forpdateam.forpda"
+            android:targetClass="forpdateam.ru.forpda.MainActivity" />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_contacts"
+        android:shortcutId="shortcut_contacts"
+        android:shortcutLongLabel="@string/shortcut_contacts"
+        android:shortcutShortLabel="@string/shortcut_contacts">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="http://4pda.ru/forum/index.php?act=qms"
+            android:targetPackage="ru.forpdateam.forpda"
+            android:targetClass="forpdateam.ru.forpda.MainActivity" />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_mentions"
+        android:shortcutId="shortcut_mentions"
+        android:shortcutLongLabel="@string/shortcut_mentions"
+        android:shortcutShortLabel="@string/shortcut_mentions">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="http://4pda.ru/forum/index.php?act=mentions"
+            android:targetPackage="ru.forpdateam.forpda"
+            android:targetClass="forpdateam.ru.forpda.MainActivity" />
+    </shortcut>
+</shortcuts>
+

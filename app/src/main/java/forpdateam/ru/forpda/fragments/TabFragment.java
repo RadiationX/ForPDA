@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.fragments;
 
-import android.animation.Animator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,14 +11,12 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -27,7 +24,7 @@ import android.widget.Toast;
 
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
-import org.acra.ACRA;
+import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.FontExampleActivity;
@@ -67,6 +64,8 @@ public class TabFragment extends RxFragment {
     protected TextView toolbarTitleView, toolbarSubtitleView;
     protected View view, notifyDot;
     protected FloatingActionButton fab;
+
+    private Observer countsObserver = (observable, o) -> updateNotifyDot();
 
 
     public TabFragment() {
@@ -193,7 +192,7 @@ public class TabFragment extends RxFragment {
         setSubtitle(subtitle);
 
         updateNotifyDot();
-        ClientHelper.getInstance().addCountsObserver((observable, o) -> updateNotifyDot());
+        ClientHelper.getInstance().addCountsObserver(countsObserver);
 
         Client.getInstance().addNetworkObserver((observable, o) -> {
             if ((!configuration.isUseCache() || icNoNetwork.getVisibility() == View.VISIBLE) && (boolean) o) {
@@ -220,32 +219,37 @@ public class TabFragment extends RxFragment {
     }
 
     protected void addBaseToolbarMenu() {
-        toolbar.getMenu().add("FONTS").setOnMenuItemClickListener(menuItem -> {
+        toolbar.getMenu().add("Fonts tester").setOnMenuItemClickListener(menuItem -> {
             getMainActivity().startActivity(new Intent(getContext(), FontExampleActivity.class));
             return false;
         });
-        toolbar.getMenu().add("SETTINGS").setOnMenuItemClickListener(menuItem -> {
+        toolbar.getMenu().add("Settings").setOnMenuItemClickListener(menuItem -> {
             getMainActivity().startActivity(new Intent(getContext(), SettingsActivity.class));
             return false;
         });
-        toolbar.getMenu().add("logout").setOnMenuItemClickListener(menuItem -> {
-            RxApi.Auth().logout().onErrorReturn(throwable -> false)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(aBoolean -> {
-                        if (aBoolean) {
-                            Toast.makeText(getContext(), "logout complete", Toast.LENGTH_LONG).show();
-                            ClientHelper.getInstance().notifyAuthChanged(ClientHelper.AUTH_STATE_LOGOUT);
-                        } else {
-                            Toast.makeText(getContext(), "logout error", Toast.LENGTH_LONG).show();
-                        }
-                    });
+        toolbar.getMenu().add("Logout").setOnMenuItemClickListener(menuItem -> {
+            new AlertDialog.Builder(getContext())
+                    .setMessage("Вы уверены, что хотите выйти из аккаунта?")
+                    .setPositiveButton("Да", (dialog, which) -> RxApi.Auth().logout().onErrorReturn(throwable -> false)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(aBoolean -> {
+                                if (aBoolean) {
+                                    Toast.makeText(getContext(), "Logout complete", Toast.LENGTH_LONG).show();
+                                    ClientHelper.getInstance().notifyAuthChanged(ClientHelper.AUTH_STATE_LOGOUT);
+                                } else {
+                                    Toast.makeText(getContext(), "Logout error", Toast.LENGTH_LONG).show();
+                                }
+                            }))
+                    .setNegativeButton("Нет", null)
+                    .show();
+
             return false;
         });
     }
 
     protected void updateNotifyDot() {
-        Log.e("FORPDA_LOG", "updateNotifyDot");
+        Log.e("FORPDA_LOG", "updateNotifyDot "+this+" : "+this.getMainActivity());
         if (!App.getInstance().getPreferences().getBoolean("main.show_notify_dot", true)) {
             notifyDot.setVisibility(View.GONE);
             return;
@@ -312,6 +316,7 @@ public class TabFragment extends RxFragment {
     public void onDestroy() {
         super.onDestroy();
         hidePopupWindows();
+        ClientHelper.getInstance().removeCountsObserver(countsObserver);
     }
 
 

@@ -30,4 +30,8 @@
     <string name="crash_notif_ticker_text">1val</string>
     <string name="crash_notif_title">Ошибка в работе программы</string>
     <string name="crash_notif_text">Помогите нам исправить её - отправьте отчет об ошибке</string>
+
+    <string name="shortcut_favorites">Избранное</string>
+    <string name="shortcut_contacts">Контакты</string>
+    <string name="shortcut_mentions">Ответы</string>
 </resources>

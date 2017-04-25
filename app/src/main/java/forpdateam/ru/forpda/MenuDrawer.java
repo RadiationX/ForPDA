@@ -20,6 +20,7 @@ import android.widget.TextView;
 import org.acra.ACRA;
 
 import java.util.ArrayList;
+import java.util.Observer;
 
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -41,6 +42,40 @@ public class MenuDrawer {
     private ArrayList<MenuItem> createdMenuItems = new ArrayList<>();
     private MenuAdapter adapter;
     private int active = -1;
+    private Observer loginObserver = (observable, o) -> {
+        menuItems.clear();
+        initMenuItems();
+        adapter.notifyDataSetChanged();
+        if ((boolean) o && TabManager.getInstance().getSize() <= 1) {
+            //select(findByClassName(NewsListFragment.class.getSimpleName()));
+            select(findByClassName(FavoritesFragment.class.getSimpleName()));
+        }
+        if (!(boolean) o) {
+            App.getInstance().getPreferences().edit().remove("menu_drawer_last").apply();
+        }
+    };
+
+    private Observer countsObserver = (observable1, o) -> {
+        MenuItem item = getByClass(QmsContactsFragment.class);
+        if (item != null) {
+            item.count = ClientHelper.getQmsCount();
+        }
+        item = getByClass(MentionsFragment.class);
+        if (item != null) {
+            item.count = ClientHelper.getMentionsCount();
+        }
+        item = getByClass(FavoritesFragment.class);
+        if (item != null) {
+            item.count = ClientHelper.getFavoritesCount();
+        }
+        adapter.notifyDataSetChanged();
+    };
+
+    public void destroy() {
+        ClientHelper.getInstance().removeLoginObserver(loginObserver);
+        ClientHelper.getInstance().removeCountsObserver(countsObserver);
+        adapter.clear();
+    }
 
     public MenuDrawer(MainActivity activity, DrawerLayout drawerLayout, Bundle savedInstanceState) {
         initMenuItems();
@@ -53,33 +88,8 @@ public class MenuDrawer {
             close();
         });
         this.drawerLayout = drawerLayout;
-        ClientHelper.getInstance().addLoginObserver((observable, o) -> {
-            menuItems.clear();
-            initMenuItems();
-            adapter.notifyDataSetChanged();
-            if ((boolean) o && TabManager.getInstance().getSize() <= 1) {
-                //select(findByClassName(NewsListFragment.class.getSimpleName()));
-                select(findByClassName(FavoritesFragment.class.getSimpleName()));
-            }
-            if (!(boolean) o) {
-                App.getInstance().getPreferences().edit().remove("menu_drawer_last").apply();
-            }
-        });
-        ClientHelper.getInstance().addCountsObserver((observable1, o) -> {
-            MenuItem item = getByClass(QmsContactsFragment.class);
-            if (item != null) {
-                item.count = ClientHelper.getQmsCount();
-            }
-            item = getByClass(MentionsFragment.class);
-            if (item != null) {
-                item.count = ClientHelper.getMentionsCount();
-            }
-            item = getByClass(FavoritesFragment.class);
-            if (item != null) {
-                item.count = ClientHelper.getFavoritesCount();
-            }
-            adapter.notifyDataSetChanged();
-        });
+        ClientHelper.getInstance().addLoginObserver(loginObserver);
+        ClientHelper.getInstance().addCountsObserver(countsObserver);
         //String last = App.getInstance().getPreferences().getString("menu_drawer_last", Api.Auth_Unclear().getAuthState() ? NewsListFragment.class.getSimpleName() : AuthFragment.class.getSimpleName());
         String last = App.getInstance().getPreferences().getString("menu_drawer_last", ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN ? FavoritesFragment.class.getSimpleName() : AuthFragment.class.getSimpleName());
         Log.d("FORPDA_LOG", "LAAST " + last);
@@ -144,7 +154,7 @@ public class MenuDrawer {
             createdMenuItems.add(new MenuItem<>("Авторизация", R.drawable.ic_person_add_gray_24dp, AuthFragment.class));
             //createdMenuItems.add(new MenuItem<>("Новости", R.drawable.ic_newspaper_gray, NewsListFragment.class));
             createdMenuItems.add(new MenuItem<>("Избранное", R.drawable.ic_star_black_24dp, FavoritesFragment.class));
-            createdMenuItems.add(new MenuItem<>("Контакты", R.drawable.ic_mail_gray_24dp, QmsContactsFragment.class));
+            createdMenuItems.add(new MenuItem<>("Контакты", R.drawable.ic_contacts_gray_24dp, QmsContactsFragment.class));
             createdMenuItems.add(new MenuItem<>("Ответы", R.drawable.ic_notifications_gray_24dp, MentionsFragment.class));
             createdMenuItems.add(new MenuItem<>("Форум", R.drawable.ic_forum_gray_24dp, ForumFragment.class));
             createdMenuItems.add(new MenuItem<>("Поиск", R.drawable.ic_search_gray_24dp, SearchFragment.class));

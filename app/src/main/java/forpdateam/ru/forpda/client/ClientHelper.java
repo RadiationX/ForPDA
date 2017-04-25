@@ -28,6 +28,9 @@ public class ClientHelper {
     public void addLoginObserver(Observer observer) {
         loginObservable.addObserver(observer);
     }
+    public void removeLoginObserver(Observer observer){
+        loginObservable.deleteObserver(observer);
+    }
 
     public void notifyAuthChanged(boolean authState) {
 
@@ -37,6 +40,10 @@ public class ClientHelper {
 
     public void addCountsObserver(Observer observer) {
         countsObservable.addObserver(observer);
+    }
+
+    public void removeCountsObserver(Observer observer){
+        countsObservable.deleteObserver(observer);
     }
 
     public void notifyCountsChanged() {

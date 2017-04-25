@@ -134,6 +134,7 @@ public class ReputationFragment extends TabFragment {
     public void refreshOptionsMenu() {
         Menu menu = toolbar.getMenu();
         menu.clear();
+        addBaseToolbarMenu();
         SubMenu subMenu = menu.addSubMenu("Сортировка");
         subMenu.getItem().setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         subMenu.getItem().setIcon(AppCompatResources.getDrawable(App.getContext(), R.drawable.ic_sort_gray_24dp));

@@ -123,7 +123,7 @@ public class ProfileFragment extends TabFragment {
         findViewById(R.id.profile_save_note).setOnClickListener(view1 -> saveNote());
         //toolbar.setTitleTextColor(Color.TRANSPARENT);
 
-        toolbar.getMenu().add("Ссылка").setOnMenuItemClickListener(menuItem -> {
+        toolbar.getMenu().add("Скопировать ссылку").setOnMenuItemClickListener(menuItem -> {
             Utils.copyToClipBoard(tab_url);
             return false;
         });

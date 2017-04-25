@@ -30,6 +30,7 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.pagination.PaginationHelper;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 
 /**
@@ -120,6 +121,11 @@ public class SearchFragment extends TabFragment {
 
         searchSettingsView.setVisibility(View.GONE);
         toolbar.getMenu().clear();
+        addBaseToolbarMenu();
+        toolbar.getMenu().add("Скопировать ссылку").setOnMenuItemClickListener(menuItem -> {
+            Utils.copyToClipBoard(settings.toUrl());
+            return false;
+        });
         toolbar.inflateMenu(R.menu.qms_contacts_menu);
         toolbar.getMenu().add("Настройки").setIcon(R.drawable.ic_tune_gray_24dp).setOnMenuItemClickListener(menuItem -> {
             if (searchSettingsView.getVisibility() == View.VISIBLE) {
