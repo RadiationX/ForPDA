@@ -66,9 +66,10 @@ public class SearchFragment extends TabFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            String url = getArguments().getString(ARG_TAB);
+           /* String url = getArguments().getString(ARG_TAB);
             if (url != null)
-                settings = SearchSettings.parseSettings(settings, url);
+                settings = SearchSettings.parseSettings(settings, url);*/
+            settings = SearchSettings.fromBundle(settings, getArguments());
         }
     }
 

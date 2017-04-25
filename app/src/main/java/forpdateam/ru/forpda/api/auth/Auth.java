@@ -54,6 +54,7 @@ public class Auth {
         headers.put("login", URLEncoder.encode(form.getNick(), "windows-1251"));
         headers.put("password", URLEncoder.encode(form.getPassword(), "windows-1251"));
         headers.put("remember", form.getRememberField());
+        headers.put("hidden", form.isHidden() ? "1" : "0");
         String response = Api.getWebClient().post(AUTH_BASE_URL, headers, true);
         Matcher matcher = errorPattern.matcher(response);
         if (matcher.find()) {

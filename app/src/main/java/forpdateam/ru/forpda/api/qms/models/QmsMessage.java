@@ -6,22 +6,24 @@ import forpdateam.ru.forpda.api.qms.interfaces.IQmsChatItem;
  * Created by radiationx on 03.08.16.
  */
 public class QmsMessage implements IQmsChatItem {
-    private boolean whoseMessage = false;
+    private boolean myMessage = false;
     private boolean isDate = false;
-    private String id, readStatus, time, avatar, date, content;
+    private int id;
+    private boolean readStatus = false;
+    private String time, avatar, date, content;
 
     @Override
-    public boolean getWhoseMessage() {
-        return whoseMessage;
+    public boolean isMyMessage() {
+        return myMessage;
     }
 
     @Override
-    public String getId() {
+    public int getId() {
         return id;
     }
 
     @Override
-    public String getReadStatus() {
+    public boolean getReadStatus() {
         return readStatus;
     }
 
@@ -58,7 +60,7 @@ public class QmsMessage implements IQmsChatItem {
         this.date = date;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -70,7 +72,7 @@ public class QmsMessage implements IQmsChatItem {
         this.content = content;
     }
 
-    public void setReadStatus(String readStatus) {
+    public void setReadStatus(boolean readStatus) {
         this.readStatus = readStatus;
     }
 
@@ -78,7 +80,7 @@ public class QmsMessage implements IQmsChatItem {
         this.time = time;
     }
 
-    public void setWhoseMessage(boolean whoseMessage) {
-        this.whoseMessage = whoseMessage;
+    public void setMyMessage(boolean myMessage) {
+        this.myMessage = myMessage;
     }
 }

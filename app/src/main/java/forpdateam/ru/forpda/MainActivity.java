@@ -172,12 +172,20 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     }
 
     public void backHandler(boolean isToolbarButton) {
-        if (TabManager.getInstance().getSize() <= 1) {
+        /*if (TabManager.getInstance().getSize() <= 1) {
             super.onBackPressed();
         } else {
             if (isToolbarButton || !TabManager.getInstance().getActive().onBackPressed()) {
                 hideKeyboard();
                 TabManager.getInstance().remove(TabManager.getInstance().getActive());
+            }
+        }*/
+
+        if (!TabManager.getInstance().getActive().onBackPressed()) {
+            hideKeyboard();
+            TabManager.getInstance().remove(TabManager.getInstance().getActive());
+            if (TabManager.getInstance().getSize() < 1) {
+                finish();
             }
         }
     }

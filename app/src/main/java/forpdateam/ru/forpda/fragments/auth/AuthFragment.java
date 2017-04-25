@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,6 +41,7 @@ public class AuthFragment extends TabFragment {
     private AuthForm authForm;
     private Button sendButton;
     private ProgressBar loginProgress;
+    private CheckBox hiddenAuth;
 
     private LinearLayout mainForm;
     private RelativeLayout complete;
@@ -68,6 +70,8 @@ public class AuthFragment extends TabFragment {
         completeText = (TextView) findViewById(R.id.auth_complete_text);
         progressView = (CircularProgressView) findViewById(R.id.auth_progress);
         loginProgress = (ProgressBar) findViewById(R.id.login_progress);
+        hiddenAuth = (CheckBox) findViewById(R.id.auth_hidden);
+
         viewsReady();
         setWhiteBackground();
         appBarLayout.setVisibility(View.GONE);
@@ -114,6 +118,7 @@ public class AuthFragment extends TabFragment {
         authForm.setCaptcha(captcha.getText().toString());
         authForm.setNick(nick.getText().toString());
         authForm.setPassword(password.getText().toString());
+        authForm.setHidden(hiddenAuth.isChecked());
         loginProgress.setVisibility(View.VISIBLE);
         sendButton.setVisibility(View.INVISIBLE);
         hidePopupWindows();

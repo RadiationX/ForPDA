@@ -176,7 +176,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
                         if (postId == null)
                             postId = uri.getQueryParameter("p");
                         Log.d("FORPDA_LOG", "param" + postId);
-                        if (postId != null && getPostById(Integer.parseInt(postId)) != null) {
+                        if (postId != null && getPostById(Integer.parseInt(postId.trim())) != null) {
                             Matcher matcher = Theme.elemToScrollPattern.matcher(uri.toString());
                             String elem = null;
                             while (matcher.find()) {

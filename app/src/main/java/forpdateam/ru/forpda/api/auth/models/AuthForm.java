@@ -14,6 +14,7 @@ public class AuthForm {
     private String nick;
     private String password;
     private String body;
+    private boolean hidden = false;
 
     public void setCaptchaImageUrl(String captchaImageUrl) {
         this.captchaImageUrl = captchaImageUrl;
@@ -77,5 +78,13 @@ public class AuthForm {
 
     public String getRememberField() {
         return rememberField;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 }

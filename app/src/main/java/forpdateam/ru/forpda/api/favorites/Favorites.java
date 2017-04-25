@@ -72,10 +72,14 @@ public class Favorites {
     }
 
     public boolean editPinState(String type, int favId) throws Exception {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("selectedtids", "" + favId);
-        headers.put("tact", type);
-        String result = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0", headers);
+        Map<String, String> formHeaders = new HashMap<>();
+        formHeaders.put("selectedtids", "" + favId);
+        formHeaders.put("tact", type);
+        /*Map<String, String> headers = new HashMap<>();
+        headers.put("Referer", "http://4pda.ru/forum/index.php?act=fav");
+        headers.put("Upgrade-Insecure-Requests", "1");*/
+        String result = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=fav", /*headers,*/ formHeaders, true);
+        //String result = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=fav&tact="+type+"&selectedtids="+favId, headers);
         return checkIsComplete(result);
     }
 
@@ -83,7 +87,7 @@ public class Favorites {
         Map<String, String> headers = new HashMap<>();
         headers.put("selectedtids", "" + favId);
         headers.put("tact", "delete");
-        String result = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0", headers);
+        String result = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0", headers, true);
         return checkIsComplete(result);
     }
 
@@ -93,6 +97,7 @@ public class Favorites {
     }
 
     private boolean checkIsComplete(String result) {
+        //forpdateam.ru.forpda.utils.Utils.longLog("FAVORITE RESULT "+result);
         return checkPattern.matcher(result).find();
     }
 }

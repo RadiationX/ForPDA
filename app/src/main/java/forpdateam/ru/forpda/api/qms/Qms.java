@@ -147,9 +147,13 @@ public class Qms {
                 item.setIsDate(true);
                 item.setDate(matcher.group(9).trim());
             } else {
-                item.setWhoseMessage(!matcher.group(1).isEmpty());
-                item.setId(matcher.group(2));
-                item.setReadStatus(matcher.group(3));
+                item.setMyMessage(!matcher.group(1).isEmpty());
+                item.setId(Integer.parseInt(matcher.group(2)));
+                if(item.isMyMessage()){
+                    item.setReadStatus(!matcher.group(3).equals("1"));
+                }else {
+                    item.setReadStatus(true);
+                }
                 item.setTime(matcher.group(4));
                 item.setAvatar(matcher.group(5));
                 item.setContent(matcher.group(6).trim());
@@ -196,9 +200,13 @@ public class Qms {
                 item.setIsDate(true);
                 item.setDate(matcher.group(9).trim());
             } else {
-                item.setWhoseMessage(!matcher.group(1).isEmpty());
-                item.setId(matcher.group(2));
-                item.setReadStatus(matcher.group(3));
+                item.setMyMessage(!matcher.group(1).isEmpty());
+                item.setId(Integer.parseInt(matcher.group(2)));
+                if(item.isMyMessage()){
+                    item.setReadStatus(!matcher.group(3).equals("1"));
+                }else {
+                    item.setReadStatus(true);
+                }
                 item.setTime(matcher.group(4));
                 item.setAvatar(matcher.group(5));
                 item.setContent(matcher.group(6).trim());
