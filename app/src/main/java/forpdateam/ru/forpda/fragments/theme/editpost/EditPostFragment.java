@@ -165,7 +165,22 @@ public class EditPostFragment extends TabFragment {
         if (messagePanel.onBackPressed())
             return true;
 
-        if (postForm.getType() == TYPE_EDIT_POST){
+        if (showExitDialog()) {
+            return true;
+        }
+
+        //Синхронизация с полем в фрагменте темы
+        TabFragment fragment = TabManager.getInstance().get(getParentTag());
+        if (fragment != null && fragment instanceof ThemeFragment) {
+            ThemeFragment themeFragment = (ThemeFragment) fragment;
+            showSyncDialog(themeFragment);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean showExitDialog() {
+        if (postForm.getType() == TYPE_EDIT_POST) {
             new AlertDialog.Builder(getContext())
                     .setMessage("Забыть изменения?")
                     .setPositiveButton("Да", (dialog, which) -> {
@@ -175,23 +190,23 @@ public class EditPostFragment extends TabFragment {
                     .show();
             return true;
         }
-
-        //Синхронизация с полем в фрагменте темы
-        TabFragment fragment = TabManager.getInstance().get(getParentTag());
-        if (fragment != null && fragment instanceof ThemeFragment) {
-            ThemeFragment themeFragment = (ThemeFragment) fragment;
-            new AlertDialog.Builder(getContext())
-                    .setMessage("Синхронизировать изменения с полем ввода в теме?")
-                    .setPositiveButton("Да", (dialog, which) -> {
-                        themeFragment.getMessagePanel().setText(messagePanel.getMessage());
-                        themeFragment.getAttachmentsPopup().setAttachments(messagePanel.getAttachments());
-                        TabManager.getInstance().remove(EditPostFragment.this);
-                    })
-                    .setNegativeButton("Нет", null)
-                    .show();
-            return true;
-        }
         return false;
+    }
+
+    private void showSyncDialog(ThemeFragment themeFragment) {
+        new AlertDialog.Builder(getContext())
+                .setMessage("Синхронизировать изменения с полем ввода в теме?")
+                .setPositiveButton("Да", (dialog, which) -> {
+                    themeFragment.getMessagePanel().setText(messagePanel.getMessage());
+                    themeFragment.getAttachmentsPopup().setAttachments(messagePanel.getAttachments());
+                    TabManager.getInstance().remove(EditPostFragment.this);
+                })
+                .setNegativeButton("Нет", ((dialog, which) -> {
+                    if (!showExitDialog()) {
+                        TabManager.getInstance().remove(EditPostFragment.this);
+                    }
+                }))
+                .show();
     }
 
     @Override

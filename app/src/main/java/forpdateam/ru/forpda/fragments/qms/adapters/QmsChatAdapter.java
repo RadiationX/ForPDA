@@ -58,11 +58,13 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public class MessageViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public TextView time;
         public LinearLayout root;
+        public View dot;
 
         public MessageViewHolder(View v) {
             super(v);
-            time = (TextView) v.findViewById(R.id.time);
+            time = (TextView) v.findViewById(R.id.chat_item_time);
             root = (LinearLayout) v.findViewById(R.id.chat_item_wrapper);
+            dot = v.findViewById(R.id.chat_item_dot);
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
         }
@@ -106,7 +108,7 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemViewType(int position) {
-        return chatItems.get(position).isDate() ? TYPE_DATE : chatItems.get(position).getWhoseMessage() ? TYPE_MY_MESSAGE : TYPE_MESSAGE;
+        return chatItems.get(position).isDate() ? TYPE_DATE : chatItems.get(position).isMyMessage() ? TYPE_MY_MESSAGE : TYPE_MESSAGE;
     }
 
     @Override
@@ -148,6 +150,7 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         holder.root.removeAllViews();
         holder.root.addView(view);
         holder.time.setText(item.getTime());
+        holder.dot.setVisibility(item.getReadStatus() ? View.GONE : View.VISIBLE);
     }
 
     private HashMap<Integer, BaseTag> createdTrees = new HashMap<>();

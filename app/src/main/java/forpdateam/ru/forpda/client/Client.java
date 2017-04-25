@@ -53,13 +53,20 @@ public class Client implements IWebClient {
         listCookies = new ArrayList<>();
         String member_id = App.getInstance().getPreferences().getString("cookie_member_id", null);
         String pass_hash = App.getInstance().getPreferences().getString("cookie_pass_hash", null);
+        String session_id = App.getInstance().getPreferences().getString("cookie_session_id", null);
+        String anonymous = App.getInstance().getPreferences().getString("cookie_anonymous", null);
         ClientHelper.setUserId(App.getInstance().getPreferences().getString("member_id", null));
-        Log.d("FORPDA_LOG", "INIT AUTH DATA " + member_id + " : " + pass_hash + " : " + App.getInstance().getPreferences().getString("member_id", null));
+        Log.d("FORPDA_LOG", "INIT AUTH DATA " + member_id + " : " + pass_hash + " : " + session_id + " : " + App.getInstance().getPreferences().getString("member_id", null));
         if (member_id != null && pass_hash != null) {
             ClientHelper.setAuthState(ClientHelper.AUTH_STATE_LOGIN);
             //Первичная загрузка кукисов
             cookies.put("member_id", parseCookie(member_id));
             cookies.put("pass_hash", parseCookie(pass_hash));
+            if (session_id != null)
+                cookies.put("session_id", parseCookie(session_id));
+            if (anonymous != null) {
+                cookies.put("anonymous", parseCookie(anonymous));
+            }
         }
     }
 
@@ -87,13 +94,16 @@ public class Client implements IWebClient {
             .writeTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .cookieJar(new CookieJar() {
-                Pattern authPattern = Pattern.compile("4pda\\.ru\\/forum\\/[\\s\\S]*?act=(?:auth|logout)");
+                Pattern authPattern = Pattern.compile("4pda\\.ru\\/forum\\/[\\s\\S]*?(?:act=(?:auth|logout)|#afterauth)");
                 Matcher matcher;
 
                 @Override
                 public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
                     Log.d("FORPDA_LOG", "response url " + url.toString());
                     Log.d("FORPDA_LOG", "response cookies size " + cookies.size());
+                    for (Cookie cookie : cookies) {
+                        Log.e("FORPDA_LOG", "Cookie: " + cookie.name() + " : " + cookie.value());
+                    }
 
                     if (matcher == null)
                         matcher = authPattern.matcher(url.toString());
@@ -102,10 +112,12 @@ public class Client implements IWebClient {
 
                     if (matcher.find()) {
                         for (Cookie cookie : cookies) {
-                            Log.e("FORPDA_LOG", "response " + cookie.name() + " : " + cookie.value());
+                            Log.e("FORPDA_LOG", "AUTH response " + cookie.name() + " : " + cookie.value());
                             boolean isMemberId = cookie.name().equals("member_id");
                             boolean isPassHash = cookie.name().equals("pass_hash");
-                            if (isMemberId || isPassHash) {
+                            boolean isSessionId = cookie.name().equals("session_id");
+                            boolean isAnonymous = cookie.name().equals("anonymous");
+                            if (isMemberId || isPassHash || isSessionId || isAnonymous) {
                                 if (cookie.value().equals("deleted")) {
                                     App.getInstance().getPreferences().edit().remove("cookie_".concat(cookie.name())).apply();
                                     if (Client.cookies.containsKey(cookie.name())) {
@@ -113,14 +125,20 @@ public class Client implements IWebClient {
                                     }
                                 } else {
                                     //Сохранение кукисов cookie_member_id и cookie_pass_hash
+                                    App.getInstance().getPreferences().edit().putString("cookie_".concat(cookie.name()), cookieToPref(url.toString(), cookie)).apply();
                                     if (isMemberId) {
-                                        App.getInstance().getPreferences().edit().putString("cookie_member_id", cookieToPref(url.toString(), cookie)).apply();
                                         App.getInstance().getPreferences().edit().putString("member_id", cookie.value()).apply();
                                         ClientHelper.setUserId(cookie.value());
                                     }
                                     if (isPassHash) {
-                                        App.getInstance().getPreferences().edit().putString("cookie_pass_hash", cookieToPref(url.toString(), cookie)).apply();
-                                        App.getInstance().getPreferences().edit().putString("auth_key", cookie.value()).apply();
+                                        //App.getInstance().getPreferences().edit().putString("cookie_pass_hash", cookieToPref(url.toString(), cookie)).apply();
+                                        //App.getInstance().getPreferences().edit().putString("auth_key", cookie.value()).apply();
+                                    }
+                                    if (isSessionId) {
+                                        //App.getInstance().getPreferences().edit().putString("cookie_session_id", cookieToPref(url.toString(), cookie)).apply();
+                                    }
+                                    if (isAnonymous) {
+                                        //App.getInstance().getPreferences().edit().putString("cookie_anonymous", cookieToPref(url.toString(), cookie)).apply();
                                     }
                                     if (!Client.cookies.containsKey(cookie.name())) {
                                         Client.cookies.put(cookie.name(), cookie);
@@ -136,6 +154,9 @@ public class Client implements IWebClient {
                     listCookies.clear();
                     listCookies.addAll(Client.cookies.values());
                     Log.d("FORPDA_LOG", "cookies size " + listCookies.size());
+                    for (int i = 0; i < listCookies.size(); i++) {
+                        Log.e("FORPDA_LOG", "cookie request: " + listCookies.get(i).name() + " : " + listCookies.get(i).value());
+                    }
                     return listCookies;
                 }
             })
@@ -144,27 +165,47 @@ public class Client implements IWebClient {
     //Network
     @Override
     public String get(String url) throws Exception {
-        return request(url, null, null, false);
+        return request(url, null, null, null, false);
     }
 
     @Override
-    public String post(String url, Map<String, String> headers) throws Exception {
-        return request(url, headers, null, false);
+    public String get(String url, Map<String, String> headers) throws Exception {
+        return request(url, headers, null, null, false);
     }
 
     @Override
-    public String post(String url, Map<String, String> headers, boolean formBody) throws Exception {
-        return request(url, headers, null, formBody);
+    public String post(String url, Map<String, String> formHeaders) throws Exception {
+        return request(url, null, formHeaders, null, false);
     }
 
     @Override
-    public String post(String url, Map<String, String> headers, RequestFile file) throws Exception {
-        return request(url, headers, file, false);
+    public String post(String url, Map<String, String> formHeaders, boolean formBody) throws Exception {
+        return request(url, null, formHeaders, null, formBody);
+    }
+
+    @Override
+    public String post(String url, Map<String, String> formHeaders, RequestFile file) throws Exception {
+        return request(url, null, formHeaders, file, false);
+    }
+
+    @Override
+    public String post(String url, Map<String, String> headers, Map<String, String> formHeaders) throws Exception {
+        return request(url, headers, formHeaders, null, false);
+    }
+
+    @Override
+    public String post(String url, Map<String, String> headers, Map<String, String> formHeaders, boolean formBody) throws Exception {
+        return request(url, headers, formHeaders, null, formBody);
+    }
+
+    @Override
+    public String post(String url, Map<String, String> headers, Map<String, String> formHeaders, RequestFile file) throws Exception {
+        return request(url, headers, formHeaders, file, false);
     }
 
     //boolean formBody нужен для тех случаев, когда в хедерах есть строки с \n и т.д
     @Override
-    public String request(String url, Map<String, String> headers, RequestFile file, boolean formBody) throws Exception {
+    public String request(String url, Map<String, String> headers, Map<String, String> formHeaders, RequestFile file, boolean formBody) throws Exception {
         Log.d("FORPDA_LOG", "request url " + url);
         if (url.substring(0, 2).equals("//")) {
             url = "http:".concat(url);
@@ -174,14 +215,20 @@ public class Client implements IWebClient {
         Request.Builder requestBuilder = new Request.Builder()
                 .url(url)
                 .header("User-Agent", userAgent);
-        if (headers != null || file != null) {
+        if (headers != null) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                Log.d("FORPDA_LOG", "HEADER " + entry.getKey() + " : " + entry.getValue());
+                requestBuilder.header(entry.getKey(), entry.getValue());
+            }
+        }
+        if (formHeaders != null || file != null) {
             if (formBody) {
-                if (headers != null) {
+                if (formHeaders != null) {
                     //FormBody нужен, т.к не все формы корректно работают с MultipartBody (точнее только авторизация)
                     Log.d("FORPDA_LOG", "FORM BUILDER");
                     FormBody.Builder formBuilder = new FormBody.Builder();
-                    for (Map.Entry<String, String> entry : headers.entrySet()) {
-                        Log.d("FORPDA_LOG", "HEADER " + entry.getKey() + " : " + entry.getValue());
+                    for (Map.Entry<String, String> entry : formHeaders.entrySet()) {
+                        Log.d("FORPDA_LOG", "FORM HEADER " + entry.getKey() + " : " + entry.getValue());
                         formBuilder.addEncoded(entry.getKey(), entry.getValue());
                     }
                     requestBuilder.post(formBuilder.build());
@@ -190,9 +237,9 @@ public class Client implements IWebClient {
                 MultipartBody.Builder multipartBuilder = new MultipartBody.Builder();
                 multipartBuilder.setType(MultipartBody.FORM);
                 Log.d("FORPDA_LOG", "MULTIPART FORM BUILDER");
-                if (headers != null) {
-                    for (Map.Entry<String, String> entry : headers.entrySet()) {
-                        Log.d("FORPDA_LOG", "HEADER " + entry.getKey() + " : " + entry.getValue());
+                if (formHeaders != null) {
+                    for (Map.Entry<String, String> entry : formHeaders.entrySet()) {
+                        Log.d("FORPDA_LOG", "FORM HEADER " + entry.getKey() + " : " + entry.getValue());
                         multipartBuilder.addFormDataPart(entry.getKey(), entry.getValue());
                     }
                 }

@@ -266,7 +266,10 @@ public abstract class ThemeFragment extends TabFragment {
                 return false;
             });
             addSearchOnPageItem(menu);
-            menu.add("Найти в теме").setOnMenuItemClickListener(menuItem -> false);
+            menu.add("Найти в теме").setOnMenuItemClickListener(menuItem -> {
+                IntentHandler.handle("http://4pda.ru/forum/index.php?forums=" + currentPage.getForumId() + "&topics=" + currentPage.getId() + "&act=search&source=pst");
+                return false;
+            });
         }
 
         SubMenu subMenu = menu.addSubMenu("Опции темы");
@@ -503,7 +506,8 @@ public abstract class ThemeFragment extends TabFragment {
     }
 
     public void quotePost(String text, ThemePost post) {
-        String insert = String.format(Locale.getDefault(), "[quote name=\"%s\" date=\"%s\" post=%S]%s[/quote]", post.getNick(), post.getDate(), post.getId(), text);
+        String date = Utils.getForumDateTime(Utils.parseForumDateTime(post.getDate()));
+        String insert = String.format(Locale.getDefault(), "[quote name=\"%s\" date=\"%s\" post=%S]%s[/quote]", post.getNick(), date, post.getId(), text);
         messagePanel.insertText(insert);
     }
 

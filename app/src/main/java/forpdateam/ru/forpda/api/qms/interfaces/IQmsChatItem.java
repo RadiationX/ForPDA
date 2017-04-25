@@ -4,11 +4,11 @@ package forpdateam.ru.forpda.api.qms.interfaces;
  * Created by radiationx on 03.08.16.
  */
 public interface IQmsChatItem {
-    boolean getWhoseMessage();
+    boolean isMyMessage();
 
-    String getId();
+    int getId();
 
-    String getReadStatus();
+    boolean getReadStatus();
 
     String getTime();
 

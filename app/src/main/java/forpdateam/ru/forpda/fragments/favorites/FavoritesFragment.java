@@ -83,6 +83,7 @@ public class FavoritesFragment extends TabFragment {
     private FavoritesAdapter adapter;
     private Subscriber<FavData> mainSubscriber = new Subscriber<>(this);
     boolean markedRead = false;
+    private boolean unreadTop = App.getInstance().getPreferences().getBoolean("lists.topic.unread_top", false);
 
     public FavoritesFragment() {
         configuration.setAlone(true);
@@ -169,21 +170,42 @@ public class FavoritesFragment extends TabFragment {
     private void bindView() {
         results = realm.where(FavItemBd.class).findAll();
         if (results.size() != 0) {
+            ArrayList<IFavItem> pinnedUnread = new ArrayList<>();
+            ArrayList<IFavItem> itemsUnread = new ArrayList<>();
             ArrayList<IFavItem> pinned = new ArrayList<>();
             ArrayList<IFavItem> items = new ArrayList<>();
-
             for (IFavItem item : results) {
                 if (item.isPin()) {
-                    pinned.add(item);
+                    if (unreadTop && item.isNewMessages()) {
+                        pinnedUnread.add(item);
+                    } else {
+                        pinned.add(item);
+                    }
                 } else {
-                    items.add(item);
+                    if (unreadTop && item.isNewMessages()) {
+                        itemsUnread.add(item);
+                    } else {
+                        items.add(item);
+                    }
                 }
             }
+
+
             adapter.clear();
-            if (pinned.size() > 0)
+            if (pinnedUnread.size() > 0) {
+                Log.e("SUKA", "ADD UNREAD PINNED " + pinnedUnread.size());
+                adapter.addSection(new Pair<>("Непрочитанные закрепленные темы", pinnedUnread));
+            }
+            if (itemsUnread.size() > 0) {
+                Log.e("SUKA", "ADD UNREAD ITEMs " + itemsUnread.size());
+                adapter.addSection(new Pair<>("Непрочитанные темы", itemsUnread));
+            }
+            if (pinned.size() > 0) {
+                Log.e("SUKA", "ADD PINNED " + pinned.size());
                 adapter.addSection(new Pair<>("Закрепленные темы", pinned));
+            }
+            Log.e("SUKA", "ADD ITEMS " + items.size());
             adapter.addSection(new Pair<>("Темы", items));
-            //adapter.addAll(results);
             adapter.notifyDataSetChanged();
         }
         if (!Client.getInstance().getNetworkState()) {
@@ -208,11 +230,15 @@ public class FavoritesFragment extends TabFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (markedRead) {
-            bindView();
-            markedRead = false;
-        }
+        boolean newUnreadTop = App.getInstance().getPreferences().getBoolean("lists.topic.unread_top", false);
         boolean newShowDot = App.getInstance().getPreferences().getBoolean("lists.topic.show_dot", false);
+
+        if (markedRead || newUnreadTop != unreadTop) {
+            markedRead = false;
+            unreadTop = newUnreadTop;
+            bindView();
+        }
+
         if (newShowDot != adapter.isShowDot()) {
             adapter.setShowDot(newShowDot);
             adapter.notifyDataSetChanged();

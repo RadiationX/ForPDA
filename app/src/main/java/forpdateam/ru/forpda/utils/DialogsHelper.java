@@ -10,6 +10,8 @@ import android.webkit.WebView;
 
 import forpdateam.ru.forpda.App;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 /**
  * Created by radiationx on 01.11.16.
  */
@@ -57,7 +59,7 @@ public class DialogsHelper {
             showedAlertDialogMenu = new AlertDialogMenu<>();
 
             alertDialogMenu.addItem(openNewTab, (context1, data) -> IntentHandler.handle(data.second));
-            alertDialogMenu.addItem(openBrowser, (context1, data) -> App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(data.second))));
+            alertDialogMenu.addItem(openBrowser, (context1, data) -> App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(data.second)).addFlags(FLAG_ACTIVITY_NEW_TASK)));
             alertDialogMenu.addItem(copyUrl, (context1, data) -> Utils.copyToClipBoard(data.second));
             alertDialogMenu.addItem(openImage, (context1, data) -> IntentHandler.handle(data.first));
             alertDialogMenu.addItem(saveImage, (context1, data) -> IntentHandler.handle(data.second));

@@ -1,9 +1,11 @@
 package forpdateam.ru.forpda;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +23,10 @@ public class TabDrawer {
     private TabAdapter adapter;
     private DrawerLayout drawerLayout;
     private NavigationView drawer;
+    private MainActivity mainActivity;
 
     public TabDrawer(MainActivity activity, DrawerLayout drawerLayout) {
+        mainActivity = activity;
         ListView tabsList = (ListView) activity.findViewById(R.id.tabs_list);
         drawer = (NavigationView) activity.findViewById(R.id.tab_drawer);
         adapter = new TabAdapter(activity);
@@ -90,7 +94,12 @@ public class TabDrawer {
                 convertView.setBackgroundColor(Color.TRANSPARENT);
 
             holder.text.setText(fragment.getTabTitle());
-            holder.close.setOnClickListener(view -> TabManager.getInstance().remove(fragment));
+            holder.close.setOnClickListener(view -> {
+                TabManager.getInstance().remove(fragment);
+                if (TabManager.getInstance().getSize() < 1) {
+                    mainActivity.finish();
+                }
+            });
             holder.close.setColorFilter(App.getContext().getResources().getColor(R.color.black));
             return convertView;
         }

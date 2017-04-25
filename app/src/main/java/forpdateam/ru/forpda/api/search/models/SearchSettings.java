@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.api.search.models;
 
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Pair;
 
 import java.io.UnsupportedEncodingException;
@@ -10,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import forpdateam.ru.forpda.fragments.TabFragment;
 
 /**
  * Created by radiationx on 01.02.17.
@@ -261,6 +264,13 @@ public class SearchSettings {
             e.printStackTrace();
         }
         return url;
+    }
+
+    public static SearchSettings fromBundle(SearchSettings settings, Bundle arguments){
+        String url = arguments.getString(TabFragment.ARG_TAB);
+        if (url != null)
+            settings = SearchSettings.parseSettings(settings, url);
+        return settings;
     }
 
     public int getSt() {

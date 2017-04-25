@@ -7,17 +7,25 @@ import java.util.Map;
  */
 
 public interface IWebClient {
-    String MINIMAL_PAGE = "http://4pda.ru/forum/index.php?showforum=200";
+    String MINIMAL_PAGE = "http://4pda.ru/forum/index.php?showforum=200#afterauth";
 
     String get(String url) throws Exception;
 
-    String post(String url, Map<String, String> headers) throws Exception;
+    String get(String url, Map<String, String> headers) throws Exception;
 
-    String post(String url, Map<String, String> headers, boolean formBody) throws Exception;
+    String post(String url, Map<String, String> headers, Map<String, String> formHeaders) throws Exception;
 
-    String post(String url, Map<String, String> headers, RequestFile file) throws Exception;
+    String post(String url, Map<String, String> headers, Map<String, String> formHeaders, boolean formBody) throws Exception;
 
-    String request(String url, Map<String, String> headers, RequestFile file, boolean formBody) throws Exception;
+    String post(String url, Map<String, String> headers, Map<String, String> formHeaders, RequestFile file) throws Exception;
+
+    String post(String url, Map<String, String> formHeaders) throws Exception;
+
+    String post(String url, Map<String, String> formHeaders, boolean formBody) throws Exception;
+
+    String post(String url, Map<String, String> formHeaders, RequestFile file) throws Exception;
+
+    String request(String url, Map<String, String> headers, Map<String, String> formHeaders, RequestFile file, boolean formBody) throws Exception;
 
     String getRedirect(String url);
 
