@@ -93,7 +93,7 @@ class ThemeDialogsHelper {
             postMenu.addItem("Пожаловаться", ThemeFragment::reportPost);
             postMenu.addItem("Изменить", ThemeFragment::editPost);
             postMenu.addItem("Удалить", ThemeFragment::deletePost);
-            postMenu.addItem("Ссылка на сообщение", (context, data) -> {
+            postMenu.addItem("Скопировать ссылку", (context, data) -> {
                 String url = "http://4pda.ru/forum/index.php?s=&showtopic=" + context.currentPage.getId() + "&view=findpost&p=" + data.getId();
                 Utils.copyToClipBoard(url);
             });

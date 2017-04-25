@@ -255,13 +255,14 @@ public abstract class ThemeFragment extends TabFragment {
     public void refreshOptionsMenu() {
         Menu menu = toolbar.getMenu();
         menu.clear();
+        addBaseToolbarMenu();
         menu.add("Обновить").setIcon(App.getAppDrawable(R.drawable.ic_refresh_gray_24dp)).setOnMenuItemClickListener(menuItem -> {
             action = REFRESH_ACTION;
             loadData();
             return false;
         })/*.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)*/;
         if (currentPage != null) {
-            menu.add("Ссылка").setOnMenuItemClickListener(menuItem -> {
+            menu.add("Скопировать ссылку").setOnMenuItemClickListener(menuItem -> {
                 Utils.copyToClipBoard(tab_url);
                 return false;
             });

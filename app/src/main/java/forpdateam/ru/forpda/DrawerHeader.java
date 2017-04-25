@@ -17,6 +17,8 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.util.Observer;
+
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -61,6 +63,15 @@ public class DrawerHeader {
         activity.getMenuDrawer().close();
     };
 
+    private Observer loginObserver = (observable, o) -> {
+        state((boolean) o);
+    };
+
+    public void destroy(){
+        activity = null;
+        ClientHelper.getInstance().removeLoginObserver(loginObserver);
+    }
+
     public DrawerHeader(MainActivity activity, DrawerLayout drawerLayout) {
         this.activity = activity;
         headerLayout = drawerLayout.findViewById(R.id.drawer_header_container);
@@ -87,9 +98,7 @@ public class DrawerHeader {
                     .setNegativeButton("Отмена", null)
                     .show();
         });
-        ClientHelper.getInstance().addLoginObserver((observable, o) -> {
-            state((boolean) o);
-        });
+        ClientHelper.getInstance().addLoginObserver(loginObserver);
         state(ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN);
     }
 

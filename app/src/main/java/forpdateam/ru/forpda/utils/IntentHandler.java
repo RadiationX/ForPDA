@@ -18,7 +18,9 @@ import java.util.regex.Pattern;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.forum.ForumFragment;
+import forpdateam.ru.forpda.fragments.mentions.MentionsFragment;
 import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsChatFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
@@ -211,7 +213,7 @@ public class IntentHandler {
                     return true;
                 case "boardrules":
                     run("boardrules");
-                    return true;
+                    return false;
                 case "search":
                     run("search " + uri.toString());
                     args.putString(TabFragment.ARG_TAB, uri.toString());
@@ -227,6 +229,11 @@ public class IntentHandler {
                     return true;
                 case "fav":
                     run("favorites");
+                    TabManager.getInstance().add(new TabFragment.Builder<>(FavoritesFragment.class).build());
+                    return true;
+                case "mentions":
+                    run("mentions");
+                    TabManager.getInstance().add(new TabFragment.Builder<>(MentionsFragment.class).build());
                     return true;
             }
         }
