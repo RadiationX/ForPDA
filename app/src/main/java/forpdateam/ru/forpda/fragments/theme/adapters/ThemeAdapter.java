@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.theme.models.ThemePostBase;
+import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.utils.ourparser.Document;
 import forpdateam.ru.forpda.utils.ourparser.Element;
 import forpdateam.ru.forpda.utils.ourparser.Html;
@@ -37,7 +37,7 @@ import forpdateam.ru.forpda.utils.ourparser.htmltags.UlTag;
  */
 
 public class ThemeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private List<ThemePostBase> postList;
+    private List<ThemePost> postList;
     private Context context;
 
     public class MessageViewHolder extends RecyclerView.ViewHolder {
@@ -58,7 +58,7 @@ public class ThemeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     }
 
-    public ThemeAdapter(List<ThemePostBase> chatItems, Context context) {
+    public ThemeAdapter(List<ThemePost> chatItems, Context context) {
         this.postList = chatItems;
         this.context = context;
     }
@@ -77,7 +77,7 @@ public class ThemeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
 
     private void bindMessageHolder(ThemeAdapter.MessageViewHolder holder, int position) {
-        ThemePostBase item = postList.get(position);
+        ThemePost item = postList.get(position);
         /*long time = System.currentTimeMillis();
         Document document = Document.getTopics(postList.get(position).getBody());
         Log.d("FORPDA_LOG", "theme parsing time document " + (System.currentTimeMillis() - time));*/
@@ -111,7 +111,7 @@ public class ThemeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return postList.size();
     }
 
-    public ThemePostBase getItem(int position) {
+    public ThemePost getItem(int position) {
         return postList.get(position);
     }
 

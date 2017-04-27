@@ -13,7 +13,7 @@ import forpdateam.ru.forpda.api.theme.models.Poll;
 import forpdateam.ru.forpda.api.theme.models.PollQuestion;
 import forpdateam.ru.forpda.api.theme.models.PollQuestionItem;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
-import forpdateam.ru.forpda.api.theme.models.ThemePostBase;
+import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.api.Utils;
 import okhttp3.MultipartBody;
@@ -89,7 +89,9 @@ public class Theme {
         matcher = universalForumPosts.matcher(response);
         Log.d("FORPDA_LOG", "posts matcher " + (System.currentTimeMillis() - time));
         while (matcher.find()) {
-            ThemePostBase item = new ThemePostBase();
+            ThemePost item = new ThemePost();
+            item.setTopicId(page.getId());
+            item.setForumId(page.getForumId());
             item.setId(Integer.parseInt(matcher.group(1)));
             item.setDate(matcher.group(5));
             item.setNumber(Integer.parseInt(matcher.group(6)));
@@ -106,7 +108,8 @@ public class Theme {
             item.setCanReport(!matcher.group(17).isEmpty());
             item.setCanEdit(!matcher.group(18).isEmpty());
             item.setCanDelete(!matcher.group(19).isEmpty());
-            //page.setCanQuote(!matcher.group(20).isEmpty());
+            page.setCanQuote(!matcher.group(20).isEmpty());
+            item.setCanQuote(page.canQuote());
             item.setBody(matcher.group(21));
             if (item.isCurator() && item.getUserId() == ClientHelper.getUserId())
                 page.setCurator(true);
@@ -177,7 +180,7 @@ public class Theme {
         }
         MultipartBody multipartBody = multipartBuilder.build();
         for (MultipartBody.Part part : multipartBody.parts()) {
-            Log.e("SUKA", part.headers().toString()+" : "+part.body().contentType());
+            Log.e("SUKA", part.headers().toString() + " : " + part.body().contentType());
         }
 
 

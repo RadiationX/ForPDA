@@ -6,8 +6,18 @@ package forpdateam.ru.forpda.api;
 
 public class BaseForumPost implements IBaseForumPost {
     private String date, avatar, nick, groupColor = "black", group, reputation, body;
-    private boolean curator, online, minus, plus, report, edit, delete;
-    private int id, number, userId;
+    private boolean curator, online, minus, plus, report, edit, delete, quote;
+    private int id = 0, topicId = 0, forumId = 0, number = 0, userId = 0;
+
+    @Override
+    public int getTopicId() {
+        return topicId;
+    }
+
+    @Override
+    public int getForumId() {
+        return forumId;
+    }
 
     @Override
     public int getId() {
@@ -94,6 +104,18 @@ public class BaseForumPost implements IBaseForumPost {
         return delete;
     }
 
+    @Override
+    public boolean canQuote() {
+        return quote;
+    }
+
+    public void setTopicId(int topicId) {
+        this.topicId = topicId;
+    }
+
+    public void setForumId(int forumId) {
+        this.forumId = forumId;
+    }
 
     public void setId(int id) {
         this.id = id;
@@ -163,5 +185,9 @@ public class BaseForumPost implements IBaseForumPost {
 
     public void setCanDelete(boolean delete) {
         this.delete = delete;
+    }
+
+    public void setCanQuote(boolean quote) {
+        this.quote = quote;
     }
 }

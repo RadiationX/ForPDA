@@ -30,7 +30,7 @@ import forpdateam.ru.forpda.utils.IntentHandler;
  */
 
 public class ThemeFragmentWeb extends ThemeFragment {
-    protected final static String JS_INTERFACE = "ITheme";
+    private final static String JS_INTERFACE = "ITheme";
     private ExtendedWebView webView;
     private WebViewClient webViewClient;
     private WebChromeClient chromeClient;
@@ -51,6 +51,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
         webView.loadUrl("about:blank");
         refreshLayout.addView(webView);
         webView.addJavascriptInterface(this, JS_INTERFACE);
+        webView.addJavascriptInterface(this, JS_POSTS_FUNCTIONS);
         webView.getSettings().setJavaScriptEnabled(true);
         registerForContextMenu(webView);
 
@@ -127,8 +128,9 @@ public class ThemeFragmentWeb extends ThemeFragment {
         unregisterForContextMenu(webView);
         webView.setActionModeListener(null);
         webView.removeJavascriptInterface(JS_INTERFACE);
+        webView.removeJavascriptInterface(JS_POSTS_FUNCTIONS);
         webView.setWebChromeClient(null);
-        webView.setWebChromeClient(null);
+        webView.setWebViewClient(null);
         webView.loadUrl("about:blank");
         webView.clearHistory();
         webView.clearSslPreferences();

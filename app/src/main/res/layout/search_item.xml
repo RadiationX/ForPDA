@@ -11,7 +11,6 @@
     android:layout_marginTop="4dp"
     android:background="?attr/selectableItemBackground"
     android:clickable="true"
-    android:minHeight="100dp"
     app:cardCornerRadius="0dp"
     app:cardElevation="1dp">
 
