@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.api.theme;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -19,6 +20,9 @@ import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.api.Utils;
+import forpdateam.ru.forpda.client.RequestBodyUtil;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 
 /**
  * Created by radiationx on 04.08.16.
@@ -167,7 +171,22 @@ public class Theme {
         headers.put("p", Integer.toString(postId));
         headers.put("message", message);
 
-        String response = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=report&amp;send=1&amp;t=" + topicId + "&amp;p=" + postId, headers);
+
+        MultipartBody.Builder multipartBuilder = new MultipartBody.Builder();
+        multipartBuilder.setType(MultipartBody.FORM);
+        Log.d("FORPDA_LOG", "MULTIPART FORM BUILDER");
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            Log.d("FORPDA_LOG", "FORM HEADER " + entry.getKey() + " : " + entry.getValue());
+            multipartBuilder.addFormDataPart(entry.getKey(), entry.getValue());
+        }
+        MultipartBody multipartBody = multipartBuilder.build();
+        for (MultipartBody.Part part : multipartBody.parts()) {
+            Log.e("SUKA", part.headers().toString()+" : "+part.body().contentType());
+        }
+
+
+        //String response = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=report&amp;send=1&amp;t=" + topicId + "&amp;p=" + postId, headers);
+        String response = "";
 
         Pattern p = Pattern.compile("<div class=\"errorwrap\">\n" +
                 "\\s*<h4>Причина:</h4>\n" +

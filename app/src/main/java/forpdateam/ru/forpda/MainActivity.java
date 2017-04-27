@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     }
 
     public MainActivity() {
-        webViewCleaner.schedule(new WebViewCleanerTask(), 0, 6000);
+        webViewCleaner.schedule(new WebViewCleanerTask(), 0, 60000);
         TabManager.init(this, this);
     }
 

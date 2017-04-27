@@ -78,7 +78,7 @@ public class Favorites {
         /*Map<String, String> headers = new HashMap<>();
         headers.put("Referer", "http://4pda.ru/forum/index.php?act=fav");
         headers.put("Upgrade-Insecure-Requests", "1");*/
-        String result = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=fav", /*headers,*/ formHeaders, true);
+        String result = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=fav", /*headers,*/ formHeaders);
         //String result = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=fav&tact="+type+"&selectedtids="+favId, headers);
         return checkIsComplete(result);
     }
@@ -87,7 +87,7 @@ public class Favorites {
         Map<String, String> headers = new HashMap<>();
         headers.put("selectedtids", "" + favId);
         headers.put("tact", "delete");
-        String result = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0", headers, true);
+        String result = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0", headers);
         return checkIsComplete(result);
     }
 

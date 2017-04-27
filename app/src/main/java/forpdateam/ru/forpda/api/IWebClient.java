@@ -15,17 +15,17 @@ public interface IWebClient {
 
     String post(String url, Map<String, String> headers, Map<String, String> formHeaders) throws Exception;
 
-    String post(String url, Map<String, String> headers, Map<String, String> formHeaders, boolean formBody) throws Exception;
+    String post(String url, Map<String, String> headers, Map<String, String> formHeaders, boolean isMultipart) throws Exception;
 
     String post(String url, Map<String, String> headers, Map<String, String> formHeaders, RequestFile file) throws Exception;
 
     String post(String url, Map<String, String> formHeaders) throws Exception;
 
-    String post(String url, Map<String, String> formHeaders, boolean formBody) throws Exception;
+    String post(String url, Map<String, String> formHeaders, boolean isMultipart) throws Exception;
 
     String post(String url, Map<String, String> formHeaders, RequestFile file) throws Exception;
 
-    String request(String url, Map<String, String> headers, Map<String, String> formHeaders, RequestFile file, boolean formBody) throws Exception;
+    String request(String url, Map<String, String> headers, Map<String, String> formHeaders, RequestFile file, boolean isMultipart) throws Exception;
 
     String getRedirect(String url);
 
