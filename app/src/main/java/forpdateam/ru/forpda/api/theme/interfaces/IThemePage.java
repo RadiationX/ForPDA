@@ -2,7 +2,7 @@ package forpdateam.ru.forpda.api.theme.interfaces;
 
 import java.util.ArrayList;
 
-import forpdateam.ru.forpda.api.theme.models.ThemePost;
+import forpdateam.ru.forpda.api.theme.models.ThemePostBase;
 
 /**
  * Created by radiationx on 04.08.16.
@@ -14,7 +14,7 @@ public interface IThemePage {
 
     boolean isInFavorite();
 
-    ArrayList<ThemePost> getPosts();
+    ArrayList<ThemePostBase> getPosts();
 
     String getHtml();
 }

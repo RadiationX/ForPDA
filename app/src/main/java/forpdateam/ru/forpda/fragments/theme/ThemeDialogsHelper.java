@@ -3,7 +3,7 @@ package forpdateam.ru.forpda.fragments.theme;
 import android.support.v7.app.AlertDialog;
 
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
-import forpdateam.ru.forpda.api.theme.models.ThemePost;
+import forpdateam.ru.forpda.api.theme.models.ThemePostBase;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -14,10 +14,10 @@ import forpdateam.ru.forpda.utils.Utils;
  */
 
 class ThemeDialogsHelper {
-    private static AlertDialogMenu<ThemeFragment, ThemePost> userMenu, reputationMenu, postMenu;
-    private static AlertDialogMenu<ThemeFragment, ThemePost> showedUserMenu, showedReputationMenu, showedPostMenu;
+    private static AlertDialogMenu<ThemeFragment, ThemePostBase> userMenu, reputationMenu, postMenu;
+    private static AlertDialogMenu<ThemeFragment, ThemePostBase> showedUserMenu, showedReputationMenu, showedPostMenu;
 
-    static void showUserMenu(ThemeFragment theme, ThemePost post) {
+    static void showUserMenu(ThemeFragment theme, ThemePostBase post) {
         if (userMenu == null) {
             userMenu = new AlertDialogMenu<>();
             showedUserMenu = new AlertDialogMenu<>();
@@ -62,7 +62,7 @@ class ThemeDialogsHelper {
                 .show();
     }
 
-    static void showReputationMenu(ThemeFragment theme, ThemePost post) {
+    static void showReputationMenu(ThemeFragment theme, ThemePostBase post) {
         if (reputationMenu == null) {
             reputationMenu = new AlertDialogMenu<>();
             showedReputationMenu = new AlertDialogMenu<>();
@@ -85,7 +85,7 @@ class ThemeDialogsHelper {
     }
 
 
-    static void showPostMenu(ThemeFragment theme, ThemePost post) {
+    static void showPostMenu(ThemeFragment theme, ThemePostBase post) {
         if (postMenu == null) {
             postMenu = new AlertDialogMenu<>();
             showedPostMenu = new AlertDialogMenu<>();

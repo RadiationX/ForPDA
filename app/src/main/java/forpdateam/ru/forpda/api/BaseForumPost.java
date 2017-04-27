@@ -1,12 +1,11 @@
-package forpdateam.ru.forpda.api.theme.models;
-
-import forpdateam.ru.forpda.api.theme.interfaces.IThemePost;
+package forpdateam.ru.forpda.api;
 
 /**
- * Created by radiationx on 04.08.16.
+ * Created by radiationx on 27.04.17.
  */
-public class ThemePost implements IThemePost {
-    private String date, avatar, nick, groupColor, group, reputation, body;
+
+public class BaseForumPost implements IBaseForumPost {
+    private String date, avatar, nick, groupColor = "black", group, reputation, body;
     private boolean curator, online, minus, plus, report, edit, delete;
     private int id, number, userId;
 
@@ -25,10 +24,12 @@ public class ThemePost implements IThemePost {
         return number;
     }
 
+    @Override
     public String getAvatar() {
         return avatar;
     }
 
+    @Override
     public String getNick() {
         return nick;
     }
@@ -116,7 +117,7 @@ public class ThemePost implements IThemePost {
 
     public void setGroupColor(String groupColor) {
         if (groupColor == null)
-            groupColor = "black";
+            return;
         this.groupColor = groupColor;
     }
 

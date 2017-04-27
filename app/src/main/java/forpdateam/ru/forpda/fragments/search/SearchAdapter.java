@@ -96,10 +96,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         SearchItem item = list.get(position);
 
         holder.title.setText(item.getTitle());
-        holder.nick.setText(item.getLastUserNick());
+        holder.nick.setText(item.getNick());
         holder.date.setText(item.getDate());
-        if (item.getContent() != null && !item.getContent().isEmpty()) {
-            holder.content.setText(item.getContent());
+        if (item.getBody() != null && !item.getBody().isEmpty()) {
+            holder.content.setText(item.getBody());
             if (holder.content.getVisibility() != View.VISIBLE)
                 holder.content.setVisibility(View.VISIBLE);
         } else {

@@ -30,6 +30,7 @@ import forpdateam.ru.forpda.utils.IntentHandler;
  */
 
 public class ThemeFragmentWeb extends ThemeFragment {
+    protected final static String JS_INTERFACE = "ITheme";
     private ExtendedWebView webView;
     private WebViewClient webViewClient;
     private WebChromeClient chromeClient;

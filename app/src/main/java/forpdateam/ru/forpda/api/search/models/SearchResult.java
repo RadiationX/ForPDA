@@ -13,6 +13,7 @@ public class SearchResult {
     private List<SearchItem> items = new ArrayList<>();
     private SearchSettings settings;
     private Pagination pagination = new Pagination();
+    private String html;
 
     public List<SearchItem> getItems() {
         return items;
@@ -36,5 +37,13 @@ public class SearchResult {
 
     public void setPagination(Pagination pagination) {
         this.pagination = pagination;
+    }
+
+    public String getHtml() {
+        return html;
+    }
+
+    public void setHtml(String html) {
+        this.html = html;
     }
 }

@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.fragments.search;
 
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -20,6 +22,8 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,6 +33,7 @@ import forpdateam.ru.forpda.api.search.models.SearchSettings;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.pagination.PaginationHelper;
 import forpdateam.ru.forpda.rxapi.RxApi;
+import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
@@ -38,6 +43,7 @@ import forpdateam.ru.forpda.utils.rx.Subscriber;
  */
 
 public class SearchFragment extends TabFragment {
+    protected final static String JS_INTERFACE = "ISearch";
     private ViewGroup searchSettingsView;
     private ViewGroup nickBlock, resourceBlock, resultBlock, sortBlock, sourceBlock;
     private Spinner resourceSpinner, resultSpinner, sortSpinner, sourceSpinner;
@@ -52,6 +58,7 @@ public class SearchFragment extends TabFragment {
     private SearchSettings settings = new SearchSettings();
 
     private Subscriber<SearchResult> mainSubscriber = new Subscriber<>(this);
+    private ExtendedWebView webView;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout refreshLayout;
     private SearchAdapter adapter = new SearchAdapter();
@@ -59,7 +66,7 @@ public class SearchFragment extends TabFragment {
     private StringBuilder titleBuilder = new StringBuilder();
     private PaginationHelper paginationHelper = new PaginationHelper();
 
-    public SearchFragment(){
+    public SearchFragment() {
         configuration.setDefaultTitle("Поиск");
     }
 
@@ -78,13 +85,14 @@ public class SearchFragment extends TabFragment {
     private MenuItem searchItem;
     private SearchResult data;
 
+    @SuppressLint("JavascriptInterface")
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         baseInflateFragment(inflater, R.layout.fragment_search);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
-        recyclerView = (RecyclerView) findViewById(R.id.base_list);
+        //recyclerView = (RecyclerView) findViewById(R.id.base_list);
         searchSettingsView = (ViewGroup) findViewById(R.id.search_settings_container);
 
         nickBlock = (ViewGroup) findViewById(R.id.search_nick_block);
@@ -101,6 +109,21 @@ public class SearchFragment extends TabFragment {
         nickField = (TextView) findViewById(R.id.search_nick_field);
 
         submitButton = (Button) findViewById(R.id.search_submit);
+
+        if (getMainActivity().getWebViews().size() > 0) {
+            webView = getMainActivity().getWebViews().element();
+            getMainActivity().getWebViews().remove();
+        } else {
+            webView = new ExtendedWebView(getContext());
+            webView.setTag("WebView_tag ".concat(Long.toString(System.currentTimeMillis())));
+        }
+        webView.loadUrl("about:blank");
+        webView.addJavascriptInterface(this, JS_INTERFACE);
+        webView.getSettings().setJavaScriptEnabled(true);
+        recyclerView = new RecyclerView(getContext());
+
+        recyclerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        webView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         viewsReady();
 
@@ -174,9 +197,9 @@ public class SearchFragment extends TabFragment {
             if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
                 IntentHandler.handle("http://4pda.ru/index.php?p=" + item.getId());
             } else {
-                String url = "http://4pda.ru/forum/index.php?showtopic=" + item.getId();
-                if (item.getPostId() != 0) {
-                    url += "&view=findpost&p=" + item.getPostId();
+                String url = "http://4pda.ru/forum/index.php?showtopic=" + item.getTopicId();
+                if (item.getId() != 0) {
+                    url += "&view=findpost&p=" + item.getId();
                 }
                 IntentHandler.handle(url);
             }
@@ -337,16 +360,63 @@ public class SearchFragment extends TabFragment {
             searchSettingsView.setVisibility(View.GONE);
         }
         refreshLayout.setRefreshing(true);
-        mainSubscriber.subscribe(RxApi.Search().getSearch(settings), this::onLoadData, new SearchResult(), v -> loadData());
+        boolean withHtml = settings.getResult().equals(SearchSettings.RESULT_POSTS.first) && settings.getResourceType().equals(SearchSettings.RESOURCE_FORUM.first);
+        mainSubscriber.subscribe(RxApi.Search().getSearch(settings, withHtml), this::onLoadData, new SearchResult(), v -> loadData());
     }
 
     private void onLoadData(SearchResult searchResult) {
         refreshLayout.setRefreshing(false);
         hidePopupWindows();
         data = searchResult;
-        adapter.clear();
-        adapter.addAll(data.getItems());
+        Log.e("SUKA", data.getSettings().getResult());
+        Log.e("SUKA", data.getSettings().getResourceType());
+        Log.e("SUKA", "" + refreshLayout.getChildCount());
+        if (refreshLayout.getChildCount() > 1) {
+            Log.e("SUKA", "" + refreshLayout.getChildAt(0));
+        }
+        if (data.getSettings().getResult().equals(SearchSettings.RESULT_POSTS.first) && data.getSettings().getResourceType().equals(SearchSettings.RESOURCE_FORUM.first)) {
+            if (refreshLayout.getChildCount() > 1) {
+                if (refreshLayout.getChildAt(0) instanceof RecyclerView) {
+                    refreshLayout.removeViewAt(0);
+                    fixTargetView();
+                    refreshLayout.addView(webView);
+                    Log.e("SUKA", "add webview");
+                }
+            } else {
+                refreshLayout.addView(webView);
+                Log.e("SUKA", "add webview");
+            }
+            webView.loadDataWithBaseURL("http://4pda.ru/forum/", data.getHtml(), "text/html", "utf-8", null);
+        } else {
+            if (refreshLayout.getChildCount() > 1) {
+                if (refreshLayout.getChildAt(0) instanceof ExtendedWebView) {
+                    refreshLayout.removeViewAt(0);
+                    fixTargetView();
+                    refreshLayout.addView(recyclerView);
+                    Log.e("SUKA", "add recyclerview");
+                }
+            } else {
+                refreshLayout.addView(recyclerView);
+                Log.e("SUKA", "add recyclerview");
+            }
+            adapter.clear();
+            adapter.addAll(data.getItems());
+        }
+
         paginationHelper.updatePagination(data.getPagination());
         setSubtitle(paginationHelper.getString());
+    }
+
+
+    //Поле mTarget это вьюха, от которой зависит обработка движений
+    private void fixTargetView() {
+        try {
+            Field field = refreshLayout.getClass().getDeclaredField("mTarget");
+            field.setAccessible(true);
+            field.set(refreshLayout, null);
+            field.setAccessible(false);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 }
