@@ -13,7 +13,7 @@ import forpdateam.ru.forpda.api.theme.models.Poll;
 import forpdateam.ru.forpda.api.theme.models.PollQuestion;
 import forpdateam.ru.forpda.api.theme.models.PollQuestionItem;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
-import forpdateam.ru.forpda.api.theme.models.ThemePost;
+import forpdateam.ru.forpda.api.theme.models.ThemePostBase;
 import forpdateam.ru.forpda.client.ClientHelper;
 import io.reactivex.Observable;
 
@@ -25,8 +25,8 @@ public class ThemeRx {
     private final static Pattern firstLetter = Pattern.compile("([a-zA-Zа-яА-Я])");
 
 
-    public Observable<ThemePage> getTheme(final String url, boolean generateHtml, boolean hatOpen, boolean pollOpen) {
-        return Observable.fromCallable(() -> transform(Api.Theme().getTheme(url, hatOpen, pollOpen), generateHtml));
+    public Observable<ThemePage> getTheme(final String url, boolean withHtml, boolean hatOpen, boolean pollOpen) {
+        return Observable.fromCallable(() -> transform(Api.Theme().getTheme(url, hatOpen, pollOpen), withHtml));
     }
 
     public Observable<String> reportPost(int themeId, int postId, String message) {
@@ -41,11 +41,11 @@ public class ThemeRx {
         return Observable.fromCallable(() -> Api.Theme().votePost(postId, type));
     }
 
-    public static ThemePage transform(ThemePage page, boolean generateHtml) throws Exception {
-        if (generateHtml) {
+    public static ThemePage transform(ThemePage page, boolean withHtml) throws Exception {
+        if (withHtml) {
             int memberId = ClientHelper.getUserId();
             long time = System.currentTimeMillis();
-            MiniTemplator t = App.getInstance().getTemplator();
+            MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_THEME);
             boolean authorized = ClientHelper.getAuthState();
             boolean prevDisabled = page.getPagination().getCurrent() <= 1;
             boolean nextDisabled = page.getPagination().getCurrent() == page.getPagination().getAll();
@@ -76,7 +76,7 @@ public class ThemeRx {
             int hatPostId = page.getPosts().get(0).getId();
             Log.d("FORPDA_LOG", "template check 2 " + (System.currentTimeMillis() - time));
             Matcher letterMatcher = null;
-            for (ThemePost post : page.getPosts()) {
+            for (ThemePostBase post : page.getPosts()) {
                 t.setVariableOpt("user_online", post.isOnline() ? "online" : "");
                 t.setVariableOpt("post_id", post.getId());
                 t.setVariableOpt("user_id", post.getUserId());
@@ -195,6 +195,7 @@ public class ThemeRx {
 
         return page;
     }
+
     private static String getDisableStr(boolean b) {
         return b ? "disabled" : "";
     }

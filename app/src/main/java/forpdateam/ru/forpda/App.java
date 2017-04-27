@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.content.res.AppCompatResources;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.SparseArray;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
@@ -29,6 +30,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.Map;
 
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.client.Client;
@@ -60,6 +62,8 @@ import static org.acra.ReportField.STACK_TRACE;
 )
 
 public class App extends android.app.Application {
+    public final static String TEMPLATE_THEME = "theme";
+    public final static String TEMPLATE_SEARCH = "search";
     private static App INSTANCE = new App();
     private SharedPreferences preferences;
     private static int savedKeyboardHeight = 0;
@@ -101,10 +105,28 @@ public class App extends android.app.Application {
         INSTANCE = this;
     }
 
-    private MiniTemplator templator;
 
-    public MiniTemplator getTemplator() {
-        return templator;
+    private Map<String, MiniTemplator> templates = new HashMap<>();
+
+    public MiniTemplator getTemplate(String name){
+        return templates.get(name);
+    }
+
+    private MiniTemplator findTemplate(String name) {
+        MiniTemplator template = null;
+        try {
+            InputStream stream = App.getInstance().getAssets().open("template_".concat(name).concat(".html"));
+            try {
+                template = new MiniTemplator.Builder().build(stream, Charset.forName("utf-8"));
+            } catch (Exception e) {
+                Toast.makeText(getContext(), "Ошибка шаблона ["+name+"]: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                //создание пустого шаблона
+                template = new MiniTemplator.Builder().build(new ByteArrayInputStream("Template error!".getBytes(Charset.forName("utf-8"))), Charset.forName("utf-8"));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return template;
     }
 
 
@@ -113,19 +135,8 @@ public class App extends android.app.Application {
         super.onCreate();
         ACRA.init(this);
 
-        InputStream stream = null;
-        try {
-            stream = App.getInstance().getAssets().open("temp.html");
-            try {
-                templator = new MiniTemplator.Builder().build(stream, Charset.forName("utf-8"));
-            } catch (Exception e) {
-                Toast.makeText(getContext(), "Ошибка шаблона: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                //создание пустого шаблона
-                templator = new MiniTemplator.Builder().build(new ByteArrayInputStream("Template error!".getBytes(Charset.forName("utf-8"))), Charset.forName("utf-8"));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        templates.put(TEMPLATE_THEME, findTemplate(TEMPLATE_THEME));
+        templates.put(TEMPLATE_SEARCH, findTemplate(TEMPLATE_SEARCH));
 
         //init
         Realm.init(this);

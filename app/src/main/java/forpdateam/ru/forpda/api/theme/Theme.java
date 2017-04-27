@@ -1,27 +1,21 @@
 package forpdateam.ru.forpda.api.theme;
 
-import android.text.TextUtils;
 import android.util.Log;
 
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import biz.source_code.miniTemplator.MiniTemplator;
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.theme.models.Poll;
 import forpdateam.ru.forpda.api.theme.models.PollQuestion;
 import forpdateam.ru.forpda.api.theme.models.PollQuestionItem;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
-import forpdateam.ru.forpda.api.theme.models.ThemePost;
+import forpdateam.ru.forpda.api.theme.models.ThemePostBase;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.api.Utils;
-import forpdateam.ru.forpda.client.RequestBodyUtil;
-import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 
 /**
@@ -31,6 +25,8 @@ public class Theme {
     //y: Oh God... Why?
     //g: Because it is faster
     private final static Pattern postsPattern = Pattern.compile("<a name=\"entry([^\"]*?)\"[^>]*?><\\/a><div class=\"post_header_container\"><div class=\"post_header\"><span class=\"post_date\">([^&]*?)&[^<]*?<a[^>]*?>#(\\d+)<\\/a>[^<]*?<\\/span>[\\s\\S]*?<font color=\"([^\"]*?)\">[^<]*?<\\/font>[\\s\\S]*?<a[^>]*?data-av=\"([^\"]*?)\"[^>]*?>([^<]*?)<[\\s\\S]*?<a[^>]*?showuser=([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[\\s\\S]*?<span[^>]*?post_user_info[^>]>(<strong[\\s\\S]*?<\\/strong>(?:<br[^>]*?>))?(?:<span[^<]*?color:([^;']*)[^>]*?>)?([\\s\\S]*?)(?:<\\/span>|)(?:  \\| [^<]*?)?<\\/span>[\\s\\S]*?(<a[^>]*?win_minus[^>]*?>[\\s\\S]*?<\\/a>|) \\([\\s\\S]*?ajaxrep[^>]*?>([^<]*?)<\\/span><\\/a>\\)[^<]*(<a[^>]*?win_add[^>]*?>[\\s\\S]*?<\\/a>|)<br[^>]*?>[^<]*?<span class=\"post_action\">(<a[^>]*?report[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?edit_post[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?delete[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?CODE=02[^>]*?>[^<]*?<\\/a>|)[^<]*[^<]*[\\s\\S]*?<div class=\"post_body[^>]*?>([\\s\\S]*?)<\\/div><\\/div>(?:<div data-post|<!-- TABLE FOOTER -->|<div class=\"topic_foot_nav\">)");
+
+    private final static Pattern universalForumPosts = Pattern.compile("(?:<a name=\"entry([^\"]*?)\"[^>]*?><\\/a>|<div[^>]*?class=\"cat_name[^>]*?>[^<]*?<a[^>]*?showtopic=(\\d+)[^>]*?p=(\\d+)[^>]*?>([\\s\\S]*?)<\\/a><\\/div>)[\\s\\S]*?<div class=\"post_header_container\"><div class=\"post_header\"><span class=\"post_date\">([^&]*?)&[^<]*?<a[^>]*?>#?([^<]*?)<\\/a>[^<]*?<\\/span>[\\s\\S]*?<font color=\"([^\"]*?)\">[^<]*?<\\/font>[\\s\\S]*?<a[^>]*?data-av=\"([^\"]*?)\"[^>]*?>([^<]*?)<[\\s\\S]*?<a[^>]*?showuser=([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[\\s\\S]*?<span[^>]*?post_user_info[^>]>(<strong[\\s\\S]*?<\\/strong>(?:<br[^>]*?>))?(?:<span[^<]*?color:([^;']*)[^>]*?>)?([\\s\\S]*?)(?:<\\/span>|)(?:  \\| [^<]*?)?<\\/span>[\\s\\S]*?(<a[^>]*?win_minus[^>]*?>[\\s\\S]*?<\\/a>|) \\([\\s\\S]*?ajaxrep[^>]*?>([^<]*?)<\\/span><\\/a>\\)[^<]*(<a[^>]*?win_add[^>]*?>[\\s\\S]*?<\\/a>|)<br[^>]*?>[^<]*?<span class=\"post_action\">(<a[^>]*?report[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?edit_post[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?delete[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?CODE=02[^>]*?>[^<]*?<\\/a>|)[^<]*[^<]*[\\s\\S]*?<div class=\"post_body[^>]*?>([\\s\\S]*?)<\\/div><\\/div>(?=<div[^>]*?class=\"cat_name|<div><div[^>]*?class=\"pagination|<div><\\/div><br[^>]*?><\\/form>|<div data-post|<!-- TABLE FOOTER -->|<div class=\"topic_foot_nav\">)");
 
     private final static Pattern titlePattern = Pattern.compile("<div class=\"topic_title_post\">(?:([^<]*?)(?: ?\\| ?([^<]*?)|))<br");
     private final static Pattern alreadyInFavPattern = Pattern.compile("Тема уже добавлена в <a href=\"[^\"]*act=fav\">");
@@ -90,31 +86,31 @@ public class Theme {
                 page.setFavId(Integer.parseInt(matcher.group(1)));
             }
         }
-        matcher = postsPattern.matcher(response);
+        matcher = universalForumPosts.matcher(response);
         Log.d("FORPDA_LOG", "posts matcher " + (System.currentTimeMillis() - time));
         while (matcher.find()) {
-            ThemePost post = new ThemePost();
-            post.setId(Integer.parseInt(matcher.group(1)));
-            post.setDate(matcher.group(2));
-            post.setNumber(Integer.parseInt(matcher.group(3)));
-            post.setOnline(matcher.group(4).contains("green"));
-            post.setAvatar(matcher.group(5));
-            post.setNick(Utils.fromHtml(matcher.group(6)));
-            post.setUserId(Integer.parseInt(matcher.group(7)));
-            post.setCurator(matcher.group(8) != null);
-            post.setGroupColor(matcher.group(9));
-            post.setGroup(matcher.group(10));
-            post.setCanMinus(!matcher.group(11).isEmpty());
-            post.setReputation(matcher.group(12));
-            post.setCanPlus(!matcher.group(13).isEmpty());
-            post.setCanReport(!matcher.group(14).isEmpty());
-            post.setCanEdit(!matcher.group(15).isEmpty());
-            post.setCanDelete(!matcher.group(16).isEmpty());
-            page.setCanQuote(!matcher.group(17).isEmpty());
-            post.setBody(matcher.group(18));
-            if (post.isCurator() && post.getUserId() == ClientHelper.getUserId())
+            ThemePostBase item = new ThemePostBase();
+            item.setId(Integer.parseInt(matcher.group(1)));
+            item.setDate(matcher.group(5));
+            item.setNumber(Integer.parseInt(matcher.group(6)));
+            item.setOnline(matcher.group(7).contains("green"));
+            item.setAvatar(matcher.group(8));
+            item.setNick(Utils.fromHtml(matcher.group(9)));
+            item.setUserId(Integer.parseInt(matcher.group(10)));
+            item.setCurator(matcher.group(11) != null);
+            item.setGroupColor(matcher.group(12));
+            item.setGroup(matcher.group(13));
+            item.setCanMinus(!matcher.group(14).isEmpty());
+            item.setReputation(matcher.group(15));
+            item.setCanPlus(!matcher.group(16).isEmpty());
+            item.setCanReport(!matcher.group(17).isEmpty());
+            item.setCanEdit(!matcher.group(18).isEmpty());
+            item.setCanDelete(!matcher.group(19).isEmpty());
+            //page.setCanQuote(!matcher.group(20).isEmpty());
+            item.setBody(matcher.group(21));
+            if (item.isCurator() && item.getUserId() == ClientHelper.getUserId())
                 page.setCurator(true);
-            page.addPost(post);
+            page.addPost(item);
         }
         Log.d("FORPDA_LOG", "poll matcher " + (System.currentTimeMillis() - time));
         matcher = pollMainPattern.matcher(response);

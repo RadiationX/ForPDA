@@ -42,7 +42,7 @@ import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
-import forpdateam.ru.forpda.api.theme.models.ThemePost;
+import forpdateam.ru.forpda.api.theme.models.ThemePostBase;
 import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
@@ -57,8 +57,6 @@ import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 
-import static forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm.TYPE_EDIT_POST;
-
 /**
  * Created by radiationx on 20.10.16.
  */
@@ -66,7 +64,6 @@ import static forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm.TYPE_E
 public abstract class ThemeFragment extends TabFragment {
     //Указывают на произведенное действие: переход назад, обновление, обычный переход по ссылке
     protected final static int BACK_ACTION = 0, REFRESH_ACTION = 1, NORMAL_ACTION = 2;
-    protected final static String JS_INTERFACE = "ITheme";
     protected int action = NORMAL_ACTION;
     protected SwipeRefreshLayout refreshLayout;
     protected ThemePage currentPage;
@@ -449,8 +446,8 @@ public abstract class ThemeFragment extends TabFragment {
     *
     * */
 
-    public ThemePost getPostById(int postId) {
-        for (ThemePost post : currentPage.getPosts())
+    public ThemePostBase getPostById(int postId) {
+        for (ThemePostBase post : currentPage.getPosts())
             if (post.getId() == postId)
                 return post;
         return null;
@@ -497,7 +494,7 @@ public abstract class ThemeFragment extends TabFragment {
         insertNick(getPostById(Integer.parseInt(postId)));
     }
 
-    public void insertNick(ThemePost post) {
+    public void insertNick(ThemePostBase post) {
         String insert = String.format(Locale.getDefault(), "[snapback]%s[/snapback] [b]%s,[/b]\n", post.getId(), post.getNick());
         messagePanel.insertText(insert);
     }
@@ -506,7 +503,7 @@ public abstract class ThemeFragment extends TabFragment {
         quotePost(text, getPostById(Integer.parseInt(postId)));
     }
 
-    public void quotePost(String text, ThemePost post) {
+    public void quotePost(String text, ThemePostBase post) {
         String date = Utils.getForumDateTime(Utils.parseForumDateTime(post.getDate()));
         String insert = String.format(Locale.getDefault(), "[quote name=\"%s\" date=\"%s\" post=%S]%s[/quote]", post.getNick(), date, post.getId(), text);
         messagePanel.insertText(insert);
@@ -521,7 +518,7 @@ public abstract class ThemeFragment extends TabFragment {
         editPost(getPostById(Integer.parseInt(postId)));
     }
 
-    public void editPost(ThemePost post) {
+    public void editPost(ThemePostBase post) {
         TabManager.getInstance().add(EditPostFragment.newInstance(post.getId(), currentPage.getId(), currentPage.getForumId(), currentPage.getSt(), currentPage.getTitle()));
         Toast.makeText(getContext(), "editpost ".concat(Integer.toString(post.getId())), Toast.LENGTH_SHORT).show();
     }
@@ -566,7 +563,7 @@ public abstract class ThemeFragment extends TabFragment {
             "Пожалуйста, используйте эту возможность форума только для жалоб о некорректном сообщении!\n" +
             "Для связи с модератором используйте личные сообщения.";
 
-    public void reportPost(ThemePost post) {
+    public void reportPost(ThemePostBase post) {
         if (App.getInstance().getPreferences().getBoolean("show_report_warning", true)) {
             new AlertDialog.Builder(getContext())
                     .setTitle("Внимание!")
@@ -602,7 +599,7 @@ public abstract class ThemeFragment extends TabFragment {
     }
 
     //Удаление сообщения
-    public void deletePost(ThemePost post) {
+    public void deletePost(ThemePostBase post) {
         new AlertDialog.Builder(getContext())
                 .setMessage("Удалить пост ".concat(post.getNick()).concat(" ?"))
                 .setPositiveButton("Да", (dialogInterface, i) -> doDeletePost(post.getId()))
@@ -615,13 +612,13 @@ public abstract class ThemeFragment extends TabFragment {
     }
 
     //Изменение репутации сообщения
-    public void votePost(ThemePost post, boolean type) {
+    public void votePost(ThemePostBase post, boolean type) {
         helperSubscriber.subscribe(RxApi.Theme().votePost(post.getId(), type), s -> toast(s.isEmpty() ? "Неизвестная ошибка" : s), "", v -> votePost(post, type));
     }
 
     //Изменение репутации пользователя
     @SuppressLint("InflateParams")
-    public void changeReputation(ThemePost post, boolean type) {
+    public void changeReputation(ThemePostBase post, boolean type) {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.reputation_change_layout, null);
 
