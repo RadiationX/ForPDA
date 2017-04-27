@@ -12,7 +12,7 @@ public class ThemePage implements IThemePage {
     private String title, desc, html, url, elementToScroll;
     private int id = 0, forumId = 0, favId = 0, scrollY = 0;
     private boolean inFavorite = false, curator = false, quote = false, hatOpen = false, pollOpen = false;
-    private ArrayList<ThemePostBase> posts = new ArrayList<>();
+    private ArrayList<ThemePost> posts = new ArrayList<>();
     private Pagination pagination = new Pagination();
     private Poll poll;
 
@@ -96,7 +96,7 @@ public class ThemePage implements IThemePage {
     }
 
     @Override
-    public ArrayList<ThemePostBase> getPosts() {
+    public ArrayList<ThemePost> getPosts() {
         return posts;
     }
 
@@ -112,7 +112,7 @@ public class ThemePage implements IThemePage {
         this.inFavorite = inFavorite;
     }
 
-    public void addPost(ThemePostBase post) {
+    public void addPost(ThemePost post) {
         posts.add(post);
     }
 

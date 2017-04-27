@@ -941,6 +941,16 @@ button:active,
 .post_container.online .post_header .inf.nick {
   color: #12b557;
 }
+.post_container .post_title {
+  text-align: center;
+}
+.post_container .post_title a {
+  color: black;
+  font-weight: bold;
+  text-decoration: none;
+  display: block;
+  padding: 1rem;
+}
 .post_container .post_header {
   padding: 0.75em 1em 0 1em;
 }
@@ -1717,4 +1727,13 @@ li .post-block {
 }
 .post-block.tbl.cur > .block-title:before {
   content: "Куратор";
+}
+.searchlite {
+  background: #ffaa00!important;
+  color: black!important;
+  font-weight: bold!important;
+  text-decoration: none!important;
+  padding: 0.25rem;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
 }

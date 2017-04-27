@@ -78,7 +78,7 @@ public class Search {
                     item.setCanReport(!matcher.group(17).isEmpty());
                     item.setCanEdit(!matcher.group(18).isEmpty());
                     item.setCanDelete(!matcher.group(19).isEmpty());
-                    //page.setCanQuote(!matcher.group(20).isEmpty());
+                    item.setCanQuote(!matcher.group(20).isEmpty());
                     item.setBody(matcher.group(21));
                     result.addItem(item);
                 }

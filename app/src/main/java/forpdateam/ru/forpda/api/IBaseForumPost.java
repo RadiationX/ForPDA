@@ -5,6 +5,10 @@ package forpdateam.ru.forpda.api;
  */
 
 public interface IBaseForumPost {
+    int getTopicId();
+
+    int getForumId();
+
     int getId();
 
     String getDate();
@@ -38,4 +42,6 @@ public interface IBaseForumPost {
     boolean canEdit();
 
     boolean canDelete();
+
+    boolean canQuote();
 }

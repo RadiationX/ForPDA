@@ -13,7 +13,7 @@ import forpdateam.ru.forpda.api.theme.models.Poll;
 import forpdateam.ru.forpda.api.theme.models.PollQuestion;
 import forpdateam.ru.forpda.api.theme.models.PollQuestionItem;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
-import forpdateam.ru.forpda.api.theme.models.ThemePostBase;
+import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.client.ClientHelper;
 import io.reactivex.Observable;
 
@@ -76,7 +76,7 @@ public class ThemeRx {
             int hatPostId = page.getPosts().get(0).getId();
             Log.d("FORPDA_LOG", "template check 2 " + (System.currentTimeMillis() - time));
             Matcher letterMatcher = null;
-            for (ThemePostBase post : page.getPosts()) {
+            for (ThemePost post : page.getPosts()) {
                 t.setVariableOpt("user_online", post.isOnline() ? "online" : "");
                 t.setVariableOpt("post_id", post.getId());
                 t.setVariableOpt("user_id", post.getUserId());

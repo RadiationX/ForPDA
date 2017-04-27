@@ -7,8 +7,6 @@ import forpdateam.ru.forpda.api.IBaseForumPost;
  */
 
 public interface ISearchItem extends IBaseForumPost {
-    int getTopicId();
-
     String getImageUrl();
 
     String getTitle();

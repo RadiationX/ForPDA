@@ -38,12 +38,13 @@ import java.util.Locale;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
+import forpdateam.ru.forpda.api.IBaseForumPost;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
-import forpdateam.ru.forpda.api.theme.models.ThemePostBase;
 import forpdateam.ru.forpda.api.RequestFile;
+import forpdateam.ru.forpda.fragments.IPostFunctions;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
@@ -61,7 +62,7 @@ import forpdateam.ru.forpda.utils.rx.Subscriber;
  * Created by radiationx on 20.10.16.
  */
 
-public abstract class ThemeFragment extends TabFragment {
+public abstract class ThemeFragment extends TabFragment implements IPostFunctions {
     //Указывают на произведенное действие: переход назад, обновление, обычный переход по ссылке
     protected final static int BACK_ACTION = 0, REFRESH_ACTION = 1, NORMAL_ACTION = 2;
     protected int action = NORMAL_ACTION;
@@ -69,7 +70,7 @@ public abstract class ThemeFragment extends TabFragment {
     protected ThemePage currentPage;
     protected List<ThemePage> history = new ArrayList<>();
     protected Subscriber<ThemePage> mainSubscriber = new Subscriber<>(this);
-    protected Subscriber<String> helperSubscriber = new Subscriber<>(this);
+    //protected Subscriber<String> helperSubscriber = new Subscriber<>(this);
     private PaginationHelper paginationHelper = new PaginationHelper();
     //Тег для вьюхи поиска. Чтобы создавались кнопки и т.д, только при вызове поиска, а не при каждом создании меню.
     protected int searchViewTag = 0;
@@ -446,8 +447,8 @@ public abstract class ThemeFragment extends TabFragment {
     *
     * */
 
-    public ThemePostBase getPostById(int postId) {
-        for (ThemePostBase post : currentPage.getPosts())
+    public IBaseForumPost getPostById(int postId) {
+        for (IBaseForumPost post : currentPage.getPosts())
             if (post.getId() == postId)
                 return post;
         return null;
@@ -475,15 +476,15 @@ public abstract class ThemeFragment extends TabFragment {
     }
 
     public void showUserMenu(final String postId) {
-        ThemeDialogsHelper.showUserMenu(this, getPostById(Integer.parseInt(postId)));
+        showUserMenu(getPostById(Integer.parseInt(postId)));
     }
 
     public void showReputationMenu(final String postId) {
-        ThemeDialogsHelper.showReputationMenu(this, getPostById(Integer.parseInt(postId)));
+        showReputationMenu(getPostById(Integer.parseInt(postId)));
     }
 
     public void showPostMenu(final String postId) {
-        ThemeDialogsHelper.showPostMenu(this, getPostById(Integer.parseInt(postId)));
+        showPostMenu(getPostById(Integer.parseInt(postId)));
     }
 
     public void reportPost(final String postId) {
@@ -494,8 +495,9 @@ public abstract class ThemeFragment extends TabFragment {
         insertNick(getPostById(Integer.parseInt(postId)));
     }
 
-    public void insertNick(ThemePostBase post) {
-        String insert = String.format(Locale.getDefault(), "[snapback]%s[/snapback] [b]%s,[/b]\n", post.getId(), post.getNick());
+    @Override
+    public void insertNick(IBaseForumPost post) {
+        String insert = String.format(Locale.getDefault(), "[snapback]%s[/snapback] [b]%s, [/b]\n", post.getId(), post.getNick());
         messagePanel.insertText(insert);
     }
 
@@ -503,9 +505,10 @@ public abstract class ThemeFragment extends TabFragment {
         quotePost(text, getPostById(Integer.parseInt(postId)));
     }
 
-    public void quotePost(String text, ThemePostBase post) {
+    @Override
+    public void quotePost(String text, IBaseForumPost post) {
         String date = Utils.getForumDateTime(Utils.parseForumDateTime(post.getDate()));
-        String insert = String.format(Locale.getDefault(), "[quote name=\"%s\" date=\"%s\" post=%S]%s[/quote]", post.getNick(), date, post.getId(), text);
+        String insert = String.format(Locale.getDefault(), "[quote name=\"%s\" date=\"%s\" post=%S]%s[/quote]\n", post.getNick(), date, post.getId(), text);
         messagePanel.insertText(insert);
     }
 
@@ -518,9 +521,9 @@ public abstract class ThemeFragment extends TabFragment {
         editPost(getPostById(Integer.parseInt(postId)));
     }
 
-    public void editPost(ThemePostBase post) {
+    @Override
+    public void editPost(IBaseForumPost post) {
         TabManager.getInstance().add(EditPostFragment.newInstance(post.getId(), currentPage.getId(), currentPage.getForumId(), currentPage.getSt(), currentPage.getTitle()));
-        Toast.makeText(getContext(), "editpost ".concat(Integer.toString(post.getId())), Toast.LENGTH_SHORT).show();
     }
 
     public void votePost(final String postId, final boolean type) {
@@ -559,82 +562,42 @@ public abstract class ThemeFragment extends TabFragment {
         loadData();
     }
 
-    private final static String reportWarningText = "Вам не нужно указывать здесь тему и сообщение, модератор автоматически получит эту информацию.\n\n" +
-            "Пожалуйста, используйте эту возможность форума только для жалоб о некорректном сообщении!\n" +
-            "Для связи с модератором используйте личные сообщения.";
-
-    public void reportPost(ThemePostBase post) {
-        if (App.getInstance().getPreferences().getBoolean("show_report_warning", true)) {
-            new AlertDialog.Builder(getContext())
-                    .setTitle("Внимание!")
-                    .setMessage(reportWarningText)
-                    .setPositiveButton("Ок", (dialogInterface, i) -> {
-                        App.getInstance().getPreferences().edit().putBoolean("show_report_warning", false).apply();
-                        showReportDialog(currentPage.getId(), post.getId());
-                    })
-                    .show();
-        } else {
-            showReportDialog(currentPage.getId(), post.getId());
-        }
+    @Override
+    public void showUserMenu(IBaseForumPost post) {
+        ThemeDialogsHelper.showUserMenu(getContext(), this, post);
     }
 
-    @SuppressLint("InflateParams")
-    public void showReportDialog(int themeId, int postId) {
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.report_layout, null);
-
-        assert layout != null;
-        final EditText messageField = (EditText) layout.findViewById(R.id.report_text_field);
-
-        new AlertDialog.Builder(getContext())
-                .setTitle("Жалоба на пост ".concat(getPostById(postId).getNick()))
-                .setView(layout)
-                .setPositiveButton("Отправить", (dialogInterface, i) -> doReportPost(themeId, postId, messageField.getText().toString()))
-                .setNegativeButton("Отмена", null)
-                .show();
+    @Override
+    public void showReputationMenu(IBaseForumPost post) {
+        ThemeDialogsHelper.showReputationMenu(getContext(), this, post);
     }
 
-    protected void doReportPost(int themeId, int postId, String message) {
-        helperSubscriber.subscribe(RxApi.Theme().reportPost(themeId, postId, message), s -> Toast.makeText(getContext(), s.isEmpty() ? "Неизвестная ошибка" : s, Toast.LENGTH_SHORT).show(), "", v -> doReportPost(themeId, postId, message));
+    @Override
+    public void showPostMenu(IBaseForumPost post) {
+        ThemeDialogsHelper.showPostMenu(getContext(), this, post);
+    }
+
+    @Override
+    public void reportPost(IBaseForumPost post) {
+        ThemeDialogsHelper.tryReportPost(getContext(), post);
     }
 
     //Удаление сообщения
-    public void deletePost(ThemePostBase post) {
-        new AlertDialog.Builder(getContext())
-                .setMessage("Удалить пост ".concat(post.getNick()).concat(" ?"))
-                .setPositiveButton("Да", (dialogInterface, i) -> doDeletePost(post.getId()))
-                .setNegativeButton("Отмена", null)
-                .show();
-    }
-
-    protected void doDeletePost(int postId) {
-        helperSubscriber.subscribe(RxApi.Theme().deletePost(postId), s -> toast(!s.isEmpty() ? "Сообщение удалено" : "Ошибка"), "", v -> doDeletePost(postId));
+    @Override
+    public void deletePost(IBaseForumPost post) {
+        ThemeDialogsHelper.deletePost(getContext(), post);
     }
 
     //Изменение репутации сообщения
-    public void votePost(ThemePostBase post, boolean type) {
-        helperSubscriber.subscribe(RxApi.Theme().votePost(post.getId(), type), s -> toast(s.isEmpty() ? "Неизвестная ошибка" : s), "", v -> votePost(post, type));
+    @Override
+    public void votePost(IBaseForumPost post, boolean type) {
+        ThemeHelper.votePost(s -> toast(s.isEmpty() ? "Неизвестная ошибка" : s), post.getId(), type);
     }
 
     //Изменение репутации пользователя
     @SuppressLint("InflateParams")
-    public void changeReputation(ThemePostBase post, boolean type) {
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.reputation_change_layout, null);
-
-        assert layout != null;
-        final TextView text = (TextView) layout.findViewById(R.id.reputation_text);
-        final EditText messageField = (EditText) layout.findViewById(R.id.reputation_text_field);
-        text.setText((type ? "Повысить" : "Понизить").concat(" репутацию ").concat(post.getNick()).concat(" ?"));
-
-        new AlertDialog.Builder(getContext())
-                .setView(layout)
-                .setPositiveButton("Да", (dialogInterface, i) -> doChangeReputation(post.getId(), post.getUserId(), type, messageField.getText().toString()))
-                .setNegativeButton("Отмена", null)
-                .show();
-    }
-
-    protected void doChangeReputation(int postId, int userId, boolean type, String message) {
-        helperSubscriber.subscribe(RxApi.Reputation().editReputation(postId, userId, type, message), s -> toast(s.isEmpty() ? "Репутация изменена" : s), "error", v -> doChangeReputation(postId, userId, type, message));
+    @Override
+    public void changeReputation(IBaseForumPost post, boolean type) {
+        ThemeDialogsHelper.changeReputation(getContext(), post, type);
     }
 }

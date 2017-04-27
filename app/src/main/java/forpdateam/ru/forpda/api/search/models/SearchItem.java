@@ -8,13 +8,7 @@ import forpdateam.ru.forpda.api.search.interfaces.ISearchItem;
  */
 
 public class SearchItem extends BaseForumPost implements ISearchItem {
-    private int topicId = 0;
     private String title, desc, imageUrl;
-
-    @Override
-    public int getTopicId() {
-        return topicId;
-    }
 
     @Override
     public String getImageUrl() {
@@ -31,10 +25,6 @@ public class SearchItem extends BaseForumPost implements ISearchItem {
         return desc;
     }
 
-    public void setTopicId(int topicId) {
-        this.topicId = topicId;
-    }
-
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
@@ -46,6 +36,4 @@ public class SearchItem extends BaseForumPost implements ISearchItem {
     public void setDesc(String desc) {
         this.desc = desc;
     }
-
-
 }

@@ -61,6 +61,9 @@ public class SearchRx {
             Log.d("FORPDA_LOG", "template check 2 " + (System.currentTimeMillis() - time));
             Matcher letterMatcher = null;
             for (SearchItem post : page.getItems()) {
+                t.setVariableOpt("topic_id", post.getTopicId());
+                t.setVariableOpt("post_title", post.getTitle());
+
                 t.setVariableOpt("user_online", post.isOnline() ? "online" : "");
                 t.setVariableOpt("post_id", post.getId());
                 t.setVariableOpt("user_id", post.getUserId());

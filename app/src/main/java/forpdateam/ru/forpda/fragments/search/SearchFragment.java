@@ -1,8 +1,12 @@
 package forpdateam.ru.forpda.fragments.search;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.SearchManager;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -16,21 +20,36 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.TabManager;
+import forpdateam.ru.forpda.api.IBaseForumPost;
 import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
+import forpdateam.ru.forpda.api.theme.Theme;
+import forpdateam.ru.forpda.api.theme.models.ThemePost;
+import forpdateam.ru.forpda.fragments.IPostFunctions;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.theme.ThemeDialogsHelper;
+import forpdateam.ru.forpda.fragments.theme.ThemeFragmentWeb;
+import forpdateam.ru.forpda.fragments.theme.ThemeHelper;
+import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
 import forpdateam.ru.forpda.pagination.PaginationHelper;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
@@ -42,7 +61,7 @@ import forpdateam.ru.forpda.utils.rx.Subscriber;
  * Created by radiationx on 29.01.17.
  */
 
-public class SearchFragment extends TabFragment {
+public class SearchFragment extends TabFragment implements IPostFunctions {
     protected final static String JS_INTERFACE = "ISearch";
     private ViewGroup searchSettingsView;
     private ViewGroup nickBlock, resourceBlock, resultBlock, sortBlock, sourceBlock;
@@ -62,6 +81,7 @@ public class SearchFragment extends TabFragment {
     private RecyclerView recyclerView;
     private SwipeRefreshLayout refreshLayout;
     private SearchAdapter adapter = new SearchAdapter();
+    private SearchWebViewClient webViewClient;
 
     private StringBuilder titleBuilder = new StringBuilder();
     private PaginationHelper paginationHelper = new PaginationHelper();
@@ -119,12 +139,14 @@ public class SearchFragment extends TabFragment {
         }
         webView.loadUrl("about:blank");
         webView.addJavascriptInterface(this, JS_INTERFACE);
+        webView.addJavascriptInterface(this, JS_POSTS_FUNCTIONS);
         webView.getSettings().setJavaScriptEnabled(true);
         recyclerView = new RecyclerView(getContext());
 
         recyclerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         webView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
+        refreshLayout.addView(recyclerView);
         viewsReady();
 
         paginationHelper.inflatePagination(getContext(), inflater, toolbar);
@@ -189,7 +211,7 @@ public class SearchFragment extends TabFragment {
         searchView.setQueryHint("Ключевые слова");
         searchItem.expandActionView();
         submitButton.setOnClickListener(v -> startSearch());
-        recyclerView.setHasFixedSize(true);
+        //recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
         refreshLayout.setOnRefreshListener(this::loadData);
@@ -386,6 +408,10 @@ public class SearchFragment extends TabFragment {
                 refreshLayout.addView(webView);
                 Log.e("SUKA", "add webview");
             }
+            if (webViewClient == null) {
+                webViewClient = new SearchWebViewClient();
+                webView.setWebViewClient(webViewClient);
+            }
             webView.loadDataWithBaseURL("http://4pda.ru/forum/", data.getHtml(), "text/html", "utf-8", null);
         } else {
             if (refreshLayout.getChildCount() > 1) {
@@ -418,5 +444,157 @@ public class SearchFragment extends TabFragment {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unregisterForContextMenu(webView);
+        webView.setActionModeListener(null);
+        webView.removeJavascriptInterface(JS_INTERFACE);
+        webView.removeJavascriptInterface(JS_POSTS_FUNCTIONS);
+        webView.setWebChromeClient(null);
+        webView.setWebViewClient(null);
+        webView.loadUrl("about:blank");
+        webView.clearHistory();
+        webView.clearSslPreferences();
+        webView.clearDisappearingChildren();
+        webView.clearFocus();
+        webView.clearFormData();
+        webView.clearMatches();
+        ViewGroup parent = ((ViewGroup) webView.getParent());
+        if (parent != null) {
+            parent.removeView(webView);
+        }
+        if (getMainActivity().getWebViews().size() < 10) {
+            getMainActivity().getWebViews().add(webView);
+        }
+    }
+
+    private class SearchWebViewClient extends WebViewClient {
+
+        @SuppressWarnings("deprecation")
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            return handleUri(Uri.parse(url));
+        }
+
+        @TargetApi(Build.VERSION_CODES.N)
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            return handleUri(request.getUrl());
+        }
+
+        private boolean handleUri(Uri uri) {
+            IntentHandler.handle(uri.toString());
+            return true;
+        }
+    }
+
+    public IBaseForumPost getPostById(int postId) {
+        for (IBaseForumPost post : data.getItems())
+            if (post.getId() == postId)
+                return post;
+        return null;
+    }
+
+    @JavascriptInterface
+    public void showUserMenu(final String postId) {
+        run(() -> showUserMenu(getPostById(Integer.parseInt(postId))));
+    }
+
+    @JavascriptInterface
+    public void showReputationMenu(final String postId) {
+        run(() -> showReputationMenu(getPostById(Integer.parseInt(postId))));
+    }
+
+    @JavascriptInterface
+    public void showPostMenu(final String postId) {
+        run(() -> showPostMenu(getPostById(Integer.parseInt(postId))));
+    }
+
+    @JavascriptInterface
+    public void insertNick(final String postId) {
+        run(() -> insertNick(getPostById(Integer.parseInt(postId))));
+    }
+
+    @JavascriptInterface
+    public void quotePost(final String text, final String postId) {
+        run(() -> quotePost(text, getPostById(Integer.parseInt(postId))));
+    }
+
+    @JavascriptInterface
+    public void deletePost(final String postId) {
+        run(() -> deletePost(getPostById(Integer.parseInt(postId))));
+    }
+
+    @JavascriptInterface
+    public void editPost(final String postId) {
+        run(() -> editPost(getPostById(Integer.parseInt(postId))));
+    }
+
+    @JavascriptInterface
+    public void votePost(final String postId, final boolean type) {
+        run(() -> votePost(getPostById(Integer.parseInt(postId)), type));
+    }
+
+    public void run(final Runnable runnable) {
+        getMainActivity().runOnUiThread(runnable);
+    }
+
+    @Override
+    public void showUserMenu(IBaseForumPost post) {
+        ThemeDialogsHelper.showUserMenu(getContext(), this, post);
+    }
+
+    @Override
+    public void showReputationMenu(IBaseForumPost post) {
+        ThemeDialogsHelper.showReputationMenu(getContext(), this, post);
+    }
+
+    @Override
+    public void showPostMenu(IBaseForumPost post) {
+        ThemeDialogsHelper.showPostMenu(getContext(), this, post);
+    }
+
+    @Override
+    public void reportPost(IBaseForumPost post) {
+        ThemeDialogsHelper.tryReportPost(getContext(), post);
+    }
+
+    @Override
+    public void insertNick(IBaseForumPost post) {
+        Toast.makeText(getContext(), "Действие невозможно", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void quotePost(String text, IBaseForumPost post) {
+        Toast.makeText(getContext(), "Действие невозможно", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void deletePost(IBaseForumPost post) {
+        ThemeDialogsHelper.deletePost(getContext(), post);
+    }
+
+    @Override
+    public void editPost(IBaseForumPost post) {
+        TabManager.getInstance().add(EditPostFragment.newInstance(post.getId(), post.getTopicId(), post.getForumId(), 0, "?Сообщение из поиска?"));
+    }
+
+    @Override
+    public void votePost(IBaseForumPost post, boolean type) {
+        ThemeHelper.votePost(s -> toast(s.isEmpty() ? "Неизвестная ошибка" : s), post.getId(), type);
+    }
+
+    @Override
+    public void changeReputation(IBaseForumPost post, boolean type) {
+        ThemeDialogsHelper.changeReputation(getContext(), post, type);
+    }
+
+    @JavascriptInterface
+    public void toast(final String text) {
+        run(() -> Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show());
     }
 }
