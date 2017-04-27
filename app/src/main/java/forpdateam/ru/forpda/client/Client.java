@@ -179,13 +179,13 @@ public class Client implements IWebClient {
     }
 
     @Override
-    public String post(String url, Map<String, String> formHeaders, boolean formBody) throws Exception {
-        return request(url, null, formHeaders, null, formBody);
+    public String post(String url, Map<String, String> formHeaders, boolean isMultipart) throws Exception {
+        return request(url, null, formHeaders, null, isMultipart);
     }
 
     @Override
     public String post(String url, Map<String, String> formHeaders, RequestFile file) throws Exception {
-        return request(url, null, formHeaders, file, false);
+        return request(url, null, formHeaders, file, true);
     }
 
     @Override
@@ -194,18 +194,18 @@ public class Client implements IWebClient {
     }
 
     @Override
-    public String post(String url, Map<String, String> headers, Map<String, String> formHeaders, boolean formBody) throws Exception {
-        return request(url, headers, formHeaders, null, formBody);
+    public String post(String url, Map<String, String> headers, Map<String, String> formHeaders, boolean isMultipart) throws Exception {
+        return request(url, headers, formHeaders, null, isMultipart);
     }
 
     @Override
     public String post(String url, Map<String, String> headers, Map<String, String> formHeaders, RequestFile file) throws Exception {
-        return request(url, headers, formHeaders, file, false);
+        return request(url, headers, formHeaders, file, true);
     }
 
-    //boolean formBody нужен для тех случаев, когда в хедерах есть строки с \n и т.д
+    //boolean isMultipart нужен для тех случаев, когда в хедерах есть строки с \n и т.д
     @Override
-    public String request(String url, Map<String, String> headers, Map<String, String> formHeaders, RequestFile file, boolean formBody) throws Exception {
+    public String request(String url, Map<String, String> headers, Map<String, String> formHeaders, RequestFile file, boolean isMultipart) throws Exception {
         Log.d("FORPDA_LOG", "request url " + url);
         if (url.substring(0, 2).equals("//")) {
             url = "http:".concat(url);
@@ -222,14 +222,15 @@ public class Client implements IWebClient {
             }
         }
         if (formHeaders != null || file != null) {
-            if (formBody) {
+            if (!isMultipart) {
                 if (formHeaders != null) {
                     //FormBody нужен, т.к не все формы корректно работают с MultipartBody (точнее только авторизация)
                     Log.d("FORPDA_LOG", "FORM BUILDER");
                     FormBody.Builder formBuilder = new FormBody.Builder();
                     for (Map.Entry<String, String> entry : formHeaders.entrySet()) {
                         Log.d("FORPDA_LOG", "FORM HEADER " + entry.getKey() + " : " + entry.getValue());
-                        formBuilder.addEncoded(entry.getKey(), entry.getValue());
+                        //formBuilder.addEncoded(entry.getKey(), entry.getValue());
+                        formBuilder.add(entry.getKey(), entry.getValue());
                     }
                     requestBuilder.post(formBuilder.build());
                 }
@@ -240,6 +241,7 @@ public class Client implements IWebClient {
                 if (formHeaders != null) {
                     for (Map.Entry<String, String> entry : formHeaders.entrySet()) {
                         Log.d("FORPDA_LOG", "FORM HEADER " + entry.getKey() + " : " + entry.getValue());
+                        //multipartBuilder.addFormDataPart(entry.getKey(), URLEncoder.encode(entry.getValue(), "UTF-8"));
                         multipartBuilder.addFormDataPart(entry.getKey(), entry.getValue());
                     }
                 }
@@ -248,9 +250,13 @@ public class Client implements IWebClient {
                     Log.e("FORPDA_LOG", "FILE " + file.getFileName());
                     Log.e("FORPDA_LOG", "FILE " + file.getMimeType());
                     Log.e("FORPDA_LOG", "FILE " + file.getFileStream());
-                    multipartBuilder.addFormDataPart(file.getRequestName(), URLEncoder.encode(file.getFileName(), "CP1251"), RequestBodyUtil.create(MediaType.parse(file.getMimeType()), file.getFileStream()));
+                    multipartBuilder.addFormDataPart(file.getRequestName(), URLEncoder.encode(file.getFileName(), "UTF-8"), RequestBodyUtil.create(MediaType.parse(file.getMimeType()), file.getFileStream()));
                 }
-                requestBuilder.post(multipartBuilder.build());
+                MultipartBody multipartBody = multipartBuilder.build();
+                for (MultipartBody.Part part : multipartBody.parts()) {
+                    Log.e("FORPDA_LOG", "PART" + part.headers().toString());
+                }
+                requestBuilder.post(multipartBody);
             }
         }
 

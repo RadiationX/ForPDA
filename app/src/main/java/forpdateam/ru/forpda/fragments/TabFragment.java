@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
+import java.net.URLEncoder;
 import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
@@ -219,6 +220,21 @@ public class TabFragment extends RxFragment {
     }
 
     protected void addBaseToolbarMenu() {
+        toolbar.getMenu().add("Test cyrillic").setOnMenuItemClickListener(menuItem -> {
+            String suka = "Т[spoiler]тест запросов с кириллицей и спецсимволов\n" +
+                    "Test request\n" +
+                    "[Ggggg]\n" +
+                    "\" : ; ' + = - < > \\ & % $ # @ !\n" +
+                    "А вот после редактирования)[attachment=\"10185864:тест кириллицы.jpg\"][/spoiler]";
+            Log.e("SUKA", suka);
+            try {
+                Log.e("SUKA", URLEncoder.encode(suka, "UTF-8"));
+                Log.e("SUKA", URLEncoder.encode(suka, "CP1251"));
+            } catch (Exception ignore) {
+            }
+
+            return false;
+        });
         toolbar.getMenu().add("Fonts tester").setOnMenuItemClickListener(menuItem -> {
             getMainActivity().startActivity(new Intent(getContext(), FontExampleActivity.class));
             return false;
@@ -249,7 +265,7 @@ public class TabFragment extends RxFragment {
     }
 
     protected void updateNotifyDot() {
-        Log.e("FORPDA_LOG", "updateNotifyDot "+this+" : "+this.getMainActivity());
+        Log.e("FORPDA_LOG", "updateNotifyDot " + this + " : " + this.getMainActivity());
         if (!App.getInstance().getPreferences().getBoolean("main.show_notify_dot", true)) {
             notifyDot.setVisibility(View.GONE);
             return;

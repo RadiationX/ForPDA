@@ -169,6 +169,6 @@ public class EditPost {
             }
         }
         headers.put("file-list", ids.toString());
-        return Api.Theme().parsePage(url, Api.getWebClient().post(url, headers), false, false);
+        return Api.Theme().parsePage(url, Api.getWebClient().post(url, headers, true), false, false);
     }
 }
