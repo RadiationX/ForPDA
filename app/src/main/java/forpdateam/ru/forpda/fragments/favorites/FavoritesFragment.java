@@ -246,8 +246,9 @@ public class FavoritesFragment extends TabFragment {
     }
 
     private void onChangeFav(boolean v) {
-        if (!v)
-            Toast.makeText(getContext(), "При выполнении операции произошла ошибка", Toast.LENGTH_SHORT).show();
+        /*if (!v)
+            Toast.makeText(getContext(), "При выполнении операции произошла ошибка", Toast.LENGTH_SHORT).show();*/
+        Toast.makeText(getContext(), "Действие выполнено", Toast.LENGTH_SHORT).show();
         loadData();
     }
 }

@@ -200,17 +200,17 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
                     .showSoftInput(view, 0);
     }
 
-    public void backHandler(boolean isToolbarButton) {
+    public void backHandler(boolean fromToolbar) {
         /*if (TabManager.getInstance().getSize() <= 1) {
             super.onBackPressed();
         } else {
-            if (isToolbarButton || !TabManager.getInstance().getActive().onBackPressed()) {
+            if (fromToolbar || !TabManager.getInstance().getActive().onBackPressed()) {
                 hideKeyboard();
                 TabManager.getInstance().remove(TabManager.getInstance().getActive());
             }
         }*/
 
-        if (!TabManager.getInstance().getActive().onBackPressed()) {
+        if (fromToolbar || !TabManager.getInstance().getActive().onBackPressed()) {
             hideKeyboard();
             TabManager.getInstance().remove(TabManager.getInstance().getActive());
             if (TabManager.getInstance().getSize() < 1) {
