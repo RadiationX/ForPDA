@@ -152,5 +152,6 @@ public class QmsThemesFragment extends TabFragment {
         if (results.size() != 0 && results.last().getThemes().size() != 0) {
             adapter.addAll(results.last().getThemes());
         }
+        recyclerView.scrollToPosition(0);
     }
 }

@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.messagepanel;
+package forpdateam.ru.forpda.views.messagepanel;
 
 import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;

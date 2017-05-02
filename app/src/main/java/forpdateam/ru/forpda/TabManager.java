@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -20,7 +22,6 @@ public class TabManager {
     private static TabManager instance;
     private FragmentManager fragmentManager;
     private TabListener tabListener;
-    private int count = 0;
     private static String activeTag = "";
     private static int activeIndex = 0;
     private List<TabFragment> existingFragments = new ArrayList<>();
@@ -70,10 +71,7 @@ public class TabManager {
     public void loadState(Bundle state) {
         if (state == null) return;
         activeTag = state.getString(BUNDLE_PREFIX.concat(BUNDLE_ACTIVE_TAG), "");
-        activeIndex = state.getInt(BUNDLE_PREFIX.concat(BUNDLE_ACTIVE_INDEX), -1);
-        if (activeIndex == -1)
-            activeIndex = 0;
-        count = activeIndex;
+        activeIndex = state.getInt(BUNDLE_PREFIX.concat(BUNDLE_ACTIVE_INDEX), 0);
         Log.d("FORPDA_LOG", "LOAD STATE " + activeTag + " : " + activeIndex);
     }
 
@@ -100,6 +98,7 @@ public class TabManager {
             if (fragmentManager.getFragments().get(i) != null)
                 existingFragments.add((TabFragment) fragmentManager.getFragments().get(i));
         }
+        Collections.sort(existingFragments, (o1, o2) -> o1.getTag().compareTo(o2.getTag()));
         Log.e("FORPDA_LOG", "UPDATE");
         for (TabFragment fragment : existingFragments) {
             Log.e("FORPDA_LOG", "RECOVERY FRAGMENT " + fragment);
@@ -151,8 +150,7 @@ public class TabManager {
             return;
         }
 
-        activeTag = TAB_PREFIX + count;
-        count++;
+        activeTag = TAB_PREFIX.concat(Long.toString(System.currentTimeMillis()));
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         hideTabs(transaction);
         transaction.add(R.id.fragments_container, tabFragment, activeTag).commit();

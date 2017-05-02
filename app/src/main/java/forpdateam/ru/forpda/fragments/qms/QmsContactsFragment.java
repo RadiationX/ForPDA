@@ -191,6 +191,7 @@ public class QmsContactsFragment extends TabFragment {
         if (results.size() != 0) {
             adapter.addAll(results);
         }
+        recyclerView.scrollToPosition(0);
     }
 
     public void deleteDialog(int mid) {

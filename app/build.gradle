@@ -89,6 +89,9 @@ android {
             universalApk false
         }
     }
+    lintOptions {
+        disable 'RestrictedApi'
+    }
 }
 
 ext {

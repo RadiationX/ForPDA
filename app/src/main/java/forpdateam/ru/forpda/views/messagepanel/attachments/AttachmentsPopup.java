@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.messagepanel.attachments;
+package forpdateam.ru.forpda.views.messagepanel.attachments;
 
 import android.content.Context;
 import android.os.Build;
@@ -22,8 +22,8 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.RequestFile;
-import forpdateam.ru.forpda.messagepanel.AutoFitRecyclerView;
-import forpdateam.ru.forpda.messagepanel.MessagePanel;
+import forpdateam.ru.forpda.views.messagepanel.AutoFitRecyclerView;
+import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
 
 /**
  * Created by radiationx on 09.01.17.

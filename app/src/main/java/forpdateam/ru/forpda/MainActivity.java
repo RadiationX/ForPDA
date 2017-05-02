@@ -2,7 +2,6 @@ package forpdateam.ru.forpda;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
@@ -23,15 +22,16 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
+import forpdateam.ru.forpda.views.drawers.DrawerHeader;
+import forpdateam.ru.forpda.views.drawers.Drawers;
 
 public class MainActivity extends AppCompatActivity implements TabManager.TabListener {
     public final static String DEF_TITLE = "ForPDA";
     private Queue<ExtendedWebView> webViews = new LinkedList<>();
     private Timer webViewCleaner = new Timer();
-    private TabDrawer tabDrawer;
-    private MenuDrawer menuDrawer;
+    private Drawers drawers;
     private DrawerHeader drawerHeader;
-    private final View.OnClickListener toggleListener = view -> menuDrawer.toggleState();
+    private final View.OnClickListener toggleListener = view -> drawers.toggleMenu();
     private final View.OnClickListener removeTabListener = view -> backHandler(true);
 
 
@@ -59,11 +59,9 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        tabDrawer = new TabDrawer(this, drawerLayout);
-        menuDrawer = new MenuDrawer(this, drawerLayout, savedInstanceState);
+        drawers = new Drawers(this, drawerLayout);
+        drawers.init(savedInstanceState);
         drawerHeader = new DrawerHeader(this, drawerLayout);
-        TabManager.getInstance().loadState(savedInstanceState);
-        TabManager.getInstance().updateFragmentList();
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
@@ -93,8 +91,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             App.setStatusBarHeight(((View) viewDiff.getParent()).getHeight() - viewDiff.getHeight());
             App.setNavigationBarHeight(viewDiff.getRootView().getHeight() - viewDiff.getHeight() - App.getStatusBarHeight());
             Log.e("FORPDA_LOG", "SB: " + App.getStatusBarHeight() + ", NB: " + App.getNavigationBarHeight());
-            menuDrawer.setStatusBarHeight(App.getStatusBarHeight());
-            tabDrawer.setStatusBarHeight(App.getStatusBarHeight());
+            drawers.setStatusBarHeight(App.getStatusBarHeight());
             //IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=2556269");
         });
 
@@ -102,8 +99,8 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         checkIntent(getIntent());
     }
 
-    public MenuDrawer getMenuDrawer() {
-        return menuDrawer;
+    public Drawers getDrawers() {
+        return drawers;
     }
 
     @Override
@@ -158,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     }
 
     public void updateTabList() {
-        tabDrawer.notifyTabsChanged();
+        drawers.notifyTabsChanged();
     }
 
     @Override
@@ -173,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
     @Override
     public void onSelectTab(TabFragment fragment) {
-        menuDrawer.setActive(fragment.getClass().getSimpleName());
+        drawers.setActiveMenu(fragment);
         Log.d("FORPDA_LOG", "onselect " + fragment);
     }
 
@@ -234,8 +231,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         super.onResume();
         Log.d("kekos", "ACTIVE TAB " + TabManager.getActiveIndex() + " : " + TabManager.getActiveTag());
         receiver.registerReceiver();
-        menuDrawer.setStatusBarHeight(App.getStatusBarHeight());
-        tabDrawer.setStatusBarHeight(App.getStatusBarHeight());
+        drawers.setStatusBarHeight(App.getStatusBarHeight());
     }
 
     @Override
@@ -249,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         super.onDestroy();
         receiver.unregisterReceiver();
         Repository.removeInstance();
-        menuDrawer.destroy();
+        drawers.destroy();
         drawerHeader.destroy();
         webViewCleaner.cancel();
         webViewCleaner.purge();

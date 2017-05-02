@@ -113,6 +113,7 @@ public class QmsBlackListFragment extends TabFragment {
         refreshLayout.setRefreshing(false);
         currentData = data;
         adapter.addAll(currentData);
+        recyclerView.scrollToPosition(0);
     }
 
     private void blockUser(String nick) {

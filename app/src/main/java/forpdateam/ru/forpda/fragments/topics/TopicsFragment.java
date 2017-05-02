@@ -19,7 +19,7 @@ import forpdateam.ru.forpda.api.topcis.models.TopicItem;
 import forpdateam.ru.forpda.api.topcis.models.TopicsData;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
-import forpdateam.ru.forpda.pagination.PaginationHelper;
+import forpdateam.ru.forpda.views.pagination.PaginationHelper;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -137,6 +137,7 @@ public class TopicsFragment extends TabFragment {
         adapter.notifyDataSetChanged();
         paginationHelper.updatePagination(data.getPagination());
         setSubtitle(paginationHelper.getString());
+        recyclerView.scrollToPosition(0);
     }
 
 }

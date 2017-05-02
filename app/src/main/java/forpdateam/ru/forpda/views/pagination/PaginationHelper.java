@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.pagination;
+package forpdateam.ru.forpda.views.pagination;
 
 import android.content.Context;
 import android.graphics.Color;

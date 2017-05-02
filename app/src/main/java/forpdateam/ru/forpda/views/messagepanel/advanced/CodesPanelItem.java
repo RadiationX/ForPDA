@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.messagepanel.advanced;
+package forpdateam.ru.forpda.views.messagepanel.advanced;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.messagepanel.MessagePanel;
+import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
 
 
 /**
