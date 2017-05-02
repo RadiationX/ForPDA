@@ -125,6 +125,7 @@ public class TopicsFragment extends TabFragment {
 
     private void onLoadThemes(TopicsData data) {
         refreshLayout.setRefreshing(false);
+        recyclerView.scrollToPosition(0);
         this.data = data;
 
         setTitle(data.getTitle());
@@ -137,7 +138,6 @@ public class TopicsFragment extends TabFragment {
         adapter.notifyDataSetChanged();
         paginationHelper.updatePagination(data.getPagination());
         setSubtitle(paginationHelper.getString());
-        recyclerView.scrollToPosition(0);
     }
 
 }

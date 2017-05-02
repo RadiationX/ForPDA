@@ -171,7 +171,7 @@ public class QmsContactsFragment extends TabFragment {
     private void onLoadContacts(ArrayList<QmsContact> data) {
         Log.d("FORPDA_LOG", "loaded itms " + data.size() + " : " + results.size());
         refreshLayout.setRefreshing(false);
-
+        recyclerView.scrollToPosition(0);
         if (data.size() == 0)
             return;
 
@@ -191,7 +191,6 @@ public class QmsContactsFragment extends TabFragment {
         if (results.size() != 0) {
             adapter.addAll(results);
         }
-        recyclerView.scrollToPosition(0);
     }
 
     public void deleteDialog(int mid) {

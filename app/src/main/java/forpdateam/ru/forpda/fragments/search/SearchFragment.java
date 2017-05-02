@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -37,14 +38,19 @@ import java.util.List;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.IBaseForumPost;
+import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
+import forpdateam.ru.forpda.api.topcis.models.TopicItem;
 import forpdateam.ru.forpda.fragments.IPostFunctions;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.fragments.theme.ThemeDialogsHelper;
 import forpdateam.ru.forpda.fragments.theme.ThemeHelper;
 import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
+import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
+import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
@@ -79,6 +85,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
 
     private StringBuilder titleBuilder = new StringBuilder();
     private PaginationHelper paginationHelper = new PaginationHelper();
+    private AlertDialogMenu<SearchFragment, IBaseForumPost> topicsDialogMenu;
 
     public SearchFragment() {
         configuration.setDefaultTitle("Поиск");
@@ -183,7 +190,6 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
         setItems(resultSpinner, (String[]) resultItems.toArray(), 0);
         setItems(sortSpinner, (String[]) sortItems.toArray(), 0);
         setItems(sourceSpinner, (String[]) sourceItems.toArray(), 1);
-        fillSettingsData();
 
         SearchManager searchManager = (SearchManager) getMainActivity().getSystemService(Context.SEARCH_SERVICE);
         if (null != searchManager) {
@@ -203,6 +209,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
         });
 
         searchView.setQueryHint("Ключевые слова");
+        fillSettingsData();
         searchItem.expandActionView();
         submitButton.setOnClickListener(v -> startSearch());
         //recyclerView.setHasFixedSize(true);
@@ -220,6 +227,26 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
                 IntentHandler.handle(url);
             }
         });
+        adapter.setOnLongItemClickListener(item -> {
+            if (topicsDialogMenu == null) {
+                topicsDialogMenu = new AlertDialogMenu<>();
+                topicsDialogMenu.addItem("Скопировать ссылку", (context, data1) -> Utils.copyToClipBoard("http://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data1.getId()))));
+                topicsDialogMenu.addItem("Открыть форум темы", (context, data1) -> IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + data1.getForumId()));
+                topicsDialogMenu.addItem("Добавить в избранное", ((context, data1) -> {
+                    new AlertDialog.Builder(context.getContext())
+                            .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> {
+                                FavoritesHelper.add(aBoolean -> {
+                                    Toast.makeText(getContext(), aBoolean ? "Тема добавлена в избранное" : "Ошибочка вышла", Toast.LENGTH_SHORT).show();
+                                }, data1.getId(), Favorites.SUB_TYPES[which1]);
+                            })
+                            .show();
+                }));
+            }
+
+            new AlertDialog.Builder(getContext())
+                    .setItems(topicsDialogMenu.getTitles(), (dialog, which) -> topicsDialogMenu.onClick(which, SearchFragment.this, item))
+                    .show();
+        });
         return view;
     }
 
@@ -236,7 +263,12 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
     }
 
     private void fillSettingsData() {
-        searchView.setQuery(settings.getQuery(), false);
+
+        searchView.post(() -> {
+            searchView.setQuery(settings.getQuery(), false);
+            Log.e("FORPDA_LOG", "FILL SETTINGST " + settings.getQuery() + " : " + searchView.getQuery());
+        });
+
         nickField.setText(settings.getNick());
 
         if (checkArg(settings.getResourceType(), SearchSettings.RESOURCE_NEWS)) {
@@ -382,13 +414,14 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
 
     private void onLoadData(SearchResult searchResult) {
         refreshLayout.setRefreshing(false);
+        recyclerView.scrollToPosition(0);
         hidePopupWindows();
         data = searchResult;
-        Log.e("SUKA", data.getSettings().getResult());
-        Log.e("SUKA", data.getSettings().getResourceType());
-        Log.e("SUKA", "" + refreshLayout.getChildCount());
+        Log.e("FORPDA_LOG", data.getSettings().getResult());
+        Log.e("FORPDA_LOG", data.getSettings().getResourceType());
+        Log.e("FORPDA_LOG", "" + refreshLayout.getChildCount());
         if (refreshLayout.getChildCount() > 1) {
-            Log.e("SUKA", "" + refreshLayout.getChildAt(0));
+            Log.e("FORPDA_LOG", "" + refreshLayout.getChildAt(0));
         }
         if (data.getSettings().getResult().equals(SearchSettings.RESULT_POSTS.first) && data.getSettings().getResourceType().equals(SearchSettings.RESOURCE_FORUM.first)) {
             if (refreshLayout.getChildCount() > 1) {
@@ -396,11 +429,11 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
                     refreshLayout.removeViewAt(0);
                     fixTargetView();
                     refreshLayout.addView(webView);
-                    Log.e("SUKA", "add webview");
+                    Log.e("FORPDA_LOG", "add webview");
                 }
             } else {
                 refreshLayout.addView(webView);
-                Log.e("SUKA", "add webview");
+                Log.e("FORPDA_LOG", "add webview");
             }
             if (webViewClient == null) {
                 webViewClient = new SearchWebViewClient();
@@ -413,15 +446,14 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
                     refreshLayout.removeViewAt(0);
                     fixTargetView();
                     refreshLayout.addView(recyclerView);
-                    Log.e("SUKA", "add recyclerview");
+                    Log.e("FORPDA_LOG", "add recyclerview");
                 }
             } else {
                 refreshLayout.addView(recyclerView);
-                Log.e("SUKA", "add recyclerview");
+                Log.e("FORPDA_LOG", "add recyclerview");
             }
             adapter.clear();
             adapter.addAll(data.getItems());
-            recyclerView.scrollToPosition(0);
         }
 
         paginationHelper.updatePagination(data.getPagination());

@@ -111,9 +111,9 @@ public class QmsBlackListFragment extends TabFragment {
 
     private void onLoadContacts(ArrayList<QmsContact> data) {
         refreshLayout.setRefreshing(false);
+        recyclerView.scrollToPosition(0);
         currentData = data;
         adapter.addAll(currentData);
-        recyclerView.scrollToPosition(0);
     }
 
     private void blockUser(String nick) {

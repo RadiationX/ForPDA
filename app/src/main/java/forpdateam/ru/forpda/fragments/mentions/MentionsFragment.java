@@ -87,10 +87,11 @@ public class MentionsFragment extends TabFragment {
 
     private void onLoadThemes(MentionsData data) {
         refreshLayout.setRefreshing(false);
+        recyclerView.scrollToPosition(0);
         this.data = data;
         adapter.addAll(data.getItems());
         paginationHelper.updatePagination(data.getPagination());
         setSubtitle(paginationHelper.getString());
-        recyclerView.scrollToPosition(0);
+
     }
 }

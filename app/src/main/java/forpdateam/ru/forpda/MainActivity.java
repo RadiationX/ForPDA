@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             //IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=2556269");
         });
 
-        Log.e("SUKA", "ON CREATE INTENT");
+        Log.e("FORPDA_LOG", "ON CREATE INTENT");
         checkIntent(getIntent());
     }
 
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.e("SUKA", "ON NEW INTENT");
+        Log.e("FORPDA_LOG", "ON NEW INTENT");
         checkIntent(intent);
 
         Log.d("FORPDA_LOG", "onnewintent " + intent.toString());
@@ -117,32 +117,32 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
         new Handler().post(() -> {
             Intent newIntent = intent;
-            /*if (intent.getAction().equals("SUKA.SOSI.HUI")) {
+            /*if (intent.getAction().equals("FORPDA_LOG.SOSI.HUI")) {
                 newIntent = new Intent();
                 newIntent.setAction(Intent.ACTION_MAIN);
                 newIntent.addCategory(Intent.CATEGORY_HOME);
                 newIntent.setData(intent.getData());
-                Log.e("SUKA", "INTENT SUKA " + newIntent);
+                Log.e("FORPDA_LOG", "INTENT FORPDA_LOG " + newIntent);
             } else {
                 newIntent = intent;
             }*/
-            /*Log.e("SUKA", "FLAG_ACTIVITY_NO_HISTORY " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_NO_HISTORY));
-            Log.e("SUKA", "FLAG_ACTIVITY_SINGLE_TOP " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_SINGLE_TOP));
-            Log.e("SUKA", "FLAG_ACTIVITY_NEW_TASK " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_NEW_TASK));
-            Log.e("SUKA", "FLAG_ACTIVITY_MULTIPLE_TASK " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_MULTIPLE_TASK));
-            Log.e("SUKA", "FLAG_ACTIVITY_CLEAR_TOP " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TOP));
-            Log.e("SUKA", "FLAG_ACTIVITY_FORWARD_RESULT " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_FORWARD_RESULT));
-            Log.e("SUKA", "FLAG_ACTIVITY_PREVIOUS_IS_TOP " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP));
-            Log.e("SUKA", "FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS));
-            Log.e("SUKA", "FLAG_ACTIVITY_BROUGHT_TO_FRONT " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT));
-            Log.e("SUKA", "FLAG_ACTIVITY_RESET_TASK_IF_NEEDED " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED));
-            Log.e("SUKA", "FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY));
-            Log.e("SUKA", "FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET));
-            Log.e("SUKA", "FLAG_ACTIVITY_NO_USER_ACTION " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_NO_USER_ACTION));
-            Log.e("SUKA", "FLAG_ACTIVITY_REORDER_TO_FRONT " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
-            Log.e("SUKA", "FLAG_ACTIVITY_NO_ANIMATION " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_NO_ANIMATION));
-            Log.e("SUKA", "FLAG_ACTIVITY_CLEAR_TASK " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TASK));
-            Log.e("SUKA", "FLAG_ACTIVITY_TASK_ON_HOME " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_TASK_ON_HOME));*/
+            /*Log.e("FORPDA_LOG", "FLAG_ACTIVITY_NO_HISTORY " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_NO_HISTORY));
+            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_SINGLE_TOP " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_SINGLE_TOP));
+            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_NEW_TASK " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_NEW_TASK));
+            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_MULTIPLE_TASK " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_MULTIPLE_TASK));
+            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_CLEAR_TOP " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_FORWARD_RESULT " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_FORWARD_RESULT));
+            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_PREVIOUS_IS_TOP " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP));
+            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS));
+            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_BROUGHT_TO_FRONT " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT));
+            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_RESET_TASK_IF_NEEDED " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED));
+            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY));
+            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET));
+            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_NO_USER_ACTION " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_NO_USER_ACTION));
+            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_REORDER_TO_FRONT " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
+            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_NO_ANIMATION " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_NO_ANIMATION));
+            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_CLEAR_TASK " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_TASK_ON_HOME " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_TASK_ON_HOME));*/
             Log.d("FORPDA_LOG", "POST on new intent " + newIntent);
             IntentHandler.handle(newIntent.getData().toString());
         });
@@ -250,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         webViewCleaner.cancel();
         webViewCleaner.purge();
         webViews.clear();
-        Log.e("SUKA", "ACTIVITY DESTROY");
+        Log.e("FORPDA_LOG", "ACTIVITY DESTROY");
     }
 
     class WebViewCleanerTask extends TimerTask {

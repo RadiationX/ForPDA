@@ -180,7 +180,7 @@ public class Theme {
         }
         MultipartBody multipartBody = multipartBuilder.build();
         for (MultipartBody.Part part : multipartBody.parts()) {
-            Log.e("SUKA", part.headers().toString() + " : " + part.body().contentType());
+            Log.e("FORPDA_LOG", part.headers().toString() + " : " + part.body().contentType());
         }
 
 

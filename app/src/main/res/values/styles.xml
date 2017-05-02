@@ -4,7 +4,7 @@
         <!--<item name="android:showDividers">middle</item>-->
         <!--<item name="android:divider">@android:drawable/divider_horizontal_bright</item>-->
     </style>
-    <style name="BaseAppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
+    <style name="BaseAppTheme" parent="Theme.AppCompat.DayNight">
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryDark">#aaa</item>
         <item name="colorAccent">@color/colorAccent</item>
