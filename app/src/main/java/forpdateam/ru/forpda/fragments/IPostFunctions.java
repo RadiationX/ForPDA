@@ -1,14 +1,6 @@
 package forpdateam.ru.forpda.fragments;
 
-import android.widget.Toast;
-
-import java.util.Locale;
-
-import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.IBaseForumPost;
-import forpdateam.ru.forpda.fragments.theme.ThemeDialogsHelper;
-import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
-import forpdateam.ru.forpda.utils.Utils;
 
 /**
  * Created by radiationx on 27.04.17.

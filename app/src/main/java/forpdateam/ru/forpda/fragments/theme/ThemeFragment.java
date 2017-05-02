@@ -37,24 +37,24 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.IBaseForumPost;
+import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
-import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.fragments.IPostFunctions;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
-import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
-import forpdateam.ru.forpda.views.messagepanel.attachments.AttachmentsPopup;
-import forpdateam.ru.forpda.views.pagination.PaginationHelper;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
+import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
+import forpdateam.ru.forpda.views.messagepanel.attachments.AttachmentsPopup;
+import forpdateam.ru.forpda.views.pagination.PaginationHelper;
 
 /**
  * Created by radiationx on 20.10.16.

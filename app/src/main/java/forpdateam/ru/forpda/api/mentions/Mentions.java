@@ -4,10 +4,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.mentions.models.MentionItem;
 import forpdateam.ru.forpda.api.mentions.models.MentionsData;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
-import forpdateam.ru.forpda.api.Utils;
 
 /**
  * Created by radiationx on 21.01.17.

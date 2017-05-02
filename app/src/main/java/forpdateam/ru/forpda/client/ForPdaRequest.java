@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.client;
 
-import android.util.Log;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

@@ -16,17 +16,17 @@ import java.util.List;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
+import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
-import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.theme.ThemeFragment;
-import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
-import forpdateam.ru.forpda.views.messagepanel.attachments.AttachmentsPopup;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
+import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
+import forpdateam.ru.forpda.views.messagepanel.attachments.AttachmentsPopup;
 
 import static forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm.ARG_TYPE;
 import static forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm.ERROR_NONE;

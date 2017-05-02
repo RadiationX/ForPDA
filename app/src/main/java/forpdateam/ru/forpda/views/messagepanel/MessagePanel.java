@@ -19,9 +19,9 @@ import java.util.List;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
+import forpdateam.ru.forpda.utils.SimpleTextWatcher;
 import forpdateam.ru.forpda.views.messagepanel.advanced.AdvancedPopup;
 import forpdateam.ru.forpda.views.messagepanel.attachments.AttachmentsPopup;
-import forpdateam.ru.forpda.utils.SimpleTextWatcher;
 
 /**
  * Created by radiationx on 07.01.17.

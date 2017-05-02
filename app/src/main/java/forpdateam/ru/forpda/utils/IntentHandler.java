@@ -9,9 +9,6 @@ import android.widget.Toast;
 
 import org.acra.ACRA;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

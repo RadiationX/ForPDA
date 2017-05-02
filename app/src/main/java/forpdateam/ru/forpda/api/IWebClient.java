@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.api;
 
-import java.util.Map;
-
 import forpdateam.ru.forpda.client.ForPdaRequest;
 
 /**

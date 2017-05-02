@@ -3,8 +3,6 @@ package forpdateam.ru.forpda.api.auth;
 import android.text.Html;
 
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

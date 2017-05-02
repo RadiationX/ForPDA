@@ -30,13 +30,13 @@ import forpdateam.ru.forpda.api.qms.models.QmsMessage;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsChatAdapter;
-import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
-import forpdateam.ru.forpda.views.messagepanel.attachments.AttachmentsPopup;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.SimpleTextWatcher;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
+import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
+import forpdateam.ru.forpda.views.messagepanel.attachments.AttachmentsPopup;
 
 /**
  * Created by radiationx on 25.08.16.

@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.fragments;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -24,7 +23,6 @@ import android.widget.Toast;
 
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
-import java.net.URLEncoder;
 import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
@@ -34,7 +32,6 @@ import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.rxapi.RxApi;
-import forpdateam.ru.forpda.settings.SettingsActivity;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 

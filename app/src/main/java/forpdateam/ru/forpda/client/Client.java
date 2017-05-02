@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.IWebClient;
-import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.utils.ourparser.Html;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
