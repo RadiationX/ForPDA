@@ -2,6 +2,8 @@ package forpdateam.ru.forpda.api;
 
 import java.util.Map;
 
+import forpdateam.ru.forpda.client.ForPdaRequest;
+
 /**
  * Created by radiationx on 26.03.17.
  */
@@ -11,21 +13,9 @@ public interface IWebClient {
 
     String get(String url) throws Exception;
 
-    String get(String url, Map<String, String> headers) throws Exception;
+    String getXhr(String url) throws Exception;
 
-    String post(String url, Map<String, String> headers, Map<String, String> formHeaders) throws Exception;
-
-    String post(String url, Map<String, String> headers, Map<String, String> formHeaders, boolean isMultipart) throws Exception;
-
-    String post(String url, Map<String, String> headers, Map<String, String> formHeaders, RequestFile file) throws Exception;
-
-    String post(String url, Map<String, String> formHeaders) throws Exception;
-
-    String post(String url, Map<String, String> formHeaders, boolean isMultipart) throws Exception;
-
-    String post(String url, Map<String, String> formHeaders, RequestFile file) throws Exception;
-
-    String request(String url, Map<String, String> headers, Map<String, String> formHeaders, RequestFile file, boolean isMultipart) throws Exception;
+    String request(ForPdaRequest request) throws Exception;
 
     String getRedirect(String url);
 

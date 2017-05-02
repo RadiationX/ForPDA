@@ -17,6 +17,7 @@ import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.RequestFile;
+import forpdateam.ru.forpda.client.ForPdaRequest;
 
 /**
  * Created by radiationx on 10.01.17.
@@ -64,8 +65,11 @@ public class EditPost {
         for (RequestFile file : files) {
             file.setRequestName("FILE_UPLOAD[]");
             item = new AttachmentItem();
+            ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+                    .url(url)
+                    .file(file);
 
-            response = Api.getWebClient().post(url, null, file);
+            response = Api.getWebClient().request(builder.build());
             matcher = loadedAttachments.matcher(response);
             if (matcher.find())
                 item = fillAttachment(item, matcher);
@@ -130,34 +134,30 @@ public class EditPost {
     public ThemePage sendPost(EditPostForm form) throws Exception {
         String url = "http://4pda.ru/forum/index.php";
         Map<String, String> headers = new HashMap<>();
-        headers.put("act", "Post");
-        Log.d("FORPDA_LOG", "FORM TYPE " + form.getType());
-        headers.put("CODE", form.getType() == EditPostForm.TYPE_NEW_POST ? "03" : "9");
-        if (form.getPostId() != 0)
-            headers.put("p", "" + form.getPostId());
-        headers.put("f", "" + form.getForumId());
-        headers.put("t", "" + form.getTopicId());
 
-
-        headers.put("auth_key", Api.getWebClient().getAuthKey());
-        headers.put("Post", form.getMessage());
-        headers.put("enablesig", "yes");
-        headers.put("enableemo", "yes");
-
-
-        headers.put("st", "" + form.getSt());
-        headers.put("removeattachid", "0");
-        headers.put("MAX_FILE_SIZE", "0");
-        headers.put("parent_id", "0");
-        headers.put("ed-0_wysiwyg_used", "0");
-        headers.put("editor_ids[]", "ed-0");
-        headers.put("iconid", "0");
-        headers.put("_upload_single_file", "1");
-        //headers.put("file-list", addedFileList);
+        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+                .url(url)
+                .formHeaders(headers)
+                .multipart()
+                .formHeader("act", "Post")
+                .formHeader("CODE", form.getType() == EditPostForm.TYPE_NEW_POST ? "03" : "9")
+                .formHeader("f", "" + form.getForumId())
+                .formHeader("t", "" + form.getTopicId())
+                .formHeader("auth_key", Api.getWebClient().getAuthKey())
+                .formHeader("Post", form.getMessage())
+                .formHeader("enablesig", "yes")
+                .formHeader("enableemo", "yes")
+                .formHeader("st", "" + form.getSt())
+                .formHeader("removeattachid", "0")
+                .formHeader("MAX_FILE_SIZE", "0")
+                .formHeader("parent_id", "0")
+                .formHeader("ed-0_wysiwyg_used", "0")
+                .formHeader("editor_ids[]", "ed-0")
+                .formHeader("iconid", "0")
+                .formHeader("_upload_single_file", "1");
+        //.formHeader("file-list", addedFileList);
         if (form.getType() == EditPostForm.TYPE_EDIT_POST)
-            headers.put("post_edit_reason", form.getEditReason());
-
-
+            builder.formHeader("post_edit_reason", form.getEditReason());
         StringBuilder ids = new StringBuilder();
         if (form.getAttachments() != null && form.getAttachments().size() > 0) {
             for (int i = 0; i < form.getAttachments().size(); i++) {
@@ -168,7 +168,9 @@ public class EditPost {
                 }
             }
         }
-        headers.put("file-list", ids.toString());
-        return Api.Theme().parsePage(url, Api.getWebClient().post(url, headers, true), false, false);
+        builder.formHeader("file-list", ids.toString());
+        if (form.getPostId() != 0)
+            builder.formHeader("p", "" + form.getPostId());
+        return Api.Theme().parsePage(url, Api.getWebClient().request(builder.build()), false, false);
     }
 }

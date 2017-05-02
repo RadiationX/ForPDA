@@ -13,6 +13,7 @@ import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.reputation.models.RepData;
 import forpdateam.ru.forpda.api.reputation.models.RepItem;
 import forpdateam.ru.forpda.api.Utils;
+import forpdateam.ru.forpda.client.ForPdaRequest;
 
 /**
  * Created by radiationx on 20.03.17.
@@ -60,16 +61,16 @@ public class Reputation {
     }
 
     public String editReputation(int postId, int userId, boolean type, String message) throws Exception {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("act", "rep");
+        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+                .url("http://4pda.ru/forum/index.php")
+                .formHeader("act", "rep")
+                .formHeader("mid", Integer.toString(userId))
+                .formHeader("type", type ? "add" : "minus")
+                .formHeader("message", message);
         if (postId > 0)
-            headers.put("p", Integer.toString(postId));
-        headers.put("mid", Integer.toString(userId));
-        headers.put("type", type ? "add" : "minus");
-        headers.put("message", message);
-
+            builder.formHeader("p", Integer.toString(postId));
         try {
-            Api.getWebClient().post("http://4pda.ru/forum/index.php", headers);
+            Api.getWebClient().request(builder.build());
         } catch (Exception exception) {
             return exception.getMessage();
         }

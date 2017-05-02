@@ -13,6 +13,7 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.IWebClient;
 import forpdateam.ru.forpda.api.auth.models.AuthForm;
 import forpdateam.ru.forpda.client.ClientHelper;
+import forpdateam.ru.forpda.client.ForPdaRequest;
 
 /**
  * Created by radiationx on 25.03.17.
@@ -46,16 +47,17 @@ public class Auth {
     }
 
     public Boolean login(final AuthForm form) throws Exception {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("captcha-time", form.getCaptchaTime());
-        headers.put("captcha-sig", form.getCaptchaSig());
-        headers.put("captcha", form.getCaptcha());
-        headers.put("return", form.getReturnField());
-        headers.put("login", URLEncoder.encode(form.getNick(), "windows-1251"));
-        headers.put("password", URLEncoder.encode(form.getPassword(), "windows-1251"));
-        headers.put("remember", form.getRememberField());
-        headers.put("hidden", form.isHidden() ? "1" : "0");
-        String response = Api.getWebClient().post(AUTH_BASE_URL, headers);
+        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+                .url(AUTH_BASE_URL)
+                .formHeader("captcha-time", form.getCaptchaTime())
+                .formHeader("captcha-sig", form.getCaptchaSig())
+                .formHeader("captcha", form.getCaptcha())
+                .formHeader("return", form.getReturnField())
+                .formHeader("login", URLEncoder.encode(form.getNick(), "windows-1251"), true)
+                .formHeader("password", URLEncoder.encode(form.getPassword(), "windows-1251"), true)
+                .formHeader("remember", form.getRememberField())
+                .formHeader("hidden", form.isHidden() ? "1" : "0");
+        String response = Api.getWebClient().request(builder.build());
         Matcher matcher = errorPattern.matcher(response);
         if (matcher.find()) {
             throw new Exception(Html.fromHtml(matcher.group(1)).toString().replaceAll("\\.", ".\n").trim());

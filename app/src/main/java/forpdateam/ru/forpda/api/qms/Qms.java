@@ -19,6 +19,7 @@ import forpdateam.ru.forpda.api.qms.models.QmsTheme;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
+import forpdateam.ru.forpda.client.ForPdaRequest;
 
 
 /**
@@ -35,9 +36,10 @@ public class Qms {
     private final static Pattern blackListMsgPattern = Pattern.compile("<div class=\"list-group-item msgbox ([^\"]*?)\"[^>]*?>[^<]*?<a[^>]*?>[^<]*?<\\/a>([\\s\\S]*?)<\\/div>");
 
     public ArrayList<QmsContact> getBlackList() throws Exception {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("xhr", "body");
-        final String response = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=qms&settings=blacklist", headers);
+        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+                .url("http://4pda.ru/forum/index.php?act=qms&settings=blacklist")
+                .formHeader("xhr", "body");
+        final String response = Api.getWebClient().request(builder.build());
         return parseBlackList(response);
     }
 
@@ -55,23 +57,25 @@ public class Qms {
     }
 
     public ArrayList<QmsContact> unBlockUsers(int[] ids) throws Exception {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("action", "delete-users");
+        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+                .url("http://4pda.ru/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1")
+                .formHeader("action", "delete-users");
         String strId;
         for (int id : ids) {
             strId = Integer.toString(id);
-            headers.put("user-id[".concat(strId).concat("]"), strId);
+            builder.formHeader("user-id[".concat(strId).concat("]"), strId);
         }
-        final String response = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1", headers);
+        final String response = Api.getWebClient().request(builder.build());
         checkOperation(response);
         return parseBlackList(response);
     }
 
     public ArrayList<QmsContact> blockUser(String nick) throws Exception {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("action", "add-user");
-        headers.put("username", nick);
-        final String response = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1", headers);
+        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+                .url("http://4pda.ru/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1")
+                .formHeader("action", "add-user")
+                .formHeader("username", nick);
+        final String response = Api.getWebClient().request(builder.build());
         checkOperation(response);
         return parseBlackList(response);
     }
@@ -86,9 +90,8 @@ public class Qms {
     }
 
     public ArrayList<QmsContact> getContactList() throws Exception {
-
         ArrayList<QmsContact> list = new ArrayList<>();
-        final String response = Api.getWebClient().get("http://4pda.ru/forum/index.php?&act=qms-xhr&action=userlist");
+        final String response = Api.getWebClient().request(new ForPdaRequest.Builder().url("http://4pda.ru/forum/index.php?&act=qms-xhr&action=userlist").build());
         final Matcher matcher = contactsPattern.matcher(response);
         QmsContact contact;
         String temp;
@@ -107,9 +110,10 @@ public class Qms {
 
     public QmsThemes getThemesList(final int id) throws Exception {
         QmsThemes qmsThemes = new QmsThemes();
-        Map<String, String> headers = new HashMap<>();
-        headers.put("xhr", "body");
-        final String response = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=qms&mid=" + id, headers);
+        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+                .url("http://4pda.ru/forum/index.php?act=qms&mid=" + id)
+                .formHeader("xhr", "body");
+        final String response = Api.getWebClient().request(builder.build());
         Matcher matcher = threadPattern.matcher(response);
         QmsTheme thread;
         while (matcher.find()) {
@@ -131,9 +135,10 @@ public class Qms {
     }
 
     public QmsChatModel getChat(final int userId, final int themeId) throws Exception {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("xhr", "body");
-        final String response = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=qms&mid=" + userId + "&t=" + themeId, headers);
+        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+                .url("http://4pda.ru/forum/index.php?act=qms&mid=" + userId + "&t=" + themeId)
+                .formHeader("xhr", "body");
+        final String response = Api.getWebClient().request(builder.build());
         return parseChat(response);
     }
 
@@ -149,9 +154,9 @@ public class Qms {
             } else {
                 item.setMyMessage(!matcher.group(1).isEmpty());
                 item.setId(Integer.parseInt(matcher.group(2)));
-                if(item.isMyMessage()){
+                if (item.isMyMessage()) {
                     item.setReadStatus(!matcher.group(3).equals("1"));
-                }else {
+                } else {
                     item.setReadStatus(true);
                 }
                 item.setTime(matcher.group(4));
@@ -177,22 +182,24 @@ public class Qms {
     }
 
     public QmsChatModel sendNewTheme(String nick, String title, String mess) throws Exception {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("username", nick);
-        headers.put("title", title);
-        headers.put("message", mess);
-        String response = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=qms&action=create-thread&xhr=body&do=1", headers);
+        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+                .url("http://4pda.ru/forum/index.php?act=qms&action=create-thread&xhr=body&do=1")
+                .formHeader("username", nick)
+                .formHeader("title", title)
+                .formHeader("message", mess);
+        String response = Api.getWebClient().request(builder.build());
         return parseChat(response);
     }
 
     public QmsMessage sendMessage(int userId, int themeId, String text) throws Exception {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("act", "qms-xhr");
-        headers.put("action", "send-message");
-        headers.put("mid", Integer.toString(userId));
-        headers.put("t", Integer.toString(themeId));
-        headers.put("message", text);
-        String response = Api.getWebClient().post("http://4pda.ru/forum/index.php", headers);
+        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+                .url("http://4pda.ru/forum/index.php")
+                .formHeader("act", "qms-xhr")
+                .formHeader("action", "send-message")
+                .formHeader("message", text)
+                .formHeader("mid", Integer.toString(userId))
+                .formHeader("t", Integer.toString(themeId));
+        String response = Api.getWebClient().request(builder.build());
         Matcher matcher = chatPattern.matcher(response);
         QmsMessage item = new QmsMessage();
         if (matcher.find()) {
@@ -202,9 +209,9 @@ public class Qms {
             } else {
                 item.setMyMessage(!matcher.group(1).isEmpty());
                 item.setId(Integer.parseInt(matcher.group(2)));
-                if(item.isMyMessage()){
+                if (item.isMyMessage()) {
                     item.setReadStatus(!matcher.group(3).equals("1"));
-                }else {
+                } else {
                     item.setReadStatus(true);
                 }
                 item.setTime(matcher.group(4));
@@ -221,11 +228,12 @@ public class Qms {
     }
 
     public String deleteDialog(int mid) throws Exception {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("act", "qms-xhr");
-        headers.put("action", "del-member");
-        headers.put("del-mid", Integer.toString(mid));
-        return Api.getWebClient().post("http://4pda.ru/forum/index.php", headers);
+        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+                .url("http://4pda.ru/forum/index.php")
+                .formHeader("act", "qms-xhr")
+                .formHeader("action", "del-member")
+                .formHeader("del-mid", Integer.toString(mid));
+        return Api.getWebClient().request(builder.build());
     }
 
     public List<AttachmentItem> uploadFiles(List<RequestFile> files) throws Exception {
@@ -264,7 +272,11 @@ public class Qms {
         for (RequestFile file : files) {
             item = new AttachmentItem();
             file.setRequestName("file");
-            response = Api.getWebClient().post(url, headers, file);
+            ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+                    .url(url)
+                    .formHeaders(headers)
+                    .file(file);
+            response = Api.getWebClient().request(builder.build());
 
 
             if (matcher == null)
