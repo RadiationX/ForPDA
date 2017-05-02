@@ -27,7 +27,7 @@ import forpdateam.ru.forpda.bdobjects.favorites.FavItemBd;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.pagination.PaginationHelper;
+import forpdateam.ru.forpda.views.pagination.PaginationHelper;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -207,6 +207,7 @@ public class FavoritesFragment extends TabFragment {
             Log.e("SUKA", "ADD ITEMS " + items.size());
             adapter.addSection(new Pair<>("Темы", items));
             adapter.notifyDataSetChanged();
+            recyclerView.scrollToPosition(0);
         }
         if (!Client.getInstance().getNetworkState()) {
             ClientHelper.getInstance().notifyCountsChanged();

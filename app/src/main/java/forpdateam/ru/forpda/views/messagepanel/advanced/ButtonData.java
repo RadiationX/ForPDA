@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.messagepanel.advanced;
+package forpdateam.ru.forpda.views.messagepanel.advanced;
 
 import android.support.annotation.DrawableRes;
 

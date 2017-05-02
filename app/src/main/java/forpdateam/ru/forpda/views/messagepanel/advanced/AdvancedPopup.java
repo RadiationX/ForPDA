@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.messagepanel.advanced;
+package forpdateam.ru.forpda.views.messagepanel.advanced;
 
 import android.content.Context;
 import android.os.Build;
@@ -18,7 +18,7 @@ import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.messagepanel.MessagePanel;
+import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
 
 /**
  * Created by radiationx on 07.01.17.

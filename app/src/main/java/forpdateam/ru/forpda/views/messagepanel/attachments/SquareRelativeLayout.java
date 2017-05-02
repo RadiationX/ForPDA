@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.messagepanel.attachments;
+package forpdateam.ru.forpda.views.messagepanel.attachments;
 
 import android.content.Context;
 import android.os.Build;

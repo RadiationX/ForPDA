@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda;
+package forpdateam.ru.forpda.views.drawers;
 
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
@@ -19,6 +19,10 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.Observer;
 
+import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.MainActivity;
+import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -60,7 +64,8 @@ public class DrawerHeader {
         } else {
             TabManager.getInstance().select(fragment);
         }*/
-        activity.getMenuDrawer().close();
+        activity.getDrawers().closeMenu();
+        activity.getDrawers().closeTabs();
     };
 
     private Observer loginObserver = (observable, o) -> {
@@ -79,7 +84,8 @@ public class DrawerHeader {
         nick = (TextView) headerLayout.findViewById(R.id.drawer_header_nick);
         openLinkButton = (ImageButton) headerLayout.findViewById(R.id.drawer_header_open_link);
         openLinkButton.setOnClickListener(v -> {
-            activity.getMenuDrawer().close();
+            activity.getDrawers().closeMenu();
+            activity.getDrawers().closeTabs();
             String url;
             url = readFromClipboard(activity);
             if (url == null) url = "";

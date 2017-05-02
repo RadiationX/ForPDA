@@ -1,28 +1,19 @@
 package forpdateam.ru.forpda.fragments.theme.editpost;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.AppCompatEditText;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
@@ -31,12 +22,10 @@ import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.theme.ThemeFragment;
-import forpdateam.ru.forpda.messagepanel.MessagePanel;
-import forpdateam.ru.forpda.messagepanel.attachments.AttachmentsPopup;
-import forpdateam.ru.forpda.messagepanel.attachments.CustomBottomSheetDialog;
+import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
+import forpdateam.ru.forpda.views.messagepanel.attachments.AttachmentsPopup;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.FilePickHelper;
-import forpdateam.ru.forpda.utils.KeyboardUtil;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 
 import static forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm.ARG_TYPE;

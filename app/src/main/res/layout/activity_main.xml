@@ -30,12 +30,10 @@
                 android:layout_height="1dp"
                 android:background="#eee"
                 android:layout_marginBottom="@dimen/dp8"/>
-            <ListView
+            <android.support.v7.widget.RecyclerView
                 android:id="@+id/menu_list"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:divider="@color/divider_color"
-                android:dividerHeight="0dp"/>
+                android:layout_height="match_parent"/>
         </LinearLayout>
     </android.support.design.widget.NavigationView>
 
@@ -48,12 +46,10 @@
 
         android:background="@color/white">
 
-        <ListView
-            android:id="@+id/tabs_list"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/tab_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="@color/divider_color"
-            android:dividerHeight="0dp"/>
+            android:layout_height="match_parent"/>
     </android.support.design.widget.NavigationView>
 
 
