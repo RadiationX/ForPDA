@@ -52,7 +52,7 @@ public class ReputationFragment extends TabFragment {
     private AlertDialogMenu<ReputationFragment, RepItem> showedRepDialogMenu;
 
 
-    public ReputationFragment(){
+    public ReputationFragment() {
         configuration.setDefaultTitle("Репутация");
     }
 
@@ -107,7 +107,7 @@ public class ReputationFragment extends TabFragment {
         return view;
     }
 
-    private void someClick(RepItem item){
+    private void someClick(RepItem item) {
         if (repDialogMenu == null) {
             repDialogMenu = new AlertDialogMenu<>();
             repDialogMenu.addItem("Профиль", (context, data1) -> {
@@ -205,6 +205,7 @@ public class ReputationFragment extends TabFragment {
 
     private void onLoadThemes(RepData data) {
         refreshLayout.setRefreshing(false);
+        recyclerView.scrollToPosition(0);
         this.data = data;
 
 
@@ -215,7 +216,6 @@ public class ReputationFragment extends TabFragment {
         setSubtitle("" + (data.getPositive() - data.getNegative()) + " (+" + data.getPositive() + " / -" + data.getNegative() + ")");
         setTabTitle("Репутация " + data.getNick() + (data.getMode().equals(Reputation.MODE_FROM) ? ": кому изменял" : ""));
         setTitle("Репутация " + data.getNick() + (data.getMode().equals(Reputation.MODE_FROM) ? ": кому изменял" : ""));
-        recyclerView.scrollToPosition(0);
     }
 
 

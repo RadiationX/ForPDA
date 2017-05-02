@@ -150,7 +150,7 @@ public class FavoritesFragment extends TabFragment {
     private void onLoadThemes(FavData data) {
         Log.d("FORPDA_LOG", "loaded itms " + data.getItems().size() + " : " + results.size());
         refreshLayout.setRefreshing(false);
-
+        recyclerView.scrollToPosition(0);
         if (data.getItems().size() == 0)
             return;
 
@@ -193,21 +193,20 @@ public class FavoritesFragment extends TabFragment {
 
             adapter.clear();
             if (pinnedUnread.size() > 0) {
-                Log.e("SUKA", "ADD UNREAD PINNED " + pinnedUnread.size());
+                Log.e("FORPDA_LOG", "ADD UNREAD PINNED " + pinnedUnread.size());
                 adapter.addSection(new Pair<>("Непрочитанные закрепленные темы", pinnedUnread));
             }
             if (itemsUnread.size() > 0) {
-                Log.e("SUKA", "ADD UNREAD ITEMs " + itemsUnread.size());
+                Log.e("FORPDA_LOG", "ADD UNREAD ITEMs " + itemsUnread.size());
                 adapter.addSection(new Pair<>("Непрочитанные темы", itemsUnread));
             }
             if (pinned.size() > 0) {
-                Log.e("SUKA", "ADD PINNED " + pinned.size());
+                Log.e("FORPDA_LOG", "ADD PINNED " + pinned.size());
                 adapter.addSection(new Pair<>("Закрепленные темы", pinned));
             }
-            Log.e("SUKA", "ADD ITEMS " + items.size());
+            Log.e("FORPDA_LOG", "ADD ITEMS " + items.size());
             adapter.addSection(new Pair<>("Темы", items));
             adapter.notifyDataSetChanged();
-            recyclerView.scrollToPosition(0);
         }
         if (!Client.getInstance().getNetworkState()) {
             ClientHelper.getInstance().notifyCountsChanged();

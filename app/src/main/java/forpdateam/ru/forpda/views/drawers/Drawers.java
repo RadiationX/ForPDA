@@ -99,7 +99,7 @@ public class Drawers {
         initTabs(savedInstanceState);
         String className = ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN ? FavoritesFragment.class.getSimpleName() : AuthFragment.class.getSimpleName();
         String last = App.getInstance().getPreferences().getString("menu_drawer_last", className);
-        Log.d("SUKA", "LAAST " + last);
+        Log.d("FORPDA_LOG", "LAAST " + last);
 
         MenuItems.MenuItem item = null;
         if (savedInstanceState != null) {
@@ -108,7 +108,7 @@ public class Drawers {
                 item = findMenuItem(tabFragment.getClass());
             }
 
-            Log.e("SUKA", "AAAA " + tabFragment + " : " + item);
+            Log.e("FORPDA_LOG", "AAAA " + tabFragment + " : " + item);
             if (item != null) {
                 item.setAttachedTabTag(tabFragment.getTag());
                 item.setActive(true);
@@ -119,7 +119,7 @@ public class Drawers {
         } else {
             item = findMenuItem(last);
         }
-        Log.e("SUKA", "FINAL ITEM " + item);
+        Log.e("FORPDA_LOG", "FINAL ITEM " + item);
         selectMenuItem(item);
 
         /*if (savedInstanceState == null) {
@@ -169,7 +169,7 @@ public class Drawers {
     }
 
     private void selectMenuItem(MenuItems.MenuItem item) {
-        Log.e("SUKA", "selectMenuItem " + item);
+        Log.e("FORPDA_LOG", "selectMenuItem " + item);
         if (item == null) return;
         try {
             if (item.getTabClass() == null) {

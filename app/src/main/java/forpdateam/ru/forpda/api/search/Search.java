@@ -49,8 +49,10 @@ public class Search {
                 matcher = forumTopicsPattern.matcher(response);
                 while (matcher.find()) {
                     item = new SearchItem();
-                    item.setId(Integer.parseInt(matcher.group(1)));
+                    item.setTopicId(Integer.parseInt(matcher.group(1)));
+                    //item.setId(Integer.parseInt(matcher.group(1)));
                     item.setTitle(Utils.fromHtml(matcher.group(4)));
+                    item.setForumId(Integer.parseInt(matcher.group(5)));
                     item.setUserId(Integer.parseInt(matcher.group(9)));
                     item.setNick(Utils.fromHtml(matcher.group(10)));
                     item.setDate(matcher.group(11));

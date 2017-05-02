@@ -115,6 +115,7 @@ public class QmsThemesFragment extends TabFragment {
     private void onLoadThemes(QmsThemes themes) {
         refreshLayout.setRefreshing(false);
 
+        recyclerView.scrollToPosition(0);
         currentThemes = themes;
 
         setTabTitle("Диалоги с ".concat(currentThemes.getNick()));
@@ -152,6 +153,5 @@ public class QmsThemesFragment extends TabFragment {
         if (results.size() != 0 && results.last().getThemes().size() != 0) {
             adapter.addAll(results.last().getThemes());
         }
-        recyclerView.scrollToPosition(0);
     }
 }
