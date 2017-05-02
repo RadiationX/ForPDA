@@ -1,27 +1,17 @@
 package forpdateam.ru.forpda.views.drawers.adapters;
 
-import android.app.ActionBar;
-import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.util.Collection;
-import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
-import forpdateam.ru.forpda.api.mentions.models.MentionItem;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.fragments.mentions.MentionsAdapter;
 
 /**
  * Created by radiationx on 02.05.17.

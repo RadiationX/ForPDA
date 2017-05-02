@@ -2,17 +2,14 @@ package forpdateam.ru.forpda.api.reputation;
 
 import android.net.Uri;
 
-import java.util.EmptyStackException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.reputation.models.RepData;
 import forpdateam.ru.forpda.api.reputation.models.RepItem;
-import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.client.ForPdaRequest;
 
 /**

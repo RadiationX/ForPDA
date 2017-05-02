@@ -3,10 +3,10 @@ package forpdateam.ru.forpda.rxapi.apiclasses;
 import java.util.List;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
-import forpdateam.ru.forpda.api.RequestFile;
 import io.reactivex.Observable;
 
 /**

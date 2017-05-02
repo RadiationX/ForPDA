@@ -3,14 +3,12 @@ package forpdateam.ru.forpda.api.profile;
 import android.text.Html;
 import android.util.Pair;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.api.Utils;
+import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.client.ForPdaRequest;
 
 /**
