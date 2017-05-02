@@ -198,9 +198,7 @@ public class Theme {
 
     public String deletePost(int postId) throws Exception {
         String url = "http://4pda.ru/forum/index.php?act=zmod&auth_key=".concat(Api.getWebClient().getAuthKey()).concat("&code=postchoice&tact=delete&selectedpids=").concat(Integer.toString(postId));
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("X-Requested-With", "XMLHttpRequest");
-        String response = Api.getWebClient().get(url, headers);
+        String response = Api.getWebClient().getXhr(url);
         return response.equals("ok") ? response : "";
     }
 

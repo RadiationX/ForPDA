@@ -162,75 +162,51 @@ public class Client implements IWebClient {
             })
             .build();
 
+
     //Network
     @Override
     public String get(String url) throws Exception {
-        return request(url, null, null, null, false);
+        return request(new ForPdaRequest.Builder().url(url).build());
     }
 
     @Override
-    public String get(String url, Map<String, String> headers) throws Exception {
-        return request(url, headers, null, null, false);
+    public String getXhr(String url) throws Exception {
+        return request(new ForPdaRequest.Builder().url(url).addHeader("X-Requested-With", "XMLHttpRequest").build());
     }
 
     @Override
-    public String post(String url, Map<String, String> formHeaders) throws Exception {
-        return request(url, null, formHeaders, null, false);
-    }
-
-    @Override
-    public String post(String url, Map<String, String> formHeaders, boolean isMultipart) throws Exception {
-        return request(url, null, formHeaders, null, isMultipart);
-    }
-
-    @Override
-    public String post(String url, Map<String, String> formHeaders, RequestFile file) throws Exception {
-        return request(url, null, formHeaders, file, true);
-    }
-
-    @Override
-    public String post(String url, Map<String, String> headers, Map<String, String> formHeaders) throws Exception {
-        return request(url, headers, formHeaders, null, false);
-    }
-
-    @Override
-    public String post(String url, Map<String, String> headers, Map<String, String> formHeaders, boolean isMultipart) throws Exception {
-        return request(url, headers, formHeaders, null, isMultipart);
-    }
-
-    @Override
-    public String post(String url, Map<String, String> headers, Map<String, String> formHeaders, RequestFile file) throws Exception {
-        return request(url, headers, formHeaders, file, true);
-    }
-
-    //boolean isMultipart нужен для тех случаев, когда в хедерах есть строки с \n и т.д
-    @Override
-    public String request(String url, Map<String, String> headers, Map<String, String> formHeaders, RequestFile file, boolean isMultipart) throws Exception {
-        Log.d("FORPDA_LOG", "request url " + url);
-        if (url.substring(0, 2).equals("//")) {
-            url = "http:".concat(url);
-            Log.d("FORPDA_LOG", "fixed request url " + url);
+    public String request(ForPdaRequest request) throws Exception {
+        Log.d("FORPDA_LOG", "request url " + request.getUrl());
+        String url = request.getUrl();
+        if (request.getUrl().substring(0, 2).equals("//")) {
+            url = "http:".concat(request.getUrl());
+            Log.d("FORPDA_LOG", "fixed request url " + request.getUrl());
         }
 
         Request.Builder requestBuilder = new Request.Builder()
                 .url(url)
                 .header("User-Agent", userAgent);
-        if (headers != null) {
-            for (Map.Entry<String, String> entry : headers.entrySet()) {
+        if (request.getHeaders() != null) {
+            for (Map.Entry<String, String> entry : request.getHeaders().entrySet()) {
                 Log.d("FORPDA_LOG", "HEADER " + entry.getKey() + " : " + entry.getValue());
                 requestBuilder.header(entry.getKey(), entry.getValue());
             }
         }
-        if (formHeaders != null || file != null) {
-            if (!isMultipart) {
-                if (formHeaders != null) {
+        if (request.getFormHeaders() != null || request.getFile() != null) {
+            if (!request.isMultipartForm()) {
+                if (request.getFormHeaders() != null) {
                     //FormBody нужен, т.к не все формы корректно работают с MultipartBody (точнее только авторизация)
                     Log.d("FORPDA_LOG", "FORM BUILDER");
                     FormBody.Builder formBuilder = new FormBody.Builder();
-                    for (Map.Entry<String, String> entry : formHeaders.entrySet()) {
+                    for (Map.Entry<String, String> entry : request.getFormHeaders().entrySet()) {
                         Log.d("FORPDA_LOG", "FORM HEADER " + entry.getKey() + " : " + entry.getValue());
                         //formBuilder.addEncoded(entry.getKey(), entry.getValue());
                         formBuilder.add(entry.getKey(), entry.getValue());
+                        if (request.getEncodedFormHeaders() != null && request.getEncodedFormHeaders().contains(entry.getKey())) {
+                            formBuilder.addEncoded(entry.getKey(), entry.getValue());
+                        } else {
+                            formBuilder.add(entry.getKey(), entry.getValue());
+                        }
                     }
                     requestBuilder.post(formBuilder.build());
                 }
@@ -238,19 +214,19 @@ public class Client implements IWebClient {
                 MultipartBody.Builder multipartBuilder = new MultipartBody.Builder();
                 multipartBuilder.setType(MultipartBody.FORM);
                 Log.d("FORPDA_LOG", "MULTIPART FORM BUILDER");
-                if (formHeaders != null) {
-                    for (Map.Entry<String, String> entry : formHeaders.entrySet()) {
+                if (request.getFormHeaders() != null) {
+                    for (Map.Entry<String, String> entry : request.getFormHeaders().entrySet()) {
                         Log.d("FORPDA_LOG", "FORM HEADER " + entry.getKey() + " : " + entry.getValue());
                         //multipartBuilder.addFormDataPart(entry.getKey(), URLEncoder.encode(entry.getValue(), "UTF-8"));
                         multipartBuilder.addFormDataPart(entry.getKey(), entry.getValue());
                     }
                 }
-                if (file != null) {
-                    Log.e("FORPDA_LOG", "FILE " + file.getRequestName());
-                    Log.e("FORPDA_LOG", "FILE " + file.getFileName());
-                    Log.e("FORPDA_LOG", "FILE " + file.getMimeType());
-                    Log.e("FORPDA_LOG", "FILE " + file.getFileStream());
-                    multipartBuilder.addFormDataPart(file.getRequestName(), URLEncoder.encode(file.getFileName(), "UTF-8"), RequestBodyUtil.create(MediaType.parse(file.getMimeType()), file.getFileStream()));
+                if (request.getFile() != null) {
+                    Log.e("FORPDA_LOG", "FILE " + request.getFile().getRequestName());
+                    Log.e("FORPDA_LOG", "FILE " + request.getFile().getFileName());
+                    Log.e("FORPDA_LOG", "FILE " + request.getFile().getMimeType());
+                    Log.e("FORPDA_LOG", "FILE " + request.getFile().getFileStream());
+                    multipartBuilder.addFormDataPart(request.getFile().getRequestName(), URLEncoder.encode(request.getFile().getFileName(), "UTF-8"), RequestBodyUtil.create(MediaType.parse(request.getFile().getMimeType()), request.getFile().getFileStream()));
                 }
                 MultipartBody multipartBody = multipartBuilder.build();
                 for (MultipartBody.Part part : multipartBody.parts()) {
@@ -265,12 +241,12 @@ public class Client implements IWebClient {
         try {
             response = client.newCall(requestBuilder.build()).execute();
             if (!response.isSuccessful())
-                throw new OkHttpResponseException(response.code(), response.message(), url);
+                throw new OkHttpResponseException(response.code(), response.message(), request.getUrl());
             res = response.body().string();
             getCounts(res);
             checkForumErrors(res);
             //Log.d("FORPDA_LOG", "redirected url " + response.request().url().toString());
-            redirects.put(url, response.request().url().toString());
+            redirects.put(request.getUrl(), response.request().url().toString());
         } finally {
             if (response != null)
                 response.close();

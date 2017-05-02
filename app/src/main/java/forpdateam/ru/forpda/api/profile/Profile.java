@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.api.Utils;
+import forpdateam.ru.forpda.client.ForPdaRequest;
 
 /**
  * Created by radiationx on 03.08.16.
@@ -111,9 +112,10 @@ public class Profile {
     }
 
     public boolean saveNote(String note) throws Exception {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("note", note);
-        String response = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=profile-xhr&action=save-note", headers);
+        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+                .url("http://4pda.ru/forum/index.php?act=profile-xhr&action=save-note")
+                .formHeader("note", note);
+        String response = Api.getWebClient().request(builder.build());
         return response.equals("1");
     }
 

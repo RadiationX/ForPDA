@@ -12,6 +12,7 @@ import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.Utils;
+import forpdateam.ru.forpda.client.ForPdaRequest;
 
 /**
  * Created by radiationx on 22.09.16.
@@ -72,27 +73,25 @@ public class Favorites {
     }
 
     public boolean editPinState(String type, int favId) throws Exception {
-        Map<String, String> formHeaders = new HashMap<>();
-        formHeaders.put("selectedtids", "" + favId);
-        formHeaders.put("tact", type);
-        /*Map<String, String> headers = new HashMap<>();
-        headers.put("Referer", "http://4pda.ru/forum/index.php?act=fav");
-        headers.put("Upgrade-Insecure-Requests", "1");*/
-        String result = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=fav", /*headers,*/ formHeaders);
-        //String result = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=fav&tact="+type+"&selectedtids="+favId, headers);
+        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+                .url("http://4pda.ru/forum/index.php?act=fav")
+                .formHeader("selectedtids", Integer.toString(favId))
+                .formHeader("tact", type);
+        String result = Api.getWebClient().request(builder.build());
         return checkIsComplete(result);
     }
 
     public boolean delete(int favId) throws Exception {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("selectedtids", "" + favId);
-        headers.put("tact", "delete");
-        String result = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0", headers);
+        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+                .url("http://4pda.ru/forum/index.php?act=fav")
+                .formHeader("selectedtids", Integer.toString(favId))
+                .formHeader("tact", "delete");
+        String result = Api.getWebClient().request(builder.build());
         return checkIsComplete(result);
     }
 
     public boolean add(int id, String type) throws Exception {
-        String result = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=fav&type=add&t=" + id + "&track_type=" + type);
+        String result = Api.getWebClient().request(new ForPdaRequest.Builder().url("http://4pda.ru/forum/index.php?act=fav&type=add&t=" + id + "&track_type=" + type).build());
         return checkIsComplete(result);
     }
 
