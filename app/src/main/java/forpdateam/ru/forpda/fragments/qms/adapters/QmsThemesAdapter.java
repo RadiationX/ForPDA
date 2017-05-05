@@ -19,7 +19,7 @@ import forpdateam.ru.forpda.api.qms.interfaces.IQmsTheme;
 public class QmsThemesAdapter extends RecyclerView.Adapter<QmsThemesAdapter.ViewHolder> {
     private List<IQmsTheme> list = new ArrayList<>();
     private OnItemClickListener itemClickListener;
-    private OnLongItemClickListener longItemClickListener;
+    private OnItemClickListener longItemClickListener;
 
     public void addAll(Collection<? extends IQmsTheme> results) {
         addAll(results, true);
@@ -44,11 +44,7 @@ public class QmsThemesAdapter extends RecyclerView.Adapter<QmsThemesAdapter.View
         this.itemClickListener = mItemClickListener;
     }
 
-    public interface OnLongItemClickListener {
-        void onItemClick(IQmsTheme theme);
-    }
-
-    public void setOnLongItemClickListener(final OnLongItemClickListener longItemClickListener) {
+    public void setOnLongItemClickListener(final OnItemClickListener longItemClickListener) {
         this.longItemClickListener = longItemClickListener;
     }
 

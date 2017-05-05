@@ -50,7 +50,7 @@ public class FavoritesFragment extends TabFragment {
                 IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=" + favItem.getTopicId() + "&view=getnewpost", args);
             };
     private AlertDialogMenu<FavoritesFragment, IFavItem> favoriteDialogMenu;
-    private FavoritesAdapter.OnLongItemClickListener onLongItemClickListener =
+    private FavoritesAdapter.OnItemClickListener onLongItemClickListener =
             favItem -> {
                 if (favoriteDialogMenu == null) {
                     favoriteDialogMenu = new AlertDialogMenu<>();
@@ -243,6 +243,12 @@ public class FavoritesFragment extends TabFragment {
             adapter.setShowDot(newShowDot);
             adapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        realm.close();
     }
 
     private void onChangeFav(boolean v) {

@@ -25,7 +25,7 @@ public class TopicsAdapter extends SectionedRecyclerViewAdapter<TopicsAdapter.Vi
     private final static int VIEW_TYPE_ANNOUNCE = 0;
     private List<Pair<String, List<TopicItem>>> sections = new ArrayList<>();
     private TopicsAdapter.OnItemClickListener itemClickListener;
-    private TopicsAdapter.OnLongItemClickListener longItemClickListener;
+    private TopicsAdapter.OnItemClickListener longItemClickListener;
 
     public void addItems(Pair<String, List<TopicItem>> item) {
         sections.add(item);
@@ -37,7 +37,6 @@ public class TopicsAdapter extends SectionedRecyclerViewAdapter<TopicsAdapter.Vi
         sections.clear();
     }
 
-
     public interface OnItemClickListener {
         void onItemClick(TopicItem theme);
     }
@@ -46,11 +45,7 @@ public class TopicsAdapter extends SectionedRecyclerViewAdapter<TopicsAdapter.Vi
         this.itemClickListener = mItemClickListener;
     }
 
-    public interface OnLongItemClickListener {
-        void onItemClick(TopicItem theme);
-    }
-
-    public void setOnLongItemClickListener(final TopicsAdapter.OnLongItemClickListener longItemClickListener) {
+    public void setOnLongItemClickListener(final TopicsAdapter.OnItemClickListener longItemClickListener) {
         this.longItemClickListener = longItemClickListener;
     }
 
@@ -100,7 +95,8 @@ public class TopicsAdapter extends SectionedRecyclerViewAdapter<TopicsAdapter.Vi
 
     @Override
     public int getItemViewType(int section, int relativePosition, int absolutePosition) {
-        if (sections.get(section).second.get(relativePosition).isAnnounce())
+        TopicItem item = sections.get(section).second.get(relativePosition);
+        if (item.isAnnounce()||item.isForum())
             return VIEW_TYPE_ANNOUNCE; // VIEW_TYPE_HEADER is -2, VIEW_TYPE_ITEM is -1. You can return 0 or greater.
         return super.getItemViewType(section, relativePosition, absolutePosition);
     }

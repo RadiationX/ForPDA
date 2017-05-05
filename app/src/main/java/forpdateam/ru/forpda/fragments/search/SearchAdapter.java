@@ -22,7 +22,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     private List<SearchItem> list = new ArrayList<>();
 
     private OnItemClickListener itemClickListener;
-    private OnLongItemClickListener longItemClickListener;
+    private OnItemClickListener longItemClickListener;
 
     public interface OnItemClickListener {
         void onItemClick(SearchItem item);
@@ -47,11 +47,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         this.itemClickListener = mItemClickListener;
     }
 
-    public interface OnLongItemClickListener {
-        void onLongItemClick(SearchItem contact);
-    }
-
-    public void setOnLongItemClickListener(final SearchAdapter.OnLongItemClickListener longItemClickListener) {
+    public void setOnLongItemClickListener(final SearchAdapter.OnItemClickListener longItemClickListener) {
         this.longItemClickListener = longItemClickListener;
     }
 
@@ -78,7 +74,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         @Override
         public boolean onLongClick(View view) {
             if (longItemClickListener != null) {
-                longItemClickListener.onLongItemClick(getItem(getLayoutPosition()));
+                longItemClickListener.onItemClick(getItem(getLayoutPosition()));
                 return true;
             }
             return false;

@@ -57,7 +57,7 @@ public class QmsChatFragment extends TabFragment {
     private QmsChatAdapter.OnItemClickListener onItemClickListener = message -> {
         Toast.makeText(getContext(), "ONCLICK " + message.getId(), Toast.LENGTH_SHORT).show();
     };
-    private QmsChatAdapter.OnLongItemClickListener onLongItemClickListener = message -> {
+    private QmsChatAdapter.OnItemClickListener onLongItemClickListener = message -> {
         Toast.makeText(getContext(), "ON LONG CLICK " + message.getId(), Toast.LENGTH_SHORT).show();
     };
 

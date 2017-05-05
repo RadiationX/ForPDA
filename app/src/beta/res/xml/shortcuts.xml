@@ -2,14 +2,14 @@
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/ic_shortcut_favorites"
-        android:shortcutId="shortcut_favorites"
-        android:shortcutLongLabel="@string/shortcut_favorites"
-        android:shortcutShortLabel="@string/shortcut_favorites">
+        android:icon="@drawable/ic_shortcut_mentions"
+        android:shortcutId="shortcut_mentions"
+        android:shortcutLongLabel="@string/shortcut_mentions"
+        android:shortcutShortLabel="@string/shortcut_mentions">
         <intent
             android:action="android.intent.action.MAIN"
-            android:data="http://4pda.ru/forum/index.php?act=fav"
-            android:launchMode="singleInstance"
+            android:data="http://4pda.ru/forum/index.php?act=mentions"
+            android:launchMode="singleTask"
             android:targetClass="forpdateam.ru.forpda.MainActivity"
             android:targetPackage="ru.forpdateam.forpda.beta" />
     </shortcut>
@@ -30,14 +30,14 @@
 
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/ic_shortcut_mentions"
-        android:shortcutId="shortcut_mentions"
-        android:shortcutLongLabel="@string/shortcut_mentions"
-        android:shortcutShortLabel="@string/shortcut_mentions">
+        android:icon="@drawable/ic_shortcut_favorites"
+        android:shortcutId="shortcut_favorites"
+        android:shortcutLongLabel="@string/shortcut_favorites"
+        android:shortcutShortLabel="@string/shortcut_favorites">
         <intent
             android:action="android.intent.action.MAIN"
-            android:data="http://4pda.ru/forum/index.php?act=mentions"
-            android:launchMode="singleTask"
+            android:data="http://4pda.ru/forum/index.php?act=fav"
+            android:launchMode="singleInstance"
             android:targetClass="forpdateam.ru.forpda.MainActivity"
             android:targetPackage="ru.forpdateam.forpda.beta" />
     </shortcut>

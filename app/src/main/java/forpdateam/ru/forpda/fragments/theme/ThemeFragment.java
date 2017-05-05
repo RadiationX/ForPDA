@@ -122,6 +122,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
             @Override
             public void onSelectedPage(int pageNumber) {
+                Log.e("SUKA", "SELECTED TAB URL " + tab_url);
                 String url = "http://4pda.ru/forum/index.php?showtopic=";
                 url = url.concat(Uri.parse(tab_url).getQueryParameter("showtopic"));
                 if (pageNumber != 0) url = url.concat("&st=").concat(Integer.toString(pageNumber));

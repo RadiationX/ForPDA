@@ -24,7 +24,7 @@ public class QmsContactsAdapter extends RecyclerView.Adapter<QmsContactsAdapter.
     private List<IQmsContact> list = new ArrayList<>();
 
     private OnItemClickListener itemClickListener;
-    private OnLongItemClickListener longItemClickListener;
+    private OnItemClickListener longItemClickListener;
 
     public interface OnItemClickListener {
         void onItemClick(IQmsContact contact);
@@ -49,11 +49,7 @@ public class QmsContactsAdapter extends RecyclerView.Adapter<QmsContactsAdapter.
         this.itemClickListener = mItemClickListener;
     }
 
-    public interface OnLongItemClickListener {
-        void onLongItemClick(IQmsContact contact);
-    }
-
-    public void setOnLongItemClickListener(final OnLongItemClickListener longItemClickListener) {
+    public void setOnLongItemClickListener(final OnItemClickListener longItemClickListener) {
         this.longItemClickListener = longItemClickListener;
     }
 
@@ -81,7 +77,7 @@ public class QmsContactsAdapter extends RecyclerView.Adapter<QmsContactsAdapter.
         @Override
         public boolean onLongClick(View view) {
             if (longItemClickListener != null) {
-                longItemClickListener.onLongItemClick(getItem(getLayoutPosition()));
+                longItemClickListener.onItemClick(getItem(getLayoutPosition()));
                 return true;
             }
             return false;

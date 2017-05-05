@@ -37,7 +37,7 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final static int TYPE_DATE = 0, TYPE_MESSAGE = 1, TYPE_MY_MESSAGE = 2;
     private Context context;
     private QmsChatAdapter.OnItemClickListener itemClickListener;
-    private QmsChatAdapter.OnLongItemClickListener longItemClickListener;
+    private QmsChatAdapter.OnItemClickListener longItemClickListener;
 
     public interface OnItemClickListener {
         void onItemClick(QmsMessage message);
@@ -47,11 +47,7 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.itemClickListener = mItemClickListener;
     }
 
-    public interface OnLongItemClickListener {
-        void onLongItemClick(QmsMessage message);
-    }
-
-    public void setOnLongItemClickListener(final QmsChatAdapter.OnLongItemClickListener longItemClickListener) {
+    public void setOnLongItemClickListener(final QmsChatAdapter.OnItemClickListener longItemClickListener) {
         this.longItemClickListener = longItemClickListener;
     }
 
@@ -79,7 +75,7 @@ public class QmsChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         @Override
         public boolean onLongClick(View view) {
             if (longItemClickListener != null) {
-                longItemClickListener.onLongItemClick(getItem(getLayoutPosition()));
+                longItemClickListener.onItemClick(getItem(getLayoutPosition()));
                 return true;
             }
             return false;
