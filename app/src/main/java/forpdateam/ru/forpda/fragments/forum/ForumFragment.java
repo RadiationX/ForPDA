@@ -236,6 +236,15 @@ public class ForumFragment extends TabFragment {
 
 
     public static boolean checkIsLink(int id) {
-        return Realm.getDefaultInstance().where(ForumItemFlatBd.class).equalTo("parentId", id).findAll().size() == 0;
+        Realm realm = Realm.getDefaultInstance();
+        boolean res = realm.where(ForumItemFlatBd.class).equalTo("parentId", id).findAll().size() == 0;
+        realm.close();
+        return res;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        realm.close();
     }
 }

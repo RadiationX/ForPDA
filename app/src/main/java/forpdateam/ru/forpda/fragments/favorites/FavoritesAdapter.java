@@ -45,7 +45,7 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
     }
 
     private FavoritesAdapter.OnItemClickListener itemClickListener;
-    private FavoritesAdapter.OnLongItemClickListener longItemClickListener;
+    private FavoritesAdapter.OnItemClickListener longItemClickListener;
 
     public interface OnItemClickListener {
         void onItemClick(IFavItem IFavItem);
@@ -55,11 +55,7 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
         this.itemClickListener = mItemClickListener;
     }
 
-    public interface OnLongItemClickListener {
-        void onLongItemClick(IFavItem IFavItem);
-    }
-
-    public void setOnLongItemClickListener(final FavoritesAdapter.OnLongItemClickListener longItemClickListener) {
+    public void setOnLongItemClickListener(final FavoritesAdapter.OnItemClickListener longItemClickListener) {
         this.longItemClickListener = longItemClickListener;
     }
 
@@ -187,7 +183,7 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
             if (longItemClickListener != null) {
                 int position[] = FavoritesAdapter.this.getPosition(getLayoutPosition());
                 if (position[0] != -1) {
-                    longItemClickListener.onLongItemClick(sections.get(position[0]).second.get(position[1]));
+                    longItemClickListener.onItemClick(sections.get(position[0]).second.get(position[1]));
                 }
                 return true;
             }

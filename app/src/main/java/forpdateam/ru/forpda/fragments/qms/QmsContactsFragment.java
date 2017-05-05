@@ -54,7 +54,7 @@ public class QmsContactsFragment extends TabFragment {
                 TabManager.getInstance().add(new TabFragment.Builder<>(QmsThemesFragment.class).setArgs(args).build());
             };
 
-    private QmsContactsAdapter.OnLongItemClickListener onLongItemClickListener = contact -> {
+    private QmsContactsAdapter.OnItemClickListener onLongItemClickListener = contact -> {
         if (contactDialogMenu == null) {
             contactDialogMenu = new AlertDialogMenu<>();
             contactDialogMenu.addItem("В черный список", (context, data) -> {
@@ -202,4 +202,9 @@ public class QmsContactsFragment extends TabFragment {
         loadData();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        realm.close();
+    }
 }

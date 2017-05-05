@@ -154,4 +154,10 @@ public class QmsThemesFragment extends TabFragment {
             adapter.addAll(results.last().getThemes());
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        realm.close();
+    }
 }

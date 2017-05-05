@@ -7,6 +7,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +15,11 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.topcis.models.TopicItem;
 import forpdateam.ru.forpda.api.topcis.models.TopicsData;
+import forpdateam.ru.forpda.bdobjects.forum.ForumItemFlatBd;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.rxapi.RxApi;
@@ -25,6 +28,8 @@ import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.pagination.PaginationHelper;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by radiationx on 01.03.17.
@@ -73,6 +78,10 @@ public class TopicsFragment extends TabFragment {
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener(item -> {
             if (item.isAnnounce()) return;
+            if (item.isForum()) {
+                IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + item.getId());
+                return;
+            }
             Bundle args = new Bundle();
             args.putString(TabFragment.ARG_TITLE, item.getTitle());
             IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=" + item.getId() + "&view=getnewpost", args);
@@ -129,7 +138,9 @@ public class TopicsFragment extends TabFragment {
         this.data = data;
 
         setTitle(data.getTitle());
-        adapter.clear();
+        //adapter.clear();
+        if (data.getForumItems().size() > 0)
+            adapter.addItems(new Pair<>("Разделы", data.getForumItems()));
         if (data.getAnnounceItems().size() > 0)
             adapter.addItems(new Pair<>("Объявления", data.getAnnounceItems()));
         if (data.getPinnedItems().size() > 0)
@@ -139,5 +150,4 @@ public class TopicsFragment extends TabFragment {
         paginationHelper.updatePagination(data.getPagination());
         setSubtitle(paginationHelper.getString());
     }
-
 }

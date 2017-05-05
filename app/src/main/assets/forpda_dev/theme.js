@@ -130,7 +130,7 @@ function blocksOpenClose() {
     for (var i = 0; i < blockTitleAll.length; i++) {
         var bt = blockTitleAll[i];
         var bb = bt.parentElement.querySelector('.block-body');
-        console.log(bb);
+        //console.log(bb);
         if (bb.parentElement.classList.contains('code') && bb.scrollHeight <= bb.offsetHeight) {
             //bb.parentElement.classList.remove('box');
         }

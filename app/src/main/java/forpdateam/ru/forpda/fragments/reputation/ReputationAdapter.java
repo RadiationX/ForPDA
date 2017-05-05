@@ -26,7 +26,7 @@ public class ReputationAdapter extends RecyclerView.Adapter<ReputationAdapter.Vi
     private List<RepItem> list = new ArrayList<>();
 
     private ReputationAdapter.OnItemClickListener itemClickListener;
-    private ReputationAdapter.OnLongItemClickListener longItemClickListener;
+    private ReputationAdapter.OnItemClickListener longItemClickListener;
 
     public interface OnItemClickListener {
         void onItemClick(RepItem contact);
@@ -51,11 +51,7 @@ public class ReputationAdapter extends RecyclerView.Adapter<ReputationAdapter.Vi
         this.itemClickListener = mItemClickListener;
     }
 
-    public interface OnLongItemClickListener {
-        void onLongItemClick(RepItem contact);
-    }
-
-    public void setOnLongItemClickListener(final ReputationAdapter.OnLongItemClickListener longItemClickListener) {
+    public void setOnLongItemClickListener(final ReputationAdapter.OnItemClickListener longItemClickListener) {
         this.longItemClickListener = longItemClickListener;
     }
 
@@ -84,7 +80,7 @@ public class ReputationAdapter extends RecyclerView.Adapter<ReputationAdapter.Vi
         @Override
         public boolean onLongClick(View view) {
             if (longItemClickListener != null) {
-                longItemClickListener.onLongItemClick(getItem(getLayoutPosition()));
+                longItemClickListener.onItemClick(getItem(getLayoutPosition()));
                 return true;
             }
             return false;

@@ -29,7 +29,7 @@ public class MentionsAdapter extends RecyclerView.Adapter<MentionsAdapter.ViewHo
     }
 
     private MentionsAdapter.OnItemClickListener itemClickListener;
-    private MentionsAdapter.OnLongItemClickListener longItemClickListener;
+    private MentionsAdapter.OnItemClickListener longItemClickListener;
 
     public interface OnItemClickListener {
         void onItemClick(MentionItem favItem);
@@ -39,11 +39,7 @@ public class MentionsAdapter extends RecyclerView.Adapter<MentionsAdapter.ViewHo
         this.itemClickListener = mItemClickListener;
     }
 
-    public interface OnLongItemClickListener {
-        void onLongItemClick(MentionItem favItem);
-    }
-
-    public void setOnLongItemClickListener(final MentionsAdapter.OnLongItemClickListener longItemClickListener) {
+    public void setOnLongItemClickListener(final MentionsAdapter.OnItemClickListener longItemClickListener) {
         this.longItemClickListener = longItemClickListener;
     }
 
@@ -98,7 +94,7 @@ public class MentionsAdapter extends RecyclerView.Adapter<MentionsAdapter.ViewHo
         @Override
         public boolean onLongClick(View view) {
             if (longItemClickListener != null) {
-                longItemClickListener.onLongItemClick(getItem(getLayoutPosition()));
+                longItemClickListener.onItemClick(getItem(getLayoutPosition()));
                 return true;
             }
             return false;

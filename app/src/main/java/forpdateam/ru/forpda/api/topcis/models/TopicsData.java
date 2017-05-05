@@ -16,6 +16,7 @@ public class TopicsData {
     private List<TopicItem> topicItems = new ArrayList<>();
     private List<TopicItem> pinnedItems = new ArrayList<>();
     private List<TopicItem> announceItems = new ArrayList<>();
+    private List<TopicItem> forumItems = new ArrayList<>();
     private Pagination pagination = new Pagination();
 
     public boolean canCreateTopic() {
@@ -64,6 +65,14 @@ public class TopicsData {
 
     public void addPinnedItem(TopicItem pinnedItem) {
         this.pinnedItems.add(pinnedItem);
+    }
+
+    public List<TopicItem> getForumItems() {
+        return forumItems;
+    }
+
+    public void addForumItem(TopicItem forumItem) {
+        this.forumItems.add(forumItem);
     }
 
     public Pagination getPagination() {

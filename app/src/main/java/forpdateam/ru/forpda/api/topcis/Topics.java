@@ -17,6 +17,7 @@ public class Topics {
     private final static Pattern titlePattern = Pattern.compile("<div[^>]*?navstrip[^>]*?>[\\s\\S]*?showforum=(\\d+)[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/div>");
     private final static Pattern canNewTopicPattern = Pattern.compile("<a[^>]*?href=\"[^\"]*?do=new_post[^\"]*?\"[^>]*?>");
     private final static Pattern announcePattern = Pattern.compile("<div[^>]*?anonce_body[^>]*?>[\\s\\S]*?<a[^>]*?href=['\"]([^\"']*?)[\"'][^>]*?>([\\s\\S]*?)<\\/a>[^<]*?<\\/div>");
+    private final static Pattern forumPattern = Pattern.compile("<div[^>]*?board_forum_row[^>]*?>[\\s\\S]*?<a[^>]*?showforum=(\\d+)[^>]*?>([\\s\\S]*?)<\\/a>");
     private final static Pattern topicsPattern = Pattern.compile("<div[^>]*?data-topic=\"(\\d+)\"[^>]*?>[^<]*?<div[^>]*?class=\"topic_title\"[^>]*?>[^<]*?<span[^>]*?class=\"modifier\"[^>]*?>(?:[^<]*?<font[^>]*?>)?([^<]*?)(?:<\\/font>)?<\\/span>[^<]*?(\\(!\\))?[^<]*?<a[^>]*?href=\"[^\"]*?\"[^>]*?>([\\s\\S]*?)<\\/a>(?: ?&nbsp;[\\s\\S]*?<\\/div>|<\\/div>)[^<]*?<div[^>]*?class=\"topic_body\"[^>]*?>(?:[^<]*?<span[^>]*?class=\"topic_desc\"[^>]*?>(?!автор)([\\s\\S]*?)<br\\s?\\/>[^<]*?<\\/span>)?[^<]*?<span[^>]*?class=\"topic_desc\"[^>]*?>[^<]*?<a[^>]*?showuser=(\\d+)[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/span>[\\s\\S]*?showuser=(\\d+)[^>]*?>([^<]*?)<\\/a>\\s?([^<]*?)(?:<span[\\s\\S]*?showuser=(\\d+)[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/span>)?<\\/div>[^<]*?<\\/div>");
 
     public TopicsData getTopics(int id, int st) throws Exception {
@@ -74,6 +75,14 @@ public class Topics {
             } else {
                 data.addTopicItem(item);
             }
+        }
+        matcher = forumPattern.matcher(response);
+        while (matcher.find()){
+            TopicItem topicItem = new TopicItem();
+            topicItem.setId(Integer.parseInt(matcher.group(1)));
+            topicItem.setTitle(matcher.group(2));
+            topicItem.setForum(true);
+            data.addForumItem(topicItem);
         }
         data.setPagination(Pagination.parseForum(response));
         return data;
