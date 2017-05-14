@@ -28,7 +28,8 @@ public class Qms {
     private final static Pattern threadPattern = Pattern.compile("<a class=\"list-group-item[^>]*?data-thread-id=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div class=\"bage[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?(?:<strong>)?([^<]*?)\\((\\d+)(?: \\/ (\\d+))?\\)");
     private final static Pattern threadNickPattern = Pattern.compile("<div class=\"nav\">[\\s\\S]*?<b>(?:<a[^>]*?>)?([\\s\\S]*?)(?:<\\/a>)?<\\/b>");
     private final static Pattern chatInfoPattern = Pattern.compile("<div class=\"nav\">[\\s\\S]*?<b>(?:<a[^>]*?>)?([\\s\\S]*?)(?:<\\/a>)?:<\\/b>([\\s\\S]*?)<\\/span>[\\s\\S]*?<input[^>]*?name=\"mid\" value=\"(\\d+)\"[^>]*>[\\s\\S]*?<input[^>]*?name=\"t\" value=\"(\\d+)\"[^>]*>[\\s\\S]*?(?:[\\s\\S]*?list-group-item(?! our-message)[^\"]*?\"[\\s\\S]*?class=\"avatar\"[^>]*?src=\"([^\"]*?)\")?");
-    private final static Pattern chatPattern = Pattern.compile("group-item([^\"]*?)\" data-message-id=\"([^\"]*?)\"[^>]*?data-unread-status=\"([^\"]*?)\">[\\s\\S]*?<\\/b> ([^ <]*?) [\\s\\S]*?src=\"([^\"]*?)\"[\\s\\S]*?(<div[^>]*?msg-content[^>]*?>[\\s\\S]*?<\\/div>)([^<]*?<\\/div>[^<]*?<div (class=\"list|id=\"threa|class=\"date))?|<div class=\"text\">([^<]*?)<\\/div>");
+    private final static Pattern chatPatternOld = Pattern.compile("group-item([^\"]*?)\" data-message-id=\"([^\"]*?)\"[^>]*?data-unread-status=\"([^\"]*?)\">[\\s\\S]*?<\\/b> ([^ <]*?) [\\s\\S]*?src=\"([^\"]*?)\"[\\s\\S]*?<div[^>]*?msg-content[^>]*?>([\\s\\S]*?)<\\/div>([^<]*?<\\/div>[^<]*?<div (class=\"list|id=\"threa|class=\"date))?|<div class=\"text\">([^<]*?)<\\/div>");
+    private final static Pattern chatPattern = Pattern.compile("group-item([^\"]*?)\" data-message-id=\"([^\"]*?)\"[^>]*?data-unread-status=\"([^\"]*?)\">[\\s\\S]*?<\\/b> ([^ <]*?) [\\s\\S]*?src=\"([^\"]*?)\"[\\s\\S]*?<div[^>]*?msg-content[^>]*?>([\\s\\S]*?)<\\/div>\\n[^<]*?<\\/div>[^<]*?<div (?:class=\"(?=date|list-group-item)|id=\"thread-inside-bottom)|<div class=\"text\">([^<]*?)<\\/div>");
 
     private final static Pattern blackListPattern = Pattern.compile("<a class=\"list-group-item[^>]*?showuser=(\\d+)[^>]*?>[\\s\\S]*?<img class=\"avatar\" src=\"([^\"]*?)\" title=\"([\\s\\S]*?)\" alt[^>]*?>");
     private final static Pattern blackListMsgPattern = Pattern.compile("<div class=\"list-group-item msgbox ([^\"]*?)\"[^>]*?>[^<]*?<a[^>]*?>[^<]*?<\\/a>([\\s\\S]*?)<\\/div>");
@@ -146,9 +147,9 @@ public class Qms {
         QmsMessage item;
         while (matcher.find()) {
             item = new QmsMessage();
-            if (matcher.group(1) == null && matcher.group(9) != null) {
+            if (matcher.group(1) == null && matcher.group(7) != null) {
                 item.setIsDate(true);
-                item.setDate(matcher.group(9).trim());
+                item.setDate(matcher.group(7).trim());
             } else {
                 item.setMyMessage(!matcher.group(1).isEmpty());
                 item.setId(Integer.parseInt(matcher.group(2)));
@@ -201,9 +202,9 @@ public class Qms {
         Matcher matcher = chatPattern.matcher(response);
         QmsMessage item = new QmsMessage();
         if (matcher.find()) {
-            if (matcher.group(1) == null && matcher.group(9) != null) {
+            if (matcher.group(1) == null && matcher.group(7) != null) {
                 item.setIsDate(true);
-                item.setDate(matcher.group(9).trim());
+                item.setDate(matcher.group(7).trim());
             } else {
                 item.setMyMessage(!matcher.group(1).isEmpty());
                 item.setId(Integer.parseInt(matcher.group(2)));

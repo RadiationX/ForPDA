@@ -1,19 +1,23 @@
 package forpdateam.ru.forpda.fragments.qms;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.webkit.JavascriptInterface;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -22,6 +26,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.util.ArrayList;
 import java.util.List;
 
+import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.RequestFile;
@@ -31,9 +36,11 @@ import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsChatAdapter;
 import forpdateam.ru.forpda.rxapi.RxApi;
+import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.SimpleTextWatcher;
+import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.views.messagepanel.attachments.AttachmentsPopup;
@@ -42,6 +49,7 @@ import forpdateam.ru.forpda.views.messagepanel.attachments.AttachmentsPopup;
  * Created by radiationx on 25.08.16.
  */
 public class QmsChatFragment extends TabFragment {
+    private final static String JS_INTERFACE = "IChat";
     public final static String USER_ID_ARG = "USER_ID_ARG";
     public final static String USER_NICK_ARG = "USER_NICK_ARG";
     public final static String USER_AVATAR_ARG = "USER_AVATAR_ARG";
@@ -50,7 +58,9 @@ public class QmsChatFragment extends TabFragment {
 
     private int userId = -1, themeId = -1;
     private String avatarUrl, userNick, themeTitle;
-    private RecyclerView recyclerView;
+    private ExtendedWebView webView;
+    private SwipeRefreshLayout refreshLayout;
+    //private RecyclerView recyclerView;
     private MessagePanel messagePanel;
     private AttachmentsPopup attachmentsPopup;
 
@@ -84,19 +94,39 @@ public class QmsChatFragment extends TabFragment {
     private AppCompatAutoCompleteTextView nickField;
     private AppCompatEditText titleField;
 
+    @SuppressLint({"SetJavaScriptEnabled", "JavascriptInterface"})
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         baseInflateFragment(inflater, R.layout.fragment_qms_chat);
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
         viewStub = (ViewStub) findViewById(R.id.toolbar_content);
         viewStub.setLayoutResource(R.layout.toolbar_qms_new_theme);
         viewStub.inflate();
         nickField = (AppCompatAutoCompleteTextView) findViewById(R.id.qms_theme_nick_field);
         titleField = (AppCompatEditText) findViewById(R.id.qms_theme_title_field);
-        recyclerView = (RecyclerView) findViewById(R.id.qms_chat);
+        //recyclerView = (RecyclerView) findViewById(R.id.qms_chat);
         messagePanel = new MessagePanel(getContext(), fragmentContainer, coordinatorLayout, false);
-        messagePanel.setHeightChangeListener(newHeight -> recyclerView.setPadding(0, 0, 0, newHeight));
+        messagePanel.setHeightChangeListener(newHeight -> webView.evalJs("setPaddingBottom(" + (newHeight / getResources().getDisplayMetrics().density) + ");"));
+        if (getMainActivity().getWebViews().size() > 0) {
+            webView = getMainActivity().getWebViews().element();
+            getMainActivity().getWebViews().remove();
+        } else {
+            webView = new ExtendedWebView(getContext());
+            webView.setTag("WebView_tag ".concat(Long.toString(System.currentTimeMillis())));
+        }
+        /*webView.setClipToPadding(false);
+        webView.setPadding(0, 0, 0, App.px64);*/
+        webView.loadUrl("about:blank");
+        refreshLayout.addView(webView);
+        refreshLayout.setOnRefreshListener(() -> refreshLayout.setRefreshing(false));
+        webView.addJavascriptInterface(this, JS_INTERFACE);
+        //webView.addJavascriptInterface(this, JS_POSTS_FUNCTIONS);
+        webView.getSettings().setJavaScriptEnabled(true);
+        registerForContextMenu(webView);
+
+        //messagePanel.setHeightChangeListener(newHeight -> recyclerView.setPadding(0, 0, 0, newHeight));
         attachmentsPopup = messagePanel.getAttachmentsPopup();
         attachmentsPopup.setAddOnClickListener(v -> pickImage());
         attachmentsPopup.setDeleteOnClickListener(v -> {
@@ -120,10 +150,10 @@ public class QmsChatFragment extends TabFragment {
 
         viewsReady();
         tryShowAvatar();
-        recyclerView.setHasFixedSize(true);
+        //recyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(llm);
+        //recyclerView.setLayoutManager(llm);
 
         if (userNick != null) {
             setSubtitle(userNick);
@@ -204,7 +234,7 @@ public class QmsChatFragment extends TabFragment {
         messageSubscriber.subscribe(RxApi.Qms().sendMessage(userId, themeId, messagePanel.getMessage()), qmsMessage -> {
             messagePanel.setProgressState(false);
             if (qmsMessage.getContent() != null) {
-                adapter.addMessage(qmsMessage);
+                //adapter.addMessage(qmsMessage);
                 messagePanel.clearMessage();
                 messagePanel.clearAttachments();
             }
@@ -278,30 +308,17 @@ public class QmsChatFragment extends TabFragment {
         }
     }
 
-    private QmsChatAdapter adapter;
+    QmsChatModel currentChat;
 
     private void onLoadChat(QmsChatModel chat) {
         themeId = chat.getThemeId();
         themeTitle = chat.getTitle();
         userId = chat.getUserId();
         userNick = chat.getNick();
-        adapter = new QmsChatAdapter(chat.getChatItemsList(), getContext());
-        adapter.setOnItemClickListener(onItemClickListener);
-        adapter.setOnLongItemClickListener(onLongItemClickListener);
-        recyclerView.setAdapter(adapter);
-        if (chat.getTitle().contains(chat.getNick())) {
-            setTabTitle("Диалог: ".concat(chat.getTitle()));
-        } else {
-            setTabTitle("Диалог c ".concat(chat.getNick()).concat(": ").concat(chat.getTitle()));
-        }
-        setTitle(chat.getTitle());
-        setSubtitle(chat.getNick());
-        if (avatarUrl == null) {
-            avatarUrl = chat.getAvatarUrl();
-            tryShowAvatar();
-            //TabManager.getInstance().remove(getParentTag());
-        }
-        recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+
+        currentChat = chat;
+        webView.loadDataWithBaseURL("http://4pda.ru/forum/", chat.getHtml(), "text/html", "utf-8", null);
+
     }
 
     private Subscriber<List<AttachmentItem>> attachmentSubscriber = new Subscriber<>(this);
@@ -327,5 +344,39 @@ public class QmsChatFragment extends TabFragment {
 
     public void pickImage() {
         startActivityForResult(FilePickHelper.pickImage(PICK_IMAGE), PICK_IMAGE);
+    }
+
+    @JavascriptInterface
+    public void showMorePosts() {
+        run(new Runnable() {
+            @Override
+            public void run() {
+                MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
+                String posts = "";
+                int size = currentChat.getChatItemsList().size();
+                int lastIndex = currentChat.getChatItemsList().lastIndexOf(currentChat.getLastShowedMess());
+                Log.e("SUKA", "LAST INDEX SUKA "+lastIndex);
+                currentChat.setLastShowedMess(currentChat.getChatItemsList().get(Math.max(lastIndex - 20, 0)));
+                for (int i = Math.max(lastIndex - 20, 0); i < lastIndex; i++) {
+                    QmsMessage mess = currentChat.getChatItemsList().get(i);
+                    if (mess.isDate()) continue;
+                    t.setVariableOpt("from_class", mess.isMyMessage() ? "our" : "his");
+                    t.setVariableOpt("mess_id", mess.getId());
+                    t.setVariableOpt("content", mess.getContent());
+                    t.setVariableOpt("date", mess.getDate());
+
+                    t.addBlockOpt("mess");
+                }
+                posts = t.generateOutput();
+                posts = posts.replaceAll("\n","");
+                Log.e("SUKA", "POSTS "+posts);
+                t.reset();
+                webView.evalJs("showMorePosts('"+posts+"')");
+            }
+        });
+    }
+
+    public void run(final Runnable runnable) {
+        getMainActivity().runOnUiThread(runnable);
     }
 }
