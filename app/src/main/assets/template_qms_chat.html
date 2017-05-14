@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+    <title>${chat_title}</title>
+    <script type="text/javascript">
+        var PageInfo = {
+            chat_title: "${chat_title}",
+            chatId: "${chatId}",
+            userId: "${userId}",
+            nick: "${nick}",
+            avatarUrl: "${avatarUrl}"
+        }
+
+        function setPaddingBottom(newPadding) {
+            document.getElementById("padding_for_message_panel").style.paddingBottom = Number(newPadding) + "px";
+        }
+    </script>
+    <!--<script type="text/javascript" src="file:///android_asset/forpda_dev/theme.js"></script>-->
+    <link rel="stylesheet" type="text/css" href="file:///android_asset/forpda_dev/fonts/roboto/import_mono.css">
+    <!--<link rel="stylesheet" type="text/css" href="file:///android_asset/forpda_dev/styles/4pda_light_blue.css">-->
+    <link rel="stylesheet" type="text/css" href="file:///android_asset/experiments/qms/styles/main.css">
+    <script type="text/javascript" src="file:///android_asset/experiments/qms/scripts/main.js"></script>
+    <script type="text/javascript" src="file:///android_asset/z_emoticons.js"></script>
+</head>
+
+<body id="${body_type}">
+    <div class="wrapper">
+        <div class="show_more" onclick="IChat.showMorePosts();">show more</div>
+        <div class="mess_list">
+            <!-- $BeginBlock mess -->
+            <div class="mess_container ${from_class}" data-mess-id="${mess_id}">
+                <div class="mess">
+                    <div class="content">${content}</div>
+                </div>
+                <div class="date"><span>${date}</span></div>
+            </div>
+            <!-- $EndBlock mess -->
+        </div>
+    </div>
+
+    <div id="padding_for_message_panel" style="padding-bottom: 4em;"></div>
+    <script type="text/javascript">
+        jsEmoticons.parseAll("file:///android_asset/smiles/")
+    </script>
+</body>
+</html>
