@@ -9,9 +9,8 @@ import java.util.List;
 
 public class QmsChatModel {
     private List<QmsMessage> chatItemsList = new ArrayList<>();
-    private int themeId, userId;
+    private int themeId, userId, showedMessIndex;
     private String title, nick, avatarUrl, html;
-    private QmsMessage lastShowedMess;
 
     public void addChatItem(QmsMessage item) {
         chatItemsList.add(item);
@@ -69,11 +68,11 @@ public class QmsChatModel {
         this.html = html;
     }
 
-    public QmsMessage getLastShowedMess() {
-        return lastShowedMess;
+    public int getShowedMessIndex() {
+        return showedMessIndex;
     }
 
-    public void setLastShowedMess(QmsMessage lastShowedMess) {
-        this.lastShowedMess = lastShowedMess;
+    public void setShowedMessIndex(int showedMessIndex) {
+        this.showedMessIndex = showedMessIndex;
     }
 }

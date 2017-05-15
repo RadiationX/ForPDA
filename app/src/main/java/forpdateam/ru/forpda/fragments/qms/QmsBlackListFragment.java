@@ -16,6 +16,7 @@ import android.view.ViewStub;
 import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
@@ -41,7 +42,7 @@ public class QmsBlackListFragment extends TabFragment {
     private Subscriber<ArrayList<QmsContact>> mainSubscriber = new Subscriber<>(this);
     private AlertDialogMenu<QmsBlackListFragment, IQmsContact> contactDialogMenu;
     private ArrayList<QmsContact> currentData;
-    private Subscriber<String[]> searchUserSubscriber = new Subscriber<>(this);
+    private Subscriber<List<String>> searchUserSubscriber = new Subscriber<>(this);
 
     public QmsBlackListFragment() {
         configuration.setDefaultTitle("Изгои мира сего");
@@ -135,10 +136,10 @@ public class QmsBlackListFragment extends TabFragment {
     }
 
     private void searchUser(String nick) {
-        searchUserSubscriber.subscribe(RxApi.Qms().findUser(nick), this::onShowSearchRes, new String[]{});
+        searchUserSubscriber.subscribe(RxApi.Qms().findUser(nick), this::onShowSearchRes, new ArrayList<>());
     }
 
-    private void onShowSearchRes(String[] res) {
+    private void onShowSearchRes(List<String>  res) {
         nickField.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, res));
     }
 
