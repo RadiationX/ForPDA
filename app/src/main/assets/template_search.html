@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>${topic_title}</title>
-   <!-- <script type="text/javascript">
+    <!-- <script type="text/javascript">
         var PageInfo = {
             url: "${topic_url}",
             title: "${topic_title}",
@@ -24,43 +24,42 @@
         }
 
     </script>-->
-    <script type="text/javascript" src="file:///android_asset/forpda_dev/theme.js"></script>
-    <link rel="stylesheet" type="text/css"
-          href="file:///android_asset/forpda_dev/fonts/roboto/import_mono.css">
-    <link rel="stylesheet" type="text/css"
-          href="file:///android_asset/forpda_dev/styles/4pda_light_blue.css">
-    <script type="text/javascript" src="file:///android_asset/z_emoticons.js"></script>
+    <script type="text/javascript" src="file:///android_asset/forpda/scripts/main.js"></script>
+   <!-- <script type="text/javascript" src="file:///android_asset/forpda/scripts/modules/theme.js"></script>-->
+    <link rel="stylesheet" type="text/css" href="file:///android_asset/fonts/roboto/import_mono.css">
+    <link rel="stylesheet" type="text/css" href="file:///android_asset/forpda/styles/light/light_main.css">
+    <link rel="stylesheet" type="text/css" href="file:///android_asset/forpda/styles/light/light_themes.css">
+    <script type="text/javascript" src="file:///android_asset/forpda/scripts/z_emoticons.js"></script>
 </head>
+
 <body id="${body_type}">
-<div class="posts_list">
-    <!-- $BeginBlock post -->
-    <div name="entry${post_id}"
-         class="post_container ${user_online} ${disable_avatar} ${avatar_type} ${hat_state_class}"
-         data-post-id="${post_id}" data-user-id="${user_id}" data-nick="${nick}">
-        <div class="post_title"><a href="http://4pda.ru/forum/index.php?showtopic=${topic_id}&view=findpost&p=${post_id}">${post_title}</a></div>
-        <div class="post_header">
-            <div class="header_wrapper">
-                <div class="avatar ${none_avatar}">
-                    <b class="letter">${nick_letter}</b>
-                    <div class="img" style="background-image:url(${avatar});"
-                         onclick="IPostFunctions.showUserMenu('${post_id}')"></div>
-                    <div class="reputation" onclick="IPostFunctions.showReputationMenu('${post_id}')"><span>${reputation}</span>
+    <div class="posts_list">
+        <!-- $BeginBlock post -->
+        <div name="entry${post_id}" class="post_container ${user_online} ${disable_avatar} ${avatar_type} ${hat_state_class}" data-post-id="${post_id}" data-user-id="${user_id}" data-nick="${nick}">
+            <div class="post_title"><a href="http://4pda.ru/forum/index.php?showtopic=${topic_id}&view=findpost&p=${post_id}">${post_title}</a></div>
+            <div class="post_header">
+                <div class="header_wrapper">
+                    <div class="avatar ${none_avatar}">
+                        <b class="letter">${nick_letter}</b>
+                        <div class="img" style="background-image:url(${avatar});" onclick="IPostFunctions.showUserMenu('${post_id}')"></div>
+                        <div class="reputation" onclick="IPostFunctions.showReputationMenu('${post_id}')"><span>${reputation}</span>
+                        </div>
                     </div>
-                </div>
-                <span class="inf nick">
+                    <span class="inf nick">
                         <span onclick="IPostFunctions.showUserMenu('${post_id}')"><b>${nick}</b></span>
-                        <span class="group" style="color:${group_color};"
-                              onclick="ISearch.toast('Группа: ${group}')"><span>${group}</span></span></span>
-                <span class="inf date"><span>${date}</span></span>
-                <a class="btn inf menu"
-                   onclick="IPostFunctions.showPostMenu('${post_id}')"><span>Меню</span></a>
+                    <span class="group" style="color:${group_color};" onclick="ISearch.toast('Группа: ${group}')"><span>${group}</span></span>
+                    </span>
+                    <span class="inf date"><span>${date}</span></span>
+                    <a class="btn inf menu" onclick="IPostFunctions.showPostMenu('${post_id}')"><span>Меню</span></a>
+                </div>
             </div>
+            <div class="post_body emoticons">${body}</div>
         </div>
-        <div class="post_body emoticons">${body}</div>
+        <!-- $EndBlock post -->
     </div>
-    <!-- $EndBlock post -->
-</div>
-<!--<div id="padding_for_message_panel" style="padding-bottom: 4em;"></div>-->
-<script type="text/javascript">jsEmoticons.parseAll("file:///android_asset/smiles/")</script>
+    <!--<div id="padding_for_message_panel" style="padding-bottom: 4em;"></div>-->
+    <script type="text/javascript">
+        jsEmoticons.parseAll("file:///android_asset/smiles/")
+    </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <title>${chat_title}</title>
     <script type="text/javascript">
-        var PageInfo = {
+        var ChatInfo = {
             chat_title: "${chat_title}",
             chatId: "${chatId}",
             userId: "${userId}",
@@ -15,12 +15,12 @@
             document.getElementById("padding_for_message_panel").style.paddingBottom = Number(newPadding) + "px";
         }
     </script>
-    <!--<script type="text/javascript" src="file:///android_asset/forpda_dev/theme.js"></script>-->
-    <link rel="stylesheet" type="text/css" href="file:///android_asset/forpda_dev/fonts/roboto/import_mono.css">
-    <!--<link rel="stylesheet" type="text/css" href="file:///android_asset/forpda_dev/styles/4pda_light_blue.css">-->
-    <link rel="stylesheet" type="text/css" href="file:///android_asset/experiments/qms/styles/main.css">
-    <script type="text/javascript" src="file:///android_asset/experiments/qms/scripts/main.js"></script>
-    <script type="text/javascript" src="file:///android_asset/z_emoticons.js"></script>
+    <script type="text/javascript" src="file:///android_asset/forpda/scripts/main.js"></script>
+    <script type="text/javascript" src="file:///android_asset/forpda/scripts/modules/qms.js"></script>
+    <link rel="stylesheet" type="text/css" href="file:///android_asset/fonts/roboto/import_mono.css">
+    <link rel="stylesheet" type="text/css" href="file:///android_asset/forpda/styles/light/light_main.css">
+    <link rel="stylesheet" type="text/css" href="file:///android_asset/forpda/styles/light/light_qms.css">
+    <script type="text/javascript" src="file:///android_asset/forpda/scripts/z_emoticons.js"></script>
 </head>
 
 <body id="${body_type}">
