@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.rxapi.apiclasses;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 
@@ -26,36 +27,9 @@ import io.reactivex.Observable;
  */
 
 public class QmsRx {
-    public Observable<ArrayList<QmsContact>> getContactList() {
-        return Observable.fromCallable(() -> Api.Qms().getContactList());
-    }
-
-    public Observable<QmsThemes> getThemesList(final int id) {
-        return Observable.fromCallable(() -> Api.Qms().getThemesList(id));
-    }
-
-    public Observable<QmsChatModel> getChat(final int userId, final int themeId) {
-        return Observable.fromCallable(() -> transform(Api.Qms().getChat(userId, themeId), true));
-    }
-
-    public Observable<String[]> findUser(final String nick) {
+    //Common
+    public Observable<List<String> > findUser(final String nick) {
         return Observable.fromCallable(() -> Api.Qms().findUser(nick));
-    }
-
-    public Observable<QmsChatModel> sendNewTheme(String nick, String title, String mess) {
-        return Observable.fromCallable(() -> Api.Qms().sendNewTheme(nick, title, mess));
-    }
-
-    public Observable<QmsMessage> sendMessage(int userId, int themeID, String text) {
-        return Observable.fromCallable(() -> Api.Qms().sendMessage(userId, themeID, text));
-    }
-
-    public Observable<String> deleteDialog(int mid) {
-        return Observable.fromCallable(() -> Api.Qms().deleteDialog(mid));
-    }
-
-    public Observable<ArrayList<QmsContact>> getBlackList() {
-        return Observable.fromCallable(() -> Api.Qms().getBlackList());
     }
 
     public Observable<ArrayList<QmsContact>> blockUser(String nick) {
@@ -66,13 +40,44 @@ public class QmsRx {
         return Observable.fromCallable(() -> Api.Qms().unBlockUsers(userIds));
     }
 
+    //Contacts
+    public Observable<ArrayList<QmsContact>> getContactList() {
+        return Observable.fromCallable(() -> Api.Qms().getContactList());
+    }
+
+    public Observable<ArrayList<QmsContact>> getBlackList() {
+        return Observable.fromCallable(() -> Api.Qms().getBlackList());
+    }
+
+
+    //Themes
+    public Observable<QmsThemes> getThemesList(final int id) {
+        return Observable.fromCallable(() -> Api.Qms().getThemesList(id));
+    }
+
+    public Observable<String> deleteDialog(int mid) {
+        return Observable.fromCallable(() -> Api.Qms().deleteDialog(mid));
+    }
+
+    //Chat
+    public Observable<QmsChatModel> getChat(final int userId, final int themeId) {
+        return Observable.fromCallable(() -> transform(Api.Qms().getChat(userId, themeId), true));
+    }
+
+    public Observable<QmsChatModel> sendNewTheme(String nick, String title, String mess) {
+        return Observable.fromCallable(() -> transform(Api.Qms().sendNewTheme(nick, title, mess), true));
+    }
+
+    public Observable<QmsMessage> sendMessage(int userId, int themeID, String text) {
+        return Observable.fromCallable(() -> Api.Qms().sendMessage(userId, themeID, text));
+    }
+
     public Observable<List<AttachmentItem>> uploadFiles(List<RequestFile> files) {
         return Observable.fromCallable(() -> Api.Qms().uploadFiles(files));
     }
 
     public static QmsChatModel transform(QmsChatModel chatModel, boolean withHtml) throws Exception {
         if (withHtml) {
-            long time = System.currentTimeMillis();
             MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT);
 
             t.setVariableOpt("chat_title", Utils.htmlEncode(chatModel.getTitle()));
@@ -81,27 +86,38 @@ public class QmsRx {
             t.setVariableOpt("nick", chatModel.getNick());
             t.setVariableOpt("avatarUrl", chatModel.getAvatarUrl());
 
-
-            Log.d("FORPDA_LOG", "template check 2 " + (System.currentTimeMillis() - time));
-            int size = chatModel.getChatItemsList().size();
-            chatModel.setLastShowedMess(chatModel.getChatItemsList().get(Math.max(size - 20, 0)));
-            for (int i = Math.max(size - 20, 0); i < size; i++) {
-                QmsMessage mess = chatModel.getChatItemsList().get(i);
-                if (mess.isDate()) continue;
-                t.setVariableOpt("from_class", mess.isMyMessage() ? "our" : "his");
-                t.setVariableOpt("mess_id", mess.getId());
-                t.setVariableOpt("content", mess.getContent());
-                t.setVariableOpt("date", mess.getDate());
-
-                t.addBlockOpt("mess");
-            }
-
-            Log.d("FORPDA_LOG", "template check 3 " + (System.currentTimeMillis() - time));
+            int endIndex = chatModel.getChatItemsList().size();
+            int startIndex = Math.max(endIndex - 30, 0);
+            chatModel.setShowedMessIndex(startIndex);
+            MiniTemplator messTemp = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
+            generateMess(messTemp, chatModel.getChatItemsList(), startIndex, endIndex);
+            t.setVariableOpt("messages", messTemp.generateOutput());
+            messTemp.reset();
             chatModel.setHtml(t.generateOutput());
-            Log.d("FORPDA_LOG", "template check 4 " + (System.currentTimeMillis() - time));
             t.reset();
-            Log.d("FORPDA_LOG", "template check 5 " + (System.currentTimeMillis() - time));
         }
         return chatModel;
+    }
+
+    public static MiniTemplator generateMess(MiniTemplator t, List<QmsMessage> messages) {
+        return generateMess(t, messages, 0, messages.size());
+    }
+
+    public static MiniTemplator generateMess(MiniTemplator t, List<QmsMessage> messages, int start, int end) {
+        for (int i = start; i < end; i++) {
+            QmsMessage mess = messages.get(i);
+            if (mess.isDate()) continue;
+            generateMess(t, mess);
+        }
+        return t;
+    }
+
+    public static MiniTemplator generateMess(MiniTemplator t, QmsMessage mess) {
+        t.setVariableOpt("from_class", mess.isMyMessage() ? "our" : "his");
+        t.setVariableOpt("mess_id", mess.getId());
+        t.setVariableOpt("content", mess.getContent());
+        t.setVariableOpt("time", mess.getTime());
+        t.addBlockOpt("mess");
+        return t;
     }
 }
