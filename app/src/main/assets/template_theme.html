@@ -7,97 +7,120 @@
             url: "${topic_url}",
             title: "${topic_title}",
             description: "${topic_description}",
-            inFavorite: ${in_favorite},
+            inFavorite: "${in_favorite}",
             elemToScroll: "${elem_to_scroll}",
             bodyType: "${body_type}",
             disableAvatar: "${disable_avatar_js}",
             avatarType: "${avatar_type}",
-            allPagesCount: ${all_pages},
-            postsOnPageCount: ${posts_on_page},
-            currentPage: ${current_page},
-            authorized: ${authorized},
-            isCurator: ${is_curator},
-            memberId: ${member_id}
+            allPagesCount: "${all_pages}",
+            postsOnPageCount: "${posts_on_page}",
+            currentPage: "${current_page}",
+            authorized: "${authorized}",
+            isCurator: "${is_curator}",
+            memberId: "${member_id}"
         }
-        function setPaddingBottom(newPadding){
-            document.getElementById("padding_for_message_panel").style.paddingBottom = Number(newPadding)+"px";
+
+        function setPaddingBottom(newPadding) {
+            document.getElementById("padding_for_message_panel").style.paddingBottom = Number(newPadding) + "px";
         }
     </script>
-    <script type="text/javascript" src="file:///android_asset/forpda_dev/theme.js"></script>
-    <link rel="stylesheet" type="text/css" href="file:///android_asset/forpda_dev/fonts/roboto/import_mono.css">
-    <link rel="stylesheet" type="text/css" href="file:///android_asset/forpda_dev/styles/4pda_light_blue.css">
-    <script type="text/javascript" src="file:///android_asset/z_emoticons.js"></script>
+    <script type="text/javascript" src="file:///android_asset/forpda/scripts/main.js"></script>
+    <script type="text/javascript" src="file:///android_asset/forpda/scripts/modules/theme.js"></script>
+    <link rel="stylesheet" type="text/css" href="file:///android_asset/fonts/roboto/import_mono.css">
+    <link rel="stylesheet" type="text/css" href="file:///android_asset/forpda/styles/light/light_main.css">
+    <link rel="stylesheet" type="text/css" href="file:///android_asset/forpda/styles/light/light_themes.css">
+    <script type="text/javascript" src="file:///android_asset/forpda/scripts/z_emoticons.js"></script>
 </head>
+
 <body id="${body_type}">
-<!-- $BeginBlock poll_block -->
-<div class="poll ${poll_type} ${poll_state_class}">
-    <a class="btn title" onclick="toggleButton(this, 'body')"><span>${poll_title}</span><i class="icon"></i></a>
-    <form action="index.php" method="get" class="body" ${poll_body_state}>
-        <div class="questions">
-            <!-- $BeginBlock poll_question_block -->
-            <div class="question">
-                <div class="title">${question_title}</div>
-                <div class="items">
-                    <!-- $BeginBlock poll_default_item -->
-                    <label class="item ${poll_type}"><input type="${question_item_type}" name="${question_item_name}" value="${question_item_value}"><i class="icon"><i class="add"></i></i><span class="title"><span>${question_item_title}</span></span></label>
-                    <!-- $EndBlock poll_default_item -->
-                    <!-- $BeginBlock poll_result_item -->
-                    <div class="item ${poll_type}">
-                        <div class="range_bar">
-                            <div class="range" style="min-width:${question_item_percent}%;"></div>
-                            <span class="value">${question_item_percent}%<span class="num_votes"><span>${question_item_votes}</span></span></span>
-                            <span class="title"><span>${question_item_title}</span></span>
+    <!-- $BeginBlock poll_block -->
+    <div class="poll ${poll_type} ${poll_state_class}">
+        <a class="btn title" onclick="toggleButton(this, 'body')"><span>${poll_title}</span><i class="icon"></i></a>
+        <form action="index.php" method="get" class="body" ${poll_body_state}>
+            <div class="questions">
+                <!-- $BeginBlock poll_question_block -->
+                <div class="question">
+                    <div class="title">${question_title}</div>
+                    <div class="items">
+                        <!-- $BeginBlock poll_default_item -->
+                        <label class="item ${poll_type}"><input type="${question_item_type}" name="${question_item_name}" value="${question_item_value}"><i class="icon"><i class="add"></i></i><span class="title"><span>${question_item_title}</span></span></label>
+                        <!-- $EndBlock poll_default_item -->
+                        <!-- $BeginBlock poll_result_item -->
+                        <div class="item ${poll_type}">
+                            <div class="range_bar">
+                                <div class="range" style="min-width:${question_item_percent}%;"></div>
+                                <span class="value">${question_item_percent}%<span class="num_votes"><span>${question_item_votes}</span></span>
+                                </span>
+                                <span class="title"><span>${question_item_title}</span></span>
+                            </div>
                         </div>
+                        <!-- $EndBlock poll_result_item -->
                     </div>
-                    <!-- $EndBlock poll_result_item -->
                 </div>
+                <!-- $EndBlock poll_question_block -->
             </div>
-            <!-- $EndBlock poll_question_block -->
-        </div>
-        <div class="votes_info"><span>Всего голосов: ${poll_votes_count}</span></div>
-        <!-- $BeginBlock poll_buttons -->
-        <div class="buttons">
-            <!-- $BeginBlock poll_vote_button --><button type="submit" class="btn vote"><span>Голосовать</span></button><!-- $EndBlock poll_vote_button -->
-            <!-- $BeginBlock poll_show_results_button --><a class="btn show_results" onclick="ITheme.showPollResults()"><span>Результаты</span></a><!-- $EndBlock poll_show_results_button -->
-            <!-- $BeginBlock poll_show_poll_button --><a class="btn show_poll" onclick="ITheme.showPoll()"><span>Пункты опроса</span></a><!-- $EndBlock poll_show_poll_button -->
-        </div>
-        <!-- $EndBlock poll_buttons -->
-        <input type="hidden" name="addpoll" value="1">
-    </form>
-</div>
-<!-- $EndBlock poll_block -->
-<div class="posts_list">
-    <!-- $BeginBlock post -->
-    <div name="entry${post_id}" class="post_container ${user_online} ${disable_avatar} ${avatar_type} ${hat_state_class}"
-         data-post-id="${post_id}" data-user-id="${user_id}" data-nick="${nick}">
-        <!-- $BeginBlock hat_button --><a class="btn hat_button" onclick="toggleButton(this, 'hat_content')"><span>Шапка темы</span><i class="icon"></i></a><!-- $EndBlock hat_button -->
-        <!-- $BeginBlock hat_content_start --><div class="hat_content" ${hat_body_state}><!-- $EndBlock hat_content_start --><div class="post_header">
-            <div class="header_wrapper">
-                <div class="avatar ${none_avatar}">
-                    <b class="letter">${nick_letter}</b>
-                    <div class="img" style="background-image:url(${avatar});" onclick="IPostFunctions.showUserMenu('${post_id}')"></div>
-                    <div class="reputation" onclick="IPostFunctions.showReputationMenu('${post_id}')"><span>${reputation}</span></div>
-                </div>
-                <span class="inf nick">
-                    <span onclick="IPostFunctions.showUserMenu('${post_id}')"><b>${nick}</b></span>
-                    <span class="group" style="color:${group_color};" onclick="ITheme.toast('Группа: ${group}')"><span>${group}</span></span></span>
-                <span class="inf date"><span>${date}</span></span>
-                <a class="btn inf menu" onclick="IPostFunctions.showPostMenu('${post_id}')"><span>Меню</span></a>
+            <div class="votes_info"><span>Всего голосов: ${poll_votes_count}</span></div>
+            <!-- $BeginBlock poll_buttons -->
+            <div class="buttons">
+                <!-- $BeginBlock poll_vote_button --><button type="submit" class="btn vote"><span>Голосовать</span></button>
+                <!-- $EndBlock poll_vote_button -->
+                <!-- $BeginBlock poll_show_results_button --><a class="btn show_results" onclick="ITheme.showPollResults()"><span>Результаты</span></a>
+                <!-- $EndBlock poll_show_results_button -->
+                <!-- $BeginBlock poll_show_poll_button --><a class="btn show_poll" onclick="ITheme.showPoll()"><span>Пункты опроса</span></a>
+                <!-- $EndBlock poll_show_poll_button -->
             </div>
-        </div>
-        <div class="post_body emoticons">${body}</div>
-        <div class="post_footer">
-            <!-- $BeginBlock report_block --><!--<a class="btn report" onclick="IPostFunctions.reportPost(${post_id})"><span>Жалоба</span></a>--><!-- $EndBlock report_block -->
-            <!-- $BeginBlock reply_block --><a class="btn nick" onclick="IPostFunctions.insertNick('${post_id}')"><span>Ответить</span></a><!-- $EndBlock reply_block -->
-            <!-- $BeginBlock vote_block --><a class="btn vote good" onclick="IPostFunctions.votePost('${post_id}', false)"><span>Плохо</span></a>
-            <a class="btn vote bad" onclick="IPostFunctions.votePost('${post_id}', true)"><span>Хорошо</span></a><!-- $EndBlock vote_block -->
-            <!-- $BeginBlock delete_block --><!--<a class="btn delete" onclick="IPostFunctions.deletePost('${post_id}')"><span>Удалить</span></a>--><!-- $EndBlock delete_block -->
-            <!-- $BeginBlock edit_block --><!--<a class="btn edit" onclick="IPostFunctions.editPost('${post_id}')"><span>Изменить</span></a>--><!-- $EndBlock edit_block -->
-        </div><!-- $BeginBlock hat_content_end --></div><!-- $EndBlock hat_content_end -->
+            <!-- $EndBlock poll_buttons -->
+            <input type="hidden" name="addpoll" value="1">
+        </form>
     </div>
-    <!-- $EndBlock post -->
-</div>
-<!--<div class="panel bottom ${navigation_disable}">
+    <!-- $EndBlock poll_block -->
+    <div class="posts_list">
+        <!-- $BeginBlock post -->
+        <div name="entry${post_id}" class="post_container ${user_online} ${disable_avatar} ${avatar_type} ${hat_state_class}" data-post-id="${post_id}" data-user-id="${user_id}" data-nick="${nick}">
+            <!-- $BeginBlock hat_button --><a class="btn hat_button" onclick="toggleButton(this, 'hat_content')"><span>Шапка темы</span><i class="icon"></i></a>
+            <!-- $EndBlock hat_button -->
+            <!-- $BeginBlock hat_content_start -->
+            <div class="hat_content" ${hat_body_state}>
+                <!-- $EndBlock hat_content_start -->
+                <div class="post_header">
+                    <div class="header_wrapper">
+                        <div class="avatar ${none_avatar}">
+                            <b class="letter">${nick_letter}</b>
+                            <div class="img" style="background-image:url(${avatar});" onclick="IPostFunctions.showUserMenu('${post_id}')"></div>
+                            <div class="reputation" onclick="IPostFunctions.showReputationMenu('${post_id}')"><span>${reputation}</span></div>
+                        </div>
+                        <span class="inf nick">
+                    <span onclick="IPostFunctions.showUserMenu('${post_id}')"><b>${nick}</b></span>
+                        <span class="group" style="color:${group_color};" onclick="ITheme.toast('Группа: ${group}')"><span>${group}</span></span>
+                        </span>
+                        <span class="inf date"><span>${date}</span></span>
+                        <a class="btn inf menu" onclick="IPostFunctions.showPostMenu('${post_id}')"><span>Меню</span></a>
+                    </div>
+                </div>
+                <div class="post_body emoticons">${body}</div>
+                <div class="post_footer">
+                    <!-- $BeginBlock report_block -->
+                    <!--<a class="btn report" onclick="IPostFunctions.reportPost(${post_id})"><span>Жалоба</span></a>-->
+                    <!-- $EndBlock report_block -->
+                    <!-- $BeginBlock reply_block --><a class="btn nick" onclick="IPostFunctions.insertNick('${post_id}')"><span>Ответить</span></a>
+                    <!-- $EndBlock reply_block -->
+                    <!-- $BeginBlock vote_block --><a class="btn vote good" onclick="IPostFunctions.votePost('${post_id}', false)"><span>Плохо</span></a>
+                    <a class="btn vote bad" onclick="IPostFunctions.votePost('${post_id}', true)"><span>Хорошо</span></a>
+                    <!-- $EndBlock vote_block -->
+                    <!-- $BeginBlock delete_block -->
+                    <!--<a class="btn delete" onclick="IPostFunctions.deletePost('${post_id}')"><span>Удалить</span></a>-->
+                    <!-- $EndBlock delete_block -->
+                    <!-- $BeginBlock edit_block -->
+                    <!--<a class="btn edit" onclick="IPostFunctions.editPost('${post_id}')"><span>Изменить</span></a>-->
+                    <!-- $EndBlock edit_block -->
+                </div>
+                <!-- $BeginBlock hat_content_end -->
+            </div>
+            <!-- $EndBlock hat_content_end -->
+        </div>
+        <!-- $EndBlock post -->
+    </div>
+    <!--<div class="panel bottom ${navigation_disable}">
     <div class="navigation">
         <a class="btn first" onclick="ITheme.firstPage()" ${first_disable}><i class="icon"></i></a>
         <a class="btn prev" onclick="ITheme.prevPage()" ${prev_disable}><i class="icon"></i></a>
@@ -106,7 +129,9 @@
         <a class="btn last" onclick="ITheme.lastPage()" ${last_disable}><i class="icon"></i></a>
     </div>
 </div>-->
-<div id="padding_for_message_panel" style="padding-bottom: 4em;"></div>
-<script type="text/javascript">jsEmoticons.parseAll("file:///android_asset/smiles/")</script>
+    <div id="padding_for_message_panel" style="padding-bottom: 4em;"></div>
+    <script type="text/javascript">
+        jsEmoticons.parseAll("file:///android_asset/smiles/")
+    </script>
 </body>
 </html>
