@@ -28,7 +28,7 @@ import io.reactivex.Observable;
 
 public class QmsRx {
     //Common
-    public Observable<List<String> > findUser(final String nick) {
+    public Observable<List<String>> findUser(final String nick) {
         return Observable.fromCallable(() -> Api.Qms().findUser(nick));
     }
 
@@ -61,7 +61,7 @@ public class QmsRx {
 
     //Chat
     public Observable<QmsChatModel> getChat(final int userId, final int themeId) {
-        return Observable.fromCallable(() -> transform(Api.Qms().getChat(userId, themeId), true));
+        return Observable.fromCallable(() -> transform(Api.Qms().getChat(userId, themeId), false));
     }
 
     public Observable<QmsChatModel> sendNewTheme(String nick, String title, String mess) {
@@ -106,18 +106,24 @@ public class QmsRx {
     public static MiniTemplator generateMess(MiniTemplator t, List<QmsMessage> messages, int start, int end) {
         for (int i = start; i < end; i++) {
             QmsMessage mess = messages.get(i);
-            if (mess.isDate()) continue;
             generateMess(t, mess);
         }
         return t;
     }
 
     public static MiniTemplator generateMess(MiniTemplator t, QmsMessage mess) {
-        t.setVariableOpt("from_class", mess.isMyMessage() ? "our" : "his");
-        t.setVariableOpt("mess_id", mess.getId());
-        t.setVariableOpt("content", mess.getContent());
-        t.setVariableOpt("time", mess.getTime());
-        t.addBlockOpt("mess");
+        if (mess.isDate()) {
+            t.setVariableOpt("date", mess.getDate());
+            t.addBlockOpt("date");
+        } else {
+            t.setVariableOpt("from_class", mess.isMyMessage() ? "our" : "his");
+            t.setVariableOpt("mess_id", mess.getId());
+            t.setVariableOpt("content", mess.getContent());
+            t.setVariableOpt("time", mess.getTime());
+            t.addBlockOpt("mess");
+        }
+        t.addBlockOpt("item");
+
         return t;
     }
 }

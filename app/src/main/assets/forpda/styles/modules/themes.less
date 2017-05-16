@@ -1,3 +1,7 @@
+body{
+    background: @darkBackground;
+}
+
 button,
 .btn {
     display: block;
@@ -57,36 +61,22 @@ button,
         transform: scale(1);
     }
 }
-/*@-webkit-keyframes radAnim2 {
-    0% {
-        
-    }
-    50% {
-        transform: scale(0.25) translateZ(0);
-    }
-    51%{
-        background: @mainColor;
-        transform: scale(0.25) translateZ(0);
-    }
-    100% {
-        background: @mainColor;
-        transform: scale(0.25) translateZ(0);
-    }
-}*/
 .poll {
     .mainBox();
     >.title {
         .noselect;
         color: #000;
-        width: 100%;
         position: relative;
         text-align: left;
+        padding-right: 40/16rem;
         .icon {
             height: 48/16em;
             width: 40/16em;
             float: right;
-            margin: -14/16em -1em;
-            position: relative;
+            //margin: -14/16em -1em;
+            right: 0;
+            top: 0;
+            position: absolute;
             -webkit-transition: 0.225s @curveStandard;
             transition: 0.225s @curveStandard;
             -webkit-transform-origin: center;
@@ -515,159 +505,6 @@ button,
     &.default {}
     &.result {}
 }
-.panel {
-    .mainBox;
-    margin: 0;
-    margin-bottom: 40/16em;
-    margin-left: 8/16rem;
-    margin-right: 8/16rem;
-    .bRad(24/16rem);
-    .navigation {
-        display: table;
-        width: 100%;
-        button,
-        .btn {
-            display: table-cell;
-            min-width: 3em;
-            text-align: center;
-            color: black;
-            position: relative;
-            &.prev .icon,
-            &.page .icon,
-            &.next .icon {
-                &:before {
-                    content: none;
-                }
-            }
-            &.first .icon {
-                &:after {
-                    margin-left: 0em;
-                }
-                &:before {
-                    margin-left: -0.375em;
-                }
-            }
-            &.next .icon {
-                &:after {
-                    margin-left: -0.375em;
-                }
-            }
-            &.last .icon {
-                &:after {
-                    margin-left: -0.125em;
-                }
-                &:before {
-                    margin-left: -0.5em;
-                }
-            }
-            &.next .icon,
-            &.last .icon {
-                &:after,
-                &:before {
-                    transform: rotate(225deg);
-                    -webkit-transform: rotate(225deg);
-                }
-            }
-            &.page .icon {
-                &:after {
-                    content: none;
-                }
-            }
-            &[disabled] {
-                &:before {
-                    content: none;
-                }
-                .icon {
-                    color: @disableNavColor;
-                    &:active {
-                        background: none;
-                    }
-                }
-            }
-            .icon {
-                position: absolute;
-                left: 0;
-                top: 0;
-                height: 100%;
-                width: 100%;
-                -webkit-transition: 0.225s @curveStandard;
-                transition: 0.225s @curveStandard;
-                &:after,
-                &:before {
-                    content: "";
-                    position: absolute;
-                    left: 50%;
-                    top: 50%;
-                    margin-left: -4/16em;
-                    margin-top: -4/16em;
-                    border-left: @borderInput;
-                    border-bottom: @borderInput;
-                    box-sizing: border-box;
-                    height: 8/16em;
-                    width: 8/16em;
-                    border-color: inherit;
-                    -webkit-transform: rotate(45deg) translateY(-1/16em) translateX(1/16em);
-                    transform: rotate(45deg) translateY(-1/16em) translateX(1/16em);
-                    -webkit-transform-origin: center;
-                    transform-origin: center;
-                }
-            }
-            &:before {
-                content: "";
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                margin-left: -16/16em;
-                margin-top: -16/16em;
-                height: 32/16em;
-                width: 32/16em;
-                background: black;
-                .bRad(100%);
-                -webkit-transform: scale(0.5) translateZ(0);
-                transform: scale(0.5) translateZ(0);
-                opacity: 0;
-                -webkit-transition: 0.15s @curveStandard;
-                transition: 0.15s @curveStandard;
-            }
-            &:active {
-                background: none;
-                &.page {
-                    background: @tapColor;
-                }
-                &:not(.page):before {
-                    opacity: 0.05;
-                    -webkit-transform: scale(1) translateZ(0);
-                    transform: scale(1) translateZ(0);
-                }
-            }
-        }
-    }
-    .who {
-        display: table;
-        width: 100%;
-        >a {
-            display: block;
-            text-align: center;
-            min-width: 3em;
-            padding: 0.875em 0;
-            color: @accentColor;
-            >span {
-                //.mdButton;
-            }
-            &:active {
-                background: @tapColor;
-            }
-        }
-        #viewers {}
-        #writers {}
-    }
-    .topic_title_post {}
-    &.top {}
-    &.bottom {
-        margin-top: 2em;
-        margin-bottom: 0;
-    }
-}
 .post_body {
     padding: 1em;
     position: relative;
@@ -1019,7 +856,7 @@ button,
                 color: @textColor;
                 font-weight: bold;
                 &.online {
-                    color: @curColor;
+                    color: @userOnlineColor;
                 }
                 
                 .group {
@@ -1205,44 +1042,4 @@ button,
         }
     }
 }
-a[href*=findpost][title="Перейти к сообщению"] {
-    width: 1.25rem;
-    height: 1.25rem;
-    display: inline-block;
-    text-align: center;
-    vertical-align: text-bottom;
-    position: relative;
-    margin-right: 0/16rem;
-    img {
-        display: none;
-    }
-    &:before {
-        content: "";
-        display: block;
-        height: 0.4375rem;
-        width: 0.4375rem;
-        box-sizing: border-box;
-        border: @borderInput;
-        border-color: white;
-        border-top: none;
-        border-right: none;
-        top: 50%;
-        margin-top: -0.1875rem;
-        left: 50%;
-        margin-left: -0.125rem;
-        position: absolute;
-        transform: rotate(45deg);
-        -webkit-transform: rotate(45deg);
-        z-index: 1;
-    }
-    &:after {
-        content: "";
-        position: absolute;
-        width: 20/16rem;
-        height: 20/16rem;
-        background: black;
-        top: 0rem;
-        left: 0rem;
-        .bRad(20/16rem);
-    }
-}
+

@@ -7,12 +7,17 @@ Version: 1.2
 Author: RadiationX|Radiation15
 Edited by: RadiationX|*or you nick*
 ---*/
+/*Curves*/
+/*Fonts*/
+/*Color scheme*/
+/*Elements colors*/
+/*Post blocks*/
 [style*="color:#ffffff"],
 [style*="color:white"] {
-  color: #212121 !important;
+  color: rgba(0, 0, 0, 0.87) !important;
 }
 .mainBox {
-  background: #fff;
+  background: #ffffff;
   margin: 0.5em 0;
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
 }
@@ -23,6 +28,9 @@ Edited by: RadiationX|*or you nick*
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+body {
+  background: #eeeeee;
 }
 button,
 .btn {
@@ -86,24 +94,8 @@ button:active,
     transform: scale(1);
   }
 }
-/*@-webkit-keyframes radAnim2 {
-    0% {
-        
-    }
-    50% {
-        transform: scale(0.25) translateZ(0);
-    }
-    51%{
-        background: @mainColor;
-        transform: scale(0.25) translateZ(0);
-    }
-    100% {
-        background: @mainColor;
-        transform: scale(0.25) translateZ(0);
-    }
-}*/
 .poll {
-  background: #fff;
+  background: #ffffff;
   margin: 0.5em 0;
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
 }
@@ -115,16 +107,17 @@ button:active,
   -ms-user-select: none;
   user-select: none;
   color: #000;
-  width: 100%;
   position: relative;
   text-align: left;
+  padding-right: 2.5rem;
 }
 .poll > .title .icon {
   height: 3em;
   width: 2.5em;
   float: right;
-  margin: -0.875em -1em;
-  position: relative;
+  right: 0;
+  top: 0;
+  position: absolute;
   -webkit-transition: 0.225s cubic-bezier(0.4, 0, 0.2, 1);
   transition: 0.225s cubic-bezier(0.4, 0, 0.2, 1);
   -webkit-transform-origin: center;
@@ -137,8 +130,8 @@ button:active,
   top: 50%;
   margin-left: -0.25em;
   margin-top: -0.25em;
-  border-left: 0.125rem solid #757575;
-  border-bottom: 0.125rem solid #757575;
+  border-left: 0.125rem solid rgba(0, 0, 0, 0.54);
+  border-bottom: 0.125rem solid rgba(0, 0, 0, 0.54);
   box-sizing: border-box;
   height: 0.5em;
   width: 0.5em;
@@ -232,7 +225,7 @@ button:active,
   content: "";
   position: absolute;
   box-sizing: border-box;
-  border: 0.125rem solid #757575;
+  border: 0.125rem solid rgba(0, 0, 0, 0.54);
   border-color: white;
   border-top: none;
   border-right: none;
@@ -312,7 +305,7 @@ button:active,
   left: 0;
   top: 50%;
   margin-top: -0.625em;
-  border: 0.125rem solid #757575;
+  border: 0.125rem solid rgba(0, 0, 0, 0.54);
   overflow: hidden;
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
@@ -447,7 +440,7 @@ button:active,
 }
 .poll > .body .votes_info {
   text-align: right;
-  color: #757575;
+  color: rgba(0, 0, 0, 0.54);
   padding: 0.5em 1em;
 }
 .poll > .body .votes_info span {
@@ -479,166 +472,6 @@ button:active,
   -webkit-animation: pollRangeAnimation 0.375s cubic-bezier(0.4, 0, 0.2, 1);
   -webkit-animation-fill-mode: forwards;
 }
-.panel {
-  background: #fff;
-  margin: 0.5em 0;
-  box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
-  margin: 0;
-  margin-bottom: 2.5em;
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
-  -webkit-border-radius: 1.5rem;
-  border-radius: 1.5rem;
-}
-.panel .navigation {
-  display: table;
-  width: 100%;
-}
-.panel .navigation button,
-.panel .navigation .btn {
-  display: table-cell;
-  min-width: 3em;
-  text-align: center;
-  color: black;
-  position: relative;
-}
-.panel .navigation button.prev .icon:before,
-.panel .navigation .btn.prev .icon:before,
-.panel .navigation button.page .icon:before,
-.panel .navigation .btn.page .icon:before,
-.panel .navigation button.next .icon:before,
-.panel .navigation .btn.next .icon:before {
-  content: none;
-}
-.panel .navigation button.first .icon:after,
-.panel .navigation .btn.first .icon:after {
-  margin-left: 0em;
-}
-.panel .navigation button.first .icon:before,
-.panel .navigation .btn.first .icon:before {
-  margin-left: -0.375em;
-}
-.panel .navigation button.next .icon:after,
-.panel .navigation .btn.next .icon:after {
-  margin-left: -0.375em;
-}
-.panel .navigation button.last .icon:after,
-.panel .navigation .btn.last .icon:after {
-  margin-left: -0.125em;
-}
-.panel .navigation button.last .icon:before,
-.panel .navigation .btn.last .icon:before {
-  margin-left: -0.5em;
-}
-.panel .navigation button.next .icon:after,
-.panel .navigation .btn.next .icon:after,
-.panel .navigation button.last .icon:after,
-.panel .navigation .btn.last .icon:after,
-.panel .navigation button.next .icon:before,
-.panel .navigation .btn.next .icon:before,
-.panel .navigation button.last .icon:before,
-.panel .navigation .btn.last .icon:before {
-  transform: rotate(225deg);
-  -webkit-transform: rotate(225deg);
-}
-.panel .navigation button.page .icon:after,
-.panel .navigation .btn.page .icon:after {
-  content: none;
-}
-.panel .navigation button[disabled]:before,
-.panel .navigation .btn[disabled]:before {
-  content: none;
-}
-.panel .navigation button[disabled] .icon,
-.panel .navigation .btn[disabled] .icon {
-  color: #bbbbbb;
-}
-.panel .navigation button[disabled] .icon:active,
-.panel .navigation .btn[disabled] .icon:active {
-  background: none;
-}
-.panel .navigation button .icon,
-.panel .navigation .btn .icon {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 100%;
-  -webkit-transition: 0.225s cubic-bezier(0.4, 0, 0.2, 1);
-  transition: 0.225s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.panel .navigation button .icon:after,
-.panel .navigation .btn .icon:after,
-.panel .navigation button .icon:before,
-.panel .navigation .btn .icon:before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  margin-left: -0.25em;
-  margin-top: -0.25em;
-  border-left: 0.125rem solid #757575;
-  border-bottom: 0.125rem solid #757575;
-  box-sizing: border-box;
-  height: 0.5em;
-  width: 0.5em;
-  border-color: inherit;
-  -webkit-transform: rotate(45deg) translateY(-0.0625em) translateX(0.0625em);
-  transform: rotate(45deg) translateY(-0.0625em) translateX(0.0625em);
-  -webkit-transform-origin: center;
-  transform-origin: center;
-}
-.panel .navigation button:before,
-.panel .navigation .btn:before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  margin-left: -1em;
-  margin-top: -1em;
-  height: 2em;
-  width: 2em;
-  background: black;
-  -webkit-border-radius: 100%;
-  border-radius: 100%;
-  -webkit-transform: scale(0.5) translateZ(0);
-  transform: scale(0.5) translateZ(0);
-  opacity: 0;
-  -webkit-transition: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  transition: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.panel .navigation button:active,
-.panel .navigation .btn:active {
-  background: none;
-}
-.panel .navigation button:active.page,
-.panel .navigation .btn:active.page {
-  background: rgba(0, 0, 0, 0.05);
-}
-.panel .navigation button:active:not(.page):before,
-.panel .navigation .btn:active:not(.page):before {
-  opacity: 0.05;
-  -webkit-transform: scale(1) translateZ(0);
-  transform: scale(1) translateZ(0);
-}
-.panel .who {
-  display: table;
-  width: 100%;
-}
-.panel .who > a {
-  display: block;
-  text-align: center;
-  min-width: 3em;
-  padding: 0.875em 0;
-  color: #0277bd;
-}
-.panel .who > a:active {
-  background: rgba(0, 0, 0, 0.05);
-}
-.panel.bottom {
-  margin-top: 2em;
-  margin-bottom: 0;
-}
 .post_body {
   padding: 1em;
   position: relative;
@@ -661,7 +494,7 @@ button:active,
   display: block;
   padding: 0.571em;
   font-size: 0.875em;
-  color: #757575;
+  color: rgba(0, 0, 0, 0.54);
 }
 .post_body strong .edit {
   text-align: left;
@@ -672,7 +505,7 @@ button:active,
   border-top: none;
   padding: 0 0.571em 0 0.571em;
   margin-top: -2px;
-  color: #757575;
+  color: rgba(0, 0, 0, 0.54);
 }
 .post_body [attach_id][title*="Скачать"]:not(.linked-image) img {
   display: none;
@@ -735,7 +568,7 @@ button:active,
   }
 }
 .post_container {
-  background: #fff;
+  background: #ffffff;
   margin: 0.5em 0;
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
   position: relative;
@@ -770,8 +603,8 @@ button:active,
   top: 50%;
   margin-left: -0.25em;
   margin-top: -0.25em;
-  border-left: 0.125rem solid #757575;
-  border-bottom: 0.125rem solid #757575;
+  border-left: 0.125rem solid rgba(0, 0, 0, 0.54);
+  border-bottom: 0.125rem solid rgba(0, 0, 0, 0.54);
   box-sizing: border-box;
   height: 0.5em;
   width: 0.5em;
@@ -939,7 +772,7 @@ button:active,
 }
 .post_container .post_header .inf.nick {
   top: 0;
-  color: #212121;
+  color: rgba(0, 0, 0, 0.87);
   font-weight: bold;
 }
 .post_container .post_header .inf.nick.online {
@@ -966,7 +799,7 @@ button:active,
 }
 .post_container .post_header .inf.nick .group > span {
   font-size: 0.875em;
-  color: #212121 !important;
+  color: rgba(0, 0, 0, 0.87) !important;
   font-weight: normal!important;
   display: none;
 }
@@ -1084,7 +917,7 @@ button:active,
 }
 .posts_list.search-results .post_container .post_header .s_inf.nick {
   font-weight: bold;
-  color: #212121;
+  color: rgba(0, 0, 0, 0.87);
 }
 .posts_list.search-results .post_container .post_header .s_inf.nick.online {
   color: #12b557;
@@ -1101,7 +934,7 @@ button:active,
   line-height: 1.5em;
 }
 .posts_list.search-results .bad-search-result {
-  background: #fff;
+  background: #ffffff;
   margin: 0.5em 0;
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
   padding: 1em;
@@ -1110,56 +943,14 @@ button:active,
 .posts_list.search-results .bad-search-result h3 {
   margin: 0;
   padding-bottom: 0.5em;
-  color: #212121;
+  color: rgba(0, 0, 0, 0.87);
 }
 .posts_list.search-results .bad-search-result span {
-  color: #757575;
+  color: rgba(0, 0, 0, 0.54);
 }
 .posts_list.search-results ~ #bottomMargin {
   height: 5.5em;
 }
 .posts_list.search-results .post_body {
   padding: 1em;
-}
-a[href*=findpost][title="Перейти к сообщению"] {
-  width: 1.25rem;
-  height: 1.25rem;
-  display: inline-block;
-  text-align: center;
-  vertical-align: text-bottom;
-  position: relative;
-  margin-right: 0rem;
-}
-a[href*=findpost][title="Перейти к сообщению"] img {
-  display: none;
-}
-a[href*=findpost][title="Перейти к сообщению"]:before {
-  content: "";
-  display: block;
-  height: 0.4375rem;
-  width: 0.4375rem;
-  box-sizing: border-box;
-  border: 0.125rem solid #757575;
-  border-color: white;
-  border-top: none;
-  border-right: none;
-  top: 50%;
-  margin-top: -0.1875rem;
-  left: 50%;
-  margin-left: -0.125rem;
-  position: absolute;
-  transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
-  z-index: 1;
-}
-a[href*=findpost][title="Перейти к сообщению"]:after {
-  content: "";
-  position: absolute;
-  width: 1.25rem;
-  height: 1.25rem;
-  background: black;
-  top: 0rem;
-  left: 0rem;
-  -webkit-border-radius: 1.25rem;
-  border-radius: 1.25rem;
 }

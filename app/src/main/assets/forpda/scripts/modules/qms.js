@@ -1,6 +1,7 @@
 var listElem;
 
 window.addEventListener("DOMContentLoaded", function (e) {
+ console.log("DOMContentLoaded");
     listElem = document.querySelector(".mess_list");
     setTimeout(function () {
         getLastMess().scrollIntoView();
@@ -8,6 +9,7 @@ window.addEventListener("DOMContentLoaded", function (e) {
 });
 
 window.addEventListener("load", function (e) {
+    console.log("load");
     getLastMess().scrollIntoView();
 });
 
@@ -31,6 +33,7 @@ function showMoreMess(listSrc) {
     var lastHeight = listElem.offsetHeight;
     listElem.insertAdjacentHTML("afterbegin", listSrc);
     window.scrollBy(0, listElem.offsetHeight - lastHeight);
+    addedNewMessages();
 }
 
 function showNewMess(listSrc, withScroll) {
@@ -38,10 +41,18 @@ function showNewMess(listSrc, withScroll) {
     if (withScroll) {
         getLastMess().scrollIntoView();
     }
+    addedNewMessages();
+}
+
+function addedNewMessages(){
+    improveCodeBlock();
+    blocksOpenClose();
+    removeImgesSrc();
+    addIcons();
 }
 
 function addTopPost() {
-    var listSrc = ""
+    var listSrc = "";
     for (var i = 0; i < 30; i++) {
         listSrc += '<div class="mess_container our"><div class="mess"><div class="content">cheburekkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk</div></div><div class="date"><span>04:20</span></div></div>';
     }

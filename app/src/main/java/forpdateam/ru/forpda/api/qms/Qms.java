@@ -206,7 +206,7 @@ public class Qms {
                 .formHeader("mid", Integer.toString(userId))
                 .formHeader("t", Integer.toString(themeId));
         String response = Api.getWebClient().request(builder.build());
-        Log.e("SUKA", "SEND MESSAGE RESPONSE " + response);
+        Log.e("FORPDA_LOG", "SEND MESSAGE RESPONSE " + response);
         Matcher matcher = chatPattern.matcher(response);
         QmsMessage item = new QmsMessage();
         if (matcher.find()) {

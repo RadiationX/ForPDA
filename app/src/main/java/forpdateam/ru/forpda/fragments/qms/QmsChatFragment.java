@@ -1,8 +1,11 @@
 package forpdateam.ru.forpda.fragments.qms;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,6 +21,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.webkit.WebViewFragment;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -26,6 +34,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.App;
@@ -67,7 +77,7 @@ public class QmsChatFragment extends TabFragment {
     private AppCompatAutoCompleteTextView nickField;
     private AppCompatEditText titleField;
     private MenuItem doneItem, editItem;
-    private Subscriber<List<String> > searchUserSubscriber = new Subscriber<>(this);
+    private Subscriber<List<String>> searchUserSubscriber = new Subscriber<>(this);
 
     private Subscriber<QmsChatModel> mainSubscriber = new Subscriber<>(this);
     private Subscriber<QmsMessage> messageSubscriber = new Subscriber<>(this);
@@ -82,7 +92,8 @@ public class QmsChatFragment extends TabFragment {
             }
         }
     };
-    QmsChatModel currentChat;
+    private QmsChatModel currentChat;
+    private Timer messageChecker = new Timer();
 
     public QmsChatFragment() {
         configuration.setDefaultTitle("Чат");
@@ -121,11 +132,14 @@ public class QmsChatFragment extends TabFragment {
             webView = new ExtendedWebView(getContext());
             webView.setTag("WebView_tag ".concat(Long.toString(System.currentTimeMillis())));
         }
-        webView.loadUrl("about:blank");
+
         chatContainer.addView(webView);
         webView.addJavascriptInterface(this, JS_INTERFACE);
         webView.getSettings().setJavaScriptEnabled(true);
         registerForContextMenu(webView);
+        webView.setWebViewClient(new QmsWebViewClient());
+        webView.setWebChromeClient(new QmsChromeClient());
+        loadBaseWeb();
 
         attachmentsPopup = messagePanel.getAttachmentsPopup();
         attachmentsPopup.setAddOnClickListener(v -> pickImage());
@@ -150,6 +164,7 @@ public class QmsChatFragment extends TabFragment {
 
         viewsReady();
         tryShowAvatar();
+        messageChecker.schedule(new MessagesChecker(), 0, 60000);
 
         if (userNick != null) {
             setSubtitle(userNick);
@@ -159,6 +174,23 @@ public class QmsChatFragment extends TabFragment {
         }
         initCreatorViews();
         return view;
+    }
+
+    private void loadBaseWeb() {
+        MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT);
+
+        /*t.setVariableOpt("chat_title", forpdateam.ru.forpda.api.Utils.htmlEncode(chatModel.getTitle()));
+        t.setVariableOpt("chatId", chatModel.getThemeId());
+        t.setVariableOpt("userId", chatModel.getUserId());
+        t.setVariableOpt("nick", chatModel.getNick());
+        t.setVariableOpt("avatarUrl", chatModel.getAvatarUrl());*/
+
+        t.setVariableOpt("body_type", "qms");
+        t.setVariableOpt("messages", "");
+        t.reset();
+        String html = t.generateOutput();
+        //Log.e("FORPDA_LOG", "GENERATED " + html);
+        webView.loadDataWithBaseURL("http://4pda.ru/forum/", html, "text/html", "utf-8", null);
     }
 
     @Override
@@ -176,6 +208,25 @@ public class QmsChatFragment extends TabFragment {
     public void onDestroy() {
         super.onDestroy();
         messagePanel.onDestroy();
+        messageChecker.cancel();
+        messageChecker.purge();
+
+        unregisterForContextMenu(webView);
+        webView.setActionModeListener(null);
+        webView.removeJavascriptInterface(JS_INTERFACE);
+        webView.setWebChromeClient(null);
+        webView.setWebViewClient(null);
+        webView.loadUrl("about:blank");
+        webView.clearHistory();
+        webView.clearSslPreferences();
+        webView.clearDisappearingChildren();
+        webView.clearFocus();
+        webView.clearFormData();
+        webView.clearMatches();
+        ((ViewGroup) webView.getParent()).removeAllViews();
+        if (getMainActivity().getWebViews().size() < 10) {
+            getMainActivity().getWebViews().add(webView);
+        }
     }
 
     @Override
@@ -197,7 +248,7 @@ public class QmsChatFragment extends TabFragment {
         searchUserSubscriber.subscribe(RxApi.Qms().findUser(nick), this::onShowSearchRes, new ArrayList());
     }
 
-    private void onShowSearchRes(List<String>  res) {
+    private void onShowSearchRes(List<String> res) {
         nickField.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, res));
     }
 
@@ -268,6 +319,49 @@ public class QmsChatFragment extends TabFragment {
     }
 
     /* CHAT */
+    private boolean baseWebComplete = false;
+    private String messagesSrc = null;
+
+    private class QmsWebViewClient extends WebViewClient {
+
+        @SuppressWarnings("deprecation")
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            return handleUri(Uri.parse(url));
+        }
+
+        @TargetApi(Build.VERSION_CODES.N)
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            return handleUri(request.getUrl());
+        }
+
+        private boolean handleUri(Uri uri) {
+            IntentHandler.handle(uri.toString());
+            return true;
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+        }
+    }
+
+    private class QmsChromeClient extends WebChromeClient {
+        @Override
+        public void onProgressChanged(WebView view, int newProgress) {
+            super.onProgressChanged(view, newProgress);
+            Log.e("FORPDA_LOG", "progress " + newProgress);
+            if (newProgress == 100) {
+                if (!baseWebComplete && messagesSrc != null) {
+                    Log.e("FORPDA_LOG", "SHOW NEW MESS CLIENT");
+                    webView.evalJs("showNewMess('".concat(messagesSrc).concat("', true)"));
+                    messagesSrc = null;
+                }
+                baseWebComplete = true;
+            }
+        }
+    }
 
     @Override
     public void loadData() {
@@ -281,11 +375,54 @@ public class QmsChatFragment extends TabFragment {
         themeTitle = chat.getTitle();
         userId = chat.getUserId();
         userNick = chat.getNick();
-
-        currentChat = chat;
-        webView.loadDataWithBaseURL("http://4pda.ru/forum/", chat.getHtml(), "text/html", "utf-8", null);
-
+        long time = System.currentTimeMillis();
+        String messagesSrc = null;
+        if (currentChat == null) {
+            currentChat = chat;
+            MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
+            int end = currentChat.getChatItemsList().size();
+            int start = Math.max(end - 30, 0);
+            currentChat.setShowedMessIndex(start);
+            QmsRx.generateMess(t, currentChat.getChatItemsList(), start, end);
+            messagesSrc = t.generateOutput();
+            t.reset();
+        } else {
+            int start = currentChat.getChatItemsList().size();
+            int end = chat.getChatItemsList().size();
+            if (start < end) {
+                MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
+                List<QmsMessage> newMessages = new ArrayList<>();
+                for (int i = start; i < end; i++) {
+                    QmsMessage message = chat.getChatItemsList().get(i);
+                    newMessages.add(message);
+                    currentChat.getChatItemsList().add(message);
+                }
+                QmsRx.generateMess(t, newMessages);
+                messagesSrc = t.generateOutput();
+                t.reset();
+            }
+        }
+        if (messagesSrc != null) {
+            messagesSrc = messagesSrc.replaceAll("\n", "").replaceAll("'", "&apos;");
+            Log.e("FORPDA_LOG", "TIME " + (System.currentTimeMillis() - time));
+            Log.e("FORPDA_LOG", "NEW MESS FINAL");
+            /*final String veryLongString = messagesSrc;
+            int maxLogSize = 1000;
+            for (int i = 0; i <= veryLongString.length() / maxLogSize; i++) {
+                int start = i * maxLogSize;
+                int end = (i + 1) * maxLogSize;
+                end = end > veryLongString.length() ? veryLongString.length() : end;
+                Log.e("FORPDA_LOG", veryLongString.substring(start, end));
+            }*/
+            if (baseWebComplete) {
+                Log.e("FORPDA_LOG", "SHOW NEW MESS");
+                webView.evalJs("showNewMess('".concat(messagesSrc).concat("', true)"));
+            } else {
+                QmsChatFragment.this.messagesSrc = messagesSrc;
+            }
+        }
     }
+
 
     private void sendMessage() {
         messagePanel.setProgressState(true);
@@ -315,6 +452,14 @@ public class QmsChatFragment extends TabFragment {
         }
     }
 
+    private class MessagesChecker extends TimerTask {
+        public void run() {
+            if (isVisible()) {
+                loadData();
+            }
+        }
+    }
+
     @JavascriptInterface
     public void showMoreMess() {
         run(new Runnable() {
@@ -332,7 +477,6 @@ public class QmsChatFragment extends TabFragment {
             }
         });
     }
-
 
     public void run(final Runnable runnable) {
         getMainActivity().runOnUiThread(runnable);

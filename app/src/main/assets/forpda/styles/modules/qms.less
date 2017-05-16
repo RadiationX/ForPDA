@@ -1,116 +1,52 @@
-.wrapper{
+body {}
+
+.wrapper {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
     max-height: 100%;
-    .show_more{
-        line-height: 48/16rem;
-        background: rgba(251, 4, 4, 0.1);
-        text-align: center;
-        text-transform: uppercase;
-        font-weight: bold;
-        font-size: 14/16rem;
-    }
 }
+
 .mess_list {
-    
-    .item_time {
-        text-align: center;
-        margin: 1em;
-        span {}
-    }
-    .mess_container {
-        //background: rgba(255, 0, 0, 0.1);
-        margin: 1rem 1rem;
+    >.mess_container {
+        margin: 8/16rem 16/16rem;
         .mess {
             position: relative;
-            background: white;
-            box-shadow: 0 1/16rem 2/16rem rgba(0, 0, 0, 0.25);
-            border-radius: 8px;
+            background: @cardBg;
+            box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
+            border-radius: 8/16rem;
             max-width: 100%;
             .content {
-                //background: white;
-                //border-radius: 2px;
-                padding: 12/16rem 16/16rem;
+                padding: 8/16rem 16/16rem;
                 -webkit-hyphens: auto;
                 -ms-hyphens: auto;
                 hyphens: auto;
                 word-wrap: break-word;
                 position: relative;
-                z-index: 2;
-                color: #333;
-            }
-            &:before {
-                //content: "";
-                position: absolute;
-                width: 16/16rem;
-                height: 16/16rem;
-                //background: red;
-                bottom: -8/16rem;
-                left: -8/16rem;
-                transform: rotate(45deg);
-                //transform-origin: bottom left;
-                box-sizing: border-box;
-                border: 8/16rem solid white;
-                z-index: 1;
-            }
-            &:after {
-                //content: "";
-                position: absolute;
-                height: 12/16rem;
-                width: 1/16rem;
-                background: red;
-                bottom: -10/16rem;
-                box-shadow: 0 1/16rem 2/16rem rgba(0, 0, 0, 0.25);
-                z-index: 0;
             }
         }
         .time {
             clear: both;
             font-size: 12/16rem;
-            padding: 2/16rem 2/16rem;
-            color: hsl(0, 0%, 35%);
+            padding: 0 8/16rem;
+            color: @secondTextColor;
         }
         &.his {
-            margin-right: 2em;
+            margin-right: 64/16em;
             .mess {
-                border-top-left-radius: 2px;
+                border-top-left-radius: 1/16rem;
                 float: left;
-                &:before {
-                    left: -8/16rem;
-                    border-bottom-color: transparent;
-                    border-left-color: transparent;
-                    box-shadow: 1/16rem -1/16rem 2/16rem rgba(0, 0, 0, 0.25);
-                }
-                &:after {
-                    left: 0;
-                    box-shadow: 0 1/16rem 2/16rem rgba(0, 0, 0, 0.25);
-                }
             }
             .time {
                 float: left;
             }
         }
         &.our {
-            margin-left: 2em;
-            
+            margin-left: 64/16em;
             .mess {
                 float: right;
-                border-top-right-radius: 2px;
-                &:before {
-                    right: -8/16rem;
-                    left: auto;
-                    border-top-color: transparent;
-                    border-right-color: transparent;
-                    box-shadow: -1/16rem 1/16rem 2/16rem rgba(0, 0, 0, 0.25);
-                }
-                &:after {
-                    left: auto;
-                    right: 0;
-                    bottom: -10/16rem;
-                    box-shadow: 0 1/16rem 2/16rem rgba(0, 0, 0, 0.25);
-                }
+                border-top-right-radius: 1/16rem;
             }
             .time {
                 float: right;
@@ -120,6 +56,16 @@
             content: "";
             display: table;
             clear: both;
+        }
+    }
+    >.date {
+        text-align: center;
+        margin: 0 16/16rem;
+        color: @secondTextColor;
+        text-transform: lowercase;
+        line-height: 24/16rem;
+        span {
+            font-size: 14/16rem;
         }
     }
 }

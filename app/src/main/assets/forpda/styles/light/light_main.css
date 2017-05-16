@@ -8,12 +8,17 @@ Version: 1.2
 Author: RadiationX|Radiation15
 Edited by: RadiationX|*or you nick*
 ---*/
+/*Curves*/
+/*Fonts*/
+/*Color scheme*/
+/*Elements colors*/
+/*Post blocks*/
 [style*="color:#ffffff"],
 [style*="color:white"] {
-  color: #212121 !important;
+  color: rgba(0, 0, 0, 0.87) !important;
 }
 .mainBox {
-  background: #fff;
+  background: #ffffff;
   margin: 0.5em 0;
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
 }
@@ -79,7 +84,7 @@ Edited by: RadiationX|*or you nick*
 }
 [style*="font-size:9px"] {
   line-height: 1.25em!important;
-  font-size: 0.5625em !important;
+  font-size: 0.75em !important;
 }
 HTML {
   font-size: 1rem;
@@ -88,10 +93,10 @@ body {
   width: 100%;
   height: 100%;
   margin: 0;
-  background: #eeeeee;
+  background: #fafafa;
   font-family: "Roboto", sans-serif;
   font-size: 1em;
-  color: #212121;
+  color: rgba(0, 0, 0, 0.87);
   line-height: 1.25em;
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -141,6 +146,7 @@ li .post-block {
   z-index: 1;
 }
 .post-block.spoil > .block-title {
+  padding-right: 2.5rem;
   color: #000;
 }
 .post-block.spoil > .block-title * {
@@ -161,12 +167,10 @@ li .post-block {
   transform: scale(1) translateZ(0);
 }
 .post-block.spoil > .block-title:before {
-  position: absolute;
   height: 100%;
   width: 100%;
   top: 0;
   left: 0;
-  padding: 0.875rem;
   box-sizing: border-box;
 }
 .post-block.spoil > .block-title .icon {
@@ -187,8 +191,8 @@ li .post-block {
   top: 50%;
   margin-left: -0.25rem;
   margin-top: -0.25rem;
-  border-left: 0.125rem solid #757575;
-  border-bottom: 0.125rem solid #757575;
+  border-left: 0.125rem solid rgba(0, 0, 0, 0.54);
+  border-bottom: 0.125rem solid rgba(0, 0, 0, 0.54);
   box-sizing: border-box;
   height: 0.5rem;
   width: 0.5rem;
@@ -344,8 +348,8 @@ li .post-block {
   top: 50%;
   margin-left: -0.25rem;
   margin-top: -0.25rem;
-  border-left: 0.125rem solid #757575;
-  border-bottom: 0.125rem solid #757575;
+  border-left: 0.125rem solid rgba(0, 0, 0, 0.54);
+  border-bottom: 0.125rem solid rgba(0, 0, 0, 0.54);
   box-sizing: border-box;
   height: 0.5rem;
   width: 0.5rem;
@@ -408,17 +412,6 @@ li .post-block {
   font-family: "Roboto Mono", monospace;
   color: #000;
 }
-.post-block.code:before {
-  position: absolute;
-  width: 2.25rem;
-  top: 3rem;
-  left: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.05);
-  border: 0.0625rem solid rgba(0, 0, 0, 0.05);
-  border-left: none;
-  box-sizing: content-box;
-}
 .post-block.code .num-pre {
   font-family: "Roboto Mono", monospace;
   position: absolute;
@@ -442,16 +435,6 @@ li .post-block {
   overflow: hidden;
   position: relative;
 }
-.post-block.code.box > .block-body:after {
-  position: absolute;
-  bottom: -1rem;
-  height: 1rem;
-  left: 0;
-  right: 0;
-  width: 100%;
-  -webkit-box-shadow: 0 -0.5rem 1rem rgba(18, 181, 87, 0.1);
-  box-shadow: 0 -0.5rem 1rem rgba(18, 181, 87, 0.1);
-}
 .post-block.code.unbox > .block-title .icon {
   -webkit-transform: rotateX(180deg) translateZ(0);
   transform: rotateX(180deg) translateZ(0);
@@ -471,16 +454,8 @@ li .post-block {
 .post-block.code.wrap .num-pre .nums {
   visibility: hidden;
 }
-.post-block.hidden {
-  background: rgba(70, 70, 70, 0.05);
-  border-color: rgba(70, 70, 70, 0.05);
-}
 .post-block.hidden > .block-title {
-  text-transform: uppercase;
   display: none;
-}
-.post-block.hidden > .block-title:before {
-  content: "Только для авторизованных";
 }
 .post-block.hidden > .block-body {
   padding-top: 1em;
@@ -532,7 +507,6 @@ li .post-block {
 }
 .post-block.tbl.cur {
   background: rgba(18, 181, 87, 0.1);
-  border: 1px solid rgba(18, 181, 87, 0.1);
 }
 .post-block.tbl.cur > .block-title {
   color: #12b557 !important;
@@ -548,4 +522,46 @@ li .post-block {
   padding: 0.25rem;
   -webkit-border-radius: 2px;
   border-radius: 2px;
+}
+a[href*=findpost][title="Перейти к сообщению"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  display: inline-block;
+  text-align: center;
+  vertical-align: text-bottom;
+  position: relative;
+  margin-right: 0rem;
+}
+a[href*=findpost][title="Перейти к сообщению"] img {
+  display: none;
+}
+a[href*=findpost][title="Перейти к сообщению"]:before {
+  content: "";
+  display: block;
+  height: 0.4375rem;
+  width: 0.4375rem;
+  box-sizing: border-box;
+  border: 0.125rem solid rgba(0, 0, 0, 0.54);
+  border-color: white;
+  border-top: none;
+  border-right: none;
+  top: 50%;
+  margin-top: -0.1875rem;
+  left: 50%;
+  margin-left: -0.125rem;
+  position: absolute;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  z-index: 1;
+}
+a[href*=findpost][title="Перейти к сообщению"]:after {
+  content: "";
+  position: absolute;
+  width: 1.25rem;
+  height: 1.25rem;
+  background: black;
+  top: 0rem;
+  left: 0rem;
+  -webkit-border-radius: 1.25rem;
+  border-radius: 1.25rem;
 }
