@@ -7,12 +7,17 @@ Version: 1.2
 Author: RadiationX|Radiation15
 Edited by: RadiationX|*or you nick*
 ---*/
+/*Curves*/
+/*Fonts*/
+/*Color scheme*/
+/*Elements colors*/
+/*Post blocks*/
 [style*="color:#ffffff"],
 [style*="color:white"] {
-  color: #212121 !important;
+  color: rgba(0, 0, 0, 0.87) !important;
 }
 .mainBox {
-  background: #fff;
+  background: #ffffff;
   margin: 0.5em 0;
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
 }
