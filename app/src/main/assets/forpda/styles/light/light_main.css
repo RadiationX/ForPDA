@@ -134,12 +134,6 @@ li .post-block {
   line-height: 1.25rem;
   color: #000!important;
 }
-.post-block > .block-title * {
-  color: #000!important;
-  font-size: 1em!important;
-  font-style: normal!important;
-  line-height: 1.25rem!important;
-}
 .post-block > .block-body {
   padding: 0.5rem 1rem 1rem 1rem;
   position: relative;
@@ -151,6 +145,9 @@ li .post-block {
 }
 .post-block.spoil > .block-title * {
   color: #000!important;
+  font-size: 1em!important;
+  font-style: normal!important;
+  line-height: 1.25rem!important;
 }
 .post-block.spoil > .block-title:first-letter {
   text-transform: uppercase;
@@ -247,45 +244,129 @@ li .post-block {
   display: block;
   z-index: 10;
 }
+.post-block.quote {
+  background: none;
+  border: none;
+  border-left: 0.25rem solid #cccccc;
+  margin-left: 0;
+}
 .post-block.quote > .block-title {
   text-transform: none;
-  font-style: italic;
   font-weight: bold;
-  padding-left: 3rem;
+  /*&:not(.empty) {
+                padding-top: 8/16rem;
+                padding-bottom: 8/16rem;
+            }*/
+  /*a[href*=findpost] {
+                background: none;
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                left: 0;
+                top: -1/16rem;
+                margin: 0;
+                &:before {
+                    left: 24/16rem;
+                    margin-left: 0;
+                }
+                &:after {
+                    background: black;
+                    top: 14/16rem;
+                    left: 16/16rem;
+                }
+            }*/
+}
+.post-block.quote > .block-title.empty {
+  display: none;
 }
 .post-block.quote > .block-title.empty:before {
   content: "Цитата";
 }
-.post-block.quote > .block-title a[href*=findpost] {
-  background: none;
+.post-block.quote > .block-title.empty + .block-body {
+  padding-top: 0.5rem;
+}
+.post-block.quote > .block-title .title {
+  margin: -0.375rem 0;
+  display: block;
+}
+.post-block.quote > .block-title .title > * {
+  padding-left: 2.25rem;
+  display: block;
+}
+.post-block.quote > .block-title .title .name {
+  line-height: 1.125rem;
+}
+.post-block.quote > .block-title .title .date {
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 0.75rem;
+  line-height: 0.75rem;
+  font-weight: normal;
+}
+.post-block.quote > .block-title .title ~ .icon {
   position: absolute;
+  left: 0.5rem;
+  top: 0.375rem;
+  height: 2.25rem;
+  width: 2.25rem;
+  background: #ccc;
+  -webkit-border-radius: 2.25rem;
+  border-radius: 2.25rem;
+  font-size: 1rem;
+  line-height: 2.25rem;
+  text-align: center;
+  font-style: normal;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+.post-block.quote > .block-title .title ~ .icon:before {
+  content: "";
+  position: absolute;
+  bottom: -0.0625rem;
+  right: -0.0625rem;
+  height: 1rem;
+  width: 1rem;
+  background: #2177af;
+  -webkit-border-radius: 1rem;
+  border-radius: 1rem;
+  background-image: url(../../res/chevron-left-white.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+  border: 0.0625rem solid white;
+  box-sizing: border-box;
+}
+.post-block.quote > .block-title .snapback {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  left: 0;
-  top: -0.0625rem;
-  margin: 0;
 }
-.post-block.quote > .block-title a[href*=findpost]:before {
-  left: 1.5rem;
-  margin-left: 0;
+.post-block.quote > .block-title .snapback:before {
+  content: none;
 }
-.post-block.quote > .block-title a[href*=findpost]:after {
-  background: black;
-  top: 0.875rem;
-  left: 1rem;
+.post-block.quote > .block-title .snapback:after {
+  content: none;
 }
-.post-block.quote:before {
-  content: "";
+.post-block.quote > .block-title:after {
   display: inline-block;
   position: absolute;
-  left: 1rem;
-  top: 0.75rem;
-  height: 1.5rem;
-  width: 1.5rem;
+  left: 0rem;
+  top: 0rem;
+  height: 3rem;
+  width: 3rem;
   background-image: url("../../res/format-quote.svg");
   background-position: center;
   background-size: 1.5rem;
   background-repeat: no-repeat;
+}
+.post-block.quote > .block-body {
+  padding-left: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-top: 0.25rem;
+}
+.post-block.quote > .block-body > .post-block {
+  margin-left: -0.5rem;
 }
 .post-block.code {
   overflow: hidden;
@@ -523,45 +604,64 @@ li .post-block {
   -webkit-border-radius: 2px;
   border-radius: 2px;
 }
-a[href*=findpost][title="Перейти к сообщению"] {
-  width: 1.25rem;
-  height: 1.25rem;
-  display: inline-block;
-  text-align: center;
-  vertical-align: text-bottom;
+a.snapback {
+  text-decoration: none;
+  font-weight: bold;
   position: relative;
-  margin-right: 0rem;
 }
-a[href*=findpost][title="Перейти к сообщению"] img {
-  display: none;
-}
-a[href*=findpost][title="Перейти к сообщению"]:before {
-  content: "";
-  display: block;
-  height: 0.4375rem;
-  width: 0.4375rem;
-  box-sizing: border-box;
-  border: 0.125rem solid rgba(0, 0, 0, 0.54);
-  border-color: white;
-  border-top: none;
-  border-right: none;
-  top: 50%;
-  margin-top: -0.1875rem;
-  left: 50%;
-  margin-left: -0.125rem;
-  position: absolute;
-  transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
+a.snapback:before {
+  content: "@";
+  position: relative;
+  font-family: "Roboto", sans-serif;
   z-index: 1;
 }
-a[href*=findpost][title="Перейти к сообщению"]:after {
+a.snapback:after {
   content: "";
   position: absolute;
-  width: 1.25rem;
-  height: 1.25rem;
-  background: black;
-  top: 0rem;
-  left: 0rem;
-  -webkit-border-radius: 1.25rem;
-  border-radius: 1.25rem;
+  top: -0.5em;
+  left: -0.5em;
+  height: 2.25em;
+  width: 2.25em;
 }
+/*a[href*=findpost][title="Перейти к сообщению"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    display: inline-block;
+    text-align: center;
+    vertical-align: text-bottom;
+    position: relative;
+    margin-right: 0/16rem;
+    background: red;
+    img {
+        display: none;
+    }
+    &:before {
+        //content: "";
+        display: block;
+        height: 0.4375rem;
+        width: 0.4375rem;
+        box-sizing: border-box;
+        border: @borderInput;
+        border-color: white;
+        border-top: none;
+        border-right: none;
+        top: 50%;
+        margin-top: -0.1875rem;
+        left: 50%;
+        margin-left: -0.125rem;
+        position: absolute;
+        transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+        z-index: 1;
+    }
+    &:after {
+        //content: "";
+        position: absolute;
+        width: 20/16rem;
+        height: 20/16rem;
+        background: black;
+        top: 0rem;
+        left: 0rem;
+        .bRad(20/16rem);
+    }
+}*/
