@@ -16,9 +16,9 @@ function improveCodeBlock() {
                 splitLines = codeBody.innerHTML.split(/<br[^>]*?>/g),
                 count = '',
                 lines = '';
-
+console.log(splitLines);
             for (var j = 0; j < splitLines.length; j++) {
-                lines += '<span class="line">' + splitLines[j] + '</span><br>';
+                lines += '<div>' + splitLines[j] + '</div>';
                 count += (j + 1) + '\n';
             }
 
@@ -28,10 +28,11 @@ function improveCodeBlock() {
 
             codeBlock.classList.add('wrap');
             codeTitle.insertAdjacentHTML("beforeEnd", '<div class="block-controls"><i class="wrap"></i><i class="select_all"></i></div>');
-            codeTitle.insertAdjacentHTML("afterEnd", '<div class="num-pre"><span class="nums">' + count + '</span></div>');
+            /*codeTitle.insertAdjacentHTML("afterEnd", '<div class="num-pre"><span class="nums">' + count + '</span></div>');*/
             codeTitle.querySelector('.wrap').addEventListener('click', onClickToggleButton);
             codeTitle.querySelector('.select_all').addEventListener('click', SelectText);
-            codeBody.innerHTML = lines;
+            
+            codeBody.innerHTML = "<div class=\"lines\">"+lines+"</div>";
             if (!codeBlock.classList.contains("improve")) {
                 codeBlock.classList.add("improve");
             }
