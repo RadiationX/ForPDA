@@ -1,6 +1,5 @@
 @charset "UTF-8";
 @pollRangeBg: rgba(128, 128, 128, 0.2);
-
 .fs(@pt) {
     font-size: (@pt * 1.5)/16em!important;
     line-height: 1.25em!important;
@@ -87,8 +86,6 @@ a {
     -webkit-tap-highlight-color: fade(@linkColor, 25%);
 }
 
-
-
 * {
     box-sizing: border-box;
 }
@@ -117,16 +114,9 @@ li {
         text-align: left!important;
         min-height: 3rem;
         font-size: 14/16rem;
-        
         line-height: 1.25rem;
         //text-transform: uppercase;
         color: #000!important;
-        * {
-            color: #000!important;
-            font-size: 1em!important;
-            font-style: normal!important;
-            line-height: 1.25rem!important;
-        }
     }
     >.block-body {
         padding: 0.5rem 1rem 1rem 1rem;
@@ -137,11 +127,13 @@ li {
         >.block-title {
             padding-right: 40/16rem;
             color: #000;
-            
             * {
                 color: #000!important;
+                font-size: 1em!important;
+                font-style: normal!important;
+                line-height: 1.25rem!important;
             }
-            &:first-letter{
+            &:first-letter {
                 text-transform: uppercase;
             }
             &.empty {
@@ -251,18 +243,109 @@ li {
         }
     }
     &.quote {
+        background: none;
+        border: none;
+        border-left: 4/16rem solid #ccc;
+        margin-left: 0;
         >.block-title {
             text-transform: none;
-            font-style: italic;
+            //font-style: italic;
+            //padding-left: 48/16rem;
             font-weight: bold;
-            padding-left: 48/16rem;
+            //padding-left: 48/16rem;
             &.empty {
                 //text-transform: uppercase;
+                display: none;
                 &:before {
                     content: "Цитата";
                 }
+                &+.block-body {
+                    padding-top: 8/16rem;
+                }
             }
-            a[href*=findpost] {
+            /*&:not(.empty) {
+                padding-top: 8/16rem;
+                padding-bottom: 8/16rem;
+            }*/
+            .title {
+                margin: -6/16rem 0;
+                
+                
+                display: block;
+                >* {
+                    padding-left: (48-12)/16rem;
+                    display: block;
+                    //background: red;
+                }
+                .name {
+                    line-height: 18/16rem;
+                    //color: @linkColor;
+                }
+                .date {
+                    color: @secondTextColor;
+                    font-size: 12/16rem;
+                    line-height: 12/16rem;
+                    font-weight: normal;
+                }
+                &~.icon {
+                    position: absolute;
+                    left: 8/16rem;
+                    top: 6/16rem;
+                    height: 36/16rem;
+                    width: 36/16rem;
+                    background: #ccc;
+                    .bRad(36/16rem);
+                    font-size: 16/16rem;
+                    line-height: 36/16rem;
+                    text-align: center;
+                    font-style: normal;
+                    color: @primaryColor;
+                    text-transform: uppercase;
+                    &:before{
+                        content: "";
+                        position: absolute;
+                        bottom: -1/16rem;
+                        right: -1/16rem;
+                        height: 16/16rem;
+                        width: 16/16rem;
+                        background: @linkColor;
+                        .bRad(16/16rem);
+                        background-image: url(../../res/chevron-left-white.svg);
+                        background-repeat: no-repeat;
+                        background-position: center;
+                        background-size: 100%;
+                        border: 1/16rem solid white;
+                        box-sizing: border-box;
+                    }
+                }
+            }
+            .snapback {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                &:before {
+                    content: none;
+                }
+                &:after {
+                    content: none;
+                }
+            }
+            &:after {
+                //content: "";
+                display: inline-block;
+                position: absolute;
+                left: 0/16rem;
+                top: 0/16rem;
+                height: 48/16rem;
+                width: 48/16rem;
+                background-image: url("../../res/format-quote.svg");
+                background-position: center;
+                background-size: 24/16rem;
+                background-repeat: no-repeat;
+            }
+            /*a[href*=findpost] {
                 background: none;
                 position: absolute;
                 width: 100%;
@@ -279,23 +362,15 @@ li {
                     top: 14/16rem;
                     left: 16/16rem;
                 }
-            }
+            }*/
         }
         >.block-body {
-            //padding-top: 0;
-        }
-        &:before {
-            content: "";
-            display: inline-block;
-            position: absolute;
-            left: 16/16rem;
-            top: 12/16rem;
-            height: 24/16rem;
-            width: 24/16rem;
-            background-image: url("../../res/format-quote.svg");
-            background-position: center;
-            background-size: 24/16rem;
-            background-repeat: no-repeat;
+            padding-left: 8/16rem;
+            padding-bottom: 8/16rem;
+            padding-top: 4/16rem;
+            >.post-block {
+                margin-left: -8/16rem;
+            }
         }
     }
     &.code {
@@ -444,7 +519,7 @@ li {
             background: rgba(0, 0, 0, 0.05);
             border: @border1;
             border-left: none;
-            .nums{
+            .nums {
                 pointer-events: none;
             }
         }
@@ -481,7 +556,7 @@ li {
                 }
             }
             .num-pre {
-                .nums{
+                .nums {
                     visibility: hidden;
                 }
             }
@@ -554,7 +629,8 @@ li {
         }
     }
 }
-.searchlite{
+
+.searchlite {
     background: #ffaa00!important;
     color: black!important;
     font-weight: bold!important;
@@ -562,7 +638,33 @@ li {
     padding: 4/16rem;
     .bRad(2px);
 }
-a[href*=findpost][title="Перейти к сообщению"] {
+
+a.snapback {
+    //background: red;
+    text-decoration: none;
+    font-weight: bold;
+    position: relative;
+    &:before {
+        content: "@";
+        //vertical-align: middle;
+        //font-size: 20/16em;
+        //line-height: 16/16em;
+        position: relative;
+        font-family: @font;
+        z-index: 1;
+    }
+    &:after {
+        content: "";
+        position: absolute;
+        top: -8/16em;
+        left: -8/16em;
+        height: 36/16em;
+        width: 36/16em;
+    }
+}
+
+
+/*a[href*=findpost][title="Перейти к сообщению"] {
     width: 1.25rem;
     height: 1.25rem;
     display: inline-block;
@@ -570,11 +672,12 @@ a[href*=findpost][title="Перейти к сообщению"] {
     vertical-align: text-bottom;
     position: relative;
     margin-right: 0/16rem;
+    background: red;
     img {
         display: none;
     }
     &:before {
-        content: "";
+        //content: "";
         display: block;
         height: 0.4375rem;
         width: 0.4375rem;
@@ -593,7 +696,7 @@ a[href*=findpost][title="Перейти к сообщению"] {
         z-index: 1;
     }
     &:after {
-        content: "";
+        //content: "";
         position: absolute;
         width: 20/16rem;
         height: 20/16rem;
@@ -602,4 +705,4 @@ a[href*=findpost][title="Перейти к сообщению"] {
         left: 0rem;
         .bRad(20/16rem);
     }
-}
+}*/
