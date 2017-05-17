@@ -253,14 +253,18 @@ li {
             //padding-left: 48/16rem;
             font-weight: bold;
             //padding-left: 48/16rem;
+            padding-left: 8/16rem;
+            padding-top: 8/16rem;
+            padding-bottom: 8/16rem;
+            min-height: auto;
             &.empty {
                 //text-transform: uppercase;
-                display: none;
+                //display: none;
                 &:before {
                     content: "Цитата";
                 }
                 &+.block-body {
-                    padding-top: 8/16rem;
+                    //padding-top: 8/16rem;
                 }
             }
             /*&:not(.empty) {
@@ -268,12 +272,13 @@ li {
                 padding-bottom: 8/16rem;
             }*/
             .title {
-                margin: -6/16rem 0;
-                
-                
+                //margin: -6/16rem 0;
+                //margin-top: 2/16rem;
+                //margin-bottom:4/16rem;
+                height: 32/16rem;
                 display: block;
                 >* {
-                    padding-left: (48-12)/16rem;
+                    padding-left: (48-4)/16rem;
                     display: block;
                     //background: red;
                 }
@@ -301,7 +306,7 @@ li {
                     font-style: normal;
                     color: @primaryColor;
                     text-transform: uppercase;
-                    &:before{
+                    &:before {
                         content: "";
                         position: absolute;
                         bottom: -1/16rem;
@@ -374,8 +379,12 @@ li {
         }
     }
     &.code {
-        overflow: hidden;
+        //overflow: hidden;
         //padding-top: 48/16rem;
+        background: none;
+        //margin-left: 0;
+        border: none;
+        //outline: 1px solid red;
         &.small {
             >.block-title {
                 .icon {
@@ -384,10 +393,22 @@ li {
             }
         }
         >.block-title {
+            //outline: 1px solid red;
+            //padding: 8/16rem 8/16rem;
+            //padding-left: 16/16rem;
+            //min-height: auto;
             &.empty {
                 &:before {
                     content: "Код";
                 }
+            }
+            &:before {
+                content: "Код: "
+            }
+            &:after {
+                content: "";
+                display: table;
+                clear: both;
             }
             &:active {
                 .icon:before {
@@ -398,17 +419,21 @@ li {
                 background: @tapColor;
             }
             >.block-controls {
-                position: absolute;
                 float: right;
-                right: 0;
+                position: absolute;
+                right: 40/16rem;
                 top: 0;
                 z-index: 3;
+                //margin: -8/16rem;
+                //margin-right: 28/16rem;
+                .noselect();
                 i {
                     height: 36/16rem;
                     width: 36/16rem;
-                    margin: 6/16rem;
+                    margin: 6/16rem 0;
                     border: @border1;
-                    border-color: rgba(0, 0, 0, 0.1);
+                    //border-color: rgba(0, 0, 0, 0.1);
+                    border: none;
                     .bRad(2px);
                     float: right;
                     background-size: 24/16rem;
@@ -419,6 +444,10 @@ li {
                     }
                     &.select_all {
                         background-image: url(../../res/select-all.svg);
+                        margin-right: 8/16rem;
+                    }
+                    &:active {
+                        background-color: @tapColor;
                     }
                 }
             }
@@ -427,6 +456,7 @@ li {
                 width: 40/16rem;
                 position: absolute;
                 right: 96/16rem;
+                right: 0;
                 top: 0;
                 -webkit-transition: 0.225s @curveStandard;
                 transition: 0.225s @curveStandard;
@@ -471,56 +501,57 @@ li {
         }
         >.block-body {
             font-family: @fontMono;
-            font-size: 0.875rem;
-            background: linear-gradient(transparent 20/14em, rgba(130, 130, 130, 0.1) 20/14em);
-            background-size: 100% 40/14em;
-            background-position: 0 0;
-            background-repeat: repeat-y;
+            //font-size: 0.875rem;
             padding-top: 0;
             padding-bottom: 0;
             margin-top: 0;
             margin-bottom: 0;
-            counter-reset: count;
-            overflow-x: auto;
-            //padding-left: 32/16rem;
-            padding-left: 40/16rem;
-            position: static;
-            white-space: pre;
-            word-break: normal;
-            word-wrap: normal;
-            color: #448d62;
-            .line {
-                position: relative;
-                &:before {
-                    text-align: center;
-                    counter-increment: count;
-                    content: counter(count);
-                    position: absolute;
-                    width: 36/16rem;
-                    left: -40/16rem;
-                    opacity: 0;
-                    pointer-events: none;
-                    font-family: @fontMono;
-                    color: #000;
-                }
+            font-family: monospace;
+            position: relative;
+            padding: 4/16rem 0;
+            padding-left: 56/16rem;
+            &:before {
+                content: "";
+                position: absolute;
+                left: 16/16rem;
+                top: 0;
+                bottom: 0;
+                width: 28/16rem;
+                border-right: 4/16rem solid #448d62;
+                box-sizing: content-box;
             }
-        }
-        .num-pre {
-            font-family: @fontMono;
-            position: absolute;
-            width: 36/16rem;
-            white-space: pre-line;
-            text-align: center;
-            top: 48/16rem;
-            top: auto;
-            font-size: 14/16em;
-            color: #000;
-            background: red;
-            background: rgba(0, 0, 0, 0.05);
-            border: @border1;
-            border-left: none;
-            .nums {
-                pointer-events: none;
+            .lines {
+                background: linear-gradient(transparent 20/16rem, rgba(130, 130, 130, 0.1) 20/16rem);
+                background-size: 100% 40/16rem;
+                background-position: 0 0;
+                background-repeat: repeat-y;
+                //outline: 1px solid red;
+                color: #448d62;
+                counter-reset: line;
+                overflow: hidden;
+                overflow-x: auto;
+                white-space: pre;
+                word-break: normal;
+                word-wrap: normal;
+                font-size: 14/16rem;
+                line-height: 20/16rem;
+                >div {
+                    display: block;
+                    counter-increment: list;
+                    &:before {
+                        content: counter(list);
+                        position: absolute;
+                        left: 16/16rem;
+                        width: 28/16rem;
+                        //background: red;
+                        padding-left: 0/16rem;
+                        //text-align: center;
+                        color: @secondTextColor;
+                        box-sizing: border-box;
+                        .noselect();
+                        pointer-events: none;
+                    }
+                }
             }
         }
         &.box {
@@ -545,19 +576,10 @@ li {
                 }
             }
             .block-body {
-                white-space: pre-wrap;
-                word-break: break-word;
-                word-wrap: normal;
-                .line {
-                    &:before {
-                        opacity: 1;
-                        pointer-events: auto;
-                    }
-                }
-            }
-            .num-pre {
-                .nums {
-                    visibility: hidden;
+                .lines {
+                    white-space: pre-wrap;
+                    word-break: break-word;
+                    word-wrap: normal;
                 }
             }
         }
@@ -590,11 +612,11 @@ li {
         }
         >.block-body {
             .post-block {
-                .bRad(2px);
+                /*.bRad(2px);
                 border-left: @border1;
                 border-right: @border1;
                 margin-left: 0!important;
-                margin-right: 0!important;
+                margin-right: 0!important;*/
             }
         }
         &.ex {
