@@ -16,7 +16,7 @@ function improveCodeBlock() {
                 splitLines = codeBody.innerHTML.split(/<br[^>]*?>/g),
                 count = '',
                 lines = '';
-console.log(splitLines);
+//console.log(splitLines);
             for (var j = 0; j < splitLines.length; j++) {
                 lines += '<div>' + splitLines[j] + '</div>';
                 count += (j + 1) + '\n';
