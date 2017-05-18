@@ -728,3 +728,137 @@ a.snapback {
         .bRad(20/16rem);
     }
 }*/
+
+.attachments {
+    background: @postBlockBg;
+    margin: 8/16rem -16/16rem;
+    position: relative;
+    .title {
+        padding: 12/16rem 16/16rem;
+        font-weight: bold;
+        font-size: 14/16rem;
+    }
+    .scroll_container {
+        overflow-x: auto;
+        white-space: nowrap;
+        font-size: 0;
+        line-height: 0;
+        padding: 0 8/16rem;
+        .attach {
+            display: inline-block;
+            width: 128/16rem;
+            height: 128/16rem;
+            position: relative;
+            margin: 8/16rem;
+            background: white;
+            .bRad(4/16rem);
+            overflow: hidden;
+            box-shadow: 0 1px 3px fade(#000, 24%);
+            
+            font-size: 16/16rem;
+            line-height: 20/16rem;
+            white-space: normal;
+            color: white;
+            .meta {
+                position: absolute;
+                box-sizing: border-box;
+                &.name {}
+                &.count {}
+                &.weight {}
+                &.format {}
+            }
+            &.file {
+                .meta {
+                    &.name {
+                        background: rgba(0, 0, 0, 0.25);
+                        .bRad(0 0 4/16rem 4/16rem);
+                        .bRad(2/16rem);
+                        line-height: 20/16em;
+                        bottom: 4/16rem;
+                        right: 4/16rem;
+                        left: 4/16rem;
+                        font-size: 12/16rem;
+                        text-align: center;
+                        padding: 2/16rem 2/16rem;
+                        //height: ((20*2)+(4*2))/16em;
+                        /*overflow: hidden;
+                    text-overflow: ellipsis;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    &:hover{
+                        -webkit-line-clamp: 10;
+                    }*/
+                        .weight {
+                            display: block;
+                            font-weight: bold;
+                        }
+                    }
+                    &.count {
+                        right: 4/16rem;
+                        top: 4/16rem;
+                        font-size: 12/16rem;
+                        line-height: 20/16rem;
+                        border-radius: 2/16rem;
+                        padding: 2/16rem 4/16rem;
+                        padding-left: 24/16rem;
+                        background: rgba(0, 0, 0, 0.25);
+                        background-image: url(../../res/download.svg);
+                        background-repeat: no-repeat;
+                        background-size: 16/16rem;
+                        background-position: 4/16rem 4/16rem;
+                        font-weight: bold;
+                    }
+                    &.weight {
+                        right: 4/16rem;
+                        top: 4/16rem;
+                        width: auto;
+                        padding: 2/16rem 4/16rem;
+                        font-size: 12/16rem;
+                        font-weight: bold;
+                        text-transform: uppercase;
+                        background: rgba(0, 0, 0, 0.25);
+                        text-align: center;
+                        display: none;
+                    }
+                    &.format {
+                        width: 100%;
+                        height: 100%;
+                        top: 0;
+                        left: 0;
+                        color: #212121;
+                        text-align: center;
+                        line-height: 104/16rem;
+                        font-size: 32/16rem;
+                        font-weight: bold;
+                        text-transform: uppercase;
+                    }
+                }
+            }
+            &.picture {
+                .meta {
+                    &.weight,
+                    &.format {
+                        padding: 2/16rem 8/16rem;
+                        right: 4/16rem;
+                        bottom: 4/16rem;
+                        font-size: 12/16rem;
+                        background: rgba(0, 0, 0, 0.25);
+                        border-radius: 2/16rem;
+                        text-transform: uppercase;
+                        font-weight: bold;
+                    }
+                }
+                .image {
+                    width: 100%;
+                    height: 100%;
+                    display: block;
+                    background-size: contain;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    .bRad(4/16rem);
+                }
+            }
+        }
+    }
+}

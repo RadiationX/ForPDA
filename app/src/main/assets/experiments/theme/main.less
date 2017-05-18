@@ -1,0 +1,96 @@
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background: #f2f2f2;
+    font-size: 1em;
+    color: #212121;
+    line-height: 20/16em;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    font-family: sans-serif;
+}
+
+.content {
+    margin: 2rem;
+    background: white;
+    padding: 1rem;
+}
+
+.post-block {
+    position: relative;
+    //padding-left: 24/16rem;
+    margin: 8/16rem 0;
+    .block-title {
+        //outline: 1px solid red;
+        font-weight: bold;
+        font-size: 14/16rem;
+        padding: 8/16rem 8/16rem;
+        &:before{
+            content: "Код: ";
+        }
+        .buttons{
+            float: right;
+            margin: -8/16rem -8/16rem;
+            margin-left: 8/16rem;
+            .btn{
+                float: right;
+                height: 28/16rem;
+                width: 28/16rem;
+                margin: 4/16rem;
+                background: red;
+                border-radius: 2px;
+            }
+        }
+        &:after{
+            content: "";
+            display: table;
+            clear: both;
+        }
+    }
+    .block-body {
+        font-family: monospace;
+        position: relative;
+        padding-left: 40/16rem;
+        .numbers {
+            float: left;
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 28/16rem;
+            border-right: 4/16rem solid green;
+            font-family: monospace;
+            text-align: center;
+            margin-right: 8/16rem;
+            box-sizing: content-box;
+            div {
+                display: none;
+            }
+        }
+        .lines {
+            counter-reset: line;
+            overflow: hidden;
+            overflow-x: auto;
+            white-space: nowrap;
+            word-break: normal;
+            word-wrap: normal;
+            >span {
+                display: block;
+                counter-increment: list;
+                &:before {
+                    content: counter(list);
+                    position: absolute;
+                    left: 0;
+                    width: 28/16rem;
+                    text-align: center;
+                }
+            }
+        }
+    }
+    &:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+}

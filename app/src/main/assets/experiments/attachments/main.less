@@ -1,0 +1,145 @@
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background: #f2f2f2;
+    font-size: 1em;
+    color: #212121;
+    line-height: 20/16em;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    font-family: sans-serif;
+}
+
+.content {
+    margin: 2rem 0;
+    background: white;
+    padding: 1rem;
+}
+
+.attachments {
+    background: rgba(0, 0, 0, 0.1);
+    margin: 8/16rem -16/16rem;
+    overflow-x: auto;
+    white-space: nowrap;
+    font-size: 0;
+    line-height: 0;
+    .attach {
+        display: inline-block;
+        width: 128/16rem;
+        height: 128/16rem;
+        position: relative;
+        margin: 8/16rem;
+        background: white;
+        border-radius: 4/16rem;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+        font-size: 16/16rem;
+        line-height: 20/16rem;
+        white-space: normal;
+        color: white;
+        .meta {
+            position: absolute;
+            box-sizing: border-box;
+            &.name {}
+            &.count {}
+            &.weight {}
+            &.format {}
+        }
+        &.file {
+            .meta {
+                &.name {
+                    background: rgba(0, 0, 0, 0.25);
+                    line-height: 20/16em;
+                    bottom: 0/16rem;
+                    width: 100%;
+                    left: 0;
+                    font-size: 12/16rem;
+                    text-align: center;
+                    padding: 4/16rem 4/16rem;
+                    
+                    //height: ((20*2)+(4*2))/16em;
+                    /*overflow: hidden;
+                    text-overflow: ellipsis;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    &:hover{
+                        -webkit-line-clamp: 10;
+                    }*/
+                    .weight {
+                        display: block;
+                        font-weight: bold;
+                    }
+                }
+                &.count {
+                    right: 4/16rem;
+                    top: 4/16rem;
+                    font-size: 12/16rem;
+                    line-height: 20/16rem;
+                    border-radius: 2/16rem;
+                    padding: 2/16rem 4/16rem;
+                    padding-left: 24/16rem;
+                    background: rgba(0, 0, 0, 0.25);
+                    background-image: url(../../forpda/res/download.svg);
+                    background-repeat: no-repeat;
+                    background-size: 16/16rem;
+                    background-position: 4/16rem 4/16rem;
+                    font-weight: bold;
+                }
+                &.weight {
+                    right: 4/16rem;
+                    top: 4/16rem;
+                    width: auto;
+                    padding: 2/16rem 4/16rem;
+                    font-size: 12/16rem;
+                    font-weight: bold;
+                    text-transform: uppercase;
+                    background: rgba(0, 0, 0, 0.25);
+                    text-align: center;
+                    display: none;
+                }
+                &.format {
+                    width: 100%;
+                    height: 100%;
+                    top: 0;
+                    left: 0;
+                    color: #212121;
+                    text-align: center;
+                    line-height: 104/16rem;
+                    font-size: 32/16rem;
+                    font-weight: bold;
+                    text-transform: uppercase;
+                }
+            }
+        }
+        &.picture {
+            .meta {
+                &.weight,
+                &.format {
+                    padding: 2/16rem 8/16rem;
+                    right: 4/16rem;
+                    bottom: 4/16rem;
+                    font-size: 12/16rem;
+                    background: rgba(0, 0, 0, 0.25);
+                    border-radius: 2/16rem;
+                    text-transform: uppercase;
+                    font-weight: bold;
+                }
+            }
+            .image {
+                width: 100%;
+                height: 100%;
+                display: block;
+                background-size: contain;
+                background-position: center;
+                background-repeat: no-repeat;
+            }
+        }
+    }
+    &:after {
+        //content: "";
+        display: table;
+        clear: both;
+    }
+}
