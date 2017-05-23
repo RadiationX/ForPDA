@@ -29,8 +29,24 @@ body {}
         .time {
             clear: both;
             font-size: 12/16rem;
-            padding: 0 8/16rem;
             color: @secondTextColor;
+        }
+        .status {
+            height: 6/16rem;
+            width: 6/16rem;
+            border-radius: 6/16rem;
+            margin: 7/16rem 4/16rem;
+        }
+        &.unread {
+            //opacity: 0.75;
+            .mess {
+                //background: #f2f2f2;
+                //opacity: 0.75;
+                //box-shadow: none;
+            }
+            .status {
+                background: #ef5350;
+            }
         }
         &.his {
             margin-right: 64/16em;
@@ -39,6 +55,10 @@ body {}
                 float: left;
             }
             .time {
+                float: left;
+                padding-left: 8/16rem;
+            }
+            .status {
                 float: left;
             }
         }
@@ -49,6 +69,10 @@ body {}
                 border-top-right-radius: 1/16rem;
             }
             .time {
+                float: right;
+                padding-right: 8/16rem;
+            }
+            .status {
                 float: right;
             }
         }

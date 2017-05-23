@@ -92,11 +92,13 @@ a {
 
 li {
     .post-block {
-        .bRad(2px);
-        margin-left: 0!important;
-        margin-right: 0!important;
-        border-left: @border1;
-        border-right: @border1;
+        &.spoil, &.hidden {
+            .bRad(2px);
+            margin-left: 0!important;
+            margin-right: 0!important;
+            border-left: @border1;
+            border-right: @border1;
+        }
     }
 }
 
@@ -385,6 +387,8 @@ li {
         //margin-left: 0;
         border: none;
         //outline: 1px solid red;
+        border-left: 4/16rem solid #448d62;
+        margin-left: 0;
         &.small {
             >.block-title {
                 .icon {
@@ -397,6 +401,8 @@ li {
             //padding: 8/16rem 8/16rem;
             //padding-left: 16/16rem;
             //min-height: auto;
+            padding: 8/16rem;
+            min-height: auto;
             &.empty {
                 &:before {
                     content: "Код";
@@ -430,7 +436,7 @@ li {
                 i {
                     height: 36/16rem;
                     width: 36/16rem;
-                    margin: 6/16rem 0;
+                    //margin: 6/16rem 0;
                     border: @border1;
                     //border-color: rgba(0, 0, 0, 0.1);
                     border: none;
@@ -452,7 +458,7 @@ li {
                 }
             }
             .icon {
-                height: 48/16rem;
+                height: 36/16rem;
                 width: 40/16rem;
                 position: absolute;
                 right: 96/16rem;
@@ -509,19 +515,19 @@ li {
             font-family: monospace;
             position: relative;
             padding: 4/16rem 0;
-            padding-left: 56/16rem;
+            padding-left: 48/16rem;
             &:before {
-                content: "";
+                //content: "";
                 position: absolute;
                 left: 16/16rem;
                 top: 0;
                 bottom: 0;
                 width: 28/16rem;
-                border-right: 4/16rem solid #448d62;
+                border-left: 4/16rem solid #448d62;
                 box-sizing: content-box;
             }
             .lines {
-                background: linear-gradient(transparent 20/16rem, rgba(130, 130, 130, 0.1) 20/16rem);
+                background: linear-gradient(rgba(130, 130, 130, 0.1) 20/16rem, transparent 20/16rem);
                 background-size: 100% 40/16rem;
                 background-position: 0 0;
                 background-repeat: repeat-y;
@@ -541,11 +547,12 @@ li {
                     &:before {
                         content: counter(list);
                         position: absolute;
-                        left: 16/16rem;
+                        left: 0/16rem;
                         width: 28/16rem;
                         //background: red;
-                        padding-left: 0/16rem;
+                        padding-left: 8/16rem;
                         //text-align: center;
+                        white-space: nowrap;
                         color: @secondTextColor;
                         box-sizing: border-box;
                         .noselect();
@@ -754,7 +761,6 @@ a.snapback {
             .bRad(4/16rem);
             overflow: hidden;
             box-shadow: 0 1px 3px fade(#000, 24%);
-            
             font-size: 16/16rem;
             line-height: 20/16rem;
             white-space: normal;

@@ -117,6 +117,7 @@ public class QmsRx {
             t.addBlockOpt("date");
         } else {
             t.setVariableOpt("from_class", mess.isMyMessage() ? "our" : "his");
+            t.setVariableOpt("unread_class", mess.getReadStatus() ? "" : "unread");
             t.setVariableOpt("mess_id", mess.getId());
             t.setVariableOpt("content", mess.getContent());
             t.setVariableOpt("time", mess.getTime());

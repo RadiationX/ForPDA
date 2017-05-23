@@ -33,16 +33,18 @@ public class FilePickHelper {
         startActivityForResult(intent, PICK_IMAGE)*/
         ;
 
-        Intent intent = new Intent();
-        intent.setType("image/*");
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.setType("*/*");
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        return Intent.createChooser(intent, "Select Picture");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        return Intent.createChooser(intent, "Select file");
     }
 
     public static List<RequestFile> onActivityResult(Context context, Intent data) {
         List<RequestFile> files = new ArrayList<>();
         RequestFile tempFile = null;
+        Log.e("SUKA", "ON ACTIVITY RESULT INTENT " + data);
         if (data.getData() == null) {
             if (data.getClipData() != null) {
                 for (int i = 0; i < data.getClipData().getItemCount(); i++) {
@@ -59,12 +61,16 @@ public class FilePickHelper {
 
     private static RequestFile createFile(Context context, Uri uri) {
         RequestFile requestFile = null;
+        Log.e("SUKA", "CREATE FILE " + uri);
         try {
             InputStream inputStream = null;
             String name = getFileName(context, uri);
             String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(name));
             if (mimeType == null) {
                 mimeType = context.getContentResolver().getType(uri);
+            }
+            if (mimeType == null) {
+                mimeType = MimeTypeUtil.getType(MimeTypeMap.getFileExtensionFromUrl(name));
             }
             Log.e("FORPDA_LOG", "MIME TYPE " + mimeType);
             if (uri.getScheme().equals("content")) {
@@ -86,7 +92,15 @@ public class FilePickHelper {
             Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
             try {
                 if (cursor != null && cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                    String[] names = cursor.getColumnNames();
+                    Log.e("SUKA", "NAMES");
+                    for (int i = 0; i < names.length; i++) {
+                        Log.e("SUKA", "NAME " + names[i]);
+                    }
+                    int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    if (index >= 0) {
+                        result = cursor.getString(index);
+                    }
                 }
             } finally {
                 cursor.close();

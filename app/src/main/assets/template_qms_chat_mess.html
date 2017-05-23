@@ -1,14 +1,16 @@
 <!-- $BeginBlock item -->
 <!-- $BeginBlock mess -->
-<div class="mess_container ${from_class}" data-mess-id="${mess_id}">
+<div class="mess_container ${from_class} ${unread_class}" data-mess-id="${mess_id}">
     <div class="mess">
         <div class="content">${content}</div>
     </div>
     <div class="time"><span>${time}</span></div>
+    <div class="status"></div>
 </div>
 <!-- $EndBlock mess -->
 <!-- $BeginBlock date -->
 <div class="date">
     <span>${date}</span>
-</div><!-- $EndBlock date -->
+</div>
+<!-- $EndBlock date -->
 <!-- $EndBlock item -->
