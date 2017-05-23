@@ -267,7 +267,7 @@ public class EditPostFragment extends TabFragment {
 
     public void tryPickFile() {
         if (checkStoragePermission()) {
-            startActivityForResult(FilePickHelper.pickImage(REQUEST_PICK_FILE), REQUEST_PICK_FILE);
+            startActivityForResult(FilePickHelper.pickImage(false), REQUEST_PICK_FILE);
         }
     }
 
@@ -276,7 +276,7 @@ public class EditPostFragment extends TabFragment {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         for (int i = 0; i < permissions.length; i++) {
             if (permissions[i].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                startActivityForResult(FilePickHelper.pickImage(REQUEST_PICK_FILE), REQUEST_PICK_FILE);
+                startActivityForResult(FilePickHelper.pickImage(false), REQUEST_PICK_FILE);
                 break;
             }
         }

@@ -539,14 +539,16 @@ li {
                 white-space: pre;
                 word-break: normal;
                 word-wrap: normal;
-                font-size: 14/16rem;
+                font-size: 12/16rem;
                 line-height: 20/16rem;
                 >div {
                     display: block;
                     counter-increment: list;
+                    min-height: 20/16rem;
                     &:before {
                         content: counter(list);
                         position: absolute;
+                        font-size: 14/16rem;
                         left: 0/16rem;
                         width: 28/16rem;
                         //background: red;

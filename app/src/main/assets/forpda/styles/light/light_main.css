@@ -514,16 +514,18 @@ li .post-block.hidden {
   white-space: pre;
   word-break: normal;
   word-wrap: normal;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   line-height: 1.25rem;
 }
 .post-block.code > .block-body .lines > div {
   display: block;
   counter-increment: list;
+  min-height: 1.25rem;
 }
 .post-block.code > .block-body .lines > div:before {
   content: counter(list);
   position: absolute;
+  font-size: 0.875rem;
   left: 0rem;
   width: 1.75rem;
   padding-left: 0.5rem;

@@ -35,6 +35,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.IBaseForumPost;
@@ -67,7 +68,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
     private ViewGroup nickBlock, resourceBlock, resultBlock, sortBlock, sourceBlock;
     private Spinner resourceSpinner, resultSpinner, sortSpinner, sourceSpinner;
     private TextView nickField;
-    private Button submitButton;
+    private Button submitButton, saveSettingsButton;
 
     private List<String> resourceItems = Arrays.asList(SearchSettings.RESOURCE_FORUM.second, SearchSettings.RESOURCE_NEWS.second);
     private List<String> resultItems = Arrays.asList(SearchSettings.RESULT_TOPICS.second, SearchSettings.RESULT_POSTS.second);
@@ -94,10 +95,12 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String savedSettings = App.getInstance().getPreferences().getString("search_settings", null);
+        Log.e("SUKA", "savedSettings "+savedSettings);
+        if (savedSettings != null) {
+            settings = SearchSettings.parseSettings(settings, savedSettings);
+        }
         if (getArguments() != null) {
-           /* String url = getArguments().getString(ARG_TAB);
-            if (url != null)
-                settings = SearchSettings.parseSettings(settings, url);*/
             settings = SearchSettings.fromBundle(settings, getArguments());
         }
     }
@@ -130,6 +133,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
         nickField = (TextView) findViewById(R.id.search_nick_field);
 
         submitButton = (Button) findViewById(R.id.search_submit);
+        saveSettingsButton = (Button) findViewById(R.id.search_save_settings);
 
         if (getMainActivity().getWebViews().size() > 0) {
             webView = getMainActivity().getWebViews().element();
@@ -212,6 +216,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
         fillSettingsData();
         searchItem.expandActionView();
         submitButton.setOnClickListener(v -> startSearch());
+        saveSettingsButton.setOnClickListener(v -> saveSettings());
         //recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
@@ -367,6 +372,16 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
         spinner.setAdapter(adapter);
         spinner.setSelection(selection);
         spinner.setOnItemSelectedListener(listener);
+    }
+
+    private void saveSettings() {
+        SearchSettings saveSettings = new SearchSettings();
+        saveSettings.setResult(settings.getResult());
+        saveSettings.setSort(settings.getSort());
+        saveSettings.setSource(settings.getSource());
+        String saveUrl = saveSettings.toUrl();
+        Log.e("SUKA", "SAVE SETTINGS " + saveUrl);
+        App.getInstance().getPreferences().edit().putString("search_settings", saveUrl).apply();
     }
 
     private void startSearch() {
