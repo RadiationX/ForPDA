@@ -42,6 +42,7 @@ public class MessagePanel extends CardView {
     private HeightChangeListener heightChangeListener;
     public int primaryColor = Color.parseColor("#0277bd");
     private boolean fullForm = false;
+    private CoordinatorLayout.LayoutParams params;
 
     public MessagePanel(Context context, ViewGroup fragmentContainer, ViewGroup targetContainer, boolean fullForm) {
         super(context);
@@ -61,8 +62,8 @@ public class MessagePanel extends CardView {
         sendProgress = (ProgressBar) findViewById(R.id.send_progress);
         formProgress = (ProgressBar) findViewById(R.id.form_load_progress);
         panelBehavior = new MessagePanelBehavior();
-        CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, fullForm ? ViewGroup.LayoutParams.MATCH_PARENT : ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.setBehavior(panelBehavior);
+        params = new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, fullForm ? ViewGroup.LayoutParams.MATCH_PARENT : ViewGroup.LayoutParams.WRAP_CONTENT);
+        //params.setBehavior(panelBehavior);
         params.gravity = Gravity.BOTTOM;
         if (!fullForm)
             params.setMargins(App.px8, App.px8, App.px8, App.px8);
@@ -109,6 +110,15 @@ public class MessagePanel extends CardView {
             }
         });
         messageField.setTypeface(Typeface.MONOSPACE);
+    }
+
+    public void disableBehavior(){
+        params.setBehavior(null);
+        setLayoutParams(params);
+    }
+    public void enableBehavior(){
+        params.setBehavior(panelBehavior);
+        setLayoutParams(params);
     }
 
     public ProgressBar getFormProgress(){

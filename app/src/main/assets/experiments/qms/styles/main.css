@@ -84,8 +84,16 @@ html {
 .mess_list .mess_container .time {
   clear: both;
   font-size: 0.75rem;
-  padding: 0.125rem 0.125rem;
   color: #595959;
+}
+.mess_list .mess_container .status {
+  height: 0.375rem;
+  width: 0.375rem;
+  border-radius: 0.375rem;
+  margin: 0.4375rem 0.25rem;
+}
+.mess_list .mess_container.unread .status {
+  background: #ef5350;
 }
 .mess_list .mess_container.his {
   margin-right: 2em;
@@ -105,6 +113,10 @@ html {
   box-shadow: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.25);
 }
 .mess_list .mess_container.his .time {
+  float: left;
+  padding-left: 0.5rem;
+}
+.mess_list .mess_container.his .status {
   float: left;
 }
 .mess_list .mess_container.our {
@@ -128,6 +140,10 @@ html {
   box-shadow: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.25);
 }
 .mess_list .mess_container.our .time {
+  float: right;
+  padding-right: 0.5rem;
+}
+.mess_list .mess_container.our .status {
   float: right;
 }
 .mess_list .mess_container:after {

@@ -1,6 +1,9 @@
 package forpdateam.ru.forpda.fragments;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
@@ -47,6 +50,10 @@ public class TabFragment extends RxFragment {
     private final static String BUNDLE_TAB_TITLE = "tab_title";
     private final static String BUNDLE_SUBTITLE = "subtitle";
     private final static String BUNDLE_PARENT_TAG = "parent_tag";
+
+    public final static int REQUEST_PICK_FILE = 1228;
+    private final static int REQUEST_STORAGE = 1;
+
 
     protected TabConfiguration configuration = new TabConfiguration();
 
@@ -286,6 +293,22 @@ public class TabFragment extends RxFragment {
 
     protected final MainActivity getMainActivity() {
         return (MainActivity) getActivity();
+    }
+
+    public boolean checkStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (getMainActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                Log.v("SUKA", "Permission is granted");
+                return true;
+            } else {
+                Log.v("SUKA", "Permission is revoked");
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_STORAGE);
+                return false;
+            }
+        } else {
+            Log.v("SUKA", "Permission is granted");
+            return true;
+        }
     }
 
     @Override

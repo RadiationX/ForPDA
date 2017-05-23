@@ -1,8 +1,11 @@
 package forpdateam.ru.forpda.fragments.theme.editpost;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -109,7 +112,7 @@ public class EditPostFragment extends TabFragment {
             }
         });
         attachmentsPopup = messagePanel.getAttachmentsPopup();
-        attachmentsPopup.setAddOnClickListener(v -> pickImage());
+        attachmentsPopup.setAddOnClickListener(v -> tryPickFile());
         attachmentsPopup.setDeleteOnClickListener(v -> removeFiles());
         viewsReady();
         Bundle args = getArguments();
@@ -261,17 +264,28 @@ public class EditPostFragment extends TabFragment {
         attachmentSubscriber.subscribe(RxApi.EditPost().deleteFiles(postForm.getPostId(), selectedFiles), item -> attachmentsPopup.onDeleteFiles(item), selectedFiles, null);
     }
 
-    private static final int PICK_IMAGE = 1228;
 
-    public void pickImage() {
-        startActivityForResult(FilePickHelper.pickImage(PICK_IMAGE), PICK_IMAGE);
+    public void tryPickFile() {
+        if (checkStoragePermission()) {
+            startActivityForResult(FilePickHelper.pickImage(REQUEST_PICK_FILE), REQUEST_PICK_FILE);
+        }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        for (int i = 0; i < permissions.length; i++) {
+            if (permissions[i].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                startActivityForResult(FilePickHelper.pickImage(REQUEST_PICK_FILE), REQUEST_PICK_FILE);
+                break;
+            }
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_PICK_FILE && resultCode == Activity.RESULT_OK) {
             if (data == null) {
                 //Display an error
                 return;

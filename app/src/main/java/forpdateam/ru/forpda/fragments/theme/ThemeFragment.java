@@ -1,10 +1,12 @@
 package forpdateam.ru.forpda.fragments.theme;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
@@ -12,6 +14,7 @@ import android.graphics.PorterDuffColorFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -76,7 +79,6 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     protected MessagePanel messagePanel;
     protected AttachmentsPopup attachmentsPopup;
     protected Subscriber<List<AttachmentItem>> attachmentSubscriber = new Subscriber<>(this);
-    protected static final int PICK_IMAGE = 1228;
     protected String tab_url = "";
 
 
@@ -103,13 +105,14 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         baseInflateFragment(inflater, R.layout.fragment_theme);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
         messagePanel = new MessagePanel(getContext(), fragmentContainer, coordinatorLayout, false);
+        messagePanel.enableBehavior();
         messagePanel.addSendOnClickListener(v -> sendMessage());
         messagePanel.getSendButton().setOnLongClickListener(v -> {
             TabManager.getInstance().add(EditPostFragment.newInstance(createEditPostForm(), currentPage.getTitle()));
             return true;
         });
         attachmentsPopup = messagePanel.getAttachmentsPopup();
-        attachmentsPopup.setAddOnClickListener(v -> pickImage());
+        attachmentsPopup.setAddOnClickListener(v -> tryPickFile());
         attachmentsPopup.setDeleteOnClickListener(v -> removeFiles());
 
         paginationHelper.inflatePagination(getContext(), inflater, toolbar);
@@ -409,15 +412,27 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         }, currentPage, v -> loadData());
     }
 
-    public void pickImage() {
-        startActivityForResult(FilePickHelper.pickImage(PICK_IMAGE), PICK_IMAGE);
+    public void tryPickFile() {
+        if (checkStoragePermission()) {
+            startActivityForResult(FilePickHelper.pickImage(REQUEST_PICK_FILE), REQUEST_PICK_FILE);
+        }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        for (int i = 0; i < permissions.length; i++) {
+            if (permissions[i].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                startActivityForResult(FilePickHelper.pickImage(REQUEST_PICK_FILE), REQUEST_PICK_FILE);
+                break;
+            }
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_PICK_FILE && resultCode == Activity.RESULT_OK) {
             if (data == null) {
                 //Display an error
                 return;
@@ -425,7 +440,6 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             uploadFiles(FilePickHelper.onActivityResult(getContext(), data));
         }
     }
-
 
     public void uploadFiles(List<RequestFile> files) {
         attachmentsPopup.preUploadFiles(files);
@@ -496,7 +510,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     @Override
     public void insertNick(IBaseForumPost post) {
-        String insert = String.format(Locale.getDefault(), "[snapback]%s[/snapback] [b]%s, [/b]\n", post.getId(), post.getNick());
+        String insert = String.format(Locale.getDefault(), "[snapback]%s[/snapback] [b]%s[/b], \n", post.getId(), post.getNick());
         messagePanel.insertText(insert);
     }
 
