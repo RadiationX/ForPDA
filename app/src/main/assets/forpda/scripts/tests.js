@@ -2,6 +2,9 @@ window.addEventListener("DOMContentLoaded", function (e) {
     var snapBacks = document.querySelectorAll("a[href*=findpost][title='Перейти к сообщению'],a[href*=showuser]");
     for (var i = 0; i < snapBacks.length; i++) {
         var snapBack = snapBacks[i];
+        if(snapBack.classList.contains("snapback")){
+            break;
+        }
         if (!snapBack.href.includes("showuser")) {
             var temp = snapBack.nextElementSibling;
             snapBack.innerHTML = temp.textContent;
@@ -32,6 +35,9 @@ window.addEventListener("DOMContentLoaded", function (e) {
     var myRegexp = /([\s\S]*?) @ ((?:\d+.\d+.\d+|[a-zA-zа-я-А-Я]+)(?:, \d+:\d+)?)/g;
     for (var i = 0; i < quotes.length; i++) {
         var quote = quotes[i];
+        if(quote.classList.contains("transformed")){
+                    break;
+                }
         var titleBlock = quote.querySelector(".block-title");
 
         var titleText = titleBlock.textContent;
@@ -54,5 +60,6 @@ window.addEventListener("DOMContentLoaded", function (e) {
             }
             titleBlock.querySelector(".icon").innerHTML = nick;
         }
+        quote.classList.add("transformed");
     }
 });

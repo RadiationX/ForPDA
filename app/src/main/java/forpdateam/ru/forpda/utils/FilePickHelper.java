@@ -24,7 +24,7 @@ import forpdateam.ru.forpda.api.RequestFile;
 
 public class FilePickHelper {
 
-    public static Intent pickImage(int PICK_IMAGE) {
+    public static Intent pickImage(boolean onlyImages) {
         /*Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image*//*");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -34,7 +34,11 @@ public class FilePickHelper {
         ;
 
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.setType("*/*");
+        if(onlyImages){
+            intent.setType("image/*");
+        }else {
+            intent.setType("*/*");
+        }
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setAction(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);

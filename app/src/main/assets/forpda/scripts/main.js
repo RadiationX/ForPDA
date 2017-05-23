@@ -8,34 +8,25 @@ function improveCodeBlock() {
     for (var i = 0; i < codeBlockAll.length; i++) {
         try {
             var codeBlock = codeBlockAll[i];
-            if (codeBlock.classList.contains("improve")) {
-                continue;
-            }
-            var codeTitle = codeBlock.querySelector('.block-title'),
-                codeBody = codeBlock.querySelector('.block-body'),
-                splitLines = codeBody.innerHTML.split(/<br[^>]*?>/g),
-                count = '',
-                lines = '';
-//console.log(splitLines);
-            for (var j = 0; j < splitLines.length; j++) {
-                lines += '<div>' + splitLines[j] + '</div>';
-                count += (j + 1) + '\n';
-            }
-
-            /*if (splitLines.length < 5) {
-                codeBlock.classList.add("small");
-            }*/
-
-            codeBlock.classList.add('wrap');
-            codeTitle.insertAdjacentHTML("beforeEnd", '<div class="block-controls"><i class="wrap"></i><i class="select_all"></i></div>');
-            /*codeTitle.insertAdjacentHTML("afterEnd", '<div class="num-pre"><span class="nums">' + count + '</span></div>');*/
-            codeTitle.querySelector('.wrap').addEventListener('click', onClickToggleButton);
-            codeTitle.querySelector('.select_all').addEventListener('click', SelectText);
-            
-            codeBody.innerHTML = "<div class=\"lines\">"+lines+"</div>";
+            var codeTitle = codeBlock.querySelector('.block-title')
             if (!codeBlock.classList.contains("improve")) {
+                var codeBody = codeBlock.querySelector('.block-body'),
+                    splitLines = codeBody.innerHTML.split(/<br[^>]*?>/g),
+                    count = '',
+                    lines = '';
+                console.log(splitLines);
+                for (var j = 0; j < splitLines.length; j++) {
+                    lines += '<div>' + splitLines[j] + '</div>';
+                    count += (j + 1) + '\n';
+                }
+                console.log(lines);
+                codeBlock.classList.add('wrap');
+                codeTitle.insertAdjacentHTML("beforeEnd", '<div class="block-controls"><i class="wrap"></i><i class="select_all"></i></div>');
+                codeBody.innerHTML = "<div class=\"lines\">" + lines + "</div>";
                 codeBlock.classList.add("improve");
             }
+            codeTitle.querySelector('.wrap').addEventListener('click', onClickToggleButton);
+            codeTitle.querySelector('.select_all').addEventListener('click', SelectText);
         } catch (error) {
             console.log(error);
         }
@@ -92,9 +83,9 @@ function blocksOpenClose() {
 
     for (var i = 0; i < blockAll.length; i++) {
         var codeBlock = blockAll[i];
-        if (codeBlock.classList.contains("trigger")) {
+        /*if (codeBlock.classList.contains("trigger")) {
             continue;
-        }
+        }*/
         var bt = codeBlock.querySelector(".block-title");
         var bb = codeBlock.querySelector('.block-body');
         //console.log(bb);
@@ -102,9 +93,9 @@ function blocksOpenClose() {
             //bb.parentElement.classList.remove('box');
         }
         bt.addEventListener('click', clickOnElement, false);
-        if (!codeBlock.classList.contains("trigger")) {
+        /*if (!codeBlock.classList.contains("trigger")) {
             codeBlock.classList.add("trigger");
-        }
+        }*/
     }
 
     function clickOnElement(event) {
@@ -170,9 +161,9 @@ function removeImgesSrc() {
     var postBlockSpoils = document.body.querySelectorAll('.post-block.spoil.close');
     for (var i = 0; i < postBlockSpoils.length; i++) {
         var codeBlock = postBlockSpoils[i];
-        if (codeBlock.classList.contains("images")) {
+        /*if (codeBlock.classList.contains("images")) {
             continue;
-        }
+        }*/
         var images = codeBlock.querySelector(".block-body").querySelectorAll("img");
         for (var j = 0; j < images.length; j++) {
             var img = images[j];
@@ -180,9 +171,9 @@ function removeImgesSrc() {
             img.dataset.imageSrc = img.src;
             img.removeAttribute('src');
         }
-        if (!codeBlock.classList.contains("images")) {
+        /*if (!codeBlock.classList.contains("images")) {
             codeBlock.classList.add("images");
-        }
+        }*/
     }
 }
 
@@ -208,17 +199,14 @@ function addIcons(e) {
     var newIcon;
     for (var i = 0; i < blockAll.length; i++) {
         var codeBlock = blockAll[i];
-        if (codeBlock.classList.contains("icons")) {
-            continue;
-        }
-        var blockTitle = codeBlock.querySelector(".block-title");
-        if (blockTitle.innerText.length == 0) {
-            blockTitle.classList.add("empty");
-        }
-        newIcon = document.createElement('i');
-        newIcon.classList.add("icon");
-        blockTitle.appendChild(newIcon);
         if (!codeBlock.classList.contains("icons")) {
+            var blockTitle = codeBlock.querySelector(".block-title");
+            if (blockTitle.innerText.length == 0) {
+                blockTitle.classList.add("empty");
+            }
+            newIcon = document.createElement('i');
+            newIcon.classList.add("icon");
+            blockTitle.appendChild(newIcon);
             codeBlock.classList.add("icons");
         }
     }

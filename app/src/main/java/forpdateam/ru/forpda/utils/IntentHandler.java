@@ -83,8 +83,11 @@ public class IntentHandler {
         if (url == null || url.length() <= 1 || url.equals("#")) {
             return false;
         }
-        if (url.substring(0, 2).equals("//"))
+        if (url.substring(0, 2).equals("//")) {
             url = "http:".concat(url);
+        } else if (url.substring(0, 1).equals("/")) {
+            url = "http://4pda.ru".concat(url);
+        }
 
         /*try {
             url = URLDecoder.decode(url, "UTF-8");

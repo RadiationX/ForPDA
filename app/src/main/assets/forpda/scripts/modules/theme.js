@@ -86,7 +86,7 @@ function scrollToElement(name) {
     /*if (document.readyState == "complete") {
         doScroll(anchorElem);
     } else {
-        
+
     }*/
 }
 
