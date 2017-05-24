@@ -118,24 +118,37 @@
         </android.support.design.widget.AppBarLayout>
 
 
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/fragment_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:orientation="vertical"
             android:background="@color/background"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-            <ImageView
-                android:id="@+id/ic_no_network"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:contentDescription="@string/icon_no_network"
-                android:visibility="gone"
-                app:srcCompat="@drawable/ic_cloud_off_black_24dp" />
-        </RelativeLayout>
+            <LinearLayout
+                android:id="@+id/no_network"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/dp8"
+                android:paddingTop="@dimen/dp4"
+                android:paddingBottom="@dimen/dp4"
+                android:visibility="gone">
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="8dp"
+                    android:contentDescription="@string/icon_no_network"
+                    app:srcCompat="@drawable/ic_cloud_off_black_24dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Нет соединения"
+                    android:textStyle="bold"
+                    android:layout_marginStart="8dp"
+                    android:gravity="center_vertical"/>
+            </LinearLayout>
+        </LinearLayout>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"

@@ -65,7 +65,7 @@ public class App extends android.app.Application {
     public final static String TEMPLATE_SEARCH = "search";
     public final static String TEMPLATE_QMS_CHAT = "qms_chat";
     public final static String TEMPLATE_QMS_CHAT_MESS = "qms_chat_mess";
-    private static App INSTANCE = new App();
+    private static App INSTANCE;
     private SharedPreferences preferences;
     private static int savedKeyboardHeight = 0;
     public static int keyboardHeight = 0;
@@ -98,18 +98,17 @@ public class App extends android.app.Application {
         App.getInstance().getPreferences().edit().putInt("keyboard_height", keyboardHeight).apply();
     }
 
+    public App() {
+
+    }
+
     public static App getInstance() {
         return INSTANCE;
     }
 
-    public App() {
-        INSTANCE = this;
-    }
-
-
     private Map<String, MiniTemplator> templates = new HashMap<>();
 
-    public MiniTemplator getTemplate(String name){
+    public MiniTemplator getTemplate(String name) {
         return templates.get(name);
     }
 
@@ -120,7 +119,7 @@ public class App extends android.app.Application {
             try {
                 template = new MiniTemplator.Builder().build(stream, Charset.forName("utf-8"));
             } catch (Exception e) {
-                Toast.makeText(getContext(), "Ошибка шаблона ["+name+"]: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Ошибка шаблона [" + name + "]: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 //создание пустого шаблона
                 template = new MiniTemplator.Builder().build(new ByteArrayInputStream("Template error!".getBytes(Charset.forName("utf-8"))), Charset.forName("utf-8"));
             }
@@ -134,6 +133,7 @@ public class App extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        INSTANCE = this;
         ACRA.init(this);
 
         templates.put(TEMPLATE_THEME, findTemplate(TEMPLATE_THEME));

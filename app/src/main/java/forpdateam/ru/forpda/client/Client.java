@@ -298,6 +298,10 @@ public class Client implements IWebClient {
         listCookies.clear();
     }
 
+    public void removeNetworkObserver(Observer observer){
+        networkObserver.deleteObserver(observer);
+    }
+
     public void addNetworkObserver(Observer observer) {
         networkObserver.addObserver(observer);
     }

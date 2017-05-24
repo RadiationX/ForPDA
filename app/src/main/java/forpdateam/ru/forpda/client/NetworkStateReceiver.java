@@ -80,7 +80,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
         }
     }
 
-    static class ConnectivityManagerDelegate {
+    private static class ConnectivityManagerDelegate {
         private final ConnectivityManager manager;
 
         ConnectivityManagerDelegate(Context context) {

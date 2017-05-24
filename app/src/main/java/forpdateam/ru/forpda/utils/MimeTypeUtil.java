@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.utils;
 
+import android.util.Log;
+
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
@@ -609,7 +611,9 @@ public class MimeTypeUtil {
 
     public static String getType(String filename) {
         if (types.size() == 0) init();
-        return types.get(filename);
+        String res = types.get(filename);
+        Log.e("SUKA", "GET MIME TYPE " + filename + " : " + res);
+        return res;
     }
 
 }

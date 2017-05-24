@@ -24,6 +24,7 @@ import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
+import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
@@ -71,10 +72,16 @@ public class DrawerHeader {
     private Observer loginObserver = (observable, o) -> {
         state((boolean) o);
     };
+    private Observer networkObserver = (observable, o) -> {
+        if ((boolean) o) {
+            state(ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN);
+        }
+    };
 
     public void destroy(){
         activity = null;
         ClientHelper.getInstance().removeLoginObserver(loginObserver);
+        Client.getInstance().removeNetworkObserver(networkObserver);
     }
 
     public DrawerHeader(MainActivity activity, DrawerLayout drawerLayout) {
@@ -105,6 +112,7 @@ public class DrawerHeader {
                     .show();
         });
         ClientHelper.getInstance().addLoginObserver(loginObserver);
+        Client.getInstance().addNetworkObserver(networkObserver);
         state(ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN);
     }
 
