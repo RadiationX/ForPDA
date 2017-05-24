@@ -1,19 +1,29 @@
 package forpdateam.ru.forpda.utils;
 
+import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
 import org.acra.ACRA;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
+import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.forum.ForumFragment;
@@ -26,6 +36,7 @@ import forpdateam.ru.forpda.fragments.reputation.ReputationFragment;
 import forpdateam.ru.forpda.fragments.search.SearchFragment;
 import forpdateam.ru.forpda.fragments.theme.ThemeFragmentWeb;
 import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
+import okhttp3.Cookie;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -78,7 +89,6 @@ public class IntentHandler {
     }
 
     public static boolean handle(String url, Bundle args) {
-        //url = Html.fromHtml(url).toString();
         Log.d("FORPDA_LOG", "handle clear url " + url);
         if (url == null || url.length() <= 1 || url.equals("#")) {
             return false;
@@ -88,37 +98,42 @@ public class IntentHandler {
         } else if (url.substring(0, 1).equals("/")) {
             url = "http://4pda.ru".concat(url);
         }
-
-        /*try {
-            url = URLDecoder.decode(url, "UTF-8");
-            Log.d("FORPDA_LOG", "AFTER DECODE "+url);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }*/
         url = Utils.fromHtml(url);
-        /*try {
-            Log.d("FORPDA_LOG", "AFTER ENCODE "+URLEncoder.encode(url, "windows-1251"));
-            Log.d("FORPDA_LOG", "AFTER ENCODE "+URLEncoder.encode(url, "utf-8"));
-            url = URLEncoder.encode(url, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }*/
         Log.d("FORPDA_LOG", "after html url " + url);
-        if (url.matches("(?:http?s?:)?\\/\\/4pda\\.ru[\\s\\S]*")) {
+        if (url.matches("(?:http?s?:)?\\/\\/[\\s\\S]*?4pda\\.(?:ru|to)[\\s\\S]*")) {
             if (!url.contains("4pda.ru")) {
                 url = "http://4pda.ru".concat(url.substring(0, 1).equals("/") ? "" : "/").concat(url);
             }
             Uri uri = Uri.parse(url.toLowerCase());
-            //Uri uri = Uri.parse(url);
             Log.d("FORPDA_LOG", "HANDLE URL " + uri.toString() + " : " + url);
-            if (uri.getHost() != null && uri.getHost().matches("4pda.ru")) {
+
+            /*if (Pattern.compile("https?:\\/\\/4pda\\.ru\\/forum\\/dl\\/post\\/\\d+\\/[\\s\\S]*\\.").matcher(url).find()) {
+                Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
+                systemDownload(uri);
+            }*/
+
+
+            Matcher matcher = Pattern.compile("https?:\\/\\/4pda\\.ru\\/forum\\/dl\\/post\\/\\d+\\/([\\s\\S]*\\.([\\s\\S]*))").matcher(url);
+            if (matcher.find()) {
+                String fullName = matcher.group(1);
+                try {
+                    fullName = URLDecoder.decode(fullName, "CP1251");
+                } catch (Exception ignore) {
+                }
+                String extension = matcher.group(2);
+                boolean isImage = MimeTypeUtil.isImage(extension);
+                if (isImage) {
+                    Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
+                } else {
+                    systemDownload(fullName, url);
+                    return true;
+                }
+            } else if (Pattern.compile("https?:\\/\\/cs\\d-\\d.4pda.to\\/\\d+").matcher(url).find()) {
+                Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
+            } else {
                 if (args == null) args = new Bundle();
                 switch (uri.getPathSegments().get(0)) {
                     case "forum":
-                        if (Pattern.compile("https?:\\/\\/4pda\\.ru\\/forum\\/dl\\/post\\/\\d+\\/[\\s\\S]*\\.").matcher(url).find()) {
-                            Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
-                            break;
-                        }
                         return handleForum(uri, args);
                     /*case "devdb":
                         if (uri.getPathSegments().size() > 1) {
@@ -140,13 +155,16 @@ public class IntentHandler {
                     default:
                         return handleSite(uri, args);*/
                 }
-                if (Pattern.compile("https?:\\/\\/cs\\d-\\d.4pda.to\\/\\d+").matcher(url).find()) {
-                    Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
-                }
             }
         }
         try {
-            App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK));
+            //App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK));
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK);
+                App.getInstance().startActivity(Intent.createChooser(intent, "Открыть в"));
+            } catch (Exception ex) {
+                //AppLog.e(context, new NotReportException(App.getContext().getString(R.string.no_app_for_link) + ": " + url));
+            }
         } catch (ActivityNotFoundException e) {
             ACRA.getErrorReporter().handleException(e);
         }
@@ -263,5 +281,38 @@ public class IntentHandler {
     private static void run(String s) {
         Log.d("FORPDA_LOG", "run: " + s);
         //Toast.makeText(App.getContext(), "ForPDA should run " + s, Toast.LENGTH_SHORT).show();
+    }
+
+    private static void systemDownload(Uri uri) {
+        Runnable runnable = () -> {
+            String fileName = null;
+            fileName = uri.getPath();
+            int cut = fileName.lastIndexOf('/');
+            if (cut != -1) {
+                fileName = fileName.substring(cut + 1);
+            }
+            Log.e("SUKA", "SYSTEM DOWNLOAD " + fileName + " : " + uri.toString());
+            systemDownload(fileName, uri.toString());
+        };
+
+        TabManager.getInstance().getActive().getMainActivity().checkStoragePermission(runnable);
+
+    }
+
+    private static void systemDownload(String fileName, String url) {
+        DownloadManager dm = (DownloadManager) App.getContext().getSystemService(Context.DOWNLOAD_SERVICE);
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+
+        Map<String, Cookie> cookies = Client.getInstance().getCookies();
+        String stringCookies = "";
+        for (Map.Entry<String, Cookie> cookieEntry : cookies.entrySet()) {
+            stringCookies = stringCookies.concat(cookieEntry.getKey()).concat("=").concat(cookieEntry.getValue().value()).concat(";");
+        }
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.addRequestHeader("Cookie", stringCookies);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+
+        dm.enqueue(request);
+        Toast.makeText(App.getContext(), "Загрузка ".concat(fileName), Toast.LENGTH_SHORT).show();
     }
 }

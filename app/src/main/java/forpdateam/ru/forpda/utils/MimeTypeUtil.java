@@ -609,11 +609,16 @@ public class MimeTypeUtil {
         types.put("zip", "application/zip");
     }
 
-    public static String getType(String filename) {
+    public static String getType(String extension) {
         if (types.size() == 0) init();
-        String res = types.get(filename);
-        Log.e("SUKA", "GET MIME TYPE " + filename + " : " + res);
+        String res = types.get(extension);
+        Log.e("SUKA", "GET MIME TYPE " + extension + " : " + res);
         return res;
+    }
+
+    public static boolean isImage(String extension) {
+        String type = getType(extension);
+        return type.contains("image/");
     }
 
 }

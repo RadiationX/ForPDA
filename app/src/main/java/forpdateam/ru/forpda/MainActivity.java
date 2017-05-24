@@ -16,7 +16,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -25,6 +27,7 @@ import forpdateam.ru.forpda.client.NetworkStateReceiver;
 import forpdateam.ru.forpda.data.Repository;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
+import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
 import forpdateam.ru.forpda.views.drawers.DrawerHeader;
@@ -258,7 +261,40 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         Log.e("FORPDA_LOG", "ACTIVITY DESTROY");
     }
 
+    private List<Runnable> storagePermissionCallbacks = new ArrayList<>();
 
+    public void checkStoragePermission(Runnable runnable) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                Log.v("SUKA", "Permission is granted");
+            } else {
+                Log.v("SUKA", "Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, TabFragment.REQUEST_STORAGE);
+                storagePermissionCallbacks.add(runnable);
+                return;
+            }
+        } else {
+            Log.v("SUKA", "Permission is granted");
+        }
+        runnable.run();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        for (int i = 0; i < permissions.length; i++) {
+            if (permissions[i].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                for (Runnable runnable : storagePermissionCallbacks) {
+                    try {
+                        runnable.run();
+                    } catch (Exception ignore) {
+                    }
+                }
+                break;
+            }
+        }
+        storagePermissionCallbacks.clear();
+    }
 
     class WebViewCleanerTask extends TimerTask {
         public void run() {
