@@ -133,6 +133,7 @@ public class IntentHandler {
                 //Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
             } else {
                 if (args == null) args = new Bundle();
+                Log.e("SUKA", "HANDLE URL, NOT IMAGE OR FILE");
                 switch (uri.getPathSegments().get(0)) {
                     case "forum":
                         return handleForum(uri, args);
@@ -158,14 +159,12 @@ public class IntentHandler {
                 }
             }
         }
+        Log.e("SUKA", "PRE TRY INTENT ");
         try {
             //App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK));
-            try {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK);
-                App.getInstance().startActivity(Intent.createChooser(intent, "Открыть в"));
-            } catch (Exception ex) {
-                //AppLog.e(context, new NotReportException(App.getContext().getString(R.string.no_app_for_link) + ": " + url));
-            }
+
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK);
+            App.getInstance().startActivity(Intent.createChooser(intent, "Открыть в").addFlags(FLAG_ACTIVITY_NEW_TASK));
         } catch (ActivityNotFoundException e) {
             ACRA.getErrorReporter().handleException(e);
         }

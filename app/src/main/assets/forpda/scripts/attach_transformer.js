@@ -121,7 +121,7 @@ function AttachmentTransformer() {
         var targetNodes = [];
         for (var i = 0; i < nodes.length; i++) {
             var node = nodes[i];
-            if (node.querySelector(".block-title").textContent.indexOf("Прикрепленные") !== -1) {
+            if ((node.querySelector(".block-title").textContent.indexOf("Прикрепленные") != -1)) {
                 targetNodes.push(node);
             }
         }
@@ -152,7 +152,7 @@ function AttachmentTransformer() {
 
         for (var i = 0; i < nodes.length; i++) {
             var node = nodes[i];
-            if (node.textContent..indexOf("Прикрепленные")!=-1) {
+            if ((node.textContent.indexOf("Прикрепленные") != -1)) {
                 targetNodes.push(node.parentNode.parentNode);
             }
         }
@@ -178,7 +178,7 @@ function AttachmentTransformer() {
                     nodesForRemove.push(size);
                     nodesForRemove.push(count);
                     postAttachments.push(parseFile(elem, size, count));
-                } else if (temp.nodeName == "TABLE" && temp.getAttribute("id").indexOf("ipb-attach")!=-1) {
+                } else if (temp.nodeName == "TABLE" && (temp.getAttribute("id").indexOf("ipb-attach") != -1)) {
                     found = true;
                     isLastBr = false;
                     postAttachments.push(parseTable(temp));

@@ -91,9 +91,9 @@ public class ImageViewerActivity extends AppCompatActivity {
         pager = (HackyViewPager) findViewById(R.id.img_viewer_pager);
 
         backLayout.setCallback(pullBackCallback);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        toolbar.setNavigationOnClickListener(v -> finish());
         setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(v -> finish());
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
 
         mVisible = true;
 
