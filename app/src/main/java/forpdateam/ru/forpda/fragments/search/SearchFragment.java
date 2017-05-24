@@ -84,7 +84,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
 
     private StringBuilder titleBuilder = new StringBuilder();
     private PaginationHelper paginationHelper = new PaginationHelper();
-    private AlertDialogMenu<SearchFragment, IBaseForumPost> topicsDialogMenu;
+    private AlertDialogMenu<SearchFragment, IBaseForumPost> createdTopicsDialogMenu, tempTopicsDialogMenu;
 
     public SearchFragment() {
         configuration.setDefaultTitle("Поиск");
@@ -94,7 +94,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String savedSettings = App.getInstance().getPreferences().getString("search_settings", null);
-        Log.e("FORPDA_LOG", "savedSettings "+savedSettings);
+        Log.e("FORPDA_LOG", "savedSettings " + savedSettings);
         if (savedSettings != null) {
             settings = SearchSettings.parseSettings(settings, savedSettings);
         }
@@ -220,22 +220,44 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
         recyclerView.setAdapter(adapter);
         refreshLayout.setOnRefreshListener(this::loadData);
         adapter.setOnItemClickListener(item -> {
+            String url = "";
             if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
-                IntentHandler.handle("http://4pda.ru/index.php?p=" + item.getId());
+                url = "http://4pda.ru/index.php?p=" + item.getId();
             } else {
-                String url = "http://4pda.ru/forum/index.php?showtopic=" + item.getTopicId();
+                url = "http://4pda.ru/forum/index.php?showtopic=" + item.getTopicId();
                 if (item.getId() != 0) {
                     url += "&view=findpost&p=" + item.getId();
                 }
-                IntentHandler.handle(url);
             }
+            IntentHandler.handle(url);
         });
         adapter.setOnLongItemClickListener(item -> {
-            if (topicsDialogMenu == null) {
-                topicsDialogMenu = new AlertDialogMenu<>();
-                topicsDialogMenu.addItem("Скопировать ссылку", (context, data1) -> Utils.copyToClipBoard("http://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data1.getId()))));
-                topicsDialogMenu.addItem("Открыть форум темы", (context, data1) -> IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + data1.getForumId()));
-                topicsDialogMenu.addItem("Добавить в избранное", ((context, data1) -> {
+            if (createdTopicsDialogMenu == null) {
+                createdTopicsDialogMenu = new AlertDialogMenu<>();
+                tempTopicsDialogMenu = new AlertDialogMenu<>();
+                createdTopicsDialogMenu.addItem("К первому", (context, data1) -> {
+                    IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=" + data1.getTopicId());
+                });
+                createdTopicsDialogMenu.addItem("К непрочитанному", (context, data1) -> {
+                    IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=" + data1.getTopicId() + "&view=getnewpost");
+                });
+                createdTopicsDialogMenu.addItem("К последнему", (context, data1) -> {
+                    IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=" + data1.getTopicId() + "&view=getlastpost");
+                });
+                createdTopicsDialogMenu.addItem("Скопировать ссылку", (context, data1) -> {
+                    String url = "";
+                    if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
+                        url = "http://4pda.ru/index.php?p=" + item.getId();
+                    } else {
+                        url = "http://4pda.ru/forum/index.php?showtopic=" + item.getTopicId();
+                        if (item.getId() != 0) {
+                            url += "&view=findpost&p=" + item.getId();
+                        }
+                    }
+                    Utils.copyToClipBoard(url);
+                });
+                createdTopicsDialogMenu.addItem("Открыть форум темы", (context, data1) -> IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + data1.getForumId()));
+                createdTopicsDialogMenu.addItem("Добавить в избранное", ((context, data1) -> {
                     new AlertDialog.Builder(context.getContext())
                             .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> {
                                 FavoritesHelper.add(aBoolean -> {
@@ -245,9 +267,15 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
                             .show();
                 }));
             }
+            tempTopicsDialogMenu.clear();
+            if(settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)){
+                tempTopicsDialogMenu.addItem(createdTopicsDialogMenu.get(3));
+            }else {
+                tempTopicsDialogMenu.addItems(createdTopicsDialogMenu.getItems());
+            }
 
             new AlertDialog.Builder(getContext())
-                    .setItems(topicsDialogMenu.getTitles(), (dialog, which) -> topicsDialogMenu.onClick(which, SearchFragment.this, item))
+                    .setItems(tempTopicsDialogMenu.getTitles(), (dialog, which) -> tempTopicsDialogMenu.onClick(which, SearchFragment.this, item))
                     .show();
         });
         return view;

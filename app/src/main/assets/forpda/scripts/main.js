@@ -14,12 +14,10 @@ function improveCodeBlock() {
                     splitLines = codeBody.innerHTML.split(/<br[^>]*?>/g),
                     count = '',
                     lines = '';
-                console.log(splitLines);
                 for (var j = 0; j < splitLines.length; j++) {
                     lines += '<div>' + splitLines[j] + '</div>';
                     count += (j + 1) + '\n';
                 }
-                console.log(lines);
                 codeBlock.classList.add('wrap');
                 codeTitle.insertAdjacentHTML("beforeEnd", '<div class="block-controls"><i class="wrap"></i><i class="select_all"></i></div>');
                 codeBody.innerHTML = "<div class=\"lines\">" + lines + "</div>";
