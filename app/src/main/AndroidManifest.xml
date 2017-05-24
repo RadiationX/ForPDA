@@ -82,10 +82,16 @@
 
         </activity>
         <activity
+            android:name=".imageviewer.ImageViewerActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".settings.SettingsActivity"
             android:label="Настройки"
-            android:theme="@style/BaseAppTheme.Settings"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:theme="@style/BaseAppTheme.Settings">
             <meta-data
                 android:name="android.max_aspect"
                 android:value="2.1" />

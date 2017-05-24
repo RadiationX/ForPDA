@@ -618,6 +618,8 @@ public class MimeTypeUtil {
 
     public static boolean isImage(String extension) {
         String type = getType(extension);
+        if (type == null)
+            return false;
         return type.contains("image/");
     }
 

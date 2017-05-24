@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,8 +27,8 @@ import java.util.TimerTask;
 import forpdateam.ru.forpda.client.NetworkStateReceiver;
 import forpdateam.ru.forpda.data.Repository;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
-import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
 import forpdateam.ru.forpda.views.drawers.DrawerHeader;
@@ -61,6 +62,17 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /*ArrayList<String> list = new ArrayList<>();
+        *//*list.add("http://s.4pda.to/JK4KRvTtz2Yq1n1wh31YbxmLjUahInU59Gayr9aSC0aFz0kXLr71nJ.png");
+        list.add("http://s.4pda.to/JK4KRvTtz2Yq1n1wh31YbxmLjUahInU59Gayr9aSC0aFz0kXLr71nJ.png");
+        list.add("http://s.4pda.to/JK4KRvTtz2Yq1n1wh31YbxmLjUahInU59Gayr9aSC0aFz0kXLr71nJ.png");
+        list.add("http://s.4pda.to/JK4KRvTtz2Yq1n1wh31YbxmLjUahInU59Gayr9aSC0aFz0kXLr71nJ.png");*//*
+        list.add("http://s.4pda.to/JK4K0VVRwYXYo98nKdRn8N57Z3v80jTahm1b6BH1HmLUkobBPXDlWz26S.gif");
+        list.add("http://sourcey.com/images/stock/salvador-dali-the-dream.jpg");
+        list.add("http://sourcey.com/images/stock/salvador-dali-persistence-of-memory.jpg");
+        list.add("http://sourcey.com/images/stock/simpsons-persistence-of-memory.jpg");
+        list.add("http://sourcey.com/images/stock/salvador-dali-the-great-masturbator.jpg");
+        ImageViewerActivity.startActivity(this, list, 2);*/
         setContentView(R.layout.activity_main);
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
