@@ -12,16 +12,12 @@ import android.widget.Toast;
 
 import org.acra.ACRA;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -294,7 +290,7 @@ public class IntentHandler {
         if (cut != -1) {
             fileName = fileName.substring(cut + 1);
         }
-        Log.e("SUKA", "SYSTEM DOWNLOAD " + fileName + " : " + url);
+        Log.e("FORPDA_LOG", "SYSTEM DOWNLOAD " + fileName + " : " + url);
         systemDownload(fileName, url);
     }
 

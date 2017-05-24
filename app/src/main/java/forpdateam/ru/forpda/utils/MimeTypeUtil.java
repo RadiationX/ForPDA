@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.utils;
 import android.util.Log;
 
 import java.util.HashMap;
-import java.util.regex.Pattern;
 
 /**
  * Created by radiationx on 23.05.17.
@@ -612,7 +611,7 @@ public class MimeTypeUtil {
     public static String getType(String extension) {
         if (types.size() == 0) init();
         String res = types.get(extension);
-        Log.e("SUKA", "GET MIME TYPE " + extension + " : " + res);
+        Log.e("FORPDA_LOG", "GET MIME TYPE " + extension + " : " + res);
         return res;
     }
 

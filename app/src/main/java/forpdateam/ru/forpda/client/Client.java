@@ -8,8 +8,6 @@ import android.os.Looper;
 import android.util.Log;
 import android.webkit.WebSettings;
 
-import java.io.InputStream;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

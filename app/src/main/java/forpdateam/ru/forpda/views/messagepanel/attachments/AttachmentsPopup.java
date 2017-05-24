@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.views.messagepanel.attachments;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
