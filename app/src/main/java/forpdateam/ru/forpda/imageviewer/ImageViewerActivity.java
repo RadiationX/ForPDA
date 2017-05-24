@@ -4,18 +4,15 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.WindowManager;
 
 import java.util.ArrayList;
 
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 
 /**
@@ -110,7 +107,7 @@ public class ImageViewerActivity extends AppCompatActivity {
         pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                Log.e("SUKA", "PAGER SELECTED POSITION " + position);
+                Log.e("FORPDA_LOG", "PAGER SELECTED POSITION " + position);
                 updateTitle(position);
             }
         });
@@ -119,7 +116,7 @@ public class ImageViewerActivity extends AppCompatActivity {
         pager.setAdapter(adapter);
         pager.setCurrentItem(currentIndex);
         pager.setClipChildren(false);
-        Log.e("SUKA", "PRE UPDATE TITLE LOAD");
+        Log.e("FORPDA_LOG", "PRE UPDATE TITLE LOAD");
 
         int finalCurrentIndex = currentIndex;
         toolbar.post(() -> updateTitle(finalCurrentIndex));
@@ -136,7 +133,7 @@ public class ImageViewerActivity extends AppCompatActivity {
 
     @SuppressLint("DefaultLocale")
     private void updateTitle(int selectedPageIndex) {
-        Log.e("SUKA", "UPDATE TITLE " + selectedPageIndex);
+        Log.e("FORPDA_LOG", "UPDATE TITLE " + selectedPageIndex);
         toolbar.setTitle(String.format("%d из %d", selectedPageIndex + 1, urls.size()));
     }
 
@@ -164,13 +161,13 @@ public class ImageViewerActivity extends AppCompatActivity {
         mVisible = false;
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getSupportActionBar().hide();
-        Log.e("SUKA", "HIDE");
+        Log.e("FORPDA_LOG", "HIDE");
     }
 
     private void show() {
         mVisible = true;
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getSupportActionBar().show();
-        Log.e("SUKA", "SHOW");
+        Log.e("FORPDA_LOG", "SHOW");
     }
 }

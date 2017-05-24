@@ -42,14 +42,12 @@ import forpdateam.ru.forpda.api.IBaseForumPost;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
-import forpdateam.ru.forpda.api.topcis.models.TopicItem;
 import forpdateam.ru.forpda.fragments.IPostFunctions;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.fragments.theme.ThemeDialogsHelper;
 import forpdateam.ru.forpda.fragments.theme.ThemeHelper;
 import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
-import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
@@ -96,7 +94,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String savedSettings = App.getInstance().getPreferences().getString("search_settings", null);
-        Log.e("SUKA", "savedSettings "+savedSettings);
+        Log.e("FORPDA_LOG", "savedSettings "+savedSettings);
         if (savedSettings != null) {
             settings = SearchSettings.parseSettings(settings, savedSettings);
         }
@@ -380,7 +378,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
         saveSettings.setSort(settings.getSort());
         saveSettings.setSource(settings.getSource());
         String saveUrl = saveSettings.toUrl();
-        Log.e("SUKA", "SAVE SETTINGS " + saveUrl);
+        Log.e("FORPDA_LOG", "SAVE SETTINGS " + saveUrl);
         App.getInstance().getPreferences().edit().putString("search_settings", saveUrl).apply();
     }
 

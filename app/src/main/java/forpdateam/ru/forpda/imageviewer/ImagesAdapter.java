@@ -1,15 +1,15 @@
 package forpdateam.ru.forpda.imageviewer;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.github.chrisbanes.photoview.OnPhotoTapListener;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -19,8 +19,7 @@ import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import uk.co.senab.photoview.PhotoView;
-import uk.co.senab.photoview.PhotoViewAttacher;
+
 
 /**
  * Created by radiationx on 24.05.17.
@@ -32,7 +31,7 @@ public class ImagesAdapter extends PagerAdapter {
     private ImageLoader imageLoader;
     private DisplayImageOptions options;
     private List<String> urls;
-    private PhotoViewAttacher.OnPhotoTapListener tapListener;
+    private OnPhotoTapListener tapListener;
 
     public ImagesAdapter(ImageViewerActivity context, List<String> urls) {
         this.inflater = LayoutInflater.from(context);
@@ -45,7 +44,7 @@ public class ImagesAdapter extends PagerAdapter {
         this.urls = urls;
     }
 
-    public void setTapListener(PhotoViewAttacher.OnPhotoTapListener tapListener) {
+    public void setTapListener(OnPhotoTapListener tapListener) {
         this.tapListener = tapListener;
     }
 
@@ -56,7 +55,7 @@ public class ImagesAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        Log.e("SUKA", "instantiateItem " + position);
+        Log.e("FORPDA_LOG", "instantiateItem " + position);
         View imageLayout = inflater.inflate(R.layout.img_view_page, container, false);
         assert imageLayout != null;
         container.addView(imageLayout, 0);
@@ -66,7 +65,7 @@ public class ImagesAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        Log.e("SUKA", "destroyItem " + position);
+        Log.e("FORPDA_LOG", "destroyItem " + position);
         container.removeView((View) object);
     }
 

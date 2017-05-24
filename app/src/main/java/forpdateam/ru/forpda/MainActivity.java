@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,7 +26,6 @@ import java.util.TimerTask;
 import forpdateam.ru.forpda.client.NetworkStateReceiver;
 import forpdateam.ru.forpda.data.Repository;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
@@ -278,15 +276,15 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     public void checkStoragePermission(Runnable runnable) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                Log.v("SUKA", "Permission is granted");
+                Log.v("FORPDA_LOG", "Permission is granted");
             } else {
-                Log.v("SUKA", "Permission is revoked");
+                Log.v("FORPDA_LOG", "Permission is revoked");
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, TabFragment.REQUEST_STORAGE);
                 storagePermissionCallbacks.add(runnable);
                 return;
             }
         } else {
-            Log.v("SUKA", "Permission is granted");
+            Log.v("FORPDA_LOG", "Permission is granted");
         }
         runnable.run();
     }

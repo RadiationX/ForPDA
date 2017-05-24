@@ -50,7 +50,7 @@ public class FilePickHelper {
     public static List<RequestFile> onActivityResult(Context context, Intent data) {
         List<RequestFile> files = new ArrayList<>();
         RequestFile tempFile;
-        Log.e("SUKA", "ON ACTIVITY RESULT INTENT " + data);
+        Log.e("FORPDA_LOG", "ON ACTIVITY RESULT INTENT " + data);
         if (data.getData() == null) {
             if (data.getClipData() != null) {
                 for (int i = 0; i < data.getClipData().getItemCount(); i++) {
@@ -80,7 +80,7 @@ public class FilePickHelper {
 
     private static RequestFile createFile(Context context, Uri uri) {
         RequestFile requestFile = null;
-        Log.e("SUKA", "CREATE FILE " + uri);
+        Log.e("FORPDA_LOG", "CREATE FILE " + uri);
         try {
             InputStream inputStream = null;
             String name = getFileName(context, uri);

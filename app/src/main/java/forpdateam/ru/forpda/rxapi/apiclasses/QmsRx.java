@@ -1,11 +1,7 @@
 package forpdateam.ru.forpda.rxapi.apiclasses;
 
-import android.util.Log;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.regex.Matcher;
 
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.App;
@@ -16,10 +12,7 @@ import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsMessage;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
-import forpdateam.ru.forpda.api.search.models.SearchItem;
-import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
-import forpdateam.ru.forpda.client.ClientHelper;
 import io.reactivex.Observable;
 
 /**

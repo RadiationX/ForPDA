@@ -6,11 +6,11 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
 
-    def versionNumber = 15
+    def versionNumber = 16
 
     def versionMajor = 0
     def versionMinor = 2
-    def versionPatch = 2
+    def versionPatch = 3
 
     def versionBuild = -1
     def versionPropsFile = file('version.properties')
@@ -131,5 +131,5 @@ dependencies {
     compile 'com.github.bmelnychuk:atv:1.2.9'
     compile 'com.afollestad:sectioned-recyclerview:0.2.3'
     compile 'ch.acra:acra:4.9.0'
-    compile 'com.github.chrisbanes.photoview:library:1.2.4'
+    compile 'com.github.chrisbanes:PhotoView:2.0.0'
 }
