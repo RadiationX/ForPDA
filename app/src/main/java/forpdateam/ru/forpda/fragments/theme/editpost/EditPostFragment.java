@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -266,20 +267,7 @@ public class EditPostFragment extends TabFragment {
 
 
     public void tryPickFile() {
-        if (checkStoragePermission()) {
-            startActivityForResult(FilePickHelper.pickImage(false), REQUEST_PICK_FILE);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        for (int i = 0; i < permissions.length; i++) {
-            if (permissions[i].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                startActivityForResult(FilePickHelper.pickImage(false), REQUEST_PICK_FILE);
-                break;
-            }
-        }
+        getMainActivity().checkStoragePermission(() -> startActivityForResult(FilePickHelper.pickImage(false), REQUEST_PICK_FILE));
     }
 
     @Override

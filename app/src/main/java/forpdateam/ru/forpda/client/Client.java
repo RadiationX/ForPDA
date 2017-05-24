@@ -88,6 +88,14 @@ public class Client implements IWebClient {
         return url.concat("|:|").concat(cookie.toString());
     }
 
+    public Map<String, Cookie> getCookies() {
+        return cookies;
+    }
+
+    public List<Cookie> getListCookies() {
+        return listCookies;
+    }
+
     private final OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
@@ -225,7 +233,7 @@ public class Client implements IWebClient {
                     Log.e("FORPDA_LOG", "FILE " + request.getFile().getFileName());
                     Log.e("FORPDA_LOG", "FILE " + request.getFile().getMimeType());
                     Log.e("FORPDA_LOG", "FILE " + request.getFile().getFileStream());
-                    multipartBuilder.addFormDataPart(request.getFile().getRequestName(), URLEncoder.encode(request.getFile().getFileName(), "UTF-8"), RequestBodyUtil.create(MediaType.parse(request.getFile().getMimeType()), request.getFile().getFileStream()));
+                    multipartBuilder.addFormDataPart(request.getFile().getRequestName(), request.getFile().getFileName(), RequestBodyUtil.create(MediaType.parse(request.getFile().getMimeType()), request.getFile().getFileStream()));
                 }
                 MultipartBody multipartBody = multipartBuilder.build();
                 for (MultipartBody.Part part : multipartBody.parts()) {
