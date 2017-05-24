@@ -9,11 +9,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
 
 import java.util.ArrayList;
 
 import forpdateam.ru.forpda.R;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 /**
  * Created by radiationx on 24.05.17.
@@ -62,6 +65,7 @@ public class ImageViewerActivity extends AppCompatActivity {
         urls.add(imageUrl);
         intent.putExtra(IMAGE_URLS_KEY, urls);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 
@@ -70,6 +74,7 @@ public class ImageViewerActivity extends AppCompatActivity {
         intent.putExtra(IMAGE_URLS_KEY, imageUrls);
         intent.putExtra(SELECTED_INDEX_KEY, selectedIndex);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 
@@ -78,6 +83,7 @@ public class ImageViewerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setTheme(R.style.ImageViewTheme);
         setContentView(R.layout.activity_img_viewer);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         appBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
@@ -86,6 +92,7 @@ public class ImageViewerActivity extends AppCompatActivity {
 
         backLayout.setCallback(pullBackCallback);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setNavigationOnClickListener(v -> finish());
         setSupportActionBar(toolbar);
 
         mVisible = true;

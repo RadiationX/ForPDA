@@ -5,7 +5,7 @@ window.addEventListener("DOMContentLoaded", function (e) {
         if(snapBack.classList.contains("snapback")){
             break;
         }
-        if (!snapBack.href.includes("showuser")) {
+        if (!snapBack.href.indexOf("showuser")!=-1) {
             var temp = snapBack.nextElementSibling;
             snapBack.innerHTML = temp.textContent;
             temp = snapBack;
