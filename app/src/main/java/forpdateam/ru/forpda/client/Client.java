@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.webkit.WebSettings;
 
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class Client implements IWebClient {
     private final static String userAgent = WebSettings.getDefaultUserAgent(App.getContext());
@@ -181,8 +183,7 @@ public class Client implements IWebClient {
         return request(new ForPdaRequest.Builder().url(url).addHeader("X-Requested-With", "XMLHttpRequest").build());
     }
 
-    @Override
-    public String request(ForPdaRequest request) throws Exception {
+    private Request.Builder prepareReques(ForPdaRequest request) {
         Log.d("FORPDA_LOG", "request url " + request.getUrl());
         String url = request.getUrl();
         if (request.getUrl().substring(0, 2).equals("//")) {
@@ -242,7 +243,12 @@ public class Client implements IWebClient {
                 requestBuilder.post(multipartBody);
             }
         }
+        return requestBuilder;
+    }
 
+    @Override
+    public String request(ForPdaRequest request) throws Exception {
+        Request.Builder requestBuilder = prepareReques(request);
         String res;
         Response response = null;
         try {
@@ -254,6 +260,23 @@ public class Client implements IWebClient {
             checkForumErrors(res);
             //Log.d("FORPDA_LOG", "redirected url " + response.request().url().toString());
             redirects.put(request.getUrl(), response.request().url().toString());
+        } finally {
+            if (response != null)
+                response.close();
+        }
+        return res;
+    }
+
+    public ResponseBody loadImage(String imageUrl) throws Exception {
+        ForPdaRequest request = new ForPdaRequest.Builder().url(imageUrl).build();
+        Request.Builder requestBuilder = prepareReques(request);
+        ResponseBody res;
+        Response response = null;
+        try {
+            response = client.newCall(requestBuilder.build()).execute();
+            if (!response.isSuccessful())
+                throw new OkHttpResponseException(response.code(), response.message(), request.getUrl());
+            res = response.body();
         } finally {
             if (response != null)
                 response.close();
@@ -306,7 +329,7 @@ public class Client implements IWebClient {
         listCookies.clear();
     }
 
-    public void removeNetworkObserver(Observer observer){
+    public void removeNetworkObserver(Observer observer) {
         networkObserver.deleteObserver(observer);
     }
 

@@ -36,6 +36,7 @@ import forpdateam.ru.forpda.fragments.reputation.ReputationFragment;
 import forpdateam.ru.forpda.fragments.search.SearchFragment;
 import forpdateam.ru.forpda.fragments.theme.ThemeFragmentWeb;
 import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
+import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
 import okhttp3.Cookie;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
@@ -101,9 +102,9 @@ public class IntentHandler {
         url = Utils.fromHtml(url);
         Log.d("FORPDA_LOG", "after html url " + url);
         if (url.matches("(?:http?s?:)?\\/\\/[\\s\\S]*?4pda\\.(?:ru|to)[\\s\\S]*")) {
-            if (!url.contains("4pda.ru")) {
+            /*if (!url.contains("4pda.ru")||!url.contains("4pda.to")) {
                 url = "http://4pda.ru".concat(url.substring(0, 1).equals("/") ? "" : "/").concat(url);
-            }
+            }*/
             Uri uri = Uri.parse(url.toLowerCase());
             Log.d("FORPDA_LOG", "HANDLE URL " + uri.toString() + " : " + url);
 
@@ -123,13 +124,17 @@ public class IntentHandler {
                 String extension = matcher.group(2);
                 boolean isImage = MimeTypeUtil.isImage(extension);
                 if (isImage) {
-                    Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
+                    ImageViewerActivity.startActivity(App.getContext(), url);
+                    return true;
+                    //Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
                 } else {
                     systemDownload(fullName, url);
                     return true;
                 }
             } else if (Pattern.compile("https?:\\/\\/cs\\d-\\d.4pda.to\\/\\d+").matcher(url).find()) {
-                Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
+                ImageViewerActivity.startActivity(App.getContext(), url);
+                return true;
+                //Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
             } else {
                 if (args == null) args = new Bundle();
                 switch (uri.getPathSegments().get(0)) {
@@ -283,36 +288,33 @@ public class IntentHandler {
         //Toast.makeText(App.getContext(), "ForPDA should run " + s, Toast.LENGTH_SHORT).show();
     }
 
-    private static void systemDownload(Uri uri) {
-        Runnable runnable = () -> {
-            String fileName = null;
-            fileName = uri.getPath();
-            int cut = fileName.lastIndexOf('/');
-            if (cut != -1) {
-                fileName = fileName.substring(cut + 1);
-            }
-            Log.e("SUKA", "SYSTEM DOWNLOAD " + fileName + " : " + uri.toString());
-            systemDownload(fileName, uri.toString());
-        };
-
-        TabManager.getInstance().getActive().getMainActivity().checkStoragePermission(runnable);
-
+    private static void systemDownload(String url) {
+        String fileName = url;
+        int cut = fileName.lastIndexOf('/');
+        if (cut != -1) {
+            fileName = fileName.substring(cut + 1);
+        }
+        Log.e("SUKA", "SYSTEM DOWNLOAD " + fileName + " : " + url);
+        systemDownload(fileName, url);
     }
 
     private static void systemDownload(String fileName, String url) {
-        DownloadManager dm = (DownloadManager) App.getContext().getSystemService(Context.DOWNLOAD_SERVICE);
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+        Runnable runnable = () -> {
+            DownloadManager dm = (DownloadManager) App.getContext().getSystemService(Context.DOWNLOAD_SERVICE);
+            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
 
-        Map<String, Cookie> cookies = Client.getInstance().getCookies();
-        String stringCookies = "";
-        for (Map.Entry<String, Cookie> cookieEntry : cookies.entrySet()) {
-            stringCookies = stringCookies.concat(cookieEntry.getKey()).concat("=").concat(cookieEntry.getValue().value()).concat(";");
-        }
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.addRequestHeader("Cookie", stringCookies);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+            Map<String, Cookie> cookies = Client.getInstance().getCookies();
+            String stringCookies = "";
+            for (Map.Entry<String, Cookie> cookieEntry : cookies.entrySet()) {
+                stringCookies = stringCookies.concat(cookieEntry.getKey()).concat("=").concat(cookieEntry.getValue().value()).concat(";");
+            }
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            request.addRequestHeader("Cookie", stringCookies);
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
 
-        dm.enqueue(request);
-        Toast.makeText(App.getContext(), "Загрузка ".concat(fileName), Toast.LENGTH_SHORT).show();
+            dm.enqueue(request);
+            Toast.makeText(App.getContext(), "Загрузка ".concat(fileName), Toast.LENGTH_SHORT).show();
+        };
+        TabManager.getInstance().getActive().getMainActivity().checkStoragePermission(runnable);
     }
 }

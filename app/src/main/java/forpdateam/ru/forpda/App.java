@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -16,6 +17,7 @@ import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemor
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ContentLengthInputStream;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 
@@ -23,10 +25,12 @@ import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +40,9 @@ import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.data.Repository;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import okhttp3.Cookie;
+import okhttp3.OkHttpClient;
+import okhttp3.ResponseBody;
 
 import static org.acra.ReportField.ANDROID_VERSION;
 import static org.acra.ReportField.APP_VERSION_CODE;
@@ -211,6 +218,18 @@ public class App extends android.app.Application {
                             imageUri = "http:".concat(imageUri);
                         Log.d("FORPDA_LOG", "UIL LOAD IMAGE: ".concat(imageUri));
                         return super.getStream(imageUri, extra);
+                    }
+
+                    @Override
+                    protected HttpURLConnection createConnection(String url, Object extra) throws IOException {
+                        HttpURLConnection conn = super.createConnection(url, extra);
+                        Map<String, Cookie> cookies = Client.getInstance().getCookies();
+                        String stringCookies = "";
+                        for (Map.Entry<String, Cookie> cookieEntry : cookies.entrySet()) {
+                            stringCookies = stringCookies.concat(cookieEntry.getKey()).concat("=").concat(cookieEntry.getValue().value()).concat(";");
+                        }
+                        conn.setRequestProperty("Cookie", stringCookies);
+                        return conn;
                     }
                 })
                 .threadPoolSize(5)
