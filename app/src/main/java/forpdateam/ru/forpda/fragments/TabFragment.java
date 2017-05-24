@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,17 +60,24 @@ public class TabFragment extends RxFragment {
 
     private String title = null, tabTitle = null, subtitle = null, parentTag = null;
 
-    protected RelativeLayout fragmentContainer, fragmentContent;
+    protected RelativeLayout fragmentContainer;
+    protected LinearLayout fragmentContent, noNetwork;
     protected CoordinatorLayout coordinatorLayout;
     protected AppBarLayout appBarLayout;
     protected CollapsingToolbarLayout toolbarLayout;
     protected Toolbar toolbar;
-    protected ImageView toolbarBackground, icNoNetwork, toolbarImageView;
+    protected ImageView toolbarBackground, toolbarImageView;
     protected TextView toolbarTitleView, toolbarSubtitleView;
     protected View view, notifyDot;
     protected FloatingActionButton fab;
 
     private Observer countsObserver = (observable, o) -> updateNotifyDot();
+    private Observer networkObserver = (observable, o) -> {
+        if ((!configuration.isUseCache() || noNetwork.getVisibility() == View.VISIBLE) && (boolean) o) {
+            loadData();
+            noNetwork.setVisibility(View.GONE);
+        }
+    };
 
 
     public TabFragment() {
@@ -174,8 +182,8 @@ public class TabFragment extends RxFragment {
         toolbarTitleView = (TextView) toolbar.findViewById(R.id.toolbar_title);
         toolbarSubtitleView = (TextView) toolbar.findViewById(R.id.toolbar_subtitle);
         notifyDot = findViewById(R.id.notify_dot);
-        fragmentContent = (RelativeLayout) coordinatorLayout.findViewById(R.id.fragment_content);
-        icNoNetwork = (ImageView) fragmentContent.findViewById(R.id.ic_no_network);
+        fragmentContent = (LinearLayout) coordinatorLayout.findViewById(R.id.fragment_content);
+        noNetwork = (LinearLayout) fragmentContent.findViewById(R.id.no_network);
         //// TODO: 20.03.17 удалить и юзать только там, где нужно
         fab = (FloatingActionButton) coordinatorLayout.findViewById(R.id.fab);
 
@@ -186,7 +194,7 @@ public class TabFragment extends RxFragment {
 
         if (!Client.getInstance().getNetworkState()) {
             if (!configuration.isUseCache())
-                icNoNetwork.setVisibility(View.VISIBLE);
+                noNetwork.setVisibility(View.VISIBLE);
             //if (!getTag().equals(TabManager.getActiveTag())) return view;
             Snackbar.make(getCoordinatorLayout(), "No network connection", Snackbar.LENGTH_LONG).show();
         }
@@ -198,12 +206,7 @@ public class TabFragment extends RxFragment {
         updateNotifyDot();
         ClientHelper.getInstance().addCountsObserver(countsObserver);
 
-        Client.getInstance().addNetworkObserver((observable, o) -> {
-            if ((!configuration.isUseCache() || icNoNetwork.getVisibility() == View.VISIBLE) && (boolean) o) {
-                loadData();
-                icNoNetwork.setVisibility(View.GONE);
-            }
-        });
+        Client.getInstance().addNetworkObserver(networkObserver);
         return view;
     }
 
@@ -329,6 +332,7 @@ public class TabFragment extends RxFragment {
         super.onDestroy();
         hidePopupWindows();
         ClientHelper.getInstance().removeCountsObserver(countsObserver);
+        Client.getInstance().removeNetworkObserver(networkObserver);
     }
 
 

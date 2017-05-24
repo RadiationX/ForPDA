@@ -15,6 +15,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.RequestFile;
 
@@ -30,13 +32,13 @@ public class FilePickHelper {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         }
-        startActivityForResult(intent, PICK_IMAGE)*/
-        ;
+        startActivityForResult(intent, PICK_IMAGE);*/
+
 
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        if(onlyImages){
+        if (onlyImages) {
             intent.setType("image/*");
-        }else {
+        } else {
             intent.setType("*/*");
         }
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
@@ -47,7 +49,7 @@ public class FilePickHelper {
 
     public static List<RequestFile> onActivityResult(Context context, Intent data) {
         List<RequestFile> files = new ArrayList<>();
-        RequestFile tempFile = null;
+        RequestFile tempFile;
         Log.e("SUKA", "ON ACTIVITY RESULT INTENT " + data);
         if (data.getData() == null) {
             if (data.getClipData() != null) {
@@ -63,20 +65,33 @@ public class FilePickHelper {
         return files;
     }
 
+    private final static Pattern extensionPattern = Pattern.compile("[\\s\\S]*\\.([\\s\\S]*)");
+
+    private static String getExtension(String name) {
+        String extension = null;
+        if (name != null) {
+            Matcher matcher = extensionPattern.matcher(name);
+            if (matcher.find()) {
+                extension = matcher.group(1);
+            }
+        }
+        return extension;
+    }
+
     private static RequestFile createFile(Context context, Uri uri) {
         RequestFile requestFile = null;
         Log.e("SUKA", "CREATE FILE " + uri);
         try {
             InputStream inputStream = null;
             String name = getFileName(context, uri);
-            String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(name));
+            String extension = getExtension(name);
+            String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
             if (mimeType == null) {
                 mimeType = context.getContentResolver().getType(uri);
             }
             if (mimeType == null) {
-                mimeType = MimeTypeUtil.getType(MimeTypeMap.getFileExtensionFromUrl(name));
+                mimeType = MimeTypeUtil.getType(extension);
             }
-            Log.e("FORPDA_LOG", "MIME TYPE " + mimeType);
             if (uri.getScheme().equals("content")) {
                 inputStream = context.getContentResolver().openInputStream(uri);
             } else if (uri.getScheme().equals("file")) {
@@ -96,18 +111,15 @@ public class FilePickHelper {
             Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
             try {
                 if (cursor != null && cursor.moveToFirst()) {
-                    String[] names = cursor.getColumnNames();
-                    Log.e("SUKA", "NAMES");
-                    for (int i = 0; i < names.length; i++) {
-                        Log.e("SUKA", "NAME " + names[i]);
-                    }
                     int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
                     if (index >= 0) {
                         result = cursor.getString(index);
                     }
                 }
             } finally {
-                cursor.close();
+                if (cursor != null) {
+                    cursor.close();
+                }
             }
         }
         if (result == null) {

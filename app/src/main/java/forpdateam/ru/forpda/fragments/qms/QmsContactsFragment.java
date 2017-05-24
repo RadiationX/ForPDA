@@ -164,6 +164,7 @@ public class QmsContactsFragment extends TabFragment {
 
     @Override
     public void loadData() {
+        Log.e("SUKA", "LOAD DATA " + this + " : " + Thread.currentThread());
         refreshLayout.setRefreshing(true);
         mainSubscriber.subscribe(RxApi.Qms().getContactList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
     }
