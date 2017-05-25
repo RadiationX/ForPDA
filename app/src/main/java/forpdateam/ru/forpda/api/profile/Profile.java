@@ -111,7 +111,7 @@ public class Profile {
 
     public boolean saveNote(String note) throws Exception {
         ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
-                .url("http://4pda.ru/forum/index.php?act=profile-xhr&action=save-note")
+                .url("http://4pda.ru/forum/index.php?act=profile-xhr&loadAction=save-note")
                 .formHeader("note", note);
         String response = Api.getWebClient().request(builder.build());
         return response.equals("1");

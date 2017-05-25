@@ -59,7 +59,7 @@ import forpdateam.ru.forpda.views.pagination.PaginationHelper;
 public abstract class ThemeFragment extends TabFragment implements IPostFunctions {
     //Указывают на произведенное действие: переход назад, обновление, обычный переход по ссылке
     protected final static int BACK_ACTION = 0, REFRESH_ACTION = 1, NORMAL_ACTION = 2;
-    protected int action = NORMAL_ACTION;
+    protected int loadAction = NORMAL_ACTION;
     protected SwipeRefreshLayout refreshLayout;
     protected ThemePage currentPage;
     protected List<ThemePage> history = new ArrayList<>();
@@ -202,7 +202,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     * */
 
     public void setAction(int action) {
-        this.action = action;
+        this.loadAction = action;
     }
 
     protected abstract void updateHistoryLastHtml();
@@ -233,10 +233,10 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         currentPage = newPage;
         tab_url = currentPage.getUrl();
 
-        if (action == NORMAL_ACTION) {
+        if (loadAction == NORMAL_ACTION) {
             saveToHistory(currentPage);
         }
-        if (action == REFRESH_ACTION) {
+        if (loadAction == REFRESH_ACTION) {
             updateHistoryLast(currentPage);
         }
         updateFavorites(currentPage);

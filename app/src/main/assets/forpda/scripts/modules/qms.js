@@ -1,17 +1,18 @@
-var listElem;
+console.log("LOAD JS SOURCE qms.js");
 
-window.addEventListener("DOMContentLoaded", function (e) {
- console.log("DOMContentLoaded");
+var listElem;
+function initQms(){
     listElem = document.querySelector(".mess_list");
     setTimeout(function () {
-        getLastMess().scrollIntoView();
-    }, 10);
-});
-
-window.addEventListener("load", function (e) {
-    console.log("load");
+        scrollQms();
+    }, 1);
+}
+function scrollQms(){
     getLastMess().scrollIntoView();
-});
+}
+nativeEvents.addEventListener("DOMContentLoaded", initQms);
+
+nativeEvents.addEventListener("load", scrollQms);
 
 var lastMessRequestTS = new Date().getTime();
 
@@ -45,6 +46,9 @@ function showNewMess(listSrc, withScroll) {
 }
 
 function addedNewMessages(){
+    transformSnapbacks();
+    transformQuotes();
+    
     improveCodeBlock();
     blocksOpenClose();
     removeImgesSrc();
