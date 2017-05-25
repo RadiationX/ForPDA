@@ -16,6 +16,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -206,9 +207,14 @@ public class AttachmentsPopup {
         adapter.clear();
     }
 
+
     public void onDeleteFiles(List<AttachmentItem> deletedItems) {
         //unblock ui
-
+        Log.e("SUKA", "ON DELETE FILES "+deletedItems);
+        for (AttachmentItem item : deletedItems) {
+            Log.e("SUKA", "DELETED FILE "+item);
+            messagePanel.setText(messagePanel.getMessage().replaceAll("\\[attachment=['\"]?" + item.getId() + ":[^\\]]*?]",""));
+        }
         progressOverlay.setVisibility(View.GONE);
         adapter.deleteSelected();
     }

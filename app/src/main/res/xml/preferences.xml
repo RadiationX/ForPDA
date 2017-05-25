@@ -17,6 +17,10 @@
             android:defaultValue="true"
             android:key="theme.circle_avatars"
             android:title="Круглые аватарки" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="theme.anchor_history"
+            android:title="История переходов на странице" />
 
     </PreferenceCategory>
 

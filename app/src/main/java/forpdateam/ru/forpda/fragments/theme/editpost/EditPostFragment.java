@@ -258,7 +258,7 @@ public class EditPostFragment extends TabFragment {
     public void removeFiles() {
         attachmentsPopup.preDeleteFiles();
         List<AttachmentItem> selectedFiles = attachmentsPopup.getSelected();
-        attachmentSubscriber.subscribe(RxApi.EditPost().deleteFiles(postForm.getPostId(), selectedFiles), item -> attachmentsPopup.onDeleteFiles(item), selectedFiles, null);
+        attachmentSubscriber.subscribe(RxApi.EditPost().deleteFiles(postForm.getPostId(), selectedFiles), item -> attachmentsPopup.onDeleteFiles(selectedFiles), selectedFiles, null);
     }
 
 

@@ -36,6 +36,11 @@ public class ThemeFragmentWeb extends ThemeFragment {
     private WebViewClient webViewClient;
     private WebChromeClient chromeClient;
 
+    @Override
+    public void scrollToAnchor(String anchor) {
+        webView.evalJs("scrollToElement(\"" + anchor + "\")");
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void addShowingView() {
@@ -205,7 +210,11 @@ public class ThemeFragmentWeb extends ThemeFragment {
                                 elem = matcher.group(1);
                             }
                             Log.d("FORPDA_LOG", " scroll to " + postId + " : " + elem);
-                            webView.evalJs("scrollToElement(\"".concat(elem == null ? "entry" : "").concat(elem != null ? elem : postId).concat("\")"));
+                            String finalAnchor = (elem == null ? "entry" : "").concat(elem != null ? elem : postId);
+                            if (App.getInstance().getPreferences().getBoolean("theme.anchor_history", true)) {
+                                currentPage.addAnchor(finalAnchor);
+                            }
+                            scrollToAnchor(finalAnchor);
                             return true;
                         } else {
                             load(uri);
@@ -269,6 +278,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
     private class ThemeChromeClient extends WebChromeClient {
         final static String tag = "WebConsole";
+
         @Override
         public void onProgressChanged(WebView view, int progress) {
             if (loadAction == NORMAL_ACTION)

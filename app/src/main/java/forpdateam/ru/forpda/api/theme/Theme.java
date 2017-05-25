@@ -64,7 +64,7 @@ public class Theme {
         long time = System.currentTimeMillis();
         Matcher matcher = elemToScrollPattern.matcher(redirectUrl);
         while (matcher.find()) {
-            page.setElementToScroll(matcher.group(1));
+            page.addAnchor(matcher.group(1));
         }
         matcher = themeIdPattern.matcher(response);
         if (matcher.find()) {

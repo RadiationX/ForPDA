@@ -48,6 +48,11 @@ public class ThemeFragmentNative extends ThemeFragment {
     }
 
     @Override
+    public void scrollToAnchor(String anchor) {
+
+    }
+
+    @Override
     protected void updateHistoryLastHtml() {
 
     }
