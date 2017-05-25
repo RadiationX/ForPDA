@@ -162,6 +162,8 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         messagePanel.hidePopupWindows();
     }
 
+    public abstract void scrollToAnchor(String anchor);
+
     @Override
     public boolean onBackPressed() {
         if (messagePanel.onBackPressed())
@@ -169,6 +171,13 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         if (toolbar.getMenu().findItem(R.id.action_search) != null && toolbar.getMenu().findItem(R.id.action_search).isActionViewExpanded()) {
             toolbar.collapseActionView();
             return true;
+        }
+        if (App.getInstance().getPreferences().getBoolean("theme.anchor_history", true)) {
+            if (currentPage.getAnchors().size() > 1) {
+                currentPage.removeAnchor();
+                scrollToAnchor(currentPage.getAnchor());
+                return true;
+            }
         }
         if (history.size() > 1) {
             setAction(BACK_ACTION);
@@ -446,7 +455,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     public void removeFiles() {
         attachmentsPopup.preDeleteFiles();
         List<AttachmentItem> selectedFiles = attachmentsPopup.getSelected();
-        attachmentSubscriber.subscribe(RxApi.EditPost().deleteFiles(0, selectedFiles), item -> attachmentsPopup.onDeleteFiles(item), selectedFiles, null);
+        attachmentSubscriber.subscribe(RxApi.EditPost().deleteFiles(0, selectedFiles), item -> attachmentsPopup.onDeleteFiles(selectedFiles), selectedFiles, null);
     }
 
 

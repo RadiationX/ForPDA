@@ -60,7 +60,7 @@ public class ThemeRx {
             t.setVariableOpt("authorized", Boolean.toString(authorized));
             t.setVariableOpt("is_curator", Boolean.toString(page.isCurator()));
             t.setVariableOpt("member_id", ClientHelper.getUserId());
-            t.setVariableOpt("elem_to_scroll", page.getElementToScroll());
+            t.setVariableOpt("elem_to_scroll", page.getAnchor());
             t.setVariableOpt("body_type", "topic");
             t.setVariableOpt("navigation_disable", prevDisabled && nextDisabled ? "navigation_disable" : "");
             t.setVariableOpt("first_disable", getDisableStr(prevDisabled));

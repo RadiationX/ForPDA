@@ -1,20 +1,41 @@
 package forpdateam.ru.forpda.api.theme.models;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.theme.interfaces.IThemePage;
+import forpdateam.ru.forpda.utils.ExtendedWebView;
 
 /**
  * Created by radiationx on 04.08.16.
  */
 public class ThemePage implements IThemePage {
-    private String title, desc, html, url, elementToScroll;
+    private List<String> anchors = new ArrayList<>();
+    private String title, desc, html, url;
     private int id = 0, forumId = 0, favId = 0, scrollY = 0;
     private boolean inFavorite = false, curator = false, quote = false, hatOpen = false, pollOpen = false;
     private ArrayList<ThemePost> posts = new ArrayList<>();
     private Pagination pagination = new Pagination();
     private Poll poll;
+
+    public boolean addAnchor(String anchor) {
+        return anchors.add(anchor);
+    }
+
+    public String getAnchor() {
+        return anchors.size() == 0 ? null : anchors.get(anchors.size() - 1);
+    }
+
+    public String removeAnchor() {
+        return anchors.size() == 0 ? null : anchors.remove(anchors.size() - 1);
+    }
+
+    public List<String> getAnchors() {
+        return anchors;
+    }
 
     public boolean isHatOpen() {
         return hatOpen;
@@ -70,14 +91,6 @@ public class ThemePage implements IThemePage {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public String getElementToScroll() {
-        return elementToScroll;
-    }
-
-    public void setElementToScroll(String elementToScroll) {
-        this.elementToScroll = elementToScroll;
     }
 
     @Override
