@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
-import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -158,6 +157,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
         webView.clearFocus();
         webView.clearFormData();
         webView.clearMatches();
+        webView.clearCache(true);
         ((ViewGroup) webView.getParent()).removeAllViews();
         if (getMainActivity().getWebViews().size() < 10) {
             getMainActivity().getWebViews().add(webView);
@@ -247,7 +247,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
             super.onLoadResource(view, url);
 
             Log.d("FORPDA_LOG", "IThemeJ: " + url);
-            if (action == NORMAL_ACTION) {
+            if (loadAction == NORMAL_ACTION) {
                 if (!url.contains("forum/uploads") && !url.contains("android_asset") && !url.contains("style_images") && m.reset(url).find()) {
                     webView.evalJs("onProgressChanged()");
                 }
@@ -269,17 +269,17 @@ public class ThemeFragmentWeb extends ThemeFragment {
     }
 
     private class ThemeChromeClient extends WebChromeClient {
+        final static String tag = "WebConsole";
         @Override
         public void onProgressChanged(WebView view, int progress) {
-            if (action == NORMAL_ACTION)
+            if (loadAction == NORMAL_ACTION)
                 webView.evalJs("onProgressChanged()");
-            /*else if (action == BACK_ACTION || action == REFRESH_ACTION)
+            /*else if (loadAction == BACK_ACTION || loadAction == REFRESH_ACTION)
                 webView.scrollTo(0, currentPage.getScrollY());*/
         }
 
         @Override
         public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-            String tag = "WebConsole";
             String message = "";
             message += "\"" + consoleMessage.message() + "\"";
             if (consoleMessage.messageLevel() == ConsoleMessage.MessageLevel.ERROR) {
@@ -307,7 +307,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
         run(() -> {
             Log.e("console", "DOMContentLoaded");
             String script = "";
-            script += "setLoadAction(" + action + ");";
+            script += "setLoadAction(" + loadAction + ");";
             script += "setLoadScrollY(" + ((int) (currentPage.getScrollY() / App.getInstance().getDensity())) + ");";
             script += "nativeEvents.onNativeDomComplete();";
             webView.evalJs(script);
@@ -317,8 +317,10 @@ public class ThemeFragmentWeb extends ThemeFragment {
     @JavascriptInterface
     public void onPageLoaded() {
         run(() -> {
+            setAction(NORMAL_ACTION);
             Log.e("console", "onPageLoaded");
             String script = "";
+            script += "setLoadAction(" + NORMAL_ACTION + ");";
             script += "nativeEvents.onNativePageComplete()";
             webView.evalJs(script);
         });

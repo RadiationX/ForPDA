@@ -60,7 +60,7 @@ public class Qms {
     public ArrayList<QmsContact> unBlockUsers(int[] ids) throws Exception {
         ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
                 .url("http://4pda.ru/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1")
-                .formHeader("action", "delete-users");
+                .formHeader("loadAction", "delete-users");
         String strId;
         for (int id : ids) {
             strId = Integer.toString(id);
@@ -74,7 +74,7 @@ public class Qms {
     public ArrayList<QmsContact> blockUser(String nick) throws Exception {
         ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
                 .url("http://4pda.ru/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1")
-                .formHeader("action", "add-user")
+                .formHeader("loadAction", "add-user")
                 .formHeader("username", nick);
         final String response = Api.getWebClient().request(builder.build());
         checkOperation(response);
@@ -92,7 +92,7 @@ public class Qms {
 
     public ArrayList<QmsContact> getContactList() throws Exception {
         ArrayList<QmsContact> list = new ArrayList<>();
-        final String response = Api.getWebClient().request(new ForPdaRequest.Builder().url("http://4pda.ru/forum/index.php?&act=qms-xhr&action=userlist").build());
+        final String response = Api.getWebClient().request(new ForPdaRequest.Builder().url("http://4pda.ru/forum/index.php?&act=qms-xhr&loadAction=userlist").build());
         final Matcher matcher = contactsPattern.matcher(response);
         QmsContact contact;
         String temp;
@@ -178,7 +178,7 @@ public class Qms {
     }
 
     public List<String> findUser(final String nick) throws Exception {
-        String response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=" + nick + "&limit=150&timestamp=" + System.currentTimeMillis());
+        String response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=qms-xhr&loadAction=autocomplete-username&q=" + nick + "&limit=150&timestamp=" + System.currentTimeMillis());
         List<String> list = new ArrayList<>();
         Matcher m = findUserPattern.matcher(response);
         while (m.find()) {
@@ -189,7 +189,7 @@ public class Qms {
 
     public QmsChatModel sendNewTheme(String nick, String title, String mess) throws Exception {
         ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
-                .url("http://4pda.ru/forum/index.php?act=qms&action=create-thread&xhr=body&do=1")
+                .url("http://4pda.ru/forum/index.php?act=qms&loadAction=create-thread&xhr=body&do=1")
                 .formHeader("username", nick)
                 .formHeader("title", title)
                 .formHeader("message", mess);
@@ -201,7 +201,7 @@ public class Qms {
         ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
                 .url("http://4pda.ru/forum/index.php")
                 .formHeader("act", "qms-xhr")
-                .formHeader("action", "send-message")
+                .formHeader("loadAction", "send-message")
                 .formHeader("message", text)
                 .formHeader("mid", Integer.toString(userId))
                 .formHeader("t", Integer.toString(themeId));
@@ -238,7 +238,7 @@ public class Qms {
         ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
                 .url("http://4pda.ru/forum/index.php")
                 .formHeader("act", "qms-xhr")
-                .formHeader("action", "del-member")
+                .formHeader("loadAction", "del-member")
                 .formHeader("del-mid", Integer.toString(mid));
         return Api.getWebClient().request(builder.build());
     }

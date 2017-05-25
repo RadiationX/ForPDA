@@ -8,15 +8,13 @@ var anchorElem, elemToActivation;
 var corrector;
 
 
-
-
-function setLoadAction(action) {
-    console.log("setLoadAction");
-    window.loadAction = action;
+function setLoadAction(loadAction) {
+    console.log("setLoadAction "+loadAction);
+    window.loadAction = loadAction;
 }
 
 function setLoadScrollY(loadScrollY) {
-    console.log("setLoadScrollY");
+    console.log("setLoadScrollY "+loadScrollY);
     window.loadScrollY = Number(loadScrollY);
 }
 
@@ -90,39 +88,16 @@ function scrollToElement(name) {
                 window.scrollTo(0, window.loadScrollY);
             }, 1);
         });
-        /*window.scrollTo(0, window.loadScrollY);
-        window.addEventListener("load", function () {
-            window.scrollTo(0, window.loadScrollY);
-        });*/
-
     } else {
         setTimeout(function () {
             doScroll(anchorElem);
         }, 1);
         window.addEventListener("load", function () {
             setTimeout(function () {
-                console.log("SCROLL");
-                console.log(getCoordinates(anchorElem).top + " : " + getScrollTop());
                 doScroll(anchorElem);
-
-                //ITheme.log(document.documentElement.innerHTML);
             }, 1);
         });
-
-        /*doScroll(anchorElem);
-        window.addEventListener("load", function () {
-            console.log("SCROLL");
-            console.log(getCoordinates(anchorElem).top + " : " + getScrollTop());
-            doScroll(anchorElem);
-
-        });*/
     }
-
-    /*if (document.readyState == "complete") {
-        doScroll(anchorElem);
-    } else {
-
-    }*/
 }
 
 function doScroll(tAnchorElem) {
@@ -383,7 +358,9 @@ function ScrollCorrector() {
         return nearest;
     }
 }
-nativeEvents.addEventListener("DOMContentLoaded", function () {
+
+function initScrollCorrector(){
     corrector = new ScrollCorrector();
-});
+}
+nativeEvents.addEventListener("DOMContentLoaded", initScrollCorrector);
 nativeEvents.addEventListener("DOMContentLoaded", scrollToElement);
