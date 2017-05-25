@@ -130,13 +130,18 @@ public class App extends android.app.Application {
         }
         return template;
     }
+    private float density = 1.0f;
 
+    public float getDensity() {
+        return density;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
         INSTANCE = this;
         ACRA.init(this);
+        density =  getResources().getDisplayMetrics().density;
 
         templates.put(TEMPLATE_THEME, findTemplate(TEMPLATE_THEME));
         templates.put(TEMPLATE_SEARCH, findTemplate(TEMPLATE_SEARCH));

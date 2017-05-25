@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import forpdateam.ru.forpda.views.drawers.MenuItems;
-
 /**
  * Created by radiationx on 27.10.16.
  */

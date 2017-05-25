@@ -1,4 +1,6 @@
-window.addEventListener("DOMContentLoaded", function (e) {
+console.log("LOAD JS SOURCE tests.js");
+
+function transformSnapbacks() {
     var snapBacks = document.querySelectorAll("a[href*=findpost][title='Перейти к сообщению'],a[href*=showuser]");
     for (var i = 0; i < snapBacks.length; i++) {
         var snapBack = snapBacks[i];
@@ -7,32 +9,38 @@ window.addEventListener("DOMContentLoaded", function (e) {
         }
         if (!(snapBack.href.indexOf("showuser") != -1)) {
             var temp = snapBack.nextElementSibling;
-            snapBack.innerHTML = temp.textContent;
-
-            temp = snapBack;
-            while (temp != null) {
-                //console.log(temp);
-                temp = temp.nextSibling;
-                if (!temp) break;
-                if (temp.nodeName === "#text") {
-                    if (temp.nodeValue === " ") {
-                        temp.nodeValue = "";
+            if (temp != null && temp != undefined) {
+                snapBack.innerHTML = temp.textContent;
+                temp = snapBack;
+                while (temp != null) {
+                    //console.log(temp);
+                    temp = temp.nextSibling;
+                    if (!temp) break;
+                    if (temp.nodeName === "#text") {
+                        if (temp.nodeValue === " ") {
+                            temp.nodeValue = "";
+                        }
+                        continue;
                     }
-                    continue;
+                    if (temp.tagName == "B") {
+                        break;
+                    }
                 }
-                if (temp.tagName == "B") {
-                    break;
+                if (temp) {
+                    temp.parentNode.removeChild(temp);
                 }
             }
-            if (temp) {
+            temp = snapBack.getElementsByTagName("IMG");
+            if (temp.length > 0) {
+                temp = temp[0];
                 temp.parentNode.removeChild(temp);
             }
         }
         snapBack.classList.add("snapback");
     }
-});
+}
 
-window.addEventListener("DOMContentLoaded", function (e) {
+function transformQuotes() {
     var quotes = document.querySelectorAll(".post-block.quote");
     var myRegexp = /([\s\S]*?) @ ((?:\d+.\d+.\d+|[a-zA-zа-я-А-Я]+)(?:, \d+:\d+)?)/g;
     for (var i = 0; i < quotes.length; i++) {
@@ -60,8 +68,11 @@ window.addEventListener("DOMContentLoaded", function (e) {
             } else {
                 nick = nick.charAt(0);
             }
-            titleBlock.querySelector(".icon").innerHTML = nick;
+            titleBlock.insertAdjacentHTML("afterbegin", "<div class=\"avatar\">" + nick + "</div>")
         }
         quote.classList.add("transformed");
     }
-});
+}
+
+nativeEvents.addEventListener("DOMContentLoaded", transformSnapbacks);
+nativeEvents.addEventListener("DOMContentLoaded", transformQuotes);

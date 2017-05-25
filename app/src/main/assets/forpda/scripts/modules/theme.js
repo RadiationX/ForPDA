@@ -1,15 +1,24 @@
-/*var ITheme = {
-    log:function(arg){
-        console.log(arg);
-    }
-}*/
+console.log("LOAD JS SOURCE theme.js");
+const BACK_ACTION = "0";
+const REFRESH_ACTION = "1";
+const NORMAL_ACTION = "2";
+window.loadAction = NORMAL_ACTION;
+window.loadScrollY = 0;
 var anchorElem, elemToActivation;
 var corrector;
-document.addEventListener("DOMContentLoaded", function () {
-    corrector = new ScrollCorrector();
-});
-document.addEventListener('DOMContentLoaded', scrollToElement);
 
+
+
+
+function setLoadAction(action) {
+    console.log("setLoadAction");
+    window.loadAction = action;
+}
+
+function setLoadScrollY(loadScrollY) {
+    console.log("setLoadScrollY");
+    window.loadScrollY = Number(loadScrollY);
+}
 
 
 //Вызывается при обновлении прогресса загрузке страницы и при загрузке её ресурсов
@@ -27,7 +36,6 @@ function getScrollTop() {
 //name это аттрибут тега html, может быть просто якорем или entry+post_id
 //Вызывается из джавы, если находится на той-же странице, и в ссылке есть entry или якорь, а также при загрузке страницы
 //PageInfo.elemToScroll - переменная, заданная в шаблоне в теге script, содержит в себе якорь или entry
-//doOnLoadScroll - объект в window, задаётся false только когда была сделана перезагрузка страницы или переход назад
 
 
 
@@ -70,19 +78,46 @@ function scrollToElement(name) {
     } else {
         anchorElem = document.documentElement;
     }
-    //Скрол к якорю/элементу
-    setTimeout(function () {
-        doScroll(anchorElem);
-    }, 1);
-    window.addEventListener("load", function () {
+    console.log("ANCHOR " + name);
+    console.log("loadAction " + window.loadAction);
+    console.log("loadScrollY " + window.loadScrollY);
+    if (window.loadAction == BACK_ACTION) {
         setTimeout(function () {
+            window.scrollTo(0, window.loadScrollY);
+        }, 1);
+        window.addEventListener("load", function () {
+            setTimeout(function () {
+                window.scrollTo(0, window.loadScrollY);
+            }, 1);
+        });
+        /*window.scrollTo(0, window.loadScrollY);
+        window.addEventListener("load", function () {
+            window.scrollTo(0, window.loadScrollY);
+        });*/
+
+    } else {
+        setTimeout(function () {
+            doScroll(anchorElem);
+        }, 1);
+        window.addEventListener("load", function () {
+            setTimeout(function () {
+                console.log("SCROLL");
+                console.log(getCoordinates(anchorElem).top + " : " + getScrollTop());
+                doScroll(anchorElem);
+
+                //ITheme.log(document.documentElement.innerHTML);
+            }, 1);
+        });
+
+        /*doScroll(anchorElem);
+        window.addEventListener("load", function () {
             console.log("SCROLL");
             console.log(getCoordinates(anchorElem).top + " : " + getScrollTop());
             doScroll(anchorElem);
 
-            //ITheme.log(document.documentElement.innerHTML);
-        }, 1);
-    });
+        });*/
+    }
+
     /*if (document.readyState == "complete") {
         doScroll(anchorElem);
     } else {
@@ -91,6 +126,7 @@ function scrollToElement(name) {
 }
 
 function doScroll(tAnchorElem) {
+    console.log(anchorElem);
     tAnchorElem.scrollIntoView();
 
     //Активация элементов, убирается класс active с уже активированных
@@ -213,19 +249,6 @@ function toggleButton(button, bodyClass) {
         }
     }
 }
-
-var pad = 100;
-
-
-function onsuka(elem) {
-    console.log("CLICK SUKA");
-    var suka = document.querySelector(".posts_list")
-    suka.style.paddingTop = pad + "px";
-    pad += 100;
-    corrector.startObserver();
-}
-
-
 
 function ScrollCorrector() {
     console.log("Scroll Corrector initialized");
@@ -360,9 +383,7 @@ function ScrollCorrector() {
         return nearest;
     }
 }
-
-
-
-
-
-function suka() {}
+nativeEvents.addEventListener("DOMContentLoaded", function () {
+    corrector = new ScrollCorrector();
+});
+nativeEvents.addEventListener("DOMContentLoaded", scrollToElement);
