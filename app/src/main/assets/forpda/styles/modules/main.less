@@ -92,7 +92,8 @@ a {
 
 li {
     .post-block {
-        &.spoil, &.hidden {
+        &.spoil,
+        &.hidden {
             .bRad(2px);
             margin-left: 0!important;
             margin-right: 0!important;
@@ -273,6 +274,37 @@ li {
                 padding-top: 8/16rem;
                 padding-bottom: 8/16rem;
             }*/
+            .avatar {
+                position: absolute;
+                left: 8/16rem;
+                top: 6/16rem;
+                height: 36/16rem;
+                width: 36/16rem;
+                background: #ccc;
+                .bRad(36/16rem);
+                font-size: 16/16rem;
+                line-height: 36/16rem;
+                text-align: center;
+                font-style: normal;
+                color: @primaryColor;
+                text-transform: uppercase;
+                &:before {
+                    content: "";
+                    position: absolute;
+                    bottom: -1/16rem;
+                    right: -1/16rem;
+                    height: 16/16rem;
+                    width: 16/16rem;
+                    background: @linkColor;
+                    .bRad(16/16rem);
+                    background-image: url(../../res/chevron-left-white.svg);
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    background-size: 100%;
+                    border: 1/16rem solid white;
+                    box-sizing: border-box;
+                }
+            }
             .title {
                 //margin: -6/16rem 0;
                 //margin-top: 2/16rem;
@@ -293,37 +325,6 @@ li {
                     font-size: 12/16rem;
                     line-height: 12/16rem;
                     font-weight: normal;
-                }
-                &~.icon {
-                    position: absolute;
-                    left: 8/16rem;
-                    top: 6/16rem;
-                    height: 36/16rem;
-                    width: 36/16rem;
-                    background: #ccc;
-                    .bRad(36/16rem);
-                    font-size: 16/16rem;
-                    line-height: 36/16rem;
-                    text-align: center;
-                    font-style: normal;
-                    color: @primaryColor;
-                    text-transform: uppercase;
-                    &:before {
-                        content: "";
-                        position: absolute;
-                        bottom: -1/16rem;
-                        right: -1/16rem;
-                        height: 16/16rem;
-                        width: 16/16rem;
-                        background: @linkColor;
-                        .bRad(16/16rem);
-                        background-image: url(../../res/chevron-left-white.svg);
-                        background-repeat: no-repeat;
-                        background-position: center;
-                        background-size: 100%;
-                        border: 1/16rem solid white;
-                        box-sizing: border-box;
-                    }
                 }
             }
             .snapback {

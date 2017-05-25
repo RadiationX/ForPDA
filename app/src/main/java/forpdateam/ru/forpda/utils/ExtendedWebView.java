@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.ActionMode;
 import android.view.ContextMenu;
 import android.view.ViewParent;
+import android.webkit.ValueCallback;
 import android.webkit.WebView;
 
 /**
@@ -28,11 +29,16 @@ public class ExtendedWebView extends NestedWebView {
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    public void evalJs(String js) {
+    public void evalJs(String script) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-            evaluateJavascript(js, null);
+            evaluateJavascript(script, null);
         else
-            loadUrl("javascript:" + js);
+            loadUrl("javascript:" + script);
+    }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    public void evalJs(String script, ValueCallback<String> resultCallback) {
+        evaluateJavascript(script, resultCallback);
     }
 
     private OnStartActionModeListener actionModeListener;

@@ -43,6 +43,16 @@ public class ThemeFragmentNative extends ThemeFragment {
     }
 
     @Override
+    protected void updateHistoryLast(ThemePage themePage) {
+
+    }
+
+    @Override
+    protected void updateHistoryLastHtml() {
+
+    }
+
+    @Override
     protected void updateView() {
         super.updateView();
         Date date = new Date();

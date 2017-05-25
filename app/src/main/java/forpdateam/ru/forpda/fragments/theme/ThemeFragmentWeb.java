@@ -9,7 +9,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -48,7 +50,7 @@ public class ThemeFragmentWeb extends ThemeFragment {
         }
         /*webView.setClipToPadding(false);
         webView.setPadding(0, 0, 0, App.px64);*/
-        webView.loadUrl("about:blank");
+        //webView.loadUrl("about:blank");
         refreshLayout.addView(webView);
         webView.addJavascriptInterface(this, JS_INTERFACE);
         webView.addJavascriptInterface(this, JS_POSTS_FUNCTIONS);
@@ -113,13 +115,31 @@ public class ThemeFragmentWeb extends ThemeFragment {
 
     @Override
     protected void saveToHistory(ThemePage themePage) {
-        if (currentPage.getUrl().equals(tab_url)) {
-            themePage.setScrollY(webView.getScrollY());
-        } else {
-            currentPage.setScrollY(webView.getScrollY());
-            history.add(currentPage);
-            webView.evalJs("ITheme.setHistoryBody(" + (history.size() - 1) + ",'<!DOCTYPE html><html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');");
-        }
+        Log.e("console", "saveToHistory " + themePage);
+        history.add(themePage);
+    }
+
+    @Override
+    protected void updateHistoryLast(ThemePage themePage) {
+        Log.e("console", "updateHistoryLast " + themePage + " : " + currentPage);
+        history.set(history.size() - 1, themePage);
+    }
+
+    @Override
+    protected void updateHistoryLastHtml() {
+        Log.e("console", "updateHistoryLastHtml");
+        webView.evalJs("ITheme.callbackUpdateHistoryHtml('<!DOCTYPE html><html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>')");
+        Log.e("console", "save scrollY " + webView.getScrollY());
+        webView.evalJs("console.log('JAVASCRIPT save scrollY '+window.scrollY)");
+    }
+
+    @JavascriptInterface
+    public void callbackUpdateHistoryHtml(String value) {
+        ThemePage themePage = history.get(history.size() - 1);
+        Log.e("console", "updateHistoryLastHtml " + themePage + " : " + currentPage);
+
+        themePage.setScrollY(webView.getScrollY());
+        themePage.setHtml(value);
     }
 
     @Override
@@ -215,9 +235,8 @@ public class ThemeFragmentWeb extends ThemeFragment {
         }
 
         private void load(Uri uri) {
-            action = NORMAL_ACTION;
             tab_url = uri.toString();
-            loadData();
+            loadData(NORMAL_ACTION);
         }
 
         private final Pattern p = Pattern.compile("\\.(jpg|png|gif|bmp)");
@@ -238,10 +257,14 @@ public class ThemeFragmentWeb extends ThemeFragment {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
-            if (action == BACK_ACTION || action == REFRESH_ACTION)
-                webView.evalJs("window.doOnLoadScroll = false");
-            if (action == BACK_ACTION)
-                webView.scrollTo(0, currentPage.getScrollY());
+
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            /*//TODO сделать привязку к событиям js, вместо этого говнища
+            updateHistoryLastHtml();*/
         }
     }
 
@@ -250,11 +273,56 @@ public class ThemeFragmentWeb extends ThemeFragment {
         public void onProgressChanged(WebView view, int progress) {
             if (action == NORMAL_ACTION)
                 webView.evalJs("onProgressChanged()");
-            else if (action == BACK_ACTION || action == REFRESH_ACTION)
-                webView.scrollTo(0, currentPage.getScrollY());
+            /*else if (action == BACK_ACTION || action == REFRESH_ACTION)
+                webView.scrollTo(0, currentPage.getScrollY());*/
+        }
+
+        @Override
+        public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+            String tag = "WebConsole";
+            String message = "";
+            message += "\"" + consoleMessage.message() + "\"";
+            if (consoleMessage.messageLevel() == ConsoleMessage.MessageLevel.ERROR) {
+                message += ", [" + consoleMessage.sourceId() + "]";
+            }
+            message += ", (" + consoleMessage.lineNumber() + ")";
+
+            ConsoleMessage.MessageLevel level = consoleMessage.messageLevel();
+            if (level == ConsoleMessage.MessageLevel.DEBUG) {
+                Log.d(tag, message);
+            } else if (level == ConsoleMessage.MessageLevel.ERROR) {
+                Log.e(tag, message);
+            } else if (level == ConsoleMessage.MessageLevel.WARNING) {
+                Log.w(tag, message);
+            } else if (level == ConsoleMessage.MessageLevel.LOG || level == ConsoleMessage.MessageLevel.TIP) {
+                Log.i(tag, message);
+            }
+            return true;
         }
     }
 
+
+    @JavascriptInterface
+    public void domContentLoaded() {
+        run(() -> {
+            Log.e("console", "DOMContentLoaded");
+            String script = "";
+            script += "setLoadAction(" + action + ");";
+            script += "setLoadScrollY(" + ((int) (currentPage.getScrollY() / App.getInstance().getDensity())) + ");";
+            script += "nativeEvents.onNativeDomComplete();";
+            webView.evalJs(script);
+        });
+    }
+
+    @JavascriptInterface
+    public void onPageLoaded() {
+        run(() -> {
+            Log.e("console", "onPageLoaded");
+            String script = "";
+            script += "nativeEvents.onNativePageComplete()";
+            webView.evalJs(script);
+        });
+    }
 
     /*
     *
