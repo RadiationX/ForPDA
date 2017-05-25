@@ -42,29 +42,25 @@
             android:focusableInTouchMode="true"
             android:visibility="gone">
 
-            <LinearLayout
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:gravity="center_vertical"
+                android:paddingEnd="@dimen/dp16"
+                android:paddingStart="@dimen/dp16"
+                android:text="@string/profile_title_about"
+                android:textColor="@color/text_color"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/profile_about_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="16dp"
-                    android:paddingStart="16dp"
-                    android:paddingTop="16dp"
-                    android:text="@string/profile_title_about"
-                    android:textColor="@color/text_color"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/profile_about_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="top"
-                    android:padding="16dp" />
-            </LinearLayout>
+                android:layout_marginTop="@dimen/dp48"
+                android:gravity="top"
+                android:paddingBottom="8dp"
+                android:padding="16dp" />
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
@@ -75,26 +71,26 @@
             android:layout_below="@+id/profile_block_about"
             android:visibility="gone">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:gravity="center_vertical"
+                android:paddingEnd="@dimen/dp16"
+                android:paddingStart="@dimen/dp16"
+                android:text="@string/profile_title_information"
+                android:textColor="@color/text_color"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
             <LinearLayout
                 android:id="@+id/profile_list_information"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/dp48"
                 android:orientation="vertical"
-                android:paddingBottom="0dp"
+                android:paddingBottom="8dp"
                 android:paddingEnd="16dp"
-                android:paddingStart="16dp"
-                android:paddingTop="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:text="@string/profile_title_information"
-                    android:textColor="@color/text_color"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
+                android:paddingStart="16dp" />
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
@@ -105,26 +101,24 @@
             android:layout_below="@+id/profile_block_information"
             android:visibility="gone">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:gravity="center_vertical"
+                android:paddingEnd="@dimen/dp16"
+                android:paddingStart="@dimen/dp16"
+                android:text="@string/profile_title_devices"
+                android:textColor="@color/text_color"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
             <LinearLayout
                 android:id="@+id/profile_list_devices"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/dp48"
                 android:orientation="vertical"
-                android:paddingBottom="16dp"
-                android:paddingTop="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:paddingEnd="0dp"
-                    android:paddingStart="16dp"
-                    android:text="@string/profile_title_devices"
-                    android:textColor="@color/text_color"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
+                android:paddingBottom="8dp" />
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
@@ -135,36 +129,30 @@
             android:layout_below="@+id/profile_block_devices"
             android:visibility="gone">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:gravity="center_vertical"
+                android:paddingEnd="@dimen/dp16"
+                android:paddingStart="@dimen/dp16"
+                android:text="@string/profile_title_contacts"
+                android:textColor="@color/text_color"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <HorizontalScrollView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/dp48">
 
-                <TextView
+                <LinearLayout
+                    android:id="@+id/profile_list_contacts"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="16dp"
-                    android:paddingEnd="16dp"
-                    android:paddingStart="16dp"
-                    android:paddingTop="16dp"
-                    android:text="@string/profile_title_contacts"
-                    android:textColor="@color/text_color"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-
-                <HorizontalScrollView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal">
-
-                    <LinearLayout
-                        android:id="@+id/profile_list_contacts"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:paddingBottom="16dp" />
-                </HorizontalScrollView>
-            </LinearLayout>
+                    android:orientation="horizontal"
+                    android:paddingBottom="8dp" />
+            </HorizontalScrollView>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
@@ -177,22 +165,22 @@
             android:focusableInTouchMode="true"
             android:visibility="gone">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:gravity="center_vertical"
+                android:paddingEnd="@dimen/dp16"
+                android:paddingStart="@dimen/dp16"
+                android:text="@string/profile_title_note"
+                android:textColor="@color/text_color"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp48"
                 android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="16dp"
-                    android:paddingEnd="16dp"
-                    android:paddingStart="16dp"
-                    android:paddingTop="16dp"
-                    android:text="@string/profile_title_note"
-                    android:textColor="@color/text_color"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/profile_note_text"
@@ -214,8 +202,7 @@
                     android:layout_marginBottom="10dp"
                     android:layout_marginStart="16dp"
                     android:background="?attr/selectableItemBackground"
-                    android:text="@string/profile_button_save"
-                    android:textColor="@color/colorPrimary" />
+                    android:text="@string/profile_button_save" />
             </LinearLayout>
         </android.support.v7.widget.CardView>
     </RelativeLayout>

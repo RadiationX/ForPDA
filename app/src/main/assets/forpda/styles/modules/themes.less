@@ -1,4 +1,4 @@
-body{
+body {
     background: @darkBackground;
 }
 
@@ -26,6 +26,7 @@ button,
         background: @tapColor;
     }
 }
+
 @-webkit-keyframes pollRangeAnimation {
     0% {
         -webkit-transform: scaleX(0.1) translateZ(0);
@@ -36,6 +37,7 @@ button,
         transform: scaleX(1) translateZ(0);
     }
 }
+
 @-webkit-keyframes pollRangeValueAnimation {
     0% {
         visibility: visible;
@@ -61,6 +63,7 @@ button,
         transform: scale(1);
     }
 }
+
 .poll {
     .mainBox();
     >.title {
@@ -160,7 +163,8 @@ button,
                                         -webkit-mask-size: 20/16em 20/16em;
                                         -webkit-mask-origin: border-box;
                                         -webkit-mask-clip: border-box;
-                                        &:after, &:before{
+                                        &:after,
+                                        &:before {
                                             .bRad(100%);
                                         }
                                     }
@@ -172,7 +176,7 @@ button,
                                         width: 18/16em;
                                         margin-top: -9/16em;
                                         left: 1/16em;
-                                        .add{
+                                        .add {
                                             position: absolute;
                                             height: 100%;
                                             width: 100%;
@@ -181,7 +185,8 @@ button,
                                             -webkit-transform: rotate(-45deg);
                                             transform: rotate(-45deg);
                                             z-index: 1;
-                                            &:after, &:before{
+                                            &:after,
+                                            &:before {
                                                 content: "";
                                                 position: absolute;
                                                 box-sizing: border-box;
@@ -192,14 +197,10 @@ button,
                                                 -webkit-transform-origin: left bottom;
                                                 transform-origin: left bottom;
                                                 opacity: 0;
-                                                -webkit-transition:
-                                                    0.2*@dur 0*@dur transform @curveStandard,
-                                                    0s 0.25*@dur opacity @curveStandard;
-                                                transition:
-                                                    0.2*@dur 0*@dur transform @curveStandard,
-                                                    0s 0.25*@dur opacity @curveStandard;
+                                                -webkit-transition: 0.2*@dur 0*@dur transform @curveStandard, 0s 0.25*@dur opacity @curveStandard;
+                                                transition: 0.2*@dur 0*@dur transform @curveStandard, 0s 0.25*@dur opacity @curveStandard;
                                             }
-                                            &:after{
+                                            &:after {
                                                 top: 7/16em;
                                                 left: 2/16em;
                                                 height: 2/16em;
@@ -207,7 +208,7 @@ button,
                                                 -webkit-transform: scaleX(0.15);
                                                 transform: scaleX(0.15);
                                             }
-                                             &:before{
+                                            &:before {
                                                 left: 2/16em;
                                                 top: 2/16em;
                                                 height: 7/16em;
@@ -216,10 +217,11 @@ button,
                                                 transform: scaleY(0.35);
                                             }
                                         }
-                                        &:after, &:before{
+                                        &:after,
+                                        &:before {
                                             .bRad(0);
                                         }
-                                        &:before{
+                                        &:before {
                                             height: 20/16em;
                                             width: 20/16em;
                                             margin-top: -10/16em;
@@ -231,66 +233,48 @@ button,
                                     }
                                 }
                                 &:checked {
-                                    + .icon {
+                                    +.icon {
                                         border-color: #000;
                                         -webkit-transition: 0s 0s border-color @curveStandard;
                                         transition: 0s 0s border-color @curveStandard;
                                         /*-webkit-animation: radAnim1 @dur @curveStandard;
                                         animation: radAnim1 @dur @curveStandard;*/
-                                        &:after{
+                                        &:after {
                                             -webkit-transform: scale(0.1);
                                             transform: scale(0.1);
-                                            -webkit-transition:
-                                                0.4*@dur 0.25*@dur -webkit-transform @curveStandard,
-                                                0s 0.2*@dur opacity @curveStandard;
-                                            transition:
-                                                0.4*@dur 0.25*@dur transform @curveStandard,
-                                                0s 0.2*@dur opacity @curveStandard;
+                                            -webkit-transition: 0.4*@dur 0.25*@dur -webkit-transform @curveStandard, 0s 0.2*@dur opacity @curveStandard;
+                                            transition: 0.4*@dur 0.25*@dur transform @curveStandard, 0s 0.2*@dur opacity @curveStandard;
                                             opacity: 1;
                                         }
-                                        &:before{
+                                        &:before {
                                             -webkit-transform: scale(1);
                                             transform: scale(1);
-                                            -webkit-transition:  
-                                                0s 0.45*@dur background @curveStandard,
-                                                0s 0.45*@dur border-width @curveStandard,
-                                                @dur 0s -webkit-transform @curveStandard,
-                                                0s 0s opacity @curveStandard;
-                                            transition:  
-                                                0s 0.45*@dur background @curveStandard,
-                                                0s 0.45*@dur border-width @curveStandard,
-                                                @dur 0s transform @curveStandard,
-                                                0s 0s opacity @curveStandard;
+                                            -webkit-transition: 0s 0.45*@dur background @curveStandard, 0s 0.45*@dur border-width @curveStandard, @dur 0s -webkit-transform @curveStandard, 0s 0s opacity @curveStandard;
+                                            transition: 0s 0.45*@dur background @curveStandard, 0s 0.45*@dur border-width @curveStandard, @dur 0s transform @curveStandard, 0s 0s opacity @curveStandard;
                                             opacity: 1;
                                             border-width: 5/16em;
                                         }
                                     }
-                                    &[type="radio"] {
-                                        
-                                    }
+                                    &[type="radio"] {}
                                     &[type="checkbox"] {
-                                        + .icon{
-                                            .add{
-                                                &:after, &:before{
+                                        +.icon {
+                                            .add {
+                                                &:after,
+                                                &:before {
                                                     opacity: 1;
-                                                    -webkit-transition:
-                                                        0.4*@dur 0.45*@dur transform @curveStandard,
-                                                        0s 0.45*@dur opacity @curveStandard;
-                                                    transition:
-                                                        0.4*@dur 0.45*@dur transform @curveStandard,
-                                                        0s 0.45*@dur opacity @curveStandard;
+                                                    -webkit-transition: 0.4*@dur 0.45*@dur transform @curveStandard, 0s 0.45*@dur opacity @curveStandard;
+                                                    transition: 0.4*@dur 0.45*@dur transform @curveStandard, 0s 0.45*@dur opacity @curveStandard;
                                                     -webkit-transform: scaleX(1) scaleY(1);
-                                                    transform: scaleX(1)  scaleY(1);
+                                                    transform: scaleX(1) scaleY(1);
                                                 }
                                             }
-                                            &:before{
+                                            &:before {
                                                 background: #000;
                                             }
                                         }
                                     }
                                 }
                             }
-                            
                             >.icon {
                                 position: absolute;
                                 height: 20/16em;
@@ -300,13 +284,14 @@ button,
                                 top: 50%;
                                 margin-top: -10/16em;
                                 border: @borderInput;
-                                overflow: hidden;                                
+                                overflow: hidden;
                                 -webkit-transform: translateZ(0);
                                 transform: translateZ(0);
                                 -webkit-transition: 0s 0.8*@dur border-color @curveStandard;
                                 transition: 0s 0.8*@dur border-color @curveStandard;
                                 outline: 2px solid transparent;
-                                &:after, &:before{
+                                &:after,
+                                &:before {
                                     content: "";
                                     position: absolute;
                                     top: 50%;
@@ -314,7 +299,7 @@ button,
                                     opacity: 0;
                                     box-sizing: border-box;
                                 }
-                                &:after{
+                                &:after {
                                     height: 20/16em;
                                     width: 20/16em;
                                     margin-top: -10/16em;
@@ -323,14 +308,10 @@ button,
                                     opacity: 0;
                                     -webkit-transform: scale(2.25);
                                     transform: scale(2.25);
-                                    -webkit-transition:
-                                        0.4*@dur 0.2*@dur -webkit-transform @curveStandard,
-                                        0s 0.8*@dur opacity @curveStandard;
-                                    transition:
-                                        0.4*@dur 0.2*@dur transform @curveStandard,
-                                        0s 0.8*@dur opacity @curveStandard;
+                                    -webkit-transition: 0.4*@dur 0.2*@dur -webkit-transform @curveStandard, 0s 0.8*@dur opacity @curveStandard;
+                                    transition: 0.4*@dur 0.2*@dur transform @curveStandard, 0s 0.8*@dur opacity @curveStandard;
                                 }
-                                &:before{
+                                &:before {
                                     height: 10/16em;
                                     width: 10/16em;
                                     margin-top: -5/16em;
@@ -338,27 +319,17 @@ button,
                                     border: 3/16em solid #000;
                                     -webkit-transform: scale(4);
                                     transform: scale(4);
-                                    -webkit-transition:
-                                        0s 0.3*@dur background @curveStandard,
-                                        0s 0.3*@dur border-width @curveStandard,
-                                        @dur 0s -webkit-transform @curveStandard,
-                                        0s @dur opacity @curveStandard;
-                                    transition:
-                                        0s 0.3*@dur background @curveStandard,
-                                        0s 0.3*@dur border-width @curveStandard,
-                                        @dur 0s transform @curveStandard,
-                                        0s @dur opacity @curveStandard;
+                                    -webkit-transition: 0s 0.3*@dur background @curveStandard, 0s 0.3*@dur border-width @curveStandard, @dur 0s -webkit-transform @curveStandard, 0s @dur opacity @curveStandard;
+                                    transition: 0s 0.3*@dur background @curveStandard, 0s 0.3*@dur border-width @curveStandard, @dur 0s transform @curveStandard, 0s @dur opacity @curveStandard;
                                 }
                             }
                             >.title {
                                 display: inline-block;
                                 padding-left: 32/16em;
                             }
-                            &:active{
-                                >.icon{
-                                    
-                                }
-                                &:before{
+                            &:active {
+                                >.icon {}
+                                &:before {
                                     opacity: 0.05;
                                     -webkit-transform: scale(1) translateZ(0);
                                     transform: scale(1) translateZ(0);
@@ -396,7 +367,6 @@ button,
                                 box-shadow: 12/16em 0 8/16em -4/16em white;
                                 line-height: 1.5em;
                             }
-                            
                             .range_bar {
                                 background: rgba(0, 0, 0, 0.10);
                                 box-sizing: border-box;
@@ -439,7 +409,7 @@ button,
                                         }
                                     }
                                 }
-                                .title{
+                                .title {
                                     position: relative;
                                     font-size: 14/16em;
                                     display: block;
@@ -448,7 +418,7 @@ button,
                                     color: black;
                                     font-weight: bold;
                                 }
-                                &:after{
+                                &:after {
                                     content: "";
                                     display: table;
                                     clear: both;
@@ -505,6 +475,7 @@ button,
     &.default {}
     &.result {}
 }
+
 .post_body {
     padding: 1em;
     position: relative;
@@ -542,82 +513,32 @@ button,
         margin-top: -2px;
         color: @secondTextColor;
     }
-    [attach_id][title*="Скачать"]:not(.linked-image) {
+    .ipb-attach.attach-file {
+        position: relative;
         img {
             display: none;
         }
         &:before {
-            font-family: 'flaticon';
-            content: "\e000";
-            line-height: 1.4em;
-            font-size: 1.2em;
-        }
-        [title*="Скачать"] {
-            background: red;
-        }
-        &[href*=".doc"][title*=".doc"] {
-            &:before {
-                content: "\e000";
-            }
-        }
-        &[href*=".eps"][title*=".eps"] {
-            &:before {
-                content: "\e002";
-            }
-        }
-        &[href*=".exe"][title*=".exe"] {
-            &:before {
-                content: "\e003";
-            }
-        }
-        &[href*=".gif"][title*=".gif"],
-        &[href*=".jpg"][title*=".jpg"] &[href*=".jpeg"][title*=".jpeg"] &[href*=".png"][title*=".png"] {
-            &:before {
-                content: "\e005";
-            }
-        }
-        &[href*=".html"][title*=".html"] {
-            &:before {
-                content: "\e004";
-            }
-        }
-        &[href*=".pdf"][title*=".pdf"] {
-            &:before {
-                content: "\e006";
-            }
-        }
-        &[href*=".ppt"][title*=".ppt"] {
-            &:before {
-                content: "\e007";
-            }
-        }
-        &[href*=".php"][title*=".php"] {
-            &:before {
-                content: "\e00a";
-            }
-        }
-        &[href*=".rtf"][title*=".rtf"] {
-            &:before {
-                content: "\e009";
-            }
-        }
-        &[href*=".txt"][title*=".txt"] {
-            &:before {
-                content: "\e00b";
-            }
-        }
-        &[href*=".zip"][title*=".zip"] {
-            &:before {
-                content: "\e00c";
-            }
-        }
-        &[href*=".txt"][title*=".txt"] {
-            &:before {
-                content: "\e00b";
-            }
+            content: "";
+            display: inline-block;
+            height: 20/16em;
+            width: 20/16em;
+            vertical-align: text-bottom;
+            //background: red;
+            /*background-image: url(../../res/file.svg);
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 20/16em 20/16em;
+            
+            -webkit-filter: blur(1px);
+            filter: blur(1px);*/
+            background-color: currentColor;
+            -webkit-mask: url(../../res/file-outline.svg) no-repeat center center;
+            -webkit-mask-size: 20/16em 20/16em;
         }
     }
 }
+
 @-webkit-keyframes highlight {
     0% {
         opacity: 0;
@@ -694,7 +615,7 @@ button,
                 transform: scale(1) translateZ(0);
             }
         }
-        &+.hat_content{
+        &+.hat_content {
             padding-top: 0.5em;
         }
     }
@@ -712,7 +633,7 @@ button,
                 .img {
                     .bRad(@avatarSize);
                 }
-                >.letter{
+                >.letter {
                     .bRad(@avatarSize);
                 }
             }
@@ -724,22 +645,22 @@ button,
                 .img {
                     display: none;
                 }
-                .letter{
+                .letter {
                     display: block;
                 }
             }
         }
     }
-    &.online{
-        .post_header{
-            .inf.nick{
+    &.online {
+        .post_header {
+            .inf.nick {
                 color: @curColor;
             }
         }
     }
-    .post_title{
+    .post_title {
         text-align: center;
-        a{
+        a {
             color: black;
             font-weight: bold;
             text-decoration: none;
@@ -752,7 +673,6 @@ button,
         .header_wrapper {
             position: relative;
         }
-        
         .avatar {
             .noselect;
             width: @avatarSize;
@@ -767,13 +687,12 @@ button,
                 background-size: cover;
                 background-position: center;
             }
-            
-            &.none_avatar{
-                >.letter{
+            &.none_avatar {
+                >.letter {
                     display: block;
                 }
             }
-            >.letter{
+            >.letter {
                 color: white;
                 position: absolute;
                 text-align: center;
@@ -788,10 +707,8 @@ button,
                 background-color: #ccc;
                 display: none;
             }
-            
             .reputation {
                 position: absolute;
-                
                 background: #757575;
                 z-index: 1;
                 height: 18/16em;
@@ -806,20 +723,19 @@ button,
                 right: 0;
                 bottom: 0;
                 box-shadow: 0 0 0 2/16em white;
-                
                 >span {
                     color: white;
                     font-size: 10/16em;
                     font-weight: bold;
                     vertical-align: middle;
-                   /* &:before {
+                    /* &:before {
                         content: "Реп (";
                     }
                     &:after {
                         content: ")";
                     }*/
                 }
-                &:after{
+                &:after {
                     content: "";
                     position: absolute;
                     height: 36/16rem;
@@ -829,7 +745,6 @@ button,
                     right: 0;
                 }
             }
-            
             &.disable {
                 .img {
                     width: 0;
@@ -843,7 +758,6 @@ button,
                     .bRad(4em);
                 }
             }
-            
         }
         .inf {
             position: absolute;
@@ -858,7 +772,6 @@ button,
                 &.online {
                     color: @userOnlineColor;
                 }
-                
                 .group {
                     position: absolute;
                     top: 50%;
@@ -868,7 +781,7 @@ button,
                     width: 8/16em;
                     background-color: currentColor;
                     .bRad(100%);
-                    &:after{
+                    &:after {
                         content: "";
                         position: absolute;
                         height: 2.25em;
@@ -884,7 +797,6 @@ button,
                     }
                 }
             }
-            
             &.menu {
                 .noselect;
                 left: auto;
@@ -934,7 +846,6 @@ button,
             }
         }
     }
-    
     .post_footer {
         .noselect;
         .btn {
@@ -985,11 +896,13 @@ button,
         clear: both;
     }
 }
+
 #search {
     .panel.bottom:empty+#bottomMargin {
         display: none;
     }
 }
+
 .posts_list {
     &.search-results {
         .topic_title_post {
@@ -1042,4 +955,3 @@ button,
         }
     }
 }
-

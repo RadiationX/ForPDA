@@ -507,54 +507,28 @@ button:active,
   margin-top: -2px;
   color: rgba(0, 0, 0, 0.54);
 }
-.post_body [attach_id][title*="Скачать"]:not(.linked-image) img {
+.post_body .ipb-attach.attach-file {
+  position: relative;
+}
+.post_body .ipb-attach.attach-file img {
   display: none;
 }
-.post_body [attach_id][title*="Скачать"]:not(.linked-image):before {
-  font-family: 'flaticon';
-  content: "\e000";
-  line-height: 1.4em;
-  font-size: 1.2em;
-}
-.post_body [attach_id][title*="Скачать"]:not(.linked-image) [title*="Скачать"] {
-  background: red;
-}
-.post_body [attach_id][title*="Скачать"]:not(.linked-image)[href*=".doc"][title*=".doc"]:before {
-  content: "\e000";
-}
-.post_body [attach_id][title*="Скачать"]:not(.linked-image)[href*=".eps"][title*=".eps"]:before {
-  content: "\e002";
-}
-.post_body [attach_id][title*="Скачать"]:not(.linked-image)[href*=".exe"][title*=".exe"]:before {
-  content: "\e003";
-}
-.post_body [attach_id][title*="Скачать"]:not(.linked-image)[href*=".gif"][title*=".gif"]:before,
-.post_body [attach_id][title*="Скачать"]:not(.linked-image)[href*=".jpg"][title*=".jpg"] .post_body [attach_id][title*="Скачать"]:not(.linked-image)[href*=".jpeg"][title*=".jpeg"] .post_body [attach_id][title*="Скачать"]:not(.linked-image)[href*=".png"][title*=".png"]:before {
-  content: "\e005";
-}
-.post_body [attach_id][title*="Скачать"]:not(.linked-image)[href*=".html"][title*=".html"]:before {
-  content: "\e004";
-}
-.post_body [attach_id][title*="Скачать"]:not(.linked-image)[href*=".pdf"][title*=".pdf"]:before {
-  content: "\e006";
-}
-.post_body [attach_id][title*="Скачать"]:not(.linked-image)[href*=".ppt"][title*=".ppt"]:before {
-  content: "\e007";
-}
-.post_body [attach_id][title*="Скачать"]:not(.linked-image)[href*=".php"][title*=".php"]:before {
-  content: "\e00a";
-}
-.post_body [attach_id][title*="Скачать"]:not(.linked-image)[href*=".rtf"][title*=".rtf"]:before {
-  content: "\e009";
-}
-.post_body [attach_id][title*="Скачать"]:not(.linked-image)[href*=".txt"][title*=".txt"]:before {
-  content: "\e00b";
-}
-.post_body [attach_id][title*="Скачать"]:not(.linked-image)[href*=".zip"][title*=".zip"]:before {
-  content: "\e00c";
-}
-.post_body [attach_id][title*="Скачать"]:not(.linked-image)[href*=".txt"][title*=".txt"]:before {
-  content: "\e00b";
+.post_body .ipb-attach.attach-file:before {
+  content: "";
+  display: inline-block;
+  height: 1.25em;
+  width: 1.25em;
+  vertical-align: text-bottom;
+  /*background-image: url(../../res/file.svg);
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 20/16em 20/16em;
+            
+            -webkit-filter: blur(1px);
+            filter: blur(1px);*/
+  background-color: currentColor;
+  -webkit-mask: url(../../res/file-outline.svg) no-repeat center center;
+  -webkit-mask-size: 1.25em 1.25em;
 }
 @-webkit-keyframes highlight {
   0% {
