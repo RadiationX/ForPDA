@@ -157,7 +157,6 @@ public class ThemeFragmentWeb extends ThemeFragment {
         webView.clearFocus();
         webView.clearFormData();
         webView.clearMatches();
-        webView.clearCache(true);
         ((ViewGroup) webView.getParent()).removeAllViews();
         if (getMainActivity().getWebViews().size() < 10) {
             getMainActivity().getWebViews().add(webView);

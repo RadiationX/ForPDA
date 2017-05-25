@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.fragments.qms.adapters;
 
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -88,6 +89,7 @@ public class QmsThemesAdapter extends RecyclerView.Adapter<QmsThemesAdapter.View
         IQmsTheme item = list.get(position);
 
         holder.name.setText(item.getName());
+        holder.name.setTypeface(item.getCountNew() > 0 ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
         if (item.getCountNew() == 0) {
             holder.count.setVisibility(View.GONE);
         } else {

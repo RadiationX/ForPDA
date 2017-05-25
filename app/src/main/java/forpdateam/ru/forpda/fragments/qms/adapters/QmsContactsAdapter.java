@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.fragments.qms.adapters;
 
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -96,6 +97,7 @@ public class QmsContactsAdapter extends RecyclerView.Adapter<QmsContactsAdapter.
 
         holder.nick.setText(item.getNick());
         ImageLoader.getInstance().displayImage(item.getAvatar(), holder.avatar);
+        holder.nick.setTypeface(item.getCount() > 0 ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
         if (item.getCount() == 0) {
             holder.count.setVisibility(View.GONE);
         } else {
