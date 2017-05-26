@@ -405,7 +405,9 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         form.setSt(currentPage.getPagination().getCurrent() * currentPage.getPagination().getPerPage());
         form.setMessage(messagePanel.getMessage());
         List<AttachmentItem> attachments = messagePanel.getAttachments();
-        attachments.forEach(form::addAttachment);
+        for (AttachmentItem item : attachments) {
+            form.addAttachment(item);
+        }
         return form;
     }
 
