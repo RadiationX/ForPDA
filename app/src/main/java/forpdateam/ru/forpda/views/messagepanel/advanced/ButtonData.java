@@ -7,7 +7,7 @@ import android.support.annotation.DrawableRes;
  */
 
 public class ButtonData {
-    private String text, icon;
+    private String text, icon, title;
     private int iconRes;
     private ClickListener listener;
 
@@ -23,6 +23,12 @@ public class ButtonData {
     public ButtonData(String text, @DrawableRes int iconRes) {
         this.text = text;
         this.iconRes = iconRes;
+    }
+
+    public ButtonData(String text, @DrawableRes int iconRes, String title) {
+        this.text = text;
+        this.iconRes = iconRes;
+        this.title = title;
     }
 
     public ButtonData(String text, @DrawableRes int iconRes, ClickListener listener) {
@@ -41,5 +47,9 @@ public class ButtonData {
 
     public int getIconRes() {
         return iconRes;
+    }
+
+    public String getTitle() {
+        return title;
     }
 }

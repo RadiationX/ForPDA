@@ -16,7 +16,7 @@ import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
 public class BasePanelItem extends FrameLayout {
     private String title;
     protected MessagePanel messagePanel;
-    protected RecyclerView recyclerView;
+    protected AutoFitRecyclerView recyclerView;
 
     public BasePanelItem(Context context, MessagePanel messagePanel, String title) {
         super(context);
