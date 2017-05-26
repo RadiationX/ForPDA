@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.views.messagepanel.advanced;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.widget.FrameLayout;
 
 import forpdateam.ru.forpda.views.messagepanel.AutoFitRecyclerView;
@@ -29,6 +28,4 @@ public class BasePanelItem extends FrameLayout {
     public String getTitle() {
         return title;
     }
-
-
 }

@@ -6,6 +6,7 @@ import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,7 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import forpdateam.ru.forpda.App;
@@ -26,7 +27,7 @@ import forpdateam.ru.forpda.views.messagepanel.advanced.ButtonData;
  * Created by radiationx on 08.01.17.
  */
 
-public class PanelItemAdapter extends RecyclerView.Adapter<PanelItemAdapter.ViewHolder> {
+public class PanelItemAdapter extends RecyclerView.Adapter<PanelItemAdapter.ViewHolder> implements ItemDragCallback.ItemTouchHelperAdapter {
     public final static int TYPE_ASSET = 0;
     public final static int TYPE_DRAWABLE = 1;
     private final ColorFilter colorFilter = new PorterDuffColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
@@ -101,4 +102,26 @@ public class PanelItemAdapter extends RecyclerView.Adapter<PanelItemAdapter.View
             }
         }
     }
+
+    @Override
+    public void onItemDismiss(int position) {
+        items.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    @Override
+    public void onItemMove(int fromPosition, int toPosition) {
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(items, i, i + 1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(items, i, i - 1);
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition);
+        Log.e("SUKA", "onItemMove");
+    }
+
 }
