@@ -1,13 +1,10 @@
 package forpdateam.ru.forpda.api.theme.models;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.theme.interfaces.IThemePage;
-import forpdateam.ru.forpda.utils.ExtendedWebView;
 
 /**
  * Created by radiationx on 04.08.16.
