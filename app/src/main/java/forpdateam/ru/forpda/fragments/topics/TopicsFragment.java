@@ -133,7 +133,7 @@ public class TopicsFragment extends TabFragment {
         this.data = data;
 
         setTitle(data.getTitle());
-        //adapter.clear();
+        adapter.clear();
         if (data.getForumItems().size() > 0)
             adapter.addItems(new Pair<>("Разделы", data.getForumItems()));
         if (data.getAnnounceItems().size() > 0)

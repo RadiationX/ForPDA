@@ -39,6 +39,7 @@ public class Theme {
     private final static Pattern pollQuestions = Pattern.compile("<tr><td[^>]*?><div class[\\s\\S]*?<strong>([\\s\\S]*?)<\\/strong>[\\s\\S]*?<table[^>]*?>([\\s\\S]*?)<\\/table>");
     private final static Pattern pollQuestionItems = Pattern.compile("<tr>(?:<td[^>]*?colspan[^>]*?><input type=\"([^\"]*?)\" name=\"([^\"]*?)\" value=\"([^\"]*?)\"[^>]*?>[^<]*?<b>([\\s\\S]*?)<\\/b>[\\s\\S]*?|<td[^>]*?width[^>]*?>([\\s\\S]*?)<\\/td><td[^>]*?>[^<]*?<b>([\\s\\S]*?)<\\/b>[^\\[]*?\\[([^\\%]*?)\\%[\\s\\S]*?)<\\/tr>");
     private final static Pattern pollButtons = Pattern.compile("<input[^>]*?value=\"([^\"]*?)\"");
+    public final static Pattern attachImagesPattern = Pattern.compile("(4pda\\.ru\\/forum\\/dl\\/post\\/\\d+\\/[^\"']*?\\.(?:jpe?g|png|gif|bmp))\"?(?:[^>]*?title=\"([^\"']*?\\.(?:jpe?g|png|gif|bmp)) - [^\"']*?\")?");
 
     public Theme() {
     }
@@ -88,6 +89,7 @@ public class Theme {
         }
         matcher = universalForumPosts.matcher(response);
         Log.d("FORPDA_LOG", "posts matcher " + (System.currentTimeMillis() - time));
+        Matcher attachMatcher = null;
         while (matcher.find()) {
             ThemePost item = new ThemePost();
             item.setTopicId(page.getId());
@@ -111,6 +113,14 @@ public class Theme {
             page.setCanQuote(!matcher.group(20).isEmpty());
             item.setCanQuote(page.canQuote());
             item.setBody(matcher.group(21));
+            if (attachMatcher == null) {
+                attachMatcher = attachImagesPattern.matcher(item.getBody());
+            } else {
+                attachMatcher.reset(item.getBody());
+            }
+            while (attachMatcher.find()) {
+                item.addAttachImage(attachMatcher.group(1), attachMatcher.group(2));
+            }
             if (item.isCurator() && item.getUserId() == ClientHelper.getUserId())
                 page.setCurator(true);
             page.addPost(item);

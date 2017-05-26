@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -16,13 +17,18 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.theme.Theme;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
+import forpdateam.ru.forpda.api.theme.models.ThemePost;
+import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
 
@@ -218,6 +224,21 @@ public class ThemeFragmentWeb extends ThemeFragment {
                             return true;
                         } else {
                             load(uri);
+                            return true;
+                        }
+                    }
+                }
+            }
+            String url = uri.toString();
+            if (Theme.attachImagesPattern.matcher(url).find()) {
+                for (ThemePost post : currentPage.getPosts()) {
+                    for (Pair<String, String> image : post.getAttachImages()) {
+                        if (image.first.contains(url)) {
+                            ArrayList<String> list = new ArrayList<>();
+                            for (Pair<String, String> attaches : post.getAttachImages()) {
+                                list.add(attaches.first);
+                            }
+                            ImageViewerActivity.startActivity(App.getContext(), list, post.getAttachImages().indexOf(image));
                             return true;
                         }
                     }
