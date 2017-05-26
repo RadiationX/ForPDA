@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
+import forpdateam.ru.forpda.views.messagepanel.advanced.adapters.PanelItemAdapter;
 
 /**
  * Created by radiationx on 08.01.17.

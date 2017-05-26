@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.views.messagepanel.advanced;
+package forpdateam.ru.forpda.views.messagepanel.advanced.adapters;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -10,14 +10,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.views.messagepanel.advanced.ButtonData;
 
 /**
  * Created by radiationx on 08.01.17.
@@ -45,6 +48,7 @@ public class PanelItemAdapter extends RecyclerView.Adapter<PanelItemAdapter.View
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
+        ButtonData item = items.get(position);
         if (type == TYPE_ASSET) {
             ImageLoader.getInstance().loadImage(urlsToAssets.get(position), new SimpleImageLoadingListener() {
                 @Override
@@ -53,8 +57,14 @@ public class PanelItemAdapter extends RecyclerView.Adapter<PanelItemAdapter.View
                 }
             });
         } else if (type == TYPE_DRAWABLE) {
-            holder.button.setImageDrawable(App.getAppDrawable(items.get(position).getIconRes()));
+            holder.button.setImageDrawable(App.getAppDrawable(item.getIconRes()));
             holder.button.setColorFilter(colorFilter);
+        }
+        if (item.getTitle() == null) {
+            holder.title.setVisibility(View.GONE);
+        } else {
+            holder.title.setText(item.getTitle());
+            holder.title.setVisibility(View.VISIBLE);
         }
     }
 
@@ -75,11 +85,13 @@ public class PanelItemAdapter extends RecyclerView.Adapter<PanelItemAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageButton button;
+        public TextView title;
 
         public ViewHolder(View view) {
             super(view);
             view.setOnClickListener(this);
             button = (ImageButton) view.findViewById(R.id.item_icon);
+            title = (TextView) view.findViewById(R.id.item_title);
         }
 
         @Override
