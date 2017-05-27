@@ -132,4 +132,6 @@ dependencies {
     compile 'com.afollestad:sectioned-recyclerview:0.2.3'
     compile 'ch.acra:acra:4.9.0'
     compile 'com.github.chrisbanes:PhotoView:2.0.0'
+    compile 'com.wada811:android-material-design-colors:3.0.0'
+    compile 'com.thebluealliance:spectrum:0.7.1'
 }

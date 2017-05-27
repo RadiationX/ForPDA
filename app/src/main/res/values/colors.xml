@@ -28,4 +28,55 @@
     <color name="divider_color">@android:color/transparent</color>
     <color name="background">#fafafa</color>
 
+    <array name="demo_colors">
+        <item>@color/md_red_500</item>
+        <item>@color/md_pink_500</item>
+        <item>@color/md_purple_500</item>
+        <item>@color/md_deep_purple_500</item>
+        <item>@color/md_indigo_500</item>
+        <item>@color/md_blue_500</item>
+        <item>@color/md_light_blue_500</item>
+        <item>@color/md_cyan_500</item>
+        <item>@color/md_teal_500</item>
+        <item>@color/md_green_500</item>
+        <item>@color/md_light_green_500</item>
+        <item>@color/md_lime_500</item>
+        <item>@color/md_yellow_500</item>
+        <item>@color/md_amber_500</item>
+        <item>@color/md_orange_500</item>
+        <item>@color/md_deep_orange_500</item>
+        <item>@color/md_brown_500</item>
+        <item>@color/md_grey_500</item>
+        <item>@color/md_blue_grey_500</item>
+        <item>@color/md_white</item>
+    </array>
+    <array name="forum_colors">
+        <item>#000000</item>
+        <item>#FFFFFF</item>
+        <item>#82CEE8</item>
+        <item>#426AE6</item>
+        <item>#0000FF</item>
+        <item>#07008C</item>
+        <item>#FDA500</item>
+        <item>#FF4300</item>
+        <item>#E1133A</item>
+        <item>#FF0000</item>
+        <item>#8C0000</item>
+        <item>#008000</item>
+        <item>#41A317</item>
+        <item>#4E8975</item>
+        <item>#F52887</item>
+        <item>#FF6245</item>
+        <item>#F76541</item>
+        <item>#800080</item>
+        <item>#440087</item>
+        <item>#E3B382</item>
+        <item>#EE9A4D</item>
+        <item>#C35817</item>
+        <item>#C85A17</item>
+        <item>#037F81</item>
+        <item>#C0C0C0</item>
+        <item>#808080</item>
+    </array>
+
 </resources>

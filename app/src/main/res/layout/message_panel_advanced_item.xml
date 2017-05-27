@@ -28,5 +28,6 @@
         android:paddingStart="4dp"
         android:textSize="12sp"
         android:visibility="gone"
-        android:clickable="false"/>
+        android:clickable="false"
+        android:textColor="#757575"/>
 </FrameLayout>

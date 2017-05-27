@@ -19,6 +19,9 @@ allprojects {
         jcenter()
         maven { url 'https://dl.bintray.com/patrickfav/maven/' }
         maven { url "https://jitpack.io" }
+        maven {
+            url "http://github.com/wada811/Android-Material-Design-Colors/raw/master/repository/"
+        }
     }
 }
 
