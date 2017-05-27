@@ -102,7 +102,7 @@ function improveCodeBlock() {
     }
 
     function onClickToggleButton(e) {
-        e.stopPropagation();
+        //e.stopPropagation();
         var button = e.target;
         var block;
         for (var i = 0; i < codeBlockAll.length; i++) {
@@ -120,7 +120,7 @@ function improveCodeBlock() {
     }
 
     function SelectText(e) {
-        e.stopPropagation();
+        //e.stopPropagation();
         var button = e.target;
         var block;
         for (var i = 0; i < codeBlockAll.length; i++) {
@@ -171,12 +171,12 @@ function blocksOpenClose() {
         var t = event.target;
         while (!t.classList.contains('post_body') || !t.classList.contains('msg-content') || t != document.body) {
             if (t.classList.contains('spoil')) {
-                event.stopPropagation();
+                //event.stopPropagation();
                 toggler("close", "open", t);
                 spoilCloseButton(t);
                 return;
             } else if (t.classList.contains('code')) {
-                event.stopPropagation();
+                //event.stopPropagation();
                 toggler("unbox", "box", t);
                 return;
             }

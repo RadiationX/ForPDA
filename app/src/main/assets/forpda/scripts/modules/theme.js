@@ -101,7 +101,7 @@ function scrollToElement(name) {
 }
 
 function doScroll(tAnchorElem) {
-    console.log(anchorElem);
+   // console.log(anchorElem);
     tAnchorElem.scrollIntoView();
 
     //Активация элементов, убирается класс active с уже активированных
@@ -115,41 +115,6 @@ function doScroll(tAnchorElem) {
     elemToActivation = postElem;
     if (elemToActivation)
         elemToActivation.classList.add('active');
-}
-
-
-
-
-
-function getCoordinates(elem) {
-    if (!elem) {
-        return {
-            top: 0,
-            left: 0
-        }
-    }
-    // (1)
-    var box = elem.getBoundingClientRect();
-
-    var body = document.body;
-    var docEl = document.documentElement;
-
-    // (2)
-    var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
-    var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
-
-    // (3)
-    var clientTop = docEl.clientTop || body.clientTop || 0;
-    var clientLeft = docEl.clientLeft || body.clientLeft || 0;
-
-    // (4)
-    var top = box.top + scrollTop - clientTop;
-    var left = box.left + scrollLeft - clientLeft;
-
-    return {
-        top: top,
-        left: left
-    };
 }
 
 function selectionToQuote() {

@@ -94,6 +94,14 @@ public class Drawers {
         tabListView.setAdapter(tabAdapter);
     }
 
+    public NavigationView getMenuDrawer(){
+        return menuDrawer;
+    }
+
+    public NavigationView getTabDrawer() {
+        return tabDrawer;
+    }
+
     public void init(Bundle savedInstanceState) {
         initMenu(savedInstanceState);
         initTabs(savedInstanceState);

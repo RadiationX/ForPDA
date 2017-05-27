@@ -1,6 +1,8 @@
 package forpdateam.ru.forpda.fragments;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
@@ -14,6 +16,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -67,6 +70,7 @@ public class TabFragment extends RxFragment {
     protected TextView toolbarTitleView, toolbarSubtitleView;
     protected View view, notifyDot;
     protected FloatingActionButton fab;
+    private AudioManager audioService;
 
     private Observer countsObserver = (observable, o) -> updateNotifyDot();
     private Observer networkObserver = (observable, o) -> {
@@ -151,6 +155,7 @@ public class TabFragment extends RxFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        audioService = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
         if (savedInstanceState != null) {
             title = savedInstanceState.getString(BUNDLE_PREFIX.concat(BUNDLE_TITLE));
             subtitle = savedInstanceState.getString(BUNDLE_PREFIX.concat(BUNDLE_SUBTITLE));
@@ -293,6 +298,13 @@ public class TabFragment extends RxFragment {
 
     public final MainActivity getMainActivity() {
         return (MainActivity) getActivity();
+    }
+
+    public void tryPlayClickEffect() {
+        try {
+            audioService.playSoundEffect(SoundEffectConstants.CLICK);
+        } catch (Exception ignore) {
+        }
     }
 
     @Override

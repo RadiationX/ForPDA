@@ -38,7 +38,7 @@
 <body id="${body_type}">
     <!-- $BeginBlock poll_block -->
     <div class="poll ${poll_type} ${poll_state_class}">
-        <a class="btn title" onclick="toggleButton(this, 'body')"><span>${poll_title}</span><i class="icon"></i></a>
+        <a class="btn title aec" onclick="toggleButton(this, 'body')"><span>${poll_title}</span><i class="icon"></i></a>
         <form action="index.php" method="get" class="body" ${poll_body_state}>
             <div class="questions">
                 <!-- $BeginBlock poll_question_block -->
@@ -46,7 +46,7 @@
                     <div class="title">${question_title}</div>
                     <div class="items">
                         <!-- $BeginBlock poll_default_item -->
-                        <label class="item ${poll_type}"><input type="${question_item_type}" name="${question_item_name}" value="${question_item_value}"><i class="icon"><i class="add"></i></i><span class="title"><span>${question_item_title}</span></span></label>
+                        <label class="item ${poll_type} aec"><input type="${question_item_type}" name="${question_item_name}" value="${question_item_value}"><i class="icon"><i class="add"></i></i><span class="title"><span>${question_item_title}</span></span></label>
                         <!-- $EndBlock poll_default_item -->
                         <!-- $BeginBlock poll_result_item -->
                         <div class="item ${poll_type}">
@@ -65,11 +65,11 @@
             <div class="votes_info"><span>Всего голосов: ${poll_votes_count}</span></div>
             <!-- $BeginBlock poll_buttons -->
             <div class="buttons">
-                <!-- $BeginBlock poll_vote_button --><button type="submit" class="btn vote"><span>Голосовать</span></button>
+                <!-- $BeginBlock poll_vote_button --><button type="submit" class="btn vote aec"><span>Голосовать</span></button>
                 <!-- $EndBlock poll_vote_button -->
-                <!-- $BeginBlock poll_show_results_button --><a class="btn show_results" onclick="ITheme.showPollResults()"><span>Результаты</span></a>
+                <!-- $BeginBlock poll_show_results_button --><a class="btn show_results aec" onclick="ITheme.showPollResults()"><span>Результаты</span></a>
                 <!-- $EndBlock poll_show_results_button -->
-                <!-- $BeginBlock poll_show_poll_button --><a class="btn show_poll" onclick="ITheme.showPoll()"><span>Пункты опроса</span></a>
+                <!-- $BeginBlock poll_show_poll_button --><a class="btn show_poll aec" onclick="ITheme.showPoll()"><span>Пункты опроса</span></a>
                 <!-- $EndBlock poll_show_poll_button -->
             </div>
             <!-- $EndBlock poll_buttons -->
@@ -80,24 +80,24 @@
     <div class="posts_list">
         <!-- $BeginBlock post -->
         <div name="entry${post_id}" class="post_container ${user_online} ${disable_avatar} ${avatar_type} ${hat_state_class}" data-post-id="${post_id}" data-user-id="${user_id}" data-nick="${nick}">
-            <!-- $BeginBlock hat_button --><a class="btn hat_button" onclick="toggleButton(this, 'hat_content')"><span>Шапка темы</span><i class="icon"></i></a>
+            <!-- $BeginBlock hat_button --><a class="btn hat_button aec" onclick="toggleButton(this, 'hat_content')"><span>Шапка темы</span><i class="icon"></i></a>
             <!-- $EndBlock hat_button -->
             <!-- $BeginBlock hat_content_start -->
             <div class="hat_content" ${hat_body_state}>
                 <!-- $EndBlock hat_content_start -->
                 <div class="post_header">
                     <div class="header_wrapper">
-                        <div class="avatar ${none_avatar}">
+                        <div class="avatar ${none_avatar} aec">
                             <b class="letter">${nick_letter}</b>
                             <div class="img" style="background-image:url(${avatar});" onclick="IPostFunctions.showUserMenu('${post_id}')"></div>
                             <div class="reputation" onclick="IPostFunctions.showReputationMenu('${post_id}')"><span>${reputation}</span></div>
                         </div>
                         <span class="inf nick">
-                    <span onclick="IPostFunctions.showUserMenu('${post_id}')"><b>${nick}</b></span>
-                        <span class="group" style="color:${group_color};" onclick="ITheme.toast('Группа: ${group}')"><span>${group}</span></span>
+                    <span class="aec" onclick="IPostFunctions.showUserMenu('${post_id}')"><b>${nick}</b></span>
+                        <span class="group aec" style="color:${group_color};" onclick="ITheme.toast('Группа: ${group}')"><span>${group}</span></span>
                         </span>
                         <span class="inf date"><span>${date}</span></span>
-                        <a class="btn inf menu" onclick="IPostFunctions.showPostMenu('${post_id}')"><span>Меню</span></a>
+                        <a class="btn inf menu aec" onclick="IPostFunctions.showPostMenu('${post_id}')"><span>Меню</span></a>
                     </div>
                 </div>
                 <div class="post_body emoticons">${body}</div>
@@ -105,10 +105,10 @@
                     <!-- $BeginBlock report_block -->
                     <!--<a class="btn report" onclick="IPostFunctions.reportPost(${post_id})"><span>Жалоба</span></a>-->
                     <!-- $EndBlock report_block -->
-                    <!-- $BeginBlock reply_block --><a class="btn nick" onclick="IPostFunctions.insertNick('${post_id}')"><span>Ответить</span></a>
+                    <!-- $BeginBlock reply_block --><a class="btn nick aec" onclick="IPostFunctions.insertNick('${post_id}')"><span>Ответить</span></a>
                     <!-- $EndBlock reply_block -->
-                    <!-- $BeginBlock vote_block --><a class="btn vote good" onclick="IPostFunctions.votePost('${post_id}', false)"><span>Плохо</span></a>
-                    <a class="btn vote bad" onclick="IPostFunctions.votePost('${post_id}', true)"><span>Хорошо</span></a>
+                    <!-- $BeginBlock vote_block --><a class="btn vote good aec" onclick="IPostFunctions.votePost('${post_id}', false)"><span>Плохо</span></a>
+                    <a class="btn vote bad aec" onclick="IPostFunctions.votePost('${post_id}', true)"><span>Хорошо</span></a>
                     <!-- $EndBlock vote_block -->
                     <!-- $BeginBlock delete_block -->
                     <!--<a class="btn delete" onclick="IPostFunctions.deletePost('${post_id}')"><span>Удалить</span></a>-->

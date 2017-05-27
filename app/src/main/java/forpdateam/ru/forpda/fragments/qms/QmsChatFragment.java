@@ -41,6 +41,7 @@ import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.api.qms.models.QmsMessage;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.jsinterfaces.IBase;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.rxapi.apiclasses.QmsRx;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
@@ -54,7 +55,7 @@ import forpdateam.ru.forpda.views.messagepanel.attachments.AttachmentsPopup;
 /**
  * Created by radiationx on 25.08.16.
  */
-public class QmsChatFragment extends TabFragment {
+public class QmsChatFragment extends TabFragment implements IBase {
     private final static String JS_INTERFACE = "IChat";
     public final static String USER_ID_ARG = "USER_ID_ARG";
     public final static String USER_NICK_ARG = "USER_NICK_ARG";
@@ -209,6 +210,7 @@ public class QmsChatFragment extends TabFragment {
         unregisterForContextMenu(webView);
         webView.setActionModeListener(null);
         webView.removeJavascriptInterface(JS_INTERFACE);
+        webView.removeJavascriptInterface(JS_BASE_INTERFACE);
         webView.setWebChromeClient(null);
         webView.setWebViewClient(null);
         webView.loadUrl("about:blank");
@@ -316,6 +318,12 @@ public class QmsChatFragment extends TabFragment {
     /* CHAT */
     private boolean baseWebComplete = false;
     private String messagesSrc = null;
+
+    @JavascriptInterface
+    @Override
+    public void playClickEffect() {
+        run(this::tryPlayClickEffect);
+    }
 
     private class QmsWebViewClient extends WebViewClient {
 
