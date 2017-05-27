@@ -112,16 +112,17 @@ public class MessagePanel extends CardView {
         messageField.setTypeface(Typeface.MONOSPACE);
     }
 
-    public void disableBehavior(){
+    public void disableBehavior() {
         params.setBehavior(null);
         setLayoutParams(params);
     }
-    public void enableBehavior(){
+
+    public void enableBehavior() {
         params.setBehavior(panelBehavior);
         setLayoutParams(params);
     }
 
-    public ProgressBar getFormProgress(){
+    public ProgressBar getFormProgress() {
         return formProgress;
     }
 
@@ -142,8 +143,7 @@ public class MessagePanel extends CardView {
         return insertText(text, null);
     }
 
-    public boolean insertText(String startText, String endText) {
-        show();
+    public int[] getSelectionRange() {
         int selectionStart = messageField.getSelectionStart();
         int selectionEnd = messageField.getSelectionEnd();
         if (selectionEnd < selectionStart && selectionEnd != -1) {
@@ -151,13 +151,41 @@ public class MessagePanel extends CardView {
             selectionStart = selectionEnd;
             selectionEnd = c;
         }
+        return new int[]{selectionStart, selectionEnd};
+    }
+
+    public boolean insertText(String startText, String endText) {
+        return insertText(startText, endText, true);
+    }
+    public boolean insertText(String startText, String endText, boolean selectionInside) {
+        show();
+        int[] selectionRange = getSelectionRange();
+        int selectionStart = selectionRange[0];
+        int selectionEnd = selectionRange[1];
         if (endText != null && selectionStart != -1 && selectionStart != selectionEnd) {
             messageField.getText().insert(selectionStart, startText);
-            messageField.getText().insert(selectionEnd + endText.length() - 1, endText);
+            messageField.getText().insert(selectionEnd + startText.length()/* - 1*/, endText);
             return true;
         }
         messageField.getText().insert(selectionStart, startText);
+        if (endText != null) {
+            messageField.getText().insert(selectionStart + startText.length(), endText);
+            if (selectionInside) {
+                messageField.setSelection(selectionStart + startText.length());
+            }
+        }
+
         return false;
+    }
+
+    public String getSelectedText() {
+        int[] selectionRange = getSelectionRange();
+        return messageField.getText().toString().substring(selectionRange[0], selectionRange[1]);
+    }
+
+    public void deleteSelected() {
+        int[] selectionRange = getSelectionRange();
+        messageField.getText().delete(selectionRange[0], selectionRange[1]);
     }
 
     public String getMessage() {

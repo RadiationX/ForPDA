@@ -97,8 +97,11 @@ public class PanelItemAdapter extends RecyclerView.Adapter<PanelItemAdapter.View
 
         @Override
         public void onClick(View v) {
-            if (itemClickListener != null) {
-                itemClickListener.onItemClick(items.get(getLayoutPosition()));
+            ButtonData item = items.get(getLayoutPosition());
+            if (item.getListener() != null) {
+                item.getListener().onClick(item);
+            } else if (itemClickListener != null) {
+                itemClickListener.onItemClick(item);
             }
         }
     }

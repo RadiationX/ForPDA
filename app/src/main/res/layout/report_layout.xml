@@ -3,22 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingTop="@dimen/dp16"
+    android:paddingEnd="@dimen/dp24"
     android:paddingStart="@dimen/dp24"
-    android:paddingEnd="@dimen/dp24">
+    android:paddingTop="@dimen/dp16">
 
     <android.support.design.widget.TextInputLayout
+        android:id="@+id/report_input_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:hint="Текст жалобы">
 
         <android.support.v7.widget.AppCompatEditText
             android:id="@+id/report_text_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Текст жалобы"
             android:inputType="textMultiLine"
-            android:scrollHorizontally="true"/>
+            android:scrollHorizontally="true" />
 
     </android.support.design.widget.TextInputLayout>
 </LinearLayout>

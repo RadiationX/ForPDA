@@ -66,8 +66,6 @@ public class QmsContactsAdapter extends RecyclerView.Adapter<QmsContactsAdapter.
             count = (TextView) v.findViewById(R.id.qms_contact_count);
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
-            v.callOnClick();
-            v.performClick();
         }
 
         @Override
