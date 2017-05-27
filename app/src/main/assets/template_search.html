@@ -40,18 +40,18 @@
             <div class="post_title"><a href="http://4pda.ru/forum/index.php?showtopic=${topic_id}&view=findpost&p=${post_id}">${post_title}</a></div>
             <div class="post_header">
                 <div class="header_wrapper">
-                    <div class="avatar ${none_avatar}">
+                    <div class="avatar ${none_avatar} aec">
                         <b class="letter">${nick_letter}</b>
                         <div class="img" style="background-image:url(${avatar});" onclick="IPostFunctions.showUserMenu('${post_id}')"></div>
                         <div class="reputation" onclick="IPostFunctions.showReputationMenu('${post_id}')"><span>${reputation}</span>
                         </div>
                     </div>
-                    <span class="inf nick">
-                        <span onclick="IPostFunctions.showUserMenu('${post_id}')"><b>${nick}</b></span>
-                    <span class="group" style="color:${group_color};" onclick="ISearch.toast('Группа: ${group}')"><span>${group}</span></span>
+                    <span class="inf nick aec">
+                        <span class="aec" onclick="IPostFunctions.showUserMenu('${post_id}')"><b>${nick}</b></span>
+                    <span class="group aec" style="color:${group_color};" onclick="ISearch.toast('Группа: ${group}')"><span>${group}</span></span>
                     </span>
                     <span class="inf date"><span>${date}</span></span>
-                    <a class="btn inf menu" onclick="IPostFunctions.showPostMenu('${post_id}')"><span>Меню</span></a>
+                    <a class="btn inf menu aec" onclick="IPostFunctions.showPostMenu('${post_id}')"><span>Меню</span></a>
                 </div>
             </div>
             <div class="post_body emoticons">${body}</div>

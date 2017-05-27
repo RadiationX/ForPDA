@@ -93,6 +93,26 @@ public class CodesPanelItem extends BasePanelItem {
         }
     };
 
+    public CodesPanelItem(Context context, MessagePanel panel) {
+        super(context, panel, "Оформление");
+        PanelItemAdapter adapter = new PanelItemAdapter(getCodes(), null, PanelItemAdapter.TYPE_DRAWABLE);
+        adapter.setOnItemClickListener(clickListener);
+
+        recyclerView.setColumnWidth(App.getInstance().dpToPx(96));
+        ItemTouchHelper touchHelper = new ItemTouchHelper(new ItemDragCallback(adapter));
+        touchHelper.attachToRecyclerView(recyclerView);
+        recyclerView.setAdapter(adapter);
+
+        if (App.getInstance().getPreferences().getBoolean("message_panel.tooltip.user_sorting", true)) {
+            SimpleInstruction instruction = new SimpleInstruction(getContext());
+            instruction.setText("Вы можете настроить расположение элементов, перемещяя их!");
+            instruction.setOnCloseClick((v) -> {
+                App.getInstance().getPreferences().edit().putBoolean("message_panel.tooltip.user_sorting", false).apply();
+            });
+            addView(instruction);
+        }
+    }
+
     private void listInsert(ButtonData item, boolean num) {
         String selected = messagePanel.getSelectedText();
         List<String> listLines = new ArrayList<>();
@@ -299,25 +319,7 @@ public class CodesPanelItem extends BasePanelItem {
         }
     }
 
-    public CodesPanelItem(Context context, MessagePanel panel) {
-        super(context, panel, "Оформление");
-        PanelItemAdapter adapter = new PanelItemAdapter(getCodes(), null, PanelItemAdapter.TYPE_DRAWABLE);
-        adapter.setOnItemClickListener(clickListener);
 
-        recyclerView.setColumnWidth(App.getInstance().dpToPx(96));
-        ItemTouchHelper touchHelper = new ItemTouchHelper(new ItemDragCallback(adapter));
-        touchHelper.attachToRecyclerView(recyclerView);
-        recyclerView.setAdapter(adapter);
-
-        if (!App.getInstance().getPreferences().getBoolean("message_panel.instruction.user_sorting", false)) {
-            SimpleInstruction instruction = new SimpleInstruction(getContext());
-            instruction.setText("Вы можете настроить расположение элементов, перемещяя их!");
-            instruction.setOnCloseClick((v) -> {
-                App.getInstance().getPreferences().edit().putBoolean("message_panel.instruction.user_sorting", true).apply();
-            });
-            addView(instruction);
-        }
-    }
 
     @Override
     protected void onDetachedFromWindow() {
@@ -326,7 +328,7 @@ public class CodesPanelItem extends BasePanelItem {
             listCodes.add(item.getText());
         }
         String sorted = TextUtils.join(",", listCodes);
-        App.getInstance().getPreferences().edit().putString("message_panel.advanced.codes.sorted", sorted).apply();
+        App.getInstance().getPreferences().edit().putString("message_panel.bb_codes.sorted", sorted).apply();
         super.onDetachedFromWindow();
     }
 
@@ -338,27 +340,28 @@ public class CodesPanelItem extends BasePanelItem {
         tempCodes.add(new ButtonData("I", R.drawable.ic_code_italic, "Курсив"));
         tempCodes.add(new ButtonData("U", R.drawable.ic_code_underline, "Подчеркнуть"));
         tempCodes.add(new ButtonData("S", R.drawable.ic_code_s, "Зачеркнуть"));
-        tempCodes.add(new ButtonData("SUB", R.drawable.ic_code_sub, "Снизу"));
-        tempCodes.add(new ButtonData("SUP", R.drawable.ic_code_sup, "Сверху"));
+        tempCodes.add(new ButtonData("URL", R.drawable.ic_code_url, "Ссылка"));
+        tempCodes.add(new ButtonData("SPOILER", R.drawable.ic_code_spoiler, "Спойлер"));
+        tempCodes.add(new ButtonData("OFFTOP", R.drawable.ic_code_offtop, "Оффтоп"));
+        tempCodes.add(new ButtonData("QUOTE", R.drawable.ic_code_quote, "Цитата"));
+        tempCodes.add(new ButtonData("CODE", R.drawable.ic_code_code, "Код"));
+        tempCodes.add(new ButtonData("COLOR", R.drawable.ic_code_color, "Цвет текста"));
+        tempCodes.add(new ButtonData("SIZE", R.drawable.ic_code_size, "Размер текста"));
+
+        tempCodes.add(new ButtonData("HIDE", R.drawable.ic_code_hide, "Скрытый"));
+        tempCodes.add(new ButtonData("BACKGROUND", R.drawable.ic_code_background, "Цвет фона"));
+        tempCodes.add(new ButtonData("LIST", R.drawable.ic_code_list, "Обычный список"));
+        tempCodes.add(new ButtonData("NUMLIST", R.drawable.ic_code_numlist, "Нумерованный список"));
+
         tempCodes.add(new ButtonData("LEFT", R.drawable.ic_code_left, "Влево"));
         tempCodes.add(new ButtonData("CENTER", R.drawable.ic_code_center, "По центру"));
         tempCodes.add(new ButtonData("RIGHT", R.drawable.ic_code_right, "Вправо"));
-        tempCodes.add(new ButtonData("OFFTOP", R.drawable.ic_code_offtop, "Оффтоп"));
-        tempCodes.add(new ButtonData("HIDE", R.drawable.ic_code_hide, "Скрытый"));
+        tempCodes.add(new ButtonData("SUB", R.drawable.ic_code_sub, "Снизу"));
+        tempCodes.add(new ButtonData("SUP", R.drawable.ic_code_sup, "Сверху"));
         tempCodes.add(new ButtonData("CUR", R.drawable.ic_code_cur, "Куратор"));
 
-        tempCodes.add(new ButtonData("URL", R.drawable.ic_code_url, "Ссылка"));
-        tempCodes.add(new ButtonData("QUOTE", R.drawable.ic_code_quote, "Цитата"));
-        tempCodes.add(new ButtonData("CODE", R.drawable.ic_code_code, "Код"));
-        tempCodes.add(new ButtonData("SPOILER", R.drawable.ic_code_spoiler, "Спойлер"));
-        tempCodes.add(new ButtonData("LIST", R.drawable.ic_code_list, "Обычный список"));
-        tempCodes.add(new ButtonData("NUMLIST", R.drawable.ic_code_numlist, "Нумерованный список"));
-        tempCodes.add(new ButtonData("COLOR", R.drawable.ic_code_color, "Цвет текста"));
-        tempCodes.add(new ButtonData("BACKGROUND", R.drawable.ic_code_background, "Цвет фона"));
-        tempCodes.add(new ButtonData("SIZE", R.drawable.ic_code_size, "Размер текста"));
 
-
-        String sorted = App.getInstance().getPreferences().getString("message_panel.advanced.codes.sorted", null);
+        String sorted = App.getInstance().getPreferences().getString("message_panel.bb_codes.sorted", null);
         if (sorted != null) {
             for (String code : TextUtils.split(sorted, ",")) {
                 for (ButtonData item : tempCodes) {

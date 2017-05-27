@@ -2,8 +2,11 @@ package forpdateam.ru.forpda;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +16,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -31,6 +36,7 @@ import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
 import forpdateam.ru.forpda.views.drawers.DrawerHeader;
 import forpdateam.ru.forpda.views.drawers.Drawers;
+import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
 
 public class MainActivity extends AppCompatActivity implements TabManager.TabListener {
     public final static String DEF_TITLE = "ForPDA";
@@ -40,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     private DrawerHeader drawerHeader;
     private final View.OnClickListener toggleListener = view -> drawers.toggleMenu();
     private final View.OnClickListener removeTabListener = view -> backHandler(true);
+    private List<SimpleTooltip> tooltips = new ArrayList<>();
+
 
 
     public View.OnClickListener getToggleListener() {
@@ -56,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     }
 
     private NetworkStateReceiver receiver;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,10 +99,51 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             public void onDrawerOpened(View drawerView) {
                 if (TabManager.getInstance().getSize() > 0)
                     TabManager.getInstance().getActive().hidePopupWindows();
+                if (drawerView.getId() == R.id.menu_drawer) {
+                    if (App.getInstance().getPreferences().getBoolean("drawers.tooltip.link_open", true)) {
+                        SimpleTooltip tooltip = new SimpleTooltip.Builder(MainActivity.this)
+                                .anchorView(drawerView.findViewById(R.id.drawer_header_open_link))
+                                .text("Вы можете вручную переходить по ссылкам")
+                                .gravity(Gravity.BOTTOM)
+                                .animated(false)
+                                .modal(true)
+                                .transparentOverlay(false)
+                                .backgroundColor(Color.BLACK)
+                                .textColor(Color.WHITE)
+                                .padding((float) App.px16)
+                                .onDismissListener(simpleTooltip -> tooltips.remove(simpleTooltip))
+                                .build();
+                        tooltip.show();
+                        tooltips.add(tooltip);
+                        App.getInstance().getPreferences().edit().putBoolean("drawers.tooltip.link_open", false).apply();
+                    }
+
+                }
+
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
+                if (drawerView.getId() == R.id.menu_drawer) {
+                    if (App.getInstance().getPreferences().getBoolean("drawers.tooltip.tabs_drawer", true)) {
+                        SimpleTooltip tooltip = new SimpleTooltip.Builder(MainActivity.this)
+                                .anchorView(drawers.getTabDrawer())
+                                .text("Справа находится панель с открытыми вкладками.\nОна позволяет удобно осуществлять навигацию между ними")
+                                .gravity(Gravity.START)
+                                .animated(false)
+                                .modal(true)
+                                .transparentOverlay(false)
+                                .backgroundColor(Color.BLACK)
+                                .textColor(Color.WHITE)
+                                .padding((float) App.px16)
+                                .onDismissListener(simpleTooltip -> tooltips.remove(simpleTooltip))
+                                .build();
+
+                        tooltip.show();
+                        tooltips.add(tooltip);
+                        App.getInstance().getPreferences().edit().putBoolean("drawers.tooltip.tabs_drawer", false).apply();
+                    }
+                }
             }
 
             @Override
@@ -200,6 +251,10 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     @Override
     public void onBackPressed() {
         Log.d("FORPDA_LOG", "onbackpressed activity");
+        if (tooltips.size() > 0) {
+            tooltips.get(tooltips.size() - 1).dismiss();
+            return;
+        }
         backHandler(false);
     }
 

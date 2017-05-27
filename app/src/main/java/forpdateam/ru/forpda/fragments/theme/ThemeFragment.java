@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +18,7 @@ import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.SubMenu;
@@ -38,7 +41,7 @@ import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
-import forpdateam.ru.forpda.fragments.IPostFunctions;
+import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
@@ -51,6 +54,7 @@ import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.views.messagepanel.attachments.AttachmentsPopup;
 import forpdateam.ru.forpda.views.pagination.PaginationHelper;
+import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
 
 /**
  * Created by radiationx on 20.10.16.
@@ -73,6 +77,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     protected AttachmentsPopup attachmentsPopup;
     protected Subscriber<List<AttachmentItem>> attachmentSubscriber = new Subscriber<>(this);
     protected String tab_url = "";
+    protected SimpleTooltip tooltip;
 
 
     protected abstract void addShowingView();
@@ -134,6 +139,23 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         refreshLayout.setOnRefreshListener(() -> {
             loadData(REFRESH_ACTION);
         });
+        if (App.getInstance().getPreferences().getBoolean("theme.tooltip.long_click_send", true)) {
+            tooltip = new SimpleTooltip.Builder(getContext())
+                    .anchorView(messagePanel.getSendButton())
+                    .text("Долгое нажатие откроет полную форму ответа")
+                    .gravity(Gravity.TOP)
+                    .animated(false)
+                    .modal(true)
+                    .transparentOverlay(false)
+                    .backgroundColor(Color.BLACK)
+                    .textColor(Color.WHITE)
+                    .padding((float) App.px16)
+                    .build();
+            tooltip.show();
+            App.getInstance().getPreferences().edit().putBoolean("theme.tooltip.long_click_send", false).apply();
+        }
+
+
         return view;
     }
 
@@ -166,6 +188,10 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     @Override
     public boolean onBackPressed() {
+        if (tooltip != null && tooltip.isShowing()) {
+            tooltip.dismiss();
+            return true;
+        }
         if (messagePanel.onBackPressed())
             return true;
         if (toolbar.getMenu().findItem(R.id.action_search) != null && toolbar.getMenu().findItem(R.id.action_search).isActionViewExpanded()) {
@@ -616,7 +642,12 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     //Изменение репутации сообщения
     @Override
     public void votePost(IBaseForumPost post, boolean type) {
-        ThemeHelper.votePost(s -> toast(s.isEmpty() ? "Неизвестная ошибка" : s), post.getId(), type);
+        new AlertDialog.Builder(getContext())
+                .setMessage((type ? "Повысить" : "Понизить").concat(" репутацию поста пользователя ").concat(post.getNick()).concat("?"))
+                .setPositiveButton("Да", (dialog, which) -> ThemeHelper.votePost(s -> toast(s.isEmpty() ? "Неизвестная ошибка" : s), post.getId(), type))
+                .setNegativeButton("Отмена", null)
+                .show();
+
     }
 
     //Изменение репутации пользователя

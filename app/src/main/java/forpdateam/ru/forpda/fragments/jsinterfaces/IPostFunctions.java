@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.fragments;
+package forpdateam.ru.forpda.fragments.jsinterfaces;
 
 import forpdateam.ru.forpda.api.IBaseForumPost;
 

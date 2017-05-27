@@ -42,7 +42,8 @@ import forpdateam.ru.forpda.api.IBaseForumPost;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
-import forpdateam.ru.forpda.fragments.IPostFunctions;
+import forpdateam.ru.forpda.fragments.jsinterfaces.IBase;
+import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.fragments.theme.ThemeDialogsHelper;
@@ -60,7 +61,7 @@ import forpdateam.ru.forpda.views.pagination.PaginationHelper;
  * Created by radiationx on 29.01.17.
  */
 
-public class SearchFragment extends TabFragment implements IPostFunctions {
+public class SearchFragment extends TabFragment implements IPostFunctions, IBase {
     protected final static String JS_INTERFACE = "ISearch";
     private ViewGroup searchSettingsView;
     private ViewGroup nickBlock, resourceBlock, resultBlock, sortBlock, sourceBlock;
@@ -143,6 +144,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
         webView.loadUrl("about:blank");
         webView.addJavascriptInterface(this, JS_INTERFACE);
         webView.addJavascriptInterface(this, JS_POSTS_FUNCTIONS);
+        webView.addJavascriptInterface(this, JS_BASE_INTERFACE);
         webView.getSettings().setJavaScriptEnabled(true);
         recyclerView = new RecyclerView(getContext());
 
@@ -268,9 +270,9 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
                 }));
             }
             tempTopicsDialogMenu.clear();
-            if(settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)){
+            if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
                 tempTopicsDialogMenu.addItem(createdTopicsDialogMenu.get(3));
-            }else {
+            } else {
                 tempTopicsDialogMenu.addItems(createdTopicsDialogMenu.getItems());
             }
 
@@ -522,6 +524,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
         webView.setActionModeListener(null);
         webView.removeJavascriptInterface(JS_INTERFACE);
         webView.removeJavascriptInterface(JS_POSTS_FUNCTIONS);
+        webView.removeJavascriptInterface(JS_BASE_INTERFACE);
         webView.setWebChromeClient(null);
         webView.setWebViewClient(null);
         webView.loadUrl("about:blank");
@@ -538,6 +541,12 @@ public class SearchFragment extends TabFragment implements IPostFunctions {
         if (getMainActivity().getWebViews().size() < 10) {
             getMainActivity().getWebViews().add(webView);
         }
+    }
+
+    @JavascriptInterface
+    @Override
+    public void playClickEffect() {
+        run(this::tryPlayClickEffect);
     }
 
     private class SearchWebViewClient extends WebViewClient {
