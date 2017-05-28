@@ -124,7 +124,7 @@ public class PanelItemAdapter extends RecyclerView.Adapter<PanelItemAdapter.View
             }
         }
         notifyItemMoved(fromPosition, toPosition);
-        Log.e("SUKA", "onItemMove");
+        Log.e("FORPDA_LOG", "onItemMove");
     }
 
 }

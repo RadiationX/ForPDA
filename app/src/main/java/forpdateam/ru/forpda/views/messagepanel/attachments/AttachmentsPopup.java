@@ -209,9 +209,9 @@ public class AttachmentsPopup {
 
     public void onDeleteFiles(List<AttachmentItem> deletedItems) {
         //unblock ui
-        Log.e("SUKA", "ON DELETE FILES "+deletedItems);
+        Log.e("FORPDA_LOG", "ON DELETE FILES "+deletedItems);
         for (AttachmentItem item : deletedItems) {
-            Log.e("SUKA", "DELETED FILE "+item);
+            Log.e("FORPDA_LOG", "DELETED FILE "+item);
             messagePanel.setText(messagePanel.getMessage().replaceAll("\\[attachment=['\"]?" + item.getId() + ":[^\\]]*?]",""));
         }
         progressOverlay.setVisibility(View.GONE);
