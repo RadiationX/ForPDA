@@ -137,6 +137,16 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
     }
 
     @Override
+    protected void updateShowAvatarState(boolean isShow) {
+        webView.evalJs("updateShowAvatarState(" + isShow + ")");
+    }
+
+    @Override
+    protected void updateTypeAvatarState(boolean isCircle) {
+        webView.evalJs("updateTypeAvatarState(" + isCircle + ")");
+    }
+
+    @Override
     protected void updateHistoryLastHtml() {
         Log.e("console", "updateHistoryLastHtml");
         webView.evalJs("ITheme.callbackUpdateHistoryHtml('<!DOCTYPE html><html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>')");

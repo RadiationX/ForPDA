@@ -627,7 +627,7 @@ button,
             }
         }
     }
-    &.avatar_circle {
+    &.circle_avatar {
         .post_header {
             .avatar {
                 .img {
@@ -639,7 +639,17 @@ button,
             }
         }
     }
-    &.disable_avatar {
+    &.square_avatar {
+        .post_header {
+            .avatar {
+                .img {
+                }
+                >.letter {
+                }
+            }
+        }
+    }
+    &.hide_avatar {
         .post_header {
             .avatar {
                 .img {
@@ -647,6 +657,16 @@ button,
                 }
                 .letter {
                     display: block;
+                }
+            }
+        }
+    }
+    &.show_avatar {
+        .post_header {
+            .avatar {
+                .img {
+                }
+                .letter {
                 }
             }
         }

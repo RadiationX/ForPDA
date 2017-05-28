@@ -31,6 +31,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -47,6 +48,7 @@ import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
+import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
@@ -78,6 +80,19 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     protected Subscriber<List<AttachmentItem>> attachmentSubscriber = new Subscriber<>(this);
     protected String tab_url = "";
     protected SimpleTooltip tooltip;
+    private Observer themePreferenceObserver = (observable, o) -> {
+        String key = (String) o;
+        switch (key) {
+            case Preferences.Theme.SHOW_AVATARS: {
+                updateShowAvatarState(App.getInstance().getPreferences().getBoolean(Preferences.Theme.SHOW_AVATARS, true));
+                break;
+            }
+            case Preferences.Theme.CIRCLE_AVATARS: {
+                updateTypeAvatarState(App.getInstance().getPreferences().getBoolean(Preferences.Theme.CIRCLE_AVATARS, true));
+                break;
+            }
+        }
+    };
 
 
     protected abstract void addShowingView();
@@ -89,6 +104,10 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     protected abstract void saveToHistory(ThemePage themePage);
 
     protected abstract void updateHistoryLast(ThemePage themePage);
+
+    protected abstract void updateShowAvatarState(boolean isShow);
+
+    protected abstract void updateTypeAvatarState(boolean isCircle);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -155,7 +174,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             App.getInstance().getPreferences().edit().putBoolean("theme.tooltip.long_click_send", false).apply();
         }
 
-
+        App.getInstance().addPreferenceChangeObserver(themePreferenceObserver);
         return view;
     }
 
@@ -173,9 +192,10 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     @Override
     public void onDestroy() {
-        history.clear();
         super.onDestroy();
+        history.clear();
         messagePanel.onDestroy();
+        App.getInstance().removePreferenceChangeListener(themePreferenceObserver);
     }
 
     @Override
@@ -199,7 +219,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             return true;
         }
         if (App.getInstance().getPreferences().getBoolean("theme.anchor_history", true)) {
-            if (currentPage.getAnchors().size() > 1) {
+            if (currentPage != null && currentPage.getAnchors().size() > 1) {
                 currentPage.removeAnchor();
                 scrollToAnchor(currentPage.getAnchor());
                 return true;

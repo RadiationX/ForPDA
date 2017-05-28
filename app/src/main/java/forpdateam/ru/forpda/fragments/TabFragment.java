@@ -36,6 +36,7 @@ import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.rxapi.RxApi;
+import forpdateam.ru.forpda.settings.Preferences;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -71,12 +72,23 @@ public class TabFragment extends RxFragment {
     protected View view, notifyDot;
     protected FloatingActionButton fab;
     private AudioManager audioService;
+    private boolean showNotifyDot = App.getInstance().getPreferences().getBoolean(Preferences.Main.SHOW_NOTIFY_DOT, true);
 
     private Observer countsObserver = (observable, o) -> updateNotifyDot();
     private Observer networkObserver = (observable, o) -> {
         if ((!configuration.isUseCache() || noNetwork.getVisibility() == View.VISIBLE) && (boolean) o) {
             loadData();
             noNetwork.setVisibility(View.GONE);
+        }
+    };
+    private Observer tabPreferenceObserver = (observable, o) -> {
+        String key = (String) o;
+        switch (key) {
+            case Preferences.Main.SHOW_NOTIFY_DOT: {
+                showNotifyDot = App.getInstance().getPreferences().getBoolean(Preferences.Main.SHOW_NOTIFY_DOT, true);
+                updateNotifyDot();
+                break;
+            }
         }
     };
 
@@ -207,8 +219,8 @@ public class TabFragment extends RxFragment {
 
         updateNotifyDot();
         ClientHelper.getInstance().addCountsObserver(countsObserver);
-
         Client.getInstance().addNetworkObserver(networkObserver);
+        App.getInstance().addPreferenceChangeObserver(tabPreferenceObserver);
         return view;
     }
 
@@ -250,19 +262,12 @@ public class TabFragment extends RxFragment {
     }
 
     protected void updateNotifyDot() {
-        Log.e("FORPDA_LOG", "updateNotifyDot " + this + " : " + this.getMainActivity());
-        if (!App.getInstance().getPreferences().getBoolean("main.show_notify_dot", true)) {
+        if (!showNotifyDot) {
             notifyDot.setVisibility(View.GONE);
             return;
         }
         if (ClientHelper.getAllCounts() > 0) {
             notifyDot.setVisibility(View.VISIBLE);
-            /*AlphaAnimation blinkanimation = new AlphaAnimation(1, 0); // Change alpha from fully visible to invisible
-            blinkanimation.setDuration(1000); // duration
-            blinkanimation.setInterpolator(new LinearInterpolator()); // do not alter animation rate
-            blinkanimation.setRepeatCount(2); // Repeat animation infinitely
-            //blinkanimation.setRepeatMode(Animation.REVERSE);
-            notifyDot.startAnimation(blinkanimation);*/
         } else {
             notifyDot.setVisibility(View.GONE);
         }
@@ -326,8 +331,8 @@ public class TabFragment extends RxFragment {
         hidePopupWindows();
         ClientHelper.getInstance().removeCountsObserver(countsObserver);
         Client.getInstance().removeNetworkObserver(networkObserver);
+        App.getInstance().removePreferenceChangeListener(tabPreferenceObserver);
     }
-
 
     /* Experiment */
     public static class Builder<T extends TabFragment> {

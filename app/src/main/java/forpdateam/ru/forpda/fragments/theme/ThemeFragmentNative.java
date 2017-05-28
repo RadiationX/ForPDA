@@ -48,6 +48,16 @@ public class ThemeFragmentNative extends ThemeFragment {
     }
 
     @Override
+    protected void updateShowAvatarState(boolean isShow) {
+
+    }
+
+    @Override
+    protected void updateTypeAvatarState(boolean isCircle) {
+
+    }
+
+    @Override
     public void scrollToAnchor(String anchor) {
 
     }

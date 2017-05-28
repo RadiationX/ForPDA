@@ -618,18 +618,18 @@ button:active,
   -webkit-transform: rotateX(180deg) translateZ(0);
   transform: rotateX(180deg) translateZ(0);
 }
-.post_container.avatar_circle .post_header .avatar .img {
+.post_container.circle_avatar .post_header .avatar .img {
   -webkit-border-radius: 3.5em;
   border-radius: 3.5em;
 }
-.post_container.avatar_circle .post_header .avatar > .letter {
+.post_container.circle_avatar .post_header .avatar > .letter {
   -webkit-border-radius: 3.5em;
   border-radius: 3.5em;
 }
-.post_container.disable_avatar .post_header .avatar .img {
+.post_container.hide_avatar .post_header .avatar .img {
   display: none;
 }
-.post_container.disable_avatar .post_header .avatar .letter {
+.post_container.hide_avatar .post_header .avatar .letter {
   display: block;
 }
 .post_container.online .post_header .inf.nick {
