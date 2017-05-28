@@ -133,7 +133,7 @@ public class IntentHandler {
                 //Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
             } else {
                 if (args == null) args = new Bundle();
-                Log.e("SUKA", "HANDLE URL, NOT IMAGE OR FILE");
+                Log.e("FORPDA_LOG", "HANDLE URL, NOT IMAGE OR FILE");
                 switch (uri.getPathSegments().get(0)) {
                     case "forum":
                         return handleForum(uri, args);
@@ -159,7 +159,7 @@ public class IntentHandler {
                 }
             }
         }
-        Log.e("SUKA", "PRE TRY INTENT ");
+        Log.e("FORPDA_LOG", "PRE TRY INTENT ");
         try {
             //App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK));
 

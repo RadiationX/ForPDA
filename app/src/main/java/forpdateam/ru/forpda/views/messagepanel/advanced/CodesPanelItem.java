@@ -290,7 +290,7 @@ public class CodesPanelItem extends BasePanelItem {
         }
         end = "[/" + tag + "]";
 
-        Log.e("SUKA", "CREATE BB CODE " + start + " : " + end);
+        Log.e("FORPDA_LOG", "CREATE BB CODE " + start + " : " + end);
         return new String[]{start, end};
     }
 
