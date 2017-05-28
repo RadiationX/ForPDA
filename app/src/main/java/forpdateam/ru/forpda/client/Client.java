@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.IWebClient;
+import forpdateam.ru.forpda.utils.SimpleObservable;
 import forpdateam.ru.forpda.utils.ourparser.Html;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
@@ -40,7 +41,7 @@ public class Client implements IWebClient {
     private static Map<String, Cookie> cookies;
     private static List<Cookie> listCookies;
     private Map<String, String> redirects = new HashMap<>();
-    private NetworkObservable networkObserver = new NetworkObservable();
+    private SimpleObservable networkObservables = new SimpleObservable();
     private Handler observerHandler = new Handler(Looper.getMainLooper());
     private Matcher countsMatcher, errorMatcher;
     private String tempGroup;
@@ -328,24 +329,17 @@ public class Client implements IWebClient {
     }
 
     public void removeNetworkObserver(Observer observer) {
-        networkObserver.deleteObserver(observer);
+        networkObservables.deleteObserver(observer);
     }
 
     public void addNetworkObserver(Observer observer) {
-        networkObserver.addObserver(observer);
+        networkObservables.addObserver(observer);
     }
 
     public void notifyNetworkObservers(Boolean b) {
-        networkObserver.notifyObservers(b);
+        networkObservables.notifyObservers(b);
     }
-
-    private class NetworkObservable extends java.util.Observable {
-        @Override
-        public synchronized boolean hasChanged() {
-            return true;
-        }
-    }
-
+    
     public boolean getNetworkState() {
         ConnectivityManager cm =
                 (ConnectivityManager) App.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);

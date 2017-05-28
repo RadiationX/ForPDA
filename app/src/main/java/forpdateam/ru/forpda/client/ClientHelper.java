@@ -2,8 +2,9 @@ package forpdateam.ru.forpda.client;
 
 import android.util.Log;
 
-import java.util.Observable;
 import java.util.Observer;
+
+import forpdateam.ru.forpda.utils.SimpleObservable;
 
 /**
  * Created by radiationx on 26.03.17.
@@ -14,8 +15,8 @@ public class ClientHelper {
     public final static boolean AUTH_STATE_LOGIN = true;
     public final static boolean AUTH_STATE_LOGOUT = false;
     private static ClientHelper clientHelper = null;
-    private MyObservable loginObservable = new MyObservable();
-    private MyObservable countsObservable = new MyObservable();
+    private SimpleObservable loginObservables = new SimpleObservable();
+    private SimpleObservable countsObservables = new SimpleObservable();
     private static boolean authState = false;
     private static int userId = 0;
     private static int qmsCount = 0, mentionsCount = 0, favoritesCount = 0;
@@ -26,28 +27,27 @@ public class ClientHelper {
     }
 
     public void addLoginObserver(Observer observer) {
-        loginObservable.addObserver(observer);
+        loginObservables.addObserver(observer);
     }
     public void removeLoginObserver(Observer observer){
-        loginObservable.deleteObserver(observer);
+        loginObservables.deleteObserver(observer);
     }
 
     public void notifyAuthChanged(boolean authState) {
-
         ClientHelper.setAuthState(authState);
-        loginObservable.notifyObservers(authState);
+        loginObservables.notifyObservers(authState);
     }
 
     public void addCountsObserver(Observer observer) {
-        countsObservable.addObserver(observer);
+        countsObservables.addObserver(observer);
     }
 
     public void removeCountsObserver(Observer observer){
-        countsObservable.deleteObserver(observer);
+        countsObservables.deleteObserver(observer);
     }
 
     public void notifyCountsChanged() {
-        countsObservable.notifyObservers();
+        countsObservables.notifyObservers();
     }
 
     public static boolean getAuthState() {
@@ -99,12 +99,5 @@ public class ClientHelper {
 
     public static void setMentionsCount(int mentionsCount) {
         ClientHelper.mentionsCount = mentionsCount;
-    }
-
-    private class MyObservable extends Observable {
-        @Override
-        public synchronized boolean hasChanged() {
-            return true;
-        }
     }
 }

@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -28,6 +29,7 @@ import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
+import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
@@ -83,7 +85,29 @@ public class FavoritesFragment extends TabFragment {
     private FavoritesAdapter adapter;
     private Subscriber<FavData> mainSubscriber = new Subscriber<>(this);
     boolean markedRead = false;
+
     private boolean unreadTop = App.getInstance().getPreferences().getBoolean("lists.topic.unread_top", false);
+    private Observer favoritesPreferenceObserver = (observable, o) -> {
+        String key = (String) o;
+        switch (key) {
+            case Preferences.Favorites.UNREAD_TOP: {
+                boolean newUnreadTop = App.getInstance().getPreferences().getBoolean(Preferences.Favorites.UNREAD_TOP, false);
+                if (newUnreadTop != unreadTop) {
+                    unreadTop = newUnreadTop;
+                    bindView();
+                }
+                break;
+            }
+            case Preferences.Favorites.SHOW_DOT: {
+                boolean newShowDot = App.getInstance().getPreferences().getBoolean(Preferences.Favorites.SHOW_DOT, false);
+                if (newShowDot != adapter.isShowDot()) {
+                    adapter.setShowDot(newShowDot);
+                    adapter.notifyDataSetChanged();
+                }
+                break;
+            }
+        }
+    };
 
     public FavoritesFragment() {
         configuration.setAlone(true);
@@ -138,6 +162,7 @@ public class FavoritesFragment extends TabFragment {
         });
 
         bindView();
+        App.getInstance().addPreferenceChangeObserver(favoritesPreferenceObserver);
         return view;
     }
 
@@ -230,18 +255,9 @@ public class FavoritesFragment extends TabFragment {
     @Override
     public void onResume() {
         super.onResume();
-        boolean newUnreadTop = App.getInstance().getPreferences().getBoolean("lists.topic.unread_top", false);
-        boolean newShowDot = App.getInstance().getPreferences().getBoolean("lists.topic.show_dot", false);
-
-        if (markedRead || newUnreadTop != unreadTop) {
+        if (markedRead) {
             markedRead = false;
-            unreadTop = newUnreadTop;
             bindView();
-        }
-
-        if (newShowDot != adapter.isShowDot()) {
-            adapter.setShowDot(newShowDot);
-            adapter.notifyDataSetChanged();
         }
     }
 
@@ -249,6 +265,7 @@ public class FavoritesFragment extends TabFragment {
     public void onDestroy() {
         super.onDestroy();
         realm.close();
+        App.getInstance().removePreferenceChangeListener(favoritesPreferenceObserver);
     }
 
     private void onChangeFav(boolean v) {

@@ -2,6 +2,7 @@ package forpdateam.ru.forpda;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -9,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.content.res.AppCompatResources;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.SparseArray;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
@@ -29,12 +31,18 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.data.Repository;
+import forpdateam.ru.forpda.utils.SimpleObservable;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import okhttp3.Cookie;
@@ -42,7 +50,10 @@ import okhttp3.Cookie;
 import static org.acra.ReportField.ANDROID_VERSION;
 import static org.acra.ReportField.APP_VERSION_CODE;
 import static org.acra.ReportField.APP_VERSION_NAME;
+import static org.acra.ReportField.CRASH_CONFIGURATION;
 import static org.acra.ReportField.CUSTOM_DATA;
+import static org.acra.ReportField.DISPLAY;
+import static org.acra.ReportField.ENVIRONMENT;
 import static org.acra.ReportField.LOGCAT;
 import static org.acra.ReportField.PHONE_MODEL;
 import static org.acra.ReportField.STACK_TRACE;
@@ -53,7 +64,7 @@ import static org.acra.ReportField.STACK_TRACE;
 
 @ReportsCrashes(
         mailTo = "rxdevlab@gmail.com",
-        customReportContent = {APP_VERSION_CODE, APP_VERSION_NAME, ANDROID_VERSION, PHONE_MODEL, CUSTOM_DATA, STACK_TRACE, LOGCAT},
+        customReportContent = {APP_VERSION_CODE, APP_VERSION_NAME, ANDROID_VERSION, PHONE_MODEL, CUSTOM_DATA, STACK_TRACE, LOGCAT, DISPLAY, ENVIRONMENT, CRASH_CONFIGURATION},
         mode = ReportingInteractionMode.NOTIFICATION,
         resNotifTickerText = R.string.crash_notif_ticker_text,
         resNotifTitle = R.string.crash_notif_title,
@@ -67,73 +78,28 @@ public class App extends android.app.Application {
     public final static String TEMPLATE_SEARCH = "search";
     public final static String TEMPLATE_QMS_CHAT = "qms_chat";
     public final static String TEMPLATE_QMS_CHAT_MESS = "qms_chat_mess";
-    private static App INSTANCE;
-    private SharedPreferences preferences;
+    public static int px2, px4, px6, px8, px12, px14, px16, px24, px32, px36, px40, px48, px56, px64;
     private static int savedKeyboardHeight = 0;
     public static int keyboardHeight = 0;
     public static int statusBarHeight = 0;
     public static int navigationBarHeight = 0;
-
-    public static int getStatusBarHeight() {
-        return statusBarHeight;
-    }
-
-    public static void setStatusBarHeight(int statusBarHeight) {
-        App.statusBarHeight = statusBarHeight;
-    }
-
-    public static int getNavigationBarHeight() {
-        return navigationBarHeight;
-    }
-
-    public static void setNavigationBarHeight(int navigationBarHeight) {
-        App.navigationBarHeight = navigationBarHeight;
-    }
-
-    public static int getKeyboardHeight() {
-        return keyboardHeight;
-    }
-
-    public static void setKeyboardHeight(int newKeyboardHeight) {
-        keyboardHeight = newKeyboardHeight;
-        if (keyboardHeight == savedKeyboardHeight) return;
-        App.getInstance().getPreferences().edit().putInt("keyboard_height", keyboardHeight).apply();
-    }
-
-    public App() {
-
-    }
+    public static SparseArray<Drawable> drawableCache = new SparseArray<>();
+    private static App INSTANCE;
+    private Map<String, MiniTemplator> templates = new HashMap<>();
+    private float density = 1.0f;
+    private SharedPreferences preferences;
+    private SimpleObservable preferenceChangeObservables = new SimpleObservable();
+    private OnSharedPreferenceChangeListener preferenceChangeListener = (sharedPreferences, key) -> {
+        Log.e("SUKA", "PREFERENCE CHANGED2 " + key);
+        preferenceChangeObservables.notifyObservers(key);
+    };
 
     public static App getInstance() {
         return INSTANCE;
     }
 
-    private Map<String, MiniTemplator> templates = new HashMap<>();
-
-    public MiniTemplator getTemplate(String name) {
-        return templates.get(name);
-    }
-
-    private MiniTemplator findTemplate(String name) {
-        MiniTemplator template = null;
-        try {
-            InputStream stream = App.getInstance().getAssets().open("template_".concat(name).concat(".html"));
-            try {
-                template = new MiniTemplator.Builder().build(stream, Charset.forName("utf-8"));
-            } catch (Exception e) {
-                Toast.makeText(getContext(), "Ошибка шаблона [" + name + "]: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                //создание пустого шаблона
-                template = new MiniTemplator.Builder().build(new ByteArrayInputStream("Template error!".getBytes(Charset.forName("utf-8"))), Charset.forName("utf-8"));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return template;
-    }
-    private float density = 1.0f;
-
-    public float getDensity() {
-        return density;
+    public static Context getContext() {
+        return getInstance();
     }
 
     @Override
@@ -141,7 +107,7 @@ public class App extends android.app.Application {
         super.onCreate();
         INSTANCE = this;
         ACRA.init(this);
-        density =  getResources().getDisplayMetrics().density;
+        density = getResources().getDisplayMetrics().density;
 
         templates.put(TEMPLATE_THEME, findTemplate(TEMPLATE_THEME));
         templates.put(TEMPLATE_SEARCH, findTemplate(TEMPLATE_SEARCH));
@@ -178,23 +144,86 @@ public class App extends android.app.Application {
         for (Field f : R.drawable.class.getFields()) {
             try {
                 if (!f.getName().contains("abc_"))
-                    drawableHashMap.put(f.getInt(f), AppCompatResources.getDrawable(App.getContext(), f.getInt(f)));
+                    drawableCache.put(f.getInt(f), AppCompatResources.getDrawable(App.getContext(), f.getInt(f)));
             } catch (Exception ignore) {
             }
         }
         keyboardHeight = getPreferences().getInt("keyboard_height", getContext().getResources().getDimensionPixelSize(R.dimen.default_keyboard_height));
         savedKeyboardHeight = keyboardHeight;
+
+        getPreferences().registerOnSharedPreferenceChangeListener(preferenceChangeListener);
     }
+
+    public void addPreferenceChangeObserver(Observer listener){
+        preferenceChangeObservables.addObserver(listener);
+    }
+
+    public void removePreferenceChangeListener(Observer listener){
+        preferenceChangeObservables.addObserver(listener);
+    }
+
+    public static int getStatusBarHeight() {
+        return statusBarHeight;
+    }
+
+    public static void setStatusBarHeight(int statusBarHeight) {
+        App.statusBarHeight = statusBarHeight;
+    }
+
+    public static int getNavigationBarHeight() {
+        return navigationBarHeight;
+    }
+
+    public static void setNavigationBarHeight(int navigationBarHeight) {
+        App.navigationBarHeight = navigationBarHeight;
+    }
+
+    public static int getKeyboardHeight() {
+        return keyboardHeight;
+    }
+
+    public static void setKeyboardHeight(int newKeyboardHeight) {
+        keyboardHeight = newKeyboardHeight;
+        if (keyboardHeight == savedKeyboardHeight) return;
+        App.getInstance().getPreferences().edit().putInt("keyboard_height", keyboardHeight).apply();
+    }
+
+
+    public MiniTemplator getTemplate(String name) {
+        return templates.get(name);
+    }
+
+    private MiniTemplator findTemplate(String name) {
+        MiniTemplator template = null;
+        try {
+            InputStream stream = App.getInstance().getAssets().open("template_".concat(name).concat(".html"));
+            try {
+                template = new MiniTemplator.Builder().build(stream, Charset.forName("utf-8"));
+            } catch (Exception e) {
+                Toast.makeText(getContext(), "Ошибка шаблона [" + name + "]: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                //создание пустого шаблона
+                template = new MiniTemplator.Builder().build(new ByteArrayInputStream("Template error!".getBytes(Charset.forName("utf-8"))), Charset.forName("utf-8"));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return template;
+    }
+
+
+    public float getDensity() {
+        return density;
+    }
+
 
     public int dpToPx(int dp) {
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
         return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
-    public static HashMap<Integer, Drawable> drawableHashMap = new HashMap<>();
 
     public static Drawable getAppDrawable(int id) {
-        return drawableHashMap.get(id);
+        return drawableCache.get(id);
     }
 
     private static DisplayImageOptions.Builder options = new DisplayImageOptions.Builder()
@@ -243,15 +272,10 @@ public class App extends android.app.Application {
         ImageLoader.getInstance().init(config);
     }
 
-    public static Context getContext() {
-        return getInstance();
-    }
 
     public SharedPreferences getPreferences() {
         if (preferences == null)
             preferences = PreferenceManager.getDefaultSharedPreferences(this);
         return preferences;
     }
-
-    public static int px2, px4, px6, px8, px12, px14, px16, px24, px32, px36, px40, px48, px56, px64;
 }

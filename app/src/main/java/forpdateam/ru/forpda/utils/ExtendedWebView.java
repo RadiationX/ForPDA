@@ -34,6 +34,9 @@ public class ExtendedWebView extends NestedWebView {
 
     public void init() {
         getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
+        getSettings().setBuiltInZoomControls(false);
+        getSettings().setDefaultFontSize(16);
+        getSettings().setTextZoom(100);
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)

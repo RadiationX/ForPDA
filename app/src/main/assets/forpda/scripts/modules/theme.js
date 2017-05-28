@@ -9,15 +9,48 @@ var corrector;
 
 
 function setLoadAction(loadAction) {
-    console.log("setLoadAction "+loadAction);
+    console.log("setLoadAction " + loadAction);
     window.loadAction = loadAction;
 }
 
 function setLoadScrollY(loadScrollY) {
-    console.log("setLoadScrollY "+loadScrollY);
+    console.log("setLoadScrollY " + loadScrollY);
     window.loadScrollY = Number(loadScrollY);
 }
 
+function updateShowAvatarState(isShow) {
+    console.log("updateShowAvatarState "+isShow);
+    var posts = document.querySelectorAll(".post_container");
+    for (var i = 0; i < posts.length; i++) {
+        var post = posts[i];
+        var isHidden = post.classList.contains("hide_avatar");
+        var isShowed = post.classList.contains("show_avatar");
+        if (isShow && isHidden) {
+            post.classList.remove("hide_avatar");
+            post.classList.add("show_avatar");
+        } else if (!isShow && isShowed) {
+            post.classList.remove("show_avatar");
+            post.classList.add("hide_avatar");
+        }
+    }
+}
+
+function updateTypeAvatarState(isCircle) {
+    console.log("updateTypeAvatarState "+isCircle);
+    var posts = document.querySelectorAll(".post_container");
+    for (var i = 0; i < posts.length; i++) {
+        var post = posts[i];
+        var isCircled = post.classList.contains("circle_avatar");
+        var isSquared = post.classList.contains("square_avatar");
+        if (isCircle && isSquared) {
+            post.classList.remove("square_avatar");
+            post.classList.add("circle_avatar");
+        } else if (!isCircle && isCircled) {
+            post.classList.remove("circle_avatar");
+            post.classList.add("square_avatar");
+        }
+    }
+}
 
 //Вызывается при обновлении прогресса загрузке страницы и при загрузке её ресурсов
 //По идеи должна верно скроллить к нужному элементу, даже если пользователь прокрутил страницу
@@ -101,7 +134,7 @@ function scrollToElement(name) {
 }
 
 function doScroll(tAnchorElem) {
-   // console.log(anchorElem);
+    // console.log(anchorElem);
     tAnchorElem.scrollIntoView();
 
     //Активация элементов, убирается класс active с уже активированных
@@ -324,7 +357,7 @@ function ScrollCorrector() {
     }
 }
 
-function initScrollCorrector(){
+function initScrollCorrector() {
     corrector = new ScrollCorrector();
 }
 nativeEvents.addEventListener("DOMContentLoaded", initScrollCorrector);

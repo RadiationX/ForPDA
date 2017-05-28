@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.AudioManager;
@@ -49,7 +50,6 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     private List<SimpleTooltip> tooltips = new ArrayList<>();
 
 
-
     public View.OnClickListener getToggleListener() {
         return toggleListener;
     }
@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     }
 
     private NetworkStateReceiver receiver;
-
 
 
     @Override
