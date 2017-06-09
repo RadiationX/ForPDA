@@ -18,6 +18,7 @@ import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by radiationx on 01.11.16.
@@ -163,12 +164,13 @@ public class ThemeDialogsHelper {
                 .show();
     }
 
-    public static void deletePost(Context context, IBaseForumPost post) {
+    public static void deletePost(Context context, IBaseForumPost post, Consumer<Boolean> onNext) {
         new AlertDialog.Builder(context)
                 .setMessage("Удалить пост ".concat(post.getNick()).concat(" ?"))
                 .setPositiveButton("Да", (dialogInterface, i) -> {
-                    ThemeHelper.deletePost(s -> {
-                        Toast.makeText(context, !s.isEmpty() ? "Сообщение удалено" : "Ошибка", Toast.LENGTH_SHORT).show();
+                    ThemeHelper.deletePost(b -> {
+                        onNext.accept(b);
+                        Toast.makeText(context, b ? "Сообщение удалено" : "Ошибка", Toast.LENGTH_SHORT).show();
                     }, post.getId());
                 })
                 .setNegativeButton("Отмена", null)

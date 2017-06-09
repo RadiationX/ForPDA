@@ -49,6 +49,7 @@ public class AttachmentsPopup {
         messagePanel = panel;
         dialog = new CustomBottomSheetDialog(context);
         dialog.setPeekHeight(App.getKeyboardHeight());
+        dialog.getWindow().getDecorView().setFitsSystemWindows(true);
 
         bottomSheet = View.inflate(context, R.layout.message_panel_attachments, null);
         recyclerView = (AutoFitRecyclerView) bottomSheet.findViewById(R.id.auto_fit_recycler_view);

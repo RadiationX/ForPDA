@@ -20,8 +20,8 @@ public class ThemeHelper {
                 .subscribe(onNext);
     }
 
-    public static void deletePost(@NonNull Consumer<String> onNext, int postId) {
-        RxApi.Theme().deletePost(postId).onErrorReturn(throwable -> "")
+    public static void deletePost(@NonNull Consumer<Boolean> onNext, int postId) {
+        RxApi.Theme().deletePost(postId).onErrorReturn(throwable -> false)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onNext);

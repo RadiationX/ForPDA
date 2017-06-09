@@ -105,7 +105,7 @@ public class CodesPanelItem extends BasePanelItem {
 
         if (App.getInstance().getPreferences().getBoolean("message_panel.tooltip.user_sorting", true)) {
             SimpleInstruction instruction = new SimpleInstruction(getContext());
-            instruction.setText("Вы можете настроить расположение элементов, перемещяя их!");
+            instruction.setText("Вы можете настроить расположение элементов, перемещая их!");
             instruction.setOnCloseClick((v) -> {
                 App.getInstance().getPreferences().edit().putBoolean("message_panel.tooltip.user_sorting", false).apply();
             });

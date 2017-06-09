@@ -62,7 +62,7 @@ public class DialogsHelper {
             alertDialogMenu.addItem(openBrowser, (context1, data) -> App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(data.second)).addFlags(FLAG_ACTIVITY_NEW_TASK)));
             alertDialogMenu.addItem(copyUrl, (context1, data) -> Utils.copyToClipBoard(data.second));
             alertDialogMenu.addItem(openImage, (context1, data) -> IntentHandler.handle(data.first));
-            alertDialogMenu.addItem(saveImage, (context1, data) -> IntentHandler.handle(data.second));
+            alertDialogMenu.addItem(saveImage, (context1, data) -> IntentHandler.systemDownload(data.second));
             alertDialogMenu.addItem(copyImageUrl, (context1, data) -> Utils.copyToClipBoard(data.first));
         }
         showedAlertDialogMenu.clear();

@@ -739,6 +739,62 @@ a.snapback {
     }
 }*/
 
+.attach_block {
+    display: block;
+    padding-left: 56/16rem;
+    padding-top: 4/16rem;
+    padding-bottom: 4/16rem;
+    padding-right: 8/16rem;
+    position: relative;
+    overflow: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+    vertical-align: text-bottom;
+    text-decoration: none;
+    //margin-bottom: 8/16rem;
+    //margin: 0 4/16rem;
+    //margin-bottom: 4/16rem;
+    border: 1px solid fade(@linkColor, 10%);
+    background: fade(@linkColor, 5%);
+    border-radius: 2/16rem;
+    .icon {
+        position: absolute;
+        top: 4/16rem;
+        left: 4/16rem;
+        height: 40/16rem;
+        width: 40/16rem;
+        border-radius: 100%;
+        background: @linkColor;
+        &:after {
+            content: "";
+            position: absolute;
+            height: 40/16rem;
+            width: 40/16rem;
+            background-color: white;
+            -webkit-mask: url(../../res/file.svg) no-repeat center center;
+            -webkit-mask-size: 20/16em 20/16em;
+        }
+    }
+    .title {
+        //white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        font-weight: bold;
+        display: block;
+    }
+    .desc {
+        font-size: 14/16rem;
+        color: @secondTextColor;
+        display: block;
+        font-weight: normal;
+    }
+    &:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+}
+
 .attachments {
     background: @postBlockBg;
     margin: 8/16rem -16/16rem;

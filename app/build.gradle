@@ -4,13 +4,13 @@ apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion "25.0.3"
 
-    def versionNumber = 19
+    def versionNumber = 20
 
     def versionMajor = 0
     def versionMinor = 2
-    def versionPatch = 6
+    def versionPatch = 7
 
     def versionBuild = -1
     def versionPropsFile = file('version.properties')

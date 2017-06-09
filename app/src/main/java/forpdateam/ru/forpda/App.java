@@ -154,12 +154,12 @@ public class App extends android.app.Application {
         getPreferences().registerOnSharedPreferenceChangeListener(preferenceChangeListener);
     }
 
-    public void addPreferenceChangeObserver(Observer listener){
-        preferenceChangeObservables.addObserver(listener);
+    public void addPreferenceChangeObserver(Observer observer) {
+        preferenceChangeObservables.addObserver(observer);
     }
 
-    public void removePreferenceChangeListener(Observer listener){
-        preferenceChangeObservables.addObserver(listener);
+    public void removePreferenceChangeObserver(Observer observer) {
+        preferenceChangeObservables.addObserver(observer);
     }
 
     public static int getStatusBarHeight() {

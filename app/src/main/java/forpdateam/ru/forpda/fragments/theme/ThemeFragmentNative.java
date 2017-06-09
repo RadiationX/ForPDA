@@ -6,6 +6,7 @@ import android.util.Log;
 
 import java.util.Date;
 
+import forpdateam.ru.forpda.api.IBaseForumPost;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.fragments.theme.adapters.ThemeAdapter;
 
@@ -74,5 +75,10 @@ public class ThemeFragmentNative extends ThemeFragment {
         adapter = new ThemeAdapter(currentPage.getPosts(), getContext());
         recyclerView.setAdapter(adapter);
         Log.d("FORPDA_LOG", "theme UI CREATE time " + (new Date().getTime() - date.getTime()));
+    }
+
+    @Override
+    public void deletePostUi(IBaseForumPost post) {
+
     }
 }

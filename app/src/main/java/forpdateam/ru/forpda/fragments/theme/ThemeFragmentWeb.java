@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.api.IBaseForumPost;
 import forpdateam.ru.forpda.api.theme.Theme;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
@@ -133,6 +134,8 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
     @Override
     protected void updateHistoryLast(ThemePage themePage) {
         Log.e("console", "updateHistoryLast " + themePage + " : " + currentPage);
+        ThemePage lastHistory = history.get(history.size() - 1);
+        themePage.getAnchors().addAll(lastHistory.getAnchors());
         history.set(history.size() - 1, themePage);
     }
 
@@ -497,6 +500,11 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
     @Override
     public void showPoll() {
         run(super::showPoll);
+    }
+
+    @Override
+    public void deletePostUi(IBaseForumPost post) {
+        webView.evalJs("deletePost(" + post.getId() + ");");
     }
 
     public void run(final Runnable runnable) {

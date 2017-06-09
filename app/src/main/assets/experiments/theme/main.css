@@ -11,10 +11,66 @@ body {
   word-wrap: break-word;
   font-family: sans-serif;
 }
-.content {
-  margin: 2rem;
+.post_body {
+  margin: 2rem 0;
   background: white;
   padding: 1rem;
+}
+a {
+  color: #2177af;
+  -webkit-tap-highlight-color: rgba(33, 119, 175, 0.25);
+}
+.attach_block {
+  display: inline-block;
+  padding-left: 3.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-right: 0.5rem;
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
+  vertical-align: text-bottom;
+  text-decoration: none;
+  border: 1px solid rgba(33, 119, 175, 0.1);
+  background: rgba(33, 119, 175, 0.05);
+  border-radius: 0.125rem;
+}
+.attach_block .icon {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  height: 2.5rem;
+  width: 2.5rem;
+  background: red;
+  border-radius: 100%;
+  background: currentColor;
+}
+.attach_block .icon:after {
+  content: "";
+  position: absolute;
+  height: 2.5rem;
+  width: 2.5rem;
+  background-color: white;
+  -webkit-mask: url(../../forpda/res/file.svg) no-repeat center center;
+  -webkit-mask-size: 1.25em 1.25em;
+}
+.attach_block .title {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-weight: bold;
+  display: block;
+}
+.attach_block .desc {
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.54);
+  display: block;
+  font-weight: normal;
+}
+.attach_block:after {
+  content: "";
+  display: table;
+  clear: both;
 }
 .post-block {
   position: relative;

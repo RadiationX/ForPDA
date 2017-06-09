@@ -11,10 +11,70 @@ body {
     font-family: sans-serif;
 }
 
-.content {
-    margin: 2rem;
+.post_body {
+    margin: 2rem 0;
     background: white;
     padding: 1rem;
+}
+a {
+  color: #2177af;
+  -webkit-tap-highlight-color: rgba(33, 119, 175, 0.25);
+}
+.attach_block {
+    display: inline-block;
+    padding-left: 56/16rem;
+    padding-top: 4/16rem;
+    padding-bottom: 4/16rem;
+    padding-right: 8/16rem;
+    position: relative;
+    overflow: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+    vertical-align: text-bottom;
+    text-decoration: none;
+    //margin-bottom: 8/16rem;
+    //margin: 0 4/16rem;
+    //margin-bottom: 4/16rem;
+    border: 1px solid fade(#2177af, 10%);
+    background: fade(#2177af, 5%);
+    border-radius: 2/16rem;
+    .icon {
+        position: absolute;
+        top: 4/16rem;
+        left: 4/16rem;
+        height: 40/16rem;
+        width: 40/16rem;
+        background: red;
+        border-radius: 100%;
+        background: currentColor;
+        &:after {
+            content: "";
+            position: absolute;
+            height: 40/16rem;
+            width: 40/16rem;
+            background-color: white;
+            -webkit-mask: url(../../forpda/res/file.svg) no-repeat center center;
+            -webkit-mask-size: 20/16em 20/16em;
+        }
+    }
+    .title {
+        //white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        font-weight: bold;
+        display: block;
+    }
+    .desc {
+        font-size: 14/16rem;
+        color: fade(#000, 54%);
+        display: block;
+        font-weight: normal;
+    }
+    &:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
 }
 
 .post-block {
@@ -26,14 +86,14 @@ body {
         font-weight: bold;
         font-size: 14/16rem;
         padding: 8/16rem 8/16rem;
-        &:before{
+        &:before {
             content: "Код: ";
         }
-        .buttons{
+        .buttons {
             float: right;
             margin: -8/16rem -8/16rem;
             margin-left: 8/16rem;
-            .btn{
+            .btn {
                 float: right;
                 height: 28/16rem;
                 width: 28/16rem;
@@ -42,7 +102,7 @@ body {
                 border-radius: 2px;
             }
         }
-        &:after{
+        &:after {
             content: "";
             display: table;
             clear: both;
