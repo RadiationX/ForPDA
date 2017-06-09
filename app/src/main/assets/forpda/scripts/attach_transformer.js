@@ -230,4 +230,59 @@ function startAttachTransformer() {
         transformer.transform(postContainers[i])
     }
 }
-nativeEvents.addEventListener("DOMContentLoaded", startAttachTransformer);
+
+function startTransformer2() {
+    //1-name, 2-extension, 3-weight
+    const metaPattern = /([\s\S]*)\.([\s\S]*?) - [^:]*?: ([\s\S]*)/g;
+    //1-name, 2-extension
+    const namePattern = /([\s\S]*)\.([\s\S]*)/g
+    //1-weight
+    const weightPattern = /\( ([\s\S]*?) \)/g;
+    //1-count
+    const countPattern = /(\d+)/g;
+    var attachments = document.querySelectorAll(".ipb-attach.attach-file");
+    var forDelete = [];
+    for (var i = 0; i < attachments.length; i++) {
+        var attach = attachments[i];
+        forDelete.push(attach);
+        var match;
+        var url = "" + attach.href;
+        var title = attach.textContent;
+        var weight;
+        var counts = undefined;
+
+        var temp = attach.nextSibling;
+        forDelete.push(temp);
+        if (match = weightPattern.exec(temp.textContent)) {
+            weight = match[1];
+        }
+        temp = temp.nextSibling;
+        if (temp.classList && temp.classList.contains("desc")) {
+            forDelete.push(temp);
+            if (match = countPattern.exec(temp.textContent)) {
+                counts = match[1];
+            }
+        }
+        temp = temp.nextSibling;
+        if (temp && temp.nodeName == "BR") {
+            forDelete.push(temp);
+        }
+        var src = "";
+        /*src+="<a href="#" class="attach_block"> <span class="icon"></span> <span class="title">ForPDA-0.2.6-app-stable-release.apk</span> <span class="desc">9,42 МБ, скачиваний: 421</span>";*/
+        src += "<a href=\"" + url + "\" class=\"attach_block\"><span class=\"icon\"></span><span class=\"title\">" + title + "</span><span class=\"desc\">" + weight;
+        if (counts != undefined) {
+            src += ", скачиваний: " + counts;
+        }
+        src += "</span></a>";
+        attach.insertAdjacentHTML("beforeBegin", src);
+        console.log(src);
+        for (var j = 0; j < forDelete.length; j++) {
+            console.log(forDelete[j].parentNode);
+            forDelete[j].parentNode.removeChild(forDelete[j]);
+            forDelete[j] = null;
+        }
+        forDelete = [];
+    }
+}
+//nativeEvents.addEventListener("DOMContentLoaded", startAttachTransformer);
+nativeEvents.addEventListener("DOMContentLoaded", startTransformer2);

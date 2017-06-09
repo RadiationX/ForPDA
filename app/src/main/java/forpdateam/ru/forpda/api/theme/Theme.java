@@ -206,10 +206,10 @@ public class Theme {
     }
 
 
-    public String deletePost(int postId) throws Exception {
+    public Boolean deletePost(int postId) throws Exception {
         String url = "http://4pda.ru/forum/index.php?act=zmod&auth_key=".concat(Api.getWebClient().getAuthKey()).concat("&code=postchoice&tact=delete&selectedpids=").concat(Integer.toString(postId));
         String response = Api.getWebClient().getXhr(url);
-        return response.equals("ok") ? response : "";
+        return response.equals("ok");
     }
 
 

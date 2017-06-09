@@ -1,22 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<forpdateam.ru.forpda.imageviewer.PullBackLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/image_viewer_pullBack"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <forpdateam.ru.forpda.imageviewer.HackyViewPager
-        android:id="@+id/img_viewer_pager"
+    <forpdateam.ru.forpda.imageviewer.PullBackLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/image_viewer_pullBack"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <forpdateam.ru.forpda.imageviewer.HackyViewPager
+            android:id="@+id/img_viewer_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+    </forpdateam.ru.forpda.imageviewer.PullBackLayout>
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"
         android:background="#33000000"
+        android:fitsSystemWindows="true"
         android:theme="@style/ImageViewTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
@@ -29,6 +36,7 @@
             app:contentInsetStart="0dp"
             app:contentInsetStartWithNavigation="0dp"
             app:layout_collapseMode="pin"
-            app:popupTheme="@style/ImageViewTheme.PopupOverlay"/>
+            app:popupTheme="@style/ImageViewTheme.PopupOverlay" />
     </android.support.design.widget.AppBarLayout>
-</forpdateam.ru.forpda.imageviewer.PullBackLayout>
+</RelativeLayout>
+

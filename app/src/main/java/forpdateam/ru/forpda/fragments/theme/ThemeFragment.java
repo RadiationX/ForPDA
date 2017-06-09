@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -195,7 +194,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         super.onDestroy();
         history.clear();
         messagePanel.onDestroy();
-        App.getInstance().removePreferenceChangeListener(themePreferenceObserver);
+        App.getInstance().removePreferenceChangeObserver(themePreferenceObserver);
     }
 
     @Override
@@ -564,7 +563,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     @Override
     public void insertNick(IBaseForumPost post) {
-        String insert = String.format(Locale.getDefault(), "[snapback]%s[/snapback] [b]%s[/b], \n", post.getId(), post.getNick());
+        String insert = String.format(Locale.getDefault(), "[snapback]%s[/snapback] [b]%s,[/b] \n", post.getId(), post.getNick());
         messagePanel.insertText(insert);
     }
 
@@ -656,8 +655,14 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     //Удаление сообщения
     @Override
     public void deletePost(IBaseForumPost post) {
-        ThemeDialogsHelper.deletePost(getContext(), post);
+        ThemeDialogsHelper.deletePost(getContext(), post, aBoolean -> {
+            if (aBoolean)
+                deletePostUi(post);
+
+        });
     }
+
+    public abstract void deletePostUi(IBaseForumPost post);
 
     //Изменение репутации сообщения
     @Override

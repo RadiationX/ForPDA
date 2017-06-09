@@ -331,7 +331,7 @@ public class TabFragment extends RxFragment {
         hidePopupWindows();
         ClientHelper.getInstance().removeCountsObserver(countsObserver);
         Client.getInstance().removeNetworkObserver(networkObserver);
-        App.getInstance().removePreferenceChangeListener(tabPreferenceObserver);
+        App.getInstance().removePreferenceChangeObserver(tabPreferenceObserver);
     }
 
     /* Experiment */

@@ -34,7 +34,7 @@ public class ThemeRx {
         return Observable.fromCallable(() -> Api.Theme().reportPost(themeId, postId, message));
     }
 
-    public Observable<String> deletePost(int postId) {
+    public Observable<Boolean> deletePost(int postId) {
         return Observable.fromCallable(() -> Api.Theme().deletePost(postId));
     }
 

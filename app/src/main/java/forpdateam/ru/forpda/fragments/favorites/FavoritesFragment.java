@@ -265,7 +265,7 @@ public class FavoritesFragment extends TabFragment {
     public void onDestroy() {
         super.onDestroy();
         realm.close();
-        App.getInstance().removePreferenceChangeListener(favoritesPreferenceObserver);
+        App.getInstance().removePreferenceChangeObserver(favoritesPreferenceObserver);
     }
 
     private void onChangeFav(boolean v) {

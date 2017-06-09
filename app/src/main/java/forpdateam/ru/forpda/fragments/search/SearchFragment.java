@@ -34,6 +34,7 @@ import android.widget.Toast;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -50,12 +51,14 @@ import forpdateam.ru.forpda.fragments.theme.ThemeDialogsHelper;
 import forpdateam.ru.forpda.fragments.theme.ThemeHelper;
 import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
+import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.pagination.PaginationHelper;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by radiationx on 29.01.17.
@@ -86,6 +89,28 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
     private StringBuilder titleBuilder = new StringBuilder();
     private PaginationHelper paginationHelper = new PaginationHelper();
     private AlertDialogMenu<SearchFragment, IBaseForumPost> createdTopicsDialogMenu, tempTopicsDialogMenu;
+
+    private Observer searchPreferenceObserver = (observable, o) -> {
+        String key = (String) o;
+        switch (key) {
+            case Preferences.Theme.SHOW_AVATARS: {
+                updateShowAvatarState(App.getInstance().getPreferences().getBoolean(Preferences.Theme.SHOW_AVATARS, true));
+                break;
+            }
+            case Preferences.Theme.CIRCLE_AVATARS: {
+                updateTypeAvatarState(App.getInstance().getPreferences().getBoolean(Preferences.Theme.CIRCLE_AVATARS, true));
+                break;
+            }
+        }
+    };
+
+    protected void updateShowAvatarState(boolean isShow) {
+        webView.evalJs("updateShowAvatarState(" + isShow + ")");
+    }
+
+    protected void updateTypeAvatarState(boolean isCircle) {
+        webView.evalJs("updateTypeAvatarState(" + isCircle + ")");
+    }
 
     public SearchFragment() {
         configuration.setDefaultTitle("Поиск");
@@ -280,6 +305,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
                     .setItems(tempTopicsDialogMenu.getTitles(), (dialog, which) -> tempTopicsDialogMenu.onClick(which, SearchFragment.this, item))
                     .show();
         });
+        App.getInstance().addPreferenceChangeObserver(searchPreferenceObserver);
         return view;
     }
 
@@ -520,6 +546,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        App.getInstance().removePreferenceChangeObserver(searchPreferenceObserver);
         unregisterForContextMenu(webView);
         webView.setActionModeListener(null);
         webView.removeJavascriptInterface(JS_INTERFACE);
@@ -652,7 +679,10 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
 
     @Override
     public void deletePost(IBaseForumPost post) {
-        ThemeDialogsHelper.deletePost(getContext(), post);
+        ThemeDialogsHelper.deletePost(getContext(), post, aBoolean -> {
+            if (aBoolean)
+                webView.evalJs("deletePost(" + post.getId() + ");");
+        });
     }
 
     @Override

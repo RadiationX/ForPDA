@@ -13,6 +13,7 @@ import forpdateam.ru.forpda.api.search.models.SearchItem;
 import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
 import forpdateam.ru.forpda.client.ClientHelper;
+import forpdateam.ru.forpda.settings.Preferences;
 import io.reactivex.Observable;
 
 /**
@@ -53,8 +54,10 @@ public class SearchRx {
             t.setVariableOpt("next_disable", getDisableStr(nextDisabled));
             t.setVariableOpt("last_disable", getDisableStr(nextDisabled));
             t.setVariableOpt("disable_avatar_js", Boolean.toString(true));*/
-            t.setVariableOpt("disable_avatar", App.getInstance().getPreferences().getBoolean("theme.show_avatars", true) ? "" : "disable_avatar");
-            t.setVariableOpt("avatar_type", App.getInstance().getPreferences().getBoolean("theme.circle_avatars", true) ? "avatar_circle" : "");
+            boolean isDisableAvatar = App.getInstance().getPreferences().getBoolean(Preferences.Theme.SHOW_AVATARS, true);
+            t.setVariableOpt("disable_avatar_js", Boolean.toString(isDisableAvatar));
+            t.setVariableOpt("disable_avatar", isDisableAvatar ? "show_avatar" : "hide_avatar");
+            t.setVariableOpt("avatar_type", App.getInstance().getPreferences().getBoolean(Preferences.Theme.CIRCLE_AVATARS, true) ? "circle_avatar" : "square_avatar");
 
             Log.d("FORPDA_LOG", "template check 1 " + (System.currentTimeMillis() - time));
 
@@ -129,9 +132,5 @@ public class SearchRx {
         }*/
 
         return page;
-    }
-
-    private static String getDisableStr(boolean b) {
-        return b ? "disabled" : "";
     }
 }
