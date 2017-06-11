@@ -18,6 +18,7 @@ import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import forpdateam.ru.forpda.bdobjects.qms.QmsThemesBd;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsThemesAdapter;
+import forpdateam.ru.forpda.fragments.qms.chat.QmsChatFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.rx.Subscriber;

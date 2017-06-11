@@ -153,12 +153,9 @@ public class Drawers {
         fillMenuItems();
         ClientHelper.getInstance().addLoginObserver(loginObserver);
         ClientHelper.getInstance().addCountsObserver(countsObserver);
-        menuAdapter.setItemClickListener(new MenuAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(MenuItems.MenuItem menuItem, int position) {
-                selectMenuItem(menuItem);
-                closeMenu();
-            }
+        menuAdapter.setItemClickListener((menuItem, position) -> {
+            selectMenuItem(menuItem);
+            closeMenu();
         });
     }
 

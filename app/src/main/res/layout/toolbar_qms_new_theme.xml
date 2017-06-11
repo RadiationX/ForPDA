@@ -8,7 +8,8 @@
     android:paddingEnd="@dimen/dp16"
     android:paddingStart="@dimen/dp16"
     android:paddingTop="56dp"
-    app:theme="@style/AUTH">
+    app:theme="@style/AUTH"
+    android:animateLayoutChanges="true">
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"

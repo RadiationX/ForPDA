@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.utils;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
@@ -32,11 +33,14 @@ public class ExtendedWebView extends NestedWebView {
         init();
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     public void init() {
-        getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
-        getSettings().setBuiltInZoomControls(false);
-        getSettings().setDefaultFontSize(16);
-        getSettings().setTextZoom(100);
+        WebSettings settings = getSettings();
+        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
+        settings.setBuiltInZoomControls(false);
+        settings.setDefaultFontSize(16);
+        settings.setTextZoom(100);
+        settings.setJavaScriptEnabled(true);
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -92,9 +96,22 @@ public class ExtendedWebView extends NestedWebView {
     protected void onCreateContextMenu(ContextMenu menu) {
         super.onCreateContextMenu(menu);
         requestFocusNodeHref(new Handler(msg -> {
-            WebView.HitTestResult result = getHitTestResult();
+            HitTestResult result = getHitTestResult();
             DialogsHelper.handleContextMenu(getContext(), result.getType(), result.getExtra(), (String) msg.getData().get("url"));
             return true;
         }).obtainMessage());
+    }
+    
+    public void destroy(){
+        setActionModeListener(null);
+        setWebChromeClient(null);
+        setWebViewClient(null);
+        loadUrl("about:blank");
+        clearHistory();
+        clearSslPreferences();
+        clearDisappearingChildren();
+        clearFocus();
+        clearFormData();
+        clearMatches();
     }
 }

@@ -52,21 +52,11 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
     @Override
     protected void addShowingView() {
         messagePanel.setHeightChangeListener(newHeight -> webView.evalJs("setPaddingBottom(" + (newHeight / getResources().getDisplayMetrics().density) + ");"));
-        if (getMainActivity().getWebViews().size() > 0) {
-            webView = getMainActivity().getWebViews().element();
-            getMainActivity().getWebViews().remove();
-        } else {
-            webView = new ExtendedWebView(getContext());
-            webView.setTag("WebView_tag ".concat(Long.toString(System.currentTimeMillis())));
-        }
-        /*webView.setClipToPadding(false);
-        webView.setPadding(0, 0, 0, App.px64);*/
-        //webView.loadUrl("about:blank");
+        webView = getMainActivity().getWebViewsProvider().pull(getContext());
         refreshLayout.addView(webView);
         webView.addJavascriptInterface(this, JS_INTERFACE);
         webView.addJavascriptInterface(this, JS_POSTS_FUNCTIONS);
         webView.addJavascriptInterface(this, JS_BASE_INTERFACE);
-        webView.getSettings().setJavaScriptEnabled(true);
         registerForContextMenu(webView);
 
         //Кастомизация менюхи при выделении текста
@@ -170,23 +160,12 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
     public void onDestroyView() {
         super.onDestroyView();
         unregisterForContextMenu(webView);
-        webView.setActionModeListener(null);
         webView.removeJavascriptInterface(JS_INTERFACE);
         webView.removeJavascriptInterface(JS_POSTS_FUNCTIONS);
         webView.removeJavascriptInterface(JS_BASE_INTERFACE);
-        webView.setWebChromeClient(null);
-        webView.setWebViewClient(null);
-        webView.loadUrl("about:blank");
-        webView.clearHistory();
-        webView.clearSslPreferences();
-        webView.clearDisappearingChildren();
-        webView.clearFocus();
-        webView.clearFormData();
-        webView.clearMatches();
+        webView.destroy();
         ((ViewGroup) webView.getParent()).removeAllViews();
-        if (getMainActivity().getWebViews().size() < 10) {
-            getMainActivity().getWebViews().add(webView);
-        }
+        getMainActivity().getWebViewsProvider().push(webView);
     }
 
     private class ThemeWebViewClient extends WebViewClient {
@@ -327,10 +306,14 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
         public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
             String message = "";
             message += "\"" + consoleMessage.message() + "\"";
-            if (consoleMessage.messageLevel() == ConsoleMessage.MessageLevel.ERROR) {
-                message += ", [" + consoleMessage.sourceId() + "]";
+            String source = consoleMessage.sourceId();
+            int cut = source.lastIndexOf('/');
+            if (cut != -1) {
+                source = source.substring(cut + 1);
             }
+            message += ", [" + source + "]";
             message += ", (" + consoleMessage.lineNumber() + ")";
+
 
             ConsoleMessage.MessageLevel level = consoleMessage.messageLevel();
             if (level == ConsoleMessage.MessageLevel.DEBUG) {
