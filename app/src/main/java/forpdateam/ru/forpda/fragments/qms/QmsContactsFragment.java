@@ -27,6 +27,7 @@ import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.bdobjects.qms.QmsContactBd;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsContactsAdapter;
+import forpdateam.ru.forpda.fragments.qms.chat.QmsChatFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.rx.Subscriber;

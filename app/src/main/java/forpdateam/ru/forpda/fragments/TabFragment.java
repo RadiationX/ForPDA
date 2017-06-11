@@ -16,6 +16,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.ViewGroup;
@@ -110,7 +111,7 @@ public class TabFragment extends RxFragment {
         return title == null ? configuration.getDefaultTitle() : title;
     }
 
-    protected final void setTitle(String newTitle) {
+    public final void setTitle(String newTitle) {
         this.title = newTitle;
         if (tabTitle == null)
             getMainActivity().updateTabList();
@@ -121,7 +122,7 @@ public class TabFragment extends RxFragment {
         return subtitle;
     }
 
-    protected final void setSubtitle(String newSubtitle) {
+    public final void setSubtitle(String newSubtitle) {
         this.subtitle = newSubtitle;
         if (subtitle == null) {
             if (toolbarSubtitleView.getVisibility() != View.GONE)
@@ -140,6 +141,10 @@ public class TabFragment extends RxFragment {
     public void setTabTitle(String tabTitle) {
         this.tabTitle = tabTitle;
         getMainActivity().updateTabList();
+    }
+
+    public Menu getMenu(){
+        return toolbar.getMenu();
     }
 
 
@@ -297,7 +302,7 @@ public class TabFragment extends RxFragment {
     }
 
 
-    protected final View findViewById(@IdRes int id) {
+    public final View findViewById(@IdRes int id) {
         return view.findViewById(id);
     }
 

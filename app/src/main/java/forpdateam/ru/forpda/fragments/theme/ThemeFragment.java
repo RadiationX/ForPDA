@@ -80,6 +80,8 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     protected String tab_url = "";
     protected SimpleTooltip tooltip;
     private Observer themePreferenceObserver = (observable, o) -> {
+        Log.d("SUKA", "themePreferenceObserver " + o);
+        if (o == null) return;
         String key = (String) o;
         switch (key) {
             case Preferences.Theme.SHOW_AVATARS: {

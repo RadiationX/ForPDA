@@ -29,7 +29,8 @@ public class ClientHelper {
     public void addLoginObserver(Observer observer) {
         loginObservables.addObserver(observer);
     }
-    public void removeLoginObserver(Observer observer){
+
+    public void removeLoginObserver(Observer observer) {
         loginObservables.deleteObserver(observer);
     }
 
@@ -42,7 +43,7 @@ public class ClientHelper {
         countsObservables.addObserver(observer);
     }
 
-    public void removeCountsObserver(Observer observer){
+    public void removeCountsObserver(Observer observer) {
         countsObservables.deleteObserver(observer);
     }
 
@@ -51,12 +52,12 @@ public class ClientHelper {
     }
 
     public static boolean getAuthState() {
-        Log.e("FORPDA_LOG", "getAuthState "+authState);
+        Log.e("FORPDA_LOG", "getAuthState " + authState);
         return authState;
     }
 
     public static void setAuthState(boolean state) {
-        Log.e("FORPDA_LOG", "NEW AUTH STATE "+authState);
+        Log.e("FORPDA_LOG", "NEW AUTH STATE " + authState);
         authState = state;
     }
 

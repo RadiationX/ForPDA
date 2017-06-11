@@ -2,12 +2,9 @@ package forpdateam.ru.forpda;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,22 +15,17 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import forpdateam.ru.forpda.client.NetworkStateReceiver;
 import forpdateam.ru.forpda.data.Repository;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.WebViewsProvider;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
 import forpdateam.ru.forpda.views.drawers.DrawerHeader;
 import forpdateam.ru.forpda.views.drawers.Drawers;
@@ -41,8 +33,7 @@ import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
 
 public class MainActivity extends AppCompatActivity implements TabManager.TabListener {
     public final static String DEF_TITLE = "ForPDA";
-    private Queue<ExtendedWebView> webViews = new LinkedList<>();
-    private Timer webViewCleaner = new Timer();
+    private WebViewsProvider webViewsProvider;
     private Drawers drawers;
     private DrawerHeader drawerHeader;
     private final View.OnClickListener toggleListener = view -> drawers.toggleMenu();
@@ -59,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     }
 
     public MainActivity() {
-        webViewCleaner.schedule(new WebViewCleanerTask(), 0, 60000);
+        webViewsProvider = new WebViewsProvider();
         TabManager.init(this, this);
     }
 
@@ -288,8 +279,8 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         }
     }
 
-    public Queue<ExtendedWebView> getWebViews() {
-        return webViews;
+    public WebViewsProvider getWebViewsProvider() {
+        return webViewsProvider;
     }
 
     @Override
@@ -319,9 +310,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         Repository.removeInstance();
         drawers.destroy();
         drawerHeader.destroy();
-        webViewCleaner.cancel();
-        webViewCleaner.purge();
-        webViews.clear();
+        webViewsProvider.destroy();
         Log.e("FORPDA_LOG", "ACTIVITY DESTROY");
     }
 
@@ -358,15 +347,5 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             }
         }
         storagePermissionCallbacks.clear();
-    }
-
-    class WebViewCleanerTask extends TimerTask {
-        public void run() {
-            Log.d("FORPDA_LOG", "try remove webview " + this);
-            if (webViews.size() > 0) {
-                Log.d("FORPDA_LOG", "remove webview " + webViews.element().getTag());
-                webViews.remove();
-            }
-        }
     }
 }

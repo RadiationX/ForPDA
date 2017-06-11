@@ -26,7 +26,7 @@ import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.forum.ForumFragment;
 import forpdateam.ru.forpda.fragments.mentions.MentionsFragment;
 import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
-import forpdateam.ru.forpda.fragments.qms.QmsChatFragment;
+import forpdateam.ru.forpda.fragments.qms.chat.QmsChatFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsThemesFragment;
 import forpdateam.ru.forpda.fragments.reputation.ReputationFragment;

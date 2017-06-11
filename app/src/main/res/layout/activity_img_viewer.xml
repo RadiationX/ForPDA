@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -24,7 +24,8 @@
         android:layout_height="wrap_content"
         android:background="#33000000"
         android:fitsSystemWindows="true"
-        android:theme="@style/ImageViewTheme.AppBarOverlay">
+        android:theme="@style/ImageViewTheme.AppBarOverlay"
+        android:animateLayoutChanges="true">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -36,7 +37,8 @@
             app:contentInsetStart="0dp"
             app:contentInsetStartWithNavigation="0dp"
             app:layout_collapseMode="pin"
-            app:popupTheme="@style/ImageViewTheme.PopupOverlay" />
+            app:popupTheme="@style/ImageViewTheme.PopupOverlay"
+            android:animateLayoutChanges="true"/>
     </android.support.design.widget.AppBarLayout>
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>
 

@@ -159,18 +159,10 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
         submitButton = (Button) findViewById(R.id.search_submit);
         saveSettingsButton = (Button) findViewById(R.id.search_save_settings);
 
-        if (getMainActivity().getWebViews().size() > 0) {
-            webView = getMainActivity().getWebViews().element();
-            getMainActivity().getWebViews().remove();
-        } else {
-            webView = new ExtendedWebView(getContext());
-            webView.setTag("WebView_tag ".concat(Long.toString(System.currentTimeMillis())));
-        }
-        webView.loadUrl("about:blank");
+        webView = getMainActivity().getWebViewsProvider().pull(getContext());
         webView.addJavascriptInterface(this, JS_INTERFACE);
         webView.addJavascriptInterface(this, JS_POSTS_FUNCTIONS);
         webView.addJavascriptInterface(this, JS_BASE_INTERFACE);
-        webView.getSettings().setJavaScriptEnabled(true);
         recyclerView = new RecyclerView(getContext());
 
         recyclerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -548,26 +540,15 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
         super.onDestroyView();
         App.getInstance().removePreferenceChangeObserver(searchPreferenceObserver);
         unregisterForContextMenu(webView);
-        webView.setActionModeListener(null);
         webView.removeJavascriptInterface(JS_INTERFACE);
         webView.removeJavascriptInterface(JS_POSTS_FUNCTIONS);
         webView.removeJavascriptInterface(JS_BASE_INTERFACE);
-        webView.setWebChromeClient(null);
-        webView.setWebViewClient(null);
-        webView.loadUrl("about:blank");
-        webView.clearHistory();
-        webView.clearSslPreferences();
-        webView.clearDisappearingChildren();
-        webView.clearFocus();
-        webView.clearFormData();
-        webView.clearMatches();
+        webView.destroy();
         ViewGroup parent = ((ViewGroup) webView.getParent());
         if (parent != null) {
             parent.removeView(webView);
         }
-        if (getMainActivity().getWebViews().size() < 10) {
-            getMainActivity().getWebViews().add(webView);
-        }
+        getMainActivity().getWebViewsProvider().push(webView);
     }
 
     @JavascriptInterface

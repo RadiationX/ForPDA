@@ -253,13 +253,13 @@ function startTransformer2() {
 
         var temp = attach.nextSibling;
         forDelete.push(temp);
-        if (match = weightPattern.exec(temp.textContent)) {
+        while (match = weightPattern.exec(temp.textContent)) {
             weight = match[1];
         }
         temp = temp.nextSibling;
         if (temp.classList && temp.classList.contains("desc")) {
             forDelete.push(temp);
-            if (match = countPattern.exec(temp.textContent)) {
+            while (match = countPattern.exec(temp.textContent)) {
                 counts = match[1];
             }
         }
@@ -275,9 +275,7 @@ function startTransformer2() {
         }
         src += "</span></a>";
         attach.insertAdjacentHTML("beforeBegin", src);
-        console.log(src);
         for (var j = 0; j < forDelete.length; j++) {
-            console.log(forDelete[j].parentNode);
             forDelete[j].parentNode.removeChild(forDelete[j]);
             forDelete[j] = null;
         }
