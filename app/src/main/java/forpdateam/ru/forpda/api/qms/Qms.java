@@ -197,7 +197,8 @@ public class Qms {
         return parseChat(response);
     }
 
-    public QmsMessage sendMessage(int userId, int themeId, String text) throws Exception {
+    public ArrayList<QmsMessage> sendMessage(int userId, int themeId, String text) throws Exception {
+        ArrayList<QmsMessage> messages = new ArrayList<>();
         ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
                 .url("http://4pda.ru/forum/index.php")
                 .formHeader("act", "qms-xhr")
@@ -225,13 +226,65 @@ public class Qms {
                 item.setAvatar(matcher.group(5));
                 item.setContent(matcher.group(6).trim());
             }
+            messages.add(item);
         } else {
             matcher = Pattern.compile("class=\"list-group-item[^\"]*?error\"[\\s\\S]*?<\\/a>([\\s\\S]*?)<\\/div>").matcher(response);
             if (matcher.find()) {
                 throw new Exception(matcher.group(1).trim());
             }
         }
-        return item;
+        return messages;
+    }
+
+    Pattern messageInfoPattern = Pattern.compile("\"id_to\":(\\d+)");
+
+    public ArrayList<QmsMessage> getMessagesFromWs(int themeId, int messageId, int afterMessageId) throws Exception {
+        ArrayList<QmsMessage> messages = new ArrayList<>();
+        ForPdaRequest.Builder messInfoBuilder = new ForPdaRequest.Builder()
+                .url("http://4pda.ru/forum/index.php?act=qms-xhr&")
+                .formHeader("action", "message-info")
+                .formHeader("t", Integer.toString(themeId))
+                .formHeader("msg-id", Integer.toString(messageId));
+        String messInfoResponse = Api.getWebClient().request(messInfoBuilder.build());
+        Log.d("WS_CHAT", "SUKA1 " + messInfoResponse);
+
+        Matcher matcher = messageInfoPattern.matcher(messInfoResponse);
+        int idTo = 0;
+        if (matcher.find()) {
+            idTo = Integer.parseInt(matcher.group(1));
+        }
+
+        ForPdaRequest.Builder threadMessagesBuilder = new ForPdaRequest.Builder()
+                .url("http://4pda.ru/forum/index.php?act=qms-xhr&")
+                .addHeader("X-Requested-With", "XMLHttpRequest")
+                .formHeader("action", "get-thread-messages")
+                .formHeader("mid", Integer.toString(idTo))
+                .formHeader("t", Integer.toString(themeId))
+                .formHeader("after-message", Integer.toString(afterMessageId));
+        String threadMessagesResponse = Api.getWebClient().request(threadMessagesBuilder.build());
+        Log.d("WS_CHAT", "SUKA2 " + threadMessagesResponse);
+
+        matcher = chatPattern.matcher(threadMessagesResponse);
+        while (matcher.find()) {
+            QmsMessage item = new QmsMessage();
+            if (matcher.group(1) == null && matcher.group(7) != null) {
+                item.setIsDate(true);
+                item.setDate(matcher.group(7).trim());
+            } else {
+                item.setMyMessage(!matcher.group(1).isEmpty());
+                item.setId(Integer.parseInt(matcher.group(2)));
+                if (item.isMyMessage()) {
+                    item.setReadStatus(!matcher.group(3).equals("1"));
+                } else {
+                    item.setReadStatus(true);
+                }
+                item.setTime(matcher.group(4));
+                item.setAvatar(matcher.group(5));
+                item.setContent(matcher.group(6).trim());
+            }
+            messages.add(item);
+        }
+        return messages;
     }
 
     public String deleteDialog(int mid) throws Exception {

@@ -51,9 +51,9 @@ public class ChatThemeCreator {
         viewStub.inflate();
         nickField = (AppCompatAutoCompleteTextView) this.fragment.findViewById(R.id.qms_theme_nick_field);
         titleField = (AppCompatEditText) this.fragment.findViewById(R.id.qms_theme_title_field);
-        this.userId = this.fragment.userId;
-        this.userNick = this.fragment.userNick;
-        this.themeTitle = this.fragment.themeTitle;
+        this.userId = this.fragment.currentChat.getUserId();
+        this.userNick = this.fragment.currentChat.getNick();
+        this.themeTitle = this.fragment.currentChat.getTitle();
         initCreatorViews();
     }
 

@@ -82,6 +82,7 @@ public class Favorites {
     public boolean delete(int favId) throws Exception {
         ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
                 .url("http://4pda.ru/forum/index.php?act=fav")
+                .addHeader("X-Requested-With", "XMLHttpRequest")
                 .formHeader("selectedtids", Integer.toString(favId))
                 .formHeader("tact", "delete");
         String result = Api.getWebClient().request(builder.build());
@@ -95,6 +96,8 @@ public class Favorites {
 
     private boolean checkIsComplete(String result) {
         //forpdateam.ru.forpda.utils.Utils.longLog("FAVORITE RESULT "+result);
-        return checkPattern.matcher(result).find();
+        boolean res = checkPattern.matcher(result).find();
+        Log.d("FORPDA_LOG", "checkIsComplete " + res);
+        return res;
     }
 }
