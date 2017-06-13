@@ -151,10 +151,9 @@ public class Client implements IWebClient {
                         Client.cookies.remove(cookie.name());
                     } else {
                         if (!Client.cookies.containsKey(cookie.name())) {
-                            Client.cookies.replace(cookie.name(), cookie);
-                        } else {
-                            Client.cookies.put(cookie.name(), cookie);
+                            Client.cookies.remove(cookie.name());
                         }
+                        Client.cookies.put(cookie.name(), cookie);
                     }
                 }
             }

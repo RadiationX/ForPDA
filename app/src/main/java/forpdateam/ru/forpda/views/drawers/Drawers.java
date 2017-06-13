@@ -94,7 +94,7 @@ public class Drawers {
         tabListView.setAdapter(tabAdapter);
     }
 
-    public NavigationView getMenuDrawer(){
+    public NavigationView getMenuDrawer() {
         return menuDrawer;
     }
 
@@ -107,6 +107,7 @@ public class Drawers {
         initTabs(savedInstanceState);
         String className = ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN ? FavoritesFragment.class.getSimpleName() : AuthFragment.class.getSimpleName();
         String last = App.getInstance().getPreferences().getString("menu_drawer_last", className);
+        last = ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN && last.equals(AuthFragment.class.getSimpleName()) ? FavoritesFragment.class.getSimpleName() : last;
         Log.d("FORPDA_LOG", "LAAST " + last);
 
         MenuItems.MenuItem item = null;
@@ -178,8 +179,8 @@ public class Drawers {
         if (item == null) return;
         try {
             if (item.getTabClass() == null) {
-                switch (item.getAction()){
-                    case MenuItems.ACTION_APP_SETTINGS:{
+                switch (item.getAction()) {
+                    case MenuItems.ACTION_APP_SETTINGS: {
                         activity.startActivity(new Intent(activity, SettingsActivity.class));
                         break;
                     }
