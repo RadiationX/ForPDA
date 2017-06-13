@@ -1,13 +1,15 @@
 console.log("LOAD JS SOURCE qms.js");
 
 var listElem;
-function initQms(){
+
+function initQms() {
     listElem = document.querySelector(".mess_list");
     setTimeout(function () {
         scrollQms();
     }, 1);
 }
-function scrollQms(){
+
+function scrollQms() {
     getLastMess().scrollIntoView();
 }
 nativeEvents.addEventListener("DOMContentLoaded", initQms);
@@ -31,8 +33,7 @@ function getLastMess() {
 
 function showMoreMess(listSrc) {
     var lastHeight = listElem.offsetHeight;
-    var suka = listElem.insertAdjacentHTML("afterbegin", listSrc);
-    console.error(suka);
+    listElem.insertAdjacentHTML("afterbegin", listSrc);
     window.scrollBy(0, listElem.offsetHeight - lastHeight);
     addedNewMessages();
 }
@@ -45,10 +46,17 @@ function showNewMess(listSrc, withScroll) {
     addedNewMessages();
 }
 
-function addedNewMessages(){
+function makeAllRead() {
+    var unreaded = listElem.querySelectorAll(".mess_container.unread");
+    for (var i = 0; i < unreaded.length; i++) {
+        unreaded[i].classList.remove("unread");
+    }
+}
+
+function addedNewMessages() {
     transformSnapbacks();
     transformQuotes();
-    
+
     improveCodeBlock();
     blocksOpenClose();
     removeImgesSrc();

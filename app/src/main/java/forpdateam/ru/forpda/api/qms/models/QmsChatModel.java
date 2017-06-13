@@ -8,16 +8,21 @@ import java.util.List;
  */
 
 public class QmsChatModel {
-    private List<QmsMessage> chatItemsList = new ArrayList<>();
-    private int themeId = 0, userId = 0, showedMessIndex = 0;
-    private String title, nick, avatarUrl, html;
+    private int themeId = 0;
+    private int userId = 0;
+    private int showedMessIndex = 0;
+    private String title;
+    private String nick;
+    private String avatarUrl;
+    private String html;
+    private List<QmsMessage> messages = new ArrayList<>();
 
-    public void addChatItem(QmsMessage item) {
-        chatItemsList.add(item);
+    public void addMessage(QmsMessage item) {
+        messages.add(item);
     }
 
-    public List<QmsMessage> getChatItemsList() {
-        return chatItemsList;
+    public List<QmsMessage> getMessages() {
+        return messages;
     }
 
     public String getTitle() {

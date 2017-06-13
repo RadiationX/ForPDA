@@ -83,11 +83,11 @@ public class QmsRx {
             t.setVariableOpt("nick", chatModel.getNick());
             t.setVariableOpt("avatarUrl", chatModel.getAvatarUrl());
 
-            int endIndex = chatModel.getChatItemsList().size();
+            int endIndex = chatModel.getMessages().size();
             int startIndex = Math.max(endIndex - 30, 0);
             chatModel.setShowedMessIndex(startIndex);
             MiniTemplator messTemp = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
-            generateMess(messTemp, chatModel.getChatItemsList(), startIndex, endIndex);
+            generateMess(messTemp, chatModel.getMessages(), startIndex, endIndex);
             t.setVariableOpt("messages", messTemp.generateOutput());
             messTemp.reset();
             chatModel.setHtml(t.generateOutput());
