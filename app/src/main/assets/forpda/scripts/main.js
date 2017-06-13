@@ -32,7 +32,7 @@ function NativeEvents() {
     document.addEventListener("DOMContentLoaded", function (e) {
         console.log("JS event: DOMContentLoaded");
         try {
-            ITheme.domContentLoaded();
+            IBase.domContentLoaded();
         } catch (ignore) {
             onNativeDomComplete();
         }
@@ -40,7 +40,7 @@ function NativeEvents() {
     window.addEventListener("load", function (e) {
         console.log("JS event: load");
         try {
-            ITheme.onPageLoaded();
+            IBase.onPageLoaded();
         } catch (ignore) {
             onNativePageComplete();
         }

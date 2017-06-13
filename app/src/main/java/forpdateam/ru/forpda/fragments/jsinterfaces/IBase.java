@@ -11,4 +11,12 @@ public interface IBase {
 
     @JavascriptInterface
     void playClickEffect();
+
+    //Событие DOMContentLoaded
+    @JavascriptInterface
+    void domContentLoaded();
+
+    //Событие load в js
+    @JavascriptInterface
+    void onPageLoaded();
 }

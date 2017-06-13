@@ -242,7 +242,7 @@
                         f = d.test_regexp;
                     f || d.buildRegexp();
                     c != k && (d.basepath = c + "");
-                    for (; e < b; e++) d.parse(a[e]),console.log(a[e]), d.removeClass(a[e], "emoticons");
+                    for (; e < b; e++) d.parse(a[e]), d.removeClass(a[e], "emoticons");
                     f || (d.test_regexp = 0)
                 }
             };

@@ -164,7 +164,7 @@ public class Qms {
                 item.setAvatar(matcher.group(5));
                 item.setContent(matcher.group(6).trim());
             }
-            chat.addChatItem(item);
+            chat.addMessage(item);
         }
         matcher = chatInfoPattern.matcher(response);
         if (matcher.find()) {
@@ -246,7 +246,6 @@ public class Qms {
                 .formHeader("t", Integer.toString(themeId))
                 .formHeader("msg-id", Integer.toString(messageId));
         String messInfoResponse = Api.getWebClient().request(messInfoBuilder.build());
-        Log.d("WS_CHAT", "SUKA1 " + messInfoResponse);
 
         Matcher matcher = messageInfoPattern.matcher(messInfoResponse);
         int idTo = 0;
@@ -262,7 +261,6 @@ public class Qms {
                 .formHeader("t", Integer.toString(themeId))
                 .formHeader("after-message", Integer.toString(afterMessageId));
         String threadMessagesResponse = Api.getWebClient().request(threadMessagesBuilder.build());
-        Log.d("WS_CHAT", "SUKA2 " + threadMessagesResponse);
 
         matcher = chatPattern.matcher(threadMessagesResponse);
         while (matcher.find()) {

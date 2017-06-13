@@ -9,8 +9,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.webkit.WebSettings;
 
-import com.readystatesoftware.chuck.ChuckInterceptor;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -101,91 +99,88 @@ public class Client implements IWebClient {
         return listCookies;
     }
 
-    private final OkHttpClient client = new OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .addInterceptor(new ChuckInterceptor(App.getContext()))
-            .cookieJar(new CookieJar() {
-                Pattern authPattern = Pattern.compile("4pda\\.ru\\/forum\\/[\\s\\S]*?(?:act=(?:auth|logout)|#afterauth)");
-                Matcher matcher;
+    private final CookieJar cookieJar = new CookieJar() {
+        Pattern authPattern = Pattern.compile("4pda\\.ru\\/forum\\/[\\s\\S]*?(?:act=(?:auth|logout)|#afterauth)");
+        Matcher matcher;
 
-                @Override
-                public void saveFromResponse(@NonNull HttpUrl url, @NonNull List<Cookie> cookies) {
-                    Log.d("FORPDA_LOG", "response url " + url.toString());
-                    Log.d("FORPDA_LOG", "response cookies size " + cookies.size());
-                    for (Cookie cookie : cookies) {
-                        Log.e("FORPDA_LOG", "Cookie: " + cookie.name() + " : " + cookie.value());
-                    }
+        @Override
+        public void saveFromResponse(@NonNull HttpUrl url, @NonNull List<Cookie> cookies) {
+            if (matcher == null)
+                matcher = authPattern.matcher(url.toString());
+            else
+                matcher = matcher.reset(url.toString());
 
-                    if (matcher == null)
-                        matcher = authPattern.matcher(url.toString());
-                    else
-                        matcher = matcher.reset(url.toString());
-
-                    if (matcher.find()) {
-                        for (Cookie cookie : cookies) {
-                            Log.e("FORPDA_LOG", "AUTH response " + cookie.name() + " : " + cookie.value());
-                            boolean isMemberId = cookie.name().equals("member_id");
-                            boolean isPassHash = cookie.name().equals("pass_hash");
-                            boolean isSessionId = cookie.name().equals("session_id");
-                            boolean isAnonymous = cookie.name().equals("anonymous");
-                            if (isMemberId || isPassHash || isSessionId || isAnonymous) {
-                                if (cookie.value().equals("deleted")) {
-                                    App.getInstance().getPreferences().edit().remove("cookie_".concat(cookie.name())).apply();
-                                    if (Client.cookies.containsKey(cookie.name())) {
-                                        Client.cookies.remove(cookie.name());
-                                    }
-                                } else {
-                                    //Сохранение кукисов cookie_member_id и cookie_pass_hash
-                                    App.getInstance().getPreferences().edit().putString("cookie_".concat(cookie.name()), cookieToPref(url.toString(), cookie)).apply();
-                                    if (isMemberId) {
-                                        App.getInstance().getPreferences().edit().putString("member_id", cookie.value()).apply();
-                                        ClientHelper.setUserId(cookie.value());
-                                    }
-                                    if (isPassHash) {
-                                        //App.getInstance().getPreferences().edit().putString("cookie_pass_hash", cookieToPref(url.toString(), cookie)).apply();
-                                        //App.getInstance().getPreferences().edit().putString("auth_key", cookie.value()).apply();
-                                    }
-                                    if (isSessionId) {
-                                        //App.getInstance().getPreferences().edit().putString("cookie_session_id", cookieToPref(url.toString(), cookie)).apply();
-                                    }
-                                    if (isAnonymous) {
-                                        //App.getInstance().getPreferences().edit().putString("cookie_anonymous", cookieToPref(url.toString(), cookie)).apply();
-                                    }
-                                    if (!Client.cookies.containsKey(cookie.name())) {
-                                        Client.cookies.put(cookie.name(), cookie);
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        for (Cookie cookie : cookies) {
-                            if (cookie.value().equals("deleted")) {
+            if (matcher.find()) {
+                for (Cookie cookie : cookies) {
+                    boolean isMemberId = cookie.name().equals("member_id");
+                    boolean isPassHash = cookie.name().equals("pass_hash");
+                    boolean isSessionId = cookie.name().equals("session_id");
+                    boolean isAnonymous = cookie.name().equals("anonymous");
+                    if (isMemberId || isPassHash || isSessionId || isAnonymous) {
+                        if (cookie.value().equals("deleted")) {
+                            App.getInstance().getPreferences().edit().remove("cookie_".concat(cookie.name())).apply();
+                            if (Client.cookies.containsKey(cookie.name())) {
                                 Client.cookies.remove(cookie.name());
-                            } else {
-                                if (!Client.cookies.containsKey(cookie.name())) {
-                                    Client.cookies.remove(cookie.name());
-                                }
+                            }
+                        } else {
+                            //Сохранение кукисов cookie_member_id и cookie_pass_hash
+                            App.getInstance().getPreferences().edit().putString("cookie_".concat(cookie.name()), cookieToPref(url.toString(), cookie)).apply();
+                            if (isMemberId) {
+                                App.getInstance().getPreferences().edit().putString("member_id", cookie.value()).apply();
+                                ClientHelper.setUserId(cookie.value());
+                            }
+                            if (isPassHash) {
+                                //App.getInstance().getPreferences().edit().putString("cookie_pass_hash", cookieToPref(url.toString(), cookie)).apply();
+                                //App.getInstance().getPreferences().edit().putString("auth_key", cookie.value()).apply();
+                            }
+                            if (isSessionId) {
+                                //App.getInstance().getPreferences().edit().putString("cookie_session_id", cookieToPref(url.toString(), cookie)).apply();
+                            }
+                            if (isAnonymous) {
+                                //App.getInstance().getPreferences().edit().putString("cookie_anonymous", cookieToPref(url.toString(), cookie)).apply();
+                            }
+                            if (!Client.cookies.containsKey(cookie.name())) {
                                 Client.cookies.put(cookie.name(), cookie);
                             }
                         }
                     }
                 }
-
-                @Override
-                public List<Cookie> loadForRequest(@NonNull HttpUrl url) {
-                    listCookies.clear();
-                    listCookies.addAll(Client.cookies.values());
-                    Log.d("FORPDA_LOG", "cookies size " + listCookies.size());
-                    for (int i = 0; i < listCookies.size(); i++) {
-                        Log.e("FORPDA_LOG", "cookie request: " + listCookies.get(i).name() + " : " + listCookies.get(i).value());
+            } else {
+                for (Cookie cookie : cookies) {
+                    if (cookie.value().equals("deleted")) {
+                        Client.cookies.remove(cookie.name());
+                    } else {
+                        if (!Client.cookies.containsKey(cookie.name())) {
+                            Client.cookies.replace(cookie.name(), cookie);
+                        } else {
+                            Client.cookies.put(cookie.name(), cookie);
+                        }
                     }
-                    return listCookies;
                 }
-            })
+            }
+        }
+
+        @Override
+        public List<Cookie> loadForRequest(@NonNull HttpUrl url) {
+            return new ArrayList<>(Client.cookies.values());
+        }
+    };
+
+    private final OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            //.addInterceptor(new ChuckInterceptor(App.getContext()))
+            .cookieJar(cookieJar)
             .build();
 
+    private final OkHttpClient webSocketClient = new OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            //.addInterceptor(new ChuckInterceptor(App.getContext()))
+            .cookieJar(cookieJar)
+            .build();
 
     //Network
     @Override
@@ -293,7 +288,7 @@ public class Client implements IWebClient {
                 .build();
         Log.d("WS_SUKA", "HEADER " + request.headers().toString());
 
-        return client.newWebSocket(request, webSocketListener);
+        return webSocketClient.newWebSocket(request, webSocketListener);
 
         // Trigger shutdown of the dispatcher's executor so this process can exit cleanly.
         //client.dispatcher().executorService().shutdown();

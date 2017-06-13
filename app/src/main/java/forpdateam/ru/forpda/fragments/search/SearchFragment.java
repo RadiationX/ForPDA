@@ -551,10 +551,29 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
         getMainActivity().getWebViewsProvider().push(webView);
     }
 
-    @JavascriptInterface
+
     @Override
+    @JavascriptInterface
     public void playClickEffect() {
         run(this::tryPlayClickEffect);
+    }
+
+    @Override
+    @JavascriptInterface
+    public void domContentLoaded() {
+        run(() -> {
+            Log.e("console", "DOMContentLoaded");
+            webView.evalJs("nativeEvents.onNativeDomComplete();");
+        });
+    }
+
+    @Override
+    @JavascriptInterface
+    public void onPageLoaded() {
+        run(() -> {
+            Log.e("console", "onPageLoaded");
+            webView.evalJs("nativeEvents.onNativePageComplete()");
+        });
     }
 
     private class SearchWebViewClient extends WebViewClient {
