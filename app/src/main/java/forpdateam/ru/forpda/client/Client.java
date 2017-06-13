@@ -5,8 +5,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.webkit.WebSettings;
+
+import com.readystatesoftware.chuck.ChuckInterceptor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +34,8 @@ import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
 
 public class Client implements IWebClient {
     private final static String userAgent = WebSettings.getDefaultUserAgent(App.getContext());
@@ -101,12 +105,13 @@ public class Client implements IWebClient {
             .connectTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
+            .addInterceptor(new ChuckInterceptor(App.getContext()))
             .cookieJar(new CookieJar() {
                 Pattern authPattern = Pattern.compile("4pda\\.ru\\/forum\\/[\\s\\S]*?(?:act=(?:auth|logout)|#afterauth)");
                 Matcher matcher;
 
                 @Override
-                public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                public void saveFromResponse(@NonNull HttpUrl url, @NonNull List<Cookie> cookies) {
                     Log.d("FORPDA_LOG", "response url " + url.toString());
                     Log.d("FORPDA_LOG", "response cookies size " + cookies.size());
                     for (Cookie cookie : cookies) {
@@ -154,11 +159,22 @@ public class Client implements IWebClient {
                                 }
                             }
                         }
+                    } else {
+                        for (Cookie cookie : cookies) {
+                            if (cookie.value().equals("deleted")) {
+                                Client.cookies.remove(cookie.name());
+                            } else {
+                                if (!Client.cookies.containsKey(cookie.name())) {
+                                    Client.cookies.remove(cookie.name());
+                                }
+                                Client.cookies.put(cookie.name(), cookie);
+                            }
+                        }
                     }
                 }
 
                 @Override
-                public List<Cookie> loadForRequest(HttpUrl url) {
+                public List<Cookie> loadForRequest(@NonNull HttpUrl url) {
                     listCookies.clear();
                     listCookies.addAll(Client.cookies.values());
                     Log.d("FORPDA_LOG", "cookies size " + listCookies.size());
@@ -182,7 +198,7 @@ public class Client implements IWebClient {
         return request(new ForPdaRequest.Builder().url(url).addHeader("X-Requested-With", "XMLHttpRequest").build());
     }
 
-    private Request.Builder prepareReques(ForPdaRequest request) {
+    private Request.Builder prepareRequest(ForPdaRequest request) {
         Log.d("FORPDA_LOG", "request url " + request.getUrl());
         String url = request.getUrl();
         if (request.getUrl().substring(0, 2).equals("//")) {
@@ -215,7 +231,9 @@ public class Client implements IWebClient {
                             formBuilder.add(entry.getKey(), entry.getValue());
                         }
                     }
-                    requestBuilder.post(formBuilder.build());
+                    FormBody formBody = formBuilder.build();
+                    Log.d("FORPDA_LOG", "FORM BODY CONTENTTYPE " + formBody.contentType());
+                    requestBuilder.post(formBody);
                 }
             } else {
                 MultipartBody.Builder multipartBuilder = new MultipartBody.Builder();
@@ -236,6 +254,7 @@ public class Client implements IWebClient {
                     multipartBuilder.addFormDataPart(request.getFile().getRequestName(), request.getFile().getFileName(), RequestBodyUtil.create(MediaType.parse(request.getFile().getMimeType()), request.getFile().getFileStream()));
                 }
                 MultipartBody multipartBody = multipartBuilder.build();
+                Log.d("FORPDA_LOG", "MULTIPART CONTENTTYPE " + multipartBody.contentType());
                 for (MultipartBody.Part part : multipartBody.parts()) {
                     Log.e("FORPDA_LOG", "PART" + part.headers().toString());
                 }
@@ -247,7 +266,7 @@ public class Client implements IWebClient {
 
     @Override
     public String request(ForPdaRequest request) throws Exception {
-        Request.Builder requestBuilder = prepareReques(request);
+        Request.Builder requestBuilder = prepareRequest(request);
         String res;
         Response response = null;
         try {
@@ -255,6 +274,7 @@ public class Client implements IWebClient {
             if (!response.isSuccessful())
                 throw new OkHttpResponseException(response.code(), response.message(), request.getUrl());
             res = response.body().string();
+            Log.e("FORPDA_LOG", response.toString());
             getCounts(res);
             checkForumErrors(res);
             //Log.d("FORPDA_LOG", "redirected url " + response.request().url().toString());
@@ -266,21 +286,17 @@ public class Client implements IWebClient {
         return res;
     }
 
-    public ResponseBody loadImage(String imageUrl) throws Exception {
-        ForPdaRequest request = new ForPdaRequest.Builder().url(imageUrl).build();
-        Request.Builder requestBuilder = prepareReques(request);
-        ResponseBody res;
-        Response response = null;
-        try {
-            response = client.newCall(requestBuilder.build()).execute();
-            if (!response.isSuccessful())
-                throw new OkHttpResponseException(response.code(), response.message(), request.getUrl());
-            res = response.body();
-        } finally {
-            if (response != null)
-                response.close();
-        }
-        return res;
+    public WebSocket createWebSocketConnection(WebSocketListener webSocketListener) {
+
+        Request request = new Request.Builder()
+                .url("ws://app.4pda.ru/ws/")
+                .build();
+        Log.d("WS_SUKA", "HEADER " + request.headers().toString());
+
+        return client.newWebSocket(request, webSocketListener);
+
+        // Trigger shutdown of the dispatcher's executor so this process can exit cleanly.
+        //client.dispatcher().executorService().shutdown();
     }
 
     private void checkForumErrors(String res) throws Exception {
@@ -339,7 +355,7 @@ public class Client implements IWebClient {
     public void notifyNetworkObservers(Boolean b) {
         networkObservables.notifyObservers(b);
     }
-    
+
     public boolean getNetworkState() {
         ConnectivityManager cm =
                 (ConnectivityManager) App.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class QmsChatModel {
     private List<QmsMessage> chatItemsList = new ArrayList<>();
-    private int themeId, userId, showedMessIndex;
+    private int themeId = 0, userId = 0, showedMessIndex = 0;
     private String title, nick, avatarUrl, html;
 
     public void addChatItem(QmsMessage item) {

@@ -8,30 +8,26 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatAutoCompleteTextView;
-import android.support.v7.widget.AppCompatEditText;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.App;
@@ -40,6 +36,8 @@ import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.api.qms.models.QmsMessage;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
+import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IBase;
 import forpdateam.ru.forpda.rxapi.RxApi;
@@ -47,10 +45,13 @@ import forpdateam.ru.forpda.rxapi.apiclasses.QmsRx;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
-import forpdateam.ru.forpda.utils.SimpleTextWatcher;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.views.messagepanel.attachments.AttachmentsPopup;
+import okhttp3.Response;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
+import okio.ByteString;
 
 /**
  * Created by radiationx on 25.08.16.
@@ -62,22 +63,22 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
     public final static String USER_AVATAR_ARG = "USER_AVATAR_ARG";
     public final static String THEME_ID_ARG = "THEME_ID_ARG";
     public final static String THEME_TITLE_ARG = "THEME_TITLE_ARG";
+    private final static int NOT_CREATED = -1;
 
-    int userId = -1;
+    final QmsChatModel currentChat = new QmsChatModel();
+    /*int userId = -1;
     private int themeId = -1;
     private String avatarUrl;
     String userNick;
-    String themeTitle;
+    String themeTitle;*/
     private ExtendedWebView webView;
     private FrameLayout chatContainer;
     private MessagePanel messagePanel;
+
     private AttachmentsPopup attachmentsPopup;
-
     private Subscriber<QmsChatModel> mainSubscriber = new Subscriber<>(this);
-    private Subscriber<QmsMessage> messageSubscriber = new Subscriber<>(this);
 
-    private QmsChatModel currentChat;
-    private Timer messageChecker = new Timer();
+    private Subscriber<ArrayList<QmsMessage>> messageSubscriber = new Subscriber<>(this);
     private boolean baseWebComplete = false;
     private String messagesSrc = null;
 
@@ -89,11 +90,11 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            userId = getArguments().getInt(USER_ID_ARG, -1);
-            themeId = getArguments().getInt(THEME_ID_ARG, -1);
-            themeTitle = getArguments().getString(THEME_TITLE_ARG);
-            avatarUrl = getArguments().getString(USER_AVATAR_ARG);
-            userNick = getArguments().getString(USER_NICK_ARG);
+            currentChat.setUserId(getArguments().getInt(USER_ID_ARG, NOT_CREATED));
+            currentChat.setThemeId(getArguments().getInt(THEME_ID_ARG, NOT_CREATED));
+            currentChat.setTitle(getArguments().getString(THEME_TITLE_ARG));
+            currentChat.setAvatarUrl(getArguments().getString(USER_AVATAR_ARG));
+            currentChat.setNick(getArguments().getString(USER_NICK_ARG));
         }
     }
 
@@ -131,7 +132,7 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
         attachmentsPopup.setInsertAttachmentListener(item -> "[url=http://savepic.ru/" + item.getId() + "." + item.getFormat() + "]" +
                 "Файл: " + item.getName() + ", Размер: " + item.getWeight() + ", ID: " + item.getId() + "[/url]");
         messagePanel.addSendOnClickListener(v -> {
-            if (themeId == -1) {
+            if (currentChat.getThemeId() == NOT_CREATED) {
                 themeCreator.sendNewTheme();
             } else {
                 sendMessage();
@@ -141,15 +142,14 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
 
         viewsReady();
         tryShowAvatar();
-        messageChecker.schedule(new MessagesChecker(), 0, 60000);
 
-        if (userNick != null) {
-            setSubtitle(userNick);
+        if (currentChat.getNick() != null) {
+            setSubtitle(currentChat.getNick());
         }
-        if (themeTitle != null) {
-            setTitle(themeTitle);
+        if (currentChat.getTitle() != null) {
+            setTitle(currentChat.getTitle());
         }
-        if (themeId == -1) {
+        if (currentChat.getThemeId() == NOT_CREATED) {
             themeCreator = new ChatThemeCreator(this);
         }
         return view;
@@ -232,37 +232,125 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
 
     @Override
     public void loadData() {
-        if (userId != -1 && themeId != -1) {
-            mainSubscriber.subscribe(RxApi.Qms().getChat(userId, themeId), this::onLoadChat, new QmsChatModel(), v -> loadData());
+        if (currentChat.getUserId() != NOT_CREATED && currentChat.getThemeId() != NOT_CREATED) {
+            mainSubscriber.subscribe(RxApi.Qms().getChat(currentChat.getUserId(), currentChat.getThemeId()), this::onLoadChat, new QmsChatModel(), v -> loadData());
         }
     }
 
-    private void onLoadChat(QmsChatModel chat) {
-        themeId = chat.getThemeId();
-        themeTitle = chat.getTitle();
-        userId = chat.getUserId();
-        userNick = chat.getNick();
+    WebSocket webSocket;
+
+    WebSocketListener webSocketListener = new WebSocketListener() {
+        Pattern pattern = Pattern.compile("\\[(\\d+),(\\d+),\"q(\\d+)\",(\\d+),(\\d+)\\]");
+
+        @Override
+        public void onOpen(WebSocket webSocket, Response response) {
+            Log.d("WS_CHAT", "ON OPEN: " + response.toString());
+            Log.d("WS_CHAT", "ON OPEN HEADERS: " + response.headers().toString());
+            webSocket.send("[0,\"sv\"]");
+            webSocket.send("[0, \"ea\", \"u" + ClientHelper.getUserId() + "\"]");
+                /*webSocket.send("Hello...");
+                webSocket.send("...World!");
+                webSocket.send(ByteString.decodeHex("deadbeef"));
+                webSocket.close(1000, "Goodbye, World!");*/
+        }
+
+
+        @Override
+        public void onMessage(WebSocket webSocket, String text) {
+            Log.d("WS_CHAT", "ON T MESSAGE: " + text);
+            Matcher matcher = pattern.matcher(text);
+            if (matcher.find()) {
+                int themeId = Integer.parseInt(matcher.group(3));
+                int messId = Integer.parseInt(matcher.group(5));
+                Log.d("WS_CHAT", "NEW QMS MESSAGE " + themeId + " : " + messId);
+                if (themeId == currentChat.getThemeId()) {
+                    onNewWsMessage(themeId, messId);
+                }
+            }
+        }
+
+        @Override
+        public void onMessage(WebSocket webSocket, ByteString bytes) {
+            Log.d("WS_CHAT", "ON B MESSAGE: " + bytes.hex());
+        }
+
+        @Override
+        public void onClosing(WebSocket webSocket, int code, String reason) {
+            Log.d("WS_CHAT", "ON CLOSING: " + code + " " + reason);
+            webSocket.close(1000, null);
+
+        }
+
+        @Override
+        public void onClosed(WebSocket webSocket, int code, String reason) {
+            Log.d("WS_CHAT", "ON CLOSED: " + code + " " + reason);
+        }
+
+        @Override
+        public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+            Log.d("WS_CHAT", "ON FAILURE: " + t.getMessage() + " " + response.toString());
+            t.printStackTrace();
+        }
+    };
+
+    private void onNewWsMessage(int themeId, int messageId) {
+        messageSubscriber.subscribe(RxApi.Qms().getMessagesFromWs(themeId, messageId, currentChat.getChatItemsList().get(currentChat.getChatItemsList().size() - 1).getId()), qmsMessage -> {
+            Log.d("WS_CHAT", "RETURNED MESSAGE " + qmsMessage.size());
+            if (qmsMessage.size() > 0) {
+                MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
+
+
+                for (int i = 0; i < qmsMessage.size(); i++) {
+                    QmsMessage message = qmsMessage.get(i);
+                    boolean contains = false;
+                    for (QmsMessage viewmessage : currentChat.getChatItemsList()) {
+                        if (viewmessage.getId() == message.getId()) {
+                            contains = true;
+                            break;
+                        }
+                    }
+                    if (contains) {
+                        break;
+                    }
+                    currentChat.addChatItem(message);
+                    QmsRx.generateMess(t, message);
+                }
+                String messagesSrc = t.generateOutput();
+                t.reset();
+                messagesSrc = messagesSrc.replaceAll("\n", "").replaceAll("'", "&apos;");
+                webView.evalJs("showNewMess('".concat(messagesSrc).concat("', true)"));
+            }
+
+        }, new ArrayList<>());
+    }
+
+    private void onLoadChat(QmsChatModel loadedChat) {
+        currentChat.setThemeId(loadedChat.getThemeId());
+        currentChat.setTitle(loadedChat.getTitle());
+        currentChat.setUserId(loadedChat.getUserId());
+        currentChat.setNick(loadedChat.getNick());
         long time = System.currentTimeMillis();
         String messagesSrc = null;
-        if (currentChat == null) {
-            currentChat = chat;
+        if (currentChat.getChatItemsList().size() == 0) {
+            webSocket = Client.getInstance().createWebSocketConnection(webSocketListener);
+            currentChat.getChatItemsList().addAll(loadedChat.getChatItemsList());
             MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
             int end = currentChat.getChatItemsList().size();
             int start = Math.max(end - 30, 0);
-            currentChat.setShowedMessIndex(start);
             QmsRx.generateMess(t, currentChat.getChatItemsList(), start, end);
             messagesSrc = t.generateOutput();
             t.reset();
+            currentChat.setShowedMessIndex(start);
         } else {
             int start = currentChat.getChatItemsList().size();
-            int end = chat.getChatItemsList().size();
+            int end = loadedChat.getChatItemsList().size();
             if (start < end) {
                 MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
                 List<QmsMessage> newMessages = new ArrayList<>();
                 for (int i = start; i < end; i++) {
-                    QmsMessage message = chat.getChatItemsList().get(i);
+                    QmsMessage message = loadedChat.getChatItemsList().get(i);
                     newMessages.add(message);
-                    currentChat.getChatItemsList().add(message);
+                    currentChat.addChatItem(message);
                 }
                 QmsRx.generateMess(t, newMessages);
                 messagesSrc = t.generateOutput();
@@ -293,37 +381,42 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
 
     private void sendMessage() {
         messagePanel.setProgressState(true);
-        messageSubscriber.subscribe(RxApi.Qms().sendMessage(userId, themeId, messagePanel.getMessage()), qmsMessage -> {
+        messageSubscriber.subscribe(RxApi.Qms().sendMessage(currentChat.getUserId(), currentChat.getThemeId(), messagePanel.getMessage()), qmsMessage -> {
             messagePanel.setProgressState(false);
-            if (qmsMessage.getContent() != null) {
-                MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
-                String messSrc = QmsRx.generateMess(t, qmsMessage).generateOutput();
-                messSrc = messSrc.replaceAll("\n", "");
-                t.reset();
-                webView.evalJs("showNewMess('" + messSrc + "', true)");
+            if (qmsMessage.size() > 0 && qmsMessage.get(0).getContent() != null) {
+                QmsMessage message = qmsMessage.get(0);
+                boolean contains = false;
+                for (QmsMessage viewmessage : currentChat.getChatItemsList()) {
+                    if (viewmessage.getId() == message.getId()) {
+                        contains = true;
+                        break;
+                    }
+                }
+                if (!contains) {
+                    currentChat.addChatItem(message);
+                    MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
+                    String messSrc = QmsRx.generateMess(t, message).generateOutput();
+                    messSrc = messSrc.replaceAll("\n", "").replaceAll("'", "&apos;");
+                    t.reset();
+                    webView.evalJs("showNewMess('" + messSrc + "', true)");
 
-                messagePanel.clearMessage();
-                messagePanel.clearAttachments();
+                    messagePanel.clearMessage();
+                    messagePanel.clearAttachments();
+                }
+
+
             }
-        }, new QmsMessage());
+        }, new ArrayList<>());
     }
 
 
     private void tryShowAvatar() {
-        if (avatarUrl != null && userId != -1) {
-            ImageLoader.getInstance().displayImage(avatarUrl, toolbarImageView);
+        if (currentChat.getAvatarUrl() != null && currentChat.getUserId() != NOT_CREATED) {
+            ImageLoader.getInstance().displayImage(currentChat.getAvatarUrl(), toolbarImageView);
             toolbarImageView.setVisibility(View.VISIBLE);
-            toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + userId));
+            toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + currentChat.getUserId()));
         } else {
             toolbarImageView.setVisibility(View.GONE);
-        }
-    }
-
-    private class MessagesChecker extends TimerTask {
-        public void run() {
-            if (isVisible()) {
-                loadData();
-            }
         }
     }
 
@@ -389,8 +482,6 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
     public void onDestroy() {
         super.onDestroy();
         messagePanel.onDestroy();
-        messageChecker.cancel();
-        messageChecker.purge();
 
         unregisterForContextMenu(webView);
         webView.removeJavascriptInterface(JS_INTERFACE);

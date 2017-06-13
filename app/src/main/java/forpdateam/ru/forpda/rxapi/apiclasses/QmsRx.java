@@ -58,11 +58,15 @@ public class QmsRx {
     }
 
     public Observable<QmsChatModel> sendNewTheme(String nick, String title, String mess) {
-        return Observable.fromCallable(() -> transform(Api.Qms().sendNewTheme(nick, title, mess), true));
+        return Observable.fromCallable(() -> transform(Api.Qms().sendNewTheme(nick, title, mess), false));
     }
 
-    public Observable<QmsMessage> sendMessage(int userId, int themeID, String text) {
-        return Observable.fromCallable(() -> Api.Qms().sendMessage(userId, themeID, text));
+    public Observable<ArrayList<QmsMessage>> sendMessage(int userId, int themeId, String text) {
+        return Observable.fromCallable(() -> Api.Qms().sendMessage(userId, themeId, text));
+    }
+
+    public Observable<ArrayList<QmsMessage>> getMessagesFromWs(int themeId, int messageId, int afterMessageId) {
+        return Observable.fromCallable(() -> Api.Qms().getMessagesFromWs(themeId, messageId, afterMessageId));
     }
 
     public Observable<List<AttachmentItem>> uploadFiles(List<RequestFile> files) {

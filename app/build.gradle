@@ -96,7 +96,7 @@ android {
 
 ext {
     supportLibVersion = '25.3.1'
-    okHttpVersion = '3.5.0'
+    okHttpVersion = '3.8.0'
     rxbindingVersion = '0.4.0'
     rxlifecycleVersion = '2.0.1'
     rxCoreVersion = '2.0.1'
@@ -135,4 +135,6 @@ dependencies {
     compile 'com.wada811:android-material-design-colors:3.0.0'
     compile 'com.thebluealliance:spectrum:0.7.1'
     compile 'com.github.douglasjunior:android-simple-tooltip:0.2.0'
+    debugCompile 'com.readystatesoftware.chuck:library:1.0.4'
+    releaseCompile 'com.readystatesoftware.chuck:library-no-op:1.0.4'
 }
