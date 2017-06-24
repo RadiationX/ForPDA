@@ -4,18 +4,23 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.SearchManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.TabLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.menu.ActionMenuItemView;
+import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.util.Pair;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,7 +62,9 @@ import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
+import forpdateam.ru.forpda.views.messagepanel.attachments.CustomBottomSheetDialog;
 import forpdateam.ru.forpda.views.pagination.PaginationHelper;
+import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
 import io.reactivex.functions.Consumer;
 
 /**
@@ -132,6 +139,8 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
     private SearchView searchView;
     private MenuItem searchItem;
     private SearchResult data;
+    private BottomSheetDialog dialog;
+    private SimpleTooltip tooltip;
 
     @SuppressLint("JavascriptInterface")
     @Nullable
@@ -141,23 +150,23 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
         baseInflateFragment(inflater, R.layout.fragment_search);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
         //recyclerView = (RecyclerView) findViewById(R.id.base_list);
-        searchSettingsView = (ViewGroup) findViewById(R.id.search_settings_container);
+        searchSettingsView = (ViewGroup) View.inflate(getContext(), R.layout.search_settings, null);
 
-        nickBlock = (ViewGroup) findViewById(R.id.search_nick_block);
-        resourceBlock = (ViewGroup) findViewById(R.id.search_resource_block);
-        resultBlock = (ViewGroup) findViewById(R.id.search_result_block);
-        sortBlock = (ViewGroup) findViewById(R.id.search_sort_block);
-        sourceBlock = (ViewGroup) findViewById(R.id.search_source_block);
+        nickBlock = (ViewGroup) searchSettingsView.findViewById(R.id.search_nick_block);
+        resourceBlock = (ViewGroup) searchSettingsView.findViewById(R.id.search_resource_block);
+        resultBlock = (ViewGroup) searchSettingsView.findViewById(R.id.search_result_block);
+        sortBlock = (ViewGroup) searchSettingsView.findViewById(R.id.search_sort_block);
+        sourceBlock = (ViewGroup) searchSettingsView.findViewById(R.id.search_source_block);
 
-        resourceSpinner = (Spinner) findViewById(R.id.search_resource_spinner);
-        resultSpinner = (Spinner) findViewById(R.id.search_result_spinner);
-        sortSpinner = (Spinner) findViewById(R.id.search_sort_spinner);
-        sourceSpinner = (Spinner) findViewById(R.id.search_source_spinner);
+        resourceSpinner = (Spinner) searchSettingsView.findViewById(R.id.search_resource_spinner);
+        resultSpinner = (Spinner) searchSettingsView.findViewById(R.id.search_result_spinner);
+        sortSpinner = (Spinner) searchSettingsView.findViewById(R.id.search_sort_spinner);
+        sourceSpinner = (Spinner) searchSettingsView.findViewById(R.id.search_source_spinner);
 
-        nickField = (TextView) findViewById(R.id.search_nick_field);
+        nickField = (TextView) searchSettingsView.findViewById(R.id.search_nick_field);
 
-        submitButton = (Button) findViewById(R.id.search_submit);
-        saveSettingsButton = (Button) findViewById(R.id.search_save_settings);
+        submitButton = (Button) searchSettingsView.findViewById(R.id.search_submit);
+        saveSettingsButton = (Button) searchSettingsView.findViewById(R.id.search_save_settings);
 
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
         webView.addJavascriptInterface(this, JS_INTERFACE);
@@ -186,7 +195,10 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
             }
         });
 
-        searchSettingsView.setVisibility(View.GONE);
+        //searchSettingsView.setVisibility(View.GONE);
+        dialog = new BottomSheetDialog(getContext());
+        //dialog.setPeekHeight(App.getKeyboardHeight());
+        //dialog.getWindow().getDecorView().setFitsSystemWindows(true);
         toolbar.getMenu().clear();
         addBaseToolbarMenu();
         toolbar.getMenu().add("Скопировать ссылку").setOnMenuItemClickListener(menuItem -> {
@@ -194,13 +206,20 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
             return false;
         });
         toolbar.inflateMenu(R.menu.qms_contacts_menu);
-        toolbar.getMenu().add("Настройки").setIcon(R.drawable.ic_tune_gray_24dp).setOnMenuItemClickListener(menuItem -> {
-            if (searchSettingsView.getVisibility() == View.VISIBLE) {
+        MenuItem settingsItem = toolbar.getMenu().add("Настройки");
+        settingsItem.setIcon(R.drawable.ic_tune_gray_24dp).setOnMenuItemClickListener(menuItem -> {
+            /*if (searchSettingsView.getVisibility() == View.VISIBLE) {
                 searchSettingsView.setVisibility(View.GONE);
             } else {
                 searchSettingsView.setVisibility(View.VISIBLE);
                 hidePopupWindows();
+            }*/
+            hidePopupWindows();
+            if (searchSettingsView != null && searchSettingsView.getParent() != null && searchSettingsView.getParent() instanceof ViewGroup) {
+                ((ViewGroup) searchSettingsView.getParent()).removeView(searchSettingsView);
             }
+            dialog.setContentView(searchSettingsView);
+            dialog.show();
             return false;
         }).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         searchItem = toolbar.getMenu().findItem(R.id.action_search);
@@ -298,7 +317,50 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
                     .show();
         });
         App.getInstance().addPreferenceChangeObserver(searchPreferenceObserver);
+        if (App.getInstance().getPreferences().getBoolean("search.tooltip.settings", true)) {
+            for (int toolbarChildIndex = 0; toolbarChildIndex < toolbar.getChildCount(); toolbarChildIndex++) {
+                View view = toolbar.getChildAt(toolbarChildIndex);
+                if (view instanceof ActionMenuView) {
+                    ActionMenuView menuView = (ActionMenuView) view;
+                    for (int menuChildIndex = 0; menuChildIndex < menuView.getChildCount(); menuChildIndex++) {
+                        try {
+                            ActionMenuItemView itemView = (ActionMenuItemView) menuView.getChildAt(menuChildIndex);
+                            if (settingsItem == itemView.getItemData()) {
+                                tooltip = new SimpleTooltip.Builder(getContext())
+                                        .anchorView(itemView)
+                                        .text("Нажимите сюда, чтобы настроить поисковой запрос")
+                                        .gravity(Gravity.BOTTOM)
+                                        .animated(false)
+                                        .modal(true)
+                                        .transparentOverlay(false)
+                                        .backgroundColor(Color.BLACK)
+                                        .textColor(Color.WHITE)
+                                        .padding((float) App.px16)
+                                        .build();
+                                tooltip.show();
+                                break;
+                            }
+                        } catch (ClassCastException ignore) {
+                        }
+                    }
+                    break;
+                }
+            }
+
+            App.getInstance().getPreferences().edit().putBoolean("search.tooltip.settings", false).apply();
+        }
+
+
         return view;
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (tooltip != null && tooltip.isShowing()) {
+            tooltip.dismiss();
+            return true;
+        }
+        return super.onBackPressed();
     }
 
     private boolean checkArg(String arg, Pair<String, String> pair) {
@@ -434,6 +496,9 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
         settings.setSt(0);
         settings.setQuery(searchView.getQuery().toString());
         settings.setNick(nickField.getText().toString());
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
         loadData();
     }
 
@@ -465,9 +530,9 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
         }
         buildTitle();
         hidePopupWindows();
-        if (searchSettingsView.getVisibility() == View.VISIBLE) {
+        /*if (searchSettingsView.getVisibility() == View.VISIBLE) {
             searchSettingsView.setVisibility(View.GONE);
-        }
+        }*/
         refreshLayout.setRefreshing(true);
         boolean withHtml = settings.getResult().equals(SearchSettings.RESULT_POSTS.first) && settings.getResourceType().equals(SearchSettings.RESOURCE_FORUM.first);
         mainSubscriber.subscribe(RxApi.Search().getSearch(settings, withHtml), this::onLoadData, new SearchResult(), v -> loadData());

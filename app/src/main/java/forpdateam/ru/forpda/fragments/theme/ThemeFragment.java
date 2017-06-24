@@ -280,6 +280,8 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     protected void onLoadData(ThemePage newPage) throws Exception {
         refreshLayout.setRefreshing(false);
         if (newPage == null || newPage.getId() == 0 || newPage.getUrl() == null) {
+            if (currentPage != null)
+                tab_url = currentPage.getUrl();
             return;
         }
         if (currentPage == null) {
@@ -287,7 +289,6 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         }
 
         currentPage = newPage;
-        tab_url = currentPage.getUrl();
 
         if (loadAction == NORMAL_ACTION) {
             saveToHistory(currentPage);
