@@ -8,15 +8,18 @@
             android:title="Индикатор счетчиков" />
 
     </PreferenceCategory>
+
     <PreferenceCategory android:title="Темы">
         <SwitchPreference
             android:defaultValue="true"
             android:key="theme.show_avatars"
             android:title="Отображать аватарки" />
+
         <SwitchPreference
             android:defaultValue="true"
             android:key="theme.circle_avatars"
             android:title="Круглые аватарки" />
+
         <SwitchPreference
             android:defaultValue="true"
             android:key="theme.anchor_history"
@@ -29,10 +32,26 @@
             android:defaultValue="false"
             android:key="lists.topic.unread_top"
             android:title="Непрочитанные сверху" />
+
         <SwitchPreference
             android:defaultValue="false"
             android:key="lists.topic.show_dot"
             android:title="Индикатор новых сообщений" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Аккаунт">
+        <Preference
+            android:key="auth.action.logout"
+            android:title="Выйти" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="О программе">
+        <Preference
+            android:key="about.application"
+            android:title="ForPDA" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

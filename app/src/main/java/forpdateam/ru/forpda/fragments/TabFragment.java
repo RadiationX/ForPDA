@@ -245,25 +245,7 @@ public class TabFragment extends RxFragment {
     }
 
     protected void addBaseToolbarMenu() {
-        toolbar.getMenu().add("Logout").setOnMenuItemClickListener(menuItem -> {
-            new AlertDialog.Builder(getContext())
-                    .setMessage("Вы уверены, что хотите выйти из аккаунта?")
-                    .setPositiveButton("Да", (dialog, which) -> RxApi.Auth().logout().onErrorReturn(throwable -> false)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(aBoolean -> {
-                                if (aBoolean) {
-                                    Toast.makeText(getContext(), "Logout complete", Toast.LENGTH_LONG).show();
-                                    ClientHelper.getInstance().notifyAuthChanged(ClientHelper.AUTH_STATE_LOGOUT);
-                                } else {
-                                    Toast.makeText(getContext(), "Logout error", Toast.LENGTH_LONG).show();
-                                }
-                            }))
-                    .setNegativeButton("Нет", null)
-                    .show();
 
-            return false;
-        });
     }
 
     protected void updateNotifyDot() {

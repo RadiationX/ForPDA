@@ -46,7 +46,7 @@ android {
         beta {
             applicationId 'ru.forpdateam.forpda.beta'
             versionCode versionNumber
-            versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})beta"
+            versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild}) beta"
         }
     }
 
