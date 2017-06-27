@@ -1,10 +1,14 @@
 package forpdateam.ru.forpda.views.messagepanel.attachments;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
@@ -23,6 +28,7 @@ import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.api.IWebClient;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 
 /**
@@ -60,7 +66,7 @@ public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.Vi
             onDataChangeListener.onChange(items.size());
     }
 
-    public void clear(){
+    public void clear() {
         items.clear();
         unSelectItems();
         if (onDataChangeListener != null) {
@@ -85,7 +91,7 @@ public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.Vi
     public void unSelectItems() {
         for (AttachmentItem item : selected) {
             if (item != null) {
-                if(item.isSelected()) item.toggle();
+                if (item.isSelected()) item.toggle();
                 notifyItemChanged(items.indexOf(item));
             }
         }
@@ -130,6 +136,7 @@ public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.Vi
                 holder.progressBar.setVisibility(View.VISIBLE);
                 holder.reload.setVisibility(View.GONE);
                 holder.imageView.setVisibility(View.GONE);
+                item.setProgressListener(holder.progressListener);
                 break;
             case AttachmentItem.STATE_NOT_LOADED:
                 holder.description.setVisibility(View.GONE);
@@ -197,10 +204,30 @@ public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.Vi
         ImageView imageView;
         RadioButton radioButton;
         View overlay;
-        ProgressBar progressBar;
+        CircularProgressView progressBar;
         ImageButton reload;
         TextView name, attributes;
-        public LinearLayout description;
+        LinearLayout description;
+        final Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                Log.e("SUKA", "done percent UI: " + (((int) msg.obj) / 100f) + " : " + Thread.currentThread());
+                //progressBar.startAnimation();
+                if (progressBar.isIndeterminate()) {
+                    progressBar.setIndeterminate(false);
+                }
+                progressBar.setProgress(((int)msg.obj));
+                super.handleMessage(msg);
+            }
+        };
+        IWebClient.ProgressListener progressListener = percent -> {
+            //progressBar.setProgress(percent / 100f);
+            Message msg = handler.obtainMessage();
+            msg.obj = percent;
+
+            handler.sendMessage(msg);
+        };
+
 
         public ViewHolder(View view) {
             super(view);
@@ -208,7 +235,7 @@ public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.Vi
             imageView = (ImageView) view.findViewById(R.id.icon);
             radioButton = (RadioButton) view.findViewById(R.id.radio_button);
             overlay = view.findViewById(R.id.overlay_and_text);
-            progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+            progressBar = (CircularProgressView) view.findViewById(R.id.progress_bar);
             reload = (ImageButton) view.findViewById(R.id.reload);
             name = (TextView) view.findViewById(R.id.file_name);
             attributes = (TextView) view.findViewById(R.id.file_attributes);

@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.webkit.WebSettings;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,9 +32,15 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
+import okio.Buffer;
+import okio.BufferedSink;
+import okio.ForwardingSink;
+import okio.Okio;
+import okio.Sink;
 
 public class Client implements IWebClient {
     private final static String userAgent = WebSettings.getDefaultUserAgent(App.getContext());
@@ -192,7 +199,57 @@ public class Client implements IWebClient {
         return request(new ForPdaRequest.Builder().url(url).addHeader("X-Requested-With", "XMLHttpRequest").build());
     }
 
-    private Request.Builder prepareRequest(ForPdaRequest request) {
+    public class ProgressRequestBody extends RequestBody {
+
+        protected RequestBody mDelegate;
+        protected ProgressListener mListener;
+        protected CountingSink mCountingSink;
+
+        public ProgressRequestBody(RequestBody delegate, ProgressListener listener) {
+            mDelegate = delegate;
+            mListener = listener;
+        }
+
+        @Override
+        public MediaType contentType() {
+            return mDelegate.contentType();
+        }
+
+        @Override
+        public long contentLength() {
+            try {
+                return mDelegate.contentLength();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return -1;
+        }
+
+        @Override
+        public void writeTo(@NonNull BufferedSink sink) throws IOException {
+            mCountingSink = new CountingSink(sink);
+            BufferedSink bufferedSink = Okio.buffer(mCountingSink);
+            mDelegate.writeTo(bufferedSink);
+            bufferedSink.flush();
+        }
+
+        protected final class CountingSink extends ForwardingSink {
+            private long bytesWritten = 0;
+
+            public CountingSink(Sink delegate) {
+                super(delegate);
+            }
+
+            @Override
+            public void write(@NonNull Buffer source, long byteCount) throws IOException {
+                super.write(source, byteCount);
+                bytesWritten += byteCount;
+                mListener.onProgress((int) (100F * bytesWritten / contentLength()));
+            }
+        }
+    }
+
+    private Request.Builder prepareRequest(ForPdaRequest request, ProgressListener uploadProgressListener) {
         Log.d("FORPDA_LOG", "request url " + request.getUrl());
         String url = request.getUrl();
         if (request.getUrl().substring(0, 2).equals("//")) {
@@ -252,15 +309,18 @@ public class Client implements IWebClient {
                 for (MultipartBody.Part part : multipartBody.parts()) {
                     Log.e("FORPDA_LOG", "PART" + part.headers().toString());
                 }
-                requestBuilder.post(multipartBody);
+                if (uploadProgressListener == null) {
+                    requestBuilder.post(multipartBody);
+                } else {
+                    requestBuilder.post(new ProgressRequestBody(multipartBody, uploadProgressListener));
+                }
             }
         }
         return requestBuilder;
     }
 
-    @Override
-    public String request(ForPdaRequest request) throws Exception {
-        Request.Builder requestBuilder = prepareRequest(request);
+    public String request(ForPdaRequest request, OkHttpClient client, ProgressListener uploadProgressListener) throws Exception {
+        Request.Builder requestBuilder = prepareRequest(request, uploadProgressListener);
         String res;
         Response response = null;
         try {
@@ -278,6 +338,16 @@ public class Client implements IWebClient {
                 response.close();
         }
         return res;
+    }
+
+    @Override
+    public String request(ForPdaRequest request) throws Exception {
+        return request(request, this.client, null);
+    }
+
+    @Override
+    public String request(ForPdaRequest request, ProgressListener uploadProgressListener) throws Exception {
+        return request(request, this.client, uploadProgressListener);
     }
 
     public WebSocket createWebSocketConnection(WebSocketListener webSocketListener) {

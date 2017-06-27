@@ -19,6 +19,7 @@ import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.api.IWebClient;
 import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
@@ -172,6 +173,9 @@ public class AttachmentsPopup {
         List<AttachmentItem> loadingItems = new ArrayList<>();
         for (RequestFile file : files) {
             AttachmentItem item = new AttachmentItem(file.getFileName());
+            item.setProgressListener(percent -> {
+
+            });
             Log.e("FORPDA_LOG", "ADD LOADING ITEM " + item);
             adapter.add(item);
             loadingItems.add(item);

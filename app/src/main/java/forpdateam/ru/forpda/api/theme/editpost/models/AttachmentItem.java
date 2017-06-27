@@ -6,6 +6,8 @@ import android.util.Log;
 
 import java.util.regex.Pattern;
 
+import forpdateam.ru.forpda.api.IWebClient;
+
 /**
  * Created by radiationx on 09.01.17.
  */
@@ -40,6 +42,28 @@ public class AttachmentItem implements Parcelable {
     private String weight;
     private String imageUrl;
     private String md5;
+
+    private IWebClient.ProgressListener itemProgressListener = new IWebClient.ProgressListener() {
+        @Override
+        public void onProgress(int percent) {
+            if (progressListener != null)
+                progressListener.onProgress(percent);
+        }
+    };
+    private IWebClient.ProgressListener progressListener;
+
+
+    public IWebClient.ProgressListener getItemProgressListener() {
+        return itemProgressListener;
+    }
+
+    public IWebClient.ProgressListener getProgressListener() {
+        return progressListener;
+    }
+
+    public void setProgressListener(IWebClient.ProgressListener progressListener) {
+        this.progressListener = progressListener;
+    }
 
     public int getWidth() {
         return width;
