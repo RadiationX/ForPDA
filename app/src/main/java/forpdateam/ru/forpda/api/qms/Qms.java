@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.IWebClient;
 import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
@@ -335,7 +336,7 @@ public class Qms {
                     .url(url)
                     .formHeaders(headers)
                     .file(file);
-            response = Api.getWebClient().request(builder.build());
+            response = Api.getWebClient().request(builder.build(), item.getItemProgressListener());
 
 
             if (matcher == null)

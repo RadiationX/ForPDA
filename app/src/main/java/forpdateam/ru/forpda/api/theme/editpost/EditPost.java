@@ -150,7 +150,7 @@ public class EditPost {
                         .formHeader("forum-attach-files", "")
                         .formHeader("code", "upload")
                         .file(file);
-                response = Api.getWebClient().request(uploadRequest.build());
+                response = Api.getWebClient().request(uploadRequest.build(), item.getProgressListener());
                 Log.d("SUKA", "RESPONSE2 " + response);
             }
             if (matcher == null) {

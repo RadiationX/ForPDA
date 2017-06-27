@@ -56,13 +56,16 @@
     </LinearLayout>
 
 
-    <ProgressBar
+    <com.github.rahatarmanahmed.cpv.CircularProgressView
         android:id="@+id/progress_bar"
         android:layout_width="@dimen/dp48"
         android:layout_height="@dimen/dp48"
         android:layout_centerInParent="true"
         android:clickable="false"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:cpv_color="@color/black"
+        app:cpv_animAutostart="true"
+        app:cpv_indeterminate="true"/>
 
     <android.support.v7.widget.AppCompatImageButton
         android:id="@+id/reload"

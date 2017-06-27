@@ -15,9 +15,15 @@ public interface IWebClient {
 
     String request(ForPdaRequest request) throws Exception;
 
+    String request(ForPdaRequest request, ProgressListener progressListener) throws Exception;
+
     String getRedirect(String url);
 
     String getAuthKey();
 
     void clearCookies();
+
+    interface ProgressListener {
+        void onProgress(int percent);
+    }
 }
