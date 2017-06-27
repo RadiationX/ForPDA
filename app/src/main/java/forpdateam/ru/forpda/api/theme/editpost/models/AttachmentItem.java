@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  */
 
 public class AttachmentItem implements Parcelable {
-    private final static Pattern imageTypes = Pattern.compile("gif|jpg|jpeg|png", Pattern.CASE_INSENSITIVE);
+    private final static Pattern imageExtensions = Pattern.compile("gif|jpg|jpeg|png", Pattern.CASE_INSENSITIVE);
     public final static int TYPE_FILE = 0;
     public final static int TYPE_IMAGE = 1;
 
@@ -32,11 +32,38 @@ public class AttachmentItem implements Parcelable {
     private int typeFile = TYPE_FILE;
     private int loadState = STATE_LOADING;
     private int status = STATUS_READY;
+    private int width = 0;
+    private int height = 0;
 
     private String name;
-    private String format;
+    private String extension;
     private String weight;
     private String imageUrl;
+    private String md5;
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public String getMd5() {
+        return md5;
+    }
+
+    public void setMd5(String md5) {
+        this.md5 = md5;
+    }
 
     public AttachmentItem(String name) {
         this.name = name;
@@ -69,13 +96,13 @@ public class AttachmentItem implements Parcelable {
         this.name = name;
     }
 
-    public String getFormat() {
-        return format;
+    public String getExtension() {
+        return extension;
     }
 
-    public void setFormat(String format) {
-        this.format = format;
-        if (imageTypes.matcher(format).matches())
+    public void setExtension(String extension) {
+        this.extension = extension;
+        if (imageExtensions.matcher(extension).matches())
             this.typeFile = TYPE_IMAGE;
     }
 
@@ -141,7 +168,7 @@ public class AttachmentItem implements Parcelable {
         parcel.writeInt(loadState);
         parcel.writeInt(status);
         writeStringToParcel(parcel, name);
-        writeStringToParcel(parcel, format);
+        writeStringToParcel(parcel, extension);
         writeStringToParcel(parcel, weight);
         writeStringToParcel(parcel, imageUrl);
     }
@@ -165,7 +192,7 @@ public class AttachmentItem implements Parcelable {
         loadState = parcel.readInt();
         status = parcel.readInt();
         name = readStringFromParcel(parcel);
-        format = readStringFromParcel(parcel);
+        extension = readStringFromParcel(parcel);
         weight = readStringFromParcel(parcel);
         imageUrl = readStringFromParcel(parcel);
     }

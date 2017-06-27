@@ -82,7 +82,7 @@ public class Favorites {
     public boolean delete(int favId) throws Exception {
         ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
                 .url("http://4pda.ru/forum/index.php?act=fav")
-                .addHeader("X-Requested-With", "XMLHttpRequest")
+                .xhrHeader()
                 .formHeader("selectedtids", Integer.toString(favId))
                 .formHeader("tact", "delete");
         String result = Api.getWebClient().request(builder.build());

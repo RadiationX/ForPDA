@@ -35,7 +35,6 @@ public class AttachmentsPopup {
     private View bottomSheet;
     private AutoFitRecyclerView recyclerView;
     private AttachmentAdapter adapter = new AttachmentAdapter();
-    private List<AttachmentItem> loadingItems = new ArrayList<>();
 
     private TextView noAttachments;
     private RelativeLayout textControls;
@@ -169,26 +168,29 @@ public class AttachmentsPopup {
         adapter.add(form.getAttachments());
     }
 
-    public void preUploadFiles(List<RequestFile> files) {
+    public List<AttachmentItem> preUploadFiles(List<RequestFile> files) {
+        List<AttachmentItem> loadingItems = new ArrayList<>();
         for (RequestFile file : files) {
             AttachmentItem item = new AttachmentItem(file.getFileName());
             Log.e("FORPDA_LOG", "ADD LOADING ITEM " + item);
             adapter.add(item);
             loadingItems.add(item);
         }
+        return loadingItems;
     }
 
     public void onUploadFiles(List<AttachmentItem> items) {
+        for(AttachmentItem item: items){
+            Log.d("SUKA", "LOADED ITEM "+item.getName());
+        }
         for (AttachmentItem item : items) {
-            AttachmentItem loadingItem = getItemByName(item.getName());
-            Log.e("FORPDA_LOG", "LOADING ITEM " + loadingItem + " : " + item);
+            Log.e("FORPDA_LOG", "LOADING ITEM " + " : " + item);
             if (item.getLoadState() == AttachmentItem.STATE_NOT_LOADED) {
-                adapter.removeItem(loadingItem);
+                adapter.removeItem(item);
                 //SHOW ERROR
             } else {
-                adapter.replaceItem(loadingItem, item);
+                adapter.notifyItemLoadResult(item);
             }
-            loadingItems.remove(loadingItem);
         }
     }
 
@@ -227,12 +229,12 @@ public class AttachmentsPopup {
         return adapter.getSelected();
     }
 
-    private AttachmentItem getItemByName(String name) {
+    /*private AttachmentItem getItemByName(String name) {
         for (AttachmentItem item : loadingItems) {
             if (item.getName().equals(name)) return item;
         }
         return null;
-    }
+    }*/
 
     public void setInsertAttachmentListener(OnInsertAttachmentListener insertAttachmentListener) {
         this.insertAttachmentListener = insertAttachmentListener;

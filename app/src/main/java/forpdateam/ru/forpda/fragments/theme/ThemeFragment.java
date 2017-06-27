@@ -498,8 +498,8 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     }
 
     public void uploadFiles(List<RequestFile> files) {
-        attachmentsPopup.preUploadFiles(files);
-        attachmentSubscriber.subscribe(RxApi.EditPost().uploadFiles(0, files), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
+        List<AttachmentItem> pending = attachmentsPopup.preUploadFiles(files);
+        attachmentSubscriber.subscribe(RxApi.EditPost().uploadFiles(0, files, pending), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
     }
 
     public void removeFiles() {

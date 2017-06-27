@@ -85,6 +85,11 @@ public class ForPdaRequest {
             return this;
         }
 
+        public ForPdaRequest.Builder xhrHeader() {
+            addHeader("X-Requested-With", "XMLHttpRequest");
+            return this;
+        }
+
         public ForPdaRequest.Builder formHeaders(Map<String, String> formHeaders) {
             return formHeaders(formHeaders, false);
         }

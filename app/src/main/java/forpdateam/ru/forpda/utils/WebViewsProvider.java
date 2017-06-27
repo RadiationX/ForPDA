@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.utils;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.ViewGroup;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -32,18 +33,24 @@ public class WebViewsProvider {
     public ExtendedWebView pull(Context context) {
         ExtendedWebView webView;
         if (availableWebViews.size() > 0) {
-            webView = availableWebViews.element();
+            webView = availableWebViews.poll();
         } else {
             webView = new ExtendedWebView(context);
             webView.setTag("WebView_tag ".concat(Long.toString(System.currentTimeMillis())));
         }
+        Log.d("SUKA", "PULL WEBVIEW "+webView);
         return webView;
     }
 
     public void push(ExtendedWebView webView) {
+        ViewGroup parent = ((ViewGroup) webView.getParent());
+        if (parent != null) {
+            parent.removeView(webView);
+        }
         if (availableWebViews.size() < 10) {
             availableWebViews.add(webView);
         }
+        Log.d("SUKA", "PUSH WEBVIEW "+webView);
     }
 
     public void destroy() {

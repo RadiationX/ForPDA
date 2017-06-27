@@ -42,4 +42,8 @@ public class RequestFile {
     public String getRequestName() {
         return requestName;
     }
+
+    public void setFileStream(InputStream fileStream) {
+        this.fileStream = fileStream;
+    }
 }

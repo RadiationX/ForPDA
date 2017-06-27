@@ -348,7 +348,7 @@ li {
                 top: 0/16rem;
                 height: 48/16rem;
                 width: 48/16rem;
-                background-image: url("../../res/format-quote.svg");
+                background-image: url("../../res/extension-quote.svg");
                 background-position: center;
                 background-size: 24/16rem;
                 background-repeat: no-repeat;
@@ -635,7 +635,7 @@ li {
             >.block-title {
                 color: @exColor!important;
                 &:before {
-                    content: "Админ";
+                    content: "Предупреждение";
                 }
             }
         }
@@ -750,13 +750,16 @@ a.snapback {
     max-width: 100%;
     box-sizing: border-box;
     vertical-align: text-bottom;
-    text-decoration: none;
+    
     //margin-bottom: 8/16rem;
     //margin: 0 4/16rem;
     //margin-bottom: 4/16rem;
     border: 1px solid fade(@linkColor, 10%);
     background: fade(@linkColor, 5%);
     border-radius: 2/16rem;
+    text-align: left!important;
+    font-size: 1rem!important;
+    text-decoration: none!important;
     .icon {
         position: absolute;
         top: 4/16rem;

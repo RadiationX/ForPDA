@@ -102,7 +102,7 @@ function improveCodeBlock() {
     }
 
     function onClickToggleButton(e) {
-        //e.stopPropagation();
+        e.stopPropagation();
         var button = e.target;
         var block;
         for (var i = 0; i < codeBlockAll.length; i++) {
@@ -120,7 +120,7 @@ function improveCodeBlock() {
     }
 
     function SelectText(e) {
-        //e.stopPropagation();
+        e.stopPropagation();
         var button = e.target;
         var block;
         for (var i = 0; i < codeBlockAll.length; i++) {
