@@ -2,8 +2,20 @@ package forpdateam.ru.forpda.api.theme.editpost;
 
 import android.util.Log;
 
+import com.nostra13.universalimageloader.utils.IoUtils;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.URLDecoder;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +40,8 @@ public class EditPost {
     private final static Pattern loadedAttachments = Pattern.compile("add_current_item\\([^'\"]*?['\"](\\d+)['\"],[^'\"]*?['\"]([^'\"]*\\.(\\w*))['\"],[^'\"]*?['\"]([^'\"]*?)['\"],[^'\"]*?['\"][^'\"]*\\/(\\w*)\\.[^\"']*?['\"]");
     private final static Pattern statusInfo = Pattern.compile("can_upload = parseInt\\([\"'](\\d+)'\\)[\\s\\S]*?status_msg_files = .([\\s\\S]*?).;[\\s\\S]*?status_msg = .([\\s\\S]*?).;[\\s\\S]*?status_is_error = ([\\s\\S]*?);");
 
+    private final static Pattern attachmentsPattern = Pattern.compile("(\\d+)\u0002([^\u0002]*?)\u0002([^\u0002]*?)\u0002(\\/\\/[^\u0002]*?)\u0002(\\d+)\u0002([0-9a-fA-F]+)(?:(?:\u0002(\\/\\/[^\u0002]*?)\u0002(\\d+)\u0002(\\d+))?(?:\u0003\u0004(\\d+)\u0003\u0004([^\u0002]*?)\u0003\u0004([^\u0002]*?)\u0003)?)?");
+
 
     public EditPostForm loadForm(int postId) throws Exception {
         Log.d("FORPDA_LOG", "START LOAD FORM");
@@ -48,11 +62,20 @@ public class EditPost {
             form.setEditReason(matcher.group(2));
         }
 
-        response = Api.getWebClient().get("http://4pda.ru/forum/index.php?&act=attach&code=attach_upload_show&attach_rel_id=".concat(Integer.toString(postId)));
+        /*response = Api.getWebClient().get("http://4pda.ru/forum/index.php?&act=attach&code=attach_upload_show&attach_rel_id=".concat(Integer.toString(postId)));
         matcher = loadedAttachments.matcher(response);
         while (matcher.find())
             form.addAttachment(fillAttachment(new AttachmentItem(), matcher));
         Log.d("FORPDA_LOG", "ATTACHES " + form.getAttachments().size());
+*/
+        response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=attach&index=1&relId=" + postId + "&maxSize=134217728&allowExt=&code=init&unlinked=");
+        matcher = attachmentsPattern.matcher(response);
+        Log.d("SUKA", "NEW ATTACHES " + response);
+        while (matcher.find()) {
+            Log.d("SUKA", "NEW ATTACH " + matcher.group(2));
+            form.addAttachment(fillAttachmentV2(new AttachmentItem(), matcher));
+        }
+
         return form;
     }
 
@@ -82,6 +105,80 @@ public class EditPost {
         return items;
     }
 
+    public List<AttachmentItem> uploadFilesV2(int postId, List<RequestFile> files, List<AttachmentItem> pending) throws Exception {
+
+        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+                .url("http://4pda.ru/forum/index.php?act=attach")
+                .xhrHeader()
+                .formHeader("index", "1")
+                .formHeader("relId", Integer.toString(postId))
+                .formHeader("maxSize", "134217728")
+                .formHeader("allowExt", "")
+                .formHeader("forum-attach-files", "")
+                .formHeader("code", "check");
+        String response;
+        Matcher matcher = null;
+        for (int i = 0; i < files.size(); i++) {
+            RequestFile file = files.get(i);
+            AttachmentItem item = pending.get(i);
+
+            file.setRequestName("FILE_UPLOAD[]");
+            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+            byte[] targetArray = new byte[file.getFileStream().available()];
+            file.getFileStream().read(targetArray);
+            InputStream is1 = new ByteArrayInputStream(targetArray);
+            file.getFileStream().close();
+            file.setFileStream(is1);
+            messageDigest.update(targetArray);
+            byte[] hash = messageDigest.digest();
+            String md5 = ByteArraytoHexString(hash);
+            Log.d("SUKA", "REQUEST FILE " + file.getFileName() + " : " + file.getFileStream().available() + " : " + md5);
+            builder.formHeader("md5", md5)
+                    .formHeader("size", "" + file.getFileStream().available())
+                    .formHeader("name", file.getFileName());
+
+            response = Api.getWebClient().request(builder.build());
+            Log.d("SUKA", "RESPONSE " + response);
+            if (response.equals("0")) {
+                ForPdaRequest.Builder uploadRequest = new ForPdaRequest.Builder()
+                        .url("http://4pda.ru/forum/index.php?act=attach")
+                        .xhrHeader()
+                        .formHeader("index", "1")
+                        .formHeader("relId", Integer.toString(postId))
+                        .formHeader("maxSize", "134217728")
+                        .formHeader("allowExt", "")
+                        .formHeader("forum-attach-files", "")
+                        .formHeader("code", "upload")
+                        .file(file);
+                response = Api.getWebClient().request(uploadRequest.build());
+                Log.d("SUKA", "RESPONSE2 " + response);
+            }
+            if (matcher == null) {
+                matcher = attachmentsPattern.matcher(response);
+            } else {
+                matcher = matcher.reset(response);
+            }
+            if (matcher.find()) {
+                fillAttachmentV2(item, matcher);
+            }
+            item.setStatus(AttachmentItem.STATUS_UPLOADED);
+        }
+        return pending;
+    }
+
+    private static String ByteArraytoHexString(byte[] bytes) {
+        StringBuilder hexString = new StringBuilder();
+        for (byte aByte : bytes) {
+            String hex = Integer.toHexString(aByte & 0xFF);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
+    }
+
+
     public List<AttachmentItem> deleteFiles(int postId, List<AttachmentItem> items) throws Exception {
         String response;
         Matcher matcher;
@@ -94,6 +191,28 @@ public class EditPost {
         return items;
     }
 
+    public List<AttachmentItem> deleteFilesV2(int postId, List<AttachmentItem> items) throws Exception {
+        String response;
+        for (AttachmentItem item : items) {
+            ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+                    .url("http://4pda.ru/forum/index.php?act=attach")
+                    .xhrHeader()
+                    .formHeader("index", "1")
+                    .formHeader("relId", Integer.toString(postId))
+                    .formHeader("maxSize", "134217728")
+                    .formHeader("allowExt", "")
+                    .formHeader("code", "remove")
+                    .formHeader("id", Integer.toString(item.getId()));
+            response = Api.getWebClient().request(builder.build());
+            //todo проверка на ошибки, я хз че еще может быть кроме 0
+            if (response.equals("0")) {
+                item.setStatus(AttachmentItem.STATUS_REMOVED);
+                item.setError(false);
+            }
+        }
+        return items;
+    }
+
     private AttachmentItem fillAttachment(AttachmentItem item, Matcher matcher) {
         item.setId(Integer.parseInt(matcher.group(1)));
         try {
@@ -101,13 +220,43 @@ public class EditPost {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        item.setFormat(matcher.group(3));
+        item.setExtension(matcher.group(3));
         item.setWeight(matcher.group(4));
         if (item.getTypeFile() == AttachmentItem.TYPE_IMAGE) {
-            item.setImageUrl("http://cs5-2.4pda.to/".concat(Integer.toString(item.getId())).concat(".").concat(item.getFormat()));
+            item.setImageUrl("http://cs5-2.4pda.to/".concat(Integer.toString(item.getId())).concat(".").concat(item.getExtension()));
         }
         item.setLoadState(AttachmentItem.STATE_LOADED);
         return item;
+    }
+
+    private AttachmentItem fillAttachmentV2(AttachmentItem item, Matcher matcher) {
+        item.setId(Integer.parseInt(matcher.group(1)));
+        try {
+            item.setName(URLDecoder.decode(matcher.group(2), "utf-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        item.setExtension(matcher.group(3));
+        String temp = readableFileSize(Long.parseLong(matcher.group(5)));
+        item.setWeight(temp);
+        item.setMd5(matcher.group(6));
+        temp = matcher.group(7);
+
+        if (temp != null) {
+            item.setTypeFile(AttachmentItem.TYPE_IMAGE);
+            item.setImageUrl("http:".concat(temp));
+            item.setWidth(Integer.parseInt(matcher.group(8)));
+            item.setHeight(Integer.parseInt(matcher.group(9)));
+        }
+        item.setLoadState(AttachmentItem.STATE_LOADED);
+        return item;
+    }
+
+    private static String readableFileSize(long size) {
+        if (size <= 0) return "0";
+        final String[] units = new String[]{"Б", "КБ", "МБ", "ГБ", "ТБ"};
+        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+        return new DecimalFormat("#,##0.##").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
 
     private AttachmentItem fillAttachmentStatus(AttachmentItem item, Matcher matcher) {

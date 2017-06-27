@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
-import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -187,7 +186,7 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
             }
             attachmentsPopup.onDeleteFiles(selectedFiles);
         });
-        attachmentsPopup.setInsertAttachmentListener(item -> "[url=http://savepic.ru/" + item.getId() + "." + item.getFormat() + "]" +
+        attachmentsPopup.setInsertAttachmentListener(item -> "[url=http://savepic.ru/" + item.getId() + "." + item.getExtension() + "]" +
                 "Файл: " + item.getName() + ", Размер: " + item.getWeight() + ", ID: " + item.getId() + "[/url]");
         messagePanel.addSendOnClickListener(v -> {
             if (currentChat.getThemeId() == NOT_CREATED) {
@@ -397,8 +396,8 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
     private Subscriber<List<AttachmentItem>> attachmentSubscriber = new Subscriber<>(this);
 
     public void uploadFiles(List<RequestFile> files) {
-        attachmentsPopup.preUploadFiles(files);
-        attachmentSubscriber.subscribe(RxApi.Qms().uploadFiles(files), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
+        List<AttachmentItem> pending = attachmentsPopup.preUploadFiles(files);
+        attachmentSubscriber.subscribe(RxApi.Qms().uploadFiles(files, pending), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
     }
 
     @Override
@@ -437,7 +436,6 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
         webView.removeJavascriptInterface(JS_INTERFACE);
         webView.removeJavascriptInterface(JS_BASE_INTERFACE);
         webView.destroy();
-        ((ViewGroup) webView.getParent()).removeAllViews();
         getMainActivity().getWebViewsProvider().push(webView);
     }
 

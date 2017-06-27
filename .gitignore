@@ -99,7 +99,7 @@ hs_err_pid*
 
 *.iml
 
-## Directory-based project format:
+## Directory-based project extension:
 .idea/
 # if you remove the above rule, at least ignore the following:
 
@@ -123,7 +123,7 @@ hs_err_pid*
 # Mongo Explorer plugin:
 # .idea/mongoSettings.xml
 
-## File-based project format:
+## File-based project extension:
 *.ipr
 *.iws
 

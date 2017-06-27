@@ -255,7 +255,7 @@ public class Qms {
 
         ForPdaRequest.Builder threadMessagesBuilder = new ForPdaRequest.Builder()
                 .url("http://4pda.ru/forum/index.php?act=qms-xhr&")
-                .addHeader("X-Requested-With", "XMLHttpRequest")
+                .xhrHeader()
                 .formHeader("action", "get-thread-messages")
                 .formHeader("mid", Integer.toString(idTo))
                 .formHeader("t", Integer.toString(themeId))
@@ -294,10 +294,9 @@ public class Qms {
         return Api.getWebClient().request(builder.build());
     }
 
-    public List<AttachmentItem> uploadFiles(List<RequestFile> files) throws Exception {
+    public List<AttachmentItem> uploadFiles(List<RequestFile> files, List<AttachmentItem> pending) throws Exception {
         String url = "http://savepic.ru/index.php";
-        List<AttachmentItem> items = new ArrayList<>();
-        AttachmentItem item;
+
         String response;
         Matcher matcher = null;
 
@@ -327,8 +326,10 @@ public class Qms {
         //zoom - надпись увеличить
         headers.put("opt3[]", "zoom");
         headers.put("email", "");
-        for (RequestFile file : files) {
-            item = new AttachmentItem();
+        for (int i = 0; i < files.size(); i++) {
+            RequestFile file = files.get(i);
+            AttachmentItem item = pending.get(i);
+
             file.setRequestName("file");
             ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
                     .url(url)
@@ -345,16 +346,15 @@ public class Qms {
                 item.setName(file.getFileName());
                 item.setImageUrl("http://savepic.ru/".concat(matcher.group(1)));
                 item.setId(Integer.parseInt(matcher.group(2)));
-                item.setFormat(matcher.group(3));
+                item.setExtension(matcher.group(3));
                 item.setWeight(matcher.group(4));
                 item.setTypeFile(AttachmentItem.TYPE_IMAGE);
                 item.setLoadState(AttachmentItem.STATE_LOADED);
-                Log.e("FORPDA_LOG", item.getName() + " : " + item.getId() + " : " + item.getFormat() + " : " + item.getWeight() + " : " + item.getImageUrl());
+                Log.e("FORPDA_LOG", item.getName() + " : " + item.getId() + " : " + item.getExtension() + " : " + item.getWeight() + " : " + item.getImageUrl());
             }
-            items.add(item);
         }
 
-        return items;
+        return pending;
     }
 
     private final static Pattern loadedAttachment = Pattern.compile("<p class=\"[^\"]*?img[^\"]*?\"[^>]*?><a[^>]*?><img[^>]*?src=\"([^\"]*?(\\d+)m?\\.([^\"]*?))\"[^>]*?>[\\s\\S]*?<p class=\"[^\"]*?b-sign[^\"]*?\"[^>]*?>[\\s\\S]*?<strong>([^,<]*?),[^<]*?<\\/strong>\\.<\\/p>");

@@ -69,8 +69,8 @@ public class QmsRx {
         return Observable.fromCallable(() -> Api.Qms().getMessagesFromWs(themeId, messageId, afterMessageId));
     }
 
-    public Observable<List<AttachmentItem>> uploadFiles(List<RequestFile> files) {
-        return Observable.fromCallable(() -> Api.Qms().uploadFiles(files));
+    public Observable<List<AttachmentItem>> uploadFiles(List<RequestFile> files, List<AttachmentItem> pending) {
+        return Observable.fromCallable(() -> Api.Qms().uploadFiles(files, pending));
     }
 
     public static QmsChatModel transform(QmsChatModel chatModel, boolean withHtml) throws Exception {

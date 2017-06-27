@@ -140,7 +140,7 @@ public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.Vi
             case AttachmentItem.STATE_LOADED:
                 holder.description.setVisibility(View.VISIBLE);
                 holder.name.setText(item.getName());
-                holder.attributes.setText(item.getFormat().concat(", ").concat(item.getWeight()));
+                holder.attributes.setText(item.getExtension().concat(", ").concat(item.getWeight()));
                 holder.progressBar.setVisibility(View.GONE);
                 holder.reload.setVisibility(View.GONE);
                 holder.imageView.setVisibility(View.VISIBLE);

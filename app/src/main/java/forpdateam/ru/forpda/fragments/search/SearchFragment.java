@@ -609,10 +609,6 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
         webView.removeJavascriptInterface(JS_POSTS_FUNCTIONS);
         webView.removeJavascriptInterface(JS_BASE_INTERFACE);
         webView.destroy();
-        ViewGroup parent = ((ViewGroup) webView.getParent());
-        if (parent != null) {
-            parent.removeView(webView);
-        }
         getMainActivity().getWebViewsProvider().push(webView);
     }
 

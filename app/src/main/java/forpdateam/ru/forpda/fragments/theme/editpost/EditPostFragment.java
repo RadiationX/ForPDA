@@ -251,8 +251,8 @@ public class EditPostFragment extends TabFragment {
     }
 
     public void uploadFiles(List<RequestFile> files) {
-        attachmentsPopup.preUploadFiles(files);
-        attachmentSubscriber.subscribe(RxApi.EditPost().uploadFiles(postForm.getPostId(), files), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
+        List<AttachmentItem> pending = attachmentsPopup.preUploadFiles(files);
+        attachmentSubscriber.subscribe(RxApi.EditPost().uploadFiles(postForm.getPostId(), files, pending), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
     }
 
     public void removeFiles() {

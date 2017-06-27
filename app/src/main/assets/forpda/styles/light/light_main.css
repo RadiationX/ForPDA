@@ -595,7 +595,7 @@ li .post-block.hidden {
   color: #e74c3c !important;
 }
 .post-block.tbl.ex > .block-title:before {
-  content: "Админ";
+  content: "Предупреждение";
 }
 .post-block.tbl.mod {
   background: rgba(41, 128, 185, 0.1);
@@ -697,10 +697,12 @@ a.snapback:after {
   max-width: 100%;
   box-sizing: border-box;
   vertical-align: text-bottom;
-  text-decoration: none;
   border: 1px solid rgba(33, 119, 175, 0.1);
   background: rgba(33, 119, 175, 0.05);
   border-radius: 0.125rem;
+  text-align: left!important;
+  font-size: 1rem!important;
+  text-decoration: none!important;
 }
 .attach_block .icon {
   position: absolute;
