@@ -42,18 +42,18 @@
             android:focusableInTouchMode="true"
             android:visibility="gone">
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:gravity="center_vertical"
                 android:paddingEnd="@dimen/dp16"
                 android:paddingStart="@dimen/dp16"
                 android:text="@string/profile_title_about"
-                android:textColor="@color/text_color"
+                android:textColor="@color/light_text_color"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/profile_about_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -71,14 +71,14 @@
             android:layout_below="@+id/profile_block_about"
             android:visibility="gone">
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:gravity="center_vertical"
                 android:paddingEnd="@dimen/dp16"
                 android:paddingStart="@dimen/dp16"
                 android:text="@string/profile_title_information"
-                android:textColor="@color/text_color"
+                android:textColor="@color/light_text_color"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -101,14 +101,14 @@
             android:layout_below="@+id/profile_block_information"
             android:visibility="gone">
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:gravity="center_vertical"
                 android:paddingEnd="@dimen/dp16"
                 android:paddingStart="@dimen/dp16"
                 android:text="@string/profile_title_devices"
-                android:textColor="@color/text_color"
+                android:textColor="@color/light_text_color"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -129,14 +129,14 @@
             android:layout_below="@+id/profile_block_devices"
             android:visibility="gone">
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:gravity="center_vertical"
                 android:paddingEnd="@dimen/dp16"
                 android:paddingStart="@dimen/dp16"
                 android:text="@string/profile_title_contacts"
-                android:textColor="@color/text_color"
+                android:textColor="@color/light_text_color"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -165,14 +165,14 @@
             android:focusableInTouchMode="true"
             android:visibility="gone">
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:gravity="center_vertical"
                 android:paddingEnd="@dimen/dp16"
                 android:paddingStart="@dimen/dp16"
                 android:text="@string/profile_title_note"
-                android:textColor="@color/text_color"
+                android:textColor="@color/light_text_color"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -192,7 +192,7 @@
                     android:focusableInTouchMode="true"
                     android:gravity="top"
                     android:hint="@string/profile_hint_note"
-                    android:labelFor="@id/profile_note_text"
+                    android:labelFor="@+id/profile_note_text"
                     android:minLines="4" />
 
                 <android.support.v7.widget.AppCompatButton

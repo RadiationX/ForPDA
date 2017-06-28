@@ -19,7 +19,7 @@
             android:id="@+id/qms_theme_nick_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Ник пользователя"
+            android:hint="@string/qms_new_theme_hint_nick"
             android:inputType="textPersonName"
             android:maxLines="1"
             android:scrollHorizontally="true" />
@@ -34,7 +34,7 @@
             android:id="@+id/qms_theme_title_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Тема"
+            android:hint="@string/qms_new_theme_hint_title"
             android:inputType="text"
             android:maxLines="1"
             android:scrollHorizontally="true" />

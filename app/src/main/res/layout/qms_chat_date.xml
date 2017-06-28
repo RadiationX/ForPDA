@@ -5,14 +5,14 @@
     android:orientation="vertical"
     android:gravity="center">
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/qmsdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:textStyle="italic"
-        android:textColor="@color/text_second_color"
+        android:textColor="@color/light_text_second_color"
         android:text="sadhkf"/>
 
 </RelativeLayout>

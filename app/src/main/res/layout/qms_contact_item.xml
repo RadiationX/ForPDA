@@ -13,15 +13,18 @@
         android:layout_marginTop="8dp"
         android:scaleType="centerCrop" />
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/qms_contact_nick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginStart="72dp"
-        android:textColor="@color/text_color" />
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/qms_contact_count"
+        android:textColor="@color/light_text_color"
+        android:text="@string/test_nick"/>
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/qms_contact_count"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
@@ -32,9 +35,9 @@
         android:background="@drawable/qms_count_background"
         android:paddingEnd="6dp"
         android:paddingStart="6dp"
-        android:text="1"
+        android:text="@string/test_count_number"
         android:gravity="center"
-        android:textColor="@color/white"
+        android:textColor="@color/light_contrast_text_color"
         android:textStyle="bold"/>
 
 

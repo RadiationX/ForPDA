@@ -66,7 +66,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
             holder.icon.setColorFilter(App.getContext().getResources().getColor(R.color.black));
         } else {
             holder.itemView.setBackgroundColor(Color.TRANSPARENT);
-            holder.text.setTextColor(App.getContext().getResources().getColor(R.color.text_color));
+            holder.text.setTextColor(App.getContext().getResources().getColor(R.color.light_text_color));
             holder.icon.clearColorFilter();
         }
 
@@ -81,9 +81,9 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
         public ViewHolder(View v) {
             super(v);
-            text = (TextView) v.findViewById(R.id.text);
-            count = (TextView) v.findViewById(R.id.count);
-            icon = (ImageView) v.findViewById(R.id.icon);
+            text = (TextView) v.findViewById(R.id.drawer_item_title);
+            count = (TextView) v.findViewById(R.id.drawer_item_count);
+            icon = (ImageView) v.findViewById(R.id.drawer_item_icon);
 
             v.setOnClickListener(this);
         }

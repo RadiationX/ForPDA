@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/item"
+    android:id="@+id/drawer_item_root"
     android:layout_width="match_parent"
     android:layout_height="48dp">
 
-    <TextView
-        android:id="@+id/text"
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/drawer_item_title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="72dp"
-        android:layout_toStartOf="@+id/count"
+        android:layout_toStartOf="@+id/drawer_item_count"
         android:gravity="center_vertical"
         android:minHeight="48dp"
         android:paddingBottom="8dp"
         android:paddingEnd="8dp"
         android:paddingStart="0dp"
         android:paddingTop="8dp"
-        android:text="ASLKDJKLASDJKLASDk"
-        android:textColor="@color/text_color"
+        android:text="@string/test_drawer_item_name"
+        android:textColor="@color/light_text_color"
         android:textSize="14sp"
         android:textStyle="bold" />
 
-    <ImageView
-        android:id="@+id/icon"
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/drawer_item_icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_alignParentTop="true"
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp" />
 
-    <TextView
-        android:id="@+id/count"
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/drawer_item_count"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_alignParentEnd="true"
@@ -42,8 +42,8 @@
         android:minWidth="24dp"
         android:paddingEnd="6dp"
         android:paddingStart="6dp"
-        android:text="-1"
-        android:textColor="@color/white"
+        android:text="@string/test_count_number"
+        android:textColor="@color/light_contrast_text_color"
         android:textStyle="bold" />
 
 </RelativeLayout>

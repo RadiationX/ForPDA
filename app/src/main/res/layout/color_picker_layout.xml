@@ -15,11 +15,11 @@
         android:clipToPadding="true"
         app:layout_collapseMode="pin"
         app:tabGravity="center"
-        app:tabIndicatorColor="@color/colorPrimary"
+        app:tabIndicatorColor="@color/colorAccent"
         app:tabPaddingEnd="16dp"
         app:tabPaddingStart="16dp"
-        app:tabSelectedTextColor="@color/colorPrimary"
-        app:tabTextColor="#757575" />
+        app:tabSelectedTextColor="@color/colorAccent"
+        app:tabTextColor="@color/light_text_second_color" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/color_picker_pager"

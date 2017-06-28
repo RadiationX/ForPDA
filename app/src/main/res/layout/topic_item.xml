@@ -10,10 +10,7 @@
     android:paddingStart="@dimen/dp16"
     android:paddingTop="@dimen/dp12">
 
-
-
-
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/topic_item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,7 +18,7 @@
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/icons_block"
         android:textSize="16sp"
-        android:text="SUKAasd "/>
+        android:text="@string/test_topic_title"/>
 
     <LinearLayout
         android:id="@+id/icons_block"
@@ -31,21 +28,21 @@
         android:paddingTop="2dp"
         android:orientation="horizontal">
 
-        <ImageView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/topic_item_poll_icon"
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_poll_gray_24dp" />
 
-        <ImageView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/topic_item_pin_icon"
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_pin_gray_24dp" />
 
-        <ImageView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/topic_item_lock_icon"
             android:layout_width="16dp"
             android:layout_height="16dp"
@@ -63,29 +60,30 @@
             android:visibility="gone"/>
     </LinearLayout>
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/topic_item_desc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/topic_item_title"
-        android:textColor="@color/text_second_color"
+        android:textColor="@color/light_text_second_color"
         android:textSize="14sp"
-        android:text="asdsadasdasd"/>
+        android:text="@string/test_topic_description"/>
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/topic_item_last_nick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/topic_item_desc"
-        android:textColor="@color/text_second_color"
-        android:text="asdfsdfdsf"/>
+        android:textColor="@color/light_text_second_color"
+        android:text="@string/test_topic_last_nick"/>
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/topic_item_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/topic_item_desc"
-        android:textColor="@color/text_second_color" />
+        android:textColor="@color/light_text_second_color"
+        android:text="@string/test_topic_date"/>
 
 </RelativeLayout>

@@ -5,14 +5,14 @@
     android:orientation="vertical"
     android:padding="@dimen/dp24">
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/value_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:text="-1" />
 
-    <SeekBar
+    <android.support.v7.widget.AppCompatSeekBar
         android:id="@+id/value_seekbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

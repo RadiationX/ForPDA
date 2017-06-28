@@ -28,7 +28,7 @@
                 app:statusBarScrim="@android:color/transparent"
                 app:titleEnabled="false">
 
-                <ImageView
+                <android.support.v7.widget.AppCompatImageView
                     android:id="@+id/toolbar_image_background"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -74,21 +74,21 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
 
-                            <TextView
+                            <android.support.v7.widget.AppCompatTextView
                                 android:id="@+id/toolbar_title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:ellipsize="end"
                                 android:maxLines="1"
-                                android:textColor="#212121"
+                                android:textColor="@color/light_text_color"
                                 android:textSize="18sp"
                                 android:textStyle="bold" />
 
-                            <TextView
+                            <android.support.v7.widget.AppCompatTextView
                                 android:id="@+id/toolbar_subtitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="#aa000000"
+                                android:textColor="@color/light_text_second_color"
                                 android:textSize="12sp"
                                 android:visibility="gone" />
                         </LinearLayout>
@@ -131,19 +131,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="@dimen/dp8"
+                android:paddingEnd="@dimen/dp8"
                 android:paddingTop="@dimen/dp4"
                 android:paddingBottom="@dimen/dp4"
                 android:visibility="gone">
-                <ImageView
+                <android.support.v7.widget.AppCompatImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:padding="8dp"
                     android:contentDescription="@string/icon_no_network"
                     app:srcCompat="@drawable/ic_cloud_off_black_24dp" />
-                <TextView
+                <android.support.v7.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="Нет соединения"
+                    android:text="@string/no_network"
                     android:textStyle="bold"
                     android:layout_marginStart="8dp"
                     android:gravity="center_vertical"/>

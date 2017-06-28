@@ -4,24 +4,25 @@
     android:layout_height="wrap_content"
     android:foreground="?attr/selectableItemBackgroundBorderless">
 
-    <TextView
-        android:id="@+id/node_value"
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/forum_item_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/dp16"
         android:layout_marginEnd="0dp"
         android:layout_marginStart="@dimen/dp16"
         android:layout_marginTop="@dimen/dp16"
-        android:layout_toStartOf="@+id/icon"
+        android:layout_toStartOf="@+id/forum_item_icon"
+        android:text="@string/test_forum_title"
         android:textAllCaps="true"
         android:textSize="14sp"
         android:textStyle="bold" />
 
-    <ImageView
-        android:id="@+id/icon"
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/forum_item_icon"
         android:layout_width="@dimen/dp24"
         android:layout_height="24dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_margin="@dimen/dp12"/>
+        android:layout_margin="@dimen/dp12" />
 </RelativeLayout>
