@@ -84,6 +84,7 @@ public class App extends android.app.Application {
     private SimpleObservable preferenceChangeObservables = new SimpleObservable();
     private OnSharedPreferenceChangeListener preferenceChangeListener = (sharedPreferences, key) -> {
         Log.e("SUKA", "PREFERENCE CHANGED2 " + key);
+        if (key == null) return;
         preferenceChangeObservables.notifyObservers(key);
     };
 

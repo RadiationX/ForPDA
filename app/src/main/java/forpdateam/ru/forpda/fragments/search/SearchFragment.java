@@ -96,6 +96,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
     private AlertDialogMenu<SearchFragment, IBaseForumPost> createdTopicsDialogMenu, tempTopicsDialogMenu;
 
     private Observer searchPreferenceObserver = (observable, o) -> {
+        if (o == null) return;
         String key = (String) o;
         switch (key) {
             case Preferences.Theme.SHOW_AVATARS: {

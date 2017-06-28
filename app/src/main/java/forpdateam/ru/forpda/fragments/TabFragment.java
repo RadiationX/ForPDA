@@ -70,14 +70,17 @@ public class TabFragment extends RxFragment {
     private AudioManager audioService;
     private boolean showNotifyDot = App.getInstance().getPreferences().getBoolean(Preferences.Main.SHOW_NOTIFY_DOT, true);
 
-    private Observer countsObserver = (observable, o) -> updateNotifyDot();
-    private Observer networkObserver = (observable, o) -> {
+    protected Observer countsObserver = (observable, o) -> updateNotifyDot();
+    protected Observer networkObserver = (observable, o) -> {
+        if (o == null)
+            o = true;
         if ((!configuration.isUseCache() || noNetwork.getVisibility() == View.VISIBLE) && (boolean) o) {
             loadData();
             noNetwork.setVisibility(View.GONE);
         }
     };
-    private Observer tabPreferenceObserver = (observable, o) -> {
+    protected Observer tabPreferenceObserver = (observable, o) -> {
+        if (o == null) return;
         String key = (String) o;
         switch (key) {
             case Preferences.Main.SHOW_NOTIFY_DOT: {
@@ -138,7 +141,7 @@ public class TabFragment extends RxFragment {
         getMainActivity().updateTabList();
     }
 
-    public Menu getMenu(){
+    public Menu getMenu() {
         return toolbar.getMenu();
     }
 
