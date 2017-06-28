@@ -11,7 +11,6 @@ import android.view.ContextMenu;
 import android.view.ViewParent;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
-import android.webkit.WebView;
 
 /**
  * Created by radiationx on 01.11.16.

@@ -1,32 +1,22 @@
 package forpdateam.ru.forpda.views.messagepanel.colorpicker;
 
 import android.content.Context;
-import android.support.annotation.ColorInt;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-import com.nostra13.universalimageloader.utils.L;
 import com.thebluealliance.spectrum.SpectrumPalette;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.views.messagepanel.advanced.AdvancedPopup;
-import forpdateam.ru.forpda.views.messagepanel.advanced.BasePanelItem;
-import forpdateam.ru.forpda.views.messagepanel.advanced.CodesPanelItem;
-import forpdateam.ru.forpda.views.messagepanel.advanced.SmilesPanelItem;
 
 /**
  * Created by radiationx on 27.05.17.

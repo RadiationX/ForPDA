@@ -48,10 +48,10 @@ import forpdateam.ru.forpda.api.IBaseForumPost;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
-import forpdateam.ru.forpda.fragments.jsinterfaces.IBase;
-import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
+import forpdateam.ru.forpda.fragments.jsinterfaces.IBase;
+import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.fragments.theme.ThemeDialogsHelper;
 import forpdateam.ru.forpda.fragments.theme.ThemeHelper;
 import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
@@ -62,10 +62,8 @@ import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
-import forpdateam.ru.forpda.views.messagepanel.attachments.CustomBottomSheetDialog;
 import forpdateam.ru.forpda.views.pagination.PaginationHelper;
 import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
-import io.reactivex.functions.Consumer;
 
 /**
  * Created by radiationx on 29.01.17.

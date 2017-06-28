@@ -31,16 +31,12 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Observable;
 import java.util.Observer;
 
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.data.Repository;
 import forpdateam.ru.forpda.utils.SimpleObservable;
 import io.realm.Realm;
@@ -50,10 +46,7 @@ import okhttp3.Cookie;
 import static org.acra.ReportField.ANDROID_VERSION;
 import static org.acra.ReportField.APP_VERSION_CODE;
 import static org.acra.ReportField.APP_VERSION_NAME;
-import static org.acra.ReportField.CRASH_CONFIGURATION;
 import static org.acra.ReportField.CUSTOM_DATA;
-import static org.acra.ReportField.DISPLAY;
-import static org.acra.ReportField.ENVIRONMENT;
 import static org.acra.ReportField.LOGCAT;
 import static org.acra.ReportField.PHONE_MODEL;
 import static org.acra.ReportField.STACK_TRACE;
@@ -64,7 +57,7 @@ import static org.acra.ReportField.STACK_TRACE;
 
 @ReportsCrashes(
         mailTo = "rxdevlab@gmail.com",
-        customReportContent = {APP_VERSION_CODE, APP_VERSION_NAME, ANDROID_VERSION, PHONE_MODEL, CUSTOM_DATA, STACK_TRACE, LOGCAT, DISPLAY, ENVIRONMENT, CRASH_CONFIGURATION},
+        customReportContent = {APP_VERSION_CODE, APP_VERSION_NAME, ANDROID_VERSION, PHONE_MODEL, CUSTOM_DATA, STACK_TRACE, LOGCAT},
         mode = ReportingInteractionMode.NOTIFICATION,
         resNotifTickerText = R.string.crash_notif_ticker_text,
         resNotifTitle = R.string.crash_notif_title,
