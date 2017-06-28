@@ -55,7 +55,6 @@ public class TabAdapter extends RecyclerView.Adapter<TabAdapter.ViewHolder> {
             holder.itemView.setBackgroundColor(Color.TRANSPARENT);
 
         holder.text.setText(fragment.getTabTitle());
-        holder.close.setColorFilter(App.getContext().getResources().getColor(R.color.black));
     }
 
 

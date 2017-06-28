@@ -36,7 +36,7 @@ public class ColorPicker {
         ScrollView scrollView = new ScrollView(context);
         ScrollView scrollView1 = new ScrollView(context);
         SpectrumPalette materialColors = new SpectrumPalette(context);
-        materialColors.setColors(context.getResources().getIntArray(R.array.demo_colors));
+        materialColors.setColors(context.getResources().getIntArray(R.array.md_colors));
         SpectrumPalette forumColors = new SpectrumPalette(context);
         forumColors.setColors(context.getResources().getIntArray(R.array.forum_colors));
         scrollView.addView(materialColors);

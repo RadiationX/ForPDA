@@ -2,13 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#f2f2f2"
+    android:background="@color/light_background_base"
     android:orientation="vertical">
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#ddd" />
+        android:background="@color/light_divider" />
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/topic_item_title"
@@ -20,10 +20,11 @@
         android:paddingTop="@dimen/dp16"
         android:textAllCaps="true"
         android:textColor="@color/light_text_second_color"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        android:text="@string/test_topic_section_title"/>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#ddd" />
+        android:background="@color/light_divider" />
 </LinearLayout>

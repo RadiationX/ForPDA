@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <forpdateam.ru.forpda.imageviewer.PullBackLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <forpdateam.ru.forpda.imageviewer.PullBackLayout
         android:id="@+id/image_viewer_pullBack"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -22,23 +21,23 @@
         android:id="@+id/appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#33000000"
+        android:animateLayoutChanges="true"
+        android:background="@color/light_img_viewer_toolbar"
         android:fitsSystemWindows="true"
-        android:theme="@style/ImageViewTheme.AppBarOverlay"
-        android:animateLayoutChanges="true">
+        android:theme="@style/ImageViewTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
+            android:animateLayoutChanges="true"
             android:fitsSystemWindows="true"
+            android:minHeight="?attr/actionBarSize"
             app:contentInsetEndWithActions="0dp"
             app:contentInsetStart="0dp"
             app:contentInsetStartWithNavigation="0dp"
             app:layout_collapseMode="pin"
-            app:popupTheme="@style/ImageViewTheme.PopupOverlay"
-            android:animateLayoutChanges="true"/>
+            app:popupTheme="@style/ImageViewTheme.PopupOverlay" />
     </android.support.design.widget.AppBarLayout>
 </android.support.design.widget.CoordinatorLayout>
 

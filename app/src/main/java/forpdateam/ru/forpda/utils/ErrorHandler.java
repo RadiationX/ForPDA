@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.utils;
 
+import android.graphics.Color;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.TextView;
@@ -55,10 +56,10 @@ public class ErrorHandler {
         Snackbar snackbar = Snackbar.make(fragment.getCoordinatorLayout(), text, listener != null /*&& isNetworkEx*/ ? Snackbar.LENGTH_INDEFINITE : Snackbar.LENGTH_LONG);
         if (listener != null /*&& isNetworkEx*/)
             snackbar.setAction("Повторить", listener);
-        snackbar.setActionTextColor(App.getInstance().getResources().getColor(R.color.white));
+        snackbar.setActionTextColor(Color.WHITE);
         try {
             TextView textView = (TextView)snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
-            textView.setTextColor(App.getInstance().getResources().getColor(R.color.white));
+            textView.setTextColor(Color.WHITE);
         }catch (Exception ignore){}
 
         snackbar.show();
