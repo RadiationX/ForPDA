@@ -4,7 +4,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#eeffffff"
+    android:background="@color/light_msg_panel_tooltip_bg"
 
     android:clickable="true"
     android:orientation="vertical">
@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:gravity="center"
-        android:text="Полезное"
+        android:text="@string/msg_panel_tooltip_useful"
         android:textAllCaps="true"
         android:textSize="16sp"
         android:textStyle="bold" />
@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="16dp"
-        android:text="Принято" />
+        android:text="@string/msg_panel_tooltip_btn_acccept" />
 
 
 </LinearLayout>

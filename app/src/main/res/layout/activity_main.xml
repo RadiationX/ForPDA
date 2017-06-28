@@ -16,7 +16,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        android:background="@color/white">
+        android:background="@color/light_background_white">
 
         <LinearLayout
             android:id="@+id/menu_drawer_content"
@@ -27,7 +27,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#eee"
+                android:background="@color/light_divider"
                 android:layout_marginBottom="@dimen/dp8"/>
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/menu_list"
@@ -43,7 +43,7 @@
         android:layout_gravity="end"
         android:fitsSystemWindows="true"
 
-        android:background="@color/white">
+        android:background="@color/light_background_white">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/tab_list"

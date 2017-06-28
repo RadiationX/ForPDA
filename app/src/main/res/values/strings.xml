@@ -62,4 +62,7 @@
     <string name="auth_chk_hidden">Скрытый</string>
     <string name="auth_btn_login">Войти</string>
     <string name="msg_panel_hint_message">Сообщение</string>
+    <string name="msg_panel_tooltip_useful">Полезное</string>
+    <string name="msg_panel_tooltip_btn_acccept">Принято</string>
+    <string name="test_topic_section_title">Topic section title</string>
 </resources>

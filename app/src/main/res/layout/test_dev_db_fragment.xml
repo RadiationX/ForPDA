@@ -9,7 +9,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:background="@color/colorPrimary">
+        android:background="@color/link_color">
 
         <ProgressBar
             style="?android:attr/progressBarStyle"

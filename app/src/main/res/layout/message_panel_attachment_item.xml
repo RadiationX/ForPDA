@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/dp2"
-        android:background="@color/white"
+        android:background="@color/light_background_white"
         android:clickable="false"
         android:scaleType="centerCrop" />
 
@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/dp2"
-        android:background="#21000000"
+        android:background="@color/light_attachment_overlay_bg"
         android:clickable="false" />
 
     <LinearLayout
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/dp2"
-        android:background="#44000000"
+        android:background="@color/light_attachment_description_bg"
         android:orientation="vertical"
         android:padding="2dp"
         android:visibility="gone">
@@ -63,7 +63,7 @@
         android:layout_centerInParent="true"
         android:clickable="false"
         android:visibility="gone"
-        app:cpv_color="@color/black"
+        app:cpv_color="@color/colorAccent"
         app:cpv_animAutostart="true"
         app:cpv_indeterminate="true"/>
 
