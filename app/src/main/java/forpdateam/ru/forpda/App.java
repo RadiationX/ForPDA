@@ -11,6 +11,7 @@ import android.support.v7.content.res.AppCompatResources;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
+import android.util.TypedValue;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
@@ -213,6 +214,13 @@ public class App extends android.app.Application {
     public int dpToPx(int dp) {
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
         return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
+    public static int convertSpToPixels(float sp) {
+        Log.d("SUKA", "SP: " + sp);
+        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, getContext().getResources().getDisplayMetrics());
+        Log.d("SUKA", "PX: " + px);
+        return px;
     }
 
 

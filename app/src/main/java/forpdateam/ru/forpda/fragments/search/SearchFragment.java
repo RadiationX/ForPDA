@@ -107,6 +107,9 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
                 updateTypeAvatarState(App.getInstance().getPreferences().getBoolean(Preferences.Theme.CIRCLE_AVATARS, true));
                 break;
             }
+            case Preferences.Main.WEBVIEW_FONT_SIZE: {
+                webView.getSettings().setDefaultFontSize(Preferences.Main.getWebViewSize());
+            }
         }
     };
 
@@ -171,6 +174,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
         webView.addJavascriptInterface(this, JS_INTERFACE);
         webView.addJavascriptInterface(this, JS_POSTS_FUNCTIONS);
         webView.addJavascriptInterface(this, JS_BASE_INTERFACE);
+        webView.getSettings().setDefaultFontSize(Preferences.Main.getWebViewSize());
         recyclerView = new RecyclerView(getContext());
 
         recyclerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -178,7 +182,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
 
         refreshLayout.addView(recyclerView);
         viewsReady();
-
+        App.getInstance().addPreferenceChangeObserver(searchPreferenceObserver);
         paginationHelper.inflatePagination(getContext(), inflater, toolbar);
         paginationHelper.setupToolbar(toolbarLayout);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
@@ -315,7 +319,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
                     .setItems(tempTopicsDialogMenu.getTitles(), (dialog, which) -> tempTopicsDialogMenu.onClick(which, SearchFragment.this, item))
                     .show();
         });
-        App.getInstance().addPreferenceChangeObserver(searchPreferenceObserver);
+
         if (App.getInstance().getPreferences().getBoolean("search.tooltip.settings", true)) {
             for (int toolbarChildIndex = 0; toolbarChildIndex < toolbar.getChildCount(); toolbarChildIndex++) {
                 View view = toolbar.getChildAt(toolbarChildIndex);

@@ -139,6 +139,11 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
     }
 
     @Override
+    protected void setFontSize(int size) {
+        webView.getSettings().setDefaultFontSize(size);
+    }
+
+    @Override
     protected void updateHistoryLastHtml() {
         Log.e("console", "updateHistoryLastHtml");
         webView.evalJs("ITheme.callbackUpdateHistoryHtml('<!DOCTYPE html><html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>')");

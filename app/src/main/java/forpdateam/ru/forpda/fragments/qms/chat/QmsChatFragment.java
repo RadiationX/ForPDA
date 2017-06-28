@@ -25,6 +25,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Observer;
 import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,6 +43,7 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IBase;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.rxapi.apiclasses.QmsRx;
+import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -79,6 +81,16 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
     private Handler actionsHandler = new Handler(Looper.getMainLooper());
     private Queue<Runnable> actionsForWebView = new LinkedList<>();
 
+    private Observer chatPreferenceObserver = (observable, o) -> {
+        if (o == null) return;
+        String key = (String) o;
+        switch (key) {
+            case Preferences.Main.WEBVIEW_FONT_SIZE: {
+                webView.getSettings().setDefaultFontSize(Preferences.Main.getWebViewSize());
+            }
+        }
+    };
+
     private WebSocket webSocket;
 
     private WebSocketListener webSocketListener = new WebSocketListener() {
@@ -95,7 +107,7 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
         @Override
         public void onMessage(WebSocket webSocket, String text) {
             Log.d("WS_CHAT", "ON T MESSAGE: " + text);
-            run(()->{
+            run(() -> {
                 Matcher matcher = pattern.matcher(text);
                 if (matcher.find()) {
                     int themeId = Integer.parseInt(matcher.group(3));
@@ -198,6 +210,7 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
 
 
         viewsReady();
+        App.getInstance().addPreferenceChangeObserver(chatPreferenceObserver);
         tryShowAvatar();
 
         if (currentChat.getNick() != null) {
@@ -209,6 +222,7 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
         if (currentChat.getThemeId() == NOT_CREATED) {
             themeCreator = new ChatThemeCreator(this);
         }
+
         return view;
     }
 
@@ -430,6 +444,7 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
     @Override
     public void onDestroy() {
         super.onDestroy();
+        App.getInstance().removePreferenceChangeObserver(chatPreferenceObserver);
         webSocket.close(1000, null);
         messagePanel.onDestroy();
         unregisterForContextMenu(webView);

@@ -92,6 +92,9 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                 updateTypeAvatarState(App.getInstance().getPreferences().getBoolean(Preferences.Theme.CIRCLE_AVATARS, true));
                 break;
             }
+            case Preferences.Main.WEBVIEW_FONT_SIZE: {
+                setFontSize(Preferences.Main.getWebViewSize());
+            }
         }
     };
 
@@ -109,6 +112,8 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     protected abstract void updateShowAvatarState(boolean isShow);
 
     protected abstract void updateTypeAvatarState(boolean isCircle);
+
+    protected abstract void setFontSize(int size);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -154,8 +159,9 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             }
         });
         addShowingView();
+        setFontSize(Preferences.Main.getWebViewSize());
         viewsReady();
-
+        App.getInstance().addPreferenceChangeObserver(themePreferenceObserver);
         refreshLayout.setOnRefreshListener(() -> {
             loadData(REFRESH_ACTION);
         });
@@ -175,7 +181,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             App.getInstance().getPreferences().edit().putBoolean("theme.tooltip.long_click_send", false).apply();
         }
 
-        App.getInstance().addPreferenceChangeObserver(themePreferenceObserver);
+
         return view;
     }
 
