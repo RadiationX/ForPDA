@@ -46,6 +46,7 @@ public class Drawers {
     private TabAdapter tabAdapter;
 
     private Observer loginObserver = (observable, o) -> {
+        if (o == null) o = false;
         menuItems.clear();
         fillMenuItems();
         menuAdapter.notifyDataSetChanged();

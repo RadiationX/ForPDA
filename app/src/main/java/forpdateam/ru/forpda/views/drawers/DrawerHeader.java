@@ -70,15 +70,17 @@ public class DrawerHeader {
     };
 
     private Observer loginObserver = (observable, o) -> {
+        if (o == null) o = false;
         state((boolean) o);
     };
     private Observer networkObserver = (observable, o) -> {
+        if (o == null) o = true;
         if ((boolean) o) {
             state(ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN);
         }
     };
 
-    public void destroy(){
+    public void destroy() {
         activity = null;
         ClientHelper.getInstance().removeLoginObserver(loginObserver);
         Client.getInstance().removeNetworkObserver(networkObserver);

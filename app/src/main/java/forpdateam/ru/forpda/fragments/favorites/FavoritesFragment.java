@@ -88,6 +88,7 @@ public class FavoritesFragment extends TabFragment {
 
     private boolean unreadTop = App.getInstance().getPreferences().getBoolean("lists.topic.unread_top", false);
     private Observer favoritesPreferenceObserver = (observable, o) -> {
+        if (o == null) return;
         String key = (String) o;
         switch (key) {
             case Preferences.Favorites.UNREAD_TOP: {
