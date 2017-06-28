@@ -9,7 +9,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.IWebClient;
 import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;

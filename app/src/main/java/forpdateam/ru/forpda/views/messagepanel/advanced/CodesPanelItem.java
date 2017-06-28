@@ -3,11 +3,7 @@ package forpdateam.ru.forpda.views.messagepanel.advanced;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.support.annotation.ColorInt;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
@@ -17,11 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-
-import com.thebluealliance.spectrum.SpectrumDialog;
-import com.thebluealliance.spectrum.SpectrumPalette;
-import com.thebluealliance.spectrum.internal.SelectedColorChangedEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
