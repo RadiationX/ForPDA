@@ -16,8 +16,14 @@
     <color name="contact_instagram">#833ab4</color>
     <color name="contact_mail_ru">#ffa930</color>
 
-    <color name="text_color">#212121</color>
-    <color name="text_second_color">#aaaaaa</color>
+    <color name="light_text_color">#212121</color>
+    <color name="light_contrast_text_color">@color/dark_text_color</color>
+    <color name="light_text_second_color">#757575</color>
+
+    <color name="dark_text_color">#ffffff</color>
+    <color name="dark_contrast_text_color">@color/light_text_color</color>
+    <color name="dark_text_second_color">#b2b2b2</color>
+
     <color name="text_drawer_item_color">#757575</color>
 
 

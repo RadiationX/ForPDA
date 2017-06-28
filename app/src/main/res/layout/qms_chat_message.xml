@@ -26,14 +26,14 @@
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="@dimen/dp2">
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/chat_item_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="20dp"
             android:text="23:00"
-            android:textColor="@color/text_second_color" />
+            android:textColor="@color/light_text_second_color" />
 
         <View
             android:id="@+id/chat_item_dot"

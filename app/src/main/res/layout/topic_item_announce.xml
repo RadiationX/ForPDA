@@ -10,10 +10,11 @@
     android:paddingStart="@dimen/dp16"
     android:paddingTop="@dimen/dp16">
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/topic_item_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:text="@string/test_topic_title"/>
 </LinearLayout>

@@ -15,28 +15,28 @@
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:layout_margin="@dimen/dp16"/>
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/nick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/drawer_header_avatar"
-                android:layout_alignTop="@id/drawer_header_avatar"
+                android:layout_toEndOf="@+id/drawer_header_avatar"
+                android:layout_alignTop="@+id/drawer_header_avatar"
                 android:textStyle="bold"
                 android:text="nick"/>
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/drawer_header_avatar"
-                android:layout_below="@id/nick"
+                android:layout_toEndOf="@+id/drawer_header_avatar"
+                android:layout_below="@+id/nick"
                 android:textStyle="bold"
                 android:text="group"/>
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/drawer_header_avatar"
-                android:layout_below="@id/group"
+                android:layout_toEndOf="@+id/drawer_header_avatar"
+                android:layout_below="@+id/group"
                 android:textStyle="bold"
                 android:text="date"/>
 

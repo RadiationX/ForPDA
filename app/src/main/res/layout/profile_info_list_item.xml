@@ -4,17 +4,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingBottom="16dp">
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:textColor="@color/text_second_color"/>
-    <TextView
+        android:textColor="@color/light_text_second_color"/>
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/item_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/text_color"
+        android:textColor="@color/light_text_color"
         android:textSize="16sp"
         android:paddingTop="2dp"/>
 </LinearLayout>

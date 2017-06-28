@@ -230,7 +230,7 @@ public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.Vi
         public ViewHolder(View view) {
             super(view);
             view.setOnClickListener(this);
-            imageView = (ImageView) view.findViewById(R.id.icon);
+            imageView = (ImageView) view.findViewById(R.id.drawer_item_icon);
             radioButton = (RadioButton) view.findViewById(R.id.radio_button);
             overlay = view.findViewById(R.id.overlay_and_text);
             progressBar = (CircularProgressView) view.findViewById(R.id.progress_bar);

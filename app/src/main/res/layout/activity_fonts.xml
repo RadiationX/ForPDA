@@ -14,7 +14,7 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         tools:ignore="MissingPrefix">
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp32"
@@ -22,34 +22,34 @@
             android:text="textStyle:"
             android:textSize="32sp" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp16"
             android:text="normal" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp16"
             android:text="bold"
             android:textStyle="bold" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp16"
             android:text="italic"
             android:textStyle="italic" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp16"
             android:text="bold|italic"
             android:textStyle="bold|italic" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp32"
@@ -57,42 +57,42 @@
             android:text="fontFamily:"
             android:textSize="32sp" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp16"
             android:fontFamily="monospace"
             android:text="monospace" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp16"
             android:fontFamily="serif-monospace"
             android:text="serif-monospace" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp16"
             android:fontFamily="casual"
             android:text="casual" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp16"
             android:fontFamily="cursive"
             android:text="cursive" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp16"
             android:fontFamily="sans-serif-condensed"
             android:text="sans-serif-condensed" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp32"
@@ -100,28 +100,28 @@
             android:text="typeface:"
             android:textSize="32sp" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp16"
             android:text="monospace"
             android:typeface="monospace" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp16"
             android:text="sans"
             android:typeface="sans" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp16"
             android:text="serif"
             android:typeface="serif" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp16"

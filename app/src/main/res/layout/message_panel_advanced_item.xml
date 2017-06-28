@@ -17,7 +17,7 @@
         android:scaleType="fitCenter"
         android:clickable="false"/>
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/item_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,5 +29,5 @@
         android:textSize="12sp"
         android:visibility="gone"
         android:clickable="false"
-        android:textColor="#757575"/>
+        android:textColor="@color/light_text_second_color"/>
 </FrameLayout>

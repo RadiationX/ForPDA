@@ -10,20 +10,20 @@
     android:paddingEnd="24dp"
     android:background="?attr/selectableItemBackgroundBorderless">
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/text_second_color"
+        android:textColor="@color/light_text_second_color"
         android:textAllCaps="true"
         android:textSize="14sp" />
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/item_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="4dp"
-        android:textColor="@color/text_color"
+        android:textColor="@color/light_text_color"
         android:textSize="24sp"
         android:textStyle="bold"/>
 </LinearLayout>

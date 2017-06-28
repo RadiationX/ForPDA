@@ -22,7 +22,7 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:gravity="top"
-                android:hint="Сообщение"
+                android:hint="@string/msg_panel_hint_message"
                 android:imeOptions="flagNoFullscreen"
                 android:inputType="textCapSentences|textMultiLine"
                 android:minHeight="@dimen/dp48"

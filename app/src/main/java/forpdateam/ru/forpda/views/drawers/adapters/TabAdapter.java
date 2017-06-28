@@ -65,8 +65,8 @@ public class TabAdapter extends RecyclerView.Adapter<TabAdapter.ViewHolder> {
 
         public ViewHolder(View v) {
             super(v);
-            text = (TextView) v.findViewById(R.id.text);
-            close = (ImageView) v.findViewById(R.id.close);
+            text = (TextView) v.findViewById(R.id.drawer_item_title);
+            close = (ImageView) v.findViewById(R.id.drawer_item_close);
 
             v.setOnClickListener(this);
             close.setOnClickListener(v1 -> {

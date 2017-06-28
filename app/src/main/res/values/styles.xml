@@ -45,7 +45,7 @@
     </style>
 
     <style name="MyTextViewStyle" parent="android:Widget.TextView">
-        <item name="android:textColor">@color/text_color</item>
+        <item name="android:textColor">@color/light_text_color</item>
     </style>
 
     <style name="BaseAppTheme.Settings">
@@ -79,7 +79,7 @@
 
     <style name="QuoteTitleTextStyle">
         <item name="android:textStyle">bold|italic</item>
-        <item name="android:textColor">@color/text_color</item>
+        <item name="android:textColor">@color/light_text_color</item>
     </style>
 
     <style name="SpoilerTitleTextStyle">

@@ -412,9 +412,9 @@ public class ProfileFragment extends TabFragment {
         public void setIcon(int iconRes) {
             if (iconRes == R.drawable.contact_icq) {
                 int px = dpToPx(20);
-                findViewById(R.id.icon).setPadding(px, px, px, px);
+                findViewById(R.id.drawer_item_icon).setPadding(px, px, px, px);
             }
-            ((ImageView) findViewById(R.id.icon)).setImageDrawable(App.getAppDrawable(iconRes));
+            ((ImageView) findViewById(R.id.drawer_item_icon)).setImageDrawable(App.getAppDrawable(iconRes));
         }
     }
 

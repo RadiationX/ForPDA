@@ -7,7 +7,7 @@
     android:paddingStart="@dimen/dp24"
     android:paddingEnd="@dimen/dp24">
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/reputation_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Причина изменения"
+            android:hint="@string/reputation_hint_reason"
             android:inputType="textMultiLine"
             android:scrollHorizontally="true"/>
 

@@ -26,7 +26,7 @@
         android:id="@+id/news_list_progress"
         android:visibility="gone"/>
 
-    <ImageView
+    <android.support.v7.widget.AppCompatImageView
         android:id="@+id/news_list_no_network"
         android:layout_width="64dp"
         android:layout_height="64dp"

@@ -27,7 +27,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:hint="Ник пользователя"
+                    android:hint="@string/search_settings_hint_nick"
                     android:maxLines="1"
                     android:textSize="16sp" />
             </android.support.design.widget.TextInputLayout>
@@ -39,13 +39,13 @@
                 android:layout_marginTop="@dimen/dp8"
                 android:orientation="vertical">
 
-                <TextView
+                <android.support.v7.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingEnd="@dimen/dp16"
                     android:paddingStart="@dimen/dp16"
-                    android:text="Место поиска"
-                    android:textColor="@color/text_second_color" />
+                    android:text="@string/search_settings_resource"
+                    android:textColor="@color/light_text_second_color" />
 
                 <android.support.v7.widget.AppCompatSpinner
                     android:id="@+id/search_resource_spinner"
@@ -62,13 +62,13 @@
                 android:layout_marginTop="@dimen/dp8"
                 android:orientation="vertical">
 
-                <TextView
+                <android.support.v7.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingEnd="@dimen/dp16"
                     android:paddingStart="@dimen/dp16"
-                    android:text="Отображение"
-                    android:textColor="@color/text_second_color" />
+                    android:text="@string/search_settings_result"
+                    android:textColor="@color/light_text_second_color" />
 
                 <android.support.v7.widget.AppCompatSpinner
                     android:id="@+id/search_result_spinner"
@@ -85,13 +85,13 @@
                 android:layout_marginTop="@dimen/dp8"
                 android:orientation="vertical">
 
-                <TextView
+                <android.support.v7.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingEnd="@dimen/dp16"
                     android:paddingStart="@dimen/dp16"
-                    android:text="Сортировка"
-                    android:textColor="@color/text_second_color" />
+                    android:text="@string/search_settings_sorting"
+                    android:textColor="@color/light_text_second_color" />
 
                 <android.support.v7.widget.AppCompatSpinner
                     android:id="@+id/search_sort_spinner"
@@ -108,13 +108,13 @@
                 android:layout_marginTop="@dimen/dp8"
                 android:orientation="vertical">
 
-                <TextView
+                <android.support.v7.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingEnd="@dimen/dp16"
                     android:paddingStart="@dimen/dp16"
-                    android:text="Искать"
-                    android:textColor="@color/text_second_color" />
+                    android:text="@string/search_settings_source"
+                    android:textColor="@color/light_text_second_color" />
 
                 <android.support.v7.widget.AppCompatSpinner
                     android:id="@+id/search_source_spinner"
@@ -137,15 +137,15 @@
                     style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Сохранить"
-                    android:layout_marginRight="8dp"/>
+                    android:text="@string/search_settings_btn_save"
+                    android:layout_marginEnd="8dp"/>
 
                 <android.support.v7.widget.AppCompatButton
                     android:id="@+id/search_submit"
                     style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Поиск" />
+                    android:text="@string/search_settings_btn_search" />
             </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>

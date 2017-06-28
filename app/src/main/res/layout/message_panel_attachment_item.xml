@@ -5,8 +5,8 @@
     android:layout_height="wrap_content"
     android:foreground="?attr/selectableItemBackgroundBorderless">
 
-    <ImageView
-        android:id="@+id/icon"
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/drawer_item_icon"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/dp2"
@@ -33,7 +33,7 @@
         android:padding="2dp"
         android:visibility="gone">
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/file_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,17 +41,17 @@
             android:ellipsize="marquee"
             android:gravity="center_horizontal"
             android:maxLines="1"
-            android:textColor="@color/white"
+            android:textColor="@color/light_contrast_text_color"
             android:textSize="12sp" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/file_attributes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:maxLines="1"
             android:textAllCaps="true"
-            android:textColor="@color/white"
+            android:textColor="@color/light_contrast_text_color"
             android:textSize="13sp" />
     </LinearLayout>
 

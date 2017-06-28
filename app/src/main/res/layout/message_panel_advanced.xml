@@ -28,13 +28,13 @@
             android:clipToPadding="true"
             app:layout_collapseMode="pin"
             app:tabGravity="center"
-            app:tabIndicatorColor="@color/colorPrimary"
+            app:tabIndicatorColor="@color/colorAccent"
             app:tabPaddingEnd="16dp"
             app:tabPaddingStart="16dp"
-            app:tabSelectedTextColor="@color/colorPrimary"
-            app:tabTextColor="#757575"/>
+            app:tabSelectedTextColor="@color/colorAccent"
+            app:tabTextColor="@color/light_text_second_color"/>
 
-        <ImageButton
+        <android.support.v7.widget.AppCompatImageButton
             android:id="@+id/delete_button"
             android:layout_width="56dp"
             android:layout_height="@dimen/dp48"

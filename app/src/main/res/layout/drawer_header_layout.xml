@@ -13,17 +13,20 @@
         android:layout_centerVertical="true"
         android:layout_marginStart="@dimen/dp16" />
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/drawer_header_nick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginStart="@dimen/dp16"
         android:layout_toEndOf="@+id/drawer_header_avatar"
+        android:layout_toStartOf="@+id/drawer_header_open_link"
         android:textSize="14sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:lines="1"
+        android:text="@string/test_nick"/>
 
-    <ImageButton
+    <android.support.v7.widget.AppCompatImageButton
         android:id="@+id/drawer_header_open_link"
         android:layout_width="@dimen/dp48"
         android:layout_height="@dimen/dp48"

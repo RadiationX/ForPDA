@@ -5,9 +5,9 @@
     android:orientation="vertical"
     android:background="?attr/selectableItemBackgroundBorderless">
 
-    <ImageView
+    <android.support.v7.widget.AppCompatImageView
         android:contentDescription="@string/empty"
-        android:id="@+id/icon"
+        android:id="@+id/drawer_item_icon"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:orientation="vertical"
