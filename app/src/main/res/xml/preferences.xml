@@ -7,6 +7,10 @@
             android:key="main.show_notify_dot"
             android:title="Индикатор счетчиков" />
 
+        <Preference
+            android:key="main.webview.font_size"
+            android:title="Размер шрифта WebView"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Темы">
