@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/light_background_white">
+    android:background="?attr/background_white">
 
     <forpdateam.ru.forpda.views.messagepanel.AutoFitRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/auto_fit_recycler_view"
@@ -16,7 +16,7 @@
         android:id="@+id/controls"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/light_background_white"
+        android:background="?attr/background_white"
         android:elevation="1dp">
 
         <android.support.v7.widget.AppCompatTextView
@@ -54,7 +54,7 @@
                 android:layout_width="1dp"
                 android:layout_height="24dp"
                 android:layout_centerInParent="true"
-                android:background="@color/light_divider" />
+                android:background="?attr/divider_line" />
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/add_to_text"
@@ -71,7 +71,7 @@
                 android:layout_height="24dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:background="@color/light_divider" />
+                android:background="?attr/divider_line" />
         </RelativeLayout>
 
 
@@ -102,7 +102,7 @@
         android:id="@+id/progress_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/light_attachment_overlay_bg"
+        android:background="?attr/attachment_overlay_bg"
         android:visibility="gone">
         <ProgressBar
             android:layout_width="48dp"

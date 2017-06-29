@@ -5,7 +5,7 @@
 
     <style name="AppTheme.NoActionBar" parent="BaseAppTheme.NoActionBar">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/status_bar_color</item>
+        <item name="android:statusBarColor">@color/light_status_bar_color</item>
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="BaseAppTheme.PopupOverlay">

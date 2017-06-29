@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
-        android:background="@color/light_img_viewer_toolbar"
+        android:background="?attr/img_viewer_toolbar"
         android:fitsSystemWindows="true"
         android:theme="@style/ImageViewTheme.AppBarOverlay">
 

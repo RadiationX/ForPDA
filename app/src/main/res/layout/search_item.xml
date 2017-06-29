@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/search_item_content"
             android:layout_marginTop="4dp"
-            android:textColor="@color/light_text_second_color"
+            android:textColor="?attr/second_text_color"
             android:text="@string/test_topic_last_nick"/>
 
         <android.support.v7.widget.AppCompatTextView
@@ -57,7 +57,7 @@
             android:layout_alignParentEnd="true"
             android:layout_below="@+id/search_item_content"
             android:layout_marginTop="4dp"
-            android:textColor="@color/light_text_second_color"
+            android:textColor="?attr/second_text_color"
             android:text="@string/test_topic_date"/>
 
     </RelativeLayout>

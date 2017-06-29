@@ -7,7 +7,7 @@
     android:paddingEnd="@dimen/dp16"
     android:paddingStart="@dimen/dp16"
     android:paddingTop="56dp"
-    app:theme="@style/AUTH">
+    app:theme="@style/ButtonsOnWhite">
 
     <android.support.v7.widget.AppCompatAutoCompleteTextView
         android:id="@+id/qms_black_list_nick_field"

@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/dp2"
-        android:background="@color/light_background_white"
+        android:background="?attr/background_white"
         android:clickable="false"
         android:scaleType="centerCrop" />
 
@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/dp2"
-        android:background="@color/light_attachment_overlay_bg"
+        android:background="?attr/attachment_overlay_bg"
         android:clickable="false" />
 
     <LinearLayout
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/dp2"
-        android:background="@color/light_attachment_description_bg"
+        android:background="?attr/attachment_description_bg"
         android:orientation="vertical"
         android:padding="2dp"
         android:visibility="gone">
@@ -41,7 +41,7 @@
             android:ellipsize="marquee"
             android:gravity="center_horizontal"
             android:maxLines="1"
-            android:textColor="@color/light_contrast_text_color"
+            android:textColor="?attr/contrast_text_color"
             android:textSize="12sp" />
 
         <android.support.v7.widget.AppCompatTextView
@@ -51,7 +51,7 @@
             android:gravity="center_horizontal"
             android:maxLines="1"
             android:textAllCaps="true"
-            android:textColor="@color/light_contrast_text_color"
+            android:textColor="?attr/contrast_text_color"
             android:textSize="13sp" />
     </LinearLayout>
 
@@ -63,7 +63,7 @@
         android:layout_centerInParent="true"
         android:clickable="false"
         android:visibility="gone"
-        app:cpv_color="@color/colorAccent"
+        app:cpv_color="?attr/colorAccent"
         app:cpv_animAutostart="true"
         app:cpv_indeterminate="true"/>
 

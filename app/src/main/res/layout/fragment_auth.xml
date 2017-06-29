@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:paddingBottom="8dp"
         android:paddingTop="8dp"
-        android:theme="@style/AUTH">
+        android:theme="@style/ButtonsOnWhite">
 
         <RelativeLayout
             android:id="@+id/auth_complete"

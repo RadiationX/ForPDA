@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!--<attr name="colorPrimary" extension="reference" />
+    <attr name="colorPrimaryDark" extension="reference" />
+    <attr name="colorAccent" extension="reference" />-->
+    <attr name="status_bar_color" extension="reference" />
+
+
+    <attr name="link_color" extension="reference" />
+    <attr name="link_color_contrast" extension="reference" />
+    <attr name="default_text_color" extension="reference" />
+    <attr name="contrast_text_color" extension="reference" />
+    <attr name="second_text_color" extension="reference" />
+    <attr name="drawer_item_text" extension="reference" />
+    <attr name="drawer_item_text_selected" extension="reference" />
+    <attr name="background_base" extension="reference" />
+    <attr name="background_base_dark" extension="reference" />
+    <attr name="background_white" extension="reference" />
+    <attr name="divider_line" extension="reference" />
+    <attr name="attachment_overlay_bg" extension="reference" />
+    <attr name="attachment_description_bg" extension="reference" />
+    <attr name="msg_panel_tooltip_bg" extension="reference" />
+    <attr name="profile_overlay_bg" extension="reference" />
+    <attr name="img_viewer_toolbar" extension="reference" />
+
+
+
     <attr name="ProfileToolbarTextStyle" extension="reference" />
     <attr name="ProfileCardStyle" extension="reference" />
     <attr name="ProfileCardTitleStyle" extension="reference" />

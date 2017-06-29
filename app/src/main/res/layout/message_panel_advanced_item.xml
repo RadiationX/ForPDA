@@ -29,5 +29,5 @@
         android:textSize="12sp"
         android:visibility="gone"
         android:clickable="false"
-        android:textColor="@color/light_text_second_color"/>
+        android:textColor="?attr/second_text_color"/>
 </FrameLayout>

@@ -7,7 +7,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/light_profile_overlay_bg" />
+        android:background="?attr/profile_overlay_bg" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_avatar"
