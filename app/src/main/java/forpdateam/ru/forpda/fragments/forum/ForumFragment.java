@@ -98,7 +98,7 @@ public class ForumFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        setListBackground();
+        setListsBackground();
         baseInflateFragment(inflater, R.layout.fragment_forum);
         treeContainer = (NestedScrollView) findViewById(R.id.nested_scroll_view);
 

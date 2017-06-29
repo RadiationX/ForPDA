@@ -182,6 +182,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
 
         refreshLayout.addView(recyclerView);
         viewsReady();
+        setCardsBackground();
         App.getInstance().addPreferenceChangeObserver(searchPreferenceObserver);
         paginationHelper.inflatePagination(getContext(), inflater, toolbar);
         paginationHelper.setupToolbar(toolbarLayout);

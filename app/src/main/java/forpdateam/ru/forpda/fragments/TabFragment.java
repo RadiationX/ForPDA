@@ -230,8 +230,12 @@ public class TabFragment extends RxFragment {
         inflater.inflate(res, fragmentContent, true);
     }
 
-    protected void setListBackground() {
-        fragmentContent.setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_white_for_lists));
+    protected void setListsBackground() {
+        fragmentContent.setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_for_lists));
+    }
+
+    protected void setCardsBackground() {
+        fragmentContent.setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_for_cards));
     }
 
     protected void viewsReady() {

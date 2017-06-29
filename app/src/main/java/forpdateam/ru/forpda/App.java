@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.AttrRes;
 import android.support.annotation.ColorRes;
+import android.support.annotation.DrawableRes;
 import android.support.v7.content.res.AppCompatResources;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -107,6 +108,14 @@ public class App extends android.app.Application {
             return typedValue.data;
         else
             return Color.RED;
+    }
+
+    @DrawableRes
+    public static int getDrawableFromAttr(Context context, @AttrRes int attr) {
+        TypedArray a = context.getTheme().obtainStyledAttributes(new int[]{attr});
+        int attributeResourceId = a.getResourceId(0, 0);
+        a.recycle();
+        return attributeResourceId;
     }
 
     @Override
