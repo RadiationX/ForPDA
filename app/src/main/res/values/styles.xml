@@ -23,8 +23,8 @@
         <item name="drawer_item_text">@color/light_drawer_item_text</item>
         <item name="drawer_item_text_selected">@color/light_drawer_item_text_selected</item>
         <item name="background_base">@color/light_background_base</item>
-        <item name="background_base_for_cards">@color/light_background_for_cards</item>
-        <item name="background_white_for_lists">@color/light_background_for_lists</item>
+        <item name="background_for_cards">@color/light_background_for_cards</item>
+        <item name="background_for_lists">@color/light_background_for_lists</item>
         <item name="divider_line">@color/light_divider_line</item>
         <item name="attachment_overlay_bg">@color/light_attachment_overlay_bg</item>
         <item name="attachment_description_bg">@color/light_attachment_description_bg</item>
@@ -32,8 +32,11 @@
         <item name="profile_overlay_bg">@color/light_profile_overlay_bg</item>
         <item name="img_viewer_toolbar">@color/light_img_viewer_toolbar</item>
         <item name="icon_base">@color/light_icon_base</item>
+        <item name="icon_base_inverse">@color/light_icon_base_inverse</item>
         <item name="icon_toolbar">@color/light_icon_toolbar</item>
-
+        <item name="icon_toolbar_inverse">@color/light_icon_toolbar_inverse</item>
+        <item name="count_background">@drawable/count_background_light</item>
+        <item name="cards_background">@color/light_card_background</item>
 
         <!-- Styles settings-->
         <item name="app_bar_overlay">@style/LightAppTheme.AppBarOverlay</item>
@@ -42,7 +45,7 @@
 
         <!-- Other settings -->
         <item name="ProfileToolbarTextStyle">@style/ProfileToolbarTextStyle</item>
-        <item name="ProfileCardStyle">@style/ProfileCardStyle</item>
+        <item name="CardStyle">@style/CardStyle</item>
         <item name="ProfileCardTitleStyle">@style/ProfileCardTitleStyle</item>
         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
         <item name="windowActionModeOverlay">true</item>
@@ -93,8 +96,8 @@
         <item name="drawer_item_text">@color/dark_drawer_item_text</item>
         <item name="drawer_item_text_selected">@color/dark_drawer_item_text_selected</item>
         <item name="background_base">@color/dark_background_base</item>
-        <item name="background_base_for_cards">@color/dark_background_for_cards</item>
-        <item name="background_white_for_lists">@color/dark_background_for_lists</item>
+        <item name="background_for_cards">@color/dark_background_for_cards</item>
+        <item name="background_for_lists">@color/dark_background_for_lists</item>
         <item name="divider_line">@color/dark_divider_line</item>
         <item name="attachment_overlay_bg">@color/dark_attachment_overlay_bg</item>
         <item name="attachment_description_bg">@color/dark_attachment_description_bg</item>
@@ -102,7 +105,11 @@
         <item name="profile_overlay_bg">@color/dark_profile_overlay_bg</item>
         <item name="img_viewer_toolbar">@color/dark_img_viewer_toolbar</item>
         <item name="icon_base">@color/dark_icon_base</item>
+        <item name="icon_base_inverse">@color/dark_icon_base_inverse</item>
         <item name="icon_toolbar">@color/dark_icon_toolbar</item>
+        <item name="icon_toolbar_inverse">@color/dark_icon_toolbar_inverse</item>
+        <item name="count_background">@drawable/count_background_dark</item>
+        <item name="cards_background">@color/dark_card_background</item>
 
 
         <!-- Styles settings-->
@@ -112,7 +119,7 @@
 
         <!-- Other settings -->
         <item name="ProfileToolbarTextStyle">@style/ProfileToolbarTextStyle</item>
-        <item name="ProfileCardStyle">@style/ProfileCardStyle</item>
+        <item name="CardStyle">@style/CardStyle</item>
         <item name="ProfileCardTitleStyle">@style/ProfileCardTitleStyle</item>
         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
         <item name="windowActionModeOverlay">true</item>
@@ -166,13 +173,13 @@
         <item name="android:textAlignment">center</item>
     </style>
 
-    <style name="ProfileCardStyle" parent="CardView">
+    <style name="CardStyle" parent="CardView">
         <item name="android:layout_marginLeft">@dimen/card_margin_horizontal</item>
         <item name="android:layout_marginRight">@dimen/card_margin_horizontal</item>
         <item name="android:layout_marginBottom">8dp</item>
         <item name="cardCornerRadius">0dp</item>
         <item name="cardElevation">1dp</item>
-
+        <item name="cardBackgroundColor">?cards_background</item>
     </style>
 
     <style name="ProfileCardTitleStyle">

@@ -15,8 +15,8 @@
     <attr name="drawer_item_text" extension="reference" format="color" />
     <attr name="drawer_item_text_selected" extension="reference" format="color" />
     <attr name="background_base" extension="reference" format="color" />
-    <attr name="background_base_for_cards" extension="reference" format="color" />
-    <attr name="background_white_for_lists" extension="reference" format="color" />
+    <attr name="background_for_cards" extension="reference" format="color" />
+    <attr name="background_for_lists" extension="reference" format="color" />
     <attr name="divider_line" extension="reference" format="color" />
     <attr name="attachment_overlay_bg" extension="reference" format="color" />
     <attr name="attachment_description_bg" extension="reference" format="color" />
@@ -25,14 +25,18 @@
     <attr name="profile_overlay_bg" extension="reference" format="color" />
     <attr name="img_viewer_toolbar" extension="reference" format="color" />
     <attr name="icon_base" extension="reference" format="color" />
+    <attr name="icon_base_inverse" extension="reference" format="color" />
     <attr name="icon_toolbar" extension="reference" format="color" />
+    <attr name="icon_toolbar_inverse" extension="reference" format="color" />
+    <attr name="count_background" extension="reference" />
+    <attr name="cards_background" extension="reference" format="color" />
 
-    <attr name="app_bar_overlay" extension="reference"/>
-    <attr name="popup_overlay" extension="reference"/>
-    <attr name="bottom_sheet_dialog_theme" extension="reference"/>
+    <attr name="app_bar_overlay" extension="reference" />
+    <attr name="popup_overlay" extension="reference" />
+    <attr name="bottom_sheet_dialog_theme" extension="reference" />
 
     <attr name="ProfileToolbarTextStyle" extension="reference" />
-    <attr name="ProfileCardStyle" extension="reference" />
     <attr name="ProfileCardTitleStyle" extension="reference" />
+    <attr name="CardStyle" extension="reference" />
 
 </resources>

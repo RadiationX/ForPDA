@@ -37,7 +37,7 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="@dimen/dp16"
-        android:background="@drawable/qms_count_background"
+        android:background="?count_background"
         android:gravity="center"
         android:minWidth="24dp"
         android:paddingEnd="6dp"

@@ -47,11 +47,11 @@ public class PaginationHelper {
         this.context = context;
         tabLayout = (TabLayout) inflater.inflate(R.layout.toolbar_theme, (ViewGroup) target.getParent(), false);
         ((ViewGroup) target.getParent()).addView(tabLayout, ((ViewGroup) target.getParent()).indexOfChild(target));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_double_left).setTag(TAG_FIRST));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_left).setTag(TAG_PREV));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_toolbar_chevron_double_left).setTag(TAG_FIRST));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_toolbar_chevron_left).setTag(TAG_PREV));
         tabLayout.addTab(tabLayout.newTab().setText("Выбор").setTag(TAG_SELECT));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_right).setTag(TAG_NEXT));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.chevron_double_right).setTag(TAG_LAST));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_toolbar_chevron_right).setTag(TAG_NEXT));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_toolbar_chevron_double_right).setTag(TAG_LAST));
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

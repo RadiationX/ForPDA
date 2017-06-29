@@ -33,7 +33,11 @@
     <color name="light_img_viewer_toolbar">#33000000</color>
 
     <color name="light_icon_base">#757575</color>
+    <color name="light_icon_base_inverse">@color/dark_icon_base</color>
     <color name="light_icon_toolbar">#212121</color>
+    <color name="light_icon_toolbar_inverse">@color/dark_icon_toolbar</color>
+
+    <color name="light_card_background">#ffffff</color>
 
 
     <!-- DARK -->
@@ -65,7 +69,11 @@
     <color name="dark_img_viewer_toolbar">#33000000</color>
 
     <color name="dark_icon_base">#b2b2b2</color>
+    <color name="dark_icon_base_inverse">@color/light_icon_base</color>
     <color name="dark_icon_toolbar">#ffffff</color>
+    <color name="dark_icon_toolbar_inverse">@color/light_icon_toolbar</color>
+
+    <color name="dark_card_background">#303030</color>
     
 
     <!-- OTHERS -->
