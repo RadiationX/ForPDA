@@ -160,7 +160,7 @@ public class CustomBottomSheetDialog extends AppCompatDialog {
                 themeId = outValue.resourceId;
             } else {
                 // bottomSheetDialogTheme is not provided; we default to our light theme
-                themeId = R.style.AppTheme_BottomSheetDialog;
+                themeId = R.style.BaseAppTheme;
             }
         }
         return themeId;

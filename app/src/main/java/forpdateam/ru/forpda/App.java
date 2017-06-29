@@ -3,10 +3,14 @@ package forpdateam.ru.forpda;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.AttrRes;
+import android.support.annotation.ColorRes;
 import android.support.v7.content.res.AppCompatResources;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -95,6 +99,14 @@ public class App extends android.app.Application {
 
     public static Context getContext() {
         return getInstance();
+    }
+
+    public static int getColorFromAttr(Context context, @AttrRes int attr) {
+        TypedValue typedValue = new TypedValue();
+        if (context != null && context.getTheme().resolveAttribute(attr, typedValue, true))
+            return typedValue.data;
+        else
+            return Color.RED;
     }
 
     @Override

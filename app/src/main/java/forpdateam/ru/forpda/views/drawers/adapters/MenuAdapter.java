@@ -62,11 +62,11 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
         if (item.isActive()) {
             holder.itemView.setBackgroundColor(color);
-            holder.text.setTextColor(App.getContext().getResources().getColor(R.color.light_drawer_item_text_selected));
-            holder.icon.setColorFilter(App.getContext().getResources().getColor(R.color.light_colorAccent));
+            holder.text.setTextColor(App.getColorFromAttr(holder.itemView.getContext(), R.attr.drawer_item_text_selected));
+            holder.icon.setColorFilter(App.getColorFromAttr(holder.itemView.getContext(), R.attr.colorAccent));
         } else {
             holder.itemView.setBackgroundColor(Color.TRANSPARENT);
-            holder.text.setTextColor(App.getContext().getResources().getColor(R.color.light_drawer_item_text));
+            holder.text.setTextColor(App.getColorFromAttr(holder.itemView.getContext(), R.attr.drawer_item_text));
             holder.icon.clearColorFilter();
         }
 
@@ -95,6 +95,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
             }
         }
     }
+
     public interface OnItemClickListener {
         void onItemClick(MenuItems.MenuItem menuItem, int position);
     }

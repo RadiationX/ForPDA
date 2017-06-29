@@ -71,7 +71,7 @@ public class QmsThemesFragment extends TabFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         initFabBehavior();
-        setWhiteBackground();
+        setListBackground();
         baseInflateFragment(inflater, R.layout.fragment_base_list);
         tryShowAvatar();
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
