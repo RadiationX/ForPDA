@@ -20,12 +20,16 @@
     <attr name="divider_line" extension="reference" format="color" />
     <attr name="attachment_overlay_bg" extension="reference" format="color" />
     <attr name="attachment_description_bg" extension="reference" format="color" />
+    <attr name="attachment_text" extension="reference" format="color" />
     <attr name="msg_panel_tooltip_bg" extension="reference" format="color" />
     <attr name="profile_overlay_bg" extension="reference" format="color" />
     <attr name="img_viewer_toolbar" extension="reference" format="color" />
+    <attr name="icon_base" extension="reference" format="color" />
+    <attr name="icon_toolbar" extension="reference" format="color" />
 
     <attr name="app_bar_overlay" extension="reference"/>
     <attr name="popup_overlay" extension="reference"/>
+    <attr name="bottom_sheet_dialog_theme" extension="reference"/>
 
     <attr name="ProfileToolbarTextStyle" extension="reference" />
     <attr name="ProfileCardStyle" extension="reference" />

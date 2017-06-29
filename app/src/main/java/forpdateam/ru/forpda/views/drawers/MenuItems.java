@@ -22,14 +22,14 @@ public class MenuItems {
     private ArrayList<MenuItem> createdMenuItems = new ArrayList<>();
 
     public MenuItems() {
-        createdMenuItems.add(new MenuItem("Авторизация", R.drawable.ic_person_add_gray_24dp, AuthFragment.class));
-        //createdMenuItems.add(new MenuItem("Новости", R.drawable.ic_newspaper_gray_24dp, NewsListFragment.class));
-        createdMenuItems.add(new MenuItem("Избранное", R.drawable.ic_star_black_24dp, FavoritesFragment.class));
-        createdMenuItems.add(new MenuItem("Контакты", R.drawable.ic_contacts_gray_24dp, QmsContactsFragment.class));
-        createdMenuItems.add(new MenuItem("Ответы", R.drawable.ic_notifications_gray_24dp, MentionsFragment.class));
-        createdMenuItems.add(new MenuItem("Форум", R.drawable.ic_forum_gray_24dp, ForumFragment.class));
-        createdMenuItems.add(new MenuItem("Поиск", R.drawable.ic_search_gray_24dp, SearchFragment.class));
-        createdMenuItems.add(new MenuItem("Настройки", R.drawable.ic_settings_gray_24dp, ACTION_APP_SETTINGS));
+        createdMenuItems.add(new MenuItem("Авторизация", R.drawable.ic_person_add, AuthFragment.class));
+        //createdMenuItems.add(new MenuItem("Новости", R.drawable.ic_newspaper, NewsListFragment.class));
+        createdMenuItems.add(new MenuItem("Избранное", R.drawable.ic_star, FavoritesFragment.class));
+        createdMenuItems.add(new MenuItem("Контакты", R.drawable.ic_contacts, QmsContactsFragment.class));
+        createdMenuItems.add(new MenuItem("Ответы", R.drawable.ic_notifications, MentionsFragment.class));
+        createdMenuItems.add(new MenuItem("Форум", R.drawable.ic_forum, ForumFragment.class));
+        createdMenuItems.add(new MenuItem("Поиск", R.drawable.ic_search, SearchFragment.class));
+        createdMenuItems.add(new MenuItem("Настройки", R.drawable.ic_settings, ACTION_APP_SETTINGS));
     }
 
     public ArrayList<MenuItem> getCreatedMenuItems() {

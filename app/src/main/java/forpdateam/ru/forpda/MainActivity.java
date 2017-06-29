@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         list.add("http://sourcey.com/images/stock/simpsons-persistence-of-memory.jpg");
         list.add("http://sourcey.com/images/stock/salvador-dali-the-great-masturbator.jpg");
         ImageViewerActivity.startActivity(this, list, 2);*/
+        setTheme(R.style.DarkAppTheme_NoActionBar);
         setContentView(R.layout.activity_main);
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 

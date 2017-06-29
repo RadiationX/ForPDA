@@ -11,7 +11,6 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -207,7 +206,7 @@ public class TabFragment extends RxFragment {
         //fragmentContainer.setPadding(0, App.getStatusBarHeight(), 0, 0);
 
         toolbar.setNavigationOnClickListener(configuration.isAlone() || configuration.isMenu() ? getMainActivity().getToggleListener() : getMainActivity().getRemoveTabListener());
-        toolbar.setNavigationIcon(configuration.isAlone() || configuration.isMenu() ? R.drawable.ic_menu_gray_24dp : R.drawable.ic_arrow_back_gray_24dp);
+        toolbar.setNavigationIcon(configuration.isAlone() || configuration.isMenu() ? R.drawable.ic_toolbar_hamburger : R.drawable.ic_toolbar_arrow_back);
 
         if (!Client.getInstance().getNetworkState()) {
             if (!configuration.isUseCache())

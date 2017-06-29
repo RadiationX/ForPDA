@@ -4,7 +4,7 @@
     android:viewportHeight="24.0"
     android:viewportWidth="24.0">
     <path
-        android:fillColor="#757575"
+        android:fillColor="?icon_toolbar"
         android:pathData="M 11.0 11.0 L 9.0 14.0 L 6.0 14.0 L 8.0 11.0 L 6.0 11.0 L 6.0 6.0 L 11.0 6.0 M 18.0 11.0
       L 16.0 14.0 L 13.0 14.0 L 15.0 11.0 L 13.0 11.0 L 13.0 6.0 L 18.0 6.0 M 20.0 2.0
       L 4.0 2.0 A 2.0 2.0 0.0 0 0 2.0 4.0 L 2.0 22.0 L 6.0 18.0 L 20.0 18.0 A 2.0 2.0 0.0 0 0 22.0 16.0

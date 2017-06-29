@@ -4,150 +4,146 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/background_white_for_lists"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/dp16">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/search_nick_block"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/background_white_for_lists"
-            android:orientation="vertical"
-            android:paddingTop="@dimen/dp16">
+            android:paddingEnd="@dimen/dp12"
+            android:paddingStart="@dimen/dp12">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/search_nick_block"
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/search_nick_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingEnd="@dimen/dp12"
-                android:paddingStart="@dimen/dp12">
+                android:layout_gravity="center_horizontal"
+                android:hint="@string/search_settings_hint_nick"
+                android:maxLines="1"
+                android:textSize="16sp" />
+        </android.support.design.widget.TextInputLayout>
 
-                <android.support.v7.widget.AppCompatEditText
-                    android:id="@+id/search_nick_field"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:hint="@string/search_settings_hint_nick"
-                    android:maxLines="1"
-                    android:textSize="16sp" />
-            </android.support.design.widget.TextInputLayout>
+        <LinearLayout
+            android:id="@+id/search_resource_block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp8"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/search_resource_block"
+            <android.support.v7.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp8"
-                android:orientation="vertical">
+                android:paddingEnd="@dimen/dp16"
+                android:paddingStart="@dimen/dp16"
+                android:text="@string/search_settings_resource"
+                android:textColor="?attr/second_text_color" />
 
-                <android.support.v7.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="@dimen/dp16"
-                    android:paddingStart="@dimen/dp16"
-                    android:text="@string/search_settings_resource"
-                    android:textColor="?attr/second_text_color" />
-
-                <android.support.v7.widget.AppCompatSpinner
-                    android:id="@+id/search_resource_spinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp48"
-                    android:paddingEnd="@dimen/dp8"
-                    android:paddingStart="@dimen/dp8" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/search_result_block"
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/search_resource_spinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp8"
-                android:orientation="vertical">
-
-                <android.support.v7.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="@dimen/dp16"
-                    android:paddingStart="@dimen/dp16"
-                    android:text="@string/search_settings_result"
-                    android:textColor="?attr/second_text_color" />
-
-                <android.support.v7.widget.AppCompatSpinner
-                    android:id="@+id/search_result_spinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp48"
-                    android:paddingEnd="@dimen/dp8"
-                    android:paddingStart="@dimen/dp8" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/search_sort_block"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp8"
-                android:orientation="vertical">
-
-                <android.support.v7.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="@dimen/dp16"
-                    android:paddingStart="@dimen/dp16"
-                    android:text="@string/search_settings_sorting"
-                    android:textColor="?attr/second_text_color" />
-
-                <android.support.v7.widget.AppCompatSpinner
-                    android:id="@+id/search_sort_spinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp48"
-                    android:paddingEnd="@dimen/dp8"
-                    android:paddingStart="@dimen/dp8" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/search_source_block"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp8"
-                android:orientation="vertical">
-
-                <android.support.v7.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="@dimen/dp16"
-                    android:paddingStart="@dimen/dp16"
-                    android:text="@string/search_settings_source"
-                    android:textColor="?attr/second_text_color" />
-
-                <android.support.v7.widget.AppCompatSpinner
-                    android:id="@+id/search_source_spinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp48"
-                    android:paddingEnd="@dimen/dp8"
-                    android:paddingStart="@dimen/dp8" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:orientation="horizontal"
-                android:paddingEnd="8dp"
-                android:paddingStart="8dp">
-
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/search_save_settings"
-                    style="@style/Widget.AppCompat.Button.Borderless"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/search_settings_btn_save"
-                    android:layout_marginEnd="8dp"/>
-
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/search_submit"
-                    style="@style/Widget.AppCompat.Button.Borderless"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/search_settings_btn_search" />
-            </LinearLayout>
+                android:layout_height="@dimen/dp48"
+                android:paddingEnd="@dimen/dp8"
+                android:paddingStart="@dimen/dp8" />
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+
+        <LinearLayout
+            android:id="@+id/search_result_block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp8"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/dp16"
+                android:paddingStart="@dimen/dp16"
+                android:text="@string/search_settings_result"
+                android:textColor="?attr/second_text_color" />
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/search_result_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp48"
+                android:paddingEnd="@dimen/dp8"
+                android:paddingStart="@dimen/dp8" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/search_sort_block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp8"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/dp16"
+                android:paddingStart="@dimen/dp16"
+                android:text="@string/search_settings_sorting"
+                android:textColor="?attr/second_text_color" />
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/search_sort_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp48"
+                android:paddingEnd="@dimen/dp8"
+                android:paddingStart="@dimen/dp8" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/search_source_block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp8"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/dp16"
+                android:paddingStart="@dimen/dp16"
+                android:text="@string/search_settings_source"
+                android:textColor="?attr/second_text_color" />
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/search_source_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp48"
+                android:paddingEnd="@dimen/dp8"
+                android:paddingStart="@dimen/dp8" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal"
+            android:paddingEnd="8dp"
+            android:paddingStart="8dp">
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/search_save_settings"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="@string/search_settings_btn_save" />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/search_submit"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/search_settings_btn_search" />
+        </LinearLayout>
+    </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>

@@ -90,7 +90,7 @@
             android:name=".settings.SettingsActivity"
             android:label="Настройки"
             android:launchMode="singleTop"
-            android:theme="@style/BaseAppTheme.Settings">
+            android:theme="@style/LightAppTheme">
             <meta-data
                 android:name="android.max_aspect"
                 android:value="2.1" />

@@ -116,6 +116,9 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
         } else {
             holder.itemView.setVisibility(View.VISIBLE);
         }*/
+        if (holder.topDivider != null) {
+            holder.topDivider.setVisibility(section == 0 ? View.GONE : View.VISIBLE);
+        }
         holder.title.setText(sections.get(section).first);
     }
 
@@ -151,11 +154,12 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public TextView title, lastNick, date, desc;
         public ImageView pinIcon, lockIcon, pollIcon;
-        public View dot;
+        public View dot, topDivider;
 
         public ViewHolder(View v) {
             super(v);
             dot = v.findViewById(R.id.topic_item_dot);
+            topDivider = v.findViewById(R.id.topic_item_top_divider);
             title = (TextView) v.findViewById(R.id.topic_item_title);
             desc = (TextView) v.findViewById(R.id.topic_item_desc);
             lastNick = (TextView) v.findViewById(R.id.topic_item_last_nick);

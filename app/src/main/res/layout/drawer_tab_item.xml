@@ -28,5 +28,5 @@
         android:layout_alignParentEnd="true"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
-        app:srcCompat="@drawable/ic_clear_gray_24dp"/>
+        app:srcCompat="@drawable/ic_clear"/>
 </RelativeLayout>

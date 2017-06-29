@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-
-    <!--<style name="LightAppTheme.NoActionBar" parent="BaseAppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <style name="LightAppTheme.NoActionBar" parent="LightAppTheme.NoActionBarBase">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/light_status_bar_color</item>
-    </style>-->
+    </style>
 
+    <style name="DarkAppTheme.NoActionBar" parent="DarkAppTheme.NoActionBarBase">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/light_status_bar_color</item>
+    </style>
 </resources>
