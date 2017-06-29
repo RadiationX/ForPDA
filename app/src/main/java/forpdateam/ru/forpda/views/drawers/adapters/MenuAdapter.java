@@ -63,7 +63,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         if (item.isActive()) {
             holder.itemView.setBackgroundColor(color);
             holder.text.setTextColor(App.getContext().getResources().getColor(R.color.light_drawer_item_text_selected));
-            holder.icon.setColorFilter(App.getContext().getResources().getColor(R.color.colorAccent));
+            holder.icon.setColorFilter(App.getContext().getResources().getColor(R.color.light_colorAccent));
         } else {
             holder.itemView.setBackgroundColor(Color.TRANSPARENT);
             holder.text.setTextColor(App.getContext().getResources().getColor(R.color.light_drawer_item_text));

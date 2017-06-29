@@ -17,7 +17,7 @@
         android:paddingStart="0dp"
         android:paddingTop="8dp"
         android:text="@string/test_drawer_item_name"
-        android:textColor="@color/light_text_color"
+        android:textColor="?attr/default_text_color"
         android:textSize="14sp"
         android:textStyle="bold" />
 
@@ -43,7 +43,7 @@
         android:paddingEnd="6dp"
         android:paddingStart="6dp"
         android:text="@string/test_count_number"
-        android:textColor="@color/light_contrast_text_color"
+        android:textColor="?attr/contrast_text_color"
         android:textStyle="bold" />
 
 </RelativeLayout>

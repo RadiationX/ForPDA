@@ -1,13 +1,15 @@
 <resources>
+
     <style name="TreeNodeStyleCustom">
         <item name="android:paddingLeft">16dp</item>
         <!--<item name="android:showDividers">middle</item>-->
         <!--<item name="android:divider">@android:drawable/divider_horizontal_bright</item>-->
     </style>
+
     <style name="BaseAppTheme" parent="Theme.AppCompat.DayNight">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/light_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/light_colorPrimaryDark</item>
+        <item name="colorAccent">@color/light_colorAccent</item>
         <item name="ProfileToolbarTextStyle">@style/ProfileToolbarTextStyle</item>
         <item name="ProfileCardStyle">@style/ProfileCardStyle</item>
         <item name="ProfileCardTitleStyle">@style/ProfileCardTitleStyle</item>
@@ -15,17 +17,35 @@
         <item name="windowActionModeOverlay">true</item>
         <!--<item name="actionModeStyle">@style/ActionModeStyle</item>-->
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-        <item name="actionModeBackground">@color/colorPrimary</item>
-        <item name="actionModeCloseButtonStyle">@style/myclosebutton</item>
+        <item name="actionModeBackground">@color/light_colorPrimary</item>
+        <item name="actionModeCloseButtonStyle">@style/actionModeCloseButtonStyle</item>
+
+        <!-- Colors attr settings-->
+        <item name="link_color">@color/light_link_color</item>
+        <item name="link_color_contrast">@color/light_link_color_contrast</item>
+        <item name="default_text_color">@color/light_default_text_color</item>
+        <item name="contrast_text_color">@color/light_contrast_text_color</item>
+        <item name="second_text_color">@color/light_second_text_color</item>
+        <item name="drawer_item_text">@color/light_drawer_item_text</item>
+        <item name="drawer_item_text_selected">@color/light_drawer_item_text_selected</item>
+        <item name="background_base">@color/light_background_base</item>
+        <item name="background_base_dark">@color/light_background_base_dark</item>
+        <item name="background_white">@color/light_background_white</item>
+        <item name="divider_line">@color/light_divider_line</item>
+        <item name="attachment_overlay_bg">@color/light_attachment_overlay_bg</item>
+        <item name="attachment_description_bg">@color/light_attachment_description_bg</item>
+        <item name="msg_panel_tooltip_bg">@color/light_msg_panel_tooltip_bg</item>
+        <item name="profile_overlay_bg">@color/light_profile_overlay_bg</item>
+        <item name="img_viewer_toolbar">@color/light_img_viewer_toolbar</item>
     </style>
 
-    <style name="myclosebutton" parent="Widget.AppCompat.Light.ActionButton.CloseMode">
+    <style name="actionModeCloseButtonStyle" parent="Widget.AppCompat.Light.ActionButton.CloseMode">
         <item name="android:tint">#757575</item> <!-- whatever color -->
     </style>
 
-    <style name="BaseAppTheme.BottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog"/>
+    <style name="BaseAppTheme.BottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog" />
 
-    <style name="AppTheme.BottomSheetDialog" parent="BaseAppTheme.BottomSheetDialog"/>
+    <style name="AppTheme.BottomSheetDialog" parent="BaseAppTheme.BottomSheetDialog" />
 
     <style name="BaseAppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
@@ -45,19 +65,20 @@
     </style>
 
     <style name="MyTextViewStyle" parent="android:Widget.TextView">
-        <item name="android:textColor">@color/light_text_color</item>
+        <item name="android:textColor">@color/light_default_text_color</item>
     </style>
 
     <style name="BaseAppTheme.Settings">
 
     </style>
 
-    <style name="AppTheme" parent="BaseAppTheme"/>
-    <style name="AppTheme.NoActionBar" parent="BaseAppTheme.NoActionBar"/>
+    <style name="AppTheme" parent="BaseAppTheme" />
+
+    <style name="AppTheme.NoActionBar" parent="BaseAppTheme.NoActionBar" />
 
     <style name="ProfileToolbarTextStyle">
-        <item name="android:textColorLink">@color/link_color_white</item>
-        <item name="android:textColor">@color/link_color_white</item>
+        <item name="android:textColorLink">?link_color_contrast</item>
+        <item name="android:textColor">?link_color_contrast</item>
         <item name="android:shadowDy">1</item>
         <item name="android:shadowRadius">5</item>
         <item name="android:shadowColor">#4c000000</item>
@@ -77,9 +98,9 @@
 
     </style>
 
-    <style name="AUTH" parent="AppTheme">
+    <style name="ButtonsOnWhite" parent="AppTheme">
         <item name="colorControlNormal">#757575</item>
-        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="colorControlActivated">@color/light_colorAccent</item>
     </style>
 
 
@@ -87,7 +108,6 @@
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
     </style>
-
 
     <style name="ImageViewTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat">
         <item name="android:singleLine">true</item>

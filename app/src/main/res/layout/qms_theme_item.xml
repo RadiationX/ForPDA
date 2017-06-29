@@ -13,7 +13,7 @@
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/qms_theme_count"
         android:text="@string/test_topic_title"
-        android:textColor="@color/light_text_color" />
+        android:textColor="?attr/default_text_color" />
 
     <TextView
         android:id="@+id/qms_theme_count"
@@ -27,7 +27,7 @@
         android:paddingStart="6dp"
         android:paddingEnd="6dp"
         android:background="@drawable/qms_count_background"
-        android:textColor="@color/light_contrast_text_color"
+        android:textColor="?attr/contrast_text_color"
         android:textStyle="bold"
         android:text="@string/test_count_number" />
 

@@ -80,7 +80,7 @@
                                 android:layout_height="wrap_content"
                                 android:ellipsize="end"
                                 android:maxLines="1"
-                                android:textColor="@color/light_text_color"
+                                android:textColor="?attr/default_text_color"
                                 android:textSize="18sp"
                                 android:textStyle="bold" />
 
@@ -88,7 +88,7 @@
                                 android:id="@+id/toolbar_subtitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/light_text_second_color"
+                                android:textColor="?attr/second_text_color"
                                 android:textSize="12sp"
                                 android:visibility="gone" />
                         </LinearLayout>
@@ -124,7 +124,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@color/light_background_base"
+            android:background="?attr/background_base"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
             <LinearLayout
                 android:id="@+id/no_network"

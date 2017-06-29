@@ -11,7 +11,7 @@
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/light_background_white"
+            android:background="?attr/background_white"
             android:orientation="vertical"
             android:paddingTop="@dimen/dp16">
 
@@ -45,7 +45,7 @@
                     android:paddingEnd="@dimen/dp16"
                     android:paddingStart="@dimen/dp16"
                     android:text="@string/search_settings_resource"
-                    android:textColor="@color/light_text_second_color" />
+                    android:textColor="?attr/second_text_color" />
 
                 <android.support.v7.widget.AppCompatSpinner
                     android:id="@+id/search_resource_spinner"
@@ -68,7 +68,7 @@
                     android:paddingEnd="@dimen/dp16"
                     android:paddingStart="@dimen/dp16"
                     android:text="@string/search_settings_result"
-                    android:textColor="@color/light_text_second_color" />
+                    android:textColor="?attr/second_text_color" />
 
                 <android.support.v7.widget.AppCompatSpinner
                     android:id="@+id/search_result_spinner"
@@ -91,7 +91,7 @@
                     android:paddingEnd="@dimen/dp16"
                     android:paddingStart="@dimen/dp16"
                     android:text="@string/search_settings_sorting"
-                    android:textColor="@color/light_text_second_color" />
+                    android:textColor="?attr/second_text_color" />
 
                 <android.support.v7.widget.AppCompatSpinner
                     android:id="@+id/search_sort_spinner"
@@ -114,7 +114,7 @@
                     android:paddingEnd="@dimen/dp16"
                     android:paddingStart="@dimen/dp16"
                     android:text="@string/search_settings_source"
-                    android:textColor="@color/light_text_second_color" />
+                    android:textColor="?attr/second_text_color" />
 
                 <android.support.v7.widget.AppCompatSpinner
                     android:id="@+id/search_source_spinner"

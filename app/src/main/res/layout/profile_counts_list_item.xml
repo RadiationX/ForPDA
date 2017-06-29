@@ -14,7 +14,7 @@
         android:id="@+id/item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/light_text_second_color"
+        android:textColor="?attr/second_text_color"
         android:textAllCaps="true"
         android:textSize="14sp" />
 
@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="4dp"
-        android:textColor="@color/light_text_color"
+        android:textColor="?attr/default_text_color"
         android:textSize="24sp"
         android:textStyle="bold"/>
 </LinearLayout>

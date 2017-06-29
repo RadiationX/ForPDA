@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="60dp"
-    android:background="@color/light_background_base">
+    android:background="?attr/background_base">
 
 
     <Button

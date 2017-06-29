@@ -1,35 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#ffffff</color>
-    <color name="colorPrimaryDark">#aaaaaa</color>
+    <!-- FOR SIMPLE TOOLTIP LIBRARY -->
     <color name="colorAccent">#000</color>
-    <color name="status_bar_color">#00000000</color>
 
-    <color name="link_color">#0277bd</color>
-    <color name="link_color_white">#ffffff</color>
-
-    <color name="contact_site">@color/link_color</color>
-    <color name="contact_icq">#539e37</color>
-    <color name="contact_twitter">#1da1f2</color>
-    <color name="contact_jabber">#cc0000</color>
-    <color name="contact_vk">#45668e</color>
-    <color name="contact_google_plus">#dd4b39</color>
-    <color name="contact_facebook">#3b5998</color>
-    <color name="contact_instagram">#833ab4</color>
-    <color name="contact_mail_ru">#ffa930</color>
 
     <!-- LIGHT -->
-    <color name="light_text_color">#212121</color>
+    <color name="light_colorPrimary">#ffffff</color>
+    <color name="light_colorPrimaryDark">#aaaaaa</color>
+    <color name="light_colorAccent">#000000</color>
+    <color name="light_status_bar_color">#00000000</color>
+
+    <color name="light_link_color">#0277bd</color>
+    <color name="light_link_color_contrast">#ffffff</color>
+
+    <color name="light_default_text_color">#212121</color>
     <color name="light_contrast_text_color">@color/dark_text_color</color>
-    <color name="light_text_second_color">#757575</color>
-    <color name="light_drawer_item_text">@color/light_text_color</color>
-    <color name="light_drawer_item_text_selected">@color/light_text_color</color>
+    <color name="light_second_text_color">#757575</color>
+    <color name="light_drawer_item_text">@color/light_default_text_color</color>
+    <color name="light_drawer_item_text_selected">@color/light_default_text_color</color>
 
     <color name="light_background_base">#fafafa</color>
     <color name="light_background_base_dark">#eeeeee</color>
     <color name="light_background_white">#ffffff</color>
 
-    <color name="light_divider">#e0e0e0</color>
+    <color name="light_divider_line">#e0e0e0</color>
 
     <color name="light_attachment_overlay_bg">#21000000</color>
     <color name="light_attachment_description_bg">#44000000</color>
@@ -40,8 +34,19 @@
 
     <!-- DARK -->
     <color name="dark_text_color">#ffffff</color>
-    <color name="dark_contrast_text_color">@color/light_text_color</color>
+    <color name="dark_contrast_text_color">@color/light_default_text_color</color>
     <color name="dark_text_second_color">#b2b2b2</color>
+
+    <!-- OTHERS -->
+    <color name="contact_site">@color/light_link_color</color>
+    <color name="contact_icq">#539e37</color>
+    <color name="contact_twitter">#1da1f2</color>
+    <color name="contact_jabber">#cc0000</color>
+    <color name="contact_vk">#45668e</color>
+    <color name="contact_google_plus">#dd4b39</color>
+    <color name="contact_facebook">#3b5998</color>
+    <color name="contact_instagram">#833ab4</color>
+    <color name="contact_mail_ru">#ffa930</color>
 
     <array name="md_colors">
         <item>#f44336</item>

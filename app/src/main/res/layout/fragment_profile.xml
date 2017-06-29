@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_background_base_dark"
+    android:background="?attr/background_base_dark"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <RelativeLayout
@@ -49,7 +49,7 @@
                 android:paddingEnd="@dimen/dp16"
                 android:paddingStart="@dimen/dp16"
                 android:text="@string/profile_title_about"
-                android:textColor="@color/light_text_color"
+                android:textColor="?attr/default_text_color"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -78,7 +78,7 @@
                 android:paddingEnd="@dimen/dp16"
                 android:paddingStart="@dimen/dp16"
                 android:text="@string/profile_title_information"
-                android:textColor="@color/light_text_color"
+                android:textColor="?attr/default_text_color"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -108,7 +108,7 @@
                 android:paddingEnd="@dimen/dp16"
                 android:paddingStart="@dimen/dp16"
                 android:text="@string/profile_title_devices"
-                android:textColor="@color/light_text_color"
+                android:textColor="?attr/default_text_color"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -136,7 +136,7 @@
                 android:paddingEnd="@dimen/dp16"
                 android:paddingStart="@dimen/dp16"
                 android:text="@string/profile_title_contacts"
-                android:textColor="@color/light_text_color"
+                android:textColor="?attr/default_text_color"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -172,7 +172,7 @@
                 android:paddingEnd="@dimen/dp16"
                 android:paddingStart="@dimen/dp16"
                 android:text="@string/profile_title_note"
-                android:textColor="@color/light_text_color"
+                android:textColor="?attr/default_text_color"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
