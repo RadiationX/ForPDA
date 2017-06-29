@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.fragments;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -232,8 +231,8 @@ public class TabFragment extends RxFragment {
         inflater.inflate(res, fragmentContent, true);
     }
 
-    protected void setWhiteBackground() {
-        fragmentContent.setBackgroundColor(ContextCompat.getColor(App.getContext(), R.color.light_background_white));
+    protected void setListBackground() {
+        fragmentContent.setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_white_for_lists));
     }
 
     protected void viewsReady() {

@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.news.Constants;
 import forpdateam.ru.forpda.data.Repository;
@@ -60,7 +61,7 @@ public class NewsListFragment extends TabFragment implements INewsView, NewsList
         log("onCreateView");
         srProgress = findViewById(R.id.news_list_progress);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.news_refresh_layout);
-        refreshLayout.setColorSchemeColors(ContextCompat.getColor(getContext(), R.color.light_colorAccent));
+        refreshLayout.setColorSchemeColors(App.getColorFromAttr(getContext(), R.attr.colorAccent));
         recyclerView = (RecyclerView) findViewById(R.id.news_list);
         presenter = new NewsPresenter();
         presenter.bindView(this, Repository.getInstance());

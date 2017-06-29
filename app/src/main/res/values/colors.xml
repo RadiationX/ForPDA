@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- FOR SIMPLE TOOLTIP LIBRARY -->
-    <color name="colorAccent">#000</color>
+    <color name="colorAccent">#000000</color>
 
 
     <!-- LIGHT -->
@@ -20,8 +20,8 @@
     <color name="light_drawer_item_text_selected">@color/light_default_text_color</color>
 
     <color name="light_background_base">#fafafa</color>
-    <color name="light_background_base_dark">#eeeeee</color>
-    <color name="light_background_white">#ffffff</color>
+    <color name="light_background_for_cards">#eeeeee</color>
+    <color name="light_background_for_lists">#ffffff</color>
 
     <color name="light_divider_line">#e0e0e0</color>
 

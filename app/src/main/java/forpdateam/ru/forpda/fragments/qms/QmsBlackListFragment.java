@@ -56,7 +56,7 @@ public class QmsBlackListFragment extends TabFragment {
         ViewStub viewStub = (ViewStub) findViewById(R.id.toolbar_content);
         viewStub.setLayoutResource(R.layout.toolbar_qms_black_list);
         viewStub.inflate();
-        setWhiteBackground();
+        setListBackground();
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
         recyclerView = (RecyclerView) findViewById(R.id.base_list);
         nickField = (AppCompatAutoCompleteTextView) findViewById(R.id.qms_black_list_nick_field);

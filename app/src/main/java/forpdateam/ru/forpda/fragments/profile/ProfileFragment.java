@@ -129,7 +129,7 @@ public class ProfileFragment extends TabFragment {
         if (getActivity() != null && getActivity().getWindow() != null) {
             window = getActivity().getWindow();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                standardColor = ContextCompat.getColor(getContext(), R.color.light_status_bar_color);
+                standardColor = App.getColorFromAttr(getContext(), R.attr.status_bar_color);
             }
         }
         toolbar.getNavigationIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);

@@ -73,7 +73,7 @@ public class AuthFragment extends TabFragment {
         hiddenAuth = (CheckBox) findViewById(R.id.auth_hidden);
 
         viewsReady();
-        setWhiteBackground();
+        setListBackground();
         appBarLayout.setVisibility(View.GONE);
         notifyDot.setVisibility(View.GONE);
         sendButton = (Button) findViewById(R.id.auth_send);
