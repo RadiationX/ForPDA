@@ -252,7 +252,8 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
     public void loadData() {
         if (currentChat.getUserId() != NOT_CREATED && currentChat.getThemeId() != NOT_CREATED) {
             mainSubscriber.subscribe(RxApi.Qms().getChat(currentChat.getUserId(), currentChat.getThemeId()), this::onLoadChat, new QmsChatModel(), v -> loadData());
-            webSocket = Client.getInstance().createWebSocketConnection(webSocketListener);
+            if (webSocket == null)
+                webSocket = Client.getInstance().createWebSocketConnection(webSocketListener);
         }
     }
 
@@ -445,7 +446,8 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
     public void onDestroy() {
         super.onDestroy();
         App.getInstance().removePreferenceChangeObserver(chatPreferenceObserver);
-        webSocket.close(1000, null);
+        if (webSocket != null)
+            webSocket.close(1000, null);
         messagePanel.onDestroy();
         unregisterForContextMenu(webView);
         webView.removeJavascriptInterface(JS_INTERFACE);

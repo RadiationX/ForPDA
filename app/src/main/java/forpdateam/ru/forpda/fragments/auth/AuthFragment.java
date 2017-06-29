@@ -29,7 +29,7 @@ import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.SimpleTextWatcher;
-import forpdateam.ru.forpda.utils.ourparser.Html;
+import forpdateam.ru.forpda.utils.Html;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 
 /**

@@ -77,16 +77,6 @@
 
     </style>
 
-    <style name="QuoteTitleTextStyle">
-        <item name="android:textStyle">bold|italic</item>
-        <item name="android:textColor">@color/light_text_color</item>
-    </style>
-
-    <style name="SpoilerTitleTextStyle">
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/link_color</item>
-    </style>
-
     <style name="AUTH" parent="AppTheme">
         <item name="colorControlNormal">#757575</item>
         <item name="colorControlActivated">@color/colorAccent</item>

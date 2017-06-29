@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.utils.ourparser;
+package forpdateam.ru.forpda.utils;
 
 /**
  * Created by radiationx on 15.09.16.

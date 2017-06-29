@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.utils.ourparser;
+package forpdateam.ru.forpda.utils;
 
 import android.text.Layout;
 import android.text.NoCopySpan;
@@ -12,8 +12,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
-
-import forpdateam.ru.forpda.utils.IntentHandler;
 
 /**
  * Created by radiationx on 19.09.16.

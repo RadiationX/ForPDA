@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.utils.ourparser.Html;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
 

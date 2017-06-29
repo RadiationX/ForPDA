@@ -355,11 +355,11 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             if (currentPage.isInFavorite()) {
                 subMenu.add("Удалить из избранного").setOnMenuItemClickListener(menuItem -> {
                     if (currentPage.getFavId() == 0) {
-                        Toast.makeText(getContext(), "ID темы не найден, попробуйте перезагрузить страницу", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(App.getContext(), "ID темы не найден, попробуйте перезагрузить страницу", Toast.LENGTH_SHORT).show();
                         return false;
                     }
                     FavoritesHelper.delete(aBoolean -> {
-                        Toast.makeText(getContext(), aBoolean ? "Тема удалена из избранного" : "Ошибка", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(App.getContext(), aBoolean ? "Тема удалена из избранного" : "Ошибка", Toast.LENGTH_SHORT).show();
                         currentPage.setInFavorite(!aBoolean);
                         refreshOptionsMenu();
                     }, currentPage.getFavId());
@@ -369,7 +369,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                 subMenu.add("Добавить в избранное").setOnMenuItemClickListener(menuItem -> {
                     new AlertDialog.Builder(getContext())
                             .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> FavoritesHelper.add(aBoolean -> {
-                                Toast.makeText(getContext(), aBoolean ? "Тема добавлена в избранное" : "Ошибочка вышла", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(App.getContext(), aBoolean ? "Тема добавлена в избранное" : "Ошибочка вышла", Toast.LENGTH_SHORT).show();
                                 currentPage.setInFavorite(aBoolean);
                                 refreshOptionsMenu();
                             }, currentPage.getId(), Favorites.SUB_TYPES[which1]))

@@ -23,7 +23,7 @@ public class MenuItems {
 
     public MenuItems() {
         createdMenuItems.add(new MenuItem("Авторизация", R.drawable.ic_person_add_gray_24dp, AuthFragment.class));
-        //createdMenuItems.add(new MenuItem("Новости", R.drawable.ic_newspaper_gray, NewsListFragment.class));
+        //createdMenuItems.add(new MenuItem("Новости", R.drawable.ic_newspaper_gray_24dp, NewsListFragment.class));
         createdMenuItems.add(new MenuItem("Избранное", R.drawable.ic_star_black_24dp, FavoritesFragment.class));
         createdMenuItems.add(new MenuItem("Контакты", R.drawable.ic_contacts_gray_24dp, QmsContactsFragment.class));
         createdMenuItems.add(new MenuItem("Ответы", R.drawable.ic_notifications_gray_24dp, MentionsFragment.class));

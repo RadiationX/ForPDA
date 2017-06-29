@@ -23,7 +23,7 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.IWebClient;
 import forpdateam.ru.forpda.utils.SimpleObservable;
-import forpdateam.ru.forpda.utils.ourparser.Html;
+import forpdateam.ru.forpda.utils.Html;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.FormBody;

@@ -103,7 +103,7 @@ public class Profile {
 
             data = about.matcher(response);
             if (data.find()) {
-                profile.setAbout(forpdateam.ru.forpda.utils.ourparser.Html.fromHtml(safe(data.group(1))));
+                profile.setAbout(forpdateam.ru.forpda.utils.Html.fromHtml(safe(data.group(1))));
             }
         }
         return profile;
