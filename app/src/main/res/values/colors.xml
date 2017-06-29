@@ -26,7 +26,7 @@
     <color name="light_drawer_item_text_selected">@color/light_text_color</color>
 
     <color name="light_background_base">#fafafa</color>
-    <color name="light_background_base_dark">#fafafa</color>
+    <color name="light_background_base_dark">#eeeeee</color>
     <color name="light_background_white">#ffffff</color>
 
     <color name="light_divider">#e0e0e0</color>

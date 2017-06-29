@@ -49,7 +49,7 @@ import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.BlurUtil;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
-import forpdateam.ru.forpda.utils.ourparser.LinkMovementMethod;
+import forpdateam.ru.forpda.utils.LinkMovementMethod;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import io.reactivex.Observable;
 

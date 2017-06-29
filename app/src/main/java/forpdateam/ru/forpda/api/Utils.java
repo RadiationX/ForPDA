@@ -2,7 +2,7 @@ package forpdateam.ru.forpda.api;
 
 import android.text.TextUtils;
 
-import forpdateam.ru.forpda.utils.ourparser.Html;
+import forpdateam.ru.forpda.utils.Html;
 
 /**
  * Created by radiationx on 26.03.17.

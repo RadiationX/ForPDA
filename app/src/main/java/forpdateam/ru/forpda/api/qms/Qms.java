@@ -18,6 +18,7 @@ import forpdateam.ru.forpda.api.qms.models.QmsTheme;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.client.ForPdaRequest;
+import forpdateam.ru.forpda.utils.Html;
 
 
 /**
@@ -121,7 +122,7 @@ public class Qms {
             thread = new QmsTheme();
             thread.setId(Integer.parseInt(matcher.group(1)));
             thread.setDate(matcher.group(2));
-            thread.setName(forpdateam.ru.forpda.utils.ourparser.Html.fromHtml(matcher.group(3).trim()).toString());
+            thread.setName(Html.fromHtml(matcher.group(3).trim()).toString());
             thread.setCountMessages(Integer.parseInt(matcher.group(4)));
             String countNew = matcher.group(5);
             thread.setCountNew(countNew == null || countNew.isEmpty() ? 0 : Integer.parseInt(countNew));
