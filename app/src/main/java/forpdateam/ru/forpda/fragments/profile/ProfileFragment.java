@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -339,7 +338,7 @@ public class ProfileFragment extends TabFragment {
         Log.d("FORPDA_LOG", "check 3 " + (System.currentTimeMillis() - time));
         if (profile.getContacts().size() > 0) {
             if (!Pattern.compile("showuser=".concat(Integer.toString(ClientHelper.getUserId()))).matcher(tab_url).find()) {
-                toolbar.getMenu().add("Написать").setIcon(App.getAppDrawable(R.drawable.ic_create_white_24dp)).setOnMenuItemClickListener(item -> {
+                toolbar.getMenu().add("Написать").setIcon(App.getAppDrawable(R.drawable.ic_toolbar_create)).setOnMenuItemClickListener(item -> {
                     IntentHandler.handle(profile.getContacts().get(0).first);
                     return false;
                 }).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);

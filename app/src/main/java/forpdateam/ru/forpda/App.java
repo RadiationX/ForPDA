@@ -112,6 +112,7 @@ public class App extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        setTheme(R.style.DarkAppTheme);
         INSTANCE = this;
         ACRA.init(this);
         density = getResources().getDisplayMetrics().density;
@@ -237,7 +238,8 @@ public class App extends android.app.Application {
 
 
     public static Drawable getAppDrawable(int id) {
-        return drawableCache.get(id);
+        //return drawableCache.get(id);
+        return AppCompatResources.getDrawable(App.getContext(), id);
     }
 
     private static DisplayImageOptions.Builder options = new DisplayImageOptions.Builder()

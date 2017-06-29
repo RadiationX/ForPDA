@@ -81,7 +81,7 @@ public class QmsThemesFragment extends TabFragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        fab.setImageDrawable(App.getAppDrawable(R.drawable.ic_create_white_24dp));
+        fab.setImageDrawable(App.getAppDrawable(R.drawable.ic_toolbar_create));
         fab.setOnClickListener(view1 -> {
             Bundle args = new Bundle();
             args.putInt(QmsChatFragment.USER_ID_ARG, currentThemes.getUserId());

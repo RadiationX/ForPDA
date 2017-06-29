@@ -210,7 +210,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
         });
         toolbar.inflateMenu(R.menu.qms_contacts_menu);
         MenuItem settingsItem = toolbar.getMenu().add("Настройки");
-        settingsItem.setIcon(R.drawable.ic_tune_gray_24dp).setOnMenuItemClickListener(menuItem -> {
+        settingsItem.setIcon(R.drawable.ic_toolbar_tune).setOnMenuItemClickListener(menuItem -> {
             /*if (searchSettingsView.getVisibility() == View.VISIBLE) {
                 searchSettingsView.setVisibility(View.GONE);
             } else {

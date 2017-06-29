@@ -67,7 +67,7 @@ public class QmsBlackListFragment extends TabFragment {
                 searchUser(s.toString());
             }
         });
-        toolbar.getMenu().add("Добавить").setIcon(AppCompatResources.getDrawable(getContext(), R.drawable.ic_add_gray_24dp)).setOnMenuItemClickListener(item -> {
+        toolbar.getMenu().add("Добавить").setIcon(AppCompatResources.getDrawable(getContext(), R.drawable.ic_toolbar_add)).setOnMenuItemClickListener(item -> {
             String nick = "";
             if (nickField.getText() != null)
                 nick = nickField.getText().toString();

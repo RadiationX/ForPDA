@@ -6,6 +6,7 @@
     android:orientation="vertical">
 
     <View
+        android:id="@+id/topic_item_top_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="?attr/divider_line" />

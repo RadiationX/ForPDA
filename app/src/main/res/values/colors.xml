@@ -14,7 +14,7 @@
     <color name="light_link_color_contrast">#ffffff</color>
 
     <color name="light_default_text_color">#212121</color>
-    <color name="light_contrast_text_color">@color/dark_text_color</color>
+    <color name="light_contrast_text_color">@color/dark_default_text_color</color>
     <color name="light_second_text_color">#757575</color>
     <color name="light_drawer_item_text">@color/light_default_text_color</color>
     <color name="light_drawer_item_text_selected">@color/light_default_text_color</color>
@@ -27,15 +27,46 @@
 
     <color name="light_attachment_overlay_bg">#21000000</color>
     <color name="light_attachment_description_bg">#44000000</color>
+    <color name="light_attachment_text">@color/light_contrast_text_color</color>
     <color name="light_msg_panel_tooltip_bg">#eeffffff</color>
     <color name="light_profile_overlay_bg">#44000000</color>
     <color name="light_img_viewer_toolbar">#33000000</color>
 
+    <color name="light_icon_base">#757575</color>
+    <color name="light_icon_toolbar">#212121</color>
+
 
     <!-- DARK -->
-    <color name="dark_text_color">#ffffff</color>
+    <color name="dark_colorPrimary">#212121</color>
+    <color name="dark_colorPrimaryDark">#000000</color>
+    <color name="dark_colorAccent">#ffffff</color>
+    <color name="dark_status_bar_color">#00000000</color>
+
+    <color name="dark_link_color">#0277bd</color>
+    <color name="dark_link_color_contrast">#ffffff</color>
+
+    <color name="dark_default_text_color">#ffffff</color>
     <color name="dark_contrast_text_color">@color/light_default_text_color</color>
-    <color name="dark_text_second_color">#b2b2b2</color>
+    <color name="dark_second_text_color">#b2b2b2</color>
+    <color name="dark_drawer_item_text">@color/dark_default_text_color</color>
+    <color name="dark_drawer_item_text_selected">@color/dark_default_text_color</color>
+
+    <color name="dark_background_base">#303030</color>
+    <color name="dark_background_for_cards">#262626</color>
+    <color name="dark_background_for_lists">@color/dark_background_base</color>
+
+    <color name="dark_divider_line">#1fffffff</color>
+
+    <color name="dark_attachment_overlay_bg">#21000000</color>
+    <color name="dark_attachment_description_bg">#44000000</color>
+    <color name="dark_attachment_text">@color/light_contrast_text_color</color>
+    <color name="dark_msg_panel_tooltip_bg">#eeffffff</color>
+    <color name="dark_profile_overlay_bg">#44000000</color>
+    <color name="dark_img_viewer_toolbar">#33000000</color>
+
+    <color name="dark_icon_base">#b2b2b2</color>
+    <color name="dark_icon_toolbar">#ffffff</color>
+    
 
     <!-- OTHERS -->
     <color name="contact_site">@color/light_link_color</color>

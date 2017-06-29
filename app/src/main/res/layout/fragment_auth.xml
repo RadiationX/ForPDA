@@ -84,7 +84,7 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:passwordToggleDrawable="@drawable/ic_visibility_black_24dp"
+                app:passwordToggleDrawable="@drawable/ic_visibility"
                 app:passwordToggleEnabled="true">
 
                 <android.support.v7.widget.AppCompatEditText

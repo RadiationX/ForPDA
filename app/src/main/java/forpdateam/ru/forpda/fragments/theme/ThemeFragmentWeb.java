@@ -64,7 +64,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
             menu.clear();
 
             menu.add("Копировать")
-                    .setIcon(App.getAppDrawable(R.drawable.ic_content_copy_gray_24dp))
+                    .setIcon(App.getAppDrawable(R.drawable.ic_toolbar_content_copy))
                     .setOnMenuItemClickListener(item -> {
                         webView.evalJs("copySelectedText()");
                         actionMode.finish();
@@ -73,7 +73,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
             if (currentPage.canQuote())
                 menu.add("Цитировать")
-                        .setIcon(App.getAppDrawable(R.drawable.ic_quote_post_gray_24dp))
+                        .setIcon(App.getAppDrawable(R.drawable.ic_toolbar_quote_post))
                         .setOnMenuItemClickListener(item -> {
                             webView.evalJs("selectionToQuote()");
                             actionMode.finish();
@@ -81,7 +81,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
                         })
                         .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
             menu.add("Весь текст")
-                    .setIcon(App.getAppDrawable(R.drawable.ic_select_all_gray_24dp))
+                    .setIcon(App.getAppDrawable(R.drawable.ic_toolbar_select_all))
                     .setOnMenuItemClickListener(item -> {
                         webView.evalJs("selectAllPostText()");
                         return true;

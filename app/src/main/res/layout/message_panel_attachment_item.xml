@@ -41,7 +41,7 @@
             android:ellipsize="marquee"
             android:gravity="center_horizontal"
             android:maxLines="1"
-            android:textColor="?attr/contrast_text_color"
+            android:textColor="?attr/attachment_text"
             android:textSize="12sp" />
 
         <android.support.v7.widget.AppCompatTextView
@@ -51,7 +51,7 @@
             android:gravity="center_horizontal"
             android:maxLines="1"
             android:textAllCaps="true"
-            android:textColor="?attr/contrast_text_color"
+            android:textColor="?attr/attachment_text"
             android:textSize="13sp" />
     </LinearLayout>
 
@@ -74,7 +74,7 @@
         android:layout_centerInParent="true"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:visibility="gone"
-        app:srcCompat="@drawable/ic_refresh_gray_24dp" />
+        app:srcCompat="@drawable/ic_toolbar_refresh" />
 
     <android.support.v7.widget.AppCompatRadioButton
         android:id="@+id/radio_button"

@@ -109,6 +109,9 @@ public class TopicsAdapter extends SectionedRecyclerViewAdapter<TopicsAdapter.Vi
         } else {
             holder.itemView.setVisibility(View.VISIBLE);
         }*/
+        if (holder.topDivider != null) {
+            holder.topDivider.setVisibility(section == 0 ? View.GONE : View.VISIBLE);
+        }
         holder.title.setText(sections.get(section).first);
     }
 
@@ -143,9 +146,11 @@ public class TopicsAdapter extends SectionedRecyclerViewAdapter<TopicsAdapter.Vi
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         TextView title, lastNick, date, desc;
         ImageView pinIcon, lockIcon, pollIcon;
+        View topDivider;
 
         public ViewHolder(View v) {
             super(v);
+            topDivider = v.findViewById(R.id.topic_item_top_divider);
             title = (TextView) v.findViewById(R.id.topic_item_title);
             desc = (TextView) v.findViewById(R.id.topic_item_desc);
             lastNick = (TextView) v.findViewById(R.id.topic_item_last_nick);
