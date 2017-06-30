@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.qms.interfaces.IQmsContact;
@@ -67,7 +68,7 @@ public class QmsBlackListFragment extends TabFragment {
                 searchUser(s.toString());
             }
         });
-        toolbar.getMenu().add("Добавить").setIcon(AppCompatResources.getDrawable(getContext(), R.drawable.ic_toolbar_add)).setOnMenuItemClickListener(item -> {
+        toolbar.getMenu().add("Добавить").setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_add)).setOnMenuItemClickListener(item -> {
             String nick = "";
             if (nickField.getText() != null)
                 nick = nickField.getText().toString();

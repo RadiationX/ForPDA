@@ -70,6 +70,7 @@ public class MessagePanel extends CardView {
         setClipToPadding(true);
         setRadius(fullForm ? 0 : App.px24);
         setPreventCornerOverlap(false);
+        setCardBackgroundColor(App.getColorFromAttr(getContext(), R.attr.cards_background));
         //На случай, когда добавляются несколько слушателей
         advancedButton.setOnClickListener(v -> {
             for (OnClickListener listener : advancedListeners)

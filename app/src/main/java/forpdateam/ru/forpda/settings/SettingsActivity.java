@@ -3,8 +3,12 @@ package forpdateam.ru.forpda.settings;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 
+import java.util.Observer;
+
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 
 /**
@@ -12,10 +16,21 @@ import forpdateam.ru.forpda.R;
  */
 
 public class SettingsActivity extends AppCompatActivity {
+    private Observer appThemeChangeObserver = (observable, o) -> {
+        if (o == null) return;
+        String key = (String) o;
+        switch (key) {
+            case Preferences.Main.Theme.IS_DARK: {
+                recreate();
+                break;
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(R.style.DarkAppTheme);
+        setTheme(App.getInstance().isDarkTheme() ? R.style.DarkAppTheme : R.style.LightAppTheme);
         setContentView(R.layout.activity_settings);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -23,6 +38,7 @@ public class SettingsActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowTitleEnabled(true);
         }
+        App.getInstance().addPreferenceChangeObserver(appThemeChangeObserver);
     }
 
     @Override
@@ -30,5 +46,11 @@ public class SettingsActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home)
             finish();
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        App.getInstance().removePreferenceChangeObserver(appThemeChangeObserver);
     }
 }

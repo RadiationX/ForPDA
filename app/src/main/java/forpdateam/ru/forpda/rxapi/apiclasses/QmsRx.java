@@ -77,6 +77,7 @@ public class QmsRx {
         if (withHtml) {
             MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT);
 
+            t.setVariableOpt("style_type", App.getInstance().getCssStyleType());
             t.setVariableOpt("chat_title", Utils.htmlEncode(chatModel.getTitle()));
             t.setVariableOpt("chatId", chatModel.getThemeId());
             t.setVariableOpt("userId", chatModel.getUserId());

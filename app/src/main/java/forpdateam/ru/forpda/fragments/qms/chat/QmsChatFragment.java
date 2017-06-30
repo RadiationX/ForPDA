@@ -65,7 +65,7 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
     public final static String USER_AVATAR_ARG = "USER_AVATAR_ARG";
     public final static String THEME_ID_ARG = "THEME_ID_ARG";
     public final static String THEME_TITLE_ARG = "THEME_TITLE_ARG";
-    private final static int NOT_CREATED = -1;
+
 
     final QmsChatModel currentChat = new QmsChatModel();
     private ChatThemeCreator themeCreator;
@@ -161,8 +161,8 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            currentChat.setUserId(getArguments().getInt(USER_ID_ARG, NOT_CREATED));
-            currentChat.setThemeId(getArguments().getInt(THEME_ID_ARG, NOT_CREATED));
+            currentChat.setUserId(getArguments().getInt(USER_ID_ARG, QmsChatModel.NOT_CREATED));
+            currentChat.setThemeId(getArguments().getInt(THEME_ID_ARG, QmsChatModel.NOT_CREATED));
             currentChat.setTitle(getArguments().getString(THEME_TITLE_ARG));
             currentChat.setAvatarUrl(getArguments().getString(USER_AVATAR_ARG));
             currentChat.setNick(getArguments().getString(USER_NICK_ARG));
@@ -201,7 +201,7 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
         attachmentsPopup.setInsertAttachmentListener(item -> "[url=http://savepic.ru/" + item.getId() + "." + item.getExtension() + "]" +
                 "Файл: " + item.getName() + ", Размер: " + item.getWeight() + ", ID: " + item.getId() + "[/url]");
         messagePanel.addSendOnClickListener(v -> {
-            if (currentChat.getThemeId() == NOT_CREATED) {
+            if (currentChat.getThemeId() == QmsChatModel.NOT_CREATED) {
                 themeCreator.sendNewTheme();
             } else {
                 sendMessage();
@@ -219,7 +219,7 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
         if (currentChat.getTitle() != null) {
             setTitle(currentChat.getTitle());
         }
-        if (currentChat.getThemeId() == NOT_CREATED) {
+        if (currentChat.getThemeId() == QmsChatModel.NOT_CREATED) {
             themeCreator = new ChatThemeCreator(this);
         }
 
@@ -234,7 +234,7 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
 
     @Override
     public void loadData() {
-        if (currentChat.getUserId() != NOT_CREATED && currentChat.getThemeId() != NOT_CREATED) {
+        if (currentChat.getUserId() != QmsChatModel.NOT_CREATED && currentChat.getThemeId() != QmsChatModel.NOT_CREATED) {
             mainSubscriber.subscribe(RxApi.Qms().getChat(currentChat.getUserId(), currentChat.getThemeId()), this::onLoadChat, new QmsChatModel(), v -> loadData());
         }
     }
@@ -249,10 +249,12 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
     //Chat
     private void loadBaseWebContainer() {
         MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT);
+        t.setVariableOpt("style_type", App.getInstance().getCssStyleType());
         t.setVariableOpt("body_type", "qms");
         t.setVariableOpt("messages", "");
+        String html = t.generateOutput();
         t.reset();
-        webView.loadDataWithBaseURL("http://4pda.ru/forum/", t.generateOutput(), "text/html", "utf-8", null);
+        webView.loadDataWithBaseURL("http://4pda.ru/forum/", html, "text/html", "utf-8", null);
     }
 
 
@@ -320,7 +322,7 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
 
 
     private void tryShowAvatar() {
-        if (currentChat.getAvatarUrl() != null && currentChat.getUserId() != NOT_CREATED) {
+        if (currentChat.getAvatarUrl() != null && currentChat.getUserId() != QmsChatModel.NOT_CREATED) {
             ImageLoader.getInstance().displayImage(currentChat.getAvatarUrl(), toolbarImageView);
             toolbarImageView.setVisibility(View.VISIBLE);
             toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + currentChat.getUserId()));

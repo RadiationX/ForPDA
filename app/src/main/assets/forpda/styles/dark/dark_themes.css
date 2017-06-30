@@ -13,7 +13,7 @@
   color: #ffffff !important;
 }
 .mainBox {
-  background: #303030;
+  background: #212121;
   margin: 0.5em 0;
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
 }
@@ -26,7 +26,7 @@
   user-select: none;
 }
 body {
-  background: #262626;
+  background: #141414;
 }
 button,
 .btn {
@@ -92,7 +92,7 @@ button:active,
   }
 }
 .poll {
-  background: #303030;
+  background: #212121;
   margin: 0.5em 0;
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
 }
@@ -223,7 +223,7 @@ button:active,
   position: absolute;
   box-sizing: border-box;
   border: 0.125rem solid rgba(255, 255, 255, 0.5);
-  border-color: #303030;
+  border-color: #212121;
   border-top: none;
   border-right: none;
   -webkit-transform-origin: left bottom;
@@ -538,7 +538,7 @@ button:active,
   }
 }
 .post_container {
-  background: #303030;
+  background: #212121;
   margin: 0.5em 0;
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
   position: relative;
@@ -700,7 +700,7 @@ button:active,
   bottom: 0.25em;
   right: 0;
   bottom: 0;
-  box-shadow: 0 0 0 0.125em #303030;
+  box-shadow: 0 0 0 0.125em #212121;
 }
 .post_container .post_header .avatar .reputation > span {
   color: #ffffff;
@@ -904,7 +904,7 @@ button:active,
   line-height: 1.5em;
 }
 .posts_list.search-results .bad-search-result {
-  background: #303030;
+  background: #212121;
   margin: 0.5em 0;
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
   padding: 1em;

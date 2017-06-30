@@ -55,8 +55,8 @@
     <color name="dark_drawer_item_text">@color/dark_default_text_color</color>
     <color name="dark_drawer_item_text_selected">@color/dark_default_text_color</color>
 
-    <color name="dark_background_base">#303030</color>
-    <color name="dark_background_for_cards">#262626</color>
+    <color name="dark_background_base">#141414</color>
+    <color name="dark_background_for_cards">#0a0a0a</color>
     <color name="dark_background_for_lists">@color/dark_background_base</color>
 
     <color name="dark_divider_line">#1fffffff</color>
@@ -73,7 +73,7 @@
     <color name="dark_icon_toolbar">#ffffff</color>
     <color name="dark_icon_toolbar_inverse">@color/light_icon_toolbar</color>
 
-    <color name="dark_card_background">#303030</color>
+    <color name="dark_card_background">#212121</color>
     
 
     <!-- OTHERS -->

@@ -12,6 +12,7 @@ public class Preferences {
         public final static String SHOW_NOTIFY_DOT = "main.show_notify_dot";
         public final static String WEBVIEW_FONT_SIZE = "main.webview.font_size";
 
+
         public static int getWebViewSize() {
             int size = App.getInstance().getPreferences().getInt(Preferences.Main.WEBVIEW_FONT_SIZE, 16);
             size = Math.max(Math.min(size, 64), 8);
@@ -21,6 +22,10 @@ public class Preferences {
         public static void setWebViewSize(int size) {
             size = Math.max(Math.min(size, 64), 8);
             App.getInstance().getPreferences().edit().putInt(Preferences.Main.WEBVIEW_FONT_SIZE, size).apply();
+        }
+
+        public final class Theme {
+            public final static String IS_DARK = "main.theme.is_dark";
         }
     }
 
