@@ -285,7 +285,6 @@ button,
                                 top: 50%;
                                 margin-top: -10/16em;
                                 border: @borderInput;
-                                
                                 overflow: hidden;
                                 -webkit-transform: translateZ(0);
                                 transform: translateZ(0);
@@ -375,7 +374,8 @@ button,
                                 position: relative;
                                 min-height: 24/16rem;
                                 padding: 6/16rem 12/16rem;
-                                .bRad(2px);;
+                                .bRad(2px);
+                                ;
                                 .range {
                                     position: absolute;
                                     left: 0;
@@ -638,10 +638,8 @@ button,
     &.square_avatar {
         .post_header {
             .avatar {
-                .img {
-                }
-                >.letter {
-                }
+                .img {}
+                >.letter {}
             }
         }
     }
@@ -660,10 +658,8 @@ button,
     &.show_avatar {
         .post_header {
             .avatar {
-                .img {
-                }
-                .letter {
-                }
+                .img {}
+                .letter {}
             }
         }
     }
@@ -819,10 +815,9 @@ button,
                 top: -12/16em;
                 height: 48/16em;
                 width: 40/16em;
-                background-image: url(../../res/dots-vertical.svg);
-                background-size: 24/16em;
-                background-position: center;
-                background-repeat: no-repeat;
+                background-color: @icon_base;
+                -webkit-mask-size: 24/16em 24/16em;
+                -webkit-mask: url(../../res/dots-vertical.svg) no-repeat center center;
                 margin: 0;
                 >span {
                     display: none;
@@ -845,7 +840,6 @@ button,
                     transition: 0.15s @curveStandard;
                 }
                 &:active {
-                    background-color: inherit;
                     &:before {
                         opacity: 0.05;
                         -webkit-transform: scale(1) translateZ(0);

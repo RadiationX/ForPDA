@@ -784,10 +784,9 @@ button:active,
   top: -0.75em;
   height: 3em;
   width: 2.5em;
-  background-image: url(../../res/dots-vertical.svg);
-  background-size: 1.5em;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-color: #757575;
+  -webkit-mask-size: 1.5em 1.5em;
+  -webkit-mask: url(../../res/dots-vertical.svg) no-repeat center center;
   margin: 0;
 }
 .post_container .post_header .inf.menu > span {
@@ -810,9 +809,6 @@ button:active,
   opacity: 0;
   -webkit-transition: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   transition: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.post_container .post_header .inf.menu:active {
-  background-color: inherit;
 }
 .post_container .post_header .inf.menu:active:before {
   opacity: 0.05;

@@ -379,21 +379,31 @@ li .post-block.hidden {
   user-select: none;
 }
 .post-block.code > .block-title > .block-controls i {
+  position: relative;
   height: 2.25rem;
   width: 2.25rem;
   -webkit-border-radius: 2px;
   border-radius: 2px;
   float: right;
-  background-size: 1.5rem;
-  background-position: center;
-  background-repeat: no-repeat;
 }
-.post-block.code > .block-title > .block-controls i.wrap {
-  background-image: url(../../res/wrap.svg);
+.post-block.code > .block-title > .block-controls i.wrap:after {
+  -webkit-mask: url(../../res/wrap.svg) no-repeat center center;
 }
 .post-block.code > .block-title > .block-controls i.select_all {
-  background-image: url(../../res/select-all.svg);
   margin-right: 0.5rem;
+}
+.post-block.code > .block-title > .block-controls i.select_all:after {
+  -webkit-mask: url(../../res/select-all.svg) no-repeat center center;
+}
+.post-block.code > .block-title > .block-controls i:after {
+  content: "";
+  height: 2.25rem;
+  width: 2.25rem;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: #212121;
+  -webkit-mask-size: 1.25em 1.25em;
 }
 .post-block.code > .block-title > .block-controls i:active {
   background-color: rgba(0, 0, 0, 0.05);
