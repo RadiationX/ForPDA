@@ -232,6 +232,13 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
         mainSubscriber.subscribe(RxApi.Qms().sendNewTheme(nick, title, message), this::onNewThemeCreate, new QmsChatModel());
     }
 
+    @Override
+    public void loadData() {
+        if (currentChat.getUserId() != NOT_CREATED && currentChat.getThemeId() != NOT_CREATED) {
+            mainSubscriber.subscribe(RxApi.Qms().getChat(currentChat.getUserId(), currentChat.getThemeId()), this::onLoadChat, new QmsChatModel(), v -> loadData());
+        }
+    }
+
     private void onNewThemeCreate(QmsChatModel chat) {
         themeCreator.onNewThemeCreate();
         messagePanel.clearMessage();
@@ -248,16 +255,10 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
         webView.loadDataWithBaseURL("http://4pda.ru/forum/", t.generateOutput(), "text/html", "utf-8", null);
     }
 
-    @Override
-    public void loadData() {
-        if (currentChat.getUserId() != NOT_CREATED && currentChat.getThemeId() != NOT_CREATED) {
-            mainSubscriber.subscribe(RxApi.Qms().getChat(currentChat.getUserId(), currentChat.getThemeId()), this::onLoadChat, new QmsChatModel(), v -> loadData());
-            if (webSocket == null)
-                webSocket = Client.getInstance().createWebSocketConnection(webSocketListener);
-        }
-    }
 
     private void onLoadChat(QmsChatModel loadedChat) {
+        if (webSocket == null)
+            webSocket = Client.getInstance().createWebSocketConnection(webSocketListener);
         currentChat.setThemeId(loadedChat.getThemeId());
         currentChat.setTitle(loadedChat.getTitle());
         currentChat.setUserId(loadedChat.getUserId());

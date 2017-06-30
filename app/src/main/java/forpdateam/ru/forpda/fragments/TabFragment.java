@@ -11,6 +11,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -267,6 +268,11 @@ public class TabFragment extends RxFragment {
         // TODO: 20.12.16 not work in 25.1.0
         //params.setBehavior(new ScrollAwareFABBehavior(fab.getContext(), null));
         fab.requestLayout();
+    }
+
+    protected void refreshLayoutStyle(SwipeRefreshLayout refreshLayout) {
+        refreshLayout.setProgressBackgroundColorSchemeColor(App.getColorFromAttr(getContext(), R.attr.colorPrimary));
+        refreshLayout.setColorSchemeColors(App.getColorFromAttr(getContext(), R.attr.colorAccent));
     }
 
     @Override

@@ -8,7 +8,6 @@
     android:paddingEnd="@dimen/dp16"
     android:paddingStart="@dimen/dp16"
     android:paddingTop="56dp"
-    app:theme="@style/ButtonsOnWhite"
     android:animateLayoutChanges="true">
 
     <android.support.design.widget.TextInputLayout

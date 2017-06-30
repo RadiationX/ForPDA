@@ -42,7 +42,7 @@
 
     <!-- DARK -->
     <color name="dark_colorPrimary">#212121</color>
-    <color name="dark_colorPrimaryDark">#000000</color>
+    <color name="dark_colorPrimaryDark">#121212</color>
     <color name="dark_colorAccent">#ffffff</color>
     <color name="dark_status_bar_color">#00000000</color>
 
@@ -64,7 +64,7 @@
     <color name="dark_attachment_overlay_bg">#21000000</color>
     <color name="dark_attachment_description_bg">#44000000</color>
     <color name="dark_attachment_text">@color/light_contrast_text_color</color>
-    <color name="dark_msg_panel_tooltip_bg">#eeffffff</color>
+    <color name="dark_msg_panel_tooltip_bg">#ee000000</color>
     <color name="dark_profile_overlay_bg">#44000000</color>
     <color name="dark_img_viewer_toolbar">#33000000</color>
 

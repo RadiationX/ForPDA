@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.mentions.models.MentionItem;
 
@@ -21,6 +22,15 @@ import forpdateam.ru.forpda.api.mentions.models.MentionItem;
 
 public class MentionsAdapter extends RecyclerView.Adapter<MentionsAdapter.ViewHolder> {
     private List<MentionItem> list = new ArrayList<>();
+
+    private int titleColorNew, titleColor;
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        titleColor = App.getColorFromAttr(recyclerView.getContext(), R.attr.second_text_color);
+        titleColorNew = App.getColorFromAttr(recyclerView.getContext(), R.attr.default_text_color);
+    }
 
     public void addAll(Collection<MentionItem> results) {
         list.clear();
@@ -54,6 +64,7 @@ public class MentionsAdapter extends RecyclerView.Adapter<MentionsAdapter.ViewHo
         MentionItem item = list.get(position);
         holder.title.setText(item.getTitle());
         holder.title.setTypeface(item.getState() == MentionItem.STATE_UNREAD ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+        holder.title.setTextColor(item.getState() == MentionItem.STATE_UNREAD ? titleColorNew : titleColor);
         holder.lastNick.setText(item.getNick());
         holder.date.setText(item.getDate());
         if (holder.desc.getVisibility() == View.VISIBLE) {

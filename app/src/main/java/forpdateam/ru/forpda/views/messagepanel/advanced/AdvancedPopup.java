@@ -31,6 +31,7 @@ public class AdvancedPopup {
     private StateListener stateListener;
     private int newKeyboardHeight = 0;
     private MessagePanel messagePanel;
+    private Context context;
 
 
     private ViewTreeObserver.OnGlobalLayoutListener globalLayoutListener = () -> {
@@ -64,6 +65,7 @@ public class AdvancedPopup {
     };
 
     public AdvancedPopup(Context context, MessagePanel panel) {
+        this.context = context;
         fragmentContainer = panel.getFragmentContainer();
         messagePanel = panel;
 
@@ -128,7 +130,7 @@ public class AdvancedPopup {
     }
 
     private void showPopup() {
-        messagePanel.getAdvancedButton().setColorFilter(messagePanel.primaryColor);
+        messagePanel.getAdvancedButton().setColorFilter(App.getColorFromAttr(context, R.attr.colorAccent));
 
         if (!popupWindow.isShowing())
             popupWindow.showAtLocation(fragmentContainer, Gravity.BOTTOM, 0, 0);

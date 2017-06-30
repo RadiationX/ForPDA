@@ -14,7 +14,9 @@ import com.afollestad.sectionedrecyclerview.SectionedRecyclerViewAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.api.mentions.models.MentionItem;
 import forpdateam.ru.forpda.api.topcis.models.TopicItem;
 
 /**
@@ -26,6 +28,14 @@ public class TopicsAdapter extends SectionedRecyclerViewAdapter<TopicsAdapter.Vi
     private List<Pair<String, List<TopicItem>>> sections = new ArrayList<>();
     private TopicsAdapter.OnItemClickListener itemClickListener;
     private TopicsAdapter.OnItemClickListener longItemClickListener;
+    private int titleColorNew, titleColor;
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        titleColor = App.getColorFromAttr(recyclerView.getContext(), R.attr.second_text_color);
+        titleColorNew = App.getColorFromAttr(recyclerView.getContext(), R.attr.default_text_color);
+    }
 
     public void addItems(Pair<String, List<TopicItem>> item) {
         sections.add(item);
@@ -96,7 +106,7 @@ public class TopicsAdapter extends SectionedRecyclerViewAdapter<TopicsAdapter.Vi
     @Override
     public int getItemViewType(int section, int relativePosition, int absolutePosition) {
         TopicItem item = sections.get(section).second.get(relativePosition);
-        if (item.isAnnounce()||item.isForum())
+        if (item.isAnnounce() || item.isForum())
             return VIEW_TYPE_ANNOUNCE; // VIEW_TYPE_HEADER is -2, VIEW_TYPE_ITEM is -1. You can return 0 or greater.
         return super.getItemViewType(section, relativePosition, absolutePosition);
     }
@@ -122,6 +132,7 @@ public class TopicsAdapter extends SectionedRecyclerViewAdapter<TopicsAdapter.Vi
         holder.title.setText(item.getTitle());
         if (getItemViewType(section, relativePosition, absolutePosition) != VIEW_TYPE_ANNOUNCE) {
             holder.title.setTypeface((item.getParams() & TopicItem.NEW_POST) != 0 ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+            holder.title.setTextColor((item.getParams() & TopicItem.NEW_POST) != 0 ? titleColorNew : titleColor);
             if (false && item.getDesc() != null) {
                 holder.desc.setVisibility(View.VISIBLE);
                 holder.desc.setText(item.getDesc());

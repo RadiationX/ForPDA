@@ -67,7 +67,7 @@ public class ChatThemeCreator {
     private void initCreatorViews() {
         titleField.addTextChangedListener(textWatcher);
         nickField.addTextChangedListener(textWatcher);
-        editItem = fragment.getMenu().add("Изменить").setIcon(App.getAppDrawable(R.drawable.ic_toolbar_create)).setOnMenuItemClickListener(menuItem -> {
+        editItem = fragment.getMenu().add("Изменить").setIcon(App.getAppDrawable(R.drawable.ic_fab_create)).setOnMenuItemClickListener(menuItem -> {
             viewStub.setVisibility(View.VISIBLE);
             doneItem.setVisible(true);
             editItem.setVisible(false);

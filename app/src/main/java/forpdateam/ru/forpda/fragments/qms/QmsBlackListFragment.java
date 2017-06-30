@@ -75,6 +75,7 @@ public class QmsBlackListFragment extends TabFragment {
             return false;
         }).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
+        refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

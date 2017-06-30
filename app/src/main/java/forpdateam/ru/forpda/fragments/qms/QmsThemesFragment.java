@@ -77,11 +77,12 @@ public class QmsThemesFragment extends TabFragment {
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
         recyclerView = (RecyclerView) findViewById(R.id.base_list);
         viewsReady();
+        refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        fab.setImageDrawable(App.getAppDrawable(R.drawable.ic_toolbar_create));
+        fab.setImageDrawable(App.getAppDrawable(R.drawable.ic_fab_create));
         fab.setOnClickListener(view1 -> {
             Bundle args = new Bundle();
             args.putInt(QmsChatFragment.USER_ID_ARG, currentThemes.getUserId());

@@ -40,7 +40,6 @@ public class MessagePanel extends CardView {
     private ProgressBar formProgress;
     private int lastHeight = 0;
     private HeightChangeListener heightChangeListener;
-    public int primaryColor = Color.parseColor("#0277bd");
     private boolean fullForm = false;
     private CoordinatorLayout.LayoutParams params;
 
@@ -100,7 +99,7 @@ public class MessagePanel extends CardView {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() > 0) {
                     if (sendButton.getColorFilter() == null) {
-                        sendButton.setColorFilter(primaryColor);
+                        sendButton.setColorFilter(App.getColorFromAttr(getContext(), R.attr.colorAccent));
                     }
                 } else {
                     if (sendButton.getColorFilter() != null) {

@@ -186,10 +186,10 @@
 
     </style>
 
-    <style name="ButtonsOnWhite">
+    <!--<style name="ButtonsOnWhite">
         <item name="colorControlNormal">#757575</item>
         <item name="colorControlActivated">@color/light_colorAccent</item>
-    </style>
+    </style>-->
 
 
     <style name="ImageViewTheme" parent="Theme.AppCompat.NoActionBar">
