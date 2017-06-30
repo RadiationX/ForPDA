@@ -11,6 +11,7 @@ public class Preferences {
     public static final class Main {
         public final static String SHOW_NOTIFY_DOT = "main.show_notify_dot";
         public final static String WEBVIEW_FONT_SIZE = "main.webview.font_size";
+        public final static String IS_SYSTEM_DOWNLOADER = "main.is_system_downloader";
 
 
         public static int getWebViewSize() {
@@ -22,6 +23,10 @@ public class Preferences {
         public static void setWebViewSize(int size) {
             size = Math.max(Math.min(size, 64), 8);
             App.getInstance().getPreferences().edit().putInt(Preferences.Main.WEBVIEW_FONT_SIZE, size).apply();
+        }
+
+        public static boolean isSystemDownloader() {
+            return App.getInstance().getPreferences().getBoolean(Main.IS_SYSTEM_DOWNLOADER, true);
         }
 
         public final class Theme {

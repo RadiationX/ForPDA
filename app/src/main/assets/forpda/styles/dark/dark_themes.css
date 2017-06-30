@@ -785,7 +785,7 @@ button:active,
   height: 3em;
   width: 2.5em;
   background-color: #b2b2b2;
-  -webkit-mask-size: 1.5em 1.5em;
+  -webkit-mask-size: 1.5rem 1.5rem;
   -webkit-mask: url(../../res/dots-vertical.svg) no-repeat center center;
   margin: 0;
 }
@@ -920,3 +920,22 @@ button:active,
 .posts_list.search-results .post_body {
   padding: 1em;
 }
+/*body {
+    background: blue;
+}
+
+@media all and (max-width: 48rem) {
+    body {
+        background: red;
+    }
+    .mess_list {
+        >.mess_container {
+            &.his {
+                margin-right: 16/16em;
+            }
+            &.our {
+                margin-left: 16/16em;
+            }
+        }
+    }
+}*/

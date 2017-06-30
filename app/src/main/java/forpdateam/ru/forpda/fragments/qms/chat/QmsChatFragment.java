@@ -177,7 +177,11 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
         baseInflateFragment(inflater, R.layout.fragment_qms_chat);
         chatContainer = (FrameLayout) findViewById(R.id.qms_chat_container);
         messagePanel = new MessagePanel(getContext(), fragmentContainer, coordinatorLayout, false);
-        messagePanel.setHeightChangeListener(newHeight -> webView.evalJs("setPaddingBottom(" + (newHeight / getResources().getDisplayMetrics().density) + ");"));
+        messagePanel.setHeightChangeListener(newHeight -> {
+            syncWithWebView(()->{
+                webView.evalJs("setPaddingBottom(" + (newHeight / getResources().getDisplayMetrics().density) + ");");
+            });
+        });
 
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
 

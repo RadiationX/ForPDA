@@ -28,6 +28,7 @@
         <item name="divider_line">@color/light_divider_line</item>
         <item name="attachment_overlay_bg">@color/light_attachment_overlay_bg</item>
         <item name="attachment_description_bg">@color/light_attachment_description_bg</item>
+        <item name="attachment_text">@color/light_attachment_text</item>
         <item name="msg_panel_tooltip_bg">@color/light_msg_panel_tooltip_bg</item>
         <item name="profile_overlay_bg">@color/light_profile_overlay_bg</item>
         <item name="img_viewer_toolbar">@color/light_img_viewer_toolbar</item>
@@ -110,6 +111,7 @@
         <item name="divider_line">@color/dark_divider_line</item>
         <item name="attachment_overlay_bg">@color/dark_attachment_overlay_bg</item>
         <item name="attachment_description_bg">@color/dark_attachment_description_bg</item>
+        <item name="attachment_text">@color/dark_attachment_text</item>
         <item name="msg_panel_tooltip_bg">@color/dark_msg_panel_tooltip_bg</item>
         <item name="profile_overlay_bg">@color/dark_profile_overlay_bg</item>
         <item name="img_viewer_toolbar">@color/dark_img_viewer_toolbar</item>

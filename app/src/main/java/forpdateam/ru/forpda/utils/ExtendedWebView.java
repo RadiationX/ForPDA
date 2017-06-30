@@ -14,6 +14,7 @@ import android.webkit.WebSettings;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.settings.Preferences;
 
 /**
  * Created by radiationx on 01.11.16.
@@ -40,7 +41,7 @@ public class ExtendedWebView extends NestedWebView {
         WebSettings settings = getSettings();
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
         settings.setBuiltInZoomControls(false);
-        settings.setDefaultFontSize(16);
+        settings.setDefaultFontSize(Preferences.Main.getWebViewSize());
         settings.setTextZoom(100);
         settings.setJavaScriptEnabled(true);
         setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_base));
