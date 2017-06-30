@@ -402,19 +402,31 @@ li {
                 z-index: 3;
                 .noselect();
                 i {
+                    position: relative;
                     height: 36/16rem;
                     width: 36/16rem;
                     .bRad(2px);
                     float: right;
-                    background-size: 24/16rem;
-                    background-position: center;
-                    background-repeat: no-repeat;
                     &.wrap {
-                        background-image: url(../../res/wrap.svg);
+                        &:after {
+                            -webkit-mask: url(../../res/wrap.svg) no-repeat center center;
+                        }
                     }
                     &.select_all {
-                        background-image: url(../../res/select-all.svg);
+                        &:after {
+                            -webkit-mask: url(../../res/select-all.svg) no-repeat center center;
+                        }
                         margin-right: 8/16rem;
+                    }
+                    &:after {
+                        content: "";
+                        height: 36/16rem;
+                        width: 36/16rem;
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        background-color: @icon_toolbar;
+                        -webkit-mask-size: 20/16em 20/16em;
                     }
                     &:active {
                         background-color: @tapColor;
@@ -701,7 +713,6 @@ a.snapback {
     max-width: 100%;
     box-sizing: border-box;
     vertical-align: text-bottom;
-    
     //margin-bottom: 8/16rem;
     //margin: 0 4/16rem;
     //margin-bottom: 4/16rem;
