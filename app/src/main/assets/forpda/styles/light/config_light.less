@@ -1,40 +1,62 @@
-/*---
-Name: Coba
-Type: Lignt
-Color: Blue[#03a9f4]
-Version: 1.2
-Author: RadiationX|Radiation15
-Edited by: RadiationX|*or you nick*
----*/
+@import "../config_colors";
 
 /*Curves*/
+
 @curveStandard: cubic-bezier(0.4, 0.0, 0.2, 1);
 @curveEaseOut: cubic-bezier(0.0, 0.0, 0.2, 1);
 @curveEaseIn: cubic-bezier(0.4, 0.0, 1, 1);
 @curveSharp: cubic-bezier(0.4, 0.0, 0.6, 1);
 
 /*Fonts*/
-@font: "Roboto", sans-serif;
-@fontMono: "Roboto Mono", monospace;
+
+@font: "Roboto",
+sans-serif;
+@fontMono: "Roboto Mono",
+monospace;
 
 /*Color scheme*/
-@primaryColor: #fff;
-@primaryDarkColor: #aaa;
-@accentColor: #000;
-@textColor: fade(#000, 87%);
-@secondTextColor: fade(#000, 54%);
-@linkColor: #2177af;
-@tapColor: fade(#000, 5%);
-@background: #fafafa;
-@darkBackground: #eee;
+
+@colorPrimary: @light_colorPrimary;
+@colorPrimaryDark: @light_colorPrimaryDark;
+@colorAccent: @light_colorAccent;
+@link_color: @light_link_color;
+@link_color_contrast: @light_link_color_contrast;
+@default_text_color: @light_default_text_color;
+@contrast_text_color: @light_contrast_text_color;
+@second_text_color: @light_second_text_color;
+@background_base: @light_background_base;
+@background_for_cards: @light_background_for_cards;
+@background_for_lists: @light_background_for_lists;
+@divider_line: @light_divider_line;
+@icon_base: @light_icon_base;
+@icon_base_inverse: @light_icon_base_inverse;
+@icon_toolbar: @light_icon_toolbar;
+@icon_toolbar_inverse: @light_icon_toolbar_inverse;
+@card_background: @light_card_background;
+@tapColor: fade(@colorAccent, 5%);
+
+/* NEW COLORS */
+
+@avatar_letter_color: @contrast_text_color;
+@avatar_background: darken(#fff, 25%);
+@avatar_overlap_color: @card_background;
+@avatar_overlap_background: darken(#fff, 50%);
+@button_selected_background: @tapColor;
+@poll_range_bar_background: fade(#000, 10%);
+@attachment_background: fade(@link_color, 5%);
+@attachment_border: fade(@link_color, 10%);
+@quote_border_color: darken(#fff, 25%);
+@code_border_color: #448d62;
+@code_text_color: #448d62;
 
 /*Elements colors*/
-@cardBg: @primaryColor;
+
 @border1: 1/16rem solid fade(#000, 5%); //Основной бордер
-@borderInput: 2/16rem solid fade(#000, 54%); //Основной бордер
+@borderInput: 2/16rem solid fade(#000, 50%); //Основной бордер
 @userOnlineColor: #12b557; //Цвет ника онлайн
 
 /*Post blocks*/
+
 @postBlockBg: fade(#000, 5%);
 @childSpoilColor: fade(#000, 3%);
 @exColor: #e74c3c;
@@ -45,11 +67,11 @@ Edited by: RadiationX|*or you nick*
 @modColorBlock: fade(@modColor, 10%);
 [style*="color:#ffffff"],
 [style*="color:white"] {
-    color: @textColor!important;
+    color: @default_text_color!important;
 }
 
 .mainBox {
-    background: @cardBg;
+    background: @card_background;
     margin: 8/16em 0;
     box-shadow: 0 0px 1px fade(#000, 24%);
 }

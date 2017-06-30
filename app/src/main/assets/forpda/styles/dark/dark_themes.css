@@ -10,10 +10,10 @@
 /*Post blocks*/
 [style*="color:#ffffff"],
 [style*="color:white"] {
-  color: #212121 !important;
+  color: #ffffff !important;
 }
 .mainBox {
-  background: #ffffff;
+  background: #303030;
   margin: 0.5em 0;
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
 }
@@ -26,7 +26,7 @@
   user-select: none;
 }
 body {
-  background: #eeeeee;
+  background: #262626;
 }
 button,
 .btn {
@@ -40,7 +40,7 @@ button,
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   outline: none!important;
   text-align: center;
-  color: #000000;
+  color: #ffffff;
 }
 button > span,
 .btn > span,
@@ -55,7 +55,7 @@ button > *,
 }
 button:active,
 .btn:active {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.05);
 }
 @-webkit-keyframes pollRangeAnimation {
   0% {
@@ -92,7 +92,7 @@ button:active,
   }
 }
 .poll {
-  background: #ffffff;
+  background: #303030;
   margin: 0.5em 0;
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
 }
@@ -103,7 +103,7 @@ button:active,
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  color: #000000;
+  color: #ffffff;
   position: relative;
   text-align: left;
   padding-right: 2.5rem;
@@ -127,12 +127,12 @@ button:active,
   top: 50%;
   margin-left: -0.25em;
   margin-top: -0.25em;
-  border-left: 0.125rem solid rgba(0, 0, 0, 0.5);
-  border-bottom: 0.125rem solid rgba(0, 0, 0, 0.5);
+  border-left: 0.125rem solid rgba(255, 255, 255, 0.5);
+  border-bottom: 0.125rem solid rgba(255, 255, 255, 0.5);
   box-sizing: border-box;
   height: 0.5em;
   width: 0.5em;
-  border-color: #000000;
+  border-color: #ffffff;
   -webkit-transform: rotate(-45deg) translateY(-0.0625em) translateX(0.0625em);
   transform: rotate(-45deg) translateY(-0.0625em) translateX(0.0625em);
   -webkit-transform-origin: center;
@@ -147,7 +147,7 @@ button:active,
   margin-top: -1em;
   height: 2em;
   width: 2em;
-  background: #000000;
+  background: #ffffff;
   -webkit-border-radius: 100%;
   border-radius: 100%;
   -webkit-transform: scale(0.5) translateZ(0);
@@ -222,8 +222,8 @@ button:active,
   content: "";
   position: absolute;
   box-sizing: border-box;
-  border: 0.125rem solid rgba(0, 0, 0, 0.5);
-  border-color: #ffffff;
+  border: 0.125rem solid rgba(255, 255, 255, 0.5);
+  border-color: #303030;
   border-top: none;
   border-right: none;
   -webkit-transform-origin: left bottom;
@@ -258,12 +258,12 @@ button:active,
   width: 1.25em;
   margin-top: -0.625em;
   margin-left: -0.625em;
-  border: 0.375em solid #000000;
+  border: 0.375em solid #ffffff;
   -webkit-transform: scale(2);
   transform: scale(2);
 }
 .poll > .body .questions .question > .items .item.default input:checked + .icon {
-  border-color: #000000;
+  border-color: #ffffff;
   -webkit-transition: 0s 0s border-color cubic-bezier(0.4, 0, 0.2, 1);
   transition: 0s 0s border-color cubic-bezier(0.4, 0, 0.2, 1);
   /*-webkit-animation: radAnim1 @dur @curveStandard;
@@ -293,7 +293,7 @@ button:active,
   transform: scaleX(1) scaleY(1);
 }
 .poll > .body .questions .question > .items .item.default input:checked[type="checkbox"] + .icon:before {
-  background: #000000;
+  background: #ffffff;
 }
 .poll > .body .questions .question > .items .item.default > .icon {
   position: absolute;
@@ -302,7 +302,7 @@ button:active,
   left: 0;
   top: 50%;
   margin-top: -0.625em;
-  border: 0.125rem solid rgba(0, 0, 0, 0.5);
+  border: 0.125rem solid rgba(255, 255, 255, 0.5);
   overflow: hidden;
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
@@ -324,7 +324,7 @@ button:active,
   width: 1.25em;
   margin-top: -0.625em;
   margin-left: -0.625em;
-  border: 0.375em solid #000000;
+  border: 0.375em solid #ffffff;
   opacity: 0;
   -webkit-transform: scale(2.25);
   transform: scale(2.25);
@@ -336,7 +336,7 @@ button:active,
   width: 0.625em;
   margin-top: -0.3125em;
   margin-left: -0.3125em;
-  border: 0.1875em solid #000000;
+  border: 0.1875em solid #ffffff;
   -webkit-transform: scale(4);
   transform: scale(4);
   -webkit-transition: 0s 0.132s background cubic-bezier(0.4, 0, 0.2, 1), 0s 0.132s border-width cubic-bezier(0.4, 0, 0.2, 1), 0.44s 0s -webkit-transform cubic-bezier(0.4, 0, 0.2, 1), 0s 0.44s opacity cubic-bezier(0.4, 0, 0.2, 1);
@@ -360,7 +360,7 @@ button:active,
   margin-top: -1.25em;
   height: 2.5em;
   width: 2.5em;
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.05);
   -webkit-border-radius: 100%;
   border-radius: 100%;
   -webkit-transform: scale(0.5) translateZ(0);
@@ -384,7 +384,7 @@ button:active,
   line-height: 1.5em;
 }
 .poll > .body .questions .question > .items .item.result .range_bar {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.1);
   box-sizing: border-box;
   position: relative;
   min-height: 1.5rem;
@@ -398,7 +398,7 @@ button:active,
   top: 0;
   height: 100%;
   width: auto;
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.1);
   -webkit-border-radius: 2px;
   border-radius: 2px;
   -webkit-transform-origin: left center;
@@ -412,7 +412,7 @@ button:active,
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
   vertical-align: bottom;
-  color: #212121;
+  color: #ffffff;
 }
 .poll > .body .questions .question > .items .item.result .range_bar .value .num_votes:before {
   content: " (";
@@ -426,7 +426,7 @@ button:active,
   display: block;
   overflow: hidden;
   padding-right: 0.5rem;
-  color: #212121;
+  color: #ffffff;
   font-weight: bold;
 }
 .poll > .body .questions .question > .items .item.result .range_bar:after {
@@ -436,7 +436,7 @@ button:active,
 }
 .poll > .body .votes_info {
   text-align: right;
-  color: #757575;
+  color: #b2b2b2;
   padding: 0.5em 1em;
 }
 .poll > .body .votes_info span {
@@ -453,7 +453,7 @@ button:active,
 .poll > .body .buttons > * {
   float: right;
   text-align: right;
-  color: #000000;
+  color: #ffffff;
 }
 .poll > .body .buttons:after {
   content: "";
@@ -490,7 +490,7 @@ button:active,
   display: block;
   padding: 0.571em;
   font-size: 0.875em;
-  color: #757575;
+  color: #b2b2b2;
 }
 .post_body strong .edit {
   text-align: left;
@@ -501,7 +501,7 @@ button:active,
   border-top: none;
   padding: 0 0.571em 0 0.571em;
   margin-top: -2px;
-  color: #757575;
+  color: #b2b2b2;
 }
 .post_body .ipb-attach.attach-file {
   position: relative;
@@ -538,7 +538,7 @@ button:active,
   }
 }
 .post_container {
-  background: #ffffff;
+  background: #303030;
   margin: 0.5em 0;
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
   position: relative;
@@ -551,7 +551,7 @@ button:active,
   -ms-user-select: none;
   user-select: none;
   width: 100%;
-  color: #000000;
+  color: #ffffff;
   position: relative;
   text-align: left;
 }
@@ -573,12 +573,12 @@ button:active,
   top: 50%;
   margin-left: -0.25em;
   margin-top: -0.25em;
-  border-left: 0.125rem solid rgba(0, 0, 0, 0.5);
-  border-bottom: 0.125rem solid rgba(0, 0, 0, 0.5);
+  border-left: 0.125rem solid rgba(255, 255, 255, 0.5);
+  border-bottom: 0.125rem solid rgba(255, 255, 255, 0.5);
   box-sizing: border-box;
   height: 0.5em;
   width: 0.5em;
-  border-color: #000000;
+  border-color: #ffffff;
   -webkit-transform: rotate(-45deg) translateY(-0.0625em) translateX(0.0625em);
   transform: rotate(-45deg) translateY(-0.0625em) translateX(0.0625em);
   -webkit-transform-origin: center;
@@ -593,7 +593,7 @@ button:active,
   margin-top: -1em;
   height: 2em;
   width: 2em;
-  background: #000000;
+  background: #ffffff;
   -webkit-border-radius: 100%;
   border-radius: 100%;
   -webkit-transform: scale(0.5) translateZ(0);
@@ -635,7 +635,7 @@ button:active,
   text-align: center;
 }
 .post_container .post_title a {
-  color: #000000;
+  color: #ffffff;
   font-weight: bold;
   text-decoration: none;
   display: block;
@@ -681,12 +681,12 @@ button:active,
   font-weight: bold;
   top: 0;
   left: 0;
-  background-color: #bfbfbf;
+  background-color: #595959;
   display: none;
 }
 .post_container .post_header .avatar .reputation {
   position: absolute;
-  background: #808080;
+  background: #4d4d4d;
   z-index: 1;
   height: 1.125em;
   line-height: 1.125em;
@@ -700,7 +700,7 @@ button:active,
   bottom: 0.25em;
   right: 0;
   bottom: 0;
-  box-shadow: 0 0 0 0.125em #ffffff;
+  box-shadow: 0 0 0 0.125em #303030;
 }
 .post_container .post_header .avatar .reputation > span {
   color: #ffffff;
@@ -741,7 +741,7 @@ button:active,
 }
 .post_container .post_header .inf.nick {
   top: 0;
-  color: #212121;
+  color: #ffffff;
   font-weight: bold;
 }
 .post_container .post_header .inf.nick.online {
@@ -768,7 +768,7 @@ button:active,
 }
 .post_container .post_header .inf.nick .group > span {
   font-size: 0.875em;
-  color: #212121 !important;
+  color: #ffffff !important;
   font-weight: normal!important;
   display: none;
 }
@@ -802,7 +802,7 @@ button:active,
   margin-top: -1em;
   height: 2em;
   width: 2em;
-  background: #000000;
+  background: #ffffff;
   -webkit-border-radius: 100%;
   border-radius: 100%;
   -webkit-transform: scale(0.5) translateZ(0);
@@ -821,7 +821,7 @@ button:active,
 }
 .post_container .post_header .inf.date {
   top: 1.25em;
-  color: #757575;
+  color: #b2b2b2;
 }
 .post_container .post_header .inf.date > span {
   font-size: 0.875em;
@@ -835,7 +835,7 @@ button:active,
   user-select: none;
 }
 .post_container .post_footer .btn {
-  color: #000000;
+  color: #ffffff;
 }
 .post_container .post_footer .btn.nick {
   float: right;
@@ -879,7 +879,7 @@ button:active,
   display: none;
 }
 .posts_list.search-results .topic_title_post {
-  border-bottom: 0.0625rem solid rgba(0, 0, 0, 0.05);
+  border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.05);
   font-weight: bold;
 }
 .posts_list.search-results .post_container .post_header {
@@ -887,7 +887,7 @@ button:active,
 }
 .posts_list.search-results .post_container .post_header .s_inf.nick {
   font-weight: bold;
-  color: #212121;
+  color: #ffffff;
 }
 .posts_list.search-results .post_container .post_header .s_inf.nick.online {
   color: #12b557;
@@ -899,12 +899,12 @@ button:active,
   font-size: 0.875em;
 }
 .posts_list.search-results .post_container .s_post_footer {
-  border-top: 0.0625rem solid rgba(0, 0, 0, 0.05);
+  border-top: 0.0625rem solid rgba(255, 255, 255, 0.05);
   padding: 0.75em 1em;
   line-height: 1.5em;
 }
 .posts_list.search-results .bad-search-result {
-  background: #ffffff;
+  background: #303030;
   margin: 0.5em 0;
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
   padding: 1em;
@@ -913,10 +913,10 @@ button:active,
 .posts_list.search-results .bad-search-result h3 {
   margin: 0;
   padding-bottom: 0.5em;
-  color: #212121;
+  color: #ffffff;
 }
 .posts_list.search-results .bad-search-result span {
-  color: #757575;
+  color: #b2b2b2;
 }
 .posts_list.search-results ~ #bottomMargin {
   height: 5.5em;

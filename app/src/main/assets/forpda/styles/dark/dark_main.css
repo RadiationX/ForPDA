@@ -11,10 +11,10 @@
 /*Post blocks*/
 [style*="color:#ffffff"],
 [style*="color:white"] {
-  color: #212121 !important;
+  color: #ffffff !important;
 }
 .mainBox {
-  background: #ffffff;
+  background: #303030;
   margin: 0.5em 0;
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
 }
@@ -89,10 +89,10 @@ body {
   width: 100%;
   height: 100%;
   margin: 0;
-  background: #fafafa;
+  background: #303030;
   font-family: "Roboto", sans-serif;
   font-size: 1em;
-  color: #212121;
+  color: #ffffff;
   line-height: 1.25em;
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -110,15 +110,15 @@ li .post-block.hidden {
   border-radius: 2px;
   margin-left: 0!important;
   margin-right: 0!important;
-  border-left: 0.0625rem solid rgba(0, 0, 0, 0.05);
-  border-right: 0.0625rem solid rgba(0, 0, 0, 0.05);
+  border-left: 0.0625rem solid rgba(255, 255, 255, 0.05);
+  border-right: 0.0625rem solid rgba(255, 255, 255, 0.05);
 }
 .post-block {
   margin: 0.75rem -1rem;
   position: relative;
-  border-top: 0.0625rem solid rgba(0, 0, 0, 0.05);
-  border-bottom: 0.0625rem solid rgba(0, 0, 0, 0.05);
-  background: rgba(0, 0, 0, 0.05);
+  border-top: 0.0625rem solid rgba(255, 255, 255, 0.05);
+  border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.05);
 }
 .post-block > .block-title {
   padding: 0.875rem;
@@ -129,7 +129,7 @@ li .post-block.hidden {
   min-height: 3rem;
   font-size: 0.875rem;
   line-height: 1.25rem;
-  color: #000000 !important;
+  color: #ffffff !important;
 }
 .post-block > .block-body {
   padding: 0.5rem 1rem 1rem 1rem;
@@ -138,10 +138,10 @@ li .post-block.hidden {
 }
 .post-block.spoil > .block-title {
   padding-right: 2.5rem;
-  color: #000000;
+  color: #ffffff;
 }
 .post-block.spoil > .block-title * {
-  color: #000000 !important;
+  color: #ffffff !important;
   font-size: 1em!important;
   font-style: normal!important;
   line-height: 1.25rem!important;
@@ -153,7 +153,7 @@ li .post-block.hidden {
   content: "Спойлер";
 }
 .post-block.spoil > .block-title:active {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.05);
 }
 .post-block.spoil > .block-title:active .icon:before {
   opacity: 0.05;
@@ -185,12 +185,12 @@ li .post-block.hidden {
   top: 50%;
   margin-left: -0.25rem;
   margin-top: -0.25rem;
-  border-left: 0.125rem solid rgba(0, 0, 0, 0.5);
-  border-bottom: 0.125rem solid rgba(0, 0, 0, 0.5);
+  border-left: 0.125rem solid rgba(255, 255, 255, 0.5);
+  border-bottom: 0.125rem solid rgba(255, 255, 255, 0.5);
   box-sizing: border-box;
   height: 0.5rem;
   width: 0.5rem;
-  border-color: #000000;
+  border-color: #ffffff;
   -webkit-transform: rotate(-45deg) translateY(-0.0625rem) translateX(0.0625rem);
   transform: rotate(-45deg) translateY(-0.0625rem) translateX(0.0625rem);
   -webkit-transform-origin: center;
@@ -205,7 +205,7 @@ li .post-block.hidden {
   margin-top: -1rem;
   height: 2rem;
   width: 2rem;
-  background: #000000;
+  background: #ffffff;
   -webkit-border-radius: 100%;
   border-radius: 100%;
   -webkit-transform: scale(0.5) translateZ(0);
@@ -215,7 +215,7 @@ li .post-block.hidden {
   transition: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .post-block.spoil > .block-body > .post-block.spoil {
-  background: rgba(0, 0, 0, 0.03);
+  background: rgba(255, 255, 255, 0.03);
 }
 .post-block.spoil > .block-body > .post-block.spoil:last-child {
   margin-bottom: 0;
@@ -268,7 +268,7 @@ li .post-block.hidden {
   top: 0.375rem;
   height: 2.25rem;
   width: 2.25rem;
-  background: #bfbfbf;
+  background: #404040;
   -webkit-border-radius: 2.25rem;
   border-radius: 2.25rem;
   font-size: 1rem;
@@ -292,7 +292,7 @@ li .post-block.hidden {
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100%;
-  border: 0.0625rem solid #ffffff;
+  border: 0.0625rem solid #303030;
   box-sizing: border-box;
 }
 .post-block.quote > .block-title .title {
@@ -307,7 +307,7 @@ li .post-block.hidden {
   line-height: 1.125rem;
 }
 .post-block.quote > .block-title .title .date {
-  color: #757575;
+  color: #b2b2b2;
   font-size: 0.75rem;
   line-height: 0.75rem;
   font-weight: normal;
@@ -358,7 +358,7 @@ li .post-block.hidden {
   clear: both;
 }
 .post-block.code > .block-title:active {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.05);
 }
 .post-block.code > .block-title:active .icon:before {
   opacity: 0.05;
@@ -396,7 +396,7 @@ li .post-block.hidden {
   margin-right: 0.5rem;
 }
 .post-block.code > .block-title > .block-controls i:active {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: rgba(255, 255, 255, 0.05);
 }
 .post-block.code > .block-title .icon {
   height: 2.25rem;
@@ -417,12 +417,12 @@ li .post-block.hidden {
   top: 50%;
   margin-left: -0.25rem;
   margin-top: -0.25rem;
-  border-left: 0.125rem solid rgba(0, 0, 0, 0.5);
-  border-bottom: 0.125rem solid rgba(0, 0, 0, 0.5);
+  border-left: 0.125rem solid rgba(255, 255, 255, 0.5);
+  border-bottom: 0.125rem solid rgba(255, 255, 255, 0.5);
   box-sizing: border-box;
   height: 0.5rem;
   width: 0.5rem;
-  border-color: #000000;
+  border-color: #ffffff;
   -webkit-transform: rotate(-45deg) translateY(-0.0625rem) translateX(0.0625rem);
   transform: rotate(-45deg) translateY(-0.0625rem) translateX(0.0625rem);
   -webkit-transform-origin: center;
@@ -437,7 +437,7 @@ li .post-block.hidden {
   margin-top: -1rem;
   height: 2rem;
   width: 2rem;
-  background: #000000;
+  background: #ffffff;
   -webkit-border-radius: 100%;
   border-radius: 100%;
   -webkit-transform: scale(0.5) translateZ(0);
@@ -485,7 +485,7 @@ li .post-block.hidden {
   width: 1.75rem;
   padding-left: 0.5rem;
   white-space: nowrap;
-  color: #757575;
+  color: #b2b2b2;
   box-sizing: border-box;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -505,7 +505,7 @@ li .post-block.hidden {
   transform: rotateX(180deg) translateZ(0);
 }
 .post-block.code.wrap > .block-title .block-controls .wrap {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: rgba(255, 255, 255, 0.05);
 }
 .post-block.code.wrap .block-body .lines {
   white-space: pre-wrap;
@@ -653,8 +653,8 @@ a.snapback:after {
   max-width: 100%;
   box-sizing: border-box;
   vertical-align: text-bottom;
-  border: 1px solid rgba(33, 119, 175, 0.1);
-  background: rgba(33, 119, 175, 0.05);
+  border: 1px solid rgba(33, 119, 175, 0.15);
+  background: rgba(33, 119, 175, 0.1);
   border-radius: 0.125rem;
   text-align: left!important;
   font-size: 1rem!important;
@@ -686,7 +686,7 @@ a.snapback:after {
 }
 .attach_block .desc {
   font-size: 0.875rem;
-  color: #757575;
+  color: #b2b2b2;
   display: block;
   font-weight: normal;
 }

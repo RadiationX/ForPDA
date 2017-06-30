@@ -1,4 +1,6 @@
-body {}
+body {
+    background: @background_for_cards;
+}
 
 .wrapper {
     position: absolute;
@@ -13,7 +15,7 @@ body {}
         margin: 8/16rem 16/16rem;
         .mess {
             position: relative;
-            background: @cardBg;
+            background: @card_background;
             box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
             border-radius: 8/16rem;
             max-width: 100%;
@@ -29,7 +31,7 @@ body {}
         .time {
             clear: both;
             font-size: 12/16rem;
-            color: @secondTextColor;
+            color: @second_text_color;
         }
         .status {
             height: 6/16rem;
@@ -85,7 +87,7 @@ body {}
     >.date {
         text-align: center;
         margin: 0 16/16rem;
-        color: @secondTextColor;
+        color: @second_text_color;
         text-transform: lowercase;
         line-height: 24/16rem;
         span {

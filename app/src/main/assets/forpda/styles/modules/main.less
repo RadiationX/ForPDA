@@ -71,10 +71,10 @@ body {
     width: 100%;
     height: 100%;
     margin: 0;
-    background: @background;
+    background: @background_base;
     font-family: @font;
     font-size: 1em;
-    color: @textColor;
+    color: @default_text_color;
     line-height: 20/16em;
     overflow-wrap: break-word;
     word-wrap: break-word;
@@ -82,8 +82,8 @@ body {
 
 a {
     //text-decoration: none;
-    color: @linkColor;
-    -webkit-tap-highlight-color: fade(@linkColor, 25%);
+    color: @link_color;
+    -webkit-tap-highlight-color: fade(@link_color, 25%);
 }
 
 * {
@@ -104,7 +104,7 @@ li {
 }
 
 .post-block {
-    margin: 0.5rem -1rem;
+    margin: 12/16rem -1rem;
     position: relative;
     border-top: @border1;
     border-bottom: @border1;
@@ -119,7 +119,7 @@ li {
         font-size: 14/16rem;
         line-height: 1.25rem;
         //text-transform: uppercase;
-        color: #000!important;
+        color: @colorAccent!important;
     }
     >.block-body {
         padding: 0.5rem 1rem 1rem 1rem;
@@ -129,9 +129,9 @@ li {
     &.spoil {
         >.block-title {
             padding-right: 40/16rem;
-            color: #000;
+            color: @colorAccent;
             * {
-                color: #000!important;
+                color: @colorAccent!important;
                 font-size: 1em!important;
                 font-style: normal!important;
                 line-height: 1.25rem!important;
@@ -183,7 +183,7 @@ li {
                     box-sizing: border-box;
                     height: 8/16rem;
                     width: 8/16rem;
-                    border-color: #000;
+                    border-color: @colorAccent;
                     -webkit-transform: rotate(-45deg) translateY(-1/16rem) translateX(1/16rem);
                     transform: rotate(-45deg) translateY(-1/16rem) translateX(1/16rem);
                     -webkit-transform-origin: center;
@@ -198,7 +198,7 @@ li {
                     margin-top: -16/16rem;
                     height: 32/16rem;
                     width: 32/16rem;
-                    background: black;
+                    background: @colorAccent;
                     .bRad(100%);
                     -webkit-transform: scale(0.5) translateZ(0);
                     transform: scale(0.5) translateZ(0);
@@ -248,7 +248,7 @@ li {
     &.quote {
         background: none;
         border: none;
-        border-left: 4/16rem solid #ccc;
+        border-left: 4/16rem solid @quote_border_color;
         margin-left: 0;
         >.block-title {
             text-transform: none;
@@ -280,13 +280,13 @@ li {
                 top: 6/16rem;
                 height: 36/16rem;
                 width: 36/16rem;
-                background: #ccc;
+                background: @avatar_background;
                 .bRad(36/16rem);
                 font-size: 16/16rem;
                 line-height: 36/16rem;
                 text-align: center;
                 font-style: normal;
-                color: @primaryColor;
+                color: @avatar_letter_color;
                 text-transform: uppercase;
                 &:before {
                     content: "";
@@ -295,13 +295,13 @@ li {
                     right: -1/16rem;
                     height: 16/16rem;
                     width: 16/16rem;
-                    background: @linkColor;
+                    background: @link_color;
                     .bRad(16/16rem);
                     background-image: url(../../res/chevron-left-white.svg);
                     background-repeat: no-repeat;
                     background-position: center;
                     background-size: 100%;
-                    border: 1/16rem solid white;
+                    border: 1/16rem solid @avatar_overlap_color;
                     box-sizing: border-box;
                 }
             }
@@ -318,10 +318,10 @@ li {
                 }
                 .name {
                     line-height: 18/16rem;
-                    //color: @linkColor;
+                    //color: @link_color;
                 }
                 .date {
-                    color: @secondTextColor;
+                    color: @second_text_color;
                     font-size: 12/16rem;
                     line-height: 12/16rem;
                     font-weight: normal;
@@ -340,37 +340,6 @@ li {
                     content: none;
                 }
             }
-            &:after {
-                //content: "";
-                display: inline-block;
-                position: absolute;
-                left: 0/16rem;
-                top: 0/16rem;
-                height: 48/16rem;
-                width: 48/16rem;
-                background-image: url("../../res/extension-quote.svg");
-                background-position: center;
-                background-size: 24/16rem;
-                background-repeat: no-repeat;
-            }
-            /*a[href*=findpost] {
-                background: none;
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                left: 0;
-                top: -1/16rem;
-                margin: 0;
-                &:before {
-                    left: 24/16rem;
-                    margin-left: 0;
-                }
-                &:after {
-                    background: black;
-                    top: 14/16rem;
-                    left: 16/16rem;
-                }
-            }*/
         }
         >.block-body {
             padding-left: 8/16rem;
@@ -388,7 +357,7 @@ li {
         //margin-left: 0;
         border: none;
         //outline: 1px solid red;
-        border-left: 4/16rem solid #448d62;
+        border-left: 4/16rem solid @code_border_color;
         margin-left: 0;
         &.small {
             >.block-title {
@@ -431,16 +400,10 @@ li {
                 right: 40/16rem;
                 top: 0;
                 z-index: 3;
-                //margin: -8/16rem;
-                //margin-right: 28/16rem;
                 .noselect();
                 i {
                     height: 36/16rem;
                     width: 36/16rem;
-                    //margin: 6/16rem 0;
-                    border: @border1;
-                    //border-color: rgba(0, 0, 0, 0.1);
-                    border: none;
                     .bRad(2px);
                     float: right;
                     background-size: 24/16rem;
@@ -481,7 +444,7 @@ li {
                     box-sizing: border-box;
                     height: 8/16rem;
                     width: 8/16rem;
-                    border-color: #000;
+                    border-color: @colorAccent;
                     -webkit-transform: rotate(-45deg) translateY(-1/16rem) translateX(1/16rem);
                     transform: rotate(-45deg) translateY(-1/16rem) translateX(1/16rem);
                     -webkit-transform-origin: center;
@@ -496,7 +459,7 @@ li {
                     margin-top: -16/16rem;
                     height: 32/16rem;
                     width: 32/16rem;
-                    background: black;
+                    background: @colorAccent;
                     .bRad(100%);
                     -webkit-transform: scale(0.5) translateZ(0);
                     transform: scale(0.5) translateZ(0);
@@ -517,23 +480,13 @@ li {
             position: relative;
             padding: 4/16rem 0;
             padding-left: 48/16rem;
-            &:before {
-                //content: "";
-                position: absolute;
-                left: 16/16rem;
-                top: 0;
-                bottom: 0;
-                width: 28/16rem;
-                border-left: 4/16rem solid #448d62;
-                box-sizing: content-box;
-            }
             .lines {
                 background: linear-gradient(rgba(130, 130, 130, 0.1) 20/16rem, transparent 20/16rem);
                 background-size: 100% 40/16rem;
                 background-position: 0 0;
                 background-repeat: repeat-y;
                 //outline: 1px solid red;
-                color: #448d62;
+                color: @code_text_color;
                 counter-reset: line;
                 overflow: hidden;
                 overflow-x: auto;
@@ -556,7 +509,7 @@ li {
                         padding-left: 8/16rem;
                         //text-align: center;
                         white-space: nowrap;
-                        color: @secondTextColor;
+                        color: @second_text_color;
                         box-sizing: border-box;
                         .noselect();
                         pointer-events: none;
@@ -582,7 +535,7 @@ li {
         &.wrap {
             >.block-title {
                 .block-controls .wrap {
-                    background-color: rgba(0, 0, 0, 0.05);
+                    background-color: @button_selected_background;
                 }
             }
             .block-body {
@@ -599,7 +552,9 @@ li {
             display: none;
         }
         >.block-body {
-            padding-top: 1em;
+            //padding-top: 1em;
+            padding-top: 12/16rem;
+            padding-bottom: 12/16rem;
         }
     }
     &.tbl {
@@ -607,9 +562,9 @@ li {
             vertical-align: middle;
         }
         a {
-            color: @linkColor!important;
+            color: @link_color!important;
             >* {
-                color: @linkColor!important;
+                color: @link_color!important;
             }
         }
         >.block-title {
@@ -672,15 +627,11 @@ li {
 }
 
 a.snapback {
-    //background: red;
     text-decoration: none;
     font-weight: bold;
     position: relative;
     &:before {
         content: "@";
-        //vertical-align: middle;
-        //font-size: 20/16em;
-        //line-height: 16/16em;
         position: relative;
         font-family: @font;
         z-index: 1;
@@ -754,8 +705,8 @@ a.snapback {
     //margin-bottom: 8/16rem;
     //margin: 0 4/16rem;
     //margin-bottom: 4/16rem;
-    border: 1px solid fade(@linkColor, 10%);
-    background: fade(@linkColor, 5%);
+    border: 1px solid @attachment_border;
+    background: @attachment_background;
     border-radius: 2/16rem;
     text-align: left!important;
     font-size: 1rem!important;
@@ -767,13 +718,13 @@ a.snapback {
         height: 40/16rem;
         width: 40/16rem;
         border-radius: 100%;
-        background: @linkColor;
+        background: @link_color;
         &:after {
             content: "";
             position: absolute;
             height: 40/16rem;
             width: 40/16rem;
-            background-color: white;
+            background-color: @link_color_contrast;
             -webkit-mask: url(../../res/file.svg) no-repeat center center;
             -webkit-mask-size: 20/16em 20/16em;
         }
@@ -787,7 +738,7 @@ a.snapback {
     }
     .desc {
         font-size: 14/16rem;
-        color: @secondTextColor;
+        color: @second_text_color;
         display: block;
         font-weight: normal;
     }
@@ -795,138 +746,5 @@ a.snapback {
         content: "";
         display: table;
         clear: both;
-    }
-}
-
-.attachments {
-    background: @postBlockBg;
-    margin: 8/16rem -16/16rem;
-    position: relative;
-    .title {
-        padding: 12/16rem 16/16rem;
-        font-weight: bold;
-        font-size: 14/16rem;
-    }
-    .scroll_container {
-        overflow-x: auto;
-        white-space: nowrap;
-        font-size: 0;
-        line-height: 0;
-        padding: 0 8/16rem;
-        .attach {
-            display: inline-block;
-            width: 128/16rem;
-            height: 128/16rem;
-            position: relative;
-            margin: 8/16rem;
-            background: white;
-            .bRad(4/16rem);
-            overflow: hidden;
-            box-shadow: 0 1px 3px fade(#000, 24%);
-            font-size: 16/16rem;
-            line-height: 20/16rem;
-            white-space: normal;
-            color: white;
-            .meta {
-                position: absolute;
-                box-sizing: border-box;
-                &.name {}
-                &.count {}
-                &.weight {}
-                &.extension {}
-            }
-            &.file {
-                .meta {
-                    &.name {
-                        background: rgba(0, 0, 0, 0.25);
-                        .bRad(0 0 4/16rem 4/16rem);
-                        .bRad(2/16rem);
-                        line-height: 20/16em;
-                        bottom: 4/16rem;
-                        right: 4/16rem;
-                        left: 4/16rem;
-                        font-size: 12/16rem;
-                        text-align: center;
-                        padding: 2/16rem 2/16rem;
-                        //height: ((20*2)+(4*2))/16em;
-                        /*overflow: hidden;
-                    text-overflow: ellipsis;
-                    display: -webkit-box;
-                    -webkit-line-clamp: 2;
-                    -webkit-box-orient: vertical;
-                    &:hover{
-                        -webkit-line-clamp: 10;
-                    }*/
-                        .weight {
-                            display: block;
-                            font-weight: bold;
-                        }
-                    }
-                    &.count {
-                        right: 4/16rem;
-                        top: 4/16rem;
-                        font-size: 12/16rem;
-                        line-height: 20/16rem;
-                        border-radius: 2/16rem;
-                        padding: 2/16rem 4/16rem;
-                        padding-left: 24/16rem;
-                        background: rgba(0, 0, 0, 0.25);
-                        background-image: url(../../res/download.svg);
-                        background-repeat: no-repeat;
-                        background-size: 16/16rem;
-                        background-position: 4/16rem 4/16rem;
-                        font-weight: bold;
-                    }
-                    &.weight {
-                        right: 4/16rem;
-                        top: 4/16rem;
-                        width: auto;
-                        padding: 2/16rem 4/16rem;
-                        font-size: 12/16rem;
-                        font-weight: bold;
-                        text-transform: uppercase;
-                        background: rgba(0, 0, 0, 0.25);
-                        text-align: center;
-                        display: none;
-                    }
-                    &.extension {
-                        width: 100%;
-                        height: 100%;
-                        top: 0;
-                        left: 0;
-                        color: #212121;
-                        text-align: center;
-                        line-height: 104/16rem;
-                        font-size: 32/16rem;
-                        font-weight: bold;
-                        text-transform: uppercase;
-                    }
-                }
-            }
-            &.picture {
-                .meta {
-                    &.weight,
-                    &.extension {
-                        padding: 2/16rem 8/16rem;
-                        right: 4/16rem;
-                        bottom: 4/16rem;
-                        font-size: 12/16rem;
-                        background: rgba(0, 0, 0, 0.25);
-                        border-radius: 2/16rem;
-                        text-transform: uppercase;
-                        font-weight: bold;
-                    }
-                }
-                .image {
-                    width: 100%;
-                    height: 100%;
-                    display: block;
-                    background-size: contain;
-                    background-position: center;
-                    background-repeat: no-repeat;
-                    .bRad(4/16rem);
-                }
-            }
-        }
     }
 }

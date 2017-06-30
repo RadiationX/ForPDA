@@ -1,0 +1,91 @@
+@import "../config_colors";
+
+/*Curves*/
+
+@curveStandard: cubic-bezier(0.4, 0.0, 0.2, 1);
+@curveEaseOut: cubic-bezier(0.0, 0.0, 0.2, 1);
+@curveEaseIn: cubic-bezier(0.4, 0.0, 1, 1);
+@curveSharp: cubic-bezier(0.4, 0.0, 0.6, 1);
+
+/*Fonts*/
+
+@font: "Roboto",
+sans-serif;
+@fontMono: "Roboto Mono",
+monospace;
+
+/*Color scheme*/
+
+@colorPrimary: @dark_colorPrimary;
+@colorPrimaryDark: @dark_colorPrimaryDark;
+@colorAccent: @dark_colorAccent;
+@link_color: @dark_link_color;
+@link_color_contrast: @dark_link_color_contrast;
+@default_text_color: @dark_default_text_color;
+@contrast_text_color: @dark_contrast_text_color;
+@second_text_color: @dark_second_text_color;
+@background_base: @dark_background_base;
+@background_for_cards: @dark_background_for_cards;
+@background_for_lists: @dark_background_for_lists;
+@divider_line: @dark_divider_line;
+@icon_base: @dark_icon_base;
+@icon_base_inverse: @dark_icon_base_inverse;
+@icon_toolbar: @dark_icon_toolbar;
+@icon_toolbar_inverse: @dark_icon_toolbar_inverse;
+@card_background: @dark_card_background;
+@tapColor: fade(@colorAccent, 5%);
+
+/* NEW COLORS */
+
+@avatar_letter_color: @dark_default_text_color;
+@avatar_background: darken(#fff, 65%);
+@avatar_overlap_color: @card_background;
+@avatar_overlap_background: darken(#fff, 70%);
+@button_selected_background: @tapColor;
+@poll_range_bar_background: fade(#fff, 10%);
+@attachment_background: fade(@link_color, 10%);
+@attachment_border: fade(@link_color, 15%);
+@quote_border_color: darken(#fff, 25%);
+@code_border_color: #448d62;
+@code_text_color: #448d62;
+
+/*Elements colors*/
+
+@border1: 1/16rem solid fade(#fff, 5%); //Основной бордер
+@borderInput: 2/16rem solid fade(#fff, 50%); //Основной бордер
+@userOnlineColor: #12b557; //Цвет ника онлайн
+
+/*Post blocks*/
+
+@postBlockBg: fade(#fff, 5%);
+@childSpoilColor: fade(#fff, 3%);
+@exColor: #e74c3c;
+@exColorBlock: fade(@exColor, 10%);
+@curColor: #12b557;
+@curColorBlock: fade(@curColor, 10%);
+@modColor: #2980b9;
+@modColorBlock: fade(@modColor, 10%);
+[style*="color:#ffffff"],
+[style*="color:white"] {
+    color: @default_text_color!important;
+}
+
+.mainBox {
+    background: @card_background;
+    margin: 8/16em 0;
+    box-shadow: 0 0px 1px fade(#000, 24%);
+}
+
+.bRad(@param) {
+    -webkit-border-radius: @param;
+    border-radius: @param;
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

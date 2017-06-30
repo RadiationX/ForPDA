@@ -1,5 +1,5 @@
 body {
-    background: @darkBackground;
+    background: @background_for_cards;
 }
 
 button,
@@ -14,6 +14,7 @@ button,
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     outline: none!important;
     text-align: center;
+    color: @colorAccent;
     >span,
     >b {
         font-size: 14/16em;
@@ -68,7 +69,7 @@ button,
     .mainBox();
     >.title {
         .noselect;
-        color: #000;
+        color: @colorAccent;
         position: relative;
         text-align: left;
         padding-right: 40/16rem;
@@ -96,7 +97,7 @@ button,
                 box-sizing: border-box;
                 height: 8/16em;
                 width: 8/16em;
-                border-color: #000;
+                border-color: @colorAccent;
                 -webkit-transform: rotate(-45deg) translateY(-1/16em) translateX(1/16em);
                 transform: rotate(-45deg) translateY(-1/16em) translateX(1/16em);
                 -webkit-transform-origin: center;
@@ -111,7 +112,7 @@ button,
                 margin-top: -16/16em;
                 height: 32/16em;
                 width: 32/16em;
-                background: black;
+                background: @colorAccent;
                 .bRad(100%);
                 -webkit-transform: scale(0.5) translateZ(0);
                 transform: scale(0.5) translateZ(0);
@@ -191,7 +192,7 @@ button,
                                                 position: absolute;
                                                 box-sizing: border-box;
                                                 border: @borderInput;
-                                                border-color: white;
+                                                border-color: @card_background;
                                                 border-top: none;
                                                 border-right: none;
                                                 -webkit-transform-origin: left bottom;
@@ -226,7 +227,7 @@ button,
                                             width: 20/16em;
                                             margin-top: -10/16em;
                                             margin-left: -10/16em;
-                                            border: 6/16em solid #000;
+                                            border: 6/16em solid @colorAccent;
                                             -webkit-transform: scale(2);
                                             transform: scale(2);
                                         }
@@ -234,7 +235,7 @@ button,
                                 }
                                 &:checked {
                                     +.icon {
-                                        border-color: #000;
+                                        border-color: @colorAccent;
                                         -webkit-transition: 0s 0s border-color @curveStandard;
                                         transition: 0s 0s border-color @curveStandard;
                                         /*-webkit-animation: radAnim1 @dur @curveStandard;
@@ -269,7 +270,7 @@ button,
                                                 }
                                             }
                                             &:before {
-                                                background: #000;
+                                                background: @colorAccent;
                                             }
                                         }
                                     }
@@ -284,6 +285,7 @@ button,
                                 top: 50%;
                                 margin-top: -10/16em;
                                 border: @borderInput;
+                                
                                 overflow: hidden;
                                 -webkit-transform: translateZ(0);
                                 transform: translateZ(0);
@@ -304,7 +306,7 @@ button,
                                     width: 20/16em;
                                     margin-top: -10/16em;
                                     margin-left: -10/16em;
-                                    border: 6/16em solid #000;
+                                    border: 6/16em solid @colorAccent;
                                     opacity: 0;
                                     -webkit-transform: scale(2.25);
                                     transform: scale(2.25);
@@ -316,7 +318,7 @@ button,
                                     width: 10/16em;
                                     margin-top: -5/16em;
                                     margin-left: -5/16em;
-                                    border: 3/16em solid #000;
+                                    border: 3/16em solid @colorAccent;
                                     -webkit-transform: scale(4);
                                     transform: scale(4);
                                     -webkit-transition: 0s 0.3*@dur background @curveStandard, 0s 0.3*@dur border-width @curveStandard, @dur 0s -webkit-transform @curveStandard, 0s @dur opacity @curveStandard;
@@ -344,7 +346,7 @@ button,
                                 margin-top: -20/16em;
                                 height: 40/16em;
                                 width: 40/16em;
-                                background: black;
+                                background: @tapColor;
                                 .bRad(100%);
                                 -webkit-transform: scale(0.5) translateZ(0);
                                 transform: scale(0.5) translateZ(0);
@@ -368,23 +370,19 @@ button,
                                 line-height: 1.5em;
                             }
                             .range_bar {
-                                background: rgba(0, 0, 0, 0.10);
+                                background: @poll_range_bar_background;
                                 box-sizing: border-box;
                                 position: relative;
                                 min-height: 24/16rem;
                                 padding: 6/16rem 12/16rem;
-                                .bRad(2px);
-                                //text-shadow: 0 0px 3/16rem rgba(0, 0, 0, 0.5);
-                                color: white;
-                                //box-shadow: inset -6em 0 6em -6em rgba(0, 0, 0, 0.5);
+                                .bRad(2px);;
                                 .range {
                                     position: absolute;
                                     left: 0;
                                     top: 0;
                                     height: 100%;
                                     width: auto;
-                                    background: rgba(0, 0, 0, 0.13);
-                                    //border: 1px solid rgba(0, 0, 0, 0.1);
+                                    background: @poll_range_bar_background;
                                     .bRad(2px);
                                     -webkit-transform-origin: left center;
                                     transform-origin: left center;
@@ -394,12 +392,10 @@ button,
                                     display: inline-block;
                                     font-size: 12/16em;
                                     font-weight: bold;
-                                    //opacity: 0;
                                     -webkit-transform: translateZ(0);
                                     transform: translateZ(0);
-                                    //visibility: hidden;
                                     vertical-align: bottom;
-                                    color: black;
+                                    color: @default_text_color;
                                     .num_votes {
                                         &:before {
                                             content: " (";
@@ -415,7 +411,7 @@ button,
                                     display: block;
                                     overflow: hidden;
                                     padding-right: 8/16rem;
-                                    color: black;
+                                    color: @default_text_color;
                                     font-weight: bold;
                                 }
                                 &:after {
@@ -431,7 +427,7 @@ button,
         }
         .votes_info {
             text-align: right;
-            color: @secondTextColor;
+            color: @second_text_color;
             padding: 8/16em 1em;
             span {
                 font-size: 14/16em;
@@ -443,7 +439,7 @@ button,
             >* {
                 float: right;
                 text-align: right;
-                color: #000;
+                color: @colorAccent;
             }
             .vote {}
             .show_results {}
@@ -497,7 +493,7 @@ button,
         display: block;
         padding: 0.571em;
         font-size: 0.875em;
-        color: @secondTextColor;
+        color: @second_text_color;
         b {}
     }
     strong {
@@ -511,7 +507,7 @@ button,
         border-top: none;
         padding: 0 0.571em 0 0.571em;
         margin-top: -2px;
-        color: @secondTextColor;
+        color: @second_text_color;
     }
     .ipb-attach.attach-file {
         position: relative;
@@ -559,7 +555,7 @@ button,
     .hat_button {
         .noselect;
         width: 100%;
-        color: #000;
+        color: @colorAccent;
         position: relative;
         text-align: left;
         .icon {
@@ -584,7 +580,7 @@ button,
                 box-sizing: border-box;
                 height: 8/16em;
                 width: 8/16em;
-                border-color: #000;
+                border-color: @colorAccent;
                 -webkit-transform: rotate(-45deg) translateY(-1/16em) translateX(1/16em);
                 transform: rotate(-45deg) translateY(-1/16em) translateX(1/16em);
                 -webkit-transform-origin: center;
@@ -599,7 +595,7 @@ button,
                 margin-top: -16/16em;
                 height: 32/16em;
                 width: 32/16em;
-                background: black;
+                background: @colorAccent;
                 .bRad(100%);
                 -webkit-transform: scale(0.5) translateZ(0);
                 transform: scale(0.5) translateZ(0);
@@ -681,7 +677,7 @@ button,
     .post_title {
         text-align: center;
         a {
-            color: black;
+            color: @colorAccent;
             font-weight: bold;
             text-decoration: none;
             display: block;
@@ -698,7 +694,6 @@ button,
             width: @avatarSize;
             height: @avatarSize;
             position: relative;
-            color: darkgray;
             .img {
                 position: relative;
                 height: @avatarSize;
@@ -713,7 +708,7 @@ button,
                 }
             }
             >.letter {
-                color: white;
+                color: @avatar_letter_color;
                 position: absolute;
                 text-align: center;
                 width: @avatarSize/2;
@@ -724,12 +719,12 @@ button,
                 font-weight: bold;
                 top: 0;
                 left: 0;
-                background-color: #ccc;
+                background-color: @avatar_background;
                 display: none;
             }
             .reputation {
                 position: absolute;
-                background: #757575;
+                background: @avatar_overlap_background;
                 z-index: 1;
                 height: 18/16em;
                 line-height: 18/16em;
@@ -742,9 +737,9 @@ button,
                 bottom: 4/16em;
                 right: 0;
                 bottom: 0;
-                box-shadow: 0 0 0 2/16em white;
+                box-shadow: 0 0 0 2/16em @avatar_overlap_color;
                 >span {
-                    color: white;
+                    color: @avatar_letter_color;
                     font-size: 10/16em;
                     font-weight: bold;
                     vertical-align: middle;
@@ -787,7 +782,7 @@ button,
             >span {}
             &.nick {
                 top: 0;
-                color: @textColor;
+                color: @default_text_color;
                 font-weight: bold;
                 &.online {
                     color: @userOnlineColor;
@@ -811,7 +806,7 @@ button,
                     }
                     >span {
                         font-size: 14/16em;
-                        color: @textColor!important;
+                        color: @default_text_color!important;
                         font-weight: normal!important;
                         display: none;
                     }
@@ -841,7 +836,7 @@ button,
                     margin-top: -16/16em;
                     height: 32/16em;
                     width: 32/16em;
-                    background: black;
+                    background: @colorAccent;
                     .bRad(100%);
                     -webkit-transform: scale(0.5) translateZ(0);
                     transform: scale(0.5) translateZ(0);
@@ -860,6 +855,7 @@ button,
             }
             &.date {
                 top: 1.25em;
+                color: @second_text_color;
                 >span {
                     font-size: 14/16em;
                 }
@@ -869,7 +865,7 @@ button,
     .post_footer {
         .noselect;
         .btn {
-            color: #000;
+            color: @colorAccent;
             &.nick {
                 float: right
             }
@@ -935,7 +931,7 @@ button,
                 .s_inf {
                     &.nick {
                         font-weight: bold;
-                        color: @textColor;
+                        color: @default_text_color;
                         &.online {
                             color: @curColor;
                         }
@@ -961,10 +957,10 @@ button,
             h3 {
                 margin: 0;
                 padding-bottom: 0.5em;
-                color: @textColor;
+                color: @default_text_color;
             }
             span {
-                color: @secondTextColor;
+                color: @second_text_color;
             }
         }
         &~#bottomMargin {
