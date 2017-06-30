@@ -3,17 +3,22 @@
 
     <PreferenceCategory android:title="Общие">
         <SwitchPreference
+            android:defaultValue="false"
+            android:key="main.theme.is_dark"
+            android:title="Тёмная тема" />
+
+        <SwitchPreference
             android:defaultValue="true"
             android:key="main.show_notify_dot"
             android:title="Индикатор счетчиков" />
 
         <Preference
             android:key="main.webview.font_size"
-            android:title="Размер шрифта WebView"/>
+            android:title="Размер шрифта WebView" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Темы">
+    <PreferenceCategory android:title="Просмотр тем">
         <SwitchPreference
             android:defaultValue="true"
             android:key="theme.show_avatars"

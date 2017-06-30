@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     private final View.OnClickListener toggleListener = view -> drawers.toggleMenu();
     private final View.OnClickListener removeTabListener = view -> backHandler(true);
     private List<SimpleTooltip> tooltips = new ArrayList<>();
+    private boolean currentThemeIsDark = false;
 
 
     public View.OnClickListener getToggleListener() {
@@ -71,7 +72,8 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         list.add("http://sourcey.com/images/stock/simpsons-persistence-of-memory.jpg");
         list.add("http://sourcey.com/images/stock/salvador-dali-the-great-masturbator.jpg");
         ImageViewerActivity.startActivity(this, list, 2);*/
-        setTheme(R.style.DarkAppTheme_NoActionBar);
+        currentThemeIsDark = App.getInstance().isDarkTheme();
+        setTheme(currentThemeIsDark ? R.style.DarkAppTheme_NoActionBar : R.style.LightAppTheme_NoActionBar);
         setContentView(R.layout.activity_main);
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -296,6 +298,9 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         Log.d("kekos", "ACTIVE TAB " + TabManager.getActiveIndex() + " : " + TabManager.getActiveTag());
         receiver.registerReceiver();
         drawers.setStatusBarHeight(App.getStatusBarHeight());
+        if (currentThemeIsDark != App.getInstance().isDarkTheme()) {
+            recreate();
+        }
     }
 
     @Override

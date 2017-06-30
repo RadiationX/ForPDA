@@ -338,7 +338,7 @@ public class ProfileFragment extends TabFragment {
         Log.d("FORPDA_LOG", "check 3 " + (System.currentTimeMillis() - time));
         if (profile.getContacts().size() > 0) {
             if (!Pattern.compile("showuser=".concat(Integer.toString(ClientHelper.getUserId()))).matcher(tab_url).find()) {
-                toolbar.getMenu().add("Написать").setIcon(App.getAppDrawable(R.drawable.ic_toolbar_create)).setOnMenuItemClickListener(item -> {
+                toolbar.getMenu().add("Написать").setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_create)).setOnMenuItemClickListener(item -> {
                     IntentHandler.handle(profile.getContacts().get(0).first);
                     return false;
                 }).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
@@ -413,7 +413,7 @@ public class ProfileFragment extends TabFragment {
                 int px = dpToPx(20);
                 findViewById(R.id.drawer_item_icon).setPadding(px, px, px, px);
             }
-            ((ImageView) findViewById(R.id.drawer_item_icon)).setImageDrawable(App.getAppDrawable(iconRes));
+            ((ImageView) findViewById(R.id.drawer_item_icon)).setImageDrawable(App.getAppDrawable(getContext(), iconRes));
         }
     }
 

@@ -36,6 +36,8 @@ public class SearchRx {
             boolean prevDisabled = page.getPagination().getCurrent() <= 1;
             boolean nextDisabled = page.getPagination().getCurrent() == page.getPagination().getAll();
 
+            t.setVariableOpt("style_type", App.getInstance().getCssStyleType());
+
             /*t.setVariableOpt("topic_title", Utils.htmlEncode(page.getTitle()));
             t.setVariableOpt("topic_description", Utils.htmlEncode(page.getDesc()));
             t.setVariableOpt("topic_url", page.getUrl());

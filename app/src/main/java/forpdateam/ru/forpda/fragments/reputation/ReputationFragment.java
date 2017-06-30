@@ -138,7 +138,7 @@ public class ReputationFragment extends TabFragment {
         addBaseToolbarMenu();
         SubMenu subMenu = menu.addSubMenu("Сортировка");
         subMenu.getItem().setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        subMenu.getItem().setIcon(AppCompatResources.getDrawable(App.getContext(), R.drawable.ic_toolbar_sort));
+        subMenu.getItem().setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_sort));
         subMenu.add("По убыванию").setOnMenuItemClickListener(menuItem -> {
             data.setSort(Reputation.SORT_DESC);
             loadData();

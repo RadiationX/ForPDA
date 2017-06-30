@@ -91,7 +91,6 @@ public class TabFragment extends RxFragment {
         }
     };
 
-
     public TabFragment() {
         parentTag = TabManager.getActiveTag();
     }

@@ -36,11 +36,11 @@ public class DefaultForumHolder extends TreeNode.BaseNodeViewHolder<ForumItemTre
         currentValue = value;
         title.setText(value.getTitle());
 
-        icon.setImageDrawable(App.getAppDrawable(value.getForums() == null ? R.drawable.ic_forum_go_to_topics : (node.isExpanded() ? R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_more_black_24dp)));
+        icon.setImageDrawable(App.getAppDrawable(context, value.getForums() == null ? R.drawable.ic_forum_go_to_topics : (node.isExpanded() ? R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_more_black_24dp)));
 
         if (value.getForums() == null) {
             int suka = App.getDrawableFromAttr(context, R.attr.count_background);
-            Log.d("SUKA", "FORUM DRAWABLE: "+suka);
+            Log.d("SUKA", "FORUM DRAWABLE: " + suka);
             icon.setBackgroundResource(suka);
         } else {
             icon.setBackground(null);
@@ -54,7 +54,7 @@ public class DefaultForumHolder extends TreeNode.BaseNodeViewHolder<ForumItemTre
         Log.d("FORPDA_LOG", "TOGGLE");
         if (currentValue.getForums() != null) {
             icon.setRotationY(active ? 1f : 0f);
-            icon.setImageDrawable(App.getAppDrawable(active ? R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_more_black_24dp));
+            icon.setImageDrawable(App.getAppDrawable(context, active ? R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_more_black_24dp));
         }
     }
 }

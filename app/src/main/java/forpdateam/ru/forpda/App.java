@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.AttrRes;
+import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.v7.content.res.AppCompatResources;
@@ -44,6 +45,7 @@ import java.util.Observer;
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.data.Repository;
+import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.SimpleObservable;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -84,6 +86,7 @@ public class App extends android.app.Application {
     public static int navigationBarHeight = 0;
     public static SparseArray<Drawable> drawableCache = new SparseArray<>();
     private static App INSTANCE;
+
     private Map<String, MiniTemplator> templates = new HashMap<>();
     private float density = 1.0f;
     private SharedPreferences preferences;
@@ -94,6 +97,7 @@ public class App extends android.app.Application {
         preferenceChangeObservables.notifyObservers(key);
     };
 
+
     public static App getInstance() {
         return INSTANCE;
     }
@@ -102,6 +106,7 @@ public class App extends android.app.Application {
         return getInstance();
     }
 
+    @ColorInt
     public static int getColorFromAttr(Context context, @AttrRes int attr) {
         TypedValue typedValue = new TypedValue();
         if (context != null && context.getTheme().resolveAttribute(attr, typedValue, true))
@@ -116,6 +121,14 @@ public class App extends android.app.Application {
         int attributeResourceId = a.getResourceId(0, 0);
         a.recycle();
         return attributeResourceId;
+    }
+
+    public boolean isDarkTheme() {
+        return App.getInstance().getPreferences().getBoolean(Preferences.Main.Theme.IS_DARK, false);
+    }
+
+    public String getCssStyleType() {
+        return isDarkTheme() ? "dark" : "light";
     }
 
     @Override
@@ -249,6 +262,11 @@ public class App extends android.app.Application {
     public static Drawable getAppDrawable(int id) {
         //return drawableCache.get(id);
         return AppCompatResources.getDrawable(App.getContext(), id);
+    }
+
+    public static Drawable getAppDrawable(Context context, int id) {
+        //return drawableCache.get(id);
+        return AppCompatResources.getDrawable(context, id);
     }
 
     private static DisplayImageOptions.Builder options = new DisplayImageOptions.Builder()

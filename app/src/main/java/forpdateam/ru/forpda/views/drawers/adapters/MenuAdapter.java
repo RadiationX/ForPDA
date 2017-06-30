@@ -70,7 +70,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
             holder.icon.clearColorFilter();
         }
 
-        holder.icon.setImageDrawable(AppCompatResources.getDrawable(App.getContext(), item.getIconRes()));
+        holder.icon.setImageDrawable(App.getAppDrawable(holder.itemView.getContext(), item.getIconRes()));
         holder.text.setText(item.getTitle());
     }
 

@@ -12,6 +12,9 @@ import android.view.ViewParent;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 
+import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.R;
+
 /**
  * Created by radiationx on 01.11.16.
  */
@@ -40,6 +43,7 @@ public class ExtendedWebView extends NestedWebView {
         settings.setDefaultFontSize(16);
         settings.setTextZoom(100);
         settings.setJavaScriptEnabled(true);
+        setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_base));
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)

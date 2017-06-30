@@ -8,8 +8,9 @@ import java.util.List;
  */
 
 public class QmsChatModel {
-    private int themeId = 0;
-    private int userId = 0;
+    public final static int NOT_CREATED = -1;
+    private int themeId = NOT_CREATED;
+    private int userId = NOT_CREATED;
     private int showedMessIndex = 0;
     private String title;
     private String nick;

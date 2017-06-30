@@ -335,7 +335,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         Menu menu = toolbar.getMenu();
         menu.clear();
         addBaseToolbarMenu();
-        menu.add("Обновить").setIcon(App.getAppDrawable(R.drawable.ic_toolbar_refresh)).setOnMenuItemClickListener(menuItem -> {
+        menu.add("Обновить").setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_refresh)).setOnMenuItemClickListener(menuItem -> {
             loadData(REFRESH_ACTION);
             return false;
         })/*.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)*/;
@@ -403,11 +403,11 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                 getContext().getTheme().resolveAttribute(android.R.attr.actionBarItemBackground, outValue, true);
 
                 AppCompatImageButton btnNext = new AppCompatImageButton(searchView.getContext());
-                btnNext.setImageDrawable(App.getAppDrawable(R.drawable.ic_toolbar_search_next));
+                btnNext.setImageDrawable(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_search_next));
                 btnNext.setBackgroundResource(outValue.resourceId);
 
                 AppCompatImageButton btnPrev = new AppCompatImageButton(searchView.getContext());
-                btnPrev.setImageDrawable(App.getAppDrawable(R.drawable.ic_toolbar_search_prev));
+                btnPrev.setImageDrawable(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_search_prev));
                 btnPrev.setBackgroundResource(outValue.resourceId);
 
                 ((LinearLayout) searchView.getChildAt(0)).addView(btnPrev, navButtonsParams);
