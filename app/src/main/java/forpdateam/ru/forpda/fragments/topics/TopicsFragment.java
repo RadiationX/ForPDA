@@ -65,6 +65,7 @@ public class TopicsFragment extends TabFragment {
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
         recyclerView = (RecyclerView) findViewById(R.id.base_list);
         viewsReady();
+        refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

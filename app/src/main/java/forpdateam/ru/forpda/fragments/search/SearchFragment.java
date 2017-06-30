@@ -260,6 +260,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
         //recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
+        refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
         adapter.setOnItemClickListener(item -> {
             String url = "";

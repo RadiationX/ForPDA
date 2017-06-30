@@ -25,6 +25,14 @@ import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
 public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdapter.ViewHolder> {
     private List<Pair<String, List<IFavItem>>> sections = new ArrayList<>();
     private boolean showDot = App.getInstance().getPreferences().getBoolean("lists.topic.show_dot", false);
+    private int titleColorNew, titleColor;
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        titleColor = App.getColorFromAttr(recyclerView.getContext(), R.attr.second_text_color);
+        titleColorNew = App.getColorFromAttr(recyclerView.getContext(), R.attr.default_text_color);
+    }
 
     public void setShowDot(boolean showDot) {
         this.showDot = showDot;
@@ -128,6 +136,7 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
         IFavItem item = sections.get(section).second.get(relativePosition);
         holder.title.setText(item.getTopicTitle());
         holder.title.setTypeface(item.isNewMessages() ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+        holder.title.setTextColor(item.isNewMessages() ? titleColorNew : titleColor);
         holder.dot.setVisibility(showDot && item.isNewMessages() ? View.VISIBLE : View.GONE);
         //holder.pinIcon.setVisibility(item.isPin() ? View.VISIBLE : View.GONE);
         holder.lockIcon.setVisibility(item.getInfo().contains("X") ? View.VISIBLE : View.GONE);

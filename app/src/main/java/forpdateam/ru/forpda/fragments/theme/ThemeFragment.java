@@ -162,6 +162,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         setFontSize(Preferences.Main.getWebViewSize());
         viewsReady();
         App.getInstance().addPreferenceChangeObserver(themePreferenceObserver);
+        refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(() -> {
             loadData(REFRESH_ACTION);
         });
