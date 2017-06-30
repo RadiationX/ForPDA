@@ -16,6 +16,12 @@
             android:key="main.webview.font_size"
             android:title="Размер шрифта WebView" />
 
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="main.is_system_downloader"
+            android:title="Системный загрузчик"
+            android:summary="Использовать системный загрузчик файлов"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Просмотр тем">

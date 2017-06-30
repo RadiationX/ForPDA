@@ -63,7 +63,7 @@
 
     <color name="dark_attachment_overlay_bg">#21000000</color>
     <color name="dark_attachment_description_bg">#44000000</color>
-    <color name="dark_attachment_text">@color/light_contrast_text_color</color>
+    <color name="dark_attachment_text">@color/dark_default_text_color</color>
     <color name="dark_msg_panel_tooltip_bg">#ee000000</color>
     <color name="dark_profile_overlay_bg">#44000000</color>
     <color name="dark_img_viewer_toolbar">#33000000</color>

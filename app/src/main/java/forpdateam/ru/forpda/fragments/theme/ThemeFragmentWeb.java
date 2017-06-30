@@ -5,6 +5,8 @@ import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
@@ -17,6 +19,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,16 +45,31 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
     private ExtendedWebView webView;
     private WebViewClient webViewClient;
     private WebChromeClient chromeClient;
+    private boolean isWebViewReady = false;
+    private Handler actionsHandler = new Handler(Looper.getMainLooper());
+    private Queue<Runnable> actionsForWebView = new LinkedList<>();
 
     @Override
     public void scrollToAnchor(String anchor) {
         webView.evalJs("scrollToElement(\"" + anchor + "\")");
     }
 
+    private void syncWithWebView(Runnable runnable) {
+        if (!isWebViewReady) {
+            actionsForWebView.add(runnable);
+        } else {
+            actionsHandler.post(runnable);
+        }
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void addShowingView() {
-        messagePanel.setHeightChangeListener(newHeight -> webView.evalJs("setPaddingBottom(" + (newHeight / getResources().getDisplayMetrics().density) + ");"));
+        messagePanel.setHeightChangeListener(newHeight -> {
+            syncWithWebView(()->{
+                webView.evalJs("setPaddingBottom(" + (newHeight / getResources().getDisplayMetrics().density) + ");");
+            });
+        });
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
         refreshLayout.addView(webView);
         webView.addJavascriptInterface(this, JS_INTERFACE);
@@ -336,6 +355,13 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
     @JavascriptInterface
     public void domContentLoaded() {
         run(() -> {
+            isWebViewReady = true;
+            for (Runnable runnable : actionsForWebView) {
+                try {
+                    actionsHandler.post(runnable);
+                } catch (Exception ignore) {
+                }
+            }
             Log.e("console", "DOMContentLoaded");
             String script = "";
             script += "setLoadAction(" + loadAction + ");";

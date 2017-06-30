@@ -110,3 +110,11 @@ body {
 .mess_list > .date span {
   font-size: 0.875rem;
 }
+@media all and (max-width: 48rem) {
+  .mess_list > .mess_container.his {
+    margin-right: 1em;
+  }
+  .mess_list > .mess_container.our {
+    margin-left: 1em;
+  }
+}

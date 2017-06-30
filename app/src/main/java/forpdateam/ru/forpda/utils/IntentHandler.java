@@ -35,6 +35,7 @@ import forpdateam.ru.forpda.fragments.search.SearchFragment;
 import forpdateam.ru.forpda.fragments.theme.ThemeFragmentWeb;
 import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
 import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
+import forpdateam.ru.forpda.settings.Preferences;
 import okhttp3.Cookie;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
@@ -301,6 +302,15 @@ public class IntentHandler {
     }
 
     public static void systemDownload(String fileName, String url) {
+        if (!Preferences.Main.isSystemDownloader()) {
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK);
+                App.getInstance().startActivity(Intent.createChooser(intent, "Загрузить через").addFlags(FLAG_ACTIVITY_NEW_TASK));
+            } catch (ActivityNotFoundException e) {
+                ACRA.getErrorReporter().handleException(e);
+            }
+            return;
+        }
         Runnable runnable = () -> {
             DownloadManager dm = (DownloadManager) App.getContext().getSystemService(Context.DOWNLOAD_SERVICE);
             DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
