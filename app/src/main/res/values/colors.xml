@@ -10,7 +10,7 @@
     <color name="light_colorAccent">#000000</color>
     <color name="light_status_bar_color">#00000000</color>
 
-    <color name="light_link_color">#0277bd</color>
+    <color name="light_link_color">#2177af</color>
     <color name="light_link_color_contrast">#ffffff</color>
 
     <color name="light_default_text_color">#212121</color>
@@ -46,7 +46,7 @@
     <color name="dark_colorAccent">#ffffff</color>
     <color name="dark_status_bar_color">#00000000</color>
 
-    <color name="dark_link_color">#0277bd</color>
+    <color name="dark_link_color">#2177af</color>
     <color name="dark_link_color_contrast">#ffffff</color>
 
     <color name="dark_default_text_color">#ffffff</color>
