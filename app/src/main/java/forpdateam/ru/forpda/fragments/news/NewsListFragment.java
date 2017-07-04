@@ -49,7 +49,7 @@ public class NewsListFragment extends TabFragment implements INewsView, NewsList
 
     public NewsListFragment(){
         configuration.setAlone(true);
-        configuration.setUseCache(true);
+        //configuration.setUseCache(true);
     }
 
     @Nullable

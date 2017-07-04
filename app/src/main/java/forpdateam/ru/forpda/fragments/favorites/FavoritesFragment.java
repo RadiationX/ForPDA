@@ -112,7 +112,7 @@ public class FavoritesFragment extends TabFragment {
 
     public FavoritesFragment() {
         configuration.setAlone(true);
-        configuration.setUseCache(true);
+        //configuration.setUseCache(true);
         configuration.setDefaultTitle("Избранное");
     }
 

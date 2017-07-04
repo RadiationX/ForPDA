@@ -52,7 +52,7 @@ public class QmsThemesFragment extends TabFragment {
     private Subscriber<QmsThemes> mainSubscriber = new Subscriber<>(this);
 
     public QmsThemesFragment() {
-        configuration.setUseCache(true);
+        //configuration.setUseCache(true);
         configuration.setDefaultTitle("Диалоги");
     }
 

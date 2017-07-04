@@ -161,6 +161,10 @@ public class TabFragment extends RxFragment {
 
     }
 
+    public void loadCacheData() {
+
+    }
+
     public CoordinatorLayout getCoordinatorLayout() {
         return coordinatorLayout;
     }
@@ -239,8 +243,10 @@ public class TabFragment extends RxFragment {
     }
 
     protected void viewsReady() {
-        if (Client.getInstance().getNetworkState()/* && !configuration.isUseCache()*/) {
+        if (Client.getInstance().getNetworkState() && !configuration.isUseCache()) {
             loadData();
+        } else {
+            loadCacheData();
         }
         addBaseToolbarMenu();
     }

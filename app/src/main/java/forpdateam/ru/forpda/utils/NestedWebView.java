@@ -6,6 +6,7 @@ import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.webkit.WebView;
 
@@ -35,6 +36,7 @@ public class NestedWebView extends WebView implements NestedScrollingChild {
     }
 
     boolean nestedScrolled = false;
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         boolean returnValue = false;
@@ -64,7 +66,7 @@ public class NestedWebView extends WebView implements NestedScrollingChild {
                     mNestedOffsetY = mScrollOffset[1];
                     mLastY -= deltaY;
                     nestedScrolled = true;
-                }else {
+                } else {
                     nestedScrolled = false;
                 }
 
@@ -114,11 +116,13 @@ public class NestedWebView extends WebView implements NestedScrollingChild {
     @Override
     public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed,
                                         int[] offsetInWindow) {
+        //Log.d("SUKA_NWV", "dispatchNestedScroll " + dyConsumed + " : " + dyUnconsumed);
         return mChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow);
     }
 
     @Override
     public boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed, int[] offsetInWindow) {
+        //Log.d("SUKA_NWV", "dispatchNestedPreScroll " + dy + " : " + consumed[1]);
         return mChildHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow);
     }
 

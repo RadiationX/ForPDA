@@ -34,16 +34,16 @@ function getLastMess() {
 function showMoreMess(listSrc) {
     var lastHeight = listElem.offsetHeight;
     listElem.insertAdjacentHTML("afterbegin", listSrc);
-    window.scrollBy(0, listElem.offsetHeight - lastHeight);
     addedNewMessages();
+    window.scrollBy(0, listElem.offsetHeight - lastHeight);
 }
 
 function showNewMess(listSrc, withScroll) {
     listElem.insertAdjacentHTML("beforeend", listSrc);
+    addedNewMessages();
     if (withScroll) {
         getLastMess().scrollIntoView();
     }
-    addedNewMessages();
 }
 
 function makeAllRead() {
@@ -52,8 +52,26 @@ function makeAllRead() {
         unreaded[i].classList.remove("unread");
     }
 }
+const savepicPattern = /https?:\/\/savepic\.ru\/(\d+)\.(.*)/g;
+
+function transformQmsAttachments() {
+    var links = document.querySelectorAll("a[href*='savepic.ru']");
+    for (var i = 0; i < links.length; i++) {
+        var link = links[i];
+        var alt = link.textContent;
+        var id = 0;
+        var extension;
+        var match
+        while (match = savepicPattern.exec(link.href)) {
+            id = match[1];
+            extension = match[2];
+        }
+        link.innerHTML = "<img src=\"http://savepic.ru/" + id + "m." + extension + "\" alt=\"" + alt + "\">";
+    }
+}
 
 function addedNewMessages() {
+    transformQmsAttachments();
     transformSnapbacks();
     transformQuotes();
 

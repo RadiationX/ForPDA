@@ -100,6 +100,7 @@ public class IntentHandler {
         }
         url = Utils.fromHtml(url);
         Log.d("FORPDA_LOG", "after html url " + url);
+
         if (url.matches("(?:http?s?:)?\\/\\/[\\s\\S]*?4pda\\.(?:ru|to)[\\s\\S]*")) {
             /*if (!url.contains("4pda.ru")||!url.contains("4pda.to")) {
                 url = "http://4pda.ru".concat(url.substring(0, 1).equals("/") ? "" : "/").concat(url);
@@ -124,12 +125,10 @@ public class IntentHandler {
                 boolean isImage = MimeTypeUtil.isImage(extension);
                 if (isImage) {
                     ImageViewerActivity.startActivity(App.getContext(), url);
-                    return true;
-                    //Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
                 } else {
                     systemDownload(fullName, url);
-                    return true;
                 }
+                return true;
             } else if (Pattern.compile("https?:\\/\\/cs\\d-\\d.4pda.to\\/\\d+").matcher(url).find()) {
                 ImageViewerActivity.startActivity(App.getContext(), url);
                 return true;
@@ -161,6 +160,9 @@ public class IntentHandler {
                         return handleSite(uri, args);*/
                 }
             }
+        } else if (Pattern.compile("https?:\\/\\/savepic\\.ru\\/(\\d+)\\.(.*)").matcher(url).find()) {
+            ImageViewerActivity.startActivity(App.getContext(), url);
+            return true;
         }
         Log.e("FORPDA_LOG", "PRE TRY INTENT ");
         try {

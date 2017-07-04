@@ -499,7 +499,7 @@ li .post-block.hidden {
 }
 .post-block.code > .block-body .lines > div {
   display: block;
-  counter-increment: list 999;
+  counter-increment: list;
   min-height: 1.25rem;
 }
 .post-block.code > .block-body .lines > div:before {

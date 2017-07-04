@@ -53,6 +53,11 @@ body {
   word-wrap: break-word;
   position: relative;
 }
+.mess_list > .mess_container .mess .content img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+}
 .mess_list > .mess_container .time {
   clear: both;
   font-size: 0.75rem;
