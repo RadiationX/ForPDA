@@ -41,7 +41,6 @@ public class ForumFragment extends TabFragment {
     private RealmResults<ForumItemFlatBd> results;
     private static AlertDialogMenu<ForumFragment, ForumItemTree> forumMenu, showedForumMenu;
     private AlertDialog updateDialog;
-    boolean firstLoad = true;
     private TreeNode.TreeNodeClickListener nodeClickListener = (node, value) -> {
         ForumItemTree item = (ForumItemTree) value;
         if (item.getForums() == null) {
@@ -108,20 +107,39 @@ public class ForumFragment extends TabFragment {
             return false;
         });
 
-        bindView();
         return view;
     }
 
 
     @Override
     public void loadData() {
-        firstLoad = false;
         updateDialog = new AlertDialog.Builder(getContext())
                 .setTitle("Обновление")
                 .setMessage("Загрузка данных")
                 .setCancelable(false)
                 .show();
         mainSubscriber.subscribe(RxApi.Forum().getForums(), this::onLoadThemes, new ForumItemTree(), null);
+    }
+
+    @Override
+    public void loadCacheData() {
+        results = realm.where(ForumItemFlatBd.class).findAll();
+        if (updateDialog != null && updateDialog.isShowing()) {
+            if (results.size() != 0) {
+                updateDialog.setMessage("Обновление прошло успешно");
+            } else {
+                updateDialog.setMessage("Произошла ошибка");
+            }
+            new Handler().postDelayed(() -> {
+                if (updateDialog != null)
+                    updateDialog.cancel();
+            }, 500);
+        }
+        if (results.size() == 0) {
+            loadData();
+        } else {
+            bindView();
+        }
     }
 
     private void onLoadThemes(ForumItemTree forumRoot) {
@@ -143,7 +161,7 @@ public class ForumFragment extends TabFragment {
             transformToList(items, forumRoot);
             r.copyToRealmOrUpdate(items);
             items.clear();
-        }, this::bindView);
+        }, this::loadCacheData);
         //setSubtitle(data.getAll() <= 1 ? null : "" + data.getCurrent() + "/" + data.getAll());
 
 
@@ -158,48 +176,32 @@ public class ForumFragment extends TabFragment {
     }
 
     private void bindView() {
-        results = realm.where(ForumItemFlatBd.class).findAll();
-        if (updateDialog != null && updateDialog.isShowing()) {
-            if (results.size() != 0) {
-                updateDialog.setMessage("Обновление прошло успешно");
-            } else {
-                updateDialog.setMessage("Произошла ошибка");
-            }
-            new Handler().postDelayed(() -> {
-                if (updateDialog != null)
-                    updateDialog.cancel();
-            }, 500);
+        //adapter.addAll(results);
+        ForumItemTree rootForum = new ForumItemTree();
+
+        Api.Forum().transformToTree(results, rootForum);
+
+        tView = new AndroidTreeView(getContext());
+        root = TreeNode.root();
+        recourse(rootForum, root);
+        tView.setRoot(root);
+
+        tView.setDefaultContainerStyle(R.style.TreeNodeStyleCustom);
+        tView.setDefaultViewHolder(DefaultForumHolder.class);
+        tView.setDefaultNodeClickListener(nodeClickListener);
+        tView.setDefaultNodeLongClickListener(nodeLongClickListener);
+        treeContainer.removeAllViews();
+        treeContainer.addView(tView.getView());
+
+        //int id = 427;
+        //int id = 828;
+        //int id = 282;
+        //int id = 269;
+        if (forumId != -1) {
+            scrollToForum(forumId);
+            forumId = -1;
         }
-        if (results.size() == 0) {
-            if (firstLoad)
-                loadData();
-        } else {
-            //adapter.addAll(results);
-            ForumItemTree rootForum = new ForumItemTree();
 
-            Api.Forum().transformToTree(results, rootForum);
-
-            tView = new AndroidTreeView(getContext());
-            root = TreeNode.root();
-            recourse(rootForum, root);
-            tView.setRoot(root);
-
-            tView.setDefaultContainerStyle(R.style.TreeNodeStyleCustom);
-            tView.setDefaultViewHolder(DefaultForumHolder.class);
-            tView.setDefaultNodeClickListener(nodeClickListener);
-            tView.setDefaultNodeLongClickListener(nodeLongClickListener);
-            treeContainer.removeAllViews();
-            treeContainer.addView(tView.getView());
-
-            //int id = 427;
-            //int id = 828;
-            //int id = 282;
-            //int id = 269;
-            if (forumId != -1) {
-                scrollToForum(forumId);
-                forumId = -1;
-            }
-        }
     }
 
 
