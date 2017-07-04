@@ -108,7 +108,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
                 break;
             }
             case Preferences.Main.WEBVIEW_FONT_SIZE: {
-                webView.getSettings().setDefaultFontSize(Preferences.Main.getWebViewSize());
+                webView.setRelativeFontSize(Preferences.Main.getWebViewSize());
             }
         }
     };
@@ -174,7 +174,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
         webView.addJavascriptInterface(this, JS_INTERFACE);
         webView.addJavascriptInterface(this, JS_POSTS_FUNCTIONS);
         webView.addJavascriptInterface(this, JS_BASE_INTERFACE);
-        webView.getSettings().setDefaultFontSize(Preferences.Main.getWebViewSize());
+        webView.setRelativeFontSize(Preferences.Main.getWebViewSize());
         recyclerView = new RecyclerView(getContext());
 
         recyclerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));

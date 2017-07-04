@@ -20,7 +20,7 @@ button,
         font-size: 14/16em;
     }
     >* {
-        display: inline-block;
+        display: inline;
         vertical-align: top;
     }
     &:active {
@@ -131,6 +131,10 @@ button,
     }
     >.body {
         //display: block!important;
+        webkit-hyphens: auto;
+        -ms-hyphens: auto;
+        hyphens: auto;
+        word-wrap: break-word;
         .questions {
             .question {
                 padding-bottom: 0.5em;
@@ -476,6 +480,10 @@ button,
     padding: 1em;
     position: relative;
     z-index: 1;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
+    word-wrap: break-word;
     .postcolor {
         overflow: auto!important;
         height: auto!important;
@@ -791,6 +799,7 @@ button,
                     height: 8/16em;
                     width: 8/16em;
                     background-color: currentColor;
+                    display: inline-block;
                     .bRad(100%);
                     &:after {
                         content: "";
@@ -966,22 +975,83 @@ button,
     }
 }
 
-/*body {
-    background: blue;
-}
-
-@media all and (max-width: 48rem) {
-    body {
-        background: red;
-    }
-    .mess_list {
-        >.mess_container {
-            &.his {
-                margin-right: 16/16em;
-            }
-            &.our {
-                margin-left: 16/16em;
+@media all and (max-width: 20rem) {
+    .post_container .post_header {
+        .avatar .reputation:after {
+            height: 18/16rem;
+            min-width: 18/16rem;
+        }
+        .inf {
+            &.nick {
+                .group {
+                    &:after {
+                        height: 1em;
+                        width: 1em;
+                        left: 0;
+                        top: -4/16rem;
+                    }
+                }
             }
         }
     }
-}*/
+}
+
+@media all and (max-width: 14rem) {
+    .poll>.title {
+        padding-left: 8/16rem;
+        /*>span{
+            display: inline;
+        }*/
+    }
+    .poll>.body .questions .question>.title {
+        padding-left: 8/16rem;
+        padding-right: 8/16rem;
+    }
+    .poll>.body .questions .question>.items {
+        padding-left: 8/16rem;
+        padding-right: 8/16rem;
+    }
+    .post_body {
+        padding-left: 8/16rem;
+        padding-right: 8/16rem;
+        .postcolor {
+            margin: -8/16em;
+            padding: 16/16em;
+        }
+    }
+    .post_container .hat_button {
+        padding-left: 8/16rem;
+    }
+    .post_container .post_header {
+        padding-left: 8/16rem;
+        padding-right: 8/16rem;
+        .inf {
+            &.nick {
+                position: relative;
+                top: auto;
+                left: auto;
+                display: block;
+                .group {
+                    position: relative;
+                    right: auto;
+                    margin-left: 4/16rem;
+                    margin-right: 4/16rem;
+                }
+            }
+            &.date {
+                position: relative;
+                top: auto;
+                left: auto;
+                display: block;
+                margin-top: 0;
+            }
+            &.menu {
+                right: -8/16rem;
+            }
+        }
+    }
+    /*.post_container .post_header .header_wrapper{
+        border-bottom: @border1;
+        padding-bottom: 8/16rem;
+    }*/
+}

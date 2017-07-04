@@ -14,7 +14,8 @@
 
         <Preference
             android:key="main.webview.font_size"
-            android:title="Размер шрифта WebView" />
+            android:title="Размер шрифта"
+            android:summary="Применяется для тем, поиска и чата"/>
 
         <SwitchPreference
             android:defaultValue="true"

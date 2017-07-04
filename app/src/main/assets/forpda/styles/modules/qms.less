@@ -96,14 +96,33 @@ body {
     }
 }
 
-@media all and (max-width: 48rem) {
+@media all and (max-width: 20rem) {
     .mess_list {
         >.mess_container {
             &.his {
-                margin-right: 16/16em;
+                margin-right: 16/16rem;
             }
             &.our {
-                margin-left: 16/16em;
+                margin-left: 16/16rem;
+            }
+        }
+    }
+}
+
+@media all and (max-width: 14rem) {
+    .mess_list {
+        >.mess_container {
+            .mess .content {
+                padding: 8/16rem 8/16rem;
+            }
+            
+            &.his {
+                margin-right: 8/16rem;
+                margin-left: 8/16rem
+            }
+            &.our {
+                margin-left: 8/16rem;
+                margin-right: 8/16rem;
             }
         }
     }

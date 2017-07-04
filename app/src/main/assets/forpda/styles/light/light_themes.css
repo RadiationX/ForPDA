@@ -50,7 +50,7 @@ button > b,
 }
 button > *,
 .btn > * {
-  display: inline-block;
+  display: inline;
   vertical-align: top;
 }
 button:active,
@@ -160,6 +160,12 @@ button:active,
   opacity: 0.05;
   -webkit-transform: scale(1) translateZ(0);
   transform: scale(1) translateZ(0);
+}
+.poll > .body {
+  webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+  word-wrap: break-word;
 }
 .poll > .body .questions .question {
   padding-bottom: 0.5em;
@@ -472,6 +478,10 @@ button:active,
   padding: 1em;
   position: relative;
   z-index: 1;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+  word-wrap: break-word;
 }
 .post_body .postcolor {
   overflow: auto!important;
@@ -755,6 +765,7 @@ button:active,
   height: 0.5em;
   width: 0.5em;
   background-color: currentColor;
+  display: inline-block;
   -webkit-border-radius: 100%;
   border-radius: 100%;
 }
@@ -920,22 +931,72 @@ button:active,
 .posts_list.search-results .post_body {
   padding: 1em;
 }
-/*body {
-    background: blue;
+@media all and (max-width: 20rem) {
+  .post_container .post_header .avatar .reputation:after {
+    height: 1.125rem;
+    min-width: 1.125rem;
+  }
+  .post_container .post_header .inf.nick .group:after {
+    height: 1em;
+    width: 1em;
+    left: 0;
+    top: -0.25rem;
+  }
 }
-
-@media all and (max-width: 48rem) {
-    body {
-        background: red;
-    }
-    .mess_list {
-        >.mess_container {
-            &.his {
-                margin-right: 16/16em;
-            }
-            &.our {
-                margin-left: 16/16em;
-            }
-        }
-    }
-}*/
+@media all and (max-width: 14rem) {
+  .poll > .title {
+    padding-left: 0.5rem;
+    /*>span{
+            display: inline;
+        }*/
+  }
+  .poll > .body .questions .question > .title {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .poll > .body .questions .question > .items {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .post_body {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .post_body .postcolor {
+    margin: -0.5em;
+    padding: 1em;
+  }
+  .post_container .hat_button {
+    padding-left: 0.5rem;
+  }
+  .post_container .post_header {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .post_container .post_header .inf.nick {
+    position: relative;
+    top: auto;
+    left: auto;
+    display: block;
+  }
+  .post_container .post_header .inf.nick .group {
+    position: relative;
+    right: auto;
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+  }
+  .post_container .post_header .inf.date {
+    position: relative;
+    top: auto;
+    left: auto;
+    display: block;
+    margin-top: 0;
+  }
+  .post_container .post_header .inf.menu {
+    right: -0.5rem;
+  }
+  /*.post_container .post_header .header_wrapper{
+        border-bottom: @border1;
+        padding-bottom: 8/16rem;
+    }*/
+}

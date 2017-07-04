@@ -33,6 +33,7 @@ import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IBase;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
+import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
 
@@ -159,7 +160,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
 
     @Override
     protected void setFontSize(int size) {
-        webView.getSettings().setDefaultFontSize(size);
+        webView.setRelativeFontSize(size);
     }
 
     @Override

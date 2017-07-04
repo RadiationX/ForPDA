@@ -86,7 +86,7 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
         String key = (String) o;
         switch (key) {
             case Preferences.Main.WEBVIEW_FONT_SIZE: {
-                webView.getSettings().setDefaultFontSize(Preferences.Main.getWebViewSize());
+                webView.setRelativeFontSize(Preferences.Main.getWebViewSize());
             }
         }
     };
