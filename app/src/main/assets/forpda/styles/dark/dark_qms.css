@@ -12,6 +12,22 @@
 [style*="color:white"] {
   color: #ffffff !important;
 }
+[style*="color:blue"] {
+  color: #4444d4!important;
+}
+[style*="color:darkblue"] {
+  color: #000076!important;
+}
+[style*="color:indigo"] {
+  color: #7f38b4!important;
+}
+[style*="color:darkred"] {
+  color: #a11!important;
+}
+[style*="color:#000000"],
+[style*="color:black"] {
+  color: #dedede !important;
+}
 .mainBox {
   background: #212121;
   margin: 0.5em 0;
@@ -110,11 +126,24 @@ body {
 .mess_list > .date span {
   font-size: 0.875rem;
 }
-@media all and (max-width: 48rem) {
+@media all and (max-width: 20rem) {
   .mess_list > .mess_container.his {
-    margin-right: 1em;
+    margin-right: 1rem;
   }
   .mess_list > .mess_container.our {
-    margin-left: 1em;
+    margin-left: 1rem;
+  }
+}
+@media all and (max-width: 14rem) {
+  .mess_list > .mess_container .mess .content {
+    padding: 0.5rem 0.5rem;
+  }
+  .mess_list > .mess_container.his {
+    margin-right: 0.5rem;
+    margin-left: 0.5rem;
+  }
+  .mess_list > .mess_container.our {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
   }
 }

@@ -110,11 +110,24 @@ body {
 .mess_list > .date span {
   font-size: 0.875rem;
 }
-@media all and (max-width: 48rem) {
+@media all and (max-width: 20rem) {
   .mess_list > .mess_container.his {
-    margin-right: 1em;
+    margin-right: 1rem;
   }
   .mess_list > .mess_container.our {
-    margin-left: 1em;
+    margin-left: 1rem;
+  }
+}
+@media all and (max-width: 14rem) {
+  .mess_list > .mess_container .mess .content {
+    padding: 0.5rem 0.5rem;
+  }
+  .mess_list > .mess_container.his {
+    margin-right: 0.5rem;
+    margin-left: 0.5rem;
+  }
+  .mess_list > .mess_container.our {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
   }
 }

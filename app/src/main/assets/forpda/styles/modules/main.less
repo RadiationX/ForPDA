@@ -104,7 +104,7 @@ li {
 }
 
 .post-block {
-    margin: 12/16rem -1rem;
+    margin: 12/16rem -16/16rem;
     position: relative;
     border-top: @border1;
     border-bottom: @border1;
@@ -309,7 +309,7 @@ li {
                 //margin: -6/16rem 0;
                 //margin-top: 2/16rem;
                 //margin-bottom:4/16rem;
-                height: 32/16rem;
+                //height: 32/16rem;
                 display: block;
                 >* {
                     padding-left: (48-4)/16rem;
@@ -509,18 +509,18 @@ li {
                 line-height: 20/16rem;
                 >div {
                     display: block;
-                    counter-increment: list;
+                    counter-increment: list 999;
                     min-height: 20/16rem;
                     &:before {
                         content: counter(list);
                         position: absolute;
                         font-size: 14/16rem;
                         left: 0/16rem;
-                        width: 28/16rem;
+                        width: 48/16rem;
                         //background: red;
                         padding-left: 8/16rem;
                         //text-align: center;
-                        white-space: nowrap;
+                        //white-space: nowrap;
                         color: @second_text_color;
                         box-sizing: border-box;
                         .noselect();
@@ -649,7 +649,7 @@ a.snapback {
         z-index: 1;
     }
     &:after {
-        content: "";
+        //content: "";
         position: absolute;
         top: -8/16em;
         left: -8/16em;
@@ -707,7 +707,7 @@ a.snapback {
     padding-left: 56/16rem;
     padding-top: 4/16rem;
     padding-bottom: 4/16rem;
-    padding-right: 8/16rem;
+    padding-right: 4/16rem;
     position: relative;
     overflow: hidden;
     max-width: 100%;
@@ -733,6 +733,8 @@ a.snapback {
         &:after {
             content: "";
             position: absolute;
+            left: 0;
+            top: 0;
             height: 40/16rem;
             width: 40/16rem;
             background-color: @link_color_contrast;
@@ -757,5 +759,59 @@ a.snapback {
         content: "";
         display: table;
         clear: both;
+    }
+}
+
+@media all and (max-width: 20rem) {
+    .post-block {
+        &.code {
+            >.block-title>.block-controls {
+                position: relative;
+                right: auto;
+                margin-top: 8/16rem;
+                float: none;
+            }
+            >.block-body {
+                padding-left: 32/16rem;
+                .lines>div:before {
+                    font-size: 8/16rem;
+                    width: 32/16rem;
+                }
+            }
+        }
+    }
+}
+
+@media all and (max-width: 14rem) {
+    .post-block {
+        margin: 12/16rem -8/16rem;
+        >.block-title {
+            padding-left: 8/16rem;
+            padding-right: 8/16rem;
+        }
+        >.block-body {
+            padding-left: 8/16rem;
+            padding-right: 8/16rem;
+        }
+    }
+    .post-block.quote>.block-title .title {
+        margin-top: 36/16rem;
+        >* {
+            padding-left: 0;
+        }
+    }
+    .attach_block {
+        padding-left: 4/16rem;
+        text-align: center!important;
+        .icon {
+            position: relative;
+            display: block;
+            top: auto;
+            left: auto;
+            height: 40/16rem;
+            width: 40/16rem;
+            margin: 0 auto;
+            margin-bottom: 4/16rem;
+        }
     }
 }

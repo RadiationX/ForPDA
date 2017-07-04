@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.ContextMenu;
 import android.view.ViewParent;
@@ -41,10 +42,32 @@ public class ExtendedWebView extends NestedWebView {
         WebSettings settings = getSettings();
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
         settings.setBuiltInZoomControls(false);
-        settings.setDefaultFontSize(Preferences.Main.getWebViewSize());
+        settings.setDefaultFontSize(16);
         settings.setTextZoom(100);
         settings.setJavaScriptEnabled(true);
+        setRelativeFontSize(Preferences.Main.getWebViewSize());
         setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_base));
+    }
+
+    @Deprecated
+    @Override
+    public void setInitialScale(int scaleInPercent) {
+        super.setInitialScale(scaleInPercent);
+        Log.e("SUKA", "SET INIT SCALE " + scaleInPercent);
+    }
+
+    //0.0f, 1.0f, 2.3f, etc
+    public void setRelativeScale(float scale) {
+        int scaleInPercent = 100;
+        try {
+            scaleInPercent = (int) (scale * (App.getInstance().getDensity() * 100));
+        } catch (Exception ignore) {
+        }
+        setInitialScale(scaleInPercent);
+    }
+
+    public void setRelativeFontSize(int fontSize) {
+        setRelativeScale(fontSize / 16f);
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -105,8 +128,8 @@ public class ExtendedWebView extends NestedWebView {
             return true;
         }).obtainMessage());
     }
-    
-    public void destroy(){
+
+    public void destroy() {
         setActionModeListener(null);
         setWebChromeClient(null);
         setWebViewClient(null);
