@@ -19,9 +19,9 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:supportsRtl="true"
-        android:theme="@style/LightAppTheme"
-        android:largeHeap="true">
+        android:theme="@style/LightAppTheme">
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -101,7 +101,10 @@
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
-        <receiver android:name=".client.NetworkStateReceiver">
+        <receiver
+            android:name=".client.NetworkStateReceiver"
+            android:enabled="false"
+            android:exported="false">
             <intent-filter>
                 <action
                     android:name="android.net.conn.CONNECTIVITY_CHANGE"

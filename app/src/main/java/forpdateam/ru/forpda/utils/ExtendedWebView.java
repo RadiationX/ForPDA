@@ -72,10 +72,15 @@ public class ExtendedWebView extends NestedWebView {
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public void evalJs(String script) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-            evaluateJavascript(script, null);
-        else
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            try {
+                evaluateJavascript(script, null);
+            } catch (Exception error) {
+                loadUrl("javascript:" + script);
+            }
+        } else {
             loadUrl("javascript:" + script);
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)

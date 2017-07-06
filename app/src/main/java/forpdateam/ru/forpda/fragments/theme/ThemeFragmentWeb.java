@@ -68,7 +68,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
     protected void addShowingView() {
         messagePanel.setHeightChangeListener(newHeight -> {
             syncWithWebView(()->{
-                webView.evalJs("setPaddingBottom(" + (newHeight / getResources().getDisplayMetrics().density) + ");");
+                webView.evalJs("setPaddingBottom(" + (newHeight / App.getInstance().getDensity()) + ");");
             });
         });
         webView = getMainActivity().getWebViewsProvider().pull(getContext());

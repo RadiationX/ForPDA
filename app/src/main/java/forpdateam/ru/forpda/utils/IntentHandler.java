@@ -136,9 +136,10 @@ public class IntentHandler {
             } else {
                 if (args == null) args = new Bundle();
                 Log.e("FORPDA_LOG", "HANDLE URL, NOT IMAGE OR FILE");
-                switch (uri.getPathSegments().get(0)) {
-                    case "forum":
-                        return handleForum(uri, args);
+                if (uri.getPathSegments().size() > 0){
+                    switch (uri.getPathSegments().get(0)) {
+                        case "forum":
+                            return handleForum(uri, args);
                     /*case "devdb":
                         if (uri.getPathSegments().size() > 1) {
                             if (uri.getPathSegments().get(1).matches("phones|pad|ebook|smartwatch")) {
@@ -158,6 +159,7 @@ public class IntentHandler {
                         }
                     default:
                         return handleSite(uri, args);*/
+                    }
                 }
             }
         } else if (Pattern.compile("https?:\\/\\/savepic\\.ru\\/(\\d+)\\.(.*)").matcher(url).find()) {
