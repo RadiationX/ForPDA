@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.NetworkStateReceiver;
 import forpdateam.ru.forpda.data.Repository;
 import forpdateam.ru.forpda.fragments.TabFragment;

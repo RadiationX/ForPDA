@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.AttrRes;
 import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.v7.content.res.AppCompatResources;
 import android.util.DisplayMetrics;
@@ -85,7 +84,8 @@ public class App extends android.app.Application {
     public static int statusBarHeight = 0;
     public static int navigationBarHeight = 0;
     public static SparseArray<Drawable> drawableCache = new SparseArray<>();
-    private static App INSTANCE;
+    private static App instance;
+    private final static Object lock = new Object();
 
     private Map<String, MiniTemplator> templates = new HashMap<>();
     private float density = 1.0f;
@@ -99,7 +99,14 @@ public class App extends android.app.Application {
 
 
     public static App getInstance() {
-        return INSTANCE;
+        if (instance == null) {
+            synchronized(lock) {
+                System.out.print("SUKA sync init APP instance "+instance);
+                if (instance == null)
+                    instance = new App();
+            }
+        }
+        return instance;
     }
 
     public static Context getContext() {
@@ -134,8 +141,8 @@ public class App extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        setTheme(R.style.DarkAppTheme);
-        INSTANCE = this;
+        setTheme(R.style.LightAppTheme);
+        instance = this;
         ACRA.init(this);
         density = getResources().getDisplayMetrics().density;
 
