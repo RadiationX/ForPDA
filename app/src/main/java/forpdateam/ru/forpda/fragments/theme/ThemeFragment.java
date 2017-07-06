@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -20,6 +21,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +67,13 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     //Указывают на произведенное действие: переход назад, обновление, обычный переход по ссылке
     protected final static int BACK_ACTION = 0, REFRESH_ACTION = 1, NORMAL_ACTION = 2;
     protected int loadAction = NORMAL_ACTION;
+    protected MenuItem refreshMenuItem;
+    protected MenuItem copyLinkMenuItem;
+    protected MenuItem searchInThemeMenuItem;
+    protected MenuItem searchOnPageMenuItem;
+    protected MenuItem deleteFavoritesMenuItem;
+    protected MenuItem addFavoritesMenuItem;
+    protected MenuItem openForumMenuItem;
     protected SwipeRefreshLayout refreshLayout;
     protected ThemePage currentPage;
     protected List<ThemePage> history = new ArrayList<>();
@@ -222,7 +231,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         }
         if (messagePanel.onBackPressed())
             return true;
-        if (toolbar.getMenu().findItem(R.id.action_search) != null && toolbar.getMenu().findItem(R.id.action_search).isActionViewExpanded()) {
+        if (getMenu().findItem(R.id.action_search) != null && getMenu().findItem(R.id.action_search).isActionViewExpanded()) {
             toolbar.collapseActionView();
             return true;
         }
@@ -281,6 +290,9 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     @Override
     public void loadData() {
         refreshLayout.setRefreshing(true);
+
+        refreshToolbarMenuItems(false);
+
         mainSubscriber.subscribe(RxApi.Theme().getTheme(tab_url, true, false, false), this::onLoadData, new ThemePage(), v -> loadData());
     }
 
@@ -323,73 +335,106 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         ((FavoritesFragment) TabManager.getInstance().get(tag)).markRead(themePage.getId());
     }
 
+    @CallSuper
     protected void updateView() {
         paginationHelper.updatePagination(currentPage.getPagination());
         tab_url = currentPage.getUrl();
         updateTitle();
         updateSubTitle();
-        refreshOptionsMenu();
+        refreshToolbarMenuItems(true);
     }
 
-    public void refreshOptionsMenu() {
-        Menu menu = toolbar.getMenu();
-        menu.clear();
-        addBaseToolbarMenu();
-        menu.add("Обновить").setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_refresh)).setOnMenuItemClickListener(menuItem -> {
+
+    @Override
+    protected void addBaseToolbarMenu() {
+        super.addBaseToolbarMenu();
+        refreshMenuItem = getMenu().add("Обновить").setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_refresh)).setOnMenuItemClickListener(menuItem -> {
             loadData(REFRESH_ACTION);
             return false;
-        })/*.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)*/;
-        if (currentPage != null) {
-            menu.add("Скопировать ссылку").setOnMenuItemClickListener(menuItem -> {
-                Utils.copyToClipBoard(tab_url);
-                return false;
-            });
-            addSearchOnPageItem(menu);
-            menu.add("Найти в теме").setOnMenuItemClickListener(menuItem -> {
-                IntentHandler.handle("http://4pda.ru/forum/index.php?forums=" + currentPage.getForumId() + "&topics=" + currentPage.getId() + "&act=search&source=pst");
-                return false;
-            });
-        }
+        });
 
-        SubMenu subMenu = menu.addSubMenu("Опции темы");
-        if (currentPage != null) {
-            if (currentPage.isInFavorite()) {
-                subMenu.add("Удалить из избранного").setOnMenuItemClickListener(menuItem -> {
-                    if (currentPage.getFavId() == 0) {
-                        Toast.makeText(App.getContext(), "ID темы не найден, попробуйте перезагрузить страницу", Toast.LENGTH_SHORT).show();
-                        return false;
-                    }
-                    FavoritesHelper.delete(aBoolean -> {
-                        Toast.makeText(App.getContext(), aBoolean ? "Тема удалена из избранного" : "Ошибка", Toast.LENGTH_SHORT).show();
-                        currentPage.setInFavorite(!aBoolean);
-                        refreshOptionsMenu();
-                    }, currentPage.getFavId());
-                    return false;
-                });
-            } else {
-                subMenu.add("Добавить в избранное").setOnMenuItemClickListener(menuItem -> {
-                    new AlertDialog.Builder(getContext())
-                            .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> FavoritesHelper.add(aBoolean -> {
-                                Toast.makeText(App.getContext(), aBoolean ? "Тема добавлена в избранное" : "Ошибочка вышла", Toast.LENGTH_SHORT).show();
-                                currentPage.setInFavorite(aBoolean);
-                                refreshOptionsMenu();
-                            }, currentPage.getId(), Favorites.SUB_TYPES[which1]))
-                            .show();
-                    return false;
-                });
-            }
-            subMenu.add("Открыть форум темы").setOnMenuItemClickListener(menuItem -> {
-                IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + currentPage.getForumId());
+        copyLinkMenuItem = getMenu().add("Скопировать ссылку").setOnMenuItemClickListener(menuItem -> {
+            Utils.copyToClipBoard(tab_url);
+            return false;
+        });
+        addSearchOnPageItem(getMenu());
+        searchInThemeMenuItem = getMenu().add("Найти в теме").setOnMenuItemClickListener(menuItem -> {
+            IntentHandler.handle("http://4pda.ru/forum/index.php?forums=" + currentPage.getForumId() + "&topics=" + currentPage.getId() + "&act=search&source=pst");
+            return false;
+        });
+
+        SubMenu subMenu = getMenu().addSubMenu("Опции темы");
+        deleteFavoritesMenuItem = subMenu.add("Удалить из избранного").setOnMenuItemClickListener(menuItem -> {
+            if (currentPage.getFavId() == 0) {
+                Toast.makeText(App.getContext(), "ID темы не найден, попробуйте перезагрузить страницу", Toast.LENGTH_SHORT).show();
                 return false;
-            });
-            //subMenu.add("Кто читает тему").setOnMenuItemClickListener(menuItem -> false);
-            //subMenu.add("Кто писал сообщения").setOnMenuItemClickListener(menuItem -> false);
+            }
+            FavoritesHelper.delete(aBoolean -> {
+                Toast.makeText(App.getContext(), aBoolean ? "Тема удалена из избранного" : "Ошибка", Toast.LENGTH_SHORT).show();
+                currentPage.setInFavorite(!aBoolean);
+                refreshToolbarMenuItems(true);
+            }, currentPage.getFavId());
+            return false;
+        });
+        addFavoritesMenuItem = subMenu.add("Добавить в избранное").setOnMenuItemClickListener(menuItem -> {
+            new AlertDialog.Builder(getContext())
+                    .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> FavoritesHelper.add(aBoolean -> {
+                        Toast.makeText(App.getContext(), aBoolean ? "Тема добавлена в избранное" : "Ошибка", Toast.LENGTH_SHORT).show();
+                        currentPage.setInFavorite(aBoolean);
+                        refreshToolbarMenuItems(true);
+                    }, currentPage.getId(), Favorites.SUB_TYPES[which1]))
+                    .show();
+            return false;
+        });
+        openForumMenuItem = subMenu.add("Открыть форум темы").setOnMenuItemClickListener(menuItem -> {
+            IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + currentPage.getForumId());
+            return false;
+        });
+
+        refreshToolbarMenuItems(false);
+    }
+
+    @Override
+    protected void refreshToolbarMenuItems(boolean enable) {
+        super.refreshToolbarMenuItems(enable);
+        Log.d("SUKA", "refreshToolbarMenuItems " + enable);
+        if (enable) {
+            boolean pageNotNull = !(currentPage == null || currentPage.getId() == 0 || currentPage.getUrl() == null);
+            Log.d("SUKA", "SADASD " + pageNotNull + " : " + currentPage + " : " + currentPage.getId() + " : " + currentPage.getUrl());
+
+            refreshMenuItem.setEnabled(true);
+            copyLinkMenuItem.setEnabled(pageNotNull);
+            searchInThemeMenuItem.setEnabled(pageNotNull);
+            searchOnPageMenuItem.setEnabled(pageNotNull);
+            deleteFavoritesMenuItem.setEnabled(pageNotNull);
+            addFavoritesMenuItem.setEnabled(pageNotNull);
+            if (pageNotNull) {
+                if (currentPage.isInFavorite()) {
+                    deleteFavoritesMenuItem.setVisible(true);
+                    addFavoritesMenuItem.setVisible(false);
+                } else {
+                    deleteFavoritesMenuItem.setVisible(false);
+                    addFavoritesMenuItem.setVisible(true);
+                }
+            }
+            openForumMenuItem.setEnabled(pageNotNull);
+        } else {
+            refreshMenuItem.setEnabled(true);
+            copyLinkMenuItem.setEnabled(false);
+            searchInThemeMenuItem.setEnabled(false);
+            searchOnPageMenuItem.setEnabled(false);
+            deleteFavoritesMenuItem.setEnabled(false);
+            addFavoritesMenuItem.setEnabled(false);
+            deleteFavoritesMenuItem.setVisible(false);
+            addFavoritesMenuItem.setVisible(false);
+            openForumMenuItem.setEnabled(false);
         }
     }
 
     private void addSearchOnPageItem(Menu menu) {
         toolbar.inflateMenu(R.menu.theme_search_menu);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchOnPageMenuItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchOnPageMenuItem.getActionView();
         searchView.setTag(searchViewTag);
 
         searchView.setOnSearchClickListener(v -> {

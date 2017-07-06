@@ -71,6 +71,9 @@ public class ProfileFragment extends TabFragment {
     private Subscriber<Bitmap> blurAvatarSubscriber = new Subscriber<>(this);
 
     private String tab_url = "";
+    private ProfileModel currentProfile;
+    private MenuItem copyLinkMenuItem;
+    private MenuItem writeMenuItem;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -121,10 +124,7 @@ public class ProfileFragment extends TabFragment {
         findViewById(R.id.profile_save_note).setOnClickListener(view1 -> saveNote());
         //toolbar.setTitleTextColor(Color.TRANSPARENT);
 
-        toolbar.getMenu().add("Скопировать ссылку").setOnMenuItemClickListener(menuItem -> {
-            Utils.copyToClipBoard(tab_url);
-            return false;
-        });
+
         if (getActivity() != null && getActivity().getWindow() != null) {
             window = getActivity().getWindow();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -134,6 +134,32 @@ public class ProfileFragment extends TabFragment {
         toolbar.getNavigationIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         toolbar.getOverflowIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         return view;
+    }
+
+
+    @Override
+    protected void addBaseToolbarMenu() {
+        super.addBaseToolbarMenu();
+        copyLinkMenuItem = getMenu().add("Скопировать ссылку").setOnMenuItemClickListener(menuItem -> {
+            Utils.copyToClipBoard(tab_url);
+            return false;
+        });
+        writeMenuItem = getMenu().add("Написать").setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_create)).setOnMenuItemClickListener(item -> {
+            IntentHandler.handle(currentProfile.getContacts().get(0).first);
+            return false;
+        }).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        refreshToolbarMenuItems(false);
+    }
+
+    @Override
+    protected void refreshToolbarMenuItems(boolean enable) {
+        super.refreshToolbarMenuItems(enable);
+        if(enable){
+            copyLinkMenuItem.setEnabled(true);
+        }else {
+            copyLinkMenuItem.setEnabled(false);
+            writeMenuItem.setVisible(false);
+        }
     }
 
     @Override
@@ -163,6 +189,7 @@ public class ProfileFragment extends TabFragment {
 
     @Override
     public void loadData() {
+        refreshToolbarMenuItems(false);
         mainSubscriber.subscribe(RxApi.Profile().getProfile(tab_url), this::onProfileLoad, new ProfileModel(), v -> loadData());
     }
 
@@ -230,9 +257,11 @@ public class ProfileFragment extends TabFragment {
     }
 
     private void onProfileLoad(ProfileModel profile) {
-        if (profile.getNick() == null) return;
+        currentProfile = profile;
+        if (currentProfile.getNick() == null) return;
+        refreshToolbarMenuItems(true);
         long time = System.currentTimeMillis();
-        ImageLoader.getInstance().loadImage(profile.getAvatar(), new SimpleImageLoadingListener() {
+        ImageLoader.getInstance().loadImage(currentProfile.getAvatar(), new SimpleImageLoadingListener() {
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                 //Нужен handler, иначе при повторном создании фрагмента неверно вычисляется высота вьюхи
@@ -295,74 +324,73 @@ public class ProfileFragment extends TabFragment {
         });
 
 
-        setTabTitle("Профиль ".concat(profile.getNick()));
-        setTitle(profile.getNick());
-        nick.setText(profile.getNick());
-        group.setText(profile.getGroup());
-        if (profile.getSign() != null) {
+        setTabTitle("Профиль ".concat(currentProfile.getNick()));
+        setTitle(currentProfile.getNick());
+        nick.setText(currentProfile.getNick());
+        group.setText(currentProfile.getGroup());
+        if (currentProfile.getSign() != null) {
             Log.d("FORPDA_LOG", "view sign set");
-            sign.setText(profile.getSign());
+            sign.setText(currentProfile.getSign());
             sign.setVisibility(View.VISIBLE);
             Log.d("FORPDA_LOG", "view sign setted");
             sign.setMovementMethod(LinkMovementMethod.getInstance());
         }
         Log.d("FORPDA_LOG", "check 1 " + (System.currentTimeMillis() - time));
-        if (profile.getPosts() != null)
-            addCountItem(getContext().getString(R.string.profile_item_text_posts), profile.getPosts());
-        if (profile.getTopics() != null)
-            addCountItem(getContext().getString(R.string.profile_item_text_themes), profile.getTopics());
-        if (profile.getReputation() != null)
-            addCountItem(getContext().getString(R.string.profile_item_text_rep), profile.getReputation());
-        if (profile.getKarma() != null)
-            addCountItem(getContext().getString(R.string.profile_item_text_karma), profile.getKarma());
-        if (profile.getSitePosts() != null)
-            addCountItem(getContext().getString(R.string.profile_item_text_site_posts), profile.getSitePosts());
-        if (profile.getComments() != null)
-            addCountItem(getContext().getString(R.string.profile_item_text_comments), profile.getComments());
+        if (currentProfile.getPosts() != null)
+            addCountItem(getContext().getString(R.string.profile_item_text_posts), currentProfile.getPosts());
+        if (currentProfile.getTopics() != null)
+            addCountItem(getContext().getString(R.string.profile_item_text_themes), currentProfile.getTopics());
+        if (currentProfile.getReputation() != null)
+            addCountItem(getContext().getString(R.string.profile_item_text_rep), currentProfile.getReputation());
+        if (currentProfile.getKarma() != null)
+            addCountItem(getContext().getString(R.string.profile_item_text_karma), currentProfile.getKarma());
+        if (currentProfile.getSitePosts() != null)
+            addCountItem(getContext().getString(R.string.profile_item_text_site_posts), currentProfile.getSitePosts());
+        if (currentProfile.getComments() != null)
+            addCountItem(getContext().getString(R.string.profile_item_text_comments), currentProfile.getComments());
         Log.d("FORPDA_LOG", "check 2 " + (System.currentTimeMillis() - time));
-        if (profile.getGender() != null)
-            addInfoItem(getContext().getString(R.string.profile_item_text_gender), profile.getGender());
-        if (profile.getBirthDay() != null)
-            addInfoItem(getContext().getString(R.string.profile_item_text_birthday), profile.getBirthDay());
-        if (profile.getCity() != null)
-            addInfoItem(getContext().getString(R.string.profile_item_text_city), profile.getCity());
-        if (profile.getUserTime() != null)
-            addInfoItem(getContext().getString(R.string.profile_item_text_user_time), profile.getUserTime());
+        if (currentProfile.getGender() != null)
+            addInfoItem(getContext().getString(R.string.profile_item_text_gender), currentProfile.getGender());
+        if (currentProfile.getBirthDay() != null)
+            addInfoItem(getContext().getString(R.string.profile_item_text_birthday), currentProfile.getBirthDay());
+        if (currentProfile.getCity() != null)
+            addInfoItem(getContext().getString(R.string.profile_item_text_city), currentProfile.getCity());
+        if (currentProfile.getUserTime() != null)
+            addInfoItem(getContext().getString(R.string.profile_item_text_user_time), currentProfile.getUserTime());
         inflater.inflate(R.layout.profile_divider, infoBlock);
-        if (profile.getRegDate() != null)
-            addInfoItem(getContext().getString(R.string.profile_item_text_reg), profile.getRegDate());
-        if (profile.getOnlineDate() != null)
-            addInfoItem(getContext().getString(R.string.profile_item_text_last_online), profile.getOnlineDate());
-        if (profile.getAlerts() != null)
-            addInfoItem(getContext().getString(R.string.profile_item_text_alerts), profile.getAlerts());
+        if (currentProfile.getRegDate() != null)
+            addInfoItem(getContext().getString(R.string.profile_item_text_reg), currentProfile.getRegDate());
+        if (currentProfile.getOnlineDate() != null)
+            addInfoItem(getContext().getString(R.string.profile_item_text_last_online), currentProfile.getOnlineDate());
+        if (currentProfile.getAlerts() != null)
+            addInfoItem(getContext().getString(R.string.profile_item_text_alerts), currentProfile.getAlerts());
         Log.d("FORPDA_LOG", "check 3 " + (System.currentTimeMillis() - time));
-        if (profile.getContacts().size() > 0) {
+        if (currentProfile.getContacts().size() > 0) {
             if (!Pattern.compile("showuser=".concat(Integer.toString(ClientHelper.getUserId()))).matcher(tab_url).find()) {
-                toolbar.getMenu().add("Написать").setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_create)).setOnMenuItemClickListener(item -> {
-                    IntentHandler.handle(profile.getContacts().get(0).first);
-                    return false;
-                }).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                writeMenuItem.setVisible(true);
+            }else {
+                writeMenuItem.setVisible(false);
             }
         }
-        if (profile.getContacts().size() > 1) {
-            for (int i = 1; i < profile.getContacts().size(); i++)
-                addContactItem(getIconRes(profile.getContacts().get(i).second), profile.getContacts().get(i).first);
+        if (currentProfile.getContacts().size() > 1) {
+            for (int i = 1; i < currentProfile.getContacts().size(); i++)
+                addContactItem(getIconRes(currentProfile.getContacts().get(i).second), currentProfile.getContacts().get(i).first);
             findViewById(R.id.profile_block_contacts).setVisibility(View.VISIBLE);
         }
         Log.d("FORPDA_LOG", "check 4 " + (System.currentTimeMillis() - time));
-        if (profile.getDevices().size() > 0) {
-            for (Pair<String, String> device : profile.getDevices()) {
+        if (currentProfile.getDevices().size() > 0) {
+            for (Pair<String, String> device : currentProfile.getDevices()) {
                 addDeviceItem(device.second, device.first);
             }
             findViewById(R.id.profile_block_devices).setVisibility(View.VISIBLE);
         }
 
-        if (profile.getNote() != null) {
-            noteText.setText(profile.getNote());
+        if (currentProfile.getNote() != null) {
+            noteText.setText(currentProfile.getNote());
             findViewById(R.id.profile_block_note).setVisibility(View.VISIBLE);
         }
-        if (profile.getAbout() != null) {
-            about.setText(profile.getAbout());
+        if (currentProfile.getAbout() != null) {
+            about.setText(currentProfile.getAbout());
             about.setMovementMethod(LinkMovementMethod.getInstance());
             findViewById(R.id.profile_block_about).setVisibility(View.VISIBLE);
         }

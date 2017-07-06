@@ -98,8 +98,28 @@ public class QmsContactsFragment extends TabFragment {
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+
+        fab.setImageDrawable(App.getAppDrawable(getContext(), R.drawable.ic_fab_create));
+        fab.setOnClickListener(view1 -> TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).build()));
+        fab.setVisibility(View.VISIBLE);
+
+        adapter = new QmsContactsAdapter();
+        adapter.setOnLongItemClickListener(onLongItemClickListener);
+        adapter.setOnItemClickListener(onItemClickListener);
+        recyclerView.setAdapter(adapter);
+
+
+
+        bindView();
+        return view;
+    }
+
+    @Override
+    protected void addBaseToolbarMenu() {
+        super.addBaseToolbarMenu();
         toolbar.inflateMenu(R.menu.qms_contacts_menu);
-        MenuItem searchItem = toolbar.getMenu().findItem(R.id.action_search);
+        MenuItem searchItem = getMenu().findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
 
         SearchManager searchManager = (SearchManager) getMainActivity().getSystemService(Context.SEARCH_SERVICE);
@@ -134,28 +154,17 @@ public class QmsContactsFragment extends TabFragment {
             }
         });
 
-        fab.setImageDrawable(App.getAppDrawable(getContext(), R.drawable.ic_fab_create));
-        fab.setOnClickListener(view1 -> TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).build()));
-        fab.setVisibility(View.VISIBLE);
-
-        adapter = new QmsContactsAdapter();
-        adapter.setOnLongItemClickListener(onLongItemClickListener);
-        adapter.setOnItemClickListener(onItemClickListener);
-        recyclerView.setAdapter(adapter);
-
-        toolbar.getMenu().add("Черный список").setOnMenuItemClickListener(item -> {
+        getMenu().add("Черный список").setOnMenuItemClickListener(item -> {
             TabManager.getInstance().add(new Builder<>(QmsBlackListFragment.class).build());
             return false;
         });
-
-        bindView();
-        return view;
     }
+
 
     @Override
     public boolean onBackPressed() {
         Log.d("FORPDA_LOG", "onbackpressed qms");
-        if (toolbar.getMenu().findItem(R.id.action_search).isActionViewExpanded()) {
+        if (getMenu().findItem(R.id.action_search).isActionViewExpanded()) {
             recyclerView.setAdapter(adapter);
             toolbar.collapseActionView();
             return true;
