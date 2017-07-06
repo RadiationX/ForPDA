@@ -203,32 +203,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
         dialog = new BottomSheetDialog(getContext());
         //dialog.setPeekHeight(App.getKeyboardHeight());
         //dialog.getWindow().getDecorView().setFitsSystemWindows(true);
-        toolbar.getMenu().clear();
-        addBaseToolbarMenu();
-        toolbar.getMenu().add("Скопировать ссылку").setOnMenuItemClickListener(menuItem -> {
-            Utils.copyToClipBoard(settings.toUrl());
-            return false;
-        });
-        toolbar.inflateMenu(R.menu.qms_contacts_menu);
-        MenuItem settingsItem = toolbar.getMenu().add("Настройки");
-        settingsItem.setIcon(R.drawable.ic_toolbar_tune).setOnMenuItemClickListener(menuItem -> {
-            /*if (searchSettingsView.getVisibility() == View.VISIBLE) {
-                searchSettingsView.setVisibility(View.GONE);
-            } else {
-                searchSettingsView.setVisibility(View.VISIBLE);
-                hidePopupWindows();
-            }*/
-            hidePopupWindows();
-            if (searchSettingsView != null && searchSettingsView.getParent() != null && searchSettingsView.getParent() instanceof ViewGroup) {
-                ((ViewGroup) searchSettingsView.getParent()).removeView(searchSettingsView);
-            }
-            dialog.setContentView(searchSettingsView);
-            dialog.show();
-            return false;
-        }).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        searchItem = toolbar.getMenu().findItem(R.id.action_search);
-        searchView = (SearchView) searchItem.getActionView();
-        searchView.setIconifiedByDefault(true);
+
 
         setItems(resourceSpinner, (String[]) resourceItems.toArray(), 0);
         setItems(resultSpinner, (String[]) resultItems.toArray(), 0);
@@ -330,7 +305,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
                     for (int menuChildIndex = 0; menuChildIndex < menuView.getChildCount(); menuChildIndex++) {
                         try {
                             ActionMenuItemView itemView = (ActionMenuItemView) menuView.getChildAt(menuChildIndex);
-                            if (settingsItem == itemView.getItemData()) {
+                            if (settingsMenuItem == itemView.getItemData()) {
                                 tooltip = new SimpleTooltip.Builder(getContext())
                                         .anchorView(itemView)
                                         .text("Нажимите сюда, чтобы настроить поисковой запрос")
@@ -357,6 +332,35 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
 
 
         return view;
+    }
+
+    private MenuItem settingsMenuItem;
+
+    @Override
+    protected void addBaseToolbarMenu() {
+        super.addBaseToolbarMenu();
+        getMenu().add("Скопировать ссылку").setOnMenuItemClickListener(menuItem -> {
+            Utils.copyToClipBoard(settings.toUrl());
+            return false;
+        });
+        toolbar.inflateMenu(R.menu.qms_contacts_menu);
+
+        settingsMenuItem = getMenu().add("Настройки");
+        settingsMenuItem.setIcon(R.drawable.ic_toolbar_tune).setOnMenuItemClickListener(menuItem -> {
+            hidePopupWindows();
+            if (searchSettingsView != null && searchSettingsView.getParent() != null && searchSettingsView.getParent() instanceof ViewGroup) {
+                ((ViewGroup) searchSettingsView.getParent()).removeView(searchSettingsView);
+            }
+            if (searchSettingsView != null) {
+                dialog.setContentView(searchSettingsView);
+                dialog.show();
+            }
+            return false;
+        }).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        searchItem = getMenu().findItem(R.id.action_search);
+        searchView = (SearchView) searchItem.getActionView();
+        searchView.setIconifiedByDefault(true);
     }
 
     @Override

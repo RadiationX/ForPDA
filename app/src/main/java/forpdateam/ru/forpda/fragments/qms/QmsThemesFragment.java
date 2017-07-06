@@ -6,15 +6,24 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
+import forpdateam.ru.forpda.api.favorites.models.FavItem;
+import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
+import forpdateam.ru.forpda.bdobjects.favorites.FavItemBd;
 import forpdateam.ru.forpda.bdobjects.qms.QmsThemesBd;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsThemesAdapter;
@@ -31,6 +40,7 @@ import io.realm.RealmResults;
 public class QmsThemesFragment extends TabFragment {
     public final static String USER_ID_ARG = "USER_ID_ARG";
     public final static String USER_AVATAR_ARG = "USER_AVATAR_ARG";
+    private MenuItem blackListMenuItem;
     private String avatarUrl;
     private QmsThemes currentThemes = new QmsThemes();
     private SwipeRefreshLayout refreshLayout;
@@ -50,6 +60,7 @@ public class QmsThemesFragment extends TabFragment {
                 TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).setArgs(args).build());
             };
     private Subscriber<QmsThemes> mainSubscriber = new Subscriber<>(this);
+    private Subscriber<ArrayList<QmsContact>> contactsSubscriber = new Subscriber<>(this);
 
     public QmsThemesFragment() {
         //configuration.setUseCache(true);
@@ -77,6 +88,9 @@ public class QmsThemesFragment extends TabFragment {
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
         recyclerView = (RecyclerView) findViewById(R.id.base_list);
         viewsReady();
+
+
+
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setHasFixedSize(true);
@@ -108,9 +122,14 @@ public class QmsThemesFragment extends TabFragment {
         }
     }
 
+
+
     @Override
     public void loadData() {
         refreshLayout.setRefreshing(true);
+
+        refreshToolbarMenuItems(false);
+
         mainSubscriber.subscribe(RxApi.Qms().getThemesList(currentThemes.getUserId()), this::onLoadThemes, currentThemes, v -> loadData());
     }
 
@@ -133,16 +152,8 @@ public class QmsThemesFragment extends TabFragment {
         }
         if (currentThemes.getThemes().size() == 0)
             return;
-        if (results != null) {
-            realm.beginTransaction();
-            try {
-                results.deleteFromRealm(results.indexOf(results.last()));
-            } catch (Exception ignore) {
-            } finally {
-                realm.commitTransaction();
-            }
-        }
         realm.executeTransactionAsync(r -> {
+            r.delete(QmsThemesBd.class);
             QmsThemesBd qmsThemesBd = new QmsThemesBd(currentThemes);
             r.copyToRealmOrUpdate(qmsThemesBd);
             qmsThemesBd.getThemes().clear();
@@ -154,6 +165,31 @@ public class QmsThemesFragment extends TabFragment {
 
         if (results.size() != 0 && results.last().getThemes().size() != 0) {
             adapter.addAll(results.last().getThemes());
+        }
+        refreshToolbarMenuItems(true);
+    }
+
+    @Override
+    protected void addBaseToolbarMenu() {
+        super.addBaseToolbarMenu();
+        blackListMenuItem = getMenu().add("В черный список").setOnMenuItemClickListener(item -> {
+            contactsSubscriber.subscribe(RxApi.Qms().blockUser(currentThemes.getNick()), qmsContacts -> {
+                if (qmsContacts.size() > 0) {
+                    Toast.makeText(getContext(), "Пользователь добавлен в черный список", Toast.LENGTH_SHORT).show();
+                }
+            }, new ArrayList<>());
+            return false;
+        });
+        refreshToolbarMenuItems(false);
+    }
+
+    @Override
+    protected void refreshToolbarMenuItems(boolean enable) {
+        super.refreshToolbarMenuItems(enable);
+        if(enable){
+            blackListMenuItem.setEnabled(true);
+        }else {
+            blackListMenuItem.setEnabled(false);
         }
     }
 

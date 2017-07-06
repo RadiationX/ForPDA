@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
@@ -19,6 +20,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -35,6 +37,7 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
+import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsMessage;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.client.Client;
@@ -66,7 +69,7 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
     public final static String THEME_ID_ARG = "THEME_ID_ARG";
     public final static String THEME_TITLE_ARG = "THEME_TITLE_ARG";
 
-
+    private MenuItem blackListMenuItem;
     final QmsChatModel currentChat = new QmsChatModel();
     private ChatThemeCreator themeCreator;
     private ExtendedWebView webView;
@@ -76,6 +79,7 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
 
     private Subscriber<QmsChatModel> mainSubscriber = new Subscriber<>(this);
     private Subscriber<ArrayList<QmsMessage>> messageSubscriber = new Subscriber<>(this);
+    private Subscriber<ArrayList<QmsContact>> contactsSubscriber = new Subscriber<>(this);
 
     private boolean isWebViewReady = false;
     private Handler actionsHandler = new Handler(Looper.getMainLooper());
@@ -178,7 +182,7 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
         chatContainer = (FrameLayout) findViewById(R.id.qms_chat_container);
         messagePanel = new MessagePanel(getContext(), fragmentContainer, coordinatorLayout, false);
         messagePanel.setHeightChangeListener(newHeight -> {
-            syncWithWebView(()->{
+            syncWithWebView(() -> {
                 webView.evalJs("setPaddingBottom(" + (newHeight / getResources().getDisplayMetrics().density) + ");");
             });
         });
@@ -230,15 +234,41 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
         return view;
     }
 
+    @Override
+    protected void addBaseToolbarMenu() {
+        super.addBaseToolbarMenu();
+        blackListMenuItem = getMenu().add("В черный список").setOnMenuItemClickListener(item -> {
+            contactsSubscriber.subscribe(RxApi.Qms().blockUser(currentChat.getNick()), qmsContacts -> {
+                if (qmsContacts.size() > 0) {
+                    Toast.makeText(getContext(), "Пользователь добавлен в черный список", Toast.LENGTH_SHORT).show();
+                }
+            }, new ArrayList<>());
+            return false;
+        });
+        refreshToolbarMenuItems(false);
+    }
+
+    @Override
+    protected void refreshToolbarMenuItems(boolean enable) {
+        super.refreshToolbarMenuItems(enable);
+        if (enable) {
+            blackListMenuItem.setEnabled(true);
+        } else {
+            blackListMenuItem.setEnabled(false);
+        }
+    }
+
     //From theme creator
     @Override
     public void onCreateNewTheme(String nick, String title, String message) {
+        refreshToolbarMenuItems(false);
         mainSubscriber.subscribe(RxApi.Qms().sendNewTheme(nick, title, message), this::onNewThemeCreate, new QmsChatModel());
     }
 
     @Override
     public void loadData() {
         if (currentChat.getUserId() != QmsChatModel.NOT_CREATED && currentChat.getThemeId() != QmsChatModel.NOT_CREATED) {
+            refreshToolbarMenuItems(false);
             mainSubscriber.subscribe(RxApi.Qms().getChat(currentChat.getUserId(), currentChat.getThemeId()), this::onLoadChat, new QmsChatModel(), v -> loadData());
         }
     }
@@ -284,6 +314,7 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
             Log.e("FORPDA_LOG", "SHOW NEW MESS");
             webView.evalJs("showNewMess('".concat(finalMessagesSrc).concat("', true)"));
         });
+        refreshToolbarMenuItems(true);
     }
 
 

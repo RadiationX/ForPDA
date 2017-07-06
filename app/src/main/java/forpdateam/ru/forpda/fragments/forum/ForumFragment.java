@@ -102,14 +102,18 @@ public class ForumFragment extends TabFragment {
         treeContainer = (NestedScrollView) findViewById(R.id.nested_scroll_view);
 
         viewsReady();
-        toolbar.getMenu().add("Обновить форумы").setOnMenuItemClickListener(item -> {
-            loadData();
-            return false;
-        });
 
         return view;
     }
 
+    @Override
+    protected void addBaseToolbarMenu() {
+        super.addBaseToolbarMenu();
+        getMenu().add("Обновить форумы").setOnMenuItemClickListener(item -> {
+            loadData();
+            return false;
+        });
+    }
 
     @Override
     public void loadData() {

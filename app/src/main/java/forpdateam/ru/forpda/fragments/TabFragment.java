@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.fragments;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -243,17 +244,32 @@ public class TabFragment extends RxFragment {
     }
 
     protected void viewsReady() {
+        addBaseToolbarMenu();
         if (Client.getInstance().getNetworkState() && !configuration.isUseCache()) {
             loadData();
         } else {
             loadCacheData();
         }
-        addBaseToolbarMenu();
     }
 
+
+
+    @CallSuper
     protected void addBaseToolbarMenu() {
 
     }
+
+    @CallSuper
+    protected void refreshToolbarMenuItems(boolean enable){
+
+    }
+
+   /* @CallSuper
+    protected void refreshToolbarMenu(){
+        getMenu().clear();
+        addBaseToolbarMenu();
+
+    }*/
 
     protected void updateNotifyDot() {
         if (!showNotifyDot) {

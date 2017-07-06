@@ -103,7 +103,6 @@ public class ReputationFragment extends TabFragment {
 
         adapter.setOnItemClickListener(this::someClick);
         adapter.setOnLongItemClickListener(this::someClick);
-        refreshOptionsMenu();
 
         return view;
     }
@@ -132,24 +131,29 @@ public class ReputationFragment extends TabFragment {
                 .show();
     }
 
-    public void refreshOptionsMenu() {
-        Menu menu = toolbar.getMenu();
-        menu.clear();
-        addBaseToolbarMenu();
-        SubMenu subMenu = menu.addSubMenu("Сортировка");
+    private MenuItem descSortMenuItem;
+    private MenuItem ascSortMenuItem;
+    private MenuItem repModeMenuItem;
+    private MenuItem upRepMenuItem;
+    private MenuItem downRepMenuItem;
+
+    @Override
+    protected void addBaseToolbarMenu() {
+        super.addBaseToolbarMenu();
+        SubMenu subMenu = getMenu().addSubMenu("Сортировка");
         subMenu.getItem().setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         subMenu.getItem().setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_sort));
-        subMenu.add("По убыванию").setOnMenuItemClickListener(menuItem -> {
+        descSortMenuItem = subMenu.add("По убыванию").setOnMenuItemClickListener(menuItem -> {
             data.setSort(Reputation.SORT_DESC);
             loadData();
             return false;
         });
-        subMenu.add("По возрастанию").setOnMenuItemClickListener(menuItem -> {
+        ascSortMenuItem = subMenu.add("По возрастанию").setOnMenuItemClickListener(menuItem -> {
             data.setSort(Reputation.SORT_ASC);
             loadData();
             return false;
         });
-        menu.add(data.getMode().equals(Reputation.MODE_FROM) ? "Репутация пользователя" : "Кому изменял")
+        repModeMenuItem = getMenu().add(data.getMode().equals(Reputation.MODE_FROM) ? "Репутация пользователя" : "Кому изменял")
                 .setOnMenuItemClickListener(item -> {
                     if (data.getMode().equals(Reputation.MODE_FROM))
                         data.setMode(Reputation.MODE_TO);
@@ -158,15 +162,39 @@ public class ReputationFragment extends TabFragment {
                     loadData();
                     return false;
                 });
-        if (data.getId() != ClientHelper.getUserId()) {
-            menu.add("Повысить").setOnMenuItemClickListener(item -> {
-                changeReputation(true);
-                return false;
-            });
-            menu.add("Понизить").setOnMenuItemClickListener(item -> {
-                changeReputation(false);
-                return false;
-            });
+        upRepMenuItem = getMenu().add("Повысить").setOnMenuItemClickListener(item -> {
+            changeReputation(true);
+            return false;
+        });
+        downRepMenuItem = getMenu().add("Понизить").setOnMenuItemClickListener(item -> {
+            changeReputation(false);
+            return false;
+        });
+        refreshToolbarMenuItems(false);
+    }
+
+    @Override
+    protected void refreshToolbarMenuItems(boolean enable) {
+        super.refreshToolbarMenuItems(enable);
+        if (enable) {
+            descSortMenuItem.setEnabled(true);
+            ascSortMenuItem.setEnabled(true);
+            repModeMenuItem.setEnabled(true);
+            repModeMenuItem.setTitle(data.getMode().equals(Reputation.MODE_FROM) ? "Репутация пользователя" : "Кому изменял");
+            if (data.getId() != ClientHelper.getUserId()) {
+                upRepMenuItem.setEnabled(true);
+                upRepMenuItem.setVisible(true);
+                downRepMenuItem.setEnabled(true);
+                downRepMenuItem.setVisible(true);
+            }
+        } else {
+            descSortMenuItem.setEnabled(false);
+            ascSortMenuItem.setEnabled(false);
+            repModeMenuItem.setEnabled(false);
+            upRepMenuItem.setEnabled(false);
+            upRepMenuItem.setEnabled(false);
+            upRepMenuItem.setVisible(false);
+            downRepMenuItem.setVisible(false);
         }
     }
 
@@ -201,6 +229,7 @@ public class ReputationFragment extends TabFragment {
     @Override
     public void loadData() {
         refreshLayout.setRefreshing(true);
+        refreshToolbarMenuItems(false);
         mainSubscriber.subscribe(RxApi.Reputation().getReputation(data), this::onLoadThemes, data, v -> loadData());
     }
 
@@ -212,7 +241,7 @@ public class ReputationFragment extends TabFragment {
 
         adapter.addAll(data.getItems());
         paginationHelper.updatePagination(data.getPagination());
-        refreshOptionsMenu();
+        refreshToolbarMenuItems(true);
         //setSubtitle(paginationHelper.getString());
         setSubtitle("" + (data.getPositive() - data.getNegative()) + " (+" + data.getPositive() + " / -" + data.getNegative() + ")");
         setTabTitle("Репутация " + data.getNick() + (data.getMode().equals(Reputation.MODE_FROM) ? ": кому изменял" : ""));
