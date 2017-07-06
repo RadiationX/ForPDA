@@ -83,8 +83,8 @@ public class AttachmentsPopup {
         });*/
         onDataChange(0);
 
-        addToText.setOnClickListener(v -> insertAttachment(false));
-        addToSpoiler.setOnClickListener(v -> insertAttachment(true));
+        addToText.setOnClickListener(v -> insertAttachment(adapter.getSelected(), false));
+        addToSpoiler.setOnClickListener(v -> insertAttachment(adapter.getSelected(), true));
 
         messagePanel.addAttachmentsOnClickListener(v -> {
             if (bottomSheet != null && bottomSheet.getParent() != null && bottomSheet.getParent() instanceof ViewGroup) {
@@ -105,11 +105,11 @@ public class AttachmentsPopup {
         }
     }
 
-    private void insertAttachment(boolean toSpoiler) {
+    public void insertAttachment(List<AttachmentItem> items, boolean toSpoiler) {
         StringBuilder text = new StringBuilder();
         if (toSpoiler)
             text.append("[spoiler]");
-        for (AttachmentItem item : adapter.getSelected()) {
+        for (AttachmentItem item : items) {
             if (insertAttachmentListener != null) {
                 text.append(insertAttachmentListener.onInsert(item));
             } else {

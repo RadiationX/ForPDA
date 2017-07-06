@@ -17,7 +17,7 @@ import forpdateam.ru.forpda.api.search.models.SearchSettings;
  */
 
 public class Search {
-    private final static Pattern forumTopicsPattern = Pattern.compile("<div[^>]*?data-topic=\"(\\d+)\"[^>]*?>[\\s\\S]*?(?:<font color=\"([^\"]*?)\"[^>]*?>([^<]*?)<\\/font>[\\s\\S]*?)?<a[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?форум:[^<]*?<a[^>]*?showforum=(\\d+)[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?автор:[^<]*?<a[^>]*?showuser=(\\d+)[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?Послед[\\s\\S]*?<a[^>]*?showuser=(\\d+)[^>]*?>([\\s\\S]*?)<\\/a>(?:\\s*)?([^<]*?)<\\/div>");
+    private final static Pattern forumTopicsPattern = Pattern.compile("<div[^>]*?data-topic=\"(\\d+)\"[^>]*?>[\\s\\S]*?(?:<font color=\"([^\"]*?)\"[^>]*?>([^<]*?)<\\/font>[\\s\\S]*?)?<a[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?<span class=\"topic_desc\">(?:(?!форум)([\\s\\S]*?)<br[^>]*?>)?форум:[^<]*?<a[^>]*?showforum=(\\d+)[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?автор:[^<]*?<a[^>]*?showuser=(\\d+)[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?Послед[\\s\\S]*?<a[^>]*?showuser=(\\d+)[^>]*?>([\\s\\S]*?)<\\/a>(?:\\s*)?([^<]*?)<\\/div>");
     private final static Pattern forumPostsPattern = Pattern.compile("<div[^>]*?class=\"cat_name[^>]*?>[^<]*?<a[^>]*?showtopic=(\\d+)[^>]*?p=(\\d+)[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?post_date[^>]*>([^&]*?)&[\\s\\S]*?<a[^>]*?showuser=(\\d+)[^>]*?data-av=\"([^\"]*?)\"[^>]*?>([\\s\\S]*?)<\\/?[ia][\\s\\S]*?post_body[^>]*?>([\\s\\S]*?)<\\/div><\\/div>(?=<div[^>]*?class=\"cat_name[^>]*?>|<div><div[^>]*?class=\"pagination|<div><\\/div><br[^>]*?><\\/form>)");
     private final static Pattern newsListPattern = Pattern.compile("<li>[^<]*?<div[^>]*?class=\"photo\"[^>]*?>[\\s\\S]*?<a[^\"]*?href=\"[^\"]*?(\\d+)\\/\"[^>]*?>[\\s\\S]*?<img[^>]*?src=\"([\\s\\S]*?)\"[^>]*?>[\\s\\S]*?class=\"date[^>]*>([\\s\\S]*?)<\\/em>[\\s\\S]*?showuser=(\\d+)[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?<h\\d[^>]*>[^<]*?<a[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?<p>[^<]*?<a[^>]*>([\\s\\S]*?)<\\/a>[^<]*?<\\/p>");
 
@@ -52,10 +52,11 @@ public class Search {
                     item.setTopicId(Integer.parseInt(matcher.group(1)));
                     //item.setId(Integer.parseInt(matcher.group(1)));
                     item.setTitle(Utils.fromHtml(matcher.group(4)));
-                    item.setForumId(Integer.parseInt(matcher.group(5)));
-                    item.setUserId(Integer.parseInt(matcher.group(9)));
-                    item.setNick(Utils.fromHtml(matcher.group(10)));
-                    item.setDate(matcher.group(11));
+                    item.setDesc(Utils.fromHtml(matcher.group(5)));
+                    item.setForumId(Integer.parseInt(matcher.group(6)));
+                    item.setUserId(Integer.parseInt(matcher.group(10)));
+                    item.setNick(Utils.fromHtml(matcher.group(11)));
+                    item.setDate(matcher.group(12));
                     result.addItem(item);
                 }
             } else {

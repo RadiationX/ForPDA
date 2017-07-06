@@ -365,6 +365,7 @@ public class Client implements IWebClient {
         //client.dispatcher().executorService().shutdown();
     }
 
+    @Override
     public String loadAndFindRedirect(String url) throws Exception {
         String redirect = null;
         Response response = null;

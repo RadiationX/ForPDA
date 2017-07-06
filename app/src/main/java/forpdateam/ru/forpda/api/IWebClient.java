@@ -17,6 +17,8 @@ public interface IWebClient {
 
     String request(ForPdaRequest request, ProgressListener progressListener) throws Exception;
 
+    String loadAndFindRedirect(String url) throws Exception;
+
     String getRedirect(String url);
 
     String getAuthKey();

@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.api.forum;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -83,5 +84,10 @@ public class Forum {
             }
         }
         parentsList.clear();
+    }
+
+    public Object markAllRead() throws Exception{
+        Api.getWebClient().loadAndFindRedirect("https://4pda.ru/forum/index.php?act=login&CODE=05");
+        return new Object();
     }
 }
