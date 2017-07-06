@@ -15,12 +15,14 @@ import org.acra.ACRA;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.TabManager;
+import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
@@ -36,6 +38,10 @@ import forpdateam.ru.forpda.fragments.theme.ThemeFragmentWeb;
 import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
 import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
 import forpdateam.ru.forpda.settings.Preferences;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.Cookie;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
@@ -136,7 +142,7 @@ public class IntentHandler {
             } else {
                 if (args == null) args = new Bundle();
                 Log.e("FORPDA_LOG", "HANDLE URL, NOT IMAGE OR FILE");
-                if (uri.getPathSegments().size() > 0){
+                if (uri.getPathSegments().size() > 0) {
                     switch (uri.getPathSegments().get(0)) {
                         case "forum":
                             return handleForum(uri, args);
@@ -306,32 +312,38 @@ public class IntentHandler {
     }
 
     public static void systemDownload(String fileName, String url) {
-        if (!Preferences.Main.isSystemDownloader()) {
-            try {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK);
-                App.getInstance().startActivity(Intent.createChooser(intent, "Загрузить через").addFlags(FLAG_ACTIVITY_NEW_TASK));
-            } catch (ActivityNotFoundException e) {
-                ACRA.getErrorReporter().handleException(e);
-            }
-            return;
-        }
-        Runnable runnable = () -> {
-            DownloadManager dm = (DownloadManager) App.getContext().getSystemService(Context.DOWNLOAD_SERVICE);
-            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+        Toast.makeText(App.getContext(), "Запрашиваю ссылку для загрузки ".concat(fileName), Toast.LENGTH_SHORT).show();
+        Observable.fromCallable(() -> Client.getInstance().loadAndFindRedirect(url))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(redirect -> {
+                    if (!Preferences.Main.isSystemDownloader()) {
+                        try {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(redirect)).addFlags(FLAG_ACTIVITY_NEW_TASK);
+                            App.getInstance().startActivity(Intent.createChooser(intent, "Загрузить через").addFlags(FLAG_ACTIVITY_NEW_TASK));
+                        } catch (ActivityNotFoundException e) {
+                            ACRA.getErrorReporter().handleException(e);
+                        }
+                    } else {
+                        MainActivity mainActivity = TabManager.getInstance().getActive().getMainActivity();
+                        Runnable runnable = () -> {
+                            DownloadManager dm = (DownloadManager) App.getContext().getSystemService(Context.DOWNLOAD_SERVICE);
+                            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(redirect));
 
-            Map<String, Cookie> cookies = Client.getInstance().getCookies();
-            String stringCookies = "";
-            for (Map.Entry<String, Cookie> cookieEntry : cookies.entrySet()) {
-                stringCookies = stringCookies.concat(cookieEntry.getKey()).concat("=").concat(cookieEntry.getValue().value()).concat(";");
-            }
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-            request.addRequestHeader("Cookie", stringCookies);
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+                            /*Map<String, Cookie> cookies = Client.getInstance().getCookies();
+                            String stringCookies = "";
+                            for (Map.Entry<String, Cookie> cookieEntry : cookies.entrySet()) {
+                                stringCookies = stringCookies.concat(cookieEntry.getKey()).concat("=").concat(cookieEntry.getValue().value()).concat(";");
+                            }
+                            request.addRequestHeader("Cookie", stringCookies);*/
+                            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
 
-            dm.enqueue(request);
-            Toast.makeText(App.getContext(), "Загрузка ".concat(fileName), Toast.LENGTH_SHORT).show();
-        };
-        MainActivity mainActivity = TabManager.getInstance().getActive().getMainActivity();
-        mainActivity.checkStoragePermission(runnable);
+                            dm.enqueue(request);
+                            Toast.makeText(App.getContext(), "Выполняется загрузка ".concat(fileName), Toast.LENGTH_SHORT).show();
+                        };
+                        mainActivity.checkStoragePermission(runnable);
+                    }
+                });
     }
 }

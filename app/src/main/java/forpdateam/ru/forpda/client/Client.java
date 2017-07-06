@@ -24,10 +24,12 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.IWebClient;
 import forpdateam.ru.forpda.utils.SimpleObservable;
 import forpdateam.ru.forpda.utils.Html;
+import okhttp3.Cache;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -44,7 +46,7 @@ import okio.Sink;
 
 public class Client implements IWebClient {
     private final static String userAgent = WebSettings.getDefaultUserAgent(App.getContext());
-    private final static Pattern countsPattern = Pattern.compile("act=mentions[^>]*?><i[^>]*?>([^<]*?)<\\/i>[\\s\\S]*?act=fav[^>]*?><i[^>]*?>([^<]*?)<\\/i>[\\s\\S]*?act=qms[^>]*?data-count=\"([^\">]*?)\">");
+    private final static Pattern countsPattern = Pattern.compile("<a href=\"(?:https?)?\\/\\/4pda\\.ru\\/forum\\/index\\.php\\?act=mentions[^>]*?><i[^>]*?>(\\d+)<\\/i>[\\s\\S]*?act=fav[^>]*?><i[^>]*?>(\\d+)<\\/i>[\\s\\S]*?act=qms[^>]*?data-count=\"(\\d+)\">");
     private final static Pattern errorPattern = Pattern.compile("^[\\s\\S]*?wr va-m text\">([\\s\\S]*?)</div></div></div></div><div class=\"footer\">");
     private static Client INSTANCE = null;
     private static Map<String, Cookie> cookies;
@@ -361,6 +363,25 @@ public class Client implements IWebClient {
 
         // Trigger shutdown of the dispatcher's executor so this process can exit cleanly.
         //client.dispatcher().executorService().shutdown();
+    }
+
+    public String loadAndFindRedirect(String url) throws Exception {
+        String redirect = null;
+        Response response = null;
+        try {
+            response = new OkHttpClient.Builder()
+                    .cookieJar(cookieJar)
+                    .build()
+                    .newCall(new Request.Builder().url(url).header("User-Agent", userAgent).build())
+                    .execute();
+            if (!response.isSuccessful())
+                throw new OkHttpResponseException(response.code(), response.message(), url);
+            redirect = response.request().url().toString();
+        } finally {
+            if (response != null)
+                response.close();
+        }
+        return redirect;
     }
 
     private void checkForumErrors(String res) throws Exception {
