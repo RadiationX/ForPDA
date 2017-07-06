@@ -12,4 +12,7 @@ public class ForumRx {
     public Observable<ForumItemTree> getForums() {
         return Observable.fromCallable(() -> Api.Forum().getForums());
     }
+    public Observable<Object> markAllRead() {
+        return Observable.fromCallable(() -> Api.Forum().markAllRead());
+    }
 }

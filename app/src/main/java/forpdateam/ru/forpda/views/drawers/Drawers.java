@@ -1,14 +1,20 @@
 package forpdateam.ru.forpda.views.drawers;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
@@ -44,6 +50,7 @@ public class Drawers {
     private NavigationView tabDrawer;
     private RecyclerView tabListView;
     private TabAdapter tabAdapter;
+    private Button tabCloseAllButton;
 
     private Observer loginObserver = (observable, o) -> {
         if (o == null) o = false;
@@ -84,6 +91,8 @@ public class Drawers {
         menuListView = (RecyclerView) activity.findViewById(R.id.menu_list);
         tabListView = (RecyclerView) activity.findViewById(R.id.tab_list);
 
+        tabCloseAllButton = (Button) activity.findViewById(R.id.tab_close_all);
+
         menuListView.setLayoutManager(new LinearLayoutManager(activity));
         tabListView.setLayoutManager(new LinearLayoutManager(activity));
 
@@ -93,6 +102,8 @@ public class Drawers {
 
         menuListView.setAdapter(menuAdapter);
         tabListView.setAdapter(tabAdapter);
+
+        tabCloseAllButton.setOnClickListener(v -> closeAllTabs());
     }
 
     public NavigationView getMenuDrawer() {
@@ -297,5 +308,28 @@ public class Drawers {
         } else {
             openTabs();
         }
+    }
+
+    public void closeAllTabs() {
+        new AlertDialog.Builder(activity)
+                .setMessage("Закрыть все вкладки?")
+                .setPositiveButton("Да", (dialog, which) -> {
+                    closeTabs();
+                    List<TabFragment> fragmentList = new ArrayList<>();
+
+                    for (TabFragment fragment : TabManager.getInstance().getFragments()) {
+                        if (!fragment.getTag().equals(TabManager.getActiveTag())) {
+                            fragmentList.add(fragment);
+                        }
+                    }
+
+                    for (TabFragment fragment : fragmentList) {
+                        TabManager.getInstance().remove(fragment);
+                    }
+                })
+                .setNegativeButton("Нет", null)
+                .show();
+
+
     }
 }

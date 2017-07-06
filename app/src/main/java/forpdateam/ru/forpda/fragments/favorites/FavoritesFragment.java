@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.fragments.favorites;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -10,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -28,6 +30,7 @@ import forpdateam.ru.forpda.bdobjects.favorites.FavItemBd;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.forum.ForumHelper;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
@@ -35,6 +38,7 @@ import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.pagination.PaginationHelper;
+import io.reactivex.functions.Consumer;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -166,6 +170,23 @@ public class FavoritesFragment extends TabFragment {
         bindView();
         App.getInstance().addPreferenceChangeObserver(favoritesPreferenceObserver);
         return view;
+    }
+
+    @Override
+    protected void addBaseToolbarMenu() {
+        super.addBaseToolbarMenu();
+        getMenu().add("Отметить все прочитанными").setOnMenuItemClickListener(item -> {
+            new AlertDialog.Builder(getContext())
+                    .setMessage("Отметить все прочитанными?")
+                    .setPositiveButton("Да", (dialog, which) -> {
+                        ForumHelper.markAllRead(o -> {
+                            loadData();
+                        });
+                    })
+                    .setNegativeButton("Нет", null)
+                    .show();
+            return false;
+        });
     }
 
     @Override

@@ -144,6 +144,7 @@ public class App extends android.app.Application {
         setTheme(R.style.LightAppTheme);
         instance = this;
         ACRA.init(this);
+        ACRA.getErrorReporter().putCustomData("USER_NICK", getPreferences().getString("auth.user.nick", "null"));
         density = getResources().getDisplayMetrics().density;
 
         templates.put(TEMPLATE_THEME, findTemplate(TEMPLATE_THEME));

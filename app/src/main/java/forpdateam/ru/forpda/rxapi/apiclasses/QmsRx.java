@@ -42,15 +42,21 @@ public class QmsRx {
         return Observable.fromCallable(() -> Api.Qms().getBlackList());
     }
 
-
-    //Themes
-    public Observable<QmsThemes> getThemesList(final int id) {
-        return Observable.fromCallable(() -> Api.Qms().getThemesList(id));
-    }
-
     public Observable<String> deleteDialog(int mid) {
         return Observable.fromCallable(() -> Api.Qms().deleteDialog(mid));
     }
+
+
+    //Themes
+    public Observable<QmsThemes> getThemesList(int id) {
+        return Observable.fromCallable(() -> Api.Qms().getThemesList(id));
+    }
+
+    public Observable<QmsThemes> deleteTheme(int id, int themeId) {
+        return Observable.fromCallable(() -> Api.Qms().deleteTheme(id, themeId));
+    }
+
+
 
     //Chat
     public Observable<QmsChatModel> getChat(final int userId, final int themeId) {

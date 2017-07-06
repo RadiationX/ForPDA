@@ -3,8 +3,10 @@ package forpdateam.ru.forpda.fragments.qms;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +23,9 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
+import forpdateam.ru.forpda.api.qms.interfaces.IQmsContact;
+import forpdateam.ru.forpda.api.qms.interfaces.IQmsTheme;
+import forpdateam.ru.forpda.api.qms.interfaces.IQmsThemes;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import forpdateam.ru.forpda.bdobjects.favorites.FavItemBd;
@@ -29,6 +34,7 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsThemesAdapter;
 import forpdateam.ru.forpda.fragments.qms.chat.QmsChatFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
+import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import io.realm.Realm;
@@ -48,6 +54,9 @@ public class QmsThemesFragment extends TabFragment {
     private QmsThemesAdapter adapter;
     private Realm realm;
     private RealmResults<QmsThemesBd> results;
+    private Subscriber<QmsThemes> mainSubscriber = new Subscriber<>(this);
+    private Subscriber<ArrayList<QmsContact>> contactsSubscriber = new Subscriber<>(this);
+    private AlertDialogMenu<QmsThemesFragment, IQmsTheme> contactDialogMenu;
     private QmsThemesAdapter.OnItemClickListener onItemClickListener =
             theme -> {
                 Bundle args = new Bundle();
@@ -59,8 +68,18 @@ public class QmsThemesFragment extends TabFragment {
                 args.putString(QmsChatFragment.THEME_TITLE_ARG, theme.getName());
                 TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).setArgs(args).build());
             };
-    private Subscriber<QmsThemes> mainSubscriber = new Subscriber<>(this);
-    private Subscriber<ArrayList<QmsContact>> contactsSubscriber = new Subscriber<>(this);
+    private QmsThemesAdapter.OnItemClickListener onLongItemClickListener =
+            theme -> {
+                if (contactDialogMenu == null) {
+                    contactDialogMenu = new AlertDialogMenu<>();
+                    contactDialogMenu.addItem("Удалить", (context, data) -> {
+                        mainSubscriber.subscribe(RxApi.Qms().deleteTheme(currentThemes.getUserId(), data.getId()), this::onLoadThemes, currentThemes, v -> loadData());
+                    });
+                }
+                new AlertDialog.Builder(getContext())
+                        .setItems(contactDialogMenu.getTitles(), (dialog, which) -> contactDialogMenu.onClick(which, QmsThemesFragment.this, theme)).show();
+            };
+
 
     public QmsThemesFragment() {
         //configuration.setUseCache(true);
@@ -90,7 +109,6 @@ public class QmsThemesFragment extends TabFragment {
         viewsReady();
 
 
-
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setHasFixedSize(true);
@@ -107,6 +125,7 @@ public class QmsThemesFragment extends TabFragment {
         fab.setVisibility(View.VISIBLE);
         adapter = new QmsThemesAdapter();
         adapter.setOnItemClickListener(onItemClickListener);
+        adapter.setOnLongItemClickListener(onLongItemClickListener);
         recyclerView.setAdapter(adapter);
         bindView();
         return view;
@@ -121,7 +140,6 @@ public class QmsThemesFragment extends TabFragment {
             toolbarImageView.setVisibility(View.GONE);
         }
     }
-
 
 
     @Override
@@ -186,9 +204,9 @@ public class QmsThemesFragment extends TabFragment {
     @Override
     protected void refreshToolbarMenuItems(boolean enable) {
         super.refreshToolbarMenuItems(enable);
-        if(enable){
+        if (enable) {
             blackListMenuItem.setEnabled(true);
-        }else {
+        } else {
             blackListMenuItem.setEnabled(false);
         }
     }

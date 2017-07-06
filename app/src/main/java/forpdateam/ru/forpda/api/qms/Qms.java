@@ -110,16 +110,29 @@ public class Qms {
         return list;
     }
 
-    public QmsThemes getThemesList(final int id) throws Exception {
-        QmsThemes qmsThemes = new QmsThemes();
+    public QmsThemes getThemesList(int id) throws Exception {
         ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
                 .url("http://4pda.ru/forum/index.php?act=qms&mid=" + id)
                 .formHeader("xhr", "body");
-        final String response = Api.getWebClient().request(builder.build());
+        String response = Api.getWebClient().request(builder.build());
+        return parseThemes(response, id);
+    }
+
+    public QmsThemes deleteTheme(int id, int themeId) throws Exception {
+        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+                .url("http://4pda.ru/forum/index.php?act=qms&mid=" + id + "&xhr=body&do=1")
+                .formHeader("xhr", "body")
+                .formHeader("action", "delete-threads")
+                .formHeader("thread-id[" + themeId + "]", "" + themeId);
+        String response = Api.getWebClient().request(builder.build());
+        return parseThemes(response, id);
+    }
+
+    private QmsThemes parseThemes(String response, int id) {
+        QmsThemes qmsThemes = new QmsThemes();
         Matcher matcher = threadPattern.matcher(response);
-        QmsTheme thread;
         while (matcher.find()) {
-            thread = new QmsTheme();
+            QmsTheme thread = new QmsTheme();
             thread.setId(Integer.parseInt(matcher.group(1)));
             thread.setDate(matcher.group(2));
             thread.setName(Html.fromHtml(matcher.group(3).trim()).toString());

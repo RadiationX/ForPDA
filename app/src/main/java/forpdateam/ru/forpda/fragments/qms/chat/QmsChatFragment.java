@@ -68,6 +68,7 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
     public final static String USER_AVATAR_ARG = "USER_AVATAR_ARG";
     public final static String THEME_ID_ARG = "THEME_ID_ARG";
     public final static String THEME_TITLE_ARG = "THEME_TITLE_ARG";
+    private final static Pattern attachmentPattern = Pattern.compile("\\[url=https?:\\/\\/savepic\\.ru\\/(\\d+)\\.[^\\]]*?\\]");
 
     private MenuItem blackListMenuItem;
     final QmsChatModel currentChat = new QmsChatModel();
@@ -206,7 +207,7 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
             }
             attachmentsPopup.onDeleteFiles(selectedFiles);
         });
-        attachmentsPopup.setInsertAttachmentListener(item -> "[url=http://savepic.ru/" + item.getId() + "." + item.getExtension() + "]" +
+        attachmentsPopup.setInsertAttachmentListener(item -> "\n[url=http://savepic.ru/" + item.getId() + "." + item.getExtension() + "]" +
                 "Файл: " + item.getName() + ", Размер: " + item.getWeight() + ", ID: " + item.getId() + "[/url]");
         messagePanel.addSendOnClickListener(v -> {
             if (currentChat.getThemeId() == QmsChatModel.NOT_CREATED) {
@@ -232,6 +233,26 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
         }
 
         return view;
+    }
+
+    private void addUnusedAttachments() {
+        try {
+            Matcher matcher = attachmentPattern.matcher(messagePanel.getMessage());
+            ArrayList<Integer> attachmentsIds = new ArrayList<>();
+            while (matcher.find()) {
+                int id = Integer.parseInt(matcher.group(1));
+                attachmentsIds.add(id);
+            }
+            ArrayList<AttachmentItem> notAttached = new ArrayList<>();
+            for (AttachmentItem item : attachmentsPopup.getAttachments()) {
+                if (!attachmentsIds.contains(item.getId())) {
+                    notAttached.add(item);
+                }
+            }
+            messagePanel.getMessageField().setSelection(messagePanel.getMessageField().getText().length());
+            attachmentsPopup.insertAttachment(notAttached, false);
+        } catch (Exception ignore) {
+        }
     }
 
     @Override
@@ -261,6 +282,7 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
     //From theme creator
     @Override
     public void onCreateNewTheme(String nick, String title, String message) {
+        addUnusedAttachments();
         refreshToolbarMenuItems(false);
         mainSubscriber.subscribe(RxApi.Qms().sendNewTheme(nick, title, message), this::onNewThemeCreate, new QmsChatModel());
     }
@@ -345,6 +367,7 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
 
     private void sendMessage() {
         messagePanel.setProgressState(true);
+        addUnusedAttachments();
         messageSubscriber.subscribe(RxApi.Qms().sendMessage(currentChat.getUserId(), currentChat.getThemeId(), messagePanel.getMessage()), qmsMessage -> {
             messagePanel.setProgressState(false);
             if (qmsMessage.size() > 0 && qmsMessage.get(0).getContent() != null) {

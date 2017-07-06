@@ -152,6 +152,7 @@ public class DrawerHeader {
         Log.d("FORPDA_LOG", "ONLOAD PROFILE " + profileModel.getNick() + " : " + profileModel.getAvatar());
         ImageLoader.getInstance().displayImage(profileModel.getAvatar(), avatar);
         nick.setText(profileModel.getNick());
+        App.getInstance().getPreferences().edit().putString("auth.user.nick", profileModel.getNick()).apply();
     }
 
     public void setStatusBarHeight(int height) {

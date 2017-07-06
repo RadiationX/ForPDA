@@ -8,31 +8,34 @@
     <FrameLayout
         android:id="@+id/fragments_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
     <android.support.design.widget.NavigationView
         android:id="@+id/menu_drawer"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        android:background="?attr/background_for_lists">
+        android:background="?attr/background_for_lists"
+        android:fitsSystemWindows="true">
 
         <LinearLayout
             android:id="@+id/menu_drawer_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <include layout="@layout/drawer_header_layout"/>
+
+            <include layout="@layout/drawer_header_layout" />
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="?attr/divider_line"
-                android:layout_marginBottom="@dimen/dp8"/>
+                android:layout_marginBottom="@dimen/dp8"
+                android:background="?attr/divider_line" />
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/menu_list"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent" />
         </LinearLayout>
     </android.support.design.widget.NavigationView>
 
@@ -41,14 +44,31 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:fitsSystemWindows="true"
+        android:background="?attr/background_for_lists"
+        android:fitsSystemWindows="true">
 
-        android:background="?attr/background_for_lists">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/tab_list"
+        <RelativeLayout
+            android:id="@+id/tab_drawer_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/tab_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/tab_close_all" />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/tab_close_all"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:gravity="start|center_vertical"
+                android:text="Закрыть все" />
+        </RelativeLayout>
+
     </android.support.design.widget.NavigationView>
 
 

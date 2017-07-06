@@ -94,13 +94,20 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         holder.title.setText(item.getTitle());
         holder.nick.setText(item.getNick());
         holder.date.setText(item.getDate());
+        String content = null;
         if (item.getBody() != null && !item.getBody().isEmpty()) {
-            holder.content.setText(item.getBody());
-            if (holder.content.getVisibility() != View.VISIBLE)
-                holder.content.setVisibility(View.VISIBLE);
+            content = item.getBody();
+        }
+        if (content == null) {
+            if (item.getDesc() != null && !item.getDesc().isEmpty()) {
+                content = item.getDesc();
+            }
+        }
+        if (content != null) {
+            holder.content.setText(content);
+            holder.content.setVisibility(View.VISIBLE);
         } else {
-            if (holder.content.getVisibility() != View.GONE)
-                holder.content.setVisibility(View.GONE);
+            holder.content.setVisibility(View.GONE);
         }
 
     }
