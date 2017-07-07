@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.topcis.models.TopicItem;
@@ -22,9 +23,9 @@ public class Topics {
 
     public TopicsData getTopics(int id, int st) throws Exception {
         TopicsData data = new TopicsData();
-        String response = Api.getWebClient().get("http://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(id)).concat("&st=").concat(Integer.toString(st)));
+        NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(id)).concat("&st=").concat(Integer.toString(st)));
 
-        Matcher matcher = titlePattern.matcher(response);
+        Matcher matcher = titlePattern.matcher(response.getBody());
         if (matcher.find()) {
             data.setId(Integer.parseInt(matcher.group(1)));
             data.setTitle(Utils.fromHtml(matcher.group(2)));
@@ -32,10 +33,10 @@ public class Topics {
             data.setId(id);
         }
 
-        matcher = canNewTopicPattern.matcher(response);
+        matcher = canNewTopicPattern.matcher(response.getBody());
         data.setCanCreateTopic(matcher.find());
 
-        matcher = announcePattern.matcher(response);
+        matcher = announcePattern.matcher(response.getBody());
         while (matcher.find()) {
             TopicItem item = new TopicItem();
             item.setAnnounce(true);
@@ -44,7 +45,7 @@ public class Topics {
             data.addAnnounceItem(item);
         }
 
-        matcher = topicsPattern.matcher(response);
+        matcher = topicsPattern.matcher(response.getBody());
         while (matcher.find()) {
             TopicItem item = new TopicItem();
             item.setId(Integer.parseInt(matcher.group(1)));
@@ -76,7 +77,7 @@ public class Topics {
                 data.addTopicItem(item);
             }
         }
-        matcher = forumPattern.matcher(response);
+        matcher = forumPattern.matcher(response.getBody());
         while (matcher.find()){
             TopicItem topicItem = new TopicItem();
             topicItem.setId(Integer.parseInt(matcher.group(1)));
@@ -84,7 +85,7 @@ public class Topics {
             topicItem.setForum(true);
             data.addForumItem(topicItem);
         }
-        data.setPagination(Pagination.parseForum(response));
+        data.setPagination(Pagination.parseForum(response.getBody()));
         return data;
     }
 }

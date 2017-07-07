@@ -16,12 +16,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
-import forpdateam.ru.forpda.client.ForPdaRequest;
+import forpdateam.ru.forpda.api.NetworkRequest;
 
 /**
  * Created by radiationx on 10.01.17.
@@ -41,12 +42,12 @@ public class EditPost {
         String url = "http://4pda.ru/forum/index.php?s=&act=post&do=post-edit-show&p=".concat(Integer.toString(postId));
         //url = url.concat("&t=").concat(Integer.toString(topicId)).concat("&f=").concat(Integer.toString(forumId));
 
-        String response = Api.getWebClient().get(url);
-        if (response.equals("nopermission")) {
+        NetworkResponse response = Api.getWebClient().get(url);
+        if (response.getBody().equals("nopermission")) {
             form.setErrorCode(EditPostForm.ERROR_NO_PERMISSION);
             return form;
         }
-        Matcher matcher = postPattern.matcher(response);
+        Matcher matcher = postPattern.matcher(response.getBody());
         if (matcher.find()) {
             Log.d("FORPDA_LOG", "MESSAGE " + matcher.group(1));
             form.setMessage(Utils.fromHtml(Utils.escapeNewLine(matcher.group(1))));
@@ -61,8 +62,8 @@ public class EditPost {
         Log.d("FORPDA_LOG", "ATTACHES " + form.getAttachments().size());
 */
         response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=attach&index=1&relId=" + postId + "&maxSize=134217728&allowExt=&code=init&unlinked=");
-        matcher = attachmentsPattern.matcher(response);
-        Log.d("SUKA", "NEW ATTACHES " + response);
+        matcher = attachmentsPattern.matcher(response.getBody());
+        Log.d("SUKA", "NEW ATTACHES " + response.getBody());
         while (matcher.find()) {
             Log.d("SUKA", "NEW ATTACH " + matcher.group(2));
             form.addAttachment(fillAttachmentV2(new AttachmentItem(), matcher));
@@ -75,21 +76,21 @@ public class EditPost {
         String url = "http://4pda.ru/forum/index.php?&act=attach&code=attach_upload_process&attach_rel_id=".concat(postId == 0 ? "" : Integer.toString(postId));
         List<AttachmentItem> items = new ArrayList<>();
         AttachmentItem item;
-        String response;
+        NetworkResponse response;
         Matcher matcher;
         for (RequestFile file : files) {
             file.setRequestName("FILE_UPLOAD[]");
             item = new AttachmentItem();
-            ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+            NetworkRequest.Builder builder = new NetworkRequest.Builder()
                     .url(url)
                     .file(file);
 
             response = Api.getWebClient().request(builder.build());
-            matcher = loadedAttachments.matcher(response);
+            matcher = loadedAttachments.matcher(response.getBody());
             if (matcher.find())
                 item = fillAttachment(item, matcher);
 
-            matcher = statusInfo.matcher(response);
+            matcher = statusInfo.matcher(response.getBody());
             if (matcher.find())
                 fillAttachmentStatus(item, matcher);
             items.add(item);
@@ -99,7 +100,7 @@ public class EditPost {
 
     public List<AttachmentItem> uploadFilesV2(int postId, List<RequestFile> files, List<AttachmentItem> pending) throws Exception {
 
-        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+        NetworkRequest.Builder builder = new NetworkRequest.Builder()
                 .url("http://4pda.ru/forum/index.php?act=attach")
                 .xhrHeader()
                 .formHeader("index", "1")
@@ -108,7 +109,7 @@ public class EditPost {
                 .formHeader("allowExt", "")
                 .formHeader("forum-attach-files", "")
                 .formHeader("code", "check");
-        String response;
+        NetworkResponse response;
         Matcher matcher = null;
         for (int i = 0; i < files.size(); i++) {
             RequestFile file = files.get(i);
@@ -131,8 +132,8 @@ public class EditPost {
 
             response = Api.getWebClient().request(builder.build());
             Log.d("SUKA", "RESPONSE " + response);
-            if (response.equals("0")) {
-                ForPdaRequest.Builder uploadRequest = new ForPdaRequest.Builder()
+            if (response.getBody().equals("0")) {
+                NetworkRequest.Builder uploadRequest = new NetworkRequest.Builder()
                         .url("http://4pda.ru/forum/index.php?act=attach")
                         .xhrHeader()
                         .formHeader("index", "1")
@@ -143,12 +144,12 @@ public class EditPost {
                         .formHeader("code", "upload")
                         .file(file);
                 response = Api.getWebClient().request(uploadRequest.build(), item.getProgressListener());
-                Log.d("SUKA", "RESPONSE2 " + response);
+                Log.d("SUKA", "RESPONSE2 " + response.getBody());
             }
             if (matcher == null) {
-                matcher = attachmentsPattern.matcher(response);
+                matcher = attachmentsPattern.matcher(response.getBody());
             } else {
-                matcher = matcher.reset(response);
+                matcher = matcher.reset(response.getBody());
             }
             if (matcher.find()) {
                 fillAttachmentV2(item, matcher);
@@ -172,11 +173,11 @@ public class EditPost {
 
 
     public List<AttachmentItem> deleteFiles(int postId, List<AttachmentItem> items) throws Exception {
-        String response;
+        NetworkResponse response;
         Matcher matcher;
         for (AttachmentItem item : items) {
             response = Api.getWebClient().get("http://4pda.ru/forum/index.php?&act=attach&code=attach_upload_remove&attach_rel_id=".concat(postId == 0 ? "" : Integer.toString(postId)).concat("&attach_id=").concat(Integer.toString(item.getId())));
-            matcher = statusInfo.matcher(response);
+            matcher = statusInfo.matcher(response.getBody());
             if (matcher.find())
                 fillAttachmentStatus(item, matcher);
         }
@@ -184,9 +185,9 @@ public class EditPost {
     }
 
     public List<AttachmentItem> deleteFilesV2(int postId, List<AttachmentItem> items) throws Exception {
-        String response;
+        NetworkResponse response;
         for (AttachmentItem item : items) {
-            ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+            NetworkRequest.Builder builder = new NetworkRequest.Builder()
                     .url("http://4pda.ru/forum/index.php?act=attach")
                     .xhrHeader()
                     .formHeader("index", "1")
@@ -197,7 +198,7 @@ public class EditPost {
                     .formHeader("id", Integer.toString(item.getId()));
             response = Api.getWebClient().request(builder.build());
             //todo проверка на ошибки, я хз че еще может быть кроме 0
-            if (response.equals("0")) {
+            if (response.getBody().equals("0")) {
                 item.setStatus(AttachmentItem.STATUS_REMOVED);
                 item.setError(false);
             }
@@ -276,7 +277,7 @@ public class EditPost {
         String url = "http://4pda.ru/forum/index.php";
         Map<String, String> headers = new HashMap<>();
 
-        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+        NetworkRequest.Builder builder = new NetworkRequest.Builder()
                 .url(url)
                 .formHeaders(headers)
                 .multipart()

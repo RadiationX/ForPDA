@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.news.models.NewsNetworkModel;
 import io.reactivex.Single;
@@ -94,9 +95,9 @@ public class NewsParser {
 
         Log.d("LOG","getNewsListFromNetwork2 ->> " + category + " " + pageNumber + " " + url);
         try {
-            String response = Api.getWebClient().get(url);
+            NetworkResponse response = Api.getWebClient().get(url);
             if (response == null) return new ArrayList<>();
-            Matcher matcher = pattern.matcher(response);
+            Matcher matcher = pattern.matcher(response.getBody());
             while (matcher.find()) {
                 NewsNetworkModel model = new NewsNetworkModel();
                 model.setLink(matcher.group(1));
@@ -172,6 +173,6 @@ public class NewsParser {
     }
 
     public static String getDetailsNewsItem(@NonNull String url) throws Exception {
-        return Api.getWebClient().get(url);
+        return Api.getWebClient().get(url).getBody();
     }
 }

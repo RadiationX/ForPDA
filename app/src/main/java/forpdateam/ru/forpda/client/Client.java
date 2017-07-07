@@ -22,14 +22,14 @@ import java.util.regex.Pattern;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.IWebClient;
+import forpdateam.ru.forpda.api.NetworkRequest;
+import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.utils.SimpleObservable;
 import forpdateam.ru.forpda.utils.Html;
-import okhttp3.Cache;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
-import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -51,7 +51,6 @@ public class Client implements IWebClient {
     private static Client INSTANCE = null;
     private static Map<String, Cookie> cookies;
     private static List<Cookie> listCookies;
-    private Map<String, String> redirects = new HashMap<>();
     private SimpleObservable networkObservables = new SimpleObservable();
     private Handler observerHandler = new Handler(Looper.getMainLooper());
     private Matcher countsMatcher, errorMatcher;
@@ -192,13 +191,8 @@ public class Client implements IWebClient {
 
     //Network
     @Override
-    public String get(String url) throws Exception {
-        return request(new ForPdaRequest.Builder().url(url).build());
-    }
-
-    @Override
-    public String getXhr(String url) throws Exception {
-        return request(new ForPdaRequest.Builder().url(url).addHeader("X-Requested-With", "XMLHttpRequest").build());
+    public NetworkResponse get(String url) throws Exception {
+        return request(new NetworkRequest.Builder().url(url).build());
     }
 
     public class ProgressRequestBody extends RequestBody {
@@ -251,7 +245,7 @@ public class Client implements IWebClient {
         }
     }
 
-    private Request.Builder prepareRequest(ForPdaRequest request, ProgressListener uploadProgressListener) {
+    private Request.Builder prepareRequest(NetworkRequest request, ProgressListener uploadProgressListener) {
         Log.d("FORPDA_LOG", "request url " + request.getUrl());
         String url = request.getUrl();
         if (request.getUrl().substring(0, 2).equals("//")) {
@@ -321,34 +315,40 @@ public class Client implements IWebClient {
         return requestBuilder;
     }
 
-    public String request(ForPdaRequest request, OkHttpClient client, ProgressListener uploadProgressListener) throws Exception {
+    public NetworkResponse request(NetworkRequest request, OkHttpClient client, ProgressListener uploadProgressListener) throws Exception {
         Request.Builder requestBuilder = prepareRequest(request, uploadProgressListener);
-        String res;
-        Response response = null;
+        NetworkResponse response = new NetworkResponse(request.getUrl());
+        Response okHttpResponse = null;
         try {
-            response = client.newCall(requestBuilder.build()).execute();
-            if (!response.isSuccessful())
-                throw new OkHttpResponseException(response.code(), response.message(), request.getUrl());
-            res = response.body().string();
-            Log.e("FORPDA_LOG", response.toString());
-            getCounts(res);
-            checkForumErrors(res);
-            //Log.d("FORPDA_LOG", "redirected url " + response.request().url().toString());
-            redirects.put(request.getUrl(), response.request().url().toString());
+            okHttpResponse = client.newCall(requestBuilder.build()).execute();
+            if (!okHttpResponse.isSuccessful())
+                throw new OkHttpResponseException(okHttpResponse.code(), okHttpResponse.message(), request.getUrl());
+
+            response.setCode(okHttpResponse.code());
+            response.setMessage(okHttpResponse.message());
+            response.setRedirect(okHttpResponse.request().url().toString());
+
+            if (!request.isWithoutBody()) {
+                response.setBody(okHttpResponse.body().string());
+                getCounts(response.getBody());
+                checkForumErrors(response.getBody());
+            }
+
+            Log.d("SUKA", "" + request.isWithoutBody() + " : " + response.toString());
         } finally {
-            if (response != null)
-                response.close();
+            if (okHttpResponse != null)
+                okHttpResponse.close();
         }
-        return res;
+        return response;
     }
 
     @Override
-    public String request(ForPdaRequest request) throws Exception {
+    public NetworkResponse request(NetworkRequest request) throws Exception {
         return request(request, this.client, null);
     }
 
     @Override
-    public String request(ForPdaRequest request, ProgressListener uploadProgressListener) throws Exception {
+    public NetworkResponse request(NetworkRequest request, ProgressListener uploadProgressListener) throws Exception {
         return request(request, this.client, uploadProgressListener);
     }
 
@@ -363,26 +363,6 @@ public class Client implements IWebClient {
 
         // Trigger shutdown of the dispatcher's executor so this process can exit cleanly.
         //client.dispatcher().executorService().shutdown();
-    }
-
-    @Override
-    public String loadAndFindRedirect(String url) throws Exception {
-        String redirect = null;
-        Response response = null;
-        try {
-            response = new OkHttpClient.Builder()
-                    .cookieJar(cookieJar)
-                    .build()
-                    .newCall(new Request.Builder().url(url).header("User-Agent", userAgent).build())
-                    .execute();
-            if (!response.isSuccessful())
-                throw new OkHttpResponseException(response.code(), response.message(), url);
-            redirect = response.request().url().toString();
-        } finally {
-            if (response != null)
-                response.close();
-        }
-        return redirect;
     }
 
     private void checkForumErrors(String res) throws Exception {
@@ -418,11 +398,6 @@ public class Client implements IWebClient {
             }*/
             observerHandler.post(() -> ClientHelper.getInstance().notifyCountsChanged());
         }
-    }
-
-
-    public String getRedirect(String url) {
-        return redirects.get(url);
     }
 
     public void clearCookies() {

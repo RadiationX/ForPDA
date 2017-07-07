@@ -29,7 +29,7 @@ public class Parser {
     public static ArrayList<DevCatalog> parseBrands(IWebClient client, String devicesTypeUrl) throws Exception {
         String pageBody;
         ArrayList<DevCatalog> res = new ArrayList<>();
-        pageBody = client.get(devicesTypeUrl + "all");
+        pageBody = client.get(devicesTypeUrl + "all").getBody();
         Document doc = Jsoup.parse(pageBody);
 
         Elements con = doc.getElementsByClass("word-list");

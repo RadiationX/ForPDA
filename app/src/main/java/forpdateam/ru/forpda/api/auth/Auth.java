@@ -9,9 +9,10 @@ import java.util.regex.Pattern;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.IWebClient;
+import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.auth.models.AuthForm;
 import forpdateam.ru.forpda.client.ClientHelper;
-import forpdateam.ru.forpda.client.ForPdaRequest;
+import forpdateam.ru.forpda.api.NetworkRequest;
 
 /**
  * Created by radiationx on 25.03.17.
@@ -23,16 +24,16 @@ public class Auth {
     private final static Pattern errorPattern = Pattern.compile("errors-list\">([\\s\\S]*?)</ul>");
 
     public AuthForm getForm() throws Exception {
-        String response = Api.getWebClient().get(AUTH_BASE_URL);
+        NetworkResponse response = Api.getWebClient().get(AUTH_BASE_URL);
 
-        if (response == null || response.isEmpty())
+        if (response.getBody() == null || response.getBody().isEmpty())
             throw new Exception("Page empty!");
 
-        if (checkLogin(response))
+        if (checkLogin(response.getBody()))
             throw new Exception("You already logged");
 
         AuthForm form = new AuthForm();
-        Matcher matcher = captchaPattern.matcher(response);
+        Matcher matcher = captchaPattern.matcher(response.getBody());
         if (matcher.find()) {
             form.setCaptchaTime(matcher.group(1));
             form.setCaptchaSig(matcher.group(2));
@@ -40,12 +41,12 @@ public class Auth {
         } else {
             throw new Exception("Form Not Found");
         }
-        form.setBody(response);
+        form.setBody(response.getBody());
         return form;
     }
 
     public Boolean login(final AuthForm form) throws Exception {
-        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+        NetworkRequest.Builder builder = new NetworkRequest.Builder()
                 .url(AUTH_BASE_URL)
                 .formHeader("captcha-time", form.getCaptchaTime())
                 .formHeader("captcha-sig", form.getCaptchaSig())
@@ -55,13 +56,13 @@ public class Auth {
                 .formHeader("password", URLEncoder.encode(form.getPassword(), "windows-1251"), true)
                 .formHeader("remember", form.getRememberField())
                 .formHeader("hidden", form.isHidden() ? "1" : "0");
-        String response = Api.getWebClient().request(builder.build());
-        Matcher matcher = errorPattern.matcher(response);
+        NetworkResponse response = Api.getWebClient().request(builder.build());
+        Matcher matcher = errorPattern.matcher(response.getBody());
         if (matcher.find()) {
             throw new Exception(Html.fromHtml(matcher.group(1)).toString().replaceAll("\\.", ".\n").trim());
         }
-        form.setBody(response);
-        return checkLogin(response);
+        form.setBody(response.getBody());
+        return checkLogin(response.getBody());
     }
 
     private boolean checkLogin(String response) {
@@ -74,9 +75,9 @@ public class Auth {
     }
 
     public boolean logout() throws Exception {
-        String response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=logout&CODE=03&k=".concat(Api.getWebClient().getAuthKey()));
+        NetworkResponse response =Api.getWebClient().get("http://4pda.ru/forum/index.php?act=logout&CODE=03&k=".concat(Api.getWebClient().getAuthKey()));
 
-        Matcher matcher = Pattern.compile("wr va-m text").matcher(response);
+        Matcher matcher = Pattern.compile("wr va-m text").matcher(response.getBody());
         if (matcher.find())
             throw new Exception("You already logout");
 
@@ -84,7 +85,7 @@ public class Auth {
         App.getInstance().getPreferences().edit().remove("cookie_member_id").remove("cookie_pass_hash").apply();
         ClientHelper.setAuthState(ClientHelper.AUTH_STATE_LOGOUT);
 
-        return !checkLogin(Api.getWebClient().get(IWebClient.MINIMAL_PAGE));
+        return !checkLogin(Api.getWebClient().get(IWebClient.MINIMAL_PAGE).getBody());
     }
 
 }
