@@ -96,10 +96,12 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
         }
     };
 
+
+
     private WebSocket webSocket;
 
     private WebSocketListener webSocketListener = new WebSocketListener() {
-        Pattern pattern = Pattern.compile("\\[(\\d+),(\\d+),\"q(\\d+)\",(\\d+),(\\d+)\\]");
+        Pattern pattern = Pattern.compile("\\[(\\d+),(\\d+),\"([\\s\\S])(\\d+)\",(\\d+),(\\d+)\\]");
 
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
@@ -115,9 +117,9 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
             run(() -> {
                 Matcher matcher = pattern.matcher(text);
                 if (matcher.find()) {
-                    int themeId = Integer.parseInt(matcher.group(3));
-                    int eventCode = Integer.parseInt(matcher.group(4));
-                    int messageId = Integer.parseInt(matcher.group(5));
+                    int themeId = Integer.parseInt(matcher.group(4));
+                    int eventCode = Integer.parseInt(matcher.group(5));
+                    int messageId = Integer.parseInt(matcher.group(6));
                     if (themeId == currentChat.getThemeId()) {
                         if (eventCode == 1) {
                             Log.d("WS_CHAT", "NEW QMS MESSAGE " + themeId + " : " + messageId);
