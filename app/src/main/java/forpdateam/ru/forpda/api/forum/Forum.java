@@ -8,6 +8,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.NetworkRequest;
+import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.forum.interfaces.IForumItemFlat;
 import forpdateam.ru.forpda.api.forum.models.ForumItemFlat;
@@ -26,8 +28,8 @@ public class Forum {
     //private final static Pattern boardsPattern = Pattern.compile("<div[^>]*?board_forum_row[^>]*><div[^>]*?forum_name[^>]*?>[\\s\\S]*?<a[^>]*?showforum=(\\d+)[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/div>");
 
     public ForumItemTree getForums() throws Exception {
-        String response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=search");
-        Matcher matcher = forumsFromSearch.matcher(response);
+        NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=search");
+        Matcher matcher = forumsFromSearch.matcher(response.getBody());
         final ForumItemTree root = new ForumItemTree();
         if (matcher.find()) {
             matcher = forumItemFromSearch.matcher(matcher.group(1));
@@ -87,7 +89,7 @@ public class Forum {
     }
 
     public Object markAllRead() throws Exception{
-        Api.getWebClient().loadAndFindRedirect("https://4pda.ru/forum/index.php?act=login&CODE=05");
+        Api.getWebClient().request(new NetworkRequest.Builder().url("https://4pda.ru/forum/index.php?act=login&CODE=05").withoutBody().build());
         return new Object();
     }
 }

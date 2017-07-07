@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
@@ -17,7 +18,7 @@ import forpdateam.ru.forpda.api.qms.models.QmsMessage;
 import forpdateam.ru.forpda.api.qms.models.QmsTheme;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
-import forpdateam.ru.forpda.client.ForPdaRequest;
+import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.utils.Html;
 
 
@@ -38,11 +39,11 @@ public class Qms {
     private final static Pattern findUserPattern = Pattern.compile("\\[(\\d+),\"([\\s\\S]*?)\",\\d+,\"<span[^>]*?background:url\\(([^\\)]*?)\\)");
 
     public ArrayList<QmsContact> getBlackList() throws Exception {
-        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+        NetworkRequest.Builder builder = new NetworkRequest.Builder()
                 .url("http://4pda.ru/forum/index.php?act=qms&settings=blacklist")
                 .formHeader("xhr", "body");
-        final String response = Api.getWebClient().request(builder.build());
-        return parseBlackList(response);
+        NetworkResponse response = Api.getWebClient().request(builder.build());
+        return parseBlackList(response.getBody());
     }
 
     private ArrayList<QmsContact> parseBlackList(String response) {
@@ -59,7 +60,7 @@ public class Qms {
     }
 
     public ArrayList<QmsContact> unBlockUsers(int[] ids) throws Exception {
-        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+        NetworkRequest.Builder builder = new NetworkRequest.Builder()
                 .url("http://4pda.ru/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1")
                 .formHeader("action", "delete-users");
         String strId;
@@ -67,19 +68,19 @@ public class Qms {
             strId = Integer.toString(id);
             builder.formHeader("user-id[".concat(strId).concat("]"), strId);
         }
-        final String response = Api.getWebClient().request(builder.build());
-        checkOperation(response);
-        return parseBlackList(response);
+        NetworkResponse response = Api.getWebClient().request(builder.build());
+        checkOperation(response.getBody());
+        return parseBlackList(response.getBody());
     }
 
     public ArrayList<QmsContact> blockUser(String nick) throws Exception {
-        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+        NetworkRequest.Builder builder = new NetworkRequest.Builder()
                 .url("http://4pda.ru/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1")
                 .formHeader("action", "add-user")
                 .formHeader("username", nick);
-        final String response = Api.getWebClient().request(builder.build());
-        checkOperation(response);
-        return parseBlackList(response);
+        NetworkResponse response = Api.getWebClient().request(builder.build());
+        checkOperation(response.getBody());
+        return parseBlackList(response.getBody());
     }
 
     private void checkOperation(String response) throws Exception {
@@ -93,8 +94,8 @@ public class Qms {
 
     public ArrayList<QmsContact> getContactList() throws Exception {
         ArrayList<QmsContact> list = new ArrayList<>();
-        final String response = Api.getWebClient().request(new ForPdaRequest.Builder().url("http://4pda.ru/forum/index.php?&act=qms-xhr&action=userlist").build());
-        final Matcher matcher = contactsPattern.matcher(response);
+        NetworkResponse response = Api.getWebClient().request(new NetworkRequest.Builder().url("http://4pda.ru/forum/index.php?&act=qms-xhr&action=userlist").build());
+        final Matcher matcher = contactsPattern.matcher(response.getBody());
         QmsContact contact;
         String temp;
         while (matcher.find()) {
@@ -111,21 +112,21 @@ public class Qms {
     }
 
     public QmsThemes getThemesList(int id) throws Exception {
-        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+        NetworkRequest.Builder builder = new NetworkRequest.Builder()
                 .url("http://4pda.ru/forum/index.php?act=qms&mid=" + id)
                 .formHeader("xhr", "body");
-        String response = Api.getWebClient().request(builder.build());
-        return parseThemes(response, id);
+        NetworkResponse response = Api.getWebClient().request(builder.build());
+        return parseThemes(response.getBody(), id);
     }
 
     public QmsThemes deleteTheme(int id, int themeId) throws Exception {
-        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+        NetworkRequest.Builder builder = new NetworkRequest.Builder()
                 .url("http://4pda.ru/forum/index.php?act=qms&mid=" + id + "&xhr=body&do=1")
                 .formHeader("xhr", "body")
                 .formHeader("action", "delete-threads")
                 .formHeader("thread-id[" + themeId + "]", "" + themeId);
-        String response = Api.getWebClient().request(builder.build());
-        return parseThemes(response, id);
+        NetworkResponse response = Api.getWebClient().request(builder.build());
+        return parseThemes(response.getBody(), id);
     }
 
     private QmsThemes parseThemes(String response, int id) {
@@ -150,11 +151,11 @@ public class Qms {
     }
 
     public QmsChatModel getChat(final int userId, final int themeId) throws Exception {
-        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+        NetworkRequest.Builder builder = new NetworkRequest.Builder()
                 .url("http://4pda.ru/forum/index.php?act=qms&mid=" + userId + "&t=" + themeId)
                 .formHeader("xhr", "body");
-        final String response = Api.getWebClient().request(builder.build());
-        return parseChat(response);
+        NetworkResponse response = Api.getWebClient().request(builder.build());
+        return parseChat(response.getBody());
     }
 
     private QmsChatModel parseChat(String response) {
@@ -192,9 +193,9 @@ public class Qms {
     }
 
     public List<String> findUser(final String nick) throws Exception {
-        String response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=" + nick + "&limit=150&timestamp=" + System.currentTimeMillis());
+        NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=" + nick + "&limit=150&timestamp=" + System.currentTimeMillis());
         List<String> list = new ArrayList<>();
-        Matcher m = findUserPattern.matcher(response);
+        Matcher m = findUserPattern.matcher(response.getBody());
         while (m.find()) {
             list.add(Utils.htmlEncode(m.group(2)));
         }
@@ -202,27 +203,27 @@ public class Qms {
     }
 
     public QmsChatModel sendNewTheme(String nick, String title, String mess) throws Exception {
-        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+        NetworkRequest.Builder builder = new NetworkRequest.Builder()
                 .url("http://4pda.ru/forum/index.php?act=qms&action=create-thread&xhr=body&do=1")
                 .formHeader("username", nick)
                 .formHeader("title", title)
                 .formHeader("message", mess);
-        String response = Api.getWebClient().request(builder.build());
-        return parseChat(response);
+        NetworkResponse response = Api.getWebClient().request(builder.build());
+        return parseChat(response.getBody());
     }
 
     public ArrayList<QmsMessage> sendMessage(int userId, int themeId, String text) throws Exception {
         ArrayList<QmsMessage> messages = new ArrayList<>();
-        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+        NetworkRequest.Builder builder = new NetworkRequest.Builder()
                 .url("http://4pda.ru/forum/index.php")
                 .formHeader("act", "qms-xhr")
                 .formHeader("action", "send-message")
                 .formHeader("message", text)
                 .formHeader("mid", Integer.toString(userId))
                 .formHeader("t", Integer.toString(themeId));
-        String response = Api.getWebClient().request(builder.build());
-        Log.e("FORPDA_LOG", "SEND MESSAGE RESPONSE " + response);
-        Matcher matcher = chatPattern.matcher(response);
+        NetworkResponse response = Api.getWebClient().request(builder.build());
+        Log.e("FORPDA_LOG", "SEND MESSAGE RESPONSE " + response.getBody());
+        Matcher matcher = chatPattern.matcher(response.getBody());
         QmsMessage item = new QmsMessage();
         if (matcher.find()) {
             if (matcher.group(1) == null && matcher.group(7) != null) {
@@ -242,7 +243,7 @@ public class Qms {
             }
             messages.add(item);
         } else {
-            matcher = Pattern.compile("class=\"list-group-item[^\"]*?error\"[\\s\\S]*?<\\/a>([\\s\\S]*?)<\\/div>").matcher(response);
+            matcher = Pattern.compile("class=\"list-group-item[^\"]*?error\"[\\s\\S]*?<\\/a>([\\s\\S]*?)<\\/div>").matcher(response.getBody());
             if (matcher.find()) {
                 throw new Exception(matcher.group(1).trim());
             }
@@ -254,29 +255,29 @@ public class Qms {
 
     public ArrayList<QmsMessage> getMessagesFromWs(int themeId, int messageId, int afterMessageId) throws Exception {
         ArrayList<QmsMessage> messages = new ArrayList<>();
-        ForPdaRequest.Builder messInfoBuilder = new ForPdaRequest.Builder()
+        NetworkRequest.Builder messInfoBuilder = new NetworkRequest.Builder()
                 .url("http://4pda.ru/forum/index.php?act=qms-xhr&")
                 .formHeader("action", "message-info")
                 .formHeader("t", Integer.toString(themeId))
                 .formHeader("msg-id", Integer.toString(messageId));
-        String messInfoResponse = Api.getWebClient().request(messInfoBuilder.build());
+        NetworkResponse messInfoResponse = Api.getWebClient().request(messInfoBuilder.build());
 
-        Matcher matcher = messageInfoPattern.matcher(messInfoResponse);
+        Matcher matcher = messageInfoPattern.matcher(messInfoResponse.getBody());
         int idTo = 0;
         if (matcher.find()) {
             idTo = Integer.parseInt(matcher.group(1));
         }
 
-        ForPdaRequest.Builder threadMessagesBuilder = new ForPdaRequest.Builder()
+        NetworkRequest.Builder threadMessagesBuilder = new NetworkRequest.Builder()
                 .url("http://4pda.ru/forum/index.php?act=qms-xhr&")
                 .xhrHeader()
                 .formHeader("action", "get-thread-messages")
                 .formHeader("mid", Integer.toString(idTo))
                 .formHeader("t", Integer.toString(themeId))
                 .formHeader("after-message", Integer.toString(afterMessageId));
-        String threadMessagesResponse = Api.getWebClient().request(threadMessagesBuilder.build());
+        NetworkResponse threadMessagesResponse = Api.getWebClient().request(threadMessagesBuilder.build());
 
-        matcher = chatPattern.matcher(threadMessagesResponse);
+        matcher = chatPattern.matcher(threadMessagesResponse.getBody());
         while (matcher.find()) {
             QmsMessage item = new QmsMessage();
             if (matcher.group(1) == null && matcher.group(7) != null) {
@@ -300,18 +301,18 @@ public class Qms {
     }
 
     public String deleteDialog(int mid) throws Exception {
-        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+        NetworkRequest.Builder builder = new NetworkRequest.Builder()
                 .url("http://4pda.ru/forum/index.php")
                 .formHeader("act", "qms-xhr")
                 .formHeader("action", "del-member")
                 .formHeader("del-mid", Integer.toString(mid));
-        return Api.getWebClient().request(builder.build());
+        return Api.getWebClient().request(builder.build()).getBody();
     }
 
     public List<AttachmentItem> uploadFiles(List<RequestFile> files, List<AttachmentItem> pending) throws Exception {
         String url = "http://savepic.ru/index.php";
 
-        String response;
+        NetworkResponse response;
         Matcher matcher = null;
 
         HashMap<String, String> headers = new HashMap<>();
@@ -345,7 +346,7 @@ public class Qms {
             AttachmentItem item = pending.get(i);
 
             file.setRequestName("file");
-            ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+            NetworkRequest.Builder builder = new NetworkRequest.Builder()
                     .url(url)
                     .formHeaders(headers)
                     .file(file);
@@ -353,9 +354,9 @@ public class Qms {
 
 
             if (matcher == null)
-                matcher = loadedAttachment.matcher(response);
+                matcher = loadedAttachment.matcher(response.getBody());
             else
-                matcher = matcher.reset(response);
+                matcher = matcher.reset(response.getBody());
             if (matcher.find()) {
                 item.setName(file.getFileName());
                 item.setImageUrl("http://savepic.ru/".concat(matcher.group(1)));

@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.mentions.models.MentionItem;
 import forpdateam.ru.forpda.api.mentions.models.MentionsData;
@@ -18,8 +19,8 @@ public class Mentions {
 
     public MentionsData getMentions(int st) throws Exception {
         MentionsData data = new MentionsData();
-        String response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=mentions&st=".concat(Integer.toString(st)));
-        Matcher matcher = mentionsPattern.matcher(response);
+        NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=mentions&st=".concat(Integer.toString(st)));
+        Matcher matcher = mentionsPattern.matcher(response.getBody());
         while (matcher.find()) {
             MentionItem item = new MentionItem();
             item.setState(matcher.group(1).equals("read") ? MentionItem.STATE_READ : MentionItem.STATE_UNREAD);
@@ -31,7 +32,7 @@ public class Mentions {
             item.setNick(Utils.fromHtml(matcher.group(7)));
             data.addItem(item);
         }
-        data.setPagination(Pagination.parseForum(response));
+        data.setPagination(Pagination.parseForum(response.getBody()));
         return data;
     }
 }

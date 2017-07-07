@@ -6,11 +6,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.reputation.models.RepData;
 import forpdateam.ru.forpda.api.reputation.models.RepItem;
-import forpdateam.ru.forpda.client.ForPdaRequest;
+import forpdateam.ru.forpda.api.NetworkRequest;
 
 /**
  * Created by radiationx on 20.03.17.
@@ -26,8 +27,8 @@ public class Reputation {
 
     public RepData getReputation(RepData data) throws Exception {
         if (data == null) return null;
-        String response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=rep&view=history&mid=" + data.getId() + "&mode=" + data.getMode() + "&order=" + data.getSort() + "&st=" + data.getPagination().getSt());
-        Matcher matcher = infoPattern.matcher(response);
+        NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=rep&view=history&mid=" + data.getId() + "&mode=" + data.getMode() + "&order=" + data.getSort() + "&st=" + data.getPagination().getSt());
+        Matcher matcher = infoPattern.matcher(response.getBody());
         if (matcher.find()) {
             data.setId(Integer.parseInt(matcher.group(1)));
             data.setNick(Utils.fromHtml(matcher.group(2)));
@@ -36,7 +37,7 @@ public class Reputation {
         }
 
 
-        matcher = listPattern.matcher(response);
+        matcher = listPattern.matcher(response.getBody());
         String temp;
         data.getItems().clear();
         while (matcher.find()) {
@@ -53,12 +54,12 @@ public class Reputation {
             item.setDate(matcher.group(7));
             data.addItem(item);
         }
-        data.setPagination(Pagination.parseForum(data.getPagination(), response));
+        data.setPagination(Pagination.parseForum(data.getPagination(), response.getBody()));
         return data;
     }
 
     public String editReputation(int postId, int userId, boolean type, String message) throws Exception {
-        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+        NetworkRequest.Builder builder = new NetworkRequest.Builder()
                 .url("http://4pda.ru/forum/index.php")
                 .formHeader("act", "rep")
                 .formHeader("mid", Integer.toString(userId))

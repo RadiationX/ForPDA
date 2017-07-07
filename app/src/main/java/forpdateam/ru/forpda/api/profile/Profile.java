@@ -1,15 +1,17 @@
 package forpdateam.ru.forpda.api.profile;
 
 import android.text.Html;
+import android.util.Log;
 import android.util.Pair;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
-import forpdateam.ru.forpda.client.ForPdaRequest;
+import forpdateam.ru.forpda.api.NetworkRequest;
 
 /**
  * Created by radiationx on 03.08.16.
@@ -27,9 +29,10 @@ public class Profile {
 
     public ProfileModel getProfile(String url) throws Exception {
         ProfileModel profile = new ProfileModel();
-        final String response = Api.getWebClient().get(url);
+        NetworkResponse response = Api.getWebClient().get(url);
 
-        final Matcher mainMatcher = mainPattern.matcher(response);
+
+        final Matcher mainMatcher = mainPattern.matcher(response.getBody());
         if (mainMatcher.find()) {
             profile.setAvatar(safe(mainMatcher.group(1)));
             profile.setNick(Utils.fromHtml(safe(mainMatcher.group(2))));
@@ -96,12 +99,12 @@ public class Profile {
                 if (data.group(1).contains("Постов"))
                     profile.setPosts(pair);
             }
-            data = note.matcher(response);
+            data = note.matcher(response.getBody());
             if (data.find()) {
                 profile.setNote(Utils.fromHtml(data.group(1).replaceAll("\n", "<br></br>")));
             }
 
-            data = about.matcher(response);
+            data = about.matcher(response.getBody());
             if (data.find()) {
                 profile.setAbout(forpdateam.ru.forpda.utils.Html.fromHtml(safe(data.group(1))));
             }
@@ -110,11 +113,11 @@ public class Profile {
     }
 
     public boolean saveNote(String note) throws Exception {
-        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+        NetworkRequest.Builder builder = new NetworkRequest.Builder()
                 .url("http://4pda.ru/forum/index.php?act=profile-xhr&action=save-note")
                 .formHeader("note", note);
-        String response = Api.getWebClient().request(builder.build());
-        return response.equals("1");
+        NetworkResponse response = Api.getWebClient().request(builder.build());
+        return response.getBody().equals("1");
     }
 
     private static String safe(String s) {

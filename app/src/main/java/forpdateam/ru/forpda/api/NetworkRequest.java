@@ -1,17 +1,15 @@
-package forpdateam.ru.forpda.client;
+package forpdateam.ru.forpda.api;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import forpdateam.ru.forpda.api.RequestFile;
-
 /**
  * Created by radiationx on 02.05.17.
  */
 
-public class ForPdaRequest {
+public class NetworkRequest {
     private String url = "";
     private Map<String, String> headers, formHeaders;
     private Set<String> encodedFormHeaders;
@@ -19,8 +17,9 @@ public class ForPdaRequest {
     private RequestFile file = null;
     //true - get, false - post
     private boolean method = true;
+    private boolean withoutBody = false;
 
-    public ForPdaRequest(Builder builder) {
+    public NetworkRequest(Builder builder) {
         this.url = builder.url;
         this.headers = builder.headers;
         this.formHeaders = builder.formHeaders;
@@ -28,6 +27,7 @@ public class ForPdaRequest {
         this.isMultipartForm = builder.isMultipartForm;
         this.file = builder.file;
         this.method = builder.method;
+        this.withoutBody = builder.withoutBody;
     }
 
     public String getUrl() {
@@ -58,6 +58,10 @@ public class ForPdaRequest {
         return method;
     }
 
+    public boolean isWithoutBody() {
+        return withoutBody;
+    }
+
     public static class Builder {
         private String url = "";
         private Map<String, String> headers, formHeaders;
@@ -65,36 +69,37 @@ public class ForPdaRequest {
         private boolean isMultipartForm = false;
         private RequestFile file = null;
         private boolean method = true;
+        private boolean withoutBody = false;
 
-        public ForPdaRequest.Builder url(String url) {
+        public NetworkRequest.Builder url(String url) {
             this.url = url;
             return this;
         }
 
-        public ForPdaRequest.Builder addHeaders(Map<String, String> headers) {
+        public NetworkRequest.Builder addHeaders(Map<String, String> headers) {
             if (this.headers == null)
                 this.headers = new HashMap<>();
             this.headers.putAll(headers);
             return this;
         }
 
-        public ForPdaRequest.Builder addHeader(String name, String value) {
+        public NetworkRequest.Builder addHeader(String name, String value) {
             if (this.headers == null)
                 this.headers = new HashMap<>();
             this.headers.put(name, value);
             return this;
         }
 
-        public ForPdaRequest.Builder xhrHeader() {
+        public NetworkRequest.Builder xhrHeader() {
             addHeader("X-Requested-With", "XMLHttpRequest");
             return this;
         }
 
-        public ForPdaRequest.Builder formHeaders(Map<String, String> formHeaders) {
+        public NetworkRequest.Builder formHeaders(Map<String, String> formHeaders) {
             return formHeaders(formHeaders, false);
         }
 
-        public ForPdaRequest.Builder formHeaders(Map<String, String> formHeaders, boolean encoded) {
+        public NetworkRequest.Builder formHeaders(Map<String, String> formHeaders, boolean encoded) {
             if (this.formHeaders == null)
                 this.formHeaders = new HashMap<>();
             this.formHeaders.putAll(formHeaders);
@@ -108,11 +113,11 @@ public class ForPdaRequest {
             return this;
         }
 
-        public ForPdaRequest.Builder formHeader(String name, String value) {
+        public NetworkRequest.Builder formHeader(String name, String value) {
             return formHeader(name, value, false);
         }
 
-        public ForPdaRequest.Builder formHeader(String name, String value, boolean encoded) {
+        public NetworkRequest.Builder formHeader(String name, String value, boolean encoded) {
             if (this.formHeaders == null)
                 this.formHeaders = new HashMap<>();
             this.formHeaders.put(name, value);
@@ -126,8 +131,13 @@ public class ForPdaRequest {
             return this;
         }
 
-        public ForPdaRequest.Builder multipart() {
+        public NetworkRequest.Builder multipart() {
             isMultipartForm = true;
+            return this;
+        }
+
+        public NetworkRequest.Builder withoutBody() {
+            withoutBody = true;
             return this;
         }
 
@@ -138,8 +148,8 @@ public class ForPdaRequest {
             return this;
         }
 
-        public ForPdaRequest build() {
-            return new ForPdaRequest(this);
+        public NetworkRequest build() {
+            return new NetworkRequest(this);
         }
     }
 }

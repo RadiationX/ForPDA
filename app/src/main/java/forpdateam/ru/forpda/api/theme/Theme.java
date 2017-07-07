@@ -8,6 +8,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.NetworkRequest;
+import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.theme.models.Poll;
@@ -47,15 +49,15 @@ public class Theme {
 
     public ThemePage getTheme(final String url, boolean hatOpen, boolean pollOpen) throws Exception {
         Log.d("FORPDA_LOG", "page start getPage");
-        String response = Api.getWebClient().get(url);
+        NetworkResponse response = Api.getWebClient().get(url);
         return parsePage(url, response, hatOpen, pollOpen);
     }
 
-    public ThemePage parsePage(String url, String response, boolean hatOpen, boolean pollOpen) throws Exception {
+    public ThemePage parsePage(String url, NetworkResponse response, boolean hatOpen, boolean pollOpen) throws Exception {
         ThemePage page = new ThemePage();
         page.setHatOpen(hatOpen);
         page.setPollOpen(pollOpen);
-        String redirectUrl = Api.getWebClient().getRedirect(url);
+        String redirectUrl = response.getRedirect();
         if (redirectUrl == null)
             redirectUrl = url;
         page.setUrl(redirectUrl);
@@ -67,27 +69,27 @@ public class Theme {
         while (matcher.find()) {
             page.addAnchor(matcher.group(1));
         }
-        matcher = themeIdPattern.matcher(response);
+        matcher = themeIdPattern.matcher(response.getBody());
         if (matcher.find()) {
             Log.d("FORPDA_LOG", "IDS PARSING " + matcher.group(1) + " : " + matcher.group(2));
             page.setForumId(Integer.parseInt(matcher.group(1)));
             page.setId(Integer.parseInt(matcher.group(2)));
         }
-        page.setPagination(Pagination.parseForum(response));
-        matcher = titlePattern.matcher(response);
+        page.setPagination(Pagination.parseForum(response.getBody()));
+        matcher = titlePattern.matcher(response.getBody());
         if (matcher.find()) {
             page.setTitle(Utils.fromHtml(matcher.group(1)));
             page.setDesc(Utils.fromHtml(matcher.group(2)));
         }
-        matcher = alreadyInFavPattern.matcher(response);
+        matcher = alreadyInFavPattern.matcher(response.getBody());
         if (matcher.find()) {
             page.setInFavorite(true);
-            matcher = favIdPattern.matcher(response);
+            matcher = favIdPattern.matcher(response.getBody());
             if (matcher.find()) {
                 page.setFavId(Integer.parseInt(matcher.group(1)));
             }
         }
-        matcher = universalForumPosts.matcher(response);
+        matcher = universalForumPosts.matcher(response.getBody());
         Log.d("FORPDA_LOG", "posts matcher " + (System.currentTimeMillis() - time));
         Matcher attachMatcher = null;
         while (matcher.find()) {
@@ -126,7 +128,7 @@ public class Theme {
             page.addPost(item);
         }
         Log.d("FORPDA_LOG", "poll matcher " + (System.currentTimeMillis() - time));
-        matcher = pollMainPattern.matcher(response);
+        matcher = pollMainPattern.matcher(response.getBody());
         if (matcher.find()) {
             Poll poll = new Poll();
             final boolean isResult = matcher.group().contains("img");
@@ -208,16 +210,16 @@ public class Theme {
 
     public Boolean deletePost(int postId) throws Exception {
         String url = "http://4pda.ru/forum/index.php?act=zmod&auth_key=".concat(Api.getWebClient().getAuthKey()).concat("&code=postchoice&tact=delete&selectedpids=").concat(Integer.toString(postId));
-        String response = Api.getWebClient().getXhr(url);
-        return response.equals("ok");
+        NetworkResponse response = Api.getWebClient().request(new NetworkRequest.Builder().url(url).xhrHeader().build());
+        return response.getBody().equals("ok");
     }
 
 
     public String votePost(int postId, boolean type) throws Exception {
-        String response = Api.getWebClient().get("http://4pda.ru/forum/zka.php?i=".concat(Integer.toString(postId)).concat("&v=").concat(type ? "1" : "-1"));
+        NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/zka.php?i=".concat(Integer.toString(postId)).concat("&v=").concat(type ? "1" : "-1"));
         String result = null;
 
-        Matcher m = Pattern.compile("ok:\\s*?((?:\\+|\\-)?\\d+)").matcher(response);
+        Matcher m = Pattern.compile("ok:\\s*?((?:\\+|\\-)?\\d+)").matcher(response.getBody());
         if (m.find()) {
             int code = Integer.parseInt(m.group(1));
             switch (code) {

@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.search.models.SearchItem;
@@ -25,14 +26,14 @@ public class Search {
 
     public SearchResult getSearch(SearchSettings settings) throws Exception {
         SearchResult result = new SearchResult();
-        String response = Api.getWebClient().get(settings.toUrl());
+        NetworkResponse response = Api.getWebClient().get(settings.toUrl());
         Matcher matcher = null;
         SearchItem item = null;
         boolean isNews = settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first);
         boolean resultTopics = settings.getResult().equals(SearchSettings.RESULT_TOPICS.first);
         Log.d("FORPDA_LOG", "params " + isNews + " : " + resultTopics + " : " + settings.getResourceType() + " : " + settings.getResult());
         if (isNews) {
-            matcher = newsListPattern.matcher(response);
+            matcher = newsListPattern.matcher(response.getBody());
             while (matcher.find()) {
                 item = new SearchItem();
                 item.setId(Integer.parseInt(matcher.group(1)));
@@ -46,7 +47,7 @@ public class Search {
             }
         } else {
             if (resultTopics) {
-                matcher = forumTopicsPattern.matcher(response);
+                matcher = forumTopicsPattern.matcher(response.getBody());
                 while (matcher.find()) {
                     item = new SearchItem();
                     item.setTopicId(Integer.parseInt(matcher.group(1)));
@@ -60,7 +61,7 @@ public class Search {
                     result.addItem(item);
                 }
             } else {
-                matcher = universalForumPosts.matcher(response);
+                matcher = universalForumPosts.matcher(response.getBody());
                 while (matcher.find()) {
                     item = new SearchItem();
                     item.setTopicId(Integer.parseInt(matcher.group(2)));
@@ -89,9 +90,9 @@ public class Search {
         }
 
         if (isNews) {
-            result.setPagination(Pagination.parseNews(response));
+            result.setPagination(Pagination.parseNews(response.getBody()));
         } else {
-            result.setPagination(Pagination.parseForum(response));
+            result.setPagination(Pagination.parseForum(response.getBody()));
         }
         result.setSettings(settings);
         return result;

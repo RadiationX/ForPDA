@@ -23,6 +23,7 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
@@ -313,13 +314,13 @@ public class IntentHandler {
 
     public static void systemDownload(String fileName, String url) {
         Toast.makeText(App.getContext(), "Запрашиваю ссылку для загрузки ".concat(fileName), Toast.LENGTH_SHORT).show();
-        Observable.fromCallable(() -> Client.getInstance().loadAndFindRedirect(url))
+        Observable.fromCallable(() -> Client.getInstance().request(new NetworkRequest.Builder().url(url).withoutBody().build()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(redirect -> {
+                .subscribe(response -> {
                     if (!Preferences.Main.isSystemDownloader()) {
                         try {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(redirect)).addFlags(FLAG_ACTIVITY_NEW_TASK);
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(response.getRedirect())).addFlags(FLAG_ACTIVITY_NEW_TASK);
                             App.getInstance().startActivity(Intent.createChooser(intent, "Загрузить через").addFlags(FLAG_ACTIVITY_NEW_TASK));
                         } catch (ActivityNotFoundException e) {
                             ACRA.getErrorReporter().handleException(e);
@@ -328,7 +329,7 @@ public class IntentHandler {
                         MainActivity mainActivity = TabManager.getInstance().getActive().getMainActivity();
                         Runnable runnable = () -> {
                             DownloadManager dm = (DownloadManager) App.getContext().getSystemService(Context.DOWNLOAD_SERVICE);
-                            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(redirect));
+                            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(response.getRedirect()));
 
                             /*Map<String, Cookie> cookies = Client.getInstance().getCookies();
                             String stringCookies = "";

@@ -6,11 +6,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
-import forpdateam.ru.forpda.client.ForPdaRequest;
+import forpdateam.ru.forpda.api.NetworkRequest;
 
 /**
  * Created by radiationx on 22.09.16.
@@ -29,9 +30,9 @@ public class Favorites {
 
     public FavData getFavorites(int st) throws Exception {
         FavData data = new FavData();
-        final String response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=fav&st=".concat(Integer.toString(st)));
+        NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=fav&st=".concat(Integer.toString(st)));
         long time = System.currentTimeMillis();
-        Matcher matcher = mainPattern.matcher(response);
+        Matcher matcher = mainPattern.matcher(response.getBody());
         FavItem item;
         while (matcher.find()) {
             item = new FavItem();
@@ -59,39 +60,39 @@ public class Favorites {
             item.setDate(matcher.group(23));
             data.addItem(item);
         }
-        data.setPagination(Pagination.parseForum(response));
+        data.setPagination(Pagination.parseForum(response.getBody()));
         Log.d("FORPDA_LOG", "parsing time " + ((System.currentTimeMillis() - time)));
 
         return data;
     }
 
     public boolean editSubscribeType(String type, int favId) throws Exception {
-        String result = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0&tact=" + type + "&selectedtids=" + favId);
-        return checkIsComplete(result);
+        NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0&tact=" + type + "&selectedtids=" + favId);
+        return checkIsComplete(response.getBody());
     }
 
     public boolean editPinState(String type, int favId) throws Exception {
-        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+        NetworkRequest.Builder builder = new NetworkRequest.Builder()
                 .url("http://4pda.ru/forum/index.php?act=fav")
                 .formHeader("selectedtids", Integer.toString(favId))
                 .formHeader("tact", type);
-        String result = Api.getWebClient().request(builder.build());
-        return checkIsComplete(result);
+        NetworkResponse response = Api.getWebClient().request(builder.build());
+        return checkIsComplete(response.getBody());
     }
 
     public boolean delete(int favId) throws Exception {
-        ForPdaRequest.Builder builder = new ForPdaRequest.Builder()
+        NetworkRequest.Builder builder = new NetworkRequest.Builder()
                 .url("http://4pda.ru/forum/index.php?act=fav")
                 .xhrHeader()
                 .formHeader("selectedtids", Integer.toString(favId))
                 .formHeader("tact", "delete");
-        String result = Api.getWebClient().request(builder.build());
-        return checkIsComplete(result);
+        NetworkResponse response = Api.getWebClient().request(builder.build());
+        return checkIsComplete(response.getBody());
     }
 
     public boolean add(int id, String type) throws Exception {
-        String result = Api.getWebClient().request(new ForPdaRequest.Builder().url("http://4pda.ru/forum/index.php?act=fav&type=add&t=" + id + "&track_type=" + type).build());
-        return checkIsComplete(result);
+        NetworkResponse response = Api.getWebClient().request(new NetworkRequest.Builder().url("http://4pda.ru/forum/index.php?act=fav&type=add&t=" + id + "&track_type=" + type).build());
+        return checkIsComplete(response.getBody());
     }
 
     private boolean checkIsComplete(String result) {
