@@ -161,6 +161,8 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
         Log.e("FORPDA_LOG", "ON CREATE INTENT");
         checkIntent(getIntent());
+        Intent serviceIntent = new Intent(this, WebSocketService.class);
+        startService(serviceIntent);
     }
 
     public Drawers getDrawers() {

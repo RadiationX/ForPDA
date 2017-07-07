@@ -6,9 +6,9 @@ import forpdateam.ru.forpda.api.qms.interfaces.IQmsTheme;
  * Created by radiationx on 03.08.16.
  */
 public class QmsTheme implements IQmsTheme {
-    private int id;
+    private int id, userId;
     private int countMessages, countNew;
-    private String name, date;
+    private String name, date, nick;
 
     public QmsTheme() {
     }
@@ -51,5 +51,21 @@ public class QmsTheme implements IQmsTheme {
 
     public void setCountNew(int countNew) {
         this.countNew = countNew;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public String getNick() {
+        return nick;
+    }
+
+    public void setNick(String nick) {
+        this.nick = nick;
     }
 }
