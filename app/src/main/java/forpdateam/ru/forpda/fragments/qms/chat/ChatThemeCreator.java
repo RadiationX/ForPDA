@@ -14,6 +14,7 @@ import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.SimpleTextWatcher;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
@@ -28,7 +29,7 @@ public class ChatThemeCreator {
     private AppCompatAutoCompleteTextView nickField;
     private AppCompatEditText titleField;
     private MenuItem doneItem, editItem;
-    private Subscriber<List<String>> searchUserSubscriber;
+    private Subscriber<List<ForumUser>> searchUserSubscriber;
     private TextWatcher textWatcher = new SimpleTextWatcher() {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -60,8 +61,12 @@ public class ChatThemeCreator {
         searchUserSubscriber.subscribe(RxApi.Qms().findUser(nick), this::onShowSearchRes, new ArrayList<>());
     }
 
-    private void onShowSearchRes(List<String> res) {
-        nickField.setAdapter(new ArrayAdapter<>(fragment.getContext(), android.R.layout.simple_dropdown_item_1line, res));
+    private void onShowSearchRes(List<ForumUser> res) {
+        List<String> nicks = new ArrayList<>();
+        for (ForumUser user : res) {
+            nicks.add(user.getNick());
+        }
+        nickField.setAdapter(new ArrayAdapter<>(fragment.getContext(), android.R.layout.simple_dropdown_item_1line, nicks));
     }
 
     private void initCreatorViews() {

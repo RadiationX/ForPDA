@@ -21,6 +21,7 @@ import java.util.List;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
+import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.api.qms.interfaces.IQmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -43,7 +44,7 @@ public class QmsBlackListFragment extends TabFragment {
     private Subscriber<ArrayList<QmsContact>> mainSubscriber = new Subscriber<>(this);
     private AlertDialogMenu<QmsBlackListFragment, IQmsContact> contactDialogMenu;
     private ArrayList<QmsContact> currentData;
-    private Subscriber<List<String>> searchUserSubscriber = new Subscriber<>(this);
+    private Subscriber<List<ForumUser>> searchUserSubscriber = new Subscriber<>(this);
 
     public QmsBlackListFragment() {
         configuration.setDefaultTitle("Изгои мира сего");
@@ -146,8 +147,12 @@ public class QmsBlackListFragment extends TabFragment {
         searchUserSubscriber.subscribe(RxApi.Qms().findUser(nick), this::onShowSearchRes, new ArrayList<>());
     }
 
-    private void onShowSearchRes(List<String>  res) {
-        nickField.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, res));
+    private void onShowSearchRes(List<ForumUser> res) {
+        List<String> nicks = new ArrayList<>();
+        for (ForumUser user : res) {
+            nicks.add(user.getNick());
+        }
+        nickField.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, nicks));
     }
 
 }

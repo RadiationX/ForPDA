@@ -8,6 +8,7 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.Utils;
+import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsMessage;
@@ -21,7 +22,7 @@ import io.reactivex.Observable;
 
 public class QmsRx {
     //Common
-    public Observable<List<String>> findUser(final String nick) {
+    public Observable<List<ForumUser>> findUser(final String nick) {
         return Observable.fromCallable(() -> Api.Qms().findUser(nick));
     }
 
