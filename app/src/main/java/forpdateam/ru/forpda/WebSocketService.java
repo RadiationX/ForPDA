@@ -172,20 +172,12 @@ public class WebSocketService extends Service {
             return "unknown";
         }
 
-        /*
-        * Для уведомлений нужен более уникальный id, чем просто (themeId/4)+type
-        * В случае, когда подряд идут mention и new, оба уведомления должны быть показаны
-        * */
         public int createNotificationId() {
-            return createEventId() + eventCode;
+            return createNotificationId(eventCode);
         }
 
-        /*
-        * Это для проверки и удаления уже созданных уведомлений, тут не нужен eventCode,
-        * т.к главное именной айдишник и тип
-        * */
-        public int createEventId() {
-            return (id / 4) + type;
+        public int createNotificationId(int eventCodeArg) {
+            return (id / 4) + type + eventCodeArg;
         }
 
         @Override
@@ -480,39 +472,48 @@ public class WebSocketService extends Service {
     }
 
     private void handleWebSocketEvent(WebSocketEvent webSocketEvent) {
-        WebSocketEvent oldWebSocketEvent = notificationEvents.get(webSocketEvent.createEventId());
-        Log.e("WS_HANDLE", "NEW WSE: " + webSocketEvent.toString());
-        Log.e("WS_HANDLE", "OLD NE: " + oldWebSocketEvent);
-        if (oldWebSocketEvent != null) {
-            Log.e("WS_HANDLE", "OLD WSE: " + oldWebSocketEvent.toString());
+        if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_READ) {
+            WebSocketEvent oldWebSocketEvent = null;
 
-            if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_READ) {
-                if (webSocketEvent.getType() == WebSocketEvent.TYPE_THEME) {
-                    if (webSocketEvent.getMessageId() >= oldWebSocketEvent.getMessageId()) {
-                        mNotificationManager.cancel(oldWebSocketEvent.createNotificationId());
-                    }
-                } else if (webSocketEvent.getType() == WebSocketEvent.TYPE_QMS) {
+            if (webSocketEvent.getType() == WebSocketEvent.TYPE_THEME) {
+                //Убираем уведомления избранного
+                oldWebSocketEvent = notificationEvents.get(webSocketEvent.createNotificationId(WebSocketEvent.EVENT_NEW));
+                if (oldWebSocketEvent != null && webSocketEvent.getMessageId() >= oldWebSocketEvent.getMessageId()) {
+                    mNotificationManager.cancel(oldWebSocketEvent.createNotificationId());
+                }
+
+                //Убираем уведомление упоминаний
+                oldWebSocketEvent = notificationEvents.get(webSocketEvent.createNotificationId(WebSocketEvent.EVENT_MENTION));
+                if(oldWebSocketEvent != null){
+                    mNotificationManager.cancel(oldWebSocketEvent.createNotificationId());
+                }
+            } else if (webSocketEvent.getType() == WebSocketEvent.TYPE_QMS) {
+
+                //Убираем уведомление кумыса
+                oldWebSocketEvent = notificationEvents.get(webSocketEvent.createNotificationId(WebSocketEvent.EVENT_NEW));
+                if(oldWebSocketEvent != null){
                     mNotificationManager.cancel(oldWebSocketEvent.createNotificationId());
                 }
             }
-        }
-        notificationEvents.put(webSocketEvent.createEventId(), webSocketEvent);
-        switch (webSocketEvent.getType()) {
-            case WebSocketEvent.TYPE_QMS:
-                if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_NEW) {
-                    handleQmsEvent(webSocketEvent);
-                }
-                break;
-            case WebSocketEvent.TYPE_THEME:
-                if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_NEW || webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
-                    handleFavEvent(webSocketEvent);
-                }
-                break;
-            case WebSocketEvent.TYPE_SITE:
-                if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
-                    handleSiteEvent(webSocketEvent);
-                }
-                break;
+        } else {
+            notificationEvents.put(webSocketEvent.createNotificationId(), webSocketEvent);
+            switch (webSocketEvent.getType()) {
+                case WebSocketEvent.TYPE_QMS:
+                    if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_NEW) {
+                        handleQmsEvent(webSocketEvent);
+                    }
+                    break;
+                case WebSocketEvent.TYPE_THEME:
+                    if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_NEW || webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
+                        handleFavEvent(webSocketEvent);
+                    }
+                    break;
+                case WebSocketEvent.TYPE_SITE:
+                    if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
+                        handleSiteEvent(webSocketEvent);
+                    }
+                    break;
+            }
         }
     }
 
