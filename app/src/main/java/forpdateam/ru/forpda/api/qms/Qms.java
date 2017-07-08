@@ -12,6 +12,7 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.Utils;
+import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsMessage;
@@ -192,12 +193,22 @@ public class Qms {
         return chat;
     }
 
-    public List<String> findUser(final String nick) throws Exception {
-        NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=" + nick + "&limit=150&timestamp=" + System.currentTimeMillis());
-        List<String> list = new ArrayList<>();
+    public List<ForumUser> findUser(final String nick) throws Exception {
+        NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=" + nick /*+ "&limit=150&timestamp=" + System.currentTimeMillis()*/);
+        List<ForumUser> list = new ArrayList<>();
         Matcher m = findUserPattern.matcher(response.getBody());
         while (m.find()) {
-            list.add(Utils.htmlEncode(m.group(2)));
+            ForumUser user = new ForumUser();
+            user.setId(Integer.parseInt(m.group(1)));
+            user.setNick(Utils.htmlEncode(m.group(2)));
+            String avatar = m.group(3);
+            if (avatar.substring(0, 2).equals("//")) {
+                avatar = "http:".concat(avatar);
+            } else if (avatar.substring(0, 1).equals("/")) {
+                avatar = "http://4pda.ru".concat(avatar);
+            }
+            user.setAvatar(avatar);
+            list.add(user);
         }
         return list;
     }
