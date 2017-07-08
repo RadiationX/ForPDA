@@ -105,7 +105,13 @@ public class IntentHandler {
         } else if (url.substring(0, 1).equals("/")) {
             url = "http://4pda.ru".concat(url);
         }
-        url = Utils.fromHtml(url);
+
+        //url = Utils.fromHtml(url);
+        try {
+            url = URLDecoder.decode(url, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         Log.d("FORPDA_LOG", "after html url " + url);
 
         if (url.matches("(?:http?s?:)?\\/\\/[\\s\\S]*?4pda\\.(?:ru|to)[\\s\\S]*")) {
