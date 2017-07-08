@@ -1,9 +1,11 @@
 package forpdateam.ru.forpda;
 
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -12,24 +14,22 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.DrawableRes;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
+import android.util.SparseArray;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.CircleBitmapDisplayer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
@@ -52,7 +52,8 @@ import okio.ByteString;
 public class WebSocketService extends Service {
     private final static Pattern inspectorFavoritesPattern = Pattern.compile("(\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) (\\d+)");
     private final static Pattern inspectorQmsPattern = Pattern.compile("(\\d+) \"([\\s\\S]*?)\" (\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) (\\d+)");
-    private Map<Integer, NotificationCompat.Builder> notifications = new HashMap<>();
+    private SparseArray<NotificationCompat.Builder> notificationBuilders = new SparseArray<>();
+    private SparseArray<NotificationEvent> notificationEvents = new SparseArray<>();
 
     private class WebSocketEvent {
         /*
@@ -271,7 +272,35 @@ public class WebSocketService extends Service {
         }
     }
 
+    @DrawableRes
+    public int generateSmallIcon(NotificationEvent notificationEvent) {
+        WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
+        if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
+            return R.drawable.ic_notifications_mention;
+        }
+        switch (webSocketEvent.getType()) {
+            case WebSocketEvent.TYPE_QMS:
+                return R.drawable.ic_notifications_qms;
+            case WebSocketEvent.TYPE_THEME:
+                return R.drawable.ic_notifications_favorites;
+            case WebSocketEvent.TYPE_SITE:
+                return R.drawable.ic_notifications_site;
+        }
+        return R.drawable.ic_notifications_unknown;
+    }
+
     public String generateTitle(NotificationEvent notificationEvent) {
+        WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
+        switch (webSocketEvent.getType()) {
+            case WebSocketEvent.TYPE_QMS:
+                String nick = notificationEvent.getUserNick();
+                if (nick == null || nick.isEmpty()) {
+                    return "Сообщения 4PDA";
+                }
+                break;
+            case WebSocketEvent.TYPE_SITE:
+                return "ForPDA";
+        }
         return notificationEvent.getUserNick();
     }
 
@@ -287,22 +316,21 @@ public class WebSocketService extends Service {
                     return "Написал сообщение в теме \"" + notificationEvent.getTitle() + "\"";
                 }
             case WebSocketEvent.TYPE_SITE:
-                return "Ответил на ваш комментарий в \"" + notificationEvent.getTitle() + "\"";
+                return "Вам ответили на комментарий на сайте";
         }
         return "Title";
     }
 
     public String generateSummaryText(NotificationEvent notificationEvent) {
         WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
+        if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
+            return "Упоминание";
+        }
         switch (webSocketEvent.getType()) {
             case WebSocketEvent.TYPE_QMS:
                 return "Чат QMS";
             case WebSocketEvent.TYPE_THEME:
-                if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
-                    return "Упоминание";
-                } else {
-                    return "Избранное";
-                }
+                return "Избранное";
             case WebSocketEvent.TYPE_SITE:
                 return "Комментарий";
         }
@@ -311,23 +339,31 @@ public class WebSocketService extends Service {
 
     public Bitmap getAvatar(NotificationEvent notificationEvent) throws Exception {
         Bitmap bitmap = null;
-        ForumUser forumUser = ForumUsersCache.getUserById(notificationEvent.getUserId());
-        Log.d("WS_USER", "FORUM USER CACHE " + forumUser);
-        if (forumUser == null) {
-            forumUser = ForumUsersCache.loadUserByNick(notificationEvent.getUserNick());
-            Log.d("WS_USER", "FORUM USER LOADED " + forumUser);
-        }
-        if (forumUser != null) {
-            bitmap = ImageLoader.getInstance().loadImageSync(forumUser.getAvatar());
-            Log.d("WS_BITMAP", "" + bitmap);
-            if (bitmap != null) {
-                Log.d("WS_BITMAP", "" + bitmap.getHeight() + " : " + bitmap.getWidth());
+        if (notificationEvent.getWebSocketEvent().getType() != WebSocketEvent.TYPE_SITE) {
+            ForumUser forumUser = ForumUsersCache.getUserById(notificationEvent.getUserId());
+            Log.d("WS_USER", "FORUM USER CACHE " + forumUser);
+            if (forumUser == null) {
+                forumUser = ForumUsersCache.loadUserByNick(notificationEvent.getUserNick());
+                Log.d("WS_USER", "FORUM USER LOADED " + forumUser);
+            }
+            if (forumUser != null) {
+                bitmap = ImageLoader.getInstance().loadImageSync(forumUser.getAvatar());
+                Log.d("WS_BITMAP", "" + bitmap);
+                if (bitmap != null) {
+                    Log.d("WS_BITMAP", "" + bitmap.getHeight() + " : " + bitmap.getWidth());
+                }
             }
         }
+
         return bitmap;
     }
 
     private Bitmap getCircleBitmap(Bitmap bitmap) {
+        Resources res = this.getResources();
+        int height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
+        int width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
+        bitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
+
         final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
                 bitmap.getHeight(), Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(output);
@@ -351,6 +387,9 @@ public class WebSocketService extends Service {
     }
 
     public void sendNotification(NotificationEvent notificationEvent) {
+        if (notificationEvent.getUserId() == ClientHelper.getUserId()) {
+            return;
+        }
         String title = generateTitle(notificationEvent);
         String text = generateContentText(notificationEvent);
         String summaryText = generateSummaryText(notificationEvent);
@@ -367,18 +406,18 @@ public class WebSocketService extends Service {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(bitmap -> {
                     Log.d("WS_RX_BITMAP", "" + bitmap);
-                    bitmap = getCircleBitmap(bitmap);
+
                     NotificationCompat.Builder mBuilder;
-                    if (notifications.containsKey(webSocketEvent.getId())) {
-                        mBuilder = notifications.get(webSocketEvent.getId());
+                    /*boolean containsBuilder = notificationBuilders.get(webSocketEvent.getId()) != null;
+                    if (containsBuilder) {
+                        mBuilder = notificationBuilders.get(webSocketEvent.getId());
                     } else {
                         mBuilder = new NotificationCompat.Builder(this);
-                        mBuilder.setSmallIcon(R.drawable.contact_site);
-                        mBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-                        notifications.put(webSocketEvent.getId(), mBuilder);
-                    }
+                    }*/
+                    mBuilder = new NotificationCompat.Builder(this);
 
-                    if (bitmap != null) {
+                    if (bitmap != null && webSocketEvent.getType() != WebSocketEvent.TYPE_SITE) {
+                        bitmap = getCircleBitmap(bitmap);
                         mBuilder.setLargeIcon(bitmap);
                     }
 
@@ -387,30 +426,57 @@ public class WebSocketService extends Service {
                     mBuilder.setStyle(bigTextStyle);
 
 
-                    if (!notifications.containsKey(webSocketEvent.getId())) {
-                        mBuilder.setSmallIcon(R.drawable.contact_site);
-                        mBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-                        notifications.put(webSocketEvent.getId(), mBuilder);
-                    }
+                    /*if (containsBuilder) {
+
+                    }*/
+
+                    // mBuilder.setContentIntent()
+
+                    mBuilder.setSmallIcon(generateSmallIcon(notificationEvent));
+                    mBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                    mBuilder.setCategory(NotificationCompat.CATEGORY_SOCIAL);
+                    mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
+                    //notificationBuilders.put(webSocketEvent.getId(), mBuilder);
+
+                    mNotificationManager.cancel(webSocketEvent.getId());
                     mNotificationManager.notify(webSocketEvent.getId(), mBuilder.build());
+                    notificationEvents.put(webSocketEvent.getId(), notificationEvent);
                 });
     }
 
     private void handleWebSocketEvent(WebSocketEvent webSocketEvent) {
+        NotificationEvent notificationEvent = notificationEvents.get(webSocketEvent.getId());
+        if (notificationEvent != null) {
+            if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_READ) {
+                if (webSocketEvent.getType() == WebSocketEvent.TYPE_THEME) {
+                    if (webSocketEvent.getMessageId() >= notificationEvent.getWebSocketEvent().getMessageId()) {
+                        mNotificationManager.cancel(webSocketEvent.getId());
+                    }
+                } else if (webSocketEvent.getType() == WebSocketEvent.TYPE_QMS) {
+                    mNotificationManager.cancel(webSocketEvent.getId());
+                }
+            }
+        }
         switch (webSocketEvent.type) {
             case WebSocketEvent.TYPE_QMS:
-                handleQmsEvent(webSocketEvent);
+                if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_NEW) {
+                    handleQmsEvent(webSocketEvent);
+                }
                 break;
             case WebSocketEvent.TYPE_THEME:
-                handleFavEvent(webSocketEvent);
+                if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_NEW || webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
+                    handleFavEvent(webSocketEvent);
+                }
                 break;
             case WebSocketEvent.TYPE_SITE:
-
+                if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
+                    handleSiteEvent(webSocketEvent);
+                }
                 break;
         }
     }
 
-    private List<NotificationEvent> parseQmsThemes(WebSocketEvent webSocketEvent) throws Exception {
+    private List<NotificationEvent> parseQmsEvents(WebSocketEvent webSocketEvent) throws Exception {
         NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=inspector&CODE=qms");
         List<NotificationEvent> qmsThemes = new ArrayList<>();
         Matcher matcher = inspectorQmsPattern.matcher(response.getBody());
@@ -431,11 +497,11 @@ public class WebSocketService extends Service {
     }
 
     private void handleQmsEvent(WebSocketEvent webSocketEvent) {
-        Observable.fromCallable(() -> parseQmsThemes(webSocketEvent))
+        Observable.fromCallable(() -> parseQmsEvents(webSocketEvent))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(qmsThemes -> {
-                    for (NotificationEvent notificationEvent : qmsThemes) {
+                .subscribe(qmsEvents -> {
+                    for (NotificationEvent notificationEvent : qmsEvents) {
                         if (notificationEvent.getId() == webSocketEvent.getId()) {
                             sendNotification(notificationEvent);
                         }
@@ -443,7 +509,7 @@ public class WebSocketService extends Service {
                 });
     }
 
-    private List<NotificationEvent> parseFavThemes(WebSocketEvent webSocketEvent) throws Exception {
+    private List<NotificationEvent> parseFavEvents(WebSocketEvent webSocketEvent) throws Exception {
         NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=inspector&CODE=fav");
         List<NotificationEvent> qmsThemes = new ArrayList<>();
         Matcher matcher = inspectorFavoritesPattern.matcher(response.getBody());
@@ -464,16 +530,21 @@ public class WebSocketService extends Service {
     }
 
     private void handleFavEvent(WebSocketEvent webSocketEvent) {
-        Observable.fromCallable(() -> parseFavThemes(webSocketEvent))
+        Observable.fromCallable(() -> parseFavEvents(webSocketEvent))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(qmsThemes -> {
-                    for (NotificationEvent notificationEvent : qmsThemes) {
+                .subscribe(favEvents -> {
+                    for (NotificationEvent notificationEvent : favEvents) {
                         if (notificationEvent.getId() == webSocketEvent.getId()) {
                             sendNotification(notificationEvent);
                         }
                     }
                 });
+    }
+
+    private void handleSiteEvent(WebSocketEvent webSocketEvent) {
+        NotificationEvent notificationEvent = new NotificationEvent(webSocketEvent);
+        sendNotification(notificationEvent);
     }
 
     private WebSocket webSocket;
@@ -572,6 +643,9 @@ public class WebSocketService extends Service {
         Log.i("WS_SERVICE", "Service: onCreate");
         webSocket = Client.getInstance().createWebSocketConnection(webSocketListener);
         mNotificationManager = NotificationManagerCompat.from(this);
+        /*new Handler().postDelayed(() -> {
+            webSocketListener.onMessage(webSocket, "[30309,0,\"s344799\",3,3977242]");
+        }, 5000);*/
     }
 
     @Override
