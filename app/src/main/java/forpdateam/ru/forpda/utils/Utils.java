@@ -60,7 +60,7 @@ public class Utils {
 
     public static String fromHtml(String s) {
         if (s == null) return null;
-        return Html.fromHtml(s).toString();
+        return Html.fromHtml(s, Html.FROM_HTML_MODE_COMPACT).toString();
     }
 
 

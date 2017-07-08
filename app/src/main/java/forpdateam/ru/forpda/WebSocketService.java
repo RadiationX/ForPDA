@@ -14,6 +14,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -52,8 +53,8 @@ import okio.ByteString;
 public class WebSocketService extends Service {
     private final static Pattern inspectorFavoritesPattern = Pattern.compile("(\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) (\\d+)");
     private final static Pattern inspectorQmsPattern = Pattern.compile("(\\d+) \"([\\s\\S]*?)\" (\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) (\\d+)");
-    private SparseArray<NotificationCompat.Builder> notificationBuilders = new SparseArray<>();
-    private SparseArray<NotificationEvent> notificationEvents = new SparseArray<>();
+    //private SparseArray<NotificationCompat.Builder> notificationBuilders = new SparseArray<>();
+    private SparseArray<WebSocketEvent> notificationEvents = new SparseArray<>();
 
     private class WebSocketEvent {
         /*
@@ -85,14 +86,14 @@ public class WebSocketService extends Service {
         /* Type: "s"|"t"|"q" */
         private int type = 0;
 
-        /* Theme id: Qms|Site|Fav| */
+        /* Theme themeId: Qms|Site|Fav| */
         private int id = 0;
 
         /* Code: 1|2|3|4 */
         private int eventCode = 0;
 
         /*
-        * QMS, Mention: message/post id;
+        * QMS, Mention: message/post themeId;
         * Fav: timestamp
         * */
         private int messageId = 0;
@@ -171,19 +172,35 @@ public class WebSocketService extends Service {
             return "unknown";
         }
 
+        /*
+        * Для уведомлений нужен более уникальный id, чем просто (themeId/4)+type
+        * В случае, когда подряд идут mention и new, оба уведомления должны быть показаны
+        * */
+        public int createNotificationId() {
+            return createEventId() + eventCode;
+        }
+
+        /*
+        * Это для проверки и удаления уже созданных уведомлений, тут не нужен eventCode,
+        * т.к главное именной айдишник и тип
+        * */
+        public int createEventId() {
+            return (id / 4) + type;
+        }
+
         @Override
         public String toString() {
-            return "WebSocketEvent{" + "unk1=" + unknown1 + ", unk2=" + unknown2 + "; type=" + typeName() + ", code=" + codeName() + ", id=" + id + ", messId=" + messageId + "}";
+            return "WebSocketEvent {" + "unk1=" + unknown1 + ", unk2=" + unknown2 + "; type=" + typeName() + ", code=" + codeName() + ", themeId=" + id + ", messId=" + messageId + "}";
         }
     }
 
     public class NotificationEvent {
         private WebSocketEvent webSocketEvent;
-        private int id = 0;
+        private int themeId = 0;
         private int userId = 0;
         private int timeStamp = 0;
 
-        private String title = "";
+        private String themeTitle = "";
         private String userNick = "";
 
         //Theme, Mentions?
@@ -207,12 +224,12 @@ public class WebSocketService extends Service {
             this.webSocketEvent = webSocketEvent;
         }
 
-        public int getId() {
-            return id;
+        public int getThemeId() {
+            return themeId;
         }
 
-        public void setId(int id) {
-            this.id = id;
+        public void setThemeId(int themeId) {
+            this.themeId = themeId;
         }
 
         public int getUserId() {
@@ -231,12 +248,12 @@ public class WebSocketService extends Service {
             this.timeStamp = timeStamp;
         }
 
-        public String getTitle() {
-            return title;
+        public String getThemeTitle() {
+            return themeTitle;
         }
 
-        public void setTitle(String title) {
-            this.title = title;
+        public void setThemeTitle(String themeTitle) {
+            this.themeTitle = themeTitle;
         }
 
         public String getUserNick() {
@@ -275,13 +292,14 @@ public class WebSocketService extends Service {
     @DrawableRes
     public int generateSmallIcon(NotificationEvent notificationEvent) {
         WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
-        if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
-            return R.drawable.ic_notifications_mention;
-        }
+
         switch (webSocketEvent.getType()) {
             case WebSocketEvent.TYPE_QMS:
                 return R.drawable.ic_notifications_qms;
             case WebSocketEvent.TYPE_THEME:
+                if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
+                    return R.drawable.ic_notifications_mention;
+                }
                 return R.drawable.ic_notifications_favorites;
             case WebSocketEvent.TYPE_SITE:
                 return R.drawable.ic_notifications_site;
@@ -308,12 +326,12 @@ public class WebSocketService extends Service {
         WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
         switch (webSocketEvent.getType()) {
             case WebSocketEvent.TYPE_QMS:
-                return notificationEvent.getTitle() + ": " + notificationEvent.getMessageCount() + " непрочитанных сообщений";
+                return notificationEvent.getThemeTitle() + ": " + notificationEvent.getMessageCount() + " непрочитанных сообщений";
             case WebSocketEvent.TYPE_THEME:
                 if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
-                    return "Ответил Вам в теме \"" + notificationEvent.getTitle() + "\"";
+                    return "Ответил Вам в теме \"" + notificationEvent.getThemeTitle() + "\"";
                 } else {
-                    return "Написал сообщение в теме \"" + notificationEvent.getTitle() + "\"";
+                    return "Написал сообщение в теме \"" + notificationEvent.getThemeTitle() + "\"";
                 }
             case WebSocketEvent.TYPE_SITE:
                 return "Вам ответили на комментарий на сайте";
@@ -333,6 +351,27 @@ public class WebSocketService extends Service {
                 return "Избранное";
             case WebSocketEvent.TYPE_SITE:
                 return "Комментарий";
+        }
+        return "Summary";
+    }
+
+    public String generateIntentUrl(NotificationEvent notificationEvent) {
+        WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
+        if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
+            switch (webSocketEvent.getType()) {
+                case WebSocketEvent.TYPE_THEME:
+                    return "http://4pda.ru/forum/index.php?showtopic=" + notificationEvent.getThemeId() + "&view=findpost&p=" + webSocketEvent.getMessageId();
+                case WebSocketEvent.TYPE_SITE:
+                    return "http://4pda.ru/index.php?p=" + notificationEvent.getThemeId() + "/#comment" + webSocketEvent.getMessageId();
+            }
+        }
+        switch (webSocketEvent.getType()) {
+            case WebSocketEvent.TYPE_QMS:
+                return "http://4pda.ru/forum/index.php?act=qms&mid=" + notificationEvent.getUserId() + "&t=" + notificationEvent.getThemeId();
+            case WebSocketEvent.TYPE_THEME:
+                return "http://4pda.ru/forum/index.php?showtopic=" + notificationEvent.getThemeId() + "&view=getnewpost";
+            /*case WebSocketEvent.TYPE_SITE:
+                return "Комментарий";*/
         }
         return "Summary";
     }
@@ -390,6 +429,9 @@ public class WebSocketService extends Service {
         if (notificationEvent.getUserId() == ClientHelper.getUserId()) {
             return;
         }
+        WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
+
+
         String title = generateTitle(notificationEvent);
         String text = generateContentText(notificationEvent);
         String summaryText = generateSummaryText(notificationEvent);
@@ -399,7 +441,6 @@ public class WebSocketService extends Service {
         bigTextStyle.bigText(text);
         bigTextStyle.setSummaryText(summaryText);
 
-        WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
         Observable.fromCallable(() -> getAvatar(notificationEvent))
                 .onErrorReturnItem(ImageLoader.getInstance().loadImageSync("assets://av.png"))
                 .subscribeOn(Schedulers.io())
@@ -408,56 +449,55 @@ public class WebSocketService extends Service {
                     Log.d("WS_RX_BITMAP", "" + bitmap);
 
                     NotificationCompat.Builder mBuilder;
-                    /*boolean containsBuilder = notificationBuilders.get(webSocketEvent.getId()) != null;
-                    if (containsBuilder) {
-                        mBuilder = notificationBuilders.get(webSocketEvent.getId());
-                    } else {
-                        mBuilder = new NotificationCompat.Builder(this);
-                    }*/
                     mBuilder = new NotificationCompat.Builder(this);
 
                     if (bitmap != null && webSocketEvent.getType() != WebSocketEvent.TYPE_SITE) {
                         bitmap = getCircleBitmap(bitmap);
                         mBuilder.setLargeIcon(bitmap);
                     }
+                    mBuilder.setSmallIcon(generateSmallIcon(notificationEvent));
 
                     mBuilder.setContentTitle(title);
                     mBuilder.setContentText(text);
                     mBuilder.setStyle(bigTextStyle);
 
 
-                    /*if (containsBuilder) {
+                    Intent notifyIntent = new Intent(this, MainActivity.class);
+                    notifyIntent.setData(Uri.parse(generateIntentUrl(notificationEvent)));
+                    notifyIntent.setAction(Intent.ACTION_VIEW);
+                    PendingIntent notifyPendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, 0);
+                    mBuilder.setContentIntent(notifyPendingIntent);
 
-                    }*/
+                    mBuilder.setAutoCancel(true);
 
-                    // mBuilder.setContentIntent()
-
-                    mBuilder.setSmallIcon(generateSmallIcon(notificationEvent));
                     mBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
                     mBuilder.setCategory(NotificationCompat.CATEGORY_SOCIAL);
                     mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
-                    //notificationBuilders.put(webSocketEvent.getId(), mBuilder);
 
-                    mNotificationManager.cancel(webSocketEvent.getId());
-                    mNotificationManager.notify(webSocketEvent.getId(), mBuilder.build());
-                    notificationEvents.put(webSocketEvent.getId(), notificationEvent);
+                    mNotificationManager.cancel(webSocketEvent.createNotificationId());
+                    mNotificationManager.notify(webSocketEvent.createNotificationId(), mBuilder.build());
                 });
     }
 
     private void handleWebSocketEvent(WebSocketEvent webSocketEvent) {
-        NotificationEvent notificationEvent = notificationEvents.get(webSocketEvent.getId());
-        if (notificationEvent != null) {
+        WebSocketEvent oldWebSocketEvent = notificationEvents.get(webSocketEvent.createEventId());
+        Log.e("WS_HANDLE", "NEW WSE: " + webSocketEvent.toString());
+        Log.e("WS_HANDLE", "OLD NE: " + oldWebSocketEvent);
+        if (oldWebSocketEvent != null) {
+            Log.e("WS_HANDLE", "OLD WSE: " + oldWebSocketEvent.toString());
+
             if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_READ) {
                 if (webSocketEvent.getType() == WebSocketEvent.TYPE_THEME) {
-                    if (webSocketEvent.getMessageId() >= notificationEvent.getWebSocketEvent().getMessageId()) {
-                        mNotificationManager.cancel(webSocketEvent.getId());
+                    if (webSocketEvent.getMessageId() >= oldWebSocketEvent.getMessageId()) {
+                        mNotificationManager.cancel(oldWebSocketEvent.createNotificationId());
                     }
                 } else if (webSocketEvent.getType() == WebSocketEvent.TYPE_QMS) {
-                    mNotificationManager.cancel(webSocketEvent.getId());
+                    mNotificationManager.cancel(oldWebSocketEvent.createNotificationId());
                 }
             }
         }
-        switch (webSocketEvent.type) {
+        notificationEvents.put(webSocketEvent.createEventId(), webSocketEvent);
+        switch (webSocketEvent.getType()) {
             case WebSocketEvent.TYPE_QMS:
                 if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_NEW) {
                     handleQmsEvent(webSocketEvent);
@@ -483,12 +523,12 @@ public class WebSocketService extends Service {
         while (matcher.find()) {
             NotificationEvent notificationEvent = new NotificationEvent(webSocketEvent);
 
-            notificationEvent.setId(Integer.parseInt(matcher.group(1)));
-            notificationEvent.setTitle(Utils.htmlEncode(matcher.group(2)));
+            notificationEvent.setThemeId(Integer.parseInt(matcher.group(1)));
+            notificationEvent.setThemeTitle(Utils.fromHtml(matcher.group(2)));
             notificationEvent.setUserId(Integer.parseInt(matcher.group(3)));
-            notificationEvent.setUserNick(Utils.htmlEncode(matcher.group(4)));
+            notificationEvent.setUserNick(Utils.fromHtml(matcher.group(4)));
             notificationEvent.setMessageCount(Integer.parseInt(matcher.group(6)));
-            if (notificationEvent.getUserNick().isEmpty() && notificationEvent.getId() == 0) {
+            if (notificationEvent.getUserNick().isEmpty() && notificationEvent.getThemeId() == 0) {
                 notificationEvent.setUserNick("Сообщения 4PDA");
             }
             qmsThemes.add(notificationEvent);
@@ -502,7 +542,7 @@ public class WebSocketService extends Service {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(qmsEvents -> {
                     for (NotificationEvent notificationEvent : qmsEvents) {
-                        if (notificationEvent.getId() == webSocketEvent.getId()) {
+                        if (notificationEvent.getThemeId() == webSocketEvent.getId()) {
                             sendNotification(notificationEvent);
                         }
                     }
@@ -516,11 +556,11 @@ public class WebSocketService extends Service {
         while (matcher.find()) {
             NotificationEvent notificationEvent = new NotificationEvent(webSocketEvent);
 
-            notificationEvent.setId(Integer.parseInt(matcher.group(1)));
-            notificationEvent.setTitle(Utils.htmlEncode(matcher.group(2)));
+            notificationEvent.setThemeId(Integer.parseInt(matcher.group(1)));
+            notificationEvent.setThemeTitle(Utils.fromHtml(matcher.group(2)));
             notificationEvent.setMessageCount(Integer.parseInt(matcher.group(3)));
             notificationEvent.setUserId(Integer.parseInt(matcher.group(4)));
-            notificationEvent.setUserNick(Utils.htmlEncode(matcher.group(5)));
+            notificationEvent.setUserNick(Utils.fromHtml(matcher.group(5)));
             notificationEvent.setTimeStamp(Integer.parseInt(matcher.group(6)));
             notificationEvent.setReadTimeStamp(Integer.parseInt(matcher.group(7)));
             notificationEvent.setImportant(matcher.group(8).equals("1"));
@@ -535,7 +575,7 @@ public class WebSocketService extends Service {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(favEvents -> {
                     for (NotificationEvent notificationEvent : favEvents) {
-                        if (notificationEvent.getId() == webSocketEvent.getId()) {
+                        if (notificationEvent.getThemeId() == webSocketEvent.getId()) {
                             sendNotification(notificationEvent);
                         }
                     }
@@ -544,6 +584,7 @@ public class WebSocketService extends Service {
 
     private void handleSiteEvent(WebSocketEvent webSocketEvent) {
         NotificationEvent notificationEvent = new NotificationEvent(webSocketEvent);
+        notificationEvent.setThemeId(webSocketEvent.getId());
         sendNotification(notificationEvent);
     }
 
@@ -602,7 +643,7 @@ public class WebSocketService extends Service {
                 event.setMessageId(Integer.parseInt(matcher.group(6)));
                 Log.e("WS_EVENT", event.toString());
                 handleWebSocketEvent(event);
-                //sendNotification("Unknown " + event.typeName(), event.codeName() + " in " + event.getId());
+                //sendNotification("Unknown " + event.typeName(), event.codeName() + " in " + event.getThemeId());
             }
 
 
@@ -658,11 +699,15 @@ public class WebSocketService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.i("WS_SERVICE", "Service: onDestroy");
+        if (webSocket != null)
+            webSocket.close(1000, null);
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         Log.i("WS_SERVICE", "Service: onTaskRemoved");
+        if (webSocket != null)
+            webSocket.close(1000, null);
         if (Build.VERSION.SDK_INT == 19) {
             Intent restartIntent = new Intent(this, getClass());
 
