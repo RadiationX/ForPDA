@@ -287,16 +287,16 @@ public class WebSocketService extends Service {
 
         switch (webSocketEvent.getType()) {
             case WebSocketEvent.TYPE_QMS:
-                return R.drawable.ic_notifications_qms;
+                return R.drawable.ic_notify_qms;
             case WebSocketEvent.TYPE_THEME:
                 if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
-                    return R.drawable.ic_notifications_mention;
+                    return R.drawable.ic_notify_mention;
                 }
-                return R.drawable.ic_notifications_favorites;
+                return R.drawable.ic_notify_favorites;
             case WebSocketEvent.TYPE_SITE:
-                return R.drawable.ic_notifications_site;
+                return R.drawable.ic_notify_site;
         }
-        return R.drawable.ic_notifications_unknown;
+        return R.drawable.ic_notify_qms;
     }
 
     public String generateTitle(NotificationEvent notificationEvent) {
@@ -444,7 +444,10 @@ public class WebSocketService extends Service {
                     mBuilder = new NotificationCompat.Builder(this);
 
                     if (bitmap != null && webSocketEvent.getType() != WebSocketEvent.TYPE_SITE) {
-                        bitmap = getCircleBitmap(bitmap);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            bitmap = getCircleBitmap(bitmap);
+                        }
+
                         mBuilder.setLargeIcon(bitmap);
                     }
                     mBuilder.setSmallIcon(generateSmallIcon(notificationEvent));
@@ -473,25 +476,23 @@ public class WebSocketService extends Service {
 
     private void handleWebSocketEvent(WebSocketEvent webSocketEvent) {
         if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_READ) {
-            WebSocketEvent oldWebSocketEvent = null;
+            WebSocketEvent oldWebSocketEvent = notificationEvents.get(webSocketEvent.createNotificationId(WebSocketEvent.EVENT_NEW));
 
             if (webSocketEvent.getType() == WebSocketEvent.TYPE_THEME) {
                 //Убираем уведомления избранного
-                oldWebSocketEvent = notificationEvents.get(webSocketEvent.createNotificationId(WebSocketEvent.EVENT_NEW));
                 if (oldWebSocketEvent != null && webSocketEvent.getMessageId() >= oldWebSocketEvent.getMessageId()) {
                     mNotificationManager.cancel(oldWebSocketEvent.createNotificationId());
                 }
 
                 //Убираем уведомление упоминаний
                 oldWebSocketEvent = notificationEvents.get(webSocketEvent.createNotificationId(WebSocketEvent.EVENT_MENTION));
-                if(oldWebSocketEvent != null){
+                if (oldWebSocketEvent != null) {
                     mNotificationManager.cancel(oldWebSocketEvent.createNotificationId());
                 }
             } else if (webSocketEvent.getType() == WebSocketEvent.TYPE_QMS) {
 
                 //Убираем уведомление кумыса
-                oldWebSocketEvent = notificationEvents.get(webSocketEvent.createNotificationId(WebSocketEvent.EVENT_NEW));
-                if(oldWebSocketEvent != null){
+                if (oldWebSocketEvent != null) {
                     mNotificationManager.cancel(oldWebSocketEvent.createNotificationId());
                 }
             }
@@ -673,8 +674,22 @@ public class WebSocketService extends Service {
         }
     };
 
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.i("WS_SERVICE", "Service: onUnbind");
+        return super.onUnbind(intent);
+    }
+
+    @Override
+    public void onRebind(Intent intent) {
+        Log.i("WS_SERVICE", "Service: onRebind");
+        super.onRebind(intent);
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
+        Log.i("WS_SERVICE", "Service: onBind");
         return null;
     }
 
@@ -692,7 +707,8 @@ public class WebSocketService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("WS_SERVICE", "Service: onStartCommand");
+        Log.i("WS_SERVICE", "Service: onStartCommand " + flags + " : " + startId + " : " + intent);
+        Log.i("WS_SERVICE", "Service: onStartCommand " + webSocket);
         return START_STICKY;
     }
 
@@ -709,7 +725,7 @@ public class WebSocketService extends Service {
         Log.i("WS_SERVICE", "Service: onTaskRemoved");
         if (webSocket != null)
             webSocket.close(1000, null);
-        if (Build.VERSION.SDK_INT == 19) {
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
             Intent restartIntent = new Intent(this, getClass());
 
             AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
