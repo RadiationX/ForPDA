@@ -2,17 +2,100 @@ package forpdateam.ru.forpda.utils;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.Build;
 import android.renderscript.Allocation;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.util.Log;
 
+import forpdateam.ru.forpda.App;
+
 /**
  * Created by radiationx on 23.08.16.
  */
-public class BlurUtil {
+public class BitmapUtils {
+
+    public static Bitmap createAvatar(Bitmap bitmap, int width, int height, boolean isCircle) {
+        final Bitmap output;
+        if (isCircle) {
+            bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
+            output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+            final Canvas canvas = new Canvas(output);
+
+            final int color = Color.RED;
+            final Paint paint = new Paint();
+            final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+            final RectF rectF = new RectF(rect);
+
+            paint.setAntiAlias(true);
+            canvas.drawARGB(0, 0, 0, 0);
+            paint.setColor(color);
+            canvas.drawOval(rectF, paint);
+
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+            canvas.drawBitmap(bitmap, rect, rect, paint);
+        }else {
+            output = Bitmap.createScaledBitmap(bitmap, width, height, true);
+        }
+        bitmap.recycle();
+        return output;
+    }
+
+    public static Bitmap centerCrop(final Bitmap src, int w, int h, float scaleFactor) {
+        final int srcWidth = (int) (src.getWidth() / scaleFactor);
+        final int srcHeight = (int) (src.getHeight() / scaleFactor);
+        w = (int) (w / scaleFactor);
+        h = (int) (h / scaleFactor);
+
+        if (w == srcWidth && h == srcHeight) {
+            return src;
+        }
+        final Matrix m = new Matrix();
+        final float scale = Math.max((float) w / srcWidth, (float) h / srcHeight);
+        m.setScale(scale, scale);
+        final int srcCroppedW, srcCroppedH;
+        int srcX, srcY;
+        srcCroppedW = Math.round(w / scale);
+        srcCroppedH = Math.round(h / scale);
+        srcX = (int) (srcWidth * 0.5f - srcCroppedW / 2);
+        srcY = (int) (srcHeight * 0.5f - srcCroppedH / 2);
+        srcX = Math.max(Math.min(srcX, srcWidth - srcCroppedW), 0);
+        srcY = Math.max(Math.min(srcY, srcHeight - srcCroppedH), 0);
+        Log.e("SUKAS", "" + w + " : " + h + " @ " + srcWidth + " : " + srcHeight + " @ " + srcCroppedW + " : " + srcCroppedH);
+        Bitmap overlay = Bitmap.createBitmap(srcCroppedW, srcCroppedH, Bitmap.Config.ARGB_8888);
+        overlay.eraseColor(Color.WHITE);
+        Canvas canvas = new Canvas(overlay);
+        canvas.translate(-srcX / scaleFactor, -srcY / scaleFactor);
+        canvas.scale(1 / scaleFactor, 1 / scaleFactor);
+        canvas.drawBitmap(src, 0, 0, new Paint(Paint.FILTER_BITMAP_FLAG));
+        //src.recycle();
+        return overlay;
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    public static Bitmap rsBlur(Context context, Bitmap sentBitmap, int radius) {
+        Bitmap overlay = Bitmap.createBitmap(sentBitmap.getWidth(), sentBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        RenderScript rs = RenderScript.create(context);
+        Allocation overlayAlloc = Allocation.createFromBitmap(rs, sentBitmap);
+        ScriptIntrinsicBlur blur = ScriptIntrinsicBlur.create(rs, overlayAlloc.getElement());
+        blur.setInput(overlayAlloc);
+        blur.setRadius(radius);
+        blur.forEach(overlayAlloc);
+        overlayAlloc.copyTo(overlay);
+        rs.destroy();
+        return overlay;
+    }
+
     public static Bitmap fastBlur(Bitmap sentBitmap, int radius, boolean canReuseInBitmap) {
 
         // Stack Blur v1.0 from
@@ -249,19 +332,5 @@ public class BlurUtil {
         bitmap.setPixels(pix, 0, w, 0, 0, w, h);
 
         return (bitmap);
-    }
-
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    public static Bitmap rsBlur(Context context, Bitmap sentBitmap, int radius) {
-        Bitmap overlay = Bitmap.createBitmap(sentBitmap.getWidth(), sentBitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        RenderScript rs = RenderScript.create(context);
-        Allocation overlayAlloc = Allocation.createFromBitmap(rs, sentBitmap);
-        ScriptIntrinsicBlur blur = ScriptIntrinsicBlur.create(rs, overlayAlloc.getElement());
-        blur.setInput(overlayAlloc);
-        blur.setRadius(radius);
-        blur.forEach(overlayAlloc);
-        overlayAlloc.copyTo(overlay);
-        rs.destroy();
-        return overlay;
     }
 }

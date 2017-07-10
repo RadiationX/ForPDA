@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
         Log.e("FORPDA_LOG", "ON CREATE INTENT");
         checkIntent(getIntent());/*
-        Intent serviceIntent = new Intent(App.getContext(), WebSocketService.class);
+        Intent serviceIntent = new Intent(App.getContext(), NotificationsService.class);
         startService(serviceIntent);*/
 
 
@@ -178,11 +178,11 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     @Override
     protected void onStart() {
         super.onStart();
-        /*Intent serviceIntent = new Intent(App.getContext(), WebSocketService.class);
+        /*Intent serviceIntent = new Intent(App.getContext(), NotificationsService.class);
         startService(serviceIntent);*/
     }
 
-    /* WebSocketService mService;
+    /* NotificationsService mService;
         boolean mBound = false;
 
 
@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             public void onServiceConnected(ComponentName className, IBinder service) {
                 Log.d("WS_SERVICE_MA", "onServiceConnected");
                 // We've bound to LocalService, cast the IBinder and get LocalService instance
-                WebSocketService.LocalBinder binder = (WebSocketService.LocalBinder) service;
+                NotificationsService.LocalBinder binder = (NotificationsService.LocalBinder) service;
                 mService = binder.getService();
                 mBound = true;
             }
