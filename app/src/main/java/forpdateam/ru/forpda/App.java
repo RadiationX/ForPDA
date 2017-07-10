@@ -196,13 +196,14 @@ public class App extends android.app.Application {
         savedKeyboardHeight = keyboardHeight;
 
         getPreferences().registerOnSharedPreferenceChangeListener(preferenceChangeListener);
-        Intent serviceIntent = new Intent(App.getContext(), WebSocketService.class).setAction("SOSNO HUICA");
+        Intent serviceIntent = new Intent(App.getContext(), NotificationsService.class).setAction("SOSNO HUICA");
         startService(serviceIntent);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             BroadcastReceiver receiver = new BroadcastReceiver() {
                 @RequiresApi(api = Build.VERSION_CODES.M)
                 @Override
                 public void onReceive(Context context, Intent intent) {
+                    Log.d("4DOZE", "ON RECEIVE "+ intent);
                     PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
 
                     if (pm.isDeviceIdleMode()) {
@@ -211,7 +212,7 @@ public class App extends android.app.Application {
                     } else {
                         // the device just woke up from doze mode
                         Log.e("4DOZE", "DOZE MODE DISABLYA");
-                        startService(new Intent(App.getContext(), WebSocketService.class).setAction(WebSocketService.CHECK_LAST_EVENTS));
+                        startService(new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS));
                     }
                 }
             };

@@ -102,7 +102,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <service
-            android:name=".WebSocketService" />
+            android:name=".NotificationsService" />
         <receiver
             android:name=".client.NetworkStateReceiver"
             android:enabled="false"
