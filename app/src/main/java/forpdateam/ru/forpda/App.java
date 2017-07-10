@@ -1,17 +1,23 @@
 package forpdateam.ru.forpda;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.AttrRes;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.RequiresApi;
 import android.support.v7.content.res.AppCompatResources;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -100,8 +106,8 @@ public class App extends android.app.Application {
 
     public static App getInstance() {
         if (instance == null) {
-            synchronized(lock) {
-                System.out.print("SUKA sync init APP instance "+instance);
+            synchronized (lock) {
+                System.out.print("SUKA sync init APP instance " + instance);
                 if (instance == null)
                     instance = new App();
             }
@@ -190,6 +196,28 @@ public class App extends android.app.Application {
         savedKeyboardHeight = keyboardHeight;
 
         getPreferences().registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+        Intent serviceIntent = new Intent(App.getContext(), WebSocketService.class).setAction("SOSNO HUICA");
+        startService(serviceIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            BroadcastReceiver receiver = new BroadcastReceiver() {
+                @RequiresApi(api = Build.VERSION_CODES.M)
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+
+                    if (pm.isDeviceIdleMode()) {
+                        // the device is now in doze mode
+                        Log.e("4DOZE", "DOZE MODE ENABLYA");
+                    } else {
+                        // the device just woke up from doze mode
+                        Log.e("4DOZE", "DOZE MODE DISABLYA");
+                        startService(new Intent(App.getContext(), WebSocketService.class).setAction(WebSocketService.CHECK_LAST_EVENTS));
+                    }
+                }
+            };
+
+            registerReceiver(receiver, new IntentFilter(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED));
+        }
     }
 
     public void addPreferenceChangeObserver(Observer observer) {
