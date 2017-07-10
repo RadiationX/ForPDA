@@ -15,6 +15,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
+import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -599,8 +600,7 @@ public class WebSocketService extends Service {
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
             Log.d("WS_EVENT", "ON OPEN: " + response.toString());
-            webSocket.send("[0,\"sv\"]");
-            webSocket.send("[0, \"ea\", \"u" + ClientHelper.getUserId() + "\"]");
+
         }
 
 
@@ -671,10 +671,20 @@ public class WebSocketService extends Service {
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             Log.d("WS_EVENT", "ON FAILURE: " + t.getMessage() + " " + response);
             t.printStackTrace();
+            WebSocketService.this.webSocket.cancel();
+            WebSocketService.this.webSocket = null;
         }
     };
 
+    /*private final IBinder mBinder = new LocalBinder();
 
+    public class LocalBinder extends Binder {
+        WebSocketService getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return WebSocketService.this;
+        }
+    }
+*/
     @Override
     public boolean onUnbind(Intent intent) {
         Log.i("WS_SERVICE", "Service: onUnbind");
@@ -695,20 +705,32 @@ public class WebSocketService extends Service {
 
     NotificationManagerCompat mNotificationManager;
 
+    public final static String CHECK_LAST_EVENTS = "SOSNI_HUICA_DOZE";
+
     @Override
     public void onCreate() {
-        Log.i("WS_SERVICE", "Service: onCreate");
-        webSocket = Client.getInstance().createWebSocketConnection(webSocketListener);
-        mNotificationManager = NotificationManagerCompat.from(this);
-        /*new Handler().postDelayed(() -> {
-            webSocketListener.onMessage(webSocket, "[30309,0,\"s344799\",3,3977242]");
-        }, 5000);*/
+        Log.i("WS_SERVICE", "Service: onCreate " + this);
+
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("WS_SERVICE", "Service: onStartCommand " + flags + " : " + startId + " : " + intent);
         Log.i("WS_SERVICE", "Service: onStartCommand " + webSocket);
+        if (webSocket == null) {
+            webSocket = Client.getInstance().createWebSocketConnection(webSocketListener);
+        }
+        if (mNotificationManager == null) {
+            mNotificationManager = NotificationManagerCompat.from(this);
+        }
+        webSocket.send("[0,\"sv\"]");
+        webSocket.send("[0, \"ea\", \"u" + ClientHelper.getUserId() + "\"]");
+        /*new Handler().postDelayed(() -> {
+            webSocketListener.onMessage(webSocket, "[30309,0,\"s344799\",3,3977242]");
+        }, 5000);*/
+        if (intent != null&&intent.getAction() != null && intent.getAction().equals(CHECK_LAST_EVENTS)) {
+            Log.d("WS_SERVICE", "HANDLE CHECK LAST EVENTS");
+        }
         return START_STICKY;
     }
 
@@ -723,8 +745,9 @@ public class WebSocketService extends Service {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         Log.i("WS_SERVICE", "Service: onTaskRemoved");
-        if (webSocket != null)
+        if (webSocket != null) {
             webSocket.close(1000, null);
+        }
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
             Intent restartIntent = new Intent(this, getClass());
 

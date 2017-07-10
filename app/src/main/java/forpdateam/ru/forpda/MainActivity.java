@@ -2,13 +2,21 @@ package forpdateam.ru.forpda;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
+import android.os.PowerManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -160,11 +168,43 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         });
 
         Log.e("FORPDA_LOG", "ON CREATE INTENT");
-        checkIntent(getIntent());
-        Intent serviceIntent = new Intent(this, WebSocketService.class);
-        startService(serviceIntent);
+        checkIntent(getIntent());/*
+        Intent serviceIntent = new Intent(App.getContext(), WebSocketService.class);
+        startService(serviceIntent);*/
+
+
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        /*Intent serviceIntent = new Intent(App.getContext(), WebSocketService.class);
+        startService(serviceIntent);*/
+    }
+
+    /* WebSocketService mService;
+        boolean mBound = false;
+
+
+
+        private ServiceConnection mConnection = new ServiceConnection() {
+
+            @Override
+            public void onServiceConnected(ComponentName className, IBinder service) {
+                Log.d("WS_SERVICE_MA", "onServiceConnected");
+                // We've bound to LocalService, cast the IBinder and get LocalService instance
+                WebSocketService.LocalBinder binder = (WebSocketService.LocalBinder) service;
+                mService = binder.getService();
+                mBound = true;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                Log.d("WS_SERVICE_MA", "onServiceDisconnected");
+                mBound = false;
+            }
+        };
+    */
     public Drawers getDrawers() {
         return drawers;
     }
