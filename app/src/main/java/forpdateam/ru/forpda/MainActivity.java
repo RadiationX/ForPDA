@@ -24,7 +24,6 @@ import java.util.List;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.NetworkStateReceiver;
-import forpdateam.ru.forpda.data.Repository;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.WebViewsProvider;
@@ -161,8 +160,14 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
         Log.e("FORPDA_LOG", "ON CREATE INTENT");
         checkIntent(getIntent());
-        Intent serviceIntent = new Intent(this, WebSocketService.class);
-        startService(serviceIntent);
+//        Intent serviceIntent = new Intent(this, WebSocketService.class);
+//        startService(serviceIntent);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            NewWebSocketService.registerJob(this, 2); // for test interval 2 minute
+        } else {
+            startService(new Intent(this, WebSocketService.class));
+        }
     }
 
     public Drawers getDrawers() {
@@ -317,7 +322,6 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     protected void onDestroy() {
         super.onDestroy();
         receiver.unregisterReceiver();
-        Repository.removeInstance();
         drawers.destroy();
         drawerHeader.destroy();
         webViewsProvider.destroy();
