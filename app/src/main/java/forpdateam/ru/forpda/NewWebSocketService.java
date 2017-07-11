@@ -51,6 +51,9 @@ import okio.ByteString;
 /**
  * Created by isanechek on 7/11/17.
  */
+
+// Yе стал копипастит последнию версию notification sevice, если все будет ок, тогда и чета надо будет думать. Чтобы не копипастить каждый раз
+
 // for lollipop+
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class NewWebSocketService extends JobService {
@@ -58,7 +61,6 @@ public class NewWebSocketService extends JobService {
     private final static Pattern inspectorFavoritesPattern = Pattern.compile("(\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) (\\d+)");
     private final static Pattern inspectorQmsPattern = Pattern.compile("(\\d+) \"([\\s\\S]*?)\" (\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) (\\d+)");
     private SparseArray<WebSocketEvent> notificationEvents = new SparseArray<>();
-    private WebSocket webSocket;
     private NotificationManager manager;
 
     // Objects
@@ -678,6 +680,7 @@ public class NewWebSocketService extends JobService {
     };
 
     // Страшная хуйня для лоллипопа и выше.
+    //
     public static int JOB_ID = 777;
     public static long SECONDS = 1000;
     public static long MINUTES = 60 * SECONDS;
@@ -686,7 +689,7 @@ public class NewWebSocketService extends JobService {
     @Override
     public boolean onStartJob(JobParameters params) {
         Log.v(TAG, "Starting job: " + String.valueOf(params));
-        webSocket = Client.getInstance().createWebSocketConnection(webSocketListener);
+        WebSocket webSocket = Client.getInstance().createWebSocketConnection(webSocketListener);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             manager = getSystemService(NotificationManager.class);
         } else {
