@@ -171,11 +171,11 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 //        Intent serviceIntent = new Intent(this, WebSocketService.class);
 //        startService(serviceIntent);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            NewWebSocketService.registerJob(this, 2); // for test interval 2 minute
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            NewWebSocketService.registerJob(this, 20); // for test interval 2 minute
         } else {
-            startService(new Intent(this, WebSocketService.class));
-        }
+            startService(new Intent(this, NotificationsService.class));
+        }*/
     }
 
     @Override
@@ -183,6 +183,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         super.onStart();
         /*Intent serviceIntent = new Intent(App.getContext(), NotificationsService.class);
         startService(serviceIntent);*/
+        App.getContext().startService(new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS));
     }
 
     /* NotificationsService mService;

@@ -196,35 +196,35 @@ public class App extends android.app.Application {
         savedKeyboardHeight = keyboardHeight;
 
         getPreferences().registerOnSharedPreferenceChangeListener(preferenceChangeListener);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            NewWebSocketService.registerJob(this, 2); // for test interval 2 minute
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            NewWebSocketService.registerJob(this, 20); // for test interval 2 minute
         } else {
             Intent serviceIntent = new Intent(App.getContext(), NotificationsService.class).setAction("SOSNO HUICA");
             startService(serviceIntent);
-        }
+        }*/
 
-        // Для теста заккоментировал, там по ходу будет видно.
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            BroadcastReceiver receiver = new BroadcastReceiver() {
-//                @RequiresApi(api = Build.VERSION_CODES.M)
-//                @Override
-//                public void onReceive(Context context, Intent intent) {
-//                    Log.d("4DOZE", "ON RECEIVE "+ intent);
-//                    PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-//
-//                    if (pm.isDeviceIdleMode()) {
-//                        // the device is now in doze mode
-//                        Log.e("4DOZE", "DOZE MODE ENABLYA");
-//                    } else {
-//                        // the device just woke up from doze mode
-//                        Log.e("4DOZE", "DOZE MODE DISABLYA");
-//                        startService(new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS));
-//                    }
-//                }
-//            };
-//
-//            registerReceiver(receiver, new IntentFilter(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED));
-//        }
+       /* // Для теста заккоментировал, там по ходу будет видно.*/
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            BroadcastReceiver receiver = new BroadcastReceiver() {
+                @RequiresApi(api = Build.VERSION_CODES.M)
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    Log.d("4DOZE", "ON RECEIVE " + intent);
+                    PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+
+                    if (pm.isDeviceIdleMode()) {
+                        // the device is now in doze mode
+                        Log.e("4DOZE", "DOZE MODE ENABLYA");
+                    } else {
+                        // the device just woke up from doze mode
+                        Log.e("4DOZE", "DOZE MODE DISABLYA");
+                        startService(new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS));
+                    }
+                }
+            };
+
+            registerReceiver(receiver, new IntentFilter(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED));
+        }
     }
 
     public void addPreferenceChangeObserver(Observer observer) {
