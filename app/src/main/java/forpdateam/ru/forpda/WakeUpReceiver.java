@@ -15,7 +15,7 @@ public class WakeUpReceiver extends BroadcastReceiver {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             NewWebSocketService.registerJob(context, 2); // for test interval 2 minute
         } else {
-            context.startService(new Intent(context, WebSocketService.class));
+            context.startService(new Intent(context, NotificationsService.class));
         }
     }
 }

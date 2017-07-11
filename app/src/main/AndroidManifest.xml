@@ -104,7 +104,6 @@
 
         <service
             android:name=".NotificationsService" />
-        <!--for test-->
         <service
             android:name=".NewWebSocketService"
             android:enabled="true"

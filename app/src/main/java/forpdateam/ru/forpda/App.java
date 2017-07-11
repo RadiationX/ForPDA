@@ -49,7 +49,6 @@ import java.util.Observer;
 
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.data.Repository;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.SimpleObservable;
 import io.realm.Realm;
@@ -158,6 +157,8 @@ public class App extends android.app.Application {
         templates.put(TEMPLATE_QMS_CHAT, findTemplate(TEMPLATE_QMS_CHAT));
         templates.put(TEMPLATE_QMS_CHAT_MESS, findTemplate(TEMPLATE_QMS_CHAT_MESS));
 
+//        NewsRepository.Companion.createInstance();
+
         //init
         Realm.init(this);
         RealmConfiguration configuration = new RealmConfiguration.Builder()
@@ -166,7 +167,6 @@ public class App extends android.app.Application {
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(configuration);
-        Repository.createInstance();
         Client.getInstance();
         initImageLoader(this);
         px2 = getContext().getResources().getDimensionPixelSize(R.dimen.dp2);
@@ -196,29 +196,35 @@ public class App extends android.app.Application {
         savedKeyboardHeight = keyboardHeight;
 
         getPreferences().registerOnSharedPreferenceChangeListener(preferenceChangeListener);
-        Intent serviceIntent = new Intent(App.getContext(), NotificationsService.class).setAction("SOSNO HUICA");
-        startService(serviceIntent);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            BroadcastReceiver receiver = new BroadcastReceiver() {
-                @RequiresApi(api = Build.VERSION_CODES.M)
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    Log.d("4DOZE", "ON RECEIVE "+ intent);
-                    PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-
-                    if (pm.isDeviceIdleMode()) {
-                        // the device is now in doze mode
-                        Log.e("4DOZE", "DOZE MODE ENABLYA");
-                    } else {
-                        // the device just woke up from doze mode
-                        Log.e("4DOZE", "DOZE MODE DISABLYA");
-                        startService(new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS));
-                    }
-                }
-            };
-
-            registerReceiver(receiver, new IntentFilter(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            NewWebSocketService.registerJob(this, 2); // for test interval 2 minute
+        } else {
+            Intent serviceIntent = new Intent(App.getContext(), NotificationsService.class).setAction("SOSNO HUICA");
+            startService(serviceIntent);
         }
+
+        // Для теста заккоментировал, там по ходу будет видно.
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            BroadcastReceiver receiver = new BroadcastReceiver() {
+//                @RequiresApi(api = Build.VERSION_CODES.M)
+//                @Override
+//                public void onReceive(Context context, Intent intent) {
+//                    Log.d("4DOZE", "ON RECEIVE "+ intent);
+//                    PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+//
+//                    if (pm.isDeviceIdleMode()) {
+//                        // the device is now in doze mode
+//                        Log.e("4DOZE", "DOZE MODE ENABLYA");
+//                    } else {
+//                        // the device just woke up from doze mode
+//                        Log.e("4DOZE", "DOZE MODE DISABLYA");
+//                        startService(new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS));
+//                    }
+//                }
+//            };
+//
+//            registerReceiver(receiver, new IntentFilter(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED));
+//        }
     }
 
     public void addPreferenceChangeObserver(Observer observer) {
