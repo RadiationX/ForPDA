@@ -44,6 +44,7 @@ import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IBase;
+import forpdateam.ru.forpda.rxapi.ForumUsersCache;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.rxapi.apiclasses.QmsRx;
 import forpdateam.ru.forpda.settings.Preferences;
@@ -339,6 +340,12 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
             webView.evalJs("showNewMess('".concat(finalMessagesSrc).concat("', true)"));
         });
         refreshToolbarMenuItems(true);
+        if (currentChat.getNick() != null) {
+            setSubtitle(currentChat.getNick());
+        }
+        if (currentChat.getTitle() != null) {
+            setTitle(currentChat.getTitle());
+        }
     }
 
 
