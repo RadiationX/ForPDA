@@ -60,6 +60,19 @@ public class NotificationsService extends Service {
     private WebSocket webSocket;
     private long lastHardCheckTime = 0;
 
+    private Observer loginObserver = (observable, o) -> {
+        if (o == null) o = false;
+
+    };
+    private Observer networkObserver = (observable, o) -> {
+        if (o == null) o = true;
+        if ((boolean) o) {
+            if (Preferences.Notifications.Main.isEnabled()) {
+                start(true);
+            }
+        }
+    };
+
     private Observer notificationSettingObserver = (observable, o) -> {
         if (o == null) return;
         String key = (String) o;
@@ -134,8 +147,10 @@ public class NotificationsService extends Service {
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             Log.d("WS_EVENT", "ON FAILURE: " + t.getMessage() + " " + response);
             t.printStackTrace();
-            NotificationsService.this.webSocket.cancel();
-            NotificationsService.this.webSocket = null;
+            if (webSocket != null) {
+                NotificationsService.this.webSocket.cancel();
+                NotificationsService.this.webSocket = null;
+            }
         }
     };
 
@@ -148,6 +163,7 @@ public class NotificationsService extends Service {
     @Override
     public void onCreate() {
         Log.i("WS_SERVICE", "Service: onCreate " + this);
+        Client.getInstance().addNetworkObserver(networkObserver);
         App.getInstance().addPreferenceChangeObserver(notificationSettingObserver);
     }
 
@@ -160,23 +176,29 @@ public class NotificationsService extends Service {
         }
         if (Preferences.Notifications.Main.isEnabled()) {
             boolean checkEvents = intent != null && intent.getAction() != null && intent.getAction().equals(CHECK_LAST_EVENTS);
+            long time = System.currentTimeMillis();
+
+            Log.d("WS_SERVICE", "HANDLE CHECK LAST EVENTS: " + time + " : " + lastHardCheckTime + " : " + (time - lastHardCheckTime));
+
+            if (checkEvents && ((time - lastHardCheckTime) >= 1000 * 60 * 1)) {
+                lastHardCheckTime = time;
+                checkEvents = true;
+            } else {
+                checkEvents = false;
+            }
             start(checkEvents);
         }
         return START_STICKY;
     }
 
     private void start(boolean checkEvents) {
-        if (webSocket == null) {
-            webSocket = Client.getInstance().createWebSocketConnection(webSocketListener);
-        }
-
-        webSocket.send("[0,\"sv\"]");
-        webSocket.send("[0, \"ea\", \"u" + ClientHelper.getUserId() + "\"]");
-        if (checkEvents) {
-            long time = System.currentTimeMillis();
-            Log.d("WS_SERVICE", "HANDLE CHECK LAST EVENTS: " + time + " : " + lastHardCheckTime + " : " + (time - lastHardCheckTime));
-            if ((time - lastHardCheckTime) >= 1000 * 60 * 1) {
-                lastHardCheckTime = time;
+        if (Client.getInstance().getNetworkState()) {
+            if (webSocket == null) {
+                webSocket = Client.getInstance().createWebSocketConnection(webSocketListener);
+            }
+            webSocket.send("[0,\"sv\"]");
+            webSocket.send("[0, \"ea\", \"u" + ClientHelper.getUserId() + "\"]");
+            if (checkEvents) {
                 handleEvent(WebSocketEvent.TYPE_QMS);
                 handleEvent(WebSocketEvent.TYPE_THEME);
             }
@@ -193,8 +215,8 @@ public class NotificationsService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.i("WS_SERVICE", "Service: onDestroy");
-        if (webSocket != null)
-            webSocket.close(1000, null);
+        stop();
+        Client.getInstance().removeNetworkObserver(networkObserver);
         App.getInstance().removePreferenceChangeObserver(notificationSettingObserver);
     }
 
@@ -270,6 +292,7 @@ public class NotificationsService extends Service {
 
         if (observable != null) {
             observable
+                    .onErrorReturnItem(new ArrayList<>())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(consumer);
