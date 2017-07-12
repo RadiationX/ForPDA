@@ -12,6 +12,7 @@ public class NotificationEvent {
 
     private String themeTitle = "";
     private String userNick = "";
+    private String source = "";
 
     //Theme, Mentions?
     private int lastReadTimeStamp = 0;
@@ -92,5 +93,13 @@ public class NotificationEvent {
 
     public void setMessageCount(int messageCount) {
         this.messageCount = messageCount;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 }

@@ -13,13 +13,21 @@ import android.os.IBinder;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.util.ArraySet;
+import android.support.v4.util.Pair;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.util.SparseArray;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.events.Events;
@@ -30,8 +38,14 @@ import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.rxapi.ForumUsersCache;
 import forpdateam.ru.forpda.utils.BitmapUtils;
+import forpdateam.ru.forpda.utils.Html;
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.BiFunction;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Response;
 import okhttp3.WebSocket;
@@ -43,6 +57,8 @@ import okio.ByteString;
  */
 
 public class NotificationsService extends Service {
+    private final static int NOTIFY_STACKED_QMS_ID = -123;
+    private final static int NOTIFY_STACKED_FAV_ID = -234;
     public final static String CHECK_LAST_EVENTS = "SOSNI_HUICA_DOZE";
     private NotificationManagerCompat mNotificationManager;
     private SparseArray<WebSocketEvent> notificationEvents = new SparseArray<>();
@@ -123,6 +139,7 @@ public class NotificationsService extends Service {
         }, 5000);*/
         if (intent != null && intent.getAction() != null && intent.getAction().equals(CHECK_LAST_EVENTS)) {
             Log.d("WS_SERVICE", "HANDLE CHECK LAST EVENTS");
+            checkLastEvents();
         }
         return START_STICKY;
     }
@@ -150,6 +167,192 @@ public class NotificationsService extends Service {
             restartIntent.putExtra("RESTART", "RESTART_CHEBUREK");
             am.setExact(AlarmManager.RTC, System.currentTimeMillis() + 3000, pi);
         }
+    }
+
+    private void checkLastEvents() {
+
+
+        loadQmsEvents(notificationEvents1 -> {
+            List<NotificationEvent> oldQmsEvents = getOldEvents(WebSocketEvent.TYPE_QMS);
+            oldQmsEvents = new ArrayList<>();
+            compareEvents(oldQmsEvents, notificationEvents1, WebSocketEvent.TYPE_QMS);
+            Set<String> newSavedQmsEvents = new ArraySet<>();
+            for (NotificationEvent event : notificationEvents1) {
+                newSavedQmsEvents.add(event.getSource());
+            }
+            App.getInstance().getPreferences().edit().putStringSet("test.notifications.qms_events", newSavedQmsEvents).apply();
+        });
+
+        loadFavEvents(notificationEvents1 -> {
+            List<NotificationEvent> oldFavEvents = getOldEvents(WebSocketEvent.TYPE_THEME);
+            oldFavEvents = new ArrayList<>();
+            compareEvents(oldFavEvents, notificationEvents1, WebSocketEvent.TYPE_THEME);
+            Set<String> newSavedQmsEvents = new ArraySet<>();
+            for (NotificationEvent event : notificationEvents1) {
+                newSavedQmsEvents.add(event.getSource());
+            }
+            App.getInstance().getPreferences().edit().putStringSet("test.notifications.qms_events", newSavedQmsEvents).apply();
+        });
+
+
+    }
+
+    private String getOldEventsSource(int type) {
+        String prefKey = "";
+        if (type == WebSocketEvent.TYPE_QMS) {
+            prefKey = "test.notifications.events_qms";
+        } else if (type == WebSocketEvent.TYPE_THEME) {
+            prefKey = "test.notifications.events_fav";
+        }
+
+        Set<String> oldSavedEvents = App.getInstance().getPreferences().getStringSet(prefKey, new ArraySet<>());
+        StringBuilder response = new StringBuilder();
+        for (String source : oldSavedEvents) {
+            response.append(source).append('\n');
+        }
+        return response.toString();
+    }
+
+    private List<NotificationEvent> getOldEvents(int type) {
+        String response = getOldEventsSource(type);
+        return Api.Events().getQmsEvents(response);
+    }
+
+    private void compareEvents(List<NotificationEvent> oldEvents, List<NotificationEvent> newEvents, int type) {
+        List<NotificationEvent> resultEvents = new ArrayList<>();
+        for (NotificationEvent newEvent : newEvents) {
+            boolean isNew = true;
+            for (NotificationEvent oldEvent : oldEvents) {
+                if (newEvent.getThemeId() == oldEvent.getThemeId()) {
+                    if (newEvent.getTimeStamp() <= oldEvent.getTimeStamp()) {
+                        isNew = false;
+                    }
+                }
+            }
+            if (isNew) {
+                WebSocketEvent webSocketEvent = new WebSocketEvent();
+                webSocketEvent.setId(newEvent.getThemeId());
+                webSocketEvent.setType(type);
+                webSocketEvent.setEventCode(WebSocketEvent.EVENT_NEW);
+                newEvent.setWebSocketEvent(webSocketEvent);
+                resultEvents.add(newEvent);
+            }
+        }
+        /*Log.d("WS_CHECK", "compareEvents " + resultEvents.size());
+        for (NotificationEvent event : resultEvents) {
+            sendNotification(event);
+        }*/
+        sendNotifications(resultEvents);
+
+
+    }
+
+    private String generateStackedTitle(List<NotificationEvent> notificationEvents) {
+        return generateStackedSummary(notificationEvents);
+    }
+
+    private CharSequence generateStackedContent(List<NotificationEvent> notificationEvents) {
+        StringBuilder content = new StringBuilder();
+
+        final int maxCount = 4;
+        int size = Math.min(notificationEvents.size(), maxCount);
+        for (int i = 0; i < size; i++) {
+            NotificationEvent event = notificationEvents.get(i);
+
+
+            WebSocketEvent webSocketEvent = event.getWebSocketEvent();
+            if (webSocketEvent.getType() == WebSocketEvent.TYPE_QMS) {
+                content.append("<b>").append(event.getUserNick()).append("</b>");
+                content.append(": ").append(event.getThemeTitle());
+            } else if (webSocketEvent.getType() == WebSocketEvent.TYPE_THEME) {
+                content.append(event.getThemeTitle());
+            }
+            if (i < size - 1) {
+                content.append("<br>");
+            }
+        }
+
+        if (notificationEvents.size() > size) {
+            content.append("<br>");
+            content.append("...и еще ").append(notificationEvents.size() - size);
+        }
+
+        return Html.fromHtml(content.toString());
+    }
+
+    private String generateStackedSummary(List<NotificationEvent> notificationEvents) {
+        return generateSummaryText(notificationEvents.get(0));
+    }
+
+    @DrawableRes
+    public int generateStackedSmallIcon(List<NotificationEvent> notificationEvents) {
+        return generateSmallIcon(notificationEvents.get(0));
+    }
+
+    private String generateStackedIntentUrl(List<NotificationEvent> notificationEvents) {
+        NotificationEvent notificationEvent = notificationEvents.get(0);
+        WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
+        switch (webSocketEvent.getType()) {
+            case WebSocketEvent.TYPE_QMS:
+                return "http://4pda.ru/forum/index.php?act=qms";
+            case WebSocketEvent.TYPE_THEME:
+                return "http://4pda.ru/forum/index.php?act=fav";
+        }
+        return "";
+    }
+
+    public void sendNotifications(List<NotificationEvent> notificationEvents) {
+        if (notificationEvents.size() == 0) {
+            return;
+        }
+        if (notificationEvents.size() == 1) {
+            sendNotification(notificationEvents.get(0));
+            return;
+        }
+        // WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
+
+
+        String title = generateStackedTitle(notificationEvents);
+        CharSequence text = generateStackedContent(notificationEvents);
+        String summaryText = generateStackedSummary(notificationEvents);
+
+        NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
+        bigTextStyle.setBigContentTitle(title);
+        bigTextStyle.bigText(text);
+        bigTextStyle.setSummaryText(summaryText);
+
+        NotificationCompat.Builder mBuilder;
+        mBuilder = new NotificationCompat.Builder(this);
+
+
+        mBuilder.setSmallIcon(generateStackedSmallIcon(notificationEvents));
+
+        mBuilder.setContentTitle(title);
+        mBuilder.setContentText(text);
+        mBuilder.setStyle(bigTextStyle);
+
+
+        Intent notifyIntent = new Intent(this, MainActivity.class);
+        notifyIntent.setData(Uri.parse(generateStackedIntentUrl(notificationEvents)));
+        notifyIntent.setAction(Intent.ACTION_VIEW);
+        PendingIntent notifyPendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, 0);
+        mBuilder.setContentIntent(notifyPendingIntent);
+
+        mBuilder.setAutoCancel(true);
+
+        mBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        mBuilder.setCategory(NotificationCompat.CATEGORY_SOCIAL);
+        mBuilder.setDefaults(NotificationCompat.DEFAULT_LIGHTS | NotificationCompat.DEFAULT_VIBRATE | NotificationCompat.DEFAULT_SOUND);
+
+        int id = 0;
+        WebSocketEvent webSocketEvent = notificationEvents.get(0).getWebSocketEvent();
+        if (webSocketEvent.getType() == WebSocketEvent.TYPE_QMS) {
+            id = NOTIFY_STACKED_QMS_ID;
+        } else if (webSocketEvent.getType() == WebSocketEvent.TYPE_THEME) {
+            id = NOTIFY_STACKED_FAV_ID;
+        }
+
+        mNotificationManager.notify(id, mBuilder.build());
     }
 
     private void handleWebSocketEvent(WebSocketEvent webSocketEvent) {
@@ -196,32 +399,40 @@ public class NotificationsService extends Service {
         }
     }
 
-    private void handleQmsEvent(WebSocketEvent webSocketEvent) {
+    private void loadQmsEvents(Consumer<List<NotificationEvent>> consumer) {
         Observable.fromCallable(() -> Api.Events().getQmsEvents())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(qmsEvents -> {
-                    for (NotificationEvent notificationEvent : qmsEvents) {
-                        if (notificationEvent.getThemeId() == webSocketEvent.getId()) {
-                            notificationEvent.setWebSocketEvent(webSocketEvent);
-                            sendNotification(notificationEvent);
-                        }
-                    }
-                });
+                .subscribe(consumer);
     }
 
-    private void handleFavEvent(WebSocketEvent webSocketEvent) {
+    private void loadFavEvents(Consumer<List<NotificationEvent>> consumer) {
         Observable.fromCallable(() -> Api.Events().getFavoritesEvents())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(favEvents -> {
-                    for (NotificationEvent notificationEvent : favEvents) {
-                        if (notificationEvent.getThemeId() == webSocketEvent.getId()) {
-                            notificationEvent.setWebSocketEvent(webSocketEvent);
-                            sendNotification(notificationEvent);
-                        }
-                    }
-                });
+                .subscribe(consumer);
+    }
+
+    private void handleQmsEvent(WebSocketEvent webSocketEvent) {
+        loadQmsEvents(qmsEvents -> {
+            for (NotificationEvent notificationEvent : qmsEvents) {
+                if (notificationEvent.getThemeId() == webSocketEvent.getId()) {
+                    notificationEvent.setWebSocketEvent(webSocketEvent);
+                    sendNotification(notificationEvent);
+                }
+            }
+        });
+    }
+
+    private void handleFavEvent(WebSocketEvent webSocketEvent) {
+        loadFavEvents(favEvents -> {
+            for (NotificationEvent notificationEvent : favEvents) {
+                if (notificationEvent.getThemeId() == webSocketEvent.getId()) {
+                    notificationEvent.setWebSocketEvent(webSocketEvent);
+                    sendNotification(notificationEvent);
+                }
+            }
+        });
     }
 
     private void handleSiteEvent(WebSocketEvent webSocketEvent) {
@@ -247,19 +458,20 @@ public class NotificationsService extends Service {
                     Log.d("WS_BITMAP", "" + bitmap.getHeight() + " : " + bitmap.getWidth());
                 }
             }
-        }
-        if (bitmap != null) {
-            Resources res = App.getContext().getResources();
-            int height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
-            int width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
+            if (bitmap != null) {
+                Resources res = App.getContext().getResources();
+                int height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
+                int width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
 
-            Bitmap prevBitmap = bitmap;
-            bitmap = BitmapUtils.centerCrop(bitmap, width, height, 1.0f);
-            prevBitmap.recycle();
+                Bitmap prevBitmap = bitmap;
+                bitmap = BitmapUtils.centerCrop(bitmap, width, height, 1.0f);
+                prevBitmap.recycle();
 
-            boolean isCircle = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
-            bitmap = BitmapUtils.createAvatar(bitmap, width, height, isCircle);
+                boolean isCircle = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+                bitmap = BitmapUtils.createAvatar(bitmap, width, height, isCircle);
+            }
         }
+
 
         return bitmap;
     }
@@ -310,7 +522,7 @@ public class NotificationsService extends Service {
 
                     mBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
                     mBuilder.setCategory(NotificationCompat.CATEGORY_SOCIAL);
-                    mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
+                    mBuilder.setDefaults(NotificationCompat.DEFAULT_LIGHTS | NotificationCompat.DEFAULT_VIBRATE | NotificationCompat.DEFAULT_SOUND);
 
                     mNotificationManager.cancel(webSocketEvent.createNotificationId());
                     mNotificationManager.notify(webSocketEvent.createNotificationId(), mBuilder.build());
@@ -401,7 +613,7 @@ public class NotificationsService extends Service {
             /*case WebSocketEvent.TYPE_SITE:
                 return "Комментарий";*/
         }
-        return "Summary";
+        return "";
     }
 
 

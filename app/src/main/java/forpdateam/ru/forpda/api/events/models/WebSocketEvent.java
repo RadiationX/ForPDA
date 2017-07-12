@@ -5,14 +5,13 @@ package forpdateam.ru.forpda.api.events.models;
  */
 
 public class WebSocketEvent {
-    public final static int SITE_EVENT_NEW  = 1;
-    public final static int SITE_EVENT_READ = 2;
-    public final static int SITE_EVENT_MENTION = 3;
-    public final static int SITE_EVENT_HAT_CHANGE = 4;
-
-    public final static String SITE_TYPE_SITE = "s";
-    public final static String SITE_TYPE_THEME = "t";
-    public final static String SITE_TYPE_QMS = "q";
+    public final static int SRC_EVENT_NEW = 1;
+    public final static int SRC_EVENT_READ = 2;
+    public final static int SRC_EVENT_MENTION = 3;
+    public final static int SRC_EVENT_HAT_CHANGE = 4;
+    public final static String SRC_TYPE_SITE = "s";
+    public final static String SRC_TYPE_THEME = "t";
+    public final static String SRC_TYPE_QMS = "q";
     /*
     * New - "1" - Qms/Favorites
     * Read - "2" - Qms/Favorites
