@@ -1,10 +1,14 @@
 package forpdateam.ru.forpda.settings;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceScreen;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -24,9 +28,10 @@ import io.reactivex.schedulers.Schedulers;
 
 public class SettingsFragment extends PreferenceFragment {
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+
         if (ClientHelper.getAuthState()) {
             findPreference("auth.action.logout").setOnPreferenceClickListener(preference -> {
                 new AlertDialog.Builder(getActivity())
@@ -51,6 +56,8 @@ public class SettingsFragment extends PreferenceFragment {
         }
 
         findPreference("about.application").setSummary("Версия " + BuildConfig.VERSION_NAME);
+
+
 
         findPreference(Preferences.Main.WEBVIEW_FONT_SIZE).setOnPreferenceClickListener(preference -> {
             View v = getActivity().getLayoutInflater().inflate(R.layout.dialog_font_size, null);
@@ -91,6 +98,13 @@ public class SettingsFragment extends PreferenceFragment {
                 App.getInstance().getPreferences().edit().putInt(Preferences.Main.WEBVIEW_FONT_SIZE, 16).apply();
             });
             return false;
+        });
+
+        findPreference("main.notify.open").setOnPreferenceClickListener(preference -> {
+            Intent intent = new Intent(getActivity(), SettingsActivity.class);
+            intent.putExtra("settings", "open.suka.notify.prefs");
+            startActivity(intent);
+            return true;
         });
     }
 }

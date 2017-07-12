@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:title="Уведомления">
+    <PreferenceCategory android:title="Общие">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="notify.main.is_enabled"
+            android:title="Уведомлять" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:dependency="notify.main.is_enabled"
+            android:title="Звук" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:dependency="notify.main.is_enabled"
+            android:title="Вибрация" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:dependency="notify.main.is_enabled"
+            android:title="Индикатор" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:dependency="notify.main.is_enabled"
+            android:title="Загружать аватары" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Избранное">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:dependency="notify.main.is_enabled"
+            android:key="notify.fav.is_enabled"
+            android:title="Уведомлять" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:dependency="notify.fav.is_enabled"
+            android:title="Только важные" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Ответы">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:dependency="notify.main.is_enabled"
+            android:key="notify.mention.is_enabled"
+            android:title="Уведомлять" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Личные сообщения QMS">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:dependency="notify.main.is_enabled"
+            android:key="notify.qms.is_enabled"
+            android:title="Уведомлять" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -1,0 +1,29 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- These settings headers are only used on tablets. -->
+
+    <header
+        android:fragment="forpdateam.ru.forpda.settings.SettingsFragment"
+        android:title="SUK1">
+        <extra
+            android:name="settings"
+            android:value="prefs_general" />
+    </header>
+
+    <header
+        android:fragment="forpdateam.ru.forpda.settings.SettingsFragment"
+        android:title="SUK2">
+        <extra
+            android:name="settings"
+            android:value="prefs_notification" />
+    </header>
+
+    <header
+        android:fragment="forpdateam.ru.forpda.settings.SettingsFragment"
+        android:title="SUK3">
+        <extra
+            android:name="settings"
+            android:value="prefs_sync" />
+    </header>
+
+</preference-headers>

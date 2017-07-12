@@ -366,9 +366,9 @@ public class NotificationsService extends Service {
         WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
 
 
-        String title = generateTitle(notificationEvent);
-        String text = generateContentText(notificationEvent);
-        String summaryText = generateSummaryText(notificationEvent);
+        String title = createTitle(notificationEvent);
+        String text = createContent(notificationEvent);
+        String summaryText = createSummary(notificationEvent);
 
         NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
         bigTextStyle.setBigContentTitle(title);
@@ -388,7 +388,7 @@ public class NotificationsService extends Service {
                     if (bitmap != null && webSocketEvent.getType() != WebSocketEvent.TYPE_SITE) {
                         mBuilder.setLargeIcon(bitmap);
                     }
-                    mBuilder.setSmallIcon(generateSmallIcon(notificationEvent));
+                    mBuilder.setSmallIcon(createSmallIcon(notificationEvent));
 
                     mBuilder.setContentTitle(title);
                     mBuilder.setContentText(text);
@@ -396,7 +396,7 @@ public class NotificationsService extends Service {
 
 
                     Intent notifyIntent = new Intent(this, MainActivity.class);
-                    notifyIntent.setData(Uri.parse(generateIntentUrl(notificationEvent)));
+                    notifyIntent.setData(Uri.parse(createIntentUrl(notificationEvent)));
                     notifyIntent.setAction(Intent.ACTION_VIEW);
                     PendingIntent notifyPendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, 0);
                     mBuilder.setContentIntent(notifyPendingIntent);
@@ -424,9 +424,9 @@ public class NotificationsService extends Service {
         // WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
 
 
-        String title = generateStackedTitle(notificationEvents);
-        CharSequence text = generateStackedContent(notificationEvents);
-        String summaryText = generateStackedSummary(notificationEvents);
+        String title = createStackedTitle(notificationEvents);
+        CharSequence text = createStackedContent(notificationEvents);
+        String summaryText = createStackedSummary(notificationEvents);
 
         NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
         bigTextStyle.setBigContentTitle(title);
@@ -444,7 +444,7 @@ public class NotificationsService extends Service {
         mBuilder = new NotificationCompat.Builder(this);
 
 
-        mBuilder.setSmallIcon(generateStackedSmallIcon(notificationEvents));
+        mBuilder.setSmallIcon(createStackedSmallIcon(notificationEvents));
 
         mBuilder.setContentTitle(title);
         mBuilder.setContentText(text);
@@ -452,7 +452,7 @@ public class NotificationsService extends Service {
 
 
         Intent notifyIntent = new Intent(this, MainActivity.class);
-        notifyIntent.setData(Uri.parse(generateStackedIntentUrl(notificationEvents)));
+        notifyIntent.setData(Uri.parse(createStackedIntentUrl(notificationEvents)));
         notifyIntent.setAction(Intent.ACTION_VIEW);
         PendingIntent notifyPendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, 0);
         mBuilder.setContentIntent(notifyPendingIntent);
@@ -480,7 +480,7 @@ public class NotificationsService extends Service {
     * */
 
     @DrawableRes
-    public int generateSmallIcon(NotificationEvent notificationEvent) {
+    public int createSmallIcon(NotificationEvent notificationEvent) {
         WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
 
         switch (webSocketEvent.getType()) {
@@ -497,7 +497,7 @@ public class NotificationsService extends Service {
         return R.drawable.ic_notify_qms;
     }
 
-    public String generateTitle(NotificationEvent notificationEvent) {
+    public String createTitle(NotificationEvent notificationEvent) {
         WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
         switch (webSocketEvent.getType()) {
             case WebSocketEvent.TYPE_QMS:
@@ -512,7 +512,7 @@ public class NotificationsService extends Service {
         return notificationEvent.getUserNick();
     }
 
-    public String generateContentText(NotificationEvent notificationEvent) {
+    public String createContent(NotificationEvent notificationEvent) {
         WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
         switch (webSocketEvent.getType()) {
             case WebSocketEvent.TYPE_QMS:
@@ -529,7 +529,7 @@ public class NotificationsService extends Service {
         return "Title";
     }
 
-    public String generateSummaryText(NotificationEvent notificationEvent) {
+    public String createSummary(NotificationEvent notificationEvent) {
         WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
         if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
             return "Упоминание";
@@ -545,7 +545,7 @@ public class NotificationsService extends Service {
         return "Summary";
     }
 
-    public String generateIntentUrl(NotificationEvent notificationEvent) {
+    public String createIntentUrl(NotificationEvent notificationEvent) {
         WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
         if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
             switch (webSocketEvent.getType()) {
@@ -560,8 +560,6 @@ public class NotificationsService extends Service {
                 return "http://4pda.ru/forum/index.php?act=qms&mid=" + notificationEvent.getUserId() + "&t=" + notificationEvent.getThemeId();
             case WebSocketEvent.TYPE_THEME:
                 return "http://4pda.ru/forum/index.php?showtopic=" + notificationEvent.getThemeId() + "&view=getnewpost";
-            /*case WebSocketEvent.TYPE_SITE:
-                return "Комментарий";*/
         }
         return "";
     }
@@ -570,11 +568,11 @@ public class NotificationsService extends Service {
     /*
     * STACKED EVENTS
     * */
-    private String generateStackedTitle(List<NotificationEvent> notificationEvents) {
-        return generateStackedSummary(notificationEvents);
+    private String createStackedTitle(List<NotificationEvent> notificationEvents) {
+        return createStackedSummary(notificationEvents);
     }
 
-    private CharSequence generateStackedContent(List<NotificationEvent> notificationEvents) {
+    private CharSequence createStackedContent(List<NotificationEvent> notificationEvents) {
         StringBuilder content = new StringBuilder();
 
         final int maxCount = 4;
@@ -601,16 +599,16 @@ public class NotificationsService extends Service {
         return Html.fromHtml(content.toString());
     }
 
-    private String generateStackedSummary(List<NotificationEvent> notificationEvents) {
-        return generateSummaryText(notificationEvents.get(0));
+    private String createStackedSummary(List<NotificationEvent> notificationEvents) {
+        return createSummary(notificationEvents.get(0));
     }
 
     @DrawableRes
-    public int generateStackedSmallIcon(List<NotificationEvent> notificationEvents) {
-        return generateSmallIcon(notificationEvents.get(0));
+    public int createStackedSmallIcon(List<NotificationEvent> notificationEvents) {
+        return createSmallIcon(notificationEvents.get(0));
     }
 
-    private String generateStackedIntentUrl(List<NotificationEvent> notificationEvents) {
+    private String createStackedIntentUrl(List<NotificationEvent> notificationEvents) {
         NotificationEvent notificationEvent = notificationEvents.get(0);
         WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
         switch (webSocketEvent.getType()) {
