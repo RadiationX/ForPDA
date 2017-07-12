@@ -21,6 +21,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observer;
 import java.util.Set;
 import java.util.regex.Matcher;
 
@@ -32,11 +33,14 @@ import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.rxapi.ForumUsersCache;
+import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.BitmapUtils;
 import forpdateam.ru.forpda.utils.Html;
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Response;
 import okhttp3.WebSocket;
@@ -55,6 +59,38 @@ public class NotificationsService extends Service {
     private SparseArray<WebSocketEvent> notificationEvents = new SparseArray<>();
     private WebSocket webSocket;
     private long lastHardCheckTime = 0;
+
+    private Observer notificationSettingObserver = (observable, o) -> {
+        if (o == null) return;
+        String key = (String) o;
+        Log.d("WS_SETTINGS", "KEY: " + key);
+        switch (key) {
+            case Preferences.Notifications.Main.ENABLED: {
+                if (Preferences.Notifications.Main.isEnabled()) {
+                    start(true);
+                } else {
+                    stop();
+                }
+                break;
+            }
+            case Preferences.Notifications.Favorites.ENABLED: {
+                if (Preferences.Notifications.Favorites.isEnabled()) {
+                    handleEvent(WebSocketEvent.TYPE_THEME);
+                }
+                break;
+            }
+            case Preferences.Notifications.Qms.ENABLED: {
+                if (Preferences.Notifications.Qms.isEnabled()) {
+                    handleEvent(WebSocketEvent.TYPE_QMS);
+                }
+                break;
+            }
+            /*case Preferences.Notifications.Mentions.ENABLED: {
+
+                break;
+            }*/
+        }
+    };
 
     private WebSocketListener webSocketListener = new WebSocketListener() {
         Matcher matcher = null;
@@ -112,24 +148,31 @@ public class NotificationsService extends Service {
     @Override
     public void onCreate() {
         Log.i("WS_SERVICE", "Service: onCreate " + this);
+        App.getInstance().addPreferenceChangeObserver(notificationSettingObserver);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("WS_SERVICE", "Service: onStartCommand " + flags + " : " + startId + " : " + intent);
         Log.i("WS_SERVICE", "Service: onStartCommand " + webSocket);
-        if (webSocket == null) {
-            webSocket = Client.getInstance().createWebSocketConnection(webSocketListener);
-        }
         if (mNotificationManager == null) {
             mNotificationManager = NotificationManagerCompat.from(this);
         }
+        if (Preferences.Notifications.Main.isEnabled()) {
+            boolean checkEvents = intent != null && intent.getAction() != null && intent.getAction().equals(CHECK_LAST_EVENTS);
+            start(checkEvents);
+        }
+        return START_STICKY;
+    }
+
+    private void start(boolean checkEvents) {
+        if (webSocket == null) {
+            webSocket = Client.getInstance().createWebSocketConnection(webSocketListener);
+        }
+
         webSocket.send("[0,\"sv\"]");
         webSocket.send("[0, \"ea\", \"u" + ClientHelper.getUserId() + "\"]");
-        /*new Handler().postDelayed(() -> {
-            webSocketListener.onMessage(webSocket, "[30309,0,\"s344799\",3,3977242]");
-        }, 5000);*/
-        if (intent != null && intent.getAction() != null && intent.getAction().equals(CHECK_LAST_EVENTS)) {
+        if (checkEvents) {
             long time = System.currentTimeMillis();
             Log.d("WS_SERVICE", "HANDLE CHECK LAST EVENTS: " + time + " : " + lastHardCheckTime + " : " + (time - lastHardCheckTime));
             if ((time - lastHardCheckTime) >= 1000 * 60 * 1) {
@@ -138,7 +181,12 @@ public class NotificationsService extends Service {
                 handleEvent(WebSocketEvent.TYPE_THEME);
             }
         }
-        return START_STICKY;
+    }
+
+    private void stop() {
+        if (webSocket != null)
+            webSocket.close(1000, null);
+        webSocket = null;
     }
 
     @Override
@@ -147,6 +195,7 @@ public class NotificationsService extends Service {
         Log.i("WS_SERVICE", "Service: onDestroy");
         if (webSocket != null)
             webSocket.close(1000, null);
+        App.getInstance().removePreferenceChangeObserver(notificationSettingObserver);
     }
 
 
@@ -243,31 +292,49 @@ public class NotificationsService extends Service {
             sendNotification(notificationEvent);
             return;
         }
+        if (type == WebSocketEvent.TYPE_QMS) {
+            if (!Preferences.Notifications.Qms.isEnabled()) {
+                return;
+            }
+        } else if (type == WebSocketEvent.TYPE_THEME) {
+            if (webSocketEvent != null) {
+                if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
+                    if (!Preferences.Notifications.Mentions.isEnabled()) {
+                        return;
+                    }
+                }
+            }
+            if (!Preferences.Notifications.Favorites.isEnabled()) {
+                return;
+            }
+        }
 
         loadEvents(loadedEvents -> {
             List<NotificationEvent> savedEvents = getSavedEvents(type);
             //savedEvents = new ArrayList<NotificationEvent>();
             saveEvents(loadedEvents, type);
             List<NotificationEvent> newEvents = compareEvents(savedEvents, loadedEvents, type);
+            List<NotificationEvent> stackedNewEvents = new ArrayList<>(newEvents);
 
             if (webSocketEvent != null) {
                 for (NotificationEvent newEvent : newEvents) {
                     if (newEvent.getThemeId() == webSocketEvent.getId()) {
                         newEvent.setWebSocketEvent(webSocketEvent);
+                        stackedNewEvents.remove(newEvent);
                         sendNotification(newEvent);
                     }
                 }
             }
-            sendNotifications(newEvents);
+            sendNotifications(stackedNewEvents);
         }, type);
     }
 
     private List<NotificationEvent> getSavedEvents(int type) {
         String prefKey = "";
         if (type == WebSocketEvent.TYPE_QMS) {
-            prefKey = "test.notifications.events_qms";
+            prefKey = Preferences.Notifications.Data.QMS_EVENTS;
         } else if (type == WebSocketEvent.TYPE_THEME) {
-            prefKey = "test.notifications.events_fav";
+            prefKey = Preferences.Notifications.Data.FAVORITES_EVENTS;
         }
 
         Set<String> oldSavedEvents = App.getInstance().getPreferences().getStringSet(prefKey, new ArraySet<>());
@@ -288,9 +355,9 @@ public class NotificationsService extends Service {
     private void saveEvents(List<NotificationEvent> loadedEvents, int type) {
         String prefKey = "";
         if (type == WebSocketEvent.TYPE_QMS) {
-            prefKey = "test.notifications.events_qms";
+            prefKey = Preferences.Notifications.Data.QMS_EVENTS;
         } else if (type == WebSocketEvent.TYPE_THEME) {
-            prefKey = "test.notifications.events_fav";
+            prefKey = Preferences.Notifications.Data.FAVORITES_EVENTS;
         }
 
         Set<String> savedEvents = new ArraySet<>();
@@ -301,6 +368,11 @@ public class NotificationsService extends Service {
     }
 
     private List<NotificationEvent> compareEvents(List<NotificationEvent> oldEvents, List<NotificationEvent> newEvents, int type) {
+        boolean onlyImportant = false;
+        if (type == WebSocketEvent.TYPE_THEME) {
+            onlyImportant = Preferences.Notifications.Favorites.isOnlyImportant();
+        }
+
         List<NotificationEvent> resultEvents = new ArrayList<>();
         for (NotificationEvent newEvent : newEvents) {
             boolean isNew = true;
@@ -311,6 +383,13 @@ public class NotificationsService extends Service {
                     }
                 }
             }
+
+            if (onlyImportant) {
+                if (!newEvent.isImportant()) {
+                    isNew = false;
+                }
+            }
+
             if (isNew) {
                 WebSocketEvent webSocketEvent = new WebSocketEvent();
                 webSocketEvent.setId(newEvent.getThemeId());
@@ -341,28 +420,14 @@ public class NotificationsService extends Service {
                     Log.d("WS_BITMAP", "" + bitmap.getHeight() + " : " + bitmap.getWidth());
                 }
             }
-            if (bitmap != null) {
-                Resources res = App.getContext().getResources();
-                int height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
-                int width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
 
-                Bitmap prevBitmap = bitmap;
-                bitmap = BitmapUtils.centerCrop(bitmap, width, height, 1.0f);
-                prevBitmap.recycle();
-
-                boolean isCircle = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
-                bitmap = BitmapUtils.createAvatar(bitmap, width, height, isCircle);
-            }
         }
 
 
         return bitmap;
     }
 
-    public void sendNotification(NotificationEvent notificationEvent) {
-        if (notificationEvent.getUserId() == ClientHelper.getUserId()) {
-            return;
-        }
+    public void sendNotification(NotificationEvent notificationEvent, Bitmap avatar) {
         WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
 
 
@@ -375,41 +440,76 @@ public class NotificationsService extends Service {
         bigTextStyle.bigText(text);
         bigTextStyle.setSummaryText(summaryText);
 
-        Observable.fromCallable(() -> loadAvatar(notificationEvent))
-                .onErrorReturnItem(ImageLoader.getInstance().loadImageSync("assets://av.png"))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(bitmap -> {
-                    Log.d("WS_RX_BITMAP", "" + bitmap);
+        NotificationCompat.Builder mBuilder;
+        mBuilder = new NotificationCompat.Builder(this);
 
-                    NotificationCompat.Builder mBuilder;
-                    mBuilder = new NotificationCompat.Builder(this);
+        if (avatar != null && webSocketEvent.getType() != WebSocketEvent.TYPE_SITE) {
+            mBuilder.setLargeIcon(avatar);
+        }
+        mBuilder.setSmallIcon(createSmallIcon(notificationEvent));
 
-                    if (bitmap != null && webSocketEvent.getType() != WebSocketEvent.TYPE_SITE) {
-                        mBuilder.setLargeIcon(bitmap);
-                    }
-                    mBuilder.setSmallIcon(createSmallIcon(notificationEvent));
-
-                    mBuilder.setContentTitle(title);
-                    mBuilder.setContentText(text);
-                    mBuilder.setStyle(bigTextStyle);
+        mBuilder.setContentTitle(title);
+        mBuilder.setContentText(text);
+        mBuilder.setStyle(bigTextStyle);
 
 
-                    Intent notifyIntent = new Intent(this, MainActivity.class);
-                    notifyIntent.setData(Uri.parse(createIntentUrl(notificationEvent)));
-                    notifyIntent.setAction(Intent.ACTION_VIEW);
-                    PendingIntent notifyPendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, 0);
-                    mBuilder.setContentIntent(notifyPendingIntent);
+        Intent notifyIntent = new Intent(this, MainActivity.class);
+        notifyIntent.setData(Uri.parse(createIntentUrl(notificationEvent)));
+        notifyIntent.setAction(Intent.ACTION_VIEW);
+        PendingIntent notifyPendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, 0);
+        mBuilder.setContentIntent(notifyPendingIntent);
 
-                    mBuilder.setAutoCancel(true);
+        mBuilder.setAutoCancel(true);
 
-                    mBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-                    mBuilder.setCategory(NotificationCompat.CATEGORY_SOCIAL);
-                    mBuilder.setDefaults(NotificationCompat.DEFAULT_LIGHTS | NotificationCompat.DEFAULT_VIBRATE | NotificationCompat.DEFAULT_SOUND);
+        mBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        mBuilder.setCategory(NotificationCompat.CATEGORY_SOCIAL);
 
-                    mNotificationManager.cancel(webSocketEvent.createNotificationId());
-                    mNotificationManager.notify(webSocketEvent.createNotificationId(), mBuilder.build());
-                });
+
+        int defaults = 0;
+        if (Preferences.Notifications.Main.isSoundEnabled()) {
+            defaults |= NotificationCompat.DEFAULT_SOUND;
+        }
+        if (Preferences.Notifications.Main.isVibrationEnabled()) {
+            defaults |= NotificationCompat.DEFAULT_VIBRATE;
+        }
+        if (Preferences.Notifications.Main.isIndicatorEnabled()) {
+            defaults |= NotificationCompat.DEFAULT_LIGHTS;
+        }
+        mBuilder.setDefaults(defaults);
+
+        mNotificationManager.cancel(webSocketEvent.createNotificationId());
+        mNotificationManager.notify(webSocketEvent.createNotificationId(), mBuilder.build());
+    }
+
+    public void sendNotification(NotificationEvent notificationEvent) {
+        if (notificationEvent.getUserId() == ClientHelper.getUserId()) {
+            return;
+        }
+
+        if (Preferences.Notifications.Main.isAvatarsEnabled()) {
+            Observable.fromCallable(() -> loadAvatar(notificationEvent))
+                    .onErrorReturn(throwable -> ImageLoader.getInstance().loadImageSync("assets://av.png"))
+                    .map(bitmap -> {
+                        if (bitmap != null) {
+                            Resources res = App.getContext().getResources();
+                            int height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
+                            int width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
+
+                            Bitmap prevBitmap = bitmap;
+                            bitmap = BitmapUtils.centerCrop(bitmap, width, height, 1.0f);
+                            prevBitmap.recycle();
+
+                            boolean isCircle = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+                            bitmap = BitmapUtils.createAvatar(bitmap, width, height, isCircle);
+                        }
+                        return bitmap;
+                    })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(avatar -> sendNotification(notificationEvent, avatar));
+        } else {
+            sendNotification(notificationEvent, null);
+        }
     }
 
 
