@@ -16,8 +16,8 @@ import forpdateam.ru.forpda.api.events.models.WebSocketEvent;
  */
 
 public class Events {
-    private final static Pattern inspectorFavoritesPattern = Pattern.compile("(\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) (\\d+)");
-    private final static Pattern inspectorQmsPattern = Pattern.compile("(\\d+) \"([\\s\\S]*?)\" (\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) (\\d+)");
+    public final static Pattern inspectorFavoritesPattern = Pattern.compile("(\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) (\\d+)");
+    public final static Pattern inspectorQmsPattern = Pattern.compile("(\\d+) \"([\\s\\S]*?)\" (\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) (\\d+)");
     public final static Pattern webSocketEventPattern = Pattern.compile("\\[(\\d+),(\\d+),\"([\\s\\S])(\\d+)\",(\\d+),(\\d+)\\]");
 
     public WebSocketEvent parseWebSocketEvent(String message) {
@@ -34,13 +34,13 @@ public class Events {
             webSocketEvent.setUnknown2(Integer.parseInt(matcher.group(2)));
 
             switch (matcher.group(3)) {
-                case WebSocketEvent.SITE_TYPE_THEME:
+                case WebSocketEvent.SRC_TYPE_THEME:
                     webSocketEvent.setType(WebSocketEvent.TYPE_THEME);
                     break;
-                case WebSocketEvent.SITE_TYPE_SITE:
+                case WebSocketEvent.SRC_TYPE_SITE:
                     webSocketEvent.setType(WebSocketEvent.TYPE_SITE);
                     break;
-                case WebSocketEvent.SITE_TYPE_QMS:
+                case WebSocketEvent.SRC_TYPE_QMS:
                     webSocketEvent.setType(WebSocketEvent.TYPE_QMS);
                     break;
             }
@@ -48,16 +48,16 @@ public class Events {
             webSocketEvent.setId(Integer.parseInt(matcher.group(4)));
 
             switch (Integer.parseInt(matcher.group(5))) {
-                case WebSocketEvent.SITE_EVENT_NEW:
+                case WebSocketEvent.SRC_EVENT_NEW:
                     webSocketEvent.setEventCode(WebSocketEvent.EVENT_NEW);
                     break;
-                case WebSocketEvent.SITE_EVENT_READ:
+                case WebSocketEvent.SRC_EVENT_READ:
                     webSocketEvent.setEventCode(WebSocketEvent.EVENT_READ);
                     break;
-                case WebSocketEvent.SITE_EVENT_MENTION:
+                case WebSocketEvent.SRC_EVENT_MENTION:
                     webSocketEvent.setEventCode(WebSocketEvent.EVENT_MENTION);
                     break;
-                case WebSocketEvent.SITE_EVENT_HAT_CHANGE:
+                case WebSocketEvent.SRC_EVENT_HAT_CHANGE:
                     webSocketEvent.setEventCode(WebSocketEvent.EVENT_HAT_CHANGE);
                     break;
             }
@@ -73,37 +73,53 @@ public class Events {
         List<NotificationEvent> qmsThemes = new ArrayList<>();
         Matcher matcher = inspectorFavoritesPattern.matcher(response.getBody());
         while (matcher.find()) {
-            NotificationEvent notificationEvent = new NotificationEvent();
-            notificationEvent.setThemeId(Integer.parseInt(matcher.group(1)));
-            notificationEvent.setThemeTitle(Utils.fromHtml(matcher.group(2)));
-            notificationEvent.setMessageCount(Integer.parseInt(matcher.group(3)));
-            notificationEvent.setUserId(Integer.parseInt(matcher.group(4)));
-            notificationEvent.setUserNick(Utils.fromHtml(matcher.group(5)));
-            notificationEvent.setTimeStamp(Integer.parseInt(matcher.group(6)));
-            notificationEvent.setReadTimeStamp(Integer.parseInt(matcher.group(7)));
-            notificationEvent.setImportant(matcher.group(8).equals("1"));
+            NotificationEvent notificationEvent = getFavoritesEvent(matcher);
             qmsThemes.add(notificationEvent);
         }
         return qmsThemes;
+    }
+
+    public NotificationEvent getFavoritesEvent(Matcher matcher) {
+        NotificationEvent notificationEvent = new NotificationEvent();
+        notificationEvent.setSource(matcher.group());
+        notificationEvent.setThemeId(Integer.parseInt(matcher.group(1)));
+        notificationEvent.setThemeTitle(Utils.fromHtml(matcher.group(2)));
+        notificationEvent.setMessageCount(Integer.parseInt(matcher.group(3)));
+        notificationEvent.setUserId(Integer.parseInt(matcher.group(4)));
+        notificationEvent.setUserNick(Utils.fromHtml(matcher.group(5)));
+        notificationEvent.setTimeStamp(Integer.parseInt(matcher.group(6)));
+        notificationEvent.setReadTimeStamp(Integer.parseInt(matcher.group(7)));
+        notificationEvent.setImportant(matcher.group(8).equals("1"));
+        return notificationEvent;
     }
 
     public List<NotificationEvent> getQmsEvents() throws Exception {
         NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=inspector&CODE=qms");
+        return getQmsEvents(response.getBody());
+    }
+
+    public List<NotificationEvent> getQmsEvents(String response) {
         List<NotificationEvent> qmsThemes = new ArrayList<>();
-        Matcher matcher = inspectorQmsPattern.matcher(response.getBody());
+        Matcher matcher = inspectorQmsPattern.matcher(response);
         while (matcher.find()) {
-            NotificationEvent notificationEvent = new NotificationEvent();
-            notificationEvent.setThemeId(Integer.parseInt(matcher.group(1)));
-            notificationEvent.setThemeTitle(Utils.fromHtml(matcher.group(2)));
-            notificationEvent.setUserId(Integer.parseInt(matcher.group(3)));
-            notificationEvent.setUserNick(Utils.fromHtml(matcher.group(4)));
-            notificationEvent.setMessageCount(Integer.parseInt(matcher.group(6)));
-            if (notificationEvent.getUserNick().isEmpty() && notificationEvent.getThemeId() == 0) {
-                notificationEvent.setUserNick("Сообщения 4PDA");
-            }
+            NotificationEvent notificationEvent = getQmsEvent(matcher);
             qmsThemes.add(notificationEvent);
         }
         return qmsThemes;
     }
 
+    public NotificationEvent getQmsEvent(Matcher matcher) {
+        NotificationEvent notificationEvent = new NotificationEvent();
+        notificationEvent.setSource(matcher.group());
+        notificationEvent.setThemeId(Integer.parseInt(matcher.group(1)));
+        notificationEvent.setThemeTitle(Utils.fromHtml(matcher.group(2)));
+        notificationEvent.setUserId(Integer.parseInt(matcher.group(3)));
+        notificationEvent.setUserNick(Utils.fromHtml(matcher.group(4)));
+        notificationEvent.setTimeStamp(Integer.parseInt(matcher.group(5)));
+        notificationEvent.setMessageCount(Integer.parseInt(matcher.group(6)));
+        if (notificationEvent.getUserNick().isEmpty() && notificationEvent.getThemeId() == 0) {
+            notificationEvent.setUserNick("Сообщения 4PDA");
+        }
+        return notificationEvent;
+    }
 }
