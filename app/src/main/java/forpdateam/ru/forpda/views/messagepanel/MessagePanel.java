@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.views.messagepanel;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.CardView;

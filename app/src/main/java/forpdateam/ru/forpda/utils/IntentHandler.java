@@ -14,15 +14,12 @@ import org.acra.ACRA;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.TabManager;
-import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -41,9 +38,7 @@ import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
 import forpdateam.ru.forpda.settings.Preferences;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.Cookie;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 

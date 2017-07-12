@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.bdobjects.ForumUserBd;
-import forpdateam.ru.forpda.bdobjects.favorites.FavItemBd;
 import io.realm.Realm;
-import io.realm.RealmResults;
 
 /**
  * Created by radiationx on 08.07.17.

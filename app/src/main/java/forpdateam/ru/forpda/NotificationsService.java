@@ -26,9 +26,9 @@ import java.util.regex.Matcher;
 
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.events.Events;
-import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.api.events.models.NotificationEvent;
 import forpdateam.ru.forpda.api.events.models.WebSocketEvent;
+import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.rxapi.ForumUsersCache;

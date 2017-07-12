@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.utils;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -17,8 +16,6 @@ import android.renderscript.Allocation;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.util.Log;
-
-import forpdateam.ru.forpda.App;
 
 /**
  * Created by radiationx on 23.08.16.

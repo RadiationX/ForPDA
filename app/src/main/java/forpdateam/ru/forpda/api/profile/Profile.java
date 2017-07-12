@@ -1,17 +1,16 @@
 package forpdateam.ru.forpda.api.profile;
 
 import android.text.Html;
-import android.util.Log;
 import android.util.Pair;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
-import forpdateam.ru.forpda.api.NetworkRequest;
 
 /**
  * Created by radiationx on 03.08.16.
