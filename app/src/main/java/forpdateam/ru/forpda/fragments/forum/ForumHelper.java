@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.fragments.forum;
 
 import android.support.annotation.NonNull;
 
-import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;

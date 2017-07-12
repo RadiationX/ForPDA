@@ -10,8 +10,6 @@ import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.client.OkHttpResponseException;
 import forpdateam.ru.forpda.client.OnlyShowException;
 import forpdateam.ru.forpda.fragments.TabFragment;

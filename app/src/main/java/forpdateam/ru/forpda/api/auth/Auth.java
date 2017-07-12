@@ -9,10 +9,10 @@ import java.util.regex.Pattern;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.IWebClient;
+import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.auth.models.AuthForm;
 import forpdateam.ru.forpda.client.ClientHelper;
-import forpdateam.ru.forpda.api.NetworkRequest;
 
 /**
  * Created by radiationx on 25.03.17.

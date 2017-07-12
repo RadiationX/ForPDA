@@ -3,7 +3,6 @@ package forpdateam.ru.forpda;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 
 /**
  * Created by isanechek on 7/11/17.

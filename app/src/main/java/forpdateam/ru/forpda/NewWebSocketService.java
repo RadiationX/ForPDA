@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda;
 
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.job.JobInfo;
 import android.app.job.JobParameters;
@@ -12,13 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
@@ -30,14 +22,9 @@ import android.util.SparseArray;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.NetworkResponse;
-import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.events.Events;
 import forpdateam.ru.forpda.api.events.models.NotificationEvent;
 import forpdateam.ru.forpda.api.events.models.WebSocketEvent;

@@ -6,7 +6,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
@@ -47,8 +46,8 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.BitmapUtils;
 import forpdateam.ru.forpda.utils.IntentHandler;
-import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.LinkMovementMethod;
+import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import io.reactivex.Observable;
 
