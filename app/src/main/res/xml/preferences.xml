@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <Preference android:title="Уведомления"
-        android:key="main.notify.open">
-        <!--<intent
-            android:action="open.suka.notify.prefs"
-            android:targetClass="forpdateam.ru.forpda.settings.SettingsActivity"
-            android:targetPackage="ru.forpdateam.forpda" />-->
-    </Preference>
+    <PreferenceCategory android:title="Уведомления">
+        <Preference
+            android:key="open_notifications"
+            android:title="Уведомления" />
+    </PreferenceCategory>
 
     <PreferenceCategory android:title="Общие">
         <SwitchPreference

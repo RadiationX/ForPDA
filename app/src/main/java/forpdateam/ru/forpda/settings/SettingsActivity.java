@@ -17,6 +17,7 @@ import forpdateam.ru.forpda.R;
  */
 
 public class SettingsActivity extends AppCompatActivity {
+    public final static String ARG_NEW_PREFERENCE_SCREEN = "new_preference_screen";
     private Observer appThemeChangeObserver = (observable, o) -> {
         if (o == null) return;
         String key = (String) o;
@@ -43,9 +44,9 @@ public class SettingsActivity extends AppCompatActivity {
         PreferenceFragment fragment = null;
         Intent intent = getIntent();
         if (intent != null) {
-            String settingsArgument = intent.getStringExtra("settings");
+            String settingsArgument = intent.getStringExtra(ARG_NEW_PREFERENCE_SCREEN);
             if (settingsArgument != null) {
-                if (settingsArgument.equals("open.suka.notify.prefs")) {
+                if (settingsArgument.equals(NotificationsSettingsFragment.PREFERENCE_SCREEN_NAME)) {
                     fragment = new NotificationsSettingsFragment();
                 }
             }

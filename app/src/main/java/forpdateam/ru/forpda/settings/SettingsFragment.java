@@ -97,9 +97,9 @@ public class SettingsFragment extends PreferenceFragment {
             return false;
         });
 
-        findPreference("main.notify.open").setOnPreferenceClickListener(preference -> {
+        findPreference("open_notifications").setOnPreferenceClickListener(preference -> {
             Intent intent = new Intent(getActivity(), SettingsActivity.class);
-            intent.putExtra("settings", "open.suka.notify.prefs");
+            intent.putExtra(SettingsActivity.ARG_NEW_PREFERENCE_SCREEN, NotificationsSettingsFragment.PREFERENCE_SCREEN_NAME);
             startActivity(intent);
             return true;
         });
