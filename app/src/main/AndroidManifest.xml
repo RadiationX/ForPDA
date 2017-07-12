@@ -82,39 +82,42 @@
                 android:resource="@xml/shortcuts" />
 
         </activity>
+
         <activity
             android:name=".imageviewer.ImageViewerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:launchMode="singleTask"
             android:theme="@style/LightAppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".settings.SettingsActivity"
             android:label="Настройки"
-            android:launchMode="singleTop"
-            android:theme="@style/LightAppTheme">
+            android:theme="@style/LightAppTheme.NoActionBar"
+            android:exported="true">
             <meta-data
                 android:name="android.max_aspect"
                 android:value="2.1" />
         </activity>
+
         <activity
             android:name=".utils.permission.ShadowActivity"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
-        <service
-            android:name=".NotificationsService" />
+        <service android:name=".NotificationsService" />
         <service
             android:name=".NewWebSocketService"
             android:enabled="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="true" />
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
         <receiver
             android:name=".WakeUpReceiver"
             android:enabled="false"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
         <receiver

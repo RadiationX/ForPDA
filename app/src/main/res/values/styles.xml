@@ -153,7 +153,6 @@
         <item name="android:background">@color/dark_card_background</item>-->
     </style>
 
-    <style name="DarkAppTheme.Settings" parent="DarkAppTheme" />
 
     <style name="DarkAppTheme.NoActionBarBase" parent="DarkAppTheme">
         <item name="windowActionBar">false</item>

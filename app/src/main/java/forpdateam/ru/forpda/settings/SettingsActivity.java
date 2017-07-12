@@ -1,8 +1,12 @@
 package forpdateam.ru.forpda.settings;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -32,14 +36,33 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setTheme(App.getInstance().isDarkTheme() ? R.style.DarkAppTheme : R.style.LightAppTheme);
         setContentView(R.layout.activity_settings);
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowTitleEnabled(true);
         }
+        PreferenceFragment fragment = null;
+        Intent intent = getIntent();
+        if (intent != null) {
+            String settingsArgument = intent.getStringExtra("settings");
+            if (settingsArgument != null) {
+                if (settingsArgument.equals("open.suka.notify.prefs")) {
+                    fragment = new NotificationsSettingsFragment();
+                }
+            }
+        }
+        if (fragment == null) {
+            fragment = new SettingsFragment();
+        }
+
+        getFragmentManager().beginTransaction().replace(R.id.fragment_content, fragment).commit();
+
+
         App.getInstance().addPreferenceChangeObserver(appThemeChangeObserver);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
