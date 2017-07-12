@@ -70,8 +70,12 @@ public class Events {
 
     public List<NotificationEvent> getFavoritesEvents() throws Exception {
         NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=inspector&CODE=fav");
+        return getFavoritesEvents(response.getBody());
+    }
+
+    public List<NotificationEvent> getFavoritesEvents(String response) {
         List<NotificationEvent> qmsThemes = new ArrayList<>();
-        Matcher matcher = inspectorFavoritesPattern.matcher(response.getBody());
+        Matcher matcher = inspectorFavoritesPattern.matcher(response);
         while (matcher.find()) {
             NotificationEvent notificationEvent = getFavoritesEvent(matcher);
             qmsThemes.add(notificationEvent);
