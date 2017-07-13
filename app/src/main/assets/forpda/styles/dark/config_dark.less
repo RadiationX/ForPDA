@@ -1,4 +1,4 @@
-@import "../config_colors";
+@import "../config_vars";
 
 /*Curves*/
 
@@ -33,6 +33,10 @@ monospace;
 @icon_toolbar: @dark_icon_toolbar;
 @icon_toolbar_inverse: @dark_icon_toolbar_inverse;
 @card_background: @dark_card_background;
+@icon_post_menu_src: @dark_icon_post_menu_src;
+@icon_wrap_src: @dark_icon_wrap_src;
+@icon_select_all_src: @dark_icon_select_all_src;
+
 @tapColor: fade(@colorAccent, 5%);
 
 /* NEW COLORS */
@@ -48,6 +52,8 @@ monospace;
 @quote_border_color: darken(#fff, 65%);
 @code_border_color: #448d62;
 @code_text_color: #448d62;
+
+
 
 /*Elements colors*/
 
@@ -65,26 +71,6 @@ monospace;
 @curColorBlock: fade(@curColor, 10%);
 @modColor: #2980b9;
 @modColorBlock: fade(@modColor, 10%);
-[style*="color:#ffffff"],
-[style*="color:white"] {
-    color: @default_text_color!important;
-}
-[style*="color:blue"] {
-  color: #4444d4!important;
-}
-[style*="color:darkblue"] {
-  color: #000076!important;
-}
-[style*="color:indigo"] {
-  color: #7f38b4!important;
-}
-[style*="color:darkred"] {
-  color: #a11!important;
-}
-[style*="color:#000000"],
-[style*="color:black"] {
-  color: #dedede !important;
-}
 
 .mainBox {
     background: @card_background;

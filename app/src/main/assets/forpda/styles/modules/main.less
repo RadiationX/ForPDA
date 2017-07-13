@@ -110,14 +110,13 @@ li {
     border-bottom: @border1;
     background: @postBlockBg;
     >.block-title {
-        padding: 0.875rem;
+        padding: 10/16rem 16/16rem;
         position: relative;
         z-index: 2;
         font-weight: bold;
         text-align: left!important;
-        min-height: 3rem;
         font-size: 14/16rem;
-        line-height: 1.25rem;
+        line-height: 20/16rem;
         //text-transform: uppercase;
         color: @colorAccent!important;
     }
@@ -162,7 +161,7 @@ li {
                 box-sizing: border-box;
             }
             .icon {
-                height: 48/16rem;
+                height: 40/16rem;
                 width: 40/16rem;
                 position: absolute;
                 right: 0;
@@ -317,7 +316,7 @@ li {
                     //background: red;
                 }
                 .name {
-                    line-height: 18/16rem;
+                    line-height: 20/16rem;
                     //color: @link_color;
                 }
                 .date {
@@ -367,12 +366,9 @@ li {
             }
         }
         >.block-title {
-            //outline: 1px solid red;
-            //padding: 8/16rem 8/16rem;
-            //padding-left: 16/16rem;
+            //padding: 8/16rem;
             //min-height: auto;
-            padding: 8/16rem;
-            min-height: auto;
+            padding-left: 8/16rem;
             &.empty {
                 &:before {
                     content: "Код";
@@ -398,7 +394,7 @@ li {
                 float: right;
                 position: absolute;
                 right: 40/16rem;
-                top: 0;
+                top: (40-36)/2/16rem;
                 z-index: 3;
                 .noselect();
                 i {
@@ -409,12 +405,12 @@ li {
                     float: right;
                     &.wrap {
                         &:after {
-                            -webkit-mask: url(../../res/wrap.svg) no-repeat center center;
+                            background-image: url(@icon_wrap_src);
                         }
                     }
                     &.select_all {
                         &:after {
-                            -webkit-mask: url(../../res/select-all.svg) no-repeat center center;
+                            background-image: url(@icon_select_all_src);
                         }
                         margin-right: 8/16rem;
                     }
@@ -425,8 +421,9 @@ li {
                         position: absolute;
                         left: 0;
                         top: 0;
-                        background-color: @icon_toolbar;
-                        -webkit-mask-size: 20/16em 20/16em;
+                        background-repeat: no-repeat;
+                        background-size: 24/16rem 24/16rem;
+                        background-position: center;
                     }
                     &:active {
                         background-color: @tapColor;
@@ -434,7 +431,7 @@ li {
                 }
             }
             .icon {
-                height: 36/16rem;
+                height: 40/16rem;
                 width: 40/16rem;
                 position: absolute;
                 right: 96/16rem;
@@ -722,13 +719,15 @@ a.snapback {
     text-align: left!important;
     font-size: 1rem!important;
     text-decoration: none!important;
+    line-height: 20/16rem!important;
+    font-style: normal!important;
     .icon {
         position: absolute;
         top: 4/16rem;
         left: 4/16rem;
         height: 40/16rem;
         width: 40/16rem;
-        border-radius: 100%;
+        .bRad(40/16rem);
         background: @link_color;
         &:after {
             content: "";
@@ -748,9 +747,11 @@ a.snapback {
         overflow: hidden;
         font-weight: bold;
         display: block;
+        
+        font-size: 1rem!important;
     }
     .desc {
-        font-size: 14/16rem;
+        font-size: 14/16rem!important;
         color: @second_text_color;
         display: block;
         font-weight: normal;

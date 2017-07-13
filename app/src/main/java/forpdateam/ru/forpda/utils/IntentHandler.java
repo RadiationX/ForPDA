@@ -3,10 +3,12 @@ package forpdateam.ru.forpda.utils;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -21,6 +23,7 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.NetworkRequest;
+import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
@@ -38,6 +41,7 @@ import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
 import forpdateam.ru.forpda.settings.Preferences;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
@@ -100,14 +104,9 @@ public class IntentHandler {
         } else if (url.substring(0, 1).equals("/")) {
             url = "http://4pda.ru".concat(url);
         }
+        url = url.replace("&amp;", "&").replace("\"", "").trim();
+        Log.d("FORPDA_LOG", "after correct url " + url);
 
-        //url = Utils.fromHtml(url);
-        try {
-            url = URLDecoder.decode(url, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        Log.d("FORPDA_LOG", "after html url " + url);
 
         if (url.matches("(?:http?s?:)?\\/\\/[\\s\\S]*?4pda\\.(?:ru|to)[\\s\\S]*")) {
             /*if (!url.contains("4pda.ru")||!url.contains("4pda.to")) {
@@ -314,11 +313,33 @@ public class IntentHandler {
     }
 
     public static void systemDownload(String fileName, String url) {
+        MainActivity mainActivity = TabManager.getInstance().getActive().getMainActivity();
+        if (mainActivity != null) {
+            new AlertDialog.Builder(mainActivity)
+                    .setMessage("Загрузить файл " + fileName + "?")
+                    .setPositiveButton("Да", (dialog, which) -> {
+                        redirectDownload(fileName, url);
+                    })
+                    .setNegativeButton("Нет", null)
+                    .show();
+        } else {
+            redirectDownload(fileName, url);
+        }
+    }
+
+    private static void redirectDownload(String fileName, String url) {
         Toast.makeText(App.getContext(), "Запрашиваю ссылку для загрузки ".concat(fileName), Toast.LENGTH_SHORT).show();
         Observable.fromCallable(() -> Client.getInstance().request(new NetworkRequest.Builder().url(url).withoutBody().build()))
                 .subscribeOn(Schedulers.io())
+                .onErrorReturn(throwable -> {
+                    Toast.makeText(App.getContext(), "Произошла ошибка", Toast.LENGTH_SHORT).show();
+                    return new NetworkResponse(null);
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
+                    if (response.getUrl() == null) {
+                        return;
+                    }
                     if (!Preferences.Main.isSystemDownloader()) {
                         try {
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(response.getRedirect())).addFlags(FLAG_ACTIVITY_NEW_TASK);

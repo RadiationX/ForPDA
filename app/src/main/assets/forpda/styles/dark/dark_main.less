@@ -1,2 +1,12 @@
 @import "config_dark";
+[style*="color:#fff"],
+[style*="color:#ffffff"],
+[style*="color:white"] {
+    color: @default_text_color!important;
+}
+[style*="color:#000"],
+[style*="color:#000000"],
+[style*="color:black"] {
+  color: @second_text_color !important;
+}
 @import "../modules/main";

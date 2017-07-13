@@ -8,26 +8,6 @@
 /* NEW COLORS */
 /*Elements colors*/
 /*Post blocks*/
-[style*="color:#ffffff"],
-[style*="color:white"] {
-  color: #ffffff !important;
-}
-[style*="color:blue"] {
-  color: #4444d4!important;
-}
-[style*="color:darkblue"] {
-  color: #000076!important;
-}
-[style*="color:indigo"] {
-  color: #7f38b4!important;
-}
-[style*="color:darkred"] {
-  color: #a11!important;
-}
-[style*="color:#000000"],
-[style*="color:black"] {
-  color: #dedede !important;
-}
 .mainBox {
   background: #212121;
   margin: 0.5em 0;
@@ -648,6 +628,10 @@ button:active,
   -webkit-border-radius: 3.5em;
   border-radius: 3.5em;
 }
+.post_container.square_avatar .post-block.quote > .block-title .avatar {
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+}
 .post_container.hide_avatar .post_header .avatar .img {
   display: none;
 }
@@ -811,9 +795,10 @@ button:active,
   top: -0.75em;
   height: 3em;
   width: 2.5em;
-  background-color: #b2b2b2;
-  -webkit-mask-size: 1.5rem 1.5rem;
-  -webkit-mask: url(../../res/dots-vertical.svg) no-repeat center center;
+  background-image: url("../../res/dark/dots-vertical.svg");
+  background-repeat: no-repeat;
+  background-size: 1.5rem 1.5rem;
+  background-position: center;
   margin: 0;
 }
 .post_container .post_header .inf.menu > span {

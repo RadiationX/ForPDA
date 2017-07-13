@@ -9,7 +9,9 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.webkit.WebSettings;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -340,6 +342,17 @@ public class Client implements IWebClient {
                 okHttpResponse.close();
         }
         return response;
+    }
+
+    public InputStream loadImage(String url) throws Exception {
+        Request.Builder requestBuilder = prepareRequest(new NetworkRequest.Builder().url(url).build(), null);
+        Response okHttpResponse = null;
+        InputStream is = null;
+        okHttpResponse = client.newCall(requestBuilder.build()).execute();
+        if (!okHttpResponse.isSuccessful())
+            throw new OkHttpResponseException(okHttpResponse.code(), okHttpResponse.message(), url);
+        is = okHttpResponse.body().byteStream();
+        return is;
     }
 
     @Override

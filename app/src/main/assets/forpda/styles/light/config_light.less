@@ -1,4 +1,4 @@
-@import "../config_colors";
+@import "../config_vars";
 
 /*Curves*/
 
@@ -33,6 +33,9 @@ monospace;
 @icon_toolbar: @light_icon_toolbar;
 @icon_toolbar_inverse: @light_icon_toolbar_inverse;
 @card_background: @light_card_background;
+@icon_post_menu_src: @light_icon_post_menu_src;
+@icon_wrap_src: @light_icon_wrap_src;
+@icon_select_all_src: @light_icon_select_all_src;
 @tapColor: fade(@colorAccent, 5%);
 
 /* NEW COLORS */
@@ -65,10 +68,7 @@ monospace;
 @curColorBlock: fade(@curColor, 10%);
 @modColor: #2980b9;
 @modColorBlock: fade(@modColor, 10%);
-[style*="color:#ffffff"],
-[style*="color:white"] {
-    color: @default_text_color!important;
-}
+
 
 .mainBox {
     background: @card_background;
