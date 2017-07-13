@@ -15,26 +15,37 @@ import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.BuildConfig;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.IBaseForumPost;
 import forpdateam.ru.forpda.api.theme.Theme;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
+import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IBase;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.MimeTypeUtil;
 
 /**
  * Created by radiationx on 20.10.16.
@@ -66,7 +77,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
     @Override
     protected void addShowingView() {
         messagePanel.setHeightChangeListener(newHeight -> {
-            syncWithWebView(()->{
+            syncWithWebView(() -> {
                 webView.evalJs("setPaddingBottom(" + (newHeight / App.getInstance().getDensity()) + ");");
             });
         });
@@ -311,6 +322,47 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
             /*//TODO сделать привязку к событиям js, вместо этого говнища
             updateHistoryLastHtml();*/
         }
+
+        // Можно будет заюзать для загрузки аватаров из кеша юзеров
+        /*@TargetApi(Build.VERSION_CODES.N)
+        @Override
+        public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+            Log.e("SUKA_WV", "shouldInterceptRequest19: " + request.getUrl());
+            String url = request.getUrl().toString();
+            Matcher matcher = p.matcher(url);
+            if (matcher.find()) {
+                return interceptImages(url, matcher.group(1));
+            }
+            return super.shouldInterceptRequest(view, request);
+        }
+
+        @Override
+        public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+            Log.e("SUKA_WV", "shouldInterceptRequest19: " + url);
+            //WebResourceResponse webResourceResponse = new WebResourceResponse();
+            Matcher matcher = p.matcher(url);
+            if (matcher.find()) {
+                return interceptImages(url, matcher.group(1));
+            }
+            return super.shouldInterceptRequest(view, url);
+        }
+
+        private WebResourceResponse interceptImages(String url, String extension) {
+            long time = System.currentTimeMillis();
+            String mimeType = MimeTypeUtil.getType(extension);
+            String encoding = "UTF-8";
+
+            InputStream inputStream = null;
+            try {
+                inputStream = Client.getInstance().loadImage(url);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            Log.e("SUKA_WV", "interceptImages: " + mimeType + " : " + encoding + ";;; Time: " + (System.currentTimeMillis() - time));
+
+            return new WebResourceResponse(mimeType, encoding, inputStream);
+        }*/
     }
 
     private class ThemeChromeClient extends WebChromeClient {
@@ -349,6 +401,8 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
             }
             return true;
         }
+
+
     }
 
 

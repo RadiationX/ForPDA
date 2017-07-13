@@ -8,10 +8,6 @@
 /* NEW COLORS */
 /*Elements colors*/
 /*Post blocks*/
-[style*="color:#ffffff"],
-[style*="color:white"] {
-  color: #212121 !important;
-}
 .mainBox {
   background: #ffffff;
   margin: 0.5em 0;
@@ -632,6 +628,10 @@ button:active,
   -webkit-border-radius: 3.5em;
   border-radius: 3.5em;
 }
+.post_container.square_avatar .post-block.quote > .block-title .avatar {
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+}
 .post_container.hide_avatar .post_header .avatar .img {
   display: none;
 }
@@ -795,9 +795,10 @@ button:active,
   top: -0.75em;
   height: 3em;
   width: 2.5em;
-  background-color: #757575;
-  -webkit-mask-size: 1.5rem 1.5rem;
-  -webkit-mask: url(../../res/dots-vertical.svg) no-repeat center center;
+  background-image: url("../../res/light/dots-vertical.svg");
+  background-repeat: no-repeat;
+  background-size: 1.5rem 1.5rem;
+  background-position: center;
   margin: 0;
 }
 .post_container .post_header .inf.menu > span {

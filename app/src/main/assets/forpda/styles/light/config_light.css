@@ -8,10 +8,6 @@
 /* NEW COLORS */
 /*Elements colors*/
 /*Post blocks*/
-[style*="color:#ffffff"],
-[style*="color:white"] {
-  color: #212121 !important;
-}
 .mainBox {
   background: #ffffff;
   margin: 0.5em 0;

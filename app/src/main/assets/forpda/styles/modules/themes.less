@@ -650,6 +650,9 @@ button,
                 >.letter {}
             }
         }
+        .post-block.quote > .block-title .avatar{
+            .bRad(0px);
+        }
     }
     &.hide_avatar {
         .post_header {
@@ -824,9 +827,10 @@ button,
                 top: -12/16em;
                 height: 48/16em;
                 width: 40/16em;
-                background-color: @icon_base;
-                -webkit-mask-size: 24/16rem 24/16rem;
-                -webkit-mask: url(../../res/dots-vertical.svg) no-repeat center center;
+                background-image: url(@icon_post_menu_src);
+                background-repeat: no-repeat;
+                background-size: 24/16rem 24/16rem;
+                background-position: center;
                 margin: 0;
                 >span {
                     display: none;

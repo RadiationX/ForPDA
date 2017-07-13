@@ -174,7 +174,7 @@ public class TabFragment extends RxFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        audioService = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
+        audioService = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
         if (savedInstanceState != null) {
             title = savedInstanceState.getString(BUNDLE_PREFIX.concat(BUNDLE_TITLE));
             subtitle = savedInstanceState.getString(BUNDLE_PREFIX.concat(BUNDLE_SUBTITLE));

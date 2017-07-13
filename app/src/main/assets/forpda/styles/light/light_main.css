@@ -9,10 +9,6 @@
 /* NEW COLORS */
 /*Elements colors*/
 /*Post blocks*/
-[style*="color:#ffffff"],
-[style*="color:white"] {
-  color: #212121 !important;
-}
 .mainBox {
   background: #ffffff;
   margin: 0.5em 0;
@@ -26,6 +22,16 @@
   -ms-user-select: none;
   user-select: none;
 }
+/*[style*="color:#fff"],
+[style*="color:#ffffff"],
+[style*="color:white"] {
+    color: @second_text_color!important;
+}
+[style*="color:#000"],
+[style*="color:#000000"],
+[style*="color:black"] {
+  color: @default_text_color !important;
+}*/
 .fsi {
   font-size: inherit !important;
 }
@@ -121,12 +127,11 @@ li .post-block.hidden {
   background: rgba(0, 0, 0, 0.05);
 }
 .post-block > .block-title {
-  padding: 0.875rem;
+  padding: 0.625rem 1rem;
   position: relative;
   z-index: 2;
   font-weight: bold;
   text-align: left!important;
-  min-height: 3rem;
   font-size: 0.875rem;
   line-height: 1.25rem;
   color: #000000 !important;
@@ -168,7 +173,7 @@ li .post-block.hidden {
   box-sizing: border-box;
 }
 .post-block.spoil > .block-title .icon {
-  height: 3rem;
+  height: 2.5rem;
   width: 2.5rem;
   position: absolute;
   right: 0;
@@ -303,7 +308,7 @@ li .post-block.hidden {
   display: block;
 }
 .post-block.quote > .block-title .title .name {
-  line-height: 1.125rem;
+  line-height: 1.25rem;
 }
 .post-block.quote > .block-title .title .date {
   color: #757575;
@@ -342,8 +347,7 @@ li .post-block.hidden {
   display: none;
 }
 .post-block.code > .block-title {
-  padding: 0.5rem;
-  min-height: auto;
+  padding-left: 0.5rem;
 }
 .post-block.code > .block-title.empty:before {
   content: "Код";
@@ -368,7 +372,7 @@ li .post-block.hidden {
   float: right;
   position: absolute;
   right: 2.5rem;
-  top: 0;
+  top: 0.125rem;
   z-index: 3;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -386,13 +390,13 @@ li .post-block.hidden {
   float: right;
 }
 .post-block.code > .block-title > .block-controls i.wrap:after {
-  -webkit-mask: url(../../res/wrap.svg) no-repeat center center;
+  background-image: url("../../res/light/wrap.svg");
 }
 .post-block.code > .block-title > .block-controls i.select_all {
   margin-right: 0.5rem;
 }
 .post-block.code > .block-title > .block-controls i.select_all:after {
-  -webkit-mask: url(../../res/select-all.svg) no-repeat center center;
+  background-image: url("../../res/light/select-all.svg");
 }
 .post-block.code > .block-title > .block-controls i:after {
   content: "";
@@ -401,14 +405,15 @@ li .post-block.hidden {
   position: absolute;
   left: 0;
   top: 0;
-  background-color: #212121;
-  -webkit-mask-size: 1.25em 1.25em;
+  background-repeat: no-repeat;
+  background-size: 1.5rem 1.5rem;
+  background-position: center;
 }
 .post-block.code > .block-title > .block-controls i:active {
   background-color: rgba(0, 0, 0, 0.05);
 }
 .post-block.code > .block-title .icon {
-  height: 2.25rem;
+  height: 2.5rem;
   width: 2.5rem;
   position: absolute;
   right: 6rem;
@@ -666,6 +671,8 @@ a.snapback:after {
   text-align: left!important;
   font-size: 1rem!important;
   text-decoration: none!important;
+  line-height: 1.25rem !important;
+  font-style: normal!important;
 }
 .attach_block .icon {
   position: absolute;
@@ -673,7 +680,8 @@ a.snapback:after {
   left: 0.25rem;
   height: 2.5rem;
   width: 2.5rem;
-  border-radius: 100%;
+  -webkit-border-radius: 2.5rem;
+  border-radius: 2.5rem;
   background: #2177af;
 }
 .attach_block .icon:after {
@@ -692,9 +700,10 @@ a.snapback:after {
   overflow: hidden;
   font-weight: bold;
   display: block;
+  font-size: 1rem!important;
 }
 .attach_block .desc {
-  font-size: 0.875rem;
+  font-size: 0.875rem !important;
   color: #757575;
   display: block;
   font-weight: normal;

@@ -60,8 +60,9 @@
         <item name="android:windowBackground">@color/light_background_base</item>
     </style>
 
-    <style name="LightAppTheme.Dialog" parent="Base.Theme.AppCompat.Light.Dialog.Alert">
+    <style name="LightAppTheme.Dialog" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:colorBackground">@color/light_card_background</item>
+        <item name="colorAccent">@color/light_colorAccent</item>
     </style>
 
     <style name="LightAppTheme.BottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
@@ -144,8 +145,9 @@
         <item name="android:windowBackground">@color/dark_background_base</item>
     </style>
 
-    <style name="DarkAppTheme.Dialog" parent="Base.Theme.AppCompat.Dialog.Alert">
+    <style name="DarkAppTheme.Dialog" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:colorBackground">@color/dark_card_background</item>
+        <item name="colorAccent">@color/dark_colorAccent</item>
     </style>
 
     <style name="DarkAppTheme.BottomSheetDialog" parent="Theme.Design.BottomSheetDialog">
