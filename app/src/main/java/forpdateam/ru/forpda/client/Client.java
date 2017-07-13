@@ -397,18 +397,18 @@ public class Client implements IWebClient {
             countsMatcher.reset(res);
 
         if (countsMatcher.find()) {
-            tempGroup = countsMatcher.group(1);
-            //int lastCounts[] = {ClientHelper.getMentionsCount(), ClientHelper.getFavoritesCount(), ClientHelper.getQmsCount()};
-            ClientHelper.setMentionsCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
+            try {
+                tempGroup = countsMatcher.group(1);
+                ClientHelper.setMentionsCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
 
-            tempGroup = countsMatcher.group(2);
-            ClientHelper.setFavoritesCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
+                tempGroup = countsMatcher.group(2);
+                ClientHelper.setFavoritesCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
 
-            tempGroup = countsMatcher.group(3);
-            ClientHelper.setQmsCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
-
-            /*if (lastCounts[0] != ClientHelper.getMentionsCount()||lastCounts[1] != ClientHelper.getFavoritesCount()||lastCounts[2] != ClientHelper.getQmsCount()) {
-            }*/
+                tempGroup = countsMatcher.group(3);
+                ClientHelper.setQmsCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
+            } catch (Exception exception) {
+                Log.d("WATAFUCK", res);
+            }
             observerHandler.post(() -> ClientHelper.getInstance().notifyCountsChanged());
         }
     }
