@@ -147,7 +147,7 @@ public class NotificationsService extends Service {
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             Log.d("WS_EVENT", "ON FAILURE: " + t.getMessage() + " " + response);
             t.printStackTrace();
-            if (webSocket != null) {
+            if (NotificationsService.this.webSocket != null) {
                 NotificationsService.this.webSocket.cancel();
                 NotificationsService.this.webSocket = null;
             }
@@ -214,10 +214,10 @@ public class NotificationsService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        App.getInstance().removePreferenceChangeObserver(notificationSettingObserver);
+        Client.getInstance().removeNetworkObserver(networkObserver);
         Log.i("WS_SERVICE", "Service: onDestroy");
         stop();
-        Client.getInstance().removeNetworkObserver(networkObserver);
-        App.getInstance().removePreferenceChangeObserver(notificationSettingObserver);
     }
 
 
@@ -517,12 +517,9 @@ public class NotificationsService extends Service {
                             Resources res = App.getContext().getResources();
                             int height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
                             int width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
-
-                            Bitmap prevBitmap = bitmap;
-                            bitmap = BitmapUtils.centerCrop(bitmap, width, height, 1.0f);
-                            prevBitmap.recycle();
-
                             boolean isCircle = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+
+                            bitmap = BitmapUtils.centerCrop(bitmap, width, height, 1.0f);
                             bitmap = BitmapUtils.createAvatar(bitmap, width, height, isCircle);
                         }
                         return bitmap;
