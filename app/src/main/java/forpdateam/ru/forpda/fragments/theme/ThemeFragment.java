@@ -142,7 +142,10 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         messagePanel.enableBehavior();
         messagePanel.addSendOnClickListener(v -> sendMessage());
         messagePanel.getSendButton().setOnLongClickListener(v -> {
-            TabManager.getInstance().add(EditPostFragment.newInstance(createEditPostForm(), currentPage.getTitle()));
+            EditPostForm form = createEditPostForm();
+            if (form != null) {
+                TabManager.getInstance().add(EditPostFragment.newInstance(createEditPostForm(), currentPage.getTitle()));
+            }
             return true;
         });
         attachmentsPopup = messagePanel.getAttachmentsPopup();
@@ -210,9 +213,9 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     @Override
     public void onDestroy() {
         super.onDestroy();
+        App.getInstance().removePreferenceChangeObserver(themePreferenceObserver);
         history.clear();
         messagePanel.onDestroy();
-        App.getInstance().removePreferenceChangeObserver(themePreferenceObserver);
     }
 
     @Override
@@ -500,6 +503,9 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     private EditPostForm createEditPostForm() {
         EditPostForm form = new EditPostForm();
+        if (currentPage == null) {
+            return null;
+        }
         form.setForumId(currentPage.getForumId());
         form.setTopicId(currentPage.getId());
         form.setSt(currentPage.getPagination().getCurrent() * currentPage.getPagination().getPerPage());
@@ -523,14 +529,17 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     private void sendMessage() {
         hidePopupWindows();
-        messagePanel.setProgressState(true);
         EditPostForm form = createEditPostForm();
-        mainSubscriber.subscribe(RxApi.EditPost().sendPost(form), s -> {
-            messagePanel.setProgressState(false);
-            onLoadData(s);
-            messagePanel.clearAttachments();
-            messagePanel.clearMessage();
-        }, currentPage, v -> loadData(NORMAL_ACTION));
+        if (form != null) {
+            messagePanel.setProgressState(true);
+            mainSubscriber.subscribe(RxApi.EditPost().sendPost(form), s -> {
+                messagePanel.setProgressState(false);
+                onLoadData(s);
+                messagePanel.clearAttachments();
+                messagePanel.clearMessage();
+            }, currentPage, v -> loadData(NORMAL_ACTION));
+        }
+
     }
 
     public void tryPickFile() {
