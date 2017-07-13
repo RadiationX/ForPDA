@@ -330,14 +330,12 @@ public class IntentHandler {
     private static void redirectDownload(String fileName, String url) {
         Toast.makeText(App.getContext(), "Запрашиваю ссылку для загрузки ".concat(fileName), Toast.LENGTH_SHORT).show();
         Observable.fromCallable(() -> Client.getInstance().request(new NetworkRequest.Builder().url(url).withoutBody().build()))
+                .onErrorReturn(throwable -> new NetworkResponse(null))
                 .subscribeOn(Schedulers.io())
-                .onErrorReturn(throwable -> {
-                    Toast.makeText(App.getContext(), "Произошла ошибка", Toast.LENGTH_SHORT).show();
-                    return new NetworkResponse(null);
-                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
                     if (response.getUrl() == null) {
+                        Toast.makeText(App.getContext(), "Произошла ошибка", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     if (!Preferences.Main.isSystemDownloader()) {
