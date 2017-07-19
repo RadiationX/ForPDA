@@ -25,6 +25,7 @@ import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.mentions.MentionsFragment;
 import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
+import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.settings.SettingsActivity;
 import forpdateam.ru.forpda.views.drawers.adapters.MenuAdapter;
 import forpdateam.ru.forpda.views.drawers.adapters.TabAdapter;
@@ -39,6 +40,7 @@ public class Drawers {
 
     private NavigationView menuDrawer;
     private RecyclerView menuListView;
+    private LinearLayoutManager menuListLayoutManager;
     private MenuAdapter menuAdapter;
     private MenuItems allMenuItems = new MenuItems();
     private ArrayList<MenuItems.MenuItem> menuItems = new ArrayList<>();
@@ -46,6 +48,7 @@ public class Drawers {
 
     private NavigationView tabDrawer;
     private RecyclerView tabListView;
+    private LinearLayoutManager tabListLayoutManager;
     private TabAdapter tabAdapter;
     private Button tabCloseAllButton;
 
@@ -79,6 +82,17 @@ public class Drawers {
         menuAdapter.notifyDataSetChanged();
     };
 
+    private Observer preferenceObserver = (observable1, o) -> {
+        if (o == null) return;
+        String key = (String) o;
+        switch (key) {
+            case Preferences.Main.IS_TABS_BOTTOM: {
+                updateTabGravity();
+                break;
+            }
+        }
+    };
+
     public Drawers(MainActivity activity, DrawerLayout drawerLayout) {
         this.activity = activity;
         this.drawerLayout = drawerLayout;
@@ -90,8 +104,11 @@ public class Drawers {
 
         tabCloseAllButton = (Button) activity.findViewById(R.id.tab_close_all);
 
-        menuListView.setLayoutManager(new LinearLayoutManager(activity));
-        tabListView.setLayoutManager(new LinearLayoutManager(activity));
+        menuListLayoutManager = new LinearLayoutManager(activity);
+        tabListLayoutManager = new LinearLayoutManager(activity);
+        tabListLayoutManager.setStackFromEnd(Preferences.Main.isTabsBottom());
+        menuListView.setLayoutManager(menuListLayoutManager);
+        tabListView.setLayoutManager(tabListLayoutManager);
 
 
         menuAdapter = new MenuAdapter(menuItems);
@@ -101,6 +118,7 @@ public class Drawers {
         tabListView.setAdapter(tabAdapter);
 
         tabCloseAllButton.setOnClickListener(v -> closeAllTabs());
+        App.getInstance().addPreferenceChangeObserver(preferenceObserver);
     }
 
     public NavigationView getMenuDrawer() {
@@ -148,6 +166,7 @@ public class Drawers {
     }
 
     public void destroy() {
+        App.getInstance().removePreferenceChangeObserver(preferenceObserver);
         ClientHelper.getInstance().removeLoginObserver(loginObserver);
         ClientHelper.getInstance().removeCountsObserver(countsObserver);
         //menuAdapter.clear();
@@ -326,7 +345,10 @@ public class Drawers {
                 })
                 .setNegativeButton("Нет", null)
                 .show();
+    }
 
-
+    private void updateTabGravity(){
+        Log.d("SUKA", "updateTabGravity: "+Preferences.Main.isTabsBottom());
+        tabListLayoutManager.setStackFromEnd(Preferences.Main.isTabsBottom());
     }
 }

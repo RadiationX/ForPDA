@@ -17,7 +17,11 @@ public class Preferences {
         public final static String SHOW_NOTIFY_DOT = "main.show_notify_dot";
         public final static String WEBVIEW_FONT_SIZE = "main.webview.font_size";
         public final static String IS_SYSTEM_DOWNLOADER = "main.is_system_downloader";
+        public final static String IS_TABS_BOTTOM = "main.drawers.tab_stack_bottom";
 
+        public static boolean isTabsBottom(){
+            return preferences().getBoolean(Main.IS_TABS_BOTTOM, false);
+        }
 
         public static int getWebViewSize() {
             int size = App.getInstance().getPreferences().getInt(Preferences.Main.WEBVIEW_FONT_SIZE, 16);

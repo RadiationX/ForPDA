@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="Уведомления">
-        <Preference
-            android:key="open_notifications"
-            android:title="Уведомления" />
-    </PreferenceCategory>
 
     <PreferenceCategory android:title="Общие">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="main.is_system_downloader"
+            android:summary="Использовать системный загрузчик файлов"
+            android:title="Системный загрузчик" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Внешний вид">
         <SwitchPreference
             android:defaultValue="false"
             android:key="main.theme.is_dark"
@@ -23,12 +27,20 @@
             android:title="Размер шрифта" />
 
         <SwitchPreference
-            android:defaultValue="true"
-            android:key="main.is_system_downloader"
-            android:summary="Использовать системный загрузчик файлов"
-            android:title="Системный загрузчик" />
+            android:defaultValue="false"
+            android:key="main.drawers.tab_stack_bottom"
+            android:title="Вкладки снизу"/>
 
     </PreferenceCategory>
+
+
+    <PreferenceCategory android:title="Уведомления">
+        <Preference
+            android:key="open_notifications"
+            android:title="Уведомления" />
+    </PreferenceCategory>
+
+
 
     <PreferenceCategory android:title="Просмотр тем">
         <SwitchPreference
