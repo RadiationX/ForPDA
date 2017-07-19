@@ -10,9 +10,11 @@ import android.widget.ProgressBar;
 
 import com.github.chrisbanes.photoview.OnPhotoTapListener;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.util.List;
@@ -76,23 +78,38 @@ public class ImagesAdapter extends PagerAdapter {
 
     private void loadImage(View imageLayout, int position) {
         assert imageLayout != null;
-        ProgressBar progress = (ProgressBar) imageLayout.findViewById(R.id.progress);
+        CircularProgressView progressBar = (CircularProgressView) imageLayout.findViewById(R.id.progress_bar);
         PhotoView photoView = (PhotoView) imageLayout.findViewById(R.id.photo_view);
         imageLoader.displayImage(urls.get(position), photoView, options, new SimpleImageLoadingListener() {
             @Override
             public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-                progress.setVisibility(View.INVISIBLE);
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                progress.setVisibility(View.INVISIBLE);
+                progressBar.setVisibility(View.GONE);
                 //delayedHide(1000);
             }
 
             @Override
             public void onLoadingCancelled(String imageUri, View view) {
-                progress.setVisibility(View.INVISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onLoadingStarted(String imageUri, View view) {
+                progressBar.setVisibility(View.VISIBLE);
+                if (progressBar.isIndeterminate()) {
+                    progressBar.setIndeterminate(false);
+                }
+            }
+        }, new ImageLoadingProgressListener() {
+            @Override
+            public void onProgressUpdate(String s, View view, int i, int i1) {
+                Log.d("SUKA", "onProgressUpdate: " + i + " : " + i1 + " \t " + s + " : " + Thread.currentThread());
+
+                progressBar.setProgress((int) (100F * i / i1));
             }
         });
 

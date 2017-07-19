@@ -187,6 +187,8 @@ public class EditPostFragment extends TabFragment {
                 .setMessage("Синхронизировать изменения с полем ввода в теме?")
                 .setPositiveButton("Да", (dialog, which) -> {
                     themeFragment.getMessagePanel().setText(messagePanel.getMessage());
+                    int[] selectionRange = messagePanel.getSelectionRange();
+                    themeFragment.getMessagePanel().getMessageField().setSelection(selectionRange[0], selectionRange[1]);
                     themeFragment.getAttachmentsPopup().setAttachments(messagePanel.getAttachments());
                     TabManager.getInstance().remove(EditPostFragment.this);
                 })
