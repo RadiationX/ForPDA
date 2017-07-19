@@ -24,6 +24,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
+import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.auth.models.AuthForm;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.client.ClientHelper;
@@ -172,7 +173,7 @@ public class AuthFragment extends TabFragment {
     private void onProfileLoad(ProfileModel profile) {
         App.getInstance().getPreferences().edit().putString("auth.user.nick", profile.getNick()).apply();
         ImageLoader.getInstance().displayImage(profile.getAvatar(), avatar);
-        completeText.setText(Html.fromHtml("Привет <b>" + profile.getNick() + "</b>!"));
+        completeText.setText(Utils.spannedFromHtml("Привет <b>" + profile.getNick() + "</b>!"));
         completeText.setVisibility(View.VISIBLE);
         AlphaAnimation animation = new AlphaAnimation(0.0f, 1.0f);
         animation.setDuration(1000);

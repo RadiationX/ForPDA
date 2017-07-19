@@ -58,12 +58,6 @@ public class Utils {
         Log.e("TEST", msg);
     }
 
-    public static String fromHtml(String s) {
-        if (s == null) return null;
-        return Html.fromHtml(s, Html.FROM_HTML_MODE_COMPACT).toString();
-    }
-
-
     //copypast from forpda
     public static SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
     public static SimpleDateFormat parseDateTimeFormat = new SimpleDateFormat("dd.MM.yyyy, HH:mm");
