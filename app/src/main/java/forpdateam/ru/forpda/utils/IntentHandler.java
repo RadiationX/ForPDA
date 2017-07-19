@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.utils;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -41,7 +40,6 @@ import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
 import forpdateam.ru.forpda.settings.Preferences;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
@@ -117,7 +115,7 @@ public class IntentHandler {
 
             /*if (Pattern.compile("https?:\\/\\/4pda\\.ru\\/forum\\/dl\\/post\\/\\d+\\/[\\s\\S]*\\.").matcher(url).find()) {
                 Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
-                systemDownload(uri);
+                handleDownload(uri);
             }*/
 
 
@@ -133,7 +131,7 @@ public class IntentHandler {
                 if (isImage) {
                     ImageViewerActivity.startActivity(App.getContext(), url);
                 } else {
-                    systemDownload(fullName, url);
+                    handleDownload(fullName, url);
                 }
                 return true;
             } else if (Pattern.compile("https?:\\/\\/cs\\d-\\d.4pda.to\\/\\d+").matcher(url).find()) {
@@ -297,7 +295,7 @@ public class IntentHandler {
         //Toast.makeText(App.getContext(), "ForPDA should run " + s, Toast.LENGTH_SHORT).show();
     }
 
-    public static void systemDownload(String url) {
+    public static void handleDownload(String url) {
         String fileName = url;
         try {
             fileName = URLDecoder.decode(url, "CP1251");
@@ -309,10 +307,10 @@ public class IntentHandler {
             fileName = fileName.substring(cut + 1);
         }
         Log.e("FORPDA_LOG", "SYSTEM DOWNLOAD " + fileName + " : " + url);
-        systemDownload(fileName, url);
+        handleDownload(fileName, url);
     }
 
-    public static void systemDownload(String fileName, String url) {
+    public static void handleDownload(String fileName, String url) {
         MainActivity mainActivity = TabManager.getInstance().getActive().getMainActivity();
         if (mainActivity != null) {
             new AlertDialog.Builder(mainActivity)
@@ -339,17 +337,35 @@ public class IntentHandler {
                         return;
                     }
                     if (!Preferences.Main.isSystemDownloader()) {
-                        try {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(response.getRedirect())).addFlags(FLAG_ACTIVITY_NEW_TASK);
-                            App.getInstance().startActivity(Intent.createChooser(intent, "Загрузить через").addFlags(FLAG_ACTIVITY_NEW_TASK));
-                        } catch (ActivityNotFoundException e) {
-                            ACRA.getErrorReporter().handleException(e);
-                        }
+                        externalDownloader(response.getRedirect());
                     } else {
                         MainActivity mainActivity = TabManager.getInstance().getActive().getMainActivity();
                         Runnable runnable = () -> {
-                            DownloadManager dm = (DownloadManager) App.getContext().getSystemService(Context.DOWNLOAD_SERVICE);
-                            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(response.getRedirect()));
+                            Toast.makeText(App.getContext(), "Выполняется загрузка ".concat(fileName), Toast.LENGTH_SHORT).show();
+                            try {
+                                systemDownloader(fileName, response.getRedirect());
+                            } catch (Exception exception) {
+                                MainActivity mainActivity1 = TabManager.getInstance().getActive().getMainActivity();
+                                if (mainActivity1 != null) {
+                                    new AlertDialog.Builder(mainActivity1)
+                                            .setMessage("Произошла ошибка: " + exception.getMessage() + ". Загрузить через внешний загрузчик?")
+                                            .setPositiveButton("Да", (dialog, which) -> {
+                                                externalDownloader(response.getRedirect());
+                                            })
+                                            .setNegativeButton("Нет", null)
+                                            .show();
+                                }
+                            }
+
+                        };
+                        mainActivity.checkStoragePermission(runnable);
+                    }
+                });
+    }
+
+    private static void systemDownloader(String fileName, String url) {
+        DownloadManager dm = (DownloadManager) App.getContext().getSystemService(Context.DOWNLOAD_SERVICE);
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
 
                             /*Map<String, Cookie> cookies = Client.getInstance().getCookies();
                             String stringCookies = "";
@@ -357,14 +373,18 @@ public class IntentHandler {
                                 stringCookies = stringCookies.concat(cookieEntry.getKey()).concat("=").concat(cookieEntry.getValue().value()).concat(";");
                             }
                             request.addRequestHeader("Cookie", stringCookies);*/
-                            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
 
-                            dm.enqueue(request);
-                            Toast.makeText(App.getContext(), "Выполняется загрузка ".concat(fileName), Toast.LENGTH_SHORT).show();
-                        };
-                        mainActivity.checkStoragePermission(runnable);
-                    }
-                });
+        dm.enqueue(request);
+    }
+
+    private static void externalDownloader(String url) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK);
+            App.getInstance().startActivity(Intent.createChooser(intent, "Загрузить через").addFlags(FLAG_ACTIVITY_NEW_TASK));
+        } catch (ActivityNotFoundException e) {
+            ACRA.getErrorReporter().handleException(e);
+        }
     }
 }
