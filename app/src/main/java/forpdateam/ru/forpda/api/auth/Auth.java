@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.api.auth;
 
-import android.text.Html;
-
 import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,6 +9,7 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.IWebClient;
 import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
+import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.auth.models.AuthForm;
 import forpdateam.ru.forpda.client.ClientHelper;
 
@@ -59,7 +58,7 @@ public class Auth {
         NetworkResponse response = Api.getWebClient().request(builder.build());
         Matcher matcher = errorPattern.matcher(response.getBody());
         if (matcher.find()) {
-            throw new Exception(Html.fromHtml(matcher.group(1)).toString().replaceAll("\\.", ".\n").trim());
+            throw new Exception(Utils.fromHtml(matcher.group(1)).replaceAll("\\.", ".\n").trim());
         }
         form.setBody(response.getBody());
         return checkLogin(response.getBody());

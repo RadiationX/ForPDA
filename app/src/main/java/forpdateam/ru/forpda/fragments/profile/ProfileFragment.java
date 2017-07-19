@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -123,7 +124,6 @@ public class ProfileFragment extends TabFragment {
         findViewById(R.id.profile_save_note).setOnClickListener(view1 -> saveNote());
         //toolbar.setTitleTextColor(Color.TRANSPARENT);
 
-
         if (getActivity() != null && getActivity().getWindow() != null) {
             window = getActivity().getWindow();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -153,9 +153,9 @@ public class ProfileFragment extends TabFragment {
     @Override
     protected void refreshToolbarMenuItems(boolean enable) {
         super.refreshToolbarMenuItems(enable);
-        if(enable){
+        if (enable) {
             copyLinkMenuItem.setEnabled(true);
-        }else {
+        } else {
             copyLinkMenuItem.setEnabled(false);
             writeMenuItem.setVisible(false);
         }
@@ -367,7 +367,7 @@ public class ProfileFragment extends TabFragment {
         if (currentProfile.getContacts().size() > 0) {
             if (!Pattern.compile("showuser=".concat(Integer.toString(ClientHelper.getUserId()))).matcher(tab_url).find()) {
                 writeMenuItem.setVisible(true);
-            }else {
+            } else {
                 writeMenuItem.setVisible(false);
             }
         }

@@ -137,7 +137,7 @@ public class Qms {
             QmsTheme thread = new QmsTheme();
             thread.setId(Integer.parseInt(matcher.group(1)));
             thread.setDate(matcher.group(2));
-            thread.setName(Html.fromHtml(matcher.group(3).trim()).toString());
+            thread.setName(Utils.fromHtml(matcher.group(3).trim()));
             thread.setCountMessages(Integer.parseInt(matcher.group(4)));
             String countNew = matcher.group(5);
             thread.setCountNew(countNew == null || countNew.isEmpty() ? 0 : Integer.parseInt(countNew));

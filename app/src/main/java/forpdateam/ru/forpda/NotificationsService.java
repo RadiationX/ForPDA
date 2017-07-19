@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.events.Events;
 import forpdateam.ru.forpda.api.events.models.NotificationEvent;
 import forpdateam.ru.forpda.api.events.models.WebSocketEvent;
@@ -716,7 +717,7 @@ public class NotificationsService extends Service {
             content.append("...и еще ").append(notificationEvents.size() - size);
         }
 
-        return Html.fromHtml(content.toString());
+        return Utils.spannedFromHtml(content.toString());
     }
 
     private String createStackedSummary(List<NotificationEvent> notificationEvents) {

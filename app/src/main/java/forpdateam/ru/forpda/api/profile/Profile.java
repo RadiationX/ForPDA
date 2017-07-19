@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.api.profile;
 
-import android.text.Html;
 import android.util.Pair;
 
 import java.util.regex.Matcher;
@@ -11,12 +10,13 @@ import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
+import forpdateam.ru.forpda.utils.Html;
 
 /**
  * Created by radiationx on 03.08.16.
  */
 public class Profile {
-    private static final Pattern mainPattern = Pattern.compile("<div[^>]*?user-box[\\s\\S]*?<img src=\"([^\"]*?)\"[\\s\\S]*?<h1>([^<]*?)<\\/h1>[\\s\\S]*?(?=<span class=\"title\">([^<]*?)<\\/span>| )[\\s\\S]*?<h2>(?:<span style[^>]*?>|)([^\"<]*?)(?:<\\/span>|)<\\/h2>[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?<div class=\"u-note\">([\\s\\S]*?)<\\/div>[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)");
+    private static final Pattern mainPattern = Pattern.compile("<div[^>]*?user-box[\\s\\S]*?<img src=\"([^\"]*?)\"[\\s\\S]*?<h1>([^<]*?)<\\/h1>[\\s\\S]*?(?=<span class=\"title\">([^<]*?)<\\/span>| )[\\s\\S]*?<h2>(?:<span style[^>]*?>|)([^\"<]*?)(?:<\\/span>|)<\\/h2>[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?<div class=\"u-note\">([\\s\\S]*?)<\\/div>[^<]*?(?:<\\/li>|<div)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)");
     private static final Pattern info = Pattern.compile("<li[\\s\\S]*?title[^>]*?>([^>]*?)<[\\s\\S]*?div[^>]*>([\\s\\S]*?)</div>");
     private static final Pattern personal = Pattern.compile("<li[\\s\\S]*?title[^>]*?>([^>]*?)<[\\s\\S]*?(?=<div[^>]*>([^<]*)[\\s\\S]*?</div>|)<");
     private static final Pattern contacts = Pattern.compile("<a[^>]*?href=\"([^\"]*?)\"[^>]*?>(?=<strong>([\\s\\S]*?)</strong>|([\\s\\S]*?)</a>)");
@@ -48,7 +48,7 @@ public class Profile {
             }
 
             String signString = safe(mainMatcher.group(6));
-            profile.setSign(signString.equals("Нет подписи") ? null : Html.fromHtml(signString));
+            profile.setSign(signString.equals("Нет подписи") ? null : Utils.coloredFromHtml(signString));
 
             data = personal.matcher(mainMatcher.group(7));
             while (data.find()) {
@@ -105,7 +105,7 @@ public class Profile {
 
             data = about.matcher(response.getBody());
             if (data.find()) {
-                profile.setAbout(forpdateam.ru.forpda.utils.Html.fromHtml(safe(data.group(1))));
+                profile.setAbout(Utils.coloredFromHtml(safe(data.group(1))));
             }
         }
         return profile;

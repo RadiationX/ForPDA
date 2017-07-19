@@ -167,6 +167,9 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         } else {
             startService(new Intent(this, NotificationsService.class));
         }*/
+        new Handler().postDelayed(()->{
+
+        }, 1000);
     }
 
     @Override

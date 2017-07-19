@@ -26,6 +26,7 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.IWebClient;
 import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
+import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.utils.Html;
 import forpdateam.ru.forpda.utils.SimpleObservable;
 import okhttp3.Cookie;
@@ -385,7 +386,7 @@ public class Client implements IWebClient {
             errorMatcher.reset(res);
 
         if (errorMatcher.find()) {
-            throw new OnlyShowException(Html.fromHtml(errorMatcher.group(1)).toString());
+            throw new OnlyShowException(Utils.fromHtml(errorMatcher.group(1)));
         }
     }
 

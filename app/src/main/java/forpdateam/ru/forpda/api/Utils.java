@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.api;
 
+import android.text.Spanned;
 import android.text.TextUtils;
 
 import forpdateam.ru.forpda.utils.Html;
@@ -9,9 +10,17 @@ import forpdateam.ru.forpda.utils.Html;
  */
 
 public class Utils {
+    public static Spanned coloredFromHtml(String s) {
+        if (s == null) return null;
+        return Html.fromHtml(s, Html.FROM_HTML_OPTION_USE_CSS_COLORS);
+    }
+    public static Spanned spannedFromHtml(String s) {
+        if (s == null) return null;
+        return Html.fromHtml(s);
+    }
     public static String fromHtml(String s) {
         if (s == null) return null;
-        return Html.fromHtml(s).toString();
+        return spannedFromHtml(s).toString();
     }
 
     public static String htmlEncode(String s) {
