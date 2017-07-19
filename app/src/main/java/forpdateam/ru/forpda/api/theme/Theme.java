@@ -143,7 +143,7 @@ public class Theme {
                     PollQuestionItem questionItem = new PollQuestionItem();
                     if (!isResult) {
                         questionItem.setType(itemsMatcher.group(1));
-                        questionItem.setName(itemsMatcher.group(2));
+                        questionItem.setName(Utils.fromHtml(itemsMatcher.group(2)));
                         questionItem.setValue(Integer.parseInt(itemsMatcher.group(3)));
                         questionItem.setTitle(Utils.fromHtml(itemsMatcher.group(4)));
                     } else {

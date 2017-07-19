@@ -81,7 +81,7 @@ public class Topics {
         while (matcher.find()){
             TopicItem topicItem = new TopicItem();
             topicItem.setId(Integer.parseInt(matcher.group(1)));
-            topicItem.setTitle(matcher.group(2));
+            topicItem.setTitle(Utils.fromHtml(matcher.group(2)));
             topicItem.setForum(true);
             data.addForumItem(topicItem);
         }

@@ -56,7 +56,6 @@ public class Client implements IWebClient {
     private static List<Cookie> listCookies;
     private SimpleObservable networkObservables = new SimpleObservable();
     private Handler observerHandler = new Handler(Looper.getMainLooper());
-    private Matcher countsMatcher, errorMatcher;
     private String tempGroup;
 
     //Class
@@ -380,11 +379,7 @@ public class Client implements IWebClient {
     }
 
     private void checkForumErrors(String res) throws Exception {
-        if (errorMatcher == null)
-            errorMatcher = errorPattern.matcher(res);
-        else
-            errorMatcher.reset(res);
-
+        Matcher errorMatcher = errorPattern.matcher(res);
         if (errorMatcher.find()) {
             throw new OnlyShowException(Utils.fromHtml(errorMatcher.group(1)));
         }
@@ -392,10 +387,7 @@ public class Client implements IWebClient {
 
 
     private void getCounts(String res) {
-        if (countsMatcher == null)
-            countsMatcher = countsPattern.matcher(res);
-        else
-            countsMatcher.reset(res);
+        Matcher countsMatcher = countsPattern.matcher(res);
 
         if (countsMatcher.find()) {
             try {

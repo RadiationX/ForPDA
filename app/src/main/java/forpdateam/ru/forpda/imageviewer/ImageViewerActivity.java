@@ -133,7 +133,7 @@ public class ImageViewerActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add("Сохранить").setOnMenuItemClickListener(item -> {
-            IntentHandler.systemDownload(urls.get(pager.getCurrentItem()));
+            IntentHandler.handleDownload(urls.get(pager.getCurrentItem()));
             return false;
         });
         return super.onCreateOptionsMenu(menu);
