@@ -290,7 +290,8 @@ function improveSpoilBlock() {
                 codeTitle.insertAdjacentHTML("beforeEnd", '<div class="block-controls"><i class="link"></i></div>');
                 codeBlock.classList.add("improve");
             }
-            codeTitle.querySelector('.link').addEventListener('click', function(){
+            codeTitle.querySelector('.link').addEventListener('click', function(e){
+                e.stopPropagation();
                 alert("SOSI");
             });
         } catch (error) {

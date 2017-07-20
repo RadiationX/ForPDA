@@ -2,17 +2,22 @@ package forpdateam.ru.forpda.api.news;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.NetworkResponse;
+import forpdateam.ru.forpda.api.NewsItem;
 import forpdateam.ru.forpda.api.Utils;
+import forpdateam.ru.forpda.api.news.models.NewsNetworkModel;
 import forpdateam.ru.forpda.api.regex.RegexStorage;
-import forpdateam.ru.forpda.data.NewsItem;
+import forpdateam.ru.forpda.fragments.news.models.NewsModel;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_ALL;
@@ -67,6 +72,10 @@ import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_WP7_SOFTWARE;
  */
 public class NewsApi {
 
+    private void logger(Object s, String unk){
+        Log.d("CHECK_CLIENT", ""+s);
+
+    }
     public List<NewsItem> mappingNewsList(@Nullable String source) {
         if (source == null) return new ArrayList<>();
         logger("source " + source, null);
@@ -91,11 +100,16 @@ public class NewsApi {
     }
 
     // разделил потому что со страницы нужен будет не только скисок артиклей
-    public Single<String> getSource(@Nullable String url, @Nullable String category, int pageNumber) {
+    public Observable<String> getSourceRx(@Nullable String url, @Nullable String category, int pageNumber) {
+        return Observable.fromCallable(() -> getSource(url, category, pageNumber));
+    }
+
+    public String getSource(@Nullable String url, @Nullable String category, int pageNumber) {
 //        if (url != null) {
 //            return Single.fromCallable(() -> get(url));
 //        }
 
+        logger(Thread.currentThread(), null);
         String link = getUrlCategory(category);
         if (pageNumber >= 2) {
             link = link + "page/" + pageNumber + "/";
@@ -105,18 +119,20 @@ public class NewsApi {
         String res = get(finalLink);
         if (res == null) {
             logger("res null", null);
-            return Single.fromCallable(() -> "");
+            res = "";
         }
-        return Single.fromCallable(() -> res);
+        return res;
     }
 
     private String get(@NonNull String url) {
         // пустая строка потому что null нельзя
+        logger(Thread.currentThread(), null);
         String source = "";
         try {
             NetworkResponse response = Api.getWebClient().get(url);
 
             logger("Respons 1 " + response.getBody(), null);
+            source = response.getBody();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -126,6 +142,9 @@ public class NewsApi {
         return source;
     }
 
+    public Single<ArrayList<NewsNetworkModel>> getNewsListFromNetwork1(String c, int pn){
+        return null;
+    }
 
 
     private String getUrlCategory(@Nullable String category) {
