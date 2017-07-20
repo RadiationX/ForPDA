@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import forpdateam.ru.forpda.api.news.Constants;
-import forpdateam.ru.forpda.api.news.NewsParser;
-import forpdateam.ru.forpda.api.news.models.NewsNetworkModel;
 import forpdateam.ru.forpda.client.NetworkStateReceiver;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -182,13 +180,13 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             }
             Log.d("CHECK_CLIENT", "MODELS: "+models.size());
         }).start();*/
-        new NewsParser().getNewsListFromNetwork1(Constants.NEWS_CATEGORY_ALL, 0)
+        /*new NewsParser().getNewsListFromNetwork1(Constants.NEWS_CATEGORY_ALL, 0)
                 .onErrorReturnItem(new ArrayList<>())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(newsNetworkModels -> {
                     Log.d("CHECK_CLIENT", "MODELS: "+newsNetworkModels.size());
-                });
+                });*/
     }
 
     @Override
