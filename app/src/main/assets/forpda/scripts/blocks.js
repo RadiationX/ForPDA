@@ -280,24 +280,33 @@ function addIcons(e) {
         }
     }
 }
+
 function improveSpoilBlock() {
-    var spoilBlockAll = document.querySelectorAll('.post-block.spoil');
-    for (var i = 0; i < spoilBlockAll.length; i++) {
-        try {
-            var codeBlock = spoilBlockAll[i];
-            var codeTitle = codeBlock.querySelector('.block-title')
-            if (!codeBlock.classList.contains("improve")) {
-                codeTitle.insertAdjacentHTML("beforeEnd", '<div class="block-controls"><i class="link"></i></div>');
-                codeBlock.classList.add("improve");
+    var posts = document.querySelectorAll('.post_container');
+    for (var j = 0; j < posts.length; j++) {
+        var post = posts[j];
+        var spoilBlockAll = post.querySelectorAll('.post-block.spoil');
+        for (var i = 0; i < spoilBlockAll.length; i++) {
+            try {
+                var codeBlock = spoilBlockAll[i];
+                var codeTitle = codeBlock.querySelector('.block-title')
+                if (!codeBlock.classList.contains("improve")) {
+                    codeTitle.insertAdjacentHTML("beforeEnd", '<div class="block-controls"><i class="link" data-spoil-number="'+(i+1)+'" data-post-id="'+post.getAttribute("data-post-id")+'"></i></div>');
+                    codeBlock.classList.add("improve");
+                }
+                codeTitle.querySelector('.link').addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    var postId = e.target.getAttribute("data-post-id");
+                    var spoilerNumber = e.target.getAttribute("data-spoil-number");
+                    console.log(postId+ " : "+spoilerNumber);
+                    ITheme.copySpoilerLink(postId, spoilerNumber);
+                });
+            } catch (error) {
+                console.log(error);
             }
-            codeTitle.querySelector('.link').addEventListener('click', function(e){
-                e.stopPropagation();
-                alert("SOSI");
-            });
-        } catch (error) {
-            console.log(error);
         }
     }
+
 
 }
 

@@ -181,13 +181,13 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             }
             Log.d("CHECK_CLIENT", "MODELS: "+models.size());
         }).start();*/
-        Api.NewsList().getSourceRx(null,Constants.NEWS_CATEGORY_ALL, 0)
+        /*Api.NewsList().getSourceRx(null,Constants.NEWS_CATEGORY_ALL, 0)
                 .onErrorReturnItem("ERROOOOOR BLYA")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(newsNetworkModels -> {
                     Log.d("CHECK_CLIENT", "MODELS: "+newsNetworkModels);
-                });
+                });*/
     }
 
     @Override
