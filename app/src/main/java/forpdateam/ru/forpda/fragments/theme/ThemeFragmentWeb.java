@@ -18,6 +18,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -46,6 +47,7 @@ import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.MimeTypeUtil;
+import forpdateam.ru.forpda.utils.Utils;
 
 /**
  * Created by radiationx on 20.10.16.
@@ -571,6 +573,16 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
     @Override
     public void deletePostUi(IBaseForumPost post) {
         webView.evalJs("deletePost(" + post.getId() + ");");
+    }
+
+    @JavascriptInterface
+    public void copySpoilerLink(String postId, String spoilNumber) {
+        run(() -> {
+            Toast.makeText(getContext(), "Ссылка на спойлер скопирована", Toast.LENGTH_SHORT).show();
+            IBaseForumPost post = getPostById(Integer.parseInt(postId));
+            String s = "http://4pda.ru/forum/index.php?act=findpost&pid=" + post.getId() + "&anchor=Spoil-" + post.getId() + "-" + spoilNumber;
+            Utils.copyToClipBoard(s);
+        });
     }
 
     public void run(final Runnable runnable) {

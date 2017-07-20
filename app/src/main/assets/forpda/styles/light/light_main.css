@@ -185,7 +185,7 @@ li .post-block.hidden {
   z-index: 1;
 }
 .post-block.spoil > .block-title {
-  padding-right: 2.5rem;
+  padding-right: 5rem;
   color: #000000;
 }
 .post-block.spoil > .block-title * {
