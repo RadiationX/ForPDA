@@ -5,7 +5,7 @@ import forpdateam.ru.forpda.api.events.Events;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.forum.Forum;
 import forpdateam.ru.forpda.api.mentions.Mentions;
-import forpdateam.ru.forpda.api.news.NewsParser;
+import forpdateam.ru.forpda.api.news.NewsApi;
 import forpdateam.ru.forpda.api.profile.Profile;
 import forpdateam.ru.forpda.api.qms.Qms;
 import forpdateam.ru.forpda.api.reputation.Reputation;
@@ -21,7 +21,7 @@ public class Api {
     private static Api INSTANCE = null;
     private static Qms qmsApi = null;
     private static Auth authApi = null;
-    private static NewsParser newsListApi = null;
+    private static NewsApi newsListApi = null;
     private static Profile profileRxApi = null;
     private static Theme themeApi = null;
     private static EditPost editPost = null;
@@ -54,8 +54,8 @@ public class Api {
         return authApi;
     }
 
-    public static NewsParser NewsList() {
-        if (newsListApi == null) newsListApi = new NewsParser();
+    public static NewsApi NewsList() {
+        if (newsListApi == null) newsListApi = new NewsApi();
         return newsListApi;
     }
 
