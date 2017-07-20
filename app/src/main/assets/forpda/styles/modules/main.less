@@ -119,6 +119,54 @@ li {
         line-height: 20/16rem;
         //text-transform: uppercase;
         color: @colorAccent!important;
+        >.block-controls {
+                float: right;
+                position: absolute;
+                right: 40/16rem;
+                top: (40-36)/2/16rem;
+                z-index: 3;
+                .noselect();
+                i {
+                    position: relative;
+                    height: 36/16rem;
+                    width: 36/16rem;
+                    .bRad(2px);
+                    float: right;
+                    margin-right: 8/16rem;
+                    &.wrap {
+                        &:after {
+                            background-image: url(@icon_wrap_src);
+                        }
+                    }
+                    &.select_all {
+                        &:after {
+                            background-image: url(@icon_select_all_src);
+                        }
+                    }
+                    &.link {
+                        &:after {
+                            background-image: url(../../res/dark/dots-vertical.svg);
+                        }
+                    }
+                    &:first-child{
+                        margin-right: 0/16rem;
+                    }
+                    &:after {
+                        content: "";
+                        height: 36/16rem;
+                        width: 36/16rem;
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        background-repeat: no-repeat;
+                        background-size: 24/16rem 24/16rem;
+                        background-position: center;
+                    }
+                    &:active {
+                        background-color: @tapColor;
+                    }
+                }
+            }
     }
     >.block-body {
         padding: 0.5rem 1rem 1rem 1rem;
@@ -389,46 +437,6 @@ li {
                     transform: scale(1) translateZ(0);
                 }
                 background: @tapColor;
-            }
-            >.block-controls {
-                float: right;
-                position: absolute;
-                right: 40/16rem;
-                top: (40-36)/2/16rem;
-                z-index: 3;
-                .noselect();
-                i {
-                    position: relative;
-                    height: 36/16rem;
-                    width: 36/16rem;
-                    .bRad(2px);
-                    float: right;
-                    &.wrap {
-                        &:after {
-                            background-image: url(@icon_wrap_src);
-                        }
-                    }
-                    &.select_all {
-                        &:after {
-                            background-image: url(@icon_select_all_src);
-                        }
-                        margin-right: 8/16rem;
-                    }
-                    &:after {
-                        content: "";
-                        height: 36/16rem;
-                        width: 36/16rem;
-                        position: absolute;
-                        left: 0;
-                        top: 0;
-                        background-repeat: no-repeat;
-                        background-size: 24/16rem 24/16rem;
-                        background-position: center;
-                    }
-                    &:active {
-                        background-color: @tapColor;
-                    }
-                }
             }
             .icon {
                 height: 40/16rem;

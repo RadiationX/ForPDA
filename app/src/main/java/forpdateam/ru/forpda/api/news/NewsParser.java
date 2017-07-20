@@ -88,7 +88,7 @@ public class NewsParser {
     * 3. Title */
     private static final Pattern materialsPattern = Pattern.compile("<li class=\"slider-item\"[^>]*?>[^<]*?<a href=\"[^\"]*?\\/(\\d+)\\/\\?[^\"]*?\"[^>]*?><img src=\"([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[^<]*?<h3>[^<]*?<a[^>]*?>([\\s\\S]*?)<\\/a>[^<]*?<\\/h3>");
 
-    private ArrayList<NewsNetworkModel> getNewsListFromNetwork2(@NonNull String category, int pageNumber) {
+    public ArrayList<NewsNetworkModel> getNewsListFromNetwork2(@NonNull String category, int pageNumber) {
         ArrayList<NewsNetworkModel> cache = new ArrayList<>();
         String url = getUrlCategory(category);
         if (pageNumber >= 2) { url = url + "page/" + pageNumber + "/"; }

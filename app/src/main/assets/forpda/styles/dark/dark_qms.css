@@ -8,11 +8,6 @@
 /* NEW COLORS */
 /*Elements colors*/
 /*Post blocks*/
-.mainBox {
-  background: #212121;
-  margin: 0.5em 0;
-  box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
-}
 .noselect {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -35,9 +30,11 @@ body {
   margin: 0.5rem 1rem;
 }
 .mess_list > .mess_container .mess {
-  position: relative;
   background: #212121;
-  box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
+  margin: 0.5em 0;
+  box-shadow: 0rem 0.0625rem 0.0625rem rgba(0, 0, 0, 0.12), 0rem 0rem 0.0625rem rgba(0, 0, 0, 0.12);
+  position: relative;
+  margin: 0;
   border-radius: 0.5rem;
   max-width: 100%;
 }
