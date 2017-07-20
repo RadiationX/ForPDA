@@ -1,16 +1,18 @@
 package forpdateam.ru.forpda.api.news;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
-import forpdateam.ru.forpda.api.news.models.NewsNetworkModel;
+import forpdateam.ru.forpda.api.regex.RegexStorage;
+import forpdateam.ru.forpda.data.NewsItem;
 import io.reactivex.Single;
 
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_ALL;
@@ -59,68 +61,76 @@ import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_SOFTWARE;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_TABLETS_REVIEWS;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_WP7_GAME;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_WP7_SOFTWARE;
+import static forpdateam.ru.forpda.ext.LogExtKt.logger;
 
 /**
  * Created by radiationx on 31.07.16.
  */
-public class NewsParser {
-    /* Groups:
-    * 1. Link
-    * 2. Title
-    * 3. Image Url
-    * 4. Comments Count
-    * 5. Date
-    * 6. Author
-    * 7. Description */
-    private static final Pattern pattern = Pattern.compile("<article[^>]*?class=\"post\"[^>]*?data-ztm=\"[^ ]+\"[^>]*>[\\s\\S]*?<a[^>]*?href=\"([^\"]*)\"[^>]*?title=\"([^\"]*?)\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\"[\\s\\S]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[\\s\\S]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?itemprop=\"description\">([\\s\\S]*?)<\\/div>[\\s\\S]*?<\\/article>");
+public class NewsApi {
 
-    /* Groups:
-    * 1. Content source
-    * 2. Materials items source
-    * 3. Magic id for newer/older navigation
-    * 4. Comments Count
-    * 5. Comments tree source */
-    private static final Pattern newPattern = Pattern.compile("<div class=\"content-box\" itemprop=\"articleBody\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?<div class=\"materials-box\"[^>]*?>[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>[^<]*?<\\/div>[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>[\\s\\S]*?<div class=\"comment-box\" id=\"comments\"[^>]*?>[^<]*?<div class=\"heading\"[^>]*?>[^>]*?<h2>(\\d+)[^<]*?<\\/h2>[\\s\\S]*?(<ul[\\s\\S]*?<\\/ul>)[^<]*?<form");
-
-    /* Groups:
-    * 1. News id
-    * 2. Image url
-    * 3. Title */
-    private static final Pattern materialsPattern = Pattern.compile("<li class=\"slider-item\"[^>]*?>[^<]*?<a href=\"[^\"]*?\\/(\\d+)\\/\\?[^\"]*?\"[^>]*?><img src=\"([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[^<]*?<h3>[^<]*?<a[^>]*?>([\\s\\S]*?)<\\/a>[^<]*?<\\/h3>");
-
-    public ArrayList<NewsNetworkModel> getNewsListFromNetwork2(@NonNull String category, int pageNumber) {
-        ArrayList<NewsNetworkModel> cache = new ArrayList<>();
-        String url = getUrlCategory(category);
-        if (pageNumber >= 2) { url = url + "page/" + pageNumber + "/"; }
-
-        Log.d("LOG","getNewsListFromNetwork2 ->> " + category + " " + pageNumber + " " + url);
-        try {
-            NetworkResponse response = Api.getWebClient().get(url);
-            if (response == null) return new ArrayList<>();
-            Matcher matcher = pattern.matcher(response.getBody());
-            while (matcher.find()) {
-                NewsNetworkModel model = new NewsNetworkModel();
-                model.setLink(matcher.group(1));
-                model.setImageUrl(matcher.group(3));
-                model.setTitle(Utils.fromHtml(matcher.group(2)));
-                model.setCommentsCount(matcher.group(4));
-                model.setDate(matcher.group(5));
-                model.setAuthor(Utils.fromHtml(matcher.group(6)));
-                model.setDescription(Utils.fromHtml(matcher.group(7)));
-                model.setCategory(category);
-                cache.add(model);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public List<NewsItem> mappingNewsList(@Nullable String source) {
+        if (source == null) return new ArrayList<>();
+        logger("source " + source, null);
+        ArrayList<NewsItem> cache = new ArrayList<>();
+        final String regex = RegexStorage.News.List.getListPattern();
+        final Pattern pattern = Pattern.compile(regex);
+        final Matcher matcher = pattern.matcher(source);
+        while (matcher.find()) {
+            NewsItem model = new NewsItem();
+            model.setUrl(matcher.group(1));
+            model.setImgUrl(matcher.group(3));
+            model.setTitle(Utils.fromHtml(matcher.group(2)));
+            model.setCommentsCount(matcher.group(4));
+            model.setDate(matcher.group(5));
+            model.setAuthor(Utils.fromHtml(matcher.group(6)));
+            model.setDescription(Utils.fromHtml(matcher.group(7)));
+//            model.setTags(matcher.group(8));
+            cache.add(model);
         }
+        logger("mapping " + cache.size(), null);
         return cache;
     }
 
-    public Single<ArrayList<NewsNetworkModel>> getNewsListFromNetwork1(@NonNull String category, int pageNumber) {
-        return Single.fromCallable(() -> getNewsListFromNetwork2(category, pageNumber));
+    // разделил потому что со страницы нужен будет не только скисок артиклей
+    public Single<String> getSource(@Nullable String url, @Nullable String category, int pageNumber) {
+//        if (url != null) {
+//            return Single.fromCallable(() -> get(url));
+//        }
+
+        String link = getUrlCategory(category);
+        if (pageNumber >= 2) {
+            link = link + "page/" + pageNumber + "/";
+        }
+        String finalLink = link;
+        logger("NewsApi finalLink " + finalLink , null);
+        String res = get(finalLink);
+        if (res == null) {
+            logger("res null", null);
+            return Single.fromCallable(() -> "");
+        }
+        return Single.fromCallable(() -> res);
     }
 
-    private String getUrlCategory(@NonNull String category) {
+    private String get(@NonNull String url) {
+        // пустая строка потому что null нельзя
+        String source = "";
+        try {
+            NetworkResponse response = Api.getWebClient().get(url);
+
+            logger("Respons 1 " + response.getBody(), null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger("Error " + e.getMessage(), null);
+            e.printStackTrace();
+        }
+        return source;
+    }
+
+
+
+    private String getUrlCategory(@Nullable String category) {
+        if (category == null) return NEWS_URL_ALL;
         switch (category) {
             case NEWS_CATEGORY_ALL:
                 return NEWS_URL_ALL;
@@ -170,9 +180,5 @@ public class NewsParser {
                 return NEWS_URL_HOW_TO_INTERVIEW;
         }
         return NEWS_URL_ALL;
-    }
-
-    public static String getDetailsNewsItem(@NonNull String url) throws Exception {
-        return Api.getWebClient().get(url).getBody();
     }
 }
