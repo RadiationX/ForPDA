@@ -280,10 +280,30 @@ function addIcons(e) {
         }
     }
 }
+function improveSpoilBlock() {
+    var spoilBlockAll = document.querySelectorAll('.post-block.spoil');
+    for (var i = 0; i < spoilBlockAll.length; i++) {
+        try {
+            var codeBlock = spoilBlockAll[i];
+            var codeTitle = codeBlock.querySelector('.block-title')
+            if (!codeBlock.classList.contains("improve")) {
+                codeTitle.insertAdjacentHTML("beforeEnd", '<div class="block-controls"><i class="link"></i></div>');
+                codeBlock.classList.add("improve");
+            }
+            codeTitle.querySelector('.link').addEventListener('click', function(){
+                alert("SOSI");
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+}
 
 nativeEvents.addEventListener("DOMContentLoaded", transformSnapbacks);
 nativeEvents.addEventListener("DOMContentLoaded", transformQuotes);
 
+nativeEvents.addEventListener("DOMContentLoaded", improveSpoilBlock);
 nativeEvents.addEventListener("DOMContentLoaded", improveCodeBlock);
 nativeEvents.addEventListener("DOMContentLoaded", blocksOpenClose);
 nativeEvents.addEventListener("DOMContentLoaded", removeImgesSrc);

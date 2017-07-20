@@ -9,11 +9,6 @@
 /* NEW COLORS */
 /*Elements colors*/
 /*Post blocks*/
-.mainBox {
-  background: #ffffff;
-  margin: 0.5em 0;
-  box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
-}
 .noselect {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -135,6 +130,54 @@ li .post-block.hidden {
   font-size: 0.875rem;
   line-height: 1.25rem;
   color: #000000 !important;
+}
+.post-block > .block-title > .block-controls {
+  float: right;
+  position: absolute;
+  right: 2.5rem;
+  top: 0.125rem;
+  z-index: 3;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.post-block > .block-title > .block-controls i {
+  position: relative;
+  height: 2.25rem;
+  width: 2.25rem;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  float: right;
+  margin-right: 0.5rem;
+}
+.post-block > .block-title > .block-controls i.wrap:after {
+  background-image: url("../../res/light/wrap.svg");
+}
+.post-block > .block-title > .block-controls i.select_all:after {
+  background-image: url("../../res/light/select-all.svg");
+}
+.post-block > .block-title > .block-controls i.link:after {
+  background-image: url(../../res/dark/dots-vertical.svg);
+}
+.post-block > .block-title > .block-controls i:first-child {
+  margin-right: 0rem;
+}
+.post-block > .block-title > .block-controls i:after {
+  content: "";
+  height: 2.25rem;
+  width: 2.25rem;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-repeat: no-repeat;
+  background-size: 1.5rem 1.5rem;
+  background-position: center;
+}
+.post-block > .block-title > .block-controls i:active {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 .post-block > .block-body {
   padding: 0.5rem 1rem 1rem 1rem;
@@ -367,50 +410,6 @@ li .post-block.hidden {
   opacity: 0.05;
   -webkit-transform: scale(1) translateZ(0);
   transform: scale(1) translateZ(0);
-}
-.post-block.code > .block-title > .block-controls {
-  float: right;
-  position: absolute;
-  right: 2.5rem;
-  top: 0.125rem;
-  z-index: 3;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-.post-block.code > .block-title > .block-controls i {
-  position: relative;
-  height: 2.25rem;
-  width: 2.25rem;
-  -webkit-border-radius: 2px;
-  border-radius: 2px;
-  float: right;
-}
-.post-block.code > .block-title > .block-controls i.wrap:after {
-  background-image: url("../../res/light/wrap.svg");
-}
-.post-block.code > .block-title > .block-controls i.select_all {
-  margin-right: 0.5rem;
-}
-.post-block.code > .block-title > .block-controls i.select_all:after {
-  background-image: url("../../res/light/select-all.svg");
-}
-.post-block.code > .block-title > .block-controls i:after {
-  content: "";
-  height: 2.25rem;
-  width: 2.25rem;
-  position: absolute;
-  left: 0;
-  top: 0;
-  background-repeat: no-repeat;
-  background-size: 1.5rem 1.5rem;
-  background-position: center;
-}
-.post-block.code > .block-title > .block-controls i:active {
-  background-color: rgba(0, 0, 0, 0.05);
 }
 .post-block.code > .block-title .icon {
   height: 2.5rem;

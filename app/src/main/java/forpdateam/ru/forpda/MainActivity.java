@@ -22,6 +22,9 @@ import android.view.inputmethod.InputMethodManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import forpdateam.ru.forpda.api.news.Constants;
+import forpdateam.ru.forpda.api.news.NewsParser;
+import forpdateam.ru.forpda.api.news.models.NewsNetworkModel;
 import forpdateam.ru.forpda.client.NetworkStateReceiver;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -30,6 +33,9 @@ import forpdateam.ru.forpda.utils.permission.RxPermissions;
 import forpdateam.ru.forpda.views.drawers.DrawerHeader;
 import forpdateam.ru.forpda.views.drawers.Drawers;
 import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity implements TabManager.TabListener {
     public final static String DEF_TITLE = "ForPDA";
@@ -167,9 +173,22 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         } else {
             startService(new Intent(this, NotificationsService.class));
         }*/
-        new Handler().postDelayed(()->{
-
-        }, 1000);
+        /*new Thread(()->{
+            ArrayList<NewsNetworkModel> models = new ArrayList<>();
+            try{
+                models = new NewsParser().getNewsListFromNetwork2(Constants.NEWS_CATEGORY_ALL, 0);
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+            Log.d("CHECK_CLIENT", "MODELS: "+models.size());
+        }).start();*/
+        new NewsParser().getNewsListFromNetwork1(Constants.NEWS_CATEGORY_ALL, 0)
+                .onErrorReturnItem(new ArrayList<>())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(newsNetworkModels -> {
+                    Log.d("CHECK_CLIENT", "MODELS: "+newsNetworkModels.size());
+                });
     }
 
     @Override
@@ -180,29 +199,6 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         App.getContext().startService(new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS));
     }
 
-    /* NotificationsService mService;
-        boolean mBound = false;
-
-
-
-        private ServiceConnection mConnection = new ServiceConnection() {
-
-            @Override
-            public void onServiceConnected(ComponentName className, IBinder service) {
-                Log.d("WS_SERVICE_MA", "onServiceConnected");
-                // We've bound to LocalService, cast the IBinder and get LocalService instance
-                NotificationsService.LocalBinder binder = (NotificationsService.LocalBinder) service;
-                mService = binder.getService();
-                mBound = true;
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                Log.d("WS_SERVICE_MA", "onServiceDisconnected");
-                mBound = false;
-            }
-        };
-    */
     public Drawers getDrawers() {
         return drawers;
     }
@@ -220,35 +216,8 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         if (intent == null || intent.getData() == null) return;
 
         new Handler().post(() -> {
-            Intent newIntent = intent;
-            /*if (intent.getAction().equals("FORPDA_LOG.SOSI.HUI")) {
-                newIntent = new Intent();
-                newIntent.setAction(Intent.ACTION_MAIN);
-                newIntent.addCategory(Intent.CATEGORY_HOME);
-                newIntent.setData(intent.getData());
-                Log.e("FORPDA_LOG", "INTENT FORPDA_LOG " + newIntent);
-            } else {
-                newIntent = intent;
-            }*/
-            /*Log.e("FORPDA_LOG", "FLAG_ACTIVITY_NO_HISTORY " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_NO_HISTORY));
-            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_SINGLE_TOP " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_SINGLE_TOP));
-            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_NEW_TASK " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_NEW_TASK));
-            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_MULTIPLE_TASK " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_MULTIPLE_TASK));
-            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_CLEAR_TOP " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TOP));
-            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_FORWARD_RESULT " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_FORWARD_RESULT));
-            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_PREVIOUS_IS_TOP " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP));
-            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS));
-            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_BROUGHT_TO_FRONT " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT));
-            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_RESET_TASK_IF_NEEDED " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED));
-            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY));
-            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET));
-            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_NO_USER_ACTION " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_NO_USER_ACTION));
-            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_REORDER_TO_FRONT " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
-            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_NO_ANIMATION " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_NO_ANIMATION));
-            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_CLEAR_TASK " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TASK));
-            Log.e("FORPDA_LOG", "FLAG_ACTIVITY_TASK_ON_HOME " + (newIntent.getFlags() & Intent.FLAG_ACTIVITY_TASK_ON_HOME));*/
-            Log.d("FORPDA_LOG", "POST on new intent " + newIntent);
-            IntentHandler.handle(newIntent.getData().toString());
+            Log.d("FORPDA_LOG", "POST on new intent " + intent);
+            IntentHandler.handle(intent.getData().toString());
         });
     }
 
