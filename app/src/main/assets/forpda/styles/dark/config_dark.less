@@ -72,10 +72,11 @@ monospace;
 @modColor: #2980b9;
 @modColorBlock: fade(@modColor, 10%);
 
-.mainBox {
+.mainBox() {
     background: @card_background;
     margin: 8/16em 0;
-    box-shadow: 0 0px 1px fade(#000, 24%);
+    box-shadow: 0rem 1/16rem 1/16rem fade(#000, 12%),
+        0rem 0rem 1/16rem fade(#000, 12%);
 }
 
 .bRad(@param) {

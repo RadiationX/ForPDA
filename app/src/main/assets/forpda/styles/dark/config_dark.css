@@ -8,11 +8,6 @@
 /* NEW COLORS */
 /*Elements colors*/
 /*Post blocks*/
-.mainBox {
-  background: #212121;
-  margin: 0.5em 0;
-  box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
-}
 .noselect {
   -webkit-touch-callout: none;
   -webkit-user-select: none;

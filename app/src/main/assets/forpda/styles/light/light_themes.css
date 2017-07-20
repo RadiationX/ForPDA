@@ -8,11 +8,6 @@
 /* NEW COLORS */
 /*Elements colors*/
 /*Post blocks*/
-.mainBox {
-  background: #ffffff;
-  margin: 0.5em 0;
-  box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
-}
 .noselect {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -22,7 +17,7 @@
   user-select: none;
 }
 body {
-  background: #fafafa;
+  background: #eeeeee;
 }
 button,
 .btn {
@@ -90,7 +85,7 @@ button:active,
 .poll {
   background: #ffffff;
   margin: 0.5em 0;
-  box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
+  box-shadow: 0rem 0.0625rem 0.0625rem rgba(0, 0, 0, 0.12), 0rem 0rem 0.0625rem rgba(0, 0, 0, 0.12);
 }
 .poll > .title {
   -webkit-touch-callout: none;
@@ -546,7 +541,7 @@ button:active,
 .post_container {
   background: #ffffff;
   margin: 0.5em 0;
-  box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
+  box-shadow: 0rem 0.0625rem 0.0625rem rgba(0, 0, 0, 0.12), 0rem 0rem 0.0625rem rgba(0, 0, 0, 0.12);
   position: relative;
 }
 .post_container .hat_button {
@@ -914,7 +909,7 @@ button:active,
 .posts_list.search-results .bad-search-result {
   background: #ffffff;
   margin: 0.5em 0;
-  box-shadow: 0 0px 1px rgba(0, 0, 0, 0.24);
+  box-shadow: 0rem 0.0625rem 0.0625rem rgba(0, 0, 0, 0.12), 0rem 0rem 0.0625rem rgba(0, 0, 0, 0.12);
   padding: 1em;
   margin: 0;
 }

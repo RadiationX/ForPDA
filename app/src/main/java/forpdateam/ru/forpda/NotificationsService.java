@@ -36,12 +36,9 @@ import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.rxapi.ForumUsersCache;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.BitmapUtils;
-import forpdateam.ru.forpda.utils.Html;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Response;
 import okhttp3.WebSocket;
@@ -57,7 +54,7 @@ public class NotificationsService extends Service {
     private final static int NOTIFY_STACKED_FAV_ID = -234;
     public final static String CHECK_LAST_EVENTS = "SOSNI_HUICA_DOZE";
     private NotificationManagerCompat mNotificationManager;
-    private SparseArray<WebSocketEvent> notificationEvents = new SparseArray<>();
+    private SparseArray<WebSocketEvent> eventsHistory = new SparseArray<>();
     private WebSocket webSocket;
     private long lastHardCheckTime = 0;
 
@@ -241,7 +238,7 @@ public class NotificationsService extends Service {
 
     private void handleWebSocketEvent(WebSocketEvent webSocketEvent) {
         if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_READ) {
-            WebSocketEvent oldWebSocketEvent = notificationEvents.get(webSocketEvent.createNotificationId(WebSocketEvent.EVENT_NEW));
+            WebSocketEvent oldWebSocketEvent = eventsHistory.get(webSocketEvent.createNotificationId(WebSocketEvent.EVENT_NEW));
 
             if (webSocketEvent.getType() == WebSocketEvent.TYPE_THEME) {
                 //Убираем уведомления избранного
@@ -250,7 +247,7 @@ public class NotificationsService extends Service {
                 }
 
                 //Убираем уведомление упоминаний
-                oldWebSocketEvent = notificationEvents.get(webSocketEvent.createNotificationId(WebSocketEvent.EVENT_MENTION));
+                oldWebSocketEvent = eventsHistory.get(webSocketEvent.createNotificationId(WebSocketEvent.EVENT_MENTION));
                 if (oldWebSocketEvent != null) {
                     mNotificationManager.cancel(oldWebSocketEvent.createNotificationId());
                 }
@@ -261,8 +258,8 @@ public class NotificationsService extends Service {
                     mNotificationManager.cancel(oldWebSocketEvent.createNotificationId());
                 }
             }
+            eventsHistory.remove(webSocketEvent.createNotificationId(WebSocketEvent.EVENT_NEW));
         } else {
-            notificationEvents.put(webSocketEvent.createNotificationId(), webSocketEvent);
             switch (webSocketEvent.getType()) {
                 case WebSocketEvent.TYPE_QMS:
                     if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_NEW) {
@@ -328,7 +325,7 @@ public class NotificationsService extends Service {
                     }
                 }
             }
-            if (!Preferences.Notifications.Favorites.isEnabled()) {
+            if (!Preferences.Notifications.Favorites.isEnabled() && !Preferences.Notifications.Mentions.isEnabled()) {
                 return;
             }
         }
@@ -453,6 +450,7 @@ public class NotificationsService extends Service {
 
     public void sendNotification(NotificationEvent notificationEvent, Bitmap avatar) {
         WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
+        eventsHistory.put(webSocketEvent.createNotificationId(), webSocketEvent);
 
 
         String title = createTitle(notificationEvent);
