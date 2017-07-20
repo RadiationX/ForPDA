@@ -104,14 +104,7 @@ public class ImagesAdapter extends PagerAdapter {
                     progressBar.setIndeterminate(false);
                 }
             }
-        }, new ImageLoadingProgressListener() {
-            @Override
-            public void onProgressUpdate(String s, View view, int i, int i1) {
-                Log.d("SUKA", "onProgressUpdate: " + i + " : " + i1 + " \t " + s + " : " + Thread.currentThread());
-
-                progressBar.setProgress((int) (100F * i / i1));
-            }
-        });
+        }, (s, view, i, i1) -> progressBar.setProgress((int) (100F * i / i1)));
 
         photoView.setOnPhotoTapListener(tapListener);
     }
