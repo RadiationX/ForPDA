@@ -22,7 +22,7 @@ public class Constants {
     public static final String ERROR_OTHER_ERRORS = "error_other_errors";
 
     /**
-     * NewsParser Category Url
+     * NewsApi Category Url
      */
     public static final String NEWS_CATEGORY_ALL = "all_news";
     public static final String NEWS_URL_ALL = "http://4pda.ru/news/";
@@ -36,7 +36,7 @@ public class Constants {
     public static final String NEWS_URL_GAMES = "http://4pda.ru/games/";
 
     /**
-     * NewsParser Subcategory Url
+     * NewsApi Subcategory Url
      */
     /*GAMES*/
     public static final String NEWS_SUBCATEGORY_DEVSTORY_GAMES = "ds_games_news";
@@ -78,4 +78,12 @@ public class Constants {
     public static final String NEWS_URL_HOW_TO_WP = "http://4pda.ru/tag/how-to-wp/?utm_source=slider1";
     public static final String NEWS_SUBCATEGORY_HOW_TO_INTERVIEW = "interview_news";
     public static final String NEWS_URL_HOW_TO_INTERVIEW = "http://4pda.ru/articles/tag/interview/";
+
+    // news tabs
+    public static final String TAB_OFFLINE = "offline";
+    public static final String TAB_ALL = "news";
+    public static final String TAB_ARTICLE = "article";
+    public static final String TAB_REVIEWS = "reviews";
+    public static final String TAB_SOFTWARE = "software";
+    public static final String TAB_GAMES = "games";
 }
