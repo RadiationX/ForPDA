@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.rxapi;
 
-import forpdateam.ru.forpda.api.news.NewsParser;
+import forpdateam.ru.forpda.api.news.NewsApi;
 import forpdateam.ru.forpda.rxapi.apiclasses.AuthRx;
 import forpdateam.ru.forpda.rxapi.apiclasses.EditPostRx;
 import forpdateam.ru.forpda.rxapi.apiclasses.FavoritesRx;
@@ -21,7 +21,7 @@ public class RxApi {
     private static RxApi INSTANCE = null;
     private static QmsRx qmsApi = null;
     private static AuthRx authApi = null;
-    private static NewsParser newsListApi = null;
+    private static NewsApi newsListApi = null;
     private static ProfileRx profileApi = null;
     private static ThemeRx themeApi = null;
     private static EditPostRx editPost = null;
@@ -42,8 +42,8 @@ public class RxApi {
         return authApi;
     }
 
-    public static NewsParser NewsList() {
-        if (newsListApi == null) newsListApi = new NewsParser();
+    public static NewsApi NewsList() {
+        if (newsListApi == null) newsListApi = new NewsApi();
         return newsListApi;
     }
 

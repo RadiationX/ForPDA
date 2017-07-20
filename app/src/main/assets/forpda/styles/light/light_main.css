@@ -160,7 +160,7 @@ li .post-block.hidden {
   background-image: url("../../res/light/select-all.svg");
 }
 .post-block > .block-title > .block-controls i.link:after {
-  background-image: url(../../res/dark/dots-vertical.svg);
+  background-image: url("../../res/light/link.svg");
 }
 .post-block > .block-title > .block-controls i:first-child {
   margin-right: 0rem;

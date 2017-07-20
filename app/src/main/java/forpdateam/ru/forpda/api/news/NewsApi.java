@@ -61,7 +61,6 @@ import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_SOFTWARE;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_TABLETS_REVIEWS;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_WP7_GAME;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_WP7_SOFTWARE;
-import static forpdateam.ru.forpda.ext.LogExtKt.logger;
 
 /**
  * Created by radiationx on 31.07.16.
