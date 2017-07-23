@@ -105,6 +105,11 @@
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
+        <activity
+            android:name=".WebVewNotFoundActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/LightAppTheme.NoActionBar" />
+
         <service android:name=".NotificationsService" />
         <service
             android:name=".NewWebSocketService"

@@ -23,6 +23,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.TypedValue;
+import android.webkit.WebSettings;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
@@ -143,32 +144,24 @@ public class App extends android.app.Application {
         return isDarkTheme() ? "dark" : "light";
     }
 
+    boolean webViewNotFound = true;
+
+    public boolean isWebViewNotFound() {
+        Log.e("check_wv", "isWebViewNotFound: "+webViewNotFound);
+        return webViewNotFound;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
-        setTheme(R.style.LightAppTheme);
         instance = this;
+        setTheme(R.style.LightAppTheme);
+
         ACRA.init(this);
         ACRA.getErrorReporter().putCustomData("USER_NICK", getPreferences().getString("auth.user.nick", "null"));
         density = getResources().getDisplayMetrics().density;
-
-        templates.put(TEMPLATE_THEME, findTemplate(TEMPLATE_THEME));
-        templates.put(TEMPLATE_SEARCH, findTemplate(TEMPLATE_SEARCH));
-        templates.put(TEMPLATE_QMS_CHAT, findTemplate(TEMPLATE_QMS_CHAT));
-        templates.put(TEMPLATE_QMS_CHAT_MESS, findTemplate(TEMPLATE_QMS_CHAT_MESS));
-
-//        NewsRepository.Companion.createInstance();
-
-        //init
-        Realm.init(this);
-        RealmConfiguration configuration = new RealmConfiguration.Builder()
-                .name("forpda.realm")
-                .schemaVersion(1)
-                .deleteRealmIfMigrationNeeded()
-                .build();
-        Realm.setDefaultConfiguration(configuration);
-        Client.getInstance();
         initImageLoader(this);
+
         px2 = getContext().getResources().getDimensionPixelSize(R.dimen.dp2);
         px4 = getContext().getResources().getDimensionPixelSize(R.dimen.dp4);
         px6 = getContext().getResources().getDimensionPixelSize(R.dimen.dp6);
@@ -194,6 +187,37 @@ public class App extends android.app.Application {
         }
         keyboardHeight = getPreferences().getInt("keyboard_height", getContext().getResources().getDimensionPixelSize(R.dimen.default_keyboard_height));
         savedKeyboardHeight = keyboardHeight;
+
+        try {
+            WebSettings.getDefaultUserAgent(App.getContext());
+            webViewNotFound = false;
+        } catch (Exception e) {
+            webViewNotFound = true;
+            Log.e("CHECK_WV", "Android System WebView is not found");
+        }
+
+        if (isWebViewNotFound()) {
+            return;
+        }
+
+        templates.put(TEMPLATE_THEME, findTemplate(TEMPLATE_THEME));
+        templates.put(TEMPLATE_SEARCH, findTemplate(TEMPLATE_SEARCH));
+        templates.put(TEMPLATE_QMS_CHAT, findTemplate(TEMPLATE_QMS_CHAT));
+        templates.put(TEMPLATE_QMS_CHAT_MESS, findTemplate(TEMPLATE_QMS_CHAT_MESS));
+
+//        NewsRepository.Companion.createInstance();
+
+        //init
+        Realm.init(this);
+        RealmConfiguration configuration = new RealmConfiguration.Builder()
+                .name("forpda.realm")
+                .schemaVersion(1)
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        Realm.setDefaultConfiguration(configuration);
+        Client.getInstance();
+
+
 
         getPreferences().registerOnSharedPreferenceChangeListener(preferenceChangeListener);
         /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -232,7 +256,7 @@ public class App extends android.app.Application {
     }
 
     public void removePreferenceChangeObserver(Observer observer) {
-        preferenceChangeObservables.addObserver(observer);
+        preferenceChangeObservables.deleteObserver(observer);
     }
 
     public static int getStatusBarHeight() {

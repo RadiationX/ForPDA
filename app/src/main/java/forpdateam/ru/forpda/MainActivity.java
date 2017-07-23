@@ -13,7 +13,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -22,8 +21,6 @@ import android.view.inputmethod.InputMethodManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.news.Constants;
 import forpdateam.ru.forpda.client.NetworkStateReceiver;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -32,9 +29,6 @@ import forpdateam.ru.forpda.utils.permission.RxPermissions;
 import forpdateam.ru.forpda.views.drawers.DrawerHeader;
 import forpdateam.ru.forpda.views.drawers.Drawers;
 import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity implements TabManager.TabListener {
     public final static String DEF_TITLE = "ForPDA";
@@ -66,6 +60,11 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (App.getInstance().isWebViewNotFound()) {
+            startActivity(new Intent(this, WebVewNotFoundActivity.class));
+            finish();
+            return;
+        }
         /*ArrayList<String> list = new ArrayList<>();
         *//*list.add("http://s.4pda.to/JK4KRvTtz2Yq1n1wh31YbxmLjUahInU59Gayr9aSC0aFz0kXLr71nJ.png");
         list.add("http://s.4pda.to/JK4KRvTtz2Yq1n1wh31YbxmLjUahInU59Gayr9aSC0aFz0kXLr71nJ.png");
@@ -172,22 +171,6 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         } else {
             startService(new Intent(this, NotificationsService.class));
         }*/
-        /*new Thread(()->{
-            ArrayList<NewsNetworkModel> models = new ArrayList<>();
-            try{
-                models = new NewsParser().getNewsListFromNetwork2(Constants.NEWS_CATEGORY_ALL, 0);
-            }catch (Exception ex){
-                ex.printStackTrace();
-            }
-            Log.d("CHECK_CLIENT", "MODELS: "+models.size());
-        }).start();*/
-        /*Api.NewsList().getSourceRx(null,Constants.NEWS_CATEGORY_ALL, 0)
-                .onErrorReturnItem("ERROOOOOR BLYA")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(newsNetworkModels -> {
-                    Log.d("CHECK_CLIENT", "MODELS: "+newsNetworkModels);
-                });*/
     }
 
     @Override
@@ -306,8 +289,10 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     protected void onResume() {
         super.onResume();
         Log.d("kekos", "ACTIVE TAB " + TabManager.getActiveIndex() + " : " + TabManager.getActiveTag());
-        receiver.registerReceiver();
-        drawers.setStatusBarHeight(App.getStatusBarHeight());
+        if (receiver != null)
+            receiver.registerReceiver();
+        if (drawers != null)
+            drawers.setStatusBarHeight(App.getStatusBarHeight());
         if (currentThemeIsDark != App.getInstance().isDarkTheme()) {
             recreate();
         }
@@ -316,16 +301,21 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     @Override
     protected void onPause() {
         super.onPause();
-        receiver.unregisterReceiver();
+        if (receiver != null)
+            receiver.unregisterReceiver();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        receiver.unregisterReceiver();
-        drawers.destroy();
-        drawerHeader.destroy();
-        webViewsProvider.destroy();
+        if (receiver != null)
+            receiver.unregisterReceiver();
+        if (drawers != null)
+            drawers.destroy();
+        if (drawerHeader != null)
+            drawerHeader.destroy();
+        if (webViewsProvider != null)
+            webViewsProvider.destroy();
         Log.e("FORPDA_LOG", "ACTIVITY DESTROY");
     }
 

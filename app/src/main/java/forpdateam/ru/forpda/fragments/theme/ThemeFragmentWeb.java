@@ -586,6 +586,8 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
     }
 
     public void run(final Runnable runnable) {
-        getMainActivity().runOnUiThread(runnable);
+        if (getMainActivity() != null) {
+            getMainActivity().runOnUiThread(runnable);
+        }
     }
 }
