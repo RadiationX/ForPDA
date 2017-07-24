@@ -92,9 +92,9 @@
 
         <activity
             android:name=".settings.SettingsActivity"
+            android:exported="true"
             android:label="Настройки"
-            android:theme="@style/LightAppTheme.NoActionBar"
-            android:exported="true">
+            android:theme="@style/LightAppTheme.NoActionBar">
             <meta-data
                 android:name="android.max_aspect"
                 android:value="2.1" />
@@ -107,6 +107,11 @@
 
         <activity
             android:name=".WebVewNotFoundActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/LightAppTheme.NoActionBar" />
+
+        <activity
+            android:name=".CheckerActivity"
             android:launchMode="singleTop"
             android:theme="@style/LightAppTheme.NoActionBar" />
 
