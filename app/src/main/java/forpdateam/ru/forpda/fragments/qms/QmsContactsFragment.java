@@ -110,7 +110,6 @@ public class QmsContactsFragment extends TabFragment {
         recyclerView.setAdapter(adapter);
 
 
-
         bindView();
         return view;
     }
@@ -154,10 +153,11 @@ public class QmsContactsFragment extends TabFragment {
             }
         });
 
-        getMenu().add("Черный список").setOnMenuItemClickListener(item -> {
-            TabManager.getInstance().add(new Builder<>(QmsBlackListFragment.class).build());
-            return false;
-        });
+        getMenu().add("Черный список")
+                .setOnMenuItemClickListener(item -> {
+                    TabManager.getInstance().add(new Builder<>(QmsBlackListFragment.class).build());
+                    return false;
+                });
     }
 
 

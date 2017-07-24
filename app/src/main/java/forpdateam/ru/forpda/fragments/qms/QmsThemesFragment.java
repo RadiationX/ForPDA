@@ -183,14 +183,15 @@ public class QmsThemesFragment extends TabFragment {
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        blackListMenuItem = getMenu().add("В черный список").setOnMenuItemClickListener(item -> {
-            contactsSubscriber.subscribe(RxApi.Qms().blockUser(currentThemes.getNick()), qmsContacts -> {
-                if (qmsContacts.size() > 0) {
-                    Toast.makeText(getContext(), "Пользователь добавлен в черный список", Toast.LENGTH_SHORT).show();
-                }
-            }, new ArrayList<>());
-            return false;
-        });
+        blackListMenuItem = getMenu().add("В черный список")
+                .setOnMenuItemClickListener(item -> {
+                    contactsSubscriber.subscribe(RxApi.Qms().blockUser(currentThemes.getNick()), qmsContacts -> {
+                        if (qmsContacts.size() > 0) {
+                            Toast.makeText(getContext(), "Пользователь добавлен в черный список", Toast.LENGTH_SHORT).show();
+                        }
+                    }, new ArrayList<>());
+                    return false;
+                });
         refreshToolbarMenuItems(false);
     }
 

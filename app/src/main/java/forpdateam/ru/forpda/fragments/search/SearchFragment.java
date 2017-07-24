@@ -339,24 +339,26 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        getMenu().add("Скопировать ссылку").setOnMenuItemClickListener(menuItem -> {
-            Utils.copyToClipBoard(settings.toUrl());
-            return false;
-        });
+        getMenu().add("Скопировать ссылку")
+                .setOnMenuItemClickListener(menuItem -> {
+                    Utils.copyToClipBoard(settings.toUrl());
+                    return false;
+                });
         toolbar.inflateMenu(R.menu.qms_contacts_menu);
 
-        settingsMenuItem = getMenu().add("Настройки");
-        settingsMenuItem.setIcon(R.drawable.ic_toolbar_tune).setOnMenuItemClickListener(menuItem -> {
-            hidePopupWindows();
-            if (searchSettingsView != null && searchSettingsView.getParent() != null && searchSettingsView.getParent() instanceof ViewGroup) {
-                ((ViewGroup) searchSettingsView.getParent()).removeView(searchSettingsView);
-            }
-            if (searchSettingsView != null) {
-                dialog.setContentView(searchSettingsView);
-                dialog.show();
-            }
-            return false;
-        }).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        settingsMenuItem = getMenu().add("Настройки")
+                .setIcon(R.drawable.ic_toolbar_tune).setOnMenuItemClickListener(menuItem -> {
+                    hidePopupWindows();
+                    if (searchSettingsView != null && searchSettingsView.getParent() != null && searchSettingsView.getParent() instanceof ViewGroup) {
+                        ((ViewGroup) searchSettingsView.getParent()).removeView(searchSettingsView);
+                    }
+                    if (searchSettingsView != null) {
+                        dialog.setContentView(searchSettingsView);
+                        dialog.show();
+                    }
+                    return false;
+                });
+        settingsMenuItem.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         searchItem = getMenu().findItem(R.id.action_search);
         searchView = (SearchView) searchItem.getActionView();

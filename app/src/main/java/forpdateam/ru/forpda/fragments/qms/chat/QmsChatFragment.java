@@ -98,7 +98,6 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
     };
 
 
-
     private WebSocket webSocket;
 
     private WebSocketListener webSocketListener = new WebSocketListener() {
@@ -261,14 +260,15 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        blackListMenuItem = getMenu().add("В черный список").setOnMenuItemClickListener(item -> {
-            contactsSubscriber.subscribe(RxApi.Qms().blockUser(currentChat.getNick()), qmsContacts -> {
-                if (qmsContacts.size() > 0) {
-                    Toast.makeText(getContext(), "Пользователь добавлен в черный список", Toast.LENGTH_SHORT).show();
-                }
-            }, new ArrayList<>());
-            return false;
-        });
+        blackListMenuItem = getMenu().add("В черный список")
+                .setOnMenuItemClickListener(item -> {
+                    contactsSubscriber.subscribe(RxApi.Qms().blockUser(currentChat.getNick()), qmsContacts -> {
+                        if (qmsContacts.size() > 0) {
+                            Toast.makeText(getContext(), "Пользователь добавлен в черный список", Toast.LENGTH_SHORT).show();
+                        }
+                    }, new ArrayList<>());
+                    return false;
+                });
         refreshToolbarMenuItems(false);
     }
 

@@ -172,18 +172,19 @@ public class FavoritesFragment extends TabFragment {
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        getMenu().add("Отметить все прочитанными").setOnMenuItemClickListener(item -> {
-            new AlertDialog.Builder(getContext())
-                    .setMessage("Отметить все прочитанными?")
-                    .setPositiveButton("Да", (dialog, which) -> {
-                        ForumHelper.markAllRead(o -> {
-                            loadData();
-                        });
-                    })
-                    .setNegativeButton("Нет", null)
-                    .show();
-            return false;
-        });
+        getMenu().add("Отметить все прочитанными")
+                .setOnMenuItemClickListener(item -> {
+                    new AlertDialog.Builder(getContext())
+                            .setMessage("Отметить все прочитанными?")
+                            .setPositiveButton("Да", (dialog, which) -> {
+                                ForumHelper.markAllRead(o -> {
+                                    loadData();
+                                });
+                            })
+                            .setNegativeButton("Нет", null)
+                            .show();
+                    return false;
+                });
     }
 
     @Override

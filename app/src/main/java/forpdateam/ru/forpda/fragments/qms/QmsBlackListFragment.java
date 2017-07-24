@@ -84,13 +84,16 @@ public class QmsBlackListFragment extends TabFragment {
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        getMenu().add("Добавить").setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_add)).setOnMenuItemClickListener(item -> {
-            String nick = "";
-            if (nickField.getText() != null)
-                nick = nickField.getText().toString();
-            blockUser(nick);
-            return false;
-        }).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        getMenu().add("Добавить")
+                .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_add))
+                .setOnMenuItemClickListener(item -> {
+                    String nick = "";
+                    if (nickField.getText() != null)
+                        nick = nickField.getText().toString();
+                    blockUser(nick);
+                    return false;
+                })
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
     }
 
     private void someClick(IQmsContact contact) {

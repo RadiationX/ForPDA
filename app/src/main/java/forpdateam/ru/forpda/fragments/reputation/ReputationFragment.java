@@ -160,14 +160,16 @@ public class ReputationFragment extends TabFragment {
                     loadData();
                     return false;
                 });
-        upRepMenuItem = getMenu().add("Повысить").setOnMenuItemClickListener(item -> {
-            changeReputation(true);
-            return false;
-        });
-        downRepMenuItem = getMenu().add("Понизить").setOnMenuItemClickListener(item -> {
-            changeReputation(false);
-            return false;
-        });
+        upRepMenuItem = getMenu().add("Повысить")
+                .setOnMenuItemClickListener(item -> {
+                    changeReputation(true);
+                    return false;
+                });
+        downRepMenuItem = getMenu().add("Понизить")
+                .setOnMenuItemClickListener(item -> {
+                    changeReputation(false);
+                    return false;
+                });
         refreshToolbarMenuItems(false);
     }
 

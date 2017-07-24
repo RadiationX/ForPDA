@@ -79,6 +79,9 @@
 
     <PreferenceCategory android:title="О программе">
         <Preference
+            android:key="about.check_update"
+            android:title="Проверить обновления" />
+        <Preference
             android:key="about.application"
             android:title="ForPDA" />
 
