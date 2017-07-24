@@ -161,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             //IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=2556269");
         });
 
+        new SimpleChecker().checkFromGitHub(this);
         Log.e("FORPDA_LOG", "ON CREATE INTENT");
         checkIntent(getIntent());
 //        Intent serviceIntent = new Intent(this, WebSocketService.class);

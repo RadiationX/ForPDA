@@ -52,7 +52,8 @@
         <SwitchPreference
             android:defaultValue="true"
             android:key="theme.anchor_history"
-            android:title="История переходов на странице" />
+            android:title="История переходов на странице"
+            android:summary="Сохраняет историю переходов snapback"/>
 
     </PreferenceCategory>
 

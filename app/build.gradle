@@ -22,6 +22,7 @@ android {
         versionProps.store(versionPropsFile.newWriter(), null)
     }
 
+
     buildTypes {
         release {
             minifyEnabled false
@@ -36,6 +37,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 25
         vectorDrawables.useSupportLibrary = true
+        buildConfigField "String", 'BUILD_DATE', '"24 июля 2017 г."'
         ndk {
             abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
         }
