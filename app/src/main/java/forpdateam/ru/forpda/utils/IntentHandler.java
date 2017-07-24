@@ -379,7 +379,7 @@ public class IntentHandler {
         dm.enqueue(request);
     }
 
-    private static void externalDownloader(String url) {
+    public static void externalDownloader(String url) {
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK);
             App.getInstance().startActivity(Intent.createChooser(intent, "Загрузить через").addFlags(FLAG_ACTIVITY_NEW_TASK));

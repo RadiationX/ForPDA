@@ -2,22 +2,22 @@
   "update": {
     "version_code": "33",
     "version_name": "0.3.8",
-    "version_build": "7814",
-    "build_date": "12 июля 2017 г.",
-    "link_github": "https://raw.githubusercontent.com/RadiationX/ForPDA/master/apk/ForPDA-0.3.7-app-beta-debug.apk",
-    "link_4pda": "http://4pda.ru/forum/dl/post/10716099/ForPDA-0.3.7-app-stable-release.apk",
+    "version_build": "7861",
+    "build_date": "24 июля 2017 г.",
+    "link_github": "https://raw.githubusercontent.com/RadiationX/ForPDA/master/apk/ForPDA-0.3.8-app-stable-release.apk",
+    "link_4pda": "http://4pda.ru/forum/dl/post/10739868/ForPDA-0.3.8-app-stable-release.apk",
     "changes": {
       "important": [
-        "IMPOJASKDLJKAL:SD"
       ],
       "added": [
-        "ASJDKL:aS:JKKLKKKKKK"
+        "Оповещение об обновлениях",
+        "Проверка наличия WebView"
       ],
       "fixed": [
-        "FJUIOASPDL:"
+        "Небольшие ошибки"
       ],
       "changed": [
-        "CJSADIOAS"
+        "Повышена стабильность"
       ]
     }
   },

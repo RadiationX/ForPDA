@@ -44,9 +44,7 @@ public class SimpleChecker {
     public void checkFromGitHub(Context context) {
         Observable.fromCallable(() -> {
             NetworkResponse response = Client.getInstance().get(CheckerActivity.JSON_LINK);
-            String body;
-            body = response.getBody();
-            return body;
+            return response.getBody();
         })
                 .onErrorReturn(throwable -> "")
                 .subscribeOn(Schedulers.io())
@@ -80,7 +78,7 @@ public class SimpleChecker {
             NotificationManagerCompat mNotificationManager = NotificationManagerCompat.from(context);
 
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
-            mBuilder.setSmallIcon(R.drawable.icon_4pda);
+            mBuilder.setSmallIcon(R.drawable.ic_notify_mention);
 
             mBuilder.setContentTitle("Обновление ForPDA");
             mBuilder.setContentText("Новая версия: " + versionName);
