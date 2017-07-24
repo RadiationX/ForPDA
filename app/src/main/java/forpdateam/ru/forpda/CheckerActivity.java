@@ -30,7 +30,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class CheckerActivity extends AppCompatActivity {
-    public final static String JSON_LINK = "https://raw.githubusercontent.com/slartus/4pdaClient-plus/master/updateinfo.json";
+    public final static String JSON_LINK = "https://raw.githubusercontent.com/radiationx/forpda/master/check.json";
     public final static String JSON_SOURCE = "json_source";
     private Toolbar toolbar;
     private TextView currentInfo;
