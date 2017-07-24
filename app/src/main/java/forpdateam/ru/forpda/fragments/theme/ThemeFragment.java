@@ -351,48 +351,55 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        refreshMenuItem = getMenu().add("Обновить").setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_refresh)).setOnMenuItemClickListener(menuItem -> {
-            loadData(REFRESH_ACTION);
-            return false;
-        });
+        refreshMenuItem = getMenu().add("Обновить")
+                .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_refresh))
+                .setOnMenuItemClickListener(menuItem -> {
+                    loadData(REFRESH_ACTION);
+                    return false;
+                });
 
-        copyLinkMenuItem = getMenu().add("Скопировать ссылку").setOnMenuItemClickListener(menuItem -> {
-            Utils.copyToClipBoard(tab_url);
-            return false;
-        });
+        copyLinkMenuItem = getMenu().add("Скопировать ссылку")
+                .setOnMenuItemClickListener(menuItem -> {
+                    Utils.copyToClipBoard(tab_url);
+                    return false;
+                });
         addSearchOnPageItem(getMenu());
-        searchInThemeMenuItem = getMenu().add("Найти в теме").setOnMenuItemClickListener(menuItem -> {
-            IntentHandler.handle("http://4pda.ru/forum/index.php?forums=" + currentPage.getForumId() + "&topics=" + currentPage.getId() + "&act=search&source=pst");
-            return false;
-        });
+        searchInThemeMenuItem = getMenu().add("Найти в теме")
+                .setOnMenuItemClickListener(menuItem -> {
+                    IntentHandler.handle("http://4pda.ru/forum/index.php?forums=" + currentPage.getForumId() + "&topics=" + currentPage.getId() + "&act=search&source=pst");
+                    return false;
+                });
 
         SubMenu subMenu = getMenu().addSubMenu("Опции темы");
-        deleteFavoritesMenuItem = subMenu.add("Удалить из избранного").setOnMenuItemClickListener(menuItem -> {
-            if (currentPage.getFavId() == 0) {
-                Toast.makeText(App.getContext(), "ID темы не найден, попробуйте перезагрузить страницу", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-            FavoritesHelper.delete(aBoolean -> {
-                Toast.makeText(App.getContext(), aBoolean ? "Тема удалена из избранного" : "Ошибка", Toast.LENGTH_SHORT).show();
-                currentPage.setInFavorite(!aBoolean);
-                refreshToolbarMenuItems(true);
-            }, currentPage.getFavId());
-            return false;
-        });
-        addFavoritesMenuItem = subMenu.add("Добавить в избранное").setOnMenuItemClickListener(menuItem -> {
-            new AlertDialog.Builder(getContext())
-                    .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> FavoritesHelper.add(aBoolean -> {
-                        Toast.makeText(App.getContext(), aBoolean ? "Тема добавлена в избранное" : "Ошибка", Toast.LENGTH_SHORT).show();
-                        currentPage.setInFavorite(aBoolean);
+        deleteFavoritesMenuItem = subMenu.add("Удалить из избранного")
+                .setOnMenuItemClickListener(menuItem -> {
+                    if (currentPage.getFavId() == 0) {
+                        Toast.makeText(App.getContext(), "ID темы не найден, попробуйте перезагрузить страницу", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                    FavoritesHelper.delete(aBoolean -> {
+                        Toast.makeText(App.getContext(), aBoolean ? "Тема удалена из избранного" : "Ошибка", Toast.LENGTH_SHORT).show();
+                        currentPage.setInFavorite(!aBoolean);
                         refreshToolbarMenuItems(true);
-                    }, currentPage.getId(), Favorites.SUB_TYPES[which1]))
-                    .show();
-            return false;
-        });
-        openForumMenuItem = subMenu.add("Открыть форум темы").setOnMenuItemClickListener(menuItem -> {
-            IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + currentPage.getForumId());
-            return false;
-        });
+                    }, currentPage.getFavId());
+                    return false;
+                });
+        addFavoritesMenuItem = subMenu.add("Добавить в избранное")
+                .setOnMenuItemClickListener(menuItem -> {
+                    new AlertDialog.Builder(getContext())
+                            .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> FavoritesHelper.add(aBoolean -> {
+                                Toast.makeText(App.getContext(), aBoolean ? "Тема добавлена в избранное" : "Ошибка", Toast.LENGTH_SHORT).show();
+                                currentPage.setInFavorite(aBoolean);
+                                refreshToolbarMenuItems(true);
+                            }, currentPage.getId(), Favorites.SUB_TYPES[which1]))
+                            .show();
+                    return false;
+                });
+        openForumMenuItem = subMenu.add("Открыть форум темы")
+                .setOnMenuItemClickListener(menuItem -> {
+                    IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + currentPage.getForumId());
+                    return false;
+                });
 
         refreshToolbarMenuItems(false);
     }

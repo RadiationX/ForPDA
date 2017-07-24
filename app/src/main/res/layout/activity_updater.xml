@@ -94,14 +94,17 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:singleLine="false"
-                    android:visibility="gone"/>
+                    android:visibility="gone"
+                    android:layout_toStartOf="@+id/update_button"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginEnd="@dimen/dp8"/>
 
                 <Button
                     android:id="@+id/update_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:text="Обновить"
+                    android:text="Загрузить"
                     android:visibility="gone"/>
             </RelativeLayout>
 

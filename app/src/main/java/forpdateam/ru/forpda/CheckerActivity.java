@@ -1,8 +1,10 @@
 package forpdateam.ru.forpda;
 
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -21,6 +23,8 @@ import org.json.JSONObject;
 import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.client.ClientHelper;
+import forpdateam.ru.forpda.utils.IntentHandler;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -52,12 +56,19 @@ public class CheckerActivity extends AppCompatActivity {
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         divider = findViewById(R.id.divider);
 
+        toolbar.setNavigationOnClickListener(v -> finish());
+        toolbar.setNavigationIcon(R.drawable.ic_toolbar_arrow_back);
+
+
         currentInfo.setText(generateCurrentInfo(BuildConfig.VERSION_NAME, BuildConfig.BUILD_DATE));
 
-        toolbar.getMenu().add("Обновить").setOnMenuItemClickListener(item -> {
-            refreshInfo();
-            return false;
-        });
+        toolbar.getMenu().add("Обновить")
+                .setIcon(App.getAppDrawable(toolbar.getContext(), R.drawable.ic_toolbar_refresh))
+                .setOnMenuItemClickListener(item -> {
+                    refreshInfo();
+                    return false;
+                })
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         String jsonSource = null;
         if (getIntent() != null) {
             jsonSource = getIntent().getStringExtra(JSON_SOURCE);
@@ -90,6 +101,7 @@ public class CheckerActivity extends AppCompatActivity {
 
     private void refreshInfo() {
         setRefreshing(true);
+        updateContent.removeAllViews();
         Observable.fromCallable(() -> {
             NetworkResponse response = Client.getInstance().get(JSON_LINK);
             String body;
@@ -144,12 +156,34 @@ public class CheckerActivity extends AppCompatActivity {
             updateContent.setVisibility(View.VISIBLE);
             updateButton.setVisibility(View.VISIBLE);
             divider.setVisibility(View.VISIBLE);
+            updateButton.setOnClickListener(v -> {
+                if (ClientHelper.getAuthState()) {
+                    CharSequence[] items = {"github.com", "4pda.ru"};
+                    new AlertDialog.Builder(CheckerActivity.this)
+                            .setTitle("Загрузить с")
+                            .setItems(items, (dialog, which) -> {
+                                switch (which) {
+                                    case 0:
+                                        IntentHandler.handleDownload(linkGit);
+                                        break;
+                                    case 1:
+                                        IntentHandler.handleDownload(link4pda);
+                                        break;
+                                }
+                            })
+                            .show();
+
+                } else {
+                    IntentHandler.handleDownload(linkGit);
+                }
+            });
         } else {
             updateInfo.setText("Обновлений нет");
             updateInfo.setVisibility(View.VISIBLE);
             updateContent.setVisibility(View.GONE);
             updateButton.setVisibility(View.GONE);
             divider.setVisibility(View.GONE);
+            updateButton.setOnClickListener(null);
         }
     }
 
