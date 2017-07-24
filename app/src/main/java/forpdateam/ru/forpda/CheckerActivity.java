@@ -15,15 +15,19 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
+import forpdateam.ru.forpda.settings.Preferences;
+import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -35,6 +39,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class CheckerActivity extends AppCompatActivity {
     public final static String JSON_LINK = "https://raw.githubusercontent.com/radiationx/forpda/master/check.json";
+    public final static String GOOGLE_PLAY_LINK = "https://play.google.com/store/apps/details?id=ru.forpdateam.forpda";
     public final static String JSON_SOURCE = "json_source";
     private Toolbar toolbar;
     private TextView currentInfo;
@@ -157,25 +162,17 @@ public class CheckerActivity extends AppCompatActivity {
             updateButton.setVisibility(View.VISIBLE);
             divider.setVisibility(View.VISIBLE);
             updateButton.setOnClickListener(v -> {
+                AlertDialogMenu<CheckerActivity, String> alertDialogMenu = new AlertDialogMenu<>();
+                alertDialogMenu.addItem("github.com", (context, data) -> redirectDownload(linkGit));
                 if (ClientHelper.getAuthState()) {
-                    CharSequence[] items = {"github.com", "4pda.ru"};
-                    new AlertDialog.Builder(CheckerActivity.this)
-                            .setTitle("Загрузить с")
-                            .setItems(items, (dialog, which) -> {
-                                switch (which) {
-                                    case 0:
-                                        IntentHandler.handleDownload(linkGit);
-                                        break;
-                                    case 1:
-                                        IntentHandler.handleDownload(link4pda);
-                                        break;
-                                }
-                            })
-                            .show();
-
-                } else {
-                    IntentHandler.handleDownload(linkGit);
+                    alertDialogMenu.addItem("4pda.ru", (context, data) -> redirectDownload(link4pda));
                 }
+                alertDialogMenu.addItem("Google Play", (context, data) -> IntentHandler.handle(GOOGLE_PLAY_LINK));
+
+                new AlertDialog.Builder(CheckerActivity.this)
+                        .setTitle("Загрузить с")
+                        .setItems(alertDialogMenu.getTitles(), (dialog, which) -> alertDialogMenu.onClick(which, CheckerActivity.this, null))
+                        .show();
             });
         } else {
             updateInfo.setText("Обновлений нет");
@@ -226,4 +223,20 @@ public class CheckerActivity extends AppCompatActivity {
     private String generateCurrentInfo(String name, String date) {
         return "Версия " + name + "\n" + "Сборка от " + date;
     }
+
+    private void redirectDownload(String url) {
+        Toast.makeText(this, "Запрашиваю ссылку для загрузки", Toast.LENGTH_SHORT).show();
+        Observable.fromCallable(() -> Client.getInstance().request(new NetworkRequest.Builder().url(url).withoutBody().build()))
+                .onErrorReturn(throwable -> new NetworkResponse(null))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> {
+                    if (response.getUrl() == null) {
+                        Toast.makeText(App.getContext(), "Произошла ошибка", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    IntentHandler.externalDownloader(response.getRedirect());
+                });
+    }
+
 }

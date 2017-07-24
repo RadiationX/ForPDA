@@ -1,16 +1,23 @@
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'realm-android'
 
+static def getDateTime() {
+    DateFormat df = new SimpleDateFormat("dd MMMMM yyyy");
+    return df.format(new Date())+" г.";
+}
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
 
-    def versionNumber = 32
+    def versionNumber = 33
 
     def versionMajor = 0
     def versionMinor = 3
-    def versionPatch = 7
+    def versionPatch = 8
 
     def versionBuild = -1
     def versionPropsFile = file('version.properties')
@@ -21,7 +28,6 @@ android {
         versionProps['VERSION_BUILD'] = versionBuild.toString()
         versionProps.store(versionPropsFile.newWriter(), null)
     }
-
 
     buildTypes {
         release {
@@ -37,7 +43,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 25
         vectorDrawables.useSupportLibrary = true
-        buildConfigField "String", 'BUILD_DATE', '"24 июля 2017 г."'
+        buildConfigField "String", 'BUILD_DATE', '"'+getDateTime()+'"'
         ndk {
             abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
         }
