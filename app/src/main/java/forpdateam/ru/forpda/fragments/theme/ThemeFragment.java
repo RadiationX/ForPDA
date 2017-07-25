@@ -141,12 +141,12 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         messagePanel = new MessagePanel(getContext(), fragmentContainer, coordinatorLayout, false);
         messagePanel.enableBehavior();
         messagePanel.addSendOnClickListener(v -> sendMessage());
-        messagePanel.getSendButton().setOnLongClickListener(v -> {
+        messagePanel.getFullButton().setVisibility(View.VISIBLE);
+        messagePanel.getFullButton().setOnClickListener(v -> {
             EditPostForm form = createEditPostForm();
             if (form != null) {
                 TabManager.getInstance().add(EditPostFragment.newInstance(createEditPostForm(), currentPage.getTitle()));
             }
-            return true;
         });
         attachmentsPopup = messagePanel.getAttachmentsPopup();
         attachmentsPopup.setAddOnClickListener(v -> tryPickFile());

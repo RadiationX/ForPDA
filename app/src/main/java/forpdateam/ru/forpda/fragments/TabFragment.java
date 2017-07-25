@@ -70,6 +70,9 @@ public class TabFragment extends RxFragment {
     protected FloatingActionButton fab;
     private AudioManager audioService;
     private boolean showNotifyDot = App.getInstance().getPreferences().getBoolean(Preferences.Main.SHOW_NOTIFY_DOT, true);
+    private boolean notifyDotFav = App.getInstance().getPreferences().getBoolean(Preferences.Main.NOTIFY_DOT_FAV, true);
+    private boolean notifyDotQms = App.getInstance().getPreferences().getBoolean(Preferences.Main.NOTIFY_DOT_QMS, true);
+    private boolean notifyDotMentions = App.getInstance().getPreferences().getBoolean(Preferences.Main.NOTIFY_DOT_MENTIONS, true);
 
     protected Observer countsObserver = (observable, o) -> updateNotifyDot();
     protected Observer networkObserver = (observable, o) -> {
@@ -86,6 +89,21 @@ public class TabFragment extends RxFragment {
         switch (key) {
             case Preferences.Main.SHOW_NOTIFY_DOT: {
                 showNotifyDot = App.getInstance().getPreferences().getBoolean(Preferences.Main.SHOW_NOTIFY_DOT, true);
+                updateNotifyDot();
+                break;
+            }
+            case Preferences.Main.NOTIFY_DOT_FAV: {
+                notifyDotFav = App.getInstance().getPreferences().getBoolean(Preferences.Main.NOTIFY_DOT_FAV, true);
+                updateNotifyDot();
+                break;
+            }
+            case Preferences.Main.NOTIFY_DOT_QMS: {
+                notifyDotQms = App.getInstance().getPreferences().getBoolean(Preferences.Main.NOTIFY_DOT_QMS, true);
+                updateNotifyDot();
+                break;
+            }
+            case Preferences.Main.NOTIFY_DOT_MENTIONS: {
+                notifyDotMentions = App.getInstance().getPreferences().getBoolean(Preferences.Main.NOTIFY_DOT_MENTIONS, true);
                 updateNotifyDot();
                 break;
             }
@@ -253,14 +271,13 @@ public class TabFragment extends RxFragment {
     }
 
 
-
     @CallSuper
     protected void addBaseToolbarMenu() {
 
     }
 
     @CallSuper
-    protected void refreshToolbarMenuItems(boolean enable){
+    protected void refreshToolbarMenuItems(boolean enable) {
 
     }
 
@@ -276,10 +293,29 @@ public class TabFragment extends RxFragment {
             notifyDot.setVisibility(View.GONE);
             return;
         }
-        if (ClientHelper.getAllCounts() > 0) {
+        if (decideShowDot()) {
             notifyDot.setVisibility(View.VISIBLE);
         } else {
             notifyDot.setVisibility(View.GONE);
+        }
+    }
+
+    private boolean decideShowDot() {
+        if (ClientHelper.getAllCounts() > 0) {
+            Log.e("SUKA_DOT", "decideShowDot " + notifyDotFav + " : " + notifyDotQms + " : " + notifyDotMentions);
+            Log.e("SUKA_DOT", "decideShowDot " + (ClientHelper.getFavoritesCount() > 0) + " : " + (ClientHelper.getQmsCount() > 0) + " : " + (ClientHelper.getMentionsCount() > 0));
+            if (ClientHelper.getFavoritesCount() > 0 && notifyDotFav) {
+                return true;
+            }
+            if (ClientHelper.getQmsCount() > 0 && notifyDotQms) {
+                return true;
+            }
+            if (ClientHelper.getMentionsCount() > 0 && notifyDotMentions) {
+                return true;
+            }
+            return false;
+        } else {
+            return false;
         }
     }
 
