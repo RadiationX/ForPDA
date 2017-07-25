@@ -318,15 +318,14 @@ public class NotificationsService extends Service {
                 return;
             }
         } else if (type == WebSocketEvent.TYPE_THEME) {
-            if (webSocketEvent != null) {
-                if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
-                    if (!Preferences.Notifications.Mentions.isEnabled()) {
-                        return;
-                    }
+            if (webSocketEvent != null && webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
+                if (!Preferences.Notifications.Mentions.isEnabled()) {
+                    return;
                 }
-            }
-            if (!Preferences.Notifications.Favorites.isEnabled() && !Preferences.Notifications.Mentions.isEnabled()) {
-                return;
+            } else {
+                if(!Preferences.Notifications.Favorites.isEnabled()){
+                    return;
+                }
             }
         }
 
