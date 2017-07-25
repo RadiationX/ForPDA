@@ -115,7 +115,7 @@ public class AdvancedPopup {
     }
 
     private void hidePopup() {
-        messagePanel.getAdvancedButton().clearColorFilter();
+        messagePanel.getAdvancedButton().setImageDrawable(App.getAppDrawable(context, R.drawable.ic_add));
 
         if (popupWindow.isShowing())
             popupWindow.dismiss();
@@ -130,7 +130,7 @@ public class AdvancedPopup {
     }
 
     private void showPopup() {
-        messagePanel.getAdvancedButton().setColorFilter(App.getColorFromAttr(context, R.attr.colorAccent));
+        messagePanel.getAdvancedButton().setImageDrawable(App.getAppDrawable(context, R.drawable.ic_keyboard));
 
         if (!popupWindow.isShowing())
             popupWindow.showAtLocation(fragmentContainer, Gravity.BOTTOM, 0, 0);

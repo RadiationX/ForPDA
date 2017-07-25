@@ -1,61 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center_vertical">
+    android:layout_gravity="center_vertical"
+    android:paddingBottom="2dp">
 
     <android.support.v7.widget.AppCompatImageButton
         android:id="@+id/button_advanced_input"
         android:layout_width="@dimen/dp48"
-        android:layout_height="@dimen/dp48"
-        android:layout_alignBottom="@+id/message_field"
+        android:layout_height="@dimen/dp40"
+        android:layout_below="@+id/message_field"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="BB-коды и смайлы"
         app:srcCompat="@drawable/ic_add" />
 
     <android.support.v7.widget.AppCompatImageButton
         android:id="@+id/button_attachments"
         android:layout_width="@dimen/dp48"
-        android:layout_height="@dimen/dp48"
-        android:layout_alignBottom="@+id/message_field"
+        android:layout_height="@dimen/dp40"
+        android:layout_below="@+id/message_field"
         android:layout_marginStart="-8dp"
         android:layout_toEndOf="@+id/button_advanced_input"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Вложения"
         app:srcCompat="@drawable/ic_attachment" />
+
+    <android.support.v7.widget.AppCompatImageButton
+        android:id="@+id/button_full"
+        android:layout_width="@dimen/dp48"
+        android:layout_height="@dimen/dp40"
+        android:layout_below="@+id/message_field"
+        android:layout_marginStart="-8dp"
+        android:layout_toEndOf="@+id/button_attachments"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:srcCompat="@drawable/ic_fullscreen"
+        android:contentDescription="Полная форма"
+        android:visibility="gone"/>
 
     <android.support.v7.widget.AppCompatEditText
         android:id="@+id/message_field"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/button_attachments"
-        android:layout_toStartOf="@+id/send_container"
         android:background="@android:color/transparent"
         android:gravity="center_vertical"
         android:hint="@string/msg_panel_hint_message"
         android:imeOptions="flagNoFullscreen"
         android:inputType="textCapSentences|textMultiLine"
         android:maxLines="4"
-        android:minHeight="@dimen/dp48"
-        android:padding="@dimen/dp8"
+        android:minHeight="@dimen/dp40"
+        android:paddingBottom="0dp"
+        android:paddingEnd="@dimen/dp16"
+        android:paddingStart="@dimen/dp16"
+        android:paddingTop="@dimen/dp8"
         android:textSize="16sp" />
 
     <FrameLayout
         android:id="@+id/send_container"
         android:layout_width="@dimen/dp48"
-        android:layout_height="@dimen/dp48"
-        android:layout_alignBottom="@+id/message_field"
-        android:layout_alignParentEnd="true">
+        android:layout_height="@dimen/dp40"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/message_field">
+
         <android.support.v7.widget.AppCompatImageButton
             android:id="@+id/button_send"
             android:layout_width="@dimen/dp48"
-            android:layout_height="@dimen/dp48"
+            android:layout_height="@dimen/dp40"
             android:background="?attr/selectableItemBackgroundBorderless"
             app:srcCompat="@drawable/ic_send" />
 
         <ProgressBar
             android:id="@+id/send_progress"
             android:layout_width="@dimen/dp48"
-            android:layout_height="@dimen/dp48"
+            android:layout_height="@dimen/dp40"
             android:clickable="false"
             android:padding="@dimen/dp8"
             android:visibility="gone" />

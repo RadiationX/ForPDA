@@ -20,20 +20,41 @@
             android:key="main.theme.is_dark"
             android:title="Тёмная тема" />
 
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="main.show_notify_dot"
-            android:title="Индикатор счетчиков" />
-
         <Preference
             android:key="main.webview.font_size"
             android:summary="Применяется для тем, поиска и чата"
             android:title="Размер шрифта" />
 
         <SwitchPreference
+            android:defaultValue="true"
+            android:key="message_panel.is_monospace"
+            android:summary="Шрифт редактора сообщений"
+            android:title="Моноширинный шрифт" />
+
+        <SwitchPreference
             android:defaultValue="false"
             android:key="main.drawers.tab_stack_bottom"
             android:title="Вкладки снизу" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="main.show_notify_dot"
+            android:title="Индикатор счетчиков" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:dependency="main.show_notify_dot"
+            android:key="main.notify_dot_fav"
+            android:title="Счетчик избранного" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:dependency="main.show_notify_dot"
+            android:key="main.notify_dot_qms"
+            android:title="Счетчик QMS" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:dependency="main.show_notify_dot"
+            android:key="main.notify_dot_mentions"
+            android:title="Счетчик упоминаний" />
 
     </PreferenceCategory>
 
@@ -52,8 +73,8 @@
         <SwitchPreference
             android:defaultValue="true"
             android:key="theme.anchor_history"
-            android:title="История переходов на странице"
-            android:summary="Сохраняет историю переходов snapback"/>
+            android:summary="Сохраняет историю переходов snapback"
+            android:title="История переходов на странице" />
 
     </PreferenceCategory>
 
