@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.CallSuper;
@@ -113,10 +114,10 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             case Preferences.Main.WEBVIEW_FONT_SIZE: {
                 setFontSize(Preferences.Main.getWebViewSize());
             }
-            case Preferences.Main.SCROLL_BUTTON_ENABLE:{
-                if(App.getInstance().getPreferences().getBoolean(Preferences.Main.SCROLL_BUTTON_ENABLE, false)){
+            case Preferences.Main.SCROLL_BUTTON_ENABLE: {
+                if (App.getInstance().getPreferences().getBoolean(Preferences.Main.SCROLL_BUTTON_ENABLE, false)) {
                     fab.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     fab.setVisibility(View.GONE);
                 }
             }
@@ -154,6 +155,9 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         FabOnScroll behavior = new FabOnScroll(fab.getContext(), null);
         params.setBehavior(behavior);
         params.gravity = Gravity.CENTER_VERTICAL | Gravity.END;
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
+            params.setMargins(App.px16, App.px16, App.px16, App.px16);
+        }
         fab.requestLayout();
     }
 
@@ -165,7 +169,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         fab.setSize(FloatingActionButton.SIZE_MINI);
         if (App.getInstance().getPreferences().getBoolean(Preferences.Main.SCROLL_BUTTON_ENABLE, false)) {
             fab.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             fab.setVisibility(View.GONE);
         }
         fab.setScaleX(0.0f);
