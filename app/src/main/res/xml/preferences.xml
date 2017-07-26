@@ -6,7 +6,7 @@
             android:title="Уведомления" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Общие">
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:key="main.is_system_downloader"
             android:summary="Использовать системный загрузчик файлов"
@@ -15,7 +15,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Внешний вид">
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="false"
             android:key="main.theme.is_dark"
             android:title="Тёмная тема" />
@@ -25,32 +25,39 @@
             android:summary="Применяется для тем, поиска и чата"
             android:title="Размер шрифта" />
 
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:key="message_panel.is_monospace"
             android:summary="Шрифт редактора сообщений"
             android:title="Моноширинный шрифт" />
 
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
+            android:defaultValue="false"
+            android:key="main.scroll_button.enable"
+            android:summary="Появляется при скролле в теме и поиске"
+            android:title="Кнопка быстрого скролла" />
+
+
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="false"
             android:key="main.drawers.tab_stack_bottom"
             android:title="Вкладки снизу" />
 
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:key="main.show_notify_dot"
             android:title="Индикатор счетчиков" />
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:dependency="main.show_notify_dot"
             android:key="main.notify_dot_fav"
             android:title="Счетчик избранного" />
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:dependency="main.show_notify_dot"
             android:key="main.notify_dot_qms"
             android:title="Счетчик QMS" />
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:dependency="main.show_notify_dot"
             android:key="main.notify_dot_mentions"
@@ -60,17 +67,17 @@
 
 
     <PreferenceCategory android:title="Просмотр тем">
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:key="theme.show_avatars"
             android:title="Отображать аватарки" />
 
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:key="theme.circle_avatars"
             android:title="Круглые аватарки" />
 
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:key="theme.anchor_history"
             android:summary="Сохраняет историю переходов snapback"
@@ -79,12 +86,12 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Списки">
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="false"
             android:key="lists.topic.unread_top"
             android:title="Непрочитанные сверху" />
 
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="false"
             android:key="lists.topic.show_dot"
             android:title="Индикатор новых сообщений" />

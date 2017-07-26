@@ -39,6 +39,17 @@
         app:srcCompat="@drawable/ic_fullscreen"
         android:contentDescription="Полная форма"
         android:visibility="gone"/>
+    <android.support.v7.widget.AppCompatImageButton
+        android:id="@+id/button_hide"
+        android:layout_width="@dimen/dp48"
+        android:layout_height="@dimen/dp40"
+        android:layout_below="@+id/message_field"
+        android:layout_marginStart="-8dp"
+        android:layout_toEndOf="@+id/button_full"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:srcCompat="@drawable/ic_transcribe_close"
+        android:contentDescription="Скрыть форму"
+        android:visibility="gone"/>
 
     <android.support.v7.widget.AppCompatEditText
         android:id="@+id/message_field"

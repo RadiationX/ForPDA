@@ -8,7 +8,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
-import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -145,7 +144,7 @@ public class ProfileFragment extends TabFragment {
                     return false;
                 });
         writeMenuItem = getMenu().add("Написать")
-                .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_create))
+                .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_profile_toolbar_create))
                 .setOnMenuItemClickListener(item -> {
                     IntentHandler.handle(currentProfile.getContacts().get(0).first);
                     return false;
