@@ -115,11 +115,11 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
             case Preferences.Main.WEBVIEW_FONT_SIZE: {
                 webView.setRelativeFontSize(Preferences.Main.getWebViewSize());
             }
-            case Preferences.Main.SCROLL_BUTTON_ENABLE:{
+            case Preferences.Main.SCROLL_BUTTON_ENABLE: {
                 scrollButtonEnable = App.getInstance().getPreferences().getBoolean(Preferences.Main.SCROLL_BUTTON_ENABLE, false);
-                if(scrollButtonEnable){
+                if (scrollButtonEnable) {
                     fab.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     fab.setVisibility(View.GONE);
                 }
             }
@@ -164,6 +164,9 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
         FabOnScroll behavior = new FabOnScroll(fab.getContext(), null);
         params.setBehavior(behavior);
         params.gravity = Gravity.CENTER_VERTICAL | Gravity.END;
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
+            params.setMargins(App.px16, App.px16, App.px16, App.px16);
+        }
         fab.requestLayout();
     }
 
@@ -613,14 +616,14 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
                 if (refreshLayout.getChildAt(0) instanceof RecyclerView) {
                     refreshLayout.removeViewAt(0);
                     fixTargetView();
-                    if(scrollButtonEnable){
+                    if (scrollButtonEnable) {
                         fab.setVisibility(View.VISIBLE);
                     }
                     refreshLayout.addView(webView);
                     Log.e("FORPDA_LOG", "add webview");
                 }
             } else {
-                if(scrollButtonEnable){
+                if (scrollButtonEnable) {
                     fab.setVisibility(View.VISIBLE);
                 }
                 refreshLayout.addView(webView);
