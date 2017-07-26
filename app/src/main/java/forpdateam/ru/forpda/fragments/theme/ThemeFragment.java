@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.fragments.theme;
 
-import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.SearchManager;
@@ -58,9 +57,9 @@ import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.settings.Preferences;
+import forpdateam.ru.forpda.utils.FabOnScroll;
 import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
-import forpdateam.ru.forpda.utils.SimpleAnimationListener;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
@@ -76,6 +75,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     //Указывают на произведенное действие: переход назад, обновление, обычный переход по ссылке
     protected final static int BACK_ACTION = 0, REFRESH_ACTION = 1, NORMAL_ACTION = 2;
     protected int loadAction = NORMAL_ACTION;
+    protected MenuItem toggleMessagePanelItem;
     protected MenuItem refreshMenuItem;
     protected MenuItem copyLinkMenuItem;
     protected MenuItem searchInThemeMenuItem;
@@ -112,6 +112,13 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             }
             case Preferences.Main.WEBVIEW_FONT_SIZE: {
                 setFontSize(Preferences.Main.getWebViewSize());
+            }
+            case Preferences.Main.SCROLL_BUTTON_ENABLE:{
+                if(App.getInstance().getPreferences().getBoolean(Preferences.Main.SCROLL_BUTTON_ENABLE, false)){
+                    fab.setVisibility(View.VISIBLE);
+                }else {
+                    fab.setVisibility(View.GONE);
+                }
             }
         }
     };
@@ -156,21 +163,37 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         super.onCreateView(inflater, container, savedInstanceState);
         initFabBehavior();
         fab.setSize(FloatingActionButton.SIZE_MINI);
-        fab.setVisibility(View.VISIBLE);
+        if (App.getInstance().getPreferences().getBoolean(Preferences.Main.SCROLL_BUTTON_ENABLE, false)) {
+            fab.setVisibility(View.VISIBLE);
+        }else {
+            fab.setVisibility(View.GONE);
+        }
         fab.setScaleX(0.0f);
         fab.setScaleY(0.0f);
         fab.setAlpha(0.0f);
         baseInflateFragment(inflater, R.layout.fragment_theme);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
         messagePanel = new MessagePanel(getContext(), fragmentContainer, coordinatorLayout, false);
+        messagePanel.setVisibility(View.GONE);
         messagePanel.enableBehavior();
         messagePanel.addSendOnClickListener(v -> sendMessage());
+        messagePanel.getSendButton().setOnLongClickListener(v -> {
+            EditPostForm form = createEditPostForm();
+            if (form != null) {
+                TabManager.getInstance().add(EditPostFragment.newInstance(createEditPostForm(), currentPage.getTitle()));
+            }
+            return true;
+        });
         messagePanel.getFullButton().setVisibility(View.VISIBLE);
         messagePanel.getFullButton().setOnClickListener(v -> {
             EditPostForm form = createEditPostForm();
             if (form != null) {
                 TabManager.getInstance().add(EditPostFragment.newInstance(createEditPostForm(), currentPage.getTitle()));
             }
+        });
+        messagePanel.getHideButton().setVisibility(View.VISIBLE);
+        messagePanel.getHideButton().setOnClickListener(v -> {
+            hideMessagePanel();
         });
         attachmentsPopup = messagePanel.getAttachmentsPopup();
         attachmentsPopup.setAddOnClickListener(v -> tryPickFile());
@@ -371,10 +394,38 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         refreshToolbarMenuItems(true);
     }
 
+    private void toggleMessagePanel() {
+        if (messagePanel.getVisibility() == View.VISIBLE) {
+            hideMessagePanel();
+        } else {
+            showMessagePanel();
+        }
+    }
+
+    private void showMessagePanel() {
+        messagePanel.setVisibility(View.VISIBLE);
+        messagePanel.getHeightChangeListener().onChangedHeight(messagePanel.getLastHeight());
+        toggleMessagePanelItem.setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_transcribe_close));
+    }
+
+    private void hideMessagePanel() {
+        messagePanel.setVisibility(View.GONE);
+        messagePanel.getHeightChangeListener().onChangedHeight(0);
+        toggleMessagePanelItem.setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_create));
+    }
 
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
+        toggleMessagePanelItem = getMenu()
+                .add("Ответить")
+                .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_create))
+                .setOnMenuItemClickListener(menuItem -> {
+                    toggleMessagePanel();
+                    return false;
+                })
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
         refreshMenuItem = getMenu().add("Обновить")
                 .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_refresh))
                 .setOnMenuItemClickListener(menuItem -> {
@@ -440,6 +491,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             boolean pageNotNull = !(currentPage == null || currentPage.getId() == 0 || currentPage.getUrl() == null);
             Log.d("SUKA", "SADASD " + pageNotNull + " : " + currentPage + " : " + currentPage.getId() + " : " + currentPage.getUrl());
 
+            toggleMessagePanelItem.setEnabled(true);
             refreshMenuItem.setEnabled(true);
             copyLinkMenuItem.setEnabled(pageNotNull);
             searchInThemeMenuItem.setEnabled(pageNotNull);
@@ -457,6 +509,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             }
             openForumMenuItem.setEnabled(pageNotNull);
         } else {
+            toggleMessagePanelItem.setEnabled(true);
             refreshMenuItem.setEnabled(true);
             copyLinkMenuItem.setEnabled(false);
             searchInThemeMenuItem.setEnabled(false);
@@ -572,6 +625,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                 onLoadData(s);
                 messagePanel.clearAttachments();
                 messagePanel.clearMessage();
+                hideMessagePanel();
             }, currentPage, v -> loadData(NORMAL_ACTION));
         }
 
@@ -662,6 +716,9 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     @Override
     public void insertNick(IBaseForumPost post) {
+        if (messagePanel.getVisibility() != View.VISIBLE) {
+            showMessagePanel();
+        }
         String insert = String.format(Locale.getDefault(), "[snapback]%s[/snapback] [b]%s,[/b] \n", post.getId(), post.getNick());
         messagePanel.insertText(insert);
     }
@@ -672,6 +729,9 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     @Override
     public void quotePost(String text, IBaseForumPost post) {
+        if (messagePanel.getVisibility() != View.VISIBLE) {
+            showMessagePanel();
+        }
         String date = Utils.getForumDateTime(Utils.parseForumDateTime(post.getDate()));
         String insert = String.format(Locale.getDefault(), "[quote name=\"%s\" date=\"%s\" post=%S]%s[/quote]\n", post.getNick(), date, post.getId(), text);
         messagePanel.insertText(insert);
@@ -781,54 +841,4 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         ThemeDialogsHelper.changeReputation(getContext(), post, type);
     }
 
-    private class FabOnScroll extends FloatingActionButton.Behavior {
-        private Handler handler = new Handler();
-        private Runnable currentRunnable;
-        private Interpolator interpolator = new AccelerateDecelerateInterpolator();
-
-        FabOnScroll(Context context, AttributeSet attrs) {
-            super();
-        }
-
-        @Override
-        public boolean onStartNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View directTargetChild, View target, int nestedScrollAxes) {
-            return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL;
-        }
-
-        @Override
-        public void onNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-            super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
-            if (child.getAlpha() == 0.0f && Math.abs(dyConsumed) > App.px24) {
-                child.clearAnimation();
-                child.animate()
-                        .scaleX(1.0f)
-                        .scaleY(1.0f)
-                        .alpha(1.0f)
-                        .setInterpolator(interpolator)
-                        .start();
-                child.setClickable(true);
-            }
-        }
-
-
-        @Override
-        public void onStopNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull FloatingActionButton child, @NonNull View target) {
-            super.onStopNestedScroll(coordinatorLayout, child, target);
-            if (currentRunnable != null) {
-                handler.removeCallbacks(currentRunnable);
-            }
-            currentRunnable = () -> {
-                child.clearAnimation();
-                child.animate()
-                        .scaleX(0.0f)
-                        .scaleY(0.0f)
-                        .alpha(0.0f)
-                        .setInterpolator(interpolator)
-                        .start();
-                child.setClickable(false);
-            };
-            handler.postDelayed(currentRunnable, 1000);
-        }
-
-    }
 }

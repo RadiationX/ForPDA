@@ -40,7 +40,7 @@
             android:key="notifications.fav.enabled"
             android:title="Уведомлять" />
 
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:key="notifications.fav.only_important"
             android:defaultValue="false"
             android:dependency="notifications.fav.enabled"
@@ -62,6 +62,14 @@
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.qms.enabled"
+            android:title="Уведомлять" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Обновления программы">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="notifications.update.enabled"
             android:title="Уведомлять" />
 
     </PreferenceCategory>

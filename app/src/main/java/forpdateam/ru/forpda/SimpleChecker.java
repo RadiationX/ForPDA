@@ -98,9 +98,9 @@ public class SimpleChecker {
 
 
             int defaults = 0;
-            if (Preferences.Notifications.Main.isSoundEnabled()) {
+            /*if (Preferences.Notifications.Main.isSoundEnabled()) {
                 defaults |= NotificationCompat.DEFAULT_SOUND;
-            }
+            }*/
             if (Preferences.Notifications.Main.isVibrationEnabled()) {
                 defaults |= NotificationCompat.DEFAULT_VIBRATE;
             }

@@ -87,7 +87,6 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
             }
         });
         webView.setOnDirectionListener(direction -> {
-            Log.d("EWV", "NEW DIRECTION: " + direction);
             if (webView.getDirection() == ExtendedWebView.DIRECTION_DOWN) {
                 fab.setImageDrawable(App.getAppDrawable(fab.getContext(), R.drawable.ic_arrow_down));
             } else if (webView.getDirection() == ExtendedWebView.DIRECTION_UP) {

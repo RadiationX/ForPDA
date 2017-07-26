@@ -30,7 +30,7 @@ import forpdateam.ru.forpda.views.messagepanel.attachments.AttachmentsPopup;
 
 @SuppressLint("ViewConstructor")
 public class MessagePanel extends CardView {
-    private ImageButton advancedButton, attachmentsButton, sendButton, fullButton;
+    private ImageButton advancedButton, attachmentsButton, sendButton, fullButton, hideButton;
     private List<View.OnClickListener> advancedListeners = new ArrayList<>(), attachmentsListeners = new ArrayList<>(), sendListeners = new ArrayList<>();
     private EditText messageField;
     private MessagePanelBehavior panelBehavior;
@@ -73,6 +73,7 @@ public class MessagePanel extends CardView {
         attachmentsButton = (ImageButton) findViewById(R.id.button_attachments);
         sendButton = (ImageButton) findViewById(R.id.button_send);
         fullButton = (ImageButton) findViewById(R.id.button_full);
+        hideButton = (ImageButton) findViewById(R.id.button_hide);
         messageField = (EditText) findViewById(R.id.message_field);
         sendProgress = (ProgressBar) findViewById(R.id.send_progress);
         formProgress = (ProgressBar) findViewById(R.id.form_load_progress);
@@ -107,6 +108,7 @@ public class MessagePanel extends CardView {
             if (heightChangeListener == null) return;
             int newHeight = getHeight() + App.px16;
             if (newHeight != lastHeight) {
+                lastHeight = newHeight;
                 heightChangeListener.onChangedHeight(newHeight);
             }
         });
@@ -127,6 +129,14 @@ public class MessagePanel extends CardView {
         });
         messageField.setTypeface(isMonospace ? Typeface.MONOSPACE : Typeface.DEFAULT);
         App.getInstance().addPreferenceChangeObserver(preferenceObserver);
+    }
+
+    public int getLastHeight() {
+        return lastHeight;
+    }
+
+    public HeightChangeListener getHeightChangeListener() {
+        return heightChangeListener;
     }
 
     public void disableBehavior() {
@@ -257,6 +267,10 @@ public class MessagePanel extends CardView {
 
     public ImageButton getFullButton() {
         return fullButton;
+    }
+
+    public ImageButton getHideButton() {
+        return hideButton;
     }
 
     public EditText getMessageField() {

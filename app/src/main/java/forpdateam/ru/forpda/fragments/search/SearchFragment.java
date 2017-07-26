@@ -10,6 +10,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -53,12 +55,14 @@ import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IBase;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.fragments.theme.ThemeDialogsHelper;
+import forpdateam.ru.forpda.fragments.theme.ThemeFragment;
 import forpdateam.ru.forpda.fragments.theme.ThemeHelper;
 import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.ExtendedWebView;
+import forpdateam.ru.forpda.utils.FabOnScroll;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
@@ -71,6 +75,7 @@ import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
 
 public class SearchFragment extends TabFragment implements IPostFunctions, IBase {
     protected final static String JS_INTERFACE = "ISearch";
+    private boolean scrollButtonEnable = App.getInstance().getPreferences().getBoolean(Preferences.Main.SCROLL_BUTTON_ENABLE, false);
     private ViewGroup searchSettingsView;
     private ViewGroup nickBlock, resourceBlock, resultBlock, sortBlock, sourceBlock;
     private Spinner resourceSpinner, resultSpinner, sortSpinner, sourceSpinner;
@@ -110,6 +115,14 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
             case Preferences.Main.WEBVIEW_FONT_SIZE: {
                 webView.setRelativeFontSize(Preferences.Main.getWebViewSize());
             }
+            case Preferences.Main.SCROLL_BUTTON_ENABLE:{
+                scrollButtonEnable = App.getInstance().getPreferences().getBoolean(Preferences.Main.SCROLL_BUTTON_ENABLE, false);
+                if(scrollButtonEnable){
+                    fab.setVisibility(View.VISIBLE);
+                }else {
+                    fab.setVisibility(View.GONE);
+                }
+            }
         }
     };
 
@@ -144,11 +157,31 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
     private BottomSheetDialog dialog;
     private SimpleTooltip tooltip;
 
+
+    @Override
+    protected void initFabBehavior() {
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+        FabOnScroll behavior = new FabOnScroll(fab.getContext(), null);
+        params.setBehavior(behavior);
+        params.gravity = Gravity.CENTER_VERTICAL | Gravity.END;
+        fab.requestLayout();
+    }
+
     @SuppressLint("JavascriptInterface")
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        initFabBehavior();
+        fab.setSize(FloatingActionButton.SIZE_MINI);
+        if (scrollButtonEnable) {
+            fab.setVisibility(View.VISIBLE);
+        } else {
+            fab.setVisibility(View.GONE);
+        }
+        fab.setScaleX(0.0f);
+        fab.setScaleY(0.0f);
+        fab.setAlpha(0.0f);
         baseInflateFragment(inflater, R.layout.fragment_search);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
         //recyclerView = (RecyclerView) findViewById(R.id.base_list);
@@ -179,6 +212,21 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
 
         recyclerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         webView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        fab.setOnClickListener(v -> {
+            if (webView.getDirection() == ExtendedWebView.DIRECTION_DOWN) {
+                webView.pageDown(true);
+            } else if (webView.getDirection() == ExtendedWebView.DIRECTION_UP) {
+                webView.pageUp(true);
+            }
+        });
+        webView.setOnDirectionListener(direction -> {
+            if (webView.getDirection() == ExtendedWebView.DIRECTION_DOWN) {
+                fab.setImageDrawable(App.getAppDrawable(fab.getContext(), R.drawable.ic_arrow_down));
+            } else if (webView.getDirection() == ExtendedWebView.DIRECTION_UP) {
+                fab.setImageDrawable(App.getAppDrawable(fab.getContext(), R.drawable.ic_arrow_up));
+            }
+        });
 
         refreshLayout.addView(recyclerView);
         viewsReady();
@@ -565,10 +613,16 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
                 if (refreshLayout.getChildAt(0) instanceof RecyclerView) {
                     refreshLayout.removeViewAt(0);
                     fixTargetView();
+                    if(scrollButtonEnable){
+                        fab.setVisibility(View.VISIBLE);
+                    }
                     refreshLayout.addView(webView);
                     Log.e("FORPDA_LOG", "add webview");
                 }
             } else {
+                if(scrollButtonEnable){
+                    fab.setVisibility(View.VISIBLE);
+                }
                 refreshLayout.addView(webView);
                 Log.e("FORPDA_LOG", "add webview");
             }
@@ -582,10 +636,12 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
                 if (refreshLayout.getChildAt(0) instanceof ExtendedWebView) {
                     refreshLayout.removeViewAt(0);
                     fixTargetView();
+                    fab.setVisibility(View.GONE);
                     refreshLayout.addView(recyclerView);
                     Log.e("FORPDA_LOG", "add recyclerview");
                 }
             } else {
+                fab.setVisibility(View.GONE);
                 refreshLayout.addView(recyclerView);
                 Log.e("FORPDA_LOG", "add recyclerview");
             }

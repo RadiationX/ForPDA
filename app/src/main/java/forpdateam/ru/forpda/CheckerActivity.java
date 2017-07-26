@@ -38,7 +38,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class CheckerActivity extends AppCompatActivity {
-    public final static String JSON_LINK = "https://raw.githubusercontent.com/radiationx/forpda/master/check.json";
+    public final static String JSON_LINK = "https://raw.githubusercontent.com/RadiationX/ForPDA/master/check.json";
     public final static String GOOGLE_PLAY_LINK = "https://play.google.com/store/apps/details?id=ru.forpdateam.forpda";
     public final static String JSON_SOURCE = "json_source";
     private Toolbar toolbar;
