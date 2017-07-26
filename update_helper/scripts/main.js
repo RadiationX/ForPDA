@@ -5,7 +5,7 @@ String.prototype.format = String.prototype.f = function () {
     });
 };
 
-const POST_CONTENT_4PDA = "[size=4][b]ForPDA New[/size][/b]\n[size=3][b]версия: {0}[/b][/size]\n\n[b]Что нового: [/b]\n{1}\n[b]Скачать: {2}[/b]"
+const POST_CONTENT_4PDA = "[size=4][b]ForPDA New[/size][/b]\n[size=3][b]версия: {0}[/b][/size]\n\n[b]Что нового: [/b]\n{1}\n[b]Скачать: [/b]{2}"
 
 var jsonField;
 
