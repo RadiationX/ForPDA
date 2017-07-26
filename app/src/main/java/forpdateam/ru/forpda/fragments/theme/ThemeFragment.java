@@ -10,12 +10,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.SearchView;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -25,6 +30,8 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -132,14 +139,29 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         }
     }
 
+    @Override
+    protected void initFabBehavior() {
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+        FabOnScroll behavior = new FabOnScroll(fab.getContext(), null);
+        params.setBehavior(behavior);
+        params.gravity = Gravity.CENTER_VERTICAL | Gravity.END;
+        fab.requestLayout();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        initFabBehavior();
+        fab.setSize(FloatingActionButton.SIZE_MINI);
+        fab.setVisibility(View.VISIBLE);
+        fab.setScaleX(0.0f);
+        fab.setScaleY(0.0f);
+        fab.setAlpha(0.0f);
         baseInflateFragment(inflater, R.layout.fragment_theme);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
         messagePanel = new MessagePanel(getContext(), fragmentContainer, coordinatorLayout, false);
-        messagePanel.enableBehavior();
+        //messagePanel.enableBehavior();
         messagePanel.addSendOnClickListener(v -> sendMessage());
         messagePanel.getFullButton().setVisibility(View.VISIBLE);
         messagePanel.getFullButton().setOnClickListener(v -> {
@@ -751,5 +773,55 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     @Override
     public void changeReputation(IBaseForumPost post, boolean type) {
         ThemeDialogsHelper.changeReputation(getContext(), post, type);
+    }
+
+    private class FabOnScroll extends FloatingActionButton.Behavior {
+        private Handler handler = new Handler();
+        private Runnable currentRunnable;
+        private Interpolator interpolator = new AccelerateDecelerateInterpolator();
+
+        FabOnScroll(Context context, AttributeSet attrs) {
+            super();
+        }
+
+        @Override
+        public boolean onStartNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View directTargetChild, View target, int nestedScrollAxes) {
+            return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL;
+        }
+
+        @Override
+        public void onNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
+            super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+
+            if (child.getAlpha() == 0.0f && Math.abs(dyConsumed) > App.px24) {
+                child.clearAnimation();
+                child.animate()
+                        .scaleX(1.0f)
+                        .scaleY(1.0f)
+                        .alpha(1.0f)
+                        .setInterpolator(interpolator)
+                        .start();
+            }
+        }
+
+
+        @Override
+        public void onStopNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull FloatingActionButton child, @NonNull View target) {
+            super.onStopNestedScroll(coordinatorLayout, child, target);
+            if (currentRunnable != null) {
+                handler.removeCallbacks(currentRunnable);
+            }
+            currentRunnable = () -> {
+                child.clearAnimation();
+                child.animate()
+                        .scaleX(0.0f)
+                        .scaleY(0.0f)
+                        .alpha(0.0f)
+                        .setInterpolator(interpolator)
+                        .start();
+            };
+            handler.postDelayed(currentRunnable, 1000);
+        }
+
     }
 }

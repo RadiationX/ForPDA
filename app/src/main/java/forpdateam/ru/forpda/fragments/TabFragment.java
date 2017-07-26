@@ -32,6 +32,7 @@ import java.util.Observer;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.ScrollAwareFABBehavior;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
@@ -320,10 +321,11 @@ public class TabFragment extends RxFragment {
     }
 
     protected void initFabBehavior() {
-        CoordinatorLayout.LayoutParams params =
-                (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
         // TODO: 20.12.16 not work in 25.1.0
-        //params.setBehavior(new ScrollAwareFABBehavior(fab.getContext(), null));
+        ScrollAwareFABBehavior behavior = new ScrollAwareFABBehavior(fab.getContext(), null);
+        params.setBehavior(behavior);
+
         fab.requestLayout();
     }
 
