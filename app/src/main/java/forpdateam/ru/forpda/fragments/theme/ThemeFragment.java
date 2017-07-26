@@ -382,7 +382,11 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
         copyLinkMenuItem = getMenu().add("Скопировать ссылку")
                 .setOnMenuItemClickListener(menuItem -> {
-                    Utils.copyToClipBoard(tab_url);
+                    String url = tab_url;
+                    if (currentPage != null) {
+                        url = "http://4pda.ru/forum/index.php?showtopic=" + currentPage.getId();
+                    }
+                    Utils.copyToClipBoard(url);
                     return false;
                 });
         addSearchOnPageItem(getMenu());
