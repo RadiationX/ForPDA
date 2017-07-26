@@ -22,6 +22,16 @@ import forpdateam.ru.forpda.settings.Preferences;
  */
 
 public class ExtendedWebView extends NestedWebView {
+    public final static int DIRECTION_NONE = 0;
+    public final static int DIRECTION_UP = 1;
+    public final static int DIRECTION_DOWN = 2;
+    private int direction = DIRECTION_NONE;
+    private OnDirectionListener onDirectionListener;
+
+    public interface OnDirectionListener {
+        void onDirectionChanged(int direction);
+    }
+
     public ExtendedWebView(Context context) {
         super(context);
         init();
@@ -35,6 +45,27 @@ public class ExtendedWebView extends NestedWebView {
     public ExtendedWebView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
+    }
+
+
+    public void setOnDirectionListener(OnDirectionListener onDirectionListener) {
+        this.onDirectionListener = onDirectionListener;
+    }
+
+    @Override
+    protected void onScrollChanged(int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+        super.onScrollChanged(scrollX, scrollY, oldScrollX, oldScrollY);
+        int newDirection = scrollY > oldScrollY ? DIRECTION_DOWN : DIRECTION_UP;
+        if (newDirection != direction) {
+            direction = newDirection;
+            if (onDirectionListener != null) {
+                onDirectionListener.onDirectionChanged(newDirection);
+            }
+        }
+    }
+
+    public int getDirection() {
+        return direction;
     }
 
     @SuppressLint("SetJavaScriptEnabled")
