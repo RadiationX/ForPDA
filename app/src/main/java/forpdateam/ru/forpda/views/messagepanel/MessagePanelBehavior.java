@@ -32,8 +32,14 @@ public class MessagePanelBehavior extends CoordinatorLayout.Behavior<CardView> {
                                final View target, final int dxConsumed, final int dyConsumed,
                                final int dxUnconsumed, final int dyUnconsumed) {
         super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+
+    }
+
+    @Override
+    public void onNestedPreScroll(CoordinatorLayout coordinatorLayout, CardView child, View target, int dx, int dy, int[] consumed) {
+        super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed);
         if (!canScrolling) return;
-        scrolled += dyConsumed + dyUnconsumed;
+        scrolled += dy + consumed[1];
         scrolled = Math.max(scrolled, -child.getMeasuredHeight() - (2 * App.px8));
         scrolled = Math.min(scrolled, 0);
         child.setTranslationY(-(float) scrolled);

@@ -45,6 +45,7 @@ body {
   border-radius: 2px;
   box-sizing: border-box;
   padding: 0.5em;
+  font-size: 1rem;
 }
 .wrapper .block textarea:focus,
 .wrapper .block input[type="text"]:focus {

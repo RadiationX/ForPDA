@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.fragments.theme;
 
+import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.SearchManager;
@@ -59,6 +60,7 @@ import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.SimpleAnimationListener;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
@@ -161,7 +163,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         baseInflateFragment(inflater, R.layout.fragment_theme);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
         messagePanel = new MessagePanel(getContext(), fragmentContainer, coordinatorLayout, false);
-        //messagePanel.enableBehavior();
+        messagePanel.enableBehavior();
         messagePanel.addSendOnClickListener(v -> sendMessage());
         messagePanel.getFullButton().setVisibility(View.VISIBLE);
         messagePanel.getFullButton().setOnClickListener(v -> {
@@ -796,7 +798,6 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         @Override
         public void onNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
             super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
-
             if (child.getAlpha() == 0.0f && Math.abs(dyConsumed) > App.px24) {
                 child.clearAnimation();
                 child.animate()
@@ -805,6 +806,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                         .alpha(1.0f)
                         .setInterpolator(interpolator)
                         .start();
+                child.setClickable(true);
             }
         }
 
@@ -823,6 +825,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                         .alpha(0.0f)
                         .setInterpolator(interpolator)
                         .start();
+                child.setClickable(false);
             };
             handler.postDelayed(currentRunnable, 1000);
         }
