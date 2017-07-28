@@ -12,6 +12,32 @@ public class FavItem implements IFavItem {
     private String trackType, info, infoColor, topicTitle, forumTitle, authorUserNick, lastUserNick, date, desc;
     private boolean pin = false, isNewMessages = false;
 
+    public FavItem() {
+    }
+
+    public FavItem(IFavItem item){
+        favId = item.getFavId();
+        topicId = item.getTopicId();
+        forumId = item.getForumId();
+        authorId = item.getAuthorId();
+        lastUserId = item.getLastUserId();
+        stParam = item.getStParam();
+        pages = item.getPages();
+
+        trackType = item.getTrackType();
+        info = item.getInfo();
+        infoColor = item.getInfoColor();
+        topicTitle = item.getTopicTitle();
+        forumTitle = item.getForumTitle();
+        authorUserNick = item.getAuthorUserNick();
+        lastUserNick = item.getLastUserNick();
+        date = item.getDate();
+        desc = item.getDesc();
+
+        pin = item.isPin();
+        isNewMessages = item.isNewMessages();
+    }
+
     public String getDesc() {
         return desc;
     }

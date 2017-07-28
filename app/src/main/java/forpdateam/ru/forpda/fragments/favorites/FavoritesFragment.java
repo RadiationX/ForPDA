@@ -216,11 +216,15 @@ public class FavoritesFragment extends TabFragment {
     private void bindView() {
         results = realm.where(FavItemBd.class).findAll();
         if (results.size() != 0) {
+            ArrayList<IFavItem> nonBdResult = new ArrayList<>();
+            for (FavItemBd itemBd : results) {
+                nonBdResult.add(new FavItem(itemBd));
+            }
             ArrayList<IFavItem> pinnedUnread = new ArrayList<>();
             ArrayList<IFavItem> itemsUnread = new ArrayList<>();
             ArrayList<IFavItem> pinned = new ArrayList<>();
             ArrayList<IFavItem> items = new ArrayList<>();
-            for (IFavItem item : results) {
+            for (IFavItem item : nonBdResult) {
                 if (item.isPin()) {
                     if (unreadTop && item.isNewMessages()) {
                         pinnedUnread.add(item);

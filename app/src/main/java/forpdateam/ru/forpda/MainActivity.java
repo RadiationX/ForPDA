@@ -245,6 +245,14 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             tooltips.get(tooltips.size() - 1).dismiss();
             return;
         }
+        if(drawers.isMenuOpen()){
+            drawers.closeMenu();
+            return;
+        }
+        if(drawers.isTabsOpen()){
+            drawers.closeTabs();
+            return;
+        }
         backHandler(false);
     }
 

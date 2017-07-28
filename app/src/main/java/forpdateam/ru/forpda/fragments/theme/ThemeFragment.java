@@ -414,6 +414,8 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     private void hideMessagePanel() {
         messagePanel.setVisibility(View.GONE);
+        messagePanel.hidePopupWindows();
+        hidePopupWindows();
         messagePanel.getHeightChangeListener().onChangedHeight(0);
         toggleMessagePanelItem.setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_create));
     }

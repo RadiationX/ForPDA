@@ -16,6 +16,15 @@ public class EditPostForm {
     private int errorCode = 0;
     private ArrayList<AttachmentItem> attachments = new ArrayList<>();
     private String editReason = "default_edit_reason", message = "";
+    private EditPoll poll;
+
+    public EditPoll getPoll() {
+        return poll;
+    }
+
+    public void setPoll(EditPoll poll) {
+        this.poll = poll;
+    }
 
     private int forumId = 0, topicId = 0, postId = 0, st = 0;
 
