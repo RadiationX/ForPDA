@@ -18,7 +18,7 @@ public class FavItemBd extends RealmObject implements IFavItem {
 
     public FavItemBd(){}
 
-    public FavItemBd(FavItem item){
+    public FavItemBd(IFavItem item){
         favId = item.getFavId();
         topicId = item.getTopicId();
         forumId = item.getForumId();

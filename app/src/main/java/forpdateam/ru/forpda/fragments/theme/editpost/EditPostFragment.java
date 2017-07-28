@@ -247,6 +247,7 @@ public class EditPostFragment extends TabFragment {
             postForm.setMessage(form.getMessage());
             postForm.setEditReason(form.getEditReason());
             postForm.setAttachments(form.getAttachments());
+            postForm.setPoll(form.getPoll());
             attachmentsPopup.onLoadAttachments(form);
             messagePanel.insertText(postForm.getMessage());
         }, postForm, null);

@@ -279,6 +279,10 @@ public class Drawers {
         drawerLayout.openDrawer(menuDrawer);
     }
 
+    public boolean isMenuOpen() {
+        return drawerLayout.isDrawerOpen(menuDrawer);
+    }
+
     public void closeMenu() {
         drawerLayout.closeDrawer(menuDrawer);
     }
@@ -318,6 +322,10 @@ public class Drawers {
         drawerLayout.closeDrawer(tabDrawer);
     }
 
+    public boolean isTabsOpen() {
+        return drawerLayout.isDrawerOpen(tabDrawer);
+    }
+
     public void toggleTabs() {
         if (drawerLayout.isDrawerOpen(tabDrawer)) {
             closeTabs();
@@ -347,8 +355,8 @@ public class Drawers {
                 .show();
     }
 
-    private void updateTabGravity(){
-        Log.d("SUKA", "updateTabGravity: "+Preferences.Main.isTabsBottom());
+    private void updateTabGravity() {
+        Log.d("SUKA", "updateTabGravity: " + Preferences.Main.isTabsBottom());
         tabListLayoutManager.setStackFromEnd(Preferences.Main.isTabsBottom());
     }
 }
