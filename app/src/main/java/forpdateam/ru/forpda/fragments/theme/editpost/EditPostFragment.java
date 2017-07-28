@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -18,6 +20,7 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
+import forpdateam.ru.forpda.api.theme.editpost.models.EditPoll;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -48,6 +51,7 @@ public class EditPostFragment extends TabFragment {
 
     private final EditPostForm postForm = new EditPostForm();
     private MessagePanel messagePanel;
+    private EditPollPopup pollPopup;
 
 
     public static EditPostFragment newInstance(int postId, int topicId, int forumId, int st, String themeName) {
@@ -117,8 +121,40 @@ public class EditPostFragment extends TabFragment {
             String title = args.getString(ARG_THEME_NAME);
             setTitle((postForm.getType() == TYPE_NEW_POST ? "Ответ" : "Редактирование").concat(title != null ? " в ".concat(title) : ""));
         }
+        pollPopup = new EditPollPopup(getContext());
 
         return view;
+    }
+
+    @Override
+    protected void addBaseToolbarMenu() {
+        super.addBaseToolbarMenu();
+        getMenu().add("Suks")
+                .setOnMenuItemClickListener(item -> {
+                    pollPopup.show();
+                    return true;
+                })
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        getMenu().add("prnt")
+                .setOnMenuItemClickListener(item -> {
+                    EditPoll poll = postForm.getPoll();
+                    if (poll != null) {
+                        Log.d("POLL", "poll_question: " + poll.getTitle());
+                        for (int i = 0; i < poll.getQuestions().size(); i++) {
+                            EditPoll.Question question = poll.getQuestion(i);
+                            int q_index = i + 1;
+                            Log.d("POLL", "question[" + q_index + "]: " + question.getTitle());
+                            Log.d("POLL", "multi[" + q_index + "]: " + (question.isMulti() ? "1" : "0"));
+                            for (int j = 0; j < question.getChoices().size(); j++) {
+                                EditPoll.Choice choice = question.getChoice(j);
+                                int c_index = j + 1;
+                                Log.d("POLL", "choice[" + q_index + '_' + c_index + "]: " + choice.getTitle());
+                            }
+                        }
+                    }
+                    return true;
+                })
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
     }
 
     @Override
@@ -248,6 +284,7 @@ public class EditPostFragment extends TabFragment {
             postForm.setEditReason(form.getEditReason());
             postForm.setAttachments(form.getAttachments());
             postForm.setPoll(form.getPoll());
+            pollPopup.setPoll(postForm.getPoll());
             attachmentsPopup.onLoadAttachments(form);
             messagePanel.insertText(postForm.getMessage());
         }, postForm, null);

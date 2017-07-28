@@ -36,7 +36,7 @@ public class CodeEditor extends AppCompatEditText {
     }
 
     private static class ForumCodes {
-        private static final Pattern ELEMENT = Pattern.compile("(\\[(?:\\/)?((?:attachment|background|nomergetime|mergetime|snapback|numlist|spoiler|offtop|center|color|right|quote|code|hide|left|list|size|sub|sup|cur|url|b|i|u|s|\\*)))([^\\]\\[]+?)?(\\])", Pattern.CASE_INSENSITIVE);
+        private static final Pattern ELEMENT = Pattern.compile("(\\[(?:\\/)?((?:attachment|background|nomergetime|mergetime|snapback|numlist|spoiler|offtop|center|color|right|quote|code|font|hide|left|list|size|sub|sup|cur|url|b|i|u|s|\\*)))([^\\]\\[]+?)?(\\])", Pattern.CASE_INSENSITIVE);
         private static final Pattern ATTRIBUTE = Pattern.compile("(name|date|post)?=(\"[^\\\"]*?\"|[\\w\\d]+)", Pattern.CASE_INSENSITIVE);
 
     }
@@ -353,7 +353,7 @@ public class CodeEditor extends AppCompatEditText {
                             int ag2e = attributes.end(2);
                             int color = colorAttrValue;
                             if (attrName == null) {
-                                if (tagName.equalsIgnoreCase("spoiler") || tagName.equalsIgnoreCase("code")) {
+                                if (tagName.equalsIgnoreCase("spoiler") || tagName.equalsIgnoreCase("code") || tagName.equalsIgnoreCase("font")) {
                                     e.setSpan(
                                             new ForegroundColorSpan(color),
                                             eg3s + 1,
