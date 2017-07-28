@@ -76,7 +76,7 @@ public class EditPost {
                     Log.d("POLL", "question[" + q_index + "]: " + question.getTitle());
                     Log.d("POLL", "multi[" + q_index + "]: " + (question.isMulti() ? "1" : "0"));
                     for (int j = 0; j < question.getChoices().size(); j++) {
-                        EditPoll.Choice choice = question.getChoice(i);
+                        EditPoll.Choice choice = question.getChoice(j);
                         int c_index = j + 1;
                         Log.d("POLL", "choice[" + q_index + '_' + c_index + "]: " + choice.getTitle());
                     }
@@ -383,7 +383,7 @@ public class EditPost {
                 builder.formHeader("question[" + q_index + "]", question.getTitle());
                 builder.formHeader("multi[" + q_index + "]", question.isMulti() ? "1" : "0");
                 for (int j = 0; j < question.getChoices().size(); j++) {
-                    EditPoll.Choice choice = question.getChoice(i);
+                    EditPoll.Choice choice = question.getChoice(j);
                     int c_index = j + 1;
                     builder.formHeader("choice[" + q_index + '_' + c_index + "]", choice.getTitle());
                 }

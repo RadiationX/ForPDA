@@ -8,7 +8,7 @@ import java.util.List;
  */
 
 public class EditPoll {
-    private String title;
+    private String title = "";
     private int maxQuestions = 0;
     private int maxChoices = 0;
     private List<Question> questions = new ArrayList<>();
@@ -50,7 +50,7 @@ public class EditPoll {
     }
 
     public static class Question {
-        private String title;
+        private String title = "";
         private boolean isMulti = false;
         private List<Choice> choices = new ArrayList<>();
 
@@ -84,7 +84,7 @@ public class EditPoll {
     }
 
     public static class Choice {
-        private String title;
+        private String title = "";
         private int votes = 0;
 
         public String getTitle() {
