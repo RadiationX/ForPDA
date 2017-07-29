@@ -39,6 +39,7 @@ public class Favorites {
             boolean isForum = matcher.group(24) != null;
 
             item.setFavId(Integer.parseInt(matcher.group(1)));
+            Log.d("FAV", "FAV ITEM NEW ID "+item.getFavId());
             item.setTrackType(matcher.group(2));
             item.setPin(matcher.group(3).equals("1"));
 
