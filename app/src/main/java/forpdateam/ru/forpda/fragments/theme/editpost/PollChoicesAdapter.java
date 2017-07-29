@@ -1,7 +1,10 @@
 package forpdateam.ru.forpda.fragments.theme.editpost;
 
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +13,14 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPoll;
+import forpdateam.ru.forpda.utils.SimpleTextWatcher;
 
 /**
  * Created by radiationx on 28.07.17.
@@ -24,10 +30,12 @@ import forpdateam.ru.forpda.api.theme.editpost.models.EditPoll;
 public class PollChoicesAdapter extends RecyclerView.Adapter<PollChoicesAdapter.ViewHolder> {
     private List<EditPoll.Choice> choices = new ArrayList<>();
     private EditPoll poll;
+    private EditPoll.Question question;
 
-    public PollChoicesAdapter(List<EditPoll.Choice> choices, EditPoll poll) {
-        this.choices = choices;
+    public PollChoicesAdapter(EditPoll.Question question, EditPoll poll) {
+        this.choices = question.getChoices();
         this.poll = poll;
+        this.question = question;
     }
 
     public PollChoicesAdapter() {
@@ -35,6 +43,8 @@ public class PollChoicesAdapter extends RecyclerView.Adapter<PollChoicesAdapter.
 
     public void add(EditPoll.Choice choice) {
         if (this.choices.size() < poll.getMaxChoices()) {
+            question.increaseIndexOffset();
+            choice.setIndex(question.getIndexOffset() + question.getBaseIndexOffset());
             this.choices.add(choice);
             //notifyItemInserted(choices.indexOf(choice));
             notifyDataSetChanged();
@@ -50,7 +60,7 @@ public class PollChoicesAdapter extends RecyclerView.Adapter<PollChoicesAdapter.
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.edit_poll_choice, parent, false);
-        return new ViewHolder(v);
+        return new ViewHolder(v, new MyCustomEditTextListener());
     }
 
     @Override
@@ -60,27 +70,59 @@ public class PollChoicesAdapter extends RecyclerView.Adapter<PollChoicesAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        EditPoll.Choice item = getItem(position);
+        EditPoll.Choice item = getItem(holder.getAdapterPosition());
         assert item != null;
 
+        holder.myCustomEditTextListener.updatePosition(holder.getAdapterPosition());
         holder.title.getEditText().setText(item.getTitle());
-        holder.title.setHint("Ответ " + (position + 1));
+        holder.title.setHint("Ответ " + (holder.getAdapterPosition() + 1));
+
 
     }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextInputLayout title;
         public ImageButton delete;
+        public MyCustomEditTextListener myCustomEditTextListener;
 
-        public ViewHolder(View v) {
+        public ViewHolder(View v, MyCustomEditTextListener myCustomEditTextListener) {
             super(v);
             title = (TextInputLayout) v.findViewById(R.id.poll_choice_title);
             delete = (ImageButton) v.findViewById(R.id.poll_choice_delete);
+
+            this.myCustomEditTextListener = myCustomEditTextListener;
+            this.title.getEditText().addTextChangedListener(myCustomEditTextListener);
             delete.setOnClickListener(v1 -> {
-                choices.remove(getLayoutPosition());
+                EditPoll.Choice choice = choices.get(getLayoutPosition());
                 //notifyItemRemoved(getLayoutPosition());
+                if (choice.getIndex() > question.getBaseIndexOffset()) {
+                    int start = choice.getIndex();
+                    int end = question.getBaseIndexOffset() + question.getIndexOffset();
+                    for (int i = start; i <= end; i++) {
+                        EditPoll.Choice c = EditPoll.findChoiceByIndex(question, i);
+                        if (c != null) {
+                            c.setIndex(c.getIndex() - 1);
+                        }
+                    }
+                    question.reduceIndexOffset();
+                }
+                choices.remove(getLayoutPosition());
                 notifyDataSetChanged();
             });
+        }
+    }
+
+    private class MyCustomEditTextListener extends SimpleTextWatcher {
+        private int position;
+
+        public void updatePosition(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            choices.get(position).setTitle(charSequence.toString());
         }
     }
 }

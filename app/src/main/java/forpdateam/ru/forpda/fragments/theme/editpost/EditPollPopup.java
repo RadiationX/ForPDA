@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.fragments.theme.editpost;
 
 import android.content.Context;
 import android.os.Build;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,7 +28,7 @@ import forpdateam.ru.forpda.views.messagepanel.attachments.CustomBottomSheetDial
  */
 
 public class EditPollPopup {
-    private CustomBottomSheetDialog dialog;
+    private BottomSheetDialog dialog;
     private View bottomSheet;
 
     private TextView pollTitle;
@@ -40,9 +41,8 @@ public class EditPollPopup {
 
 
     public EditPollPopup(Context context) {
-        dialog = new CustomBottomSheetDialog(context);
-        dialog.setPeekHeight(App.getKeyboardHeight());
-        dialog.getWindow().getDecorView().setFitsSystemWindows(true);
+        dialog = new BottomSheetDialog(context);
+        //dialog.getWindow().getDecorView().setFitsSystemWindows(true);
 
         bottomSheet = View.inflate(context, R.layout.edit_poll, null);
 
@@ -58,7 +58,7 @@ public class EditPollPopup {
         });
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window window = dialog.getWindow();
             if (window != null) {
                 window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -67,7 +67,7 @@ public class EditPollPopup {
                 }
                 //window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
             }
-        }
+        }*/
     }
 
     public void show() {
@@ -75,8 +75,8 @@ public class EditPollPopup {
             ((ViewGroup) bottomSheet.getParent()).removeView(bottomSheet);
         }
         dialog.setContentView(bottomSheet);
-        //dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.Softinput);
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        //dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         dialog.show();
     }

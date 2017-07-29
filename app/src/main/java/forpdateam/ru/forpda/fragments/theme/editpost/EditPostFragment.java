@@ -19,6 +19,7 @@ import java.util.List;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.RequestFile;
+import forpdateam.ru.forpda.api.theme.editpost.EditPost;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPoll;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
@@ -138,20 +139,7 @@ public class EditPostFragment extends TabFragment {
         getMenu().add("prnt")
                 .setOnMenuItemClickListener(item -> {
                     EditPoll poll = postForm.getPoll();
-                    if (poll != null) {
-                        Log.d("POLL", "poll_question: " + poll.getTitle());
-                        for (int i = 0; i < poll.getQuestions().size(); i++) {
-                            EditPoll.Question question = poll.getQuestion(i);
-                            int q_index = i + 1;
-                            Log.d("POLL", "question[" + q_index + "]: " + question.getTitle());
-                            Log.d("POLL", "multi[" + q_index + "]: " + (question.isMulti() ? "1" : "0"));
-                            for (int j = 0; j < question.getChoices().size(); j++) {
-                                EditPoll.Choice choice = question.getChoice(j);
-                                int c_index = j + 1;
-                                Log.d("POLL", "choice[" + q_index + '_' + c_index + "]: " + choice.getTitle());
-                            }
-                        }
-                    }
+                    EditPost.printPoll(poll);
                     return true;
                 })
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);

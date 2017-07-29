@@ -27,6 +27,7 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPoll;
+import forpdateam.ru.forpda.utils.SimpleTextWatcher;
 
 /**
  * Created by radiationx on 28.07.17.
@@ -47,6 +48,8 @@ public class PollQuestionsAdapter extends RecyclerView.Adapter<PollQuestionsAdap
 
     public void add(EditPoll.Question question) {
         if (questions.size() < poll.getMaxQuestions()) {
+            poll.increaseIndexOffset();
+            question.setIndex(poll.getIndexOffset() + poll.getBaseIndexOffset());
             this.questions.add(question);
             //notifyItemInserted(questions.indexOf(question));
             notifyDataSetChanged();
@@ -62,7 +65,7 @@ public class PollQuestionsAdapter extends RecyclerView.Adapter<PollQuestionsAdap
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.edit_poll_question, parent, false);
-        return new ViewHolder(v);
+        return new ViewHolder(v, new MyCustomEditTextListener());
     }
 
     @Override
@@ -72,22 +75,24 @@ public class PollQuestionsAdapter extends RecyclerView.Adapter<PollQuestionsAdap
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        EditPoll.Question item = getItem(position);
+        EditPoll.Question item = getItem(holder.getAdapterPosition());
         assert item != null;
 
-        holder.title.setText(item.getTitle());
-        holder.title.setHint("Вопрос " + (position + 1));
-        holder.titleField.setText("Вопрос " + (position + 1));
+        String qstr = "Вопрос " + (holder.getAdapterPosition() + 1);
+        holder.myCustomEditTextListener.updatePosition(holder.getAdapterPosition());
+
+        holder.title.setText(qstr);
+        holder.titleField.setText(item.getTitle());
+        holder.titleField.setHint(qstr);
+
         holder.multi.setChecked(item.isMulti());
 
         PollChoicesAdapter choicesAdapter = choiceAdapters.get(item);
 
-        Log.d("POLL", "ADAPTER Q 1: " + choicesAdapter + " : " + position);
         if (choicesAdapter == null) {
-            choicesAdapter = new PollChoicesAdapter(item.getChoices(), poll);
+            choicesAdapter = new PollChoicesAdapter(item, poll);
             choiceAdapters.put(item, choicesAdapter);
         }
-        Log.d("POLL", "ADAPTER Q 2: " + choicesAdapter + " : " + position + " : " + choicesAdapter.getItemCount());
 
 
         holder.choices.setAdapter(choicesAdapter);
@@ -102,8 +107,9 @@ public class PollQuestionsAdapter extends RecyclerView.Adapter<PollQuestionsAdap
         public RecyclerView choices;
         public Button addChoice;
         public ImageButton delete;
+        public MyCustomEditTextListener myCustomEditTextListener;
 
-        public ViewHolder(View v) {
+        public ViewHolder(View v, MyCustomEditTextListener myCustomEditTextListener) {
             super(v);
             title = (AppCompatTextView) v.findViewById(R.id.poll_question_title);
             titleField = (AppCompatEditText) v.findViewById(R.id.poll_question_title_field);
@@ -111,6 +117,9 @@ public class PollQuestionsAdapter extends RecyclerView.Adapter<PollQuestionsAdap
             choices = (RecyclerView) v.findViewById(R.id.poll_question_choices);
             addChoice = (Button) v.findViewById(R.id.poll_add_choice);
             delete = (ImageButton) v.findViewById(R.id.poll_question_delete);
+
+            this.myCustomEditTextListener = myCustomEditTextListener;
+            this.titleField.addTextChangedListener(myCustomEditTextListener);
 
             choices.setLayoutManager(new LinearLayoutManager(choices.getContext()));
 
@@ -121,11 +130,36 @@ public class PollQuestionsAdapter extends RecyclerView.Adapter<PollQuestionsAdap
 
             delete.setOnClickListener(v1 -> {
                 EditPoll.Question question = questions.get(getLayoutPosition());
+
+                if (question.getIndex() > poll.getBaseIndexOffset()) {
+                    int start = question.getIndex();
+                    int end = poll.getBaseIndexOffset() + poll.getIndexOffset();
+                    for (int i = start; i <= end; i++) {
+                        EditPoll.Question q = EditPoll.findQuestionByIndex(poll, i);
+                        if (q != null) {
+                            q.setIndex(q.getIndex() - 1);
+                        }
+                    }
+                    poll.reduceIndexOffset();
+                }
                 questions.remove(question);
                 choiceAdapters.remove(question);
                 //notifyItemRemoved(getLayoutPosition());
                 notifyDataSetChanged();
             });
+        }
+    }
+
+    private class MyCustomEditTextListener extends SimpleTextWatcher {
+        private int position;
+
+        public void updatePosition(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            questions.get(position).setTitle(charSequence.toString());
         }
     }
 }
