@@ -2,9 +2,6 @@ package forpdateam.ru.forpda.api.theme.editpost;
 
 import android.util.Log;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -45,6 +42,22 @@ public class EditPost {
 
     private final static Pattern attachmentsPattern = Pattern.compile("(\\d+)\u0002([^\u0002]*?)\u0002([^\u0002]*?)\u0002(\\/\\/[^\u0002]*?)\u0002(\\d+)\u0002([0-9a-fA-F]+)(?:(?:\u0002(\\/\\/[^\u0002]*?)\u0002(\\d+)\u0002(\\d+))?(?:\u0003\u0004(\\d+)\u0003\u0004([^\u0002]*?)\u0003\u0004([^\u0002]*?)\u0003)?)?");
 
+    public static void printPoll(EditPoll poll) {
+        if (poll != null) {
+            Log.d("POLL", "poll_question: " + poll.getTitle() + " : {" + poll.getMaxQuestions() + ":" + poll.getMaxChoices() + "} : " + poll.getBaseIndexOffset() + " +" + poll.getIndexOffset());
+            for (int i = 0; i < poll.getQuestions().size(); i++) {
+                EditPoll.Question question = poll.getQuestion(i);
+                int q_index = question.getIndex();
+                Log.d("POLL", "question[" + q_index + "]: " + question.getTitle() + " : " + question.getBaseIndexOffset() + " +" + question.getIndexOffset());
+                Log.d("POLL", "multi[" + q_index + "]: " + (question.isMulti() ? "1" : "0"));
+                for (int j = 0; j < question.getChoices().size(); j++) {
+                    EditPoll.Choice choice = question.getChoice(j);
+                    int c_index = choice.getIndex();
+                    Log.d("POLL", "choice[" + q_index + '_' + c_index + "]: " + choice.getTitle());
+                }
+            }
+        }
+    }
 
     public EditPostForm loadForm(int postId) throws Exception {
         Log.d("FORPDA_LOG", "START LOAD FORM");
@@ -68,20 +81,7 @@ public class EditPost {
         if (matcher.find()) {
             EditPoll poll = createPoll(matcher);
             form.setPoll(poll);
-            if (poll != null) {
-                Log.d("POLL", "poll_question: " + poll.getTitle());
-                for (int i = 0; i < poll.getQuestions().size(); i++) {
-                    EditPoll.Question question = poll.getQuestion(i);
-                    int q_index = i + 1;
-                    Log.d("POLL", "question[" + q_index + "]: " + question.getTitle());
-                    Log.d("POLL", "multi[" + q_index + "]: " + (question.isMulti() ? "1" : "0"));
-                    for (int j = 0; j < question.getChoices().size(); j++) {
-                        EditPoll.Choice choice = question.getChoice(j);
-                        int c_index = j + 1;
-                        Log.d("POLL", "choice[" + q_index + '_' + c_index + "]: " + choice.getTitle());
-                    }
-                }
-            }
+            EditPost.printPoll(poll);
         }
 
 
@@ -108,6 +108,11 @@ public class EditPost {
         Matcher jsonMatcher = fckngInvalidJsonPattern.matcher(matcher.group(2));
         while (jsonMatcher.find()) {
             EditPoll.Question question = new EditPoll.Question();
+            int questionIndex = Integer.parseInt(jsonMatcher.group(1));
+            if (questionIndex > poll.getBaseIndexOffset()) {
+                poll.setBaseIndexOffset(questionIndex);
+            }
+            question.setIndex(questionIndex);
             question.setTitle(Utils.fromHtml(jsonMatcher.group(2)));
             poll.addQuestion(question);
         }
@@ -116,11 +121,19 @@ public class EditPost {
         while (jsonMatcher.find()) {
             Matcher indices = pollIndicesPattern.matcher(jsonMatcher.group(1));
             if (indices.find()) {
-                int questionIndex = Integer.parseInt(indices.group(1)) - 1;
-                EditPoll.Question question = poll.getQuestion(questionIndex);
-                EditPoll.Choice choice = new EditPoll.Choice();
-                choice.setTitle(Utils.fromHtml(jsonMatcher.group(2)));
-                question.addChoice(choice);
+                int questionIndex = Integer.parseInt(indices.group(1));
+                EditPoll.Question question = EditPoll.findQuestionByIndex(poll, questionIndex);
+                if (question != null) {
+                    EditPoll.Choice choice = new EditPoll.Choice();
+
+                    int choiceIndex = Integer.parseInt(indices.group(2));
+                    if (choiceIndex > question.getBaseIndexOffset()) {
+                        question.setBaseIndexOffset(choiceIndex);
+                    }
+                    choice.setIndex(choiceIndex);
+                    choice.setTitle(Utils.fromHtml(jsonMatcher.group(2)));
+                    question.addChoice(choice);
+                }
             }
         }
 
@@ -128,19 +141,25 @@ public class EditPost {
         while (jsonMatcher.find()) {
             Matcher indices = pollIndicesPattern.matcher(jsonMatcher.group(1));
             if (indices.find()) {
-                int questionIndex = Integer.parseInt(indices.group(1)) - 1;
-                int choiceIndex = Integer.parseInt(indices.group(2)) - 1;
-                EditPoll.Question question = poll.getQuestion(questionIndex);
-                EditPoll.Choice choice = question.getChoice(choiceIndex);
-                choice.setVotes(Integer.parseInt(jsonMatcher.group(2)));
+                int questionIndex = Integer.parseInt(indices.group(1));
+                EditPoll.Question question = EditPoll.findQuestionByIndex(poll, questionIndex);
+                if (question != null) {
+                    int choiceIndex = Integer.parseInt(indices.group(2));
+                    EditPoll.Choice choice = EditPoll.findChoiceByIndex(question, choiceIndex);
+                    if (choice != null) {
+                        choice.setVotes(Integer.parseInt(jsonMatcher.group(2)));
+                    }
+                }
             }
         }
 
         jsonMatcher = jsonMatcher.reset(matcher.group(5));
         while (jsonMatcher.find()) {
-            int questionIndex = Integer.parseInt(jsonMatcher.group(1)) - 1;
-            EditPoll.Question question = poll.getQuestion(questionIndex);
-            question.setMulti(jsonMatcher.group(2).equals("1"));
+            int questionIndex = Integer.parseInt(jsonMatcher.group(1));
+            EditPoll.Question question = EditPoll.findQuestionByIndex(poll, questionIndex);
+            if (question != null) {
+                question.setMulti(jsonMatcher.group(2).equals("1"));
+            }
         }
 
         poll.setMaxQuestions(Integer.parseInt(matcher.group(6)));
@@ -376,6 +395,7 @@ public class EditPost {
                 .formHeader("_upload_single_file", "1");
         EditPoll poll = form.getPoll();
         if (poll != null) {
+            EditPost.printPoll(poll);
             builder.formHeader("poll_question", poll.getTitle());
             for (int i = 0; i < poll.getQuestions().size(); i++) {
                 EditPoll.Question question = poll.getQuestion(i);

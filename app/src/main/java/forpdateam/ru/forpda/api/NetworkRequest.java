@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.api;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,7 +12,7 @@ import java.util.Set;
 
 public class NetworkRequest {
     private String url = "";
-    private Map<String, String> headers, formHeaders;
+    private LinkedHashMap<String, String> headers, formHeaders;
     private Set<String> encodedFormHeaders;
     private boolean isMultipartForm = false;
     private RequestFile file = null;
@@ -34,11 +35,11 @@ public class NetworkRequest {
         return url;
     }
 
-    public Map<String, String> getHeaders() {
+    public LinkedHashMap<String, String> getHeaders() {
         return headers;
     }
 
-    public Map<String, String> getFormHeaders() {
+    public LinkedHashMap<String, String> getFormHeaders() {
         return formHeaders;
     }
 
@@ -64,7 +65,7 @@ public class NetworkRequest {
 
     public static class Builder {
         private String url = "";
-        private Map<String, String> headers, formHeaders;
+        private LinkedHashMap<String, String> headers, formHeaders;
         private Set<String> encodedFormHeaders;
         private boolean isMultipartForm = false;
         private RequestFile file = null;
@@ -76,16 +77,16 @@ public class NetworkRequest {
             return this;
         }
 
-        public NetworkRequest.Builder addHeaders(Map<String, String> headers) {
+        public NetworkRequest.Builder addHeaders(LinkedHashMap<String, String> headers) {
             if (this.headers == null)
-                this.headers = new HashMap<>();
+                this.headers = new LinkedHashMap<>();
             this.headers.putAll(headers);
             return this;
         }
 
         public NetworkRequest.Builder addHeader(String name, String value) {
             if (this.headers == null)
-                this.headers = new HashMap<>();
+                this.headers = new LinkedHashMap<>();
             this.headers.put(name, value);
             return this;
         }
@@ -101,7 +102,7 @@ public class NetworkRequest {
 
         public NetworkRequest.Builder formHeaders(Map<String, String> formHeaders, boolean encoded) {
             if (this.formHeaders == null)
-                this.formHeaders = new HashMap<>();
+                this.formHeaders = new LinkedHashMap<>();
             this.formHeaders.putAll(formHeaders);
             if (encoded) {
                 if (this.encodedFormHeaders == null) {
@@ -119,7 +120,7 @@ public class NetworkRequest {
 
         public NetworkRequest.Builder formHeader(String name, String value, boolean encoded) {
             if (this.formHeaders == null)
-                this.formHeaders = new HashMap<>();
+                this.formHeaders = new LinkedHashMap<>();
             this.formHeaders.put(name, value);
             if (encoded) {
                 if (this.encodedFormHeaders == null) {
