@@ -36,11 +36,11 @@
             app:srcCompat="@drawable/ic_poll" />
 
         <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/topic_item_pin_icon"
+            android:id="@+id/topic_item_forum_icon"
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:visibility="gone"
-            app:srcCompat="@drawable/ic_pin" />
+            app:srcCompat="@drawable/ic_forum" />
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/topic_item_lock_icon"

@@ -138,7 +138,7 @@ public class TopicsAdapter extends SectionedRecyclerViewAdapter<TopicsAdapter.Vi
             } else {
                 holder.desc.setVisibility(View.GONE);
             }
-            //holder.pinIcon.setVisibility(item.isPinned() ? View.VISIBLE : View.GONE);
+            //holder.forumIcon.setVisibility(item.isPinned() ? View.VISIBLE : View.GONE);
             holder.lockIcon.setVisibility((item.getParams() & TopicItem.CLOSED) != 0 ? View.VISIBLE : View.GONE);
             holder.pollIcon.setVisibility((item.getParams() & TopicItem.POLL) != 0 ? View.VISIBLE : View.GONE);
             holder.lastNick.setText(item.getLastUserNick());
@@ -155,7 +155,7 @@ public class TopicsAdapter extends SectionedRecyclerViewAdapter<TopicsAdapter.Vi
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         TextView title, lastNick, date, desc;
-        ImageView pinIcon, lockIcon, pollIcon;
+        ImageView forumIcon, lockIcon, pollIcon;
         View topDivider;
 
         public ViewHolder(View v) {
@@ -165,7 +165,7 @@ public class TopicsAdapter extends SectionedRecyclerViewAdapter<TopicsAdapter.Vi
             desc = (TextView) v.findViewById(R.id.topic_item_desc);
             lastNick = (TextView) v.findViewById(R.id.topic_item_last_nick);
             date = (TextView) v.findViewById(R.id.topic_item_date);
-            pinIcon = (ImageView) v.findViewById(R.id.topic_item_pin_icon);
+            forumIcon = (ImageView) v.findViewById(R.id.topic_item_forum_icon);
             lockIcon = (ImageView) v.findViewById(R.id.topic_item_lock_icon);
             pollIcon = (ImageView) v.findViewById(R.id.topic_item_poll_icon);
 

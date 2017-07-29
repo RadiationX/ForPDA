@@ -41,6 +41,8 @@ public interface IFavItem {
 
     boolean isNewMessages();
 
+    boolean isForum();
+
     void setFavId(int favId);
 
     void setTopicId(int topicId);
@@ -76,4 +78,6 @@ public interface IFavItem {
     void setPin(boolean pin);
 
     void setNewMessages(boolean newMessages);
+
+    void setForum(boolean isForum);
 }
