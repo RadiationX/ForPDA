@@ -18,7 +18,7 @@ import forpdateam.ru.forpda.api.others.pagination.Pagination;
  */
 
 public class Favorites {
-    private final static Pattern mainPattern = Pattern.compile("<div data-item-fid=\"([^\"]*)\" data-item-track=\"([^\"]*)\" data-item-pin=\"([^\"]*)\">[\\s\\S]*?(?:class=\"modifier\">(<font color=\"([^\"]*)\">|)([^< ]*)(<\\/font>|)<\\/span>)?<a href=\"[^\"]*=(\\d*)[^\"]*?\"[^>]*?>(<strong>|)([^<]*)(<\\/strong>|)<\\/a>(?: &nbsp;[\\s\\S]*?(<a href=\"[^\"]*=(\\d*)\">\\((\\d*?)\\)[^<]*?<\\/a>|)<\\/div>[\\s\\S]*?topic_desc\">([^<]*|)(<br[^>]*>|)[\\s\\S]*?showforum=([^\"]*?)\">([^<]*)<\\/a><br[^>]*>[\\s\\S]*?showuser=([^\"]*)\">([^<]*)<\\/a>[\\s\\S]*?showuser=([^\"]*)\">([^<]*)<\\/a> ([^<]*?)<|[^<]*?<\\/div>[^<]*?<div class=\"board-forum-lastpost[\\s\\S]*?<div class=\"topic_body\">([^<]*?) <a href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?)<\\/a>)?");
+    private final static Pattern mainPattern = Pattern.compile("<div data-item-fid=\"([^\"]*)\" data-item-track=\"([^\"]*)\" data-item-pin=\"([^\"]*)\">[\\s\\S]*?(?:class=\"modifier\">(?:<font color=\"([^\"]*)\">)?([^< ]*)(?:<\\/font>)?<\\/span>)?<a href=\"[^\"]*=(\\d*)[^\"]*?\"[^>]*?>(<strong>)?([^<]*)(?:<\\/strong>)?<\\/a>(?:[^<]*?<a[^>]*?tpg\\(\\d+,(\\d+)\\)[^>]*?>[^<]*?<\\/a>[\\s\\S]*?)?(?:<\\/div><div class=\"topic_body\"><span class=\"topic_desc\">([^<]*|)(<br[^>]*>|)[\\s\\S]*?showforum=([^\"]*?)\">([^<]*)<\\/a><br[^>]*>[\\s\\S]*?showuser=([^\"]*)\">([^<]*)<\\/a>[\\s\\S]*?showuser=([^\"]*)\">([^<]*)<\\/a> ([^<]*?)|[^<]*?<\\/div>[^<]*?<div class=\"board-forum-lastpost[\\s\\S]*?<div class=\"topic_body\">([^<]*?) <a href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?))<");
     private final static Pattern checkPattern = Pattern.compile("<div style=\"[^\"]*background:#dff0d8[^\"]*\">[\\s\\S]*<div id=\"navstrip");
     private final static Pattern pagesPattern = Pattern.compile("parseInt\\((\\d*)\\)[\\s\\S]*?parseInt\\(st\\*(\\d*)\\)[\\s\\S]*?pagination\">[\\s\\S]*?<span[^>]*?>([^<]*?)<\\/span>");
     public final static int ACTION_EDIT_SUB_TYPE = 0;
@@ -36,43 +36,46 @@ public class Favorites {
         FavItem item;
         while (matcher.find()) {
             item = new FavItem();
-            boolean isForum = matcher.group(24) != null;
+            boolean isForum = matcher.group(19) != null;
 
             item.setFavId(Integer.parseInt(matcher.group(1)));
-            Log.d("FAV", "FAV ITEM NEW ID "+item.getFavId());
+            Log.d("FAV", "FAV ITEM NEW ID " + item.getFavId());
             item.setTrackType(matcher.group(2));
             item.setPin(matcher.group(3).equals("1"));
 
             if (isForum) {
-                item.setForumId(Integer.parseInt(matcher.group(8)));
+                item.setForumId(Integer.parseInt(matcher.group(6)));
             } else {
-                if (!matcher.group(4).isEmpty())
-                    item.setInfoColor(matcher.group(5));
-                item.setInfo(matcher.group(6));
-                item.setTopicId(Integer.parseInt(matcher.group(8)));
+                if (matcher.group(4) != null) {
+                    item.setInfoColor(matcher.group(4));
+                }
+
+                item.setInfo(matcher.group(5));
+                item.setTopicId(Integer.parseInt(matcher.group(6)));
             }
-            item.setNewMessages(!matcher.group(9).isEmpty());
-            item.setTopicTitle(Utils.fromHtml(matcher.group(10)));
+            item.setNewMessages(matcher.group(7) != null);
+            item.setTopicTitle(Utils.fromHtml(matcher.group(8)));
 
             if (isForum) {
-                item.setDate(matcher.group(24));
-                item.setLastUserId(Integer.parseInt(matcher.group(25)));
-                item.setLastUserNick(Utils.fromHtml(matcher.group(26)));
+                item.setDate(matcher.group(19));
+                item.setLastUserId(Integer.parseInt(matcher.group(20)));
+                item.setLastUserNick(Utils.fromHtml(matcher.group(21)));
                 item.setForum(true);
             } else {
-                if (!matcher.group(12).isEmpty()) {
-                    item.setStParam(Integer.parseInt(matcher.group(13)));
-                    item.setPages(Integer.parseInt(matcher.group(14)));
+                if (matcher.group(9) != null) {
+                    item.setStParam(Integer.parseInt(matcher.group(9)));
+                    item.setPages((item.getStParam() / 20) + 1);
                 }
-                if (!matcher.group(15).isEmpty())
-                    item.setDesc(Utils.fromHtml(matcher.group(15)));
-                item.setForumId(Integer.parseInt(matcher.group(17)));
-                item.setForumTitle(Utils.fromHtml(matcher.group(18)));
-                item.setAuthorId(Integer.parseInt(matcher.group(19)));
-                item.setAuthorUserNick(Utils.fromHtml(matcher.group(20)));
-                item.setLastUserId(Integer.parseInt(matcher.group(21)));
-                item.setLastUserNick(Utils.fromHtml(matcher.group(22)));
-                item.setDate(matcher.group(23));
+                if (matcher.group(10) != null)
+                    item.setDesc(Utils.fromHtml(matcher.group(10)));
+
+                item.setForumId(Integer.parseInt(matcher.group(12)));
+                item.setForumTitle(Utils.fromHtml(matcher.group(13)));
+                item.setAuthorId(Integer.parseInt(matcher.group(14)));
+                item.setAuthorUserNick(Utils.fromHtml(matcher.group(15)));
+                item.setLastUserId(Integer.parseInt(matcher.group(16)));
+                item.setLastUserNick(Utils.fromHtml(matcher.group(17)));
+                item.setDate(matcher.group(18));
             }
 
             data.addItem(item);
