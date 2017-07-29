@@ -79,7 +79,7 @@ public class MentionsAdapter extends RecyclerView.Adapter<MentionsAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public TextView title, lastNick, date, desc;
-        public ImageView pinIcon, lockIcon, pollIcon;
+        public ImageView forumIcon, lockIcon, pollIcon;
 
         public ViewHolder(View v) {
             super(v);
@@ -87,7 +87,7 @@ public class MentionsAdapter extends RecyclerView.Adapter<MentionsAdapter.ViewHo
             desc = (TextView) v.findViewById(R.id.topic_item_desc);
             lastNick = (TextView) v.findViewById(R.id.topic_item_last_nick);
             date = (TextView) v.findViewById(R.id.topic_item_date);
-            pinIcon = (ImageView) v.findViewById(R.id.topic_item_pin_icon);
+            forumIcon = (ImageView) v.findViewById(R.id.topic_item_forum_icon);
             lockIcon = (ImageView) v.findViewById(R.id.topic_item_lock_icon);
             pollIcon = (ImageView) v.findViewById(R.id.topic_item_poll_icon);
 

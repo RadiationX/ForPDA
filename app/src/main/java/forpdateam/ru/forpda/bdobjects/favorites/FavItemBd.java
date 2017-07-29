@@ -14,7 +14,7 @@ public class FavItemBd extends RealmObject implements IFavItem {
     private int favId;
     private int topicId, forumId, authorId, lastUserId, stParam, pages;
     private String trackType, info, infoColor, topicTitle, forumTitle, authorUserNick, lastUserNick, date, desc;
-    private boolean pin = false, isNewMessages = false;
+    private boolean pin = false, isNewMessages = false, isForum = false;
 
     public FavItemBd(){}
 
@@ -39,6 +39,7 @@ public class FavItemBd extends RealmObject implements IFavItem {
 
         pin = item.isPin();
         isNewMessages = item.isNewMessages();
+        isForum = item.isForum();
     }
 
     public String getDesc() {
@@ -185,4 +186,11 @@ public class FavItemBd extends RealmObject implements IFavItem {
         isNewMessages = newMessages;
     }
 
+    public boolean isForum() {
+        return isForum;
+    }
+
+    public void setForum(boolean forum) {
+        isForum = forum;
+    }
 }

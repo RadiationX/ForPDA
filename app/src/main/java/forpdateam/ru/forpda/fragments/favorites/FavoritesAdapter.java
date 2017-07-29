@@ -135,12 +135,22 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
 
         IFavItem item = sections.get(section).second.get(relativePosition);
         holder.title.setText(item.getTopicTitle());
-        holder.title.setTypeface(item.isNewMessages() ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
-        holder.title.setTextColor(item.isNewMessages() ? titleColorNew : titleColor);
+
+        holder.title.setTypeface(item.isNewMessages() || item.isForum() ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+        holder.title.setTextColor(item.isNewMessages() || item.isForum() ? titleColorNew : titleColor);
         holder.dot.setVisibility(showDot && item.isNewMessages() ? View.VISIBLE : View.GONE);
-        //holder.pinIcon.setVisibility(item.isPin() ? View.VISIBLE : View.GONE);
-        holder.lockIcon.setVisibility(item.getInfo().contains("X") ? View.VISIBLE : View.GONE);
-        holder.pollIcon.setVisibility(item.getInfo().contains("^") ? View.VISIBLE : View.GONE);
+
+
+        holder.forumIcon.setVisibility(item.isForum() ? View.VISIBLE : View.GONE);
+
+        if (item.isForum()) {
+            holder.lockIcon.setVisibility(View.GONE);
+            holder.pollIcon.setVisibility(View.GONE);
+        } else {
+            holder.lockIcon.setVisibility(item.getInfo().contains("X") ? View.VISIBLE : View.GONE);
+            holder.pollIcon.setVisibility(item.getInfo().contains("^") ? View.VISIBLE : View.GONE);
+        }
+
         /*if (item.getInfo().contains("+^"))
             holder.pollIcon.setColorFilter(ContextCompat.getColor(App.getContext(), R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
         else
@@ -162,7 +172,7 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public TextView title, lastNick, date, desc;
-        public ImageView pinIcon, lockIcon, pollIcon;
+        public ImageView forumIcon, lockIcon, pollIcon;
         public View dot, topDivider;
 
         public ViewHolder(View v) {
@@ -173,7 +183,7 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
             desc = (TextView) v.findViewById(R.id.topic_item_desc);
             lastNick = (TextView) v.findViewById(R.id.topic_item_last_nick);
             date = (TextView) v.findViewById(R.id.topic_item_date);
-            pinIcon = (ImageView) v.findViewById(R.id.topic_item_pin_icon);
+            forumIcon = (ImageView) v.findViewById(R.id.topic_item_forum_icon);
             lockIcon = (ImageView) v.findViewById(R.id.topic_item_lock_icon);
             pollIcon = (ImageView) v.findViewById(R.id.topic_item_poll_icon);
 
