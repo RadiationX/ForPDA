@@ -42,7 +42,7 @@ public class EditPollPopup {
 
     public EditPollPopup(Context context) {
         dialog = new BottomSheetDialog(context);
-        //dialog.getWindow().getDecorView().setFitsSystemWindows(true);
+        dialog.getWindow().getDecorView().setFitsSystemWindows(true);
 
         bottomSheet = View.inflate(context, R.layout.edit_poll, null);
 
@@ -75,7 +75,7 @@ public class EditPollPopup {
             ((ViewGroup) bottomSheet.getParent()).removeView(bottomSheet);
         }
         dialog.setContentView(bottomSheet);
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         //dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         dialog.show();

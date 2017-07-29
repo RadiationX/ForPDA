@@ -30,7 +30,7 @@ import forpdateam.ru.forpda.views.messagepanel.attachments.AttachmentsPopup;
 
 @SuppressLint("ViewConstructor")
 public class MessagePanel extends CardView {
-    private ImageButton advancedButton, attachmentsButton, sendButton, fullButton, hideButton;
+    private ImageButton advancedButton, attachmentsButton, sendButton, fullButton, hideButton, editPollButton;
     private List<View.OnClickListener> advancedListeners = new ArrayList<>(), attachmentsListeners = new ArrayList<>(), sendListeners = new ArrayList<>();
     private EditText messageField;
     private MessagePanelBehavior panelBehavior;
@@ -74,6 +74,7 @@ public class MessagePanel extends CardView {
         sendButton = (ImageButton) findViewById(R.id.button_send);
         fullButton = (ImageButton) findViewById(R.id.button_full);
         hideButton = (ImageButton) findViewById(R.id.button_hide);
+        editPollButton = (ImageButton) findViewById(R.id.button_edt_poll);
         messageField = (EditText) findViewById(R.id.message_field);
         sendProgress = (ProgressBar) findViewById(R.id.send_progress);
         formProgress = (ProgressBar) findViewById(R.id.form_load_progress);
@@ -271,6 +272,10 @@ public class MessagePanel extends CardView {
 
     public ImageButton getHideButton() {
         return hideButton;
+    }
+
+    public ImageButton getEditPollButton() {
+        return editPollButton;
     }
 
     public EditText getMessageField() {

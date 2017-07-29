@@ -122,7 +122,11 @@ public class EditPostFragment extends TabFragment {
             String title = args.getString(ARG_THEME_NAME);
             setTitle((postForm.getType() == TYPE_NEW_POST ? "Ответ" : "Редактирование").concat(title != null ? " в ".concat(title) : ""));
         }
-        pollPopup = new EditPollPopup(getContext());
+        messagePanel.getEditPollButton().setOnClickListener(v -> {
+            if (pollPopup != null)
+                pollPopup.show();
+        });
+
 
         return view;
     }
@@ -130,19 +134,13 @@ public class EditPostFragment extends TabFragment {
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        getMenu().add("Suks")
-                .setOnMenuItemClickListener(item -> {
-                    pollPopup.show();
-                    return true;
-                })
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        getMenu().add("prnt")
+        /*getMenu().add("prnt")
                 .setOnMenuItemClickListener(item -> {
                     EditPoll poll = postForm.getPoll();
                     EditPost.printPoll(poll);
                     return true;
                 })
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);*/
     }
 
     @Override
@@ -271,8 +269,16 @@ public class EditPostFragment extends TabFragment {
             postForm.setMessage(form.getMessage());
             postForm.setEditReason(form.getEditReason());
             postForm.setAttachments(form.getAttachments());
-            postForm.setPoll(form.getPoll());
-            pollPopup.setPoll(postForm.getPoll());
+            if (form.getPoll() != null) {
+                postForm.setPoll(form.getPoll());
+
+                pollPopup = new EditPollPopup(getContext());
+                pollPopup.setPoll(postForm.getPoll());
+                messagePanel.getEditPollButton().setVisibility(View.VISIBLE);
+            } else {
+                messagePanel.getEditPollButton().setVisibility(View.GONE);
+            }
+
             attachmentsPopup.onLoadAttachments(form);
             messagePanel.insertText(postForm.getMessage());
         }, postForm, null);
