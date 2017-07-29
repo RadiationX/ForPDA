@@ -1,31 +1,24 @@
 package forpdateam.ru.forpda.fragments.theme.editpost;
 
-import android.graphics.Color;
-import android.support.design.widget.TextInputLayout;
-import android.support.v4.util.SparseArrayCompat;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPoll;
 import forpdateam.ru.forpda.utils.SimpleTextWatcher;
 
@@ -65,7 +58,7 @@ public class PollQuestionsAdapter extends RecyclerView.Adapter<PollQuestionsAdap
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.edit_poll_question, parent, false);
-        return new ViewHolder(v, new MyCustomEditTextListener());
+        return new ViewHolder(v, new CustomTextWatcher(), new CustomCheckedChangeListener());
     }
 
     @Override
@@ -79,7 +72,8 @@ public class PollQuestionsAdapter extends RecyclerView.Adapter<PollQuestionsAdap
         assert item != null;
 
         String qstr = "Вопрос " + (holder.getAdapterPosition() + 1);
-        holder.myCustomEditTextListener.updatePosition(holder.getAdapterPosition());
+        holder.customTextWatcher.updatePosition(holder.getAdapterPosition());
+        holder.checkedChangeListener.updatePosition(holder.getAdapterPosition());
 
         holder.title.setText(qstr);
         holder.titleField.setText(item.getTitle());
@@ -107,9 +101,10 @@ public class PollQuestionsAdapter extends RecyclerView.Adapter<PollQuestionsAdap
         public RecyclerView choices;
         public Button addChoice;
         public ImageButton delete;
-        public MyCustomEditTextListener myCustomEditTextListener;
+        public CustomTextWatcher customTextWatcher;
+        public CustomCheckedChangeListener checkedChangeListener;
 
-        public ViewHolder(View v, MyCustomEditTextListener myCustomEditTextListener) {
+        public ViewHolder(View v, CustomTextWatcher customTextWatcher, CustomCheckedChangeListener checkedChangeListener) {
             super(v);
             title = (AppCompatTextView) v.findViewById(R.id.poll_question_title);
             titleField = (AppCompatEditText) v.findViewById(R.id.poll_question_title_field);
@@ -118,8 +113,11 @@ public class PollQuestionsAdapter extends RecyclerView.Adapter<PollQuestionsAdap
             addChoice = (Button) v.findViewById(R.id.poll_add_choice);
             delete = (ImageButton) v.findViewById(R.id.poll_question_delete);
 
-            this.myCustomEditTextListener = myCustomEditTextListener;
-            this.titleField.addTextChangedListener(myCustomEditTextListener);
+            this.customTextWatcher = customTextWatcher;
+            this.titleField.addTextChangedListener(customTextWatcher);
+
+            this.checkedChangeListener = checkedChangeListener;
+            this.multi.setOnCheckedChangeListener(checkedChangeListener);
 
             choices.setLayoutManager(new LinearLayoutManager(choices.getContext()));
 
@@ -150,7 +148,7 @@ public class PollQuestionsAdapter extends RecyclerView.Adapter<PollQuestionsAdap
         }
     }
 
-    private class MyCustomEditTextListener extends SimpleTextWatcher {
+    private class CustomTextWatcher extends SimpleTextWatcher {
         private int position;
 
         public void updatePosition(int position) {
@@ -160,6 +158,19 @@ public class PollQuestionsAdapter extends RecyclerView.Adapter<PollQuestionsAdap
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
             questions.get(position).setTitle(charSequence.toString());
+        }
+    }
+
+    private class CustomCheckedChangeListener implements CompoundButton.OnCheckedChangeListener {
+        private int position;
+
+        public void updatePosition(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            questions.get(position).setMulti(isChecked);
         }
     }
 }
