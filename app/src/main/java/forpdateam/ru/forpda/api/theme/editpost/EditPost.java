@@ -390,16 +390,16 @@ public class EditPost {
         EditPoll poll = form.getPoll();
         if (poll != null) {
             EditPost.printPoll(poll);
-            builder.formHeader("poll_question", poll.getTitle());
+            builder.formHeader("poll_question", poll.getTitle().replaceAll("\n"," "));
             for (int i = 0; i < poll.getQuestions().size(); i++) {
                 EditPoll.Question question = poll.getQuestion(i);
                 int q_index = i + 1;
-                builder.formHeader("question[" + q_index + "]", question.getTitle());
+                builder.formHeader("question[" + q_index + "]", question.getTitle().replaceAll("\n"," "));
                 builder.formHeader("multi[" + q_index + "]", question.isMulti() ? "1" : "0");
                 for (int j = 0; j < question.getChoices().size(); j++) {
                     EditPoll.Choice choice = question.getChoice(j);
                     int c_index = j + 1;
-                    builder.formHeader("choice[" + q_index + '_' + c_index + "]", choice.getTitle());
+                    builder.formHeader("choice[" + q_index + '_' + c_index + "]", choice.getTitle().replaceAll("\n"," "));
                 }
             }
         }
