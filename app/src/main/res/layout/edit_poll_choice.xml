@@ -15,6 +15,9 @@
         <android.support.v7.widget.AppCompatEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
             android:textSize="16sp" />
     </android.support.design.widget.TextInputLayout>
 

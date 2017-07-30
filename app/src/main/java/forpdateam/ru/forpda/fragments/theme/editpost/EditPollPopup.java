@@ -21,6 +21,7 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPoll;
 import forpdateam.ru.forpda.api.theme.models.Poll;
+import forpdateam.ru.forpda.utils.SimpleTextWatcher;
 import forpdateam.ru.forpda.views.messagepanel.attachments.CustomBottomSheetDialog;
 
 /**
@@ -55,6 +56,14 @@ public class EditPollPopup {
 
         addPoll.setOnClickListener(v -> {
             questionsAdapter.add(new EditPoll.Question());
+        });
+        pollTitleField.addTextChangedListener(new SimpleTextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (poll != null) {
+                    poll.setTitle(s.toString());
+                }
+            }
         });
 
 
