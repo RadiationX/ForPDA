@@ -30,10 +30,10 @@ import forpdateam.ru.forpda.api.theme.models.ThemePage;
  */
 
 public class EditPost {
-    private final static Pattern formInfoPattern = Pattern.compile("is_mod\\s*?=\\s*?(\\d+)[\\s\\S]*?poll_questions\\s*?=\\s*?(\\{[^\\}]*?\\})[\\s\\S]*?poll_choices\\s*?=\\s*?(\\{[^\\}]*?\\})[\\s\\S]*?poll_votes\\s*?=\\s*?(\\{[^\\}]*?\\})[\\s\\S]*?poll_multi\\s*?=\\s*?(\\{[^\\}]*?\\})[\\s\\S]*?max_poll_questions\\s*?=\\s*?(\\d+)[\\s\\S]*?max_poll_choices\\s*?=\\s*?(\\d+)[\\s\\S]*?<input[^>]*?name=\"poll_question\"[^>]*?value=\"([^\"]*?)\"");
+    private final static Pattern formInfoPattern = Pattern.compile("is_mod\\s*?=\\s*?(\\d+)[\\s\\S]*?poll_questions\\s*?=\\s*?(\\{[\\s\\S]*?\\})\\n,[\\s\\S]*?poll_choices\\s*?=\\s*?(\\{[\\s\\S]*?\\})\\n[\\s\\S]*?poll_votes\\s*?=\\s*?(\\{[\\s\\S]*?\\})\\n[\\s\\S]*?poll_multi\\s*?=\\s*?(\\{[\\s\\S]*?\\})\\n[\\s\\S]*?max_poll_questions\\s*?=\\s*?(\\d+)[\\s\\S]*?max_poll_choices\\s*?=\\s*?(\\d+)[\\s\\S]*?<input[^>]*?name=\"poll_question\"[^>]*?value=\"([^\"]*?)\"");
 
-    private final static Pattern fckngInvalidJsonPattern = Pattern.compile("(?:\\{|\\,)[\\\"\\']?([^\\:]*?)[\\\"\\']?\\s*?\\:\\s*?[\\\"\\']?([^\\,\\}\\'\\\"]*?)[\\\"\\'](?:\\})?");
-    private final static Pattern pollIndicesPattern = Pattern.compile("(\\d+)_(\\d+)");
+    private final static Pattern fckngInvalidJsonPattern = Pattern.compile("(?:\\{|\\,)[\\\"\\']?(\\d+)(?:_(\\d+))?[\\\"\\']?\\s*?\\:\\s*?[\\\"\\']([^\\'\\\"]*?)[\\\"\\'](?:\\})?");
+    //private final static Pattern pollIndicesPattern = Pattern.compile("(\\d+)_(\\d+)");
 
 
     private final static Pattern postPattern = Pattern.compile("[^<]*?<textarea[^>]*>([\\s\\S]*?)<\\/textarea>[\\s\\S]*?<input[^>]*?name=\"post_edit_reason\" value=\"([^\"]*?)\"");
@@ -113,42 +113,36 @@ public class EditPost {
                 poll.setBaseIndexOffset(questionIndex);
             }
             question.setIndex(questionIndex);
-            question.setTitle(Utils.fromHtml(jsonMatcher.group(2)));
+            question.setTitle(Utils.fromHtml(jsonMatcher.group(3)));
             poll.addQuestion(question);
         }
 
         jsonMatcher = jsonMatcher.reset(matcher.group(3));
         while (jsonMatcher.find()) {
-            Matcher indices = pollIndicesPattern.matcher(jsonMatcher.group(1));
-            if (indices.find()) {
-                int questionIndex = Integer.parseInt(indices.group(1));
-                EditPoll.Question question = EditPoll.findQuestionByIndex(poll, questionIndex);
-                if (question != null) {
-                    EditPoll.Choice choice = new EditPoll.Choice();
+            int questionIndex = Integer.parseInt(jsonMatcher.group(1));
+            EditPoll.Question question = EditPoll.findQuestionByIndex(poll, questionIndex);
+            if (question != null) {
+                EditPoll.Choice choice = new EditPoll.Choice();
 
-                    int choiceIndex = Integer.parseInt(indices.group(2));
-                    if (choiceIndex > question.getBaseIndexOffset()) {
-                        question.setBaseIndexOffset(choiceIndex);
-                    }
-                    choice.setIndex(choiceIndex);
-                    choice.setTitle(Utils.fromHtml(jsonMatcher.group(2)));
-                    question.addChoice(choice);
+                int choiceIndex = Integer.parseInt(jsonMatcher.group(2));
+                if (choiceIndex > question.getBaseIndexOffset()) {
+                    question.setBaseIndexOffset(choiceIndex);
                 }
+                choice.setIndex(choiceIndex);
+                choice.setTitle(Utils.fromHtml(jsonMatcher.group(3)));
+                question.addChoice(choice);
             }
         }
 
         jsonMatcher = jsonMatcher.reset(matcher.group(4));
         while (jsonMatcher.find()) {
-            Matcher indices = pollIndicesPattern.matcher(jsonMatcher.group(1));
-            if (indices.find()) {
-                int questionIndex = Integer.parseInt(indices.group(1));
-                EditPoll.Question question = EditPoll.findQuestionByIndex(poll, questionIndex);
-                if (question != null) {
-                    int choiceIndex = Integer.parseInt(indices.group(2));
-                    EditPoll.Choice choice = EditPoll.findChoiceByIndex(question, choiceIndex);
-                    if (choice != null) {
-                        choice.setVotes(Integer.parseInt(jsonMatcher.group(2)));
-                    }
+            int questionIndex = Integer.parseInt(jsonMatcher.group(1));
+            EditPoll.Question question = EditPoll.findQuestionByIndex(poll, questionIndex);
+            if (question != null) {
+                int choiceIndex = Integer.parseInt(jsonMatcher.group(2));
+                EditPoll.Choice choice = EditPoll.findChoiceByIndex(question, choiceIndex);
+                if (choice != null) {
+                    choice.setVotes(Integer.parseInt(jsonMatcher.group(3)));
                 }
             }
         }
@@ -158,7 +152,7 @@ public class EditPost {
             int questionIndex = Integer.parseInt(jsonMatcher.group(1));
             EditPoll.Question question = EditPoll.findQuestionByIndex(poll, questionIndex);
             if (question != null) {
-                question.setMulti(jsonMatcher.group(2).equals("1"));
+                question.setMulti(jsonMatcher.group(3).equals("1"));
             }
         }
 
