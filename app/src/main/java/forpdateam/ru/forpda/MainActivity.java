@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         super.onStart();
         /*Intent serviceIntent = new Intent(App.getContext(), NotificationsService.class);
         startService(serviceIntent);*/
-        App.getContext().startService(new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS));
+        App.getContext().startService(new Intent(App.getContext(), UNService.class).setAction(UNService.CHECK_LAST_EVENTS));
     }
 
     public Drawers getDrawers() {

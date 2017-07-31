@@ -2,6 +2,8 @@ package forpdateam.ru.forpda.api;
 
 import forpdateam.ru.forpda.api.auth.Auth;
 import forpdateam.ru.forpda.api.events.Events;
+import forpdateam.ru.forpda.api.events.UniversalEvents;
+import forpdateam.ru.forpda.api.events.models.UniversalEvent;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.forum.Forum;
 import forpdateam.ru.forpda.api.mentions.Mentions;
@@ -32,6 +34,7 @@ public class Api {
     private static Topics topics = null;
     private static Reputation reputation = null;
     private static Events events = null;
+    private static UniversalEvents uevents = null;
 
     private static IWebClient webClient = null;
 
@@ -107,6 +110,11 @@ public class Api {
     public static Events Events() {
         if (events == null) events = new Events();
         return events;
+    }
+
+    public static UniversalEvents UniversalEvents() {
+        if (uevents == null) uevents = new UniversalEvents();
+        return uevents;
     }
 
     public static Api get() {

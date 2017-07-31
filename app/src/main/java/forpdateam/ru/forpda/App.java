@@ -243,7 +243,7 @@ public class App extends android.app.Application {
                     } else {
                         // the device just woke up from doze mode
                         Log.e("4DOZE", "DOZE MODE DISABLYA");
-                        startService(new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS));
+                        startService(new Intent(App.getContext(), UNService.class).setAction(UNService.CHECK_LAST_EVENTS));
                     }
                 }
             };

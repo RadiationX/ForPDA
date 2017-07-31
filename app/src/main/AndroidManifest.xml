@@ -115,7 +115,7 @@
             android:launchMode="singleTop"
             android:theme="@style/LightAppTheme.NoActionBar" />
 
-        <service android:name=".NotificationsService" />
+        <service android:name=".UNService" />
         <service
             android:name=".NewWebSocketService"
             android:enabled="false"
