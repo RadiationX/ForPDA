@@ -167,14 +167,6 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         }
         Log.e("FORPDA_LOG", "ON CREATE INTENT");
         checkIntent(getIntent());
-//        Intent serviceIntent = new Intent(this, WebSocketService.class);
-//        startService(serviceIntent);
-
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            NewWebSocketService.registerJob(this, 20); // for test interval 2 minute
-        } else {
-            startService(new Intent(this, NotificationsService.class));
-        }*/
     }
 
     @Override
@@ -182,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         super.onStart();
         /*Intent serviceIntent = new Intent(App.getContext(), NotificationsService.class);
         startService(serviceIntent);*/
-        App.getContext().startService(new Intent(App.getContext(), UNService.class).setAction(UNService.CHECK_LAST_EVENTS));
+        App.getContext().startService(new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS));
     }
 
     public Drawers getDrawers() {

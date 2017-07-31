@@ -221,14 +221,7 @@ public class App extends android.app.Application {
 
 
         getPreferences().registerOnSharedPreferenceChangeListener(preferenceChangeListener);
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            NewWebSocketService.registerJob(this, 20); // for test interval 2 minute
-        } else {
-            Intent serviceIntent = new Intent(App.getContext(), NotificationsService.class).setAction("SOSNO HUICA");
-            startService(serviceIntent);
-        }*/
 
-       /* // Для теста заккоментировал, там по ходу будет видно.*/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             BroadcastReceiver receiver = new BroadcastReceiver() {
                 @RequiresApi(api = Build.VERSION_CODES.M)
@@ -243,7 +236,7 @@ public class App extends android.app.Application {
                     } else {
                         // the device just woke up from doze mode
                         Log.e("4DOZE", "DOZE MODE DISABLYA");
-                        startService(new Intent(App.getContext(), UNService.class).setAction(UNService.CHECK_LAST_EVENTS));
+                        startService(new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS));
                     }
                 }
             };

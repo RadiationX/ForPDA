@@ -1,15 +1,11 @@
 package forpdateam.ru.forpda;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
-
-import org.acra.ACRA;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 

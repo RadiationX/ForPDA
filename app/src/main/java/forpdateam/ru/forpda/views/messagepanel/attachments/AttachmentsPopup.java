@@ -1,13 +1,10 @@
 package forpdateam.ru.forpda.views.messagepanel.attachments;
 
 import android.content.Context;
-import android.os.Build;
 import android.support.design.widget.BottomSheetDialog;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;

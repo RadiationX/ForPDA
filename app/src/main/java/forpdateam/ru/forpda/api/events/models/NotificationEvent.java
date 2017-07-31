@@ -1,42 +1,101 @@
 package forpdateam.ru.forpda.api.events.models;
 
 /**
- * Created by radiationx on 10.07.17.
+ * Created by radiationx on 29.07.17.
  */
 
 public class NotificationEvent {
-    private WebSocketEvent webSocketEvent;
-    private int themeId = 0;
+    public final static int SRC_EVENT_NEW = 1;
+    public final static int SRC_EVENT_READ = 2;
+    public final static int SRC_EVENT_MENTION = 3;
+    public final static int SRC_EVENT_HAT_EDITED = 4;
+    public final static String SRC_TYPE_SITE = "s";
+    public final static String SRC_TYPE_THEME = "t";
+    public final static String SRC_TYPE_QMS = "q";
+
+
+    public enum Event {
+        NEW(2),
+        READ(4),
+        MENTION(8),
+        HAT_EDITED(16);
+
+        private final int value;
+
+        Event(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
+
+    public enum Source {
+        THEME(32),
+        SITE(64),
+        QMS(128);
+
+        private final int value;
+
+        Source(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
+
+    private Event event;
+    private Source source;
+
+    private int messageId = 0;
+
+    private int sourceId = 0;
     private int userId = 0;
+
     private int timeStamp = 0;
+    private int lastTimeStamp = 0;
 
-    private String themeTitle = "";
-    private String userNick = "";
-    private String source = "";
-
-    //Theme, Mentions?
-    private int lastReadTimeStamp = 0;
-
-    //Theme, Mentions?
+    private int msgCount = 0;
     private boolean important = false;
 
-    //Theme, Mentions?
-    private int messageCount = 0;
+    private String sourceTitle = "";
+    private String userNick = "";
 
-    public WebSocketEvent getWebSocketEvent() {
-        return webSocketEvent;
+    private String sourceEventText;
+
+    public int getMessageId() {
+        return messageId;
     }
 
-    public void setWebSocketEvent(WebSocketEvent webSocketEvent) {
-        this.webSocketEvent = webSocketEvent;
+    public void setMessageId(int messageId) {
+        this.messageId = messageId;
     }
 
-    public int getThemeId() {
-        return themeId;
+    public Event getEvent() {
+        return event;
     }
 
-    public void setThemeId(int themeId) {
-        this.themeId = themeId;
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    public Source getSource() {
+        return source;
+    }
+
+    public void setSource(Source source) {
+        this.source = source;
+    }
+
+    public int getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(int sourceId) {
+        this.sourceId = sourceId;
     }
 
     public int getUserId() {
@@ -55,28 +114,20 @@ public class NotificationEvent {
         this.timeStamp = timeStamp;
     }
 
-    public String getThemeTitle() {
-        return themeTitle;
+    public int getLastTimeStamp() {
+        return lastTimeStamp;
     }
 
-    public void setThemeTitle(String themeTitle) {
-        this.themeTitle = themeTitle;
+    public void setLastTimeStamp(int lastTimeStamp) {
+        this.lastTimeStamp = lastTimeStamp;
     }
 
-    public String getUserNick() {
-        return userNick;
+    public int getMsgCount() {
+        return msgCount;
     }
 
-    public void setUserNick(String userNick) {
-        this.userNick = userNick;
-    }
-
-    public int getLastReadTimeStamp() {
-        return lastReadTimeStamp;
-    }
-
-    public void setReadTimeStamp(int lastReadTimeStamp) {
-        this.lastReadTimeStamp = lastReadTimeStamp;
+    public void setMsgCount(int msgCount) {
+        this.msgCount = msgCount;
     }
 
     public boolean isImportant() {
@@ -87,19 +138,92 @@ public class NotificationEvent {
         this.important = important;
     }
 
-    public int getMessageCount() {
-        return messageCount;
+    public String getSourceTitle() {
+        return sourceTitle;
     }
 
-    public void setMessageCount(int messageCount) {
-        this.messageCount = messageCount;
+    public void setSourceTitle(String sourceTitle) {
+        this.sourceTitle = sourceTitle;
     }
 
-    public String getSource() {
-        return source;
+    public String getUserNick() {
+        return userNick;
     }
 
-    public void setSource(String source) {
-        this.source = source;
+    public void setUserNick(String userNick) {
+        this.userNick = userNick;
+    }
+
+    public String getSourceEventText() {
+        return sourceEventText;
+    }
+
+    public void setSourceEventText(String sourceEventText) {
+        this.sourceEventText = sourceEventText;
+    }
+
+    /*
+    * short
+    * */
+
+    public boolean isNew() {
+        return NotificationEvent.isNew(event);
+    }
+
+    public boolean isRead() {
+        return NotificationEvent.isRead(event);
+    }
+
+    public boolean isMention() {
+        return NotificationEvent.isMention(event);
+    }
+
+    public boolean fromTheme() {
+        return NotificationEvent.fromTheme(source);
+    }
+
+    public boolean fromSite() {
+        return NotificationEvent.fromSite(source);
+    }
+
+    public boolean fromQms() {
+        return NotificationEvent.fromQms(source);
+    }
+
+
+    public static boolean isNew(Event event) {
+        return event != null && event == Event.NEW;
+    }
+
+    public static boolean isRead(Event event) {
+        return event != null && event == Event.READ;
+    }
+
+    public static boolean isMention(Event event) {
+        return event != null && event == Event.MENTION;
+    }
+
+    public static boolean fromTheme(Source source) {
+        return source != null && source == Source.THEME;
+    }
+
+    public static boolean fromSite(Source source) {
+        return source != null && source == Source.SITE;
+    }
+
+    public static boolean fromQms(Source source) {
+        return source != null && source == Source.QMS;
+    }
+
+    /*
+    * for notifications
+    *
+    * */
+    public int notifyId() {
+        return notifyId(event);
+    }
+
+    public int notifyId(Event event) {
+        return (sourceId / 4) + event.getValue() + event.getValue();
     }
 }
