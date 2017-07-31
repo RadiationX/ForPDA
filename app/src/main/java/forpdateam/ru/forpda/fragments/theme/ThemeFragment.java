@@ -341,8 +341,13 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         refreshLayout.setRefreshing(true);
 
         refreshToolbarMenuItems(false);
-
-        mainSubscriber.subscribe(RxApi.Theme().getTheme(tab_url, true, false, false), this::onLoadData, new ThemePage(), v -> loadData());
+        boolean hatOpen = false;
+        boolean pollOpen = false;
+        if(currentPage!=null){
+            hatOpen = currentPage.isHatOpen();
+            pollOpen = currentPage.isPollOpen();
+        }
+        mainSubscriber.subscribe(RxApi.Theme().getTheme(tab_url, true, hatOpen, pollOpen), this::onLoadData, new ThemePage(), v -> loadData());
     }
 
     protected void onLoadData(ThemePage newPage) throws Exception {

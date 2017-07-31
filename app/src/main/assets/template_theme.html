@@ -40,7 +40,7 @@
 <body id="${body_type}">
     <!-- $BeginBlock poll_block -->
     <div class="poll ${poll_type} ${poll_state_class}">
-        <a class="btn title aec" onclick="toggleButton(this, 'body')"><span>${poll_title}</span><i class="icon"></i></a>
+        <a class="btn title aec" onclick="toggleButton(this, 'body', 'poll')"><span>${poll_title}</span><i class="icon"></i></a>
         <form action="index.php" method="get" class="body" ${poll_body_state}>
             <div class="questions">
                 <!-- $BeginBlock poll_question_block -->
@@ -82,7 +82,7 @@
     <div class="posts_list">
         <!-- $BeginBlock post -->
         <div name="entry${post_id}" class="post_container ${user_online} ${disable_avatar} ${avatar_type} ${hat_state_class}" data-post-id="${post_id}" data-user-id="${user_id}" data-nick="${nick}">
-            <!-- $BeginBlock hat_button --><a class="btn hat_button aec" onclick="toggleButton(this, 'hat_content')"><span>Шапка темы</span><i class="icon"></i></a>
+            <!-- $BeginBlock hat_button --><a class="btn hat_button aec" onclick="toggleButton(this, 'hat_content', 'hat')"><span>Шапка темы</span><i class="icon"></i></a>
             <!-- $EndBlock hat_button -->
             <!-- $BeginBlock hat_content_start -->
             <div class="hat_content" ${hat_body_state}>

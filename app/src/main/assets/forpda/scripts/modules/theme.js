@@ -18,10 +18,10 @@ function setLoadScrollY(loadScrollY) {
     window.loadScrollY = Number(loadScrollY);
 }
 
-function disableImages(){
+function disableImages() {
     var images = document.querySelectorAll(".linked-image");
     console.log(images);
-    for(var i = 0; i< images.length;i++){
+    for (var i = 0; i < images.length; i++) {
         var image = images[i];
         var src = image.getAttribute("src");
         image.removeAttribute("src");
@@ -180,7 +180,7 @@ function selectAllPostText() {
     }
 }
 
-function toggleButton(button, bodyClass) {
+function toggleButton(button, bodyClass, name) {
     var parent = button.parentNode;
     var body;
     if (bodyClass !== undefined)
@@ -191,11 +191,21 @@ function toggleButton(button, bodyClass) {
         if (body !== undefined) {
             body.removeAttribute("hidden");
         }
+        if (name === "poll") {
+            ITheme.setPollOpen("true");
+        } else if (name === "hat") {
+            ITheme.setHatOpen("true");
+        }
     } else {
         parent.classList.remove("open");
         parent.classList.add("close");
         if (body !== undefined) {
             body.setAttribute("hidden", "");
+        }
+        if (name === "poll") {
+            ITheme.setPollOpen("false");
+        } else if (name === "hat") {
+            ITheme.setHatOpen("false");
         }
     }
 }

@@ -638,13 +638,16 @@ button:active,
 }
 .post_container .post_title {
   text-align: center;
+  text-decoration: underline;
+  color: red;
+  padding: 1rem;
+  padding-bottom: 0;
 }
 .post_container .post_title a {
-  color: #000000;
   font-weight: bold;
-  text-decoration: none;
   display: block;
-  padding: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 0.0625rem solid rgba(0, 0, 0, 0.05);
 }
 .post_container .post_header {
   padding: 0.75em 1em 0 1em;

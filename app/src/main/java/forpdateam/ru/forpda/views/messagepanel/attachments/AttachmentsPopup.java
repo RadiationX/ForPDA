@@ -5,6 +5,7 @@ import android.support.design.widget.BottomSheetDialog;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -45,6 +46,10 @@ public class AttachmentsPopup {
     public AttachmentsPopup(Context context, MessagePanel panel) {
         messagePanel = panel;
         dialog = new BottomSheetDialog(context);
+        WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
+        lp.dimAmount = 1.0f;
+        dialog.getWindow().setAttributes(lp);
+        dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         //dialog.setPeekHeight(App.getKeyboardHeight());
         //dialog.getWindow().getDecorView().setFitsSystemWindows(true);
 
@@ -181,8 +186,8 @@ public class AttachmentsPopup {
     }
 
     public void onUploadFiles(List<AttachmentItem> items) {
-        for(AttachmentItem item: items){
-            Log.d("SUKA", "LOADED ITEM "+item.getName());
+        for (AttachmentItem item : items) {
+            Log.d("SUKA", "LOADED ITEM " + item.getName());
         }
         for (AttachmentItem item : items) {
             Log.e("FORPDA_LOG", "LOADING ITEM " + " : " + item);
@@ -213,10 +218,10 @@ public class AttachmentsPopup {
 
     public void onDeleteFiles(List<AttachmentItem> deletedItems) {
         //unblock ui
-        Log.e("FORPDA_LOG", "ON DELETE FILES "+deletedItems);
+        Log.e("FORPDA_LOG", "ON DELETE FILES " + deletedItems);
         for (AttachmentItem item : deletedItems) {
-            Log.e("FORPDA_LOG", "DELETED FILE "+item);
-            messagePanel.setText(messagePanel.getMessage().replaceAll("\\[attachment=['\"]?" + item.getId() + ":[^\\]]*?]",""));
+            Log.e("FORPDA_LOG", "DELETED FILE " + item);
+            messagePanel.setText(messagePanel.getMessage().replaceAll("\\[attachment=['\"]?" + item.getId() + ":[^\\]]*?]", ""));
         }
         progressOverlay.setVisibility(View.GONE);
         adapter.deleteSelected();

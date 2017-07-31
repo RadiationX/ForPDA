@@ -69,9 +69,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
     protected void addShowingView() {
 
         messagePanel.setHeightChangeListener(newHeight -> {
-            syncWithWebView(() -> {
-                webView.evalJs("setPaddingBottom(" + (newHeight / App.getInstance().getDensity()) + ");");
-            });
+            syncWithWebView(() -> webView.setPaddingBottom(newHeight));
         });
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
         refreshLayout.addView(webView);
@@ -147,6 +145,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
             webView.setWebChromeClient(chromeClient);
         }
         webView.loadDataWithBaseURL("http://4pda.ru/forum/", currentPage.getHtml(), "text/html", "utf-8", null);
+        syncWithWebView(() -> webView.updatePaddingBottom());
     }
 
     @Override
@@ -587,6 +586,23 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
             Utils.copyToClipBoard(s);
         });
     }
+
+    @JavascriptInterface
+    public void setPollOpen(String sValue) {
+        run(() -> {
+            boolean value = Boolean.parseBoolean(sValue);
+            currentPage.setPollOpen(value);
+        });
+    }
+
+    @JavascriptInterface
+    public void setHatOpen(String sValue) {
+        run(() -> {
+            boolean value = Boolean.parseBoolean(sValue);
+            currentPage.setHatOpen(value);
+        });
+    }
+
 
     public void run(final Runnable runnable) {
         if (getMainActivity() != null) {

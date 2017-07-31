@@ -80,25 +80,49 @@ public class ExtendedWebView extends NestedWebView {
         setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_base));
     }
 
+    private int relativeScale = 100;
+    private float fontScale = 1.0f;
+    private int paddingBottom = 0;
+
+    public int getRelativeScale() {
+        return relativeScale;
+    }
+
+    public float getFontScale() {
+        return fontScale;
+    }
+
+
     @Deprecated
     @Override
     public void setInitialScale(int scaleInPercent) {
         super.setInitialScale(scaleInPercent);
         Log.e("SUKA", "SET INIT SCALE " + scaleInPercent);
+        setPaddingBottom(paddingBottom);
     }
+
 
     //0.0f, 1.0f, 2.3f, etc
     public void setRelativeScale(float scale) {
-        int scaleInPercent = 100;
         try {
-            scaleInPercent = (int) (scale * (App.getInstance().getDensity() * 100));
+            relativeScale = (int) (scale * (App.getInstance().getDensity() * 100));
+            fontScale = scale;
         } catch (Exception ignore) {
         }
-        setInitialScale(scaleInPercent);
+        setInitialScale(relativeScale);
     }
 
     public void setRelativeFontSize(int fontSize) {
         setRelativeScale(fontSize / 16f);
+    }
+
+    public void updatePaddingBottom(){
+        setPaddingBottom(paddingBottom);
+    }
+    public void setPaddingBottom(int padding) {
+        paddingBottom = padding;
+        Log.d("kurwa", "setPaddingBottom " + padding + " : " + App.getInstance().getDensity() + " : " + fontScale + " : " + relativeScale);
+        evalJs("setPaddingBottom(" + ((paddingBottom / App.getInstance().getDensity()) * (1 / fontScale)) + ");");
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)

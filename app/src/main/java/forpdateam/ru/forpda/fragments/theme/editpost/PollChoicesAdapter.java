@@ -1,6 +1,8 @@
 package forpdateam.ru.forpda.fragments.theme.editpost;
 
+import android.content.DialogInterface;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -88,21 +90,28 @@ public class PollChoicesAdapter extends RecyclerView.Adapter<PollChoicesAdapter.
             this.myCustomEditTextListener = myCustomEditTextListener;
             this.title.getEditText().addTextChangedListener(myCustomEditTextListener);
             delete.setOnClickListener(v1 -> {
-                EditPoll.Choice choice = choices.get(getLayoutPosition());
-                //notifyItemRemoved(getLayoutPosition());
-                if (choice.getIndex() > question.getBaseIndexOffset()) {
-                    int start = choice.getIndex();
-                    int end = question.getBaseIndexOffset() + question.getIndexOffset();
-                    for (int i = start; i <= end; i++) {
-                        EditPoll.Choice c = EditPoll.findChoiceByIndex(question, i);
-                        if (c != null) {
-                            c.setIndex(c.getIndex() - 1);
-                        }
-                    }
-                    question.reduceIndexOffset();
-                }
-                choices.remove(getLayoutPosition());
-                notifyDataSetChanged();
+                new AlertDialog.Builder(v.getContext())
+                        .setMessage("Удалить ответ?")
+                        .setPositiveButton("Да", (dialog, which) -> {
+                            EditPoll.Choice choice = choices.get(getLayoutPosition());
+                            //notifyItemRemoved(getLayoutPosition());
+                            if (choice.getIndex() > question.getBaseIndexOffset()) {
+                                int start = choice.getIndex();
+                                int end = question.getBaseIndexOffset() + question.getIndexOffset();
+                                for (int i = start; i <= end; i++) {
+                                    EditPoll.Choice c = EditPoll.findChoiceByIndex(question, i);
+                                    if (c != null) {
+                                        c.setIndex(c.getIndex() - 1);
+                                    }
+                                }
+                                question.reduceIndexOffset();
+                            }
+                            choices.remove(getLayoutPosition());
+                            notifyDataSetChanged();
+                        })
+                        .setNegativeButton("Нет", null)
+                        .show();
+
             });
         }
     }
