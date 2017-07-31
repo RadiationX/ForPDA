@@ -6,7 +6,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,7 +15,6 @@ import forpdateam.ru.forpda.api.NewsItem;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.news.models.NewsNetworkModel;
 import forpdateam.ru.forpda.api.regex.RegexStorage;
-import forpdateam.ru.forpda.fragments.news.models.NewsModel;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 

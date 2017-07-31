@@ -27,9 +27,8 @@ import java.util.regex.Matcher;
 
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.Utils;
-import forpdateam.ru.forpda.api.events.Events;
+import forpdateam.ru.forpda.api.events.NotificationEvents;
 import forpdateam.ru.forpda.api.events.models.NotificationEvent;
-import forpdateam.ru.forpda.api.events.models.WebSocketEvent;
 import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
@@ -46,7 +45,7 @@ import okhttp3.WebSocketListener;
 import okio.ByteString;
 
 /**
- * Created by radiationx on 07.07.17.
+ * Created by radiationx on 31.07.17.
  */
 
 public class NotificationsService extends Service {
@@ -54,9 +53,14 @@ public class NotificationsService extends Service {
     private final static int NOTIFY_STACKED_FAV_ID = -234;
     public final static String CHECK_LAST_EVENTS = "SOSNI_HUICA_DOZE";
     private NotificationManagerCompat mNotificationManager;
-    private SparseArray<WebSocketEvent> eventsHistory = new SparseArray<>();
+    private SparseArray<NotificationEvent> eventsHistory = new SparseArray<>();
     private WebSocket webSocket;
     private long lastHardCheckTime = 0;
+
+    /*private boolean notificationsEnabled = Preferences.Notifications.Main.isEnabled();
+    private boolean favoritesEnabled = Preferences.Notifications.Main.isEnabled();
+    private boolean mentionsEnabled = Preferences.Notifications.Main.isEnabled();
+    private boolean qmsEnabled = Preferences.Notifications.Main.isEnabled();*/
 
     private Observer loginObserver = (observable, o) -> {
         if (o == null) o = false;
@@ -86,13 +90,13 @@ public class NotificationsService extends Service {
             }
             case Preferences.Notifications.Favorites.ENABLED: {
                 if (Preferences.Notifications.Favorites.isEnabled()) {
-                    handleEvent(WebSocketEvent.TYPE_THEME);
+                    handleEvent(NotificationEvent.Source.THEME);
                 }
                 break;
             }
             case Preferences.Notifications.Qms.ENABLED: {
                 if (Preferences.Notifications.Qms.isEnabled()) {
-                    handleEvent(WebSocketEvent.TYPE_QMS);
+                    handleEvent(NotificationEvent.Source.QMS);
                 }
                 break;
             }
@@ -115,13 +119,15 @@ public class NotificationsService extends Service {
         public void onMessage(WebSocket webSocket, String text) {
             Log.d("WS_EVENT", "ON T MESSAGE: " + text);
             if (matcher == null) {
-                matcher = Events.webSocketEventPattern.matcher(text);
+                matcher = NotificationEvents.webSocketEventPattern.matcher(text);
             } else {
                 matcher = matcher.reset(text);
             }
-            WebSocketEvent event = Api.Events().parseWebSocketEvent(matcher);
+            NotificationEvent event = Api.UniversalEvents().parseWebSocketEvent(matcher);
             if (event != null) {
-                handleWebSocketEvent(event);
+                if (event.getEvent() != NotificationEvent.Event.HAT_EDITED) {
+                    handleWebSocketEvent(event);
+                }
             }
         }
 
@@ -197,8 +203,8 @@ public class NotificationsService extends Service {
             webSocket.send("[0,\"sv\"]");
             webSocket.send("[0, \"ea\", \"u" + ClientHelper.getUserId() + "\"]");
             if (checkEvents) {
-                handleEvent(WebSocketEvent.TYPE_QMS);
-                handleEvent(WebSocketEvent.TYPE_THEME);
+                handleEvent(NotificationEvent.Source.THEME);
+                handleEvent(NotificationEvent.Source.QMS);
             }
         }
     }
@@ -235,57 +241,171 @@ public class NotificationsService extends Service {
         }
     }
 
+    private void handleWebSocketEvent(NotificationEvent event) {
+        if (event.isRead()) {
+            NotificationEvent oldEvent = eventsHistory.get(event.notifyId(NotificationEvent.Event.NEW));
 
-    private void handleWebSocketEvent(WebSocketEvent webSocketEvent) {
-        if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_READ) {
-            WebSocketEvent oldWebSocketEvent = eventsHistory.get(webSocketEvent.createNotificationId(WebSocketEvent.EVENT_NEW));
-
-            if (webSocketEvent.getType() == WebSocketEvent.TYPE_THEME) {
+            if (event.fromTheme()) {
                 //Убираем уведомления избранного
-                if (oldWebSocketEvent != null && webSocketEvent.getMessageId() >= oldWebSocketEvent.getMessageId()) {
-                    mNotificationManager.cancel(oldWebSocketEvent.createNotificationId());
+                if (oldEvent != null && event.getMessageId() >= oldEvent.getMessageId()) {
+                    mNotificationManager.cancel(oldEvent.notifyId());
                 }
 
                 //Убираем уведомление упоминаний
-                oldWebSocketEvent = eventsHistory.get(webSocketEvent.createNotificationId(WebSocketEvent.EVENT_MENTION));
-                if (oldWebSocketEvent != null) {
-                    mNotificationManager.cancel(oldWebSocketEvent.createNotificationId());
+                oldEvent = eventsHistory.get(event.notifyId(NotificationEvent.Event.MENTION));
+                if (oldEvent != null) {
+                    mNotificationManager.cancel(oldEvent.notifyId());
                 }
-            } else if (webSocketEvent.getType() == WebSocketEvent.TYPE_QMS) {
+            } else if (event.fromQms()) {
 
                 //Убираем уведомление кумыса
-                if (oldWebSocketEvent != null) {
-                    mNotificationManager.cancel(oldWebSocketEvent.createNotificationId());
+                if (oldEvent != null) {
+                    mNotificationManager.cancel(oldEvent.notifyId());
                 }
             }
-            eventsHistory.remove(webSocketEvent.createNotificationId(WebSocketEvent.EVENT_NEW));
-        } else {
-            switch (webSocketEvent.getType()) {
-                case WebSocketEvent.TYPE_QMS:
-                    if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_NEW) {
-                        handleEvent(webSocketEvent);
-                    }
-                    break;
-                case WebSocketEvent.TYPE_THEME:
-                    if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_NEW || webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
-                        handleEvent(webSocketEvent);
-                    }
-                    break;
-                case WebSocketEvent.TYPE_SITE:
-                    if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
-                        handleEvent(webSocketEvent);
-                    }
-                    break;
-            }
+            eventsHistory.remove(event.notifyId(NotificationEvent.Event.NEW));
+            return;
         }
+        handleEvent(event);
     }
 
-    private void loadEvents(Consumer<List<NotificationEvent>> consumer, int type) {
+    private void handleEvent(NotificationEvent.Source source) {
+        handleEvent(null, source);
+    }
+
+    private void handleEvent(NotificationEvent event) {
+        handleEvent(event, event.getSource());
+    }
+
+    private void handleEvent(@Nullable NotificationEvent event, NotificationEvent.Source source) {
+        if (!Preferences.Notifications.Main.isEnabled()) {
+            return;
+        }
+
+        if (NotificationEvent.fromSite(source)) {
+            if (Preferences.Notifications.Mentions.isEnabled()) {
+                sendNotification(event);
+            }
+            return;
+        }
+        if (NotificationEvent.fromQms(source)) {
+            if (!Preferences.Notifications.Qms.isEnabled()) {
+                return;
+            }
+        } else if (NotificationEvent.fromTheme(source)) {
+            if (event != null && event.isMention()) {
+                if (!Preferences.Notifications.Mentions.isEnabled()) {
+                    return;
+                }
+            } else {
+                if (!Preferences.Notifications.Favorites.isEnabled()) {
+                    return;
+                }
+            }
+        }
+
+        loadEvents(loadedEvents -> {
+            List<NotificationEvent> savedEvents = getSavedEvents(source);
+            //savedEvents = new ArrayList<>();
+            saveEvents(loadedEvents, source);
+            List<NotificationEvent> newEvents = compareEvents(savedEvents, loadedEvents, source);
+            List<NotificationEvent> stackedNewEvents = new ArrayList<>(newEvents);
+
+            if (event != null) {
+                //Удаляем из общего уведомления текущее уведомление
+                for (NotificationEvent newEvent : newEvents) {
+                    if (newEvent.getSourceId() == event.getSourceId()) {
+                        stackedNewEvents.remove(newEvent);
+                        if (newEvent.getEvent() != event.getEvent()) {
+                            newEvent.setEvent(event.getEvent());
+                        }
+                        sendNotification(newEvent);
+                    } else if (event.isMention() && !Preferences.Notifications.Favorites.isEnabled()) {
+                        stackedNewEvents.remove(newEvent);
+                    }
+                }
+            }
+
+            sendNotifications(stackedNewEvents);
+        }, source);
+    }
+
+    private List<NotificationEvent> getSavedEvents(NotificationEvent.Source source) {
+        String prefKey = "";
+        if (NotificationEvent.fromQms(source)) {
+            prefKey = Preferences.Notifications.Data.QMS_EVENTS;
+        } else if (NotificationEvent.fromTheme(source)) {
+            prefKey = Preferences.Notifications.Data.FAVORITES_EVENTS;
+        }
+
+        Set<String> savedEvents = App.getInstance().getPreferences().getStringSet(prefKey, new ArraySet<>());
+        StringBuilder responseBuilder = new StringBuilder();
+        for (String saved : savedEvents) {
+            responseBuilder.append(saved).append('\n');
+        }
+        String response = responseBuilder.toString();
+
+        if (NotificationEvent.fromQms(source)) {
+            return Api.UniversalEvents().getQmsEvents(response);
+        } else if (NotificationEvent.fromTheme(source)) {
+            return Api.UniversalEvents().getFavoritesEvents(response);
+        }
+        return new ArrayList<>();
+    }
+
+    private void saveEvents(List<NotificationEvent> loadedEvents, NotificationEvent.Source source) {
+        String prefKey = "";
+        if (NotificationEvent.fromQms(source)) {
+            prefKey = Preferences.Notifications.Data.QMS_EVENTS;
+        } else if (NotificationEvent.fromTheme(source)) {
+            prefKey = Preferences.Notifications.Data.FAVORITES_EVENTS;
+        }
+
+        Set<String> savedEvents = new ArraySet<>();
+        for (NotificationEvent event : loadedEvents) {
+            savedEvents.add(event.getSourceEventText());
+        }
+        App.getInstance().getPreferences().edit().putStringSet(prefKey, savedEvents).apply();
+    }
+
+    private List<NotificationEvent> compareEvents(List<NotificationEvent> savedEvents, List<NotificationEvent> loadedEvents, NotificationEvent.Source source) {
+        List<NotificationEvent> resultEvents = new ArrayList<>();
+
+        boolean onlyImportant = false;
+        if (NotificationEvent.fromTheme(source)) {
+            onlyImportant = Preferences.Notifications.Favorites.isOnlyImportant();
+        }
+
+        for (NotificationEvent loaded : loadedEvents) {
+            boolean isNew = true;
+            for (NotificationEvent saved : savedEvents) {
+                if (loaded.getSourceId() == saved.getSourceId()) {
+                    if (loaded.getTimeStamp() <= saved.getTimeStamp()) {
+                        isNew = false;
+                    }
+                }
+            }
+
+            if (onlyImportant) {
+                if (!loaded.isImportant()) {
+                    isNew = false;
+                }
+            }
+
+            if (isNew) {
+                resultEvents.add(loaded);
+            }
+        }
+
+        return resultEvents;
+    }
+
+    private void loadEvents(Consumer<List<NotificationEvent>> consumer, NotificationEvent.Source source) {
         Observable<List<NotificationEvent>> observable = null;
-        if (type == WebSocketEvent.TYPE_QMS) {
-            observable = Observable.fromCallable(() -> Api.Events().getQmsEvents());
-        } else if (type == WebSocketEvent.TYPE_THEME) {
-            observable = Observable.fromCallable(() -> Api.Events().getFavoritesEvents());
+        if (source == NotificationEvent.Source.QMS) {
+            observable = Observable.fromCallable(() -> Api.UniversalEvents().getQmsEvents());
+        } else if (source == NotificationEvent.Source.THEME) {
+            observable = Observable.fromCallable(() -> Api.UniversalEvents().getFavoritesEvents());
         }
 
         if (observable != null) {
@@ -297,142 +417,16 @@ public class NotificationsService extends Service {
         }
     }
 
-    private void handleEvent(int type) {
-        handleEvent(null, type);
-    }
-
-    private void handleEvent(WebSocketEvent webSocketEvent) {
-        handleEvent(webSocketEvent, webSocketEvent.getType());
-    }
-
-    private void handleEvent(WebSocketEvent webSocketEvent, int type) {
-        if (type == WebSocketEvent.TYPE_SITE) {
-            NotificationEvent notificationEvent = new NotificationEvent();
-            notificationEvent.setWebSocketEvent(webSocketEvent);
-            notificationEvent.setThemeId(webSocketEvent.getId());
-            sendNotification(notificationEvent);
-            return;
-        }
-        if (type == WebSocketEvent.TYPE_QMS) {
-            if (!Preferences.Notifications.Qms.isEnabled()) {
-                return;
-            }
-        } else if (type == WebSocketEvent.TYPE_THEME) {
-            if (webSocketEvent != null && webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
-                if (!Preferences.Notifications.Mentions.isEnabled()) {
-                    return;
-                }
-            } else {
-                if(!Preferences.Notifications.Favorites.isEnabled()){
-                    return;
-                }
-            }
-        }
-
-        loadEvents(loadedEvents -> {
-            List<NotificationEvent> savedEvents = getSavedEvents(type);
-            //savedEvents = new ArrayList<NotificationEvent>();
-            saveEvents(loadedEvents, type);
-            List<NotificationEvent> newEvents = compareEvents(savedEvents, loadedEvents, type);
-            List<NotificationEvent> stackedNewEvents = new ArrayList<>(newEvents);
-
-            if (webSocketEvent != null) {
-                for (NotificationEvent newEvent : newEvents) {
-                    if (newEvent.getThemeId() == webSocketEvent.getId()) {
-                        newEvent.setWebSocketEvent(webSocketEvent);
-                        stackedNewEvents.remove(newEvent);
-                        sendNotification(newEvent);
-                    }
-                }
-            }
-            sendNotifications(stackedNewEvents);
-        }, type);
-    }
-
-    private List<NotificationEvent> getSavedEvents(int type) {
-        String prefKey = "";
-        if (type == WebSocketEvent.TYPE_QMS) {
-            prefKey = Preferences.Notifications.Data.QMS_EVENTS;
-        } else if (type == WebSocketEvent.TYPE_THEME) {
-            prefKey = Preferences.Notifications.Data.FAVORITES_EVENTS;
-        }
-
-        Set<String> oldSavedEvents = App.getInstance().getPreferences().getStringSet(prefKey, new ArraySet<>());
-        StringBuilder responseBuilder = new StringBuilder();
-        for (String source : oldSavedEvents) {
-            responseBuilder.append(source).append('\n');
-        }
-        String response = responseBuilder.toString();
-
-        if (type == WebSocketEvent.TYPE_QMS) {
-            return Api.Events().getQmsEvents(response);
-        } else if (type == WebSocketEvent.TYPE_THEME) {
-            return Api.Events().getFavoritesEvents(response);
-        }
-        return new ArrayList<>();
-    }
-
-    private void saveEvents(List<NotificationEvent> loadedEvents, int type) {
-        String prefKey = "";
-        if (type == WebSocketEvent.TYPE_QMS) {
-            prefKey = Preferences.Notifications.Data.QMS_EVENTS;
-        } else if (type == WebSocketEvent.TYPE_THEME) {
-            prefKey = Preferences.Notifications.Data.FAVORITES_EVENTS;
-        }
-
-        Set<String> savedEvents = new ArraySet<>();
-        for (NotificationEvent event : loadedEvents) {
-            savedEvents.add(event.getSource());
-        }
-        App.getInstance().getPreferences().edit().putStringSet(prefKey, savedEvents).apply();
-    }
-
-    private List<NotificationEvent> compareEvents(List<NotificationEvent> oldEvents, List<NotificationEvent> newEvents, int type) {
-        boolean onlyImportant = false;
-        if (type == WebSocketEvent.TYPE_THEME) {
-            onlyImportant = Preferences.Notifications.Favorites.isOnlyImportant();
-        }
-
-        List<NotificationEvent> resultEvents = new ArrayList<>();
-        for (NotificationEvent newEvent : newEvents) {
-            boolean isNew = true;
-            for (NotificationEvent oldEvent : oldEvents) {
-                if (newEvent.getThemeId() == oldEvent.getThemeId()) {
-                    if (newEvent.getTimeStamp() <= oldEvent.getTimeStamp()) {
-                        isNew = false;
-                    }
-                }
-            }
-
-            if (onlyImportant) {
-                if (!newEvent.isImportant()) {
-                    isNew = false;
-                }
-            }
-
-            if (isNew) {
-                WebSocketEvent webSocketEvent = new WebSocketEvent();
-                webSocketEvent.setId(newEvent.getThemeId());
-                webSocketEvent.setType(type);
-                webSocketEvent.setEventCode(WebSocketEvent.EVENT_NEW);
-                newEvent.setWebSocketEvent(webSocketEvent);
-                resultEvents.add(newEvent);
-            }
-        }
-
-        return resultEvents;
-    }
-
-
-    public Bitmap loadAvatar(NotificationEvent notificationEvent) throws Exception {
+    public Bitmap loadAvatar(NotificationEvent event) throws Exception {
         Bitmap bitmap = null;
-        if (notificationEvent.getWebSocketEvent().getType() != WebSocketEvent.TYPE_SITE) {
-            ForumUser forumUser = ForumUsersCache.getUserById(notificationEvent.getUserId());
+        if (!event.fromSite()) {
+            ForumUser forumUser = ForumUsersCache.getUserById(event.getUserId());
             Log.d("WS_USER", "FORUM USER CACHE " + forumUser);
             if (forumUser == null) {
-                forumUser = ForumUsersCache.loadUserByNick(notificationEvent.getUserNick());
+                forumUser = ForumUsersCache.loadUserByNick(event.getUserNick());
                 Log.d("WS_USER", "FORUM USER LOADED " + forumUser);
             }
+
             if (forumUser != null) {
                 bitmap = ImageLoader.getInstance().loadImageSync(forumUser.getAvatar());
                 Log.d("WS_BITMAP", "" + bitmap);
@@ -440,50 +434,46 @@ public class NotificationsService extends Service {
                     Log.d("WS_BITMAP", "" + bitmap.getHeight() + " : " + bitmap.getWidth());
                 }
             }
-
         }
-
 
         return bitmap;
     }
 
-    public void sendNotification(NotificationEvent notificationEvent, Bitmap avatar) {
-        WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
-        eventsHistory.put(webSocketEvent.createNotificationId(), webSocketEvent);
+    public void sendNotification(NotificationEvent event, Bitmap avatar) {
+        eventsHistory.put(event.notifyId(), event);
 
-
-        String title = createTitle(notificationEvent);
-        String text = createContent(notificationEvent);
-        String summaryText = createSummary(notificationEvent);
+        String title = createTitle(event);
+        String text = createContent(event);
+        String summaryText = createSummary(event);
 
         NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
         bigTextStyle.setBigContentTitle(title);
         bigTextStyle.bigText(text);
         bigTextStyle.setSummaryText(summaryText);
 
-        NotificationCompat.Builder mBuilder;
-        mBuilder = new NotificationCompat.Builder(this);
+        NotificationCompat.Builder builder;
+        builder = new NotificationCompat.Builder(this);
 
-        if (avatar != null && webSocketEvent.getType() != WebSocketEvent.TYPE_SITE) {
-            mBuilder.setLargeIcon(avatar);
+        if (avatar != null && !event.fromSite()) {
+            builder.setLargeIcon(avatar);
         }
-        mBuilder.setSmallIcon(createSmallIcon(notificationEvent));
+        builder.setSmallIcon(createSmallIcon(event));
 
-        mBuilder.setContentTitle(title);
-        mBuilder.setContentText(text);
-        mBuilder.setStyle(bigTextStyle);
+        builder.setContentTitle(title);
+        builder.setContentText(text);
+        builder.setStyle(bigTextStyle);
 
 
         Intent notifyIntent = new Intent(this, MainActivity.class);
-        notifyIntent.setData(Uri.parse(createIntentUrl(notificationEvent)));
+        notifyIntent.setData(Uri.parse(createIntentUrl(event)));
         notifyIntent.setAction(Intent.ACTION_VIEW);
         PendingIntent notifyPendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, 0);
-        mBuilder.setContentIntent(notifyPendingIntent);
+        builder.setContentIntent(notifyPendingIntent);
 
-        mBuilder.setAutoCancel(true);
+        builder.setAutoCancel(true);
 
-        mBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        mBuilder.setCategory(NotificationCompat.CATEGORY_SOCIAL);
+        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        builder.setCategory(NotificationCompat.CATEGORY_SOCIAL);
 
 
         int defaults = 0;
@@ -496,19 +486,19 @@ public class NotificationsService extends Service {
         if (Preferences.Notifications.Main.isIndicatorEnabled()) {
             defaults |= NotificationCompat.DEFAULT_LIGHTS;
         }
-        mBuilder.setDefaults(defaults);
+        builder.setDefaults(defaults);
 
-        mNotificationManager.cancel(webSocketEvent.createNotificationId());
-        mNotificationManager.notify(webSocketEvent.createNotificationId(), mBuilder.build());
+        mNotificationManager.cancel(event.notifyId());
+        mNotificationManager.notify(event.notifyId(), builder.build());
     }
 
-    public void sendNotification(NotificationEvent notificationEvent) {
-        if (notificationEvent.getUserId() == ClientHelper.getUserId()) {
+    public void sendNotification(NotificationEvent event) {
+        if (event.getUserId() == ClientHelper.getUserId()) {
             return;
         }
 
         if (Preferences.Notifications.Main.isAvatarsEnabled()) {
-            Observable.fromCallable(() -> loadAvatar(notificationEvent))
+            Observable.fromCallable(() -> loadAvatar(event))
                     .onErrorReturn(throwable -> ImageLoader.getInstance().loadImageSync("assets://av.png"))
                     .map(bitmap -> {
                         if (bitmap != null) {
@@ -524,27 +514,27 @@ public class NotificationsService extends Service {
                     })
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(avatar -> sendNotification(notificationEvent, avatar));
+                    .subscribe(avatar -> sendNotification(event, avatar));
         } else {
-            sendNotification(notificationEvent, null);
+            sendNotification(event, null);
         }
     }
 
 
-    public void sendNotifications(List<NotificationEvent> notificationEvents) {
-        if (notificationEvents.size() == 0) {
+    public void sendNotifications(List<NotificationEvent> events) {
+        if (events.size() == 0) {
             return;
         }
-        if (notificationEvents.size() == 1) {
-            sendNotification(notificationEvents.get(0));
+        if (events.size() == 1) {
+            sendNotification(events.get(0));
             return;
         }
         // WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
 
 
-        String title = createStackedTitle(notificationEvents);
-        CharSequence text = createStackedContent(notificationEvents);
-        String summaryText = createStackedSummary(notificationEvents);
+        String title = createStackedTitle(events);
+        CharSequence text = createStackedContent(events);
+        String summaryText = createStackedSummary(events);
 
         NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
         bigTextStyle.setBigContentTitle(title);
@@ -553,8 +543,8 @@ public class NotificationsService extends Service {
 
         NotificationCompat.MessagingStyle messagingStyle = new NotificationCompat.MessagingStyle("SU4KA");
         messagingStyle.setConversationTitle("CONV TITLE");
-        for (NotificationEvent event : notificationEvents) {
-            messagingStyle.addMessage(event.getThemeTitle(), event.getTimeStamp(), event.getUserNick());
+        for (NotificationEvent event : events) {
+            messagingStyle.addMessage(event.getSourceTitle(), event.getTimeStamp(), event.getUserNick());
         }
 
 
@@ -562,7 +552,7 @@ public class NotificationsService extends Service {
         mBuilder = new NotificationCompat.Builder(this);
 
 
-        mBuilder.setSmallIcon(createStackedSmallIcon(notificationEvents));
+        mBuilder.setSmallIcon(createStackedSmallIcon(events));
 
         mBuilder.setContentTitle(title);
         mBuilder.setContentText(text);
@@ -570,7 +560,7 @@ public class NotificationsService extends Service {
 
 
         Intent notifyIntent = new Intent(this, MainActivity.class);
-        notifyIntent.setData(Uri.parse(createStackedIntentUrl(notificationEvents)));
+        notifyIntent.setData(Uri.parse(createStackedIntentUrl(events)));
         notifyIntent.setAction(Intent.ACTION_VIEW);
         PendingIntent notifyPendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, 0);
         mBuilder.setContentIntent(notifyPendingIntent);
@@ -582,13 +572,12 @@ public class NotificationsService extends Service {
         mBuilder.setDefaults(NotificationCompat.DEFAULT_LIGHTS | NotificationCompat.DEFAULT_VIBRATE | NotificationCompat.DEFAULT_SOUND);
 
         int id = 0;
-        WebSocketEvent webSocketEvent = notificationEvents.get(0).getWebSocketEvent();
-        if (webSocketEvent.getType() == WebSocketEvent.TYPE_QMS) {
+        NotificationEvent event = events.get(0);
+        if (event.fromQms()) {
             id = NOTIFY_STACKED_QMS_ID;
-        } else if (webSocketEvent.getType() == WebSocketEvent.TYPE_THEME) {
+        } else if (event.fromTheme()) {
             id = NOTIFY_STACKED_FAV_ID;
         }
-
         mNotificationManager.notify(id, mBuilder.build());
     }
 
@@ -598,87 +587,84 @@ public class NotificationsService extends Service {
     * */
 
     @DrawableRes
-    public int createSmallIcon(NotificationEvent notificationEvent) {
-        WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
+    public int createSmallIcon(NotificationEvent event) {
+        if (event.fromQms())
+            return R.drawable.ic_notify_qms;
 
-        switch (webSocketEvent.getType()) {
-            case WebSocketEvent.TYPE_QMS:
-                return R.drawable.ic_notify_qms;
-            case WebSocketEvent.TYPE_THEME:
-                if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
-                    return R.drawable.ic_notify_mention;
-                }
-                return R.drawable.ic_notify_favorites;
-            case WebSocketEvent.TYPE_SITE:
-                return R.drawable.ic_notify_site;
+        if (event.fromTheme()) {
+            if (event.isMention())
+                return R.drawable.ic_notify_mention;
+
+            return R.drawable.ic_notify_favorites;
         }
+
+        if (event.fromSite())
+            return R.drawable.ic_notify_site;
+
         return R.drawable.ic_notify_qms;
     }
 
-    public String createTitle(NotificationEvent notificationEvent) {
-        WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
-        switch (webSocketEvent.getType()) {
-            case WebSocketEvent.TYPE_QMS:
-                String nick = notificationEvent.getUserNick();
-                if (nick == null || nick.isEmpty()) {
-                    return "Сообщения 4PDA";
-                }
-                break;
-            case WebSocketEvent.TYPE_SITE:
-                return "ForPDA";
+    public String createTitle(NotificationEvent event) {
+        if (event.fromQms()) {
+            String nick = event.getUserNick();
+            if (nick == null || nick.isEmpty())
+                return "Сообщения 4PDA";
         }
-        return notificationEvent.getUserNick();
+
+        if (event.fromSite())
+            return "ForPDA";
+
+        return event.getUserNick();
     }
 
-    public String createContent(NotificationEvent notificationEvent) {
-        WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
-        switch (webSocketEvent.getType()) {
-            case WebSocketEvent.TYPE_QMS:
-                return notificationEvent.getThemeTitle() + ": " + notificationEvent.getMessageCount() + " непрочитанных сообщений";
-            case WebSocketEvent.TYPE_THEME:
-                if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
-                    return "Ответил Вам в теме \"" + notificationEvent.getThemeTitle() + "\"";
-                } else {
-                    return "Написал сообщение в теме \"" + notificationEvent.getThemeTitle() + "\"";
-                }
-            case WebSocketEvent.TYPE_SITE:
-                return "Вам ответили на комментарий на сайте";
+    public String createContent(NotificationEvent event) {
+        if (event.fromQms())
+            return event.getSourceTitle() + ": " + event.getMsgCount() + " непрочитанных сообщений";
+
+        if (event.fromTheme()) {
+            if (event.isMention())
+                return "Ответил Вам в теме \"" + event.getSourceTitle() + "\"";
+
+            return "Написал сообщение в теме \"" + event.getSourceTitle() + "\"";
         }
-        return "Title";
+
+        if (event.fromSite())
+            return "Вам ответили на комментарий на сайте";
+
+        return "";
     }
 
-    public String createSummary(NotificationEvent notificationEvent) {
-        WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
-        if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
+    public String createSummary(NotificationEvent event) {
+        if (event.isMention())
             return "Упоминание";
-        }
-        switch (webSocketEvent.getType()) {
-            case WebSocketEvent.TYPE_QMS:
-                return "Чат QMS";
-            case WebSocketEvent.TYPE_THEME:
-                return "Избранное";
-            case WebSocketEvent.TYPE_SITE:
-                return "Комментарий";
-        }
-        return "Summary";
+
+        if (event.fromQms())
+            return "Чат QMS";
+
+        if (event.fromTheme())
+            return "Избранное";
+
+        if (event.fromSite())
+            return "Комментарий";
+
+        return "";
     }
 
-    public String createIntentUrl(NotificationEvent notificationEvent) {
-        WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
-        if (webSocketEvent.getEventCode() == WebSocketEvent.EVENT_MENTION) {
-            switch (webSocketEvent.getType()) {
-                case WebSocketEvent.TYPE_THEME:
-                    return "http://4pda.ru/forum/index.php?showtopic=" + notificationEvent.getThemeId() + "&view=findpost&p=" + webSocketEvent.getMessageId();
-                case WebSocketEvent.TYPE_SITE:
-                    return "http://4pda.ru/index.php?p=" + notificationEvent.getThemeId() + "/#comment" + webSocketEvent.getMessageId();
-            }
+    public String createIntentUrl(NotificationEvent event) {
+        if (event.isMention()) {
+            if (event.fromTheme())
+                return "http://4pda.ru/forum/index.php?showtopic=" + event.getSourceId() + "&view=findpost&p=" + event.getMessageId();
+
+            if (event.fromSite())
+                return "http://4pda.ru/index.php?p=" + event.getSourceId() + "/#comment" + event.getMessageId();
         }
-        switch (webSocketEvent.getType()) {
-            case WebSocketEvent.TYPE_QMS:
-                return "http://4pda.ru/forum/index.php?act=qms&mid=" + notificationEvent.getUserId() + "&t=" + notificationEvent.getThemeId();
-            case WebSocketEvent.TYPE_THEME:
-                return "http://4pda.ru/forum/index.php?showtopic=" + notificationEvent.getThemeId() + "&view=getnewpost";
-        }
+
+        if (event.fromQms())
+            return "http://4pda.ru/forum/index.php?act=qms&mid=" + event.getUserId() + "&t=" + event.getSourceId();
+
+        if (event.fromTheme())
+            return "http://4pda.ru/forum/index.php?showtopic=" + event.getSourceId() + "&view=getnewpost";
+
         return "";
     }
 
@@ -686,56 +672,53 @@ public class NotificationsService extends Service {
     /*
     * STACKED EVENTS
     * */
-    private String createStackedTitle(List<NotificationEvent> notificationEvents) {
-        return createStackedSummary(notificationEvents);
+    private String createStackedTitle(List<NotificationEvent> events) {
+        return createStackedSummary(events);
     }
 
-    private CharSequence createStackedContent(List<NotificationEvent> notificationEvents) {
+    private CharSequence createStackedContent(List<NotificationEvent> events) {
         StringBuilder content = new StringBuilder();
 
         final int maxCount = 4;
-        int size = Math.min(notificationEvents.size(), maxCount);
+        int size = Math.min(events.size(), maxCount);
         for (int i = 0; i < size; i++) {
-            NotificationEvent event = notificationEvents.get(i);
-            WebSocketEvent webSocketEvent = event.getWebSocketEvent();
-            if (webSocketEvent.getType() == WebSocketEvent.TYPE_QMS) {
+            NotificationEvent event = events.get(i);
+            if (event.fromQms()) {
                 content.append("<b>").append(event.getUserNick()).append("</b>");
-                content.append(": ").append(event.getThemeTitle());
-            } else if (webSocketEvent.getType() == WebSocketEvent.TYPE_THEME) {
-                content.append(event.getThemeTitle());
+                content.append(": ").append(event.getSourceTitle());
+            } else if (event.fromTheme()) {
+                content.append(event.getSourceTitle());
             }
             if (i < size - 1) {
                 content.append("<br>");
             }
         }
 
-        if (notificationEvents.size() > size) {
+        if (events.size() > size) {
             content.append("<br>");
-            content.append("...и еще ").append(notificationEvents.size() - size);
+            content.append("...и еще ").append(events.size() - size);
         }
 
         return Utils.spannedFromHtml(content.toString());
     }
 
-    private String createStackedSummary(List<NotificationEvent> notificationEvents) {
-        return createSummary(notificationEvents.get(0));
+    private String createStackedSummary(List<NotificationEvent> events) {
+        return createSummary(events.get(0));
     }
 
     @DrawableRes
-    public int createStackedSmallIcon(List<NotificationEvent> notificationEvents) {
-        return createSmallIcon(notificationEvents.get(0));
+    public int createStackedSmallIcon(List<NotificationEvent> events) {
+        return createSmallIcon(events.get(0));
     }
 
-    private String createStackedIntentUrl(List<NotificationEvent> notificationEvents) {
-        NotificationEvent notificationEvent = notificationEvents.get(0);
-        WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
-        switch (webSocketEvent.getType()) {
-            case WebSocketEvent.TYPE_QMS:
-                return "http://4pda.ru/forum/index.php?act=qms";
-            case WebSocketEvent.TYPE_THEME:
-                return "http://4pda.ru/forum/index.php?act=fav";
-        }
+    private String createStackedIntentUrl(List<NotificationEvent> events) {
+        NotificationEvent event = events.get(0);
+        if (event.fromQms())
+            return "http://4pda.ru/forum/index.php?act=qms";
+
+        if (event.fromTheme())
+            return "http://4pda.ru/forum/index.php?act=fav";
+
         return "";
     }
-
 }

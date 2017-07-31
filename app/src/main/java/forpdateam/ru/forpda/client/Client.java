@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.webkit.WebSettings;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ import forpdateam.ru.forpda.api.IWebClient;
 import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
-import forpdateam.ru.forpda.utils.Html;
 import forpdateam.ru.forpda.utils.SimpleObservable;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;

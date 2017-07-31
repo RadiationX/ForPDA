@@ -115,12 +115,7 @@
             android:launchMode="singleTop"
             android:theme="@style/LightAppTheme.NoActionBar" />
 
-        <service android:name=".UNService" />
-        <service
-            android:name=".NewWebSocketService"
-            android:enabled="false"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service android:name=".NotificationsService" />
 
         <receiver
             android:name=".WakeUpReceiver"

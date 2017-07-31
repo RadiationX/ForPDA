@@ -1,28 +1,19 @@
 package forpdateam.ru.forpda.fragments.theme.editpost;
 
 import android.content.Context;
-import android.os.Build;
 import android.support.design.widget.BottomSheetDialog;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPoll;
-import forpdateam.ru.forpda.api.theme.models.Poll;
 import forpdateam.ru.forpda.utils.SimpleTextWatcher;
-import forpdateam.ru.forpda.views.messagepanel.attachments.CustomBottomSheetDialog;
 
 /**
  * Created by radiationx on 28.07.17.

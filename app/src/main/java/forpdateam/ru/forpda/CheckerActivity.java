@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda;
 
-import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -26,7 +25,6 @@ import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
-import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import io.reactivex.Observable;

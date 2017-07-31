@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.bdobjects.favorites;
 
 import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
-import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
