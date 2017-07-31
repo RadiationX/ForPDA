@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.fragments.theme.editpost;
 
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatTextView;
@@ -127,23 +128,29 @@ public class PollQuestionsAdapter extends RecyclerView.Adapter<PollQuestionsAdap
             });
 
             delete.setOnClickListener(v1 -> {
-                EditPoll.Question question = questions.get(getLayoutPosition());
+                new AlertDialog.Builder(v.getContext())
+                        .setMessage("Удалить вопрос?")
+                        .setPositiveButton("Да", (dialog, which) -> {
+                            EditPoll.Question question = questions.get(getLayoutPosition());
 
-                if (question.getIndex() > poll.getBaseIndexOffset()) {
-                    int start = question.getIndex();
-                    int end = poll.getBaseIndexOffset() + poll.getIndexOffset();
-                    for (int i = start; i <= end; i++) {
-                        EditPoll.Question q = EditPoll.findQuestionByIndex(poll, i);
-                        if (q != null) {
-                            q.setIndex(q.getIndex() - 1);
-                        }
-                    }
-                    poll.reduceIndexOffset();
-                }
-                questions.remove(question);
-                choiceAdapters.remove(question);
-                //notifyItemRemoved(getLayoutPosition());
-                notifyDataSetChanged();
+                            if (question.getIndex() > poll.getBaseIndexOffset()) {
+                                int start = question.getIndex();
+                                int end = poll.getBaseIndexOffset() + poll.getIndexOffset();
+                                for (int i = start; i <= end; i++) {
+                                    EditPoll.Question q = EditPoll.findQuestionByIndex(poll, i);
+                                    if (q != null) {
+                                        q.setIndex(q.getIndex() - 1);
+                                    }
+                                }
+                                poll.reduceIndexOffset();
+                            }
+                            questions.remove(question);
+                            choiceAdapters.remove(question);
+                            //notifyItemRemoved(getLayoutPosition());
+                            notifyDataSetChanged();
+                        })
+                        .setNegativeButton("Нет", null)
+                        .show();
             });
         }
     }

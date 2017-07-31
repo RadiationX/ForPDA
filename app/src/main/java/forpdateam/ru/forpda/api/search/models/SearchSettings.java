@@ -40,8 +40,8 @@ public class SearchSettings {
     public final static Pair<String, String> RESULT_TOPICS = new Pair<>("topics", "Темы");
     public final static Pair<String, String> RESULT_POSTS = new Pair<>("posts", "Сообщения");
 
-    public final static Pair<String, String> SORT_DA = new Pair<>("da", "Убываение даты");
-    public final static Pair<String, String> SORT_DD = new Pair<>("dd", "Возрастание даты");
+    public final static Pair<String, String> SORT_DA = new Pair<>("da", "Возрастание даты");
+    public final static Pair<String, String> SORT_DD = new Pair<>("dd", "Убываение даты");
     public final static Pair<String, String> SORT_REL = new Pair<>("rel", "Соответствие");
 
     public final static Pair<String, String> SOURCE_ALL = new Pair<>("all", "Везде");
