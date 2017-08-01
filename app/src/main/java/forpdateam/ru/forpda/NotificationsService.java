@@ -316,9 +316,8 @@ public class NotificationsService extends Service {
                 for (NotificationEvent newEvent : newEvents) {
                     if (newEvent.getSourceId() == event.getSourceId()) {
                         stackedNewEvents.remove(newEvent);
-                        if (newEvent.getEvent() != event.getEvent()) {
-                            newEvent.setEvent(event.getEvent());
-                        }
+                        newEvent.setEvent(event.getEvent());
+                        newEvent.setMessageId(event.getMessageId());
                         sendNotification(newEvent);
                     } else if (event.isMention() && !Preferences.Notifications.Favorites.isEnabled()) {
                         stackedNewEvents.remove(newEvent);

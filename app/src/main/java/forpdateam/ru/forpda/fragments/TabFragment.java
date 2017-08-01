@@ -14,6 +14,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -226,6 +227,13 @@ public class TabFragment extends RxFragment {
         noNetwork = (LinearLayout) fragmentContent.findViewById(R.id.no_network);
         //// TODO: 20.03.17 удалить и юзать только там, где нужно
         fab = (FloatingActionButton) coordinatorLayout.findViewById(R.id.fab);
+
+        toolbarTitleView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+        toolbarTitleView.setHorizontallyScrolling(true);
+        toolbarTitleView.setMarqueeRepeatLimit(3);
+        toolbarTitleView.setSelected(true);
+        toolbarTitleView.setHorizontalFadingEdgeEnabled(true);
+        toolbarTitleView.setFadingEdgeLength(App.px16);
 
         //fragmentContainer.setPadding(0, App.getStatusBarHeight(), 0, 0);
 

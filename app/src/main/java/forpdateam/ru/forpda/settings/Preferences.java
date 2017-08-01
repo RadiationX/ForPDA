@@ -23,6 +23,7 @@ public class Preferences {
         public final static String IS_SYSTEM_DOWNLOADER = "main.is_system_downloader";
         public final static String IS_TABS_BOTTOM = "main.drawers.tab_stack_bottom";
         public final static String IS_EDITOR_MONOSPACE = "message_panel.is_monospace";
+        public final static String IS_EDITOR_DEFAULT_HIDDEN = "message_panel.is_default_hidden";
         public final static String SCROLL_BUTTON_ENABLE = "main.scroll_button.enable";
 
         public static boolean isTabsBottom(){

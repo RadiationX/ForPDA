@@ -133,13 +133,13 @@ public class EditPostFragment extends TabFragment {
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        getMenu().add("prnt")
+        /*getMenu().add("prnt")
                 .setOnMenuItemClickListener(item -> {
                     EditPoll poll = postForm.getPoll();
                     EditPost.printPoll(poll);
                     return true;
                 })
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);*/
     }
 
     @Override
