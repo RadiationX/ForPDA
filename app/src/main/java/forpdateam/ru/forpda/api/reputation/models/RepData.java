@@ -11,7 +11,7 @@ import forpdateam.ru.forpda.api.reputation.Reputation;
  */
 
 public class RepData {
-    private int id, positive, negative;
+    private int id = 0, positive = 0, negative = 0;
     private String nick, mode = Reputation.MODE_TO, sort = Reputation.SORT_DESC;
     private Pagination pagination = new Pagination();
     private List<RepItem> items = new ArrayList<>();
