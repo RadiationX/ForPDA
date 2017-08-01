@@ -32,6 +32,12 @@
             android:title="Моноширинный шрифт" />
 
         <forpdateam.ru.forpda.settings.SwitchPreference
+            android:defaultValue="true"
+            android:key="message_panel.is_default_hidden"
+            android:summary="По умолчанию скрыть редактор сообщений"
+            android:title="Скрытый редактор сообщений" />
+
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="false"
             android:key="main.scroll_button.enable"
             android:summary="Появляется при скролле в теме и поиске"

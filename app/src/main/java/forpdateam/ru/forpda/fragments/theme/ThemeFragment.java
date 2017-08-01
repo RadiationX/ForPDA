@@ -173,7 +173,6 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         baseInflateFragment(inflater, R.layout.fragment_theme);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
         messagePanel = new MessagePanel(getContext(), fragmentContainer, coordinatorLayout, false);
-        messagePanel.setVisibility(View.GONE);
         messagePanel.enableBehavior();
         messagePanel.addSendOnClickListener(v -> sendMessage());
         messagePanel.getSendButton().setOnLongClickListener(v -> {
@@ -240,7 +239,11 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             App.getInstance().getPreferences().edit().putBoolean("theme.tooltip.long_click_send", false).apply();
         }
 
-
+        if (App.getInstance().getPreferences().getBoolean(Preferences.Main.IS_EDITOR_DEFAULT_HIDDEN, true)) {
+            hideMessagePanel();
+        } else {
+            showMessagePanel();
+        }
         return view;
     }
 
@@ -343,7 +346,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         refreshToolbarMenuItems(false);
         boolean hatOpen = false;
         boolean pollOpen = false;
-        if(currentPage!=null){
+        if (currentPage != null) {
             hatOpen = currentPage.isHatOpen();
             pollOpen = currentPage.isPollOpen();
         }
