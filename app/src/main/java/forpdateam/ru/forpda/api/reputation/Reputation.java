@@ -23,7 +23,7 @@ public class Reputation {
     public final static String SORT_ASC = "asc";
     public final static String SORT_DESC = "desc";
     private final static Pattern listPattern = Pattern.compile("<tr>[^<]*?<td[^>]*?><strong><a [^>]*?showuser=(\\d+)[^\"]*\">([\\s\\S]*?)<\\/a><\\/strong><\\/td>[^<]*?<td[^>]*?>(?:<strong><a href=\"([^\"]*?)\">([\\s\\S]*?)<\\/a><\\/strong>)?[^<]*?<\\/td>[^<]*?<td[^>]*?>([\\s\\S]*?)<\\/td>[^<]*?<td[^>]*?><img[^>]*?src=\"([^\"]*?)\"[^>]*?><\\/td>[^<]*?<td[^>]*?>([\\s\\S]*?)<\\/td>[^<]*?<\\/tr>");
-    private final static Pattern infoPattern = Pattern.compile("<div class=\"maintitle\">[\\s\\S]*?<a href=\"[^\"]*?showuser=(\\d+)\"[^>]*?>([\\s\\S]*?)<\\/a>[^\\[]*?\\[\\+(\\d+)\\/\\-(\\d+)\\]");
+    private final static Pattern infoPattern = Pattern.compile("<div class=\"maintitle\">[\\s\\S]*?<a href=\"[^\"]*?showuser=(\\d+)\"[^>]*?>([\\s\\S]*?)<\\/a>[^\\[]*?\\[\\+(\\d+)?\\/\\-(\\d+)?\\]");
 
     public RepData getReputation(RepData data) throws Exception {
         if (data == null) return null;
@@ -32,8 +32,12 @@ public class Reputation {
         if (matcher.find()) {
             data.setId(Integer.parseInt(matcher.group(1)));
             data.setNick(Utils.fromHtml(matcher.group(2)));
-            data.setPositive(Integer.parseInt(matcher.group(3)));
-            data.setNegative(Integer.parseInt(matcher.group(4)));
+            if (matcher.group(3) != null) {
+                data.setPositive(Integer.parseInt(matcher.group(3)));
+            }
+            if (matcher.group(4) != null) {
+                data.setNegative(Integer.parseInt(matcher.group(4)));
+            }
         }
 
 

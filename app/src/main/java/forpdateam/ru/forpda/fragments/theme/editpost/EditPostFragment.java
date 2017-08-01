@@ -242,15 +242,18 @@ public class EditPostFragment extends TabFragment {
         }
         sendSubscriber.subscribe(RxApi.EditPost().sendPost(postForm), s -> {
             messagePanel.setProgressState(false);
-            ThemeFragment fragment = (ThemeFragment) TabManager.getInstance().get(getParentTag());
-            if (fragment != null) {
-                if (postForm.getType() == TYPE_EDIT_POST) {
-                    fragment.onEditPostCompleted(s);
-                } else {
-                    fragment.onSendPostCompleted(s);
+            if (s.getId() != 0) {
+                ThemeFragment fragment = (ThemeFragment) TabManager.getInstance().get(getParentTag());
+                if (fragment != null) {
+                    if (postForm.getType() == TYPE_EDIT_POST) {
+                        fragment.onEditPostCompleted(s);
+                    } else {
+                        fragment.onSendPostCompleted(s);
+                    }
                 }
+                TabManager.getInstance().remove(EditPostFragment.this);
             }
-            TabManager.getInstance().remove(EditPostFragment.this);
+
         }, new ThemePage(), v -> loadData());
     }
 

@@ -631,11 +631,15 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             messagePanel.setProgressState(true);
             mainSubscriber.subscribe(RxApi.EditPost().sendPost(form), s -> {
                 messagePanel.setProgressState(false);
-                onLoadData(s);
-                messagePanel.clearAttachments();
-                messagePanel.clearMessage();
-                hideMessagePanel();
-            }, currentPage, v -> loadData(NORMAL_ACTION));
+                if (s != currentPage) {
+                    onLoadData(s);
+                    messagePanel.clearAttachments();
+                    messagePanel.clearMessage();
+                    if (App.getInstance().getPreferences().getBoolean(Preferences.Main.IS_EDITOR_DEFAULT_HIDDEN, true)) {
+                        hideMessagePanel();
+                    }
+                }
+            }, currentPage);
         }
 
     }
