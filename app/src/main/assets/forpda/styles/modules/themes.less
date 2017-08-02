@@ -848,6 +848,7 @@ button,
                     transition: 0.15s @curveStandard;
                 }
                 &:active {
+                    background-color: transparent;
                     &:before {
                         opacity: 0.05;
                         -webkit-transform: scale(1) translateZ(0);
@@ -1026,13 +1027,15 @@ button,
                 opacity: 0.31;
             }
         }
+        &.hidden {
+            display: none;
+        }
         &.page {
             >.icon {
                 display: none;
             }
         }
         &.first {
-            display: none;
             >.icon {
                 background-image: url(@arrow_double_left);
             }
@@ -1048,7 +1051,6 @@ button,
             }
         }
         &.last {
-            display: none;
             >.icon {
                 background-image: url(@arrow_double_right);
             }
@@ -1076,9 +1078,6 @@ button,
     }
 }
 @media all and (max-width: 14rem) {
-    .navigation {
-        display: block;
-    }
     .poll>.title {
         padding-left: 8/16rem;
         /*>span{
@@ -1136,4 +1135,18 @@ button,
         border-bottom: @border1;
         padding-bottom: 8/16rem;
     }*/
+}
+@media all and (min-width: 11.5rem) {
+    .navigation {
+        .button {
+            &:not(.hidden)+.button {
+                margin-left: 0;
+            }
+        }
+    }
+}
+@media all and (max-width: 11.5rem) {
+    .navigation {
+        display: block;
+    }
 }

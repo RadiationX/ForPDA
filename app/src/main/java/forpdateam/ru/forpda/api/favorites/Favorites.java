@@ -18,7 +18,7 @@ import forpdateam.ru.forpda.api.others.pagination.Pagination;
  */
 
 public class Favorites {
-    private final static Pattern mainPattern = Pattern.compile("<div data-item-fid=\"([^\"]*)\" data-item-track=\"([^\"]*)\" data-item-pin=\"([^\"]*)\">[\\s\\S]*?(?:class=\"modifier\">(?:<font color=\"([^\"]*)\">)?([^< ]*)(?:<\\/font>)?<\\/span>)?<a href=\"[^\"]*=(\\d*)[^\"]*?\"[^>]*?>(<strong>)?([^<]*)(?:<\\/strong>)?<\\/a>(?:[^<]*?<a[^>]*?tpg\\(\\d+,(\\d+)\\)[^>]*?>[^<]*?<\\/a>[\\s\\S]*?)?(?:<\\/div><div class=\"topic_body\"><span class=\"topic_desc\">([^<]*|)(<br[^>]*>|)[\\s\\S]*?showforum=([^\"]*?)\">([^<]*)<\\/a><br[^>]*>[\\s\\S]*?showuser=([^\"]*)\">([^<]*)<\\/a>[\\s\\S]*?showuser=([^\"]*)\">([^<]*)<\\/a> ([^<]*?)|[^<]*?<\\/div>[^<]*?<div class=\"board-forum-lastpost[\\s\\S]*?<div class=\"topic_body\">([^<]*?) <a href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?))<");
+    private final static Pattern mainPattern = Pattern.compile("<div data-item-fid=\"([^\"]*)\" data-item-track=\"([^\"]*)\" data-item-pin=\"([^\"]*)\">[\\s\\S]*?(?:class=\"(?:modifier|forum_img_with_link)\"[^>]*?>(?:<font color=\"([^\"]*)\">)?([^< ]*)(?:<\\/font>)?<\\/(?:span|a)>)?[^<]*?<a href=\"[^\"]*=(\\d*)[^\"]*?\"[^>]*?>(<strong>)?([^<]*)(?:<\\/strong>)?<\\/a>(?:[^<]*?<a[^>]*?tpg\\(\\d+,(\\d+)\\)[^>]*?>[^<]*?<\\/a>[\\s\\S]*?)?(?:<\\/div><div class=\"topic_body\"><span class=\"topic_desc\">([^<]*|)(<br[^>]*>|)[\\s\\S]*?showforum=([^\"]*?)\">([^<]*)<\\/a><br[^>]*>[\\s\\S]*?showuser=([^\"]*)\">([^<]*)<\\/a>[\\s\\S]*?showuser=([^\"]*)\">([^<]*)<\\/a> ([^<]*?)|[^<]*?<\\/div>[^<]*?<div class=\"board-forum-lastpost[\\s\\S]*?<div class=\"topic_body\">([^<]*?) <a href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?))<");
     private final static Pattern checkPattern = Pattern.compile("<div style=\"[^\"]*background:#dff0d8[^\"]*\">[\\s\\S]*<div id=\"navstrip");
     private final static Pattern pagesPattern = Pattern.compile("parseInt\\((\\d*)\\)[\\s\\S]*?parseInt\\(st\\*(\\d*)\\)[\\s\\S]*?pagination\">[\\s\\S]*?<span[^>]*?>([^<]*?)<\\/span>");
     public final static int ACTION_EDIT_SUB_TYPE = 0;
@@ -42,18 +42,19 @@ public class Favorites {
             Log.d("FAV", "FAV ITEM NEW ID " + item.getFavId());
             item.setTrackType(matcher.group(2));
             item.setPin(matcher.group(3).equals("1"));
-
+            if (matcher.group(4) != null) {
+                item.setInfoColor(matcher.group(4));
+            }
+            if (matcher.group(5) != null) {
+                item.setInfo(matcher.group(5));
+            }
             if (isForum) {
                 item.setForumId(Integer.parseInt(matcher.group(6)));
             } else {
-                if (matcher.group(4) != null) {
-                    item.setInfoColor(matcher.group(4));
-                }
 
-                item.setInfo(matcher.group(5));
                 item.setTopicId(Integer.parseInt(matcher.group(6)));
             }
-            item.setNewMessages(matcher.group(7) != null);
+            item.setNewMessages(item.getInfo() != null && item.getInfo().contains("+"));
             item.setTopicTitle(Utils.fromHtml(matcher.group(8)));
 
             if (isForum) {

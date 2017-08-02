@@ -9,16 +9,19 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.topcis.models.TopicItem;
 import forpdateam.ru.forpda.api.topcis.models.TopicsData;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
+import forpdateam.ru.forpda.fragments.forum.ForumFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -145,5 +148,18 @@ public class TopicsFragment extends TabFragment {
         adapter.notifyDataSetChanged();
         paginationHelper.updatePagination(data.getPagination());
         setSubtitle(paginationHelper.getString());
+    }
+
+    @Override
+    protected void addBaseToolbarMenu() {
+        super.addBaseToolbarMenu();
+        getMenu()
+                .add("Открыть форум")
+                .setOnMenuItemClickListener(item -> {
+                    Bundle args = new Bundle();
+                    args.putInt(ForumFragment.ARG_FORUM_ID, id);
+                    TabManager.getInstance().add(new Builder<>(ForumFragment.class).setArgs(args).build());
+                    return true;
+                });
     }
 }
