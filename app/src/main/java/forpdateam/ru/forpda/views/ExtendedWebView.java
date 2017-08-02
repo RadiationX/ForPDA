@@ -224,7 +224,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
             ArrayList<String> actions = new ArrayList<>();
             if (jsLifeCycleListener != null) {
                 try {
-                    jsLifeCycleListener.onPageComplete(actions);
+                    jsLifeCycleListener.onDomContentComplete(actions);
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
