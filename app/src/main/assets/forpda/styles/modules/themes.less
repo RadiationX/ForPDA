@@ -1,7 +1,6 @@
 body {
     background: @background_for_cards;
 }
-
 button,
 .btn {
     display: block;
@@ -27,7 +26,6 @@ button,
         background: @tapColor;
     }
 }
-
 @-webkit-keyframes pollRangeAnimation {
     0% {
         -webkit-transform: scaleX(0.1) translateZ(0);
@@ -38,7 +36,6 @@ button,
         transform: scaleX(1) translateZ(0);
     }
 }
-
 @-webkit-keyframes pollRangeValueAnimation {
     0% {
         visibility: visible;
@@ -49,7 +46,6 @@ button,
         opacity: 1;
     }
 }
-
 @-webkit-keyframes radAnim1 {
     0% {
         -webkit-transform: scale(1);
@@ -64,7 +60,6 @@ button,
         transform: scale(1);
     }
 }
-
 .poll {
     .mainBox();
     >.title {
@@ -475,7 +470,6 @@ button,
     &.default {}
     &.result {}
 }
-
 .post_body {
     padding: 1em;
     position: relative;
@@ -542,7 +536,6 @@ button,
         }
     }
 }
-
 @-webkit-keyframes highlight {
     0% {
         opacity: 0;
@@ -554,7 +547,6 @@ button,
         opacity: 0;
     }
 }
-
 .post_container {
     @avatarSize: 56/16em;
     @fullAvatarSize: (56+2)/16em;
@@ -650,7 +642,7 @@ button,
                 >.letter {}
             }
         }
-        .post-block.quote > .block-title .avatar{
+        .post-block.quote > .block-title .avatar {
             .bRad(0px);
         }
     }
@@ -922,13 +914,11 @@ button,
         clear: both;
     }
 }
-
 #search {
     .panel.bottom:empty+#bottomMargin {
         display: none;
     }
 }
-
 .posts_list {
     &.search-results {
         .topic_title_post {
@@ -981,7 +971,78 @@ button,
         }
     }
 }
-
+.navigation {
+    .mainBox();
+    display: table;
+    border-spacing: 0px;
+    padding: 0;
+    width: 100%;
+    border-spacing: 8/16rem 8/16rem;
+    .button {
+        height: 36/16rem;
+        box-sizing: border-box;
+        margin: 6/16rem 8/16rem;
+        border-radius: 2px;
+        position: relative;
+        display: table-cell;
+        vertical-align: middle;
+        white-space: nowrap;
+        text-align: center;
+        text-transform: uppercase;
+        color: @colorAccent;
+        font-size: 14/16rem;
+        >.icon {
+            height: 24/16rem;
+            width: 24/16rem;
+            display: block;
+            margin: 0 auto;
+            background-position: center;
+            background-size: 24/16rem;
+            background-repeat: no-repeat;
+        }
+        &:active {
+            background: @tapColor;
+        }
+        &:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            margin: -6/16rem -8/16rem;
+            /*background: red;
+                opacity: 0.05;*/
+        }
+        &.page {
+            >.icon {
+                display: none;
+            }
+        }
+        &.first {
+            display: none;
+            >.icon {
+                background-image: url(@arrow_double_left);
+            }
+        }
+        &.prev {
+            >.icon {
+                background-image: url(@arrow_left);
+            }
+        }
+        &.next {
+            >.icon {
+                background-image: url(@arrow_right);
+            }
+        }
+        &.last {
+            display: none;
+            >.icon {
+                background-image: url(@arrow_double_right);
+            }
+        }
+    }
+}
 @media all and (max-width: 20rem) {
     .post_container .post_header {
         .avatar .reputation:after {
@@ -1002,7 +1063,6 @@ button,
         }
     }
 }
-
 @media all and (max-width: 14rem) {
     .poll>.title {
         padding-left: 8/16rem;

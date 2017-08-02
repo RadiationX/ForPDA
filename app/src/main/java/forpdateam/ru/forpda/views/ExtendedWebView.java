@@ -203,18 +203,18 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     @Override
     @JavascriptInterface
     public void playClickEffect() {
-        run(this::tryPlayClickEffect);
+        runInUiThread(this::tryPlayClickEffect);
     }
 
     @Override
     @JavascriptInterface
     public void domContentLoaded() {
-        run(() -> {
+        runInUiThread(() -> {
             Log.d("EWV", "domContentLoaded " + isJsReady);
             isJsReady = true;
             for (Runnable action : actionsForWebView) {
                 try {
-                    run(action);
+                    runInUiThread(action);
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
@@ -242,7 +242,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     @Override
     @JavascriptInterface
     public void onPageLoaded() {
-        run(() -> {
+        runInUiThread(() -> {
             Log.d("EWV", "onPageLoaded " + isJsReady);
             ArrayList<String> actions = new ArrayList<>();
             if (jsLifeCycleListener != null) {
@@ -270,7 +270,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
         }
     }
 
-    public final void run(final Runnable action) {
+    public final void runInUiThread(final Runnable action) {
         if (Thread.currentThread() != mUiThread) {
             mHandler.post(action);
         } else {

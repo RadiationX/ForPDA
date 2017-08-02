@@ -113,7 +113,7 @@ public class ThemeRx {
                 //Post body
                 if (page.getPosts().size() > 1 && hatPostId == post.getId()) {
                     t.setVariableOpt("hat_state_class", page.isHatOpen() ? "open" : "close");
-                    t.setVariableOpt("hat_body_state", page.isPollOpen() ? "" : "hidden");
+                    t.setVariableOpt("hat_body_state", page.isHatOpen() ? "" : "hidden");
                     t.addBlockOpt("hat_button");
                     t.addBlockOpt("hat_content_start");
                     t.addBlockOpt("hat_content_end");
