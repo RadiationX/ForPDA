@@ -206,6 +206,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         saveSettingsButton = (Button) searchSettingsView.findViewById(R.id.search_save_settings);
 
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
+        webView.setJsLifeCycleListener(this);
         webView.addJavascriptInterface(this, JS_INTERFACE);
         webView.addJavascriptInterface(this, JS_POSTS_FUNCTIONS);
         webView.setRelativeFontSize(Preferences.Main.getWebViewSize());
@@ -675,6 +676,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         unregisterForContextMenu(webView);
         webView.removeJavascriptInterface(JS_INTERFACE);
         webView.removeJavascriptInterface(JS_POSTS_FUNCTIONS);
+        webView.setJsLifeCycleListener(null);
         webView.destroy();
         getMainActivity().getWebViewsProvider().push(webView);
     }

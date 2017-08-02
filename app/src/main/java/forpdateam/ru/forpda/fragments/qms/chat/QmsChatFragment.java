@@ -179,6 +179,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         });
 
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
+        webView.setJsLifeCycleListener(this);
 
         chatContainer.addView(webView);
         webView.addJavascriptInterface(this, JS_INTERFACE);
@@ -473,6 +474,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         messagePanel.onDestroy();
         unregisterForContextMenu(webView);
         webView.removeJavascriptInterface(JS_INTERFACE);
+        webView.setJsLifeCycleListener(null);
         webView.destroy();
         getMainActivity().getWebViewsProvider().push(webView);
     }

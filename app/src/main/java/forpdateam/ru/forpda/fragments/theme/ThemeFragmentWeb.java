@@ -57,6 +57,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
             webView.setPaddingBottom(newHeight);
         });
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
+        webView.setJsLifeCycleListener(this);
         refreshLayout.addView(webView);
         webView.addJavascriptInterface(this, JS_INTERFACE);
         webView.addJavascriptInterface(this, JS_POSTS_FUNCTIONS);
@@ -184,6 +185,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
         unregisterForContextMenu(webView);
         webView.removeJavascriptInterface(JS_INTERFACE);
         webView.removeJavascriptInterface(JS_POSTS_FUNCTIONS);
+        webView.setJsLifeCycleListener(null);
         webView.destroy();
         getMainActivity().getWebViewsProvider().push(webView);
     }
