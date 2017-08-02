@@ -11,6 +11,59 @@ body {
   word-wrap: break-word;
   font-family: sans-serif;
 }
+.navigation {
+  background: white;
+  width: 100%;
+  display: flex;
+}
+.navigation .button {
+  height: 2.25rem;
+  box-sizing: border-box;
+  margin: 0.375rem 0.5rem;
+  border-radius: 2px;
+  position: relative;
+  background: blue;
+  flex: 1 1 auto;
+  text-align: center;
+  text-transform: uppercase;
+  color: #000;
+  font-size: 0.875rem;
+  padding: 0.375rem 0.5rem;
+  display: block;
+}
+.navigation .button > .icon {
+  height: 1.5rem;
+  width: 1.5rem;
+  display: block;
+  margin: 0 auto;
+  background: red;
+  background-position: center;
+  background-size: 1.5rem;
+  background-repeat: no-repeat;
+}
+.navigation .button:active {
+  background: red;
+}
+.navigation .button:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  margin: -0.375rem -0.5rem;
+  /*background: red;
+                opacity: 0.05;*/
+}
+.navigation .button.page > .icon {
+  display: none;
+}
+.navigation .button.first {
+  display: none;
+}
+.navigation .button.last {
+  display: none;
+}
 .post_body {
   margin: 2rem 0;
   background: white;

@@ -973,18 +973,21 @@ button,
 }
 .navigation {
     .mainBox();
-    display: table;
-    border-spacing: 0px;
-    padding: 0;
-    width: 100%;
-    border-spacing: 8/16rem 8/16rem;
+    display: flex;
+    overflow: hidden;
+    &.disabled {
+        display: none;
+    }
     .button {
+        .noselect();
         height: 36/16rem;
-        box-sizing: border-box;
         margin: 6/16rem 8/16rem;
-        border-radius: 2px;
+        padding: 6/16rem 8/16rem;
+        display: block;
+        flex: 1 1 auto;
+        box-sizing: border-box;
+        .bRad(2/16rem);
         position: relative;
-        display: table-cell;
         vertical-align: middle;
         white-space: nowrap;
         text-align: center;
@@ -1000,7 +1003,11 @@ button,
             background-size: 24/16rem;
             background-repeat: no-repeat;
         }
-        &:active {
+        >b {
+            padding: 2/16rem 0;
+            display: inline-block;
+        }
+        &:not(.disabled):active {
             background: @tapColor;
         }
         &:before {
@@ -1013,6 +1020,11 @@ button,
             margin: -6/16rem -8/16rem;
             /*background: red;
                 opacity: 0.05;*/
+        }
+        &.disabled {
+            >.icon {
+                opacity: 0.31;
+            }
         }
         &.page {
             >.icon {
@@ -1064,6 +1076,9 @@ button,
     }
 }
 @media all and (max-width: 14rem) {
+    .navigation {
+        display: block;
+    }
     .poll>.title {
         padding-left: 8/16rem;
         /*>span{

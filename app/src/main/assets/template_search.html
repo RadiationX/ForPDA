@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+
 <head>
     <title>${topic_title}</title>
     <!-- <script type="text/javascript">
@@ -61,9 +62,18 @@
         </div>
         <!-- $EndBlock post -->
     </div>
+    <div class="navigation">
+        <span class="button first ${first_disable}" onclick="ITheme.firstPage()"><i class="icon"></i></span>
+        <span class="button prev ${prev_disable}" onclick="ITheme.prevPage()"><i class="icon"></i></span>
+        <span class="button page" onclick="ITheme.selectPage()"><b>Выбор</b><i class="icon"></i></span>
+        <span class="button next ${next_disable}" onclick="ITheme.nextPage()" ><i class="icon"></i></span>
+        <span class="button last ${last_disable}" onclick="ITheme.lastPage()"><i class="icon"></i></span>
+    </div>
     <!--<div id="padding_for_message_panel" style="padding-bottom: 4em;"></div>-->
     <script type="text/javascript">
         jsEmoticons.parseAll("file:///android_asset/smiles/")
+
     </script>
 </body>
+
 </html>
