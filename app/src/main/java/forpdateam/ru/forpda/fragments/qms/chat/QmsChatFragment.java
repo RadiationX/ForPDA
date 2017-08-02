@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,10 +23,8 @@ import android.widget.Toast;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Observer;
-import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,11 +39,10 @@ import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.fragments.jsinterfaces.IBase;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.rxapi.apiclasses.QmsRx;
 import forpdateam.ru.forpda.settings.Preferences;
-import forpdateam.ru.forpda.utils.ExtendedWebView;
+import forpdateam.ru.forpda.views.ExtendedWebView;
 import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
@@ -61,7 +56,7 @@ import okio.ByteString;
 /**
  * Created by radiationx on 25.08.16.
  */
-public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCreator.ThemeCreatorInterface {
+public class QmsChatFragment extends TabFragment implements ChatThemeCreator.ThemeCreatorInterface, ExtendedWebView.JsLifeCycleListener {
     private final static String JS_INTERFACE = "IChat";
     public final static String USER_ID_ARG = "USER_ID_ARG";
     public final static String USER_NICK_ARG = "USER_NICK_ARG";
@@ -83,8 +78,6 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
     private Subscriber<ArrayList<QmsContact>> contactsSubscriber = new Subscriber<>(this);
 
     private boolean isWebViewReady = false;
-    private Handler actionsHandler = new Handler(Looper.getMainLooper());
-    private Queue<Runnable> actionsForWebView = new LinkedList<>();
 
     private Observer chatPreferenceObserver = (observable, o) -> {
         if (o == null) return;
@@ -113,23 +106,21 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
         @Override
         public void onMessage(WebSocket webSocket, String text) {
             Log.d("WS_CHAT", "ON T MESSAGE: " + text);
-            run(() -> {
-                Matcher matcher = pattern.matcher(text);
-                if (matcher.find()) {
-                    int themeId = Integer.parseInt(matcher.group(4));
-                    int eventCode = Integer.parseInt(matcher.group(5));
-                    int messageId = Integer.parseInt(matcher.group(6));
-                    if (themeId == currentChat.getThemeId()) {
-                        if (eventCode == 1) {
-                            Log.d("WS_CHAT", "NEW QMS MESSAGE " + themeId + " : " + messageId);
-                            onNewWsMessage(themeId, messageId);
-                        } else if (eventCode == 2) {
-                            Log.d("WS_CHAT", "THREAD READED");
-                            webView.evalJs("makeAllRead();");
-                        }
+            Matcher matcher = pattern.matcher(text);
+            if (matcher.find()) {
+                int themeId = Integer.parseInt(matcher.group(4));
+                int eventCode = Integer.parseInt(matcher.group(5));
+                int messageId = Integer.parseInt(matcher.group(6));
+                if (themeId == currentChat.getThemeId()) {
+                    if (eventCode == 1) {
+                        Log.d("WS_CHAT", "NEW QMS MESSAGE " + themeId + " : " + messageId);
+                        onNewWsMessage(themeId, messageId);
+                    } else if (eventCode == 2) {
+                        Log.d("WS_CHAT", "THREAD READED");
+                        webView.evalJs("makeAllRead();");
                     }
                 }
-            });
+            }
         }
 
         @Override
@@ -184,14 +175,13 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
         chatContainer = (FrameLayout) findViewById(R.id.qms_chat_container);
         messagePanel = new MessagePanel(getContext(), fragmentContainer, coordinatorLayout, false);
         messagePanel.setHeightChangeListener(newHeight -> {
-            syncWithWebView(() -> webView.setPaddingBottom(newHeight));
+            webView.setPaddingBottom(newHeight);
         });
 
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
 
         chatContainer.addView(webView);
         webView.addJavascriptInterface(this, JS_INTERFACE);
-        webView.addJavascriptInterface(this, JS_BASE_INTERFACE);
         registerForContextMenu(webView);
         webView.setWebViewClient(new QmsWebViewClient());
         loadBaseWebContainer();
@@ -332,10 +322,10 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
         currentChat.setShowedMessIndex(start);
         messagesSrc = messagesSrc.replaceAll("\n", "").replaceAll("'", "&apos;");
         final String finalMessagesSrc = messagesSrc;
-        syncWithWebView(() -> {
-            Log.e("FORPDA_LOG", "SHOW NEW MESS");
-            webView.evalJs("showNewMess('".concat(finalMessagesSrc).concat("', true)"));
-        });
+
+        Log.e("FORPDA_LOG", "SHOW NEW MESS");
+        webView.evalJs("showNewMess('".concat(finalMessagesSrc).concat("', true)"));
+
         refreshToolbarMenuItems(true);
         if (currentChat.getNick() != null) {
             setSubtitle(currentChat.getNick());
@@ -395,62 +385,27 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
         }
     }
 
-    private void syncWithWebView(Runnable runnable) {
-        if (!isWebViewReady) {
-            actionsForWebView.add(runnable);
-        } else {
-            actionsHandler.post(runnable);
-        }
-    }
-
     @JavascriptInterface
     public void showMoreMess() {
-        run(() -> {
-            MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
-            int endIndex = currentChat.getShowedMessIndex();
-            int startIndex = Math.max(endIndex - 30, 0);
-            currentChat.setShowedMessIndex(startIndex);
-            QmsRx.generateMess(t, currentChat.getMessages(), startIndex, endIndex);
-            String messagesSrc = t.generateOutput();
-            messagesSrc = messagesSrc.replaceAll("\n", "");
-            t.reset();
-            webView.evalJs("showMoreMess('" + messagesSrc + "')");
-        });
+        MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
+        int endIndex = currentChat.getShowedMessIndex();
+        int startIndex = Math.max(endIndex - 30, 0);
+        currentChat.setShowedMessIndex(startIndex);
+        QmsRx.generateMess(t, currentChat.getMessages(), startIndex, endIndex);
+        String messagesSrc = t.generateOutput();
+        messagesSrc = messagesSrc.replaceAll("\n", "");
+        t.reset();
+        webView.evalJs("showMoreMess('" + messagesSrc + "')");
     }
 
     @Override
-    @JavascriptInterface
-    public void domContentLoaded() {
-        run(() -> {
-            Log.e("console", "DOMContentLoaded");
-            isWebViewReady = true;
-            for (Runnable runnable : actionsForWebView) {
-                try {
-                    actionsHandler.post(runnable);
-                } catch (Exception ignore) {
-                }
-            }
-            webView.evalJs("nativeEvents.onNativeDomComplete();");
-        });
+    public void onDomContentComplete(final ArrayList<String> actions) {
+        Log.e("console", "DOMContentLoaded");
     }
 
     @Override
-    @JavascriptInterface
-    public void onPageLoaded() {
-        run(() -> {
-            Log.e("console", "onPageLoaded");
-            webView.evalJs("nativeEvents.onNativePageComplete()");
-        });
-    }
-
-    @Override
-    @JavascriptInterface
-    public void playClickEffect() {
-        run(this::tryPlayClickEffect);
-    }
-
-    public void run(final Runnable runnable) {
-        getMainActivity().runOnUiThread(runnable);
+    public void onPageComplete(final ArrayList<String> actions) {
+        Log.e("console", "onPageLoaded");
     }
 
     private class QmsWebViewClient extends WebViewClient {
@@ -518,7 +473,6 @@ public class QmsChatFragment extends TabFragment implements IBase, ChatThemeCrea
         messagePanel.onDestroy();
         unregisterForContextMenu(webView);
         webView.removeJavascriptInterface(JS_INTERFACE);
-        webView.removeJavascriptInterface(JS_BASE_INTERFACE);
         webView.destroy();
         getMainActivity().getWebViewsProvider().push(webView);
     }

@@ -39,6 +39,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Observer;
@@ -60,7 +61,7 @@ import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
-import forpdateam.ru.forpda.utils.ExtendedWebView;
+import forpdateam.ru.forpda.views.ExtendedWebView;
 import forpdateam.ru.forpda.utils.FabOnScroll;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
@@ -72,7 +73,7 @@ import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
  * Created by radiationx on 29.01.17.
  */
 
-public class SearchFragment extends TabFragment implements IPostFunctions, IBase {
+public class SearchFragment extends TabFragment implements IPostFunctions, ExtendedWebView.JsLifeCycleListener {
     protected final static String JS_INTERFACE = "ISearch";
     private boolean scrollButtonEnable = App.getInstance().getPreferences().getBoolean(Preferences.Main.SCROLL_BUTTON_ENABLE, false);
     private ViewGroup searchSettingsView;
@@ -208,7 +209,6 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
         webView.addJavascriptInterface(this, JS_INTERFACE);
         webView.addJavascriptInterface(this, JS_POSTS_FUNCTIONS);
-        webView.addJavascriptInterface(this, JS_BASE_INTERFACE);
         webView.setRelativeFontSize(Preferences.Main.getWebViewSize());
         recyclerView = new RecyclerView(getContext());
 
@@ -676,34 +676,18 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
         unregisterForContextMenu(webView);
         webView.removeJavascriptInterface(JS_INTERFACE);
         webView.removeJavascriptInterface(JS_POSTS_FUNCTIONS);
-        webView.removeJavascriptInterface(JS_BASE_INTERFACE);
         webView.destroy();
         getMainActivity().getWebViewsProvider().push(webView);
     }
 
-
     @Override
-    @JavascriptInterface
-    public void playClickEffect() {
-        run(this::tryPlayClickEffect);
+    public void onDomContentComplete(final ArrayList<String> actions) {
+        Log.e("console", "DOMContentLoaded");
     }
 
     @Override
-    @JavascriptInterface
-    public void domContentLoaded() {
-        run(() -> {
-            Log.e("console", "DOMContentLoaded");
-            webView.evalJs("nativeEvents.onNativeDomComplete();");
-        });
-    }
-
-    @Override
-    @JavascriptInterface
-    public void onPageLoaded() {
-        run(() -> {
-            Log.e("console", "onPageLoaded");
-            webView.evalJs("nativeEvents.onNativePageComplete()");
-        });
+    public void onPageComplete(final ArrayList<String> actions) {
+        Log.e("console", "onPageLoaded");
     }
 
     private class SearchWebViewClient extends WebViewClient {
@@ -735,46 +719,42 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
 
     @JavascriptInterface
     public void showUserMenu(final String postId) {
-        run(() -> showUserMenu(getPostById(Integer.parseInt(postId))));
+        webView.run(() -> showUserMenu(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void showReputationMenu(final String postId) {
-        run(() -> showReputationMenu(getPostById(Integer.parseInt(postId))));
+        webView.run(() -> showReputationMenu(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void showPostMenu(final String postId) {
-        run(() -> showPostMenu(getPostById(Integer.parseInt(postId))));
+        webView.run(() -> showPostMenu(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void insertNick(final String postId) {
-        run(() -> insertNick(getPostById(Integer.parseInt(postId))));
+        webView.run(() -> insertNick(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void quotePost(final String text, final String postId) {
-        run(() -> quotePost(text, getPostById(Integer.parseInt(postId))));
+        webView.run(() -> quotePost(text, getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void deletePost(final String postId) {
-        run(() -> deletePost(getPostById(Integer.parseInt(postId))));
+        webView.run(() -> deletePost(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void editPost(final String postId) {
-        run(() -> editPost(getPostById(Integer.parseInt(postId))));
+        webView.run(() -> editPost(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void votePost(final String postId, final boolean type) {
-        run(() -> votePost(getPostById(Integer.parseInt(postId)), type));
-    }
-
-    public void run(final Runnable runnable) {
-        getMainActivity().runOnUiThread(runnable);
+        webView.run(() -> votePost(getPostById(Integer.parseInt(postId)), type));
     }
 
     @Override
@@ -832,6 +812,6 @@ public class SearchFragment extends TabFragment implements IPostFunctions, IBase
 
     @JavascriptInterface
     public void toast(final String text) {
-        run(() -> Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show());
+        webView.run(() -> Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show());
     }
 }
