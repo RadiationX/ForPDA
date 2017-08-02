@@ -413,121 +413,121 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
     @JavascriptInterface
     @Override
     public void firstPage() {
-        webView.run(super::firstPage);
+        webView.runInUiThread(super::firstPage);
     }
 
     @JavascriptInterface
     @Override
     public void prevPage() {
-        webView.run(super::prevPage);
+        webView.runInUiThread(super::prevPage);
     }
 
     @JavascriptInterface
     @Override
     public void nextPage() {
-        webView.run(super::nextPage);
+        webView.runInUiThread(super::nextPage);
     }
 
     @JavascriptInterface
     @Override
     public void lastPage() {
-        webView.run(super::lastPage);
+        webView.runInUiThread(super::lastPage);
     }
 
     @JavascriptInterface
     @Override
     public void selectPage() {
-        webView.run(super::selectPage);
+        webView.runInUiThread(super::selectPage);
     }
 
     @JavascriptInterface
     @Override
     public void showUserMenu(final String postId) {
-        webView.run(() -> super.showUserMenu(postId));
+        webView.runInUiThread(() -> super.showUserMenu(postId));
     }
 
     @JavascriptInterface
     @Override
     public void showReputationMenu(final String postId) {
-        webView.run(() -> super.showReputationMenu(postId));
+        webView.runInUiThread(() -> super.showReputationMenu(postId));
     }
 
     @JavascriptInterface
     @Override
     public void showPostMenu(final String postId) {
-        webView.run(() -> super.showPostMenu(postId));
+        webView.runInUiThread(() -> super.showPostMenu(postId));
     }
 
     @JavascriptInterface
     @Override
     public void reportPost(final String postId) {
-        webView.run(() -> super.reportPost(postId));
+        webView.runInUiThread(() -> super.reportPost(postId));
     }
 
     @JavascriptInterface
     @Override
     public void insertNick(final String postId) {
-        webView.run(() -> super.insertNick(postId));
+        webView.runInUiThread(() -> super.insertNick(postId));
     }
 
     @JavascriptInterface
     @Override
     public void quotePost(final String text, final String postId) {
-        webView.run(() -> super.quotePost(text, postId));
+        webView.runInUiThread(() -> super.quotePost(text, postId));
     }
 
     @JavascriptInterface
     @Override
     public void deletePost(final String postId) {
-        webView.run(() -> super.deletePost(postId));
+        webView.runInUiThread(() -> super.deletePost(postId));
     }
 
     @JavascriptInterface
     @Override
     public void editPost(final String postId) {
-        webView.run(() -> super.editPost(postId));
+        webView.runInUiThread(() -> super.editPost(postId));
     }
 
     @JavascriptInterface
     @Override
     public void votePost(final String postId, final boolean type) {
-        webView.run(() -> super.votePost(postId, type));
+        webView.runInUiThread(() -> super.votePost(postId, type));
     }
 
     @JavascriptInterface
     @Override
     public void setHistoryBody(final String index, final String body) {
-        webView.run(() -> super.setHistoryBody(index, body));
+        webView.runInUiThread(() -> super.setHistoryBody(index, body));
     }
 
     @JavascriptInterface
     @Override
     public void copySelectedText(final String text) {
-        webView.run(() -> super.copySelectedText(text));
+        webView.runInUiThread(() -> super.copySelectedText(text));
     }
 
     @JavascriptInterface
     @Override
     public void toast(final String text) {
-        webView.run(() -> super.toast(text));
+        webView.runInUiThread(() -> super.toast(text));
     }
 
     @JavascriptInterface
     @Override
     public void log(final String text) {
-        webView.run(() -> super.log(text));
+        webView.runInUiThread(() -> super.log(text));
     }
 
     @JavascriptInterface
     @Override
     public void showPollResults() {
-        webView.run(super::showPollResults);
+        webView.runInUiThread(super::showPollResults);
     }
 
     @JavascriptInterface
     @Override
     public void showPoll() {
-        webView.run(super::showPoll);
+        webView.runInUiThread(super::showPoll);
     }
 
     @Override
@@ -537,7 +537,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
 
     @JavascriptInterface
     public void copySpoilerLink(String postId, String spoilNumber) {
-        webView.run(() -> {
+        webView.runInUiThread(() -> {
             Toast.makeText(getContext(), "Ссылка на спойлер скопирована", Toast.LENGTH_SHORT).show();
             IBaseForumPost post = getPostById(Integer.parseInt(postId));
             String s = "http://4pda.ru/forum/index.php?act=findpost&pid=" + post.getId() + "&anchor=Spoil-" + post.getId() + "-" + spoilNumber;
@@ -547,7 +547,8 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
 
     @JavascriptInterface
     public void setPollOpen(String sValue) {
-        webView.run(() -> {
+
+        webView.runInUiThread(() -> {
             boolean value = Boolean.parseBoolean(sValue);
             currentPage.setPollOpen(value);
         });
@@ -555,7 +556,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
 
     @JavascriptInterface
     public void setHatOpen(String sValue) {
-        webView.run(() -> {
+        webView.runInUiThread(() -> {
             boolean value = Boolean.parseBoolean(sValue);
             currentPage.setHatOpen(value);
         });

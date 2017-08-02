@@ -53,7 +53,6 @@ import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
-import forpdateam.ru.forpda.fragments.jsinterfaces.IBase;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.fragments.theme.ThemeDialogsHelper;
 import forpdateam.ru.forpda.fragments.theme.ThemeHelper;
@@ -719,42 +718,42 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
     @JavascriptInterface
     public void showUserMenu(final String postId) {
-        webView.run(() -> showUserMenu(getPostById(Integer.parseInt(postId))));
+        webView.runInUiThread(() -> showUserMenu(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void showReputationMenu(final String postId) {
-        webView.run(() -> showReputationMenu(getPostById(Integer.parseInt(postId))));
+        webView.runInUiThread(() -> showReputationMenu(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void showPostMenu(final String postId) {
-        webView.run(() -> showPostMenu(getPostById(Integer.parseInt(postId))));
+        webView.runInUiThread(() -> showPostMenu(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void insertNick(final String postId) {
-        webView.run(() -> insertNick(getPostById(Integer.parseInt(postId))));
+        webView.runInUiThread(() -> insertNick(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void quotePost(final String text, final String postId) {
-        webView.run(() -> quotePost(text, getPostById(Integer.parseInt(postId))));
+        webView.runInUiThread(() -> quotePost(text, getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void deletePost(final String postId) {
-        webView.run(() -> deletePost(getPostById(Integer.parseInt(postId))));
+        webView.runInUiThread(() -> deletePost(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void editPost(final String postId) {
-        webView.run(() -> editPost(getPostById(Integer.parseInt(postId))));
+        webView.runInUiThread(() -> editPost(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void votePost(final String postId, final boolean type) {
-        webView.run(() -> votePost(getPostById(Integer.parseInt(postId)), type));
+        webView.runInUiThread(() -> votePost(getPostById(Integer.parseInt(postId)), type));
     }
 
     @Override
@@ -812,6 +811,6 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
     @JavascriptInterface
     public void toast(final String text) {
-        webView.run(() -> Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show());
+        webView.runInUiThread(() -> Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show());
     }
 }

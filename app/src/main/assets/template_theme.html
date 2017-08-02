@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+
 <head>
     <title>${topic_title}</title>
     <script type="text/javascript">
@@ -24,6 +25,7 @@
         function setPaddingBottom(newPadding) {
             document.getElementById("padding_for_message_panel").style.paddingBottom = Number(newPadding) + "px";
         }
+
     </script>
     <script type="text/javascript" src="file:///android_asset/forpda/scripts/main.js"></script>
     <script type="text/javascript" src="file:///android_asset/forpda/scripts/modules/posts_functions.js"></script>
@@ -49,7 +51,9 @@
                     <div class="title">${question_title}</div>
                     <div class="items">
                         <!-- $BeginBlock poll_default_item -->
-                        <label class="item ${poll_type} aec"><input type="${question_item_type}" name="${question_item_name}" value="${question_item_value}"><i class="icon"><i class="add"></i></i><span class="title"><span>${question_item_title}</span></span></label>
+                        <label class="item ${poll_type} aec">
+                            <input type="${question_item_type}" name="${question_item_name}" value="${question_item_value}"><i class="icon"><i class="add"></i></i><span class="title"><span>${question_item_title}</span></span>
+                        </label>
                         <!-- $EndBlock poll_default_item -->
                         <!-- $BeginBlock poll_result_item -->
                         <div class="item ${poll_type}">
@@ -68,7 +72,8 @@
             <div class="votes_info"><span>Всего голосов: ${poll_votes_count}</span></div>
             <!-- $BeginBlock poll_buttons -->
             <div class="buttons">
-                <!-- $BeginBlock poll_vote_button --><button type="submit" class="btn vote aec"><span>Голосовать</span></button>
+                <!-- $BeginBlock poll_vote_button -->
+                <button type="submit" class="btn vote aec"><span>Голосовать</span></button>
                 <!-- $EndBlock poll_vote_button -->
                 <!-- $BeginBlock poll_show_results_button --><a class="btn show_results aec" onclick="ITheme.showPollResults()"><span>Результаты</span></a>
                 <!-- $EndBlock poll_show_results_button -->
@@ -126,18 +131,18 @@
         </div>
         <!-- $EndBlock post -->
     </div>
-    <!--<div class="panel bottom ${navigation_disable}">
     <div class="navigation">
-        <a class="btn first" onclick="ITheme.firstPage()" ${first_disable}><i class="icon"></i></a>
-        <a class="btn prev" onclick="ITheme.prevPage()" ${prev_disable}><i class="icon"></i></a>
-        <a class="btn page" onclick="ITheme.selectPage()"><b>Выбор</b><i class="icon"></i></a>
-        <a class="btn next" onclick="ITheme.nextPage()" ${next_disable}><i class="icon"></i></a>
-        <a class="btn last" onclick="ITheme.lastPage()" ${last_disable}><i class="icon"></i></a>
+        <span class="button first" onclick="ITheme.firstPage()" ${first_disable}><i class="icon"></i></span>
+        <span class="button prev" onclick="ITheme.prevPage()" ${prev_disable}><i class="icon"></i></span>
+        <span class="button page" onclick="ITheme.selectPage()"><b>Выбор</b><i class="icon"></i></span>
+        <span class="button next" onclick="ITheme.nextPage()" ${next_disable}><i class="icon"></i></span>
+        <span class="button last" onclick="ITheme.lastPage()" ${last_disable}><i class="icon"></i></span>
     </div>
-</div>-->
     <div id="padding_for_message_panel" style="padding-bottom: 0em;"></div>
     <script type="text/javascript">
         jsEmoticons.parseAll("file:///android_asset/smiles/")
+
     </script>
 </body>
+
 </html>
