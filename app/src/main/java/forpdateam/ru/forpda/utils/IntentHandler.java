@@ -211,14 +211,15 @@ public class IntentHandler {
         if (param != null || uri.toString().matches("act=idx")) {
             run("showforum " + (param == null ? "-1" : param));
             int id = param == null ? -1 : Integer.parseInt(param);
-            if (!ForumFragment.checkIsLink(id)) {
+            /*if (!ForumFragment.checkIsLink(id)) {
                 args.putInt(ForumFragment.ARG_FORUM_ID, id);
                 TabManager.getInstance().add(new TabFragment.Builder<>(ForumFragment.class).setArgs(args).build());
             } else {
-                args.putInt(TopicsFragment.TOPICS_ID_ARG, id);
-                TabManager.getInstance().add(new TabFragment.Builder<>(TopicsFragment.class).setArgs(args).build());
-                run("show topics in forum");
-            }
+
+            }*/
+            args.putInt(TopicsFragment.TOPICS_ID_ARG, id);
+            TabManager.getInstance().add(new TabFragment.Builder<>(TopicsFragment.class).setArgs(args).build());
+            run("show topics in forum");
             return true;
         }
         param = uri.getQueryParameter("act");

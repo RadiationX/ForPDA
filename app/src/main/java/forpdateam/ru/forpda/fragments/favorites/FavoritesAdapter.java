@@ -136,8 +136,8 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
         IFavItem item = sections.get(section).second.get(relativePosition);
         holder.title.setText(item.getTopicTitle());
 
-        holder.title.setTypeface(item.isNewMessages() || item.isForum() ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
-        holder.title.setTextColor(item.isNewMessages() || item.isForum() ? titleColorNew : titleColor);
+        holder.title.setTypeface(item.isNewMessages() ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+        holder.title.setTextColor(item.isNewMessages() ? titleColorNew : titleColor);
         holder.dot.setVisibility(showDot && item.isNewMessages() ? View.VISIBLE : View.GONE);
 
 

@@ -820,6 +820,9 @@ button:active,
   -webkit-transition: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   transition: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
+.post_container .post_header .inf.menu:active {
+  background-color: transparent;
+}
 .post_container .post_header .inf.menu:active:before {
   opacity: 0.05;
   -webkit-transform: scale(1) translateZ(0);
@@ -993,10 +996,10 @@ button:active,
 .navigation .button.disabled > .icon {
   opacity: 0.31;
 }
-.navigation .button.page > .icon {
+.navigation .button.hidden {
   display: none;
 }
-.navigation .button.first {
+.navigation .button.page > .icon {
   display: none;
 }
 .navigation .button.first > .icon {
@@ -1007,9 +1010,6 @@ button:active,
 }
 .navigation .button.next > .icon {
   background-image: url("../../res/light/chevron-right.svg");
-}
-.navigation .button.last {
-  display: none;
 }
 .navigation .button.last > .icon {
   background-image: url("../../res/light/chevron-double-right.svg");
@@ -1027,9 +1027,6 @@ button:active,
   }
 }
 @media all and (max-width: 14rem) {
-  .navigation {
-    display: block;
-  }
   .poll > .title {
     padding-left: 0.5rem;
     /*>span{
@@ -1085,4 +1082,14 @@ button:active,
         border-bottom: @border1;
         padding-bottom: 8/16rem;
     }*/
+}
+@media all and (min-width: 11.5rem) {
+  .navigation .button:not(.hidden) + .button {
+    margin-left: 0;
+  }
+}
+@media all and (max-width: 11.5rem) {
+  .navigation {
+    display: block;
+  }
 }
