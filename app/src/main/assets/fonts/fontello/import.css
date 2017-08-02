@@ -23,7 +23,7 @@
     text-transform: none;
 }
 
-* .icon-hash:before {
+.icon-hash:before {
     content: '\23';
 }
 /* '#' */

@@ -5,8 +5,6 @@ import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
@@ -20,8 +18,6 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,10 +27,9 @@ import forpdateam.ru.forpda.api.IBaseForumPost;
 import forpdateam.ru.forpda.api.theme.Theme;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
-import forpdateam.ru.forpda.fragments.jsinterfaces.IBase;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
-import forpdateam.ru.forpda.utils.ExtendedWebView;
+import forpdateam.ru.forpda.views.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 
@@ -42,40 +37,29 @@ import forpdateam.ru.forpda.utils.Utils;
  * Created by radiationx on 20.10.16.
  */
 
-public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, IBase {
+public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, ExtendedWebView.JsLifeCycleListener {
     private final static String JS_INTERFACE = "ITheme";
     private ExtendedWebView webView;
     private WebViewClient webViewClient;
     private WebChromeClient chromeClient;
-    private boolean isWebViewReady = false;
-    private Handler actionsHandler = new Handler(Looper.getMainLooper());
-    private Queue<Runnable> actionsForWebView = new LinkedList<>();
 
     @Override
     public void scrollToAnchor(String anchor) {
         webView.evalJs("scrollToElement(\"" + anchor + "\")");
     }
 
-    private void syncWithWebView(Runnable runnable) {
-        if (!isWebViewReady) {
-            actionsForWebView.add(runnable);
-        } else {
-            actionsHandler.post(runnable);
-        }
-    }
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void addShowingView() {
 
         messagePanel.setHeightChangeListener(newHeight -> {
-            syncWithWebView(() -> webView.setPaddingBottom(newHeight));
+            webView.setPaddingBottom(newHeight);
         });
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
         refreshLayout.addView(webView);
         webView.addJavascriptInterface(this, JS_INTERFACE);
         webView.addJavascriptInterface(this, JS_POSTS_FUNCTIONS);
-        webView.addJavascriptInterface(this, JS_BASE_INTERFACE);
         registerForContextMenu(webView);
         fab.setOnClickListener(v -> {
             if (webView.getDirection() == ExtendedWebView.DIRECTION_DOWN) {
@@ -145,7 +129,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
             webView.setWebChromeClient(chromeClient);
         }
         webView.loadDataWithBaseURL("http://4pda.ru/forum/", currentPage.getHtml(), "text/html", "utf-8", null);
-        syncWithWebView(() -> webView.updatePaddingBottom());
+        webView.updatePaddingBottom();
     }
 
     @Override
@@ -200,7 +184,6 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
         unregisterForContextMenu(webView);
         webView.removeJavascriptInterface(JS_INTERFACE);
         webView.removeJavascriptInterface(JS_POSTS_FUNCTIONS);
-        webView.removeJavascriptInterface(JS_BASE_INTERFACE);
         webView.destroy();
         getMainActivity().getWebViewsProvider().push(webView);
     }
@@ -405,40 +388,20 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
             }
             return true;
         }
-
-
     }
 
 
-    @JavascriptInterface
-    public void domContentLoaded() {
-        run(() -> {
-            isWebViewReady = true;
-            for (Runnable runnable : actionsForWebView) {
-                try {
-                    actionsHandler.post(runnable);
-                } catch (Exception ignore) {
-                }
-            }
-            Log.e("console", "DOMContentLoaded");
-            String script = "";
-            script += "setLoadAction(" + loadAction + ");";
-            script += "setLoadScrollY(" + ((int) (currentPage.getScrollY() / App.getInstance().getDensity())) + ");";
-            script += "nativeEvents.onNativeDomComplete();";
-            webView.evalJs(script);
-        });
+    @Override
+    public void onDomContentComplete(final ArrayList<String> actions) {
+        Log.e("console", "DOMContentLoaded");
+        actions.add("setLoadAction(" + loadAction + ");");
+        actions.add("setLoadScrollY(" + ((int) (currentPage.getScrollY() / App.getInstance().getDensity())) + ");");
     }
 
-    @JavascriptInterface
-    public void onPageLoaded() {
-        run(() -> {
-            setAction(NORMAL_ACTION);
-            Log.e("console", "onPageLoaded");
-            String script = "";
-            script += "setLoadAction(" + NORMAL_ACTION + ");";
-            script += "nativeEvents.onNativePageComplete()";
-            webView.evalJs(script);
-        });
+    @Override
+    public void onPageComplete(final ArrayList<String> actions) {
+        setAction(NORMAL_ACTION);
+        actions.add("setLoadAction(" + NORMAL_ACTION + ");");
     }
 
     /*
@@ -448,128 +411,123 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
     * */
 
     @JavascriptInterface
-    public void playClickEffect() {
-        run(this::tryPlayClickEffect);
-    }
-
-    @JavascriptInterface
     @Override
     public void firstPage() {
-        run(super::firstPage);
+        webView.run(super::firstPage);
     }
 
     @JavascriptInterface
     @Override
     public void prevPage() {
-        run(super::prevPage);
+        webView.run(super::prevPage);
     }
 
     @JavascriptInterface
     @Override
     public void nextPage() {
-        run(super::nextPage);
+        webView.run(super::nextPage);
     }
 
     @JavascriptInterface
     @Override
     public void lastPage() {
-        run(super::lastPage);
+        webView.run(super::lastPage);
     }
 
     @JavascriptInterface
     @Override
     public void selectPage() {
-        run(super::selectPage);
+        webView.run(super::selectPage);
     }
 
     @JavascriptInterface
     @Override
     public void showUserMenu(final String postId) {
-        run(() -> super.showUserMenu(postId));
+        webView.run(() -> super.showUserMenu(postId));
     }
 
     @JavascriptInterface
     @Override
     public void showReputationMenu(final String postId) {
-        run(() -> super.showReputationMenu(postId));
+        webView.run(() -> super.showReputationMenu(postId));
     }
 
     @JavascriptInterface
     @Override
     public void showPostMenu(final String postId) {
-        run(() -> super.showPostMenu(postId));
+        webView.run(() -> super.showPostMenu(postId));
     }
 
     @JavascriptInterface
     @Override
     public void reportPost(final String postId) {
-        run(() -> super.reportPost(postId));
+        webView.run(() -> super.reportPost(postId));
     }
 
     @JavascriptInterface
     @Override
     public void insertNick(final String postId) {
-        run(() -> super.insertNick(postId));
+        webView.run(() -> super.insertNick(postId));
     }
 
     @JavascriptInterface
     @Override
     public void quotePost(final String text, final String postId) {
-        run(() -> super.quotePost(text, postId));
+        webView.run(() -> super.quotePost(text, postId));
     }
 
     @JavascriptInterface
     @Override
     public void deletePost(final String postId) {
-        run(() -> super.deletePost(postId));
+        webView.run(() -> super.deletePost(postId));
     }
 
     @JavascriptInterface
     @Override
     public void editPost(final String postId) {
-        run(() -> super.editPost(postId));
+        webView.run(() -> super.editPost(postId));
     }
 
     @JavascriptInterface
     @Override
     public void votePost(final String postId, final boolean type) {
-        run(() -> super.votePost(postId, type));
+        webView.run(() -> super.votePost(postId, type));
     }
 
     @JavascriptInterface
     @Override
     public void setHistoryBody(final String index, final String body) {
-        run(() -> super.setHistoryBody(index, body));
+        webView.run(() -> super.setHistoryBody(index, body));
     }
 
     @JavascriptInterface
     @Override
     public void copySelectedText(final String text) {
-        run(() -> super.copySelectedText(text));
+        webView.run(() -> super.copySelectedText(text));
     }
 
     @JavascriptInterface
     @Override
     public void toast(final String text) {
-        run(() -> super.toast(text));
+        webView.run(() -> super.toast(text));
     }
 
     @JavascriptInterface
     @Override
     public void log(final String text) {
-        run(() -> super.log(text));
+        webView.run(() -> super.log(text));
     }
 
     @JavascriptInterface
     @Override
     public void showPollResults() {
-        run(super::showPollResults);
+        webView.run(super::showPollResults);
     }
 
     @JavascriptInterface
     @Override
     public void showPoll() {
-        run(super::showPoll);
+        webView.run(super::showPoll);
     }
 
     @Override
@@ -579,7 +537,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
 
     @JavascriptInterface
     public void copySpoilerLink(String postId, String spoilNumber) {
-        run(() -> {
+        webView.run(() -> {
             Toast.makeText(getContext(), "Ссылка на спойлер скопирована", Toast.LENGTH_SHORT).show();
             IBaseForumPost post = getPostById(Integer.parseInt(postId));
             String s = "http://4pda.ru/forum/index.php?act=findpost&pid=" + post.getId() + "&anchor=Spoil-" + post.getId() + "-" + spoilNumber;
@@ -589,7 +547,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
 
     @JavascriptInterface
     public void setPollOpen(String sValue) {
-        run(() -> {
+        webView.run(() -> {
             boolean value = Boolean.parseBoolean(sValue);
             currentPage.setPollOpen(value);
         });
@@ -597,16 +555,10 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, I
 
     @JavascriptInterface
     public void setHatOpen(String sValue) {
-        run(() -> {
+        webView.run(() -> {
             boolean value = Boolean.parseBoolean(sValue);
             currentPage.setHatOpen(value);
         });
     }
 
-
-    public void run(final Runnable runnable) {
-        if (getMainActivity() != null) {
-            getMainActivity().runOnUiThread(runnable);
-        }
-    }
 }

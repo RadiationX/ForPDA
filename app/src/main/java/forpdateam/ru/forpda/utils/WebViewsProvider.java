@@ -9,6 +9,8 @@ import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import forpdateam.ru.forpda.views.ExtendedWebView;
+
 /**
  * Created by radiationx on 11.06.17.
  */
