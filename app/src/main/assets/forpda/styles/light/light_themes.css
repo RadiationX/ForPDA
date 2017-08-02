@@ -934,19 +934,28 @@ button:active,
   background: #ffffff;
   margin: 0.5em 0;
   box-shadow: 0rem 0.0625rem 0.0625rem rgba(0, 0, 0, 0.12), 0rem 0rem 0.0625rem rgba(0, 0, 0, 0.12);
-  display: table;
-  border-spacing: 0px;
-  padding: 0;
-  width: 100%;
-  border-spacing: 0.5rem 0.5rem;
+  display: flex;
+  overflow: hidden;
+}
+.navigation.disabled {
+  display: none;
 }
 .navigation .button {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   height: 2.25rem;
-  box-sizing: border-box;
   margin: 0.375rem 0.5rem;
-  border-radius: 2px;
+  padding: 0.375rem 0.5rem;
+  display: block;
+  flex: 1 1 auto;
+  box-sizing: border-box;
+  -webkit-border-radius: 0.125rem;
+  border-radius: 0.125rem;
   position: relative;
-  display: table-cell;
   vertical-align: middle;
   white-space: nowrap;
   text-align: center;
@@ -963,7 +972,11 @@ button:active,
   background-size: 1.5rem;
   background-repeat: no-repeat;
 }
-.navigation .button:active {
+.navigation .button > b {
+  padding: 0.125rem 0;
+  display: inline-block;
+}
+.navigation .button:not(.disabled):active {
   background: rgba(0, 0, 0, 0.05);
 }
 .navigation .button:before {
@@ -976,6 +989,9 @@ button:active,
   margin: -0.375rem -0.5rem;
   /*background: red;
                 opacity: 0.05;*/
+}
+.navigation .button.disabled > .icon {
+  opacity: 0.31;
 }
 .navigation .button.page > .icon {
   display: none;
@@ -1011,6 +1027,9 @@ button:active,
   }
 }
 @media all and (max-width: 14rem) {
+  .navigation {
+    display: block;
+  }
   .poll > .title {
     padding-left: 0.5rem;
     /*>span{

@@ -10,8 +10,79 @@ body {
     word-wrap: break-word;
     font-family: sans-serif;
 }
-.panel {
-    
+.navigation {
+    background: white;
+    width: 100%;
+    display: flex;
+    .button {
+        height: 36/16rem;
+        box-sizing: border-box;
+        margin: 6/16rem 8/16rem;
+        border-radius: 2px;
+        position: relative;
+        background: blue;
+        flex: 1 1 auto;
+        //display: table-cell;
+        //vertical-align: middle;
+        //white-space: nowrap;
+        text-align: center;
+        text-transform: uppercase;
+        color: #000;
+        font-size: 14/16rem;
+        padding: 6/16rem 8/16rem;
+        display: block;
+        >.icon {
+            height: 24/16rem;
+            width: 24/16rem;
+            display: block;
+            margin: 0 auto;
+            background: red;
+            background-position: center;
+            background-size: 24/16rem;
+            background-repeat: no-repeat;
+        }
+        &:active {
+            background: red;
+        }
+        &:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            margin: -6/16rem -8/16rem;
+            /*background: red;
+                opacity: 0.05;*/
+        }
+        &.page {
+            >.icon {
+                display: none;
+            }
+        }
+        &.first {
+            display: none;
+            >.icon {
+                //background-image: url(@arrow_double_left);
+            }
+        }
+        &.prev {
+            >.icon {
+                //background-image: url(@arrow_left);
+            }
+        }
+        &.next {
+            >.icon {
+                //background-image: url(@arrow_right);
+            }
+        }
+        &.last {
+            display: none;
+            >.icon {
+                //background-image: url(@arrow_double_right);
+            }
+        }
+    }
 }
 .post_body {
     margin: 2rem 0;
