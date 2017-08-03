@@ -541,7 +541,7 @@ button,
         opacity: 0;
     }
     20% {
-        opacity: 0.25;
+        opacity: @postFlashOpacity;
     }
     100% {
         opacity: 0;
@@ -897,7 +897,7 @@ button,
         top: 0;
         height: 100%;
         width: 100%;
-        background: black;
+        background: @postFlashColor;
         z-index: 10;
         opacity: 0;
         pointer-events: none;

@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.fragments.theme;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -32,6 +33,8 @@ import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
 import forpdateam.ru.forpda.views.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 /**
  * Created by radiationx on 20.10.16.
@@ -102,6 +105,13 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
                     .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_select_all))
                     .setOnMenuItemClickListener(item -> {
                         webView.evalJs("selectAllPostText()");
+                        return true;
+                    })
+                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            menu.add("Поделиться")
+                    .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_select_all))
+                    .setOnMenuItemClickListener(item -> {
+                        webView.evalJs("shareSelectedText()");
                         return true;
                     })
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
@@ -561,6 +571,17 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
         webView.runInUiThread(() -> {
             boolean value = Boolean.parseBoolean(sValue);
             currentPage.setHatOpen(value);
+        });
+    }
+
+    @JavascriptInterface
+    public void shareSelectedText(String text) {
+        webView.runInUiThread(() -> {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+            sendIntent.setType("text/plain");
+            startActivity(Intent.createChooser(sendIntent, "Поделиться"));
         });
     }
 

@@ -182,6 +182,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public void evalJs(String script) {
+        Log.d("EWV", "evalJs: " + script);
         try {
             evalJs(script, null);
         } catch (Exception error) {
@@ -271,6 +272,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     }
 
     public final void runInUiThread(final Runnable action) {
+        Log.d("EWV", "runInUiThread " + (Thread.currentThread() != mUiThread));
         if (Thread.currentThread() != mUiThread) {
             mHandler.post(action);
         } else {
@@ -290,10 +292,15 @@ public class ExtendedWebView extends NestedWebView implements IBase {
 
 
     public void syncWithJs(final Runnable runnable) {
+        Log.d("EWV", "syncWithJs " + isJsReady);
         if (!isJsReady) {
             actionsForWebView.add(runnable);
         } else {
-            mHandler.post(runnable);
+            try {
+                runnable.run();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
