@@ -156,6 +156,14 @@ function copySelectedText() {
     }
 }
 
+function shareSelectedText() {
+    var selectedText = window.getSelection().toString();
+    if (selectedText != null && selectedText) {
+        ITheme.shareSelectedText(selectedText);
+    }
+}
+
+
 function selectAllPostText() {
     var selObj = window.getSelection();
     var p = selObj.anchorNode.parentNode;

@@ -532,7 +532,7 @@ button:active,
     opacity: 0;
   }
   20% {
-    opacity: 0.25;
+    opacity: 0.15;
   }
   100% {
     opacity: 0;
@@ -869,7 +869,7 @@ button:active,
   top: 0;
   height: 100%;
   width: 100%;
-  background: black;
+  background: #ffffff;
   z-index: 10;
   opacity: 0;
   pointer-events: none;
