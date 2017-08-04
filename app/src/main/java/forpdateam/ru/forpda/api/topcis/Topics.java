@@ -23,7 +23,7 @@ public class Topics {
 
     public TopicsData getTopics(int id, int st) throws Exception {
         TopicsData data = new TopicsData();
-        NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(id)).concat("&st=").concat(Integer.toString(st)));
+        NetworkResponse response = Api.getWebClient().get("https://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(id)).concat("&st=").concat(Integer.toString(st)));
 
         Matcher matcher = titlePattern.matcher(response.getBody());
         if (matcher.find()) {

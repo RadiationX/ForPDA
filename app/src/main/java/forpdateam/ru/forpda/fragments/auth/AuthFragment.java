@@ -166,7 +166,7 @@ public class AuthFragment extends TabFragment {
         animation1.setDuration(375);
         complete.startAnimation(animation1);
 
-        profileSubscriber.subscribe(RxApi.Profile().getProfile("http://4pda.ru/forum/index.php?showuser=".concat(Integer.toString(ClientHelper.getUserId()))), this::onProfileLoad, new ProfileModel());
+        profileSubscriber.subscribe(RxApi.Profile().getProfile("https://4pda.ru/forum/index.php?showuser=".concat(Integer.toString(ClientHelper.getUserId()))), this::onProfileLoad, new ProfileModel());
     }
 
     private void onProfileLoad(ProfileModel profile) {

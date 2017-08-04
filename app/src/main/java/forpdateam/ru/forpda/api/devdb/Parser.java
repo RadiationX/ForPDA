@@ -19,10 +19,10 @@ public class Parser {
 
     public static ArrayList<DevCatalog> getStandardDevicesTypes() {
         ArrayList<DevCatalog> res = new ArrayList<>();
-        res.add(new DevCatalog("http://4pda.ru/devdb/phones/", "Телефоны").setType(DevCatalog.DEVICE_TYPE));
-        res.add(new DevCatalog("http://4pda.ru/devdb/pad/", "Планшеты").setType(DevCatalog.DEVICE_TYPE));
-        res.add(new DevCatalog("http://4pda.ru/devdb/ebook/", "Электронные книги").setType(DevCatalog.DEVICE_TYPE));
-        res.add(new DevCatalog("http://4pda.ru/devdb/smartwatch/", "Смарт часы").setType(DevCatalog.DEVICE_TYPE));
+        res.add(new DevCatalog("https://4pda.ru/devdb/phones/", "Телефоны").setType(DevCatalog.DEVICE_TYPE));
+        res.add(new DevCatalog("https://4pda.ru/devdb/pad/", "Планшеты").setType(DevCatalog.DEVICE_TYPE));
+        res.add(new DevCatalog("https://4pda.ru/devdb/ebook/", "Электронные книги").setType(DevCatalog.DEVICE_TYPE));
+        res.add(new DevCatalog("https://4pda.ru/devdb/smartwatch/", "Смарт часы").setType(DevCatalog.DEVICE_TYPE));
         return res;
     }
 

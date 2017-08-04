@@ -32,7 +32,7 @@ import static forpdateam.ru.forpda.utils.Utils.log;
 public class NewsListFragment extends TabFragment implements INewsView, NewsListAdapter.OnItemClickListener,
         NewsListAdapter.OnItemLongClickListener, NewsListAdapter.OnLoadMoreCallback,
         NewsListAdapter.OnReloadDataListener {
-    private static final String LINk = "http://4pda.ru";
+    private static final String LINk = "https://4pda.ru";
     private static final String TAG = "NewsListFragment";
 
     private TextView text;

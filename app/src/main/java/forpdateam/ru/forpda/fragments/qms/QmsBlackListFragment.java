@@ -99,7 +99,7 @@ public class QmsBlackListFragment extends TabFragment {
     private void someClick(IQmsContact contact) {
         if (contactDialogMenu == null) {
             contactDialogMenu = new AlertDialogMenu<>();
-            contactDialogMenu.addItem("Профиль", (context, data) -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + data.getId()));
+            contactDialogMenu.addItem("Профиль", (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data.getId()));
             contactDialogMenu.addItem("Диалоги", (context, data) -> {
                 Bundle args = new Bundle();
                 args.putString(TabFragment.ARG_TITLE, data.getNick());

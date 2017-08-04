@@ -30,7 +30,7 @@ public class Favorites {
 
     public FavData getFavorites(int st) throws Exception {
         FavData data = new FavData();
-        NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=fav&st=".concat(Integer.toString(st)));
+        NetworkResponse response = Api.getWebClient().get("https://4pda.ru/forum/index.php?act=fav&st=".concat(Integer.toString(st)));
         long time = System.currentTimeMillis();
         Matcher matcher = mainPattern.matcher(response.getBody());
         FavItem item;
@@ -88,13 +88,13 @@ public class Favorites {
     }
 
     public boolean editSubscribeType(String type, int favId) throws Exception {
-        NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0&tact=" + type + "&selectedtids=" + favId);
+        NetworkResponse response = Api.getWebClient().get("https://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0&tact=" + type + "&selectedtids=" + favId);
         return checkIsComplete(response.getBody());
     }
 
     public boolean editPinState(String type, int favId) throws Exception {
         NetworkRequest.Builder builder = new NetworkRequest.Builder()
-                .url("http://4pda.ru/forum/index.php?act=fav")
+                .url("https://4pda.ru/forum/index.php?act=fav")
                 .formHeader("selectedtids", Integer.toString(favId))
                 .formHeader("tact", type);
         NetworkResponse response = Api.getWebClient().request(builder.build());
@@ -103,7 +103,7 @@ public class Favorites {
 
     public boolean delete(int favId) throws Exception {
         NetworkRequest.Builder builder = new NetworkRequest.Builder()
-                .url("http://4pda.ru/forum/index.php?act=fav")
+                .url("https://4pda.ru/forum/index.php?act=fav")
                 .xhrHeader()
                 .formHeader("selectedtids", Integer.toString(favId))
                 .formHeader("tact", "delete");
@@ -112,7 +112,7 @@ public class Favorites {
     }
 
     public boolean add(int id, String type) throws Exception {
-        NetworkResponse response = Api.getWebClient().request(new NetworkRequest.Builder().url("http://4pda.ru/forum/index.php?act=fav&type=add&t=" + id + "&track_type=" + type).build());
+        NetworkResponse response = Api.getWebClient().request(new NetworkRequest.Builder().url("https://4pda.ru/forum/index.php?act=fav&type=add&t=" + id + "&track_type=" + type).build());
         return checkIsComplete(response.getBody());
     }
 

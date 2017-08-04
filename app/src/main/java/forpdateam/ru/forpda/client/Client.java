@@ -249,7 +249,7 @@ public class Client implements IWebClient {
         Log.d("FORPDA_LOG", "request url " + request.getUrl());
         String url = request.getUrl();
         if (request.getUrl().substring(0, 2).equals("//")) {
-            url = "http:".concat(request.getUrl());
+            url = "https:".concat(request.getUrl());
             Log.d("FORPDA_LOG", "fixed request url " + request.getUrl());
         }
 

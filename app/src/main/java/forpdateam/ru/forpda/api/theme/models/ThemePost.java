@@ -22,6 +22,6 @@ public class ThemePost extends BaseForumPost implements IThemePost {
     }
 
     public void addAttachImage(String urlId, String name) {
-        attachImages.add(new Pair<>("http://".concat(urlId), name));
+        attachImages.add(new Pair<>("https://".concat(urlId), name));
     }
 }

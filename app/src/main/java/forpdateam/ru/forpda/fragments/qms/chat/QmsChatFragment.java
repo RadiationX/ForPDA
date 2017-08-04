@@ -301,7 +301,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         t.setVariableOpt("messages", "");
         String html = t.generateOutput();
         t.reset();
-        webView.loadDataWithBaseURL("http://4pda.ru/forum/", html, "text/html", "utf-8", null);
+        webView.loadDataWithBaseURL("https://4pda.ru/forum/", html, "text/html", "utf-8", null);
     }
 
 
@@ -380,7 +380,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         if (currentChat.getAvatarUrl() != null && currentChat.getUserId() != QmsChatModel.NOT_CREATED) {
             ImageLoader.getInstance().displayImage(currentChat.getAvatarUrl(), toolbarImageView);
             toolbarImageView.setVisibility(View.VISIBLE);
-            toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + currentChat.getUserId()));
+            toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + currentChat.getUserId()));
         } else {
             toolbarImageView.setVisibility(View.GONE);
         }

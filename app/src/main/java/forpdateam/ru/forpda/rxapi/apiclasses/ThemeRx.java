@@ -86,7 +86,7 @@ public class ThemeRx {
                 t.setVariableOpt("user_id", post.getUserId());
 
                 //Post header
-                //t.setVariableOpt("avatar", post.getAvatar().isEmpty() ? "file:///android_asset/av.png" : "http://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
+                //t.setVariableOpt("avatar", post.getAvatar().isEmpty() ? "file:///android_asset/av.png" : "https://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
                 t.setVariableOpt("avatar", post.getAvatar().isEmpty() ? "" : "http://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
                 t.setVariableOpt("none_avatar", post.getAvatar().isEmpty() ? "none_avatar" : "");
 

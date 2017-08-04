@@ -51,38 +51,38 @@ public class IntentHandler {
 
     /*
     *http://4pda.ru/forum/index.php?showuser=2556269
-    *http://4pda.ru/forum/index.php?showtopic=84979&view=getlastpost
-    *http://4pda.ru/forum/index.php?showtopic=84979&view=getnewpost
-    *http://4pda.ru/forum/index.php?showtopic=84979&view=findpost&p=51813850
-    *http://4pda.ru/forum/index.php?showtopic=84979&st=22460#entry51805351
-    *http://4pda.ru/forum/index.php?act=findpost&pid=51805351
-    *http://4pda.ru/forum/index.php?showforum=8&utm_source=ftmenu
-    *http://4pda.ru/forum/index.php?act=idx
-    *http://4pda.ru/forum/index.php?act=fav
-    *http://4pda.ru/forum/index.php?act=Members
-    *http://4pda.ru/forum/index.php?act=attach&code=showuser
-    *http://4pda.ru/forum/index.php?act=UserCP
-    *http://4pda.ru/forum/index.php?act=boardrules
-    *http://4pda.ru/forum/index.php?act=rep&view=history&mid=3916635
-    *http://4pda.ru/forum/index.php?act=qms
-    *http://4pda.ru/forum/index.php?act=qms&mid=5106086
-    *http://4pda.ru/forum/index.php?act=qms&mid=5106086&t=3127574
-    *http://4pda.ru/forum/index.php?act=Help
-    *http://4pda.ru/forum/index.php?act=search
-    *http://4pda.ru/forum/index.php?s=&act=Stats&view=who&t=84979
-    *http://4pda.ru/forum/index.php?act=search&query=hui&username=&forums%5B%5D=all&subforums=1&source=all&sort=rel&result=posts
-    *http://4pda.ru/devdb/
-    *http://4pda.ru/devdb/phones/
-    *http://4pda.ru/devdb/phones/acer
-    *http://4pda.ru/devdb/acer_liquid_z410_duo
-    *http://4pda.ru/special/polzovatelskoe-testirovanie-alcatel-idol-4s/
-    *http://4pda.ru
-    *http://4pda.ru/2016/08/04/315172/
-    *http://4pda.ru/reviews/tag/smart-watches/
-    *http://4pda.ru/articles/
-    *http://4pda.ru/pages/posts/3916635
-    *http://4pda.ru/pages/comments/3916635/
-    *http://4pda.ru/?s=hui
+    *https://4pda.ru/forum/index.php?showtopic=84979&view=getlastpost
+    *https://4pda.ru/forum/index.php?showtopic=84979&view=getnewpost
+    *https://4pda.ru/forum/index.php?showtopic=84979&view=findpost&p=51813850
+    *https://4pda.ru/forum/index.php?showtopic=84979&st=22460#entry51805351
+    *https://4pda.ru/forum/index.php?act=findpost&pid=51805351
+    *https://4pda.ru/forum/index.php?showforum=8&utm_source=ftmenu
+    *https://4pda.ru/forum/index.php?act=idx
+    *https://4pda.ru/forum/index.php?act=fav
+    *https://4pda.ru/forum/index.php?act=Members
+    *https://4pda.ru/forum/index.php?act=attach&code=showuser
+    *https://4pda.ru/forum/index.php?act=UserCP
+    *https://4pda.ru/forum/index.php?act=boardrules
+    *https://4pda.ru/forum/index.php?act=rep&view=history&mid=3916635
+    *https://4pda.ru/forum/index.php?act=qms
+    *https://4pda.ru/forum/index.php?act=qms&mid=5106086
+    *https://4pda.ru/forum/index.php?act=qms&mid=5106086&t=3127574
+    *https://4pda.ru/forum/index.php?act=Help
+    *https://4pda.ru/forum/index.php?act=search
+    *https://4pda.ru/forum/index.php?s=&act=Stats&view=who&t=84979
+    *https://4pda.ru/forum/index.php?act=search&query=hui&username=&forums%5B%5D=all&subforums=1&source=all&sort=rel&result=posts
+    *https://4pda.ru/devdb/
+    *https://4pda.ru/devdb/phones/
+    *https://4pda.ru/devdb/phones/acer
+    *https://4pda.ru/devdb/acer_liquid_z410_duo
+    *https://4pda.ru/special/polzovatelskoe-testirovanie-alcatel-idol-4s/
+    *https://4pda.ru
+    *https://4pda.ru/2016/08/04/315172/
+    *https://4pda.ru/reviews/tag/smart-watches/
+    *https://4pda.ru/articles/
+    *https://4pda.ru/pages/posts/3916635
+    *https://4pda.ru/pages/comments/3916635/
+    *https://4pda.ru/?s=hui
     * */
     private final static String FORUM_PATH = "forum";
     private final static String DEVDB_PATH = "forum";
@@ -98,9 +98,9 @@ public class IntentHandler {
             return false;
         }
         if (url.substring(0, 2).equals("//")) {
-            url = "http:".concat(url);
+            url = "https:".concat(url);
         } else if (url.substring(0, 1).equals("/")) {
-            url = "http://4pda.ru".concat(url);
+            url = "https://4pda.ru".concat(url);
         }
         url = url.replace("&amp;", "&").replace("\"", "").trim();
         Log.d("FORPDA_LOG", "after correct url " + url);
@@ -108,7 +108,7 @@ public class IntentHandler {
 
         if (url.matches("(?:http?s?:)?\\/\\/[\\s\\S]*?4pda\\.(?:ru|to)[\\s\\S]*")) {
             /*if (!url.contains("4pda.ru")||!url.contains("4pda.to")) {
-                url = "http://4pda.ru".concat(url.substring(0, 1).equals("/") ? "" : "/").concat(url);
+                url = "https://4pda.ru".concat(url.substring(0, 1).equals("/") ? "" : "/").concat(url);
             }*/
             Uri uri = Uri.parse(url.toLowerCase());
             Log.d("FORPDA_LOG", "HANDLE URL " + uri.toString() + " : " + url);

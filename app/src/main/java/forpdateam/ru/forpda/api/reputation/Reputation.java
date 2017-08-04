@@ -27,7 +27,7 @@ public class Reputation {
 
     public RepData getReputation(RepData data) throws Exception {
         if (data == null) return null;
-        NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=rep&view=history&mid=" + data.getId() + "&mode=" + data.getMode() + "&order=" + data.getSort() + "&st=" + data.getPagination().getSt());
+        NetworkResponse response = Api.getWebClient().get("https://4pda.ru/forum/index.php?act=rep&view=history&mid=" + data.getId() + "&mode=" + data.getMode() + "&order=" + data.getSort() + "&st=" + data.getPagination().getSt());
         Matcher matcher = infoPattern.matcher(response.getBody());
         if (matcher.find()) {
             data.setId(Integer.parseInt(matcher.group(1)));
@@ -64,7 +64,7 @@ public class Reputation {
 
     public String editReputation(int postId, int userId, boolean type, String message) throws Exception {
         NetworkRequest.Builder builder = new NetworkRequest.Builder()
-                .url("http://4pda.ru/forum/index.php")
+                .url("https://4pda.ru/forum/index.php")
                 .formHeader("act", "rep")
                 .formHeader("mid", Integer.toString(userId))
                 .formHeader("type", type ? "add" : "minus")

@@ -78,19 +78,19 @@ public class TopicsFragment extends TabFragment {
         adapter.setOnItemClickListener(item -> {
             if (item.isAnnounce()) return;
             if (item.isForum()) {
-                IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + item.getId());
+                IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + item.getId());
                 return;
             }
             Bundle args = new Bundle();
             args.putString(TabFragment.ARG_TITLE, item.getTitle());
-            IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=" + item.getId() + "&view=getnewpost", args);
+            IntentHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + item.getId() + "&view=getnewpost", args);
         });
         adapter.setOnLongItemClickListener(item -> {
             if (item.isAnnounce()) return;
             if (topicsDialogMenu == null) {
                 topicsDialogMenu = new AlertDialogMenu<>();
-                topicsDialogMenu.addItem("Скопировать ссылку", (context, data1) -> Utils.copyToClipBoard("http://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data1.getId()))));
-                topicsDialogMenu.addItem("Открыть форум темы", (context, data1) -> IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + data.getId()));
+                topicsDialogMenu.addItem("Скопировать ссылку", (context, data1) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data1.getId()))));
+                topicsDialogMenu.addItem("Открыть форум темы", (context, data1) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getId()));
                 topicsDialogMenu.addItem("Добавить в избранное", ((context, data1) -> {
                     new AlertDialog.Builder(context.getContext())
                             .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> {

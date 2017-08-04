@@ -208,7 +208,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             @Override
             public void onSelectedPage(int pageNumber) {
                 Log.e("FORPDA_LOG", "SELECTED TAB URL " + tab_url);
-                String url = "http://4pda.ru/forum/index.php?showtopic=";
+                String url = "https://4pda.ru/forum/index.php?showtopic=";
                 url = url.concat(Uri.parse(tab_url).getQueryParameter("showtopic"));
                 if (pageNumber != 0) url = url.concat("&st=").concat(Integer.toString(pageNumber));
                 tab_url = url;
@@ -446,7 +446,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                 .setOnMenuItemClickListener(menuItem -> {
                     String url = tab_url;
                     if (currentPage != null) {
-                        url = "http://4pda.ru/forum/index.php?showtopic=" + currentPage.getId();
+                        url = "https://4pda.ru/forum/index.php?showtopic=" + currentPage.getId();
                     }
                     Utils.copyToClipBoard(url);
                     return false;
@@ -454,7 +454,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         addSearchOnPageItem(getMenu());
         searchInThemeMenuItem = getMenu().add("Найти в теме")
                 .setOnMenuItemClickListener(menuItem -> {
-                    IntentHandler.handle("http://4pda.ru/forum/index.php?forums=" + currentPage.getForumId() + "&topics=" + currentPage.getId() + "&act=search&source=pst");
+                    IntentHandler.handle("https://4pda.ru/forum/index.php?forums=" + currentPage.getForumId() + "&topics=" + currentPage.getId() + "&act=search&source=pst");
                     return false;
                 });
 
@@ -485,7 +485,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                 });
         openForumMenuItem = subMenu.add("Открыть форум темы")
                 .setOnMenuItemClickListener(menuItem -> {
-                    IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + currentPage.getForumId());
+                    IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + currentPage.getForumId());
                     return false;
                 });
 

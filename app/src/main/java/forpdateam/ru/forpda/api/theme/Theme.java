@@ -196,27 +196,29 @@ public class Theme {
         }
 
 
-        //String response = Api.getWebClient().post("http://4pda.ru/forum/index.php?act=report&amp;send=1&amp;t=" + topicId + "&amp;p=" + postId, headers);
-        String response = "";
+        NetworkResponse response = Api.getWebClient().request(new NetworkRequest.Builder()
+                .url("https://4pda.ru/forum/index.php?")
+                .formHeaders(headers).build());
+
 
         Pattern p = Pattern.compile("<div class=\"errorwrap\">\n" +
                 "\\s*<h4>Причина:</h4>\n" +
                 "\\s*\n" +
                 "\\s*<p>(.*)</p>", Pattern.MULTILINE);
-        Matcher m = p.matcher(response);
+        Matcher m = p.matcher(response.getBody());
         return m.find() ? "Ошибка отправки жалобы: ".concat(m.group(1)) : "Жалоба отправлена";
     }
 
 
     public Boolean deletePost(int postId) throws Exception {
-        String url = "http://4pda.ru/forum/index.php?act=zmod&auth_key=".concat(Api.getWebClient().getAuthKey()).concat("&code=postchoice&tact=delete&selectedpids=").concat(Integer.toString(postId));
+        String url = "https://4pda.ru/forum/index.php?act=zmod&auth_key=".concat(Api.getWebClient().getAuthKey()).concat("&code=postchoice&tact=delete&selectedpids=").concat(Integer.toString(postId));
         NetworkResponse response = Api.getWebClient().request(new NetworkRequest.Builder().url(url).xhrHeader().build());
         return response.getBody().equals("ok");
     }
 
 
     public String votePost(int postId, boolean type) throws Exception {
-        NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/zka.php?i=".concat(Integer.toString(postId)).concat("&v=").concat(type ? "1" : "-1"));
+        NetworkResponse response = Api.getWebClient().get("https://4pda.ru/forum/zka.php?i=".concat(Integer.toString(postId)).concat("&v=").concat(type ? "1" : "-1"));
         String result = null;
 
         Matcher m = Pattern.compile("ok:\\s*?((?:\\+|\\-)?\\d+)").matcher(response.getBody());

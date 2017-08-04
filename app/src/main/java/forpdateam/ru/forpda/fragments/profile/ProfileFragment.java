@@ -81,7 +81,7 @@ public class ProfileFragment extends TabFragment {
             tab_url = getArguments().getString(ARG_TAB);
         }
         if (tab_url == null || tab_url.isEmpty())
-            tab_url = "http://4pda.ru/forum/index.php?showuser=".concat(Integer.toString(ClientHelper.getUserId() == 0 ? 2556269 : ClientHelper.getUserId()));
+            tab_url = "https://4pda.ru/forum/index.php?showuser=".concat(Integer.toString(ClientHelper.getUserId() == 0 ? 2556269 : ClientHelper.getUserId()));
     }
 
     @Nullable
