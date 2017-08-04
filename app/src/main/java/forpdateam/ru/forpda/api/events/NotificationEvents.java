@@ -67,7 +67,7 @@ public class NotificationEvents {
     }
 
     public List<NotificationEvent> getFavoritesEvents() throws Exception {
-        NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=inspector&CODE=fav");
+        NetworkResponse response = Api.getWebClient().get("https://4pda.ru/forum/index.php?act=inspector&CODE=fav");
         return getFavoritesEvents(response.getBody());
     }
 
@@ -98,7 +98,7 @@ public class NotificationEvents {
     }
 
     public List<NotificationEvent> getQmsEvents() throws Exception {
-        NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=inspector&CODE=qms");
+        NetworkResponse response = Api.getWebClient().get("https://4pda.ru/forum/index.php?act=inspector&CODE=qms");
         return getQmsEvents(response.getBody());
     }
 

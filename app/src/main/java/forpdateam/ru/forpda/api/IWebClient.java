@@ -5,7 +5,7 @@ package forpdateam.ru.forpda.api;
  */
 
 public interface IWebClient {
-    String MINIMAL_PAGE = "http://4pda.ru/forum/index.php?showforum=200#afterauth";
+    String MINIMAL_PAGE = "https://4pda.ru/forum/index.php?showforum=200#afterauth";
 
     NetworkResponse get(String url) throws Exception;
 

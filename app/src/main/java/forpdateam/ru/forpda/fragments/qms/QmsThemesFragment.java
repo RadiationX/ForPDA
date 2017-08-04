@@ -128,7 +128,7 @@ public class QmsThemesFragment extends TabFragment {
         if (avatarUrl != null) {
             ImageLoader.getInstance().displayImage(avatarUrl, toolbarImageView);
             toolbarImageView.setVisibility(View.VISIBLE);
-            toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + currentThemes.getUserId()));
+            toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + currentThemes.getUserId()));
         } else {
             toolbarImageView.setVisibility(View.GONE);
         }

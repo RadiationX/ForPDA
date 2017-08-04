@@ -51,9 +51,9 @@ public class FavoritesFragment extends TabFragment {
                 Bundle args = new Bundle();
                 args.putString(TabFragment.ARG_TITLE, favItem.getTopicTitle());
                 if(favItem.isForum()){
-                    IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + favItem.getForumId(), args);
+                    IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + favItem.getForumId(), args);
                 }else {
-                    IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=" + favItem.getTopicId() + "&view=getnewpost", args);
+                    IntentHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + favItem.getTopicId() + "&view=getnewpost", args);
                 }
             };
     private AlertDialogMenu<FavoritesFragment, IFavItem> favoriteDialogMenu, showedFavoriteDialogMenu;
@@ -64,13 +64,13 @@ public class FavoritesFragment extends TabFragment {
                     showedFavoriteDialogMenu = new AlertDialogMenu<>();
                     favoriteDialogMenu.addItem("Скопировать ссылку", (context, data) ->{
                         if(data.isForum()){
-                            Utils.copyToClipBoard("http://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getForumId())));
+                            Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getForumId())));
                         }else {
-                            Utils.copyToClipBoard("http://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data.getTopicId())));
+                            Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data.getTopicId())));
                         }
                     } );
-                    favoriteDialogMenu.addItem("Вложения", (context, data) -> IntentHandler.handle("http://4pda.ru/forum/index.php?act=attach&code=showtopic&tid=" + data.getTopicId()));
-                    favoriteDialogMenu.addItem("Открыть форум темы", (context, data) -> IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + data.getForumId()));
+                    favoriteDialogMenu.addItem("Вложения", (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=attach&code=showtopic&tid=" + data.getTopicId()));
+                    favoriteDialogMenu.addItem("Открыть форум темы", (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getForumId()));
                     favoriteDialogMenu.addItem("Изменить тип подписки", (context, data) -> {
                         new AlertDialog.Builder(context.getContext())
                                 .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> context.changeFav(Favorites.ACTION_EDIT_SUB_TYPE, Favorites.SUB_TYPES[which1], data.getFavId()))

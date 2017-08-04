@@ -82,7 +82,16 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
         //Кастомизация менюхи при выделении текста
         webView.setActionModeListener((actionMode, callback, type) -> {
             Menu menu = actionMode.getMenu();
+            ArrayList<MenuItem> items = new ArrayList<>();
+            for (int i = 0; i < menu.size(); i++) {
+                items.add(menu.getItem(i));
+            }
             menu.clear();
+
+            for (MenuItem item : items) {
+                Log.d("menuitem", "" + item.getTitle() + " : " + item.getItemId() + " : " + item.getActionProvider() + " : " + item.getGroupId() + " : " + item.getIntent() + " : " + item.getIcon());
+            }
+            Log.e("menuitem", "" + android.R.id.copy + " : " + android.R.id.selectAll);
 
             menu.add("Копировать")
                     .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_content_copy))
@@ -109,12 +118,20 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
                     })
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
             menu.add("Поделиться")
-                    .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_select_all))
+                    .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_share))
                     .setOnMenuItemClickListener(item -> {
                         webView.evalJs("shareSelectedText()");
                         return true;
                     })
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            for (MenuItem item : items) {
+                if (item.getIntent() != null) {
+                    menu.add(item.getGroupId(), item.getItemId(), item.getOrder(), item.getTitle())
+                            .setIntent(item.getIntent())
+                            .setNumericShortcut(item.getNumericShortcut())
+                            .setAlphabeticShortcut(item.getAlphabeticShortcut());
+                }
+            }
         });
     }
 
@@ -139,7 +156,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
             chromeClient = new ThemeFragmentWeb.ThemeChromeClient();
             webView.setWebChromeClient(chromeClient);
         }
-        webView.loadDataWithBaseURL("http://4pda.ru/forum/", currentPage.getHtml(), "text/html", "utf-8", null);
+        webView.loadDataWithBaseURL("https://4pda.ru/forum/", currentPage.getHtml(), "text/html", "utf-8", null);
         webView.updatePaddingBottom();
     }
 
@@ -552,7 +569,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
         webView.runInUiThread(() -> {
             Toast.makeText(getContext(), "Ссылка на спойлер скопирована", Toast.LENGTH_SHORT).show();
             IBaseForumPost post = getPostById(Integer.parseInt(postId));
-            String s = "http://4pda.ru/forum/index.php?act=findpost&pid=" + post.getId() + "&anchor=Spoil-" + post.getId() + "-" + spoilNumber;
+            String s = "https://4pda.ru/forum/index.php?act=findpost&pid=" + post.getId() + "&anchor=Spoil-" + post.getId() + "-" + spoilNumber;
             Utils.copyToClipBoard(s);
         });
     }

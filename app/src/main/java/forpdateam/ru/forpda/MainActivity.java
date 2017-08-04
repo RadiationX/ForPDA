@@ -66,17 +66,6 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             finish();
             return;
         }
-        /*ArrayList<String> list = new ArrayList<>();
-        *//*list.add("http://s.4pda.to/JK4KRvTtz2Yq1n1wh31YbxmLjUahInU59Gayr9aSC0aFz0kXLr71nJ.png");
-        list.add("http://s.4pda.to/JK4KRvTtz2Yq1n1wh31YbxmLjUahInU59Gayr9aSC0aFz0kXLr71nJ.png");
-        list.add("http://s.4pda.to/JK4KRvTtz2Yq1n1wh31YbxmLjUahInU59Gayr9aSC0aFz0kXLr71nJ.png");
-        list.add("http://s.4pda.to/JK4KRvTtz2Yq1n1wh31YbxmLjUahInU59Gayr9aSC0aFz0kXLr71nJ.png");*//*
-        list.add("http://s.4pda.to/JK4K0VVRwYXYo98nKdRn8N57Z3v80jTahm1b6BH1HmLUkobBPXDlWz26S.gif");
-        list.add("http://sourcey.com/images/stock/salvador-dali-the-dream.jpg");
-        list.add("http://sourcey.com/images/stock/salvador-dali-persistence-of-memory.jpg");
-        list.add("http://sourcey.com/images/stock/simpsons-persistence-of-memory.jpg");
-        list.add("http://sourcey.com/images/stock/salvador-dali-the-great-masturbator.jpg");
-        ImageViewerActivity.startActivity(this, list, 2);*/
         currentThemeIsDark = App.getInstance().isDarkTheme();
         setTheme(currentThemeIsDark ? R.style.DarkAppTheme_NoActionBar : R.style.LightAppTheme_NoActionBar);
         setContentView(R.layout.activity_main);
@@ -159,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             App.setNavigationBarHeight(viewDiff.getRootView().getHeight() - viewDiff.getHeight() - App.getStatusBarHeight());
             Log.e("FORPDA_LOG", "SB: " + App.getStatusBarHeight() + ", NB: " + App.getNavigationBarHeight());
             drawers.setStatusBarHeight(App.getStatusBarHeight());
-            //IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=2556269");
+            //IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=2556269");
         });
 
         if (Preferences.Notifications.Update.isEnabled()) {

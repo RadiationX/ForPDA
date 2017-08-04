@@ -40,7 +40,7 @@ public class Qms {
 
     public ArrayList<QmsContact> getBlackList() throws Exception {
         NetworkRequest.Builder builder = new NetworkRequest.Builder()
-                .url("http://4pda.ru/forum/index.php?act=qms&settings=blacklist")
+                .url("https://4pda.ru/forum/index.php?act=qms&settings=blacklist")
                 .formHeader("xhr", "body");
         NetworkResponse response = Api.getWebClient().request(builder.build());
         return parseBlackList(response.getBody());
@@ -61,7 +61,7 @@ public class Qms {
 
     public ArrayList<QmsContact> unBlockUsers(int[] ids) throws Exception {
         NetworkRequest.Builder builder = new NetworkRequest.Builder()
-                .url("http://4pda.ru/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1")
+                .url("https://4pda.ru/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1")
                 .formHeader("action", "delete-users");
         String strId;
         for (int id : ids) {
@@ -75,7 +75,7 @@ public class Qms {
 
     public ArrayList<QmsContact> blockUser(String nick) throws Exception {
         NetworkRequest.Builder builder = new NetworkRequest.Builder()
-                .url("http://4pda.ru/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1")
+                .url("https://4pda.ru/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1")
                 .formHeader("action", "add-user")
                 .formHeader("username", nick);
         NetworkResponse response = Api.getWebClient().request(builder.build());
@@ -94,7 +94,7 @@ public class Qms {
 
     public ArrayList<QmsContact> getContactList() throws Exception {
         ArrayList<QmsContact> list = new ArrayList<>();
-        NetworkResponse response = Api.getWebClient().request(new NetworkRequest.Builder().url("http://4pda.ru/forum/index.php?&act=qms-xhr&action=userlist").build());
+        NetworkResponse response = Api.getWebClient().request(new NetworkRequest.Builder().url("https://4pda.ru/forum/index.php?&act=qms-xhr&action=userlist").build());
         final Matcher matcher = contactsPattern.matcher(response.getBody());
         QmsContact contact;
         String temp;
@@ -113,7 +113,7 @@ public class Qms {
 
     public QmsThemes getThemesList(int id) throws Exception {
         NetworkRequest.Builder builder = new NetworkRequest.Builder()
-                .url("http://4pda.ru/forum/index.php?act=qms&mid=" + id)
+                .url("https://4pda.ru/forum/index.php?act=qms&mid=" + id)
                 .formHeader("xhr", "body");
         NetworkResponse response = Api.getWebClient().request(builder.build());
         return parseThemes(response.getBody(), id);
@@ -121,7 +121,7 @@ public class Qms {
 
     public QmsThemes deleteTheme(int id, int themeId) throws Exception {
         NetworkRequest.Builder builder = new NetworkRequest.Builder()
-                .url("http://4pda.ru/forum/index.php?act=qms&mid=" + id + "&xhr=body&do=1")
+                .url("https://4pda.ru/forum/index.php?act=qms&mid=" + id + "&xhr=body&do=1")
                 .formHeader("xhr", "body")
                 .formHeader("action", "delete-threads")
                 .formHeader("thread-id[" + themeId + "]", "" + themeId);
@@ -152,7 +152,7 @@ public class Qms {
 
     public QmsChatModel getChat(final int userId, final int themeId) throws Exception {
         NetworkRequest.Builder builder = new NetworkRequest.Builder()
-                .url("http://4pda.ru/forum/index.php?act=qms&mid=" + userId + "&t=" + themeId)
+                .url("https://4pda.ru/forum/index.php?act=qms&mid=" + userId + "&t=" + themeId)
                 .formHeader("xhr", "body");
         NetworkResponse response = Api.getWebClient().request(builder.build());
         return parseChat(response.getBody());
@@ -193,7 +193,7 @@ public class Qms {
     }
 
     public List<ForumUser> findUser(final String nick) throws Exception {
-        NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=" + nick /*+ "&limit=150&timestamp=" + System.currentTimeMillis()*/);
+        NetworkResponse response = Api.getWebClient().get("https://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=" + nick /*+ "&limit=150&timestamp=" + System.currentTimeMillis()*/);
         List<ForumUser> list = new ArrayList<>();
         Matcher m = findUserPattern.matcher(response.getBody());
         while (m.find()) {
@@ -202,9 +202,9 @@ public class Qms {
             user.setNick(Utils.htmlEncode(m.group(2)));
             String avatar = m.group(3);
             if (avatar.substring(0, 2).equals("//")) {
-                avatar = "http:".concat(avatar);
+                avatar = "https:".concat(avatar);
             } else if (avatar.substring(0, 1).equals("/")) {
-                avatar = "http://4pda.ru".concat(avatar);
+                avatar = "https://4pda.ru".concat(avatar);
             }
             user.setAvatar(avatar);
             list.add(user);
@@ -214,7 +214,7 @@ public class Qms {
 
     public QmsChatModel sendNewTheme(String nick, String title, String mess) throws Exception {
         NetworkRequest.Builder builder = new NetworkRequest.Builder()
-                .url("http://4pda.ru/forum/index.php?act=qms&action=create-thread&xhr=body&do=1")
+                .url("https://4pda.ru/forum/index.php?act=qms&action=create-thread&xhr=body&do=1")
                 .formHeader("username", nick)
                 .formHeader("title", title)
                 .formHeader("message", mess);
@@ -225,7 +225,7 @@ public class Qms {
     public ArrayList<QmsMessage> sendMessage(int userId, int themeId, String text) throws Exception {
         ArrayList<QmsMessage> messages = new ArrayList<>();
         NetworkRequest.Builder builder = new NetworkRequest.Builder()
-                .url("http://4pda.ru/forum/index.php")
+                .url("https://4pda.ru/forum/index.php")
                 .formHeader("act", "qms-xhr")
                 .formHeader("action", "send-message")
                 .formHeader("message", text)
@@ -266,7 +266,7 @@ public class Qms {
     public ArrayList<QmsMessage> getMessagesFromWs(int themeId, int messageId, int afterMessageId) throws Exception {
         ArrayList<QmsMessage> messages = new ArrayList<>();
         NetworkRequest.Builder messInfoBuilder = new NetworkRequest.Builder()
-                .url("http://4pda.ru/forum/index.php?act=qms-xhr&")
+                .url("https://4pda.ru/forum/index.php?act=qms-xhr&")
                 .formHeader("action", "message-info")
                 .formHeader("t", Integer.toString(themeId))
                 .formHeader("msg-id", Integer.toString(messageId));
@@ -279,7 +279,7 @@ public class Qms {
         }
 
         NetworkRequest.Builder threadMessagesBuilder = new NetworkRequest.Builder()
-                .url("http://4pda.ru/forum/index.php?act=qms-xhr&")
+                .url("https://4pda.ru/forum/index.php?act=qms-xhr&")
                 .xhrHeader()
                 .formHeader("action", "get-thread-messages")
                 .formHeader("mid", Integer.toString(idTo))
@@ -312,7 +312,7 @@ public class Qms {
 
     public String deleteDialog(int mid) throws Exception {
         NetworkRequest.Builder builder = new NetworkRequest.Builder()
-                .url("http://4pda.ru/forum/index.php")
+                .url("https://4pda.ru/forum/index.php")
                 .formHeader("act", "qms-xhr")
                 .formHeader("action", "del-member")
                 .formHeader("del-mid", Integer.toString(mid));

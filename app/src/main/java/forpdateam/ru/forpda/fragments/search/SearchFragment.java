@@ -290,9 +290,9 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         adapter.setOnItemClickListener(item -> {
             String url = "";
             if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
-                url = "http://4pda.ru/index.php?p=" + item.getId();
+                url = "https://4pda.ru/index.php?p=" + item.getId();
             } else {
-                url = "http://4pda.ru/forum/index.php?showtopic=" + item.getTopicId();
+                url = "https://4pda.ru/forum/index.php?showtopic=" + item.getTopicId();
                 if (item.getId() != 0) {
                     url += "&view=findpost&p=" + item.getId();
                 }
@@ -304,27 +304,27 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
                 createdTopicsDialogMenu = new AlertDialogMenu<>();
                 tempTopicsDialogMenu = new AlertDialogMenu<>();
                 createdTopicsDialogMenu.addItem("К первому", (context, data1) -> {
-                    IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=" + data1.getTopicId());
+                    IntentHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + data1.getTopicId());
                 });
                 createdTopicsDialogMenu.addItem("К непрочитанному", (context, data1) -> {
-                    IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=" + data1.getTopicId() + "&view=getnewpost");
+                    IntentHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + data1.getTopicId() + "&view=getnewpost");
                 });
                 createdTopicsDialogMenu.addItem("К последнему", (context, data1) -> {
-                    IntentHandler.handle("http://4pda.ru/forum/index.php?showtopic=" + data1.getTopicId() + "&view=getlastpost");
+                    IntentHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + data1.getTopicId() + "&view=getlastpost");
                 });
                 createdTopicsDialogMenu.addItem("Скопировать ссылку", (context, data1) -> {
                     String url = "";
                     if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
-                        url = "http://4pda.ru/index.php?p=" + item.getId();
+                        url = "https://4pda.ru/index.php?p=" + item.getId();
                     } else {
-                        url = "http://4pda.ru/forum/index.php?showtopic=" + item.getTopicId();
+                        url = "https://4pda.ru/forum/index.php?showtopic=" + item.getTopicId();
                         if (item.getId() != 0) {
                             url += "&view=findpost&p=" + item.getId();
                         }
                     }
                     Utils.copyToClipBoard(url);
                 });
-                createdTopicsDialogMenu.addItem("Открыть форум темы", (context, data1) -> IntentHandler.handle("http://4pda.ru/forum/index.php?showforum=" + data1.getForumId()));
+                createdTopicsDialogMenu.addItem("Открыть форум темы", (context, data1) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data1.getForumId()));
                 createdTopicsDialogMenu.addItem("Добавить в избранное", ((context, data1) -> {
                     new AlertDialog.Builder(context.getContext())
                             .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> {
@@ -632,7 +632,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
                 webViewClient = new SearchWebViewClient();
                 webView.setWebViewClient(webViewClient);
             }
-            webView.loadDataWithBaseURL("http://4pda.ru/forum/", data.getHtml(), "text/html", "utf-8", null);
+            webView.loadDataWithBaseURL("https://4pda.ru/forum/", data.getHtml(), "text/html", "utf-8", null);
         } else {
             if (refreshLayout.getChildCount() > 1) {
                 if (refreshLayout.getChildAt(0) instanceof ExtendedWebView) {

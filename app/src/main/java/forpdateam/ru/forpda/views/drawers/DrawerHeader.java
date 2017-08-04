@@ -142,7 +142,7 @@ public class DrawerHeader {
     }
 
     private void load() {
-        RxApi.Profile().getProfile("http://4pda.ru/forum/index.php?showuser=".concat(Integer.toString(ClientHelper.getUserId() == 0 ? 2556269 : ClientHelper.getUserId()))).onErrorReturn(throwable -> new ProfileModel())
+        RxApi.Profile().getProfile("https://4pda.ru/forum/index.php?showuser=".concat(Integer.toString(ClientHelper.getUserId() == 0 ? 2556269 : ClientHelper.getUserId()))).onErrorReturn(throwable -> new ProfileModel())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::onLoad);

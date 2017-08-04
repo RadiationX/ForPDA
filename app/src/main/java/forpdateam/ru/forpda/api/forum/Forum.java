@@ -27,7 +27,7 @@ public class Forum {
     //private final static Pattern boardsPattern = Pattern.compile("<div[^>]*?board_forum_row[^>]*><div[^>]*?forum_name[^>]*?>[\\s\\S]*?<a[^>]*?showforum=(\\d+)[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/div>");
 
     public ForumItemTree getForums() throws Exception {
-        NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=search");
+        NetworkResponse response = Api.getWebClient().get("https://4pda.ru/forum/index.php?act=search");
         Matcher matcher = forumsFromSearch.matcher(response.getBody());
         final ForumItemTree root = new ForumItemTree();
         if (matcher.find()) {

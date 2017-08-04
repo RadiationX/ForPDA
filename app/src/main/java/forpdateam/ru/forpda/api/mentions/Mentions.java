@@ -19,7 +19,7 @@ public class Mentions {
 
     public MentionsData getMentions(int st) throws Exception {
         MentionsData data = new MentionsData();
-        NetworkResponse response = Api.getWebClient().get("http://4pda.ru/forum/index.php?act=mentions&st=".concat(Integer.toString(st)));
+        NetworkResponse response = Api.getWebClient().get("https://4pda.ru/forum/index.php?act=mentions&st=".concat(Integer.toString(st)));
         Matcher matcher = mentionsPattern.matcher(response.getBody());
         while (matcher.find()) {
             MentionItem item = new MentionItem();

@@ -109,7 +109,7 @@ public class ReputationFragment extends TabFragment {
         if (repDialogMenu == null) {
             repDialogMenu = new AlertDialogMenu<>();
             repDialogMenu.addItem("Профиль", (context, data1) -> {
-                IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + data1.getUserId());
+                IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data1.getUserId());
             });
             repDialogMenu.addItem("Перейти к сообщению", (context, data1) -> {
                 IntentHandler.handle(data1.getSourceUrl());

@@ -652,17 +652,17 @@ public class NotificationsService extends Service {
     public String createIntentUrl(NotificationEvent event) {
         if (event.isMention()) {
             if (event.fromTheme())
-                return "http://4pda.ru/forum/index.php?showtopic=" + event.getSourceId() + "&view=findpost&p=" + event.getMessageId();
+                return "https://4pda.ru/forum/index.php?showtopic=" + event.getSourceId() + "&view=findpost&p=" + event.getMessageId();
 
             if (event.fromSite())
-                return "http://4pda.ru/index.php?p=" + event.getSourceId() + "/#comment" + event.getMessageId();
+                return "https://4pda.ru/index.php?p=" + event.getSourceId() + "/#comment" + event.getMessageId();
         }
 
         if (event.fromQms())
-            return "http://4pda.ru/forum/index.php?act=qms&mid=" + event.getUserId() + "&t=" + event.getSourceId();
+            return "https://4pda.ru/forum/index.php?act=qms&mid=" + event.getUserId() + "&t=" + event.getSourceId();
 
         if (event.fromTheme())
-            return "http://4pda.ru/forum/index.php?showtopic=" + event.getSourceId() + "&view=getnewpost";
+            return "https://4pda.ru/forum/index.php?showtopic=" + event.getSourceId() + "&view=getnewpost";
 
         return "";
     }
@@ -713,10 +713,10 @@ public class NotificationsService extends Service {
     private String createStackedIntentUrl(List<NotificationEvent> events) {
         NotificationEvent event = events.get(0);
         if (event.fromQms())
-            return "http://4pda.ru/forum/index.php?act=qms";
+            return "https://4pda.ru/forum/index.php?act=qms";
 
         if (event.fromTheme())
-            return "http://4pda.ru/forum/index.php?act=fav";
+            return "https://4pda.ru/forum/index.php?act=fav";
 
         return "";
     }

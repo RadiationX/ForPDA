@@ -35,8 +35,8 @@ public class ThemeDialogsHelper {
         if (userMenu == null) {
             userMenu = new AlertDialogMenu<>();
             showedUserMenu = new AlertDialogMenu<>();
-            userMenu.addItem("Профиль", (context1, data) -> IntentHandler.handle("http://4pda.ru/forum/index.php?showuser=" + data.getUserId()));
-            userMenu.addItem("Личные сообщения QMS", (context1, data) -> IntentHandler.handle("http://4pda.ru/forum/index.php?act=qms&amp;mid=" + data.getUserId()));
+            userMenu.addItem("Профиль", (context1, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data.getUserId()));
+            userMenu.addItem("Личные сообщения QMS", (context1, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=qms&amp;mid=" + data.getUserId()));
             userMenu.addItem("Темы пользователя", (context1, data) -> {
                 SearchSettings settings = new SearchSettings();
                 settings.setSource(SearchSettings.SOURCE_ALL.first);
@@ -81,7 +81,7 @@ public class ThemeDialogsHelper {
             reputationMenu = new AlertDialogMenu<>();
             showedReputationMenu = new AlertDialogMenu<>();
             reputationMenu.addItem("Повысить", (context1, data) -> context1.changeReputation(data, true));
-            reputationMenu.addItem("Посмотреть", (context1, data) -> IntentHandler.handle("http://4pda.ru/forum/index.php?act=rep&view=history&amp;mid=" + data.getUserId()));
+            reputationMenu.addItem("Посмотреть", (context1, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=rep&view=history&amp;mid=" + data.getUserId()));
             reputationMenu.addItem("Понизить", (context1, data) -> context1.changeReputation(data, false));
         }
         showedReputationMenu.clear();
@@ -108,7 +108,7 @@ public class ThemeDialogsHelper {
             postMenu.addItem("Изменить", IPostFunctions::editPost);
             postMenu.addItem("Удалить", IPostFunctions::deletePost);
             postMenu.addItem("Скопировать ссылку", (context1, data) -> {
-                String url = "http://4pda.ru/forum/index.php?s=&showtopic=" + data.getTopicId() + "&view=findpost&p=" + data.getId();
+                String url = "https://4pda.ru/forum/index.php?s=&showtopic=" + data.getTopicId() + "&view=findpost&p=" + data.getId();
                 Utils.copyToClipBoard(url);
             });
         }

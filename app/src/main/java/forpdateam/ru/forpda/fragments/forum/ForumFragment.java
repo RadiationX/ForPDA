@@ -59,7 +59,7 @@ public class ForumFragment extends TabFragment {
                 args.putInt(TopicsFragment.TOPICS_ID_ARG, data.getId());
                 TabManager.getInstance().add(new TabFragment.Builder<>(TopicsFragment.class).setArgs(args).build());
             });
-            forumMenu.addItem("Скопировать ссылку", (context, data) -> Utils.copyToClipBoard("http://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getId()))));
+            forumMenu.addItem("Скопировать ссылку", (context, data) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getId()))));
             forumMenu.addItem("Отметить прочитанным", (context, data) -> {
 
             });

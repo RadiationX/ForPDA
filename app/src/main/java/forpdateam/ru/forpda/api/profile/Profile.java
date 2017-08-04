@@ -112,7 +112,7 @@ public class Profile {
 
     public boolean saveNote(String note) throws Exception {
         NetworkRequest.Builder builder = new NetworkRequest.Builder()
-                .url("http://4pda.ru/forum/index.php?act=profile-xhr&action=save-note")
+                .url("https://4pda.ru/forum/index.php?act=profile-xhr&action=save-note")
                 .formHeader("note", note);
         NetworkResponse response = Api.getWebClient().request(builder.build());
         return response.getBody().equals("1");
