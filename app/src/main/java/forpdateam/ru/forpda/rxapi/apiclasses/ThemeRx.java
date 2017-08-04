@@ -87,7 +87,7 @@ public class ThemeRx {
 
                 //Post header
                 //t.setVariableOpt("avatar", post.getAvatar().isEmpty() ? "file:///android_asset/av.png" : "https://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
-                t.setVariableOpt("avatar", post.getAvatar().isEmpty() ? "" : "http://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
+                t.setVariableOpt("avatar", post.getAvatar().isEmpty() ? "" : "https://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
                 t.setVariableOpt("none_avatar", post.getAvatar().isEmpty() ? "none_avatar" : "");
 
                 if (letterMatcher != null) {
@@ -200,7 +200,7 @@ public class ThemeRx {
         return page;
     }
 
-    private static String getDisableStr(boolean b) {
+    public static String getDisableStr(boolean b) {
         return b ? "disabled" : "";
     }
 

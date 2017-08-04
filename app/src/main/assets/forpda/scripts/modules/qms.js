@@ -1,9 +1,6 @@
 console.log("LOAD JS SOURCE qms.js");
 
-var listElem;
-
 function initQms() {
-    listElem = document.querySelector(".mess_list");
     setTimeout(function () {
         scrollQms();
     }, 1);
@@ -27,11 +24,13 @@ window.addEventListener("scroll", function (e) {
 });
 
 function getLastMess() {
+var listElem = document.querySelector(".mess_list");
     var messages = listElem.querySelectorAll(".mess_container");
     return messages[messages.length - 1];
 }
 
 function showMoreMess(listSrc) {
+var listElem = document.querySelector(".mess_list");
     var lastHeight = listElem.offsetHeight;
     listElem.insertAdjacentHTML("afterbegin", listSrc);
     addedNewMessages();
@@ -39,6 +38,7 @@ function showMoreMess(listSrc) {
 }
 
 function showNewMess(listSrc, withScroll) {
+var listElem = document.querySelector(".mess_list");
     listElem.insertAdjacentHTML("beforeend", listSrc);
     addedNewMessages();
     if (withScroll) {
@@ -47,6 +47,7 @@ function showNewMess(listSrc, withScroll) {
 }
 
 function makeAllRead() {
+var listElem = document.querySelector(".mess_list");
     var unreaded = listElem.querySelectorAll(".mess_container.unread");
     for (var i = 0; i < unreaded.length; i++) {
         unreaded[i].classList.remove("unread");

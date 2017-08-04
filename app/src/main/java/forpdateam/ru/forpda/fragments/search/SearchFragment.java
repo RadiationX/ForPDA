@@ -55,6 +55,7 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.fragments.theme.ThemeDialogsHelper;
+import forpdateam.ru.forpda.fragments.theme.ThemeFragmentWeb;
 import forpdateam.ru.forpda.fragments.theme.ThemeHelper;
 import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
@@ -207,6 +208,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
         webView.setJsLifeCycleListener(this);
+        webView.addJavascriptInterface(this, ThemeFragmentWeb.JS_INTERFACE);
         webView.addJavascriptInterface(this, JS_INTERFACE);
         webView.addJavascriptInterface(this, JS_POSTS_FUNCTIONS);
         webView.setRelativeFontSize(Preferences.Main.getWebViewSize());
@@ -676,6 +678,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         unregisterForContextMenu(webView);
         webView.removeJavascriptInterface(JS_INTERFACE);
         webView.removeJavascriptInterface(JS_POSTS_FUNCTIONS);
+        webView.removeJavascriptInterface(ThemeFragmentWeb.JS_INTERFACE);
         webView.setJsLifeCycleListener(null);
         webView.destroy();
         getMainActivity().getWebViewsProvider().push(webView);
@@ -710,6 +713,33 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
             return true;
         }
     }
+
+
+    @JavascriptInterface
+    public void firstPage() {
+        webView.runInUiThread(() -> paginationHelper.firstPage());
+    }
+
+    @JavascriptInterface
+    public void prevPage() {
+        webView.runInUiThread(() -> paginationHelper.prevPage());
+    }
+
+    @JavascriptInterface
+    public void nextPage() {
+        webView.runInUiThread(() -> paginationHelper.nextPage());
+    }
+
+    @JavascriptInterface
+    public void lastPage() {
+        webView.runInUiThread(() -> paginationHelper.lastPage());
+    }
+
+    @JavascriptInterface
+    public void selectPage() {
+        webView.runInUiThread(() -> paginationHelper.selectPageDialog());
+    }
+
 
     public IBaseForumPost getPostById(int postId) {
         for (IBaseForumPost post : data.getItems())
