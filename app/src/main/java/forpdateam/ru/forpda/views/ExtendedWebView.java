@@ -6,6 +6,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ActionMode;
@@ -43,7 +44,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
 
     private OnDirectionListener onDirectionListener;
     private AudioManager audioManager;
-    private Handler mHandler = new Handler();
+    private Handler mHandler = new Handler(Looper.getMainLooper());
     private Thread mUiThread;
     private Queue<Runnable> actionsForWebView = new LinkedList<>();
     private JsLifeCycleListener jsLifeCycleListener;
@@ -182,7 +183,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public void evalJs(String script) {
-        Log.d("EWV", "evalJs: " + script);
+        //Log.d("EWV", "evalJs: " + script);
         try {
             evalJs(script, null);
         } catch (Exception error) {
@@ -272,11 +273,11 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     }
 
     public final void runInUiThread(final Runnable action) {
-        Log.d("EWV", "runInUiThread " + (Thread.currentThread() != mUiThread));
-        if (Thread.currentThread() != mUiThread) {
-            mHandler.post(action);
-        } else {
+        Log.d("EWV", "runInUiThread " + (Thread.currentThread() == mUiThread));
+        if (Thread.currentThread() == mUiThread) {
             action.run();
+        } else {
+            mHandler.post(action);
         }
     }
 
@@ -291,13 +292,13 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     }
 
 
-    public void syncWithJs(final Runnable runnable) {
+    public void syncWithJs(final Runnable action) {
         Log.d("EWV", "syncWithJs " + isJsReady);
         if (!isJsReady) {
-            actionsForWebView.add(runnable);
+            actionsForWebView.add(action);
         } else {
             try {
-                runnable.run();
+                runInUiThread(action);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

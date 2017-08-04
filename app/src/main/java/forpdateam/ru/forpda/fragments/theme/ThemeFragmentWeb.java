@@ -41,7 +41,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
  */
 
 public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, ExtendedWebView.JsLifeCycleListener {
-    private final static String JS_INTERFACE = "ITheme";
+    public final static String JS_INTERFACE = "ITheme";
     private ExtendedWebView webView;
     private WebViewClient webViewClient;
     private WebChromeClient chromeClient;

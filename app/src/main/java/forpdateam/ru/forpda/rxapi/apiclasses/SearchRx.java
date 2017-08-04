@@ -50,12 +50,11 @@ public class SearchRx {
             t.setVariableOpt("member_id", ClientHelper.getUserId());
             t.setVariableOpt("elem_to_scroll", page.getElementToScroll());*/
             t.setVariableOpt("body_type", "search");
-            /*t.setVariableOpt("navigation_disable", prevDisabled && nextDisabled ? "navigation_disable" : "");
-            t.setVariableOpt("first_disable", getDisableStr(prevDisabled));
-            t.setVariableOpt("prev_disable", getDisableStr(prevDisabled));
-            t.setVariableOpt("next_disable", getDisableStr(nextDisabled));
-            t.setVariableOpt("last_disable", getDisableStr(nextDisabled));
-            t.setVariableOpt("disable_avatar_js", Boolean.toString(true));*/
+            t.setVariableOpt("navigation_disable", ThemeRx.getDisableStr(prevDisabled && nextDisabled));
+            t.setVariableOpt("first_disable", ThemeRx.getDisableStr(prevDisabled));
+            t.setVariableOpt("prev_disable", ThemeRx.getDisableStr(prevDisabled));
+            t.setVariableOpt("next_disable", ThemeRx.getDisableStr(nextDisabled));
+            t.setVariableOpt("last_disable", ThemeRx.getDisableStr(nextDisabled));
             boolean isDisableAvatar = App.getInstance().getPreferences().getBoolean(Preferences.Theme.SHOW_AVATARS, true);
             t.setVariableOpt("disable_avatar_js", Boolean.toString(isDisableAvatar));
             t.setVariableOpt("disable_avatar", isDisableAvatar ? "show_avatar" : "hide_avatar");
@@ -74,7 +73,7 @@ public class SearchRx {
                 t.setVariableOpt("user_id", post.getUserId());
 
                 //Post header
-                t.setVariableOpt("avatar", post.getAvatar().isEmpty() ? "" : "http://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
+                t.setVariableOpt("avatar", post.getAvatar().isEmpty() ? "" : "https://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
                 t.setVariableOpt("none_avatar", post.getAvatar().isEmpty() ? "none_avatar" : "");
 
                 if (letterMatcher != null) {
