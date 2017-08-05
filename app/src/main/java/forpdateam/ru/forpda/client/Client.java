@@ -12,6 +12,7 @@ import android.webkit.WebSettings;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,7 @@ public class Client implements IWebClient {
     private SimpleObservable networkObservables = new SimpleObservable();
     private Handler observerHandler = new Handler(Looper.getMainLooper());
     private String tempGroup;
+    private ArrayList<String> privateHeaders = new ArrayList<>(Arrays.asList("pass_hash", "session_id", "auth_key", "password"));
 
     //Class
     public Client() {
@@ -66,7 +68,7 @@ public class Client implements IWebClient {
         String session_id = App.getInstance().getPreferences().getString("cookie_session_id", null);
         String anonymous = App.getInstance().getPreferences().getString("cookie_anonymous", null);
         ClientHelper.setUserId(App.getInstance().getPreferences().getString("member_id", null));
-        Log.d("FORPDA_LOG", "INIT AUTH DATA " + member_id + " : " + pass_hash + " : " + session_id + " : " + App.getInstance().getPreferences().getString("member_id", null));
+        //Log.d("FORPDA_LOG", "INIT AUTH DATA " + member_id + " : " + pass_hash + " : " + session_id + " : " + App.getInstance().getPreferences().getString("member_id", null));
         if (member_id != null && pass_hash != null) {
             ClientHelper.setAuthState(ClientHelper.AUTH_STATE_LOGIN);
             //Первичная загрузка кукисов
@@ -258,7 +260,7 @@ public class Client implements IWebClient {
                 .header("User-Agent", userAgent);
         if (request.getHeaders() != null) {
             for (Map.Entry<String, String> entry : request.getHeaders().entrySet()) {
-                Log.d("FORPDA_LOG", "HEADER " + entry.getKey() + " : " + entry.getValue());
+                Log.d("FORPDA_LOG", "HEADER " + entry.getKey() + " : " + (privateHeaders.contains(entry.getKey()) ? "private" : entry.getValue()));
                 requestBuilder.header(entry.getKey(), entry.getValue());
             }
         }
@@ -269,7 +271,7 @@ public class Client implements IWebClient {
                     Log.d("FORPDA_LOG", "FORM BUILDER");
                     FormBody.Builder formBuilder = new FormBody.Builder();
                     for (Map.Entry<String, String> entry : request.getFormHeaders().entrySet()) {
-                        Log.d("FORPDA_LOG", "FORM HEADER " + entry.getKey() + " : " + entry.getValue());
+                        Log.d("FORPDA_LOG", "FORM HEADER " + entry.getKey() + " : " + (privateHeaders.contains(entry.getKey()) ? "private" : entry.getValue()));
                         //formBuilder.addEncoded(entry.getKey(), entry.getValue());
                         formBuilder.add(entry.getKey(), entry.getValue());
                         if (request.getEncodedFormHeaders() != null && request.getEncodedFormHeaders().contains(entry.getKey())) {
@@ -288,7 +290,7 @@ public class Client implements IWebClient {
                 Log.d("FORPDA_LOG", "MULTIPART FORM BUILDER");
                 if (request.getFormHeaders() != null) {
                     for (Map.Entry<String, String> entry : request.getFormHeaders().entrySet()) {
-                        Log.d("FORPDA_LOG", "FORM HEADER " + entry.getKey() + " : " + entry.getValue());
+                        Log.d("FORPDA_LOG", "FORM HEADER " + entry.getKey() + " : " + (privateHeaders.contains(entry.getKey()) ? "private" : entry.getValue()));
                         //multipartBuilder.addFormDataPart(entry.getKey(), URLEncoder.encode(entry.getValue(), "UTF-8"));
                         multipartBuilder.addFormDataPart(entry.getKey(), entry.getValue());
                     }
