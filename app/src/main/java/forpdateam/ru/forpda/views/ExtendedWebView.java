@@ -100,6 +100,9 @@ public class ExtendedWebView extends NestedWebView implements IBase {
         settings.setDefaultFontSize(16);
         settings.setTextZoom(100);
         settings.setJavaScriptEnabled(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         setRelativeFontSize(Preferences.Main.getWebViewSize());
         setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_base));
     }
