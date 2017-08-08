@@ -156,6 +156,9 @@ public class Drawers {
             item = findMenuItem(last);
         }
         Log.e("FORPDA_LOG", "FINAL ITEM " + item);
+        if (item == null) {
+            item = menuItems.get(0);
+        }
         selectMenuItem(item);
 
         /*if (savedInstanceState == null) {
@@ -261,7 +264,7 @@ public class Drawers {
 
     private MenuItems.MenuItem findMenuItem(String className) {
         for (MenuItems.MenuItem item : menuItems) {
-            if (item.getTabClass().getSimpleName().equals(className))
+            if (item.getTabClass() != null && item.getTabClass().getSimpleName().equals(className))
                 return item;
         }
         return null;

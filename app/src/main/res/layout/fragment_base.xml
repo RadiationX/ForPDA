@@ -70,9 +70,11 @@
                             android:visibility="gone" />
 
                         <LinearLayout
-                            android:layout_width="match_parent"
+                            android:id="@+id/toolbar_titles_wrapper"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:visibility="visible">
 
                             <android.support.v7.widget.AppCompatTextView
                                 android:id="@+id/toolbar_title"
@@ -93,6 +95,12 @@
                                 android:visibility="gone" />
                         </LinearLayout>
 
+                        <android.support.v7.widget.AppCompatSpinner
+                            android:id="@+id/toolbar_spinner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:visibility="gone" />
+
                     </LinearLayout>
 
                 </android.support.v7.widget.Toolbar>
@@ -108,8 +116,8 @@
                         android:layout_width="8dp"
                         android:layout_height="8dp"
                         android:layout_gravity="center_vertical|end"
-                        android:layout_marginTop="-8dp"
                         android:layout_marginEnd="16dp"
+                        android:layout_marginTop="-8dp"
                         android:background="@drawable/notify_dot" />
                 </FrameLayout>
 
@@ -123,31 +131,34 @@
             android:id="@+id/fragment_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:background="?attr/background_base"
+            android:orientation="vertical"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
             <LinearLayout
                 android:id="@+id/no_network"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="@dimen/dp8"
-                android:paddingEnd="@dimen/dp8"
-                android:paddingTop="@dimen/dp4"
                 android:paddingBottom="@dimen/dp4"
+                android:paddingEnd="@dimen/dp8"
+                android:paddingStart="@dimen/dp8"
+                android:paddingTop="@dimen/dp4"
                 android:visibility="gone">
+
                 <android.support.v7.widget.AppCompatImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:padding="8dp"
                     android:contentDescription="@string/icon_no_network"
+                    android:padding="8dp"
                     app:srcCompat="@drawable/ic_cloud_off_black_24dp" />
+
                 <android.support.v7.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="@string/no_network"
-                    android:textStyle="bold"
                     android:layout_marginStart="8dp"
-                    android:gravity="center_vertical"/>
+                    android:gravity="center_vertical"
+                    android:text="@string/no_network"
+                    android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
 
@@ -159,7 +170,7 @@
             android:layout_margin="@dimen/fab_margin"
             android:clickable="true"
             android:visibility="gone"
-            app:fabSize="normal"/>
+            app:fabSize="normal" />
 
     </android.support.design.widget.CoordinatorLayout>
 </RelativeLayout>

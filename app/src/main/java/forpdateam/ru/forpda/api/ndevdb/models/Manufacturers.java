@@ -15,6 +15,7 @@ public class Manufacturers {
 
     private LinkedHashMap<String, ArrayList<Item>> letterMap = new LinkedHashMap<>();
     private String catId;
+    private String catTitle;
     private int actual = 0;
     private int all = 0;
 
@@ -24,6 +25,14 @@ public class Manufacturers {
 
     public void setCatId(String catId) {
         this.catId = catId;
+    }
+
+    public String getCatTitle() {
+        return catTitle;
+    }
+
+    public void setCatTitle(String catTitle) {
+        this.catTitle = catTitle;
     }
 
     public int getActual() {

@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.trello.rxlifecycle2.components.support.RxFragment;
@@ -61,13 +62,14 @@ public class TabFragment extends RxFragment {
     private String title = null, tabTitle = null, subtitle = null, parentTag = null;
 
     protected RelativeLayout fragmentContainer;
-    protected LinearLayout fragmentContent, noNetwork;
+    protected LinearLayout fragmentContent, noNetwork, titlesWrapper;
     protected CoordinatorLayout coordinatorLayout;
     protected AppBarLayout appBarLayout;
     protected CollapsingToolbarLayout toolbarLayout;
     protected Toolbar toolbar;
     protected ImageView toolbarBackground, toolbarImageView;
     protected TextView toolbarTitleView, toolbarSubtitleView;
+    protected Spinner toolbarSpinner;
     protected View view, notifyDot;
     protected FloatingActionButton fab;
     private AudioManager audioService;
@@ -222,6 +224,8 @@ public class TabFragment extends RxFragment {
         toolbarImageView = (ImageView) toolbar.findViewById(R.id.toolbar_image_icon);
         toolbarTitleView = (TextView) toolbar.findViewById(R.id.toolbar_title);
         toolbarSubtitleView = (TextView) toolbar.findViewById(R.id.toolbar_subtitle);
+        titlesWrapper = (LinearLayout) toolbar.findViewById(R.id.toolbar_titles_wrapper);
+        toolbarSpinner = (Spinner) toolbar.findViewById(R.id.toolbar_spinner);
         notifyDot = findViewById(R.id.notify_dot);
         fragmentContent = (LinearLayout) coordinatorLayout.findViewById(R.id.fragment_content);
         noNetwork = (LinearLayout) fragmentContent.findViewById(R.id.no_network);

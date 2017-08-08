@@ -22,6 +22,7 @@ public class Device {
     private String manId;
     private String manTitle;
     private String catId;
+    private String catTitle;
 
     public String getId() {
         return id;
@@ -63,6 +64,14 @@ public class Device {
         this.catId = catId;
     }
 
+    public String getCatTitle() {
+        return catTitle;
+    }
+
+    public void setCatTitle(String catTitle) {
+        this.catTitle = catTitle;
+    }
+
     public void addImage(String imageSrc, String fullImageSrc) {
         images.add(new Pair<>(imageSrc, fullImageSrc));
     }
@@ -81,5 +90,9 @@ public class Device {
 
     public void addSpecs(String title, ArrayList<Pair<String, String>> specs) {
         this.specs.add(new Pair<>(title, specs));
+    }
+
+    public ArrayList<Pair<String, ArrayList<Pair<String, String>>>> getSpecs() {
+        return specs;
     }
 }

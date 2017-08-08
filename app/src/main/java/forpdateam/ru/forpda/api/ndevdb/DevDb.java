@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.api.ndevdb;
 
+import android.util.Log;
 import android.util.Pair;
 
 import java.util.ArrayList;
@@ -21,7 +22,8 @@ import forpdateam.ru.forpda.api.reputation.models.RepItem;
  */
 
 public class DevDb {
-    public final static Pattern MAIN_PATTERN = Pattern.compile("product-name\">([\\s\\S]*?)<\\/h1>[\\s\\S]*?<a href=\"[^\"]*?devdb\\/([^\\/\"]*?)(?:\\/([^\"]*?))?\">(\\d+)<\\/a>[\\s\\S]*?<a[^>]*?>(\\d+)<\\/a>");
+    public final static Pattern MAIN_PATTERN = Pattern.compile("<div class=\"breadcrumbs-back\"><ul class=\"breadcrumbs\">([\\s\\S]*?)<\\/ul><\\/div>[^<]*?<div[^>]*?>[\\s\\S]*?<\\/div>[^<]*?<\\/div>(?:[^<]*?<div class=\"rating r\\d\">[^<]*?<div class=\"num\">(\\d+)<\\/div>[^<]*?<div class=\"text\">([\\s\\S]*?)<\\/div>[^<]*?<\\/div>)?[\\s\\S]*?<h1 class=\"product-name\">(?:<a[^>]*?>[^<]*?<\\/a>)? ?([\\s\\S]*?)<\\/h1>(?:<div class=\"version\"><span[^>]*?>[^<]*?<\\/span><a[^>]*?>(\\d+)<\\/a><span[^>]*?>[^<]*?<\\/span>*<a[^>]*?>(\\d+)<\\/a>)?");
+    private final static Pattern BREADCRUMB_PATTERN = Pattern.compile("<a href=\"[^\"]*?devdb\\/([^\"\\/]+?)(?:\\/([^\"]+?))?\">([^<]*?)<\\/a>");
     private final static Pattern SPECS_PATTERN = Pattern.compile("<dl[^>]*?>[^<]*?<dt>([\\s\\S]*?)<\\/dt>[^<]*<dd>([\\s\\S]*?)<\\/dd>");
 
     public Manufacturers getManufacturers(String catId) throws Exception {
@@ -43,9 +45,16 @@ public class DevDb {
         }
         matcher = MAIN_PATTERN.matcher(response.getBody());
         if (matcher.find()) {
-            data.setCatId(matcher.group(2));
-            data.setActual(Integer.parseInt(matcher.group(4)));
-            data.setAll(Integer.parseInt(matcher.group(5)));
+            Matcher bcMatcher = BREADCRUMB_PATTERN.matcher(matcher.group(1));
+
+            while (bcMatcher.find()) {
+                if (bcMatcher.group(2) == null) {
+                    data.setCatId(bcMatcher.group(1));
+                    data.setCatTitle(bcMatcher.group(3));
+                }
+            }
+            data.setActual(Integer.parseInt(matcher.group(5)));
+            data.setAll(Integer.parseInt(matcher.group(6)));
         }
         return data;
     }
@@ -54,6 +63,7 @@ public class DevDb {
         Manufacturer data = new Manufacturer();
         NetworkResponse response = Api.getWebClient().get("https://4pda.ru/devdb/" + catId + "/" + manId + "/all");
 
+        Log.d("MANAPI", "RESPONSE TUT " + response);
         Matcher matcher = Manufacturer.DEVICES_PATTERN.matcher(response.getBody());
         while (matcher.find()) {
             Manufacturer.DeviceItem item = new Manufacturer.DeviceItem();
@@ -74,14 +84,28 @@ public class DevDb {
 
             data.addDevice(item);
         }
+        Log.d("MANAPI", "ADDED DEVICES " + data.getDevices().size());
         matcher = MAIN_PATTERN.matcher(response.getBody());
+        Log.d("MANAPI", "MATCHER MAIN");
         if (matcher.find()) {
-            data.setTitle(matcher.group(1));
-            data.setCatId(matcher.group(2));
-            data.setId(matcher.group(3));
-            data.setActual(Integer.parseInt(matcher.group(4)));
-            data.setAll(Integer.parseInt(matcher.group(5)));
+            Log.d("MANAPI", "FIND MAIN");
+            Matcher bcMatcher = BREADCRUMB_PATTERN.matcher(matcher.group(1));
+            while (bcMatcher.find()) {
+                Log.d("MANAPI", "FIND BREADCRUMB");
+                if (bcMatcher.group(2) == null) {
+                    data.setCatId(bcMatcher.group(1));
+                    data.setCatTitle(bcMatcher.group(3));
+                } else {
+                    data.setId(bcMatcher.group(2));
+                    data.setTitle(bcMatcher.group(3));
+                }
+            }
+            Log.d("MANAPI", "FILL MAIN");
+            data.setTitle(matcher.group(4));
+            data.setActual(Integer.parseInt(matcher.group(5)));
+            data.setAll(Integer.parseInt(matcher.group(6)));
         }
+        Log.d("MANAPI", "ADDED MAIN PART ");
         return data;
     }
 
@@ -109,14 +133,25 @@ public class DevDb {
                 data.addSpecs(title, specs);
             }
         }
-        /*matcher = MAIN_PATTERN.matcher(response.getBody());
+        matcher = MAIN_PATTERN.matcher(response.getBody());
         if (matcher.find()) {
-            data.setTitle(matcher.group(1));
-            data.setCatId(matcher.group(2));
-            data.setId(matcher.group(3));
-            data.setActual(Integer.parseInt(matcher.group(4)));
-            data.setAll(Integer.parseInt(matcher.group(5)));
-        }*/
+            Matcher bcMatcher = BREADCRUMB_PATTERN.matcher(matcher.group(1));
+            while (bcMatcher.find()) {
+                if (bcMatcher.group(2) == null) {
+                    data.setCatId(bcMatcher.group(1));
+                    data.setCatTitle(bcMatcher.group(3));
+                } else {
+                    data.setManId(bcMatcher.group(2));
+                    data.setManTitle(bcMatcher.group(3));
+                }
+            }
+
+            if (matcher.group(2) != null) {
+                data.setRating(Integer.parseInt(matcher.group(2)), matcher.group(3));
+            }
+            data.setTitle(matcher.group(4));
+            data.setId(devId);
+        }
         return data;
     }
 }

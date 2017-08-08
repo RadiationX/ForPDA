@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import forpdateam.ru.forpda.api.ndevdb.DevDb;
+import forpdateam.ru.forpda.api.ndevdb.models.Device;
+import forpdateam.ru.forpda.api.ndevdb.models.Manufacturer;
 import forpdateam.ru.forpda.api.ndevdb.models.Manufacturers;
 import forpdateam.ru.forpda.client.NetworkStateReceiver;
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -169,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         checkIntent(getIntent());
 
 
-        DevDb devDb = new DevDb();
+        /*DevDb devDb = new DevDb();
         Observable.fromCallable(() -> devDb.getManufacturers("phones"))
                 .onErrorReturn(throwable -> new Manufacturers())
                 .subscribeOn(Schedulers.io())
@@ -180,6 +182,27 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
                         Log.d("NDEVDB", "MANS LETTER: " + entry.getKey() + " : " + entry.getValue().size());
                     }
                 });
+
+        Observable.fromCallable(() -> devDb.getManufacturer("phones", "asus"))
+                .onErrorReturn(throwable -> new Manufacturer())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(manufacturer -> {
+                    Log.e("NDEVDB", "LOAD MAN: " + manufacturer);
+                    Log.e("NDEVDB", "MAN: " + manufacturer.getTitle() + " : " + manufacturer.getDevices().size());
+
+
+                });
+        Observable.fromCallable(() -> devDb.getDevice("asus_zenfone_4"))
+                .onErrorReturn(throwable -> new Device())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(device -> {
+                    Log.e("NDEVDB", "LOAD DEV: " + device);
+                    Log.e("NDEVDB", "DEV: " + device.getTitle() + " : " + device.getImages().size() + " : " + device.getSpecs().size());
+
+
+                });*/
     }
 
     @Override
