@@ -16,6 +16,7 @@ public class Manufacturer {
     private String id;
     private String title;
     private String catId;
+    private String catTitle;
 
     private int actual = 0;
     private int all = 0;
@@ -42,6 +43,14 @@ public class Manufacturer {
 
     public void setCatId(String catId) {
         this.catId = catId;
+    }
+
+    public String getCatTitle() {
+        return catTitle;
+    }
+
+    public void setCatTitle(String catTitle) {
+        this.catTitle = catTitle;
     }
 
     public int getActual() {

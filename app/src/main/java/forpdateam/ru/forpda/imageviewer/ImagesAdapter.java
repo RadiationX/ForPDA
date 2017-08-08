@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.imageviewer;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
@@ -33,7 +34,7 @@ public class ImagesAdapter extends PagerAdapter {
     private List<String> urls;
     private OnPhotoTapListener tapListener;
 
-    public ImagesAdapter(ImageViewerActivity context, List<String> urls) {
+    public ImagesAdapter(Context context, List<String> urls) {
         this.inflater = LayoutInflater.from(context);
         imageLoader = ImageLoader.getInstance();
 

@@ -5,6 +5,7 @@ import forpdateam.ru.forpda.api.events.NotificationEvents;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.forum.Forum;
 import forpdateam.ru.forpda.api.mentions.Mentions;
+import forpdateam.ru.forpda.api.ndevdb.DevDb;
 import forpdateam.ru.forpda.api.news.NewsApi;
 import forpdateam.ru.forpda.api.profile.Profile;
 import forpdateam.ru.forpda.api.qms.Qms;
@@ -32,6 +33,7 @@ public class Api {
     private static Topics topics = null;
     private static Reputation reputation = null;
     private static NotificationEvents uevents = null;
+    private static DevDb devDb = null;
 
     private static IWebClient webClient = null;
 
@@ -107,6 +109,11 @@ public class Api {
     public static NotificationEvents UniversalEvents() {
         if (uevents == null) uevents = new NotificationEvents();
         return uevents;
+    }
+
+    public static DevDb DevDb() {
+        if (devDb == null) devDb = new DevDb();
+        return devDb;
     }
 
     public static Api get() {

@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.rxapi;
 
 import forpdateam.ru.forpda.api.news.NewsApi;
 import forpdateam.ru.forpda.rxapi.apiclasses.AuthRx;
+import forpdateam.ru.forpda.rxapi.apiclasses.DevDbRx;
 import forpdateam.ru.forpda.rxapi.apiclasses.EditPostRx;
 import forpdateam.ru.forpda.rxapi.apiclasses.FavoritesRx;
 import forpdateam.ru.forpda.rxapi.apiclasses.ForumRx;
@@ -31,6 +32,7 @@ public class RxApi {
     private static ForumRx forum = null;
     private static TopicsRx topics = null;
     private static ReputationRx reputation = null;
+    private static DevDbRx devDb = null;
 
     public static QmsRx Qms() {
         if (qmsApi == null) qmsApi = new QmsRx();
@@ -90,6 +92,11 @@ public class RxApi {
     public static ReputationRx Reputation() {
         if (reputation == null) reputation = new ReputationRx();
         return reputation;
+    }
+
+    public static DevDbRx DevDb() {
+        if (devDb == null) devDb = new DevDbRx();
+        return devDb;
     }
 
     public static RxApi get() {

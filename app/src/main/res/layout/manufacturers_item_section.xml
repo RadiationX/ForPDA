@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/background_for_cards"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/item_top_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?attr/divider_line" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/item_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/dp8"
+        android:paddingEnd="@dimen/dp16"
+        android:paddingStart="@dimen/dp16"
+        android:paddingTop="@dimen/dp16"
+        android:textAllCaps="true"
+        android:textColor="?attr/second_text_color"
+        android:textSize="12sp"
+        android:text="@string/test_topic_section_title"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?attr/divider_line" />
+</LinearLayout>
