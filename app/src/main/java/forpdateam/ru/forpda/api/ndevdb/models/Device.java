@@ -11,12 +11,28 @@ import java.util.regex.Pattern;
 
 public class Device {
     public final static Pattern PATTERN_1 = Pattern.compile("h1 class=\"product-name\">(?:<a[^>]*?>[^<]*?<\\/a>)? ?([^<]*?)<\\/h1>[\\s\\S]*?div class=\"item-visual\">([\\s\\S]*?)<\\/div>[^<]*?<div class=\"item-info\">[\\s\\S]*?div class=\"item-content[^>]*?>[^<]*?<div class=\"content\">([\\s\\S]*?)<\\/div>[^<]*?<div class=\"aside\">");
+
     public final static Pattern IMAGES_PATTERN = Pattern.compile("<a[^>]*?href=\"([^\"]*?)\"[^>]*?><img src=\"([^\"]*?)\"");
+
     public final static Pattern SPECS_TITLED_PATTERN = Pattern.compile("<div class=\"specifications-list\"><h3[^>]*?>([^>]*?)<\\/h3>([\\s\\S]*?)<\\/div>(?=<div class=\"specifications-list\">)");
+
+    public final static Pattern REVIEWS_PATTERN = Pattern.compile("<a href=\"[^\"]*?4pda\\.ru\\/\\d+\\/\\d+\\/\\d+\\/(\\d+)\\/\" class=\"article-img\">[^<]*?<img src=\"([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[^<]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div class=\"upd\">([^<]*?)<\\/div>[^<]*?<div class=\"description\">([^<]+?)?<\\/div>");
+
+    public final static Pattern DISCUSS_AND_FIRM_PATTERN = Pattern.compile("<a href=\"[^\"]*?showtopic=(\\d+)\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div class=\"upd\">([^<]*?)<\\/div>[^<]*?<div class=\"description\">([^<]+?)?<\\/div>");
+
+    public final static Pattern DISCUSSIONS_PATTERN = Pattern.compile("<div class=\"tab(?: active)?\" id=\"discussions\">[\\s\\S]*?<ul class=\"article-list\">([\\s\\S]*?)<\\/ul>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?(?=<div class=\"tab(?: active)?\" id=\"reviews\">)");
+
+    public final static Pattern FIRMwARES_PATTERN = Pattern.compile("<div class=\"tab(?: active)?\" id=\"firmware\">[\\s\\S]*?<ul class=\"article-list\">([\\s\\S]*?)<\\/ul>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?(?=<div class=\"tab(?: active)?\" id=\"prices\">)");
+
+    public final static Pattern COMMENTS_PATTERN = Pattern.compile("<li><a name=\"comment-(\\d+)\"[^>]*?><\\/a>[^<]*?<div class=\"rating r(\\d+)\"><span[^>]*?>(\\d+)<\\/span>[\\s\\S]*?<a href=\"[^\"]*?showuser=(\\d+)\"[^>]*?>([\\s\\S]*?)<\\/a><\\/div>[^<]*?<div class=\"date\">([^<]*?)<\\/div>[^<]*?<\\/div>[^<]*?<div class=\"text-box\">((?:[^<]*?<span class=\"wo-toggle\">([\\s\\S]*?)<\\/span>)?(?:[^<]*?<span class=\"w-toggle\">([\\s\\S]*?)<\\/span>)?[\\s\\S]*?)<\\/div>[\\s\\S]*?<div class=\"profit\"[^>]*?>[^<]*?<span><a href=\"[^\"]*?\\/like\\/[^\"]*?\"[^>]*?>[^<]*?(\\d+)[^<]*?<\\/a>[\\s\\S]*?<a href=\"[^\"]*?\\/dislike\\/[^\"]*?\"[^>]*?>[^<]*?(\\d+)[^<]*?<\\/a>");
 
     private ArrayList<Pair<String, ArrayList<Pair<String, String>>>> specs = new ArrayList<>();
     private ArrayList<Pair<String, String>> images = new ArrayList<>();
     private Pair<Integer, String> rating;
+    private ArrayList<Review> reviews = new ArrayList<>();
+    private ArrayList<PostItem> discussions = new ArrayList<>();
+    private ArrayList<PostItem> firmwares = new ArrayList<>();
+    private ArrayList<PostItem> news = new ArrayList<>();
     private String id;
     private String title;
     private String manId;
@@ -94,5 +110,151 @@ public class Device {
 
     public ArrayList<Pair<String, ArrayList<Pair<String, String>>>> getSpecs() {
         return specs;
+    }
+
+    public ArrayList<Review> getReviews() {
+        return reviews;
+    }
+
+    public void addReview(Review comment) {
+        this.reviews.add(comment);
+    }
+
+    public ArrayList<PostItem> getDiscussions() {
+        return discussions;
+    }
+
+    public void addDiscussion(PostItem postItem) {
+        this.discussions.add(postItem);
+    }
+
+    public ArrayList<PostItem> getFirmwares() {
+        return firmwares;
+    }
+
+    public void addFirmware(PostItem postItem) {
+        this.firmwares.add(postItem);
+    }
+
+    public ArrayList<PostItem> getNews() {
+        return news;
+    }
+
+    public void addNews(PostItem postItem) {
+        this.news.add(postItem);
+    }
+
+    public static class Review {
+        private int id = 0;
+        private int ratingColorCode = 0;
+        private int rating = 0;
+        private int userId = 0;
+        private String nick;
+        private String date;
+        private String text;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public int getRatingColorCode() {
+            return ratingColorCode;
+        }
+
+        public void setRatingColorCode(int ratingColorCode) {
+            this.ratingColorCode = ratingColorCode;
+        }
+
+        public int getRating() {
+            return rating;
+        }
+
+        public void setRating(int rating) {
+            this.rating = rating;
+        }
+
+        public int getUserId() {
+            return userId;
+        }
+
+        public void setUserId(int userId) {
+            this.userId = userId;
+        }
+
+        public String getNick() {
+            return nick;
+        }
+
+        public void setNick(String nick) {
+            this.nick = nick;
+        }
+
+        public String getDate() {
+            return date;
+        }
+
+        public void setDate(String date) {
+            this.date = date;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+    }
+
+    public static class PostItem{
+        private int id = 0;
+        private String image;
+        private String title;
+        private String date;
+        private String desc;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getImage() {
+            return image;
+        }
+
+        public void setImage(String image) {
+            this.image = image;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getDate() {
+            return date;
+        }
+
+        public void setDate(String date) {
+            this.date = date;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
     }
 }

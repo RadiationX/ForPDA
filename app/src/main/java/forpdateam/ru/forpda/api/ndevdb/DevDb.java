@@ -13,9 +13,6 @@ import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.ndevdb.models.Device;
 import forpdateam.ru.forpda.api.ndevdb.models.Manufacturer;
 import forpdateam.ru.forpda.api.ndevdb.models.Manufacturers;
-import forpdateam.ru.forpda.api.others.pagination.Pagination;
-import forpdateam.ru.forpda.api.reputation.models.RepData;
-import forpdateam.ru.forpda.api.reputation.models.RepItem;
 
 /**
  * Created by radiationx on 06.08.17.
@@ -133,6 +130,7 @@ public class DevDb {
                 data.addSpecs(title, specs);
             }
         }
+
         matcher = MAIN_PATTERN.matcher(response.getBody());
         if (matcher.find()) {
             Matcher bcMatcher = BREADCRUMB_PATTERN.matcher(matcher.group(1));
@@ -151,6 +149,66 @@ public class DevDb {
             }
             data.setTitle(matcher.group(4));
             data.setId(devId);
+        }
+
+        matcher = Device.COMMENTS_PATTERN.matcher(response.getBody());
+        while (matcher.find()) {
+            Device.Review review = new Device.Review();
+            review.setId(Integer.parseInt(matcher.group(1)));
+            review.setRatingColorCode(Integer.parseInt(matcher.group(2)));
+            review.setRating(Integer.parseInt(matcher.group(3)));
+            review.setUserId(Integer.parseInt(matcher.group(4)));
+            review.setNick(Utils.fromHtml(matcher.group(5)));
+            review.setDate(matcher.group(6));
+            String text = matcher.group(9);
+            if (text == null) {
+                text = matcher.group(7);
+            }
+            review.setText(text);
+            data.addReview(review);
+        }
+
+        matcher = Device.REVIEWS_PATTERN.matcher(response.getBody());
+        while (matcher.find()) {
+            Device.PostItem item = new Device.PostItem();
+            item.setId(Integer.parseInt(matcher.group(1)));
+            item.setImage(matcher.group(2));
+            item.setTitle(Utils.fromHtml(matcher.group(3)));
+            item.setDate(matcher.group(4));
+            if (matcher.group(5) != null) {
+                item.setDesc(Utils.fromHtml(matcher.group(5)));
+            }
+            data.addNews(item);
+        }
+
+        matcher = Device.DISCUSSIONS_PATTERN.matcher(response.getBody());
+        if (matcher.find()) {
+            Matcher matcher1 = Device.DISCUSS_AND_FIRM_PATTERN.matcher(matcher.group(1));
+            while (matcher1.find()) {
+                Device.PostItem item = new Device.PostItem();
+                item.setId(Integer.parseInt(matcher1.group(1)));
+                item.setTitle(Utils.fromHtml(matcher1.group(2)));
+                item.setDate(matcher1.group(3));
+                if (matcher1.group(4) != null) {
+                    item.setDesc(Utils.fromHtml(matcher1.group(4)));
+                }
+                data.addDiscussion(item);
+            }
+        }
+
+        matcher = Device.FIRMwARES_PATTERN.matcher(response.getBody());
+        if (matcher.find()) {
+            Matcher matcher1 = Device.DISCUSS_AND_FIRM_PATTERN.matcher(matcher.group(1));
+            while (matcher1.find()) {
+                Device.PostItem item = new Device.PostItem();
+                item.setId(Integer.parseInt(matcher1.group(1)));
+                item.setTitle(Utils.fromHtml(matcher1.group(2)));
+                item.setDate(matcher1.group(3));
+                if (matcher1.group(4) != null) {
+                    item.setDesc(Utils.fromHtml(matcher1.group(4)));
+                }
+                data.addFirmware(item);
+            }
         }
         return data;
     }
