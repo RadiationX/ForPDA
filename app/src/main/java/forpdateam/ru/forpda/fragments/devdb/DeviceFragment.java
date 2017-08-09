@@ -1,10 +1,7 @@
 package forpdateam.ru.forpda.fragments.devdb;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -12,7 +9,6 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -22,18 +18,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.github.chrisbanes.photoview.OnPhotoTapListener;
-import com.github.chrisbanes.photoview.PhotoView;
-import com.github.rahatarmanahmed.cpv.CircularProgressView;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,14 +28,10 @@ import java.util.List;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.ndevdb.models.Device;
-import forpdateam.ru.forpda.api.ndevdb.models.Manufacturer;
-import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.devdb.device.specs.SpecsFragment;
-import forpdateam.ru.forpda.imageviewer.ImagesAdapter;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
-import forpdateam.ru.forpda.views.pagination.PaginationHelper;
 
 /**
  * Created by radiationx on 08.08.17.
@@ -56,7 +39,7 @@ import forpdateam.ru.forpda.views.pagination.PaginationHelper;
 
 public class DeviceFragment extends TabFragment {
     public final static String ARG_DEVICE_ID = "DEVICE_ID";
-    private String deviceId;
+    private String deviceId = "xiaomi_redmi_note_3_pro";
     private Subscriber<Device> mainSubscriber = new Subscriber<>(this);
     private ViewPager imagesPager;
 
@@ -68,7 +51,7 @@ public class DeviceFragment extends TabFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            deviceId = getArguments().getString(ARG_DEVICE_ID);
+            deviceId = getArguments().getString(ARG_DEVICE_ID, deviceId);
         }
     }
 
@@ -101,49 +84,26 @@ public class DeviceFragment extends TabFragment {
         toolbar.requestLayout();
 
 
-        TabLayout tabLayout = new TabLayout(getContext());
+        tabLayout = new TabLayout(getContext());
         CollapsingToolbarLayout.LayoutParams tabparams = new CollapsingToolbarLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM);
         tabparams.setCollapseMode(CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN);
         tabLayout.setLayoutParams(tabparams);
-        tabLayout.addTab(tabLayout.newTab().setText("Характеристики"));
-        tabLayout.addTab(tabLayout.newTab().setText("Отзывы"));
-        tabLayout.addTab(tabLayout.newTab().setText("Обсуждения"));
-        tabLayout.addTab(tabLayout.newTab().setText("Публикации"));
-        tabLayout.addTab(tabLayout.newTab().setText("Прошивки"));
-        tabLayout.addTab(tabLayout.newTab().setText("Цены"));
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         toolbarLayout.addView(tabLayout);
 
 
-        pager = (ViewPager) findViewById(R.id.view_pager);
+        fragmentsPager = (ViewPager) findViewById(R.id.view_pager);
+        tabLayout.setupWithViewPager(fragmentsPager);
 
         return view;
     }
 
-    ViewPager pager;
+    TabLayout tabLayout;
+    ViewPager fragmentsPager;
 
     @Override
     public void loadData() {
         mainSubscriber.subscribe(RxApi.DevDb().getDevice(deviceId), this::onLoad, new Device());
-    }
-
-    private class FragmentPagerAdapter extends android.support.v4.app.FragmentPagerAdapter {
-        private Device device;
-
-        public FragmentPagerAdapter(FragmentManager fm, Device device) {
-            super(fm);
-            this.device = device;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return new SpecsFragment().setDevice(device);
-        }
-
-        @Override
-        public int getCount() {
-            return 1;
-        }
     }
 
     private void onLoad(Device device) {
@@ -154,13 +114,66 @@ public class DeviceFragment extends TabFragment {
         for (Pair<String, String> pair : device.getImages()) {
             urls.add(pair.first);
         }
-        ImagesAdapter adapter = new ImagesAdapter(getContext(), urls);
+        ImagesAdapter imagesAdapter = new ImagesAdapter(getContext(), urls);
+        imagesPager.setAdapter(imagesAdapter);
 
-        imagesPager.setAdapter(adapter);
+        /*tabLayout.addTab(tabLayout.newTab().setText("Характеристики"));
+        tabLayout.addTab(tabLayout.newTab().setText("Отзывы"));
+        tabLayout.addTab(tabLayout.newTab().setText("Обсуждения"));
+        tabLayout.addTab(tabLayout.newTab().setText("Публикации"));
+        tabLayout.addTab(tabLayout.newTab().setText("Прошивки"));
+        tabLayout.addTab(tabLayout.newTab().setText("Цены"));*/
 
         FragmentPagerAdapter pagerAdapter = new FragmentPagerAdapter(getChildFragmentManager(), device);
-        pager.setAdapter(pagerAdapter);
+        fragmentsPager.setAdapter(pagerAdapter);
     }
+
+    private class FragmentPagerAdapter extends android.support.v4.app.FragmentPagerAdapter {
+        private Device device;
+        private ArrayList<Fragment> fragments = new ArrayList<>();
+        private ArrayList<String> titles = new ArrayList<>();
+
+        public FragmentPagerAdapter(FragmentManager fm, Device device) {
+            super(fm);
+            this.device = device;
+            if (this.device.getSpecs().size() > 0) {
+                fragments.add(new SpecsFragment().setDevice(this.device));
+                titles.add("Характеристики");
+            }
+            if (this.device.getReviews().size() > 0) {
+                fragments.add(new SpecsFragment().setDevice(this.device));
+                titles.add("Отзывы");
+            }
+            if (this.device.getDiscussions().size() > 0) {
+                fragments.add(new SpecsFragment().setDevice(this.device));
+                titles.add("Обсуждения");
+            }
+            /*if (this.device.getNews().size() > 0) {
+                fragments.add(new SpecsFragment().setDevice(this.device));
+                titles.add("Публикации");
+            }*/
+            if (this.device.getFirmwares().size() > 0) {
+                fragments.add(new SpecsFragment().setDevice(this.device));
+                titles.add("Прошивки");
+            }
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return fragments.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return fragments.size();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return titles.get(position);
+        }
+    }
+
 
     public class ImagesAdapter extends PagerAdapter {
         //private SparseArray<View> views = new SparseArray<>();
