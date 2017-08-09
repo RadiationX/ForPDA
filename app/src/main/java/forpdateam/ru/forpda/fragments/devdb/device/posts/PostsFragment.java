@@ -13,9 +13,8 @@ import java.util.ArrayList;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.ndevdb.models.Device;
-import forpdateam.ru.forpda.fragments.devdb.ManufacturerFragment;
+import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.fragments.devdb.device.SubDeviceFragment;
-import forpdateam.ru.forpda.fragments.devdb.device.comments.CommentsAdapter;
 
 /**
  * Created by radiationx on 09.08.17.
@@ -46,7 +45,7 @@ public class PostsFragment extends SubDeviceFragment {
 
         adapter.addAll(getList());
         recyclerView.setAdapter(adapter);
-        recyclerView.addItemDecoration(new ManufacturerFragment.SpacingItemDecoration(App.px8, true));
+        recyclerView.addItemDecoration(new BrandFragment.SpacingItemDecoration(App.px8, true));
         return view;
     }
 

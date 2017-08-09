@@ -10,9 +10,8 @@ import android.view.ViewGroup;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.fragments.devdb.ManufacturerFragment;
+import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.fragments.devdb.device.SubDeviceFragment;
-import forpdateam.ru.forpda.fragments.devdb.device.specs.SpecsAdapter;
 
 /**
  * Created by radiationx on 09.08.17.
@@ -31,7 +30,7 @@ public class CommentsFragment extends SubDeviceFragment {
         CommentsAdapter adapter = new CommentsAdapter();
         adapter.addAll(device.getComments());
         recyclerView.setAdapter(adapter);
-        recyclerView.addItemDecoration(new ManufacturerFragment.SpacingItemDecoration(App.px8, true));
+        recyclerView.addItemDecoration(new BrandFragment.SpacingItemDecoration(App.px8, true));
         return view;
     }
 }

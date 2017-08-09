@@ -10,9 +10,9 @@ import java.util.regex.Pattern;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
+import forpdateam.ru.forpda.api.ndevdb.models.Brand;
 import forpdateam.ru.forpda.api.ndevdb.models.Device;
-import forpdateam.ru.forpda.api.ndevdb.models.Manufacturer;
-import forpdateam.ru.forpda.api.ndevdb.models.Manufacturers;
+import forpdateam.ru.forpda.api.ndevdb.models.Brands;
 
 /**
  * Created by radiationx on 06.08.17.
@@ -23,16 +23,16 @@ public class DevDb {
     private final static Pattern BREADCRUMB_PATTERN = Pattern.compile("<a href=\"[^\"]*?devdb\\/([^\"\\/]+?)(?:\\/([^\"]+?))?\">([^<]*?)<\\/a>");
     private final static Pattern SPECS_PATTERN = Pattern.compile("<dl[^>]*?>[^<]*?<dt>([^<]*?)<\\/dt>[^<]*<dd>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>[\\s\\S]*?)?<\\/dd>");
 
-    public Manufacturers getManufacturers(String catId) throws Exception {
-        Manufacturers data = new Manufacturers();
+    public Brands getBrands(String catId) throws Exception {
+        Brands data = new Brands();
         NetworkResponse response = Api.getWebClient().get("https://4pda.ru/devdb/" + catId + "/all");
-        Matcher matcher = Manufacturers.LETTERS_PATTERN.matcher(response.getBody());
+        Matcher matcher = Brands.LETTERS_PATTERN.matcher(response.getBody());
         while (matcher.find()) {
             String letter = matcher.group(1);
-            ArrayList<Manufacturers.Item> items = new ArrayList<>();
-            Matcher itemsMatcher = Manufacturers.ITEMS_IN_LETTER_PATTERN.matcher(matcher.group(2));
+            ArrayList<Brands.Item> items = new ArrayList<>();
+            Matcher itemsMatcher = Brands.ITEMS_IN_LETTER_PATTERN.matcher(matcher.group(2));
             while (itemsMatcher.find()) {
-                Manufacturers.Item item = new Manufacturers.Item();
+                Brands.Item item = new Brands.Item();
                 item.setId(itemsMatcher.group(1));
                 item.setTitle(Utils.fromHtml(itemsMatcher.group(2)));
                 item.setCount(Integer.parseInt(itemsMatcher.group(3)));
@@ -56,14 +56,13 @@ public class DevDb {
         return data;
     }
 
-    public Manufacturer getManufacturer(String catId, String manId) throws Exception {
-        Manufacturer data = new Manufacturer();
-        NetworkResponse response = Api.getWebClient().get("https://4pda.ru/devdb/" + catId + "/" + manId + "/all");
+    public Brand getBrand(String catId, String brandId) throws Exception {
+        Brand data = new Brand();
+        NetworkResponse response = Api.getWebClient().get("https://4pda.ru/devdb/" + catId + "/" + brandId + "/all");
 
-        Log.d("MANAPI", "RESPONSE TUT " + response);
-        Matcher matcher = Manufacturer.DEVICES_PATTERN.matcher(response.getBody());
+        Matcher matcher = Brand.DEVICES_PATTERN.matcher(response.getBody());
         while (matcher.find()) {
-            Manufacturer.DeviceItem item = new Manufacturer.DeviceItem();
+            Brand.DeviceItem item = new Brand.DeviceItem();
             item.setImageSrc(matcher.group(1));
             item.setId(matcher.group(2));
             item.setTitle(Utils.fromHtml(matcher.group(3)));
@@ -81,14 +80,10 @@ public class DevDb {
 
             data.addDevice(item);
         }
-        Log.d("MANAPI", "ADDED DEVICES " + data.getDevices().size());
         matcher = MAIN_PATTERN.matcher(response.getBody());
-        Log.d("MANAPI", "MATCHER MAIN");
         if (matcher.find()) {
-            Log.d("MANAPI", "FIND MAIN");
             Matcher bcMatcher = BREADCRUMB_PATTERN.matcher(matcher.group(1));
             while (bcMatcher.find()) {
-                Log.d("MANAPI", "FIND BREADCRUMB");
                 if (bcMatcher.group(2) == null) {
                     data.setCatId(bcMatcher.group(1));
                     data.setCatTitle(bcMatcher.group(3));
@@ -97,12 +92,10 @@ public class DevDb {
                     data.setTitle(bcMatcher.group(3));
                 }
             }
-            Log.d("MANAPI", "FILL MAIN");
             data.setTitle(matcher.group(4));
             data.setActual(Integer.parseInt(matcher.group(5)));
             data.setAll(Integer.parseInt(matcher.group(6)));
         }
-        Log.d("MANAPI", "ADDED MAIN PART ");
         return data;
     }
 
@@ -139,8 +132,8 @@ public class DevDb {
                     data.setCatId(bcMatcher.group(1));
                     data.setCatTitle(bcMatcher.group(3));
                 } else {
-                    data.setManId(bcMatcher.group(2));
-                    data.setManTitle(bcMatcher.group(3));
+                    data.setBrandId(bcMatcher.group(2));
+                    data.setBrandTitle(bcMatcher.group(3));
                 }
             }
 

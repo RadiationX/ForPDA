@@ -12,38 +12,34 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
-import forpdateam.ru.forpda.api.ndevdb.models.Manufacturers;
+import forpdateam.ru.forpda.api.ndevdb.models.Brands;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.fragments.devdb.adapters.ManufacturersAdapter;
-import forpdateam.ru.forpda.fragments.favorites.FavoritesAdapter;
+import forpdateam.ru.forpda.fragments.devdb.adapters.BrandsAdapter;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
-import io.reactivex.functions.Consumer;
 
 /**
  * Created by radiationx on 08.08.17.
  */
 
-public class ManufacturersFragment extends TabFragment {
+public class BrandsFragment extends TabFragment {
     public final static String ARG_CATEGORY_ID = "CATEGORY_ID";
     private final static String[] spinnerTitles = {"Телефоны", "Планшеты", "Эл. книги", "Смарт часы"};
     private final static String[] mansCats = {"phones", "pad", "ebook", "smartwatch"};
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
-    private Subscriber<Manufacturers> mainSubscriber = new Subscriber<>(this);
-    private ManufacturersAdapter adapter;
+    private Subscriber<Brands> mainSubscriber = new Subscriber<>(this);
+    private BrandsAdapter adapter;
     private int selected = 0;
-    private Manufacturers currentData;
+    private Brands currentData;
 
-    public ManufacturersFragment() {
+    public BrandsFragment() {
         //configuration.setAlone(true);
         configuration.setDefaultTitle("Произовдители");
     }
@@ -83,7 +79,7 @@ public class ManufacturersFragment extends TabFragment {
         titlesWrapper.setVisibility(View.GONE);
         toolbarSpinner.setVisibility(View.VISIBLE);
 
-        adapter = new ManufacturersAdapter();
+        adapter = new BrandsAdapter();
         recyclerView.setAdapter(adapter);
 
 
@@ -106,9 +102,9 @@ public class ManufacturersFragment extends TabFragment {
 
         adapter.setOnItemClickListener(item -> {
             Bundle args = new Bundle();
-            args.putString(ManufacturerFragment.ARG_CATEGORY_ID, currentData.getCatId());
-            args.putString(ManufacturerFragment.ARG_MANUFACTURER_ID, item.getId());
-            TabManager.getInstance().add(new Builder<>(ManufacturerFragment.class).setArgs(args).build());
+            args.putString(BrandFragment.ARG_CATEGORY_ID, currentData.getCatId());
+            args.putString(BrandFragment.ARG_BRAND_ID, item.getId());
+            TabManager.getInstance().add(new Builder<>(BrandFragment.class).setArgs(args).build());
         });
 
         return view;
@@ -117,17 +113,17 @@ public class ManufacturersFragment extends TabFragment {
     @Override
     public void loadData() {
         refreshLayout.setRefreshing(true);
-        mainSubscriber.subscribe(RxApi.DevDb().getManufacturers(mansCats[selected]), this::onLoad, new Manufacturers());
+        mainSubscriber.subscribe(RxApi.DevDb().getBrands(mansCats[selected]), this::onLoad, new Brands());
     }
 
-    private void onLoad(Manufacturers manufacturers) {
-        currentData = manufacturers;
+    private void onLoad(Brands brands) {
+        currentData = brands;
         refreshLayout.setRefreshing(false);
         adapter.clear();
-        for (Map.Entry<String, ArrayList<Manufacturers.Item>> entry : manufacturers.getLetterMap().entrySet()) {
+        for (Map.Entry<String, ArrayList<Brands.Item>> entry : brands.getLetterMap().entrySet()) {
             adapter.addSection(new Pair<>(entry.getKey(), entry.getValue()));
         }
         adapter.notifyDataSetChanged();
-        setTitle(manufacturers.getCatTitle());
+        setTitle(brands.getCatTitle());
     }
 }

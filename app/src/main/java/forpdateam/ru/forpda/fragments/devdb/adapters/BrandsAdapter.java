@@ -1,12 +1,10 @@
 package forpdateam.ru.forpda.fragments.devdb.adapters;
 
-import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.sectionedrecyclerview.SectionedRecyclerViewAdapter;
@@ -16,14 +14,14 @@ import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.ndevdb.models.Manufacturers;
+import forpdateam.ru.forpda.api.ndevdb.models.Brands;
 
 /**
  * Created by radiationx on 08.08.17.
  */
 
-public class ManufacturersAdapter extends SectionedRecyclerViewAdapter<ManufacturersAdapter.ViewHolder> {
-    private List<Pair<String, List<Manufacturers.Item>>> sections = new ArrayList<>();
+public class BrandsAdapter extends SectionedRecyclerViewAdapter<BrandsAdapter.ViewHolder> {
+    private List<Pair<String, List<Brands.Item>>> sections = new ArrayList<>();
     private int titleColorNew, titleColor;
 
     @Override
@@ -33,28 +31,28 @@ public class ManufacturersAdapter extends SectionedRecyclerViewAdapter<Manufactu
         titleColorNew = App.getColorFromAttr(recyclerView.getContext(), R.attr.default_text_color);
     }
 
-    public void addSection(Pair<String, List<Manufacturers.Item>> item) {
+    public void addSection(Pair<String, List<Brands.Item>> item) {
         sections.add(item);
     }
 
     public void clear() {
-        for (Pair<String, List<Manufacturers.Item>> pair : sections)
+        for (Pair<String, List<Brands.Item>> pair : sections)
             pair.second.clear();
         sections.clear();
     }
 
-    private ManufacturersAdapter.OnItemClickListener itemClickListener;
-    private ManufacturersAdapter.OnItemClickListener longItemClickListener;
+    private BrandsAdapter.OnItemClickListener itemClickListener;
+    private BrandsAdapter.OnItemClickListener longItemClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(Manufacturers.Item item);
+        void onItemClick(Brands.Item item);
     }
 
-    public void setOnItemClickListener(final ManufacturersAdapter.OnItemClickListener mItemClickListener) {
+    public void setOnItemClickListener(final BrandsAdapter.OnItemClickListener mItemClickListener) {
         this.itemClickListener = mItemClickListener;
     }
 
-    public void setOnLongItemClickListener(final ManufacturersAdapter.OnItemClickListener longItemClickListener) {
+    public void setOnLongItemClickListener(final BrandsAdapter.OnItemClickListener longItemClickListener) {
         this.longItemClickListener = longItemClickListener;
     }
 
@@ -88,18 +86,18 @@ public class ManufacturersAdapter extends SectionedRecyclerViewAdapter<Manufactu
     }
 
     @Override
-    public ManufacturersAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public BrandsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layout = VIEW_TYPE_ITEM;
         switch (viewType) {
             case VIEW_TYPE_HEADER:
-                layout = R.layout.manufacturers_item_section;
+                layout = R.layout.brands_item_section;
                 break;
             case VIEW_TYPE_ITEM:
-                layout = R.layout.manufacturers_item;
+                layout = R.layout.brands_item;
                 break;
         }
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
-        return new ManufacturersAdapter.ViewHolder(v);
+        return new BrandsAdapter.ViewHolder(v);
     }
 
     @Override
@@ -108,7 +106,7 @@ public class ManufacturersAdapter extends SectionedRecyclerViewAdapter<Manufactu
     }
 
     @Override
-    public void onBindHeaderViewHolder(ManufacturersAdapter.ViewHolder holder, int section) {
+    public void onBindHeaderViewHolder(BrandsAdapter.ViewHolder holder, int section) {
         // Setup header view.
         /*if (sections.size() == 1) {
             holder.itemView.setVisibility(View.GONE);
@@ -122,8 +120,8 @@ public class ManufacturersAdapter extends SectionedRecyclerViewAdapter<Manufactu
     }
 
     @Override
-    public void onBindViewHolder(ManufacturersAdapter.ViewHolder holder, int section, int relativePosition, int absolutePosition) {
-        Manufacturers.Item item = sections.get(section).second.get(relativePosition);
+    public void onBindViewHolder(BrandsAdapter.ViewHolder holder, int section, int relativePosition, int absolutePosition) {
+        Brands.Item item = sections.get(section).second.get(relativePosition);
         holder.title.setText(item.getTitle());
         holder.count.setText(Integer.toString(item.getCount()));
 
@@ -146,7 +144,7 @@ public class ManufacturersAdapter extends SectionedRecyclerViewAdapter<Manufactu
         @Override
         public void onClick(View view) {
             if (itemClickListener != null) {
-                int position[] = ManufacturersAdapter.this.getPosition(getLayoutPosition());
+                int position[] = BrandsAdapter.this.getPosition(getLayoutPosition());
                 if (position[0] != -1) {
                     itemClickListener.onItemClick(sections.get(position[0]).second.get(position[1]));
                 }
@@ -156,7 +154,7 @@ public class ManufacturersAdapter extends SectionedRecyclerViewAdapter<Manufactu
         @Override
         public boolean onLongClick(View view) {
             if (longItemClickListener != null) {
-                int position[] = ManufacturersAdapter.this.getPosition(getLayoutPosition());
+                int position[] = BrandsAdapter.this.getPosition(getLayoutPosition());
                 if (position[0] != -1) {
                     longItemClickListener.onItemClick(sections.get(position[0]).second.get(position[1]));
                 }

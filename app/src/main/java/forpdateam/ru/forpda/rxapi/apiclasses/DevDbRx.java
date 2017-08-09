@@ -1,10 +1,9 @@
 package forpdateam.ru.forpda.rxapi.apiclasses;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.ndevdb.models.Brand;
+import forpdateam.ru.forpda.api.ndevdb.models.Brands;
 import forpdateam.ru.forpda.api.ndevdb.models.Device;
-import forpdateam.ru.forpda.api.ndevdb.models.Manufacturer;
-import forpdateam.ru.forpda.api.ndevdb.models.Manufacturers;
-import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import io.reactivex.Observable;
 
 /**
@@ -12,12 +11,12 @@ import io.reactivex.Observable;
  */
 
 public class DevDbRx {
-    public Observable<Manufacturers> getManufacturers(String catId) {
-        return Observable.fromCallable(() -> Api.DevDb().getManufacturers(catId));
+    public Observable<Brands> getBrands(String catId) {
+        return Observable.fromCallable(() -> Api.DevDb().getBrands(catId));
     }
 
-    public Observable<Manufacturer> getManufacturer(String catId, String manId) {
-        return Observable.fromCallable(() -> Api.DevDb().getManufacturer(catId, manId));
+    public Observable<Brand> getBrand(String catId, String brandId) {
+        return Observable.fromCallable(() -> Api.DevDb().getBrand(catId, brandId));
     }
     public Observable<Device> getDevice(String devId) {
         return Observable.fromCallable(() -> Api.DevDb().getDevice(devId));

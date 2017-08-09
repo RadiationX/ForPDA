@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
  * Created by radiationx on 06.08.17.
  */
 
-public class Manufacturers {
+public class Brands {
 
     public final static Pattern LETTERS_PATTERN = Pattern.compile("<div class=\"letter\">([^<]*?)<\\/div>[^<]*?<div class=\"frame\">([\\s\\S]*?)<\\/div>");
     public final static Pattern ITEMS_IN_LETTER_PATTERN = Pattern.compile("<a href=\"[^\"]*?\\/([^\\/\"]*?)(?:\\/all)?\">([\\s\\S]*?) ?\\((\\d+)\\)<\\/a>");

@@ -35,8 +35,8 @@ public class Device {
     private ArrayList<PostItem> news = new ArrayList<>();
     private String id;
     private String title;
-    private String manId;
-    private String manTitle;
+    private String brandId;
+    private String brandTitle;
     private String catId;
     private String catTitle;
 
@@ -56,20 +56,20 @@ public class Device {
         this.title = title;
     }
 
-    public String getManId() {
-        return manId;
+    public String getBrandId() {
+        return brandId;
     }
 
-    public void setManId(String manId) {
-        this.manId = manId;
+    public void setBrandId(String brandId) {
+        this.brandId = brandId;
     }
 
-    public String getManTitle() {
-        return manTitle;
+    public String getBrandTitle() {
+        return brandTitle;
     }
 
-    public void setManTitle(String manTitle) {
-        this.manTitle = manTitle;
+    public void setBrandTitle(String brandTitle) {
+        this.brandTitle = brandTitle;
     }
 
     public String getCatId() {

@@ -26,10 +26,9 @@ import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.devdb.DeviceFragment;
-import forpdateam.ru.forpda.fragments.devdb.ManufacturerFragment;
-import forpdateam.ru.forpda.fragments.devdb.ManufacturersFragment;
+import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
+import forpdateam.ru.forpda.fragments.devdb.BrandsFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
-import forpdateam.ru.forpda.fragments.forum.ForumFragment;
 import forpdateam.ru.forpda.fragments.mentions.MentionsFragment;
 import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
@@ -156,14 +155,14 @@ public class IntentHandler {
                                 if (uri.getPathSegments().get(1).matches("phones|pad|ebook|smartwatch")) {
                                     if (uri.getPathSegments().size() > 2 && !uri.getPathSegments().get(2).matches("new|select")) {
                                         run("devdb models brand");
-                                        args.putString(ManufacturerFragment.ARG_CATEGORY_ID, uri.getPathSegments().get(1));
-                                        args.putString(ManufacturerFragment.ARG_MANUFACTURER_ID, uri.getPathSegments().get(2));
-                                        TabManager.getInstance().add(new TabFragment.Builder<>(ManufacturerFragment.class).setArgs(args).build());
+                                        args.putString(BrandFragment.ARG_CATEGORY_ID, uri.getPathSegments().get(1));
+                                        args.putString(BrandFragment.ARG_BRAND_ID, uri.getPathSegments().get(2));
+                                        TabManager.getInstance().add(new TabFragment.Builder<>(BrandFragment.class).setArgs(args).build());
                                         return true;
                                     }
                                     run("devdb models");
-                                    args.putString(ManufacturersFragment.ARG_CATEGORY_ID, uri.getPathSegments().get(1));
-                                    TabManager.getInstance().add(new TabFragment.Builder<>(ManufacturersFragment.class).setArgs(args).build());
+                                    args.putString(BrandsFragment.ARG_CATEGORY_ID, uri.getPathSegments().get(1));
+                                    TabManager.getInstance().add(new TabFragment.Builder<>(BrandsFragment.class).setArgs(args).build());
                                     return true;
                                 } else {
                                     run("devdb device");
@@ -173,7 +172,7 @@ public class IntentHandler {
                                 }
                             } else {
                                 run("devdb categories");
-                                TabManager.getInstance().add(new TabFragment.Builder<>(ManufacturersFragment.class).build());
+                                TabManager.getInstance().add(new TabFragment.Builder<>(BrandsFragment.class).build());
                                 return true;
                             }
                         default:
