@@ -30,6 +30,7 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.ndevdb.models.Device;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.devdb.device.comments.CommentsFragment;
+import forpdateam.ru.forpda.fragments.devdb.device.posts.PostsFragment;
 import forpdateam.ru.forpda.fragments.devdb.device.specs.SpecsFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
@@ -144,19 +145,19 @@ public class DeviceFragment extends TabFragment {
             }
             if (this.device.getComments().size() > 0) {
                 fragments.add(new CommentsFragment().setDevice(this.device));
-                titles.add("Отзывы");
+                titles.add("Отзывы (" + this.device.getComments().size() + ")");
             }
             if (this.device.getDiscussions().size() > 0) {
-                fragments.add(new SpecsFragment().setDevice(this.device));
-                titles.add("Обсуждения");
+                fragments.add(new PostsFragment().setSource(PostsFragment.SRC_DISCUSSIONS).setDevice(this.device));
+                titles.add("Обсуждения (" + this.device.getDiscussions().size() + ")");
             }
             /*if (this.device.getNews().size() > 0) {
-                fragments.add(new SpecsFragment().setDevice(this.device));
-                titles.add("Публикации");
+                fragments.add(new PostsFragment().setSource(PostsFragment.SRC_NEWS).setDevice(this.device));
+                titles.add("Публикации ("+this.device.getNews().size()+")");
             }*/
             if (this.device.getFirmwares().size() > 0) {
-                fragments.add(new SpecsFragment().setDevice(this.device));
-                titles.add("Прошивки");
+                fragments.add(new PostsFragment().setSource(PostsFragment.SRC_FIRMWARES).setDevice(this.device));
+                titles.add("Прошивки (" + this.device.getFirmwares().size() + ")");
             }
         }
 

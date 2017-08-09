@@ -31,8 +31,8 @@ public class MenuItems {
         createdMenuItems.add(new MenuItem("Избранное", R.drawable.ic_star, FavoritesFragment.class));
         createdMenuItems.add(new MenuItem("Контакты", R.drawable.ic_contacts, QmsContactsFragment.class));
         createdMenuItems.add(new MenuItem("Ответы", R.drawable.ic_notifications, MentionsFragment.class));
-        createdMenuItems.add(new MenuItem("DevDb", R.drawable.ic_mic, ManufacturersFragment.class));
-        createdMenuItems.add(new MenuItem("DevDb dev", R.drawable.ic_mic, DeviceFragment.class));
+        createdMenuItems.add(new MenuItem("DevDb", R.drawable.ic_devices_other, ManufacturersFragment.class));
+        createdMenuItems.add(new MenuItem("DevDb dev", R.drawable.ic_devices_other, DeviceFragment.class));
         createdMenuItems.add(new MenuItem("Форум", R.drawable.ic_forum, ForumFragment.class));
         createdMenuItems.add(new MenuItem("Поиск", R.drawable.ic_search, SearchFragment.class));
         createdMenuItems.add(new MenuItem("Настройки", R.drawable.ic_settings, ACTION_APP_SETTINGS));
