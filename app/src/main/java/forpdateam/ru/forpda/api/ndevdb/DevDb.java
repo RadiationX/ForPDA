@@ -153,19 +153,21 @@ public class DevDb {
 
         matcher = Device.COMMENTS_PATTERN.matcher(response.getBody());
         while (matcher.find()) {
-            Device.Review review = new Device.Review();
-            review.setId(Integer.parseInt(matcher.group(1)));
-            review.setRatingColorCode(Integer.parseInt(matcher.group(2)));
-            review.setRating(Integer.parseInt(matcher.group(3)));
-            review.setUserId(Integer.parseInt(matcher.group(4)));
-            review.setNick(Utils.fromHtml(matcher.group(5)));
-            review.setDate(matcher.group(6));
+            Device.Comment comment = new Device.Comment();
+            comment.setId(Integer.parseInt(matcher.group(1)));
+            comment.setRatingColorCode(Integer.parseInt(matcher.group(2)));
+            comment.setRating(Integer.parseInt(matcher.group(3)));
+            comment.setUserId(Integer.parseInt(matcher.group(4)));
+            comment.setNick(Utils.fromHtml(matcher.group(5)));
+            comment.setDate(matcher.group(6));
             String text = matcher.group(9);
             if (text == null) {
                 text = matcher.group(7);
             }
-            review.setText(text);
-            data.addReview(review);
+            comment.setText(text.trim());
+            comment.setLikes(Integer.parseInt(matcher.group(10)));
+            comment.setDislikes(Integer.parseInt(matcher.group(11)));
+            data.addComment(comment);
         }
 
         matcher = Device.REVIEWS_PATTERN.matcher(response.getBody());
