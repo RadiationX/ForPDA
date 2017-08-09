@@ -13,7 +13,7 @@
     android:clickable="true"
     app:cardCornerRadius="0dp"
     app:cardElevation="1dp"
-    style="?CardStyle">
+    style="@style/CardStyle.Wide">
 
     <RelativeLayout
         android:layout_width="match_parent"

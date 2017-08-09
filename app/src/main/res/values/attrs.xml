@@ -36,7 +36,5 @@
     <attr name="bottom_sheet_dialog_theme" extension="reference" />
 
     <attr name="ProfileToolbarTextStyle" extension="reference" />
-    <attr name="ProfileCardTitleStyle" extension="reference" />
-    <attr name="CardStyle" extension="reference" />
 
 </resources>

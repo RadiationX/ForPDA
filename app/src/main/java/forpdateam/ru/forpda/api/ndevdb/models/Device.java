@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public class Device {
     public final static Pattern PATTERN_1 = Pattern.compile("h1 class=\"product-name\">(?:<a[^>]*?>[^<]*?<\\/a>)? ?([^<]*?)<\\/h1>[\\s\\S]*?div class=\"item-visual\">([\\s\\S]*?)<\\/div>[^<]*?<div class=\"item-info\">[\\s\\S]*?div class=\"item-content[^>]*?>[^<]*?<div class=\"content\">([\\s\\S]*?)<\\/div>[^<]*?<div class=\"aside\">");
     public final static Pattern IMAGES_PATTERN = Pattern.compile("<a[^>]*?href=\"([^\"]*?)\"[^>]*?><img src=\"([^\"]*?)\"");
-    public final static Pattern SPECS_TITLED_PATTERN = Pattern.compile("<div class=\"specifications-list\"><h3[^>]*?>([^>]*?)<\\/h3>([\\s\\S]*?)<\\/div>");
+    public final static Pattern SPECS_TITLED_PATTERN = Pattern.compile("<div class=\"specifications-list\"><h3[^>]*?>([^>]*?)<\\/h3>([\\s\\S]*?)<\\/div>(?=<div class=\"specifications-list\">)");
 
     private ArrayList<Pair<String, ArrayList<Pair<String, String>>>> specs = new ArrayList<>();
     private ArrayList<Pair<String, String>> images = new ArrayList<>();

@@ -9,8 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.ndevdb.models.Device;
+import forpdateam.ru.forpda.fragments.devdb.ManufacturerFragment;
 
 /**
  * Created by radiationx on 08.08.17.
@@ -41,6 +43,7 @@ public class SpecsFragment extends Fragment {
         SpecsAdapter adapter = new SpecsAdapter();
         adapter.addAll(device.getSpecs());
         recyclerView.setAdapter(adapter);
+        recyclerView.addItemDecoration(new ManufacturerFragment.SpacingItemDecoration(App.px8, true));
         return view;
     }
 }

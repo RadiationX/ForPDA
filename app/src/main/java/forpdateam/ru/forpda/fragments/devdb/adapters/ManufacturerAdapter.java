@@ -30,7 +30,7 @@ public class ManufacturerAdapter extends RecyclerView.Adapter<ManufacturerAdapte
     private ManufacturerAdapter.OnItemClickListener longItemClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(Manufacturer.DeviceItem contact);
+        void onItemClick(Manufacturer.DeviceItem deviceItem);
     }
 
     public void addAll(Collection<? extends Manufacturer.DeviceItem> results) {

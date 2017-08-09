@@ -33,6 +33,7 @@ import io.reactivex.functions.Consumer;
  */
 
 public class ManufacturersFragment extends TabFragment {
+    public final static String ARG_CATEGORY_ID = "CATEGORY_ID";
     private final static String[] spinnerTitles = {"Телефоны", "Планшеты", "Эл. книги", "Смарт часы"};
     private final static String[] mansCats = {"phones", "pad", "ebook", "smartwatch"};
     private SwipeRefreshLayout refreshLayout;
@@ -43,8 +44,28 @@ public class ManufacturersFragment extends TabFragment {
     private Manufacturers currentData;
 
     public ManufacturersFragment() {
-        configuration.setAlone(true);
+        //configuration.setAlone(true);
         configuration.setDefaultTitle("Произовдители");
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d("SUKAPADLA", "ARGS "+getArguments());
+        if (getArguments() != null) {
+            String categoryId = getArguments().getString(ARG_CATEGORY_ID);
+            if (categoryId != null) {
+                for (int i = 0; i < mansCats.length; i++) {
+                    if (mansCats[i].equals(categoryId)) {
+                        selected = i;
+                        break;
+                    }
+                }
+
+            }
+            Log.d("SUKAPADLA", "CATID " + categoryId + " : " + selected);
+
+        }
     }
 
     @Nullable
@@ -70,7 +91,7 @@ public class ManufacturersFragment extends TabFragment {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         toolbarSpinner.setAdapter(spinnerAdapter);
         toolbarSpinner.setPrompt("Category");
-        toolbarSpinner.setSelection(0);
+        toolbarSpinner.setSelection(selected);
         toolbarSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

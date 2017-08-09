@@ -46,8 +46,6 @@
 
         <!-- Other settings -->
         <item name="ProfileToolbarTextStyle">@style/ProfileToolbarTextStyle</item>
-        <item name="CardStyle">@style/CardStyle</item>
-        <item name="ProfileCardTitleStyle">@style/ProfileCardTitleStyle</item>
         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
         <item name="windowActionModeOverlay">true</item>
         <!--<item name="actionModeStyle">@style/ActionModeStyle</item>-->
@@ -131,8 +129,6 @@
 
         <!-- Other settings -->
         <item name="ProfileToolbarTextStyle">@style/ProfileToolbarTextStyle</item>
-        <item name="CardStyle">@style/CardStyle</item>
-        <item name="ProfileCardTitleStyle">@style/ProfileCardTitleStyle</item>
         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
         <item name="windowActionModeOverlay">true</item>
         <!--<item name="actionModeStyle">@style/ActionModeStyle</item>-->
@@ -194,18 +190,23 @@
         <item name="android:textAlignment">center</item>
     </style>
 
-    <style name="CardStyle" parent="CardView">
-        <item name="android:layout_marginLeft">@dimen/card_margin_horizontal</item>
-        <item name="android:layout_marginRight">@dimen/card_margin_horizontal</item>
-        <item name="android:layout_marginBottom">8dp</item>
-        <item name="cardCornerRadius">0dp</item>
+
+    <style name="CardStyle.Item" parent="CardView">
+        <item name="cardCornerRadius">2dp</item>
         <item name="cardElevation">1dp</item>
         <item name="cardBackgroundColor">?cards_background</item>
     </style>
 
-    <style name="ProfileCardTitleStyle">
-
+    <style name="CardStyle.Item.Wide" parent="CardStyle.Item">
+        <item name="android:layout_marginLeft">@dimen/card_margin_horizontal</item>
+        <item name="android:layout_marginRight">@dimen/card_margin_horizontal</item>
+        <item name="cardCornerRadius">0dp</item>
     </style>
+
+    <style name="CardStyle.Wide" parent="CardStyle.Item.Wide">
+        <item name="android:layout_marginBottom">@dimen/dp8</item>
+    </style>
+
 
     <!--<style name="ButtonsOnWhite">
         <item name="colorControlNormal">#757575</item>

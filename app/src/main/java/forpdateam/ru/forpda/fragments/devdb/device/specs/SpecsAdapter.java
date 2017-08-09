@@ -59,7 +59,7 @@ public class SpecsAdapter extends RecyclerView.Adapter<SpecsAdapter.ViewHolder> 
         for (int i = 0; i < item.second.size(); i++) {
             Pair<String, String> pair = item.second.get(i);
             String strColor = String.format("#%06X", 0xFFFFFF & App.getColorFromAttr(holder.itemView.getContext(), R.attr.second_text_color));
-            builder.append("<span style=\"color: ").append(strColor).append("\">").append(pair.first).append("</span><br>").append(pair.second);
+            builder.append("<small style=\"font-size:10px\"><span style=\"color: ").append(strColor).append("\">").append(pair.first).append("</span></small><br>").append(pair.second);
             if (i + 1 < item.second.size()) {
                 builder.append("<br><br>");
             }
