@@ -30,11 +30,9 @@ import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
-import forpdateam.ru.forpda.views.ExtendedWebView;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
-
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import forpdateam.ru.forpda.views.ExtendedWebView;
 
 /**
  * Created by radiationx on 20.10.16.
