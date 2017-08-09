@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.api.ndevdb;
 
-import android.util.Log;
 import android.util.Pair;
 
 import java.util.ArrayList;
@@ -11,8 +10,8 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.ndevdb.models.Brand;
-import forpdateam.ru.forpda.api.ndevdb.models.Device;
 import forpdateam.ru.forpda.api.ndevdb.models.Brands;
+import forpdateam.ru.forpda.api.ndevdb.models.Device;
 
 /**
  * Created by radiationx on 06.08.17.

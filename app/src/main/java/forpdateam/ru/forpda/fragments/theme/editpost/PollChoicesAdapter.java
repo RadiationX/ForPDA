@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.fragments.theme.editpost;
 
-import android.content.DialogInterface;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;

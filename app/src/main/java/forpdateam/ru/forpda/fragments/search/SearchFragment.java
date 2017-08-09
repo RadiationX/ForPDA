@@ -61,11 +61,11 @@ import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
-import forpdateam.ru.forpda.views.ExtendedWebView;
 import forpdateam.ru.forpda.utils.FabOnScroll;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
+import forpdateam.ru.forpda.views.ExtendedWebView;
 import forpdateam.ru.forpda.views.pagination.PaginationHelper;
 import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
 
