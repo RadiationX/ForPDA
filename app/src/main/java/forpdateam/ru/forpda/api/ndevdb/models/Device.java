@@ -29,7 +29,7 @@ public class Device {
     private ArrayList<Pair<String, ArrayList<Pair<String, String>>>> specs = new ArrayList<>();
     private ArrayList<Pair<String, String>> images = new ArrayList<>();
     private Pair<Integer, String> rating;
-    private ArrayList<Review> reviews = new ArrayList<>();
+    private ArrayList<Comment> comments = new ArrayList<>();
     private ArrayList<PostItem> discussions = new ArrayList<>();
     private ArrayList<PostItem> firmwares = new ArrayList<>();
     private ArrayList<PostItem> news = new ArrayList<>();
@@ -112,12 +112,12 @@ public class Device {
         return specs;
     }
 
-    public ArrayList<Review> getReviews() {
-        return reviews;
+    public ArrayList<Comment> getComments() {
+        return comments;
     }
 
-    public void addReview(Review comment) {
-        this.reviews.add(comment);
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
     }
 
     public ArrayList<PostItem> getDiscussions() {
@@ -144,11 +144,13 @@ public class Device {
         this.news.add(postItem);
     }
 
-    public static class Review {
+    public static class Comment {
         private int id = 0;
         private int ratingColorCode = 0;
         private int rating = 0;
         private int userId = 0;
+        private int likes = 0;
+        private int dislikes = 0;
         private String nick;
         private String date;
         private String text;
@@ -207,6 +209,22 @@ public class Device {
 
         public void setText(String text) {
             this.text = text;
+        }
+
+        public int getLikes() {
+            return likes;
+        }
+
+        public void setLikes(int likes) {
+            this.likes = likes;
+        }
+
+        public int getDislikes() {
+            return dislikes;
+        }
+
+        public void setDislikes(int dislikes) {
+            this.dislikes = dislikes;
         }
     }
 

@@ -29,6 +29,7 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.ndevdb.models.Device;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.devdb.device.comments.CommentsFragment;
 import forpdateam.ru.forpda.fragments.devdb.device.specs.SpecsFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
@@ -44,7 +45,7 @@ public class DeviceFragment extends TabFragment {
     private ViewPager imagesPager;
 
     public DeviceFragment() {
-        configuration.setDefaultTitle("Произовдитель");
+        configuration.setDefaultTitle("Устройство");
     }
 
     @Override
@@ -110,6 +111,7 @@ public class DeviceFragment extends TabFragment {
 
         //title.setText(device.getTitle());
         setTitle(device.getTitle());
+        setSubtitle(device.getCatTitle() + " > " + device.getManTitle());
         ArrayList<String> urls = new ArrayList<>();
         for (Pair<String, String> pair : device.getImages()) {
             urls.add(pair.first);
@@ -140,8 +142,8 @@ public class DeviceFragment extends TabFragment {
                 fragments.add(new SpecsFragment().setDevice(this.device));
                 titles.add("Характеристики");
             }
-            if (this.device.getReviews().size() > 0) {
-                fragments.add(new SpecsFragment().setDevice(this.device));
+            if (this.device.getComments().size() > 0) {
+                fragments.add(new CommentsFragment().setDevice(this.device));
                 titles.add("Отзывы");
             }
             if (this.device.getDiscussions().size() > 0) {
