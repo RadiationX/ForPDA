@@ -5,12 +5,10 @@ import android.support.annotation.DrawableRes;
 import java.util.ArrayList;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.ndevdb.models.Manufacturer;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.auth.AuthFragment;
 import forpdateam.ru.forpda.fragments.devdb.DeviceFragment;
-import forpdateam.ru.forpda.fragments.devdb.ManufacturerFragment;
-import forpdateam.ru.forpda.fragments.devdb.ManufacturersFragment;
+import forpdateam.ru.forpda.fragments.devdb.BrandsFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.forum.ForumFragment;
 import forpdateam.ru.forpda.fragments.mentions.MentionsFragment;
@@ -31,7 +29,7 @@ public class MenuItems {
         createdMenuItems.add(new MenuItem("Избранное", R.drawable.ic_star, FavoritesFragment.class));
         createdMenuItems.add(new MenuItem("Контакты", R.drawable.ic_contacts, QmsContactsFragment.class));
         createdMenuItems.add(new MenuItem("Ответы", R.drawable.ic_notifications, MentionsFragment.class));
-        createdMenuItems.add(new MenuItem("DevDb", R.drawable.ic_devices_other, ManufacturersFragment.class));
+        createdMenuItems.add(new MenuItem("DevDb", R.drawable.ic_devices_other, BrandsFragment.class));
         createdMenuItems.add(new MenuItem("DevDb dev", R.drawable.ic_devices_other, DeviceFragment.class));
         createdMenuItems.add(new MenuItem("Форум", R.drawable.ic_forum, ForumFragment.class));
         createdMenuItems.add(new MenuItem("Поиск", R.drawable.ic_search, SearchFragment.class));

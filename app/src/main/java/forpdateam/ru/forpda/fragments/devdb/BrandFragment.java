@@ -14,9 +14,9 @@ import android.view.ViewGroup;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
-import forpdateam.ru.forpda.api.ndevdb.models.Manufacturer;
+import forpdateam.ru.forpda.api.ndevdb.models.Brand;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.fragments.devdb.adapters.ManufacturerAdapter;
+import forpdateam.ru.forpda.fragments.devdb.adapters.BrandAdapter;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.messagepanel.AutoFitRecyclerView;
@@ -25,16 +25,16 @@ import forpdateam.ru.forpda.views.messagepanel.AutoFitRecyclerView;
  * Created by radiationx on 08.08.17.
  */
 
-public class ManufacturerFragment extends TabFragment {
+public class BrandFragment extends TabFragment {
     public final static String ARG_CATEGORY_ID = "CATEGORY_ID";
-    public final static String ARG_MANUFACTURER_ID = "MANUFACTURER_ID";
+    public final static String ARG_BRAND_ID = "BRAND_ID";
     private SwipeRefreshLayout refreshLayout;
     private AutoFitRecyclerView recyclerView;
-    private Subscriber<Manufacturer> mainSubscriber = new Subscriber<>(this);
-    private ManufacturerAdapter adapter;
-    private String catId, manId;
+    private Subscriber<Brand> mainSubscriber = new Subscriber<>(this);
+    private BrandAdapter adapter;
+    private String catId, brandId;
 
-    public ManufacturerFragment() {
+    public BrandFragment() {
         configuration.setDefaultTitle("Произовдитель");
     }
 
@@ -43,7 +43,7 @@ public class ManufacturerFragment extends TabFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             catId = getArguments().getString(ARG_CATEGORY_ID, null);
-            manId = getArguments().getString(ARG_MANUFACTURER_ID, null);
+            brandId = getArguments().getString(ARG_BRAND_ID, null);
         }
     }
 
@@ -52,14 +52,14 @@ public class ManufacturerFragment extends TabFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         setCardsBackground();
-        baseInflateFragment(inflater, R.layout.fragment_manufacturer);
+        baseInflateFragment(inflater, R.layout.fragment_brand);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
         recyclerView = (AutoFitRecyclerView) findViewById(R.id.base_list);
         viewsReady();
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
 
-        adapter = new ManufacturerAdapter();
+        adapter = new BrandAdapter();
         recyclerView.setColumnWidth(App.getInstance().dpToPx(144));
         recyclerView.setAdapter(adapter);
         try {
@@ -82,15 +82,15 @@ public class ManufacturerFragment extends TabFragment {
     public void loadData() {
         refreshLayout.setRefreshing(true);
         Log.d("MANFR", "START LOAD DATA");
-        mainSubscriber.subscribe(RxApi.DevDb().getManufacturer(catId, manId), this::onLoad, new Manufacturer());
+        mainSubscriber.subscribe(RxApi.DevDb().getBrand(catId, brandId), this::onLoad, new Brand());
     }
 
-    private void onLoad(Manufacturer manufacturer) {
+    private void onLoad(Brand brand) {
         refreshLayout.setRefreshing(false);
         Log.d("MANFR", "END LOAD DATA");
-        adapter.addAll(manufacturer.getDevices());
-        setTitle(manufacturer.getTitle());
-        setSubtitle(manufacturer.getCatTitle());
+        adapter.addAll(brand.getDevices());
+        setTitle(brand.getTitle());
+        setSubtitle(brand.getCatTitle());
     }
 
     public static class SpacingItemDecoration extends RecyclerView.ItemDecoration {

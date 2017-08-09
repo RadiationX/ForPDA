@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.fragments.devdb.adapters;
 
-import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,28 +15,28 @@ import java.util.Collection;
 import java.util.List;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.ndevdb.models.Manufacturer;
+import forpdateam.ru.forpda.api.ndevdb.models.Brand;
 
 /**
  * Created by radiationx on 08.08.17.
  */
 
-public class ManufacturerAdapter extends RecyclerView.Adapter<ManufacturerAdapter.ViewHolder> {
+public class BrandAdapter extends RecyclerView.Adapter<BrandAdapter.ViewHolder> {
 
-    private List<Manufacturer.DeviceItem> list = new ArrayList<>();
+    private List<Brand.DeviceItem> list = new ArrayList<>();
 
-    private ManufacturerAdapter.OnItemClickListener itemClickListener;
-    private ManufacturerAdapter.OnItemClickListener longItemClickListener;
+    private BrandAdapter.OnItemClickListener itemClickListener;
+    private BrandAdapter.OnItemClickListener longItemClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(Manufacturer.DeviceItem deviceItem);
+        void onItemClick(Brand.DeviceItem deviceItem);
     }
 
-    public void addAll(Collection<? extends Manufacturer.DeviceItem> results) {
+    public void addAll(Collection<? extends Brand.DeviceItem> results) {
         addAll(results, true);
     }
 
-    public void addAll(Collection<? extends Manufacturer.DeviceItem> results, boolean clearList) {
+    public void addAll(Collection<? extends Brand.DeviceItem> results, boolean clearList) {
         if (clearList)
             clear();
         list.addAll(results);
@@ -48,24 +47,24 @@ public class ManufacturerAdapter extends RecyclerView.Adapter<ManufacturerAdapte
         list.clear();
     }
 
-    public void setOnItemClickListener(final ManufacturerAdapter.OnItemClickListener mItemClickListener) {
+    public void setOnItemClickListener(final BrandAdapter.OnItemClickListener mItemClickListener) {
         this.itemClickListener = mItemClickListener;
     }
 
-    public void setOnLongItemClickListener(final ManufacturerAdapter.OnItemClickListener longItemClickListener) {
+    public void setOnLongItemClickListener(final BrandAdapter.OnItemClickListener longItemClickListener) {
         this.longItemClickListener = longItemClickListener;
     }
 
 
     @Override
-    public ManufacturerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.manufacturer_item, parent, false);
-        return new ManufacturerAdapter.ViewHolder(v);
+    public BrandAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.brand_item, parent, false);
+        return new BrandAdapter.ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(ManufacturerAdapter.ViewHolder holder, int position) {
-        Manufacturer.DeviceItem item = list.get(position);
+    public void onBindViewHolder(BrandAdapter.ViewHolder holder, int position) {
+        Brand.DeviceItem item = list.get(position);
         holder.title.setText(item.getTitle());
         /*holder.price.setVisibility(item.getPrice() == null ? View.GONE : View.VISIBLE);
         if (item.getPrice() != null) {
@@ -82,7 +81,7 @@ public class ManufacturerAdapter extends RecyclerView.Adapter<ManufacturerAdapte
         return list.size();
     }
 
-    public Manufacturer.DeviceItem getItem(int position) {
+    public Brand.DeviceItem getItem(int position) {
         return list.get(position);
     }
 

@@ -112,7 +112,7 @@ public class DeviceFragment extends TabFragment {
 
         //title.setText(device.getTitle());
         setTitle(device.getTitle());
-        setSubtitle(device.getCatTitle() + " > " + device.getManTitle());
+        setSubtitle(device.getCatTitle() + " > " + device.getBrandTitle());
         ArrayList<String> urls = new ArrayList<>();
         for (Pair<String, String> pair : device.getImages()) {
             urls.add(pair.first);

@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.fragments.devdb.device.specs;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,8 +10,7 @@ import android.view.ViewGroup;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.ndevdb.models.Device;
-import forpdateam.ru.forpda.fragments.devdb.ManufacturerFragment;
+import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.fragments.devdb.device.SubDeviceFragment;
 
 /**
@@ -34,7 +32,7 @@ public class SpecsFragment extends SubDeviceFragment {
         SpecsAdapter adapter = new SpecsAdapter();
         adapter.addAll(device.getSpecs());
         recyclerView.setAdapter(adapter);
-        recyclerView.addItemDecoration(new ManufacturerFragment.SpacingItemDecoration(App.px8, true));
+        recyclerView.addItemDecoration(new BrandFragment.SpacingItemDecoration(App.px8, true));
         return view;
     }
 }

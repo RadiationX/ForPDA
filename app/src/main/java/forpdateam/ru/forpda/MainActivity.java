@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,30 +18,18 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import forpdateam.ru.forpda.api.ndevdb.DevDb;
-import forpdateam.ru.forpda.api.ndevdb.models.Device;
-import forpdateam.ru.forpda.api.ndevdb.models.Manufacturer;
-import forpdateam.ru.forpda.api.ndevdb.models.Manufacturers;
 import forpdateam.ru.forpda.client.NetworkStateReceiver;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.settings.Preferences;
-import forpdateam.ru.forpda.utils.BitmapUtils;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.WebViewsProvider;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
 import forpdateam.ru.forpda.views.drawers.DrawerHeader;
 import forpdateam.ru.forpda.views.drawers.Drawers;
 import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity implements TabManager.TabListener {
     public final static String DEF_TITLE = "ForPDA";
@@ -169,40 +156,6 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         }
         Log.e("FORPDA_LOG", "ON CREATE INTENT");
         checkIntent(getIntent());
-
-
-        /*DevDb devDb = new DevDb();
-        Observable.fromCallable(() -> devDb.getManufacturers("phones"))
-                .onErrorReturn(throwable -> new Manufacturers())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(manufacturers -> {
-                    Log.e("NDEVDB", "LOAD MANS: " + manufacturers);
-                    for (Map.Entry<String, ArrayList<Manufacturers.Item>> entry : manufacturers.getLetterMap().entrySet()) {
-                        Log.d("NDEVDB", "MANS LETTER: " + entry.getKey() + " : " + entry.getValue().size());
-                    }
-                });
-
-        Observable.fromCallable(() -> devDb.getManufacturer("phones", "asus"))
-                .onErrorReturn(throwable -> new Manufacturer())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(manufacturer -> {
-                    Log.e("NDEVDB", "LOAD MAN: " + manufacturer);
-                    Log.e("NDEVDB", "MAN: " + manufacturer.getTitle() + " : " + manufacturer.getDevices().size());
-
-
-                });
-        Observable.fromCallable(() -> devDb.getDevice("asus_zenfone_4"))
-                .onErrorReturn(throwable -> new Device())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(device -> {
-                    Log.e("NDEVDB", "LOAD DEV: " + device);
-                    Log.e("NDEVDB", "DEV: " + device.getTitle() + " : " + device.getImages().size() + " : " + device.getSpecs().size());
-
-
-                });*/
     }
 
     @Override
