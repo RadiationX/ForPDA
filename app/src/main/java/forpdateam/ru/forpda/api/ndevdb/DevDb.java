@@ -24,7 +24,7 @@ import forpdateam.ru.forpda.api.reputation.models.RepItem;
 public class DevDb {
     public final static Pattern MAIN_PATTERN = Pattern.compile("<div class=\"breadcrumbs-back\"><ul class=\"breadcrumbs\">([\\s\\S]*?)<\\/ul><\\/div>[^<]*?<div[^>]*?>[\\s\\S]*?<\\/div>[^<]*?<\\/div>(?:[^<]*?<div class=\"rating r\\d\">[^<]*?<div class=\"num\">(\\d+)<\\/div>[^<]*?<div class=\"text\">([\\s\\S]*?)<\\/div>[^<]*?<\\/div>)?[\\s\\S]*?<h1 class=\"product-name\">(?:<a[^>]*?>[^<]*?<\\/a>)? ?([\\s\\S]*?)<\\/h1>(?:<div class=\"version\"><span[^>]*?>[^<]*?<\\/span><a[^>]*?>(\\d+)<\\/a><span[^>]*?>[^<]*?<\\/span>*<a[^>]*?>(\\d+)<\\/a>)?");
     private final static Pattern BREADCRUMB_PATTERN = Pattern.compile("<a href=\"[^\"]*?devdb\\/([^\"\\/]+?)(?:\\/([^\"]+?))?\">([^<]*?)<\\/a>");
-    private final static Pattern SPECS_PATTERN = Pattern.compile("<dl[^>]*?>[^<]*?<dt>([\\s\\S]*?)<\\/dt>[^<]*<dd>([\\s\\S]*?)<\\/dd>");
+    private final static Pattern SPECS_PATTERN = Pattern.compile("<dl[^>]*?>[^<]*?<dt>([^<]*?)<\\/dt>[^<]*<dd>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>[\\s\\S]*?)?<\\/dd>");
 
     public Manufacturers getManufacturers(String catId) throws Exception {
         Manufacturers data = new Manufacturers();

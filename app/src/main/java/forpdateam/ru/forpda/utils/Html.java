@@ -985,7 +985,7 @@ class HtmlToSpannedConverter implements ContentHandler {
         } else if (tag.equalsIgnoreCase("big")) {
             end(mSpannableStringBuilder, Big.class, new RelativeSizeSpan(1.25f));
         } else if (tag.equalsIgnoreCase("small")) {
-            end(mSpannableStringBuilder, Small.class, new RelativeSizeSpan(0.8f));
+            end(mSpannableStringBuilder, Small.class, new RelativeSizeSpan(0.875f));
         } else if (tag.equalsIgnoreCase("font")) {
             endFont(mSpannableStringBuilder);
         } else if (tag.equalsIgnoreCase("blockquote")) {

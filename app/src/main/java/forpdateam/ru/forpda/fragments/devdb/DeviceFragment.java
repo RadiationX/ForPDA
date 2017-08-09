@@ -55,11 +55,21 @@ import forpdateam.ru.forpda.views.pagination.PaginationHelper;
  */
 
 public class DeviceFragment extends TabFragment {
+    public final static String ARG_DEVICE_ID = "DEVICE_ID";
+    private String deviceId;
     private Subscriber<Device> mainSubscriber = new Subscriber<>(this);
     private ViewPager imagesPager;
 
     public DeviceFragment() {
         configuration.setDefaultTitle("Произовдитель");
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            deviceId = getArguments().getString(ARG_DEVICE_ID);
+        }
     }
 
     @Nullable
@@ -114,7 +124,7 @@ public class DeviceFragment extends TabFragment {
 
     @Override
     public void loadData() {
-        mainSubscriber.subscribe(RxApi.DevDb().getDevice("apple_iphone_5s"), this::onLoad, new Device());
+        mainSubscriber.subscribe(RxApi.DevDb().getDevice(deviceId), this::onLoad, new Device());
     }
 
     private class FragmentPagerAdapter extends android.support.v4.app.FragmentPagerAdapter {

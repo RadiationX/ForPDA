@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/dp8"
     android:layout_marginTop="@dimen/dp8"
-    style="?CardStyle">
+    style="@style/CardStyle.Wide">
 
     <LinearLayout
         android:layout_width="match_parent"
