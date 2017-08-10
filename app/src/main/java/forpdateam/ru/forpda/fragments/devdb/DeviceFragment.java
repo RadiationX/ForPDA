@@ -3,12 +3,14 @@ package forpdateam.ru.forpda.fragments.devdb;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -55,6 +57,21 @@ public class DeviceFragment extends TabFragment {
         if (getArguments() != null) {
             deviceId = getArguments().getString(ARG_DEVICE_ID, deviceId);
         }
+
+        if (getChildFragmentManager().getFragments() != null) {
+            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+            for (Fragment fragment : getChildFragmentManager().getFragments()) {
+                transaction.remove(fragment);
+            }
+            transaction.commit();
+            getChildFragmentManager().executePendingTransactions();
+        }
+
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Nullable
