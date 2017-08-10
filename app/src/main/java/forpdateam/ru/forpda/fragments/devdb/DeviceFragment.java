@@ -13,7 +13,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
@@ -28,12 +27,10 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.robohorse.pagerbullet.PagerBullet;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -53,7 +50,7 @@ import forpdateam.ru.forpda.utils.rx.Subscriber;
 
 public class DeviceFragment extends TabFragment {
     public final static String ARG_DEVICE_ID = "DEVICE_ID";
-    private String deviceId = "xiaomi_redmi_note_3_pro";
+    private String deviceId = "";
     private Subscriber<Device> mainSubscriber = new Subscriber<>(this);
     private PagerBullet imagesPager;
     private TabLayout tabLayout;
@@ -209,6 +206,7 @@ public class DeviceFragment extends TabFragment {
 
         if (device.getRating() > 0) {
             rating.setText(Integer.toString(device.getRating()));
+            rating.setBackgroundResource(App.getDrawableResAttr(getContext(), R.attr.count_background));
             rating.getBackground().setColorFilter(RxApi.DevDb().getColorFilter(device.getRating()));
             rating.setVisibility(View.VISIBLE);
             if (device.getComments().size() > 0) {

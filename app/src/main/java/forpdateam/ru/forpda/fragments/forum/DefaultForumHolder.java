@@ -39,7 +39,7 @@ public class DefaultForumHolder extends TreeNode.BaseNodeViewHolder<ForumItemTre
         icon.setImageDrawable(App.getAppDrawable(context, value.getForums() == null ? R.drawable.ic_forum_go_to_topics : (node.isExpanded() ? R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_more_black_24dp)));
 
         if (value.getForums() == null) {
-            int suka = App.getDrawableFromAttr(context, R.attr.count_background);
+            int suka = App.getDrawableResAttr(context, R.attr.count_background);
             Log.d("SUKA", "FORUM DRAWABLE: " + suka);
             icon.setBackgroundResource(suka);
         } else {

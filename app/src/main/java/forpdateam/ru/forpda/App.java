@@ -129,11 +129,15 @@ public class App extends android.app.Application {
     }
 
     @DrawableRes
-    public static int getDrawableFromAttr(Context context, @AttrRes int attr) {
+    public static int getDrawableResAttr(Context context, @AttrRes int attr) {
         TypedArray a = context.getTheme().obtainStyledAttributes(new int[]{attr});
         int attributeResourceId = a.getResourceId(0, 0);
         a.recycle();
         return attributeResourceId;
+    }
+
+    public static Drawable getDrawableAttr(Context context, @AttrRes int attr) {
+        return getAppDrawable(context, getDrawableResAttr(context, attr));
     }
 
     public boolean isDarkTheme() {

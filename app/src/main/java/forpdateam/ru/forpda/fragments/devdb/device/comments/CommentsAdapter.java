@@ -92,6 +92,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
             like.setCompoundDrawablesRelativeWithIntrinsicBounds(App.getAppDrawable(v.getContext(), R.drawable.ic_thumb_up), null, null, null);
             dislike.setCompoundDrawablesRelativeWithIntrinsicBounds(App.getAppDrawable(v.getContext(), R.drawable.ic_thumb_down), null, null, null);
             title.setOnClickListener(this::onTitleClick);
+            rating.setBackgroundResource(App.getDrawableResAttr(v.getContext(), R.attr.count_background));
         }
 
         private void onTitleClick(View v) {
