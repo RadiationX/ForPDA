@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  */
 
 public class Brand {
-    public final static Pattern DEVICES_PATTERN = Pattern.compile("<div class=\"box-holder\">[^<]*?<div class=\"visual\">[^<]*?<a[^>]*?>[^<]*?<span[^>]*?><img src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div class=\"name\"><a href=\"[^\"]*?devdb\\/([^\"]*?)\"[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?<div class=\"specifications-list\">([\\s\\S]*?)<\\/div>(?:<div class=\"price\">[^<]*?<strong>([^<]*?)<\\/strong>)?[\\s\\S]*?<div class=\"rating-col\">(?:[^<]*?<div class=\"rating r\\d\">[^<]*?<div class=\"num\">(\\d+)<\\/div>[^<]*?<div class=\"text\">([\\s\\S]*?)<\\/div>[^<]*?<\\/div>)?");
+    public final static Pattern DEVICES_PATTERN = Pattern.compile("<div class=\"box-holder\">[^<]*?<div class=\"visual\">[^<]*?<a[^>]*?>[^<]*?<span[^>]*?><img src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div class=\"name\"><a href=\"[^\"]*?devdb\\/([^\"]*?)\"[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?<div class=\"specifications-list\">([\\s\\S]*?)<\\/div>(?:<div class=\"price\">[^<]*?<strong>([^<]*?)<\\/strong>)?[\\s\\S]*?<div class=\"rating-col\">(?:[^<]*?<div class=\"rating r(\\d+)\">[^<]*?<div class=\"num\">(\\d+)<\\/div>[^<]*?<div class=\"text\">([\\s\\S]*?)<\\/div>[^<]*?<\\/div>)?");
 
     private ArrayList<DeviceItem> devices = new ArrayList<>();
     private String id;
@@ -79,11 +79,11 @@ public class Brand {
 
     public static class DeviceItem {
         private ArrayList<Pair<String, String>> specs = new ArrayList<>();
-        private Pair<Integer, String> rating;
         private String id;
         private String title;
         private String price;
         private String imageSrc;
+        private int rating = 0;
 
         public String getImageSrc() {
             return imageSrc;
@@ -117,12 +117,12 @@ public class Brand {
             this.price = price;
         }
 
-        public Pair<Integer, String> getRating() {
+        public int getRating() {
             return rating;
         }
 
-        public void setRating(int num, String text) {
-            this.rating = new Pair<>(num, text);
+        public void setRating(int rating) {
+            this.rating = rating;
         }
 
         public void addSpec(String a1, String value) {

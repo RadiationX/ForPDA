@@ -28,7 +28,6 @@ public class Device {
 
     private ArrayList<Pair<String, ArrayList<Pair<String, String>>>> specs = new ArrayList<>();
     private ArrayList<Pair<String, String>> images = new ArrayList<>();
-    private Pair<Integer, String> rating;
     private ArrayList<Comment> comments = new ArrayList<>();
     private ArrayList<PostItem> discussions = new ArrayList<>();
     private ArrayList<PostItem> firmwares = new ArrayList<>();
@@ -39,6 +38,7 @@ public class Device {
     private String brandTitle;
     private String catId;
     private String catTitle;
+    private int rating = 0;
 
     public String getId() {
         return id;
@@ -96,11 +96,11 @@ public class Device {
         return images;
     }
 
-    public void setRating(int num, String text) {
-        this.rating = new Pair<>(num, text);
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 
-    public Pair<Integer, String> getRating() {
+    public int getRating() {
         return rating;
     }
 
@@ -146,7 +146,6 @@ public class Device {
 
     public static class Comment {
         private int id = 0;
-        private int ratingColorCode = 0;
         private int rating = 0;
         private int userId = 0;
         private int likes = 0;
@@ -161,14 +160,6 @@ public class Device {
 
         public void setId(int id) {
             this.id = id;
-        }
-
-        public int getRatingColorCode() {
-            return ratingColorCode;
-        }
-
-        public void setRatingColorCode(int ratingColorCode) {
-            this.ratingColorCode = ratingColorCode;
         }
 
         public int getRating() {
@@ -228,7 +219,7 @@ public class Device {
         }
     }
 
-    public static class PostItem{
+    public static class PostItem {
         private int id = 0;
         private String image;
         private String title;
