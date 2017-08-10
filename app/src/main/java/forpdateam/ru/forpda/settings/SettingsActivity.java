@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.settings;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -81,5 +82,11 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         App.getInstance().removePreferenceChangeObserver(appThemeChangeObserver);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        App.getInstance().onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

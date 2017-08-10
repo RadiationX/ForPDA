@@ -333,17 +333,6 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        for (int i = 0; i < permissions.length; i++) {
-            if (permissions[i].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                for (Runnable runnable : storagePermissionCallbacks) {
-                    try {
-                        runnable.run();
-                    } catch (Exception ignore) {
-                    }
-                }
-                break;
-            }
-        }
-        storagePermissionCallbacks.clear();
+        App.getInstance().onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

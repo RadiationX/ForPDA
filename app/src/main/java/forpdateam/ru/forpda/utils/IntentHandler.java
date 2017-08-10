@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.utils;
 
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -325,9 +326,9 @@ public class IntentHandler {
     }
 
     public static void handleDownload(String fileName, String url) {
-        MainActivity mainActivity = TabManager.getInstance().getActive().getMainActivity();
-        if (mainActivity != null) {
-            new AlertDialog.Builder(mainActivity)
+        Activity activity = App.getActivity();
+        if (activity != null) {
+            new AlertDialog.Builder(activity)
                     .setMessage("Загрузить файл " + fileName + "?")
                     .setPositiveButton("Да", (dialog, which) -> {
                         redirectDownload(fileName, url);
@@ -340,6 +341,7 @@ public class IntentHandler {
     }
 
     private static void redirectDownload(String fileName, String url) {
+
         Toast.makeText(App.getContext(), "Запрашиваю ссылку для загрузки ".concat(fileName), Toast.LENGTH_SHORT).show();
         Observable.fromCallable(() -> Client.getInstance().request(new NetworkRequest.Builder().url(url).withoutBody().build()))
                 .onErrorReturn(throwable -> new NetworkResponse(null))
@@ -353,26 +355,18 @@ public class IntentHandler {
                     if (!Preferences.Main.isSystemDownloader()) {
                         externalDownloader(response.getRedirect());
                     } else {
-                        MainActivity mainActivity = TabManager.getInstance().getActive().getMainActivity();
-                        Runnable runnable = () -> {
+                        Runnable checkAction = () -> {
                             Toast.makeText(App.getContext(), "Выполняется загрузка ".concat(fileName), Toast.LENGTH_SHORT).show();
                             try {
                                 systemDownloader(fileName, response.getRedirect());
                             } catch (Exception exception) {
-                                MainActivity mainActivity1 = TabManager.getInstance().getActive().getMainActivity();
-                                if (mainActivity1 != null) {
-                                    new AlertDialog.Builder(mainActivity1)
-                                            .setMessage("Произошла ошибка: " + exception.getMessage() + ". Загрузить через внешний загрузчик?")
-                                            .setPositiveButton("Да", (dialog, which) -> {
-                                                externalDownloader(response.getRedirect());
-                                            })
-                                            .setNegativeButton("Нет", null)
-                                            .show();
-                                }
+                                Toast.makeText(App.getContext(), "Произошла ошибка. Будет загружено через внешний загрузчик.", Toast.LENGTH_SHORT).show();
+                                externalDownloader(response.getRedirect());
                             }
-
                         };
-                        mainActivity.checkStoragePermission(runnable);
+
+                        Activity activity = App.getActivity();
+                        App.getInstance().checkStoragePermission(checkAction, activity);
                     }
                 });
     }

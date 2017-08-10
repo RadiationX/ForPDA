@@ -1,11 +1,14 @@
 package forpdateam.ru.forpda;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -17,7 +20,9 @@ import android.preference.PreferenceManager;
 import android.support.annotation.AttrRes;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.content.res.AppCompatResources;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -44,12 +49,15 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Observer;
 
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.SimpleObservable;
 import io.realm.Realm;
@@ -84,7 +92,7 @@ public class App extends android.app.Application {
     public final static String TEMPLATE_SEARCH = "search";
     public final static String TEMPLATE_QMS_CHAT = "qms_chat";
     public final static String TEMPLATE_QMS_CHAT_MESS = "qms_chat_mess";
-    public static int px2, px4, px6, px8, px12, px14, px16, px20,px24, px32, px36, px40, px48, px56, px64;
+    public static int px2, px4, px6, px8, px12, px14, px16, px20, px24, px32, px36, px40, px48, px56, px64;
     private static int savedKeyboardHeight = 0;
     public static int keyboardHeight = 0;
     public static int statusBarHeight = 0;
@@ -151,7 +159,7 @@ public class App extends android.app.Application {
     boolean webViewNotFound = true;
 
     public boolean isWebViewNotFound() {
-        Log.e("check_wv", "isWebViewNotFound: "+webViewNotFound);
+        Log.e("check_wv", "isWebViewNotFound: " + webViewNotFound);
         return webViewNotFound;
     }
 
@@ -221,7 +229,6 @@ public class App extends android.app.Application {
                 .build();
         Realm.setDefaultConfiguration(configuration);
         Client.getInstance();
-
 
 
         getPreferences().registerOnSharedPreferenceChangeListener(preferenceChangeListener);
@@ -385,5 +392,69 @@ public class App extends android.app.Application {
         if (preferences == null)
             preferences = PreferenceManager.getDefaultSharedPreferences(this);
         return preferences;
+    }
+
+
+    public static Activity getActivity() {
+        try {
+            Class activityThreadClass = Class.forName("android.app.ActivityThread");
+            Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null);
+            Field activitiesField = activityThreadClass.getDeclaredField("mActivities");
+            activitiesField.setAccessible(true);
+
+            Map<Object, Object> activities = (Map<Object, Object>) activitiesField.get(activityThread);
+            if (activities == null)
+                return null;
+
+            for (Object activityRecord : activities.values()) {
+                Class activityRecordClass = activityRecord.getClass();
+                Field pausedField = activityRecordClass.getDeclaredField("paused");
+                pausedField.setAccessible(true);
+                if (!pausedField.getBoolean(activityRecord)) {
+                    Field activityField = activityRecordClass.getDeclaredField("activity");
+                    activityField.setAccessible(true);
+                    Activity activity = (Activity) activityField.get(activityRecord);
+                    return activity;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private List<Runnable> permissionCallbacks = new ArrayList<>();
+
+    public void checkStoragePermission(Runnable runnable, Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                Log.v("FORPDA_LOG", "Permission is granted");
+            } else {
+                Log.v("FORPDA_LOG", "Permission is revoked");
+                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, TabFragment.REQUEST_STORAGE);
+                permissionCallbacks.add(runnable);
+                return;
+            }
+        } else {
+            Log.v("FORPDA_LOG", "Permission is granted");
+        }
+        runnable.run();
+    }
+
+    //PLS CALL THIS IN ALL ACTIVITIES
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        for (int i = 0; i < permissions.length; i++) {
+            if (permissions[i].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                for (Runnable runnable : permissionCallbacks) {
+                    try {
+                        runnable.run();
+                    } catch (Exception ignore) {
+                    }
+                }
+                break;
+            }
+        }
+        permissionCallbacks.clear();
     }
 }
