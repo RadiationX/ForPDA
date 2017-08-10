@@ -2,6 +2,7 @@ package forpdateam.ru.forpda;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -161,9 +162,9 @@ public class CheckerActivity extends AppCompatActivity {
             divider.setVisibility(View.VISIBLE);
             updateButton.setOnClickListener(v -> {
                 AlertDialogMenu<CheckerActivity, String> alertDialogMenu = new AlertDialogMenu<>();
-                alertDialogMenu.addItem("github.com", (context, data) -> redirectDownload(linkGit));
+                alertDialogMenu.addItem("github.com", (context, data) -> IntentHandler.handleDownload(linkGit));
                 if (ClientHelper.getAuthState()) {
-                    alertDialogMenu.addItem("4pda.ru", (context, data) -> redirectDownload(link4pda));
+                    alertDialogMenu.addItem("4pda.ru", (context, data) -> IntentHandler.handleDownload(link4pda));
                 }
                 alertDialogMenu.addItem("Google Play", (context, data) -> IntentHandler.handle(GOOGLE_PLAY_LINK));
 
@@ -222,19 +223,10 @@ public class CheckerActivity extends AppCompatActivity {
         return "Версия " + name + "\n" + "Сборка от " + date;
     }
 
-    private void redirectDownload(String url) {
-        Toast.makeText(this, "Запрашиваю ссылку для загрузки", Toast.LENGTH_SHORT).show();
-        Observable.fromCallable(() -> Client.getInstance().request(new NetworkRequest.Builder().url(url).withoutBody().build()))
-                .onErrorReturn(throwable -> new NetworkResponse(null))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(response -> {
-                    if (response.getUrl() == null) {
-                        Toast.makeText(App.getContext(), "Произошла ошибка", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    IntentHandler.externalDownloader(response.getRedirect());
-                });
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        App.getInstance().onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
 }
