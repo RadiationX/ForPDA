@@ -172,5 +172,9 @@ const androidEffectClickListener = function AndroidEffectClick(e) {
 
 function playClickEffect() {
     console.log("PLAY CLICK");
-    IBase.playClickEffect();
+    try{
+        IBase.playClickEffect();
+    }catch(ex){
+        console.info(ex.message);
+    }
 }
