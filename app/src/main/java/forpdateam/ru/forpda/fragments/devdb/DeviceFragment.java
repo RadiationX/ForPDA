@@ -24,11 +24,13 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.robohorse.pagerbullet.PagerBullet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,8 +55,9 @@ public class DeviceFragment extends TabFragment {
     public final static String ARG_DEVICE_ID = "DEVICE_ID";
     private String deviceId = "xiaomi_redmi_note_3_pro";
     private Subscriber<Device> mainSubscriber = new Subscriber<>(this);
-    private ViewPager imagesPager;
+    private PagerBullet imagesPager;
     private TabLayout tabLayout;
+    private TextView rating;
     private ViewPager fragmentsPager;
     private ProgressBar progressBar;
     private Device currentData;
@@ -96,8 +99,9 @@ public class DeviceFragment extends TabFragment {
         viewStub.setLayoutResource(R.layout.toolbar_device);
         viewStub.inflate();
 
-        imagesPager = (ViewPager) findViewById(R.id.images_pager);
+        imagesPager = (PagerBullet) findViewById(R.id.images_pager);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        rating = (TextView) findViewById(R.id.item_rating);
         viewsReady();
 
         toolbarTitleView.setShadowLayer(App.px2, 0, 0, App.getColorFromAttr(getContext(), R.attr.colorPrimary));
@@ -128,6 +132,8 @@ public class DeviceFragment extends TabFragment {
 
         fragmentsPager = (ViewPager) findViewById(R.id.view_pager);
         tabLayout.setupWithViewPager(fragmentsPager);
+
+        imagesPager.setIndicatorTintColorScheme(App.getColorFromAttr(getContext(), R.attr.default_text_color), App.getColorFromAttr(getContext(), R.attr.second_text_color));
 
         return view;
     }
@@ -187,6 +193,8 @@ public class DeviceFragment extends TabFragment {
         refreshToolbarMenuItems(true);
         setTitle(currentData.getTitle());
         setSubtitle(currentData.getCatTitle() + " > " + currentData.getBrandTitle());
+
+
         ArrayList<String> urls = new ArrayList<>();
         ArrayList<String> fullUrls = new ArrayList<>();
         for (Pair<String, String> pair : currentData.getImages()) {
@@ -198,6 +206,19 @@ public class DeviceFragment extends TabFragment {
 
         FragmentPagerAdapter pagerAdapter = new FragmentPagerAdapter(getChildFragmentManager(), currentData);
         fragmentsPager.setAdapter(pagerAdapter);
+
+        if (device.getRating() > 0) {
+            rating.setText(Integer.toString(device.getRating()));
+            rating.getBackground().setColorFilter(RxApi.DevDb().getColorFilter(device.getRating()));
+            rating.setVisibility(View.VISIBLE);
+            if (device.getComments().size() > 0) {
+                rating.setClickable(true);
+                rating.setOnClickListener(v -> fragmentsPager.setCurrentItem(1, true));
+            }
+
+        } else {
+            rating.setVisibility(View.GONE);
+        }
     }
 
 
