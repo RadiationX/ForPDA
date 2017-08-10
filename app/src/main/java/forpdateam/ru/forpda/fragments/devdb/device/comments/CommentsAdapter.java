@@ -19,6 +19,7 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.ndevdb.models.Device;
+import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.IntentHandler;
 
 /**
@@ -27,15 +28,6 @@ import forpdateam.ru.forpda.utils.IntentHandler;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHolder> {
     private ArrayList<Device.Comment> list = new ArrayList<>();
-    private SparseArray<ColorFilter> colorFilter = new SparseArray<>();
-
-    public CommentsAdapter() {
-        colorFilter.put(1, new PorterDuffColorFilter(Color.parseColor("#850113"), PorterDuff.Mode.SRC_IN));
-        colorFilter.put(2, new PorterDuffColorFilter(Color.parseColor("#d50000"), PorterDuff.Mode.SRC_IN));
-        colorFilter.put(3, new PorterDuffColorFilter(Color.parseColor("#ffac00"), PorterDuff.Mode.SRC_IN));
-        colorFilter.put(4, new PorterDuffColorFilter(Color.parseColor("#99cc00"), PorterDuff.Mode.SRC_IN));
-        colorFilter.put(5, new PorterDuffColorFilter(Color.parseColor("#339900"), PorterDuff.Mode.SRC_IN));
-    }
 
     public void addAll(Collection<Device.Comment> results) {
         addAll(results, true);
@@ -68,7 +60,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
         holder.rating.setText(Integer.toString(item.getRating()));
         holder.like.setText(Integer.toString(item.getLikes()));
         holder.dislike.setText(Integer.toString(item.getDislikes()));
-        holder.rating.getBackground().setColorFilter(colorFilter.get(item.getRatingColorCode()));
+        holder.rating.getBackground().setColorFilter(RxApi.DevDb().getColorFilter(item.getRating()));
     }
 
     @Override

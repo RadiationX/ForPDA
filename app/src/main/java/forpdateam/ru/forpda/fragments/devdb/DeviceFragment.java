@@ -1,9 +1,9 @@
 package forpdateam.ru.forpda.fragments.devdb;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -13,16 +13,22 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +40,9 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.devdb.device.comments.CommentsFragment;
 import forpdateam.ru.forpda.fragments.devdb.device.posts.PostsFragment;
 import forpdateam.ru.forpda.fragments.devdb.device.specs.SpecsFragment;
+import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
 import forpdateam.ru.forpda.rxapi.RxApi;
+import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 
 /**
@@ -46,6 +54,10 @@ public class DeviceFragment extends TabFragment {
     private String deviceId = "xiaomi_redmi_note_3_pro";
     private Subscriber<Device> mainSubscriber = new Subscriber<>(this);
     private ViewPager imagesPager;
+    private TabLayout tabLayout;
+    private ViewPager fragmentsPager;
+    private ProgressBar progressBar;
+    private Device currentData;
 
     public DeviceFragment() {
         configuration.setDefaultTitle("Устройство");
@@ -85,8 +97,11 @@ public class DeviceFragment extends TabFragment {
         viewStub.inflate();
 
         imagesPager = (ViewPager) findViewById(R.id.images_pager);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         viewsReady();
 
+        toolbarTitleView.setShadowLayer(App.px2, 0, 0, App.getColorFromAttr(getContext(), R.attr.colorPrimary));
+        toolbarSubtitleView.setShadowLayer(App.px2, 0, 0, App.getColorFromAttr(getContext(), R.attr.colorPrimary));
 
         toolbarLayout.setExpandedTitleColor(Color.TRANSPARENT);
         toolbarLayout.setCollapsedTitleTextColor(Color.TRANSPARENT);
@@ -117,36 +132,74 @@ public class DeviceFragment extends TabFragment {
         return view;
     }
 
-    TabLayout tabLayout;
-    ViewPager fragmentsPager;
+    private MenuItem copyLinkMenuItem, toBrandMenuItem, toBrandsMenuItem;
+
+    @Override
+    protected void addBaseToolbarMenu() {
+        super.addBaseToolbarMenu();
+        copyLinkMenuItem = getMenu().add("Скопировать ссылку")
+                .setOnMenuItemClickListener(item -> {
+                    IntentHandler.handle("http://4pda.ru/devdb/" + currentData.getId());
+                    return true;
+                });
+
+        toBrandMenuItem = getMenu().add("Устройства")
+                .setOnMenuItemClickListener(item -> {
+                    IntentHandler.handle("http://4pda.ru/devdb/" + currentData.getCatId() + "/" + currentData.getBrandId());
+                    return true;
+                });
+
+        toBrandsMenuItem = getMenu().add("Устройства")
+                .setOnMenuItemClickListener(item -> {
+                    IntentHandler.handle("http://4pda.ru/devdb/" + currentData.getCatId());
+                    return true;
+                });
+
+        refreshToolbarMenuItems(false);
+    }
+
+    @Override
+    protected void refreshToolbarMenuItems(boolean enable) {
+        super.refreshToolbarMenuItems(enable);
+        if (enable) {
+            copyLinkMenuItem.setEnabled(true);
+            toBrandMenuItem.setVisible(true);
+            toBrandsMenuItem.setVisible(true);
+        } else {
+            copyLinkMenuItem.setEnabled(false);
+            toBrandMenuItem.setVisible(false);
+            toBrandsMenuItem.setVisible(false);
+        }
+    }
 
     @Override
     public void loadData() {
+        refreshToolbarMenuItems(false);
+        progressBar.setVisibility(View.VISIBLE);
         mainSubscriber.subscribe(RxApi.DevDb().getDevice(deviceId), this::onLoad, new Device());
     }
 
     private void onLoad(Device device) {
-
-        //title.setText(device.getTitle());
-        setTitle(device.getTitle());
-        setSubtitle(device.getCatTitle() + " > " + device.getBrandTitle());
+        currentData = device;
+        progressBar.setVisibility(View.GONE);
+        toBrandMenuItem.setTitle(currentData.getCatTitle() + " " + currentData.getBrandTitle());
+        toBrandsMenuItem.setTitle(currentData.getCatTitle());
+        refreshToolbarMenuItems(true);
+        setTitle(currentData.getTitle());
+        setSubtitle(currentData.getCatTitle() + " > " + currentData.getBrandTitle());
         ArrayList<String> urls = new ArrayList<>();
-        for (Pair<String, String> pair : device.getImages()) {
+        ArrayList<String> fullUrls = new ArrayList<>();
+        for (Pair<String, String> pair : currentData.getImages()) {
             urls.add(pair.first);
+            fullUrls.add(pair.second);
         }
-        ImagesAdapter imagesAdapter = new ImagesAdapter(getContext(), urls);
+        ImagesAdapter imagesAdapter = new ImagesAdapter(getContext(), urls, fullUrls);
         imagesPager.setAdapter(imagesAdapter);
 
-        /*tabLayout.addTab(tabLayout.newTab().setText("Характеристики"));
-        tabLayout.addTab(tabLayout.newTab().setText("Отзывы"));
-        tabLayout.addTab(tabLayout.newTab().setText("Обсуждения"));
-        tabLayout.addTab(tabLayout.newTab().setText("Публикации"));
-        tabLayout.addTab(tabLayout.newTab().setText("Прошивки"));
-        tabLayout.addTab(tabLayout.newTab().setText("Цены"));*/
-
-        FragmentPagerAdapter pagerAdapter = new FragmentPagerAdapter(getChildFragmentManager(), device);
+        FragmentPagerAdapter pagerAdapter = new FragmentPagerAdapter(getChildFragmentManager(), currentData);
         fragmentsPager.setAdapter(pagerAdapter);
     }
+
 
     private class FragmentPagerAdapter extends android.support.v4.app.FragmentPagerAdapter {
         private Device device;
@@ -168,10 +221,10 @@ public class DeviceFragment extends TabFragment {
                 fragments.add(new PostsFragment().setSource(PostsFragment.SRC_DISCUSSIONS).setDevice(this.device));
                 titles.add("Обсуждения (" + this.device.getDiscussions().size() + ")");
             }
-            /*if (this.device.getNews().size() > 0) {
+            if (this.device.getNews().size() > 0) {
                 fragments.add(new PostsFragment().setSource(PostsFragment.SRC_NEWS).setDevice(this.device));
-                titles.add("Публикации ("+this.device.getNews().size()+")");
-            }*/
+                titles.add("Публикации (" + this.device.getNews().size() + ")");
+            }
             if (this.device.getFirmwares().size() > 0) {
                 fragments.add(new PostsFragment().setSource(PostsFragment.SRC_FIRMWARES).setDevice(this.device));
                 titles.add("Прошивки (" + this.device.getFirmwares().size() + ")");
@@ -198,11 +251,13 @@ public class DeviceFragment extends TabFragment {
     public class ImagesAdapter extends PagerAdapter {
         //private SparseArray<View> views = new SparseArray<>();
         private LayoutInflater inflater;
-        private List<String> urls;
+        private ArrayList<String> urls;
+        ArrayList<String> fullUrls;
 
-        public ImagesAdapter(Context context, List<String> urls) {
+        public ImagesAdapter(Context context, ArrayList<String> urls, ArrayList<String> fullUrls) {
             this.inflater = LayoutInflater.from(context);
             this.urls = urls;
+            this.fullUrls = fullUrls;
         }
 
 
@@ -216,6 +271,7 @@ public class DeviceFragment extends TabFragment {
             Log.e("FORPDA_LOG", "instantiateItem " + position);
             View imageLayout = inflater.inflate(R.layout.device_image_page, container, false);
             assert imageLayout != null;
+            imageLayout.setOnClickListener(v -> ImageViewerActivity.startActivity(DeviceFragment.this.getContext(), fullUrls, position));
             container.addView(imageLayout, 0);
             loadImage(imageLayout, position);
             return imageLayout;
@@ -234,8 +290,29 @@ public class DeviceFragment extends TabFragment {
 
         private void loadImage(View imageLayout, int position) {
             assert imageLayout != null;
-            ImageView photoView = (ImageView) imageLayout.findViewById(R.id.image_view);
-            ImageLoader.getInstance().displayImage(urls.get(position), photoView);
+            ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image_view);
+            ProgressBar progressBar = (ProgressBar) imageLayout.findViewById(R.id.progress_bar);
+            ImageLoader.getInstance().displayImage(urls.get(position), imageView, new SimpleImageLoadingListener() {
+                @Override
+                public void onLoadingStarted(String imageUri, View view) {
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onLoadingCancelled(String imageUri, View view) {
+                    progressBar.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                    progressBar.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+                    progressBar.setVisibility(View.GONE);
+                }
+            });
 
         }
     }

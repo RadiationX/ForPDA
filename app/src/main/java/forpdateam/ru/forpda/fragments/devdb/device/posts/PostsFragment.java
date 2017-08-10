@@ -37,7 +37,7 @@ public class PostsFragment extends SubDeviceFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.device_fragment_specs, container, false);
-        view.setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_for_lists));
+        //view.setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_for_lists));
         recyclerView = (RecyclerView) view.findViewById(R.id.base_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         PostsAdapter adapter = new PostsAdapter();

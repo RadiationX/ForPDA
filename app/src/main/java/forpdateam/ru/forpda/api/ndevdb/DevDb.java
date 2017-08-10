@@ -22,6 +22,10 @@ public class DevDb {
     private final static Pattern BREADCRUMB_PATTERN = Pattern.compile("<a href=\"[^\"]*?devdb\\/([^\"\\/]+?)(?:\\/([^\"]+?))?\">([^<]*?)<\\/a>");
     private final static Pattern SPECS_PATTERN = Pattern.compile("<dl[^>]*?>[^<]*?<dt>([^<]*?)<\\/dt>[^<]*<dd>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>[\\s\\S]*?)?<\\/dd>");
 
+    public int getRatingCode(int rating) {
+        return Math.max(Math.round(rating / 2.0f), 1);
+    }
+
     public Brands getBrands(String catId) throws Exception {
         Brands data = new Brands();
         NetworkResponse response = Api.getWebClient().get("https://4pda.ru/devdb/" + catId + "/all");
@@ -73,8 +77,8 @@ public class DevDb {
 
             if (matcher.group(5) != null)
                 item.setPrice(matcher.group(5));
-            if (matcher.group(6) != null) {
-                item.setRating(Integer.parseInt(matcher.group(6)), matcher.group(7));
+            if (matcher.group(7) != null) {
+                item.setRating(Integer.parseInt(matcher.group(7)));
             }
 
             data.addDevice(item);
@@ -137,7 +141,7 @@ public class DevDb {
             }
 
             if (matcher.group(2) != null) {
-                data.setRating(Integer.parseInt(matcher.group(2)), matcher.group(3));
+                data.setRating(Integer.parseInt(matcher.group(2)));
             }
             data.setTitle(matcher.group(4));
             data.setId(devId);
@@ -147,7 +151,6 @@ public class DevDb {
         while (matcher.find()) {
             Device.Comment comment = new Device.Comment();
             comment.setId(Integer.parseInt(matcher.group(1)));
-            comment.setRatingColorCode(Integer.parseInt(matcher.group(2)));
             comment.setRating(Integer.parseInt(matcher.group(3)));
             comment.setUserId(Integer.parseInt(matcher.group(4)));
             comment.setNick(Utils.fromHtml(matcher.group(5)));
