@@ -63,7 +63,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     public final static String USER_AVATAR_ARG = "USER_AVATAR_ARG";
     public final static String THEME_ID_ARG = "THEME_ID_ARG";
     public final static String THEME_TITLE_ARG = "THEME_TITLE_ARG";
-    private final static Pattern attachmentPattern = Pattern.compile("\\[url=https?:\\/\\/savepic\\.ru\\/(\\d+)\\.[^\\]]*?\\]");
+    private final static Pattern attachmentPattern = Pattern.compile("\\[url=https?:\\/\\/savepic\\.net\\/(\\d+)\\.[^\\]]*?\\]");
 
     private MenuItem blackListMenuItem;
     final QmsChatModel currentChat = new QmsChatModel();
@@ -197,7 +197,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
             }
             attachmentsPopup.onDeleteFiles(selectedFiles);
         });
-        attachmentsPopup.setInsertAttachmentListener(item -> "\n[url=http://savepic.ru/" + item.getId() + "." + item.getExtension() + "]" +
+        attachmentsPopup.setInsertAttachmentListener(item -> "\n[url=http://savepic.net/" + item.getId() + "." + item.getExtension() + "]" +
                 "Файл: " + item.getName() + ", Размер: " + item.getWeight() + ", ID: " + item.getId() + "[/url]");
         messagePanel.addSendOnClickListener(v -> {
             if (currentChat.getThemeId() == QmsChatModel.NOT_CREATED) {

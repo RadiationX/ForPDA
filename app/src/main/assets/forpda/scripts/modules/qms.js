@@ -53,10 +53,10 @@ var listElem = document.querySelector(".mess_list");
         unreaded[i].classList.remove("unread");
     }
 }
-const savepicPattern = /https?:\/\/savepic\.ru\/(\d+)\.(.*)/g;
+const savepicPattern = /https?:\/\/savepic\.net\/(\d+)\.(.*)/g;
 
 function transformQmsAttachments() {
-    var links = document.querySelectorAll("a[href*='savepic.ru']");
+    var links = document.querySelectorAll("a[href*='savepic.net']");
     for (var i = 0; i < links.length; i++) {
         var link = links[i];
         var alt = link.textContent;
@@ -67,7 +67,7 @@ function transformQmsAttachments() {
             id = match[1];
             extension = match[2];
         }
-        link.innerHTML = "<img src=\"http://savepic.ru/" + id + "m." + extension + "\" alt=\"" + alt + "\">";
+        link.innerHTML = "<img src=\"http://savepic.net/" + id + "m." + extension + "\" alt=\"" + alt + "\">";
     }
 }
 

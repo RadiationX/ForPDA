@@ -180,7 +180,7 @@ public class IntentHandler {
                     }
                 }
             }
-        } else if (Pattern.compile("https?:\\/\\/savepic\\.ru\\/(\\d+)\\.(.*)").matcher(url).find()) {
+        } else if (Pattern.compile("https?:\\/\\/savepic\\.net\\/(\\d+)\\.(.*)").matcher(url).find()) {
             ImageViewerActivity.startActivity(App.getContext(), url);
             return true;
         }
