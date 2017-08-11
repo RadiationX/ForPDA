@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,7 @@ import android.view.ViewGroup;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
-import forpdateam.ru.forpda.api.ndevdb.models.Brand;
+import forpdateam.ru.forpda.api.devdb.models.Brand;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.devdb.adapters.BrandAdapter;
 import forpdateam.ru.forpda.rxapi.RxApi;
@@ -64,7 +63,7 @@ public class BrandFragment extends TabFragment {
         recyclerView.setAdapter(adapter);
         try {
             GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
-            recyclerView.addItemDecoration(new SpacingItemDecoration(gridLayoutManager, App.getInstance().dpToPx(8)));
+            recyclerView.addItemDecoration(new SpacingItemDecoration(gridLayoutManager, App.px8));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -81,13 +80,11 @@ public class BrandFragment extends TabFragment {
     @Override
     public void loadData() {
         refreshLayout.setRefreshing(true);
-        Log.d("MANFR", "START LOAD DATA");
         mainSubscriber.subscribe(RxApi.DevDb().getBrand(catId, brandId), this::onLoad, new Brand());
     }
 
     private void onLoad(Brand brand) {
         refreshLayout.setRefreshing(false);
-        Log.d("MANFR", "END LOAD DATA");
         adapter.addAll(brand.getDevices());
         setTitle(brand.getTitle());
         setSubtitle(brand.getCatTitle());

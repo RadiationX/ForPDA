@@ -29,6 +29,7 @@ import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
  */
 
 public class AttachmentsPopup {
+    private final static String LOG_TAG = AttachmentsPopup.class.getSimpleName();
     private BottomSheetDialog dialog;
     private MessagePanel messagePanel;
     private View bottomSheet;
@@ -172,13 +173,14 @@ public class AttachmentsPopup {
     }
 
     public List<AttachmentItem> preUploadFiles(List<RequestFile> files) {
+        Log.d(LOG_TAG, "preUploadFiles " + files);
         List<AttachmentItem> loadingItems = new ArrayList<>();
         for (RequestFile file : files) {
             AttachmentItem item = new AttachmentItem(file.getFileName());
             item.setProgressListener(percent -> {
 
             });
-            Log.e("FORPDA_LOG", "ADD LOADING ITEM " + item);
+            Log.d(LOG_TAG, "Add loading item " + item);
             adapter.add(item);
             loadingItems.add(item);
         }
@@ -186,11 +188,9 @@ public class AttachmentsPopup {
     }
 
     public void onUploadFiles(List<AttachmentItem> items) {
+        Log.d(LOG_TAG, "onUploadFiles " + items);
         for (AttachmentItem item : items) {
-            Log.d("SUKA", "LOADED ITEM " + item.getName());
-        }
-        for (AttachmentItem item : items) {
-            Log.e("FORPDA_LOG", "LOADING ITEM " + " : " + item);
+            Log.d(LOG_TAG, "Loading item " + item);
             if (item.getLoadState() == AttachmentItem.STATE_NOT_LOADED) {
                 adapter.removeItem(item);
                 //SHOW ERROR
@@ -218,9 +218,9 @@ public class AttachmentsPopup {
 
     public void onDeleteFiles(List<AttachmentItem> deletedItems) {
         //unblock ui
-        Log.e("FORPDA_LOG", "ON DELETE FILES " + deletedItems);
+        Log.d(LOG_TAG, "onDeleteFiles " + deletedItems);
         for (AttachmentItem item : deletedItems) {
-            Log.e("FORPDA_LOG", "DELETED FILE " + item);
+            Log.d(LOG_TAG, "Delete file " + item);
             messagePanel.setText(messagePanel.getMessage().replaceAll("\\[attachment=['\"]?" + item.getId() + ":[^\\]]*?]", ""));
         }
         progressOverlay.setVisibility(View.GONE);

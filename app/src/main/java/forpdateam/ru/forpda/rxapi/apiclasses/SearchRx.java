@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.rxapi.apiclasses;
 
-import android.util.Log;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +28,6 @@ public class SearchRx {
     public static SearchResult transform(SearchResult page, boolean withHtml) throws Exception {
         if (withHtml) {
             int memberId = ClientHelper.getUserId();
-            long time = System.currentTimeMillis();
             MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_SEARCH);
             boolean authorized = ClientHelper.getAuthState();
             boolean prevDisabled = page.getPagination().getCurrent() <= 1;
@@ -60,9 +57,7 @@ public class SearchRx {
             t.setVariableOpt("disable_avatar", isDisableAvatar ? "show_avatar" : "hide_avatar");
             t.setVariableOpt("avatar_type", App.getInstance().getPreferences().getBoolean(Preferences.Theme.CIRCLE_AVATARS, true) ? "circle_avatar" : "square_avatar");
 
-            Log.d("FORPDA_LOG", "template check 1 " + (System.currentTimeMillis() - time));
 
-            Log.d("FORPDA_LOG", "template check 2 " + (System.currentTimeMillis() - time));
             Matcher letterMatcher = null;
             for (SearchItem post : page.getItems()) {
                 t.setVariableOpt("topic_id", post.getTopicId());
@@ -115,11 +110,8 @@ public class SearchRx {
                 t.addBlockOpt("post");
             }
 
-            Log.d("FORPDA_LOG", "template check 3 " + (System.currentTimeMillis() - time));
             page.setHtml(t.generateOutput());
-            Log.d("FORPDA_LOG", "template check 4 " + (System.currentTimeMillis() - time));
             t.reset();
-            Log.d("FORPDA_LOG", "template check 5 " + (System.currentTimeMillis() - time));
         }
 
         /*final String veryLongString = page.getHtml();

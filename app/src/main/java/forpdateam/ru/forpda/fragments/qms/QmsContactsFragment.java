@@ -9,7 +9,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -137,7 +136,6 @@ public class QmsContactsFragment extends TabFragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.d("FORPDA_LOG", "on query changed start");
                 searchContacts.clear();
                 if (!newText.isEmpty()) {
                     for (QmsContactBd contact : results) {
@@ -148,7 +146,6 @@ public class QmsContactsFragment extends TabFragment {
                 } else {
                     adapter.addAll(results);
                 }
-                Log.d("FORPDA_LOG", "on query changed end");
                 return false;
             }
         });
@@ -163,7 +160,7 @@ public class QmsContactsFragment extends TabFragment {
 
     @Override
     public boolean onBackPressed() {
-        Log.d("FORPDA_LOG", "onbackpressed qms");
+        super.onBackPressed();
         if (getMenu().findItem(R.id.action_search).isActionViewExpanded()) {
             recyclerView.setAdapter(adapter);
             toolbar.collapseActionView();
@@ -175,13 +172,11 @@ public class QmsContactsFragment extends TabFragment {
 
     @Override
     public void loadData() {
-        Log.e("FORPDA_LOG", "LOAD DATA " + this + " : " + Thread.currentThread());
         refreshLayout.setRefreshing(true);
         mainSubscriber.subscribe(RxApi.Qms().getContactList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
     }
 
     private void onLoadContacts(ArrayList<QmsContact> data) {
-        Log.d("FORPDA_LOG", "loaded itms " + data.size() + " : " + results.size());
         refreshLayout.setRefreshing(false);
         recyclerView.scrollToPosition(0);
         if (data.size() == 0)

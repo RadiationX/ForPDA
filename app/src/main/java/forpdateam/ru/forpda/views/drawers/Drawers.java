@@ -35,6 +35,7 @@ import forpdateam.ru.forpda.views.drawers.adapters.TabAdapter;
  */
 
 public class Drawers {
+    private final static String LOG_TAG = Drawers.class.getSimpleName();
     private MainActivity activity;
     private DrawerLayout drawerLayout;
 
@@ -135,7 +136,7 @@ public class Drawers {
         String className = ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN ? FavoritesFragment.class.getSimpleName() : AuthFragment.class.getSimpleName();
         String last = App.getInstance().getPreferences().getString("menu_drawer_last", className);
         last = ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN && last.equals(AuthFragment.class.getSimpleName()) ? FavoritesFragment.class.getSimpleName() : last;
-        Log.d("FORPDA_LOG", "LAAST " + last);
+        Log.d(LOG_TAG, "Last item " + last);
 
         MenuItems.MenuItem item = null;
         if (savedInstanceState != null) {
@@ -144,7 +145,7 @@ public class Drawers {
                 item = findMenuItem(tabFragment.getClass());
             }
 
-            Log.e("FORPDA_LOG", "AAAA " + tabFragment + " : " + item);
+            Log.d(LOG_TAG, "AAAA " + tabFragment + " : " + item);
             if (item != null) {
                 item.setAttachedTabTag(tabFragment.getTag());
                 item.setActive(true);
@@ -155,10 +156,11 @@ public class Drawers {
         } else {
             item = findMenuItem(last);
         }
-        Log.e("FORPDA_LOG", "FINAL ITEM " + item);
+        Log.d(LOG_TAG, "Final item " + item);
         if (item == null) {
             item = menuItems.get(0);
         }
+        Log.d(LOG_TAG, "FinalFinal item " + item);
         selectMenuItem(item);
 
         /*if (savedInstanceState == null) {
@@ -206,7 +208,7 @@ public class Drawers {
     }
 
     private void selectMenuItem(MenuItems.MenuItem item) {
-        Log.e("FORPDA_LOG", "selectMenuItem " + item);
+        Log.d(LOG_TAG, "selectMenuItem " + item);
         if (item == null) return;
         try {
             if (item.getTabClass() == null) {
@@ -359,7 +361,6 @@ public class Drawers {
     }
 
     private void updateTabGravity() {
-        Log.d("SUKA", "updateTabGravity: " + Preferences.Main.isTabsBottom());
         tabListLayoutManager.setStackFromEnd(Preferences.Main.isTabsBottom());
     }
 }

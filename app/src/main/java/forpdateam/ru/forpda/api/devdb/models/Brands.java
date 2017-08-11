@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.api.ndevdb.models;
+package forpdateam.ru.forpda.api.devdb.models;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

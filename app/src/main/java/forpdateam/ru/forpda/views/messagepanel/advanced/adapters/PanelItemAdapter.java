@@ -6,7 +6,6 @@ import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -124,7 +123,7 @@ public class PanelItemAdapter extends RecyclerView.Adapter<PanelItemAdapter.View
             }
         }
         notifyItemMoved(fromPosition, toPosition);
-        Log.e("FORPDA_LOG", "onItemMove");
+        //Log.d("FORPDA_LOG", "onItemMove");
     }
 
 }

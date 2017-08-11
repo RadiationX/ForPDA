@@ -410,7 +410,7 @@ public class CodeEditor extends AppCompatEditText {
             // shouldn't ever happen because of find()
         }
 
-        Log.d("SUKA", "TIME: " + (System.currentTimeMillis() - time));
+        Log.d("CodeEditor", "Time: " + (System.currentTimeMillis() - time));
         return e;
     }
 

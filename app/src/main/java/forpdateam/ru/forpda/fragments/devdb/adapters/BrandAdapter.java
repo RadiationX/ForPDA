@@ -19,7 +19,7 @@ import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.ndevdb.models.Brand;
+import forpdateam.ru.forpda.api.devdb.models.Brand;
 import forpdateam.ru.forpda.rxapi.RxApi;
 
 /**

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.ndevdb.models.Device;
+import forpdateam.ru.forpda.api.devdb.models.Device;
 import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.fragments.devdb.device.SubDeviceFragment;
 

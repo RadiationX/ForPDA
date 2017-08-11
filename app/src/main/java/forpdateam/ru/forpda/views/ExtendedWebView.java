@@ -33,6 +33,7 @@ import forpdateam.ru.forpda.utils.DialogsHelper;
  */
 
 public class ExtendedWebView extends NestedWebView implements IBase {
+    private final static String LOG_TAG = ExtendedWebView.class.getSimpleName();
     public final static int DIRECTION_NONE = 0;
     public final static int DIRECTION_UP = 1;
     public final static int DIRECTION_DOWN = 2;
@@ -155,7 +156,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     @Override
     public void setInitialScale(int scaleInPercent) {
         super.setInitialScale(scaleInPercent);
-        Log.e("EWV", "SET INIT SCALE " + scaleInPercent);
+        Log.d(LOG_TAG, "SET INIT SCALE " + scaleInPercent);
         setPaddingBottom(paddingBottom);
     }
 
@@ -215,7 +216,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     @JavascriptInterface
     public void domContentLoaded() {
         runInUiThread(() -> {
-            Log.d("EWV", "domContentLoaded " + isJsReady);
+            Log.d(LOG_TAG, "domContentLoaded " + isJsReady);
             isJsReady = true;
             for (Runnable action : actionsForWebView) {
                 try {
@@ -248,7 +249,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     @JavascriptInterface
     public void onPageLoaded() {
         runInUiThread(() -> {
-            Log.d("EWV", "onPageLoaded " + isJsReady);
+            Log.d(LOG_TAG, "onPageLoaded " + isJsReady);
             ArrayList<String> actions = new ArrayList<>();
             if (jsLifeCycleListener != null) {
                 try {
@@ -276,7 +277,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     }
 
     public final void runInUiThread(final Runnable action) {
-        Log.d("EWV", "runInUiThread " + (Thread.currentThread() == mUiThread));
+        Log.d(LOG_TAG, "runInUiThread " + (Thread.currentThread() == mUiThread));
         if (Thread.currentThread() == mUiThread) {
             action.run();
         } else {
@@ -296,7 +297,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
 
 
     public void syncWithJs(final Runnable action) {
-        Log.d("EWV", "syncWithJs " + isJsReady);
+        Log.d(LOG_TAG, "syncWithJs " + isJsReady);
         if (!isJsReady) {
             actionsForWebView.add(action);
         } else {

@@ -69,6 +69,7 @@ import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
 
 public abstract class ThemeFragment extends TabFragment implements IPostFunctions {
     //Указывают на произведенное действие: переход назад, обновление, обычный переход по ссылке
+    private final static String LOG_TAG = ThemeFragment.class.getSimpleName();
     protected final static int BACK_ACTION = 0, REFRESH_ACTION = 1, NORMAL_ACTION = 2;
     protected int loadAction = NORMAL_ACTION;
     protected MenuItem toggleMessagePanelItem;
@@ -94,7 +95,6 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     protected String tab_url = "";
     protected SimpleTooltip tooltip;
     private Observer themePreferenceObserver = (observable, o) -> {
-        Log.d("SUKA", "themePreferenceObserver " + o);
         if (o == null) return;
         String key = (String) o;
         switch (key) {
@@ -207,7 +207,6 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
             @Override
             public void onSelectedPage(int pageNumber) {
-                Log.e("FORPDA_LOG", "SELECTED TAB URL " + tab_url);
                 String url = "https://4pda.ru/forum/index.php?showtopic=";
                 url = url.concat(Uri.parse(tab_url).getQueryParameter("showtopic"));
                 if (pageNumber != 0) url = url.concat("&st=").concat(Integer.toString(pageNumber));
@@ -277,6 +276,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     @Override
     public boolean onBackPressed() {
+        super.onBackPressed();
         if (tooltip != null && tooltip.isShowing()) {
             tooltip.dismiss();
             return true;
@@ -299,7 +299,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
             history.remove(history.size() - 1);
             currentPage = history.get(history.size() - 1);
-            Log.e("console", "BACK PRESS REMOVE " + currentPage);
+            Log.d(LOG_TAG, "BACK PRESS REMOVE " + currentPage);
             tab_url = currentPage.getUrl();
             updateView();
             return true;
@@ -388,7 +388,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         if (themePage.getPagination().getCurrent() < themePage.getPagination().getAll()) return;
         String tag = TabManager.getInstance().getTagContainClass(FavoritesFragment.class);
         if (tag == null) return;
-        Log.e("FORPDA_LOG", "UPDATE FOVARITE " + tag + " : " + TabManager.getInstance().get(tag));
+        Log.d(LOG_TAG, "UPDATE FOVARITE " + tag + " : " + TabManager.getInstance().get(tag));
         ((FavoritesFragment) TabManager.getInstance().get(tag)).markRead(themePage.getId());
     }
 
@@ -495,10 +495,8 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     @Override
     protected void refreshToolbarMenuItems(boolean enable) {
         super.refreshToolbarMenuItems(enable);
-        Log.d("SUKA", "refreshToolbarMenuItems " + enable);
         if (enable) {
             boolean pageNotNull = !(currentPage == null || currentPage.getId() == 0 || currentPage.getUrl() == null);
-            Log.d("SUKA", "SADASD " + pageNotNull + " : " + currentPage + " : " + currentPage.getId() + " : " + currentPage.getUrl());
 
             toggleMessagePanelItem.setEnabled(true);
             refreshMenuItem.setEnabled(true);
@@ -645,7 +643,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     }
 
     public void tryPickFile() {
-        getMainActivity().checkStoragePermission(() -> startActivityForResult(FilePickHelper.pickImage(false), REQUEST_PICK_FILE));
+        App.getInstance().checkStoragePermission(() -> startActivityForResult(FilePickHelper.pickImage(false), REQUEST_PICK_FILE), App.getActivity());
     }
 
     @Override
@@ -790,7 +788,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             int start = i * maxLogSize;
             int end = (i + 1) * maxLogSize;
             end = end > text.length() ? text.length() : end;
-            Log.v("FORPDA_LOG", text.substring(start, end));
+            Log.v(LOG_TAG, text.substring(start, end));
         }
     }
 

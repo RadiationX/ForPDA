@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.fragments.forum;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -40,7 +39,6 @@ public class DefaultForumHolder extends TreeNode.BaseNodeViewHolder<ForumItemTre
 
         if (value.getForums() == null) {
             int suka = App.getDrawableResAttr(context, R.attr.count_background);
-            Log.d("SUKA", "FORUM DRAWABLE: " + suka);
             icon.setBackgroundResource(suka);
         } else {
             icon.setBackground(null);
@@ -51,7 +49,6 @@ public class DefaultForumHolder extends TreeNode.BaseNodeViewHolder<ForumItemTre
 
     @Override
     public void toggle(boolean active) {
-        Log.d("FORPDA_LOG", "TOGGLE");
         if (currentValue.getForums() != null) {
             icon.setRotationY(active ? 1f : 0f);
             icon.setImageDrawable(App.getAppDrawable(context, active ? R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_more_black_24dp));

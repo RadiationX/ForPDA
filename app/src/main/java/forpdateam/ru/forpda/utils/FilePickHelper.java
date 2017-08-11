@@ -25,6 +25,7 @@ import forpdateam.ru.forpda.api.RequestFile;
  */
 
 public class FilePickHelper {
+    private final static String LOG_TAG = FilePickHelper.class.getSimpleName();
 
     public static Intent pickImage(boolean onlyImages) {
         /*Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -50,7 +51,7 @@ public class FilePickHelper {
     public static List<RequestFile> onActivityResult(Context context, Intent data) {
         List<RequestFile> files = new ArrayList<>();
         RequestFile tempFile;
-        Log.e("FORPDA_LOG", "ON ACTIVITY RESULT INTENT " + data);
+        Log.d(LOG_TAG, "onActivityResult " + data);
         if (data.getData() == null) {
             if (data.getClipData() != null) {
                 for (int i = 0; i < data.getClipData().getItemCount(); i++) {
@@ -80,7 +81,7 @@ public class FilePickHelper {
 
     private static RequestFile createFile(Context context, Uri uri) {
         RequestFile requestFile = null;
-        Log.e("FORPDA_LOG", "CREATE FILE " + uri);
+        Log.d(LOG_TAG, "createFile " + uri);
         try {
             InputStream inputStream = null;
             String name = getFileName(context, uri);
@@ -105,7 +106,7 @@ public class FilePickHelper {
     }
 
     private static String getFileName(Context context, Uri uri) {
-        Log.d("FORPDA_LOG", uri.getScheme() + " : " + context.getContentResolver().getType(uri));
+        Log.d(LOG_TAG, "getFileName " + uri.getScheme() + " : " + context.getContentResolver().getType(uri));
         String result = null;
         if (uri.getScheme().equals("content")) {
             Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
@@ -123,7 +124,7 @@ public class FilePickHelper {
             }
         }
         if (result == null) {
-            Log.d("FORPDA_LOG", "res " + uri.getPath());
+            Log.d(LOG_TAG, "res " + uri.getPath());
             result = uri.getPath();
             int cut = result.lastIndexOf('/');
             if (cut != -1) {

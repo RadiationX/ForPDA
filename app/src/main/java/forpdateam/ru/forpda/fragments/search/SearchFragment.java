@@ -74,6 +74,7 @@ import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
  */
 
 public class SearchFragment extends TabFragment implements IPostFunctions, ExtendedWebView.JsLifeCycleListener {
+    private final static String LOG_TAG = SearchFragment.class.getSimpleName();
     protected final static String JS_INTERFACE = "ISearch";
     private boolean scrollButtonEnable = App.getInstance().getPreferences().getBoolean(Preferences.Main.SCROLL_BUTTON_ENABLE, false);
     private ViewGroup searchSettingsView;
@@ -142,7 +143,6 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String savedSettings = App.getInstance().getPreferences().getString("search_settings", null);
-        Log.e("FORPDA_LOG", "savedSettings " + savedSettings);
         if (savedSettings != null) {
             settings = SearchSettings.parseSettings(settings, savedSettings);
         }
@@ -419,6 +419,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
     @Override
     public boolean onBackPressed() {
+        super.onBackPressed();
         if (tooltip != null && tooltip.isShowing()) {
             tooltip.dismiss();
             return true;
@@ -442,7 +443,6 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
         searchView.post(() -> {
             searchView.setQuery(settings.getQuery(), false);
-            Log.e("FORPDA_LOG", "FILL SETTINGST " + settings.getQuery() + " : " + searchView.getQuery());
         });
 
         nickField.setText(settings.getNick());
@@ -551,7 +551,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         saveSettings.setSort(settings.getSort());
         saveSettings.setSource(settings.getSource());
         String saveUrl = saveSettings.toUrl();
-        Log.e("FORPDA_LOG", "SAVE SETTINGS " + saveUrl);
+        Log.d(LOG_TAG, "SAVE SETTINGS " + saveUrl);
         App.getInstance().getPreferences().edit().putString("search_settings", saveUrl).apply();
     }
 
@@ -606,12 +606,9 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         recyclerView.scrollToPosition(0);
         hidePopupWindows();
         data = searchResult;
-        Log.e("FORPDA_LOG", data.getSettings().getResult());
-        Log.e("FORPDA_LOG", data.getSettings().getResourceType());
-        Log.e("FORPDA_LOG", "" + refreshLayout.getChildCount());
-        if (refreshLayout.getChildCount() > 1) {
-            Log.e("FORPDA_LOG", "" + refreshLayout.getChildAt(0));
-        }
+        /*if (refreshLayout.getChildCount() > 1) {
+            Log.d("FORPDA_LOG", "" + refreshLayout.getChildAt(0));
+        }*/
         if (data.getSettings().getResult().equals(SearchSettings.RESULT_POSTS.first) && data.getSettings().getResourceType().equals(SearchSettings.RESOURCE_FORUM.first)) {
             if (refreshLayout.getChildCount() > 1) {
                 if (refreshLayout.getChildAt(0) instanceof RecyclerView) {
@@ -621,14 +618,14 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
                         fab.setVisibility(View.VISIBLE);
                     }
                     refreshLayout.addView(webView);
-                    Log.e("FORPDA_LOG", "add webview");
+                    Log.d(LOG_TAG, "add webview");
                 }
             } else {
                 if (scrollButtonEnable) {
                     fab.setVisibility(View.VISIBLE);
                 }
                 refreshLayout.addView(webView);
-                Log.e("FORPDA_LOG", "add webview");
+                Log.d(LOG_TAG, "add webview");
             }
             if (webViewClient == null) {
                 webViewClient = new SearchWebViewClient();
@@ -642,12 +639,12 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
                     fixTargetView();
                     fab.setVisibility(View.GONE);
                     refreshLayout.addView(recyclerView);
-                    Log.e("FORPDA_LOG", "add recyclerview");
+                    Log.d(LOG_TAG, "add recyclerview");
                 }
             } else {
                 fab.setVisibility(View.GONE);
                 refreshLayout.addView(recyclerView);
-                Log.e("FORPDA_LOG", "add recyclerview");
+                Log.d(LOG_TAG, "add recyclerview");
             }
             adapter.clear();
             adapter.addAll(data.getItems());
@@ -686,12 +683,10 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
     @Override
     public void onDomContentComplete(final ArrayList<String> actions) {
-        Log.e("console", "DOMContentLoaded");
     }
 
     @Override
     public void onPageComplete(final ArrayList<String> actions) {
-        Log.e("console", "onPageLoaded");
     }
 
     private class SearchWebViewClient extends WebViewClient {

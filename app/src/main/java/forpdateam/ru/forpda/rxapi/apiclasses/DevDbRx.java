@@ -7,10 +7,9 @@ import android.graphics.PorterDuffColorFilter;
 import android.util.SparseArray;
 
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.ndevdb.DevDb;
-import forpdateam.ru.forpda.api.ndevdb.models.Brand;
-import forpdateam.ru.forpda.api.ndevdb.models.Brands;
-import forpdateam.ru.forpda.api.ndevdb.models.Device;
+import forpdateam.ru.forpda.api.devdb.models.Brand;
+import forpdateam.ru.forpda.api.devdb.models.Brands;
+import forpdateam.ru.forpda.api.devdb.models.Device;
 import io.reactivex.Observable;
 
 /**

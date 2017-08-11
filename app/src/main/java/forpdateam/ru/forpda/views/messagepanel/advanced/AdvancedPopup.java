@@ -5,7 +5,6 @@ import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +38,7 @@ public class AdvancedPopup {
             return;
         }
         newKeyboardHeight = fragmentContainer.getRootView().getHeight() - fragmentContainer.getHeight() - App.getStatusBarHeight() - App.getNavigationBarHeight();
-        Log.d("FORPDA_LOG", "TREE OBSERVER " + newKeyboardHeight + " = " + fragmentContainer.getRootView().getHeight() + " - " + fragmentContainer.getHeight() + " - " + App.getStatusBarHeight() + " - " + App.getNavigationBarHeight());
+        //Log.d("FORPDA_LOG", "TREE OBSERVER " + newKeyboardHeight + " = " + fragmentContainer.getRootView().getHeight() + " - " + fragmentContainer.getHeight() + " - " + App.getStatusBarHeight() + " - " + App.getNavigationBarHeight());
         if (newKeyboardHeight > 100) {
             int last = App.getKeyboardHeight();
             App.setKeyboardHeight(newKeyboardHeight);
@@ -61,7 +60,7 @@ public class AdvancedPopup {
             isShowingKeyboard = false;
         }
         messagePanel.setCanScrolling(!(isShowingKeyboard || popupWindow.isShowing()));
-        Log.d("FORPDA_LOG", "AFTER " + fragmentContainer.getPaddingBottom());
+        //Log.d("FORPDA_LOG", "AFTER " + fragmentContainer.getPaddingBottom());
     };
 
     public AdvancedPopup(Context context, MessagePanel panel) {

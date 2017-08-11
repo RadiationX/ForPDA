@@ -10,7 +10,6 @@ import android.util.Log;
 import android.webkit.WebSettings;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -47,6 +46,7 @@ import okio.Okio;
 import okio.Sink;
 
 public class Client implements IWebClient {
+    private final static String LOG_TAG = Client.class.getSimpleName();
     private final static Pattern countsPattern = Pattern.compile("<a href=\"(?:https?)?\\/\\/4pda\\.ru\\/forum\\/index\\.php\\?act=mentions[^>]*?><i[^>]*?>(\\d+)<\\/i>[\\s\\S]*?act=fav[^>]*?><i[^>]*?>(\\d+)<\\/i>[\\s\\S]*?act=qms[^>]*?data-count=\"(\\d+)\">");
     private final static Pattern errorPattern = Pattern.compile("^[\\s\\S]*?wr va-m text\">([\\s\\S]*?)</div></div></div></div><div class=\"footer\">");
     private static Client INSTANCE = null;
@@ -251,31 +251,36 @@ public class Client implements IWebClient {
     }
 
     private Request.Builder prepareRequest(NetworkRequest request, ProgressListener uploadProgressListener) {
-        Log.d("FORPDA_LOG", "request url " + request.getUrl());
+        //Log.d("FORPDA_LOG", "request url " + request.getUrl());
         String url = request.getUrl();
         if (request.getUrl().substring(0, 2).equals("//")) {
             url = "https:".concat(request.getUrl());
-            Log.d("FORPDA_LOG", "fixed request url " + request.getUrl());
         }
+        Log.d(LOG_TAG, "Request url " + request.getUrl());
 
         Request.Builder requestBuilder = new Request.Builder()
                 .url(url)
                 .header("User-Agent", userAgent);
         if (request.getHeaders() != null) {
             for (Map.Entry<String, String> entry : request.getHeaders().entrySet()) {
-                Log.d("FORPDA_LOG", "HEADER " + entry.getKey() + " : " + (privateHeaders.contains(entry.getKey()) ? "private" : entry.getValue()));
+                Log.d(LOG_TAG, "Header " + entry.getKey() + " : " + (privateHeaders.contains(entry.getKey()) ? "private" : entry.getValue()));
                 requestBuilder.header(entry.getKey(), entry.getValue());
             }
         }
         if (request.getFormHeaders() != null || request.getFile() != null) {
+            Log.d(LOG_TAG, "Multipart " + request.isMultipartForm());
+            if (request.getFormHeaders() != null) {
+                for (Map.Entry<String, String> entry : request.getFormHeaders().entrySet()) {
+                    Log.d(LOG_TAG, "Form header " + entry.getKey() + " : " + (privateHeaders.contains(entry.getKey()) ? "private" : entry.getValue()));
+                }
+            }
+            if (request.getFile() != null) {
+                Log.d(LOG_TAG, "Form file " + request.getFile().toString());
+            }
             if (!request.isMultipartForm()) {
                 if (request.getFormHeaders() != null) {
-                    //FormBody нужен, т.к не все формы корректно работают с MultipartBody (точнее только авторизация)
-                    Log.d("FORPDA_LOG", "FORM BUILDER");
                     FormBody.Builder formBuilder = new FormBody.Builder();
                     for (Map.Entry<String, String> entry : request.getFormHeaders().entrySet()) {
-                        Log.d("FORPDA_LOG", "FORM HEADER " + entry.getKey() + " : " + (privateHeaders.contains(entry.getKey()) ? "private" : entry.getValue()));
-                        //formBuilder.addEncoded(entry.getKey(), entry.getValue());
                         formBuilder.add(entry.getKey(), entry.getValue());
                         if (request.getEncodedFormHeaders() != null && request.getEncodedFormHeaders().contains(entry.getKey())) {
                             formBuilder.addEncoded(entry.getKey(), entry.getValue());
@@ -284,32 +289,26 @@ public class Client implements IWebClient {
                         }
                     }
                     FormBody formBody = formBuilder.build();
-                    Log.d("FORPDA_LOG", "FORM BODY CONTENTTYPE " + formBody.contentType());
                     requestBuilder.post(formBody);
                 }
             } else {
                 MultipartBody.Builder multipartBuilder = new MultipartBody.Builder();
                 multipartBuilder.setType(MultipartBody.FORM);
-                Log.d("FORPDA_LOG", "MULTIPART FORM BUILDER");
                 if (request.getFormHeaders() != null) {
                     for (Map.Entry<String, String> entry : request.getFormHeaders().entrySet()) {
-                        Log.d("FORPDA_LOG", "FORM HEADER " + entry.getKey() + " : " + (privateHeaders.contains(entry.getKey()) ? "private" : entry.getValue()));
-                        //multipartBuilder.addFormDataPart(entry.getKey(), URLEncoder.encode(entry.getValue(), "UTF-8"));
                         multipartBuilder.addFormDataPart(entry.getKey(), entry.getValue());
                     }
                 }
                 if (request.getFile() != null) {
-                    Log.e("FORPDA_LOG", "FILE " + request.getFile().getRequestName());
-                    Log.e("FORPDA_LOG", "FILE " + request.getFile().getFileName());
-                    Log.e("FORPDA_LOG", "FILE " + request.getFile().getMimeType());
-                    Log.e("FORPDA_LOG", "FILE " + request.getFile().getFileStream());
-                    multipartBuilder.addFormDataPart(request.getFile().getRequestName(), request.getFile().getFileName(), RequestBodyUtil.create(MediaType.parse(request.getFile().getMimeType()), request.getFile().getFileStream()));
+                    multipartBuilder.addFormDataPart(
+                            request.getFile().getRequestName(),
+                            request.getFile().getFileName(),
+                            RequestBodyUtil.create(
+                                    MediaType.parse(request.getFile().getMimeType()),
+                                    request.getFile().getFileStream())
+                    );
                 }
                 MultipartBody multipartBody = multipartBuilder.build();
-                Log.d("FORPDA_LOG", "MULTIPART CONTENTTYPE " + multipartBody.contentType());
-                for (MultipartBody.Part part : multipartBody.parts()) {
-                    Log.e("FORPDA_LOG", "PART" + part.headers().toString());
-                }
                 if (uploadProgressListener == null) {
                     requestBuilder.post(multipartBody);
                 } else {
@@ -339,23 +338,13 @@ public class Client implements IWebClient {
                 checkForumErrors(response.getBody());
             }
 
-            Log.d("SUKA", "" + request.isWithoutBody() + " : " + response.toString());
+            //Log.d("SUKA", "" + request.isWithoutBody() + " : " + response.toString());
+            Log.d(LOG_TAG, "Response: " + response.toString());
         } finally {
             if (okHttpResponse != null)
                 okHttpResponse.close();
         }
         return response;
-    }
-
-    public InputStream loadImage(String url) throws Exception {
-        Request.Builder requestBuilder = prepareRequest(new NetworkRequest.Builder().url(url).build(), null);
-        Response okHttpResponse = null;
-        InputStream is = null;
-        okHttpResponse = client.newCall(requestBuilder.build()).execute();
-        if (!okHttpResponse.isSuccessful())
-            throw new OkHttpResponseException(okHttpResponse.code(), okHttpResponse.message(), url);
-        is = okHttpResponse.body().byteStream();
-        return is;
     }
 
     @Override
@@ -369,12 +358,9 @@ public class Client implements IWebClient {
     }
 
     public WebSocket createWebSocketConnection(WebSocketListener webSocketListener) {
-
         Request request = new Request.Builder()
                 .url("ws://app.4pda.ru/ws/")
                 .build();
-        Log.d("WS_SUKA", "HEADER " + request.headers().toString());
-
         return webSocketClient.newWebSocket(request, webSocketListener);
 
         // Trigger shutdown of the dispatcher's executor so this process can exit cleanly.

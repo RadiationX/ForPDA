@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.api.qms;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -232,7 +230,6 @@ public class Qms {
                 .formHeader("mid", Integer.toString(userId))
                 .formHeader("t", Integer.toString(themeId));
         NetworkResponse response = Api.getWebClient().request(builder.build());
-        Log.e("FORPDA_LOG", "SEND MESSAGE RESPONSE " + response.getBody());
         Matcher matcher = chatPattern.matcher(response.getBody());
         QmsMessage item = new QmsMessage();
         if (matcher.find()) {
@@ -375,47 +372,7 @@ public class Qms {
                 item.setWeight(matcher.group(4));
                 item.setTypeFile(AttachmentItem.TYPE_IMAGE);
                 item.setLoadState(AttachmentItem.STATE_LOADED);
-                Log.e("FORPDA_LOG", item.getName() + " : " + item.getId() + " : " + item.getExtension() + " : " + item.getWeight() + " : " + item.getImageUrl());
             }
-        }
-
-        return pending;
-    }
-
-    public List<AttachmentItem> uploadFiless(List<RequestFile> files, List<AttachmentItem> pending) throws Exception {
-        String url = "https://api.imgur.com/3/image";
-
-        NetworkResponse response;
-        Matcher matcher = null;
-
-        HashMap<String, String> headers = new HashMap<>();
-        for (int i = 0; i < files.size(); i++) {
-            RequestFile file = files.get(i);
-            AttachmentItem item = pending.get(i);
-
-            file.setRequestName("image");
-            NetworkRequest.Builder builder = new NetworkRequest.Builder()
-                    .url(url)
-                    .formHeaders(headers)
-                    .file(file);
-            response = Api.getWebClient().request(builder.build(), item.getItemProgressListener());
-
-
-            Log.d("IMGUR", "RESPONSE " + response + " : \n" + response.getBody());
-            /*if (matcher == null)
-                matcher = loadedAttachment.matcher(response.getBody());
-            else
-                matcher = matcher.reset(response.getBody());
-            if (matcher.find()) {
-                item.setName(file.getFileName());
-                item.setImageUrl("http://savepic.net/".concat(matcher.group(1)));
-                item.setId(Integer.parseInt(matcher.group(2)));
-                item.setExtension(matcher.group(3));
-                item.setWeight(matcher.group(4));
-                item.setTypeFile(AttachmentItem.TYPE_IMAGE);
-                item.setLoadState(AttachmentItem.STATE_LOADED);
-                Log.e("FORPDA_LOG", item.getName() + " : " + item.getId() + " : " + item.getExtension() + " : " + item.getWeight() + " : " + item.getImageUrl());
-            }*/
         }
 
         return pending;

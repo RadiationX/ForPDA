@@ -7,7 +7,6 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -281,7 +280,7 @@ public class CodesPanelItem extends BasePanelItem {
         }
         end = "[/" + tag + "]";
 
-        Log.e("FORPDA_LOG", "CREATE BB CODE " + start + " : " + end);
+        //Log.d("FORPDA_LOG", "CREATE BB CODE " + start + " : " + end);
         return new String[]{start, end};
     }
 

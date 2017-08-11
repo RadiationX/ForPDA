@@ -106,7 +106,7 @@ public class App extends android.app.Application {
     private SharedPreferences preferences;
     private SimpleObservable preferenceChangeObservables = new SimpleObservable();
     private OnSharedPreferenceChangeListener preferenceChangeListener = (sharedPreferences, key) -> {
-        Log.e("SUKA", "PREFERENCE CHANGED2 " + key);
+        Log.d(App.class.getSimpleName(), "Preference changed: " + key);
         if (key == null) return;
         preferenceChangeObservables.notifyObservers(key);
     };
@@ -159,7 +159,6 @@ public class App extends android.app.Application {
     boolean webViewNotFound = true;
 
     public boolean isWebViewNotFound() {
-        Log.e("check_wv", "isWebViewNotFound: " + webViewNotFound);
         return webViewNotFound;
     }
 
@@ -206,7 +205,6 @@ public class App extends android.app.Application {
             webViewNotFound = false;
         } catch (Exception e) {
             webViewNotFound = true;
-            Log.e("CHECK_WV", "Android System WebView is not found");
         }
 
         if (isWebViewNotFound()) {
@@ -238,15 +236,15 @@ public class App extends android.app.Application {
                 @RequiresApi(api = Build.VERSION_CODES.M)
                 @Override
                 public void onReceive(Context context, Intent intent) {
-                    Log.d("4DOZE", "ON RECEIVE " + intent);
+                    Log.d(App.class.getSimpleName(), "DOZE ON RECEIVE " + intent);
                     PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
 
                     if (pm.isDeviceIdleMode()) {
                         // the device is now in doze mode
-                        Log.e("4DOZE", "DOZE MODE ENABLYA");
+                        Log.d(App.class.getSimpleName(), "DOZE MODE ENABLYA");
                     } else {
                         // the device just woke up from doze mode
-                        Log.e("4DOZE", "DOZE MODE DISABLYA");
+                        Log.d(App.class.getSimpleName(), "DOZE MODE DISABLYA");
                         startService(new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS));
                     }
                 }
@@ -323,21 +321,11 @@ public class App extends android.app.Application {
         return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
-    public static int convertSpToPixels(float sp) {
-        Log.d("SUKA", "SP: " + sp);
-        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, getContext().getResources().getDisplayMetrics());
-        Log.d("SUKA", "PX: " + px);
-        return px;
-    }
-
-
     public static Drawable getAppDrawable(int id) {
-        //return drawableCache.get(id);
         return AppCompatResources.getDrawable(App.getContext(), id);
     }
 
     public static Drawable getAppDrawable(Context context, int id) {
-        //return drawableCache.get(id);
         return AppCompatResources.getDrawable(context, id);
     }
 
@@ -360,7 +348,7 @@ public class App extends android.app.Application {
                     public InputStream getStream(String imageUri, Object extra) throws IOException {
                         if (imageUri.substring(0, 2).equals("//"))
                             imageUri = "http:".concat(imageUri);
-                        Log.d("FORPDA_LOG", "UIL LOAD IMAGE: ".concat(imageUri));
+                        Log.d(App.class.getSimpleName(), "ImageLoader getStream "+imageUri);
                         return super.getStream(imageUri, extra);
                     }
 
@@ -428,16 +416,11 @@ public class App extends android.app.Application {
 
     public void checkStoragePermission(Runnable runnable, Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                Log.v("FORPDA_LOG", "Permission is granted");
-            } else {
-                Log.v("FORPDA_LOG", "Permission is revoked");
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, TabFragment.REQUEST_STORAGE);
                 permissionCallbacks.add(runnable);
                 return;
             }
-        } else {
-            Log.v("FORPDA_LOG", "Permission is granted");
         }
         runnable.run();
     }

@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.fragments;
 
-import android.content.Context;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.IdRes;
@@ -18,7 +16,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -44,6 +41,7 @@ import forpdateam.ru.forpda.settings.Preferences;
  * Created by radiationx on 07.08.16.
  */
 public class TabFragment extends RxFragment {
+    private final static String LOG_TAG = TabFragment.class.getSimpleName();
     public final static String ARG_TITLE = "TAB_TITLE";
     public final static String TAB_SUBTITLE = "TAB_SUBTITLE";
     public final static String ARG_TAB = "TAB_URL";
@@ -72,7 +70,6 @@ public class TabFragment extends RxFragment {
     protected Spinner toolbarSpinner;
     protected View view, notifyDot;
     protected FloatingActionButton fab;
-    private AudioManager audioService;
     private boolean showNotifyDot = App.getInstance().getPreferences().getBoolean(Preferences.Main.SHOW_NOTIFY_DOT, true);
     private boolean notifyDotFav = App.getInstance().getPreferences().getBoolean(Preferences.Main.NOTIFY_DOT_FAV, true);
     private boolean notifyDotQms = App.getInstance().getPreferences().getBoolean(Preferences.Main.NOTIFY_DOT_QMS, true);
@@ -170,8 +167,9 @@ public class TabFragment extends RxFragment {
 
     //False - можно закрывать
     //True - еще нужно что-то сделать, не закрывать
+    @CallSuper
     public boolean onBackPressed() {
-        Log.d("FORPDA_LOG", "onbackpressed tab");
+        Log.d(LOG_TAG, "onBackPressed "+this);
         return false;
     }
 
@@ -196,7 +194,7 @@ public class TabFragment extends RxFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        audioService = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
+        Log.d(LOG_TAG, "onDestroy " + this);
         if (savedInstanceState != null) {
             title = savedInstanceState.getString(BUNDLE_PREFIX.concat(BUNDLE_TITLE));
             subtitle = savedInstanceState.getString(BUNDLE_PREFIX.concat(BUNDLE_SUBTITLE));
@@ -315,8 +313,6 @@ public class TabFragment extends RxFragment {
 
     private boolean decideShowDot() {
         if (ClientHelper.getAllCounts() > 0) {
-            Log.e("SUKA_DOT", "decideShowDot " + notifyDotFav + " : " + notifyDotQms + " : " + notifyDotMentions);
-            Log.e("SUKA_DOT", "decideShowDot " + (ClientHelper.getFavoritesCount() > 0) + " : " + (ClientHelper.getQmsCount() > 0) + " : " + (ClientHelper.getMentionsCount() > 0));
             if (ClientHelper.getFavoritesCount() > 0 && notifyDotFav) {
                 return true;
             }
@@ -334,10 +330,8 @@ public class TabFragment extends RxFragment {
 
     protected void initFabBehavior() {
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
-        // TODO: 20.12.16 not work in 25.1.0
         ScrollAwareFABBehavior behavior = new ScrollAwareFABBehavior(fab.getContext(), null);
         params.setBehavior(behavior);
-
         fab.requestLayout();
     }
 
@@ -346,11 +340,6 @@ public class TabFragment extends RxFragment {
         refreshLayout.setColorSchemeColors(App.getColorFromAttr(getContext(), R.attr.colorAccent));
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Log.d("FORPDA_LOG", "onactivitycreated " + getArguments() + " : " + savedInstanceState + " : " + title);
-    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -370,29 +359,23 @@ public class TabFragment extends RxFragment {
         return (MainActivity) getActivity();
     }
 
-    public void tryPlayClickEffect() {
-        try {
-            audioService.playSoundEffect(SoundEffectConstants.CLICK);
-        } catch (Exception ignore) {
-        }
-    }
-
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("FORPDA_LOG", this + " : onresume");
+        Log.d(LOG_TAG, "onResume " + this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(LOG_TAG, "onPause " + this);
         hidePopupWindows();
-        Log.d("FORPDA_LOG", this + " : onpause");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(LOG_TAG, "onDestroy " + this);
         hidePopupWindows();
         ClientHelper.getInstance().removeCountsObserver(countsObserver);
         Client.getInstance().removeNetworkObserver(networkObserver);

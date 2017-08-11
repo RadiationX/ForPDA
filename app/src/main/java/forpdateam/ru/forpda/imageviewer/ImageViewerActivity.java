@@ -9,7 +9,6 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 
@@ -117,7 +116,6 @@ public class ImageViewerActivity extends AppCompatActivity {
         pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                Log.e("FORPDA_LOG", "PAGER SELECTED POSITION " + position);
                 updateTitle(position);
             }
         });
@@ -126,7 +124,6 @@ public class ImageViewerActivity extends AppCompatActivity {
         pager.setAdapter(adapter);
         pager.setCurrentItem(currentIndex);
         pager.setClipChildren(false);
-        Log.e("FORPDA_LOG", "PRE UPDATE TITLE LOAD");
 
         int finalCurrentIndex = currentIndex;
         toolbar.post(() -> updateTitle(finalCurrentIndex));
@@ -151,7 +148,6 @@ public class ImageViewerActivity extends AppCompatActivity {
 
     @SuppressLint("DefaultLocale")
     private void updateTitle(int selectedPageIndex) {
-        Log.e("FORPDA_LOG", "UPDATE TITLE " + selectedPageIndex);
         toolbar.setTitle(String.format("%d из %d", selectedPageIndex + 1, urls.size()));
     }
 
@@ -186,7 +182,6 @@ public class ImageViewerActivity extends AppCompatActivity {
                 | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
                 | View.SYSTEM_UI_FLAG_IMMERSIVE);*/
         getSupportActionBar().hide();
-        Log.e("FORPDA_LOG", "HIDE");
     }
 
     private void show() {
@@ -196,7 +191,6 @@ public class ImageViewerActivity extends AppCompatActivity {
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);*/
         getSupportActionBar().show();
-        Log.e("FORPDA_LOG", "SHOW");
     }
 
     @Override

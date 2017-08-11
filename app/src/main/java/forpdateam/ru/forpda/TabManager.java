@@ -14,6 +14,7 @@ import java.util.List;
 import forpdateam.ru.forpda.fragments.TabFragment;
 
 public class TabManager {
+    private final static String LOG_TAG = TabManager.class.getSimpleName();
     private final static String TAB_PREFIX = "tab_";
     private final static String BUNDLE_PREFIX = "tab_manager_";
     private final static String BUNDLE_ACTIVE_TAG = "active_tag";
@@ -65,13 +66,14 @@ public class TabManager {
         if (outState == null) return;
         outState.putString(BUNDLE_PREFIX.concat(BUNDLE_ACTIVE_TAG), activeTag);
         outState.putInt(BUNDLE_PREFIX.concat(BUNDLE_ACTIVE_INDEX), activeIndex);
+        Log.d(LOG_TAG, "saveState: " + activeTag + " : " + activeIndex);
     }
 
     public void loadState(Bundle state) {
         if (state == null) return;
         activeTag = state.getString(BUNDLE_PREFIX.concat(BUNDLE_ACTIVE_TAG), "");
         activeIndex = state.getInt(BUNDLE_PREFIX.concat(BUNDLE_ACTIVE_INDEX), 0);
-        Log.d("FORPDA_LOG", "LOAD STATE " + activeTag + " : " + activeIndex);
+        Log.d(LOG_TAG, "loadState: " + activeTag + " : " + activeIndex);
     }
 
     public int getSize() {
@@ -91,6 +93,7 @@ public class TabManager {
     }
 
     public void updateFragmentList() {
+        Log.d(LOG_TAG, "updateFragmentList");
         existingFragments.clear();
         if (fragmentManager.getFragments() == null) return;
         for (int i = 0; i < fragmentManager.getFragments().size(); i++) {
@@ -98,10 +101,6 @@ public class TabManager {
                 existingFragments.add((TabFragment) fragmentManager.getFragments().get(i));
         }
         Collections.sort(existingFragments, (o1, o2) -> o1.getTag().compareTo(o2.getTag()));
-        Log.e("FORPDA_LOG", "UPDATE");
-        for (TabFragment fragment : existingFragments) {
-            Log.e("FORPDA_LOG", "RECOVERY FRAGMENT " + fragment);
-        }
     }
 
     private void hideTabs(FragmentTransaction transaction) {
@@ -138,6 +137,7 @@ public class TabManager {
     }
 
     public void add(TabFragment tabFragment) {
+        Log.d(LOG_TAG, "add: "+tabFragment);
         if (tabFragment == null)
             return;
         String check = null;
@@ -172,6 +172,7 @@ public class TabManager {
     }
 
     public void remove(TabFragment tabFragment) {
+        Log.d(LOG_TAG, "remove: "+tabFragment);
         if (tabFragment == null)
             return;
 
@@ -208,6 +209,7 @@ public class TabManager {
     }
 
     public void select(TabFragment tabFragment) {
+        Log.d(LOG_TAG, "select: "+tabFragment);
         if (tabFragment == null)
             return;
         FragmentTransaction transaction = fragmentManager.beginTransaction();

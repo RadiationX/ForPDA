@@ -60,7 +60,6 @@ public class EditPost {
     }
 
     public EditPostForm loadForm(int postId) throws Exception {
-        Log.d("FORPDA_LOG", "START LOAD FORM");
         EditPostForm form = new EditPostForm();
         String url = "https://4pda.ru/forum/index.php?act=post&do=edit_post&p=".concat(Integer.toString(postId));
         //url = url.concat("&t=").concat(Integer.toString(topicId)).concat("&f=").concat(Integer.toString(forumId));
@@ -72,9 +71,7 @@ public class EditPost {
         }
         Matcher matcher = postPattern.matcher(response.getBody());
         if (matcher.find()) {
-            Log.d("FORPDA_LOG", "MESSAGE " + matcher.group(1));
             form.setMessage(Utils.fromHtml(Utils.escapeNewLine(matcher.group(1))));
-            Log.d("FORPDA_LOG", "REASON " + matcher.group(2));
             form.setEditReason(matcher.group(2));
         }
         matcher = formInfoPattern.matcher(response.getBody());
@@ -93,9 +90,7 @@ public class EditPost {
 */
         response = Api.getWebClient().get("https://4pda.ru/forum/index.php?act=attach&index=1&relId=" + postId + "&maxSize=134217728&allowExt=&code=init&unlinked=");
         matcher = attachmentsPattern.matcher(response.getBody());
-        Log.d("SUKA", "NEW ATTACHES " + response.getBody());
         while (matcher.find()) {
-            Log.d("SUKA", "NEW ATTACH " + matcher.group(2));
             form.addAttachment(fillAttachmentV2(new AttachmentItem(), matcher));
         }
 
@@ -215,13 +210,11 @@ public class EditPost {
             messageDigest.update(targetArray);
             byte[] hash = messageDigest.digest();
             String md5 = ByteArraytoHexString(hash);
-            Log.d("SUKA", "REQUEST FILE " + file.getFileName() + " : " + file.getFileStream().available() + " : " + md5);
             builder.formHeader("md5", md5)
                     .formHeader("size", "" + file.getFileStream().available())
                     .formHeader("name", file.getFileName());
 
             response = Api.getWebClient().request(builder.build());
-            Log.d("SUKA", "RESPONSE " + response);
             if (response.getBody().equals("0")) {
                 NetworkRequest.Builder uploadRequest = new NetworkRequest.Builder()
                         .url("https://4pda.ru/forum/index.php?act=attach")
@@ -234,7 +227,6 @@ public class EditPost {
                         .formHeader("code", "upload")
                         .file(file);
                 response = Api.getWebClient().request(uploadRequest.build(), item.getProgressListener());
-                Log.d("SUKA", "RESPONSE2 " + response.getBody());
             }
             if (matcher == null) {
                 matcher = attachmentsPattern.matcher(response.getBody());

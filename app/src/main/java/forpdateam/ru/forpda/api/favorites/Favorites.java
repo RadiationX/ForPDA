@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.api.favorites;
 
-import android.util.Log;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +29,6 @@ public class Favorites {
     public FavData getFavorites(int st) throws Exception {
         FavData data = new FavData();
         NetworkResponse response = Api.getWebClient().get("https://4pda.ru/forum/index.php?act=fav&st=".concat(Integer.toString(st)));
-        long time = System.currentTimeMillis();
         Matcher matcher = mainPattern.matcher(response.getBody());
         FavItem item;
         while (matcher.find()) {
@@ -39,7 +36,6 @@ public class Favorites {
             boolean isForum = matcher.group(19) != null;
 
             item.setFavId(Integer.parseInt(matcher.group(1)));
-            Log.d("FAV", "FAV ITEM NEW ID " + item.getFavId());
             item.setTrackType(matcher.group(2));
             item.setPin(matcher.group(3).equals("1"));
             if (matcher.group(4) != null) {
@@ -82,8 +78,6 @@ public class Favorites {
             data.addItem(item);
         }
         data.setPagination(Pagination.parseForum(response.getBody()));
-        Log.d("FORPDA_LOG", "parsing time " + ((System.currentTimeMillis() - time)));
-
         return data;
     }
 
@@ -117,9 +111,6 @@ public class Favorites {
     }
 
     private boolean checkIsComplete(String result) {
-        //forpdateam.ru.forpda.utils.Utils.longLog("FAVORITE RESULT "+result);
-        boolean res = checkPattern.matcher(result).find();
-        Log.d("FORPDA_LOG", "checkIsComplete " + res);
-        return res;
+        return checkPattern.matcher(result).find();
     }
 }
