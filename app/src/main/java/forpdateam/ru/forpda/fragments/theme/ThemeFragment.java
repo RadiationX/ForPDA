@@ -46,6 +46,7 @@ import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
+import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
@@ -498,6 +499,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         if (enable) {
             boolean pageNotNull = !(currentPage == null || currentPage.getId() == 0 || currentPage.getUrl() == null);
 
+
             toggleMessagePanelItem.setEnabled(true);
             refreshMenuItem.setEnabled(true);
             copyLinkMenuItem.setEnabled(pageNotNull);
@@ -516,7 +518,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             }
             openForumMenuItem.setEnabled(pageNotNull);
         } else {
-            toggleMessagePanelItem.setEnabled(true);
+            toggleMessagePanelItem.setEnabled(false);
             refreshMenuItem.setEnabled(true);
             copyLinkMenuItem.setEnabled(false);
             searchInThemeMenuItem.setEnabled(false);
@@ -526,6 +528,12 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             deleteFavoritesMenuItem.setVisible(false);
             addFavoritesMenuItem.setVisible(false);
             openForumMenuItem.setEnabled(false);
+        }
+        if(!ClientHelper.getAuthState()){
+            toggleMessagePanelItem.setVisible(false);
+            deleteFavoritesMenuItem.setVisible(false);
+            addFavoritesMenuItem.setVisible(false);
+            hideMessagePanel();
         }
     }
 

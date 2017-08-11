@@ -54,6 +54,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observer;
+import java.util.regex.Pattern;
 
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.client.Client;
@@ -300,6 +301,7 @@ public class App extends android.app.Application {
             try {
                 template = new MiniTemplator.Builder().build(stream, Charset.forName("utf-8"));
             } catch (Exception e) {
+                e.printStackTrace();
                 Toast.makeText(getContext(), "Ошибка шаблона [" + name + "]: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 //создание пустого шаблона
                 template = new MiniTemplator.Builder().build(new ByteArrayInputStream("Template error!".getBytes(Charset.forName("utf-8"))), Charset.forName("utf-8"));
@@ -344,23 +346,27 @@ public class App extends android.app.Application {
     public static void initImageLoader(Context context) {
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
                 .imageDownloader(new BaseImageDownloader(context) {
+                    final Pattern pattern4pda = Pattern.compile("(?:http?s?:)?\\/\\/.*?4pda\\.(?:ru|to)");
+
                     @Override
                     public InputStream getStream(String imageUri, Object extra) throws IOException {
                         if (imageUri.substring(0, 2).equals("//"))
                             imageUri = "http:".concat(imageUri);
-                        Log.d(App.class.getSimpleName(), "ImageLoader getStream "+imageUri);
+                        Log.d(App.class.getSimpleName(), "ImageLoader getStream " + imageUri);
                         return super.getStream(imageUri, extra);
                     }
 
                     @Override
                     protected HttpURLConnection createConnection(String url, Object extra) throws IOException {
                         HttpURLConnection conn = super.createConnection(url, extra);
-                        Map<String, Cookie> cookies = Client.getInstance().getCookies();
-                        String stringCookies = "";
-                        for (Map.Entry<String, Cookie> cookieEntry : cookies.entrySet()) {
-                            stringCookies = stringCookies.concat(cookieEntry.getKey()).concat("=").concat(cookieEntry.getValue().value()).concat(";");
+                        if (pattern4pda.matcher(url).find()) {
+                            Map<String, Cookie> cookies = Client.getInstance().getCookies();
+                            String stringCookies = "";
+                            for (Map.Entry<String, Cookie> cookieEntry : cookies.entrySet()) {
+                                stringCookies = stringCookies.concat(cookieEntry.getKey()).concat("=").concat(cookieEntry.getValue().value()).concat(";");
+                            }
+                            conn.setRequestProperty("Cookie", stringCookies);
                         }
-                        conn.setRequestProperty("Cookie", stringCookies);
                         return conn;
                     }
                 })

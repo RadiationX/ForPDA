@@ -43,7 +43,7 @@ public class BitmapUtils {
         }else {
             output = Bitmap.createScaledBitmap(bitmap, width, height, true);
         }
-        bitmap.recycle();
+        //bitmap.recycle();
         return output;
     }
 

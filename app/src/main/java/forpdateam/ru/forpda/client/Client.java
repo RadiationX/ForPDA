@@ -57,6 +57,7 @@ public class Client implements IWebClient {
     private Handler observerHandler = new Handler(Looper.getMainLooper());
     private String tempGroup;
     private ArrayList<String> privateHeaders = new ArrayList<>(Arrays.asList("pass_hash", "session_id", "auth_key", "password"));
+    private final Cookie mobileCookie = Cookie.parse(HttpUrl.parse("https://4pda.ru/"), "ngx_mb=1;");
 
     //Class
     public Client() {
@@ -74,6 +75,9 @@ public class Client implements IWebClient {
         String anonymous = App.getInstance().getPreferences().getString("cookie_anonymous", null);
         ClientHelper.setUserId(App.getInstance().getPreferences().getString("member_id", null));
         //Log.d("FORPDA_LOG", "INIT AUTH DATA " + member_id + " : " + pass_hash + " : " + session_id + " : " + App.getInstance().getPreferences().getString("member_id", null));
+
+
+        cookies.put("ngx_mb", mobileCookie);
         if (member_id != null && pass_hash != null) {
             ClientHelper.setAuthState(ClientHelper.AUTH_STATE_LOGIN);
             //Первичная загрузка кукисов
@@ -119,6 +123,9 @@ public class Client implements IWebClient {
 
         @Override
         public void saveFromResponse(@NonNull HttpUrl url, @NonNull List<Cookie> cookies) {
+            /*for (Cookie cookie : cookies) {
+                Log.d("SUKA", "Cookie save: "+cookie.toString());
+            }*/
             Matcher matcher = authPattern.matcher(url.toString());
             if (matcher.find()) {
                 for (Cookie cookie : cookies) {
@@ -174,6 +181,7 @@ public class Client implements IWebClient {
             if (!url.host().toLowerCase().contains("4pda")) {
                 return new ArrayList<>();
             }
+            cookies.put("ngx_mb", mobileCookie);
             return new ArrayList<>(Client.cookies.values());
         }
     };
