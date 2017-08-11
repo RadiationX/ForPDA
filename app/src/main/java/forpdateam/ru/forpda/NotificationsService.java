@@ -49,6 +49,7 @@ import okio.ByteString;
  */
 
 public class NotificationsService extends Service {
+    private final static String LOG_TAG = NotificationsService.class.getSimpleName();
     private final static int NOTIFY_STACKED_QMS_ID = -123;
     private final static int NOTIFY_STACKED_FAV_ID = -234;
     public final static String CHECK_LAST_EVENTS = "SOSNI_HUICA_DOZE";
@@ -78,7 +79,6 @@ public class NotificationsService extends Service {
     private Observer notificationSettingObserver = (observable, o) -> {
         if (o == null) return;
         String key = (String) o;
-        Log.d("WS_SETTINGS", "KEY: " + key);
         switch (key) {
             case Preferences.Notifications.Main.ENABLED: {
                 if (Preferences.Notifications.Main.isEnabled()) {
@@ -112,12 +112,12 @@ public class NotificationsService extends Service {
 
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
-            Log.d("WS_EVENT", "ON OPEN: " + response.toString());
+            Log.d(LOG_TAG, "WSListener onOpen: " + response.toString());
         }
 
         @Override
         public void onMessage(WebSocket webSocket, String text) {
-            Log.d("WS_EVENT", "ON T MESSAGE: " + text);
+            Log.d(LOG_TAG, "WSListener onMessage: " + text);
             if (matcher == null) {
                 matcher = NotificationEvents.webSocketEventPattern.matcher(text);
             } else {
@@ -133,23 +133,23 @@ public class NotificationsService extends Service {
 
         @Override
         public void onMessage(WebSocket webSocket, ByteString bytes) {
-            Log.d("WS_EVENT", "ON B MESSAGE: " + bytes.hex());
+            Log.d(LOG_TAG, "WSListener onMessage: " + bytes.hex());
         }
 
         @Override
         public void onClosing(WebSocket webSocket, int code, String reason) {
-            Log.d("WS_EVENT", "ON CLOSING: " + code + " " + reason);
+            Log.d(LOG_TAG, "WSListener onClosing: " + code + " " + reason);
             webSocket.close(1000, null);
         }
 
         @Override
         public void onClosed(WebSocket webSocket, int code, String reason) {
-            Log.d("WS_EVENT", "ON CLOSED: " + code + " " + reason);
+            Log.d(LOG_TAG, "WSListener onClosed: " + code + " " + reason);
         }
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-            Log.d("WS_EVENT", "ON FAILURE: " + t.getMessage() + " " + response);
+            Log.d(LOG_TAG, "WSListener onFailure: " + t.getMessage() + " " + response);
             t.printStackTrace();
             if (NotificationsService.this.webSocket != null) {
                 NotificationsService.this.webSocket.cancel();
@@ -166,15 +166,15 @@ public class NotificationsService extends Service {
 
     @Override
     public void onCreate() {
-        Log.i("WS_SERVICE", "Service: onCreate " + this);
+        Log.i(LOG_TAG, "onCreate");
         Client.getInstance().addNetworkObserver(networkObserver);
         App.getInstance().addPreferenceChangeObserver(notificationSettingObserver);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("WS_SERVICE", "Service: onStartCommand " + flags + " : " + startId + " : " + intent);
-        Log.i("WS_SERVICE", "Service: onStartCommand " + webSocket);
+        Log.i(LOG_TAG, "onStartCommand args" + flags + " : " + startId + " : " + intent);
+        Log.i(LOG_TAG, "onStartCommand websocket" + webSocket);
         if (mNotificationManager == null) {
             mNotificationManager = NotificationManagerCompat.from(this);
         }
@@ -182,7 +182,7 @@ public class NotificationsService extends Service {
             boolean checkEvents = intent != null && intent.getAction() != null && intent.getAction().equals(CHECK_LAST_EVENTS);
             long time = System.currentTimeMillis();
 
-            Log.d("WS_SERVICE", "HANDLE CHECK LAST EVENTS: " + time + " : " + lastHardCheckTime + " : " + (time - lastHardCheckTime));
+            Log.d(LOG_TAG, "Handle check last events: " + time + " : " + lastHardCheckTime + " : " + (time - lastHardCheckTime));
 
             if (checkEvents && ((time - lastHardCheckTime) >= 1000 * 60 * 1)) {
                 lastHardCheckTime = time;
@@ -218,16 +218,16 @@ public class NotificationsService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.i(LOG_TAG, "onDestroy");
         App.getInstance().removePreferenceChangeObserver(notificationSettingObserver);
         Client.getInstance().removeNetworkObserver(networkObserver);
-        Log.i("WS_SERVICE", "Service: onDestroy");
         stop();
     }
 
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        Log.i("WS_SERVICE", "Service: onTaskRemoved");
+        Log.i(LOG_TAG, "onTaskRemoved");
         if (webSocket != null) {
             webSocket.close(1000, null);
         }
@@ -420,17 +420,17 @@ public class NotificationsService extends Service {
         Bitmap bitmap = null;
         if (!event.fromSite()) {
             ForumUser forumUser = ForumUsersCache.getUserById(event.getUserId());
-            Log.d("WS_USER", "FORUM USER CACHE " + forumUser);
+            Log.d(LOG_TAG, "Forum user from cache " + forumUser);
             if (forumUser == null) {
                 forumUser = ForumUsersCache.loadUserByNick(event.getUserNick());
-                Log.d("WS_USER", "FORUM USER LOADED " + forumUser);
+                Log.d(LOG_TAG, "Forum user from network " + forumUser);
             }
 
             if (forumUser != null) {
                 bitmap = ImageLoader.getInstance().loadImageSync(forumUser.getAvatar());
-                Log.d("WS_BITMAP", "" + bitmap);
+                Log.d(LOG_TAG, "Loaded avatar bitmap" + bitmap);
                 if (bitmap != null) {
-                    Log.d("WS_BITMAP", "" + bitmap.getHeight() + " : " + bitmap.getWidth());
+                    Log.d(LOG_TAG, "Bitmap h/w: " + bitmap.getHeight() + " : " + bitmap.getWidth());
                 }
             }
         }

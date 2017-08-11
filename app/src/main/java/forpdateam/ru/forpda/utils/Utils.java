@@ -55,7 +55,7 @@ public class Utils {
         }
     }
     public static void log(@NonNull String msg) {
-        Log.e("TEST", msg);
+        Log.d("TEST", msg);
     }
 
     //copypast from forpda

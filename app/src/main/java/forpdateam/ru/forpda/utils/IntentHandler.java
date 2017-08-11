@@ -20,7 +20,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
@@ -51,6 +50,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
  * Created by radiationx on 04.08.16.
  */
 public class IntentHandler {
+    private final static String LOG_TAG = IntentHandler.class.getSimpleName();
 
     /*
     *http://4pda.ru/forum/index.php?showuser=2556269
@@ -96,7 +96,7 @@ public class IntentHandler {
     }
 
     public static boolean handle(String url, Bundle args) {
-        Log.d("FORPDA_LOG", "handle clear url " + url);
+        Log.d(LOG_TAG, "handle url " + url);
         if (url == null || url.length() <= 1 || url.equals("#")) {
             return false;
         }
@@ -106,7 +106,7 @@ public class IntentHandler {
             url = "https://4pda.ru".concat(url);
         }
         url = url.replace("&amp;", "&").replace("\"", "").trim();
-        Log.d("FORPDA_LOG", "after correct url " + url);
+        Log.d(LOG_TAG, "Corrected url " + url);
 
 
         if (url.matches("(?:http?s?:)?\\/\\/[\\s\\S]*?4pda\\.(?:ru|to)[\\s\\S]*")) {
@@ -114,7 +114,7 @@ public class IntentHandler {
                 url = "https://4pda.ru".concat(url.substring(0, 1).equals("/") ? "" : "/").concat(url);
             }*/
             Uri uri = Uri.parse(url.toLowerCase());
-            Log.d("FORPDA_LOG", "HANDLE URL " + uri.toString() + " : " + url);
+            Log.d(LOG_TAG, "Compare uri/url " + uri.toString() + " : " + url);
 
             /*if (Pattern.compile("https?:\\/\\/4pda\\.ru\\/forum\\/dl\\/post\\/\\d+\\/[\\s\\S]*\\.").matcher(url).find()) {
                 Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
@@ -143,16 +143,16 @@ public class IntentHandler {
                 //Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
             } else {
                 if (args == null) args = new Bundle();
-                Log.e("FORPDA_LOG", "HANDLE URL, NOT IMAGE OR FILE");
+                Log.d(LOG_TAG, "Url is not a image or file");
+                for (String path : uri.getPathSegments()) {
+                    Log.d(LOG_TAG, "Uri path: " + path);
+                }
                 if (uri.getPathSegments().size() > 0) {
                     switch (uri.getPathSegments().get(0)) {
                         case "forum":
                             return handleForum(uri, args);
                         case "devdb":
                             if (uri.getPathSegments().size() > 1) {
-                                for (String path : uri.getPathSegments()) {
-                                    Log.d("URLPATH", "DEVDB: " + path);
-                                }
                                 if (uri.getPathSegments().get(1).matches("phones|pad|ebook|smartwatch")) {
                                     if (uri.getPathSegments().size() > 2 && !uri.getPathSegments().get(2).matches("new|select")) {
                                         run("devdb models brand");
@@ -185,7 +185,7 @@ public class IntentHandler {
             ImageViewerActivity.startActivity(App.getContext(), url);
             return true;
         }
-        Log.e("FORPDA_LOG", "PRE TRY INTENT ");
+        Log.d(LOG_TAG, "Start external intent");
         try {
             //App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK));
 
@@ -306,11 +306,11 @@ public class IntentHandler {
     }
 
     private static void run(String s) {
-        Log.d("FORPDA_LOG", "run: " + s);
-        //Toast.makeText(App.getContext(), "ForPDA should run " + s, Toast.LENGTH_SHORT).show();
+        Log.d(LOG_TAG, "Run in theory: " + s);
     }
 
     public static void handleDownload(String url) {
+        Log.d(LOG_TAG, "handleDownload " + url);
         String fileName = url;
         try {
             fileName = URLDecoder.decode(url, "CP1251");
@@ -321,11 +321,11 @@ public class IntentHandler {
         if (cut != -1) {
             fileName = fileName.substring(cut + 1);
         }
-        Log.e("FORPDA_LOG", "SYSTEM DOWNLOAD " + fileName + " : " + url);
         handleDownload(fileName, url);
     }
 
     public static void handleDownload(String fileName, String url) {
+        Log.d(LOG_TAG, "handleDownload " + fileName + " : " + url);
         Activity activity = App.getActivity();
         if (activity != null) {
             new AlertDialog.Builder(activity)
@@ -341,7 +341,6 @@ public class IntentHandler {
     }
 
     private static void redirectDownload(String fileName, String url) {
-
         Toast.makeText(App.getContext(), "Запрашиваю ссылку для загрузки ".concat(fileName), Toast.LENGTH_SHORT).show();
         Observable.fromCallable(() -> Client.getInstance().request(new NetworkRequest.Builder().url(url).withoutBody().build()))
                 .onErrorReturn(throwable -> new NetworkResponse(null))

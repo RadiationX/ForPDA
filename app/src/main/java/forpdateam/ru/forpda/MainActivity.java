@@ -1,15 +1,11 @@
 package forpdateam.ru.forpda;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +28,7 @@ import forpdateam.ru.forpda.views.drawers.Drawers;
 import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
 
 public class MainActivity extends AppCompatActivity implements TabManager.TabListener {
+    public final static String LOG_TAG = MainActivity.class.getSimpleName();
     public final static String DEF_TITLE = "ForPDA";
     private WebViewsProvider webViewsProvider;
     private Drawers drawers;
@@ -146,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         viewDiff.post(() -> {
             App.setStatusBarHeight(((View) viewDiff.getParent()).getHeight() - viewDiff.getHeight());
             App.setNavigationBarHeight(viewDiff.getRootView().getHeight() - viewDiff.getHeight() - App.getStatusBarHeight());
-            Log.e("FORPDA_LOG", "SB: " + App.getStatusBarHeight() + ", NB: " + App.getNavigationBarHeight());
+            Log.d(LOG_TAG, "Calc SB: " + App.getStatusBarHeight() + ", NB: " + App.getNavigationBarHeight());
             drawers.setStatusBarHeight(App.getStatusBarHeight());
             //IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=2556269");
         });
@@ -154,7 +151,6 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         if (Preferences.Notifications.Update.isEnabled()) {
             new SimpleChecker().checkFromGitHub(this);
         }
-        Log.e("FORPDA_LOG", "ON CREATE INTENT");
         checkIntent(getIntent());
     }
 
@@ -173,17 +169,15 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.e("FORPDA_LOG", "ON NEW INTENT");
+        Log.d(LOG_TAG, "onNewIntent " + intent.toString());
         checkIntent(intent);
-
-        Log.d("FORPDA_LOG", "onnewintent " + intent.toString());
     }
 
     void checkIntent(Intent intent) {
         if (intent == null || intent.getData() == null) return;
 
         new Handler().post(() -> {
-            Log.d("FORPDA_LOG", "POST on new intent " + intent);
+            Log.d(LOG_TAG, "Handler.post checkIntent: " + intent);
             IntentHandler.handle(intent.getData().toString());
         });
     }
@@ -200,28 +194,29 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
     @Override
     public void onAddTab(TabFragment fragment) {
-        Log.d("FORPDA_LOG", "onadd " + fragment);
+        Log.d(LOG_TAG, "TabManager callback onAddTab " + fragment);
     }
 
     @Override
     public void onRemoveTab(TabFragment fragment) {
-        Log.d("FORPDA_LOG", "onremove " + fragment);
+        Log.d(LOG_TAG, "TabManager callback onRemoveTab " + fragment);
     }
 
     @Override
     public void onSelectTab(TabFragment fragment) {
+        Log.d(LOG_TAG, "TabManager callback onSelectTab " + fragment);
         drawers.setActiveMenu(fragment);
-        Log.d("FORPDA_LOG", "onselect " + fragment);
     }
 
     @Override
     public void onChange() {
+        Log.d(LOG_TAG, "TabManager callback onChange");
         updateTabList();
     }
 
     @Override
     public void onBackPressed() {
-        Log.d("FORPDA_LOG", "onbackpressed activity");
+        Log.d(LOG_TAG, "onBackPressed");
         if (tooltips.size() > 0) {
             tooltips.get(tooltips.size() - 1).dismiss();
             return;
@@ -274,14 +269,15 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
     @Override
     protected void onResumeFragments() {
-        Log.e("FORPDA_LOG", "ONRESUME_FRAGMENTS");
         super.onResumeFragments();
+        Log.d(LOG_TAG, "onResumeFragments");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("kekos", "ACTIVE TAB " + TabManager.getActiveIndex() + " : " + TabManager.getActiveTag());
+        Log.d(LOG_TAG, "onPause");
+        Log.d(LOG_TAG, "TabManager active tab: " + TabManager.getActiveIndex() + " : " + TabManager.getActiveTag());
         if (receiver != null)
             receiver.registerReceiver();
         if (drawers != null)
@@ -294,40 +290,27 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d(LOG_TAG, "onPause");
         if (receiver != null)
             receiver.unregisterReceiver();
     }
 
     @Override
     protected void onDestroy() {
+        Log.d(LOG_TAG, "onDestroy");
         super.onDestroy();
-        if (receiver != null)
+        if (receiver != null) {
             receiver.unregisterReceiver();
-        if (drawers != null)
-            drawers.destroy();
-        if (drawerHeader != null)
-            drawerHeader.destroy();
-        if (webViewsProvider != null)
-            webViewsProvider.destroy();
-        Log.e("FORPDA_LOG", "ACTIVITY DESTROY");
-    }
-
-    private List<Runnable> storagePermissionCallbacks = new ArrayList<>();
-
-    public void checkStoragePermission(Runnable runnable) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                Log.v("FORPDA_LOG", "Permission is granted");
-            } else {
-                Log.v("FORPDA_LOG", "Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, TabFragment.REQUEST_STORAGE);
-                storagePermissionCallbacks.add(runnable);
-                return;
-            }
-        } else {
-            Log.v("FORPDA_LOG", "Permission is granted");
         }
-        runnable.run();
+        if (drawers != null) {
+            drawers.destroy();
+        }
+        if (drawerHeader != null) {
+            drawerHeader.destroy();
+        }
+        if (webViewsProvider != null) {
+            webViewsProvider.destroy();
+        }
     }
 
     @Override

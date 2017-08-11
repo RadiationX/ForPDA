@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.api.search;
 
-import android.util.Log;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +29,6 @@ public class Search {
         SearchItem item = null;
         boolean isNews = settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first);
         boolean resultTopics = settings.getResult().equals(SearchSettings.RESULT_TOPICS.first);
-        Log.d("FORPDA_LOG", "params " + isNews + " : " + resultTopics + " : " + settings.getResourceType() + " : " + settings.getResult());
         if (isNews) {
             matcher = newsListPattern.matcher(response.getBody());
             while (matcher.find()) {

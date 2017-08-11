@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.api.ndevdb;
+package forpdateam.ru.forpda.api.devdb;
 
 import android.util.Pair;
 
@@ -9,9 +9,9 @@ import java.util.regex.Pattern;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
-import forpdateam.ru.forpda.api.ndevdb.models.Brand;
-import forpdateam.ru.forpda.api.ndevdb.models.Brands;
-import forpdateam.ru.forpda.api.ndevdb.models.Device;
+import forpdateam.ru.forpda.api.devdb.models.Brand;
+import forpdateam.ru.forpda.api.devdb.models.Brands;
+import forpdateam.ru.forpda.api.devdb.models.Device;
 
 /**
  * Created by radiationx on 06.08.17.

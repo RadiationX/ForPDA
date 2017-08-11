@@ -46,4 +46,9 @@ public class RequestFile {
     public void setFileStream(InputStream fileStream) {
         this.fileStream = fileStream;
     }
+
+    @Override
+    public String toString() {
+        return "RequestFile{" + fileName + ", " + mimeType + ", " + requestName + ", " + fileStream + "}";
+    }
 }

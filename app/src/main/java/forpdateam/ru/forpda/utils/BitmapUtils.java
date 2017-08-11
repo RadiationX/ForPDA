@@ -15,7 +15,6 @@ import android.os.Build;
 import android.renderscript.Allocation;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
-import android.util.Log;
 
 /**
  * Created by radiationx on 23.08.16.
@@ -68,7 +67,6 @@ public class BitmapUtils {
         srcY = (int) (srcHeight * 0.5f - srcCroppedH / 2);
         srcX = Math.max(Math.min(srcX, srcWidth - srcCroppedW), 0);
         srcY = Math.max(Math.min(srcY, srcHeight - srcCroppedH), 0);
-        Log.e("SUKAS", "" + w + " : " + h + " @ " + srcWidth + " : " + srcHeight + " @ " + srcCroppedW + " : " + srcCroppedH);
         Bitmap overlay = Bitmap.createBitmap(srcCroppedW, srcCroppedH, Bitmap.Config.ARGB_8888);
         overlay.eraseColor(Color.WHITE);
         Canvas canvas = new Canvas(overlay);
@@ -158,7 +156,6 @@ public class BitmapUtils {
         for (i = 0; i < 256 * divsum; i++) {
             dv[i] = (i / divsum);
         }
-        Log.d("FORPDA_LOG", String.format("BLUR ARGS %d : %d : %d : %d : %d : %d : %d : %d : %d", w, h, wm, hm, wh, div, Math.max(w, h), divsum, divsum * 256));
 
         yw = yi = 0;
 
@@ -170,7 +167,6 @@ public class BitmapUtils {
         int r1 = radius + 1;
         int routsum, goutsum, boutsum;
         int rinsum, ginsum, binsum;
-        //Log.d("FORPDA_LOG", String.format("BLUR ARGS %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d : %d", rsum, gsum, bsum, x, y, i, p, yp, yi, yw, stackpointer,stackstart, rbs, r1, routsum, goutsum, boutsum, rinsum, ginsum, binsum ));
 
         for (y = 0; y < h; y++) {
             rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;

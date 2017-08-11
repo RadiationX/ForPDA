@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.api.ndevdb.models;
+package forpdateam.ru.forpda.api.devdb.models;
 
 import android.util.Pair;
 

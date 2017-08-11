@@ -611,7 +611,7 @@ public class MimeTypeUtil {
     public static String getType(String extension) {
         if (types.size() == 0) init();
         String res = types.get(extension);
-        Log.e("FORPDA_LOG", "GET MIME TYPE " + extension + " : " + res);
+        Log.d("MimeTypeUtil", "getType " + extension + " : " + res);
         return res;
     }
 

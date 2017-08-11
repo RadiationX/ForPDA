@@ -209,7 +209,7 @@ public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.Vi
         final Handler handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
-                Log.e("SUKA", "done percent UI: " + (((int) msg.obj) / 100f) + " : " + Thread.currentThread());
+                Log.d("SUKA", "done percent UI: " + (((int) msg.obj) / 100f) + " : " + Thread.currentThread());
                 //progressBar.startAnimation();
                 if (progressBar.isIndeterminate()) {
                     progressBar.setIndeterminate(false);

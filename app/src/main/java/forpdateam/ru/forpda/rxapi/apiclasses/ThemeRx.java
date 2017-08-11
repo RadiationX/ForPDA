@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.rxapi.apiclasses;
 
-import android.util.Log;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,7 +43,6 @@ public class ThemeRx {
     public static ThemePage transform(ThemePage page, boolean withHtml) throws Exception {
         if (withHtml) {
             int memberId = ClientHelper.getUserId();
-            long time = System.currentTimeMillis();
             MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_THEME);
             boolean authorized = ClientHelper.getAuthState();
             boolean prevDisabled = page.getPagination().getCurrent() <= 1;
@@ -75,10 +72,8 @@ public class ThemeRx {
             t.setVariableOpt("disable_avatar", isDisableAvatar ? "show_avatar" : "hide_avatar");
             t.setVariableOpt("avatar_type", App.getInstance().getPreferences().getBoolean(Preferences.Theme.CIRCLE_AVATARS, true) ? "circle_avatar" : "square_avatar");
 
-            Log.d("FORPDA_LOG", "template check 1 " + (System.currentTimeMillis() - time));
 
             int hatPostId = page.getPosts().get(0).getId();
-            Log.d("FORPDA_LOG", "template check 2 " + (System.currentTimeMillis() - time));
             Matcher letterMatcher = null;
             for (ThemePost post : page.getPosts()) {
                 t.setVariableOpt("user_online", post.isOnline() ? "online" : "");
@@ -180,11 +175,8 @@ public class ThemeRx {
             }
 
 
-            Log.d("FORPDA_LOG", "template check 3 " + (System.currentTimeMillis() - time));
             page.setHtml(t.generateOutput());
-            Log.d("FORPDA_LOG", "template check 4 " + (System.currentTimeMillis() - time));
             t.reset();
-            Log.d("FORPDA_LOG", "template check 5 " + (System.currentTimeMillis() - time));
         }
 
         /*final String veryLongString = page.getHtml();

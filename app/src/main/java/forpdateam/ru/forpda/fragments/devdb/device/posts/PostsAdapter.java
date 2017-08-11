@@ -14,7 +14,7 @@ import java.util.Collection;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Utils;
-import forpdateam.ru.forpda.api.ndevdb.models.Device;
+import forpdateam.ru.forpda.api.devdb.models.Device;
 import forpdateam.ru.forpda.utils.IntentHandler;
 
 /**

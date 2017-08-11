@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +17,7 @@ import java.util.Map;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
-import forpdateam.ru.forpda.api.ndevdb.models.Brands;
+import forpdateam.ru.forpda.api.devdb.models.Brands;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.devdb.adapters.BrandsAdapter;
 import forpdateam.ru.forpda.rxapi.RxApi;
@@ -47,7 +46,6 @@ public class BrandsFragment extends TabFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("SUKAPADLA", "ARGS "+getArguments());
         if (getArguments() != null) {
             String categoryId = getArguments().getString(ARG_CATEGORY_ID);
             if (categoryId != null) {
@@ -59,8 +57,6 @@ public class BrandsFragment extends TabFragment {
                 }
 
             }
-            Log.d("SUKAPADLA", "CATID " + categoryId + " : " + selected);
-
         }
     }
 

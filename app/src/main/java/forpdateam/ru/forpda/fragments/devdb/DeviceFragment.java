@@ -13,7 +13,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -34,7 +33,7 @@ import java.util.ArrayList;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.ndevdb.models.Device;
+import forpdateam.ru.forpda.api.devdb.models.Device;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.devdb.device.comments.CommentsFragment;
 import forpdateam.ru.forpda.fragments.devdb.device.posts.PostsFragment;
@@ -287,7 +286,6 @@ public class DeviceFragment extends TabFragment {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            Log.e("FORPDA_LOG", "instantiateItem " + position);
             View imageLayout = inflater.inflate(R.layout.device_image_page, container, false);
             assert imageLayout != null;
             imageLayout.setOnClickListener(v -> ImageViewerActivity.startActivity(DeviceFragment.this.getContext(), fullUrls, position));
@@ -298,7 +296,6 @@ public class DeviceFragment extends TabFragment {
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-            Log.e("FORPDA_LOG", "destroyItem " + position);
             container.removeView((View) object);
         }
 

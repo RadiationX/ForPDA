@@ -14,6 +14,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.RequestFile;
@@ -169,6 +170,7 @@ public class EditPostFragment extends TabFragment {
 
     @Override
     public boolean onBackPressed() {
+        super.onBackPressed();
         if (messagePanel.onBackPressed())
             return true;
 
@@ -296,7 +298,7 @@ public class EditPostFragment extends TabFragment {
 
 
     public void tryPickFile() {
-        getMainActivity().checkStoragePermission(() -> startActivityForResult(FilePickHelper.pickImage(false), REQUEST_PICK_FILE));
+        App.getInstance().checkStoragePermission(() -> startActivityForResult(FilePickHelper.pickImage(false), REQUEST_PICK_FILE), App.getActivity());
     }
 
     @Override

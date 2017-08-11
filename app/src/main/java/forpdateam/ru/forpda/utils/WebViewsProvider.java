@@ -23,9 +23,9 @@ public class WebViewsProvider {
         webViewCleaner.schedule(new TimerTask() {
             @Override
             public void run() {
-                Log.d("FORPDA_LOG", "try remove webview " + this);
+                Log.d("WebViewsProvider", "try remove webview " + this);
                 if (availableWebViews.size() > 0) {
-                    Log.d("FORPDA_LOG", "remove webview " + availableWebViews.element().getTag());
+                    Log.d("WebViewsProvider", "remove webview " + availableWebViews.element().getTag());
                     availableWebViews.remove();
                 }
             }
@@ -40,7 +40,7 @@ public class WebViewsProvider {
             webView = new ExtendedWebView(context);
             webView.setTag("WebView_tag ".concat(Long.toString(System.currentTimeMillis())));
         }
-        Log.d("SUKA", "PULL WEBVIEW "+webView);
+        Log.d("WebViewsProvider", "Pull "+webView);
         return webView;
     }
 
@@ -52,7 +52,7 @@ public class WebViewsProvider {
         if (availableWebViews.size() < 10) {
             availableWebViews.add(webView);
         }
-        Log.d("SUKA", "PUSH WEBVIEW "+webView);
+        Log.d("WebViewsProvider", "Push "+webView);
     }
 
     public void destroy() {

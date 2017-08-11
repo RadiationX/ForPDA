@@ -16,7 +16,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.graphics.Palette;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -262,7 +261,6 @@ public class ProfileFragment extends TabFragment {
         currentProfile = profile;
         if (currentProfile.getNick() == null) return;
         refreshToolbarMenuItems(true);
-        long time = System.currentTimeMillis();
         ImageLoader.getInstance().loadImage(currentProfile.getAvatar(), new SimpleImageLoadingListener() {
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
@@ -274,17 +272,13 @@ public class ProfileFragment extends TabFragment {
                     Palette.from(loadedImage).generate(palette -> {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             Palette.Swatch swatch = palette.getDarkMutedSwatch();
-                            Log.d("FORPDA_LOG", "COLOR 1");
                             if (swatch == null) {
-                                Log.d("FORPDA_LOG", "COLOR 2");
                                 swatch = palette.getMutedSwatch();
                             }
                             if (swatch == null) {
-                                Log.d("FORPDA_LOG", "COLOR 3");
                                 swatch = palette.getDarkVibrantSwatch();
                             }
                             statusBarColor = swatch == null ? standardColor : swatch.getRgb();
-                            Log.d("FORPDA_LOG", "COLOR " + (swatch != null) + " : " + statusBarColor);
                             if (!isDetached() && isAdded() && isVisible() && !isHidden()) {
                                 if (swatch == null) {
                                     window.setStatusBarColor(statusBarColor);
@@ -331,13 +325,10 @@ public class ProfileFragment extends TabFragment {
         nick.setText(currentProfile.getNick());
         group.setText(currentProfile.getGroup());
         if (currentProfile.getSign() != null) {
-            Log.d("FORPDA_LOG", "view sign set");
             sign.setText(currentProfile.getSign());
             sign.setVisibility(View.VISIBLE);
-            Log.d("FORPDA_LOG", "view sign setted");
             sign.setMovementMethod(LinkMovementMethod.getInstance());
         }
-        Log.d("FORPDA_LOG", "check 1 " + (System.currentTimeMillis() - time));
         if (currentProfile.getPosts() != null)
             addCountItem(getContext().getString(R.string.profile_item_text_posts), currentProfile.getPosts());
         if (currentProfile.getTopics() != null)
@@ -350,7 +341,6 @@ public class ProfileFragment extends TabFragment {
             addCountItem(getContext().getString(R.string.profile_item_text_site_posts), currentProfile.getSitePosts());
         if (currentProfile.getComments() != null)
             addCountItem(getContext().getString(R.string.profile_item_text_comments), currentProfile.getComments());
-        Log.d("FORPDA_LOG", "check 2 " + (System.currentTimeMillis() - time));
         if (currentProfile.getGender() != null)
             addInfoItem(getContext().getString(R.string.profile_item_text_gender), currentProfile.getGender());
         if (currentProfile.getBirthDay() != null)
@@ -366,7 +356,6 @@ public class ProfileFragment extends TabFragment {
             addInfoItem(getContext().getString(R.string.profile_item_text_last_online), currentProfile.getOnlineDate());
         if (currentProfile.getAlerts() != null)
             addInfoItem(getContext().getString(R.string.profile_item_text_alerts), currentProfile.getAlerts());
-        Log.d("FORPDA_LOG", "check 3 " + (System.currentTimeMillis() - time));
         if (currentProfile.getContacts().size() > 0) {
             if (!Pattern.compile("showuser=".concat(Integer.toString(ClientHelper.getUserId()))).matcher(tab_url).find()) {
                 writeMenuItem.setVisible(true);
@@ -379,7 +368,6 @@ public class ProfileFragment extends TabFragment {
                 addContactItem(getIconRes(currentProfile.getContacts().get(i).second), currentProfile.getContacts().get(i).first);
             findViewById(R.id.profile_block_contacts).setVisibility(View.VISIBLE);
         }
-        Log.d("FORPDA_LOG", "check 4 " + (System.currentTimeMillis() - time));
         if (currentProfile.getDevices().size() > 0) {
             for (Pair<String, String> device : currentProfile.getDevices()) {
                 addDeviceItem(device.second, device.first);
@@ -399,7 +387,6 @@ public class ProfileFragment extends TabFragment {
 
         findViewById(R.id.profile_block_counts).setVisibility(View.VISIBLE);
         findViewById(R.id.profile_block_information).setVisibility(View.VISIBLE);
-        Log.d("FORPDA_LOG", "full time " + (System.currentTimeMillis() - time));
     }
 
     class CountItem extends LinearLayout {

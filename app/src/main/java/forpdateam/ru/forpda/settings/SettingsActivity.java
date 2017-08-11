@@ -6,7 +6,6 @@ import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 
 import java.util.Observer;
@@ -27,7 +26,6 @@ public class SettingsActivity extends AppCompatActivity {
         switch (key) {
             case Preferences.Main.Theme.IS_DARK: {
                 boolean themeIsDark = App.getInstance().isDarkTheme();
-                Log.d("SETTINGS_WTF", "IS DARK: " + currentThemeIsDark + " : " + themeIsDark);
                 if (currentThemeIsDark != themeIsDark) {
                     currentThemeIsDark = themeIsDark;
                     recreate();

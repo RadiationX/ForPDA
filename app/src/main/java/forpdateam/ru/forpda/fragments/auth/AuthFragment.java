@@ -128,7 +128,7 @@ public class AuthFragment extends TabFragment {
     }
 
     private void showLoginResult(boolean b) {
-        Log.d("FORPDA_LOG", "LOGIN RESULT = "+b);
+        Log.d(AuthFragment.class.getSimpleName(), "showLoginResult " + b);
         if (b) {
             loadProfile();
         } else {

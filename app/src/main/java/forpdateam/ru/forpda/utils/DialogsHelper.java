@@ -27,8 +27,7 @@ public class DialogsHelper {
     private final static String copyImageUrl = "Скопировать ссылку изображения";
 
     public static void handleContextMenu(Context context, int type, String extra, String nodeHref) {
-
-        Log.d("FORPDA_LOG", "context " + type + " : " + extra + " : " + nodeHref);
+        Log.d("DialogsHelper", "handleContextMenu " + type + " : " + extra + " : " + nodeHref);
         if (type == WebView.HitTestResult.UNKNOWN_TYPE || type == WebView.HitTestResult.EDIT_TEXT_TYPE)
             return;
         type = type == WebView.HitTestResult.ANCHOR_TYPE ? WebView.HitTestResult.SRC_ANCHOR_TYPE : type;

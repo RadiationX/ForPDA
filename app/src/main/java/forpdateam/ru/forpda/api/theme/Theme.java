@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.api.theme;
 
-import android.util.Log;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -48,7 +46,6 @@ public class Theme {
 
 
     public ThemePage getTheme(final String url, boolean hatOpen, boolean pollOpen) throws Exception {
-        Log.d("FORPDA_LOG", "page start getPage");
         NetworkResponse response = Api.getWebClient().get(url);
         return parsePage(url, response, hatOpen, pollOpen);
     }
@@ -62,8 +59,6 @@ public class Theme {
             redirectUrl = url;
         page.setUrl(redirectUrl);
 
-        Log.d("FORPDA_LOG", "page getted");
-        Log.d("FORPDA_LOG", "page redirected " + redirectUrl);
         long time = System.currentTimeMillis();
         Matcher matcher = elemToScrollPattern.matcher(redirectUrl);
         while (matcher.find()) {
@@ -71,7 +66,6 @@ public class Theme {
         }
         matcher = themeIdPattern.matcher(response.getBody());
         if (matcher.find()) {
-            Log.d("FORPDA_LOG", "IDS PARSING " + matcher.group(1) + " : " + matcher.group(2));
             page.setForumId(Integer.parseInt(matcher.group(1)));
             page.setId(Integer.parseInt(matcher.group(2)));
         }
@@ -90,7 +84,6 @@ public class Theme {
             }
         }
         matcher = universalForumPosts.matcher(response.getBody());
-        Log.d("FORPDA_LOG", "posts matcher " + (System.currentTimeMillis() - time));
         Matcher attachMatcher = null;
         while (matcher.find()) {
             ThemePost item = new ThemePost();
@@ -127,7 +120,6 @@ public class Theme {
                 page.setCurator(true);
             page.addPost(item);
         }
-        Log.d("FORPDA_LOG", "poll matcher " + (System.currentTimeMillis() - time));
         matcher = pollMainPattern.matcher(response.getBody());
         if (matcher.find()) {
             Poll poll = new Poll();
@@ -169,7 +161,6 @@ public class Theme {
             poll.setVotesCount(Integer.parseInt(matcher.group(3)));
             page.setPoll(poll);
         }
-        Log.d("FORPDA_LOG", "end created page obj " + (System.currentTimeMillis() - time));
 
         return page;
     }
@@ -185,15 +176,13 @@ public class Theme {
 
         MultipartBody.Builder multipartBuilder = new MultipartBody.Builder();
         multipartBuilder.setType(MultipartBody.FORM);
-        Log.d("FORPDA_LOG", "MULTIPART FORM BUILDER");
         for (Map.Entry<String, String> entry : headers.entrySet()) {
-            Log.d("FORPDA_LOG", "FORM HEADER " + entry.getKey() + " : " + entry.getValue());
             multipartBuilder.addFormDataPart(entry.getKey(), entry.getValue());
         }
-        MultipartBody multipartBody = multipartBuilder.build();
+        /*MultipartBody multipartBody = multipartBuilder.build();
         for (MultipartBody.Part part : multipartBody.parts()) {
-            Log.e("FORPDA_LOG", part.headers().toString() + " : " + part.body().contentType());
-        }
+            Log.d("FORPDA_LOG", part.headers().toString() + " : " + part.body().contentType());
+        }*/
 
 
         NetworkResponse response = Api.getWebClient().request(new NetworkRequest.Builder()

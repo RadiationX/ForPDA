@@ -39,6 +39,7 @@ import forpdateam.ru.forpda.views.ExtendedWebView;
  */
 
 public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, ExtendedWebView.JsLifeCycleListener {
+    private final static String LOG_TAG = ThemeFragmentWeb.class.getSimpleName();
     public final static String JS_INTERFACE = "ITheme";
     private ExtendedWebView webView;
     private WebViewClient webViewClient;
@@ -86,12 +87,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
             }
             menu.clear();
 
-            for (MenuItem item : items) {
-                Log.d("menuitem", "" + item.getTitle() + " : " + item.getItemId() + " : " + item.getActionProvider() + " : " + item.getGroupId() + " : " + item.getIntent() + " : " + item.getIcon());
-            }
-            Log.e("menuitem", "" + android.R.id.copy + " : " + android.R.id.selectAll);
-
-            menu.add("Копировать")
+               menu.add("Копировать")
                     .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_content_copy))
                     .setOnMenuItemClickListener(item -> {
                         webView.evalJs("copySelectedText()");
@@ -160,13 +156,13 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
 
     @Override
     protected void saveToHistory(ThemePage themePage) {
-        Log.e("console", "saveToHistory " + themePage);
+        Log.d(LOG_TAG, "saveToHistory " + themePage);
         history.add(themePage);
     }
 
     @Override
     protected void updateHistoryLast(ThemePage themePage) {
-        Log.e("console", "updateHistoryLast " + themePage + " : " + currentPage);
+        Log.d(LOG_TAG, "updateHistoryLast " + themePage + " : " + currentPage);
         ThemePage lastHistory = history.get(history.size() - 1);
         themePage.getAnchors().addAll(lastHistory.getAnchors());
         history.set(history.size() - 1, themePage);
@@ -189,16 +185,16 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
 
     @Override
     protected void updateHistoryLastHtml() {
-        Log.e("console", "updateHistoryLastHtml");
+        Log.d(LOG_TAG, "updateHistoryLastHtml");
         webView.evalJs("ITheme.callbackUpdateHistoryHtml('<!DOCTYPE html><html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>')");
-        Log.e("console", "save scrollY " + webView.getScrollY());
+        Log.d(LOG_TAG, "save scrollY " + webView.getScrollY());
         webView.evalJs("console.log('JAVASCRIPT save scrollY '+window.scrollY)");
     }
 
     @JavascriptInterface
     public void callbackUpdateHistoryHtml(String value) {
         ThemePage themePage = history.get(history.size() - 1);
-        Log.e("console", "updateHistoryLastHtml " + themePage + " : " + currentPage);
+        Log.d(LOG_TAG, "updateHistoryLastHtml " + themePage + " : " + currentPage);
 
         themePage.setScrollY(webView.getScrollY());
         themePage.setHtml(value);
@@ -231,12 +227,12 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
 
 
         private boolean handleUri(Uri uri) {
-            Log.d("FORPDA_LOG", "handle " + uri);
+            Log.d(LOG_TAG, "handle " + uri);
             if (checkIsPoll(uri.toString())) return true;
             if (uri.getHost() != null && uri.getHost().matches("4pda.ru")) {
                 if (uri.getPathSegments().get(0).equals("forum")) {
                     String param = uri.getQueryParameter("showtopic");
-                    Log.d("FORPDA_LOG", "param" + param);
+                    Log.d(LOG_TAG, "param" + param);
                     if (param != null && !param.equals(Uri.parse(tab_url).getQueryParameter("showtopic"))) {
                         load(uri);
                         return true;
@@ -244,19 +240,19 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
                     param = uri.getQueryParameter("act");
                     if (param == null)
                         param = uri.getQueryParameter("view");
-                    Log.d("FORPDA_LOG", "param" + param);
+                    Log.d(LOG_TAG, "param" + param);
                     if (param != null && param.equals("findpost")) {
                         String postId = uri.getQueryParameter("pid");
                         if (postId == null)
                             postId = uri.getQueryParameter("p");
-                        Log.d("FORPDA_LOG", "param" + postId);
+                        Log.d(LOG_TAG, "param" + postId);
                         if (postId != null && getPostById(Integer.parseInt(postId.trim())) != null) {
                             Matcher matcher = Theme.elemToScrollPattern.matcher(uri.toString());
                             String elem = null;
                             while (matcher.find()) {
                                 elem = matcher.group(1);
                             }
-                            Log.d("FORPDA_LOG", " scroll to " + postId + " : " + elem);
+                            Log.d(LOG_TAG, " scroll to " + postId + " : " + elem);
                             String finalAnchor = (elem == null ? "entry" : "").concat(elem != null ? elem : postId);
                             if (App.getInstance().getPreferences().getBoolean("theme.anchor_history", true)) {
                                 currentPage.addAnchor(finalAnchor);
@@ -316,7 +312,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
         public void onLoadResource(WebView view, String url) {
             super.onLoadResource(view, url);
 
-            Log.d("FORPDA_LOG", "IThemeJ: " + url);
+            Log.d(LOG_TAG, "IThemeJ: " + url);
             if (loadAction == NORMAL_ACTION) {
                 if (!url.contains("forum/uploads") && !url.contains("android_asset") && !url.contains("style_images") && m.reset(url).find()) {
                     webView.evalJs("onProgressChanged()");
@@ -341,7 +337,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
         /*@TargetApi(Build.VERSION_CODES.N)
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-            Log.e("SUKA_WV", "shouldInterceptRequest19: " + request.getUrl());
+            Log.d("SUKA_WV", "shouldInterceptRequest19: " + request.getUrl());
             String url = request.getUrl().toString();
             Matcher matcher = p.matcher(url);
             if (matcher.find()) {
@@ -352,7 +348,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
 
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-            Log.e("SUKA_WV", "shouldInterceptRequest19: " + url);
+            Log.d("SUKA_WV", "shouldInterceptRequest19: " + url);
             //WebResourceResponse webResourceResponse = new WebResourceResponse();
             Matcher matcher = p.matcher(url);
             if (matcher.find()) {
@@ -373,7 +369,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
                 e.printStackTrace();
             }
 
-            Log.e("SUKA_WV", "interceptImages: " + mimeType + " : " + encoding + ";;; Time: " + (System.currentTimeMillis() - time));
+            Log.d("SUKA_WV", "interceptImages: " + mimeType + " : " + encoding + ";;; Time: " + (System.currentTimeMillis() - time));
 
             return new WebResourceResponse(mimeType, encoding, inputStream);
         }*/
@@ -407,7 +403,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
             if (level == ConsoleMessage.MessageLevel.DEBUG) {
                 Log.d(tag, message);
             } else if (level == ConsoleMessage.MessageLevel.ERROR) {
-                Log.e(tag, message);
+                Log.d(tag, message);
             } else if (level == ConsoleMessage.MessageLevel.WARNING) {
                 Log.w(tag, message);
             } else if (level == ConsoleMessage.MessageLevel.LOG || level == ConsoleMessage.MessageLevel.TIP) {
@@ -420,7 +416,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
 
     @Override
     public void onDomContentComplete(final ArrayList<String> actions) {
-        Log.e("console", "DOMContentLoaded");
+        Log.d(LOG_TAG, "DOMContentLoaded");
         actions.add("setLoadAction(" + loadAction + ");");
         actions.add("setLoadScrollY(" + ((int) (currentPage.getScrollY() / App.getInstance().getDensity())) + ");");
     }

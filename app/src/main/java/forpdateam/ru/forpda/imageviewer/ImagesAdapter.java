@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.imageviewer;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +55,6 @@ public class ImagesAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        Log.e("FORPDA_LOG", "instantiateItem " + position);
         View imageLayout = inflater.inflate(R.layout.img_view_page, container, false);
         assert imageLayout != null;
         container.addView(imageLayout, 0);
@@ -66,7 +64,6 @@ public class ImagesAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        Log.e("FORPDA_LOG", "destroyItem " + position);
         container.removeView((View) object);
     }
 

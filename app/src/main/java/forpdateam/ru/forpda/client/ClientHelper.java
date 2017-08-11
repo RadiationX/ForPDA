@@ -11,7 +11,7 @@ import forpdateam.ru.forpda.utils.SimpleObservable;
  */
 
 public class ClientHelper {
-    //Зачем? - Возможно в потом будет изменено на другой тип данных
+    private final static String LOG_TAG = ClientHelper.class.getSimpleName();
     public final static boolean AUTH_STATE_LOGIN = true;
     public final static boolean AUTH_STATE_LOGOUT = false;
     private static ClientHelper clientHelper = null;
@@ -52,12 +52,12 @@ public class ClientHelper {
     }
 
     public static boolean getAuthState() {
-        Log.e("FORPDA_LOG", "getAuthState " + authState);
+        Log.d(LOG_TAG, "getAuthState " + authState);
         return authState;
     }
 
     public static void setAuthState(boolean state) {
-        Log.e("FORPDA_LOG", "NEW AUTH STATE " + authState);
+        Log.d(LOG_TAG, "setAuthState " + authState);
         authState = state;
     }
 
@@ -66,7 +66,7 @@ public class ClientHelper {
     }
 
     public static void setUserId(String newUserId) {
-        Log.d("FORPDA_LOG", "newUserId: " + newUserId);
+        Log.d(LOG_TAG, "setUserId " + newUserId);
         try {
             userId = Integer.parseInt(newUserId);
         } catch (NumberFormatException e) {

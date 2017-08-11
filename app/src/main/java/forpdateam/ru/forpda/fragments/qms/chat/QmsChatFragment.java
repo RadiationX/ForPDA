@@ -57,6 +57,7 @@ import okio.ByteString;
  * Created by radiationx on 25.08.16.
  */
 public class QmsChatFragment extends TabFragment implements ChatThemeCreator.ThemeCreatorInterface, ExtendedWebView.JsLifeCycleListener {
+    private final static String LOG_TAG = QmsChatFragment.class.getSimpleName();
     private final static String JS_INTERFACE = "IChat";
     public final static String USER_ID_ARG = "USER_ID_ARG";
     public final static String USER_NICK_ARG = "USER_NICK_ARG";
@@ -97,7 +98,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
 
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
-            Log.d("WS_CHAT", "ON OPEN: " + response.toString());
+            Log.d(LOG_TAG, "ON OPEN: " + response.toString());
             webSocket.send("[0,\"sv\"]");
             webSocket.send("[0, \"ea\", \"u" + ClientHelper.getUserId() + "\"]");
         }
@@ -105,7 +106,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
 
         @Override
         public void onMessage(WebSocket webSocket, String text) {
-            Log.d("WS_CHAT", "ON T MESSAGE: " + text);
+            Log.d(LOG_TAG, "ON T MESSAGE: " + text);
             Matcher matcher = pattern.matcher(text);
             if (matcher.find()) {
                 int themeId = Integer.parseInt(matcher.group(4));
@@ -113,10 +114,10 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
                 int messageId = Integer.parseInt(matcher.group(6));
                 if (themeId == currentChat.getThemeId()) {
                     if (eventCode == 1) {
-                        Log.d("WS_CHAT", "NEW QMS MESSAGE " + themeId + " : " + messageId);
+                        Log.d(LOG_TAG, "NEW QMS MESSAGE " + themeId + " : " + messageId);
                         onNewWsMessage(themeId, messageId);
                     } else if (eventCode == 2) {
-                        Log.d("WS_CHAT", "THREAD READED");
+                        Log.d(LOG_TAG, "THREAD READED");
                         webView.evalJs("makeAllRead();");
                     }
                 }
@@ -125,23 +126,23 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
 
         @Override
         public void onMessage(WebSocket webSocket, ByteString bytes) {
-            Log.d("WS_CHAT", "ON B MESSAGE: " + bytes.hex());
+            Log.d(LOG_TAG, "ON B MESSAGE: " + bytes.hex());
         }
 
         @Override
         public void onClosing(WebSocket webSocket, int code, String reason) {
-            Log.d("WS_CHAT", "ON CLOSING: " + code + " " + reason);
+            Log.d(LOG_TAG, "ON CLOSING: " + code + " " + reason);
             webSocket.close(1000, null);
         }
 
         @Override
         public void onClosed(WebSocket webSocket, int code, String reason) {
-            Log.d("WS_CHAT", "ON CLOSED: " + code + " " + reason);
+            Log.d(LOG_TAG, "ON CLOSED: " + code + " " + reason);
         }
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-            Log.d("WS_CHAT", "ON FAILURE: " + t.getMessage() + " " + response);
+            Log.d(LOG_TAG, "ON FAILURE: " + t.getMessage() + " " + response);
             t.printStackTrace();
         }
     };
@@ -324,7 +325,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         messagesSrc = messagesSrc.replaceAll("\n", "").replaceAll("'", "&apos;");
         final String finalMessagesSrc = messagesSrc;
 
-        Log.e("FORPDA_LOG", "SHOW NEW MESS");
+        Log.d(LOG_TAG, "showNewMess");
         webView.evalJs("showNewMess('".concat(finalMessagesSrc).concat("', true)"));
 
         refreshToolbarMenuItems(true);
@@ -339,7 +340,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
 
     private void onNewWsMessage(int themeId, int messageId) {
         messageSubscriber.subscribe(RxApi.Qms().getMessagesFromWs(themeId, messageId, currentChat.getMessages().get(currentChat.getMessages().size() - 1).getId()), qmsMessage -> {
-            Log.d("WS_CHAT", "RETURNED MESSAGE " + qmsMessage.size());
+            Log.d(LOG_TAG, "Returned messages " + qmsMessage.size());
             if (qmsMessage.size() > 0) {
                 MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
                 for (int i = 0; i < qmsMessage.size(); i++) {
@@ -401,12 +402,10 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
 
     @Override
     public void onDomContentComplete(final ArrayList<String> actions) {
-        Log.e("console", "DOMContentLoaded");
     }
 
     @Override
     public void onPageComplete(final ArrayList<String> actions) {
-        Log.e("console", "onPageLoaded");
     }
 
     private class QmsWebViewClient extends WebViewClient {
@@ -451,11 +450,12 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     }
 
     public void tryPickFile() {
-        getMainActivity().checkStoragePermission(() -> startActivityForResult(FilePickHelper.pickImage(true), REQUEST_PICK_FILE));
+       App.getInstance().checkStoragePermission(() -> startActivityForResult(FilePickHelper.pickImage(true), REQUEST_PICK_FILE), App.getActivity());
     }
 
     @Override
     public boolean onBackPressed() {
+        super.onBackPressed();
         return messagePanel.onBackPressed();
     }
 

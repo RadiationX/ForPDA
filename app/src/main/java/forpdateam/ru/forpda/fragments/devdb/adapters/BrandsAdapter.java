@@ -14,7 +14,7 @@ import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.ndevdb.models.Brands;
+import forpdateam.ru.forpda.api.devdb.models.Brands;
 
 /**
  * Created by radiationx on 08.08.17.
