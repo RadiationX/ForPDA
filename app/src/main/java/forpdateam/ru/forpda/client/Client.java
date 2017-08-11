@@ -47,12 +47,12 @@ import okio.Okio;
 import okio.Sink;
 
 public class Client implements IWebClient {
-    private final static String userAgent = WebSettings.getDefaultUserAgent(App.getContext());
     private final static Pattern countsPattern = Pattern.compile("<a href=\"(?:https?)?\\/\\/4pda\\.ru\\/forum\\/index\\.php\\?act=mentions[^>]*?><i[^>]*?>(\\d+)<\\/i>[\\s\\S]*?act=fav[^>]*?><i[^>]*?>(\\d+)<\\/i>[\\s\\S]*?act=qms[^>]*?data-count=\"(\\d+)\">");
     private final static Pattern errorPattern = Pattern.compile("^[\\s\\S]*?wr va-m text\">([\\s\\S]*?)</div></div></div></div><div class=\"footer\">");
     private static Client INSTANCE = null;
     private static Map<String, Cookie> cookies;
     private static List<Cookie> listCookies;
+    private String userAgent;
     private SimpleObservable networkObservables = new SimpleObservable();
     private Handler observerHandler = new Handler(Looper.getMainLooper());
     private String tempGroup;
@@ -61,6 +61,11 @@ public class Client implements IWebClient {
     //Class
     public Client() {
         Api.setWebClient(this);
+        try {
+            userAgent = WebSettings.getDefaultUserAgent(App.getContext());
+        } catch (Exception ignore) {
+            userAgent = "Linux; Android NaN; UNKNOWN";
+        }
         cookies = new HashMap<>();
         listCookies = new ArrayList<>();
         String member_id = App.getInstance().getPreferences().getString("cookie_member_id", null);
@@ -110,16 +115,11 @@ public class Client implements IWebClient {
     }
 
     private final CookieJar cookieJar = new CookieJar() {
-        Pattern authPattern = Pattern.compile("4pda\\.ru\\/forum\\/[\\s\\S]*?(?:act=(?:auth|logout)|#afterauth)");
-        Matcher matcher;
+        private final Pattern authPattern = Pattern.compile("4pda\\.ru\\/forum\\/[\\s\\S]*?(?:act=(?:auth|logout)|#afterauth)");
 
         @Override
         public void saveFromResponse(@NonNull HttpUrl url, @NonNull List<Cookie> cookies) {
-            if (matcher == null)
-                matcher = authPattern.matcher(url.toString());
-            else
-                matcher = matcher.reset(url.toString());
-
+            Matcher matcher = authPattern.matcher(url.toString());
             if (matcher.find()) {
                 for (Cookie cookie : cookies) {
                     boolean isMemberId = cookie.name().equals("member_id");
@@ -171,6 +171,9 @@ public class Client implements IWebClient {
 
         @Override
         public List<Cookie> loadForRequest(@NonNull HttpUrl url) {
+            if (!url.host().toLowerCase().contains("4pda")) {
+                return new ArrayList<>();
+            }
             return new ArrayList<>(Client.cookies.values());
         }
     };

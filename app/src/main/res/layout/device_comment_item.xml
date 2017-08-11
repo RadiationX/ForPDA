@@ -62,25 +62,23 @@
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/item_dislike_btn"
-                style="?android:borderlessButtonStyle"
+                style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="8dp"
                 android:drawablePadding="8dp"
-                android:drawableStart="@drawable/ic_thumb_down"
                 android:enabled="false"
                 android:minWidth="48dp"
                 android:text="1" />
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/item_like_btn"
-                style="?android:borderlessButtonStyle"
+                style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toStartOf="@+id/item_dislike_btn"
                 android:drawablePadding="8dp"
-                android:drawableStart="@drawable/ic_thumb_up"
                 android:enabled="false"
                 android:minWidth="48dp"
                 android:text="1" />
