@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.rxapi.apiclasses;
 
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.favorites.Favorites;
+import forpdateam.ru.forpda.api.favorites.Sorting;
 import forpdateam.ru.forpda.api.favorites.models.FavData;
 import io.reactivex.Observable;
 
@@ -10,8 +11,9 @@ import io.reactivex.Observable;
  */
 
 public class FavoritesRx {
-    public Observable<FavData> getFavorites(int st) {
-        return Observable.fromCallable(() -> Api.Favorites().getFavorites(st));
+
+    public Observable<FavData> getFavorites(int st, boolean all, Sorting sorting) {
+        return Observable.fromCallable(() -> Api.Favorites().getFavorites(st, all, sorting));
     }
 
     public Observable<Boolean> editFavorites(int act, int favId, int id, String type) {

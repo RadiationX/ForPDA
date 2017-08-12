@@ -1,5 +1,9 @@
 package forpdateam.ru.forpda.api.favorites;
 
+import android.net.Uri;
+
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,9 +30,25 @@ public class Favorites {
     public final static String[] SUB_TYPES = {"none", "delayed", "immediate", "daily", "weekly", "pinned"};
     public final static CharSequence[] SUB_NAMES = {"Не уведомлять", "Первый раз", "Каждый раз", "Каждый день", "Каждую неделю", "При изменении первого поста"};
 
-    public FavData getFavorites(int st) throws Exception {
+    private final static Comparator<FavItem> DESC_ORDER = (item1, item2) -> item1.getTopicTitle().compareToIgnoreCase(item2.getTopicTitle());
+    private final static Comparator<FavItem> ASC_ORDER = (item1, item2) -> item2.getTopicTitle().compareToIgnoreCase(item1.getTopicTitle());
+
+    public FavData getFavorites(int st, boolean all, Sorting sorting) throws Exception {
         FavData data = new FavData();
-        NetworkResponse response = Api.getWebClient().get("https://4pda.ru/forum/index.php?act=fav&st=".concat(Integer.toString(st)));
+
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("https")
+                .authority("4pda.ru");
+        builder.appendPath("forum");
+        builder.appendQueryParameter("act", "fav");
+        builder.appendQueryParameter("st", Integer.toString(st));
+        builder.appendQueryParameter(Sorting.Key.HEADER, sorting.getKey());
+        builder.appendQueryParameter(Sorting.Order.HEADER, sorting.getOrder());
+        if (sorting.isRemember()) {
+            builder.appendQueryParameter(Sorting.HEADER_REMEMBER, Sorting.REMEMBER);
+        }
+
+        NetworkResponse response = Api.getWebClient().get(builder.build().toString());
         Matcher matcher = mainPattern.matcher(response.getBody());
         FavItem item;
         while (matcher.find()) {
@@ -78,6 +98,32 @@ public class Favorites {
             data.addItem(item);
         }
         data.setPagination(Pagination.parseForum(response.getBody()));
+        data.setSorting(Sorting.parse(response.getBody()));
+        if (all) {
+            while (true) {
+                if (data.getPagination().getCurrent() >= data.getPagination().getAll()) {
+                    break;
+                }
+                FavData favData = getFavorites(data.getPagination().getPage(data.getPagination().getCurrent()), false, sorting);
+                data.setPagination(favData.getPagination());
+                if (favData.getItems().size() == 0) {
+                    break;
+                }
+                for (FavItem favItem : favData.getItems()) {
+                    data.addItem(favItem);
+                }
+            }
+            data.getPagination().setAll(1);
+
+            if (data.getSorting().getKey().equals(Sorting.Key.TITLE)) {
+                if (data.getSorting().getOrder().equals(Sorting.Order.DESC)) {
+                    Collections.sort(data.getItems(), DESC_ORDER);
+                } else if (data.getSorting().getOrder().equals(Sorting.Order.ASC)) {
+                    Collections.sort(data.getItems(), ASC_ORDER);
+                }
+            }
+        }
+
         return data;
     }
 

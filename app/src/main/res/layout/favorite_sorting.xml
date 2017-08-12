@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/search_settings_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/background_for_lists"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/dp16">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp8"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/dp16"
+                android:paddingStart="@dimen/dp16"
+                android:text="Сортировать по"
+                android:textColor="?attr/second_text_color" />
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/sorting_key"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp48"
+                android:paddingEnd="@dimen/dp8"
+                android:paddingStart="@dimen/dp8" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp8"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/dp16"
+                android:paddingStart="@dimen/dp16"
+                android:text="Порядок"
+                android:textColor="?attr/second_text_color" />
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/sorting_order"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp48"
+                android:paddingEnd="@dimen/dp8"
+                android:paddingStart="@dimen/dp8" />
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/apply_to_site"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Применить на сайте" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal"
+            android:paddingEnd="8dp"
+            android:paddingStart="8dp">
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/sorting_apply"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Применить" />
+        </LinearLayout>
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

@@ -70,10 +70,10 @@ public class TabFragment extends RxFragment {
     protected Spinner toolbarSpinner;
     protected View view, notifyDot;
     protected FloatingActionButton fab;
-    private boolean showNotifyDot = App.getInstance().getPreferences().getBoolean(Preferences.Main.SHOW_NOTIFY_DOT, true);
-    private boolean notifyDotFav = App.getInstance().getPreferences().getBoolean(Preferences.Main.NOTIFY_DOT_FAV, true);
-    private boolean notifyDotQms = App.getInstance().getPreferences().getBoolean(Preferences.Main.NOTIFY_DOT_QMS, true);
-    private boolean notifyDotMentions = App.getInstance().getPreferences().getBoolean(Preferences.Main.NOTIFY_DOT_MENTIONS, true);
+    private boolean showNotifyDot = Preferences.Main.isShowNotifyDot();
+    private boolean notifyDotFav = Preferences.Main.isShowNotifyDotFav();
+    private boolean notifyDotQms = Preferences.Main.isShowNotifyDotQms();
+    private boolean notifyDotMentions = Preferences.Main.isShowNotifyDotMentions();
 
     protected Observer countsObserver = (observable, o) -> updateNotifyDot();
     protected Observer networkObserver = (observable, o) -> {
@@ -89,22 +89,22 @@ public class TabFragment extends RxFragment {
         String key = (String) o;
         switch (key) {
             case Preferences.Main.SHOW_NOTIFY_DOT: {
-                showNotifyDot = App.getInstance().getPreferences().getBoolean(Preferences.Main.SHOW_NOTIFY_DOT, true);
+                showNotifyDot = Preferences.Main.isShowNotifyDot();
                 updateNotifyDot();
                 break;
             }
             case Preferences.Main.NOTIFY_DOT_FAV: {
-                notifyDotFav = App.getInstance().getPreferences().getBoolean(Preferences.Main.NOTIFY_DOT_FAV, true);
+                notifyDotFav = Preferences.Main.isShowNotifyDotFav();
                 updateNotifyDot();
                 break;
             }
             case Preferences.Main.NOTIFY_DOT_QMS: {
-                notifyDotQms = App.getInstance().getPreferences().getBoolean(Preferences.Main.NOTIFY_DOT_QMS, true);
+                notifyDotQms = Preferences.Main.isShowNotifyDotQms();
                 updateNotifyDot();
                 break;
             }
             case Preferences.Main.NOTIFY_DOT_MENTIONS: {
-                notifyDotMentions = App.getInstance().getPreferences().getBoolean(Preferences.Main.NOTIFY_DOT_MENTIONS, true);
+                notifyDotMentions = Preferences.Main.isShowNotifyDotMentions();
                 updateNotifyDot();
                 break;
             }
@@ -169,7 +169,7 @@ public class TabFragment extends RxFragment {
     //True - еще нужно что-то сделать, не закрывать
     @CallSuper
     public boolean onBackPressed() {
-        Log.d(LOG_TAG, "onBackPressed "+this);
+        Log.d(LOG_TAG, "onBackPressed " + this);
         return false;
     }
 

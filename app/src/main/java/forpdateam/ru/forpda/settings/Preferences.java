@@ -13,21 +13,54 @@ public class Preferences {
         return App.getInstance().getPreferences();
     }
 
-    public static final class Main {
-        public final static String SHOW_NOTIFY_DOT = "main.show_notify_dot";
-        public final static String NOTIFY_DOT_FAV = "main.notify_dot_fav";
-        public final static String NOTIFY_DOT_QMS = "main.notify_dot_qms";
-        public final static String NOTIFY_DOT_MENTIONS = "main.notify_dot_mentions";
+    public final static class Main {
+        private final static String PREFIX = "main.";
+        public final static String SHOW_NOTIFY_DOT = PREFIX + "show_notify_dot";
+        public final static String NOTIFY_DOT_FAV = PREFIX + "notify_dot_fav";
+        public final static String NOTIFY_DOT_QMS = PREFIX + "notify_dot_qms";
+        public final static String NOTIFY_DOT_MENTIONS = PREFIX + "notify_dot_mentions";
 
-        public final static String WEBVIEW_FONT_SIZE = "main.webview.font_size";
-        public final static String IS_SYSTEM_DOWNLOADER = "main.is_system_downloader";
-        public final static String IS_TABS_BOTTOM = "main.drawers.tab_stack_bottom";
+        public final static String WEBVIEW_FONT_SIZE = PREFIX + "webview.font_size";
+        public final static String IS_SYSTEM_DOWNLOADER = PREFIX + "is_system_downloader";
+        public final static String IS_TABS_BOTTOM = PREFIX + "drawers.tab_stack_bottom";
         public final static String IS_EDITOR_MONOSPACE = "message_panel.is_monospace";
         public final static String IS_EDITOR_DEFAULT_HIDDEN = "message_panel.is_default_hidden";
-        public final static String SCROLL_BUTTON_ENABLE = "main.scroll_button.enable";
+        public final static String SCROLL_BUTTON_ENABLE = PREFIX + "scroll_button.enable";
 
-        public static boolean isTabsBottom(){
-            return preferences().getBoolean(Main.IS_TABS_BOTTOM, false);
+        public static boolean isShowNotifyDot() {
+            return preferences().getBoolean(SHOW_NOTIFY_DOT, true);
+        }
+
+        public static boolean isShowNotifyDotFav() {
+            return preferences().getBoolean(NOTIFY_DOT_FAV, true);
+        }
+
+        public static boolean isShowNotifyDotQms() {
+            return preferences().getBoolean(NOTIFY_DOT_QMS, true);
+        }
+
+        public static boolean isShowNotifyDotMentions() {
+            return preferences().getBoolean(NOTIFY_DOT_MENTIONS, true);
+        }
+
+        public static boolean isSystemDownloader() {
+            return preferences().getBoolean(IS_SYSTEM_DOWNLOADER, true);
+        }
+
+        public static boolean isTabsBottom() {
+            return preferences().getBoolean(IS_TABS_BOTTOM, false);
+        }
+
+        public static boolean isEditorMonospace() {
+            return preferences().getBoolean(IS_EDITOR_MONOSPACE, true);
+        }
+
+        public static boolean isEditorDefaultHidden() {
+            return preferences().getBoolean(IS_EDITOR_DEFAULT_HIDDEN, true);
+        }
+
+        public static boolean isScrollButtonEnable() {
+            return preferences().getBoolean(SCROLL_BUTTON_ENABLE, false);
         }
 
         public static int getWebViewSize() {
@@ -41,23 +74,73 @@ public class Preferences {
             preferences().edit().putInt(Preferences.Main.WEBVIEW_FONT_SIZE, size).apply();
         }
 
-        public static boolean isSystemDownloader() {
-            return preferences().getBoolean(Main.IS_SYSTEM_DOWNLOADER, true);
-        }
+        public final static class Theme {
+            private final static String PREFIX = Main.PREFIX + "theme.";
+            public final static String IS_DARK = PREFIX + "is_dark";
 
-        public final class Theme {
-            public final static String IS_DARK = "main.theme.is_dark";
+            public static boolean isDark() {
+                return preferences().getBoolean(IS_DARK, false);
+            }
         }
     }
 
-    public final class Favorites {
-        public final static String UNREAD_TOP = "lists.topic.unread_top";
-        public final static String SHOW_DOT = "lists.topic.show_dot";
+    public final static class Lists {
+        private final static String PREFIX = "lists.";
+
+        public final static class Topic {
+            private final static String PREFIX = Lists.PREFIX + "topic.";
+            public final static String UNREAD_TOP = PREFIX + "unread_top";
+            public final static String SHOW_DOT = PREFIX + "show_dot";
+
+            public static boolean isUnreadTop() {
+                return preferences().getBoolean(UNREAD_TOP, false);
+            }
+
+            public static boolean isShowDot() {
+                return preferences().getBoolean(SHOW_DOT, false);
+            }
+        }
+
+        public final static class Favorites {
+            private final static String PREFIX = Lists.PREFIX + "favorites.";
+            public final static String LOAD_ALL = PREFIX + "load_all";
+            public final static String SORTING_KEY = PREFIX + "sorting_key";
+            public final static String SORTING_ORDER = PREFIX + "sorting_order";
+
+            public static boolean isLoadAll() {
+                return preferences().getBoolean(LOAD_ALL, false);
+            }
+
+            public static String getSortingKey() {
+                return preferences().getString(SORTING_KEY, "");
+            }
+
+            public static String getSortingOrder() {
+                return preferences().getString(SORTING_ORDER, "");
+            }
+
+            public static void setSortingKey(String key) {
+                preferences().edit().putString(SORTING_KEY, key).apply();
+            }
+
+            public static void setSortingOrder(String order) {
+                preferences().edit().putString(SORTING_ORDER, order).apply();
+            }
+        }
     }
 
-    public final class Theme {
-        public final static String SHOW_AVATARS = "theme.show_avatars";
-        public final static String CIRCLE_AVATARS = "theme.circle_avatars";
+    public final static class Theme {
+        private final static String PREFIX = "theme.";
+        public final static String SHOW_AVATARS = PREFIX + "show_avatars";
+        public final static String CIRCLE_AVATARS = PREFIX + "circle_avatars";
+
+        public static boolean isShowAvatars() {
+            return preferences().getBoolean(SHOW_AVATARS, true);
+        }
+
+        public static boolean isCircleAvatars() {
+            return preferences().getBoolean(CIRCLE_AVATARS, true);
+        }
     }
 
     public static final class Notifications {
@@ -131,6 +214,7 @@ public class Preferences {
                 return preferences().getBoolean(ENABLED, true);
             }
         }
+
         public static final class Update {
             private final static String PREFIX = Notifications.PREFIX + "update.";
             public final static String ENABLED = PREFIX + "enabled";

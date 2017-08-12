@@ -43,14 +43,14 @@ public class MessagePanel extends CardView {
     private HeightChangeListener heightChangeListener;
     private boolean fullForm = false;
     private CoordinatorLayout.LayoutParams params;
-    boolean isMonospace = App.getInstance().getPreferences().getBoolean(Preferences.Main.IS_EDITOR_MONOSPACE, true);
+    boolean isMonospace = Preferences.Main.isEditorMonospace();
 
     protected Observer preferenceObserver = (observable, o) -> {
         if (o == null) return;
         String key = (String) o;
         switch (key) {
             case Preferences.Main.IS_EDITOR_MONOSPACE: {
-                isMonospace = App.getInstance().getPreferences().getBoolean(Preferences.Main.IS_EDITOR_MONOSPACE, true);
+                isMonospace = Preferences.Main.isEditorMonospace();
                 messageField.setTypeface(isMonospace ? Typeface.MONOSPACE : Typeface.DEFAULT);
                 break;
             }

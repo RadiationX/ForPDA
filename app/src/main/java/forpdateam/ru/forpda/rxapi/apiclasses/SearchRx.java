@@ -52,10 +52,10 @@ public class SearchRx {
             t.setVariableOpt("prev_disable", ThemeRx.getDisableStr(prevDisabled));
             t.setVariableOpt("next_disable", ThemeRx.getDisableStr(nextDisabled));
             t.setVariableOpt("last_disable", ThemeRx.getDisableStr(nextDisabled));
-            boolean isDisableAvatar = App.getInstance().getPreferences().getBoolean(Preferences.Theme.SHOW_AVATARS, true);
+            boolean isDisableAvatar = Preferences.Theme.isShowAvatars();
             t.setVariableOpt("disable_avatar_js", Boolean.toString(isDisableAvatar));
             t.setVariableOpt("disable_avatar", isDisableAvatar ? "show_avatar" : "hide_avatar");
-            t.setVariableOpt("avatar_type", App.getInstance().getPreferences().getBoolean(Preferences.Theme.CIRCLE_AVATARS, true) ? "circle_avatar" : "square_avatar");
+            t.setVariableOpt("avatar_type", Preferences.Theme.isCircleAvatars() ? "circle_avatar" : "square_avatar");
 
 
             Matcher letterMatcher = null;

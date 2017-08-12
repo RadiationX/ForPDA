@@ -46,7 +46,7 @@ button > *,
 }
 button:active,
 .btn:active {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.1);
 }
 @-webkit-keyframes pollRangeAnimation {
   0% {
@@ -357,7 +357,7 @@ button:active,
   margin-top: -1.25em;
   height: 2.5em;
   width: 2.5em;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.1);
   -webkit-border-radius: 100%;
   border-radius: 100%;
   -webkit-transform: scale(0.5) translateZ(0);
@@ -980,7 +980,7 @@ button:active,
   display: inline-block;
 }
 .navigation .button:not(.disabled):active {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.1);
 }
 .navigation .button:before {
   content: "";

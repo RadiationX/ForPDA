@@ -150,7 +150,7 @@ public class App extends android.app.Application {
     }
 
     public boolean isDarkTheme() {
-        return getPreferences().getBoolean(Preferences.Main.Theme.IS_DARK, false);
+        return Preferences.Main.Theme.isDark();
     }
 
     public String getCssStyleType() {
