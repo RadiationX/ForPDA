@@ -102,6 +102,12 @@
             android:key="lists.topic.show_dot"
             android:title="Индикатор новых сообщений" />
 
+        <forpdateam.ru.forpda.settings.SwitchPreference
+            android:defaultValue="false"
+            android:key="lists.favorites.load_all"
+            android:title="Все темы избранного"
+            android:summary="Загружать все темы избранного. Расходуется больше трафика."/>
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Аккаунт">

@@ -177,7 +177,7 @@ li .post-block.hidden {
   background-position: center;
 }
 .post-block > .block-title > .block-controls i:active {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 .post-block > .block-body {
   padding: 0.5rem 1rem 1rem 1rem;
@@ -201,7 +201,7 @@ li .post-block.hidden {
   content: "Спойлер";
 }
 .post-block.spoil > .block-title:active {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.1);
 }
 .post-block.spoil > .block-title:active .icon:before {
   opacity: 0.05;
@@ -267,6 +267,30 @@ li .post-block.hidden {
 }
 .post-block.spoil > .block-body > .post-block.spoil:last-child {
   margin-bottom: 0;
+}
+.post-block.spoil > .block-body > .spoil_close {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  margin: 0.375rem;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  margin-left: -0.625rem;
+  margin-right: -0.625rem;
+  margin-bottom: -0.625rem;
+  padding: 0.5rem;
+  text-transform: uppercase;
+  font-weight: bold!important;
+  font-style: normal!important;
+  -webkit-border-radius: 0.125rem;
+  border-radius: 0.125rem;
+  display: inline-block;
+}
+.post-block.spoil > .block-body > .spoil_close:active {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 .post-block.spoil.close > .block-body {
   display: none;
@@ -404,7 +428,7 @@ li .post-block.hidden {
   clear: both;
 }
 .post-block.code > .block-title:active {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.1);
 }
 .post-block.code > .block-title:active .icon:before {
   opacity: 0.05;
@@ -517,7 +541,7 @@ li .post-block.hidden {
   transform: rotateX(180deg) translateZ(0);
 }
 .post-block.code.wrap > .block-title .block-controls .wrap {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 .post-block.code.wrap .block-body .lines {
   white-space: pre-wrap;
@@ -744,6 +768,12 @@ a.snapback:after {
   }
   .post-block.quote > .block-title .title > * {
     padding-left: 0;
+  }
+  .post-block.spoil > .block-body > .spoil_close {
+    margin-top: 0.5rem;
+    margin-left: -0.125rem;
+    margin-right: -0.125rem;
+    margin-bottom: -0.375rem;
   }
   .attach_block {
     padding-left: 0.25rem;

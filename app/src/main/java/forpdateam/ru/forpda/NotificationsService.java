@@ -124,11 +124,16 @@ public class NotificationsService extends Service {
                 matcher = matcher.reset(text);
             }
             NotificationEvent event = Api.UniversalEvents().parseWebSocketEvent(matcher);
-            if (event != null) {
-                if (event.getEvent() != NotificationEvent.Event.HAT_EDITED) {
-                    handleWebSocketEvent(event);
+            try {
+                if (event != null) {
+                    if (event.getEvent() != NotificationEvent.Event.HAT_EDITED) {
+                        handleWebSocketEvent(event);
+                    }
                 }
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
+
         }
 
         @Override
@@ -244,26 +249,33 @@ public class NotificationsService extends Service {
     private void handleWebSocketEvent(NotificationEvent event) {
         if (event.isRead()) {
             NotificationEvent oldEvent = eventsHistory.get(event.notifyId(NotificationEvent.Event.NEW));
+            boolean delete = false;
 
             if (event.fromTheme()) {
                 //Убираем уведомления избранного
                 if (oldEvent != null && event.getMessageId() >= oldEvent.getMessageId()) {
                     mNotificationManager.cancel(oldEvent.notifyId());
+                    delete = true;
                 }
 
                 //Убираем уведомление упоминаний
                 oldEvent = eventsHistory.get(event.notifyId(NotificationEvent.Event.MENTION));
                 if (oldEvent != null) {
                     mNotificationManager.cancel(oldEvent.notifyId());
+                    delete = true;
                 }
             } else if (event.fromQms()) {
 
                 //Убираем уведомление кумыса
                 if (oldEvent != null) {
                     mNotificationManager.cancel(oldEvent.notifyId());
+                    delete = true;
                 }
             }
-            eventsHistory.remove(event.notifyId(NotificationEvent.Event.NEW));
+
+            if (delete) {
+                eventsHistory.remove(event.notifyId(NotificationEvent.Event.NEW));
+            }
             return;
         }
         handleEvent(event);

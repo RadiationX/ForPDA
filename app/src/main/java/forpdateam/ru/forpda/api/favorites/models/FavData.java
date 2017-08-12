@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.api.favorites.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import forpdateam.ru.forpda.api.favorites.Sorting;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 
 /**
@@ -12,6 +13,7 @@ import forpdateam.ru.forpda.api.others.pagination.Pagination;
 public class FavData {
     private List<FavItem> items = new ArrayList<>();
     private Pagination pagination = new Pagination();
+    private Sorting sorting = new Sorting();
 
     public List<FavItem> getItems() {
         return items;
@@ -27,5 +29,13 @@ public class FavData {
 
     public void setPagination(Pagination pagination) {
         this.pagination = pagination;
+    }
+
+    public Sorting getSorting() {
+        return sorting;
+    }
+
+    public void setSorting(Sorting sorting) {
+        this.sorting = sorting;
     }
 }

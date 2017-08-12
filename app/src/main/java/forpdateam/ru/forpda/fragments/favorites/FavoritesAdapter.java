@@ -17,6 +17,7 @@ import java.util.List;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
+import forpdateam.ru.forpda.settings.Preferences;
 
 /**
  * Created by radiationx on 22.09.16.
@@ -24,7 +25,7 @@ import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
 
 public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdapter.ViewHolder> {
     private List<Pair<String, List<IFavItem>>> sections = new ArrayList<>();
-    private boolean showDot = App.getInstance().getPreferences().getBoolean("lists.topic.show_dot", false);
+    private boolean showDot = Preferences.Lists.Topic.isShowDot();
     private int titleColorNew, titleColor;
 
     @Override

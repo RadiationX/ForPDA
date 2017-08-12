@@ -4,69 +4,58 @@
     font-size: (@pt * 1.5)/16em!important;
     line-height: 1.25em!important;
 }
-
 .fsi {
     font-size: inherit!important
 }
-
 [style*="font-size:36pt"] {
     .fs(36);
     * {
         .fsi;
     }
 }
-
 [style*="font-size:24pt"] {
     .fs(24);
     * {
         .fsi;
     }
 }
-
 [style*="font-size:18pt"] {
     .fs(18);
     * {
         .fsi;
     }
 }
-
 [style*="font-size:14pt"] {
     .fs(14);
     * {
         .fsi;
     }
 }
-
 [style*="font-size:12pt"] {
     .fs(12);
     * {
         .fsi;
     }
 }
-
 [style*="font-size:10pt"] {
     .fs(10);
     * {
         .fsi;
     }
 }
-
 [style*="font-size:8pt"] {
     .fs(8);
     * {
         .fsi;
     }
 }
-
 [style*="font-size:9px"] {
     line-height: 1.25em!important;
     font-size: 12/16em!important;
 }
-
 HTML {
     font-size: 1rem;
 }
-
 body {
     width: 100%;
     height: 100%;
@@ -79,17 +68,14 @@ body {
     overflow-wrap: break-word;
     word-wrap: break-word;
 }
-
 a {
     //text-decoration: none;
     color: @link_color;
     -webkit-tap-highlight-color: fade(@link_color, 25%);
 }
-
 * {
     box-sizing: border-box;
 }
-
 li {
     .post-block {
         &.spoil,
@@ -102,7 +88,6 @@ li {
         }
     }
 }
-
 .post-block {
     margin: 12/16rem -16/16rem;
     position: relative;
@@ -120,53 +105,53 @@ li {
         //text-transform: uppercase;
         color: @colorAccent!important;
         >.block-controls {
+            float: right;
+            position: absolute;
+            right: 40/16rem;
+            top: (40-36)/2/16rem;
+            z-index: 3;
+            .noselect();
+            i {
+                position: relative;
+                height: 36/16rem;
+                width: 36/16rem;
+                .bRad(2px);
                 float: right;
-                position: absolute;
-                right: 40/16rem;
-                top: (40-36)/2/16rem;
-                z-index: 3;
-                .noselect();
-                i {
-                    position: relative;
-                    height: 36/16rem;
-                    width: 36/16rem;
-                    .bRad(2px);
-                    float: right;
-                    margin-right: 8/16rem;
-                    &.wrap {
-                        &:after {
-                            background-image: url(@icon_wrap_src);
-                        }
-                    }
-                    &.select_all {
-                        &:after {
-                            background-image: url(@icon_select_all_src);
-                        }
-                    }
-                    &.link {
-                        &:after {
-                            background-image: url(@icon_link_src);
-                        }
-                    }
-                    &:first-child{
-                        margin-right: 0/16rem;
-                    }
+                margin-right: 8/16rem;
+                &.wrap {
                     &:after {
-                        content: "";
-                        height: 36/16rem;
-                        width: 36/16rem;
-                        position: absolute;
-                        left: 0;
-                        top: 0;
-                        background-repeat: no-repeat;
-                        background-size: 24/16rem 24/16rem;
-                        background-position: center;
-                    }
-                    &:active {
-                        background-color: @tapColor;
+                        background-image: url(@icon_wrap_src);
                     }
                 }
+                &.select_all {
+                    &:after {
+                        background-image: url(@icon_select_all_src);
+                    }
+                }
+                &.link {
+                    &:after {
+                        background-image: url(@icon_link_src);
+                    }
+                }
+                &:first-child {
+                    margin-right: 0/16rem;
+                }
+                &:after {
+                    content: "";
+                    height: 36/16rem;
+                    width: 36/16rem;
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    background-repeat: no-repeat;
+                    background-size: 24/16rem 24/16rem;
+                    background-position: center;
+                }
+                &:active {
+                    background-color: @tapColor;
+                }
             }
+        }
     }
     >.block-body {
         padding: 0.5rem 1rem 1rem 1rem;
@@ -260,6 +245,24 @@ li {
                 background: @childSpoilColor;
                 &:last-child {
                     margin-bottom: 0;
+                }
+            }
+            >.spoil_close {
+                .noselect();
+                margin: 6/16rem;
+                margin-top: 16/16rem;
+                font-size: 14/16rem;
+                margin-left: -(16-6)/16rem;
+                margin-right: -(16-6)/16rem;
+                margin-bottom: -(16-6)/16rem;
+                padding: 8/16rem;
+                text-transform: uppercase;
+                font-weight: bold!important;
+                font-style: normal!important;
+                .bRad(2/16rem);
+                display: inline-block;
+                &:active {
+                    background-color: @tapColor;
                 }
             }
         }
@@ -633,7 +636,6 @@ li {
         }
     }
 }
-
 .searchlite {
     background: #ffaa00!important;
     color: black!important;
@@ -642,7 +644,6 @@ li {
     padding: 4/16rem;
     .bRad(2px);
 }
-
 a.snapback {
     text-decoration: none;
     font-weight: bold;
@@ -662,7 +663,6 @@ a.snapback {
         width: 36/16em;
     }
 }
-
 
 /*a[href*=findpost][title="Перейти к сообщению"] {
     width: 1.25rem;
@@ -755,7 +755,6 @@ a.snapback {
         overflow: hidden;
         font-weight: bold;
         display: block;
-        
         font-size: 1rem!important;
     }
     .desc {
@@ -770,7 +769,6 @@ a.snapback {
         clear: both;
     }
 }
-
 @media all and (max-width: 20rem) {
     .post-block {
         &.code {
@@ -790,7 +788,6 @@ a.snapback {
         }
     }
 }
-
 @media all and (max-width: 14rem) {
     .post-block {
         margin: 12/16rem -8/16rem;
@@ -808,6 +805,12 @@ a.snapback {
         >* {
             padding-left: 0;
         }
+    }
+    .post-block.spoil>.block-body>.spoil_close {
+        margin-top: 8/16rem;
+        margin-left: -(8-6)/16rem;
+        margin-right: -(8-6)/16rem;
+        margin-bottom: -(12-6)/16rem;
     }
     .attach_block {
         padding-left: 4/16rem;

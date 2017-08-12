@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.fragments.favorites;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.TabLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -9,8 +10,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -20,6 +26,7 @@ import java.util.Observer;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.favorites.Favorites;
+import forpdateam.ru.forpda.api.favorites.Sorting;
 import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
 import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
@@ -49,9 +56,9 @@ public class FavoritesFragment extends TabFragment {
             favItem -> {
                 Bundle args = new Bundle();
                 args.putString(TabFragment.ARG_TITLE, favItem.getTopicTitle());
-                if(favItem.isForum()){
+                if (favItem.isForum()) {
                     IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + favItem.getForumId(), args);
-                }else {
+                } else {
                     IntentHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + favItem.getTopicId() + "&view=getnewpost", args);
                 }
             };
@@ -61,13 +68,13 @@ public class FavoritesFragment extends TabFragment {
                 if (favoriteDialogMenu == null) {
                     favoriteDialogMenu = new AlertDialogMenu<>();
                     showedFavoriteDialogMenu = new AlertDialogMenu<>();
-                    favoriteDialogMenu.addItem("Скопировать ссылку", (context, data) ->{
-                        if(data.isForum()){
+                    favoriteDialogMenu.addItem("Скопировать ссылку", (context, data) -> {
+                        if (data.isForum()) {
                             Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getForumId())));
-                        }else {
+                        } else {
                             Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data.getTopicId())));
                         }
-                    } );
+                    });
                     favoriteDialogMenu.addItem("Вложения", (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=attach&code=showtopic&tid=" + data.getTopicId()));
                     favoriteDialogMenu.addItem("Открыть форум темы", (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getForumId()));
                     favoriteDialogMenu.addItem("Изменить тип подписки", (context, data) -> {
@@ -81,7 +88,7 @@ public class FavoritesFragment extends TabFragment {
                 showedFavoriteDialogMenu.clear();
 
                 showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(0));
-                if (!favItem.isForum()){
+                if (!favItem.isForum()) {
                     showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(1));
                     showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(2));
                 }
@@ -106,25 +113,30 @@ public class FavoritesFragment extends TabFragment {
     private Subscriber<FavData> mainSubscriber = new Subscriber<>(this);
     boolean markedRead = false;
 
-    private boolean unreadTop = App.getInstance().getPreferences().getBoolean("lists.topic.unread_top", false);
+    private boolean unreadTop = Preferences.Lists.Topic.isUnreadTop();
+    private boolean loadAll = Preferences.Lists.Favorites.isLoadAll();
     private Observer favoritesPreferenceObserver = (observable, o) -> {
         if (o == null) return;
         String key = (String) o;
         switch (key) {
-            case Preferences.Favorites.UNREAD_TOP: {
-                boolean newUnreadTop = App.getInstance().getPreferences().getBoolean(Preferences.Favorites.UNREAD_TOP, false);
+            case Preferences.Lists.Topic.UNREAD_TOP: {
+                boolean newUnreadTop = Preferences.Lists.Topic.isUnreadTop();
                 if (newUnreadTop != unreadTop) {
                     unreadTop = newUnreadTop;
                     bindView();
                 }
                 break;
             }
-            case Preferences.Favorites.SHOW_DOT: {
-                boolean newShowDot = App.getInstance().getPreferences().getBoolean(Preferences.Favorites.SHOW_DOT, false);
+            case Preferences.Lists.Topic.SHOW_DOT: {
+                boolean newShowDot = Preferences.Lists.Topic.isShowDot();
                 if (newShowDot != adapter.isShowDot()) {
                     adapter.setShowDot(newShowDot);
                     adapter.notifyDataSetChanged();
                 }
+                break;
+            }
+            case Preferences.Lists.Favorites.LOAD_ALL: {
+                loadAll = Preferences.Lists.Favorites.isLoadAll();
                 break;
             }
         }
@@ -149,6 +161,14 @@ public class FavoritesFragment extends TabFragment {
     private PaginationHelper paginationHelper = new PaginationHelper();
     private int currentSt = 0;
 
+    private BottomSheetDialog dialog;
+    private ViewGroup sortingView;
+    private Spinner keySpinner;
+    private Spinner orderSpinner;
+    private Button sortApply;
+    private CheckBox applyToSite;
+    private Sorting sorting = new Sorting(Preferences.Lists.Favorites.getSortingKey(), Preferences.Lists.Favorites.getSortingOrder());
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -157,6 +177,15 @@ public class FavoritesFragment extends TabFragment {
         baseInflateFragment(inflater, R.layout.fragment_base_list);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
         recyclerView = (RecyclerView) findViewById(R.id.base_list);
+
+        sortingView = (ViewGroup) View.inflate(getContext(), R.layout.favorite_sorting, null);
+        keySpinner = (Spinner) sortingView.findViewById(R.id.sorting_key);
+        orderSpinner = (Spinner) sortingView.findViewById(R.id.sorting_order);
+        sortApply = (Button) sortingView.findViewById(R.id.sorting_apply);
+        applyToSite = (CheckBox) sortingView.findViewById(R.id.apply_to_site);
+        dialog = new BottomSheetDialog(getContext());
+
+
         viewsReady();
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
@@ -183,6 +212,35 @@ public class FavoritesFragment extends TabFragment {
             }
         });
 
+        setItems(keySpinner, new String[]{"Последнее сообщение", "Название"}, 0);
+        setItems(orderSpinner, new String[]{"Возрастание", "Убывание"}, 0);
+        selectSpinners(sorting);
+        sortApply.setOnClickListener(v -> {
+            switch (keySpinner.getSelectedItemPosition()) {
+                case 0:
+                    sorting.setKey(Sorting.Key.LAST_POST);
+                    break;
+                case 1:
+                    sorting.setKey(Sorting.Key.TITLE);
+                    break;
+            }
+            switch (orderSpinner.getSelectedItemPosition()) {
+                case 0:
+                    sorting.setOrder(Sorting.Order.ASC);
+                    break;
+                case 1:
+                    sorting.setOrder(Sorting.Order.DESC);
+                    break;
+            }
+            Preferences.Lists.Favorites.setSortingKey(sorting.getKey());
+            Preferences.Lists.Favorites.setSortingOrder(sorting.getOrder());
+            sorting.setRemember(applyToSite.isChecked());
+            loadData();
+            if (dialog != null && dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        });
+
         bindView();
         App.getInstance().addPreferenceChangeObserver(favoritesPreferenceObserver);
         return view;
@@ -204,17 +262,53 @@ public class FavoritesFragment extends TabFragment {
                             .show();
                     return false;
                 });
+
+        getMenu().add("Сортировка")
+                .setIcon(R.drawable.ic_toolbar_sort).setOnMenuItemClickListener(menuItem -> {
+            hidePopupWindows();
+            if (sortingView != null && sortingView.getParent() != null && sortingView.getParent() instanceof ViewGroup) {
+                ((ViewGroup) sortingView.getParent()).removeView(sortingView);
+            }
+            if (sortingView != null) {
+                dialog.setContentView(sortingView);
+                dialog.show();
+            }
+            return false;
+        })
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
     }
 
     @Override
     public void loadData() {
         refreshLayout.setRefreshing(true);
-        mainSubscriber.subscribe(RxApi.Favorites().getFavorites(currentSt), this::onLoadThemes, new FavData(), v -> loadData());
+        mainSubscriber.subscribe(RxApi.Favorites().getFavorites(currentSt, loadAll, sorting), this::onLoadThemes, new FavData(), v -> loadData());
     }
 
     private void onLoadThemes(FavData data) {
         refreshLayout.setRefreshing(false);
         recyclerView.scrollToPosition(0);
+
+        sorting = data.getSorting();
+        sorting.setRemember(false);
+        applyToSite.setChecked(false);
+        selectSpinners(sorting);
+        switch (data.getSorting().getKey()) {
+            case Sorting.Key.LAST_POST:
+                keySpinner.setSelection(0);
+                break;
+            case Sorting.Key.TITLE:
+                keySpinner.setSelection(1);
+                break;
+        }
+        switch (data.getSorting().getOrder()) {
+            case Sorting.Order.ASC:
+                orderSpinner.setSelection(0);
+                break;
+            case Sorting.Order.DESC:
+                orderSpinner.setSelection(1);
+                break;
+        }
+
         if (data.getItems().size() == 0)
             return;
 
@@ -229,6 +323,35 @@ public class FavoritesFragment extends TabFragment {
         }, this::bindView);
         paginationHelper.updatePagination(data.getPagination());
         setSubtitle(paginationHelper.getString());
+
+
+    }
+
+    private void selectSpinners(Sorting sorting) {
+        switch (sorting.getKey()) {
+            case Sorting.Key.LAST_POST:
+                keySpinner.setSelection(0);
+                break;
+            case Sorting.Key.TITLE:
+                keySpinner.setSelection(1);
+                break;
+        }
+        switch (sorting.getOrder()) {
+            case Sorting.Order.ASC:
+                orderSpinner.setSelection(0);
+                break;
+            case Sorting.Order.DESC:
+                orderSpinner.setSelection(1);
+                break;
+        }
+    }
+
+    private void setItems(Spinner spinner, String[] items, int selection) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getMainActivity(), android.R.layout.simple_spinner_item, items);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(selection);
+        //spinner.setOnItemSelectedListener(listener);
     }
 
     private void bindView() {
@@ -313,4 +436,5 @@ public class FavoritesFragment extends TabFragment {
         Toast.makeText(getContext(), "Действие выполнено", Toast.LENGTH_SHORT).show();
         loadData();
     }
+
 }

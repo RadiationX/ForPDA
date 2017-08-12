@@ -100,18 +100,18 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         String key = (String) o;
         switch (key) {
             case Preferences.Theme.SHOW_AVATARS: {
-                updateShowAvatarState(App.getInstance().getPreferences().getBoolean(Preferences.Theme.SHOW_AVATARS, true));
+                updateShowAvatarState(Preferences.Theme.isShowAvatars());
                 break;
             }
             case Preferences.Theme.CIRCLE_AVATARS: {
-                updateTypeAvatarState(App.getInstance().getPreferences().getBoolean(Preferences.Theme.CIRCLE_AVATARS, true));
+                updateTypeAvatarState(Preferences.Theme.isCircleAvatars());
                 break;
             }
             case Preferences.Main.WEBVIEW_FONT_SIZE: {
                 setFontSize(Preferences.Main.getWebViewSize());
             }
             case Preferences.Main.SCROLL_BUTTON_ENABLE: {
-                if (App.getInstance().getPreferences().getBoolean(Preferences.Main.SCROLL_BUTTON_ENABLE, false)) {
+                if (Preferences.Main.isScrollButtonEnable()) {
                     fab.setVisibility(View.VISIBLE);
                 } else {
                     fab.setVisibility(View.GONE);
@@ -163,7 +163,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         super.onCreateView(inflater, container, savedInstanceState);
         initFabBehavior();
         fab.setSize(FloatingActionButton.SIZE_MINI);
-        if (App.getInstance().getPreferences().getBoolean(Preferences.Main.SCROLL_BUTTON_ENABLE, false)) {
+        if (Preferences.Main.isScrollButtonEnable()) {
             fab.setVisibility(View.VISIBLE);
         } else {
             fab.setVisibility(View.GONE);
@@ -239,7 +239,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             App.getInstance().getPreferences().edit().putBoolean("theme.tooltip.long_click_send", false).apply();
         }
 
-        if (App.getInstance().getPreferences().getBoolean(Preferences.Main.IS_EDITOR_DEFAULT_HIDDEN, true)) {
+        if (Preferences.Main.isEditorDefaultHidden()) {
             hideMessagePanel();
         } else {
             showMessagePanel();
@@ -529,7 +529,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             addFavoritesMenuItem.setVisible(false);
             openForumMenuItem.setEnabled(false);
         }
-        if(!ClientHelper.getAuthState()){
+        if (!ClientHelper.getAuthState()) {
             toggleMessagePanelItem.setVisible(false);
             deleteFavoritesMenuItem.setVisible(false);
             addFavoritesMenuItem.setVisible(false);
@@ -641,7 +641,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                     onLoadData(s);
                     messagePanel.clearAttachments();
                     messagePanel.clearMessage();
-                    if (App.getInstance().getPreferences().getBoolean(Preferences.Main.IS_EDITOR_DEFAULT_HIDDEN, true)) {
+                    if (Preferences.Main.isEditorDefaultHidden()) {
                         hideMessagePanel();
                     }
                 }

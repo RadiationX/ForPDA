@@ -212,6 +212,21 @@ function spoilCloseButton(t) {
                     spoilCloseButton(el);
                 });
             }
+            if (t.clientHeight > document.documentElement.clientHeight) {
+                var bb = t.querySelector('.block-body');
+                var btn = document.createElement('div');
+                btn.innerHTML = 'Закрыть спойлер';
+                btn.className = "spoil_close";
+                btn.addEventListener('click', clickBtn);
+
+                function clickBtn() {
+                    t.classList.remove('open');
+                    t.classList.add('close');
+                    t.scrollIntoView();
+                }
+                bb.appendChild(btn);
+                return;
+            }
         }
         t = t.parentElement;
     }
@@ -291,14 +306,14 @@ function improveSpoilBlock() {
                 var codeBlock = spoilBlockAll[i];
                 var codeTitle = codeBlock.querySelector('.block-title')
                 if (!codeBlock.classList.contains("improve")) {
-                    codeTitle.insertAdjacentHTML("beforeEnd", '<div class="block-controls"><i class="link" data-spoil-number="'+(i+1)+'" data-post-id="'+post.getAttribute("data-post-id")+'"></i></div>');
+                    codeTitle.insertAdjacentHTML("beforeEnd", '<div class="block-controls"><i class="link" data-spoil-number="' + (i + 1) + '" data-post-id="' + post.getAttribute("data-post-id") + '"></i></div>');
                     codeBlock.classList.add("improve");
                 }
                 codeTitle.querySelector('.link').addEventListener('click', function (e) {
                     e.stopPropagation();
                     var postId = e.target.getAttribute("data-post-id");
                     var spoilerNumber = e.target.getAttribute("data-spoil-number");
-                    console.log(postId+ " : "+spoilerNumber);
+                    console.log(postId + " : " + spoilerNumber);
                     ITheme.copySpoilerLink(postId, spoilerNumber);
                 });
             } catch (error) {

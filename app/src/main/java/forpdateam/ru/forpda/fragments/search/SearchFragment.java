@@ -76,7 +76,7 @@ import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
 public class SearchFragment extends TabFragment implements IPostFunctions, ExtendedWebView.JsLifeCycleListener {
     private final static String LOG_TAG = SearchFragment.class.getSimpleName();
     protected final static String JS_INTERFACE = "ISearch";
-    private boolean scrollButtonEnable = App.getInstance().getPreferences().getBoolean(Preferences.Main.SCROLL_BUTTON_ENABLE, false);
+    private boolean scrollButtonEnable = Preferences.Main.isScrollButtonEnable();
     private ViewGroup searchSettingsView;
     private ViewGroup nickBlock, resourceBlock, resultBlock, sortBlock, sourceBlock;
     private Spinner resourceSpinner, resultSpinner, sortSpinner, sourceSpinner;
@@ -106,18 +106,18 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         String key = (String) o;
         switch (key) {
             case Preferences.Theme.SHOW_AVATARS: {
-                updateShowAvatarState(App.getInstance().getPreferences().getBoolean(Preferences.Theme.SHOW_AVATARS, true));
+                updateShowAvatarState(Preferences.Theme.isShowAvatars());
                 break;
             }
             case Preferences.Theme.CIRCLE_AVATARS: {
-                updateTypeAvatarState(App.getInstance().getPreferences().getBoolean(Preferences.Theme.CIRCLE_AVATARS, true));
+                updateTypeAvatarState(Preferences.Theme.isCircleAvatars());
                 break;
             }
             case Preferences.Main.WEBVIEW_FONT_SIZE: {
                 webView.setRelativeFontSize(Preferences.Main.getWebViewSize());
             }
             case Preferences.Main.SCROLL_BUTTON_ENABLE: {
-                scrollButtonEnable = App.getInstance().getPreferences().getBoolean(Preferences.Main.SCROLL_BUTTON_ENABLE, false);
+                scrollButtonEnable = Preferences.Main.isScrollButtonEnable();
                 if (scrollButtonEnable) {
                     fab.setVisibility(View.VISIBLE);
                 } else {
