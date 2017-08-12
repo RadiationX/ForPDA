@@ -8,8 +8,6 @@ import java.util.regex.Pattern;
  */
 
 public class Sorting {
-    public final static String HEADER_REMEMBER = "remember";
-    public final static String REMEMBER = "1";
     private final static Pattern pattern = Pattern.compile("<div class=\"forum_sort\"[^>]*?>[\\s\\S]*?<select name=\"sort_key\">[\\s\\S]*?<option value=\"([^\"]*?)\" selected(?:=\"selected\")?[^>]*?>[\\s\\S]*?<select name=\"sort_by\">[\\s\\S]*?<option value=\"([^\"]*?)\" selected(?:=\"selected\")?[^>]*?>");
 
     public final static class Key {
@@ -20,8 +18,8 @@ public class Sorting {
 
     public final static class Order {
         public final static String HEADER = "sort_by";
-        public final static String DESC = "A-Z";
-        public final static String ASC = "Z-A";
+        public final static String DESC = "Z-A";
+        public final static String ASC = "A-Z";
     }
 
     public Sorting() {
@@ -34,7 +32,6 @@ public class Sorting {
 
     private String key = "";
     private String order = "";
-    boolean remember = false;
 
     public String getKey() {
         return key;
@@ -50,14 +47,6 @@ public class Sorting {
 
     public void setOrder(String order) {
         this.order = order;
-    }
-
-    public boolean isRemember() {
-        return remember;
-    }
-
-    public void setRemember(boolean remember) {
-        this.remember = remember;
     }
 
     public static Sorting parse(String body) {

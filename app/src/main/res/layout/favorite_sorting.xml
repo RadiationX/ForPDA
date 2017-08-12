@@ -55,13 +55,6 @@
                 android:paddingStart="@dimen/dp8" />
         </LinearLayout>
 
-        <CheckBox
-            android:id="@+id/apply_to_site"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="Применить на сайте" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
