@@ -18,6 +18,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -71,14 +72,13 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     private ChatThemeCreator themeCreator;
     private ExtendedWebView webView;
     private FrameLayout chatContainer;
+    private ProgressBar progressBar;
     private MessagePanel messagePanel;
     private AttachmentsPopup attachmentsPopup;
 
     private Subscriber<QmsChatModel> mainSubscriber = new Subscriber<>(this);
     private Subscriber<ArrayList<QmsMessage>> messageSubscriber = new Subscriber<>(this);
     private Subscriber<ArrayList<QmsContact>> contactsSubscriber = new Subscriber<>(this);
-
-    private boolean isWebViewReady = false;
 
     private Observer chatPreferenceObserver = (observable, o) -> {
         if (o == null) return;
@@ -174,6 +174,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         super.onCreateView(inflater, container, savedInstanceState);
         baseInflateFragment(inflater, R.layout.fragment_qms_chat);
         chatContainer = (FrameLayout) findViewById(R.id.qms_chat_container);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         messagePanel = new MessagePanel(getContext(), fragmentContainer, coordinatorLayout, false);
         messagePanel.setHeightChangeListener(newHeight -> {
             webView.setPaddingBottom(newHeight);
@@ -182,7 +183,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
         webView.setJsLifeCycleListener(this);
 
-        chatContainer.addView(webView);
+        chatContainer.addView(webView, 0);
         webView.addJavascriptInterface(this, JS_INTERFACE);
         registerForContextMenu(webView);
         webView.setWebViewClient(new QmsWebViewClient());
@@ -276,6 +277,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     public void onCreateNewTheme(String nick, String title, String message) {
         addUnusedAttachments();
         refreshToolbarMenuItems(false);
+        progressBar.setVisibility(View.VISIBLE);
         mainSubscriber.subscribe(RxApi.Qms().sendNewTheme(nick, title, message), this::onNewThemeCreate, new QmsChatModel());
     }
 
@@ -283,6 +285,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     public void loadData() {
         if (currentChat.getUserId() != QmsChatModel.NOT_CREATED && currentChat.getThemeId() != QmsChatModel.NOT_CREATED) {
             refreshToolbarMenuItems(false);
+            progressBar.setVisibility(View.VISIBLE);
             mainSubscriber.subscribe(RxApi.Qms().getChat(currentChat.getUserId(), currentChat.getThemeId()), this::onLoadChat, new QmsChatModel(), v -> loadData());
         }
     }
@@ -307,6 +310,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
 
 
     private void onLoadChat(QmsChatModel loadedChat) {
+        progressBar.setVisibility(View.GONE);
         if (webSocket == null)
             webSocket = Client.getInstance().createWebSocketConnection(webSocketListener);
         currentChat.setThemeId(loadedChat.getThemeId());
@@ -450,7 +454,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     }
 
     public void tryPickFile() {
-       App.getInstance().checkStoragePermission(() -> startActivityForResult(FilePickHelper.pickImage(true), REQUEST_PICK_FILE), App.getActivity());
+        App.getInstance().checkStoragePermission(() -> startActivityForResult(FilePickHelper.pickImage(true), REQUEST_PICK_FILE), App.getActivity());
     }
 
     @Override

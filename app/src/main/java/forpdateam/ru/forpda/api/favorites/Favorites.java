@@ -41,12 +41,10 @@ public class Favorites {
                 .authority("4pda.ru");
         builder.appendPath("forum");
         builder.appendQueryParameter("act", "fav");
+        builder.appendQueryParameter("type", "all");
         builder.appendQueryParameter("st", Integer.toString(st));
         builder.appendQueryParameter(Sorting.Key.HEADER, sorting.getKey());
         builder.appendQueryParameter(Sorting.Order.HEADER, sorting.getOrder());
-        if (sorting.isRemember()) {
-            builder.appendQueryParameter(Sorting.HEADER_REMEMBER, Sorting.REMEMBER);
-        }
 
         NetworkResponse response = Api.getWebClient().get(builder.build().toString());
         Matcher matcher = mainPattern.matcher(response.getBody());

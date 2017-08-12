@@ -166,7 +166,6 @@ public class FavoritesFragment extends TabFragment {
     private Spinner keySpinner;
     private Spinner orderSpinner;
     private Button sortApply;
-    private CheckBox applyToSite;
     private Sorting sorting = new Sorting(Preferences.Lists.Favorites.getSortingKey(), Preferences.Lists.Favorites.getSortingOrder());
 
     @Nullable
@@ -182,7 +181,6 @@ public class FavoritesFragment extends TabFragment {
         keySpinner = (Spinner) sortingView.findViewById(R.id.sorting_key);
         orderSpinner = (Spinner) sortingView.findViewById(R.id.sorting_order);
         sortApply = (Button) sortingView.findViewById(R.id.sorting_apply);
-        applyToSite = (CheckBox) sortingView.findViewById(R.id.apply_to_site);
         dialog = new BottomSheetDialog(getContext());
 
 
@@ -234,7 +232,6 @@ public class FavoritesFragment extends TabFragment {
             }
             Preferences.Lists.Favorites.setSortingKey(sorting.getKey());
             Preferences.Lists.Favorites.setSortingOrder(sorting.getOrder());
-            sorting.setRemember(applyToSite.isChecked());
             loadData();
             if (dialog != null && dialog.isShowing()) {
                 dialog.dismiss();
@@ -289,8 +286,6 @@ public class FavoritesFragment extends TabFragment {
         recyclerView.scrollToPosition(0);
 
         sorting = data.getSorting();
-        sorting.setRemember(false);
-        applyToSite.setChecked(false);
         selectSpinners(sorting);
         switch (data.getSorting().getKey()) {
             case Sorting.Key.LAST_POST:
