@@ -134,7 +134,7 @@ public class BrandAdapter extends RecyclerView.Adapter<BrandAdapter.ViewHolder> 
             image = (ImageView) v.findViewById(R.id.item_image);
             progressBar = (ProgressBar) v.findViewById(R.id.progress_bar);
             image.setTag(progressBar);
-            rating.setBackgroundResource(App.getDrawableResAttr(v.getContext(), R.attr.count_background));
+            rating.setBackground(App.getDrawableAttr(rating.getContext(), R.attr.count_background));
             //price = (TextView) v.findViewById(R.id.item_price);
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);

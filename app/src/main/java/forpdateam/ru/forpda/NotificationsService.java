@@ -52,7 +52,7 @@ public class NotificationsService extends Service {
     private final static String LOG_TAG = NotificationsService.class.getSimpleName();
     private final static int NOTIFY_STACKED_QMS_ID = -123;
     private final static int NOTIFY_STACKED_FAV_ID = -234;
-    public final static String CHECK_LAST_EVENTS = "SOSNI_HUICA_DOZE";
+    public final static String CHECK_LAST_EVENTS = "CHECK_LAST_EVENTS";
     private NotificationManagerCompat mNotificationManager;
     private SparseArray<NotificationEvent> eventsHistory = new SparseArray<>();
     private WebSocket webSocket;

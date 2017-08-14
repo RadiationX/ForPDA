@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.fragments;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.IdRes;
@@ -241,6 +242,10 @@ public class TabFragment extends RxFragment {
 
         toolbar.setNavigationOnClickListener(configuration.isAlone() || configuration.isMenu() ? getMainActivity().getToggleListener() : getMainActivity().getRemoveTabListener());
         toolbar.setNavigationIcon(configuration.isAlone() || configuration.isMenu() ? R.drawable.ic_toolbar_hamburger : R.drawable.ic_toolbar_arrow_back);
+
+        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.LOLLIPOP){
+            findViewById(R.id.toolbar_shadow_prelp).setVisibility(View.VISIBLE);
+        }
 
         if (!Client.getInstance().getNetworkState()) {
             if (!configuration.isUseCache())
