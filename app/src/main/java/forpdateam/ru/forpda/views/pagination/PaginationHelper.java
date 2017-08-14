@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.views.pagination;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -14,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ListView;
+
+import java.util.ArrayList;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -31,73 +34,94 @@ public class PaginationHelper {
     private final static int TAG_LAST = 4;
     private final static ColorFilter colorFilter = new PorterDuffColorFilter(Color.argb(80, 255, 255, 255), PorterDuff.Mode.DST_IN);
     private Context context;
-    private TabLayout tabLayout;
+    //private TabLayout tabLayout;
+
+    private ArrayList<TabLayout> tabLayouts = new ArrayList<>();
     private Pagination pagination;
     private PaginationListener listener;
+    private TabLayout.OnTabSelectedListener tabSelectedListener = new TabLayout.OnTabSelectedListener() {
+        @Override
+        public void onTabSelected(TabLayout.Tab tab) {
+            if (listener.onTabSelected(tab) || tab.getTag() == null) return;
+            switch ((Integer) tab.getTag()) {
+                case TAG_FIRST:
+                    firstPage();
+                    break;
+                case TAG_PREV:
+                    prevPage();
+                    break;
+                case TAG_NEXT:
+                    nextPage();
+                    break;
+                case TAG_LAST:
+                    lastPage();
+                    break;
+                case TAG_SELECT:
+                    selectPageDialog();
+                    break;
+            }
+        }
 
-    public String getString() {
-        return pagination == null || pagination.getAll() <= 1 ? null : Integer.toString(pagination.getCurrent()).concat("/").concat(Integer.toString(pagination.getAll()));
+        @Override
+        public void onTabUnselected(TabLayout.Tab tab) {
+
+        }
+
+        @Override
+        public void onTabReselected(TabLayout.Tab tab) {
+            onTabSelected(tab);
+        }
+    };
+
+
+    public PaginationHelper(Activity context) {
+        this.context = context;
     }
 
     public void setPagination(Pagination pagination) {
         this.pagination = pagination;
     }
 
-    public void inflatePagination(Context context, LayoutInflater inflater, View target) {
-        this.context = context;
-        tabLayout = (TabLayout) inflater.inflate(R.layout.toolbar_theme, (ViewGroup) target.getParent(), false);
-        ((ViewGroup) target.getParent()).addView(tabLayout, ((ViewGroup) target.getParent()).indexOfChild(target));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_toolbar_chevron_double_left).setTag(TAG_FIRST));
+    public void addInToolbar(LayoutInflater inflater, CollapsingToolbarLayout target) {
+        TabLayout tabLayout = (TabLayout) inflater.inflate(R.layout.pagination_toolbar, target, false);
+        target.addView(tabLayout, target.indexOfChild(target.findViewById(R.id.toolbar)));
+
+        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) target.getLayoutParams();
+        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
+        target.setLayoutParams(params);
+        target.setScrimVisibleHeightTrigger(App.px56 + App.px24);
+        setupTabLayout(tabLayout, true);
+        tabLayouts.add(tabLayout);
+        target.requestLayout();
+    }
+
+    public void addInList(LayoutInflater inflater, ViewGroup target) {
+        TabLayout tabLayout = (TabLayout) inflater.inflate(R.layout.pagination_list, target, false);
+        target.addView(tabLayout);
+        setupTabLayout(tabLayout, false);
+        tabLayouts.add(tabLayout);
+        target.requestLayout();
+    }
+
+    private void setupTabLayout(TabLayout tabLayout, boolean firstLast) {
+        if (firstLast) {
+            tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_toolbar_chevron_double_left).setTag(TAG_FIRST));
+        }
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_toolbar_chevron_left).setTag(TAG_PREV));
         tabLayout.addTab(tabLayout.newTab().setText("Выбор").setTag(TAG_SELECT));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_toolbar_chevron_right).setTag(TAG_NEXT));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_toolbar_chevron_double_right).setTag(TAG_LAST));
+        if (firstLast) {
+            tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_toolbar_chevron_double_right).setTag(TAG_LAST));
+        }
 
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (listener.onTabSelected(tab) || tab.getTag() == null) return;
-                switch ((Integer) tab.getTag()) {
-                    case TAG_FIRST:
-                        firstPage();
-                        break;
-                    case TAG_PREV:
-                        prevPage();
-                        break;
-                    case TAG_NEXT:
-                        nextPage();
-                        break;
-                    case TAG_LAST:
-                        lastPage();
-                        break;
-                    case TAG_SELECT:
-                        selectPageDialog();
-                        break;
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                onTabSelected(tab);
-            }
-        });
+        tabLayout.addOnTabSelectedListener(tabSelectedListener);
     }
 
-    public void setupToolbar(CollapsingToolbarLayout collapsingToolbarLayout) {
-        if (collapsingToolbarLayout == null) return;
-        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams();
-        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
-        collapsingToolbarLayout.setLayoutParams(params);
-        collapsingToolbarLayout.setScrimVisibleHeightTrigger(App.px56 + App.px24);
-    }
 
     private void selectPage(int pageNumber) {
-        listener.onSelectedPage(pageNumber);
+        if (listener != null) {
+            listener.onSelectedPage(pageNumber);
+        }
     }
 
 
@@ -123,32 +147,38 @@ public class PaginationHelper {
 
     public void updatePagination(Pagination newPagination) {
         this.pagination = newPagination;
-        if (pagination.getAll() <= 1) {
-            tabLayout.setVisibility(View.GONE);
-            return;
-        }
-        tabLayout.setVisibility(View.VISIBLE);
-        boolean prevDisabled = pagination.getCurrent() <= 1;
-        boolean nextDisabled = pagination.getCurrent() == pagination.getAll();
-        TabLayout.Tab tab;
-        int tag;
-        for (int i = 0; i < tabLayout.getTabCount(); i++) {
-            tab = tabLayout.getTabAt(i);
-            if (tab == null || tab.getTag() == null) return;
-            tag = (Integer) tab.getTag();
-            if ((tag) == TAG_SELECT) continue;
-            if (tab.getIcon() != null) {
-                if ((tag == TAG_FIRST || tag == TAG_PREV) ? prevDisabled : nextDisabled)
-                    tab.getIcon().setColorFilter(colorFilter);
-                else
-                    tab.getIcon().clearColorFilter();
+        for (TabLayout tabLayout : tabLayouts) {
+            if (pagination.getAll() <= 1) {
+                tabLayout.setVisibility(View.GONE);
+                return;
+            }
+            tabLayout.setVisibility(View.VISIBLE);
+            boolean prevDisabled = pagination.getCurrent() <= 1;
+            boolean nextDisabled = pagination.getCurrent() == pagination.getAll();
+            TabLayout.Tab tab;
+            int tag;
+            for (int i = 0; i < tabLayout.getTabCount(); i++) {
+                tab = tabLayout.getTabAt(i);
+                if (tab == null || tab.getTag() == null) return;
+                tag = (Integer) tab.getTag();
+                if ((tag) == TAG_SELECT) continue;
+                if (tab.getIcon() != null) {
+                    if ((tag == TAG_FIRST || tag == TAG_PREV) ? prevDisabled : nextDisabled)
+                        tab.getIcon().setColorFilter(colorFilter);
+                    else
+                        tab.getIcon().clearColorFilter();
+                }
             }
         }
     }
 
+    public String getTitle() {
+        return pagination == null || pagination.getAll() <= 1 ? null : Integer.toString(pagination.getCurrent()).concat("/").concat(Integer.toString(pagination.getAll()));
+    }
+
     public void selectPageDialog() {
         if (context == null)
-            context = App.getContext();
+            context = App.getActivity();
         final int[] pages = new int[pagination.getAll()];
 
         for (int i = 0; i < pagination.getAll(); i++)

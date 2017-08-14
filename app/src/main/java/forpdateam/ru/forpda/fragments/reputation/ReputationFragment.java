@@ -24,6 +24,7 @@ import forpdateam.ru.forpda.api.reputation.Reputation;
 import forpdateam.ru.forpda.api.reputation.models.RepData;
 import forpdateam.ru.forpda.api.reputation.models.RepItem;
 import forpdateam.ru.forpda.client.ClientHelper;
+import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
@@ -38,13 +39,10 @@ import io.reactivex.schedulers.Schedulers;
  * Created by radiationx on 20.03.17.
  */
 
-public class ReputationFragment extends TabFragment {
-
-    private SwipeRefreshLayout refreshLayout;
-    private RecyclerView recyclerView;
+public class ReputationFragment extends ListFragment {
     private ReputationAdapter adapter;
     private Subscriber<RepData> mainSubscriber = new Subscriber<>(this);
-    private PaginationHelper paginationHelper = new PaginationHelper();
+    private PaginationHelper paginationHelper;
     private RepData data = new RepData();
     private static AlertDialogMenu<ReputationFragment, RepItem> repDialogMenu;
     private AlertDialogMenu<ReputationFragment, RepItem> showedRepDialogMenu;
@@ -70,10 +68,6 @@ public class ReputationFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        setListsBackground();
-        baseInflateFragment(inflater, R.layout.fragment_base_list);
-        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
-        recyclerView = (RecyclerView) findViewById(R.id.base_list);
         viewsReady();
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
@@ -84,8 +78,10 @@ public class ReputationFragment extends TabFragment {
         recyclerView.setAdapter(adapter);
 
 
-        paginationHelper.inflatePagination(getContext(), inflater, toolbar);
-        paginationHelper.setupToolbar(toolbarLayout);
+
+        paginationHelper = new PaginationHelper(getActivity());
+        paginationHelper.addInToolbar(inflater, toolbarLayout);
+        paginationHelper.addInList(inflater, listContainer);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {
@@ -235,7 +231,7 @@ public class ReputationFragment extends TabFragment {
 
     private void onLoadThemes(RepData data) {
         refreshLayout.setRefreshing(false);
-        recyclerView.scrollToPosition(0);
+
         this.data = data;
 
 
@@ -246,6 +242,7 @@ public class ReputationFragment extends TabFragment {
         setSubtitle("" + (data.getPositive() - data.getNegative()) + " (+" + data.getPositive() + " / -" + data.getNegative() + ")");
         setTabTitle("Репутация " + data.getNick() + (data.getMode().equals(Reputation.MODE_FROM) ? ": кому изменял" : ""));
         setTitle("Репутация " + data.getNick() + (data.getMode().equals(Reputation.MODE_FROM) ? ": кому изменял" : ""));
+        listScrollTop();
     }
 
 

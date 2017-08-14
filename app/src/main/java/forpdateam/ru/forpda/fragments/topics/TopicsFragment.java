@@ -19,6 +19,7 @@ import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.topcis.models.TopicItem;
 import forpdateam.ru.forpda.api.topcis.models.TopicsData;
 import forpdateam.ru.forpda.client.ClientHelper;
+import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.fragments.forum.ForumFragment;
@@ -33,11 +34,9 @@ import forpdateam.ru.forpda.views.pagination.PaginationHelper;
  * Created by radiationx on 01.03.17.
  */
 
-public class TopicsFragment extends TabFragment {
+public class TopicsFragment extends ListFragment {
     public final static String TOPICS_ID_ARG = "TOPICS_ID_ARG";
     private int id;
-    private SwipeRefreshLayout refreshLayout;
-    private RecyclerView recyclerView;
     private TopicsAdapter adapter;
     private Subscriber<TopicsData> mainSubscriber = new Subscriber<>(this);
 
@@ -54,7 +53,7 @@ public class TopicsFragment extends TabFragment {
     }
 
 
-    private PaginationHelper paginationHelper = new PaginationHelper();
+    private PaginationHelper paginationHelper;
     private int currentSt = 0;
     TopicsData data;
     private AlertDialogMenu<TopicsFragment, TopicItem> fullTopicsDialogMenu;
@@ -64,14 +63,9 @@ public class TopicsFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        setListsBackground();
-        baseInflateFragment(inflater, R.layout.fragment_base_list);
-        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
-        recyclerView = (RecyclerView) findViewById(R.id.base_list);
         viewsReady();
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
-        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         adapter = new TopicsAdapter();
@@ -115,8 +109,9 @@ public class TopicsFragment extends TabFragment {
                     .show();
         });
 
-        paginationHelper.inflatePagination(getContext(), inflater, toolbar);
-        paginationHelper.setupToolbar(toolbarLayout);
+        paginationHelper = new PaginationHelper(getActivity());
+        paginationHelper.addInToolbar(inflater, toolbarLayout);
+        paginationHelper.addInList(inflater, listContainer);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {
@@ -141,7 +136,7 @@ public class TopicsFragment extends TabFragment {
 
     private void onLoadThemes(TopicsData data) {
         refreshLayout.setRefreshing(false);
-        recyclerView.scrollToPosition(0);
+
         this.data = data;
 
         setTitle(data.getTitle());
@@ -155,7 +150,8 @@ public class TopicsFragment extends TabFragment {
         adapter.addItems(new Pair<>("Темы", data.getTopicItems()));
         adapter.notifyDataSetChanged();
         paginationHelper.updatePagination(data.getPagination());
-        setSubtitle(paginationHelper.getString());
+        setSubtitle(paginationHelper.getTitle());
+        listScrollTop();
     }
 
     @Override

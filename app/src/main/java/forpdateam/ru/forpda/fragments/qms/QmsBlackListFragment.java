@@ -23,6 +23,7 @@ import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.api.qms.interfaces.IQmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
+import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsContactsAdapter;
 import forpdateam.ru.forpda.rxapi.RxApi;
@@ -35,9 +36,7 @@ import forpdateam.ru.forpda.utils.rx.Subscriber;
  * Created by radiationx on 22.03.17.
  */
 
-public class QmsBlackListFragment extends TabFragment {
-    private SwipeRefreshLayout refreshLayout;
-    private RecyclerView recyclerView;
+public class QmsBlackListFragment extends ListFragment {
     private AppCompatAutoCompleteTextView nickField;
     private QmsContactsAdapter adapter;
     private Subscriber<ArrayList<QmsContact>> mainSubscriber = new Subscriber<>(this);
@@ -53,13 +52,9 @@ public class QmsBlackListFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        baseInflateFragment(inflater, R.layout.fragment_base_list);
         ViewStub viewStub = (ViewStub) findViewById(R.id.toolbar_content);
         viewStub.setLayoutResource(R.layout.toolbar_qms_black_list);
         viewStub.inflate();
-        setListsBackground();
-        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
-        recyclerView = (RecyclerView) findViewById(R.id.base_list);
         nickField = (AppCompatAutoCompleteTextView) findViewById(R.id.qms_black_list_nick_field);
         viewsReady();
         nickField.addTextChangedListener(new SimpleTextWatcher() {
@@ -71,7 +66,6 @@ public class QmsBlackListFragment extends TabFragment {
 
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
-        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         adapter = new QmsContactsAdapter();
