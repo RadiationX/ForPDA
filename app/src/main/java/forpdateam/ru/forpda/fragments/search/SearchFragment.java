@@ -98,7 +98,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
     private SearchWebViewClient webViewClient;
 
     private StringBuilder titleBuilder = new StringBuilder();
-    private PaginationHelper paginationHelper = new PaginationHelper();
+    private PaginationHelper paginationHelper;
     private AlertDialogMenu<SearchFragment, IBaseForumPost> createdTopicsDialogMenu, tempTopicsDialogMenu;
 
     private Observer searchPreferenceObserver = (observable, o) -> {
@@ -236,8 +236,8 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         viewsReady();
         setCardsBackground();
         App.getInstance().addPreferenceChangeObserver(searchPreferenceObserver);
-        paginationHelper.inflatePagination(getContext(), inflater, toolbar);
-        paginationHelper.setupToolbar(toolbarLayout);
+        paginationHelper = new PaginationHelper(getActivity());
+        paginationHelper.addInToolbar(inflater, toolbarLayout);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {
@@ -651,7 +651,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         }
 
         paginationHelper.updatePagination(data.getPagination());
-        setSubtitle(paginationHelper.getString());
+        setSubtitle(paginationHelper.getTitle());
     }
 
 

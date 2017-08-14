@@ -86,7 +86,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     protected List<ThemePage> history = new ArrayList<>();
     protected Subscriber<ThemePage> mainSubscriber = new Subscriber<>(this);
     //protected Subscriber<String> helperSubscriber = new Subscriber<>(this);
-    private PaginationHelper paginationHelper = new PaginationHelper();
+    private PaginationHelper paginationHelper;
     //Тег для вьюхи поиска. Чтобы создавались кнопки и т.д, только при вызове поиска, а не при каждом создании меню.
     protected int searchViewTag = 0;
     //protected final ColorFilter colorFilter = new PorterDuffColorFilter(Color.argb(80, 255, 255, 255), PorterDuff.Mode.DST_IN);
@@ -198,8 +198,8 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         attachmentsPopup.setAddOnClickListener(v -> tryPickFile());
         attachmentsPopup.setDeleteOnClickListener(v -> removeFiles());
 
-        paginationHelper.inflatePagination(getContext(), inflater, toolbar);
-        paginationHelper.setupToolbar(toolbarLayout);
+        paginationHelper = new PaginationHelper(getActivity());
+        paginationHelper.addInToolbar(inflater, toolbarLayout);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {

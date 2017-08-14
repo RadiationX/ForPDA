@@ -15,7 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -33,6 +33,7 @@ import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import forpdateam.ru.forpda.bdobjects.favorites.FavItemBd;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
+import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.forum.ForumHelper;
 import forpdateam.ru.forpda.rxapi.RxApi;
@@ -49,9 +50,7 @@ import io.realm.RealmResults;
  * Created by radiationx on 22.09.16.
  */
 
-public class FavoritesFragment extends TabFragment {
-    private SwipeRefreshLayout refreshLayout;
-    private RecyclerView recyclerView;
+public class FavoritesFragment extends ListFragment {
     private FavoritesAdapter.OnItemClickListener onItemClickListener =
             favItem -> {
                 Bundle args = new Bundle();
@@ -158,7 +157,7 @@ public class FavoritesFragment extends TabFragment {
         realm = Realm.getDefaultInstance();
     }
 
-    private PaginationHelper paginationHelper = new PaginationHelper();
+    private PaginationHelper paginationHelper;
     private int currentSt = 0;
 
     private BottomSheetDialog dialog;
@@ -172,11 +171,6 @@ public class FavoritesFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        setListsBackground();
-        baseInflateFragment(inflater, R.layout.fragment_base_list);
-        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
-        recyclerView = (RecyclerView) findViewById(R.id.base_list);
-
         sortingView = (ViewGroup) View.inflate(getContext(), R.layout.favorite_sorting, null);
         keySpinner = (Spinner) sortingView.findViewById(R.id.sorting_key);
         orderSpinner = (Spinner) sortingView.findViewById(R.id.sorting_order);
@@ -187,7 +181,6 @@ public class FavoritesFragment extends TabFragment {
         viewsReady();
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
-        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         //recyclerView.addItemDecoration(new DividerItemDecoration(getContext()));
         adapter = new FavoritesAdapter();
@@ -195,8 +188,9 @@ public class FavoritesFragment extends TabFragment {
         adapter.setOnLongItemClickListener(onLongItemClickListener);
         recyclerView.setAdapter(adapter);
 
-        paginationHelper.inflatePagination(getContext(), inflater, toolbar);
-        paginationHelper.setupToolbar(toolbarLayout);
+        paginationHelper = new PaginationHelper(getActivity());
+        paginationHelper.addInToolbar(inflater, toolbarLayout);
+        paginationHelper.addInList(inflater, listContainer);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {
@@ -283,7 +277,7 @@ public class FavoritesFragment extends TabFragment {
 
     private void onLoadThemes(FavData data) {
         refreshLayout.setRefreshing(false);
-        recyclerView.scrollToPosition(0);
+
 
         sorting = data.getSorting();
         selectSpinners(sorting);
@@ -317,8 +311,8 @@ public class FavoritesFragment extends TabFragment {
             bdList.clear();
         }, this::bindView);
         paginationHelper.updatePagination(data.getPagination());
-        setSubtitle(paginationHelper.getString());
-
+        setSubtitle(paginationHelper.getTitle());
+        listScrollTop();
 
     }
 

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.mentions.models.MentionsData;
+import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -22,9 +23,7 @@ import forpdateam.ru.forpda.views.pagination.PaginationHelper;
  * Created by radiationx on 21.01.17.
  */
 
-public class MentionsFragment extends TabFragment {
-    private SwipeRefreshLayout refreshLayout;
-    private RecyclerView recyclerView;
+public class MentionsFragment extends ListFragment {
     private MentionsAdapter adapter;
     private MentionsAdapter.OnItemClickListener onItemClickListener =
             favItem -> {
@@ -35,7 +34,7 @@ public class MentionsFragment extends TabFragment {
 
     private Subscriber<MentionsData> mainSubscriber = new Subscriber<>(this);
 
-    private PaginationHelper paginationHelper = new PaginationHelper();
+    private PaginationHelper paginationHelper;
     private MentionsData data;
     private int currentSt = 0;
 
@@ -49,17 +48,14 @@ public class MentionsFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        setListsBackground();
-        baseInflateFragment(inflater, R.layout.fragment_base_list);
-        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
-        recyclerView = (RecyclerView) findViewById(R.id.base_list);
         viewsReady();
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        paginationHelper.inflatePagination(getContext(), inflater, toolbar);
-        paginationHelper.setupToolbar(toolbarLayout);
+        paginationHelper = new PaginationHelper(getActivity());
+        paginationHelper.addInToolbar(inflater, toolbarLayout);
+        paginationHelper.addInList(inflater, listContainer);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {
@@ -88,11 +84,11 @@ public class MentionsFragment extends TabFragment {
 
     private void onLoadThemes(MentionsData data) {
         refreshLayout.setRefreshing(false);
-        recyclerView.scrollToPosition(0);
+
         this.data = data;
         adapter.addAll(data.getItems());
         paginationHelper.updatePagination(data.getPagination());
-        setSubtitle(paginationHelper.getString());
-
+        setSubtitle(paginationHelper.getTitle());
+        listScrollTop();
     }
 }

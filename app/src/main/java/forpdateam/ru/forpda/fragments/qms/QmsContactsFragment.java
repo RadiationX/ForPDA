@@ -24,6 +24,7 @@ import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.qms.interfaces.IQmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.bdobjects.qms.QmsContactBd;
+import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsContactsAdapter;
 import forpdateam.ru.forpda.fragments.qms.chat.QmsChatFragment;
@@ -36,9 +37,7 @@ import io.realm.RealmResults;
 /**
  * Created by radiationx on 25.08.16.
  */
-public class QmsContactsFragment extends TabFragment {
-    private SwipeRefreshLayout refreshLayout;
-    private RecyclerView recyclerView;
+public class QmsContactsFragment extends ListFragment {
     private QmsContactsAdapter adapter;
     private Subscriber<ArrayList<QmsContact>> mainSubscriber = new Subscriber<>(this);
     private Subscriber<String> helperSubscriber = new Subscriber<>(this);
@@ -88,14 +87,9 @@ public class QmsContactsFragment extends TabFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         initFabBehavior();
-        setListsBackground();
-        baseInflateFragment(inflater, R.layout.fragment_base_list);
-        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
-        recyclerView = (RecyclerView) findViewById(R.id.base_list);
         viewsReady();
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
-        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
 

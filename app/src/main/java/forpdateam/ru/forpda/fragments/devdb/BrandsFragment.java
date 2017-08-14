@@ -18,6 +18,7 @@ import java.util.Map;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.devdb.models.Brands;
+import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.devdb.adapters.BrandsAdapter;
 import forpdateam.ru.forpda.rxapi.RxApi;
@@ -27,12 +28,10 @@ import forpdateam.ru.forpda.utils.rx.Subscriber;
  * Created by radiationx on 08.08.17.
  */
 
-public class BrandsFragment extends TabFragment {
+public class BrandsFragment extends ListFragment {
     public final static String ARG_CATEGORY_ID = "CATEGORY_ID";
     private final static String[] spinnerTitles = {"Телефоны", "Планшеты", "Эл. книги", "Смарт часы"};
     private final static String[] mansCats = {"phones", "pad", "ebook", "smartwatch"};
-    private SwipeRefreshLayout refreshLayout;
-    private RecyclerView recyclerView;
     private Subscriber<Brands> mainSubscriber = new Subscriber<>(this);
     private BrandsAdapter adapter;
     private int selected = 0;
@@ -64,10 +63,6 @@ public class BrandsFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        setListsBackground();
-        baseInflateFragment(inflater, R.layout.fragment_base_list);
-        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
-        recyclerView = (RecyclerView) findViewById(R.id.base_list);
         viewsReady();
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         refreshLayoutStyle(refreshLayout);

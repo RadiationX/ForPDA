@@ -23,6 +23,7 @@ import forpdateam.ru.forpda.api.qms.interfaces.IQmsTheme;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import forpdateam.ru.forpda.bdobjects.qms.QmsThemesBd;
+import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsThemesAdapter;
 import forpdateam.ru.forpda.fragments.qms.chat.QmsChatFragment;
@@ -36,14 +37,12 @@ import io.realm.RealmResults;
 /**
  * Created by radiationx on 25.08.16.
  */
-public class QmsThemesFragment extends TabFragment {
+public class QmsThemesFragment extends ListFragment {
     public final static String USER_ID_ARG = "USER_ID_ARG";
     public final static String USER_AVATAR_ARG = "USER_AVATAR_ARG";
     private MenuItem blackListMenuItem;
     private String avatarUrl;
     private QmsThemes currentThemes = new QmsThemes();
-    private SwipeRefreshLayout refreshLayout;
-    private RecyclerView recyclerView;
     private QmsThemesAdapter adapter;
     private Realm realm;
     private RealmResults<QmsThemesBd> results;
@@ -94,17 +93,12 @@ public class QmsThemesFragment extends TabFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         initFabBehavior();
-        setListsBackground();
-        baseInflateFragment(inflater, R.layout.fragment_base_list);
         tryShowAvatar();
-        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
-        recyclerView = (RecyclerView) findViewById(R.id.base_list);
         viewsReady();
 
 
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
-        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         fab.setImageDrawable(App.getAppDrawable(getContext(), R.drawable.ic_fab_create));
