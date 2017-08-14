@@ -76,6 +76,15 @@ a {
 * {
     box-sizing: border-box;
 }
+>.btns_container {
+    display: block;
+    position: relative;
+    &:after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+}
 li {
     .post-block {
         &.spoil,
@@ -247,22 +256,25 @@ li {
                     margin-bottom: 0;
                 }
             }
-            >.spoil_close {
-                .noselect();
-                margin: 6/16rem;
-                margin-top: 16/16rem;
-                font-size: 14/16rem;
-                margin-left: -(16-6)/16rem;
-                margin-right: -(16-6)/16rem;
-                margin-bottom: -(16-6)/16rem;
-                padding: 8/16rem;
-                text-transform: uppercase;
-                font-weight: bold!important;
-                font-style: normal!important;
-                .bRad(2/16rem);
-                display: inline-block;
-                &:active {
-                    background-color: @tapColor;
+            >.btns_container {
+                >.spoil_close {
+                    .noselect();
+                    margin: 6/16rem;
+                    margin-top: 16/16rem;
+                    font-size: 14/16rem;
+                    margin-left: -(16-6)/16rem;
+                    margin-right: -(16-6)/16rem;
+                    margin-bottom: -(16-6)/16rem;
+                    padding: 8/16rem;
+                    text-transform: uppercase;
+                    font-weight: bold!important;
+                    font-style: normal!important;
+                    color: @colorAccent!important;
+                    .bRad(2/16rem);
+                    display: inline-block;
+                    &:active {
+                        background-color: @tapColor;
+                    }
                 }
             }
         }
@@ -708,7 +720,7 @@ a.snapback {
 }*/
 
 .attach_block {
-    display: block;
+    display: inline-block;
     padding-left: 56/16rem;
     padding-top: 4/16rem;
     padding-bottom: 4/16rem;
@@ -729,6 +741,7 @@ a.snapback {
     text-decoration: none!important;
     line-height: 20/16rem!important;
     font-style: normal!important;
+    font-family: @font;
     .icon {
         position: absolute;
         top: 4/16rem;

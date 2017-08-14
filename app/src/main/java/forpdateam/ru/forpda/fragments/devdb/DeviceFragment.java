@@ -205,7 +205,7 @@ public class DeviceFragment extends TabFragment {
 
         if (device.getRating() > 0) {
             rating.setText(Integer.toString(device.getRating()));
-            rating.setBackgroundResource(App.getDrawableResAttr(getContext(), R.attr.count_background));
+            rating.setBackground(App.getDrawableAttr(rating.getContext(), R.attr.count_background));
             rating.getBackground().setColorFilter(RxApi.DevDb().getColorFilter(device.getRating()));
             rating.setVisibility(View.VISIBLE);
             if (device.getComments().size() > 0) {

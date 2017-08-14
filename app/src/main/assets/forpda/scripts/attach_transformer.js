@@ -269,11 +269,11 @@ function startTransformer2() {
         }
         var src = "";
         /*src+="<a href="#" class="attach_block"> <span class="icon"></span> <span class="title">ForPDA-0.2.6-app-stable-release.apk</span> <span class="desc">9,42 МБ, скачиваний: 421</span>";*/
-        src += "<a href=\"" + url + "\" class=\"attach_block\"><span class=\"icon\"></span><span class=\"title\">" + title + "</span><span class=\"desc\">" + weight;
+        src += "<div class=\"btns_container\"><a href=\"" + url + "\" class=\"attach_block\"><span class=\"icon\"></span><span class=\"title\">" + title + "</span><span class=\"desc\">" + weight;
         if (counts != undefined) {
             src += ", скачиваний: " + counts;
         }
-        src += "</span></a>";
+        src += "</span></a><\div>";
         attach.insertAdjacentHTML("beforeBegin", src);
         for (var j = 0; j < forDelete.length; j++) {
             forDelete[j].parentNode.removeChild(forDelete[j]);

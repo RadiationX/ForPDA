@@ -126,8 +126,7 @@
         </android.support.design.widget.AppBarLayout>
 
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <LinearLayout
             android:id="@+id/fragment_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -161,6 +160,14 @@
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
+
+        <View
+            android:id="@+id/toolbar_shadow_prelp"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@drawable/toolbar_shadow_prelp"
+            android:visibility="gone"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"

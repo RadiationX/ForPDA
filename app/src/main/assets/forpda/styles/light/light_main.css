@@ -105,6 +105,15 @@ a {
 * {
   box-sizing: border-box;
 }
+ > .btns_container {
+  display: block;
+  position: relative;
+}
+ > .btns_container:after {
+  content: "";
+  clear: both;
+  display: table;
+}
 li .post-block.spoil,
 li .post-block.hidden {
   -webkit-border-radius: 2px;
@@ -268,7 +277,7 @@ li .post-block.hidden {
 .post-block.spoil > .block-body > .post-block.spoil:last-child {
   margin-bottom: 0;
 }
-.post-block.spoil > .block-body > .spoil_close {
+.post-block.spoil > .block-body > .btns_container > .spoil_close {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -285,11 +294,12 @@ li .post-block.hidden {
   text-transform: uppercase;
   font-weight: bold!important;
   font-style: normal!important;
+  color: #000000 !important;
   -webkit-border-radius: 0.125rem;
   border-radius: 0.125rem;
   display: inline-block;
 }
-.post-block.spoil > .block-body > .spoil_close:active {
+.post-block.spoil > .block-body > .btns_container > .spoil_close:active {
   background-color: rgba(0, 0, 0, 0.1);
 }
 .post-block.spoil.close > .block-body {
@@ -678,7 +688,7 @@ a.snapback:after {
     }
 }*/
 .attach_block {
-  display: block;
+  display: inline-block;
   padding-left: 3.5rem;
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
@@ -696,6 +706,7 @@ a.snapback:after {
   text-decoration: none!important;
   line-height: 1.25rem !important;
   font-style: normal!important;
+  font-family: "Roboto", sans-serif;
 }
 .attach_block .icon {
   position: absolute;

@@ -165,15 +165,50 @@ function blocksOpenClose() {
         /*if (!codeBlock.classList.contains("trigger")) {
             codeBlock.classList.add("trigger");
         }*/
+
+        if (codeBlock.classList.contains('spoil')) {
+            var btn = bb.querySelector('.spoil_close');
+            if (!btn) {
+                var btnsContainer = document.createElement("div");
+                btnsContainer.classList.add("btns_container");
+                btn = document.createElement('div');
+                bb.appendChild(btnsContainer);
+                btnsContainer.appendChild(btn);
+                btn.innerHTML = 'Закрыть спойлер';
+                btn.className = "spoil_close";
+                btnsContainer.style.display = "none";
+            }
+
+            btn.addEventListener('click', clickBtn);
+
+            function clickBtn(event) {
+                clickOnElement(event);
+                var t = event.target;
+                while (!t.classList.contains('post_body') || !t.classList.contains('msg-content') || t != document.body) {
+                    if (t.classList.contains('spoil')) {
+                        t.scrollIntoView();
+                        return;
+                    }
+                    t = t.parentElement;
+                }
+
+            }
+
+        }
     }
 
     function clickOnElement(event) {
+
         var t = event.target;
-        while (!t.classList.contains('post_body') || !t.classList.contains('msg-content') || t != document.body) {
+        console.log("clickOnElement data-brackets-id " + t.getAttribute("data-brackets-id"));
+        while (t.classList.contains("post-block") || !t.classList.contains('post_body') || !t.classList.contains('msg-content') || t != document.body) {
+            console.log("clickOnElement " + t.getAttribute("data-brackets-id"));
             if (t.classList.contains('spoil')) {
                 //event.stopPropagation();
+                console.log("call spoilCloseButton data-brackets-id " + t.parentElement.getAttribute("data-brackets-id"));
                 toggler("close", "open", t);
                 spoilCloseButton(t);
+
                 return;
             } else if (t.classList.contains('code')) {
                 //event.stopPropagation();
@@ -203,32 +238,41 @@ function blocksOpenClose() {
  */
 
 function spoilCloseButton(t) {
+    console.log("spoilCloseButton data-brackets-id " + t.getAttribute("data-brackets-id"));
     var el = t;
-    while (t && !t.classList.contains('.post-body')) {
-        if (t.classList.contains('spoil') && !t.querySelector('.spoil_close')) {
-            if (t.querySelector('img[src]')) {
-                var images = t.querySelectorAll('img[src]');
-                images[images.length - 1].addEventListener("load", function () {
-                    spoilCloseButton(el);
-                });
-            }
-            if (t.clientHeight > document.documentElement.clientHeight) {
-                var bb = t.querySelector('.block-body');
-                var btn = document.createElement('div');
-                btn.innerHTML = 'Закрыть спойлер';
-                btn.className = "spoil_close";
-                btn.addEventListener('click', clickBtn);
+    if (t.classList.contains('spoil')) {
+        
+        t = t.querySelector(".block-body");
+        
+        console.log("body "+t);
+        
+        if (t.querySelector('img[src]')) {
+            var images = t.querySelectorAll('img[src]');
+            images[images.length - 1].addEventListener("load", function () {
+                spoilCloseButton(el);
+            });
+        }
 
-                function clickBtn() {
-                    t.classList.remove('open');
-                    t.classList.add('close');
-                    t.scrollIntoView();
+        
+        for (var i = t.childNodes.length; i >= 0; i--) {
+            var node = t.childNodes.item(i);
+            console.log("NODE "+t.classList);
+            if ((!!node)&&(!!node.classList)&&node.classList.contains("btns_container")) {
+                var btn = node;
+                console.log("SUKA " + (t.clientHeight > document.documentElement.clientHeight) + " : " + btn.style.display);
+                console.log("data-brackets-id " + btn.parentElement.getAttribute("data-brackets-id"));
+                if (t.clientHeight > document.documentElement.clientHeight) {
+                    btn.style.display = "block";
+                    console.log("SET BLYA BLOCK");
+                    return;
+                } else {
+                    btn.style.display = "none";
+                    console.log("SET BLYA NONE");
+                    return;
                 }
-                bb.appendChild(btn);
-                return;
             }
         }
-        t = t.parentElement;
+
     }
 }
 
