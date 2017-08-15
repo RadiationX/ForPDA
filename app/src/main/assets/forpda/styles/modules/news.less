@@ -1,0 +1,502 @@
+@undefined: red;
+@undefined1: blue;
+.content-box {
+    padding: 1em;
+    padding-top: 1em;
+    padding-bottom: 0.5em;
+    p {}
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        line-height: normal;
+    }
+    img {
+        max-width: 100%;
+        border: none!important;
+        height: auto!important;
+    }
+    iframe {
+        margin: 0.5em auto;
+        max-width: 100%;
+    }
+    .table4site {
+        .bRad(2px);
+        height: auto!important;
+        border-collapse: collapse;
+        border-top: @border1;
+        border-bottom: @border1;
+        overflow-x: auto;
+        background: @undefined;
+        margin: 0.5em -1em;
+        position: relative;
+        display: block;
+        tbody {
+            width: 100%;
+            display: table;
+            tr {
+                td {
+                    text-align: left;
+                    padding: 0.75em 0.5em;
+                    >p {
+                        margin: 0;
+                    }
+                }
+                &:nth-child(even) td {
+                    background: rgba(0, 0, 0, 0.05);
+                }
+            }
+        }
+    }
+    .galContainer {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        li {
+            text-align: center;
+            a {
+                img {}
+            }
+        }
+    }
+    .wp-caption {
+        .wp-caption-dt {
+            display: block;
+            a {
+                img {}
+            }
+        }
+        .wp-caption-dd {}
+    }
+    .mlinks {
+        background: @undefined;
+        border-top: @border1;
+        border-bottom: @border1;
+        margin: 0.5em -1em;
+        .mlhead {
+            background: @undefined;
+            padding-top: 1em;
+            min-height: 128px;
+            &:after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+            .do-vam {
+                >div {
+                    .mlicon {
+                        float: left;
+                        margin: 0em 1em 1em 1em;
+                        display: block;
+                        width: 3.5em;
+                        .bRad(2px);
+                    }
+                    .mltitle,
+                    .mlauthor {
+                        overflow: hidden;
+                        font-weight: normal;
+                    }
+                    .mltitle {
+                        margin: 0;
+                        padding: 0.2em 0;
+                        font-size: 1.25em;
+                    }
+                    .mlauthor {
+                        margin: 0;
+                        font-size: 1em;
+                        padding-bottom: 0.25em;
+                        color: @undefined1;
+                    }
+                    .mltbl {
+                        padding-bottom: 0.25em;
+                        overflow: hidden;
+                        .mlrow {
+                            .bRad(2px);
+                            position: relative;
+                            line-height: 2.25em;
+                            height: 2.25em;
+                            margin: 0.25em 0.5em 0.25em 0.5em;
+                            float: right;
+                            clear: both;
+                            &:first-child {
+                                display: none;
+                            }
+                            .mlcell {
+                                display: inline-block;
+                                position: relative;
+                                //padding: 0 10px;
+                                &:first-child {
+                                    min-width: 2.25em;
+                                    text-align: center;
+                                    i {
+                                        &:before {}
+                                    }
+                                }
+                                &:nth-child(2) {
+                                    padding: 0 0.375em;
+                                    &:first-letter {
+                                        text-transform: uppercase;
+                                    }
+                                }
+                                &:nth-child(3) {
+                                    min-width: 2.5em;
+                                    text-align: center;
+                                    &:after {
+                                        display: none;
+                                    }
+                                }
+                                &:last-child {
+                                    border-right: none;
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    &:after {
+                                        display: none;
+                                    }
+                                    a {
+                                        display: block;
+                                        width: 100%;
+                                        height: 100%;
+                                        position: absolute;
+                                        color: transparent;
+                                        top: 0;
+                                        left: 0;
+                                        &:active {
+                                            .bRad(2px);
+                                            background: @tapColor;
+                                        }
+                                    }
+                                }
+                            }
+                            &:last-child {
+                                .mlcell {
+                                    border-bottom: none;
+                                }
+                            }
+                        }
+                        &:after {
+                            content: "";
+                            display: table;
+                            clear: both;
+                        }
+                    }
+                    .mldl {
+                        margin: 0;
+                        padding: 0.5em 1em;
+                        font-weight: normal;
+                        display: none;
+                    }
+                }
+            }
+        }
+        .mlscreenshots {
+            width: 100%;
+            border-top: @border1;
+            .screenshots {
+                .sc-btn {
+                    display: none!important;
+                }
+                .sc-content {
+                    white-space: nowrap;
+                    overflow-x: scroll!important;
+                    a {
+                        padding: 0 0.375em;
+                        vertical-align: middle;
+                        display: inline-block;
+                        img {}
+                    }
+                }
+            }
+        }
+        &.desc {
+            .mlhead {
+                min-height: 80px;
+                .do-vam {
+                    div {
+                        .mlicon {
+                            width: 3.5em;
+                            height: 3.5em;
+                        }
+                    }
+                }
+            }
+            .mlright {
+                background: @undefined;
+                overflow: hidden;
+                .mltbl {
+                    display: table;
+                    width: 100%;
+                    border-top: @border1;
+                    .mlrow {
+                        position: relative;
+                        line-height: 2em;
+                        display: table-row;
+                        .mlcell {
+                            display: table-cell;
+                            position: relative;
+                            padding: 0 10px;
+                            border: @border1;
+                            border-width: 0 1px 1px 0;
+                            &:last-of-type {
+                                border-right: none;
+                            }
+                            a {}
+                            i,
+                            span {
+                                display: block;
+                                height: 2em;
+                                text-align: center;
+                                &:before {
+                                    line-height: 2em;
+                                }
+                            }
+                        }
+                        &:last-child {
+                            .mlcell {
+                                border-bottom: none;
+                            }
+                        }
+                    }
+                }
+            }
+            .mlscreenshots {
+                background: @undefined;
+                padding: 10px;
+            }
+        }
+    }
+    p {
+        img {
+            max-width: 100%;
+            width: auto!important;
+            height: auto!important;
+            margin: 0.5em auto;
+        }
+    }
+    ul {
+        //margin-top: -0.9em;
+    }
+    blockquote {
+        background: @undefined;
+        margin: 0.5em -1em;
+        padding: 1em;
+        padding-top: 0;
+        border-top: @border1;
+        border-bottom: @border1;
+        border-color: @undefined;
+        &:before {
+            content: "Цитата";
+            height: 3em;
+            line-height: 3em;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.5em;
+        }
+        p {
+            display: inline;
+        }
+    }
+    .review-bottom-informer {
+        margin: 0.5em -1em;
+        border-top: @border1;
+        .item {
+            text-align: center;
+            display: block;
+            box-sizing: border-box;
+            min-height: 3em;
+            background: @undefined;
+            .title {
+                display: block;
+                text-align: center;
+                font-size: 1.5em;
+            }
+            .desc {
+                br {
+                    display: inline-block;
+                }
+            }
+            &:not(a) {
+                padding: 0.5em 0;
+                .desc {
+                    font-size: 0.875em;
+                    color: @undefined1;
+                }
+            }
+        }
+        a.item {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.875em;
+            padding: 1em;
+            .title {
+                display: none;
+                font-size: 1.125em;
+                padding-right: 0.25em;
+                i {
+                    display: none;
+                    &:before {
+                        display: block;
+                        width: auto;
+                    }
+                }
+            }
+        }
+        .item:first-child {}
+    }
+    .mb_source {
+        margin: 0;
+        line-height: 2.25em;
+        height: 2.25em;
+        padding-top: 0.25em;
+    }
+    .mb_source + br {
+        display: none;
+    }
+    div[id*="poll-ajax-frame"] {
+        margin: 0.5em -1em;
+        padding: 1em 1em;
+        border-top: @border1;
+        position: relative;
+        >h2 {
+            margin: 0;
+        }
+        .poll-list {
+            padding: 0;
+            padding-top: 1em;
+            list-style: none;
+            display: block;
+            margin: 0;
+            li {
+                display: block;
+                .text {
+                    height: 2.25em;
+                    line-height: 2.25em;
+                    display: block;
+                    .color {}
+                }
+                .title {
+                    display: block;
+                    padding-top: 0.75em;
+                    padding-bottom: 0.25em;
+                }
+                .slider {
+                    position: relative;
+                    line-height: 1.5em;
+                    height: 1.5em;
+                    .range {
+                        .fill {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            height: 1.5em;
+                            line-height: 1.5em;
+                            .bRad(2px);
+                        }
+                    }
+                    .value {
+                        position: absolute;
+                        top: 0;
+                        right: 0;
+                        line-height: 1.7142em;
+                        height: 1.7142em;
+                        font-size: 0.875em;
+                        padding: 0 0.4em;
+                    }
+                }
+            }
+        }
+        .btn {
+            float: right;
+            background: none;
+            border: none;
+            outline: none;
+            font-size: 0.875em;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: @colorAccent;
+            line-height: 2.571em;
+            padding: 0 0.571em;
+            position: absolute;
+            bottom: 0.571em;
+            right: 0.571em;
+            &+.small-desc {
+                margin-bottom: 2.25em;
+            }
+        }
+        .small-desc {
+            font-weight: bold;
+            margin-top: 1em;
+            text-align: right;
+            color: @undefined1;
+            a {}
+        }
+        &:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    }
+    .btn {
+        padding: 0.75em;
+        display: inline-block;
+        position: relative;
+        .bRad(2px);
+        color: #ffffff;
+        background: #0277bd;
+        margin: 0.25em 0;
+        &:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        &:active:after {
+            background: rgba(0, 0, 0, 0.1);
+        }
+    }
+    .eg_tbl {
+        background: transparent;
+        margin-top: 0;
+        list-style: none;
+        padding: 0;
+        margin: 0 -1em;
+        >li {
+            padding: 0 1em;
+            border-top: @border1;
+            background: transparent;
+            >ol {
+                list-style: none;
+                padding: 0;
+                width: auto;
+                li {
+                    padding-top: 1em;
+                    text-align: center;
+                    img {}
+                }
+            }
+            >div {
+                h1 {}
+                p {
+                    span {}
+                    &._spacer {
+                        display: none;
+                    }
+                }
+            }
+            &:last-child {
+                border-bottom: @border1;
+            }
+        }
+    }
+}
+#news.noimages {
+    .container .content .content-box p a[data-lightbox]:after {
+        content: "Прикрепленное изображение";
+        display: block;
+    }
+}
