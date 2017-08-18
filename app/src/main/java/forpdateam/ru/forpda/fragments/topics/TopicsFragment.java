@@ -111,7 +111,7 @@ public class TopicsFragment extends ListFragment {
 
         paginationHelper = new PaginationHelper(getActivity());
         paginationHelper.addInToolbar(inflater, toolbarLayout);
-        paginationHelper.addInList(inflater, listContainer);
+        //paginationHelper.addInList(inflater, listContainer);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {

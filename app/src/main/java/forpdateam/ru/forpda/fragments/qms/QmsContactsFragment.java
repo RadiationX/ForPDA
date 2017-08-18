@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -86,8 +87,10 @@ public class QmsContactsFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        long time = System.currentTimeMillis();
         initFabBehavior();
         viewsReady();
+        Log.d("suka", "QCF cp1 " + (System.currentTimeMillis() - time));
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -101,9 +104,10 @@ public class QmsContactsFragment extends ListFragment {
         adapter.setOnLongItemClickListener(onLongItemClickListener);
         adapter.setOnItemClickListener(onItemClickListener);
         recyclerView.setAdapter(adapter);
-
+        Log.d("suka", "QCF cp2 " + (System.currentTimeMillis() - time));
 
         bindView();
+        Log.d("suka", "QCF cp3 " + (System.currentTimeMillis() - time));
         return view;
     }
 

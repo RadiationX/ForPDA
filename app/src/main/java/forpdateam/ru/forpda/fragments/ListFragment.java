@@ -9,6 +9,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,31 +31,33 @@ import forpdateam.ru.forpda.views.pagination.PaginationHelper;
 public abstract class ListFragment extends TabFragment {
     protected SwipeRefreshLayout refreshLayout;
     protected RecyclerView recyclerView;
-    protected LinearLayout listContainer;
-    protected NestedScrollView listScrollView;
+    //protected LinearLayout listContainer;
+    //protected NestedScrollView listScrollView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        long time = System.currentTimeMillis();
         setCardsBackground();
         baseInflateFragment(inflater, R.layout.fragment_base_list);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
-        listContainer = (LinearLayout) findViewById(R.id.list_container);
+        //listContainer = (LinearLayout) findViewById(R.id.list_container);
         recyclerView = (RecyclerView) findViewById(R.id.base_list);
-        listScrollView = (NestedScrollView) findViewById(R.id.list_scroll_view);
+        //listScrollView = (NestedScrollView) findViewById(R.id.list_scroll_view);
 
-        recyclerView.setNestedScrollingEnabled(false);
+        //recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_for_lists));
-        recyclerView.setHasFixedSize(true);
+        //recyclerView.setHasFixedSize(true);
         refreshLayoutStyle(refreshLayout);
+        Log.d("suka", "LF onCreateView " + (System.currentTimeMillis() - time));
         return view;
     }
 
     protected void listScrollTop() {
         new Handler().postDelayed(() -> {
-            listScrollView.fullScroll(View.FOCUS_UP);
-            //recyclerView.smoothScrollToPosition(0);
+            //listScrollView.fullScroll(View.FOCUS_UP);
+            recyclerView.smoothScrollToPosition(0);
             //appBarLayout.setExpanded(true, true);
         }, 225);
     }
