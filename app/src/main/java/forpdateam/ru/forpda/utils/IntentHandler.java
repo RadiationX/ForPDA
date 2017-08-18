@@ -147,8 +147,25 @@ public class IntentHandler {
                 for (String path : uri.getPathSegments()) {
                     Log.d(LOG_TAG, "Uri path: " + path);
                 }
+
                 if (uri.getPathSegments().size() > 0) {
                     switch (uri.getPathSegments().get(0)) {
+                        case "pages":
+                            if(uri.getPathSegments().size()>1){
+                                if(uri.getPathSegments().get(1).equalsIgnoreCase("go")){
+                                    String redUrl = uri.getQueryParameter("u");
+                                    if(redUrl!=null){
+                                        try{
+                                            redUrl = URLDecoder.decode(redUrl, "UTF-8");
+                                        }catch (UnsupportedEncodingException ex){
+                                            ex.printStackTrace();
+                                        }
+                                        externalIntent(redUrl);
+                                        return true;
+                                    }
+                                }
+                            }
+                            break;
                         case "forum":
                             return handleForum(uri, args);
                         case "devdb":
@@ -185,6 +202,11 @@ public class IntentHandler {
             ImageViewerActivity.startActivity(App.getContext(), url);
             return true;
         }
+        externalIntent(url);
+        return false;
+    }
+
+    private static void externalIntent(String url){
         Log.d(LOG_TAG, "Start external intent");
         try {
             //App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK));
@@ -194,7 +216,6 @@ public class IntentHandler {
         } catch (ActivityNotFoundException e) {
             ACRA.getErrorReporter().handleException(e);
         }
-        return false;
     }
 
     private static boolean handleForum(Uri uri, Bundle args) {
