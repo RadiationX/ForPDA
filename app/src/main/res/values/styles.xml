@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="TreeNodeStyleCustom">
         <item name="android:paddingLeft">16dp</item>
@@ -187,7 +187,7 @@
         <item name="android:shadowDy">1</item>
         <item name="android:shadowRadius">5</item>
         <item name="android:shadowColor">#4c000000</item>
-        <item name="android:textAlignment">center</item>
+        <item name="android:textAlignment" tools:ignore="NewApi">center</item>
     </style>
 
 
@@ -215,8 +215,8 @@
 
 
     <style name="ImageViewTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
+        <item name="android:windowTranslucentNavigation" tools:ignore="NewApi">true</item>
     </style>
 
     <style name="ImageViewTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat">

@@ -3,7 +3,9 @@ package forpdateam.ru.forpda.views.drawers;
 import android.support.annotation.DrawableRes;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
+import forpdateam.ru.forpda.BuildConfig;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.auth.AuthFragment;
@@ -11,6 +13,7 @@ import forpdateam.ru.forpda.fragments.devdb.BrandsFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.forum.ForumFragment;
 import forpdateam.ru.forpda.fragments.mentions.MentionsFragment;
+import forpdateam.ru.forpda.fragments.news.main.NewsMainParentFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
 import forpdateam.ru.forpda.fragments.search.SearchFragment;
 
@@ -24,7 +27,8 @@ public class MenuItems {
 
     public MenuItems() {
         createdMenuItems.add(new MenuItem("Авторизация", R.drawable.ic_person_add, AuthFragment.class));
-        //createdMenuItems.add(new MenuItem("Новости", R.drawable.ic_newspaper, NewsListFragment.class));
+        if (Objects.equals(BuildConfig.FLAVOR, "dev"))
+            createdMenuItems.add(new MenuItem("Новости", R.drawable.ic_newspaper, NewsMainParentFragment.class));
         createdMenuItems.add(new MenuItem("Избранное", R.drawable.ic_star, FavoritesFragment.class));
         createdMenuItems.add(new MenuItem("Контакты", R.drawable.ic_contacts, QmsContactsFragment.class));
         createdMenuItems.add(new MenuItem("Ответы", R.drawable.ic_notifications, MentionsFragment.class));

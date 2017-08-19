@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.fragments;
 
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
@@ -11,6 +12,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -21,11 +23,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import com.trello.rxlifecycle2.components.support.RxFragment;
 
 import java.util.Observer;
 
@@ -41,7 +42,7 @@ import forpdateam.ru.forpda.settings.Preferences;
 /**
  * Created by radiationx on 07.08.16.
  */
-public class TabFragment extends RxFragment {
+public class TabFragment extends Fragment {
     private final static String LOG_TAG = TabFragment.class.getSimpleName();
     public final static String ARG_TITLE = "TAB_TITLE";
     public final static String TAB_SUBTITLE = "TAB_SUBTITLE";
@@ -60,6 +61,7 @@ public class TabFragment extends RxFragment {
 
     private String title = null, tabTitle = null, subtitle = null, parentTag = null;
 
+    protected ProgressBar toolbarProgress;
     protected RelativeLayout fragmentContainer;
     protected LinearLayout fragmentContent, noNetwork, titlesWrapper;
     protected CoordinatorLayout coordinatorLayout;
@@ -223,6 +225,7 @@ public class TabFragment extends RxFragment {
         toolbarImageView = (ImageView) toolbar.findViewById(R.id.toolbar_image_icon);
         toolbarTitleView = (TextView) toolbar.findViewById(R.id.toolbar_title);
         toolbarSubtitleView = (TextView) toolbar.findViewById(R.id.toolbar_subtitle);
+        toolbarProgress = (ProgressBar) toolbar.findViewById(R.id.toolbar_progress);
         titlesWrapper = (LinearLayout) toolbar.findViewById(R.id.toolbar_titles_wrapper);
         toolbarSpinner = (Spinner) toolbar.findViewById(R.id.toolbar_spinner);
         notifyDot = findViewById(R.id.notify_dot);

@@ -169,8 +169,11 @@ public class App extends android.app.Application {
         instance = this;
         setTheme(R.style.LightAppTheme);
 
-        ACRA.init(this);
-        ACRA.getErrorReporter().putCustomData("USER_NICK", getPreferences().getString("auth.user.nick", "null"));
+
+        if (!BuildConfig.DEBUG) {
+            ACRA.init(this);
+            ACRA.getErrorReporter().putCustomData("USER_NICK", getPreferences().getString("auth.user.nick", "null"));
+        }
         density = getResources().getDisplayMetrics().density;
         initImageLoader(this);
 
@@ -208,16 +211,10 @@ public class App extends android.app.Application {
             webViewNotFound = true;
         }
 
-        if (isWebViewNotFound()) {
-            return;
-        }
-
         templates.put(TEMPLATE_THEME, findTemplate(TEMPLATE_THEME));
         templates.put(TEMPLATE_SEARCH, findTemplate(TEMPLATE_SEARCH));
         templates.put(TEMPLATE_QMS_CHAT, findTemplate(TEMPLATE_QMS_CHAT));
         templates.put(TEMPLATE_QMS_CHAT_MESS, findTemplate(TEMPLATE_QMS_CHAT_MESS));
-
-//        NewsRepository.Companion.createInstance();
 
         //init
         Realm.init(this);

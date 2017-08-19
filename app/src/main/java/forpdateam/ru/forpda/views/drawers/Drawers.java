@@ -59,7 +59,7 @@ public class Drawers {
         fillMenuItems();
         menuAdapter.notifyDataSetChanged();
         if ((boolean) o && TabManager.getInstance().getSize() <= 1) {
-            //select(findByClassName(NewsListFragment.class.getSimpleName()));
+            //select(findByClassName(NewsTimelineFragment.class.getSimpleName()));
             selectMenuItem(findMenuItem(FavoritesFragment.class));
         }
         if (!(boolean) o) {

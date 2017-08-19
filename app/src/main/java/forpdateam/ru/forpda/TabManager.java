@@ -1,17 +1,21 @@
 package forpdateam.ru.forpda;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Fade;
 import android.util.Log;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.utils.animation.DetailsTransition;
 
 public class TabManager {
     private final static String LOG_TAG = TabManager.class.getSimpleName();
@@ -152,6 +156,38 @@ public class TabManager {
         activeTag = TAB_PREFIX.concat(Long.toString(System.currentTimeMillis()));
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         hideTabs(transaction);
+        transaction.add(R.id.fragments_container, tabFragment, activeTag).commit();
+        fragmentManager.executePendingTransactions();
+        updateFragmentList();
+        activeIndex = existingFragments.indexOf(tabFragment);
+        tabListener.onChange();
+        tabListener.onAddTab(tabFragment);
+    }
+
+    public void add(TabFragment tabFragment, View sharedElement, Fragment fragment) {
+        if (tabFragment == null)
+            return;
+        String check = null;
+        if (tabFragment.getConfiguration().isAlone()) {
+            check = getTagContainClass(tabFragment.getClass());
+        }
+        if (check != null) {
+            select(check);
+            return;
+        }
+
+        activeTag = TAB_PREFIX.concat(Long.toString(System.currentTimeMillis()));
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        hideTabs(transaction);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            tabFragment.setSharedElementEnterTransition(new DetailsTransition());
+            tabFragment.setEnterTransition(new Fade());
+            fragment.setExitTransition(new Fade());
+            tabFragment.setSharedElementReturnTransition(new DetailsTransition());
+        }
+
+        transaction.addSharedElement(sharedElement, "detailsCover");
         transaction.add(R.id.fragments_container, tabFragment, activeTag).commit();
         fragmentManager.executePendingTransactions();
         updateFragmentList();
