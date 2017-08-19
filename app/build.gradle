@@ -56,6 +56,13 @@ android {
             versionCode versionNumber
             versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild}) beta"
         }
+
+        dev {
+            minSdkVersion '22'
+            applicationId 'ru.forpdateam.forpda.debug'
+            versionCode versionNumber
+            versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild}) dev_api_22"
+        }
     }
 
     applicationVariants.all { variant ->
@@ -91,7 +98,7 @@ android {
     }
     splits {
         abi {
-            enable false
+            enable gradle.startParameter.taskNames.contains(":app:assembleRelease")
             reset()
             include 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
             universalApk false
@@ -105,9 +112,9 @@ android {
 ext {
     supportLibVersion = '25.3.1'
     okHttpVersion = '3.8.1'
-    rxbindingVersion = '0.4.0'
-    rxlifecycleVersion = '2.0.1'
-    rxCoreVersion = '2.0.1'
+    rxCoreVersion = '2.1.0'
+    rxAndroidVersion = '2.0.1'
+    archVersion = '1.0.0-alpha5'
 }
 
 dependencies {
@@ -118,27 +125,26 @@ dependencies {
     compile "com.android.support:cardview-v7:${supportLibVersion}"
     compile "com.android.support:recyclerview-v7:${supportLibVersion}"
     compile "com.android.support:preference-v7:${supportLibVersion}"
+//    compile "android.arch.persistence.room:runtime:${archVersion}"
+//    compile "android.arch.persistence.room:rxjava2:${archVersion}"
+//    annotationProcessor "android.arch.persistence.room:compiler:${archVersion}"
+//    compile "android.arch.lifecycle:runtime:${archVersion}"
+//    compile "android.arch.lifecycle:extensions:${archVersion}"
+//    annotationProcessor "android.arch.lifecycle:compiler:${archVersion}"
     compile "com.squareup.okhttp3:okhttp:${okHttpVersion}"
     compile "com.squareup.okhttp3:okhttp-urlconnection:${okHttpVersion}"
     compile 'com.annimon:stream:1.1.4'
-    compile "io.reactivex.rxjava2:rxandroid:${rxCoreVersion}"
+    compile "io.reactivex.rxjava2:rxandroid:${rxAndroidVersion}"
     compile "io.reactivex.rxjava2:rxjava:${rxCoreVersion}"
-    compile 'com.github.fcannizzaro:fast-event:0.1.4'
-    compile 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
-    compile "com.trello.rxlifecycle2:rxlifecycle:${rxlifecycleVersion}"
-    compile "com.trello.rxlifecycle2:rxlifecycle-components:${rxlifecycleVersion}"
-    compile "com.trello.rxlifecycle2:rxlifecycle-android:${rxlifecycleVersion}"
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
-    compile 'org.jsoup:jsoup:1.10.1'
+    compile 'org.jsoup:jsoup:1.10.3'
     compile 'com.github.rahatarmanahmed:circularprogressview:2.5.0'
     compile 'de.hdodenhof:circleimageview:2.1.0'
-    compile 'com.nineoldandroids:library:2.4.0'
     compile group: 'org.ccil.cowan.tagsoup', name: 'tagsoup', version: '1.2'
     compile 'org.bsc.util:minitemplator-repackaged:1.2'
     compile 'com.lapism:searchview:4.0'
     compile 'com.github.bmelnychuk:atv:1.2.9'
     compile 'com.afollestad:sectioned-recyclerview:0.2.3'
-    //compile 'ch.acra:acra:4.9.0'
     compile 'com.faendir:acra:4.10.0'
 
     compile 'com.github.chrisbanes:PhotoView:2.0.0'

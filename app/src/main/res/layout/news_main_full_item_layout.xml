@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    android:id="@+id/news_full_item_root"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardElevation="@dimen/dp4"
+    app:cardUseCompatPadding="true">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/news_full_item_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:layout_marginLeft="@dimen/dp8"
+                android:layout_marginTop="@dimen/dp8"
+                tools:text="Вася в разносе"/>
+
+            <TextView
+                android:id="@+id/news_full_item_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:layout_marginTop="@dimen/dp8"
+                android:layout_marginLeft="@dimen/dp8"
+                tools:text="обзор"
+                android:visibility="gone"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/news_full_item_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:lineSpacingMultiplier="0.9"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:layout_margin="@dimen/dp8"
+                tools:text="Самая крутая новость на сегодня. Завезли новости. Наконец-то, бля. "/>
+
+            <FrameLayout
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp8"
+                android:layout_gravity="center_vertical">
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/news_full_item_cover"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/test_img"/>
+
+                <LinearLayout
+                    android:id="@+id/news_full_item_new_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|bottom"
+                    android:background="@color/cardview_light_background"
+                    android:minHeight="20dp"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <TextView
+                        android:id="@+id/news_full_item_news_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="new"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        tools:ignore="HardcodedText"
+                        tools:text="new"/>
+
+                </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/news_full_item_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:maxLines="3"
+            android:layout_margin="@dimen/dp8"
+            android:ellipsize="end"
+            tools:text="Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <android.support.v4.widget.Space
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/news_full_item_comments_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:layout_margin="8dp"
+                tools:text="256 комментариев"/>
+            <TextView
+                android:id="@+id/news_full_item_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:layout_margin="8dp"
+                tools:text="20.09.1985"/>
+
+        </LinearLayout>
+    </LinearLayout>
+    </LinearLayout>
+</android.support.v7.widget.CardView>

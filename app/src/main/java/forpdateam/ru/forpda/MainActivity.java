@@ -136,7 +136,6 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         });
         RxPermissions.getInstance(this);
 
-
         receiver = new NetworkStateReceiver();
         receiver.registerReceiver();
         final View viewDiff = findViewById(R.id.fragments_container);

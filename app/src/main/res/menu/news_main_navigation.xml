@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+      xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/news_list_timeline_tab"
+        android:checked="true"
+        android:title="@string/news_timeline_title"
+        android:icon="@drawable/ic_news_home_black_24dp"
+        app:showAsAction="ifRoom"
+        tools:ignore="HardcodedText"/>
+
+
+    <!--<item android:id="@+id/action_hot_tab"-->
+          <!--android:checked="false"-->
+          <!--android:title="Топ"-->
+          <!--android:icon="@drawable/ic_news_whatshot_black_24dp"-->
+          <!--app:showAsAction="ifRoom"-->
+          <!--tools:ignore="HardcodedText"/>-->
+
+    <item
+        android:id="@+id/news_list_category_tab"
+        android:checkable="false"
+        android:title="@string/news_category_title"
+        android:icon="@drawable/ic_news_bubble_chart_black_24dp"
+        app:showAsAction="ifRoom"
+        tools:ignore="HardcodedText"/>
+
+    <!--<item-->
+        <!--android:id="@+id/action_offline_tab"-->
+        <!--android:checked="false"-->
+        <!--android:title="офлайн"-->
+        <!--android:icon="@drawable/ic_news_offline_black_24dp"-->
+        <!--app:showAsAction="ifRoom"-->
+        <!--tools:ignore="HardcodedText"/>-->
+
+</menu>

@@ -65,4 +65,23 @@
     <string name="msg_panel_tooltip_useful">Полезное</string>
     <string name="msg_panel_tooltip_btn_acccept">Принято</string>
     <string name="test_topic_section_title">Topic section title</string>
+
+    <!--News-->
+    <!--News List Parent Fragment-->
+    <string name="default_news_title">Новости</string>
+    <string name="default_category_title">Категории</string>
+    <!--Bottom Navigation Main-->
+    <string name="news_timeline_title">лента</string>
+    <string name="news_category_title">категории</string>
+    <!--Bottom Navigation Details-->
+    <string name="news_content_title">контент</string>
+    <string name="news_comments_title">комментарии</string>
+
+    <string name="news_opps">Opps. Что-то пошло не так.</string>
+
+
+    <!--For Test-->
+    <string name="test_details_title">На большом воздушном шаре мы твои новости шатали.</string>
+
+
 </resources>

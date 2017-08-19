@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/news_list_item_click_container"
+            android:layout_width="match_parent"
+            android:layout_height="116dp"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/news_list_item_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp16"
+                    android:layout_marginTop="@dimen/dp16"
+                    android:layout_marginEnd="@dimen/dp8"
+                    android:layout_marginBottom="@dimen/dp4"
+                    android:textStyle="bold"
+                    android:maxLines="3"
+                    android:ellipsize="end"
+                    tools:text="First test title news.First test title news."
+                    tools:ignore="RtlCompat"/>
+
+                <TextView
+                    android:id="@+id/news_list_item_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp16"
+                    android:layout_marginEnd="@dimen/dp8"
+                    android:layout_marginBottom="@dimen/dp8"
+                    android:maxLines="3"
+                    android:ellipsize="end"
+                    android:textSize="12sp"
+                    tools:text="First test title news. First test title news. First test title news. First test title news.First test title news."
+                    tools:ignore="RtlCompat"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/news_list_item_cover"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                android:layout_marginTop="@dimen/dp16"
+                android:layout_marginEnd="@dimen/dp16"
+                android:layout_marginStart="@dimen/dp16"
+                android:layout_marginBottom="@dimen/dp8"
+                tools:src="@drawable/test_img"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/news_list_item_user_avatar"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/dp16"
+                android:padding="2dp"
+                android:visibility="invisible"
+                tools:src="@drawable/test_img"
+                tools:visibility="visible"
+                tools:ignore="RtlCompat"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/news_list_item_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Valera Pupkin Valera Pupkin Valera Pupkin "
+                    android:maxLines="1"
+                    android:maxLength="20"
+                    android:layout_marginStart="@dimen/dp6"
+                    android:layout_marginTop="@dimen/dp6"
+                    android:textSize="10sp"
+                    tools:ignore="RtlCompat"/>
+
+                <TextView
+                    android:id="@+id/news_list_item_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="20.05.2017"
+                    android:layout_marginStart="@dimen/dp8"
+                    android:textSize="10sp"
+                    tools:ignore="RtlCompat"/>
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/news_list_item_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/dp6"
+                android:layout_marginEnd="@dimen/dp4"
+                app:srcCompat="@drawable/ic_news_offline_black_24dp"
+                tools:ignore="RtlCompat"/>
+            <ImageButton
+                android:id="@+id/news_list_item_share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/dp20"
+                android:padding="@dimen/dp6"
+                app:srcCompat="@drawable/ic_share_black_24dp"
+                tools:ignore="RtlCompat"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="@dimen/dp16"
+        android:layout_marginEnd="@dimen/dp16"
+        android:background="@color/cardview_dark_background"/>
+</LinearLayout>

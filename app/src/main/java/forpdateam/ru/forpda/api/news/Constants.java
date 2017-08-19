@@ -86,4 +86,26 @@ public class Constants {
     public static final String TAB_REVIEWS = "reviews";
     public static final String TAB_SOFTWARE = "software";
     public static final String TAB_GAMES = "games";
+
+
+
+
+    public static final String NEWS_LOAD_DATA_TASK = "news.load.data";
+    public static final String NEWS_UPDATE_BACKGROUND_TASK = "update.background";
+    public static final String COUNT_NEW_NEWS_ITEMS = "count.items";
+    public static final String DETAILS_COVER = "count.items";
+    public static final String NEWS_ERROR_LOAD_OR_UPDATE_TASK = "news.load.update.errro";
+
+
+
+    // to details fragment args
+    public static final String D_TITLE = "d.news.title";
+    public static final String D_DATE = "d.news.date";
+    public static final String D_USERNAME = "d.news.username";
+    public static final String D_URL = "d.news.url";
+    public static final String D_IMG = "d.news.img";
+    public static final String D_ID = "d.news.id";
+
+    //
+
 }
