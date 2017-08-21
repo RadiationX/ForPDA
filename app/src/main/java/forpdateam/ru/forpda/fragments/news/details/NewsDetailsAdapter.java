@@ -9,10 +9,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.robohorse.pagerbullet.PagerBullet;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.fragments.news.details.blocks.ContentBlock;
 import forpdateam.ru.forpda.fragments.news.details.blocks.GalleryBlock;
@@ -20,6 +22,8 @@ import forpdateam.ru.forpda.fragments.news.details.blocks.ImageBlock;
 import forpdateam.ru.forpda.fragments.news.details.blocks.InfoBlock;
 import forpdateam.ru.forpda.fragments.news.details.blocks.TitleBlock;
 import forpdateam.ru.forpda.fragments.news.details.blocks.YoutubeBlock;
+import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
+import forpdateam.ru.forpda.imageviewer.ImagesAdapter;
 import forpdateam.ru.forpda.utils.Html;
 
 /**
@@ -28,7 +32,7 @@ import forpdateam.ru.forpda.utils.Html;
 
 public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<Object> items = new ArrayList();
+    private ArrayList items = new ArrayList<>();
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -100,11 +104,13 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         public ImageHolder(View itemView) {
             super(itemView);
             imageView = (ImageView) itemView.findViewById(R.id.nd_img_block_iv);
+            imageView.setClickable(true);
         }
 
         public void bind(ImageBlock imageBlock) {
             // title later, ept.
             ImageLoader.getInstance().displayImage(imageBlock.getImageUrl(), imageView);
+            imageView.setOnClickListener(v -> ImageViewerActivity.startActivity(itemView.getContext(), imageBlock.getImageUrl()));
         }
     }
 
@@ -124,12 +130,25 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     protected static class GalleryHolder extends RecyclerView.ViewHolder {
 
+        private TextView imagesCount;
+        private PagerBullet pager;
+
         public GalleryHolder(View itemView) {
             super(itemView);
+            imagesCount = (TextView) itemView.findViewById(R.id.news_details_gallery_count_images);
+            pager = (PagerBullet) itemView.findViewById(R.id.news_details_gallery_count_pager);
+            pager.setIndicatorTintColorScheme(App.getColorFromAttr(itemView.getContext(), R.attr.default_text_color), App.getColorFromAttr(itemView.getContext(), R.attr.second_text_color));
         }
 
         public void bind(GalleryBlock galleryBlock) {
-
+            ImagesAdapter adapter = new ImagesAdapter(itemView.getContext(), galleryBlock.getUrls());
+            adapter.setCropImg(true);
+            pager.setAdapter(adapter);
+            adapter.setOnClickListener((view, position) -> ImageViewerActivity.startActivity(itemView.getContext(), galleryBlock.getUrls(), position));
+//            if (imagesCount.getVisibility() == View.GONE) {
+//                imagesCount.setVisibility(View.VISIBLE);
+//                imagesCount.setText(String.valueOf(galleryBlock.getUrls().size()));
+//            }
         }
     }
 
