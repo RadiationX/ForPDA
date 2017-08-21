@@ -3,9 +3,11 @@ package forpdateam.ru.forpda.imageviewer;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.github.chrisbanes.photoview.OnPhotoTapListener;
 import com.github.chrisbanes.photoview.PhotoView;
@@ -20,6 +22,8 @@ import java.util.List;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 
+import static org.acra.ACRA.log;
+
 
 /**
  * Created by radiationx on 24.05.17.
@@ -32,6 +36,8 @@ public class ImagesAdapter extends PagerAdapter {
     private DisplayImageOptions options;
     private List<String> urls;
     private OnPhotoTapListener tapListener;
+    private ImagesAdapter.OnClickListener clickListener = null;
+    private boolean crop = false;
 
     public ImagesAdapter(Context context, List<String> urls) {
         this.inflater = LayoutInflater.from(context);
@@ -46,6 +52,14 @@ public class ImagesAdapter extends PagerAdapter {
 
     public void setTapListener(OnPhotoTapListener tapListener) {
         this.tapListener = tapListener;
+    }
+
+    public void setOnClickListener (ImagesAdapter.OnClickListener onClickListener) {
+        this.clickListener = onClickListener;
+    }
+
+    public void setCropImg(boolean crop) {
+        this.crop = crop;
     }
 
     @Override
@@ -76,6 +90,9 @@ public class ImagesAdapter extends PagerAdapter {
         assert imageLayout != null;
         CircularProgressView progressBar = (CircularProgressView) imageLayout.findViewById(R.id.progress_bar);
         PhotoView photoView = (PhotoView) imageLayout.findViewById(R.id.photo_view);
+        if (crop) photoView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        if (clickListener != null)
+            photoView.setOnClickListener(v -> clickListener.itemClick(v, position));
         imageLoader.displayImage(urls.get(position), photoView, options, new SimpleImageLoadingListener() {
             @Override
             public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
@@ -103,5 +120,9 @@ public class ImagesAdapter extends PagerAdapter {
         }, (s, view, i, i1) -> progressBar.setProgress((int) (100F * i / i1)));
 
         photoView.setOnPhotoTapListener(tapListener);
+    }
+
+    public interface OnClickListener {
+        void itemClick(View view, int position);
     }
 }

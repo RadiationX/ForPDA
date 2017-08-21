@@ -2,6 +2,8 @@ package forpdateam.ru.forpda.fragments.news.details;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +19,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.util.ArrayList;
 import java.util.List;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.news.NewsApi;
 import forpdateam.ru.forpda.api.news.models.NewsItem;
@@ -50,8 +53,6 @@ public class NewsDetailsFragment extends TabFragment {
     private NewsApi api;
     private News news;
     private String _id;
-    private String _title;
-    private String _img;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,6 +76,7 @@ public class NewsDetailsFragment extends TabFragment {
         baseInflateFragment(inflater, R.layout.news_details_fragment_layout);
         refresh = (SwipeRefreshLayout) findViewById(R.id.news_details_content_refresh);
         refresh.setOnRefreshListener(this::loadData);
+        refreshLayoutStyle(refresh);
         refresh.setEnabled(false);
         progressBar = (ProgressBar) findViewById(R.id.news_details_progress);
         recyclerView = (RecyclerView) findViewById(R.id.news_details_list);
@@ -90,7 +92,10 @@ public class NewsDetailsFragment extends TabFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setTitle(news.title);
-        ImageLoader.getInstance().displayImage(news.imgUrl, toolbarBackground);
+        if (toolbarBackground.getVisibility() == View.GONE) {
+            toolbarBackground.setVisibility(View.VISIBLE);
+            loadCoverImage();
+        } else loadCoverImage();
 
     }
 
@@ -111,6 +116,10 @@ public class NewsDetailsFragment extends TabFragment {
         super.onDestroy();
         if (disposable.isDisposed()) disposable.dispose();
         if (realm != null) realm.close();
+    }
+
+    private void loadCoverImage() {
+        ImageLoader.getInstance().displayImage(news.imgUrl, toolbarBackground);
     }
 
     private void loadFromNetwork() {

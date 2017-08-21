@@ -33,12 +33,14 @@
                 <android.support.v7.widget.AppCompatImageView
                     android:id="@+id/toolbar_image_background"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="@dimen/detail_backdrop_height"
                     android:contentDescription="@string/parallax_background"
                     android:transitionName="toolbarCover"
                     android:scaleType="centerCrop"
                     app:layout_collapseMode="parallax"
-                    tools:targetApi="lollipop"/>
+                    android:visibility="gone"
+                    tools:targetApi="lollipop"
+                    tools:src="@drawable/test_img"/>
 
                 <ViewStub
                     android:id="@+id/toolbar_content"
@@ -81,7 +83,7 @@
                             android:visibility="visible">
 
                             <LinearLayout
-                                android:layout_width="wrap_content"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:orientation="vertical">

@@ -65,6 +65,7 @@ public class NewsMainParentFragment extends TabFragment implements
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.news_list_progress);
         progressBar.setVisibility(View.GONE);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.news_list_refresh);
+        refreshLayoutStyle(refreshLayout);
         refreshLayout.setVisibility(View.VISIBLE);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.news_list);
 

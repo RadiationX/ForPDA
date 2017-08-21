@@ -82,6 +82,7 @@
 
     <!--For Test-->
     <string name="test_details_title">На большом воздушном шаре мы твои новости шатали.</string>
+    <string name="test_details_title2">На большом воздушном шаре мы твои новости шатали. На большом воздушном шаре мы твои новости шатали.</string>
 
 
 </resources>

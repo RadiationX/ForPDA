@@ -5,6 +5,8 @@
     android:id="@+id/nd_content_block_tv"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/dp8"
-    android:layout_marginEnd="@dimen/dp8"
+    android:textSize="16sp"
+    android:textStyle="normal"
+    android:layout_marginStart="@dimen/dp16"
+    android:layout_marginEnd="@dimen/dp16"
     tools:text="@string/test_details_title"/>
