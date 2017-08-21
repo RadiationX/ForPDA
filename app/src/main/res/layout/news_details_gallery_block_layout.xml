@@ -1,36 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/news_details_content_height"
-    app:cardElevation="@dimen/dp4">
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center">
-        <TextView
-            android:id="@+id/news_details_gallery_count_images"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="@dimen/dp8"
-            android:layout_marginEnd="@dimen/dp8"
-            android:textColor="#fff"
-            android:background="@drawable/circle_background"
-            android:textStyle="normal"
-            android:textSize="12sp"
-            android:gravity="center"
-            android:visibility="gone"
-            tools:visibility="visible"
-            tools:text="1"/>
+    android:layout_height="@dimen/news_details_content_height">
 
-        <com.robohorse.pagerbullet.PagerBullet
-            android:id="@+id/news_details_gallery_count_pager"
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:cardElevation="@dimen/dp4">
+
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:panelHeightInDp="@dimen/dp48" />
-    </FrameLayout>
-</android.support.v7.widget.CardView>
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+            <TextView
+                android:id="@+id/news_details_gallery_count_images"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="@dimen/dp8"
+                android:layout_marginEnd="@dimen/dp8"
+                android:textColor="#fff"
+                android:background="@drawable/circle_background"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:gravity="center"
+                android:visibility="gone"
+                tools:visibility="visible"
+                tools:text="1"/>
+
+            <!--<com.robohorse.pagerbullet.PagerBullet-->
+                <!--android:id="@+id/news_details_gallery_count_pager"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--app:panelHeightInDp="@dimen/dp48" />-->
+            <android.support.v4.view.ViewPager
+                android:id="@+id/news_details_gallery_count_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:panelHeightInDp="@dimen/dp48" />
+        </FrameLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <forpdateam.ru.forpda.views.InkPageIndicator
+        android:id="@+id/news_details_gallery_count_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        app:dotDiameter="8dp"
+        app:dotGap="8dp"
+        app:animationDuration="320"
+        android:layout_margin="@dimen/dp8"
+        app:pageIndicatorColor="@color/colorAccent"
+        app:currentPageIndicatorColor="@color/white"/>
+</LinearLayout>
