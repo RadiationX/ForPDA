@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.fragments.news.details;
 
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import forpdateam.ru.forpda.fragments.news.details.blocks.YoutubeBlock;
 import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
 import forpdateam.ru.forpda.imageviewer.ImagesAdapter;
 import forpdateam.ru.forpda.utils.Html;
+import forpdateam.ru.forpda.views.InkPageIndicator;
 
 /**
  * Created by isanechek on 8/19/17.
@@ -131,24 +133,32 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     protected static class GalleryHolder extends RecyclerView.ViewHolder {
 
         private TextView imagesCount;
-        private PagerBullet pager;
+//        private PagerBullet pager;
+        private ViewPager pager;
+        private InkPageIndicator mIndicator;
 
         public GalleryHolder(View itemView) {
             super(itemView);
             imagesCount = (TextView) itemView.findViewById(R.id.news_details_gallery_count_images);
-            pager = (PagerBullet) itemView.findViewById(R.id.news_details_gallery_count_pager);
-            pager.setIndicatorTintColorScheme(App.getColorFromAttr(itemView.getContext(), R.attr.default_text_color), App.getColorFromAttr(itemView.getContext(), R.attr.second_text_color));
+//            pager = (PagerBullet) itemView.findViewById(R.id.news_details_gallery_count_pager);
+//            pager.setIndicatorTintColorScheme(App.getColorFromAttr(itemView.getContext(), R.attr.default_text_color), App.getColorFromAttr(itemView.getContext(), R.attr.second_text_color));
+            pager = (ViewPager) itemView.findViewById(R.id.news_details_gallery_count_pager);
+            mIndicator = (InkPageIndicator) itemView.findViewById(R.id.news_details_gallery_count_indicator);
         }
 
         public void bind(GalleryBlock galleryBlock) {
             ImagesAdapter adapter = new ImagesAdapter(itemView.getContext(), galleryBlock.getUrls());
             adapter.setCropImg(true);
             pager.setAdapter(adapter);
+            mIndicator.setViewPager(pager);
             adapter.setOnClickListener((view, position) -> ImageViewerActivity.startActivity(itemView.getContext(), galleryBlock.getUrls(), position));
 //            if (imagesCount.getVisibility() == View.GONE) {
 //                imagesCount.setVisibility(View.VISIBLE);
 //                imagesCount.setText(String.valueOf(galleryBlock.getUrls().size()));
 //            }
+
+
+
         }
     }
 
