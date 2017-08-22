@@ -81,7 +81,7 @@ public class NewsDetailsFragment extends TabFragment {
         progressBar = (ProgressBar) findViewById(R.id.news_details_progress);
         recyclerView = (RecyclerView) findViewById(R.id.news_details_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(false);
         adapter = new NewsDetailsAdapter();
         recyclerView.setAdapter(adapter);
         viewsReady();

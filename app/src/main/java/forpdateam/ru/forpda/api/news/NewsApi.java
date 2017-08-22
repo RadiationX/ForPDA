@@ -21,6 +21,7 @@ import forpdateam.ru.forpda.api.regex.RegexStorage;
 import forpdateam.ru.forpda.fragments.news.details.blocks.ContentBlock;
 import forpdateam.ru.forpda.fragments.news.details.blocks.GalleryBlock;
 import forpdateam.ru.forpda.fragments.news.details.blocks.ImageBlock;
+import forpdateam.ru.forpda.fragments.news.details.blocks.ListTextBlock;
 import forpdateam.ru.forpda.fragments.news.details.blocks.TitleBlock;
 import forpdateam.ru.forpda.fragments.news.details.blocks.YoutubeBlock;
 import io.reactivex.Single;
@@ -208,6 +209,7 @@ public class NewsApi {
         });
     }
 
+    private final static Pattern youtubeId = Pattern.compile("^https?://.*(?:youtu.be/|v/|u/\\w/|embed/|watch?v=)([^#&?]*).*$", Pattern.CASE_INSENSITIVE);
     public List<Object> action(String content) {
         log("Action " + content);
         ArrayList<Object> cache = new ArrayList<>();
@@ -226,10 +228,12 @@ public class NewsApi {
 
                         } else {
                             if (isYoutube(e.toString())) {
-                                // Вообще тут надо только id видео
-                                //  Короче позже надо будет заменить
-                                String url = element.select("iframe").attr("src");
-                                cache.add(new YoutubeBlock(url));
+                                if (element.select("iframe").contains("www.youtube.com")) {
+                                    String url = element.select("iframe").attr("src");
+                                    Matcher matcher = youtubeId.matcher(element.select("iframe").attr("src"));
+                                    if (matcher.matches())
+                                        cache.add(new YoutubeBlock(matcher.group(1)));
+                                }
                             } else  if (isImage(e.toString())) {
                                 String url = e.select("img").attr("src");
                                 cache.add(new ImageBlock(url));
@@ -248,16 +252,27 @@ public class NewsApi {
                 cache.add(new TitleBlock(e.text()));
             } else if (tagName.equals("ul")) {
                 ArrayList<String> urls = new ArrayList<String>();
+                ArrayList<String> lines = new ArrayList<>();
                 for (Element li : e.children()) {
-                    String url = li.select("img").attr("src");
-                    if (url != null) {
-                        urls.add(url);
+                    // Это конечно пиздец. Да тут все пиздец, переписывать в лучшее времена надо
+                    // Но пока это работает так.)
+                    if (isImage(li.toString())) {
+                        String url = li.select("img").attr("src");
+                        if (url != null) {
+                            urls.add(url);
+                        }
+                    } else {
+                        lines.add(li.toString());
                     }
                 }
 
                 log("gallery size " + urls.size());
                 if (urls.size() > 0) {
                     cache.add(new GalleryBlock(urls));
+                }
+
+                if (lines.size() > 0) {
+                    cache.add(new ListTextBlock(lines));
                 }
             }
         }
