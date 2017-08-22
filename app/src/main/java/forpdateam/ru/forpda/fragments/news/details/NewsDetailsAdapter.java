@@ -7,20 +7,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.robohorse.pagerbullet.PagerBullet;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.fragments.news.details.blocks.ContentBlock;
 import forpdateam.ru.forpda.fragments.news.details.blocks.GalleryBlock;
 import forpdateam.ru.forpda.fragments.news.details.blocks.ImageBlock;
 import forpdateam.ru.forpda.fragments.news.details.blocks.InfoBlock;
+import forpdateam.ru.forpda.fragments.news.details.blocks.ListTextBlock;
 import forpdateam.ru.forpda.fragments.news.details.blocks.TitleBlock;
 import forpdateam.ru.forpda.fragments.news.details.blocks.YoutubeBlock;
 import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
@@ -156,9 +156,6 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 //                imagesCount.setVisibility(View.VISIBLE);
 //                imagesCount.setText(String.valueOf(galleryBlock.getUrls().size()));
 //            }
-
-
-
         }
     }
 
@@ -170,6 +167,33 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
 
         public void bind(YoutubeBlock youtubeBlock) {
+            Log.e("ADAPTER", " url " + "http://img.youtube.com/vi/"+youtubeBlock.getId()+"/maxresdefault.jpg");
+            ImageLoader.getInstance().displayImage("http://img.youtube.com/vi/"+youtubeBlock.getId()+"/maxresdefault.jpg", preview);
+            preview.setClickable(true);
+            preview.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+        }
+    }
+
+    protected static class ListTextHolder extends RecyclerView.ViewHolder {
+
+        private LinearLayout container;
+
+        public ListTextHolder(View itemView) {
+            super(itemView);
+            container = (LinearLayout) itemView.findViewById(R.id.news_details_list_text_container);
+        }
+
+        public void bind(ListTextBlock block) {
+            for (String text : block.getList()) {
+                TextView textView = new TextView(itemView.getContext());
+                textView.setText(Html.fromHtml(text));
+                container.addView(textView);
+            }
 
         }
     }
@@ -199,6 +223,29 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 InfoBlock infoBlock = (InfoBlock) item;
                 infoHolder.bind(infoBlock);
             }
+        },
+        LISTTEXT {
+            @Override
+            boolean is(Object item) {
+                return item instanceof ListTextBlock;
+            }
+
+            @Override
+            int type() {
+                return R.layout.news_details_list_text_block_layout;
+            }
+
+            @Override
+            RecyclerView.ViewHolder viewHolder(ViewGroup parent) {
+                return new ListTextHolder(getLayout(parent, R.layout.news_details_list_text_block_layout));
+            }
+
+            @Override
+            void bind(RecyclerView.ViewHolder holder, Object item) {
+                ListTextHolder textHolder = (ListTextHolder) holder;
+                ListTextBlock block = (ListTextBlock) item;
+                textHolder.bind(block);
+             }
         },
         TITLE {
             @Override
