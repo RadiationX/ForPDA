@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.SimpleTextWatcher;
+import forpdateam.ru.forpda.views.CodeEditor;
 import forpdateam.ru.forpda.views.messagepanel.advanced.AdvancedPopup;
 import forpdateam.ru.forpda.views.messagepanel.attachments.AttachmentsPopup;
 
@@ -32,13 +34,14 @@ import forpdateam.ru.forpda.views.messagepanel.attachments.AttachmentsPopup;
 public class MessagePanel extends CardView {
     private ImageButton advancedButton, attachmentsButton, sendButton, fullButton, hideButton, editPollButton;
     private List<View.OnClickListener> advancedListeners = new ArrayList<>(), attachmentsListeners = new ArrayList<>(), sendListeners = new ArrayList<>();
-    private EditText messageField;
+    private CodeEditor messageField;
     private MessagePanelBehavior panelBehavior;
     private AdvancedPopup advancedPopup;
     private AttachmentsPopup attachmentsPopup;
     private ViewGroup fragmentContainer;
     private ProgressBar sendProgress;
     private ProgressBar formProgress;
+    private ScrollView messageWrapper;
     private int lastHeight = 0;
     private HeightChangeListener heightChangeListener;
     private boolean fullForm = false;
@@ -75,9 +78,16 @@ public class MessagePanel extends CardView {
         fullButton = (ImageButton) findViewById(R.id.button_full);
         hideButton = (ImageButton) findViewById(R.id.button_hide);
         editPollButton = (ImageButton) findViewById(R.id.button_edt_poll);
-        messageField = (EditText) findViewById(R.id.message_field);
+        messageField = (CodeEditor) findViewById(R.id.message_field);
         sendProgress = (ProgressBar) findViewById(R.id.send_progress);
         formProgress = (ProgressBar) findViewById(R.id.form_load_progress);
+        messageWrapper = (ScrollView) findViewById(R.id.message_wrapper);
+
+        messageField.attachToScrollView(messageWrapper);
+        messageWrapper.setEnabled(true);
+        messageWrapper.setVerticalFadingEdgeEnabled(true);
+        messageWrapper.setFadingEdgeLength(App.px8);
+
         panelBehavior = new MessagePanelBehavior();
         params = new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, fullForm ? ViewGroup.LayoutParams.MATCH_PARENT : ViewGroup.LayoutParams.WRAP_CONTENT);
         //params.setBehavior(panelBehavior);
