@@ -27,7 +27,7 @@ public class MenuItems {
 
     public MenuItems() {
         createdMenuItems.add(new MenuItem("Авторизация", R.drawable.ic_person_add, AuthFragment.class));
-        //if (Objects.equals(BuildConfig.FLAVOR, "dev"))
+        if (Objects.equals(BuildConfig.FLAVOR, "dev"))
             createdMenuItems.add(new MenuItem("Новости", R.drawable.ic_newspaper, NewsMainParentFragment.class));
         createdMenuItems.add(new MenuItem("Избранное", R.drawable.ic_star, FavoritesFragment.class));
         createdMenuItems.add(new MenuItem("Контакты", R.drawable.ic_contacts, QmsContactsFragment.class));
