@@ -12,7 +12,7 @@
         android:id="@+id/button_advanced_input"
         android:layout_width="@dimen/dp48"
         android:layout_height="@dimen/dp40"
-        android:layout_below="@+id/message_field"
+        android:layout_below="@+id/message_wrapper"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="BB-коды и смайлы"
         app:srcCompat="@drawable/ic_add" />
@@ -21,7 +21,7 @@
         android:id="@+id/button_attachments"
         android:layout_width="@dimen/dp48"
         android:layout_height="@dimen/dp40"
-        android:layout_below="@+id/message_field"
+        android:layout_below="@+id/message_wrapper"
         android:layout_marginStart="-8dp"
         android:layout_toEndOf="@+id/button_advanced_input"
         android:background="?attr/selectableItemBackgroundBorderless"
@@ -32,7 +32,7 @@
         android:id="@+id/button_full"
         android:layout_width="@dimen/dp48"
         android:layout_height="@dimen/dp40"
-        android:layout_below="@+id/message_field"
+        android:layout_below="@+id/message_wrapper"
         android:layout_marginStart="-8dp"
         android:layout_toEndOf="@+id/button_attachments"
         android:background="?attr/selectableItemBackgroundBorderless"
@@ -43,7 +43,7 @@
         android:id="@+id/button_hide"
         android:layout_width="@dimen/dp48"
         android:layout_height="@dimen/dp40"
-        android:layout_below="@+id/message_field"
+        android:layout_below="@+id/message_wrapper"
         android:layout_marginStart="-8dp"
         android:layout_toEndOf="@+id/button_full"
         android:background="?attr/selectableItemBackgroundBorderless"
@@ -51,29 +51,44 @@
         android:contentDescription="Скрыть форму"
         android:visibility="gone"/>
 
-    <forpdateam.ru.forpda.views.CodeEditor
-        android:id="@+id/message_field"
+
+    <ScrollView
+        android:id="@+id/message_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:gravity="center_vertical"
-        android:hint="@string/msg_panel_hint_message"
-        android:imeOptions="flagNoFullscreen"
-        android:inputType="textCapSentences|textMultiLine"
-        android:maxLines="4"
-        android:minHeight="@dimen/dp40"
-        android:paddingBottom="0dp"
-        android:paddingEnd="@dimen/dp16"
-        android:paddingStart="@dimen/dp16"
-        android:paddingTop="@dimen/dp8"
-        android:textSize="16sp" />
+        android:fillViewport="true"
+        android:scrollbars="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <forpdateam.ru.forpda.views.CodeEditor
+                android:id="@+id/message_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical"
+                android:hint="@string/msg_panel_hint_message"
+                android:imeOptions="flagNoFullscreen"
+                android:inputType="textCapSentences|textMultiLine"
+                android:maxLines="4"
+                android:minHeight="@dimen/dp40"
+                android:paddingBottom="0dp"
+                android:paddingEnd="@dimen/dp16"
+                android:paddingStart="@dimen/dp16"
+                android:paddingTop="@dimen/dp8"
+                android:textSize="16sp" />
+
+        </FrameLayout>
+    </ScrollView>
 
     <FrameLayout
         android:id="@+id/send_container"
         android:layout_width="@dimen/dp48"
         android:layout_height="@dimen/dp40"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/message_field">
+        android:layout_below="@+id/message_wrapper">
 
         <android.support.v7.widget.AppCompatImageButton
             android:id="@+id/button_send"

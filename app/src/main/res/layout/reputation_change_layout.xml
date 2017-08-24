@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/reputation_hint_reason"
-            android:inputType="textMultiLine"
+            android:inputType="text|textCapSentences|textMultiLine"
             android:scrollHorizontally="true"/>
 
     </android.support.design.widget.TextInputLayout>

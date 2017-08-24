@@ -153,5 +153,4 @@ dependencies {
     compile 'com.github.douglasjunior:android-simple-tooltip:0.2.0'
     compile 'com.robohorse.pagerbullet:pagerbullet:1.0.8'
     compile 'com.github.apg-mobile:android-round-textview:v0.0.3'
-    compile 'com.codesgood:justifiedtextview:1.0.2'
 }
