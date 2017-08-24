@@ -58,10 +58,10 @@ android {
         }
 
         dev {
-            minSdkVersion '22'
+            minSdkVersion '21'
             applicationId 'ru.forpdateam.forpda.debug'
             versionCode versionNumber
-            versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild}) dev_api_22"
+            versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild}) dev_api_21"
         }
     }
 
@@ -152,4 +152,5 @@ dependencies {
     compile 'com.thebluealliance:spectrum:0.7.1'
     compile 'com.github.douglasjunior:android-simple-tooltip:0.2.0'
     compile 'com.robohorse.pagerbullet:pagerbullet:1.0.8'
+    compile 'com.github.apg-mobile:android-round-textview:v0.0.3'
 }

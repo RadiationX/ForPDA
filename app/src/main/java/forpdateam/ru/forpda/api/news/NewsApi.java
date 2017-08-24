@@ -209,7 +209,7 @@ public class NewsApi {
         });
     }
 
-    private final static Pattern youtubeId = Pattern.compile("^https?://.*(?:youtu.be/|v/|u/\\w/|embed/|watch?v=)([^#&?]*).*$", Pattern.CASE_INSENSITIVE);
+    private final static Pattern youtubeId = Pattern.compile("(?:youtube(?:-nocookie)?\\.com\\/(?:[^\\/\\n\\s]+\\/\\S+\\/|(?:v|e(?:mbed)?)\\/|\\S*?[?&]v=)|youtu\\.be\\/)([a-zA-Z0-9_-]{11})");
     public List<Object> action(String content) {
         log("Action " + content);
         ArrayList<Object> cache = new ArrayList<>();
@@ -219,61 +219,71 @@ public class NewsApi {
         log("Elements size " + element.children().get(0).toString());
         for (Element e : element.children()) {
             String tagName = e.tagName();
-            if (tagName.equals("p")) {
-                if (e.children().size() > 0) {
-                    if (checkChild(e)) {
-                        // Пока хз как правильно сделать, но как бы и не должно быть такого варианта.
-                        if (e.text().length() > 0) {
-                            log("Пиздос здесь.");
+            switch (tagName) {
+                case "p":
+                    if (e.children().size() > 0) {
+                        if (checkChild(e)) {
+                            // Пока хз как правильно сделать, но как бы и не должно быть такого варианта.
+                            if (e.text().length() > 0) {
+                                log("Пиздос здесь.");
 
-                        } else {
-                            if (isYoutube(e.toString())) {
-                                if (element.select("iframe").contains("www.youtube.com")) {
-                                    String url = element.select("iframe").attr("src");
-                                    Matcher matcher = youtubeId.matcher(element.select("iframe").attr("src"));
-                                    if (matcher.matches())
-                                        cache.add(new YoutubeBlock(matcher.group(1)));
+                            } else {
+                                if (isYoutube(e.toString())) {
+                                    Log.e("Youtube", "!!!");
+                                    String url = element.select("iframe").attr("src").replaceFirst("//", "").trim();
+                                    Log.e("Youtube", "url " + url);
+                                    Matcher matcher = youtubeId.matcher(url);
+                                    if (matcher.find()) {
+                                        String id = matcher.group(1);
+                                        String previewUrl = "http://img.youtube.com/vi/"+ id +"/0.jpg";
+                                        cache.add(new YoutubeBlock(id, previewUrl, url));
+                                    } else {
+
+                                        Log.e("Youtube", "HULL");
+                                    }
+                                } else if (isImage(e.toString())) {
+                                    String url = e.select("img").attr("src");
+                                    cache.add(new ImageBlock(url));
                                 }
-                            } else  if (isImage(e.toString())) {
-                                String url = e.select("img").attr("src");
-                                cache.add(new ImageBlock(url));
                             }
+                        } else {
+                            // Ну как бы тут в тексте вроде ссылки есть на другие ресурсы.
+                            cache.add(new ContentBlock(e.toString()));
                         }
                     } else {
-                        // Ну как бы тут в тексте вроде ссылки есть на другие ресурсы.
-                        cache.add(new ContentBlock(e.toString()));
+                        // Внутри тега нет детей, значит просто текст.
+                        String text = e.text();
+                        cache.add(new ContentBlock(e.text()));
                     }
-                } else {
-                    // Внутри тега нет детей, значит просто текст.
-                    String text = e.text();
-                    cache.add(new ContentBlock(e.text()));
-                }
-            } else if (tagName.equals("h2")) {
-                cache.add(new TitleBlock(e.text()));
-            } else if (tagName.equals("ul")) {
-                ArrayList<String> urls = new ArrayList<String>();
-                ArrayList<String> lines = new ArrayList<>();
-                for (Element li : e.children()) {
-                    // Это конечно пиздец. Да тут все пиздец, переписывать в лучшее времена надо
-                    // Но пока это работает так.)
-                    if (isImage(li.toString())) {
-                        String url = li.select("img").attr("src");
-                        if (url != null) {
-                            urls.add(url);
+                    break;
+                case "h2":
+                    cache.add(new TitleBlock(e.text()));
+                    break;
+                case "ul":
+                    ArrayList<String> urls = new ArrayList<String>();
+                    ArrayList<String> lines = new ArrayList<>();
+                    for (Element li : e.children()) {
+                        // Это конечно пиздец. Да тут все пиздец, переписывать в лучшее времена надо
+                        // Но пока это работает так.)
+                        if (isImage(li.toString())) {
+                            String url = li.select("img").attr("src");
+                            if (url != null) {
+                                urls.add(url);
+                            }
+                        } else {
+                            lines.add(li.toString());
                         }
-                    } else {
-                        lines.add(li.toString());
                     }
-                }
 
-                log("gallery size " + urls.size());
-                if (urls.size() > 0) {
-                    cache.add(new GalleryBlock(urls));
-                }
+                    log("gallery size " + urls.size());
+                    if (urls.size() > 0) {
+                        cache.add(new GalleryBlock(urls));
+                    }
 
-                if (lines.size() > 0) {
-                    cache.add(new ListTextBlock(lines));
-                }
+                    if (lines.size() > 0) {
+                        cache.add(new ListTextBlock(lines));
+                    }
+                    break;
             }
         }
         log("Cache size " + cache.size());

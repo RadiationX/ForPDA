@@ -1,5 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/nd_youtube_block_preview"
-              android:layout_width="match_parent"
-              android:layout_height="@dimen/news_details_content_height" />
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="@dimen/news_details_content_height"
+             android:layout_marginStart="@dimen/dp16"
+             android:layout_marginEnd="@dimen/dp16"
+             android:layout_marginTop="@dimen/dp8"
+             android:layout_marginBottom="@dimen/dp8"
+             xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <ImageView
+        android:id="@+id/nd_youtube_block_preview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:scaleType="fitXY"
+        android:clickable="false"
+        android:visibility="visible"
+        tools:src="@drawable/test_img"/>
+
+    <ImageView
+        android:id="@+id/nd_youtube_block_click"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/youtube"
+        android:padding="@dimen/dp8"
+        android:clickable="true"
+        android:background="@drawable/circle_background"
+        android:layout_gravity="center"/>
+
+</FrameLayout>

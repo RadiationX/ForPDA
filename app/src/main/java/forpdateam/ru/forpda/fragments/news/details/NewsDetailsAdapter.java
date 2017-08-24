@@ -1,5 +1,8 @@
 package forpdateam.ru.forpda.fragments.news.details;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -34,6 +37,13 @@ import forpdateam.ru.forpda.views.InkPageIndicator;
 
 public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    public interface DetailsItemClickListener {
+        public void youtubeItemClick(String id, String url, int position);
+    }
+
+    private NewsDetailsAdapter.DetailsItemClickListener itemClickListener = null;
+
+
     private ArrayList items = new ArrayList<>();
 
     @Override
@@ -44,7 +54,7 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Object item = items.get(position);
-        DetailsType.get(item).bind(holder, item);
+        DetailsType.get(item).bind(holder, item, itemClickListener, position);
     }
 
     @Override
@@ -68,6 +78,10 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
+    public void setItemClickListener(NewsDetailsAdapter.DetailsItemClickListener itemClickListener) {
+        this.itemClickListener = itemClickListener;
+    }
+
     protected static class InfoHolder extends RecyclerView.ViewHolder {
         private TextView title;
         private TextView date;
@@ -80,7 +94,7 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             date = (TextView) itemView.findViewById(R.id.nd_ib_date);
         }
 
-        public void bind(InfoBlock infoBlock) {
+        public void bind(InfoBlock infoBlock, NewsDetailsAdapter.DetailsItemClickListener listener, int position) {
             title.setText(infoBlock.getTitle());
             author.setText(infoBlock.getAuthor());
             date.setText(infoBlock.getDate());
@@ -109,7 +123,7 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             imageView.setClickable(true);
         }
 
-        public void bind(ImageBlock imageBlock) {
+        public void bind(ImageBlock imageBlock, NewsDetailsAdapter.DetailsItemClickListener listener, int position) {
             // title later, ept.
             ImageLoader.getInstance().displayImage(imageBlock.getImageUrl(), imageView);
             imageView.setOnClickListener(v -> ImageViewerActivity.startActivity(itemView.getContext(), imageBlock.getImageUrl()));
@@ -125,7 +139,7 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             content = (TextView) itemView.findViewById(R.id.nd_content_block_tv);
         }
 
-        public void bind(ContentBlock contentBlock) {
+        public void bind(ContentBlock contentBlock, NewsDetailsAdapter.DetailsItemClickListener listener, int position) {
             content.setText(Html.fromHtml(contentBlock.getContent()));
         }
     }
@@ -139,19 +153,19 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         public GalleryHolder(View itemView) {
             super(itemView);
-            imagesCount = (TextView) itemView.findViewById(R.id.news_details_gallery_count_images);
+//            imagesCount = (TextView) itemView.findViewById(R.id.news_details_gallery_count_images);
 //            pager = (PagerBullet) itemView.findViewById(R.id.news_details_gallery_count_pager);
 //            pager.setIndicatorTintColorScheme(App.getColorFromAttr(itemView.getContext(), R.attr.default_text_color), App.getColorFromAttr(itemView.getContext(), R.attr.second_text_color));
             pager = (ViewPager) itemView.findViewById(R.id.news_details_gallery_count_pager);
             mIndicator = (InkPageIndicator) itemView.findViewById(R.id.news_details_gallery_count_indicator);
         }
 
-        public void bind(GalleryBlock galleryBlock) {
+        public void bind(GalleryBlock galleryBlock, NewsDetailsAdapter.DetailsItemClickListener listener, int position) {
             ImagesAdapter adapter = new ImagesAdapter(itemView.getContext(), galleryBlock.getUrls());
             adapter.setCropImg(true);
             pager.setAdapter(adapter);
             mIndicator.setViewPager(pager);
-            adapter.setOnClickListener((view, position) -> ImageViewerActivity.startActivity(itemView.getContext(), galleryBlock.getUrls(), position));
+            adapter.setOnClickListener((view, pos) -> ImageViewerActivity.startActivity(itemView.getContext(), galleryBlock.getUrls(), pos));
 //            if (imagesCount.getVisibility() == View.GONE) {
 //                imagesCount.setVisibility(View.VISIBLE);
 //                imagesCount.setText(String.valueOf(galleryBlock.getUrls().size()));
@@ -161,21 +175,20 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     protected static class YoutubeHolder extends RecyclerView.ViewHolder {
         private ImageView preview;
+        private ImageView previewBtn;
         public YoutubeHolder(View itemView) {
             super(itemView);
             preview = (ImageView) itemView.findViewById(R.id.nd_youtube_block_preview);
+            previewBtn = (ImageView) itemView.findViewById(R.id.nd_youtube_block_click);
         }
 
-        public void bind(YoutubeBlock youtubeBlock) {
-            Log.e("ADAPTER", " url " + "http://img.youtube.com/vi/"+youtubeBlock.getId()+"/maxresdefault.jpg");
-            ImageLoader.getInstance().displayImage("http://img.youtube.com/vi/"+youtubeBlock.getId()+"/maxresdefault.jpg", preview);
-            preview.setClickable(true);
-            preview.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+        public void bind(YoutubeBlock youtubeBlock, NewsDetailsAdapter.DetailsItemClickListener listener, int position) {
+            ImageLoader.getInstance().displayImage(youtubeBlock.getPreviewImgUrl(), preview);
+            // id - нужен чтоб если есть нативное приложение, то передать туда. Хотя можно и ссылку так то, но уже поздно.
+            if (listener != null) {
+                previewBtn.setOnClickListener(v -> listener.youtubeItemClick(youtubeBlock.getId(), youtubeBlock.getUrl(), position));
+            }
 
-                }
-            });
         }
     }
 
@@ -188,7 +201,7 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             container = (LinearLayout) itemView.findViewById(R.id.news_details_list_text_container);
         }
 
-        public void bind(ListTextBlock block) {
+        public void bind(ListTextBlock block, NewsDetailsAdapter.DetailsItemClickListener listener, int position) {
             for (String text : block.getList()) {
                 TextView textView = new TextView(itemView.getContext());
                 textView.setText(Html.fromHtml(text));
@@ -218,10 +231,10 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
 
             @Override
-            void bind(RecyclerView.ViewHolder holder, Object item) {
+            void bind(RecyclerView.ViewHolder holder, Object item, DetailsItemClickListener listener, int position) {
                 InfoHolder infoHolder = (InfoHolder) holder;
                 InfoBlock infoBlock = (InfoBlock) item;
-                infoHolder.bind(infoBlock);
+                infoHolder.bind(infoBlock, listener, position);
             }
         },
         LISTTEXT {
@@ -241,10 +254,10 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
 
             @Override
-            void bind(RecyclerView.ViewHolder holder, Object item) {
+            void bind(RecyclerView.ViewHolder holder, Object item, DetailsItemClickListener listener, int position) {
                 ListTextHolder textHolder = (ListTextHolder) holder;
                 ListTextBlock block = (ListTextBlock) item;
-                textHolder.bind(block);
+                textHolder.bind(block, listener, position);
              }
         },
         TITLE {
@@ -264,7 +277,7 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
 
             @Override
-            void bind(RecyclerView.ViewHolder holder, Object item) {
+            void bind(RecyclerView.ViewHolder holder, Object item, DetailsItemClickListener listener, int position) {
                 TitleHolder titleHolder = (TitleHolder) holder;
                 TitleBlock titleBlock = (TitleBlock) item;
                 titleHolder.bind(titleBlock);
@@ -287,10 +300,10 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
 
             @Override
-            void bind(RecyclerView.ViewHolder holder, Object item) {
+            void bind(RecyclerView.ViewHolder holder, Object item, DetailsItemClickListener listener, int position) {
                 ContentHolder contentHolder = (ContentHolder) holder;
                 ContentBlock contentBlock = (ContentBlock) item;
-                contentHolder.bind(contentBlock);
+                contentHolder.bind(contentBlock, listener, position);
             }
         },
         IMAGE {
@@ -310,10 +323,10 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
 
             @Override
-            void bind(RecyclerView.ViewHolder holder, Object item) {
+            void bind(RecyclerView.ViewHolder holder, Object item, DetailsItemClickListener listener, int position) {
                 ImageHolder imageHolder = (ImageHolder) holder;
                 ImageBlock imageBlock = (ImageBlock) item;
-                imageHolder.bind(imageBlock);
+                imageHolder.bind(imageBlock, listener, position);
             }
         },
         GALLERY {
@@ -333,10 +346,10 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
 
             @Override
-            void bind(RecyclerView.ViewHolder holder, Object item) {
+            void bind(RecyclerView.ViewHolder holder, Object item, DetailsItemClickListener listener, int position) {
                 GalleryHolder galleryHolder = (GalleryHolder) holder;
                 GalleryBlock galleryBlock = (GalleryBlock) item;
-                galleryHolder.bind(galleryBlock);
+                galleryHolder.bind(galleryBlock, listener, position);
             }
         },
         YOUTUBE {
@@ -356,10 +369,10 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
 
             @Override
-            void bind(RecyclerView.ViewHolder holder, Object item) {
+            void bind(RecyclerView.ViewHolder holder, Object item, DetailsItemClickListener listener, int position) {
                 YoutubeHolder youtubeHolder = (YoutubeHolder) holder;
                 YoutubeBlock youtubeBlock = (YoutubeBlock) item;
-                youtubeHolder.bind(youtubeBlock);
+                youtubeHolder.bind(youtubeBlock, listener, position);
             }
         };
 
@@ -390,6 +403,6 @@ public class NewsDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         abstract boolean is(Object item);
         abstract int type();
         abstract RecyclerView.ViewHolder viewHolder(ViewGroup parent);
-        abstract void bind(RecyclerView.ViewHolder holder, Object item);
+        abstract void bind(RecyclerView.ViewHolder holder, Object item, NewsDetailsAdapter.DetailsItemClickListener listener, int position);
     }
 }

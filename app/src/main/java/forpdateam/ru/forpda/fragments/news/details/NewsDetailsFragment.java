@@ -1,5 +1,8 @@
 package forpdateam.ru.forpda.fragments.news.details;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -40,9 +43,10 @@ import static forpdateam.ru.forpda.utils.Utils.log;
  * Created by isanechek on 8/19/17.
  */
 
-public class NewsDetailsFragment extends TabFragment {
+public class NewsDetailsFragment extends TabFragment implements NewsDetailsAdapter.DetailsItemClickListener {
 
     public static final String NEWS_ID = "news.to.details.id";
+    public static final String OTHER_CASE = "news.to.details.other";
 
     private SwipeRefreshLayout refresh;
     private RecyclerView recyclerView;
@@ -64,8 +68,10 @@ public class NewsDetailsFragment extends TabFragment {
         if (getArguments() != null) {
             _id = getArguments().getString(NEWS_ID);
             realm = Realm.getDefaultInstance();
-            news = realm.where(News.class).equalTo("url", _id).findFirst();
             api = new NewsApi();
+            news = realm.where(News.class).equalTo("url", _id).findFirst();
+
+
         } else log("Arguments null");
     }
 
@@ -83,6 +89,7 @@ public class NewsDetailsFragment extends TabFragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(false);
         adapter = new NewsDetailsAdapter();
+        adapter.setItemClickListener(this);
         recyclerView.setAdapter(adapter);
         viewsReady();
         return view;
@@ -155,5 +162,17 @@ public class NewsDetailsFragment extends TabFragment {
         realm.executeTransaction(r -> {
             r.insertOrUpdate(EntityMapping.mappingNews(news, item));
         });
+    }
+
+    @Override
+    public void youtubeItemClick(String id, String url, int position) {
+
+        try {
+            Intent app = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
+            startActivity(app);
+        } catch (ActivityNotFoundException e) {
+            Intent otherView = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(otherView);
+        }
     }
 }

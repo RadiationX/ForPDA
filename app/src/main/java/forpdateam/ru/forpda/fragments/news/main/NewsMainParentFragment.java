@@ -126,6 +126,7 @@ public class NewsMainParentFragment extends TabFragment implements
         ViewCompat.setTransitionName(view, String.valueOf(position) + "_image");
         Bundle args = new Bundle();
         args.putString(NewsDetailsFragment.NEWS_ID, adapter.getItem(position).url);
+        args.putBoolean(NewsDetailsFragment.OTHER_CASE, true);
         TabManager.getInstance().add(new TabFragment.Builder<>(NewsDetailsFragment.class).setArgs(args).build());
     }
 
