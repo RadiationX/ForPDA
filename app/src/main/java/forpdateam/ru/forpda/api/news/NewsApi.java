@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.Utils;
-import forpdateam.ru.forpda.api.news.html.NewsHtmlBuilder;
 import forpdateam.ru.forpda.api.news.models.NewsItem;
 import forpdateam.ru.forpda.api.regex.RegexStorage;
 import forpdateam.ru.forpda.fragments.news.details.blocks.ContentBlock;
@@ -87,14 +86,26 @@ public class NewsApi {
         final Matcher matcher = pattern.matcher(source);
         while (matcher.find()) {
             NewsItem model = new NewsItem();
-            model.setUrl(matcher.group(1));
-            model.setImgUrl(matcher.group(3));
-            model.setTitle(Utils.fromHtml(matcher.group(2)));
-            model.setCommentsCount(matcher.group(4));
-            model.setDate(matcher.group(5));
-            model.setAuthor(Utils.fromHtml(matcher.group(6)));
-            model.setDescription(Utils.fromHtml(matcher.group(7)));
+            if (matcher.group(1) == null) {
+                model.setUrl(matcher.group(9));
+                model.setImgUrl(matcher.group(10));
+                model.setTitle(Utils.fromHtml(matcher.group(11)));
+                model.setCommentsCount(matcher.group(12));
+                model.setDate(matcher.group(14).replace('-','.'));
+                model.setAuthor(matcher.group(15));
+                model.setDescription(matcher.group(17).trim());
+
+            } else {
+                model.setUrl(matcher.group(1));
+                model.setImgUrl(matcher.group(3));
+                model.setTitle(Utils.fromHtml(matcher.group(2)));
+                model.setCommentsCount(matcher.group(4));
+                model.setDate(matcher.group(5));
+                model.setAuthor(Utils.fromHtml(matcher.group(6)));
+                model.setDescription(Utils.fromHtml(matcher.group(7)));
 //            model.setTags(matcher.group(8));
+            }
+
             cache.add(model);
         }
         return cache;
@@ -134,6 +145,7 @@ public class NewsApi {
 
 
     private String getUrlCategory(@Nullable String category) {
+        Log.d("SUKA", "getUrlCategory " + category);
         if (category == null) return NEWS_URL_ALL;
         switch (category) {
             case NEWS_CATEGORY_ALL:
@@ -187,7 +199,28 @@ public class NewsApi {
     }
 
     /*========================DETAILS=============================*/
-    private final Pattern pattern1 = Pattern.compile("<div class=\"content-box\" itemprop=\"articleBody\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>(?:[^<]*?<div class=\"materials-box\"[^>]*?>[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>[^<]*?<\\/div>)?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>[\\s\\S]*?<div class=\"comment-box\" id=\"comments\"[^>]*?>[^<]*?<div class=\"heading\"[^>]*?>[^>]*?<h2>(\\d+)[^<]*?<\\/h2>[\\s\\S]*?(<ul[\\s\\S]*?<\\/ul>)[^<]*?<form");
+
+    /*
+    * 1. Дата курильщика (2017-08-24T07:00:00+00:00)
+    * 2. Урл изображения
+    * 3. Заголовок
+    * 4. Дата нормального человека (24.08.17)
+    * 5. Id автора
+    * 6. Ник автора
+    * 7. Сорсы тегов
+    * 8. Вроде как контент
+    * 9. Сорсы материалов по теме, их может не быть (null у group(9))
+    * 10. Магический относительный id новости для навигации вперёд/назад
+    * 11. Кол-во комментов
+    * 12. Сорсы комментов
+    * */
+    private final Pattern detailsPattern = Pattern.compile("<section[^>]*>[^<]*?<article[^>]*?>[\\s\\S]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"photo\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"description\"[^>]*?>[^<]*?<h1[^>]*?>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?<\\/h1>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[^<]*?<span[^>]*?class=\"name\"[^>]*?>[^<]*?<a[^>]*?href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?class=\"more-box\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"meta\"[^>]*?>([\\s\\S]*?)<\\/div>[\\s\\S]*?<div class=\"content-box\" itemprop=\"articleBody\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>(?:[^<]*?<div class=\"materials-box\"[^>]*?>[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>[^<]*?<\\/div>)?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>[\\s\\S]*?<div class=\"comment-box\" id=\"comments\"[^>]*?>[^<]*?<div class=\"heading\"[^>]*?>[^>]*?<h2>(\\d+)[^<]*?<\\/h2>[\\s\\S]*?(<ul[\\s\\S]*?<\\/ul>)[^<]*?<form");
+
+    /*
+    * 1. tag для ссылки
+    * 2. Заголовок
+    * */
+    private final Pattern tagsPattern = Pattern.compile("<a[^>]*?href=\"\\/tag\\/([^\"\\/]*?)\\/\"[^>]*?>([^<]*?)<\\/a>");
 
 
     public Single<NewsItem> loadTestDetails(String url) {
@@ -195,11 +228,19 @@ public class NewsApi {
             String regex = RegexStorage.News.Details.getRootDetailsPattern();
             Pattern p = Pattern.compile(regex);
             final Pattern content = Pattern.compile("<div class=\"content-box\" itemprop=\"articleBody\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?");
-            String response = Api.getWebClient().get("https:" +url).getBody();
-            Matcher matcher = pattern1.matcher(response);
+            String response = Api.getWebClient().get("https:" + url).getBody();
+            Matcher matcher = detailsPattern.matcher(response);
             NewsItem item = new NewsItem();
             if (matcher.find()) {
-                item.html = matcher.group(1);
+                item.setImgUrl(matcher.group(2));
+                item.setTitle(Utils.fromHtml(matcher.group(3)));
+                item.setDate(matcher.group(4));
+                item.setAuthor(matcher.group(6));
+                item.setHtml(matcher.group(8));
+                item.setMoreNews(matcher.group(9));
+                item.setNavId(matcher.group(10));
+                item.setCommentsCount(matcher.group(11));
+                item.setComments(matcher.group(12));
 //                item.html = NewsHtmlBuilder.transformBody(matcher.group(1));
 //                item.moreNews = matcher.group(2);
 //                item.navId = matcher.group(3);
@@ -210,6 +251,7 @@ public class NewsApi {
     }
 
     private final static Pattern youtubeId = Pattern.compile("(?:youtube(?:-nocookie)?\\.com\\/(?:[^\\/\\n\\s]+\\/\\S+\\/|(?:v|e(?:mbed)?)\\/|\\S*?[?&]v=)|youtu\\.be\\/)([a-zA-Z0-9_-]{11})");
+
     public List<Object> action(String content) {
         log("Action " + content);
         ArrayList<Object> cache = new ArrayList<>();
@@ -235,7 +277,7 @@ public class NewsApi {
                                     Matcher matcher = youtubeId.matcher(url);
                                     if (matcher.find()) {
                                         String id = matcher.group(1);
-                                        String previewUrl = "http://img.youtube.com/vi/"+ id +"/0.jpg";
+                                        String previewUrl = "http://img.youtube.com/vi/" + id + "/0.jpg";
                                         cache.add(new YoutubeBlock(id, previewUrl, url));
                                     } else {
 

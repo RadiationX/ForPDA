@@ -10,7 +10,7 @@ public class DefaultRegex {
 
     public static class News {
         public static class List {
-            /* Groups:
+            /* Groups news:
             * 1. Link
             * 2. Title
             * 3. Image Url
@@ -19,9 +19,21 @@ public class DefaultRegex {
             * 6. Author
             * 7. Description
             * 8  Tags
+            *
+            * Groups  reviews:
+            * 9. Ссылка
+            * 10. Ссылка изображения
+            * 11. Заголовок
+            * 12. Кол-во комментов
+            * 13. Дата курильщика
+            * 14. Дата нормального человека
+            * 15. Ник автора
+            * 16. Название девайса, возможно можно связать с devdb
+            * 17. Контент
+            *
             * */
             public static String getListPattern() {
-                return "<article[^>]*?class=\"post\"[^>]*?data-ztm=\"[^ ]+\"[^>]*>[\\s\\S]*?<a[^>]*?href=\"([^\"]*)\"[^>]*?title=\"([^\"]*?)\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\"[\\s\\S]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[\\s\\S]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?itemprop=\"description\">([\\s\\S]*?)<\\/div>[\\s\\S]*?<div[^>]*?class=\"meta\">([\\s\\S]*?)<\\/div>[\\s\\S]*?<\\/article>";
+                return "<article[^>]*?class=\"post\"[^>]*?>[^<]*?<div class=\"visual\">[^<]*?<a[^>]*?href=\"([^\"]*)\"[^>]*?title=\"([^\"]*?)\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\"[\\s\\S]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[\\s\\S]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?itemprop=\"description\">([\\s\\S]*?)<\\/div>[\\s\\S]*?<div[^>]*?class=\"meta\">([\\s\\S]*?)<\\/div>[\\s\\S]*?<\\/article>|<li itemscope[^>]*?>[^<]*?<div class=\"photo\">[^<]*?<a[^>]*?href=\"([^\"]*?)\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?title=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<a[^>]*?class=\"v-count\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<meta[^>]*?content=\"((\\d+-\\d+-\\d+)[^\"]*?)\"[^>]*?>[\\s\\S]*?<div class=\"content\" itemprop=\"description\">[\\s\\S]*?<div class=\"summary\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[^<]*?<div itemprop=\"description\">([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<span class=\"bg-shadow\">";
             }
         }
 

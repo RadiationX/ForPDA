@@ -156,6 +156,7 @@ public class TabManager {
         activeTag = TAB_PREFIX.concat(Long.toString(System.currentTimeMillis()));
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         hideTabs(transaction);
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         transaction.add(R.id.fragments_container, tabFragment, activeTag).commit();
         fragmentManager.executePendingTransactions();
         updateFragmentList();

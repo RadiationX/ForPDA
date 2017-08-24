@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.news.Constants;
@@ -22,6 +23,7 @@ import forpdateam.ru.forpda.api.news.NewsApi;
 import forpdateam.ru.forpda.data.news.entity.News;
 import forpdateam.ru.forpda.data.news.local.EntityMapping;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.fragments.news.details.NewsDetailsFragment;
 import forpdateam.ru.forpda.fragments.news.main.timeline.NewsListAdapter;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -72,6 +74,7 @@ public class NewsMainParentFragment extends TabFragment implements
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.addItemDecoration(new BrandFragment.SpacingItemDecoration(App.px8, true));
 
         adapter = new NewsListAdapter();
         adapter.setOnClickListener(this);
