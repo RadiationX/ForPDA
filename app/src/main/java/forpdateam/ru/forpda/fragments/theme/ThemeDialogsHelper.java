@@ -158,7 +158,7 @@ public class ThemeDialogsHelper {
                 .setPositiveButton("Отправить", (dialogInterface, i) -> {
                     ThemeHelper.reportPost(s -> {
                         Toast.makeText(context, s.isEmpty() ? "Неизвестная ошибка" : s, Toast.LENGTH_SHORT).show();
-                    }, post.getForumId(), post.getTopicId(), messageField.getText().toString());
+                    }, post.getTopicId(), post.getId(), messageField.getText().toString());
                 })
                 .setNegativeButton("Отмена", null)
                 .show();
