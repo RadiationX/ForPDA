@@ -32,7 +32,7 @@ import forpdateam.ru.forpda.utils.DialogsHelper;
  * Created by radiationx on 01.11.16.
  */
 
-public class ExtendedWebView extends NestedWebView implements IBase {
+public class ExtendedWebView extends NestedGeckoView implements IBase {
     private final static String LOG_TAG = ExtendedWebView.class.getSimpleName();
     public final static int DIRECTION_NONE = 0;
     public final static int DIRECTION_UP = 1;
