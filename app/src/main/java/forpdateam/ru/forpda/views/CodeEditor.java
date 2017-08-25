@@ -52,7 +52,7 @@ public class CodeEditor extends AppCompatEditText {
     private int colorAttrValue;
     private ScrollView scrollView;
 
-    Runnable scrollerTask;
+    private Runnable scrollerTask;
     private int initialPosition;
     private int newCheck = 100;
 
