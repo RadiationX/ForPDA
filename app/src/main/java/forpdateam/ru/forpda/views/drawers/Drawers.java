@@ -129,17 +129,22 @@ public class Drawers {
     public NavigationView getTabDrawer() {
         return tabDrawer;
     }
-
+    private Bundle savedInstanceState;
     public void init(Bundle savedInstanceState) {
         initMenu(savedInstanceState);
         initTabs(savedInstanceState);
+        this.savedInstanceState = savedInstanceState;
+        //firstSelect(savedInstanceState);
+    }
+
+    public void firstSelect() {
         String className = ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN ? FavoritesFragment.class.getSimpleName() : AuthFragment.class.getSimpleName();
         String last = App.getInstance().getPreferences().getString("menu_drawer_last", className);
         last = ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN && last.equals(AuthFragment.class.getSimpleName()) ? FavoritesFragment.class.getSimpleName() : last;
         Log.d(LOG_TAG, "Last item " + last);
 
         MenuItems.MenuItem item = null;
-        if (savedInstanceState != null) {
+        if (this.savedInstanceState != null) {
             TabFragment tabFragment = TabManager.getInstance().get(TabManager.getActiveTag());
             if (tabFragment != null) {
                 item = findMenuItem(tabFragment.getClass());
