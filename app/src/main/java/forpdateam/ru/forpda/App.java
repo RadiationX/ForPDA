@@ -100,7 +100,7 @@ public class App extends android.app.Application {
     public static int navigationBarHeight = 0;
     public static SparseArray<Drawable> drawableCache = new SparseArray<>();
     private static App instance;
-    private final static Object lock = new Object();
+    //private final static Object lock = new Object();
 
     private Map<String, MiniTemplator> templates = new HashMap<>();
     private float density = 1.0f;
@@ -112,14 +112,13 @@ public class App extends android.app.Application {
         preferenceChangeObservables.notifyObservers(key);
     };
 
+    public App() {
+        instance = this;
+    }
 
     public static App getInstance() {
         if (instance == null) {
-            synchronized (lock) {
-                System.out.print("SUKA sync init APP instance " + instance);
-                if (instance == null)
-                    instance = new App();
-            }
+            instance = new App();
         }
         return instance;
     }

@@ -174,11 +174,18 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     }
 
     void checkIntent(Intent intent) {
-        if (intent == null || intent.getData() == null) return;
+        if (intent == null || intent.getData() == null) {
+            drawers.firstSelect();
+            return;
+        }
 
         new Handler().post(() -> {
             Log.d(LOG_TAG, "Handler.post checkIntent: " + intent);
-            IntentHandler.handle(intent.getData().toString());
+            boolean handled = IntentHandler.handle(intent.getData().toString());
+            if (!handled || TabManager.getInstance().getSize() == 0) {
+                drawers.firstSelect();
+            }
+            setIntent(null);
         });
     }
 
