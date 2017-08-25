@@ -342,6 +342,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     @Override
     public void loadData() {
+        super.loadData();
         refreshLayout.setRefreshing(true);
 
         refreshToolbarMenuItems(false);

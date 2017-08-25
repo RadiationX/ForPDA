@@ -588,6 +588,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
     @Override
     public void loadData() {
+        super.loadData();
         if (settings.getQuery().isEmpty() && settings.getNick().isEmpty()) {
             return;
         }

@@ -103,6 +103,7 @@ public class BrandsFragment extends ListFragment {
 
     @Override
     public void loadData() {
+        super.loadData();
         refreshLayout.setRefreshing(true);
         mainSubscriber.subscribe(RxApi.DevDb().getBrands(mansCats[selected]), this::onLoad, new Brands());
     }

@@ -191,6 +191,7 @@ public class ProfileFragment extends TabFragment {
 
     @Override
     public void loadData() {
+        super.loadData();
         refreshToolbarMenuItems(false);
         mainSubscriber.subscribe(RxApi.Profile().getProfile(tab_url), this::onProfileLoad, new ProfileModel(), v -> loadData());
     }

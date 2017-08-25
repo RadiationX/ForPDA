@@ -106,6 +106,7 @@ public class AuthFragment extends TabFragment {
 
     @Override
     public void loadData() {
+        super.loadData();
         mainSubscriber.subscribe(RxApi.Auth().getForm(), this::onLoadForm, new AuthForm(), view1 -> loadData());
     }
 

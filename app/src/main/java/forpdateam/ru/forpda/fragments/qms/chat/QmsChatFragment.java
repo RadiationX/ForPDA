@@ -283,6 +283,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
 
     @Override
     public void loadData() {
+        super.loadData();
         if (currentChat.getUserId() != QmsChatModel.NOT_CREATED && currentChat.getThemeId() != QmsChatModel.NOT_CREATED) {
             refreshToolbarMenuItems(false);
             progressBar.setVisibility(View.VISIBLE);

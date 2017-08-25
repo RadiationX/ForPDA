@@ -176,6 +176,7 @@ public class DeviceFragment extends TabFragment {
 
     @Override
     public void loadData() {
+        super.loadData();
         refreshToolbarMenuItems(false);
         progressBar.setVisibility(View.VISIBLE);
         mainSubscriber.subscribe(RxApi.DevDb().getDevice(deviceId), this::onLoad, new Device());

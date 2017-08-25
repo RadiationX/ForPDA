@@ -131,6 +131,7 @@ public class QmsThemesFragment extends ListFragment {
 
     @Override
     public void loadData() {
+        super.loadData();
         refreshLayout.setRefreshing(true);
 
         refreshToolbarMenuItems(false);
