@@ -78,6 +78,7 @@ public class MentionsFragment extends ListFragment {
 
     @Override
     public void loadData() {
+        super.loadData();
         refreshLayout.setRefreshing(true);
         mainSubscriber.subscribe(RxApi.Mentions().getMentions(currentSt), this::onLoadThemes, new MentionsData(), v -> loadData());
     }

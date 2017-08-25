@@ -142,6 +142,7 @@ public class EditPostFragment extends TabFragment {
 
     @Override
     public void loadData() {
+        super.loadData();
         if (postForm.getType() == TYPE_EDIT_POST) {
             loadForm();
         } else {

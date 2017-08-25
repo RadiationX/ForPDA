@@ -170,6 +170,7 @@ public class QmsContactsFragment extends ListFragment {
 
     @Override
     public void loadData() {
+        super.loadData();
         refreshLayout.setRefreshing(true);
         mainSubscriber.subscribe(RxApi.Qms().getContactList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
     }

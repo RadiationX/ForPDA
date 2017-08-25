@@ -77,13 +77,15 @@ public class TabFragment extends Fragment {
     private boolean notifyDotFav = Preferences.Main.isShowNotifyDotFav();
     private boolean notifyDotQms = Preferences.Main.isShowNotifyDotQms();
     private boolean notifyDotMentions = Preferences.Main.isShowNotifyDotMentions();
+    private boolean alreadyCallLoad = false;
 
     protected Observer countsObserver = (observable, o) -> updateNotifyDot();
     protected Observer networkObserver = (observable, o) -> {
         if (o == null)
             o = true;
         if ((!configuration.isUseCache() || noNetwork.getVisibility() == View.VISIBLE) && (boolean) o) {
-            loadData();
+            if (!alreadyCallLoad)
+                loadData();
             noNetwork.setVisibility(View.GONE);
         }
     };
@@ -181,10 +183,13 @@ public class TabFragment extends Fragment {
     }
 
     //Загрузка каких-то данных, выполняется только при наличии сети
+    @CallSuper
     public void loadData() {
+        alreadyCallLoad = true;
 
     }
 
+    @CallSuper
     public void loadCacheData() {
 
     }
@@ -246,7 +251,7 @@ public class TabFragment extends Fragment {
         toolbar.setNavigationOnClickListener(configuration.isAlone() || configuration.isMenu() ? getMainActivity().getToggleListener() : getMainActivity().getRemoveTabListener());
         toolbar.setNavigationIcon(configuration.isAlone() || configuration.isMenu() ? R.drawable.ic_toolbar_hamburger : R.drawable.ic_toolbar_arrow_back);
 
-        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             findViewById(R.id.toolbar_shadow_prelp).setVisibility(View.VISIBLE);
         }
 
@@ -283,7 +288,8 @@ public class TabFragment extends Fragment {
     protected void viewsReady() {
         addBaseToolbarMenu();
         if (Client.getInstance().getNetworkState() && !configuration.isUseCache()) {
-            loadData();
+            if (!alreadyCallLoad)
+                loadData();
         } else {
             loadCacheData();
         }

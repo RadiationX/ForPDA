@@ -131,6 +131,7 @@ public class ForumFragment extends TabFragment {
 
     @Override
     public void loadData() {
+        super.loadData();
         updateDialog = new AlertDialog.Builder(getContext())
                 .setTitle("Обновление")
                 .setMessage("Загрузка данных")
@@ -141,6 +142,7 @@ public class ForumFragment extends TabFragment {
 
     @Override
     public void loadCacheData() {
+        super.loadCacheData();
         results = realm.where(ForumItemFlatBd.class).findAll();
         if (updateDialog != null && updateDialog.isShowing()) {
             if (results.size() != 0) {

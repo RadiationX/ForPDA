@@ -110,6 +110,7 @@ public class QmsBlackListFragment extends ListFragment {
 
     @Override
     public void loadData() {
+        super.loadData();
         refreshLayout.setRefreshing(true);
         mainSubscriber.subscribe(RxApi.Qms().getBlackList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
     }

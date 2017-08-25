@@ -130,6 +130,7 @@ public class TopicsFragment extends ListFragment {
 
     @Override
     public void loadData() {
+        super.loadData();
         refreshLayout.setRefreshing(true);
         mainSubscriber.subscribe(RxApi.Topics().getTopics(id, currentSt), this::onLoadThemes, new TopicsData(), v -> loadData());
     }
