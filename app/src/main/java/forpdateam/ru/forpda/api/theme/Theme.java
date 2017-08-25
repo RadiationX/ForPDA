@@ -167,10 +167,10 @@ public class Theme {
 
     public String reportPost(int topicId, int postId, String message) throws Exception {
         Map<String, String> headers = new HashMap<>();
-        headers.put("act", "report");
+        /*headers.put("act", "report");
         headers.put("send", "1");
         headers.put("t", Integer.toString(topicId));
-        headers.put("p", Integer.toString(postId));
+        headers.put("p", Integer.toString(postId));*/
         headers.put("message", message);
 
 
@@ -186,8 +186,10 @@ public class Theme {
 
 
         NetworkResponse response = Api.getWebClient().request(new NetworkRequest.Builder()
-                .url("https://4pda.ru/forum/index.php?")
-                .formHeaders(headers).build());
+                .url("https://4pda.ru/forum/index.php?act=report&send=1&t="+Integer.toString(topicId)+"&p="+Integer.toString(postId)+"")
+                .formHeaders(headers)
+                .multipart()
+                .build());
 
 
         Pattern p = Pattern.compile("<div class=\"errorwrap\">\n" +
