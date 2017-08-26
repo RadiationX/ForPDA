@@ -49,6 +49,7 @@ import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.LinkMovementMethod;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
+import forpdateam.ru.forpda.views.ScrimHelper;
 import io.reactivex.Observable;
 
 /**
@@ -61,9 +62,6 @@ public class ProfileFragment extends TabFragment {
     private LinearLayout countList, infoBlock, contactList, devicesList;
     private EditText noteText;
     private CircularProgressView progressView;
-    private Window window;
-    private int statusBarColor = -1, standardColor = -1;
-    private ValueAnimator statusBarValueAnimator;
 
     private Subscriber<ProfileModel> mainSubscriber = new Subscriber<>(this);
     private Subscriber<Boolean> saveNoteSubscriber = new Subscriber<>(this);
@@ -123,12 +121,18 @@ public class ProfileFragment extends TabFragment {
         findViewById(R.id.profile_save_note).setOnClickListener(view1 -> saveNote());
         //toolbar.setTitleTextColor(Color.TRANSPARENT);
 
-        if (getActivity() != null && getActivity().getWindow() != null) {
-            window = getActivity().getWindow();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                standardColor = App.getColorFromAttr(getContext(), R.attr.status_bar_color);
+
+        ScrimHelper scrimHelper = new ScrimHelper(appBarLayout, toolbarLayout);
+        scrimHelper.setScrimListener(scrim1 -> {
+            if(scrim1){
+                toolbar.getNavigationIcon().clearColorFilter();
+                toolbar.getOverflowIcon().clearColorFilter();
+            }else {
+                toolbar.getNavigationIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+                toolbar.getOverflowIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
             }
-        }
+        });
+
         toolbar.getNavigationIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         toolbar.getOverflowIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         return view;
@@ -167,21 +171,11 @@ public class ProfileFragment extends TabFragment {
     @Override
     public void onPause() {
         super.onPause();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.setStatusBarColor(standardColor);
-            if (statusBarValueAnimator != null) {
-                statusBarValueAnimator.cancel();
-            }
-        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (!isDetached() && isAdded() && isVisible() && !isHidden())
-                window.setStatusBarColor(statusBarColor);
-        }
     }
 
     public int dpToPx(int dp) {
@@ -271,33 +265,6 @@ public class ProfileFragment extends TabFragment {
                     if (!isAdded())
                         return;
                     blur(loadedImage);
-                    Palette.from(loadedImage).generate(palette -> {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            Palette.Swatch swatch = palette.getDarkMutedSwatch();
-                            if (swatch == null) {
-                                swatch = palette.getMutedSwatch();
-                            }
-                            if (swatch == null) {
-                                swatch = palette.getDarkVibrantSwatch();
-                            }
-                            statusBarColor = swatch == null ? standardColor : swatch.getRgb();
-                            if (!isDetached() && isAdded() && isVisible() && !isHidden()) {
-                                if (swatch == null) {
-                                    window.setStatusBarColor(statusBarColor);
-                                } else {
-                                    statusBarValueAnimator = new ValueAnimator();
-                                    statusBarValueAnimator.setIntValues(0, 255);
-                                    statusBarValueAnimator.setDuration(500);
-                                    statusBarValueAnimator.setInterpolator(new DecelerateInterpolator());
-                                    statusBarValueAnimator.addUpdateListener(animation -> {
-                                        window.setStatusBarColor(Color.argb(((Integer) animation.getAnimatedValue()), Color.red(statusBarColor), Color.green(statusBarColor), Color.blue(statusBarColor)));
-                                    });
-                                    statusBarValueAnimator.start();
-                                }
-                                toolbarLayout.setContentScrimColor(statusBarColor);
-                            }
-                        }
-                    });
                     Bitmap overlay = Bitmap.createBitmap(loadedImage.getWidth(), loadedImage.getHeight(), Bitmap.Config.RGB_565);
                     overlay.eraseColor(Color.WHITE);
                     Canvas canvas = new Canvas(overlay);
