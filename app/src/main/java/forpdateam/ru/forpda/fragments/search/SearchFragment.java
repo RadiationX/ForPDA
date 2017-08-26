@@ -683,6 +683,12 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        paginationHelper.destroy();
+    }
+
+    @Override
     public void onDomContentComplete(final ArrayList<String> actions) {
     }
 

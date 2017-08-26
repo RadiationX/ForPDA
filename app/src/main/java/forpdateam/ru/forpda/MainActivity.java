@@ -139,19 +139,25 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
         receiver = new NetworkStateReceiver();
         receiver.registerReceiver();
-        final View viewDiff = findViewById(R.id.fragments_container);
-        viewDiff.post(() -> {
-            App.setStatusBarHeight(((View) viewDiff.getParent()).getHeight() - viewDiff.getHeight());
-            App.setNavigationBarHeight(viewDiff.getRootView().getHeight() - viewDiff.getHeight() - App.getStatusBarHeight());
-            Log.d(LOG_TAG, "Calc SB: " + App.getStatusBarHeight() + ", NB: " + App.getNavigationBarHeight());
-            drawers.setStatusBarHeight(App.getStatusBarHeight());
-            //IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=2556269");
-        });
+
+
+        final View viewDiff = findViewById(R.id.view_for_measure);
+        viewDiff.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> measureView(v));
+        //viewDiff.post(() -> measureView(viewDiff));
 
         if (Preferences.Notifications.Update.isEnabled()) {
             new SimpleChecker().checkFromGitHub(this);
         }
         checkIntent(getIntent());
+
+    }
+
+    private void measureView(View v) {
+        App.setStatusBarHeight((int) (((View) v.getParent()).getY() + v.getY()));
+        App.setNavigationBarHeight(v.getRootView().getHeight() - findViewById(R.id.fragments_container).getHeight());
+        Log.d(LOG_TAG, "Calc SB: " + App.getStatusBarHeight() + ", NB: " + App.getNavigationBarHeight());
+        Log.d(LOG_TAG, "Calc SOOOKA " + v.getRootView().getHeight() + " : " + v.getRootView().getY() + " : " + findViewById(R.id.fragments_container).getHeight() + " : " + findViewById(R.id.fragments_container).getY());
+        App.getInstance().getStatusBarSizeObservables().notifyObservers();
     }
 
     @Override
@@ -287,8 +293,6 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         Log.d(LOG_TAG, "TabManager active tab: " + TabManager.getActiveIndex() + " : " + TabManager.getActiveTag());
         if (receiver != null)
             receiver.registerReceiver();
-        if (drawers != null)
-            drawers.setStatusBarHeight(App.getStatusBarHeight());
         if (currentThemeIsDark != App.getInstance().isDarkTheme()) {
             recreate();
         }

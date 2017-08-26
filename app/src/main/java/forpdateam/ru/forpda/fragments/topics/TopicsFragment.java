@@ -167,4 +167,10 @@ public class TopicsFragment extends ListFragment {
                     return true;
                 });
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        paginationHelper.destroy();
+    }
 }

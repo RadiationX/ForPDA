@@ -37,4 +37,8 @@
 
     <attr name="ProfileToolbarTextStyle" extension="reference" />
 
+    <declare-styleable name="AspectRatio">
+        <attr name="aspectRatio" format="float"/>
+    </declare-styleable>
+
 </resources>

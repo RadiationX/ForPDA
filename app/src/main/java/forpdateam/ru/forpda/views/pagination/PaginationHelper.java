@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -34,7 +35,14 @@ public class PaginationHelper {
     private final static int TAG_LAST = 4;
     private final static ColorFilter colorFilter = new PorterDuffColorFilter(Color.argb(80, 255, 255, 255), PorterDuff.Mode.DST_IN);
     private Context context;
-    //private TabLayout tabLayout;
+    private TabLayout tabLayoutInToolbar;
+    private Observer statusBarSizeObserver = (observable1, o) -> {
+        if (tabLayoutInToolbar != null) {
+            CollapsingToolbarLayout.LayoutParams params = (CollapsingToolbarLayout.LayoutParams) tabLayoutInToolbar.getLayoutParams();
+            params.topMargin = App.getToolBarHeight(tabLayoutInToolbar.getContext()) + App.getStatusBarHeight();
+            tabLayoutInToolbar.setLayoutParams(params);
+        }
+    };
 
     private ArrayList<TabLayout> tabLayouts = new ArrayList<>();
     private Pagination pagination;
@@ -76,6 +84,7 @@ public class PaginationHelper {
 
     public PaginationHelper(Activity context) {
         this.context = context;
+
     }
 
     public void setPagination(Pagination pagination) {
@@ -85,6 +94,8 @@ public class PaginationHelper {
     public void addInToolbar(LayoutInflater inflater, CollapsingToolbarLayout target) {
         TabLayout tabLayout = (TabLayout) inflater.inflate(R.layout.pagination_toolbar, target, false);
         target.addView(tabLayout, target.indexOfChild(target.findViewById(R.id.toolbar)));
+        tabLayoutInToolbar = tabLayout;
+        App.getInstance().addStatusBarSizeObserver(statusBarSizeObserver);
 
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) target.getLayoutParams();
         params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
@@ -212,6 +223,10 @@ public class PaginationHelper {
 
     public void setListener(PaginationListener listener) {
         this.listener = listener;
+    }
+
+    public void destroy() {
+        App.getInstance().removeStatusBarSizeObserver(statusBarSizeObserver);
     }
 
     public interface PaginationListener {

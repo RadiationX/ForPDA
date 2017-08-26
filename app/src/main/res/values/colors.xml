@@ -8,7 +8,7 @@
     <color name="light_colorPrimary">#ffffff</color>
     <color name="light_colorPrimaryDark">#aaaaaa</color>
     <color name="light_colorAccent">#000000</color>
-    <color name="light_status_bar_color">#00000000</color>
+    <color name="light_status_bar_color">#33000000</color>
 
     <color name="light_link_color">#2177af</color>
     <color name="light_link_color_contrast">#ffffff</color>

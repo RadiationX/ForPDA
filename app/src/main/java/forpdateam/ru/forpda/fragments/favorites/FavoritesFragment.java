@@ -417,6 +417,7 @@ public class FavoritesFragment extends ListFragment {
     public void onDestroy() {
         super.onDestroy();
         App.getInstance().removePreferenceChangeObserver(favoritesPreferenceObserver);
+        paginationHelper.destroy();
         realm.close();
     }
 
