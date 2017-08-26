@@ -5,6 +5,7 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ import forpdateam.ru.forpda.data.news.local.EntityMapping;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.views.ExtendedWebView;
+import forpdateam.ru.forpda.views.ScrimHelper;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -71,6 +73,7 @@ public class NewsDetailsFragment extends TabFragment {
         } else log("Arguments null");
     }
 
+    boolean scrim = false;
 
     @Nullable
     @Override
@@ -109,12 +112,26 @@ public class NewsDetailsFragment extends TabFragment {
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) toolbarLayout.getLayoutParams();
         params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
         toolbarLayout.setLayoutParams(params);
-        toolbarTitleView.setVisibility(View.GONE);
+
+        ScrimHelper scrimHelper = new ScrimHelper(appBarLayout, toolbarLayout);
+        scrimHelper.setScrimListener(scrim1 -> {
+            if(scrim1){
+                toolbar.getNavigationIcon().clearColorFilter();
+                toolbar.getOverflowIcon().clearColorFilter();
+                toolbarTitleView.setVisibility(View.VISIBLE);
+            }else {
+                toolbar.getNavigationIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+                toolbar.getOverflowIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+                toolbarTitleView.setVisibility(View.GONE);
+            }
+        });
+
         //toolbarLayout.requestLayout();
         setTitle(news.title);
         detailsTitle.setText(news.title);
         detailsNick.setText(news.author);
         detailsDate.setText(news.date);
+        toolbarTitleView.setVisibility(View.GONE);
         toolbar.getNavigationIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         toolbar.getOverflowIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         return view;

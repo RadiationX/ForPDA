@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         App.setStatusBarHeight((int) (((View) v.getParent()).getY() + v.getY()));
         App.setNavigationBarHeight(v.getRootView().getHeight() - findViewById(R.id.fragments_container).getHeight());
         Log.d(LOG_TAG, "Calc SB: " + App.getStatusBarHeight() + ", NB: " + App.getNavigationBarHeight());
-        Log.d(LOG_TAG, "Calc SOOOKA " + v.getRootView().getHeight() + " : " + v.getRootView().getY() + " : " + findViewById(R.id.fragments_container).getHeight() + " : " + findViewById(R.id.fragments_container).getY());
+        //Log.d(LOG_TAG, "Calc SOOOKA " + v.getRootView().getHeight() + " : " + v.getRootView().getY() + " : " + findViewById(R.id.fragments_container).getHeight() + " : " + findViewById(R.id.fragments_container).getY());
         App.getInstance().getStatusBarSizeObservables().notifyObservers();
     }
 
