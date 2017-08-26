@@ -140,6 +140,8 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         receiver = new NetworkStateReceiver();
         receiver.registerReceiver();
 
+        KeyboardUtil keyboardUtil = new KeyboardUtil(this, findViewById(android.R.id.content));
+        keyboardUtil.enable();
 
         final View viewDiff = findViewById(R.id.view_for_measure);
         viewDiff.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> measureView(v));
