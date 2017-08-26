@@ -15,7 +15,7 @@ import forpdateam.ru.forpda.api.others.pagination.Pagination;
  */
 
 public class Mentions {
-    private final static Pattern mentionsPattern = Pattern.compile("<div class=\"topic_title_post ([^\"]*?)\"[^>]*?>([^:]*?):[^<]*?<a[^>]*?href=\"([^\"]*?)\"[^>]*?>(?:([^<]*?)(?:, ([^<]*?)|))<\\/a>[\\s\\S]*?post_date[^\"]*?\"[^>]*?>[^<]*?<a[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?showuser[^>]*>([\\s\\S]*?)<");
+    private final static Pattern mentionsPattern = Pattern.compile("<div class=\"topic_title_post ?([^\"]*?)\"[^>]*?>([^:]*?):[^<]*?<a[^>]*?href=\"([^\"]*?)\"[^>]*?>(?:([^<]*?)(?:, ([^<]*?)|))<\\/a>[\\s\\S]*?post_date[^\"]*?\"[^>]*?>[^<]*?<a[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?showuser[^>]*>([\\s\\S]*?)<");
 
     public MentionsData getMentions(int st) throws Exception {
         MentionsData data = new MentionsData();

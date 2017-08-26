@@ -48,6 +48,7 @@ function getScrollTop() {
 
 
 function scrollToElement(name) {
+    console.log("scrollToElement "+name);
     if (typeof name != 'string') {
         name = PageInfo.elemToScroll;
     }
@@ -68,10 +69,11 @@ function scrollToElement(name) {
         //Открытие всех спойлеров
         var block = anchorElem;
         while (block.classList && !block.classList.contains('post_body')) {
-            if (block.classList.contains('spoil')) {
+            /*if (block.classList.contains('spoil')) {
                 block.classList.remove('close');
                 block.classList.add('open');
-            }
+            }*/
+            toggler("close", "open", block);
             block = block.parentNode;
         }
         //Открытие шапки
@@ -355,5 +357,27 @@ function ScrollCorrector() {
 function initScrollCorrector() {
     corrector = new ScrollCorrector();
 }
+
+function transformAnchor() {
+    var anchors = [];
+    var links = document.querySelectorAll(".post_container .post_body a[name][title]");
+    for (var i = 0; i < links.length; i++) {
+        if (links[i].innerHTML === "ˇ") {
+            anchors.push(links[i]);
+        }
+    }
+    anchors.forEach(function (item, i, arr) {
+        item.classList.add("anchor");
+        item.innerHTML = "";
+        item.addEventListener("click", function (event) {
+            var t = event.target;
+            while (!t.classList.contains('post_container')) {
+                t = t.parentElement;
+            }
+            ITheme.anchorDialog(t.dataset.postId, event.target.name);
+        })
+    });
+}
+nativeEvents.addEventListener("DOMContentLoaded", transformAnchor);
 nativeEvents.addEventListener("DOMContentLoaded", initScrollCorrector);
 nativeEvents.addEventListener("DOMContentLoaded", scrollToElement);

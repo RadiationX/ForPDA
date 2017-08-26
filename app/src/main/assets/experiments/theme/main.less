@@ -17,6 +17,32 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
 }
+a.anchor{
+    display: block;
+    position: relative;
+    height: 24/16rem;
+    margin-bottom: 8/16rem;
+    &:before{
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 24/16rem;
+        width: 24/16rem;
+        background-image: url(anchor.svg);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 24/16rem 24/16rem;
+    }
+    &:after{
+        content: "";
+        position: absolute;
+        top: 24/2/16rem;
+        left: (24+4)/16rem;
+        right: 0;
+        border-top: 1/16rem dashed #ccc;
+    }
+}
 .navigation {
     background: white;
     width: 100%;

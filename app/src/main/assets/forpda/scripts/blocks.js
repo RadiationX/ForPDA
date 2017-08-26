@@ -219,7 +219,18 @@ function blocksOpenClose() {
         }
     }
 
-    function toggler(c, o, t) {
+    /*function toggler(c, o, t) {
+        if (t.classList.contains(c)) {
+            t.classList.remove(c);
+            t.classList.add(o);
+            addImgesSrc(t);
+        } else if (t.classList.contains(o)) {
+            t.classList.remove(o);
+            t.classList.add(c);
+        }
+    }*/
+}
+ function toggler(c, o, t) {
         if (t.classList.contains(c)) {
             t.classList.remove(c);
             t.classList.add(o);
@@ -229,8 +240,6 @@ function blocksOpenClose() {
             t.classList.add(c);
         }
     }
-}
-
 /**
  *		==================
  *		SPOIL CLOSE BUTTON
@@ -295,9 +304,15 @@ function removeImgesSrc() {
         var images = codeBlock.querySelector(".block-body").querySelectorAll("img");
         for (var j = 0; j < images.length; j++) {
             var img = images[j];
+            console.log("removeImgesSrc "+img.src+" : "+img.dataset.src);
             if (!img.hasAttribute('src') || img.dataset.imageSrc) continue;
-            img.dataset.imageSrc = img.src;
+            var srcUrl = img.dataset.src;
+            if(!srcUrl){
+                srcUrl = img.src;
+            }
+            img.dataset.imageSrc = srcUrl;
             img.removeAttribute('src');
+            img.removeAttribute('data-src');
         }
         /*if (!codeBlock.classList.contains("images")) {
             codeBlock.classList.add("images");
@@ -311,10 +326,12 @@ function addImgesSrc(target) {
             var images = target.querySelectorAll('img');
             for (var i = 0; i < images.length; i++) {
                 var img = images[i];
+                console.log("addImgesSrc "+img.src+" : "+img.dataset.imageSrc);
                 if (img.hasAttribute('src') || !img.dataset.imageSrc) continue;
                 img.src = img.dataset.imageSrc;
                 img.removeAttribute('data-image-src');
-                corrector.startObserver();
+                if(typeof corrector !== 'undefined')
+                    corrector.startObserver();
             }
             return;
         }

@@ -2,10 +2,12 @@ package forpdateam.ru.forpda.fragments.theme;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
@@ -87,7 +89,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
             }
             menu.clear();
 
-               menu.add("Копировать")
+            menu.add("Копировать")
                     .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_content_copy))
                     .setOnMenuItemClickListener(item -> {
                         webView.evalJs("copySelectedText()");
@@ -596,4 +598,19 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
         });
     }
 
+    @JavascriptInterface
+    public void anchorDialog(String postId, String name) {
+        webView.runInUiThread(() -> {
+            IBaseForumPost post = getPostById(Integer.parseInt(postId));
+            String link = "https://4pda.ru/forum/index.php?act=findpost&pid=" + post.getId() + "&anchor=" + name;
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Ссылка на якорь")
+                    .setMessage(link)
+                    .setPositiveButton("Скопировать", (dialog, which) -> {
+                        Utils.copyToClipBoard(link);
+                    })
+                    .setNegativeButton("Отмена", null)
+                    .show();
+        });
+    }
 }
