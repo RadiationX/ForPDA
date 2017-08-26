@@ -474,6 +474,35 @@ button:active,
   hyphens: auto;
   word-wrap: break-word;
 }
+.post_body a.anchor {
+  display: block;
+  position: relative;
+  height: 1.5rem;
+  margin-top: 0.5rem;
+}
+.post_body a.anchor:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 1.5rem;
+  width: 1.5rem;
+  background-image: url("../../res/dark/anchor.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 1.5rem 1.5rem;
+}
+.post_body a.anchor:after {
+  content: "";
+  position: absolute;
+  top: 0.75rem;
+  left: 2rem;
+  right: 0.5rem;
+  border-top: 0.0625rem dashed #b2b2b2;
+}
+.post_body a.anchor:active {
+  background: rgba(255, 255, 255, 0.1);
+}
 .post_body .postcolor {
   overflow: auto!important;
   height: auto!important;

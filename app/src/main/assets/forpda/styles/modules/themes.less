@@ -478,6 +478,35 @@ button,
     -ms-hyphens: auto;
     hyphens: auto;
     word-wrap: break-word;
+    a.anchor {
+        display: block;
+        position: relative;
+        height: 24/16rem;
+        margin-top: 8/16rem;
+        &:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 24/16rem;
+            width: 24/16rem;
+            background-image: url(@anchor);
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 24/16rem 24/16rem;
+        }
+        &:after {
+            content: "";
+            position: absolute;
+            top: 24/2/16rem;
+            left: (24+8)/16rem;
+            right: 8/16rem;
+            border-top: 1/16rem dashed @second_text_color;
+        }
+        &:active{
+            background: @tapColor;
+        }
+    }
     .postcolor {
         overflow: auto!important;
         height: auto!important;
