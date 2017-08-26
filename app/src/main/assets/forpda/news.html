@@ -1,20 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <title>Document</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>${details_title}</title>
     <script type="text/javascript" src="scripts/main.js"></script>
-    <script type="text/javascript" src="scripts/blocks.js"></script>
+    <script type="text/javascript" src="scripts/modules/news.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles/md_colors.css">
+    <link rel="stylesheet" type="text/css" href="../fonts/roboto/import_mono.css">
+    <link rel="stylesheet" type="text/css" href="../fonts/fontello/import.css">
     <link rel="stylesheet" type="text/css" href="../fonts/roboto/import.css">
     <link rel="stylesheet" type="text/css" href="styles/light/light_main.css">
     <link rel="stylesheet" type="text/css" href="styles/light/light_news.css">
-    <!--<link rel="stylesheet" type="text/css" href="styles/helpers/grid.css">-->
 </head>
 
-<body>
-    <div class="content-box" itemprop="articleBody">
+<body id="news">
+    <div class="content">
         <meta property="og:description" content="В июле группа компаний VEON Ltd., работающая в России под брендом «Билайн», представила новое приложение. Программа доступна всем пользователям, но для абонентов «Билайн» в приложении есть особые «плюшки». Такие, например, как бесплатный трафик для звонков, пересылки файлов, просмотра видео. Наша редакция протестировала новое приложение и готова рассказать, чем же оно отличается от множества других.">
         <p style="text-align:justify">В июле группа компаний VEON Ltd., работающая в России под брендом «Билайн», представила новое приложение. Программа доступна всем пользователям, но для абонентов «Билайн» в приложении есть особые «плюшки». Такие, например, как бесплатный трафик для звонков, пересылки файлов, просмотра видео. Наша редакция протестировала новое приложение и готова рассказать, чем же оно отличается от множества других.
             <!--more-->
@@ -264,6 +264,11 @@
         </p>
         <br>
     </div>
+
+    <script type="text/javascript">
+        jsEmoticons.parseAll("file:///android_asset/smiles/")
+
+    </script>
 </body>
 
 </html>
