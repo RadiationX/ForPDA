@@ -83,6 +83,8 @@ public class AuthFragment extends TabFragment {
         nick.addTextChangedListener(myTW);
         password.addTextChangedListener(myTW);
         captcha.addTextChangedListener(myTW);
+        fragmentContainer.setFitsSystemWindows(true);
+        fragmentContent.setFitsSystemWindows(true);
         return view;
     }
 
