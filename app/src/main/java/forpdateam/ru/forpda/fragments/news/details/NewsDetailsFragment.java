@@ -1,39 +1,25 @@
 package forpdateam.ru.forpda.fragments.news.details;
 
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.news.NewsApi;
 import forpdateam.ru.forpda.api.news.models.NewsItem;
 import forpdateam.ru.forpda.data.news.entity.News;
 import forpdateam.ru.forpda.data.news.local.EntityMapping;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.fragments.news.details.blocks.InfoBlock;
+import forpdateam.ru.forpda.rxapi.RxApi;
+import forpdateam.ru.forpda.views.ExtendedWebView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 
@@ -43,15 +29,13 @@ import static forpdateam.ru.forpda.utils.Utils.log;
  * Created by isanechek on 8/19/17.
  */
 
-public class NewsDetailsFragment extends TabFragment implements NewsDetailsAdapter.DetailsItemClickListener {
+public class NewsDetailsFragment extends TabFragment {
 
     public static final String NEWS_ID = "news.to.details.id";
     public static final String OTHER_CASE = "news.to.details.other";
 
-    private SwipeRefreshLayout refresh;
-    private RecyclerView recyclerView;
-    private ProgressBar progressBar;
-    private NewsDetailsAdapter adapter;
+    private SwipeRefreshLayout refreshLayout;
+    private ExtendedWebView webView;
     private Realm realm;
     private CompositeDisposable disposable;
     private NewsApi api;
@@ -80,42 +64,41 @@ public class NewsDetailsFragment extends TabFragment implements NewsDetailsAdapt
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         baseInflateFragment(inflater, R.layout.news_details_fragment_layout);
-        refresh = (SwipeRefreshLayout) findViewById(R.id.news_details_content_refresh);
-        refresh.setOnRefreshListener(this::loadData);
-        refreshLayoutStyle(refresh);
-        refresh.setEnabled(false);
-        progressBar = (ProgressBar) findViewById(R.id.news_details_progress);
-        recyclerView = (RecyclerView) findViewById(R.id.news_details_list);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setHasFixedSize(false);
-        adapter = new NewsDetailsAdapter();
-        adapter.setItemClickListener(this);
-        recyclerView.setAdapter(adapter);
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
+        webView = getMainActivity().getWebViewsProvider().pull(getContext());
+        refreshLayout.addView(webView);
         viewsReady();
+        refreshLayout.setOnRefreshListener(this::loadData);
+        refreshLayoutStyle(refreshLayout);
+
+        setTitle(news.title);
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setTitle(news.title);
-        if (toolbarBackground.getVisibility() == View.GONE) {
-            toolbarBackground.setVisibility(View.VISIBLE);
-            loadCoverImage();
-        } else loadCoverImage();
+
 
     }
 
     @Override
     public void loadData() {
         super.loadData();
-        adapter.insertData(new InfoBlock(news.title, news.author, news.date));
-        loadFromNetwork();
-    }
-
-    @Override
-    public void loadCacheData() {
-        super.loadCacheData();
+        refreshLayout.setRefreshing(true);
+        loadCoverImage();
+        disposable.add(RxApi.NewsList().getDetails(_id)
+                .filter(item -> item.getHtml() != null)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(n -> {
+                    insertData(n);
+                    refreshLayout.setRefreshing(false);
+                    webView.loadDataWithBaseURL("https://4pda.ru/forum/", n.getHtml(), "text/html", "utf-8", null);
+                }, throwable -> {
+                    if (refreshLayout.isRefreshing()) refreshLayout.setRefreshing(false);
+                    Toast.makeText(getActivity(), R.string.news_opps, Toast.LENGTH_SHORT).show();
+                }));
     }
 
     @Override
@@ -129,34 +112,6 @@ public class NewsDetailsFragment extends TabFragment implements NewsDetailsAdapt
         ImageLoader.getInstance().displayImage(news.imgUrl, toolbarBackground);
     }
 
-    private void loadFromNetwork() {
-        refresh.setRefreshing(true);
-        disposable.add(api.loadTestDetails(_id)
-                .filter(item -> item.getHtml() != null)
-                .map((Function<NewsItem, List>) item -> api.action(item.getHtml()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(n -> {
-                    if (refresh.isRefreshing()) refresh.setRefreshing(false);
-                    adapter.insertData(n);
-
-//                    if (news.body != null) {
-//                        if (news.body.equals(n.getHtml())) {
-//                            log("Yse puchkom, bro.))");
-//                        } else {
-////                            insertData(n);
-//                            loadHtml(n.html);
-//                        }
-//                    } else {
-////                        insertData(n);
-//                        loadHtml(n.html);
-//                    }
-
-                }, throwable -> {
-                    if (refresh.isRefreshing()) refresh.setRefreshing(false);
-                    Toast.makeText(getActivity(), R.string.news_opps, Toast.LENGTH_SHORT).show();
-                }));
-    }
 
     private void insertData(NewsItem item) {
         realm.executeTransaction(r -> {
@@ -164,15 +119,4 @@ public class NewsDetailsFragment extends TabFragment implements NewsDetailsAdapt
         });
     }
 
-    @Override
-    public void youtubeItemClick(String id, String url, int position) {
-
-        try {
-            Intent app = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
-            startActivity(app);
-        } catch (ActivityNotFoundException e) {
-            Intent otherView = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity(otherView);
-        }
-    }
 }

@@ -26,6 +26,7 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.fragments.news.details.NewsDetailsFragment;
 import forpdateam.ru.forpda.fragments.news.main.timeline.NewsListAdapter;
+import forpdateam.ru.forpda.rxapi.RxApi;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -43,6 +44,7 @@ public class NewsMainParentFragment extends TabFragment implements
     private String category = Constants.NEWS_CATEGORY_ALL;
     private CompositeDisposable mDisposable;
     private Realm realm;
+
     public NewsMainParentFragment() {
 
     }
@@ -134,8 +136,7 @@ public class NewsMainParentFragment extends TabFragment implements
     }
 
     private void loadDataNews(int page) {
-        mDisposable.add(mApi.getRxSource(category, page)
-                .map(s -> mApi.mappingNewsList(s))
+        mDisposable.add(RxApi.NewsList().getNews(category, page)
                 .map(newsItems -> EntityMapping.mappingNews(category, newsItems))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

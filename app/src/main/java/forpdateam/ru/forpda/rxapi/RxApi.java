@@ -7,6 +7,7 @@ import forpdateam.ru.forpda.rxapi.apiclasses.EditPostRx;
 import forpdateam.ru.forpda.rxapi.apiclasses.FavoritesRx;
 import forpdateam.ru.forpda.rxapi.apiclasses.ForumRx;
 import forpdateam.ru.forpda.rxapi.apiclasses.MentionsRx;
+import forpdateam.ru.forpda.rxapi.apiclasses.NewsRx;
 import forpdateam.ru.forpda.rxapi.apiclasses.ProfileRx;
 import forpdateam.ru.forpda.rxapi.apiclasses.QmsRx;
 import forpdateam.ru.forpda.rxapi.apiclasses.ReputationRx;
@@ -22,7 +23,7 @@ public class RxApi {
     private static RxApi INSTANCE = null;
     private static QmsRx qmsApi = null;
     private static AuthRx authApi = null;
-    private static NewsApi newsListApi = null;
+    private static NewsRx newsApi = null;
     private static ProfileRx profileApi = null;
     private static ThemeRx themeApi = null;
     private static EditPostRx editPost = null;
@@ -44,9 +45,9 @@ public class RxApi {
         return authApi;
     }
 
-    public static NewsApi NewsList() {
-        if (newsListApi == null) newsListApi = new NewsApi();
-        return newsListApi;
+    public static NewsRx NewsList() {
+        if (newsApi == null) newsApi = new NewsRx();
+        return newsApi;
     }
 
     public static ProfileRx Profile() {

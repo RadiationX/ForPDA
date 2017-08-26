@@ -22,7 +22,7 @@ public class Api {
     private static Api INSTANCE = null;
     private static Qms qmsApi = null;
     private static Auth authApi = null;
-    private static NewsApi newsListApi = null;
+    private static NewsApi newsApi = null;
     private static Profile profileRxApi = null;
     private static Theme themeApi = null;
     private static EditPost editPost = null;
@@ -56,9 +56,9 @@ public class Api {
         return authApi;
     }
 
-    public static NewsApi NewsList() {
-        if (newsListApi == null) newsListApi = new NewsApi();
-        return newsListApi;
+    public static NewsApi NewsApi() {
+        if (newsApi == null) newsApi = new NewsApi();
+        return newsApi;
     }
 
     public static Profile Profile() {
