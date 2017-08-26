@@ -245,5 +245,9 @@ public class ReputationFragment extends ListFragment {
         listScrollTop();
     }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        paginationHelper.destroy();
+    }
 }

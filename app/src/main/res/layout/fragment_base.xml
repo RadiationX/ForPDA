@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/fragment_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fitsSystemWindows="true">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/coordinator_layout"
@@ -26,20 +26,24 @@
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
                 app:contentScrim="?attr/colorPrimary"
-                app:statusBarScrim="@android:color/transparent"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:statusBarScrim="@android:color/transparent"
                 app:titleEnabled="false">
 
+                <!--
+                Всем вьюхам, которые должны быть ниже статусбара, нужно сделать
+                 margintop=24dp(statusbarHeight) и обязательно в джава коде.
+                -->
                 <android.support.v7.widget.AppCompatImageView
                     android:id="@+id/toolbar_image_background"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/parallax_background"
-                    android:transitionName="toolbarCover"
                     android:scaleType="centerCrop"
+                    android:transitionName="toolbarCover"
                     app:layout_collapseMode="parallax"
-                    tools:targetApi="lollipop"
-                    tools:src="@drawable/test_img"/>
+                    tools:src="@drawable/test_img"
+                    tools:targetApi="lollipop" />
 
                 <ViewStub
                     android:id="@+id/toolbar_content"
@@ -86,6 +90,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:orientation="vertical">
+
                                 <android.support.v7.widget.AppCompatTextView
                                     android:id="@+id/toolbar_title"
                                     android:layout_width="wrap_content"
@@ -95,7 +100,7 @@
                                     android:textColor="?attr/default_text_color"
                                     android:textSize="18sp"
                                     android:textStyle="bold"
-                                    tools:text="BlaBlaBlaBlaBlaBlaBlaBlaBlaBlaBlaBlaBlaBlaBlaBla"/>
+                                    tools:text="BlaBlaBlaBlaBlaBlaBlaBlaBlaBlaBlaBlaBlaBlaBlaBla" />
 
                                 <android.support.v7.widget.AppCompatTextView
                                     android:id="@+id/toolbar_subtitle"
@@ -104,19 +109,20 @@
                                     android:textColor="?attr/second_text_color"
                                     android:textSize="12sp"
                                     android:visibility="gone"
-                                    tools:visibility="visible"
-                                    tools:text="subtitle"/>
+                                    tools:text="subtitle"
+                                    tools:visibility="visible" />
                             </LinearLayout>
+
                             <ProgressBar
-                                style="?android:attr/progressBarStyleSmall"
                                 android:id="@+id/toolbar_progress"
-                                android:layout_gravity="center_vertical"
+                                style="?android:attr/progressBarStyleSmall"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/dp8"
+                                android:layout_gravity="center_vertical"
                                 android:layout_marginEnd="@dimen/dp8"
+                                android:layout_marginStart="@dimen/dp8"
                                 android:visibility="invisible"
-                                tools:visibility="visible"/>
+                                tools:visibility="visible" />
                         </LinearLayout>
 
                         <android.support.v7.widget.AppCompatSpinner

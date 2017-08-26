@@ -1,15 +1,23 @@
 package forpdateam.ru.forpda.fragments.news.details;
 
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.design.widget.AppBarLayout;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.news.NewsApi;
 import forpdateam.ru.forpda.api.news.models.NewsItem;
@@ -34,8 +42,12 @@ public class NewsDetailsFragment extends TabFragment {
     public static final String NEWS_ID = "news.to.details.id";
     public static final String OTHER_CASE = "news.to.details.other";
 
-    private SwipeRefreshLayout refreshLayout;
+    private FrameLayout webViewContainer;
+    private ImageView detailsImage;
     private ExtendedWebView webView;
+    private TextView detailsTitle;
+    private TextView detailsNick;
+    private TextView detailsDate;
     private Realm realm;
     private CompositeDisposable disposable;
     private NewsApi api;
@@ -45,7 +57,7 @@ public class NewsDetailsFragment extends TabFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        configuration.setDefaultTitle("");
+        configuration.setDefaultTitle("Новость");
         configuration.setUseCache(false); // back
         configuration.setAlone(false);
         disposable = new CompositeDisposable();
@@ -59,19 +71,52 @@ public class NewsDetailsFragment extends TabFragment {
         } else log("Arguments null");
     }
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         baseInflateFragment(inflater, R.layout.news_details_fragment_layout);
-        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
+        webViewContainer = (FrameLayout) findViewById(R.id.swipe_refresh_list);
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
-        refreshLayout.addView(webView);
-        viewsReady();
-        refreshLayout.setOnRefreshListener(this::loadData);
-        refreshLayoutStyle(refreshLayout);
+        webViewContainer.addView(webView);
 
+        ViewStub viewStub = (ViewStub) findViewById(R.id.toolbar_content);
+        viewStub.setLayoutResource(R.layout.toolbar_news_details);
+        viewStub.inflate();
+        detailsImage = (ImageView) findViewById(R.id.news_details_image);
+        detailsTitle = (TextView) findViewById(R.id.news_details_title);
+        detailsNick = (TextView) findViewById(R.id.news_details_nick);
+        detailsDate = (TextView) findViewById(R.id.news_details_date);
+        viewsReady();
+        //webViewContainer.setOnRefreshListener(this::loadData);
+        //refreshLayoutStyle(webViewContainer);
+
+
+
+        /*toolbar.removeViewAt(0);
+
+        toolbarLayout.setTitleEnabled(true);
+        toolbar.setTitle(news.title);
+        toolbarLayout.setTitle(news.title);
+        toolbarLayout.setExpandedTitleGravity(Gravity.BOTTOM | Gravity.LEFT);
+        //toolbarLayout.setExpandedTitleMarginTop(App.px64 );
+        //toolbarLayout.setScrimVisibleHeightTrigger(App.px36);
+        toolbarLayout.setExpandedTitleColor(Color.RED);
+        toolbarLayout.setCollapsedTitleTextColor(Color.BLUE);
+        //toolbarLayout.setExpandedTitleTextAppearance(R.style.QText);
+        toolbarLayout.setScrimAnimationDuration(225);*/
+        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) toolbarLayout.getLayoutParams();
+        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
+        toolbarLayout.setLayoutParams(params);
+        toolbarTitleView.setVisibility(View.GONE);
+        //toolbarLayout.requestLayout();
         setTitle(news.title);
+        detailsTitle.setText(news.title);
+        detailsNick.setText(news.author);
+        detailsDate.setText(news.date);
+        toolbar.getNavigationIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+        toolbar.getOverflowIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         return view;
     }
 
@@ -85,7 +130,7 @@ public class NewsDetailsFragment extends TabFragment {
     @Override
     public void loadData() {
         super.loadData();
-        refreshLayout.setRefreshing(true);
+        //webViewContainer.setRefreshing(true);
         loadCoverImage();
         disposable.add(RxApi.NewsList().getDetails(_id)
                 .filter(item -> item.getHtml() != null)
@@ -93,10 +138,10 @@ public class NewsDetailsFragment extends TabFragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(n -> {
                     insertData(n);
-                    refreshLayout.setRefreshing(false);
+                    //webViewContainer.setRefreshing(false);
                     webView.loadDataWithBaseURL("https://4pda.ru/forum/", n.getHtml(), "text/html", "utf-8", null);
                 }, throwable -> {
-                    if (refreshLayout.isRefreshing()) refreshLayout.setRefreshing(false);
+                    //webViewContainer.setRefreshing(false);
                     Toast.makeText(getActivity(), R.string.news_opps, Toast.LENGTH_SHORT).show();
                 }));
     }
@@ -109,7 +154,7 @@ public class NewsDetailsFragment extends TabFragment {
     }
 
     private void loadCoverImage() {
-        ImageLoader.getInstance().displayImage(news.imgUrl, toolbarBackground);
+        ImageLoader.getInstance().displayImage(news.imgUrl, detailsImage);
     }
 
 

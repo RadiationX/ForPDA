@@ -94,6 +94,10 @@ public class Drawers {
         }
     };
 
+    private Observer statusBarSizeObserver = (observable1, o) -> {
+        setStatusBarHeight(App.getStatusBarHeight());
+    };
+
     public Drawers(MainActivity activity, DrawerLayout drawerLayout) {
         this.activity = activity;
         this.drawerLayout = drawerLayout;
@@ -120,6 +124,7 @@ public class Drawers {
 
         tabCloseAllButton.setOnClickListener(v -> closeAllTabs());
         App.getInstance().addPreferenceChangeObserver(preferenceObserver);
+        App.getInstance().addStatusBarSizeObserver(statusBarSizeObserver);
     }
 
     public NavigationView getMenuDrawer() {
@@ -177,6 +182,7 @@ public class Drawers {
 
     public void destroy() {
         App.getInstance().removePreferenceChangeObserver(preferenceObserver);
+        App.getInstance().removeStatusBarSizeObserver(statusBarSizeObserver);
         ClientHelper.getInstance().removeLoginObserver(loginObserver);
         ClientHelper.getInstance().removeCountsObserver(countsObserver);
         //menuAdapter.clear();

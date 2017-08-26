@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.fragments;
 
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
@@ -113,6 +112,18 @@ public class TabFragment extends Fragment {
                 updateNotifyDot();
                 break;
             }
+        }
+    };
+    private Observer statusBarSizeObserver = (observable1, o) -> {
+        if (notifyDot != null) {
+            CollapsingToolbarLayout.LayoutParams params = (CollapsingToolbarLayout.LayoutParams) notifyDot.getLayoutParams();
+            params.topMargin = App.getStatusBarHeight();
+            notifyDot.setLayoutParams(params);
+        }
+        if (toolbar != null) {
+            CollapsingToolbarLayout.LayoutParams params = (CollapsingToolbarLayout.LayoutParams) toolbar.getLayoutParams();
+            params.topMargin = App.getStatusBarHeight();
+            toolbar.setLayoutParams(params);
         }
     };
 
@@ -245,6 +256,8 @@ public class TabFragment extends Fragment {
         toolbarTitleView.setSelected(true);
         toolbarTitleView.setHorizontalFadingEdgeEnabled(true);
         toolbarTitleView.setFadingEdgeLength(App.px16);
+
+        App.getInstance().addStatusBarSizeObserver(statusBarSizeObserver);
 
         //fragmentContainer.setPadding(0, App.getStatusBarHeight(), 0, 0);
 
@@ -394,6 +407,7 @@ public class TabFragment extends Fragment {
         ClientHelper.getInstance().removeCountsObserver(countsObserver);
         Client.getInstance().removeNetworkObserver(networkObserver);
         App.getInstance().removePreferenceChangeObserver(tabPreferenceObserver);
+        App.getInstance().removeStatusBarSizeObserver(statusBarSizeObserver);
     }
 
     /* Experiment */

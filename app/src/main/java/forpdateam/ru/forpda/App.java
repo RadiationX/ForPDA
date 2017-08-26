@@ -112,6 +112,8 @@ public class App extends android.app.Application {
         if (key == null) return;
         preferenceChangeObservables.notifyObservers(key);
     };
+    private SimpleObservable statusBarSizeObservables = new SimpleObservable();
+
 
     public App() {
         instance = this;
@@ -253,12 +255,33 @@ public class App extends android.app.Application {
         }
     }
 
+    public static int getToolBarHeight(Context context) {
+        int[] attrs = new int[] {R.attr.actionBarSize};
+        TypedArray ta = context.obtainStyledAttributes(attrs);
+        int toolBarHeight = ta.getDimensionPixelSize(0, -1);
+        ta.recycle();
+        return toolBarHeight;
+    }
+
     public void addPreferenceChangeObserver(Observer observer) {
         preferenceChangeObservables.addObserver(observer);
     }
 
     public void removePreferenceChangeObserver(Observer observer) {
         preferenceChangeObservables.deleteObserver(observer);
+    }
+
+    public void addStatusBarSizeObserver(Observer observer) {
+        statusBarSizeObservables.addObserver(observer);
+        observer.update(statusBarSizeObservables, null);
+    }
+
+    public void removeStatusBarSizeObserver(Observer observer) {
+        statusBarSizeObservables.deleteObserver(observer);
+    }
+
+    public SimpleObservable getStatusBarSizeObservables() {
+        return statusBarSizeObservables;
     }
 
     public static int getStatusBarHeight() {
@@ -282,6 +305,7 @@ public class App extends android.app.Application {
     }
 
     public static void setKeyboardHeight(int newKeyboardHeight) {
+        Log.d("FORPDA_LOG", "setKeyboardHeight "+newKeyboardHeight);
         keyboardHeight = newKeyboardHeight;
         if (keyboardHeight == savedKeyboardHeight) return;
         App.getInstance().getPreferences().edit().putInt("keyboard_height", keyboardHeight).apply();

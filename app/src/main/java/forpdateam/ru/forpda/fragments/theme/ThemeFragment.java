@@ -265,6 +265,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         App.getInstance().removePreferenceChangeObserver(themePreferenceObserver);
         history.clear();
         messagePanel.onDestroy();
+        paginationHelper.destroy();
     }
 
     @Override

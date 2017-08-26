@@ -92,4 +92,10 @@ public class MentionsFragment extends ListFragment {
         setSubtitle(paginationHelper.getTitle());
         listScrollTop();
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        paginationHelper.destroy();
+    }
 }
