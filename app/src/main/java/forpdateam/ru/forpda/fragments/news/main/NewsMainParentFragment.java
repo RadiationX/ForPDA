@@ -90,7 +90,8 @@ public class NewsMainParentFragment extends TabFragment implements
     public void loadData() {
         super.loadData();
         refreshLayout.setRefreshing(true);
-        loadDataNews(0);
+        page = 0;
+        loadDataNews(page);
     }
 
     @Override
@@ -135,6 +136,29 @@ public class NewsMainParentFragment extends TabFragment implements
         TabManager.getInstance().add(new TabFragment.Builder<>(NewsDetailsFragment.class).setArgs(args).build());
     }
 
+    int page = 0;
+    @Override
+    public void loadMore() {
+        page++;
+        mDisposable.add(RxApi.NewsList().getNews(category, page)
+                .map(newsItems -> EntityMapping.mappingNews(category, newsItems))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(res -> {
+                    refreshLayout.setRefreshing(false);
+                    if (res.size() > 0) {
+                        adapter.insertMore(res);
+                        realm.executeTransaction(r -> {
+                            //if (r.where(News.class).findAll().size() > 0) r.delete(News.class);
+                            r.insertOrUpdate(res);
+                        });
+                    }
+                }, throwable -> {
+                    refreshLayout.setRefreshing(false);
+                    Toast.makeText(getActivity(), R.string.news_opps, Toast.LENGTH_SHORT).show();
+                }));
+    }
+
     private void loadDataNews(int page) {
         mDisposable.add(RxApi.NewsList().getNews(category, page)
                 .map(newsItems -> EntityMapping.mappingNews(category, newsItems))
@@ -145,7 +169,7 @@ public class NewsMainParentFragment extends TabFragment implements
                     if (res.size() > 0) {
                         adapter.insertData(res);
                         realm.executeTransaction(r -> {
-                            if (r.where(News.class).findAll().size() > 0) r.delete(News.class);
+                            //if (r.where(News.class).findAll().size() > 0) r.delete(News.class);
                             r.insertOrUpdate(res);
                         });
                     }

@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -30,6 +31,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.robohorse.pagerbullet.PagerBullet;
 
 import java.util.ArrayList;
+import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -57,6 +59,14 @@ public class DeviceFragment extends TabFragment {
     private ViewPager fragmentsPager;
     private ProgressBar progressBar;
     private Device currentData;
+    private RelativeLayout toolbarContent;
+    private Observer statusBarSizeObserver = (observable1, o) -> {
+        if (toolbarContent != null) {
+            CollapsingToolbarLayout.LayoutParams params = (CollapsingToolbarLayout.LayoutParams) toolbarContent.getLayoutParams();
+            params.topMargin = /*App.getToolBarHeight(toolbarLayout.getContext()) +*/ App.getStatusBarHeight();
+            toolbarContent.setLayoutParams(params);
+        }
+    };
 
     public DeviceFragment() {
         configuration.setDefaultTitle("Устройство");
@@ -85,6 +95,8 @@ public class DeviceFragment extends TabFragment {
         super.onActivityCreated(savedInstanceState);
     }
 
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -93,7 +105,7 @@ public class DeviceFragment extends TabFragment {
         baseInflateFragment(inflater, R.layout.fragment_device);
         ViewStub viewStub = (ViewStub) findViewById(R.id.toolbar_content);
         viewStub.setLayoutResource(R.layout.toolbar_device);
-        viewStub.inflate();
+        toolbarContent = (RelativeLayout) viewStub.inflate();
 
         imagesPager = (PagerBullet) findViewById(R.id.images_pager);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
@@ -131,6 +143,7 @@ public class DeviceFragment extends TabFragment {
 
         imagesPager.setIndicatorTintColorScheme(App.getColorFromAttr(getContext(), R.attr.default_text_color), App.getColorFromAttr(getContext(), R.attr.second_text_color));
 
+        App.getInstance().addStatusBarSizeObserver(statusBarSizeObserver);
         return view;
     }
 
@@ -219,6 +232,11 @@ public class DeviceFragment extends TabFragment {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        App.getInstance().removeStatusBarSizeObserver(statusBarSizeObserver);
+    }
 
     private class FragmentPagerAdapter extends android.support.v4.app.FragmentPagerAdapter {
         private Device device;
