@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,6 +30,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private static final int COMPAT_LAYOUT = 1;
     private static final int FULL_LAYOUT = 2;
+    private static final int LOAD_MORE_LAYOUT = 3;
 
     private ArrayList<News> items = new ArrayList<>();
     private NewsListAdapter.ItemClickListener mItemClickListener;
@@ -39,6 +41,8 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             return new FullHolder(getItemLayout(parent, R.layout.news_main_full_item_layout));
         } else if (viewType == COMPAT_LAYOUT) {
             return new CompatHolder(getItemLayout(parent, R.layout.news_main_compat_item_layout));
+        } else if (viewType == LOAD_MORE_LAYOUT) {
+            return new LoadMoreHolder(getItemLayout(parent, R.layout.news_list_load_more_layout));
         }
         throw new IllegalArgumentException("Еблан что ле? Чего ты тут заслал, мудила. Смотри внимательней. Сучка!");
     }
@@ -49,8 +53,11 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             ((CompatHolder) holder).bind(items.get(position), position);
         } else if (FULL_LAYOUT == getItemViewType(position)) {
             ((FullHolder) holder).bind(items.get(position), position);
+        } else if (LOAD_MORE_LAYOUT == getItemViewType(position)) {
+            ((LoadMoreHolder) holder).bind();
         }
     }
+
 
     @Override
     public int getItemCount() {
@@ -59,6 +66,9 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemViewType(int position) {
+        if (position == (getItemCount() - 1)) {
+            return LOAD_MORE_LAYOUT;
+        }
         return FULL_LAYOUT;
     }
 
@@ -75,8 +85,16 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
         this.items.clear();
         this.items.addAll(list);
-        this.items.addAll(0, list);
+        //this.items.addAll(0, list);
         diffResult.dispatchUpdatesTo(this);
+    }
+
+    private boolean showBtn = false;
+
+    public void insertMore(List<News> list) {
+        this.items.addAll(list);
+        notifyItemRangeInserted(items.size(), list.size());
+        showBtn = true;
     }
 
     public void updateData(List<News> list) {
@@ -92,7 +110,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         items.clear();
     }
 
-    private View getItemLayout(ViewGroup parent,int id) {
+    private View getItemLayout(ViewGroup parent, int id) {
         return LayoutInflater.from(parent.getContext()).inflate(id, parent, false);
     }
 
@@ -180,7 +198,42 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
+    public class LoadMoreHolder extends RecyclerView.ViewHolder {
+
+        private LinearLayout container;
+        private Button btn;
+
+        public LoadMoreHolder(View itemView) {
+            super(itemView);
+            container = (LinearLayout) itemView.findViewById(R.id.nl_lm_container);
+            btn = (Button) itemView.findViewById(R.id.nl_lm_btn);
+        }
+
+
+        public void bind() {
+            if (showBtn && container.getVisibility() == View.VISIBLE) {
+                container.setVisibility(View.GONE);
+                btn.setVisibility(View.VISIBLE);
+                btn.setOnClickListener(v -> {
+                    btn.setVisibility(View.GONE);
+                    showBtn = false;
+                    container.setVisibility(View.VISIBLE);
+                    mItemClickListener.loadMore();
+                });
+            } else {
+                btn.setOnClickListener(v -> {
+                    btn.setVisibility(View.GONE);
+                    container.setVisibility(View.VISIBLE);
+                    mItemClickListener.loadMore();
+                });
+            }
+        }
+
+    }
+
     public interface ItemClickListener {
         void itemClick(View view, int position);
+
+        void loadMore();
     }
 }
