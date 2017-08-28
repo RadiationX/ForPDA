@@ -25,6 +25,7 @@ import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.favorites.Sorting;
 import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
@@ -345,6 +346,7 @@ public class FavoritesFragment extends ListFragment {
     }
 
     private void bindView() {
+        if (realm.isClosed()) return;
         results = realm.where(FavItemBd.class).findAll();
         if (results.size() != 0) {
             ArrayList<IFavItem> nonBdResult = new ArrayList<>();

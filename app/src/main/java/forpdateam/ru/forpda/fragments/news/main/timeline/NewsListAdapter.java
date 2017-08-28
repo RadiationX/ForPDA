@@ -4,6 +4,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.api.news.models.NewsItem;
 import forpdateam.ru.forpda.data.news.entity.News;
 
 /**
@@ -27,13 +29,14 @@ import forpdateam.ru.forpda.data.news.entity.News;
  */
 
 public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
     private static final int COMPAT_LAYOUT = 1;
     private static final int FULL_LAYOUT = 2;
     private static final int LOAD_MORE_LAYOUT = 3;
 
-    private ArrayList<News> items = new ArrayList<>();
+    private ArrayList<NewsItem> items = new ArrayList<>();
     private NewsListAdapter.ItemClickListener mItemClickListener;
+
+    private boolean showBtn = false;
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -76,38 +79,18 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.mItemClickListener = onClickListener;
     }
 
-    public News getItem(int position) {
+    public NewsItem getItem(int position) {
         return items.get(position);
     }
 
-    public void insertData(List<News> list) {
-        final NewsDiffCallback diffCallback = new NewsDiffCallback(items, list);
-        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
-        this.items.clear();
+    public void addAll(List<NewsItem> list) {
         this.items.addAll(list);
-        //this.items.addAll(0, list);
-        diffResult.dispatchUpdatesTo(this);
-    }
-
-    private boolean showBtn = false;
-
-    public void insertMore(List<News> list) {
-        this.items.addAll(list);
-        notifyItemRangeInserted(items.size(), list.size());
         showBtn = true;
     }
 
-    public void updateData(List<News> list) {
-        final NewsDiffCallback diffCallback = new NewsDiffCallback(items, list);
-        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
-        this.items.clear();
-        this.items.addAll(list);
-        this.items.addAll(0, list);
-        diffResult.dispatchUpdatesTo(this);
-    }
 
     public void clear() {
-        items.clear();
+        this.items.clear();
     }
 
     private View getItemLayout(ViewGroup parent, int id) {
@@ -137,18 +120,19 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             date = (TextView) itemView.findViewById(R.id.news_list_item_date);
             save = (ImageButton) itemView.findViewById(R.id.news_list_item_save);
             share = (ImageButton) itemView.findViewById(R.id.news_list_item_share);
+            clickContainer.setOnClickListener(v -> {
+                ViewCompat.setTransitionName(cover, String.valueOf(getLayoutPosition()) + "_image");
+                mItemClickListener.itemClick(cover, getLayoutPosition());
+            });
         }
 
-        public void bind(News item, int position) {
-            clickContainer.setOnClickListener(v -> {
-                ViewCompat.setTransitionName(cover, String.valueOf(position) + "_image");
-                mItemClickListener.itemClick(cover, position);
-            });
-            title.setText(item.title);
-            description.setText(item.description);
-            ImageLoader.getInstance().displayImage(item.imgUrl, cover);
-            username.setText(item.author);
-            date.setText(item.date);
+        public void bind(NewsItem item, int position) {
+
+            title.setText(item.getTitle());
+            description.setText(item.getDescription());
+            ImageLoader.getInstance().displayImage(item.getImgUrl(), cover);
+            username.setText(item.getAuthor());
+            date.setText(item.getDate());
         }
     }
 
@@ -178,23 +162,22 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             nContainer = (LinearLayout) itemView.findViewById(R.id.news_full_item_new_container);
             cover = (CircleImageView) itemView.findViewById(R.id.news_full_item_cover);
             root = (CardView) itemView.findViewById(R.id.news_full_item_root);
+            root.setOnClickListener(v -> {
+                mItemClickListener.itemClick(cover, getLayoutPosition());
+            });
         }
 
-        public void bind(News news, int position) {
-            if (news.newNews && nContainer.getVisibility() == View.GONE) {
+        public void bind(NewsItem news, int position) {
+            /*if (news.newNews && nContainer.getVisibility() == View.GONE) {
                 nContainer.setVisibility(View.VISIBLE);
-            }
-            username.setText(news.author);
-            category.setText(news.category);
-            title.setText(news.title);
-            description.setText(news.description);
-            commentsCount.setText(news.commentsCount);
-            date.setText(news.date);
-            ImageLoader.getInstance().displayImage(news.imgUrl, cover);
-            root.setOnClickListener(v -> {
-
-                mItemClickListener.itemClick(cover, position);
-            });
+            }*/
+            username.setText(news.getAuthor());
+            //category.setText(news.category);
+            title.setText(news.getTitle());
+            description.setText(news.getDescription());
+            commentsCount.setText(Integer.toString(news.getCommentsCount()));
+            date.setText(news.getDate());
+            ImageLoader.getInstance().displayImage(news.getImgUrl(), cover);
         }
     }
 

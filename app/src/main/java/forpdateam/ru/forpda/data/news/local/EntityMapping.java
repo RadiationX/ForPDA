@@ -3,7 +3,7 @@ package forpdateam.ru.forpda.data.news.local;
 import java.util.ArrayList;
 import java.util.List;
 
-import forpdateam.ru.forpda.api.news.models.NewsItem;
+import forpdateam.ru.forpda.api.news.models.DetailsPage;
 import forpdateam.ru.forpda.data.news.entity.News;
 
 /**
@@ -12,7 +12,7 @@ import forpdateam.ru.forpda.data.news.entity.News;
 
 public class EntityMapping {
 
-    public static List<News> mappingNews(String category, List<NewsItem> items) {
+    public static List<News> mappingNews(String category, List<DetailsPage> items) {
         ArrayList<News> cache = new ArrayList<>();
         for (int i = 0; i < items.size(); i++) {
             cache.add(mappingNews(category, items.get(i)));
@@ -20,7 +20,7 @@ public class EntityMapping {
         return cache;
     }
 
-    public static News mappingNews(String category, NewsItem item) {
+    public static News mappingNews(String category, DetailsPage item) {
         News news = new News();
         news.title = item.getTitle();
         news.url = item.getUrl();
@@ -39,12 +39,12 @@ public class EntityMapping {
         return news;
     }
 
-    public static News mappingNews(News news, NewsItem item) {
+    public static News mappingNews(News news, DetailsPage item) {
         if (news == null) {
             throw new IllegalArgumentException("Mapping news object null!");
         }
 
-        news.body = item.html;
+        news.body = item.getHtml();
         if (news.newNews) {
             news.newNews = false;
             news.readDone = true;
@@ -53,9 +53,9 @@ public class EntityMapping {
         return news;
     }
 
-    public static News mappingNews(NewsItem item) {
+    public static News mappingNews(DetailsPage item) {
         News news = new News();
-        news.body = item.html;
+        news.body = item.getHtml();
         return news;
     }
 }

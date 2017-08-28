@@ -1,10 +1,10 @@
 package forpdateam.ru.forpda.api.news.models;
 
 /**
- * Created by radiationx on 28.08.17.
+ * Created by isanechek on 7/20/17.
  */
-
-public class NewsItem {
+// На время только, ибо оригинал в котлине
+public class DetailsPage {
     private int id;
     private String url;
     private String title;
@@ -14,6 +14,13 @@ public class NewsItem {
     private String imgUrl;
     private int commentsCount;
     private String tags;
+
+    // for details
+
+    private String html;
+    private String moreNews;
+    private String navId;
+    private String comments;
 
     public int getId() {
         return id;
@@ -85,5 +92,37 @@ public class NewsItem {
 
     public void setTags(String tags) {
         this.tags = tags;
+    }
+
+    public String getHtml() {
+        return html;
+    }
+
+    public void setHtml(String html) {
+        this.html = html;
+    }
+
+    public String getMoreNews() {
+        return moreNews;
+    }
+
+    public void setMoreNews(String moreNews) {
+        this.moreNews = moreNews;
+    }
+
+    public String getNavId() {
+        return navId;
+    }
+
+    public void setNavId(String navId) {
+        this.navId = navId;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 }

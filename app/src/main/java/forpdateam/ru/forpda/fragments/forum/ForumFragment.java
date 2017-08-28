@@ -143,6 +143,7 @@ public class ForumFragment extends TabFragment {
     @Override
     public void loadCacheData() {
         super.loadCacheData();
+        if (realm.isClosed()) return;
         results = realm.where(ForumItemFlatBd.class).findAll();
         if (updateDialog != null && updateDialog.isShowing()) {
             if (results.size() != 0) {

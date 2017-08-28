@@ -1,5 +1,9 @@
 package forpdateam.ru.forpda.api.theme;
 
+import android.util.Log;
+
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -166,32 +170,34 @@ public class Theme {
     }
 
     public String reportPost(int topicId, int postId, String message) throws Exception {
-        Map<String, String> headers = new HashMap<>();
-        /*headers.put("act", "report");
-        headers.put("send", "1");
-        headers.put("t", Integer.toString(topicId));
-        headers.put("p", Integer.toString(postId));*/
-        headers.put("message", message);
 
+        String testString = "Тест жалобы. Вот так выглядит текст с клиента ForPDA. $%@#*";
+        /*Log.d("SUKA", testString);
+        testString = URLEncoder.encode(testString, "ISO-8859-1");
+        Log.d("SUKA", testString);
+        testString = URLDecoder.decode(testString, "Windows-1251");
+        Log.d("SUKA", testString);*/
 
-        MultipartBody.Builder multipartBuilder = new MultipartBody.Builder();
-        multipartBuilder.setType(MultipartBody.FORM);
-        for (Map.Entry<String, String> entry : headers.entrySet()) {
-            multipartBuilder.addFormDataPart(entry.getKey(), entry.getValue());
-        }
-        /*MultipartBody multipartBody = multipartBuilder.build();
-        for (MultipartBody.Part part : multipartBody.parts()) {
-            Log.d("FORPDA_LOG", part.headers().toString() + " : " + part.body().contentType());
-        }*/
-
-
-        NetworkResponse response = Api.getWebClient().request(new NetworkRequest.Builder()
-                .url("https://4pda.ru/forum/index.php?act=report&send=1&t="+Integer.toString(topicId)+"&p="+Integer.toString(postId)+"")
-                .formHeaders(headers)
+        /*testString += URLEncoder.encode("Тест жалобы. ", "UTF-8");
+        testString += URLEncoder.encode("Вот так выглядит текст", "Windows-1251");
+        testString += URLEncoder.encode(" с клиента ForPDA. $%@#*", "ISO-8859-1");
+*/
+        NetworkRequest request = new NetworkRequest.Builder()
+                .url("https://4pda.ru/forum/index.php?act=report&send=1&t=" + Integer.toString(topicId) + "&p=" + Integer.toString(postId) + "")
                 .multipart()
-                .build());
+                .formHeader("message", testString)
+                .build();
 
+        if (request.getFormHeaders() != null) {
+            for (Map.Entry<String, String> entry : request.getFormHeaders().entrySet()) {
+                Log.d("SUKA", "Form header " + entry.getKey() + " : " + entry.getValue());
+            }
+        }
+        if (request.getFile() != null) {
+            Log.d("SUKA", "Form file " + request.getFile().toString());
+        }
 
+        NetworkResponse response = Api.getWebClient().request(request);
         Pattern p = Pattern.compile("<div class=\"errorwrap\">\n" +
                 "\\s*<h4>Причина:</h4>\n" +
                 "\\s*\n" +

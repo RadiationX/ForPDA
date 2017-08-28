@@ -188,12 +188,17 @@ public class ExtendedWebView extends NestedGeckoView implements IBase {
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public void evalJs(String script) {
         //Log.d("EWV", "evalJs: " + script);
-        try {
-            evalJs(script, null);
-        } catch (Exception error) {
-            error.printStackTrace();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            try {
+                evalJs(script, null);
+            } catch (Exception error) {
+                error.printStackTrace();
+                loadUrl("javascript:" + script);
+            }
+        } else {
             loadUrl("javascript:" + script);
         }
+
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)

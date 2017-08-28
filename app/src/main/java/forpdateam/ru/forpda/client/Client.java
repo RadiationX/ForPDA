@@ -270,6 +270,7 @@ public class Client implements IWebClient {
         Log.d(LOG_TAG, "Request url " + request.getUrl());
         Request.Builder requestBuilder = new Request.Builder()
                 .url(url)
+                .header("Accept-Language", "ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4")
                 .header("User-Agent", USER_AGENT);
         if (request.getHeaders() != null) {
             for (Map.Entry<String, String> entry : request.getHeaders().entrySet()) {

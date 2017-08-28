@@ -193,6 +193,7 @@ public class QmsContactsFragment extends ListFragment {
     }
 
     private void bindView() {
+        if (realm.isClosed()) return;
         results = realm.where(QmsContactBd.class).findAll();
         if (results.size() != 0) {
             adapter.addAll(results);
