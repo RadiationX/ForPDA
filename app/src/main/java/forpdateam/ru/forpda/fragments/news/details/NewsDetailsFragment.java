@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +17,7 @@ import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.news.NewsApi;
-import forpdateam.ru.forpda.api.news.models.NewsItem;
-import forpdateam.ru.forpda.data.news.entity.News;
-import forpdateam.ru.forpda.data.news.local.EntityMapping;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.views.ExtendedWebView;
@@ -31,7 +25,6 @@ import forpdateam.ru.forpda.views.ScrimHelper;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import io.realm.Realm;
 
 import static forpdateam.ru.forpda.utils.Utils.log;
 
@@ -41,7 +34,13 @@ import static forpdateam.ru.forpda.utils.Utils.log;
 
 public class NewsDetailsFragment extends TabFragment {
 
-    public static final String NEWS_ID = "news.to.details.id";
+    public static final String ARG_NEWS_ID = "ARG_NEWS_ID";
+    public static final String ARG_NEWS_TITLE = "ARG_NEWS_TITLE";
+    public static final String ARG_NEWS_AUTHOR_NICK = "ARG_NEWS_AUTHOR_NICK";
+    public static final String ARG_NEWS_AUTHOR_ID = "ARG_NEWS_AUTHOR_ID";
+    public static final String ARG_NEWS_DATE = "ARG_NEWS_DATE";
+    public static final String ARG_NEWS_IMAGE = "ARG_NEWS_IMAGE";
+
     public static final String OTHER_CASE = "news.to.details.other";
 
     private FrameLayout webViewContainer;
@@ -50,11 +49,14 @@ public class NewsDetailsFragment extends TabFragment {
     private TextView detailsTitle;
     private TextView detailsNick;
     private TextView detailsDate;
-    private Realm realm;
+    //private Realm realm;
     private CompositeDisposable disposable;
-    private NewsApi api;
-    private News news;
-    private String _id;
+    //private News news;
+    private int newsId;
+    private String newsTitle;
+    private String newsNick;
+    private String newsDate;
+    private String newsImageUrl;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,10 +66,14 @@ public class NewsDetailsFragment extends TabFragment {
         configuration.setAlone(false);
         disposable = new CompositeDisposable();
         if (getArguments() != null) {
-            _id = getArguments().getString(NEWS_ID);
-            realm = Realm.getDefaultInstance();
-            api = new NewsApi();
-            news = realm.where(News.class).equalTo("url", _id).findFirst();
+            newsId = getArguments().getInt(ARG_NEWS_ID);
+            newsTitle = getArguments().getString(ARG_NEWS_TITLE);
+            newsNick = getArguments().getString(ARG_NEWS_AUTHOR_NICK);
+            newsDate = getArguments().getString(ARG_NEWS_DATE);
+            newsImageUrl = getArguments().getString(ARG_NEWS_IMAGE);
+            Log.d("SUKA", "" + newsId + " : " + newsTitle + " : " + newsNick + " : " + newsDate + " : " + newsImageUrl);
+            //realm = Realm.getDefaultInstance();
+            //news = realm.where(News.class).equalTo("url", newsId).findFirst();
 
 
         } else log("Arguments null");
@@ -100,8 +106,8 @@ public class NewsDetailsFragment extends TabFragment {
         /*toolbar.removeViewAt(0);
 
         toolbarLayout.setTitleEnabled(true);
-        toolbar.setTitle(news.title);
-        toolbarLayout.setTitle(news.title);
+        toolbar.setTitle(news.newsTitle);
+        toolbarLayout.setTitle(news.newsTitle);
         toolbarLayout.setExpandedTitleGravity(Gravity.BOTTOM | Gravity.LEFT);
         //toolbarLayout.setExpandedTitleMarginTop(App.px64 );
         //toolbarLayout.setScrimVisibleHeightTrigger(App.px36);
@@ -115,11 +121,11 @@ public class NewsDetailsFragment extends TabFragment {
 
         ScrimHelper scrimHelper = new ScrimHelper(appBarLayout, toolbarLayout);
         scrimHelper.setScrimListener(scrim1 -> {
-            if(scrim1){
+            if (scrim1) {
                 toolbar.getNavigationIcon().clearColorFilter();
                 toolbar.getOverflowIcon().clearColorFilter();
                 toolbarTitleView.setVisibility(View.VISIBLE);
-            }else {
+            } else {
                 toolbar.getNavigationIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
                 toolbar.getOverflowIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
                 toolbarTitleView.setVisibility(View.GONE);
@@ -127,10 +133,10 @@ public class NewsDetailsFragment extends TabFragment {
         });
 
         //toolbarLayout.requestLayout();
-        setTitle(news.title);
-        detailsTitle.setText(news.title);
-        detailsNick.setText(news.author);
-        detailsDate.setText(news.date);
+        setTitle(newsTitle);
+        detailsTitle.setText(newsTitle);
+        detailsNick.setText(newsNick);
+        detailsDate.setText(newsDate);
         toolbarTitleView.setVisibility(View.GONE);
         toolbar.getNavigationIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         toolbar.getOverflowIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
@@ -149,16 +155,22 @@ public class NewsDetailsFragment extends TabFragment {
         super.loadData();
         //webViewContainer.setRefreshing(true);
         loadCoverImage();
-        disposable.add(RxApi.NewsList().getDetails(_id)
+        disposable.add(RxApi.NewsList().getDetails(newsId)
                 .filter(item -> item.getHtml() != null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(n -> {
-                    insertData(n);
-                    //webViewContainer.setRefreshing(false);
-                    webView.loadDataWithBaseURL("https://4pda.ru/forum/", n.getHtml(), "text/html", "utf-8", null);
+                .subscribe(article -> {
+                    newsTitle = article.getTitle();
+                    newsNick = article.getAuthor();
+                    newsDate = article.getDate();
+                    newsImageUrl = article.getImgUrl();
+                    setTitle(newsTitle);
+                    detailsTitle.setText(newsTitle);
+                    detailsNick.setText(newsNick);
+                    detailsDate.setText(newsDate);
+                    loadCoverImage();
+                    webView.loadDataWithBaseURL("https://4pda.ru/forum/", article.getHtml(), "text/html", "utf-8", null);
                 }, throwable -> {
-                    //webViewContainer.setRefreshing(false);
                     Toast.makeText(getActivity(), R.string.news_opps, Toast.LENGTH_SHORT).show();
                 }));
     }
@@ -167,18 +179,18 @@ public class NewsDetailsFragment extends TabFragment {
     public void onDestroy() {
         super.onDestroy();
         if (disposable.isDisposed()) disposable.dispose();
-        if (realm != null) realm.close();
+        //if (realm != null) realm.close();
     }
 
     private void loadCoverImage() {
-        ImageLoader.getInstance().displayImage(news.imgUrl, detailsImage);
+        ImageLoader.getInstance().displayImage(newsImageUrl, detailsImage);
     }
 
 
-    private void insertData(NewsItem item) {
+    /*private void insertData(DetailsPage item) {
         realm.executeTransaction(r -> {
             r.insertOrUpdate(EntityMapping.mappingNews(news, item));
         });
-    }
+    }*/
 
 }

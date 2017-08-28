@@ -167,6 +167,7 @@ public class QmsThemesFragment extends ListFragment {
     }
 
     private void bindView() {
+        if (realm.isClosed()) return;
         results = realm.where(QmsThemesBd.class).equalTo("userId", currentThemes.getUserId()).findAll();
 
         if (results.size() != 0 && results.last().getThemes().size() != 0) {

@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.api.news;
 
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -11,9 +10,9 @@ import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.Utils;
+import forpdateam.ru.forpda.api.news.models.DetailsPage;
 import forpdateam.ru.forpda.api.news.models.NewsItem;
 import forpdateam.ru.forpda.api.regex.RegexStorage;
-import io.reactivex.Single;
 
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_ALL;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_ARTICLES;
@@ -73,14 +72,14 @@ public class NewsApi {
     * 4. Дата нормального человека (24.08.17)
     * 5. Id автора
     * 6. Ник автора
-    * 7. Сорсы тегов
-    * 8. Вроде как контент
-    * 9. Сорсы материалов по теме, их может не быть (null у group(9))
-    * 10. Магический относительный id новости для навигации вперёд/назад
-    * 11. Кол-во комментов
+    * 7. Кол-во комментов
+    * 8. Сорсы тегов
+    * 9. Вроде как контент
+    * 10. Сорсы материалов по теме, их может не быть (null у group(9))
+    * 11. Магический относительный id новости для навигации вперёд/назад
     * 12. Сорсы комментов
     * */
-    private final Pattern detailsPattern = Pattern.compile("<section[^>]*>[^<]*?<article[^>]*?>[\\s\\S]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"photo\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"description\"[^>]*?>[^<]*?<h1[^>]*?>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?<\\/h1>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[^<]*?<span[^>]*?class=\"name\"[^>]*?>[^<]*?<a[^>]*?href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?class=\"more-box\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"meta\"[^>]*?>([\\s\\S]*?)<\\/div>[\\s\\S]*?<div class=\"content-box\" itemprop=\"articleBody\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>(?:[^<]*?<div class=\"materials-box\"[^>]*?>[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>[^<]*?<\\/div>)?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>[\\s\\S]*?<div class=\"comment-box\" id=\"comments\"[^>]*?>[^<]*?<div class=\"heading\"[^>]*?>[^>]*?<h2>(\\d+)[^<]*?<\\/h2>[\\s\\S]*?(<ul[\\s\\S]*?<\\/ul>)[^<]*?<form");
+    private final Pattern detailsPattern = Pattern.compile("<section[^>]*>[^<]*?<article[^>]*?>[\\s\\S]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"photo\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"description\"[^>]*?>[^<]*?<h1[^>]*?>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?<\\/h1>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[^<]*?<span[^>]*?class=\"name\"[^>]*?>[^<]*?<a[^>]*?href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?class=\"more-box\"[^>]*?>[^<]*?<a[^>]*?>(\\d+)<\\/a>[\\s\\S]*?<div[^>]*?class=\"meta\"[^>]*?>([\\s\\S]*?)<\\/div>[\\s\\S]*?<div class=\"content-box\" itemprop=\"articleBody\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>(?:[^<]*?<div class=\"materials-box\"[^>]*?>[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>[^<]*?<\\/div>)?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>[\\s\\S]*?<div class=\"comment-box\" id=\"comments\"[^>]*?>[^<]*?<div class=\"heading\"[^>]*?>[^>]*?<h2>[^<]*?<\\/h2>[\\s\\S]*?(<ul[\\s\\S]*?<\\/ul>)[^<]*?<form");
 
     /*
     * 1. tag для ссылки
@@ -105,46 +104,48 @@ public class NewsApi {
         final Pattern pattern = Pattern.compile(regex);
         final Matcher matcher = pattern.matcher(response);
         while (matcher.find()) {
-            NewsItem model = new NewsItem();
-            if (matcher.group(1) == null) {
-                model.setUrl(matcher.group(9));
-                model.setImgUrl(matcher.group(10));
-                model.setTitle(Utils.fromHtml(matcher.group(11)));
-                model.setCommentsCount(matcher.group(12));
-                model.setDate(matcher.group(14).replace('-', '.'));
-                model.setAuthor(matcher.group(15));
-                model.setDescription(matcher.group(17).trim());
-
+            NewsItem item = new NewsItem();
+            boolean isReview = matcher.group(1) == null;
+            if (!isReview) {
+                item.setUrl(matcher.group(1));
+                item.setId(Integer.parseInt(matcher.group(2)));
+                item.setTitle(Utils.fromHtml(matcher.group(3)));
+                item.setImgUrl(matcher.group(4));
+                item.setCommentsCount(Integer.parseInt(matcher.group(5)));
+                item.setDate(matcher.group(6));
+                item.setAuthor(Utils.fromHtml(matcher.group(7)));
+                item.setDescription(Utils.fromHtml(matcher.group(8)));
             } else {
-                model.setUrl(matcher.group(1));
-                model.setImgUrl(matcher.group(3));
-                model.setTitle(Utils.fromHtml(matcher.group(2)));
-                model.setCommentsCount(matcher.group(4));
-                model.setDate(matcher.group(5));
-                model.setAuthor(Utils.fromHtml(matcher.group(6)));
-                model.setDescription(Utils.fromHtml(matcher.group(7)));
+                item.setUrl(matcher.group(10));
+                item.setId(Integer.parseInt(matcher.group(11)));
+                item.setImgUrl(matcher.group(12));
+                item.setTitle(Utils.fromHtml(matcher.group(13)));
+                item.setCommentsCount(Integer.parseInt(matcher.group(14)));
+                item.setDate(matcher.group(16).replace('-', '.'));
+                item.setAuthor(Utils.fromHtml(matcher.group(17)));
+                item.setDescription(Utils.fromHtml(matcher.group(19).trim()));
 //            model.setTags(matcher.group(8));
             }
 
-            cache.add(model);
+            cache.add(item);
         }
         return cache;
     }
 
 
-    public NewsItem getDetails(String url) throws Exception {
-        String response = Api.getWebClient().get("https:" + url).getBody();
+    public DetailsPage getDetails(int id) throws Exception {
+        String response = Api.getWebClient().get("https://4pda.ru/index.php?p="+id).getBody();
         Matcher matcher = detailsPattern.matcher(response);
-        NewsItem item = new NewsItem();
+        DetailsPage item = new DetailsPage();
         if (matcher.find()) {
             item.setImgUrl(matcher.group(2));
             item.setTitle(Utils.fromHtml(matcher.group(3)));
             item.setDate(matcher.group(4));
-            item.setAuthor(matcher.group(6));
-            item.setHtml(matcher.group(8));
-            item.setMoreNews(matcher.group(9));
-            item.setNavId(matcher.group(10));
-            item.setCommentsCount(matcher.group(11));
+            item.setAuthor(Utils.fromHtml(matcher.group(6)));
+            item.setCommentsCount(Integer.parseInt(matcher.group(7)));
+            item.setHtml(matcher.group(9));
+            item.setMoreNews(matcher.group(10));
+            item.setNavId(matcher.group(11));
             item.setComments(matcher.group(12));
         }
         return item;

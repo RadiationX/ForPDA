@@ -20,8 +20,7 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.news.Constants;
 import forpdateam.ru.forpda.api.news.NewsApi;
-import forpdateam.ru.forpda.data.news.entity.News;
-import forpdateam.ru.forpda.data.news.local.EntityMapping;
+import forpdateam.ru.forpda.api.news.models.NewsItem;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.fragments.news.details.NewsDetailsFragment;
@@ -30,22 +29,21 @@ import forpdateam.ru.forpda.rxapi.RxApi;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import io.realm.Realm;
 
 /**
  * Created by isanechek on 8/8/17.
  */
 
-public class NewsMainParentFragment extends TabFragment implements
+public class NewsMainFragment extends TabFragment implements
         NewsListAdapter.ItemClickListener {
     private SwipeRefreshLayout refreshLayout;
     private NewsListAdapter adapter;
     private NewsApi mApi;
     private String category = Constants.NEWS_CATEGORY_ALL;
     private CompositeDisposable mDisposable;
-    private Realm realm;
+    //private Realm realm;
 
-    public NewsMainParentFragment() {
+    public NewsMainFragment() {
 
     }
 
@@ -54,8 +52,8 @@ public class NewsMainParentFragment extends TabFragment implements
         super.onCreate(savedInstanceState);
         configuration.setDefaultTitle(getString(R.string.default_news_title));
         configuration.setAlone(true);
-        configuration.setUseCache(true);
-        realm = Realm.getDefaultInstance();
+        //configuration.setUseCache(true);
+        //realm = Realm.getDefaultInstance();
         mDisposable = new CompositeDisposable();
     }
 
@@ -90,19 +88,20 @@ public class NewsMainParentFragment extends TabFragment implements
     public void loadData() {
         super.loadData();
         refreshLayout.setRefreshing(true);
-        page = 0;
-        loadDataNews(page);
+        page = 1;
+        loadDataNews(page, true);
     }
 
-    @Override
+    /*@Override
     public void loadCacheData() {
         super.loadCacheData();
+        if (realm.isClosed()) return;
         List<News> list = realm.where(News.class).findAll();
         d("from realm " + list.size());
         if (list.size() > 0) adapter.insertData(list);
         else loadData();
     }
-
+*/
     @Override
     public void onPause() {
         super.onPause();
@@ -118,9 +117,9 @@ public class NewsMainParentFragment extends TabFragment implements
             mDisposable.clear();
         }
 
-        if (realm != null) {
+        /*if (realm != null) {
             realm.close();
-        }
+        }*/
     }
 
     private void d(String msg) {
@@ -131,52 +130,49 @@ public class NewsMainParentFragment extends TabFragment implements
     public void itemClick(View view, int position) {
         ViewCompat.setTransitionName(view, String.valueOf(position) + "_image");
         Bundle args = new Bundle();
-        args.putString(NewsDetailsFragment.NEWS_ID, adapter.getItem(position).url);
+        NewsItem item = adapter.getItem(position);
+
+        args.putInt(NewsDetailsFragment.ARG_NEWS_ID, item.getId());
+        args.putString(NewsDetailsFragment.ARG_NEWS_TITLE, item.getTitle());
+        args.putString(NewsDetailsFragment.ARG_NEWS_AUTHOR_NICK, item.getAuthor());
+        args.putString(NewsDetailsFragment.ARG_NEWS_DATE, item.getDate());
+        args.putString(NewsDetailsFragment.ARG_NEWS_IMAGE, item.getImgUrl());
         args.putBoolean(NewsDetailsFragment.OTHER_CASE, true);
         TabManager.getInstance().add(new TabFragment.Builder<>(NewsDetailsFragment.class).setArgs(args).build());
     }
 
-    int page = 0;
+    int page = 1;
+
     @Override
     public void loadMore() {
         page++;
+        loadDataNews(page, false);
+    }
+
+    private void loadDataNews(int page, boolean withClear) {
         mDisposable.add(RxApi.NewsList().getNews(category, page)
-                .map(newsItems -> EntityMapping.mappingNews(category, newsItems))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(res -> {
-                    refreshLayout.setRefreshing(false);
-                    if (res.size() > 0) {
-                        adapter.insertMore(res);
-                        realm.executeTransaction(r -> {
-                            //if (r.where(News.class).findAll().size() > 0) r.delete(News.class);
-                            r.insertOrUpdate(res);
-                        });
-                    }
+                    onLoadNews(res, withClear);
                 }, throwable -> {
                     refreshLayout.setRefreshing(false);
                     Toast.makeText(getActivity(), R.string.news_opps, Toast.LENGTH_SHORT).show();
                 }));
     }
 
-    private void loadDataNews(int page) {
-        mDisposable.add(RxApi.NewsList().getNews(category, page)
-                .map(newsItems -> EntityMapping.mappingNews(category, newsItems))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(res -> {
-                    refreshLayout.setRefreshing(false);
-                    if (res.size() > 0) {
-                        adapter.insertData(res);
-                        realm.executeTransaction(r -> {
-                            //if (r.where(News.class).findAll().size() > 0) r.delete(News.class);
-                            r.insertOrUpdate(res);
-                        });
-                    }
-                }, throwable -> {
-                    refreshLayout.setRefreshing(false);
-                    Toast.makeText(getActivity(), R.string.news_opps, Toast.LENGTH_SHORT).show();
-                }));
+    private void onLoadNews(List<NewsItem> list, boolean withClear) {
+        refreshLayout.setRefreshing(false);
+        if (withClear) {
+            adapter.clear();
+        }
+        int startIndex = adapter.getItemCount();
+        Log.d("SUKA", "ADAPTER SIZE " + adapter.getItemCount() + " : " + withClear);
+        if (list.size() > 0) {
+            adapter.addAll(list);
+        }
+        adapter.notifyDataSetChanged();
+        //adapter.notifyItemRangeInserted(startIndex, adapter.getItemCount());
     }
 
     private void toast(String message) {

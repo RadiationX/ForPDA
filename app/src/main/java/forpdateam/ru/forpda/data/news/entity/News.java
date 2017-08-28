@@ -17,7 +17,7 @@ public class News extends RealmObject {
     public String author;
     public String date;
     public String imgUrl;
-    public String commentsCount;
+    public int commentsCount;
     public String tags;
 
     // for details

@@ -48,6 +48,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -171,7 +173,6 @@ public class App extends android.app.Application {
         instance = this;
         setTheme(R.style.LightAppTheme);
 
-
         if (!BuildConfig.DEBUG) {
             ACRA.init(this);
             ACRA.getErrorReporter().putCustomData("USER_NICK", getPreferences().getString("auth.user.nick", "null"));
@@ -256,7 +257,7 @@ public class App extends android.app.Application {
     }
 
     public static int getToolBarHeight(Context context) {
-        int[] attrs = new int[] {R.attr.actionBarSize};
+        int[] attrs = new int[]{R.attr.actionBarSize};
         TypedArray ta = context.obtainStyledAttributes(attrs);
         int toolBarHeight = ta.getDimensionPixelSize(0, -1);
         ta.recycle();
@@ -305,7 +306,7 @@ public class App extends android.app.Application {
     }
 
     public static void setKeyboardHeight(int newKeyboardHeight) {
-        Log.d("FORPDA_LOG", "setKeyboardHeight "+newKeyboardHeight);
+        Log.d("FORPDA_LOG", "setKeyboardHeight " + newKeyboardHeight);
         keyboardHeight = newKeyboardHeight;
         if (keyboardHeight == savedKeyboardHeight) return;
         App.getInstance().getPreferences().edit().putInt("keyboard_height", keyboardHeight).apply();

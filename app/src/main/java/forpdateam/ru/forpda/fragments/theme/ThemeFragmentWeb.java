@@ -393,11 +393,14 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
             String message = "";
             message += "\"" + consoleMessage.message() + "\"";
             String source = consoleMessage.sourceId();
-            int cut = source.lastIndexOf('/');
-            if (cut != -1) {
-                source = source.substring(cut + 1);
+            if (source != null) {
+                int cut = source.lastIndexOf('/');
+                if (cut != -1) {
+                    source = source.substring(cut + 1);
+                }
+                message += ", [" + source + "]";
             }
-            message += ", [" + source + "]";
+
             message += ", (" + consoleMessage.lineNumber() + ")";
 
 
