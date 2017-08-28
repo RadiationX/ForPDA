@@ -48,12 +48,12 @@ public class AdvancedPopup {
         newKeyboardHeight = windowHeight - fragmentContainerHeight - statusBarHeight - navigationBarHeight;
 
 
-        if (lastKeyboardHeight == newKeyboardHeight)
-            return;
+        /*if (lastKeyboardHeight == newKeyboardHeight)
+            return;*/
         lastKeyboardHeight = newKeyboardHeight;
 
-        //Log.d("FORPDA_LOG", "TREE OBSERVER " + newKeyboardHeight + " = " + windowHeight + " - " + fragmentContainerHeight + " - " + statusBarHeight + " - " + navigationBarHeight);
-        if (newKeyboardHeight > 0) {
+        Log.d("FORPDA_LOG", "TREE OBSERVER " + newKeyboardHeight + " = " + windowHeight + " - " + fragmentContainerHeight + " - " + statusBarHeight + " - " + navigationBarHeight+" : "+isShowingKeyboard+" : "+popupWindow.isShowing());
+        if (newKeyboardHeight > 100) {
             App.setKeyboardHeight(newKeyboardHeight);
             popupWindow.setHeight(newKeyboardHeight);
             popupWindow.update();
@@ -63,14 +63,15 @@ public class AdvancedPopup {
                 hidePopup();
             isShowingKeyboard = true;
             //Log.d("FORPDA_LOG", "isShowingKeyboard = TRUE, SetPadding " + newKeyboardHeight);
-        } else {
+        } else if(isShowingKeyboard){
             if (popupWindow.isShowing()) {
                 hidePopup();
             }
             isShowingKeyboard = false;
             //Log.d("FORPDA_LOG", "isShowingKeyboard = false");
         }
-        fragmentContainer.setPadding(0, 0, 0, 0);
+        //Log.d("SUKA", "OBSERVER SET PADDING 0");
+        //fragmentContainer.setPadding(0, 0, 0, 0);
         /*if (newKeyboardHeight > 100) {
             int last = App.getKeyboardHeight();
             App.setKeyboardHeight(Math.max(last, newKeyboardHeight));
@@ -161,8 +162,10 @@ public class AdvancedPopup {
 
         //Log.d("FORPDA_LOG", "hidePopup " + App.getKeyboardHeight() + " : " + lastKeyboardHeight + " : " + newKeyboardHeight);
         //fragmentContainer.setPadding(0, 0, 0, 0);
-        if (fragmentContainer.getPaddingBottom() != 0)
+        if (fragmentContainer.getPaddingBottom() != 0){
+            Log.d("SUKA", "hidePopup SET PADDING 0");
             fragmentContainer.setPadding(0, 0, 0, 0);
+        }
 
         if (stateListener != null)
             stateListener.onHide();
@@ -176,10 +179,18 @@ public class AdvancedPopup {
         if (!popupWindow.isShowing())
             popupWindow.showAtLocation(fragmentContainer, Gravity.BOTTOM, 0, 0);
 
-        Log.d("FORPDA_LOG", "showPopup " + App.getKeyboardHeight());
+        Log.d("FORPDA_LOG", "showPopup " + App.getKeyboardHeight()+" : "+fragmentContainer.getPaddingBottom()+" : "+isShowingKeyboard);
         //fragmentContainer.setPadding(0, 0, 0, App.getKeyboardHeight());
-        if (!isShowingKeyboard && fragmentContainer.getPaddingBottom() != App.getKeyboardHeight())
-            fragmentContainer.setPadding(0, 0, 0, App.getKeyboardHeight());
+        if (!isShowingKeyboard){
+            if(fragmentContainer.getPaddingBottom()!=App.getKeyboardHeight()){
+                Log.d("SUKA", "showPopup SET PADDING "+ App.getKeyboardHeight());
+                fragmentContainer.setPadding(0, 0, 0,App.getKeyboardHeight());
+            }
+        }
+        else {
+            Log.d("SUKA", "showPopup SET PADDING "+ 0);
+            fragmentContainer.setPadding(0, 0, 0, 0);
+        }
 
         if (stateListener != null)
             stateListener.onShow();
