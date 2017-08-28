@@ -75,7 +75,7 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
     /*
     * onInterceptTouchEvent не обязателен, вставил для красоты, вдруг он будет чем-то полезен
     * */
-    @Override
+    /*@Override
     public boolean onInterceptTouchEvent(MotionEvent e) {
         if (mVelocityTracker == null) {
             mVelocityTracker = VelocityTracker.obtain();
@@ -156,8 +156,11 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
             }
         }
         return mScrollState == SCROLL_STATE_DRAGGING;
-    }
+    }*/
 
+
+    boolean lastDnps = false;
+    boolean lastDsbi = false;
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
@@ -211,6 +214,10 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
                 int dy = mLastTouchY - y;
 
                 boolean dnps = dispatchNestedPreScroll(dx, dy, mScrollConsumed, mScrollOffset);
+                /*if (lastDnps != dnps) {
+                    Log.e("SUKA", "CHANGED DNPS " + dnps);
+                    lastDnps = dnps;
+                }*/
 
 
                 if (dnps) {
@@ -248,7 +255,14 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
                 if (mScrollState == SCROLL_STATE_DRAGGING) {
                     mLastTouchX = x - mScrollOffset[0];
                     mLastTouchY = y - mScrollOffset[1];
-                    if (((dnps && dy >= 0) || (!dnps && dy <= 0)) && getScrollY() == 0) {
+                    boolean dsbi = ((dnps && dy >= 0) || (!dnps && dy <= 0)) && getScrollY() < 5;
+                    /*if (lastDsbi != dsbi) {
+                        Log.e("SUKA", "CHANGED dsbi " + dsbi);
+                        lastDsbi = dsbi;
+                    }
+                    Log.d("SUKA", "scrollByInternal " + dnps + " : " + dy + " : " + y + " : " + getScrollY() + " : " + dsbi);*/
+
+                    if (dsbi) {
                         scrollByInternal(dx, dy, vtev);
                     } else {
                         super.onTouchEvent(e);

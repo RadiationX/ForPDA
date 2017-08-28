@@ -3,6 +3,7 @@ package forpdateam.ru.forpda;
 import android.app.Activity;
 import android.graphics.Rect;
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
@@ -14,25 +15,26 @@ import android.view.inputmethod.InputMethodManager;
 public class KeyboardUtil {
     private View decorView;
     private View contentView;
+    private int suka = Build.VERSION_CODES.LOLLIPOP;
 
     public KeyboardUtil(Activity act, View contentView) {
         this.decorView = act.getWindow().getDecorView();
         this.contentView = contentView;
 
         //only required on newer android versions. it was working on API level 19
-        if (Build.VERSION.SDK_INT >= 19) {
+        if (Build.VERSION.SDK_INT >= suka) {
             decorView.getViewTreeObserver().addOnGlobalLayoutListener(onGlobalLayoutListener);
         }
     }
 
     public void enable() {
-        if (Build.VERSION.SDK_INT >= 19) {
+        if (Build.VERSION.SDK_INT >= suka) {
             decorView.getViewTreeObserver().addOnGlobalLayoutListener(onGlobalLayoutListener);
         }
     }
 
     public void disable() {
-        if (Build.VERSION.SDK_INT >= 19) {
+        if (Build.VERSION.SDK_INT >= suka) {
             decorView.getViewTreeObserver().removeOnGlobalLayoutListener(onGlobalLayoutListener);
         }
     }
@@ -49,6 +51,7 @@ public class KeyboardUtil {
             //get screen height and calculate the difference with the useable area from the r
             int height = decorView.getContext().getResources().getDisplayMetrics().heightPixels;
             int diff = height - r.bottom;
+            Log.e("SUKA", "GLL " + height + " : " + diff);
 
             //if it could be a keyboard add the padding to the view
             if (diff != 0) {

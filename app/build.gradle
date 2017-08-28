@@ -40,7 +40,7 @@ android {
         applicationId "ru.forpdateam.forpda"
         versionCode versionNumber
         versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})"
-        minSdkVersion 17
+        minSdkVersion 19
         targetSdkVersion 25
         vectorDrawables.useSupportLibrary = true
         buildConfigField "String", 'BUILD_DATE', '"'+getDateTime()+'"'

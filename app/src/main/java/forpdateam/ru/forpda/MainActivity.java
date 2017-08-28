@@ -3,6 +3,7 @@ package forpdateam.ru.forpda;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -155,10 +156,16 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     }
 
     private void measureView(View v) {
-        App.setStatusBarHeight((int) (((View) v.getParent()).getY() + v.getY()));
-        App.setNavigationBarHeight(v.getRootView().getHeight() - findViewById(R.id.fragments_container).getHeight());
+        Log.d(LOG_TAG, "Calc SOOOKA " + ((int) (((View) v.getParent()).getTop()))+" : "+v.getTop()+" : "+v.getRootView().getTop()+" : "+v.getRootView().getHeight()+" : "+findViewById(R.id.fragments_container).getHeight());
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            App.setStatusBarHeight((int) (((View) v.getParent()).getTop() + v.getTop()));
+            App.setNavigationBarHeight(v.getRootView().getHeight() - findViewById(R.id.fragments_container).getHeight());
+        }
+
+
+
         Log.d(LOG_TAG, "Calc SB: " + App.getStatusBarHeight() + ", NB: " + App.getNavigationBarHeight());
-        //Log.d(LOG_TAG, "Calc SOOOKA " + v.getRootView().getHeight() + " : " + v.getRootView().getY() + " : " + findViewById(R.id.fragments_container).getHeight() + " : " + findViewById(R.id.fragments_container).getY());
         App.getInstance().getStatusBarSizeObservables().notifyObservers();
     }
 

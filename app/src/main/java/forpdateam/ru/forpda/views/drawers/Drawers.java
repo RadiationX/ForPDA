@@ -53,6 +53,8 @@ public class Drawers {
     private TabAdapter tabAdapter;
     private Button tabCloseAllButton;
 
+    boolean isFirstSelected = false;
+
     private Observer loginObserver = (observable, o) -> {
         if (o == null) o = false;
         menuItems.clear();
@@ -134,7 +136,9 @@ public class Drawers {
     public NavigationView getTabDrawer() {
         return tabDrawer;
     }
+
     private Bundle savedInstanceState;
+
     public void init(Bundle savedInstanceState) {
         initMenu(savedInstanceState);
         initTabs(savedInstanceState);
@@ -143,6 +147,9 @@ public class Drawers {
     }
 
     public void firstSelect() {
+        if (isFirstSelected)
+            return;
+        isFirstSelected = true;
         String className = ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN ? FavoritesFragment.class.getSimpleName() : AuthFragment.class.getSimpleName();
         String last = App.getInstance().getPreferences().getString("menu_drawer_last", className);
         last = ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN && last.equals(AuthFragment.class.getSimpleName()) ? FavoritesFragment.class.getSimpleName() : last;

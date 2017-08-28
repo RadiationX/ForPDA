@@ -56,6 +56,7 @@
         <item name="actionOverflowButtonStyle">@style/OverFlow</item>
         <item name="alertDialogTheme">@style/LightAppTheme.Dialog</item>
         <item name="android:windowBackground">@color/light_background_base</item>
+       <!-- <item name="android:windowTranslucentStatus">true</item>Z-->
     </style>
 
     <style name="LightAppTheme.Dialog" parent="Theme.AppCompat.Light.Dialog.Alert">
