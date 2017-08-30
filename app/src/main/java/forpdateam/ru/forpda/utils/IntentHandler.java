@@ -30,6 +30,8 @@ import forpdateam.ru.forpda.fragments.devdb.BrandsFragment;
 import forpdateam.ru.forpda.fragments.devdb.DeviceFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.mentions.MentionsFragment;
+import forpdateam.ru.forpda.fragments.news.details.NewsDetailsFragment;
+import forpdateam.ru.forpda.fragments.news.main.NewsMainFragment;
 import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsThemesFragment;
@@ -109,6 +111,27 @@ public class IntentHandler {
         Log.d(LOG_TAG, "Corrected url " + url);
 
 
+        Matcher matcher = Pattern.compile("https?:\\/\\/4pda\\.ru\\/forum\\/dl\\/post\\/\\d+\\/([\\s\\S]*\\.([\\s\\S]*))").matcher(url);
+        if (matcher.find()) {
+            String fullName = matcher.group(1);
+            try {
+                fullName = URLDecoder.decode(fullName, "CP1251");
+            } catch (Exception ignore) {
+            }
+            String extension = matcher.group(2);
+            boolean isImage = MimeTypeUtil.isImage(extension);
+            if (isImage) {
+                ImageViewerActivity.startActivity(App.getContext(), url);
+            } else {
+                handleDownload(fullName, url);
+            }
+            return true;
+        } else if (Pattern.compile("\\/\\/.*?(4pda\\.to|4pda.ru|ggpht.com|googleusercontent.com|windowsphone.com|mzstatic.com|savepic.net|savepice.ru|savepic.ru)\\/[\\s\\S]*?\\.(png|jpg|jpeg|gif)").matcher(url).find()) {
+            ImageViewerActivity.startActivity(App.getContext(), url);
+            return true;
+            //Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
+        }
+
         if (url.matches("(?:http?s?:)?\\/\\/[\\s\\S]*?4pda\\.(?:ru|to)[\\s\\S]*")) {
             /*if (!url.contains("4pda.ru")||!url.contains("4pda.to")) {
                 url = "https://4pda.ru".concat(url.substring(0, 1).equals("/") ? "" : "/").concat(url);
@@ -121,92 +144,76 @@ public class IntentHandler {
                 handleDownload(uri);
             }*/
 
+            if (args == null) args = new Bundle();
+            Log.d(LOG_TAG, "Url is not a image or file");
+            for (String path : uri.getPathSegments()) {
+                Log.d(LOG_TAG, "Uri path: " + path);
+            }
 
-            Matcher matcher = Pattern.compile("https?:\\/\\/4pda\\.ru\\/forum\\/dl\\/post\\/\\d+\\/([\\s\\S]*\\.([\\s\\S]*))").matcher(url);
-            if (matcher.find()) {
-                String fullName = matcher.group(1);
-                try {
-                    fullName = URLDecoder.decode(fullName, "CP1251");
-                } catch (Exception ignore) {
-                }
-                String extension = matcher.group(2);
-                boolean isImage = MimeTypeUtil.isImage(extension);
-                if (isImage) {
-                    ImageViewerActivity.startActivity(App.getContext(), url);
-                } else {
-                    handleDownload(fullName, url);
-                }
-                return true;
-            } else if (Pattern.compile("https?:\\/\\/cs\\d-\\d.4pda.to\\/\\d+").matcher(url).find()) {
-                ImageViewerActivity.startActivity(App.getContext(), url);
-                return true;
-                //Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
-            } else {
-                if (args == null) args = new Bundle();
-                Log.d(LOG_TAG, "Url is not a image or file");
-                for (String path : uri.getPathSegments()) {
-                    Log.d(LOG_TAG, "Uri path: " + path);
-                }
-
-                if (uri.getPathSegments().size() > 0) {
-                    switch (uri.getPathSegments().get(0)) {
-                        case "pages":
-                            if(uri.getPathSegments().size()>1){
-                                if(uri.getPathSegments().get(1).equalsIgnoreCase("go")){
-                                    String redUrl = uri.getQueryParameter("u");
-                                    if(redUrl!=null){
-                                        try{
-                                            redUrl = URLDecoder.decode(redUrl, "UTF-8");
-                                        }catch (UnsupportedEncodingException ex){
-                                            ex.printStackTrace();
-                                        }
-                                        externalIntent(redUrl);
-                                        return true;
+            if (uri.getPathSegments().size() > 0) {
+                switch (uri.getPathSegments().get(0)) {
+                    case "pages":
+                        if (uri.getPathSegments().size() > 1) {
+                            if (uri.getPathSegments().get(1).equalsIgnoreCase("go")) {
+                                String redUrl = uri.getQueryParameter("u");
+                                if (redUrl != null) {
+                                    try {
+                                        redUrl = URLDecoder.decode(redUrl, "UTF-8");
+                                    } catch (UnsupportedEncodingException ex) {
+                                        ex.printStackTrace();
                                     }
+                                    externalIntent(redUrl);
+                                    return true;
                                 }
                             }
-                            break;
-                        case "forum":
-                            return handleForum(uri, args);
-                        case "devdb":
-                            if (uri.getPathSegments().size() > 1) {
-                                if (uri.getPathSegments().get(1).matches("phones|pad|ebook|smartwatch")) {
-                                    if (uri.getPathSegments().size() > 2 && !uri.getPathSegments().get(2).matches("new|select")) {
-                                        run("devdb models brand");
-                                        args.putString(BrandFragment.ARG_CATEGORY_ID, uri.getPathSegments().get(1));
-                                        args.putString(BrandFragment.ARG_BRAND_ID, uri.getPathSegments().get(2));
-                                        TabManager.getInstance().add(new TabFragment.Builder<>(BrandFragment.class).setArgs(args).build());
-                                        return true;
-                                    }
-                                    run("devdb models");
-                                    args.putString(BrandsFragment.ARG_CATEGORY_ID, uri.getPathSegments().get(1));
-                                    TabManager.getInstance().add(new TabFragment.Builder<>(BrandsFragment.class).setArgs(args).build());
-                                    return true;
-                                } else {
-                                    run("devdb device");
-                                    args.putString(DeviceFragment.ARG_DEVICE_ID, uri.getPathSegments().get(1));
-                                    TabManager.getInstance().add(new TabFragment.Builder<>(DeviceFragment.class).setArgs(args).build());
+                        }
+                        break;
+                    case "forum":
+                        return handleForum(uri, args);
+                    case "devdb":
+                        if (uri.getPathSegments().size() > 1) {
+                            if (uri.getPathSegments().get(1).matches("phones|pad|ebook|smartwatch")) {
+                                if (uri.getPathSegments().size() > 2 && !uri.getPathSegments().get(2).matches("new|select")) {
+                                    run("devdb models brand");
+                                    args.putString(BrandFragment.ARG_CATEGORY_ID, uri.getPathSegments().get(1));
+                                    args.putString(BrandFragment.ARG_BRAND_ID, uri.getPathSegments().get(2));
+                                    TabManager.getInstance().add(BrandFragment.class, args);
                                     return true;
                                 }
+                                run("devdb models");
+                                args.putString(BrandsFragment.ARG_CATEGORY_ID, uri.getPathSegments().get(1));
+                                TabManager.getInstance().add(BrandsFragment.class, args);
+                                return true;
                             } else {
-                                run("devdb categories");
-                                TabManager.getInstance().add(new TabFragment.Builder<>(BrandsFragment.class).build());
+                                run("devdb device");
+                                args.putString(DeviceFragment.ARG_DEVICE_ID, uri.getPathSegments().get(1));
+                                TabManager.getInstance().add(DeviceFragment.class, args);
                                 return true;
                             }
-                        default:
-                            return handleSite(uri, args);
-                    }
+                        } else {
+                            run("devdb categories");
+                            TabManager.getInstance().add(BrandsFragment.class);
+                            return true;
+                        }
+                    default:
+                        if(handleSite(uri, args))
+                        return true;
                 }
+            } else {
+                if(handleSite(uri, args))
+                    return true;
             }
-        } else if (Pattern.compile("https?:\\/\\/savepic\\.net\\/(\\d+)\\.(.*)").matcher(url).find()) {
+
+        } /*else if (Pattern.compile("https?:\\/\\/savepic\\.net\\/(\\d+)\\.(.*)").matcher(url).find()) {
             ImageViewerActivity.startActivity(App.getContext(), url);
             return true;
-        }
+        }*/
+
         externalIntent(url);
         return false;
     }
 
-    private static void externalIntent(String url){
+    private static void externalIntent(String url) {
         Log.d(LOG_TAG, "Start external intent");
         try {
             //App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK));
@@ -223,7 +230,7 @@ public class IntentHandler {
         if (param != null) {
             run("showuser " + param);
             args.putString(TabFragment.ARG_TAB, uri.toString());
-            TabManager.getInstance().add(new TabFragment.Builder<>(ProfileFragment.class).setArgs(args).build());
+            TabManager.getInstance().add(ProfileFragment.class, args);
             return true;
         }
         param = uri.getQueryParameter("showtopic");
@@ -239,7 +246,7 @@ public class IntentHandler {
             }
             run("showtopic " + tid + " : " + view + " : " + st + " : " + pid);
             args.putString(TabFragment.ARG_TAB, uri.toString());
-            TabManager.getInstance().add(new TabFragment.Builder<>(ThemeFragmentWeb.class).setArgs(args).build());
+            TabManager.getInstance().add(ThemeFragmentWeb.class, args);
             return true;
         }
         param = uri.getQueryParameter("showforum");
@@ -253,7 +260,7 @@ public class IntentHandler {
 
             }*/
             args.putInt(TopicsFragment.TOPICS_ID_ARG, id);
-            TabManager.getInstance().add(new TabFragment.Builder<>(TopicsFragment.class).setArgs(args).build());
+            TabManager.getInstance().add(TopicsFragment.class, args);
             run("show topics in forum");
             return true;
         }
@@ -263,17 +270,17 @@ public class IntentHandler {
                 case "qms":
                     if (uri.getQueryParameter("mid") == null) {
                         run("qms contacts");
-                        TabManager.getInstance().add(new TabFragment.Builder<>(QmsContactsFragment.class).build());
+                        TabManager.getInstance().add(QmsContactsFragment.class, args);
                     } else {
                         if (uri.getQueryParameter("t") != null) {
                             run("qms chat " + uri.getQueryParameter("mid") + " : " + uri.getQueryParameter("t"));
                             args.putInt(QmsChatFragment.THEME_ID_ARG, Integer.parseInt(uri.getQueryParameter("t")));
                             args.putInt(QmsChatFragment.USER_ID_ARG, Integer.parseInt(uri.getQueryParameter("mid")));
-                            TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).setArgs(args).build());
+                            TabManager.getInstance().add(QmsChatFragment.class, args);
                         } else {
                             run("qms thread " + uri.getQueryParameter("mid"));
                             args.putInt(QmsThemesFragment.USER_ID_ARG, Integer.parseInt(uri.getQueryParameter("mid")));
-                            TabManager.getInstance().add(new TabFragment.Builder<>(QmsThemesFragment.class).setArgs(args).build());
+                            TabManager.getInstance().add(QmsThemesFragment.class, args);
                         }
                     }
                     return true;
@@ -283,23 +290,23 @@ public class IntentHandler {
                 case "search":
                     run("search " + uri.toString());
                     args.putString(TabFragment.ARG_TAB, uri.toString());
-                    TabManager.getInstance().add(new TabFragment.Builder<>(SearchFragment.class).setArgs(args).build());
+                    TabManager.getInstance().add(SearchFragment.class, args);
                     return true;
                 case "rep":
                     args.putString(TabFragment.ARG_TAB, uri.toString());
-                    TabManager.getInstance().add(new TabFragment.Builder<>(ReputationFragment.class).setArgs(args).build());
+                    TabManager.getInstance().add(ReputationFragment.class, args);
                     return true;
                 case "findpost":
                     args.putString(TabFragment.ARG_TAB, uri.toString());
-                    TabManager.getInstance().add(new TabFragment.Builder<>(ThemeFragmentWeb.class).setArgs(args).build());
+                    TabManager.getInstance().add(ThemeFragmentWeb.class, args);
                     return true;
                 case "fav":
                     run("favorites");
-                    TabManager.getInstance().add(new TabFragment.Builder<>(FavoritesFragment.class).build());
+                    TabManager.getInstance().add(FavoritesFragment.class);
                     return true;
                 case "mentions":
                     run("mentions");
-                    TabManager.getInstance().add(new TabFragment.Builder<>(MentionsFragment.class).build());
+                    TabManager.getInstance().add(MentionsFragment.class);
                     return true;
             }
         }
@@ -307,15 +314,20 @@ public class IntentHandler {
     }
 
     private static boolean handleSite(Uri uri, Bundle args) {
-        if (Pattern.compile("\\d{4}/\\d{2}/\\d{2}/\\d+").matcher(uri.toString()).find()) {
-            run("show news");
+        Matcher matcher = Pattern.compile("https?:\\/\\/4pda\\.ru\\/(?:.+?p=|\\d{4}\\/\\d{2}\\/\\d{2}\\/)(\\d+)").matcher(uri.toString());
+        if (matcher.find()) {
+            int id = Integer.parseInt(matcher.group(1));
+            args.putInt(NewsDetailsFragment.ARG_NEWS_ID, id);
+            TabManager.getInstance().add(NewsDetailsFragment.class, args);
             return true;
         }
-        if (uri.getPathSegments().get(0).contains("special")) {
+        if (uri.getPathSegments().size() > 0 && uri.getPathSegments().get(0).contains("special")) {
             run("show special");
+            Toast.makeText(App.getContext(), "Не поддерживается: special", Toast.LENGTH_SHORT).show();
             return true;
         }
         if (uri.getPathSegments().size() == 0) {
+            TabManager.getInstance().add(NewsMainFragment.class);
             run("show newslist");
             return true;
         } else if (uri.getPathSegments().get(0).matches("news|articles|reviews|tag|software|games|review")) {

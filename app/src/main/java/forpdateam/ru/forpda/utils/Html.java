@@ -1214,7 +1214,7 @@ class HtmlToSpannedConverter implements ContentHandler {
     private static void endCssStyle(Editable text) {
         Font font = getLast(text, Font.class);
         if (font != null) {
-            if (font.mFace.equals("fontello")) {
+            if (font.mFace.equalsIgnoreCase("fontello")) {
                 setSpanFromMark(text, font, new AssetsTypefaceSpan(App.getContext(), "fontello/fontello.ttf"));
             }
         }

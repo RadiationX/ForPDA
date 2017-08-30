@@ -23,6 +23,7 @@ import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.fragments.forum.ForumFragment;
+import forpdateam.ru.forpda.fragments.qms.chat.QmsChatFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -163,7 +164,7 @@ public class TopicsFragment extends ListFragment {
                 .setOnMenuItemClickListener(item -> {
                     Bundle args = new Bundle();
                     args.putInt(ForumFragment.ARG_FORUM_ID, id);
-                    TabManager.getInstance().add(new Builder<>(ForumFragment.class).setArgs(args).build());
+                    TabManager.getInstance().add(ForumFragment.class, args);
                     return true;
                 });
     }

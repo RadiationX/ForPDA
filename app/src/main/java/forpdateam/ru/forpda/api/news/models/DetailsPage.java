@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.api.news.models;
 
+import java.util.ArrayList;
+
 /**
  * Created by isanechek on 7/20/17.
  */
@@ -13,12 +15,12 @@ public class DetailsPage {
     private String date;
     private String imgUrl;
     private int commentsCount;
-    private String tags;
+    private ArrayList<Tag> tags = new ArrayList<>();
 
     // for details
 
     private String html;
-    private String moreNews;
+    private ArrayList<Material> materials = new ArrayList<>();
     private String navId;
     private String comments;
 
@@ -86,12 +88,12 @@ public class DetailsPage {
         this.commentsCount = commentsCount;
     }
 
-    public String getTags() {
+    public ArrayList<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(String tags) {
-        this.tags = tags;
+    public void addTag(Tag tag) {
+        this.tags.add(tag);
     }
 
     public String getHtml() {
@@ -102,12 +104,12 @@ public class DetailsPage {
         this.html = html;
     }
 
-    public String getMoreNews() {
-        return moreNews;
+    public ArrayList<Material> getMaterials() {
+        return materials;
     }
 
-    public void setMoreNews(String moreNews) {
-        this.moreNews = moreNews;
+    public void addMaterial(Material material) {
+        this.materials.add(material);
     }
 
     public String getNavId() {

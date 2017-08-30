@@ -51,7 +51,7 @@ public class KeyboardUtil {
             //get screen height and calculate the difference with the useable area from the r
             int height = decorView.getContext().getResources().getDisplayMetrics().heightPixels;
             int diff = height - r.bottom;
-            Log.e("SUKA", "GLL " + height + " : " + diff);
+            //Log.e("SUKA", "GLL " + height + " : " + diff);
 
             //if it could be a keyboard add the padding to the view
             if (diff != 0) {
