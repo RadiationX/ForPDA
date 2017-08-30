@@ -1,10 +1,8 @@
 package forpdateam.ru.forpda.fragments.news.main.timeline;
 
 import android.support.v4.view.ViewCompat;
-import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +20,6 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.news.models.NewsItem;
-import forpdateam.ru.forpda.data.news.entity.News;
 
 /**
  * Created by isanechek on 8/8/17.
@@ -122,7 +119,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             share = (ImageButton) itemView.findViewById(R.id.news_list_item_share);
             clickContainer.setOnClickListener(v -> {
                 ViewCompat.setTransitionName(cover, String.valueOf(getLayoutPosition()) + "_image");
-                mItemClickListener.itemClick(cover, getLayoutPosition());
+                mItemClickListener.onItemClick(cover, getItem(getLayoutPosition()), getLayoutPosition());
             });
         }
 
@@ -162,9 +159,8 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             nContainer = (LinearLayout) itemView.findViewById(R.id.news_full_item_new_container);
             cover = (CircleImageView) itemView.findViewById(R.id.news_full_item_cover);
             root = (CardView) itemView.findViewById(R.id.news_full_item_root);
-            root.setOnClickListener(v -> {
-                mItemClickListener.itemClick(cover, getLayoutPosition());
-            });
+            itemView.setOnClickListener(v -> mItemClickListener.onItemClick(cover, getItem(getLayoutPosition()), getLayoutPosition()));
+            itemView.setOnLongClickListener(v -> mItemClickListener.onLongItemClick(v, getItem(getLayoutPosition()), getLayoutPosition()));
         }
 
         public void bind(NewsItem news, int position) {
@@ -201,13 +197,13 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     btn.setVisibility(View.GONE);
                     showBtn = false;
                     container.setVisibility(View.VISIBLE);
-                    mItemClickListener.loadMore();
+                    mItemClickListener.onLoadMoreClick();
                 });
             } else {
                 btn.setOnClickListener(v -> {
                     btn.setVisibility(View.GONE);
                     container.setVisibility(View.VISIBLE);
-                    mItemClickListener.loadMore();
+                    mItemClickListener.onLoadMoreClick();
                 });
             }
         }
@@ -215,8 +211,10 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public interface ItemClickListener {
-        void itemClick(View view, int position);
+        boolean onLongItemClick(View view, NewsItem item, int position);
 
-        void loadMore();
+        void onItemClick(View view, NewsItem item, int position);
+
+        void onLoadMoreClick();
     }
 }

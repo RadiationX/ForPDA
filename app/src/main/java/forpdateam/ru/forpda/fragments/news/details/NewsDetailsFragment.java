@@ -32,6 +32,7 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.chat.QmsChatFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.views.ExtendedWebView;
 import forpdateam.ru.forpda.views.ScrimHelper;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -169,10 +170,18 @@ public class NewsDetailsFragment extends TabFragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-
+    protected void addBaseToolbarMenu() {
+        super.addBaseToolbarMenu();
+        getMenu().add("Скопировать ссылку")
+                .setOnMenuItemClickListener(menuItem -> {
+                    Utils.copyToClipBoard("https://4pda.ru/index.php?p="+newsId);
+                    return false;
+                });
+        getMenu().add("Поделиться")
+                .setOnMenuItemClickListener(menuItem -> {
+                    Utils.shareText("https://4pda.ru/index.php?p="+newsId);
+                    return false;
+                });
     }
 
     @Override

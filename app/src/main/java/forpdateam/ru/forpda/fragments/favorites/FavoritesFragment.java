@@ -392,6 +392,10 @@ public class FavoritesFragment extends ListFragment {
         }
     }
 
+    private void offerToSubscribe(){
+
+    }
+
     public void changeFav(int action, String type, int favId) {
         FavoritesHelper.changeFav(this::onChangeFav, action, favId, -1, type);
     }

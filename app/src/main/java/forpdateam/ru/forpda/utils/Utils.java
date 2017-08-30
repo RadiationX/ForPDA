@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.utils;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -31,6 +32,14 @@ public class Utils {
         clipboard.setPrimaryClip(clip);
     }
 
+    public static void shareText(String text) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+        sendIntent.setType("text/plain");
+        App.getInstance().startActivity(Intent.createChooser(sendIntent, "Поделиться"));
+    }
+
     public static <T> T checkNotNull(T value, String message) {
         if (value == null) {
             throw new NullPointerException(message);
@@ -45,7 +54,7 @@ public class Utils {
         return value;
     }
 
-    public static void longLog(String msg){
+    public static void longLog(String msg) {
         int maxLogSize = 1000;
         for (int i = 0; i <= msg.length() / maxLogSize; i++) {
             int start = i * maxLogSize;
@@ -54,6 +63,7 @@ public class Utils {
             Log.v("FORPDA_LOG", msg.substring(start, end));
         }
     }
+
     public static void log(@NonNull String msg) {
         Log.d("TEST", msg);
     }
