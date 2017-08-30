@@ -593,11 +593,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
     @JavascriptInterface
     public void shareSelectedText(String text) {
         webView.runInUiThread(() -> {
-            Intent sendIntent = new Intent();
-            sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, text);
-            sendIntent.setType("text/plain");
-            startActivity(Intent.createChooser(sendIntent, "Поделиться"));
+            Utils.shareText(text);
         });
     }
 

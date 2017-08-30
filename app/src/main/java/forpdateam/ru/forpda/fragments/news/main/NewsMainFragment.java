@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,15 +19,22 @@ import java.util.List;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
+import forpdateam.ru.forpda.api.favorites.Favorites;
+import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
 import forpdateam.ru.forpda.api.news.Constants;
 import forpdateam.ru.forpda.api.news.NewsApi;
 import forpdateam.ru.forpda.api.news.models.NewsItem;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
+import forpdateam.ru.forpda.fragments.favorites.FavoritesAdapter;
+import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.news.details.NewsDetailsFragment;
 import forpdateam.ru.forpda.fragments.news.main.timeline.NewsListAdapter;
 import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
+import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.Utils;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -127,12 +135,36 @@ public class NewsMainFragment extends TabFragment implements
         Log.d("PARENT", msg);
     }
 
+    private AlertDialogMenu<NewsMainFragment, NewsItem> favoriteDialogMenu, showedFavoriteDialogMenu;
+
     @Override
-    public void itemClick(View view, int position) {
+    public boolean onLongItemClick(View view, NewsItem item, int position) {
+        if (favoriteDialogMenu == null) {
+            favoriteDialogMenu = new AlertDialogMenu<>();
+            showedFavoriteDialogMenu = new AlertDialogMenu<>();
+            favoriteDialogMenu.addItem("Скопировать ссылку", (context, data) -> {
+                Utils.copyToClipBoard("https://4pda.ru/index.php?p="+data.getId());
+            });
+            favoriteDialogMenu.addItem("Поделиться", (context, data) -> {
+                Utils.shareText("https://4pda.ru/index.php?p="+data.getId());
+            });
+        }
+        showedFavoriteDialogMenu.clear();
+
+        showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(0));
+        showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(1));
+        new AlertDialog.Builder(getContext())
+                .setItems(showedFavoriteDialogMenu.getTitles(), (dialog, which) -> {
+                    showedFavoriteDialogMenu.onClick(which, NewsMainFragment.this, item);
+                })
+                .show();
+        return true;
+    }
+
+    @Override
+    public void onItemClick(View view, NewsItem item, int position) {
         ViewCompat.setTransitionName(view, String.valueOf(position) + "_image");
         Bundle args = new Bundle();
-        NewsItem item = adapter.getItem(position);
-
         args.putInt(NewsDetailsFragment.ARG_NEWS_ID, item.getId());
         args.putString(NewsDetailsFragment.ARG_NEWS_TITLE, item.getTitle());
         args.putString(NewsDetailsFragment.ARG_NEWS_AUTHOR_NICK, item.getAuthor());
@@ -145,7 +177,7 @@ public class NewsMainFragment extends TabFragment implements
     int page = 1;
 
     @Override
-    public void loadMore() {
+    public void onLoadMoreClick() {
         page++;
         loadDataNews(page, false);
     }
