@@ -9,6 +9,7 @@ import android.util.Log;
 import android.webkit.WebView;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -60,7 +61,7 @@ public class DialogsHelper {
             alertDialogMenu.addItem(openNewTab, (context1, data) -> IntentHandler.handle(data.second));
             alertDialogMenu.addItem(openBrowser, (context1, data) -> App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(data.second)).addFlags(FLAG_ACTIVITY_NEW_TASK)));
             alertDialogMenu.addItem(copyUrl, (context1, data) -> Utils.copyToClipBoard(data.second));
-            alertDialogMenu.addItem(openImage, (context1, data) -> IntentHandler.handle(data.first));
+            alertDialogMenu.addItem(openImage, (context1, data) -> ImageViewerActivity.startActivity(context1, data.first));
             alertDialogMenu.addItem(saveImage, (context1, data) -> IntentHandler.handleDownload(data.second));
             alertDialogMenu.addItem(copyImageUrl, (context1, data) -> Utils.copyToClipBoard(data.first));
         }

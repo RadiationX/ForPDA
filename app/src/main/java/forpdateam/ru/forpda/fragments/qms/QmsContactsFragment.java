@@ -51,7 +51,7 @@ public class QmsContactsFragment extends ListFragment {
                 args.putString(TabFragment.ARG_TITLE, contact.getNick());
                 args.putInt(QmsThemesFragment.USER_ID_ARG, contact.getId());
                 args.putString(QmsThemesFragment.USER_AVATAR_ARG, contact.getAvatar());
-                TabManager.getInstance().add(new TabFragment.Builder<>(QmsThemesFragment.class).setArgs(args).build());
+                TabManager.getInstance().add(QmsThemesFragment.class, args);
             };
 
     private QmsContactsAdapter.OnItemClickListener onLongItemClickListener = contact -> {
@@ -97,7 +97,7 @@ public class QmsContactsFragment extends ListFragment {
 
 
         fab.setImageDrawable(App.getAppDrawable(getContext(), R.drawable.ic_fab_create));
-        fab.setOnClickListener(view1 -> TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).build()));
+        fab.setOnClickListener(view1 -> TabManager.getInstance().add(QmsChatFragment.class));
         fab.setVisibility(View.VISIBLE);
 
         adapter = new QmsContactsAdapter();
@@ -147,10 +147,10 @@ public class QmsContactsFragment extends ListFragment {
                 return false;
             }
         });
-
+        searchView.setQueryHint("Пользователь");
         getMenu().add("Черный список")
                 .setOnMenuItemClickListener(item -> {
-                    TabManager.getInstance().add(new Builder<>(QmsBlackListFragment.class).build());
+                    TabManager.getInstance().add(QmsBlackListFragment.class);
                     return false;
                 });
     }

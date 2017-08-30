@@ -5,9 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <ProgressBar
+        android:id="@+id/article_progress_bar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
 
     <forpdateam.ru.forpda.views.AspectRatioImageView
-        android:id="@+id/news_details_image"
+        android:id="@+id/article_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
@@ -31,13 +37,13 @@
         android:paddingTop="@dimen/dp12">
 
         <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/news_details_title"
+            android:id="@+id/article_title"
             style="?ProfileToolbarTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="start"
             android:singleLine="false"
-            android:text="asuiodauspoudioauiosdupoiausioudoiauopisuoiduaiouspodiuaopsudoaipusoai"
+            tools:text="asuiodauspoudioauiosdupoiausioudoiauopisuoiduaiouspodiuaopsudoaipusoai"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -48,22 +54,22 @@
             android:orientation="horizontal">
 
             <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/news_details_nick"
+                android:id="@+id/article_nick"
                 style="?ProfileToolbarTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="LONG NICK"
+                tools:text="LONG NICK"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
             <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/news_details_date"
+                android:id="@+id/article_date"
                 style="?ProfileToolbarTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:text="LONG NICK"
+                tools:text="LONG NICK"
                 android:textSize="14sp"
                 android:textStyle="bold" />
         </LinearLayout>

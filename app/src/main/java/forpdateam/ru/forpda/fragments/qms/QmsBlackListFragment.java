@@ -25,6 +25,7 @@ import forpdateam.ru.forpda.api.qms.interfaces.IQmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.news.details.NewsDetailsFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsContactsAdapter;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
@@ -99,7 +100,7 @@ public class QmsBlackListFragment extends ListFragment {
                 args.putString(TabFragment.ARG_TITLE, data.getNick());
                 args.putInt(QmsThemesFragment.USER_ID_ARG, data.getId());
                 args.putString(QmsThemesFragment.USER_AVATAR_ARG, data.getAvatar());
-                TabManager.getInstance().add(new TabFragment.Builder<>(QmsThemesFragment.class).setArgs(args).build());
+                TabManager.getInstance().add(QmsThemesFragment.class, args);
             });
             contactDialogMenu.addItem("Удалить", (context, data) -> context.unBlockUser(new int[]{data.getId()}));
         }

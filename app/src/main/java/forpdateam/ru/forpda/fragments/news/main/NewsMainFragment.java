@@ -25,6 +25,7 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.fragments.news.details.NewsDetailsFragment;
 import forpdateam.ru.forpda.fragments.news.main.timeline.NewsListAdapter;
+import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -138,7 +139,7 @@ public class NewsMainFragment extends TabFragment implements
         args.putString(NewsDetailsFragment.ARG_NEWS_DATE, item.getDate());
         args.putString(NewsDetailsFragment.ARG_NEWS_IMAGE, item.getImgUrl());
         args.putBoolean(NewsDetailsFragment.OTHER_CASE, true);
-        TabManager.getInstance().add(new TabFragment.Builder<>(NewsDetailsFragment.class).setArgs(args).build());
+        TabManager.getInstance().add(NewsDetailsFragment.class, args);
     }
 
     int page = 1;

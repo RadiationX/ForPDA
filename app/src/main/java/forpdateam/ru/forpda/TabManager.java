@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.mentions.MentionsFragment;
 import forpdateam.ru.forpda.utils.animation.DetailsTransition;
 
 public class TabManager {
@@ -138,6 +139,18 @@ public class TabManager {
             if (fragment.getTag().equals(tag))
                 return (TabFragment) fragment;
         return null;
+    }
+
+    public void add(Class<?extends TabFragment> tClass) {
+        add(tClass, null);
+    }
+    public void add(Class<?extends TabFragment> tClass, Bundle args) {
+        TabFragment.Builder builder = new TabFragment.Builder<>(tClass);
+        if(args!=null){
+            builder.setArgs(args);
+        }
+        TabFragment fragment = builder.build();
+        add(fragment);
     }
 
     public void add(TabFragment tabFragment) {

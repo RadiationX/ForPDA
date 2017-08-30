@@ -21,6 +21,7 @@ import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
 import forpdateam.ru.forpda.bdobjects.forum.ForumItemFlatBd;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
@@ -46,7 +47,7 @@ public class ForumFragment extends TabFragment {
         if (item.getForums() == null) {
             Bundle args = new Bundle();
             args.putInt(TopicsFragment.TOPICS_ID_ARG, item.getId());
-            TabManager.getInstance().add(new TabFragment.Builder<>(TopicsFragment.class).setArgs(args).build());
+            TabManager.getInstance().add(TopicsFragment.class, args);
         }
     };
     private TreeNode.TreeNodeLongClickListener nodeLongClickListener = (node, value) -> {
@@ -57,7 +58,7 @@ public class ForumFragment extends TabFragment {
             forumMenu.addItem("Открыть форум", (context, data) -> {
                 Bundle args = new Bundle();
                 args.putInt(TopicsFragment.TOPICS_ID_ARG, data.getId());
-                TabManager.getInstance().add(new TabFragment.Builder<>(TopicsFragment.class).setArgs(args).build());
+                TabManager.getInstance().add(TopicsFragment.class, args);
             });
             forumMenu.addItem("Скопировать ссылку", (context, data) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getId()))));
             forumMenu.addItem("Отметить прочитанным", (context, data) -> {

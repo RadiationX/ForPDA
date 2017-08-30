@@ -95,7 +95,7 @@ public class BrandsFragment extends ListFragment {
             Bundle args = new Bundle();
             args.putString(BrandFragment.ARG_CATEGORY_ID, currentData.getCatId());
             args.putString(BrandFragment.ARG_BRAND_ID, item.getId());
-            TabManager.getInstance().add(new Builder<>(BrandFragment.class).setArgs(args).build());
+            TabManager.getInstance().add(BrandFragment.class, args);
         });
 
         return view;

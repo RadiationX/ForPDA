@@ -71,7 +71,7 @@ public class BrandFragment extends TabFragment {
         adapter.setOnItemClickListener(deviceItem -> {
             Bundle args = new Bundle();
             args.putString(DeviceFragment.ARG_DEVICE_ID, deviceItem.getId());
-            TabManager.getInstance().add(new Builder<>(DeviceFragment.class).setArgs(args).build());
+            TabManager.getInstance().add(DeviceFragment.class, args);
         });
 
         return view;

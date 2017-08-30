@@ -11,7 +11,9 @@ import java.util.regex.Pattern;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.news.models.DetailsPage;
+import forpdateam.ru.forpda.api.news.models.Material;
 import forpdateam.ru.forpda.api.news.models.NewsItem;
+import forpdateam.ru.forpda.api.news.models.Tag;
 import forpdateam.ru.forpda.api.regex.RegexStorage;
 
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_ALL;
@@ -77,15 +79,25 @@ public class NewsApi {
     * 9. Вроде как контент
     * 10. Сорсы материалов по теме, их может не быть (null у group(9))
     * 11. Магический относительный id новости для навигации вперёд/назад
-    * 12. Сорсы комментов
+    * 12. Строка, по которой можно узнать доступность комментирования
+    * 13. Сорсы комментов
     * */
-    private final Pattern detailsPattern = Pattern.compile("<section[^>]*>[^<]*?<article[^>]*?>[\\s\\S]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"photo\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"description\"[^>]*?>[^<]*?<h1[^>]*?>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?<\\/h1>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[^<]*?<span[^>]*?class=\"name\"[^>]*?>[^<]*?<a[^>]*?href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?class=\"more-box\"[^>]*?>[^<]*?<a[^>]*?>(\\d+)<\\/a>[\\s\\S]*?<div[^>]*?class=\"meta\"[^>]*?>([\\s\\S]*?)<\\/div>[\\s\\S]*?<div class=\"content-box\" itemprop=\"articleBody\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>(?:[^<]*?<div class=\"materials-box\"[^>]*?>[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>[^<]*?<\\/div>)?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>[\\s\\S]*?<div class=\"comment-box\" id=\"comments\"[^>]*?>[^<]*?<div class=\"heading\"[^>]*?>[^>]*?<h2>[^<]*?<\\/h2>[\\s\\S]*?(<ul[\\s\\S]*?<\\/ul>)[^<]*?<form");
+    private final Pattern detailsPattern = Pattern.compile("<section[^>]*>[^<]*?<article[^>]*?>[\\s\\S]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"photo\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"description\"[^>]*?>[^<]*?<h1[^>]*?>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?<\\/h1>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[^<]*?<span[^>]*?class=\"name\"[^>]*?>[^<]*?<a[^>]*?href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?class=\"more-box\"[^>]*?>[^<]*?<a[^>]*?>(\\d+)<\\/a>[\\s\\S]*?<div[^>]*?class=\"meta\"[^>]*?>([\\s\\S]*?)<\\/div>[\\s\\S]*?<div class=\"content-box\" itemprop=\"articleBody\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>(?:[^<]*?<div class=\"materials-box\"[^>]*?>[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>[^<]*?<\\/div>)?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>[\\s\\S]*?<div class=\"comment-box\" id=\"comments\"[^>]*?>[^<]*?<div class=\"heading\"[^>]*?>[^>]*?<h2>[^<]*?<\\/h2>([\\s\\S]+?)<\\/div>([\\s\\S]*?)[^<]*?<br[^>]*?>[^<]*?<\\/div>[^<]*?<ul class=\"page-nav");
+    private final Pattern excludeFormCommentPattern = Pattern.compile("<form[\\s\\S]*");
 
     /*
     * 1. tag для ссылки
     * 2. Заголовок
     * */
     private final Pattern tagsPattern = Pattern.compile("<a[^>]*?href=\"\\/tag\\/([^\"\\/]*?)\\/\"[^>]*?>([^<]*?)<\\/a>");
+
+
+    /*
+    * 1. Ссылка изображения
+    * 2. id новости
+    * 3. Заголовок
+    * */
+    private final Pattern materialsPattern = Pattern.compile("<li[^>]*?>[^<]*?<a[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[^<]*?<h3>[^<]*?<a[^>]*?href=\"[^\"]*?\\/(\\d+)\\/[^\"\\/]*?\"[^>]*?>([\\s\\S]*?)<\\/a>[^<]*?<\\/h3>");
 
 
     public String getLink(@Nullable String category, int pageNumber) {
@@ -99,7 +111,7 @@ public class NewsApi {
     public List<NewsItem> getNews(String category, int pageNumber) throws Exception {
         String url = getLink(category, pageNumber);
         String response = Api.getWebClient().get(url).getBody();
-        ArrayList<NewsItem> cache = new ArrayList<>();
+        ArrayList<NewsItem> items = new ArrayList<>();
         final String regex = RegexStorage.News.List.getListPattern();
         final Pattern pattern = Pattern.compile(regex);
         final Matcher matcher = pattern.matcher(response);
@@ -115,6 +127,7 @@ public class NewsApi {
                 item.setDate(matcher.group(6));
                 item.setAuthor(Utils.fromHtml(matcher.group(7)));
                 item.setDescription(Utils.fromHtml(matcher.group(8)));
+                parseTags(item.getTags(), matcher.group(9));
             } else {
                 item.setUrl(matcher.group(10));
                 item.setId(Integer.parseInt(matcher.group(11)));
@@ -124,31 +137,57 @@ public class NewsApi {
                 item.setDate(matcher.group(16).replace('-', '.'));
                 item.setAuthor(Utils.fromHtml(matcher.group(17)));
                 item.setDescription(Utils.fromHtml(matcher.group(19).trim()));
-//            model.setTags(matcher.group(8));
             }
-
-            cache.add(item);
+            items.add(item);
         }
-        return cache;
+        return items;
     }
 
 
     public DetailsPage getDetails(int id) throws Exception {
-        String response = Api.getWebClient().get("https://4pda.ru/index.php?p="+id).getBody();
+        String response = Api.getWebClient().get("https://4pda.ru/index.php?p=" + id).getBody();
         Matcher matcher = detailsPattern.matcher(response);
-        DetailsPage item = new DetailsPage();
+        DetailsPage page = new DetailsPage();
         if (matcher.find()) {
-            item.setImgUrl(matcher.group(2));
-            item.setTitle(Utils.fromHtml(matcher.group(3)));
-            item.setDate(matcher.group(4));
-            item.setAuthor(Utils.fromHtml(matcher.group(6)));
-            item.setCommentsCount(Integer.parseInt(matcher.group(7)));
-            item.setHtml(matcher.group(9));
-            item.setMoreNews(matcher.group(10));
-            item.setNavId(matcher.group(11));
-            item.setComments(matcher.group(12));
+            page.setImgUrl(matcher.group(2));
+            page.setTitle(Utils.fromHtml(matcher.group(3)));
+            page.setDate(matcher.group(4));
+            page.setAuthor(Utils.fromHtml(matcher.group(6)));
+            page.setCommentsCount(Integer.parseInt(matcher.group(7)));
+            parseTags(page.getTags(), matcher.group(8));
+            page.setHtml(matcher.group(9));
+            parseMaterials(page.getMaterials(), matcher.group(10));
+            page.setNavId(matcher.group(11));
+            String comments = matcher.group(13);
+            comments = excludeFormCommentPattern.matcher(comments).replaceFirst("");
+            page.setComments(comments);
         }
-        return item;
+        return page;
+    }
+
+    private void parseMaterials(ArrayList<Material> materials, String sourceMaterials) {
+        if (sourceMaterials == null)
+            return;
+        Matcher matcher = materialsPattern.matcher(sourceMaterials);
+        while (matcher.find()) {
+            Material material = new Material();
+            material.setImageUrl(matcher.group(1));
+            material.setId(Integer.parseInt(matcher.group(2)));
+            material.setTitle(Utils.fromHtml(matcher.group(3)));
+            materials.add(material);
+        }
+    }
+
+    private void parseTags(ArrayList<Tag> tags, String sourceTags) {
+        if (sourceTags == null)
+            return;
+        Matcher matcher = tagsPattern.matcher(sourceTags);
+        while (matcher.find()) {
+            Tag material = new Tag();
+            material.setTag(matcher.group(1));
+            material.setTitle(Utils.fromHtml(matcher.group(2)));
+            tags.add(material);
+        }
     }
 
 

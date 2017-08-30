@@ -1,7 +1,11 @@
 package forpdateam.ru.forpda.fragments.news.details;
 
+import android.annotation.TargetApi;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -10,16 +14,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.api.news.models.DetailsPage;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.qms.chat.QmsChatFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
+import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.views.ExtendedWebView;
 import forpdateam.ru.forpda.views.ScrimHelper;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -44,6 +56,8 @@ public class NewsDetailsFragment extends TabFragment {
     public static final String OTHER_CASE = "news.to.details.other";
 
     private FrameLayout webViewContainer;
+    private ProgressBar progressBar;
+    private ProgressBar imageProgressBar;
     private ImageView detailsImage;
     private ExtendedWebView webView;
     private TextView detailsTitle;
@@ -87,16 +101,21 @@ public class NewsDetailsFragment extends TabFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         baseInflateFragment(inflater, R.layout.news_details_fragment_layout);
         webViewContainer = (FrameLayout) findViewById(R.id.swipe_refresh_list);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
-        webViewContainer.addView(webView);
+        webViewContainer.addView(webView, 0);
+        //webView.addJavascriptInterface(this, JS_INTERFACE);
+        registerForContextMenu(webView);
+        webView.setWebViewClient(new ArticleWebViewClient());
 
         ViewStub viewStub = (ViewStub) findViewById(R.id.toolbar_content);
         viewStub.setLayoutResource(R.layout.toolbar_news_details);
         viewStub.inflate();
-        detailsImage = (ImageView) findViewById(R.id.news_details_image);
-        detailsTitle = (TextView) findViewById(R.id.news_details_title);
-        detailsNick = (TextView) findViewById(R.id.news_details_nick);
-        detailsDate = (TextView) findViewById(R.id.news_details_date);
+        detailsImage = (ImageView) findViewById(R.id.article_image);
+        detailsTitle = (TextView) findViewById(R.id.article_title);
+        detailsNick = (TextView) findViewById(R.id.article_nick);
+        detailsDate = (TextView) findViewById(R.id.article_date);
+        imageProgressBar = (ProgressBar) findViewById(R.id.article_progress_bar);
         viewsReady();
         //webViewContainer.setOnRefreshListener(this::loadData);
         //refreshLayoutStyle(webViewContainer);
@@ -133,10 +152,16 @@ public class NewsDetailsFragment extends TabFragment {
         });
 
         //toolbarLayout.requestLayout();
-        setTitle(newsTitle);
-        detailsTitle.setText(newsTitle);
-        detailsNick.setText(newsNick);
-        detailsDate.setText(newsDate);
+        if (newsTitle != null) {
+            setTitle(newsTitle);
+            detailsTitle.setText(newsTitle);
+        }
+        if (newsNick != null) {
+            detailsNick.setText(newsNick);
+        }
+        if (newsDate != null) {
+            detailsDate.setText(newsDate);
+        }
         toolbarTitleView.setVisibility(View.GONE);
         toolbar.getNavigationIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         toolbar.getOverflowIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
@@ -154,25 +179,33 @@ public class NewsDetailsFragment extends TabFragment {
     public void loadData() {
         super.loadData();
         //webViewContainer.setRefreshing(true);
+        progressBar.setVisibility(View.VISIBLE);
         loadCoverImage();
         disposable.add(RxApi.NewsList().getDetails(newsId)
                 .filter(item -> item.getHtml() != null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(article -> {
-                    newsTitle = article.getTitle();
-                    newsNick = article.getAuthor();
-                    newsDate = article.getDate();
-                    newsImageUrl = article.getImgUrl();
-                    setTitle(newsTitle);
-                    detailsTitle.setText(newsTitle);
-                    detailsNick.setText(newsNick);
-                    detailsDate.setText(newsDate);
-                    loadCoverImage();
-                    webView.loadDataWithBaseURL("https://4pda.ru/forum/", article.getHtml(), "text/html", "utf-8", null);
-                }, throwable -> {
+                .subscribe(this::onLoadArticle, throwable -> {
+                    throwable.printStackTrace();
                     Toast.makeText(getActivity(), R.string.news_opps, Toast.LENGTH_SHORT).show();
                 }));
+    }
+
+    private void onLoadArticle(DetailsPage article) {
+        progressBar.setVisibility(View.GONE);
+        newsTitle = article.getTitle();
+        newsNick = article.getAuthor();
+        newsDate = article.getDate();
+        newsImageUrl = article.getImgUrl();
+
+        setTitle(newsTitle);
+        detailsTitle.setText(newsTitle);
+        detailsNick.setText(newsNick);
+        detailsDate.setText(newsDate);
+
+        loadCoverImage();
+
+        webView.loadDataWithBaseURL("https://4pda.ru/forum/", article.getHtml(), "text/html", "utf-8", null);
     }
 
     @Override
@@ -183,10 +216,40 @@ public class NewsDetailsFragment extends TabFragment {
     }
 
     private void loadCoverImage() {
-        ImageLoader.getInstance().displayImage(newsImageUrl, detailsImage);
+        if (newsImageUrl != null) {
+            ImageLoader.getInstance().displayImage(newsImageUrl, detailsImage, new SimpleImageLoadingListener() {
+                @Override
+                public void onLoadingStarted(String imageUri, View view) {
+                    imageProgressBar.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                    imageProgressBar.setVisibility(View.GONE);
+                }
+            });
+        }
     }
 
+    private class ArticleWebViewClient extends WebViewClient {
 
+        @SuppressWarnings("deprecation")
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            return handleUri(Uri.parse(url));
+        }
+
+        @TargetApi(Build.VERSION_CODES.N)
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            return handleUri(request.getUrl());
+        }
+
+        private boolean handleUri(Uri uri) {
+            IntentHandler.handle(uri.toString());
+            return true;
+        }
+    }
     /*private void insertData(DetailsPage item) {
         realm.executeTransaction(r -> {
             r.insertOrUpdate(EntityMapping.mappingNews(news, item));

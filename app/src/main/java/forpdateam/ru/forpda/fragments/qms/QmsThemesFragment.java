@@ -58,7 +58,7 @@ public class QmsThemesFragment extends ListFragment {
                 args.putString(QmsChatFragment.USER_AVATAR_ARG, avatarUrl);
                 args.putInt(QmsChatFragment.THEME_ID_ARG, theme.getId());
                 args.putString(QmsChatFragment.THEME_TITLE_ARG, theme.getName());
-                TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).setArgs(args).build());
+                TabManager.getInstance().add(QmsChatFragment.class, args);
             };
     private QmsThemesAdapter.OnItemClickListener onLongItemClickListener =
             theme -> {
@@ -107,7 +107,7 @@ public class QmsThemesFragment extends ListFragment {
             args.putInt(QmsChatFragment.USER_ID_ARG, currentThemes.getUserId());
             args.putString(QmsChatFragment.USER_NICK_ARG, currentThemes.getNick());
             args.putString(QmsChatFragment.USER_AVATAR_ARG, avatarUrl);
-            TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).setArgs(args).build());
+            TabManager.getInstance().add(QmsChatFragment.class, args);
         });
         fab.setVisibility(View.VISIBLE);
         adapter = new QmsThemesAdapter();
@@ -152,7 +152,7 @@ public class QmsThemesFragment extends ListFragment {
             args.putInt(QmsChatFragment.USER_ID_ARG, currentThemes.getUserId());
             args.putString(QmsChatFragment.USER_NICK_ARG, currentThemes.getNick());
             args.putString(QmsChatFragment.USER_AVATAR_ARG, avatarUrl);
-            TabManager.getInstance().add(new TabFragment.Builder<>(QmsChatFragment.class).setArgs(args).build());
+            TabManager.getInstance().add(QmsChatFragment.class, args);
             //new Handler().postDelayed(() -> TabManager.getInstance().remove(getTag()), 500);
             return;
         }
