@@ -38,7 +38,6 @@ public abstract class ListFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        long time = System.currentTimeMillis();
         setCardsBackground();
         baseInflateFragment(inflater, R.layout.fragment_base_list);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
@@ -48,9 +47,8 @@ public abstract class ListFragment extends TabFragment {
 
         //recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_for_lists));
-        //recyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(true);
         refreshLayoutStyle(refreshLayout);
-        Log.d("suka", "LF onCreateView " + (System.currentTimeMillis() - time));
         return view;
     }
 

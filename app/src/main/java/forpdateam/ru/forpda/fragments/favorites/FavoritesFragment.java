@@ -348,7 +348,9 @@ public class FavoritesFragment extends ListFragment {
 
     private void bindView() {
         if (realm.isClosed()) return;
+        Log.e("SUKA", "bindView call");
         results = realm.where(FavItemBd.class).findAll();
+        Log.e("SUKA", "bindView result");
         if (results.size() != 0) {
             ArrayList<IFavItem> nonBdResult = new ArrayList<>();
             for (FavItemBd itemBd : results) {
@@ -386,6 +388,7 @@ public class FavoritesFragment extends ListFragment {
                 adapter.addSection(new Pair<>("Закрепленные темы", pinned));
             }
             adapter.addSection(new Pair<>("Темы", items));
+            Log.e("SUKA", "bindView notifyDataSetChanged");
             adapter.notifyDataSetChanged();
         }
         if (!Client.getInstance().getNetworkState()) {

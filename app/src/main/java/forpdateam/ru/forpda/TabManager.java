@@ -102,8 +102,8 @@ public class TabManager {
         existingFragments.clear();
         if (fragmentManager.getFragments() == null) return;
         for (int i = 0; i < fragmentManager.getFragments().size(); i++) {
-            if (fragmentManager.getFragments().get(i) != null){
-                Log.d(LOG_TAG, "update fragment "+fragmentManager.getFragments().get(i));
+            if (fragmentManager.getFragments().get(i) != null) {
+                Log.d(LOG_TAG, "update fragment " + fragmentManager.getFragments().get(i));
                 existingFragments.add((TabFragment) fragmentManager.getFragments().get(i));
             }
         }
@@ -128,7 +128,12 @@ public class TabManager {
     }
 
     public TabFragment getActive() {
-        return get(activeIndex);
+        TabFragment active = null;
+        try {
+            active = get(activeIndex);
+        } catch (Exception ignore) {
+        }
+        return active;
     }
 
     public TabFragment get(final int index) {

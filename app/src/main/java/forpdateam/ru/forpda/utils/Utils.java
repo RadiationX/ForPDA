@@ -16,6 +16,7 @@ import java.util.GregorianCalendar;
 import forpdateam.ru.forpda.App;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 /**
  * Created by isanechek on 30.07.16.
@@ -37,7 +38,8 @@ public class Utils {
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT, text);
         sendIntent.setType("text/plain");
-        App.getInstance().startActivity(Intent.createChooser(sendIntent, "Поделиться"));
+        sendIntent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+        App.getInstance().startActivity(Intent.createChooser(sendIntent, "Поделиться").addFlags(FLAG_ACTIVITY_NEW_TASK));
     }
 
     public static <T> T checkNotNull(T value, String message) {
