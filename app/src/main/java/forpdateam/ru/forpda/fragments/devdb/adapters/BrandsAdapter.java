@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.afollestad.sectionedrecyclerview.SectionedRecyclerViewAdapter;
+import com.afollestad.sectionedrecyclerview.SectionedViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,6 +87,11 @@ public class BrandsAdapter extends SectionedRecyclerViewAdapter<BrandsAdapter.Vi
     }
 
     @Override
+    public void onBindFooterViewHolder(ViewHolder viewHolder, int i) {
+
+    }
+
+    @Override
     public BrandsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layout = VIEW_TYPE_ITEM;
         switch (viewType) {
@@ -106,7 +112,7 @@ public class BrandsAdapter extends SectionedRecyclerViewAdapter<BrandsAdapter.Vi
     }
 
     @Override
-    public void onBindHeaderViewHolder(BrandsAdapter.ViewHolder holder, int section) {
+    public void onBindHeaderViewHolder(BrandsAdapter.ViewHolder holder, int section, boolean expanded) {
         // Setup header view.
         /*if (sections.size() == 1) {
             holder.itemView.setVisibility(View.GONE);
@@ -127,7 +133,7 @@ public class BrandsAdapter extends SectionedRecyclerViewAdapter<BrandsAdapter.Vi
 
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    public class ViewHolder extends SectionedViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public TextView title, count;
         public View topDivider;
 

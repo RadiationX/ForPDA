@@ -233,6 +233,12 @@ public class FavoritesFragment extends ListFragment {
                 dialog.dismiss();
             }
         });
+        recyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                Log.e("SUKA", "recycler onLayoutChange " + v.getHeight() + " : " + v.getMeasuredHeight());
+            }
+        });
 
         bindView();
         App.getInstance().addPreferenceChangeObserver(favoritesPreferenceObserver);
@@ -388,7 +394,7 @@ public class FavoritesFragment extends ListFragment {
                 adapter.addSection(new Pair<>("Закрепленные темы", pinned));
             }
             adapter.addSection(new Pair<>("Темы", items));
-            Log.e("SUKA", "bindView notifyDataSetChanged");
+            Log.e("SUKA", "bindView notifyDataSetChanged "+recyclerView.isLayoutFrozen());
             adapter.notifyDataSetChanged();
         }
         if (!Client.getInstance().getNetworkState()) {
@@ -396,7 +402,7 @@ public class FavoritesFragment extends ListFragment {
         }
     }
 
-    private void offerToSubscribe(){
+    private void offerToSubscribe() {
 
     }
 
@@ -405,7 +411,7 @@ public class FavoritesFragment extends ListFragment {
     }
 
     public void markRead(int topicId) {
-        Log.d("SUKA", "markRead "+topicId);
+        Log.d("SUKA", "markRead " + topicId);
         realm.executeTransactionAsync(realm1 -> {
             IFavItem favItem = realm1.where(FavItemBd.class).equalTo("topicId", topicId).findFirst();
             if (favItem != null) {

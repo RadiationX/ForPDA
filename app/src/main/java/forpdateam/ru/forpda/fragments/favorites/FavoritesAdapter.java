@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.fragments.favorites;
 
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.sectionedrecyclerview.SectionedRecyclerViewAdapter;
+import com.afollestad.sectionedrecyclerview.SectionedViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,7 +101,8 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
 
     @Override
     public FavoritesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        int layout = VIEW_TYPE_ITEM;
+        Log.d("FavoritesAdapter", "onCreateViewHolder " + viewType);
+        int layout = R.layout.topic_item;
         switch (viewType) {
             case VIEW_TYPE_HEADER:
                 layout = R.layout.topic_item_section;
@@ -118,13 +121,14 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
     }
 
     @Override
-    public void onBindHeaderViewHolder(FavoritesAdapter.ViewHolder holder, int section) {
+    public void onBindHeaderViewHolder(FavoritesAdapter.ViewHolder holder, int section, boolean expanded) {
         // Setup header view.
         /*if (sections.size() == 1) {
             holder.itemView.setVisibility(View.GONE);
         } else {
             holder.itemView.setVisibility(View.VISIBLE);
         }*/
+        Log.d("FavoritesAdapter", "onBindHeaderViewHolder " + section);
         if (holder.topDivider != null) {
             holder.topDivider.setVisibility(section == 0 ? View.GONE : View.VISIBLE);
         }
@@ -132,8 +136,13 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
     }
 
     @Override
-    public void onBindViewHolder(FavoritesAdapter.ViewHolder holder, int section, int relativePosition, int absolutePosition) {
+    public void onBindFooterViewHolder(ViewHolder viewHolder, int i) {
 
+    }
+
+    @Override
+    public void onBindViewHolder(FavoritesAdapter.ViewHolder holder, int section, int relativePosition, int absolutePosition) {
+        Log.d("FavoritesAdapter", "onBindViewHolder " + section + " : " + relativePosition + " : " + absolutePosition);
         IFavItem item = sections.get(section).second.get(relativePosition);
         holder.title.setText(item.getTopicTitle());
 
@@ -171,7 +180,7 @@ public class FavoritesAdapter extends SectionedRecyclerViewAdapter<FavoritesAdap
         // See sample project for a visual of how these indices work.
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    public class ViewHolder extends SectionedViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public TextView title, lastNick, date, desc;
         public ImageView forumIcon, lockIcon, pollIcon;
         public View dot, topDivider;

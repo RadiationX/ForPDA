@@ -59,12 +59,14 @@ public class KeyboardUtil {
                 //check if the padding is 0 (if yes set the padding for the keyboard)
                 if (contentView.getPaddingBottom() != diff) {
                     //set the padding of the contentView for the keyboard
+                    Log.e("SUKA", "KeyboardUtil " + diff);
                     contentView.setPadding(0, 0, 0, diff);
                 }
             } else {
                 //check if the padding is != 0 (if yes reset the padding)
                 if (contentView.getPaddingBottom() != 0) {
                     //reset the padding of the contentView
+                    Log.e("SUKA", "KeyboardUtil h " + 0);
                     contentView.setPadding(0, 0, 0, 0);
                 }
             }
