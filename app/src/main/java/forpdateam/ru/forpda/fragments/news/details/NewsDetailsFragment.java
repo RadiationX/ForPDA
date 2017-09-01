@@ -33,10 +33,14 @@ import forpdateam.ru.forpda.fragments.qms.chat.QmsChatFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
+import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.ExtendedWebView;
 import forpdateam.ru.forpda.views.ScrimHelper;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 
 import static forpdateam.ru.forpda.utils.Utils.log;
@@ -65,13 +69,13 @@ public class NewsDetailsFragment extends TabFragment {
     private TextView detailsNick;
     private TextView detailsDate;
     //private Realm realm;
-    private CompositeDisposable disposable;
     //private News news;
     private int newsId;
     private String newsTitle;
     private String newsNick;
     private String newsDate;
     private String newsImageUrl;
+    private Subscriber<DetailsPage> mainSubscriber = new Subscriber<>(this);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,7 +83,6 @@ public class NewsDetailsFragment extends TabFragment {
         configuration.setDefaultTitle("Новость");
         configuration.setUseCache(false); // back
         configuration.setAlone(false);
-        disposable = new CompositeDisposable();
         if (getArguments() != null) {
             newsId = getArguments().getInt(ARG_NEWS_ID);
             newsTitle = getArguments().getString(ARG_NEWS_TITLE);
@@ -174,12 +177,12 @@ public class NewsDetailsFragment extends TabFragment {
         super.addBaseToolbarMenu();
         getMenu().add("Скопировать ссылку")
                 .setOnMenuItemClickListener(menuItem -> {
-                    Utils.copyToClipBoard("https://4pda.ru/index.php?p="+newsId);
+                    Utils.copyToClipBoard("https://4pda.ru/index.php?p=" + newsId);
                     return false;
                 });
         getMenu().add("Поделиться")
                 .setOnMenuItemClickListener(menuItem -> {
-                    Utils.shareText("https://4pda.ru/index.php?p="+newsId);
+                    Utils.shareText("https://4pda.ru/index.php?p=" + newsId);
                     return false;
                 });
     }
@@ -190,14 +193,7 @@ public class NewsDetailsFragment extends TabFragment {
         //webViewContainer.setRefreshing(true);
         progressBar.setVisibility(View.VISIBLE);
         loadCoverImage();
-        disposable.add(RxApi.NewsList().getDetails(newsId)
-                .filter(item -> item.getHtml() != null)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onLoadArticle, throwable -> {
-                    throwable.printStackTrace();
-                    Toast.makeText(getActivity(), R.string.news_opps, Toast.LENGTH_SHORT).show();
-                }));
+        mainSubscriber.subscribe(RxApi.NewsList().getDetails(newsId), this::onLoadArticle, new DetailsPage(), v -> loadData());
     }
 
     private void onLoadArticle(DetailsPage article) {
@@ -220,7 +216,9 @@ public class NewsDetailsFragment extends TabFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (disposable.isDisposed()) disposable.dispose();
+
+        /*if (!disposable.isDisposed())
+            disposable.dispose();*/
         //if (realm != null) realm.close();
     }
 

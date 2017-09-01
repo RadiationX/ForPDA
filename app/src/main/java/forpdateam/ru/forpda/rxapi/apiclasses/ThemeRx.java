@@ -62,7 +62,7 @@ public class ThemeRx {
             t.setVariableOpt("member_id", ClientHelper.getUserId());
             t.setVariableOpt("elem_to_scroll", page.getAnchor());
             t.setVariableOpt("body_type", "topic");
-            t.setVariableOpt("navigation_disable",getDisableStr( prevDisabled && nextDisabled ));
+            t.setVariableOpt("navigation_disable", getDisableStr(prevDisabled && nextDisabled));
             t.setVariableOpt("first_disable", getDisableStr(prevDisabled));
             t.setVariableOpt("prev_disable", getDisableStr(prevDisabled));
             t.setVariableOpt("next_disable", getDisableStr(nextDisabled));
@@ -73,7 +73,10 @@ public class ThemeRx {
             t.setVariableOpt("avatar_type", Preferences.Theme.isCircleAvatars() ? "circle_avatar" : "square_avatar");
 
 
-            int hatPostId = page.getPosts().get(0).getId();
+            int hatPostId = 0;
+            if (page.getPosts().size() > 0) {
+                hatPostId = page.getPosts().get(0).getId();
+            }
             Matcher letterMatcher = null;
             for (ThemePost post : page.getPosts()) {
                 t.setVariableOpt("user_online", post.isOnline() ? "online" : "");
