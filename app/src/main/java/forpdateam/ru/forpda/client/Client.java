@@ -10,6 +10,7 @@ import android.util.Log;
 import android.webkit.WebSettings;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -351,7 +352,9 @@ public class Client implements IWebClient {
 
             //Log.d("SUKA", "" + request.isWithoutBody() + " : " + response.toString());
             Log.d(LOG_TAG, "Response: " + response.toString());
-        } finally {
+        } /*catch (InterruptedIOException iioe){
+            iioe.printStackTrace();
+        }*/finally {
             if (okHttpResponse != null)
                 okHttpResponse.close();
         }

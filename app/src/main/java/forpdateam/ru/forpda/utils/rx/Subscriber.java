@@ -37,12 +37,16 @@ public class Subscriber<T> {
     }
 
     public Disposable subscribe(@NonNull Observable<T> observable, @NonNull Consumer<T> onNext, @NonNull T onErrorReturn, View.OnClickListener onErrorAction) {
-        return observable.onErrorReturn(throwable -> {
+        Disposable disposable = observable.onErrorReturn(throwable -> {
             handleErrorRx(throwable, onErrorAction);
             return onErrorReturn;
         })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onNext, throwable -> handleErrorRx(throwable, onErrorAction));
+        if (fragment != null) {
+            fragment.getDisposable().add(disposable);
+        }
+        return disposable;
     }
 }

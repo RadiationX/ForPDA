@@ -37,6 +37,7 @@ import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.settings.Preferences;
+import io.reactivex.disposables.CompositeDisposable;
 
 /**
  * Created by radiationx on 07.08.16.
@@ -77,6 +78,8 @@ public class TabFragment extends Fragment {
     private boolean notifyDotQms = Preferences.Main.isShowNotifyDotQms();
     private boolean notifyDotMentions = Preferences.Main.isShowNotifyDotMentions();
     private boolean alreadyCallLoad = false;
+
+    protected CompositeDisposable disposable = new CompositeDisposable();
 
     protected Observer countsObserver = (observable, o) -> updateNotifyDot();
     protected Observer networkObserver = (observable, o) -> {
@@ -180,6 +183,10 @@ public class TabFragment extends Fragment {
         return toolbar.getMenu();
     }
 
+
+    public CompositeDisposable getDisposable() {
+        return disposable;
+    }
 
     //False - можно закрывать
     //True - еще нужно что-то сделать, не закрывать
@@ -400,9 +407,12 @@ public class TabFragment extends Fragment {
     }
 
     @Override
+    @CallSuper
     public void onDestroy() {
         super.onDestroy();
         Log.d(LOG_TAG, "onDestroy " + this);
+        if (!disposable.isDisposed())
+            disposable.dispose();
         hidePopupWindows();
         ClientHelper.getInstance().removeCountsObserver(countsObserver);
         Client.getInstance().removeNetworkObserver(networkObserver);

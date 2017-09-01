@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import forpdateam.ru.forpda.App;
@@ -35,8 +36,11 @@ import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
+import forpdateam.ru.forpda.utils.rx.Subscriber;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -49,7 +53,7 @@ public class NewsMainFragment extends TabFragment implements
     private NewsListAdapter adapter;
     private NewsApi mApi;
     private String category = Constants.NEWS_CATEGORY_ALL;
-    private CompositeDisposable mDisposable;
+    private Subscriber<List<NewsItem>> mainSubscriber = new Subscriber<>(this);
     //private Realm realm;
 
     public NewsMainFragment() {
@@ -63,7 +67,6 @@ public class NewsMainFragment extends TabFragment implements
         configuration.setAlone(true);
         //configuration.setUseCache(true);
         //realm = Realm.getDefaultInstance();
-        mDisposable = new CompositeDisposable();
     }
 
     @Nullable
@@ -114,17 +117,11 @@ public class NewsMainFragment extends TabFragment implements
     @Override
     public void onPause() {
         super.onPause();
-        if (mDisposable.isDisposed()) {
-            mDisposable.clear();
-        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mDisposable.isDisposed()) {
-            mDisposable.clear();
-        }
 
         /*if (realm != null) {
             realm.close();
@@ -143,10 +140,10 @@ public class NewsMainFragment extends TabFragment implements
             favoriteDialogMenu = new AlertDialogMenu<>();
             showedFavoriteDialogMenu = new AlertDialogMenu<>();
             favoriteDialogMenu.addItem("Скопировать ссылку", (context, data) -> {
-                Utils.copyToClipBoard("https://4pda.ru/index.php?p="+data.getId());
+                Utils.copyToClipBoard("https://4pda.ru/index.php?p=" + data.getId());
             });
             favoriteDialogMenu.addItem("Поделиться", (context, data) -> {
-                Utils.shareText("https://4pda.ru/index.php?p="+data.getId());
+                Utils.shareText("https://4pda.ru/index.php?p=" + data.getId());
             });
         }
         showedFavoriteDialogMenu.clear();
@@ -183,15 +180,7 @@ public class NewsMainFragment extends TabFragment implements
     }
 
     private void loadDataNews(int page, boolean withClear) {
-        mDisposable.add(RxApi.NewsList().getNews(category, page)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(res -> {
-                    onLoadNews(res, withClear);
-                }, throwable -> {
-                    refreshLayout.setRefreshing(false);
-                    Toast.makeText(getActivity(), R.string.news_opps, Toast.LENGTH_SHORT).show();
-                }));
+        mainSubscriber.subscribe(RxApi.NewsList().getNews(category, page), list -> onLoadNews(list, withClear), new ArrayList<>(), v -> loadDataNews(page, withClear));
     }
 
     private void onLoadNews(List<NewsItem> list, boolean withClear) {

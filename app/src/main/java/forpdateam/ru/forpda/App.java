@@ -63,6 +63,8 @@ import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.SimpleObservable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.plugins.RxJavaPlugins;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import okhttp3.Cookie;
@@ -171,6 +173,13 @@ public class App extends android.app.Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        RxJavaPlugins.setErrorHandler(new Consumer<Throwable>() {
+            @Override
+            public void accept(@io.reactivex.annotations.NonNull Throwable throwable) throws Exception {
+                Log.d("SUKA", "RxJavaPlugins errorHandler "+throwable);
+                throwable.printStackTrace();
+            }
+        });
         setTheme(R.style.LightAppTheme);
 
         if (!BuildConfig.DEBUG) {
