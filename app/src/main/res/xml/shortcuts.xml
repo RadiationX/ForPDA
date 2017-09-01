@@ -9,7 +9,7 @@
         android:shortcutShortLabel="@string/shortcut_mentions">
         <intent
             android:action="android.intent.action.VIEW"
-            android:data="http://4pda.ru/forum/index.php?act=mentions"
+            android:data="https://4pda.ru/forum/index.php?act=mentions"
             android:targetClass="forpdateam.ru.forpda.MainActivity"
             android:targetPackage="ru.forpdateam.forpda" />
     </shortcut>
@@ -22,7 +22,7 @@
         android:shortcutShortLabel="@string/shortcut_contacts">
         <intent
             android:action="android.intent.action.VIEW"
-            android:data="http://4pda.ru/forum/index.php?act=qms"
+            android:data="https://4pda.ru/forum/index.php?act=qms"
             android:targetClass="forpdateam.ru.forpda.MainActivity"
             android:targetPackage="ru.forpdateam.forpda" />
     </shortcut>
@@ -35,7 +35,20 @@
         android:shortcutShortLabel="@string/shortcut_favorites">
         <intent
             android:action="android.intent.action.VIEW"
-            android:data="http://4pda.ru/forum/index.php?act=fav"
+            android:data="https://4pda.ru/forum/index.php?act=fav"
+            android:targetClass="forpdateam.ru.forpda.MainActivity"
+            android:targetPackage="ru.forpdateam.forpda" />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_news"
+        android:shortcutId="shortcut_news"
+        android:shortcutLongLabel="@string/shortcut_news"
+        android:shortcutShortLabel="@string/shortcut_news">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="https://4pda.ru/"
             android:targetClass="forpdateam.ru.forpda.MainActivity"
             android:targetPackage="ru.forpdateam.forpda" />
     </shortcut>

@@ -41,5 +41,18 @@
             android:targetClass="forpdateam.ru.forpda.MainActivity"
             android:targetPackage="ru.forpdateam.forpda.beta" />
     </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_news"
+        android:shortcutId="shortcut_news"
+        android:shortcutLongLabel="@string/shortcut_news"
+        android:shortcutShortLabel="@string/shortcut_news">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="https://4pda.ru/"
+            android:targetClass="forpdateam.ru.forpda.MainActivity"
+            android:targetPackage="ru.forpdateam.forpda.beta" />
+    </shortcut>
 </shortcuts>
 

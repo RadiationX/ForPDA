@@ -8,6 +8,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -401,6 +402,7 @@ public class FavoritesFragment extends ListFragment {
     }
 
     public void markRead(int topicId) {
+        Log.d("SUKA", "markRead "+topicId);
         realm.executeTransactionAsync(realm1 -> {
             IFavItem favItem = realm1.where(FavItemBd.class).equalTo("topicId", topicId).findFirst();
             if (favItem != null) {
