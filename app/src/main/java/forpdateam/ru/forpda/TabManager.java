@@ -51,7 +51,7 @@ public class TabManager {
     }
 
     private void clear() {
-        fragmentManager =null;
+        fragmentManager = null;
         tabListener = null;
         existingFragments.clear();
         existingFragments = null;
@@ -102,8 +102,10 @@ public class TabManager {
         existingFragments.clear();
         if (fragmentManager.getFragments() == null) return;
         for (int i = 0; i < fragmentManager.getFragments().size(); i++) {
-            if (fragmentManager.getFragments().get(i) != null)
+            if (fragmentManager.getFragments().get(i) != null){
+                Log.d(LOG_TAG, "update fragment "+fragmentManager.getFragments().get(i));
                 existingFragments.add((TabFragment) fragmentManager.getFragments().get(i));
+            }
         }
         Collections.sort(existingFragments, (o1, o2) -> o1.getTag().compareTo(o2.getTag()));
     }
@@ -141,12 +143,13 @@ public class TabManager {
         return null;
     }
 
-    public void add(Class<?extends TabFragment> tClass) {
+    public void add(Class<? extends TabFragment> tClass) {
         add(tClass, null);
     }
-    public void add(Class<?extends TabFragment> tClass, Bundle args) {
+
+    public void add(Class<? extends TabFragment> tClass, Bundle args) {
         TabFragment.Builder builder = new TabFragment.Builder<>(tClass);
-        if(args!=null){
+        if (args != null) {
             builder.setArgs(args);
         }
         TabFragment fragment = builder.build();
@@ -154,7 +157,7 @@ public class TabManager {
     }
 
     public void add(TabFragment tabFragment) {
-        Log.d(LOG_TAG, "add: "+tabFragment);
+        Log.d(LOG_TAG, "add: " + tabFragment);
         if (tabFragment == null)
             return;
         String check = null;
@@ -212,8 +215,12 @@ public class TabManager {
 
     public String getTagContainClass(final Class aClass) {
         String className = aClass.getSimpleName();
-        for (TabFragment fragment : existingFragments)
+        for (TabFragment fragment : existingFragments) {
+            Log.d("SUKA", "getTagContainClass " + fragment);
+        }
+        for (TabFragment fragment : existingFragments) {
             if (fragment.getClass().getSimpleName().equals(className)) return fragment.getTag();
+        }
         return null;
     }
 
@@ -222,7 +229,7 @@ public class TabManager {
     }
 
     public void remove(TabFragment tabFragment) {
-        Log.d(LOG_TAG, "remove: "+tabFragment);
+        Log.d(LOG_TAG, "remove: " + tabFragment);
         if (tabFragment == null)
             return;
 
@@ -259,7 +266,7 @@ public class TabManager {
     }
 
     public void select(TabFragment tabFragment) {
-        Log.d(LOG_TAG, "select: "+tabFragment);
+        Log.d(LOG_TAG, "select: " + tabFragment);
         if (tabFragment == null)
             return;
         FragmentTransaction transaction = fragmentManager.beginTransaction();

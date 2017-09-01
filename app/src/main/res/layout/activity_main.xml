@@ -5,19 +5,31 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-
+    <!--
+        Coordinator, потому-что он уходит под статусбар, а допусть FrameLayout не уходит.
+    -->
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/fragments_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
+        <!--
+            Эта вьюха нужна, чтобы фрагменты нормально вставлялись.
+            Если её не будет, то нулевой фрагмент не уйдёт под статусбар, а другие будут норм.
+            А с этой вьюхой получается, что она не уходит под сб, а фрагменты уходят.
+        -->
         <View
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true" />
     </android.support.design.widget.CoordinatorLayout>
 
+
+    <!--
+        Для измерения размеров статусбара и навбара.
+        От версии андроида эта хрень работает по-разному. Но в целом вроде норм.
+    -->
     <View
         android:id="@+id/view_for_measure"
         android:layout_width="match_parent"

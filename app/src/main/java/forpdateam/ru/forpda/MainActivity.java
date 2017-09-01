@@ -73,6 +73,12 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+
+        /*
+        * Т.к. 2 вьюхи, делаю цвет в 2 раза прозрачнее, чтобы компенсировать это.
+        * P.S. Чем больше вьюх в DrawerLayout находятся до NavigationView, тем сильнее будет затенение
+        * */
+        drawerLayout.setScrimColor(0x4C000000);
         drawers = new Drawers(this, drawerLayout);
         drawers.init(savedInstanceState);
         drawerHeader = new DrawerHeader(this, drawerLayout);
@@ -156,13 +162,12 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     }
 
     private void measureView(View v) {
-        Log.d(LOG_TAG, "Calc SOOOKA " + ((int) (((View) v.getParent()).getTop()))+" : "+v.getTop()+" : "+v.getRootView().getTop()+" : "+v.getRootView().getHeight()+" : "+findViewById(R.id.fragments_container).getHeight());
+        Log.d(LOG_TAG, "Calc SOOOKA " + ((int) (((View) v.getParent()).getTop())) + " : " + v.getTop() + " : " + v.getRootView().getTop() + " : " + v.getRootView().getHeight() + " : " + findViewById(R.id.fragments_container).getHeight());
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             App.setStatusBarHeight((int) (((View) v.getParent()).getTop() + v.getTop()));
             App.setNavigationBarHeight(v.getRootView().getHeight() - findViewById(R.id.fragments_container).getHeight());
         }
-
 
 
         Log.d(LOG_TAG, "Calc SB: " + App.getStatusBarHeight() + ", NB: " + App.getNavigationBarHeight());
@@ -190,7 +195,9 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
     void checkIntent(Intent intent) {
         if (intent == null || intent.getData() == null) {
-            drawers.firstSelect();
+            if (TabManager.getInstance().getSize() == 0) {
+                drawers.firstSelect();
+            }
             return;
         }
 
