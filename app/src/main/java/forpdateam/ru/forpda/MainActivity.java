@@ -283,9 +283,14 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             }
         }*/
 
-        if (fromToolbar || !TabManager.getInstance().getActive().onBackPressed()) {
+        TabFragment active = TabManager.getInstance().getActive();
+        if (active == null) {
+            finish();
+            return;
+        }
+        if (fromToolbar || !active.onBackPressed()) {
             hideKeyboard();
-            TabManager.getInstance().remove(TabManager.getInstance().getActive());
+            TabManager.getInstance().remove(active);
             if (TabManager.getInstance().getSize() < 1) {
                 finish();
             }

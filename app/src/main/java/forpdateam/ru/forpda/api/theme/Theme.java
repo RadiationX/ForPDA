@@ -183,9 +183,9 @@ public class Theme {
         testString += URLEncoder.encode(" с клиента ForPDA. $%@#*", "ISO-8859-1");
 */
         NetworkRequest request = new NetworkRequest.Builder()
-                .url("https://4pda.ru/forum/index.php?act=report&send=1&t=" + Integer.toString(topicId) + "&p=" + Integer.toString(postId) + "")
-                .multipart()
-                .formHeader("message", testString)
+                .url("http://4pda.ru/forum/index.php?act=report&send=1&t=" + Integer.toString(topicId) + "&p=" + Integer.toString(postId) + "")
+                //.multipart()
+                .formHeader("message", URLEncoder.encode(message, "windows-1251"), true)
                 .build();
 
         if (request.getFormHeaders() != null) {

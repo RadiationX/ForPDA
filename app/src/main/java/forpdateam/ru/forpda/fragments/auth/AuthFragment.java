@@ -119,6 +119,7 @@ public class AuthFragment extends TabFragment {
     }
 
     private void tryLogin() {
+        if (authForm == null) return;
         authForm.setCaptcha(captcha.getText().toString());
         authForm.setNick(nick.getText().toString());
         authForm.setPassword(password.getText().toString());
