@@ -10,11 +10,15 @@ import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.Utils;
+import forpdateam.ru.forpda.api.news.models.Comment;
 import forpdateam.ru.forpda.api.news.models.DetailsPage;
 import forpdateam.ru.forpda.api.news.models.Material;
 import forpdateam.ru.forpda.api.news.models.NewsItem;
 import forpdateam.ru.forpda.api.news.models.Tag;
 import forpdateam.ru.forpda.api.regex.RegexStorage;
+import forpdateam.ru.forpda.api.regex.parser.Document;
+import forpdateam.ru.forpda.api.regex.parser.Node;
+import forpdateam.ru.forpda.api.regex.parser.Parser;
 
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_ALL;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_ARTICLES;
@@ -161,6 +165,7 @@ public class NewsApi {
             String comments = matcher.group(13);
             comments = excludeFormCommentPattern.matcher(comments).replaceFirst("");
             page.setComments(comments);
+            Comment comment = parseComments(page.getComments());
         }
         return page;
     }
@@ -188,6 +193,94 @@ public class NewsApi {
             material.setTitle(Utils.fromHtml(matcher.group(2)));
             tags.add(material);
         }
+    }
+
+
+    private final Pattern idPattern = Pattern.compile("comment-(\\d+)");
+    private final Pattern userIdPattern = Pattern.compile("showuser=(\\d+)");
+
+    private Comment parseComments(String source) {
+        long time = System.currentTimeMillis();
+        Document document = Parser.parse(source);
+        Comment comments = new Comment();
+        recurseComments(document, comments, 0);
+
+        Log.e("TIME", "Comments: " + (System.currentTimeMillis() - time));
+        return comments;
+    }
+
+
+    private Comment recurseComments(Node root, Comment parentComment, int level) {
+
+        Node rootComments = Parser.findNode(root, "ul", "class", "comment-list");
+        ArrayList<Node> commentNodes = Parser.findChildNodes(rootComments, "li", null, null);
+
+        for (Node commentNode : commentNodes) {
+            Comment comment = new Comment();
+
+            String id = null, userId = null, userNick = null, date = null, content = null;
+            Matcher matcher;
+            Node anchorNode = Parser.findNode(commentNode, "div", "id", "comment-");
+
+            id = anchorNode.getAttribute("id");
+            if (id != null) {
+                matcher = idPattern.matcher(id);
+                if (matcher.find()) {
+                    id = matcher.group(1);
+                    comment.setId(Integer.parseInt(id));
+                }
+            }
+
+
+            String deletedString = anchorNode.getAttribute("class");
+            boolean isDeleted = deletedString != null && deletedString.contains("deleted");
+            comment.setDeleted(isDeleted);
+
+            if (!isDeleted) {
+                Node nickNode = Parser.findNode(commentNode, "a", "class", "nickname");
+                Node metaNode = Parser.findNode(commentNode, "span", "class", "h-meta");
+
+
+                userId = nickNode.getAttribute("href");
+                if (userId != null) {
+                    matcher = userIdPattern.matcher(userId);
+                    if (matcher.find()) {
+                        userId = matcher.group(1);
+                        comment.setUserId(Integer.parseInt(userId));
+                    }
+                }
+
+
+                userNick = Parser.getHtml(nickNode, true);
+                comment.setUserNick(Utils.fromHtml(userNick));
+
+                date = Parser.ownText(metaNode).trim();
+                date = date.replace(" |", ",");
+                comment.setDate(date);
+            }
+
+
+            Node contentNode = Parser.findNode(commentNode, "p", "class", "content");
+            content = Parser.getHtml(contentNode, true);
+            comment.setContent(content);
+            comment.setLevel(level);
+
+            String levelPadding = "";
+            for (int i = 0; i < level; i++) {
+                levelPadding += "\t";
+            }
+
+
+            Log.d("SUKA", levelPadding + id + " : " + userId + " : " + userNick + " : " + date + " : " + content);
+            level++;
+
+            parentComment.addChild(comment);
+            comment.addChild(recurseComments(commentNode, comment, level));
+            level--;
+        }
+
+
+        return parentComment;
     }
 
 

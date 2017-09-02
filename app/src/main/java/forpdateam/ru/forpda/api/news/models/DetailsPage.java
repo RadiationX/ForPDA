@@ -23,6 +23,7 @@ public class DetailsPage {
     private ArrayList<Material> materials = new ArrayList<>();
     private String navId;
     private String comments;
+    private Comment commentTree;
 
     public int getId() {
         return id;
@@ -126,5 +127,13 @@ public class DetailsPage {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public Comment getCommentTree() {
+        return commentTree;
+    }
+
+    public void setCommentTree(Comment commentTree) {
+        this.commentTree = commentTree;
     }
 }
