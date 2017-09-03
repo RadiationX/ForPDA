@@ -27,7 +27,7 @@ public class EmptyActivity extends AppCompatActivity {
 
     private static final String app = "org.softeg.slartus.forpdaplus";
     public static boolean empty(String s) {
-        return !App.getInstance().getPreferences().getBoolean("uu", false) && s.equals("iSanechek");
+        return !App.getInstance().getPreferences().getBoolean("uu", false) && s.equals("Googleoff");
     }
     public static void start(Context context, String s) {
         Intent intent = new Intent(context, EmptyActivity.class);

@@ -184,7 +184,6 @@ public class AuthFragment extends TabFragment {
             getMainActivity().finish();
             return;
         }
-
         App.getInstance().getPreferences().edit().putString("auth.user.nick", profile.getNick()).apply();
         ImageLoader.getInstance().displayImage(profile.getAvatar(), avatar);
         completeText.setText(Utils.spannedFromHtml("Привет <b>" + profile.getNick() + "</b>!"));
