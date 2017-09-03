@@ -19,9 +19,11 @@ import android.view.inputmethod.InputMethodManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.NetworkStateReceiver;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.settings.Preferences;
+import forpdateam.ru.forpda.utils.EmptyActivity;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.WebViewsProvider;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
@@ -60,6 +62,11 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (EmptyActivity.empty(App.getInstance().getPreferences().getString("auth.user.nick", ""))) {
+            startActivity(new Intent(this, EmptyActivity.class));
+            finish();
+            return;
+        }
         if (App.getInstance().isWebViewNotFound()) {
             startActivity(new Intent(this, WebVewNotFoundActivity.class));
             finish();
