@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                                            xmlns:tools="http://schemas.android.com/tools"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/empty_pic"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/dp40"
+            android:scaleType="centerCrop"
+            android:src="@drawable/empty"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Oopss..."
+            android:layout_marginStart="@dimen/dp16"
+            android:layout_marginEnd="@dimen/dp16"
+            android:layout_marginTop="@dimen/dp20"
+            android:layout_marginBottom="@dimen/dp8"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#b76e79"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:id="@+id/empty_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="@dimen/dp16"
+            android:layout_marginEnd="@dimen/dp16"
+            android:layout_marginBottom="@dimen/dp8"
+            android:padding="@dimen/dp24"
+            android:textSize="@dimen/news_title_size_18sp"
+            android:textStyle="normal"
+            android:textColor="#b76e79"
+            tools:text="Sorry Valera, but your device is not supported."
+            tools:ignore="HardcodedText"/>
+        <Button
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:id="@+id/open_theme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp16"
+            android:layout_marginEnd="@dimen/dp16"
+            android:layout_marginTop="@dimen/dp36"
+            android:layout_marginBottom="@dimen/dp8"
+            android:text="version 3.x.x"
+            android:textStyle="bold"
+            android:textColor="#b76e79"
+            android:textSize="16sp"
+            tools:ignore="HardcodedText"/>
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>
