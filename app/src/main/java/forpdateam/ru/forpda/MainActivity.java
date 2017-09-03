@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
     private NetworkStateReceiver receiver;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
