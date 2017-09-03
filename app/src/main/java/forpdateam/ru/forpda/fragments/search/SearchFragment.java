@@ -161,7 +161,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
     @Override
     protected void initFabBehavior() {
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
-        FabOnScroll behavior = new FabOnScroll(fab.getContext(), null);
+        FabOnScroll behavior = new FabOnScroll(fab.getContext());
         params.setBehavior(behavior);
         params.gravity = Gravity.CENTER_VERTICAL | Gravity.END;
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
@@ -288,6 +288,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
         refreshLayoutStyle(refreshLayout);
+        refreshLayoutLongTrigger(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
         adapter.setOnItemClickListener(item -> {
             String url = "";

@@ -374,6 +374,10 @@ public class TabFragment extends Fragment {
         refreshLayout.setColorSchemeColors(App.getColorFromAttr(getContext(), R.attr.colorAccent));
     }
 
+    protected void refreshLayoutLongTrigger(SwipeRefreshLayout refreshLayout){
+        refreshLayout.setDistanceToTriggerSync(App.px48 * 3);
+        refreshLayout.setProgressViewEndTarget(false, App.px48 * 3);
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

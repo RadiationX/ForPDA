@@ -63,6 +63,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
         webView.setJsLifeCycleListener(this);
         refreshLayout.addView(webView);
+        refreshLayoutLongTrigger(refreshLayout);
         webView.addJavascriptInterface(this, JS_INTERFACE);
         webView.addJavascriptInterface(this, JS_POSTS_FUNCTIONS);
         registerForContextMenu(webView);

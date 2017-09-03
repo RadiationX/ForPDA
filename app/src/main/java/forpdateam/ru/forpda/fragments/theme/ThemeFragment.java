@@ -39,6 +39,7 @@ import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.ScrollAwareFABBehavior;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.IBaseForumPost;
 import forpdateam.ru.forpda.api.RequestFile;
@@ -173,6 +174,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         fab.setAlpha(0.0f);
         baseInflateFragment(inflater, R.layout.fragment_theme);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
+
         messagePanel = new MessagePanel(getContext(), fragmentContainer, coordinatorLayout, false);
         messagePanel.enableBehavior();
         messagePanel.addSendOnClickListener(v -> sendMessage());
