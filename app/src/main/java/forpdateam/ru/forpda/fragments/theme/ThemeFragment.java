@@ -39,7 +39,6 @@ import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.ScrollAwareFABBehavior;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.IBaseForumPost;
 import forpdateam.ru.forpda.api.RequestFile;
@@ -459,7 +458,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         addSearchOnPageItem(getMenu());
         searchInThemeMenuItem = getMenu().add("Найти в теме")
                 .setOnMenuItemClickListener(menuItem -> {
-                    IntentHandler.handle("https://4pda.ru/forum/index.php?forums=" + currentPage.getForumId() + "&topics=" + currentPage.getId() + "&act=search&source=pst");
+                    IntentHandler.handle("https://4pda.ru/forum/index.php?forums=" + currentPage.getForumId() + "&topics=" + currentPage.getId() + "&act=search&source=pst&result=posts");
                     return false;
                 });
 
@@ -733,12 +732,12 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         reportPost(getPostById(Integer.parseInt(postId)));
     }
 
-    public void insertNick(final String postId) {
-        insertNick(getPostById(Integer.parseInt(postId)));
+    public void reply(final String postId) {
+        reply(getPostById(Integer.parseInt(postId)));
     }
 
     @Override
-    public void insertNick(IBaseForumPost post) {
+    public void reply(IBaseForumPost post) {
         if (messagePanel.getVisibility() != View.VISIBLE) {
             showMessagePanel();
         }

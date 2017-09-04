@@ -21,15 +21,15 @@
     <div class="materials_list">
     <!-- $BeginBlock material -->
         <a class="material_item" href="https://4pda.ru/index.php?p=${material_id}">
-            <img class="image" src="${material_image}">
+            <span class="image" style="background-image: url(${material_image})"></span>
             <span class="title">${material_title}</span>
         </a>
     <!-- $EndBlock material -->
     </div>
 </div>
-<div class="comments">
+<div class="comments" onclick="INews.toComments();">
     <div class="title">Комментарии</div>
-    <div class="content">Coming soon</div>
+    <div class="content">Сделайте свайп справа на лево</div>
 </div>
 
 <script type="text/javascript">

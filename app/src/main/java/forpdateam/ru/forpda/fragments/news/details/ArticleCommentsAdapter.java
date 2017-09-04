@@ -77,10 +77,8 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
         Comment.Karma karma = item.getKarma();
         //Log.d("SUKA", "ADAPTER ITEM " + item.getId() + " : " + karma);
         holder.content.setText(item.getContent());
-        holder.nick.setText(item.getUserNick());
-        holder.date.setText(item.getDate());
-
         if (item.isDeleted()) {
+            holder.itemView.setClickable(false);
             if (holder.likeImage.getVisibility() != View.GONE) {
                 holder.likeImage.setVisibility(View.GONE);
             }
@@ -94,6 +92,7 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
                 holder.date.setVisibility(View.GONE);
             }
         } else {
+            holder.itemView.setClickable(true);
             if (holder.likeImage.getVisibility() != View.VISIBLE) {
                 holder.likeImage.setVisibility(View.VISIBLE);
             }
@@ -107,6 +106,9 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
             if (holder.date.getVisibility() != View.VISIBLE) {
                 holder.date.setVisibility(View.VISIBLE);
             }
+
+            holder.nick.setText(item.getUserNick());
+            holder.date.setText(item.getDate());
 
             if (karma.getCount() == 0) {
                 if (holder.likeCount.getVisibility() != View.GONE) {

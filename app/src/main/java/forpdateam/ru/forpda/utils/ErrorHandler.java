@@ -51,7 +51,7 @@ public class ErrorHandler {
 
 
         //if (isNetworkEx) {
-        Snackbar snackbar = Snackbar.make(fragment.getCoordinatorLayout(), text, listener != null /*&& isNetworkEx*/ ? Snackbar.LENGTH_INDEFINITE : Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(fragment.getCoordinatorLayout(), text, /*listener != null ? Snackbar.LENGTH_INDEFINITE :*/ Snackbar.LENGTH_LONG);
         if (listener != null /*&& isNetworkEx*/)
             snackbar.setAction("Повторить", listener);
         snackbar.setActionTextColor(Color.WHITE);

@@ -517,31 +517,36 @@ body {
 }
 .materials {
     display: block;
-    overflow-x: auto;
-    width: 100%;
     .materials_list {
-        display: table;
-        border-spacing: 8/16rem;
         margin: 0 auto;
         .material_item {
             .mainBox();
-            .bRad(2/16rem);
-            display: table-cell;
+            display: block;
             overflow: hidden;
-            width: 25%;
-            min-width: 12rem;
-            max-width: 16rem;
-            margin: 8/16rem;
             text-decoration: none;
             color: @default_text_color;
+            padding: 12/16rem 16/16rem;
             .image {
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: cover;
                 display: block;
-                max-width: 100%;
+                width: 5rem;
+                height: 5rem;
+                .bRad(5rem);
+                float: right;
             }
             .title {
-                padding: 8/16rem;
                 display: block;
                 overflow: hidden;
+                font-size: 20/16em;
+                padding-right: 8/16rem;
+                font-weight: 500;
+            }
+            &:after{
+                content: "";
+                display: table;
+                clear: both;
             }
         }
     }
