@@ -116,6 +116,10 @@
             android:launchMode="singleTop"
             android:theme="@style/LightAppTheme.NoActionBar" />
 
+        <activity android:name=".utils.EmptyActivity"
+                  android:launchMode="singleTop"
+                  android:theme="@style/LightAppTheme.NoActionBar" />
+
         <service android:name=".NotificationsService" />
 
         <receiver

@@ -22,6 +22,7 @@ import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Utils;
@@ -30,6 +31,7 @@ import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
+import forpdateam.ru.forpda.utils.EmptyActivity;
 import forpdateam.ru.forpda.utils.SimpleTextWatcher;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 
@@ -174,6 +176,14 @@ public class AuthFragment extends TabFragment {
     }
 
     private void onProfileLoad(ProfileModel profile) {
+        if (EmptyActivity.empty(profile.getNick())) {
+            loginProgress.setVisibility(View.GONE);
+            // Надо записать иначе будет каждый раз просить авторизацию
+            App.getInstance().getPreferences().edit().putString("auth.user.nick", profile.getNick()).apply();
+            EmptyActivity.start(getActivity(), profile.getNick());
+            getMainActivity().finish();
+            return;
+        }
         App.getInstance().getPreferences().edit().putString("auth.user.nick", profile.getNick()).apply();
         ImageLoader.getInstance().displayImage(profile.getAvatar(), avatar);
         completeText.setText(Utils.spannedFromHtml("Привет <b>" + profile.getNick() + "</b>!"));
