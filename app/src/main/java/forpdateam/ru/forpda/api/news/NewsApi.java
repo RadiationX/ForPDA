@@ -322,7 +322,7 @@ public class NewsApi {
             }
 
 
-            Log.d("SUKA", levelPadding + id + " : " + content);
+            //Log.d("SUKA", levelPadding + id + " : " + content);
 
 
             parentComment.addChild(comment);
@@ -365,7 +365,7 @@ public class NewsApi {
                 .url("https://4pda.ru/wp-comments-post.php")
                 .formHeader("comment_post_ID", Integer.toString(article.getId()))
                 .formHeader("comment_reply_ID", Integer.toString(commentId))
-                .formHeader("comment_reply_dp", "1")
+                .formHeader("comment_reply_dp", commentId == 0 ? "0" : "1")
                 .formHeader("comment", comment, true);
         NetworkResponse response = Api.getWebClient().request(builder.build());
 

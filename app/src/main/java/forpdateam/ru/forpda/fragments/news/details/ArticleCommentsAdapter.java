@@ -75,7 +75,7 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
     public void onBindViewHolder(ArticleCommentsAdapter.ViewHolder holder, int position) {
         Comment item = list.get(position);
         Comment.Karma karma = item.getKarma();
-        Log.d("SUKA", "ADAPTER ITEM " + item.getId() + " : " + karma);
+        //Log.d("SUKA", "ADAPTER ITEM " + item.getId() + " : " + karma);
         holder.content.setText(item.getContent());
         holder.nick.setText(item.getUserNick());
         holder.date.setText(item.getDate());
