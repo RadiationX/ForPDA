@@ -17,9 +17,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Observer;
 import java.util.concurrent.Callable;
 
 import forpdateam.ru.forpda.App;
@@ -50,9 +52,22 @@ public class ArticleCommentsFragment extends Fragment implements ArticleComments
     private FrameLayout sendContainer;
     private AppCompatImageButton buttonSend;
     private ProgressBar progressBarSend;
+    private RelativeLayout writePanel;
     private DetailsPage article;
     private ArticleCommentsAdapter adapter;
     private Comment currentReplyComment;
+
+    private Observer loginObserver = (observable, o) -> {
+        if (o == null) o = false;
+        if (ClientHelper.getAuthState()) {
+            writePanel.setVisibility(View.VISIBLE);
+        } else {
+            writePanel.setVisibility(View.GONE);
+        }
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
+    };
 
     public ArticleCommentsFragment setArticle(DetailsPage article) {
         this.article = article;
@@ -64,6 +79,7 @@ public class ArticleCommentsFragment extends Fragment implements ArticleComments
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.article_comments, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.base_list);
+        writePanel = (RelativeLayout) view.findViewById(R.id.comment_write_panel);
         messageField = (EditText) view.findViewById(R.id.message_field);
         sendContainer = (FrameLayout) view.findViewById(R.id.send_container);
         buttonSend = (AppCompatImageButton) view.findViewById(R.id.button_send);
@@ -110,6 +126,13 @@ public class ArticleCommentsFragment extends Fragment implements ArticleComments
 
         buttonSend.setOnClickListener(v -> sendComment());
 
+        if (ClientHelper.getAuthState()) {
+            writePanel.setVisibility(View.VISIBLE);
+        } else {
+            writePanel.setVisibility(View.GONE);
+        }
+
+        ClientHelper.getInstance().addLoginObserver(loginObserver);
         return view;
     }
 
@@ -166,4 +189,9 @@ public class ArticleCommentsFragment extends Fragment implements ArticleComments
                 });
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ClientHelper.getInstance().removeLoginObserver(loginObserver);
+    }
 }
