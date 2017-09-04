@@ -138,7 +138,7 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
                 case Comment.Karma.NOT_LIKED: {
                     holder.likeImage.setImageDrawable(holder.heart_outline);
                     holder.likeImage.clearColorFilter();
-                    holder.likeImage.setClickable(ClientHelper.getAuthState());
+                    holder.likeImage.setClickable(ClientHelper.getAuthState() && ClientHelper.getUserId() != item.getUserId());
                     break;
                 }
             }
@@ -185,7 +185,7 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
                     clickListener.onLikeClick(getItem(getLayoutPosition()), getLayoutPosition());
                 }
             });
-            itemView.setOnClickListener(v1 -> {
+            content.setOnClickListener(v1 -> {
                 if (clickListener != null) {
                     clickListener.onReplyClick(getItem(getLayoutPosition()), getLayoutPosition());
                 }

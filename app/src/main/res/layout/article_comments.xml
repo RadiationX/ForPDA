@@ -1,34 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/base_list"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_above="@+id/comment_write_panel"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/base_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 
     <RelativeLayout
         android:id="@+id/comment_write_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:background="?colorPrimary">
+        android:background="?colorPrimary"
+        android:orientation="horizontal">
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?divider_line"/>
+            android:background="?divider_line" />
 
         <EditText
             android:id="@+id/message_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/send_container"
             android:background="@android:color/transparent"
             android:gravity="center_vertical"
             android:hint="@string/msg_panel_hint_message"
@@ -41,22 +50,21 @@
             android:paddingStart="@dimen/dp16"
             android:paddingTop="@dimen/dp8"
             android:textSize="16sp"
-            android:layout_toStartOf="@+id/send_container"
-            tools:text="jdkal;dsasd\n\n\njdklasjdlkas"/>
+            tools:text="jdkal;dsasd\n\n\njdklasjdlkas" />
 
         <FrameLayout
             android:id="@+id/send_container"
             android:layout_width="@dimen/dp48"
             android:layout_height="@dimen/dp48"
-            android:layout_alignParentEnd="true"
-            android:layout_alignBottom="@+id/message_field">
+            android:layout_alignBottom="@+id/message_field"
+            android:layout_alignParentEnd="true">
 
             <android.support.v7.widget.AppCompatImageButton
                 android:id="@+id/button_send"
-                app:srcCompat="@drawable/ic_send"
                 android:layout_width="@dimen/dp48"
                 android:layout_height="@dimen/dp48"
-                android:background="?attr/selectableItemBackgroundBorderless" />
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_send" />
 
             <ProgressBar
                 android:id="@+id/send_progress"

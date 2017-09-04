@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +14,7 @@ import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -40,6 +42,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -47,6 +50,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class ArticleCommentsFragment extends Fragment implements ArticleCommentsAdapter.ClickListener {
+    private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
     private EditText messageField;
     private FrameLayout sendContainer;
@@ -78,12 +82,31 @@ public class ArticleCommentsFragment extends Fragment implements ArticleComments
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.article_comments, container, false);
+        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_list);
         recyclerView = (RecyclerView) view.findViewById(R.id.base_list);
         writePanel = (RelativeLayout) view.findViewById(R.id.comment_write_panel);
         messageField = (EditText) view.findViewById(R.id.message_field);
         sendContainer = (FrameLayout) view.findViewById(R.id.send_container);
         buttonSend = (AppCompatImageButton) view.findViewById(R.id.button_send);
         progressBarSend = (ProgressBar) view.findViewById(R.id.send_progress);
+
+        refreshLayout.setProgressBackgroundColorSchemeColor(App.getColorFromAttr(getContext(), R.attr.colorPrimary));
+        refreshLayout.setColorSchemeColors(App.getColorFromAttr(getContext(), R.attr.colorAccent));
+        refreshLayout.setOnRefreshListener(() -> {
+            refreshLayout.setRefreshing(true);
+            RxApi.NewsList().getDetails(article.getId())
+                    .map(page -> {
+                        Comment commentTree = Api.NewsApi().updateComments(article, page);
+                        article.setCommentTree(commentTree);
+                        return Api.NewsApi().commentsToList(article.getCommentTree());
+                    })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(comments -> {
+                        refreshLayout.setRefreshing(false);
+                        adapter.addAll(comments);
+                    });
+        });
 
         recyclerView.setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_for_lists));
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -143,33 +166,37 @@ public class ArticleCommentsFragment extends Fragment implements ArticleComments
 
     @Override
     public void onLikeClick(Comment comment, int position) {
+        Comment.Karma karma = comment.getKarma();
+        karma.setStatus(Comment.Karma.LIKED);
+        karma.setCount(karma.getCount() + 1);
+        adapter.notifyItemChanged(position);
         RxApi.NewsList().likeComment(article.getId(), comment.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(aBoolean -> {
-                    Comment.Karma karma = comment.getKarma();
-                    karma.setStatus(Comment.Karma.LIKED);
-                    karma.setCount(karma.getCount() + 1);
-                    adapter.notifyItemChanged(position);
-                });
+                .subscribe();
     }
 
     @Override
     public void onReplyClick(Comment comment, int position) {
         if (messageField.getText().length() == 0) {
-            currentReplyComment = comment;
-            messageField.setText(currentReplyComment.getUserNick() + ",\n");
+            fillMessageField(comment);
         } else {
             new AlertDialog.Builder(getContext())
                     .setMessage("Уже имеется введёный текст, очистить?")
-                    .setPositiveButton("Да", (dialog, which) -> {
-                        currentReplyComment = comment;
-                        messageField.setText(currentReplyComment.getUserNick() + ",\n");
-                    })
+                    .setPositiveButton("Да", (dialog, which) -> fillMessageField(comment))
                     .setNegativeButton("Отмена", null)
                     .show();
         }
 
+    }
+
+    private void fillMessageField(Comment comment) {
+        currentReplyComment = comment;
+        messageField.setText(currentReplyComment.getUserNick() + ",\n");
+        messageField.setSelection(messageField.getText().length());
+        messageField.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(messageField, InputMethodManager.SHOW_IMPLICIT);
     }
 
     private void sendComment() {

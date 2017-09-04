@@ -235,7 +235,7 @@ public class NewsApi {
                     int commentId = Integer.parseInt(matcher.group(1));
                     karma.setStatus(Integer.parseInt(matcher.group(2)));
                     karma.setCount(Integer.parseInt(matcher.group(5)));
-                    Log.d("SUKA", "parseKarma " + commentId + " : " + karma.getCount());
+                    //Log.d("SUKA", "parseKarma " + commentId + " : " + karma.getCount());
                     karmaMap.put(commentId, karma);
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -316,11 +316,11 @@ public class NewsApi {
             comment.setLevel(level);
             comment.setKarma(karmaMap.get(comment.getId()));
 
-            String levelPadding = "";
+            /*String levelPadding = "";
             for (int i = 0; i < level; i++) {
                 levelPadding += "\t";
             }
-
+*/
 
             //Log.d("SUKA", levelPadding + id + " : " + content);
 
@@ -371,6 +371,10 @@ public class NewsApi {
 
         DetailsPage newArticle = parseArticle(article.getId(), response.getBody());
 
+        return updateComments(article, newArticle);
+    }
+
+    public Comment updateComments(DetailsPage article, DetailsPage newArticle) {
         article.getKarmaMap().clear();
         article.setKarmaMap(newArticle.getKarmaMap());
 
