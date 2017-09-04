@@ -5,14 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
-
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/comment_nick"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:layout_marginStart="@dimen/dp8"
         android:gravity="center_vertical"
         android:textSize="14sp"
         android:textStyle="bold"
@@ -20,6 +18,7 @@
         android:layout_toStartOf="@+id/comment_meta"
         android:layout_alignParentStart="true"
         android:maxLines="1"
+        android:textColor="?second_text_color"
         tools:text="radiation15" />
 
     <LinearLayout
@@ -27,7 +26,6 @@
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="@dimen/dp8"
         android:gravity="end|center_vertical"
         android:orientation="horizontal">
 
@@ -36,6 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp"
+            android:textColor="?second_text_color"
             tools:text="4.09.17, 12:02" />
 
 
@@ -46,6 +45,7 @@
             android:paddingBottom="4dp"
             android:paddingTop="4dp"
             android:layout_marginStart="@dimen/dp4"
+            android:layout_marginEnd="-4dp"
             app:srcCompat="@drawable/ic_heart_outline" />
 
         <TextView
@@ -53,6 +53,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
+            android:textSize="12sp"
+            android:textColor="?second_text_color"
+            android:layout_marginStart="@dimen/dp4"
             android:text="30" />
 
     </LinearLayout>
@@ -63,8 +66,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/comment_nick"
-        android:layout_marginStart="@dimen/dp8"
-        android:layout_marginEnd="@dimen/dp8"
         android:textSize="16sp"
         tools:text="hjkdshklf hlksdf\nsdakfjl;sadf\ndasjlkfa;sdf\nsdajkfl" />
 </RelativeLayout>

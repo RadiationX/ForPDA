@@ -13,9 +13,11 @@ public class Comment {
     private String date;
     private String content;
     private boolean deleted = false;
+    private boolean collapsed = false;
     private boolean canReply = false;
     private ArrayList<Comment> children = new ArrayList<>();
     private int level;
+    private Karma karma;
 
     public Comment() {
     }
@@ -29,6 +31,8 @@ public class Comment {
         this.deleted = comment.isDeleted();
         this.canReply = comment.canReply;
         this.level = comment.getLevel();
+        this.collapsed = comment.isCollapsed();
+        this.karma = comment.getKarma();
     }
 
     public int getId() {
@@ -79,6 +83,22 @@ public class Comment {
         this.deleted = deleted;
     }
 
+    public boolean isCollapsed() {
+        return collapsed;
+    }
+
+    public void setCollapsed(boolean collapsed) {
+        this.collapsed = collapsed;
+    }
+
+    public boolean isCanReply() {
+        return canReply;
+    }
+
+    public void setCanReply(boolean canReply) {
+        this.canReply = canReply;
+    }
+
     public ArrayList<Comment> getChildren() {
         return children;
     }
@@ -93,5 +113,41 @@ public class Comment {
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    public Karma getKarma() {
+        return karma;
+    }
+
+    public void setKarma(Karma karma) {
+        this.karma = karma;
+    }
+
+    public static class Karma {
+        public final static int NOT_LIKED = 0;
+        public final static int LIKED = 1;
+        public final static int DISLIKED = -1;
+        public final static int FORBIDDEN = 2;
+
+        private int status;
+        private int count;
+        private int unknown1;
+        private int unknown2;
+
+        public int getStatus() {
+            return status;
+        }
+
+        public void setStatus(int status) {
+            this.status = status;
+        }
+
+        public int getCount() {
+            return count;
+        }
+
+        public void setCount(int count) {
+            this.count = count;
+        }
     }
 }

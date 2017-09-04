@@ -10,13 +10,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.news.models.Comment;
 import forpdateam.ru.forpda.api.news.models.DetailsPage;
+import forpdateam.ru.forpda.api.profile.models.ProfileModel;
+import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
+import forpdateam.ru.forpda.rxapi.RxApi;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 03.09.17.
@@ -38,13 +47,20 @@ public class ArticleCommentsFragment extends Fragment {
         recyclerView.setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_for_lists));
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
-        recyclerView.addItemDecoration(new BrandFragment.SpacingItemDecoration(App.px12, true));
-
+        recyclerView.addItemDecoration(new BrandFragment.SpacingItemDecoration(App.px12, false));
         ArticleCommentsAdapter adapter = new ArticleCommentsAdapter();
 
-        ArrayList<Comment> commentList = Api.NewsApi().commentsToList(article.getCommentTree());
+        Observable.fromCallable(() -> {
+            if (article.getCommentTree() == null) {
+                Comment commentTree = Api.NewsApi().parseComments(article.getKarmaMap(), article.getCommentsSource());
+                article.setCommentTree(commentTree);
+            }
+            return Api.NewsApi().commentsToList(article.getCommentTree());
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(adapter::addAll);
 
-        adapter.addAll(commentList);
 
         recyclerView.setAdapter(adapter);
 

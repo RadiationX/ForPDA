@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.api.news.models;
 
+import android.util.SparseArray;
+
 import java.util.ArrayList;
 
 /**
@@ -16,13 +18,14 @@ public class DetailsPage {
     private String imgUrl;
     private int commentsCount;
     private ArrayList<Tag> tags = new ArrayList<>();
+    private SparseArray<Comment.Karma> karmaMap = new SparseArray<>();
 
     // for details
 
     private String html;
     private ArrayList<Material> materials = new ArrayList<>();
     private String navId;
-    private String comments;
+    private String commentsSource;
     private Comment commentTree;
 
     public int getId() {
@@ -121,12 +124,12 @@ public class DetailsPage {
         this.navId = navId;
     }
 
-    public String getComments() {
-        return comments;
+    public String getCommentsSource() {
+        return commentsSource;
     }
 
-    public void setComments(String comments) {
-        this.comments = comments;
+    public void setCommentsSource(String commentsSource) {
+        this.commentsSource = commentsSource;
     }
 
     public Comment getCommentTree() {
@@ -136,4 +139,14 @@ public class DetailsPage {
     public void setCommentTree(Comment commentTree) {
         this.commentTree = commentTree;
     }
+
+    public SparseArray<Comment.Karma> getKarmaMap() {
+        return karmaMap;
+    }
+
+    public void setKarmaMap(SparseArray<Comment.Karma> karmaMap) {
+        this.karmaMap = karmaMap;
+    }
+
+
 }
