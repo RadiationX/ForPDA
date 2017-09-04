@@ -56,6 +56,7 @@ import static forpdateam.ru.forpda.utils.Utils.log;
 public class NewsDetailsFragment extends TabFragment {
 
     public static final String ARG_NEWS_ID = "ARG_NEWS_ID";
+    public static final String ARG_NEWS_COMMENT_ID = "ARG_NEWS_COMMENT_ID";
     public static final String ARG_NEWS_TITLE = "ARG_NEWS_TITLE";
     public static final String ARG_NEWS_AUTHOR_NICK = "ARG_NEWS_AUTHOR_NICK";
     public static final String ARG_NEWS_AUTHOR_ID = "ARG_NEWS_AUTHOR_ID";
@@ -76,6 +77,7 @@ public class NewsDetailsFragment extends TabFragment {
     //private Realm realm;
     //private News news;
     private int newsId;
+    private int commentId;
     private String newsTitle;
     private String newsNick;
     private String newsDate;
@@ -89,11 +91,13 @@ public class NewsDetailsFragment extends TabFragment {
         configuration.setUseCache(false); // back
         configuration.setAlone(false);
         if (getArguments() != null) {
-            newsId = getArguments().getInt(ARG_NEWS_ID);
+            newsId = getArguments().getInt(ARG_NEWS_ID, 0);
+            commentId = getArguments().getInt(ARG_NEWS_COMMENT_ID, 0);
             newsTitle = getArguments().getString(ARG_NEWS_TITLE);
             newsNick = getArguments().getString(ARG_NEWS_AUTHOR_NICK);
             newsDate = getArguments().getString(ARG_NEWS_DATE);
             newsImageUrl = getArguments().getString(ARG_NEWS_IMAGE);
+
             Log.d("SUKA", "" + newsId + " : " + newsTitle + " : " + newsNick + " : " + newsDate + " : " + newsImageUrl);
             //realm = Realm.getDefaultInstance();
             //news = realm.where(News.class).equalTo("url", newsId).findFirst();
@@ -207,6 +211,7 @@ public class NewsDetailsFragment extends TabFragment {
     }
 
     private void onLoadArticle(DetailsPage article) {
+        article.setCommentId(commentId);
         progressBar.setVisibility(View.GONE);
         newsTitle = article.getTitle();
         newsNick = article.getAuthor();
@@ -222,6 +227,10 @@ public class NewsDetailsFragment extends TabFragment {
 
         FragmentPagerAdapter pagerAdapter = new FragmentPagerAdapter(getChildFragmentManager(), article);
         fragmentsPager.setAdapter(pagerAdapter);
+        if (article.getCommentId() != 0) {
+            appBarLayout.setExpanded(false, true);
+            fragmentsPager.setCurrentItem(1, true);
+        }
 
 
     }
@@ -248,26 +257,6 @@ public class NewsDetailsFragment extends TabFragment {
                     imageProgressBar.setVisibility(View.GONE);
                 }
             });
-        }
-    }
-
-    private class ArticleWebViewClient extends WebViewClient {
-
-        @SuppressWarnings("deprecation")
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            return handleUri(Uri.parse(url));
-        }
-
-        @TargetApi(Build.VERSION_CODES.N)
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-            return handleUri(request.getUrl());
-        }
-
-        private boolean handleUri(Uri uri) {
-            IntentHandler.handle(uri.toString());
-            return true;
         }
     }
 

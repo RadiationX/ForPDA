@@ -85,7 +85,17 @@ public class ArticleCommentsFragment extends Fragment implements ArticleComments
         })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(adapter::addAll);
+                .subscribe(comments -> {
+                    adapter.addAll(comments);
+                    if (article.getCommentId() > 0) {
+                        for (int i = 0; i < comments.size(); i++) {
+                            if (comments.get(i).getId() == article.getCommentId()) {
+                                recyclerView.scrollToPosition(i);
+                                break;
+                            }
+                        }
+                    }
+                });
         recyclerView.setAdapter(adapter);
 
         messageField.addTextChangedListener(new SimpleTextWatcher() {

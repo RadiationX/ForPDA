@@ -10,6 +10,7 @@ import java.util.ArrayList;
 // На время только, ибо оригинал в котлине
 public class DetailsPage {
     private int id;
+    private int commentId;
     private String url;
     private String title;
     private String description;
@@ -34,6 +35,14 @@ public class DetailsPage {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getCommentId() {
+        return commentId;
+    }
+
+    public void setCommentId(int commentId) {
+        this.commentId = commentId;
     }
 
     public String getUrl() {
