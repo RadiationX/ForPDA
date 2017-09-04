@@ -767,8 +767,8 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
     }
 
     @JavascriptInterface
-    public void insertNick(final String postId) {
-        webView.runInUiThread(() -> insertNick(getPostById(Integer.parseInt(postId))));
+    public void reply(final String postId) {
+        webView.runInUiThread(() -> reply(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
@@ -812,7 +812,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
     }
 
     @Override
-    public void insertNick(IBaseForumPost post) {
+    public void reply(IBaseForumPost post) {
         Toast.makeText(getContext(), "Действие невозможно", Toast.LENGTH_SHORT).show();
     }
 

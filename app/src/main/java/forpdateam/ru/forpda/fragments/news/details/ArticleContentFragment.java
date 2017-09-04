@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -25,6 +26,7 @@ import forpdateam.ru.forpda.views.ExtendedWebView;
  */
 
 public class ArticleContentFragment extends Fragment {
+    public final static String JS_INTERFACE = "INews";
     private ExtendedWebView webView;
     private DetailsPage article;
 
@@ -39,8 +41,16 @@ public class ArticleContentFragment extends Fragment {
         webView = ((MainActivity) getActivity()).getWebViewsProvider().pull(getContext());
         registerForContextMenu(webView);
         webView.setWebViewClient(new ArticleWebViewClient());
+        webView.addJavascriptInterface(this, JS_INTERFACE);
         webView.loadDataWithBaseURL("https://4pda.ru/forum/", article.getHtml(), "text/html", "utf-8", null);
         return webView;
+    }
+
+    @JavascriptInterface
+    public void toComments() {
+        webView.runInUiThread(()->{
+            ((NewsDetailsFragment) getParentFragment()).getFragmentsPager().setCurrentItem(1);
+        });
     }
 
     @Override

@@ -875,7 +875,7 @@ button:active,
 .post_container .post_footer .btn {
   color: #000000;
 }
-.post_container .post_footer .btn.nick {
+.post_container .post_footer .btn.reply {
   float: right;
 }
 .post_container .post_footer .btn.vote {

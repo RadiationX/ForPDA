@@ -494,37 +494,42 @@ body {
 }
 .materials {
   display: block;
-  overflow-x: auto;
-  width: 100%;
 }
 .materials .materials_list {
-  display: table;
-  border-spacing: 0.5rem;
   margin: 0 auto;
 }
 .materials .materials_list .material_item {
   background: #ffffff;
   margin: 0.5em 0;
   box-shadow: 0rem 0.0625rem 0.0625rem rgba(0, 0, 0, 0.12), 0rem 0rem 0.0625rem rgba(0, 0, 0, 0.12);
-  -webkit-border-radius: 0.125rem;
-  border-radius: 0.125rem;
-  display: table-cell;
+  display: block;
   overflow: hidden;
-  width: 25%;
-  min-width: 12rem;
-  max-width: 16rem;
-  margin: 0.5rem;
   text-decoration: none;
   color: #212121;
+  padding: 0.75rem 1rem;
 }
 .materials .materials_list .material_item .image {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
   display: block;
-  max-width: 100%;
+  width: 5rem;
+  height: 5rem;
+  -webkit-border-radius: 5rem;
+  border-radius: 5rem;
+  float: right;
 }
 .materials .materials_list .material_item .title {
-  padding: 0.5rem;
   display: block;
   overflow: hidden;
+  font-size: 1.25em;
+  padding-right: 0.5rem;
+  font-weight: 500;
+}
+.materials .materials_list .material_item:after {
+  content: "";
+  display: table;
+  clear: both;
 }
 .comments {
   background: #ffffff;

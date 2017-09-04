@@ -2,8 +2,6 @@ package forpdateam.ru.forpda.fragments.theme;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -495,8 +493,8 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
 
     @JavascriptInterface
     @Override
-    public void insertNick(final String postId) {
-        webView.runInUiThread(() -> super.insertNick(postId));
+    public void reply(final String postId) {
+        webView.runInUiThread(() -> super.reply(postId));
     }
 
     @JavascriptInterface

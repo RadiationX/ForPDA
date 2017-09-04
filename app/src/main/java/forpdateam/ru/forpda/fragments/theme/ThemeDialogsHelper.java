@@ -103,7 +103,7 @@ public class ThemeDialogsHelper {
         if (postMenu == null) {
             postMenu = new AlertDialogMenu<>();
             showedPostMenu = new AlertDialogMenu<>();
-            postMenu.addItem("Ответить", IPostFunctions::insertNick);
+            postMenu.addItem("Ответить", IPostFunctions::reply);
             postMenu.addItem("Пожаловаться", IPostFunctions::reportPost);
             postMenu.addItem("Изменить", IPostFunctions::editPost);
             postMenu.addItem("Удалить", IPostFunctions::deletePost);

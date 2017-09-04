@@ -35,12 +35,11 @@
                 android:lineSpacingMultiplier="0.9"
                 android:layout_marginEnd="@dimen/dp8"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                tools:text="Самая крутая новость на сегодня. Завезли новости. Наконец-то, бля. " />
+                tools:text="Самая крутая новость на сегодня. Завезли новости. Наконец-то, бля.\nasdasd\n " />
 
             <FrameLayout
                 android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical">
+                android:layout_height="wrap_content">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/news_full_item_cover"

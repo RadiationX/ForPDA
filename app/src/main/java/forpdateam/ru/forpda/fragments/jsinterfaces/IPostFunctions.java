@@ -17,7 +17,7 @@ public interface IPostFunctions {
 
     void reportPost(IBaseForumPost post);
 
-    void insertNick(IBaseForumPost post);
+    void reply(IBaseForumPost post);
 
     void quotePost(String text, IBaseForumPost post);
 

@@ -235,6 +235,11 @@ public class NewsDetailsFragment extends TabFragment {
 
     }
 
+
+    public ViewPager getFragmentsPager() {
+        return fragmentsPager;
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
