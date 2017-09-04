@@ -22,6 +22,7 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.news.models.Comment;
 import forpdateam.ru.forpda.api.news.models.DetailsPage;
+import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.IntentHandler;
 
@@ -92,7 +93,7 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
                 holder.date.setVisibility(View.GONE);
             }
         } else {
-            holder.itemView.setClickable(true);
+            holder.itemView.setClickable(ClientHelper.getAuthState());
             if (holder.likeImage.getVisibility() != View.VISIBLE) {
                 holder.likeImage.setVisibility(View.VISIBLE);
             }
@@ -137,7 +138,7 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
                 case Comment.Karma.NOT_LIKED: {
                     holder.likeImage.setImageDrawable(holder.heart_outline);
                     holder.likeImage.clearColorFilter();
-                    holder.likeImage.setClickable(true);
+                    holder.likeImage.setClickable(ClientHelper.getAuthState());
                     break;
                 }
             }
