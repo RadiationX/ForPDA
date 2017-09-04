@@ -1,16 +1,23 @@
 package forpdateam.ru.forpda.fragments.news.details;
 
+import android.annotation.TargetApi;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.api.devdb.models.Device;
 import forpdateam.ru.forpda.api.news.models.DetailsPage;
 import forpdateam.ru.forpda.fragments.devdb.device.SubDeviceFragment;
+import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.views.ExtendedWebView;
 
 /**
@@ -31,7 +38,35 @@ public class ArticleContentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         webView = ((MainActivity) getActivity()).getWebViewsProvider().pull(getContext());
         registerForContextMenu(webView);
+        webView.setWebViewClient(new ArticleWebViewClient());
         webView.loadDataWithBaseURL("https://4pda.ru/forum/", article.getHtml(), "text/html", "utf-8", null);
         return webView;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        webView.destroy();
+        ((MainActivity) getActivity()).getWebViewsProvider().push(webView);
+    }
+
+    private class ArticleWebViewClient extends WebViewClient {
+
+        @SuppressWarnings("deprecation")
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            return handleUri(Uri.parse(url));
+        }
+
+        @TargetApi(Build.VERSION_CODES.N)
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            return handleUri(request.getUrl());
+        }
+
+        private boolean handleUri(Uri uri) {
+            IntentHandler.handle(uri.toString());
+            return true;
+        }
     }
 }

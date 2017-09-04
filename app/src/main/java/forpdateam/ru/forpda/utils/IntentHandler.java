@@ -196,11 +196,11 @@ public class IntentHandler {
                             return true;
                         }
                     default:
-                        if(handleSite(uri, args))
-                        return true;
+                        if (handleSite(uri, args))
+                            return true;
                 }
             } else {
-                if(handleSite(uri, args))
+                if (handleSite(uri, args))
                     return true;
             }
 
@@ -314,9 +314,12 @@ public class IntentHandler {
     }
 
     private static boolean handleSite(Uri uri, Bundle args) {
-        Matcher matcher = Pattern.compile("https?:\\/\\/4pda\\.ru\\/(?:.+?p=|\\d{4}\\/\\d{2}\\/\\d{2}\\/)(\\d+)").matcher(uri.toString());
+        Matcher matcher = Pattern.compile("https?:\\/\\/4pda\\.ru\\/(?:.+?p=|\\d{4}\\/\\d{2}\\/\\d{2}\\/)(\\d+)(?:\\/#comment(\\d+))?").matcher(uri.toString());
         if (matcher.find()) {
             int id = Integer.parseInt(matcher.group(1));
+            if (matcher.group(2) != null) {
+                args.putInt(NewsDetailsFragment.ARG_NEWS_COMMENT_ID, Integer.parseInt(matcher.group(2)));
+            }
             args.putInt(NewsDetailsFragment.ARG_NEWS_ID, id);
             TabManager.getInstance().add(NewsDetailsFragment.class, args);
             return true;
