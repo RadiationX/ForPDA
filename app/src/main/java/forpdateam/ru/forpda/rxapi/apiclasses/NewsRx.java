@@ -6,6 +6,7 @@ import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.Utils;
+import forpdateam.ru.forpda.api.news.models.Comment;
 import forpdateam.ru.forpda.api.news.models.DetailsPage;
 import forpdateam.ru.forpda.api.news.models.Material;
 import forpdateam.ru.forpda.api.news.models.NewsItem;
@@ -19,6 +20,14 @@ import io.reactivex.Observable;
 public class NewsRx {
     public Observable<List<NewsItem>> getNews(final String category, int pageNumber) {
         return Observable.fromCallable(() -> Api.NewsApi().getNews(category, pageNumber));
+    }
+
+    public Observable<Boolean> likeComment(int articleId, int commentId) {
+        return Observable.fromCallable(() -> Api.NewsApi().likeComment(articleId, commentId));
+    }
+
+    public Observable<Comment> replyComment(DetailsPage article, int commentId, String comment) {
+        return Observable.fromCallable(() -> Api.NewsApi().replyComment(article, commentId, comment));
     }
 
     public Observable<DetailsPage> getDetails(final int id) {
