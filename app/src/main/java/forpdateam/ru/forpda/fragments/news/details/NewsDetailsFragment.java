@@ -9,6 +9,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,27 +27,25 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
+import java.util.ArrayList;
+
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.api.devdb.models.Device;
 import forpdateam.ru.forpda.api.news.models.DetailsPage;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.fragments.qms.chat.QmsChatFragment;
+import forpdateam.ru.forpda.fragments.devdb.device.comments.CommentsFragment;
+import forpdateam.ru.forpda.fragments.devdb.device.posts.PostsFragment;
+import forpdateam.ru.forpda.fragments.devdb.device.specs.SpecsFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.ExtendedWebView;
 import forpdateam.ru.forpda.views.ScrimHelper;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 
 import static forpdateam.ru.forpda.utils.Utils.log;
 
@@ -61,10 +65,11 @@ public class NewsDetailsFragment extends TabFragment {
     public static final String OTHER_CASE = "news.to.details.other";
 
     private FrameLayout webViewContainer;
+    private ViewPager fragmentsPager;
     private ProgressBar progressBar;
     private ProgressBar imageProgressBar;
     private ImageView detailsImage;
-    private ExtendedWebView webView;
+
     private TextView detailsTitle;
     private TextView detailsNick;
     private TextView detailsDate;
@@ -95,6 +100,14 @@ public class NewsDetailsFragment extends TabFragment {
 
 
         } else log("Arguments null");
+        if (getChildFragmentManager().getFragments() != null) {
+            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+            for (Fragment fragment : getChildFragmentManager().getFragments()) {
+                transaction.remove(fragment);
+            }
+            transaction.commit();
+            getChildFragmentManager().executePendingTransactions();
+        }
     }
 
     boolean scrim = false;
@@ -104,13 +117,10 @@ public class NewsDetailsFragment extends TabFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         baseInflateFragment(inflater, R.layout.news_details_fragment_layout);
+        fragmentsPager = (ViewPager) findViewById(R.id.view_pager);
         webViewContainer = (FrameLayout) findViewById(R.id.swipe_refresh_list);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        webView = getMainActivity().getWebViewsProvider().pull(getContext());
-        webViewContainer.addView(webView, 0);
-        //webView.addJavascriptInterface(this, JS_INTERFACE);
-        registerForContextMenu(webView);
-        webView.setWebViewClient(new ArticleWebViewClient());
+
 
         ViewStub viewStub = (ViewStub) findViewById(R.id.toolbar_content);
         viewStub.setLayoutResource(R.layout.toolbar_news_details);
@@ -210,7 +220,10 @@ public class NewsDetailsFragment extends TabFragment {
 
         loadCoverImage();
 
-        webView.loadDataWithBaseURL("https://4pda.ru/forum/", article.getHtml(), "text/html", "utf-8", null);
+        FragmentPagerAdapter pagerAdapter = new FragmentPagerAdapter(getChildFragmentManager(), article);
+        fragmentsPager.setAdapter(pagerAdapter);
+
+
     }
 
     @Override
@@ -257,10 +270,38 @@ public class NewsDetailsFragment extends TabFragment {
             return true;
         }
     }
-    /*private void insertData(DetailsPage item) {
-        realm.executeTransaction(r -> {
-            r.insertOrUpdate(EntityMapping.mappingNews(news, item));
-        });
-    }*/
+
+    private class FragmentPagerAdapter extends android.support.v4.app.FragmentPagerAdapter {
+        private DetailsPage article;
+        private ArrayList<Fragment> fragments = new ArrayList<>();
+        private ArrayList<String> titles = new ArrayList<>();
+
+        public FragmentPagerAdapter(FragmentManager fm, DetailsPage article) {
+            super(fm);
+            this.article = article;
+
+            fragments.add(new ArticleContentFragment().setArticle(this.article));
+            titles.add("Контент");
+
+            fragments.add(new ArticleCommentsFragment().setArticle(this.article));
+            titles.add("Комментарии");
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return fragments.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return fragments.size();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return titles.get(position);
+        }
+    }
+
 
 }
