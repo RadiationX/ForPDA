@@ -4,12 +4,17 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.NetworkRequest;
+import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.news.models.Comment;
 import forpdateam.ru.forpda.api.news.models.DetailsPage;
@@ -88,7 +93,7 @@ public class NewsApi {
     * 13. Сорсы комментов
     * 14. Сорсы karma
     * */
-    private final Pattern detailsPattern = Pattern.compile("<section[^>]*>[^<]*?<article[^>]*?>[\\s\\S]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"photo\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"description\"[^>]*?>[^<]*?<h1[^>]*?>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?<\\/h1>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[^<]*?<span[^>]*?class=\"name\"[^>]*?>[^<]*?<a[^>]*?href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?class=\"more-box\"[^>]*?>[^<]*?<a[^>]*?>(\\d+)<\\/a>[\\s\\S]*?<div[^>]*?class=\"meta\"[^>]*?>([\\s\\S]*?)<\\/div>[\\s\\S]*?<div class=\"content-box\" itemprop=\"articleBody\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>(?:[^<]*?<div class=\"materials-box\"[^>]*?>[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>[^<]*?<\\/div>)?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>[\\s\\S]*?<div class=\"comment-box\" id=\"comments\"[^>]*?>[^<]*?<div class=\"heading\"[^>]*?>[^>]*?<h2>[^<]*?<\\/h2>([\\s\\S]*?)<\\/div>([\\s\\S]*?)[^<]*?<br[^>]*?>[^<]*?<\\/div>[^<]*?<ul class=\"page-nav[\\s\\S]*?ModKarma\\(([\\s\\S]*?)\\)<\\/script>");
+    private final Pattern detailsPattern = Pattern.compile("<section[^>]*>[^<]*?<article[^>]*?>[\\s\\S]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"photo\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"description\"[^>]*?>[^<]*?<h1[^>]*?>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?<\\/h1>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[^<]*?<span[^>]*?class=\"name\"[^>]*?>[^<]*?<a[^>]*?href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?class=\"more-box\"[^>]*?>[^<]*?<a[^>]*?>(\\d+)<\\/a>[\\s\\S]*?<div[^>]*?class=\"meta\"[^>]*?>([\\s\\S]*?)<\\/div>[\\s\\S]*?<div class=\"content-box\" itemprop=\"articleBody\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>(?:[^<]*?<div class=\"materials-box\"[^>]*?>[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>[^<]*?<\\/div>)?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>[\\s\\S]*?<div class=\"comment-box\" id=\"comments\"[^>]*?>[^<]*?<div class=\"heading\"[^>]*?>[^>]*?<h2>[^<]*?<\\/h2>([\\s\\S]*?)<\\/div>([\\s\\S]*?)[^<]*?<br[^>]*?>[^<]*?<\\/div>[^<]*?<ul class=\"page-nav");
     private final Pattern excludeFormCommentPattern = Pattern.compile("<form[\\s\\S]*");
 
     /*
@@ -110,6 +115,7 @@ public class NewsApi {
     * 2. Статус: 0 - не лайкнутый, 1 - лайкнутый, -1 - дизлайкнутый, (2 - нельзя лайкнуть) - хз, это с другого проекта значение, сам я такого не видел
     * */
     private final Pattern karmaPattern = Pattern.compile("\\\"(\\d+)\\\":\\[(.+?),(.+?),(.+?),(.+?)\\]");
+    private final Pattern karmaSourcePattern = Pattern.compile("ModKarma\\(([\\s\\S]*?)\\)<\\/script>");
 
 
     public String getLink(@Nullable String category, int pageNumber) {
@@ -158,11 +164,16 @@ public class NewsApi {
 
     public DetailsPage getDetails(int id) throws Exception {
         String response = Api.getWebClient().get("https://4pda.ru/index.php?p=" + id).getBody();
+        return parseArticle(id, response);
+    }
+
+    private DetailsPage parseArticle(int id, String response) {
         long time = System.currentTimeMillis();
         Matcher matcher = detailsPattern.matcher(response);
         DetailsPage page = new DetailsPage();
         if (matcher.find()) {
             Log.e("TIME", "Article found: " + (System.currentTimeMillis() - time));
+            page.setId(id);
             page.setImgUrl(matcher.group(2));
             page.setTitle(Utils.fromHtml(matcher.group(3)));
             page.setDate(matcher.group(4));
@@ -173,8 +184,7 @@ public class NewsApi {
             parseMaterials(page.getMaterials(), matcher.group(10));
             page.setNavId(matcher.group(11));
 
-            String karmaSource = matcher.group(14);
-            parseKarma(page.getKarmaMap(), karmaSource);
+            parseKarma(page.getKarmaMap(), response);
 
             String comments = matcher.group(13);
             comments = excludeFormCommentPattern.matcher(comments).replaceFirst("");
@@ -216,14 +226,22 @@ public class NewsApi {
         if (sourceKarma == null)
             return;
         long time = System.currentTimeMillis();
-        Matcher matcher = karmaPattern.matcher(sourceKarma);
-        while (matcher.find()) {
-            Comment.Karma karma = new Comment.Karma();
-            int commentId = Integer.parseInt(matcher.group(1));
-            karma.setStatus(Integer.parseInt(matcher.group(2)));
-            karma.setCount(Integer.parseInt(matcher.group(5)));
-            //Log.d("SUKA", "parseKarma " + commentId + " : " + karma.getCount());
-            karmaMap.put(commentId, karma);
+        Matcher matcher = karmaSourcePattern.matcher(sourceKarma);
+        if (matcher.find()) {
+            matcher = karmaPattern.matcher(matcher.group(1));
+            while (matcher.find()) {
+                try {
+                    Comment.Karma karma = new Comment.Karma();
+                    int commentId = Integer.parseInt(matcher.group(1));
+                    karma.setStatus(Integer.parseInt(matcher.group(2)));
+                    karma.setCount(Integer.parseInt(matcher.group(5)));
+                    Log.d("SUKA", "parseKarma " + commentId + " : " + karma.getCount());
+                    karmaMap.put(commentId, karma);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
         }
         Log.e("TIME", "Karma: " + (System.currentTimeMillis() - time));
     }
@@ -298,6 +316,15 @@ public class NewsApi {
             comment.setLevel(level);
             comment.setKarma(karmaMap.get(comment.getId()));
 
+            String levelPadding = "";
+            for (int i = 0; i < level; i++) {
+                levelPadding += "\t";
+            }
+
+
+            Log.d("SUKA", levelPadding + id + " : " + content);
+
+
             parentComment.addChild(comment);
 
             level++;
@@ -322,6 +349,38 @@ public class NewsApi {
         }
     }
 
+    public Boolean likeComment(int articleId, int commentId) throws Exception {
+        String url = "http://4pda.ru/wp-content/plugins/karma/ajax.php?p=" + articleId + "&c=" + commentId + "&v=1";
+        Api.getWebClient().request(new NetworkRequest.Builder().url(url).xhrHeader().build());
+        return true;
+    }
+
+    public Comment replyComment(DetailsPage article, int commentId, String comment) throws Exception {
+        try {
+            comment = URLEncoder.encode(comment, "Windows-1251");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        NetworkRequest.Builder builder = new NetworkRequest.Builder()
+                .url("https://4pda.ru/wp-comments-post.php")
+                .formHeader("comment_post_ID", Integer.toString(article.getId()))
+                .formHeader("comment_reply_ID", Integer.toString(commentId))
+                .formHeader("comment_reply_dp", "1")
+                .formHeader("comment", comment, true);
+        NetworkResponse response = Api.getWebClient().request(builder.build());
+
+        DetailsPage newArticle = parseArticle(article.getId(), response.getBody());
+
+        article.getKarmaMap().clear();
+        article.setKarmaMap(newArticle.getKarmaMap());
+
+        article.setCommentsSource(newArticle.getCommentsSource());
+        article.setCommentsCount(newArticle.getCommentsCount());
+
+        Comment newComments = parseComments(article.getKarmaMap(), newArticle.getCommentsSource());
+        article.setCommentTree(newComments);
+        return newComments;
+    }
 
     private static String getUrlCategory(@Nullable String category) {
         Log.d("SUKA", "getUrlCategory " + category);

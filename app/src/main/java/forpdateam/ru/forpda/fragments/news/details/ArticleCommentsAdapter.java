@@ -21,6 +21,8 @@ import java.util.Collection;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.news.models.Comment;
+import forpdateam.ru.forpda.api.news.models.DetailsPage;
+import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.IntentHandler;
 
 /**
@@ -31,7 +33,15 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
     private ArrayList<Comment> list = new ArrayList<>();
     private ColorFilter likedColorFilter;
     private ColorFilter dislikedColorFilter;
+    private ClickListener clickListener;
 
+    public ClickListener getClickListener() {
+        return clickListener;
+    }
+
+    public void setClickListener(ClickListener clickListener) {
+        this.clickListener = clickListener;
+    }
 
     public void addAll(Collection<Comment> results) {
         addAll(results, true);
@@ -69,7 +79,6 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
         holder.content.setText(item.getContent());
         holder.nick.setText(item.getUserNick());
         holder.date.setText(item.getDate());
-
 
         if (item.isDeleted()) {
             if (holder.likeImage.getVisibility() != View.GONE) {
@@ -114,16 +123,19 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
                 case Comment.Karma.LIKED: {
                     holder.likeImage.setImageDrawable(holder.heart);
                     holder.likeImage.setColorFilter(likedColorFilter);
+                    holder.likeImage.setClickable(false);
                     break;
                 }
                 case Comment.Karma.DISLIKED: {
                     holder.likeImage.setImageDrawable(holder.heart_outline);
                     holder.likeImage.setColorFilter(dislikedColorFilter);
+                    holder.likeImage.setClickable(false);
                     break;
                 }
                 case Comment.Karma.NOT_LIKED: {
                     holder.likeImage.setImageDrawable(holder.heart_outline);
                     holder.likeImage.clearColorFilter();
+                    holder.likeImage.setClickable(true);
                     break;
                 }
             }
@@ -161,8 +173,28 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
             heart = App.getAppDrawable(v.getContext(), R.drawable.ic_heart);
             heart_outline = App.getAppDrawable(v.getContext(), R.drawable.ic_heart_outline);
             nick.setOnClickListener(v1 -> {
-                IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + getItem(getLayoutPosition()).getUserId());
+                if (clickListener != null) {
+                    clickListener.onNickClick(getItem(getLayoutPosition()), getLayoutPosition());
+                }
+            });
+            likeImage.setOnClickListener(v1 -> {
+                if (clickListener != null) {
+                    clickListener.onLikeClick(getItem(getLayoutPosition()), getLayoutPosition());
+                }
+            });
+            itemView.setOnClickListener(v1 -> {
+                if (clickListener != null) {
+                    clickListener.onReplyClick(getItem(getLayoutPosition()), getLayoutPosition());
+                }
             });
         }
+    }
+
+    public interface ClickListener {
+        void onNickClick(Comment comment, int position);
+
+        void onLikeClick(Comment comment, int position);
+
+        void onReplyClick(Comment comment, int position);
     }
 }

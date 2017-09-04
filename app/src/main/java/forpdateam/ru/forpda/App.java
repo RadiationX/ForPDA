@@ -46,6 +46,7 @@ import org.acra.annotation.ReportsCrashes;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URLDecoder;
@@ -173,12 +174,9 @@ public class App extends android.app.Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        RxJavaPlugins.setErrorHandler(new Consumer<Throwable>() {
-            @Override
-            public void accept(@io.reactivex.annotations.NonNull Throwable throwable) throws Exception {
-                Log.d("SUKA", "RxJavaPlugins errorHandler "+throwable);
-                throwable.printStackTrace();
-            }
+        RxJavaPlugins.setErrorHandler(throwable -> {
+            Log.d("SUKA", "RxJavaPlugins errorHandler "+throwable);
+            throwable.printStackTrace();
         });
         setTheme(R.style.LightAppTheme);
 
