@@ -77,6 +77,8 @@
     
 
     <!-- OTHERS -->
+    <color name="dislike_color">#f44336</color>
+
     <color name="contact_site">@color/light_link_color</color>
     <color name="contact_icq">#539e37</color>
     <color name="contact_twitter">#1da1f2</color>

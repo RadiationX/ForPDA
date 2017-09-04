@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.api.news;
 
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.util.SparseArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,10 +84,11 @@ public class NewsApi {
     * 9. Вроде как контент
     * 10. Сорсы материалов по теме, их может не быть (null у group(9))
     * 11. Магический относительный id новости для навигации вперёд/назад
-    * 12. Строка, по которой можно узнать доступность комментирования
+    * 12. Строка, по которой можно узнать доступность комментирования, если null или пустая, то низя
     * 13. Сорсы комментов
+    * 14. Сорсы karma
     * */
-    private final Pattern detailsPattern = Pattern.compile("<section[^>]*>[^<]*?<article[^>]*?>[\\s\\S]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"photo\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"description\"[^>]*?>[^<]*?<h1[^>]*?>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?<\\/h1>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[^<]*?<span[^>]*?class=\"name\"[^>]*?>[^<]*?<a[^>]*?href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?class=\"more-box\"[^>]*?>[^<]*?<a[^>]*?>(\\d+)<\\/a>[\\s\\S]*?<div[^>]*?class=\"meta\"[^>]*?>([\\s\\S]*?)<\\/div>[\\s\\S]*?<div class=\"content-box\" itemprop=\"articleBody\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>(?:[^<]*?<div class=\"materials-box\"[^>]*?>[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>[^<]*?<\\/div>)?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>[\\s\\S]*?<div class=\"comment-box\" id=\"comments\"[^>]*?>[^<]*?<div class=\"heading\"[^>]*?>[^>]*?<h2>[^<]*?<\\/h2>([\\s\\S]+?)<\\/div>([\\s\\S]*?)[^<]*?<br[^>]*?>[^<]*?<\\/div>[^<]*?<ul class=\"page-nav");
+    private final Pattern detailsPattern = Pattern.compile("<section[^>]*>[^<]*?<article[^>]*?>[\\s\\S]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"photo\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"description\"[^>]*?>[^<]*?<h1[^>]*?>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?<\\/h1>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[^<]*?<span[^>]*?class=\"name\"[^>]*?>[^<]*?<a[^>]*?href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?class=\"more-box\"[^>]*?>[^<]*?<a[^>]*?>(\\d+)<\\/a>[\\s\\S]*?<div[^>]*?class=\"meta\"[^>]*?>([\\s\\S]*?)<\\/div>[\\s\\S]*?<div class=\"content-box\" itemprop=\"articleBody\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>(?:[^<]*?<div class=\"materials-box\"[^>]*?>[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>[^<]*?<\\/div>)?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>[\\s\\S]*?<div class=\"comment-box\" id=\"comments\"[^>]*?>[^<]*?<div class=\"heading\"[^>]*?>[^>]*?<h2>[^<]*?<\\/h2>([\\s\\S]*?)<\\/div>([\\s\\S]*?)[^<]*?<br[^>]*?>[^<]*?<\\/div>[^<]*?<ul class=\"page-nav[\\s\\S]*?ModKarma\\(([\\s\\S]*?)\\)<\\/script>");
     private final Pattern excludeFormCommentPattern = Pattern.compile("<form[\\s\\S]*");
 
     /*
@@ -102,6 +104,12 @@ public class NewsApi {
     * 3. Заголовок
     * */
     private final Pattern materialsPattern = Pattern.compile("<li[^>]*?>[^<]*?<a[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[^<]*?<h3>[^<]*?<a[^>]*?href=\"[^\"]*?\\/(\\d+)\\/[^\"\\/]*?\"[^>]*?>([\\s\\S]*?)<\\/a>[^<]*?<\\/h3>");
+
+    /*
+    * 1. Id коммента
+    * 2. Статус: 0 - не лайкнутый, 1 - лайкнутый, -1 - дизлайкнутый, (2 - нельзя лайкнуть) - хз, это с другого проекта значение, сам я такого не видел
+    * */
+    private final Pattern karmaPattern = Pattern.compile("\\\"(\\d+)\\\":\\[(.+?),(.+?),(.+?),(.+?)\\]");
 
 
     public String getLink(@Nullable String category, int pageNumber) {
@@ -150,9 +158,11 @@ public class NewsApi {
 
     public DetailsPage getDetails(int id) throws Exception {
         String response = Api.getWebClient().get("https://4pda.ru/index.php?p=" + id).getBody();
+        long time = System.currentTimeMillis();
         Matcher matcher = detailsPattern.matcher(response);
         DetailsPage page = new DetailsPage();
         if (matcher.find()) {
+            Log.e("TIME", "Article found: " + (System.currentTimeMillis() - time));
             page.setImgUrl(matcher.group(2));
             page.setTitle(Utils.fromHtml(matcher.group(3)));
             page.setDate(matcher.group(4));
@@ -162,12 +172,18 @@ public class NewsApi {
             page.setHtml(matcher.group(9));
             parseMaterials(page.getMaterials(), matcher.group(10));
             page.setNavId(matcher.group(11));
+
+            String karmaSource = matcher.group(14);
+            parseKarma(page.getKarmaMap(), karmaSource);
+
             String comments = matcher.group(13);
             comments = excludeFormCommentPattern.matcher(comments).replaceFirst("");
-            page.setComments(comments);
-            Comment comment = parseComments(page.getComments());
-            page.setCommentTree(comment);
+            page.setCommentsSource(comments);
+
+            /*Comment commentTree = parseComments(page.getKarmaMap(), page.getCommentsSource());
+            page.setCommentTree(commentTree);*/
         }
+        Log.e("TIME", "Article: " + (System.currentTimeMillis() - time));
         return page;
     }
 
@@ -189,22 +205,38 @@ public class NewsApi {
             return;
         Matcher matcher = tagsPattern.matcher(sourceTags);
         while (matcher.find()) {
-            Tag material = new Tag();
-            material.setTag(matcher.group(1));
-            material.setTitle(Utils.fromHtml(matcher.group(2)));
-            tags.add(material);
+            Tag tag = new Tag();
+            tag.setTag(matcher.group(1));
+            tag.setTitle(Utils.fromHtml(matcher.group(2)));
+            tags.add(tag);
         }
+    }
+
+    private void parseKarma(final SparseArray<Comment.Karma> karmaMap, String sourceKarma) {
+        if (sourceKarma == null)
+            return;
+        long time = System.currentTimeMillis();
+        Matcher matcher = karmaPattern.matcher(sourceKarma);
+        while (matcher.find()) {
+            Comment.Karma karma = new Comment.Karma();
+            int commentId = Integer.parseInt(matcher.group(1));
+            karma.setStatus(Integer.parseInt(matcher.group(2)));
+            karma.setCount(Integer.parseInt(matcher.group(5)));
+            //Log.d("SUKA", "parseKarma " + commentId + " : " + karma.getCount());
+            karmaMap.put(commentId, karma);
+        }
+        Log.e("TIME", "Karma: " + (System.currentTimeMillis() - time));
     }
 
 
     private final Pattern idPattern = Pattern.compile("comment-(\\d+)");
     private final Pattern userIdPattern = Pattern.compile("showuser=(\\d+)");
 
-    private Comment parseComments(String source) {
+    public Comment parseComments(final SparseArray<Comment.Karma> karmaMap, String source) {
         long time = System.currentTimeMillis();
         Document document = Parser.parse(source);
         Comment comments = new Comment();
-        recurseComments(document, comments, 0);
+        recurseComments(karmaMap, document, comments, 0);
 
         Log.e("TIME", "Comments: " + (System.currentTimeMillis() - time));
         Log.e("SUKA", "Comments: " + comments.getChildren().size() + " : " + comments.getChildren().get(0).getChildren().size());
@@ -212,7 +244,7 @@ public class NewsApi {
     }
 
 
-    private Comment recurseComments(Node root, Comment parentComment, int level) {
+    private Comment recurseComments(final SparseArray<Comment.Karma> karmaMap, Node root, Comment parentComment, int level) {
         Node rootComments = Parser.findNode(root, "ul", "class", "comment-list");
         ArrayList<Node> commentNodes = Parser.findChildNodes(rootComments, "li", null, null);
 
@@ -264,11 +296,12 @@ public class NewsApi {
             content = Parser.getHtml(contentNode, true);
             comment.setContent(Utils.fromHtml(content));
             comment.setLevel(level);
+            comment.setKarma(karmaMap.get(comment.getId()));
 
             parentComment.addChild(comment);
 
             level++;
-            recurseComments(commentNode, comment, level);
+            recurseComments(karmaMap, commentNode, comment, level);
             level--;
         }
 
