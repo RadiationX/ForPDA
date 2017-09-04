@@ -17,6 +17,20 @@ public class Comment {
     private ArrayList<Comment> children = new ArrayList<>();
     private int level;
 
+    public Comment() {
+    }
+
+    public Comment(Comment comment) {
+        this.id = comment.getId();
+        this.userId = comment.getUserId();
+        this.userNick = comment.getUserNick();
+        this.date = comment.getDate();
+        this.content = comment.getContent();
+        this.deleted = comment.isDeleted();
+        this.canReply = comment.canReply;
+        this.level = comment.getLevel();
+    }
+
     public int getId() {
         return id;
     }
