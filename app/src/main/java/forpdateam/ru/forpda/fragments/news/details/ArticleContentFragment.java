@@ -48,7 +48,7 @@ public class ArticleContentFragment extends Fragment {
 
     @JavascriptInterface
     public void toComments() {
-        webView.runInUiThread(()->{
+        webView.runInUiThread(() -> {
             ((NewsDetailsFragment) getParentFragment()).getFragmentsPager().setCurrentItem(1);
         });
     }
@@ -56,8 +56,10 @@ public class ArticleContentFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        webView.destroy();
-        ((MainActivity) getActivity()).getWebViewsProvider().push(webView);
+        if (webView != null) {
+            webView.destroy();
+            ((MainActivity) getActivity()).getWebViewsProvider().push(webView);
+        }
     }
 
     private class ArticleWebViewClient extends WebViewClient {

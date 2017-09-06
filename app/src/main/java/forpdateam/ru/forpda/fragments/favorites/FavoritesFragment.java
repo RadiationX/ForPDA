@@ -269,8 +269,7 @@ public class FavoritesFragment extends ListFragment {
                 dialog.show();
             }
             return false;
-        })
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        });
     }
 
     @Override

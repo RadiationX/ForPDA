@@ -54,13 +54,14 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginBottom="@dimen/dp8"
                 android:background="?attr/divider_line" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/menu_list"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="@dimen/dp8" />
         </LinearLayout>
     </android.support.design.widget.NavigationView>
 

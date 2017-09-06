@@ -25,10 +25,12 @@ import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.data.realm.qms.QmsContactBd;
 import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsContactsAdapter;
 import forpdateam.ru.forpda.fragments.qms.chat.QmsChatFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -42,7 +44,7 @@ public class QmsContactsFragment extends ListFragment {
     private Subscriber<String> helperSubscriber = new Subscriber<>(this);
     private Realm realm;
     private RealmResults<QmsContactBd> results;
-    private AlertDialogMenu<QmsContactsFragment, IQmsContact> contactDialogMenu;
+    private AlertDialogMenu<QmsContactsFragment, IQmsContact> dialogMenu;
     private QmsContactsAdapter.OnItemClickListener onItemClickListener =
             contact -> {
                 Bundle args = new Bundle();
@@ -53,19 +55,27 @@ public class QmsContactsFragment extends ListFragment {
             };
 
     private QmsContactsAdapter.OnItemClickListener onLongItemClickListener = contact -> {
-        if (contactDialogMenu == null) {
-            contactDialogMenu = new AlertDialogMenu<>();
-            contactDialogMenu.addItem("В черный список", (context, data) -> {
+        if (dialogMenu == null) {
+            dialogMenu = new AlertDialogMenu<>();
+            dialogMenu.addItem("Профиль", (context, data) -> {
+                IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data.getId());
+            });
+            dialogMenu.addItem("В черный список", (context, data) -> {
                 mainSubscriber.subscribe(RxApi.Qms().blockUser(data.getNick()), qmsContacts -> {
                     if (qmsContacts.size() > 0) {
                         Toast.makeText(getContext(), "Пользователь добавлен в черный список", Toast.LENGTH_SHORT).show();
                     }
                 }, new ArrayList<>());
             });
-            contactDialogMenu.addItem("Удалить", (context, data) -> context.deleteDialog(data.getId()));
+            dialogMenu.addItem("Удалить", (context, data) -> context.deleteDialog(data.getId()));
+            dialogMenu.addItem("Создать заметку", (context1, data) -> {
+                String title = "Диалоги с " + data.getNick();
+                String url = "http://4pda.ru/forum/index.php?act=qms&mid=" + data.getId();
+                NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);
+            });
         }
         new AlertDialog.Builder(getContext())
-                .setItems(contactDialogMenu.getTitles(), (dialog, which) -> contactDialogMenu.onClick(which, QmsContactsFragment.this, contact)).show();
+                .setItems(dialogMenu.getTitles(), (dialog, which) -> dialogMenu.onClick(which, QmsContactsFragment.this, contact)).show();
     };
 
 

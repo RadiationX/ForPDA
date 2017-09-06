@@ -139,7 +139,7 @@ public class NewsApi {
             if (!isReview) {
                 item.setUrl(matcher.group(1));
                 item.setId(Integer.parseInt(matcher.group(2)));
-                item.setTitle(Utils.fromHtml(matcher.group(3)));
+                item.setTitle(Utils.fromHtml(Utils.fromHtml(matcher.group(3))));
                 item.setImgUrl(matcher.group(4));
                 item.setCommentsCount(Integer.parseInt(matcher.group(5)));
                 item.setDate(matcher.group(6));
@@ -150,7 +150,7 @@ public class NewsApi {
                 item.setUrl(matcher.group(10));
                 item.setId(Integer.parseInt(matcher.group(11)));
                 item.setImgUrl(matcher.group(12));
-                item.setTitle(Utils.fromHtml(matcher.group(13)));
+                item.setTitle(Utils.fromHtml(Utils.fromHtml(matcher.group(13))));
                 item.setCommentsCount(Integer.parseInt(matcher.group(14)));
                 item.setDate(matcher.group(16).replace('-', '.'));
                 item.setAuthor(Utils.fromHtml(matcher.group(17)));

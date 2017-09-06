@@ -6,7 +6,8 @@
     android:clickable="true"
     android:foreground="?attr/selectableItemBackground"
     android:orientation="vertical"
-    app:contentPadding="0dp">
+    app:contentPadding="0dp"
+    style="@style/CardStyle.Item">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -22,7 +23,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@+id/item_date"
-            android:text="ASDaskldjkla;sjkldjjd klas ;jasdasd"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -43,8 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/item_title"
             android:layout_marginTop="@dimen/dp4"
-            android:fontFamily="monospace"
-            android:text="ka;sldjalk;sjdklasjdl;kasd\njkl;kdjfl;sadf\njkl;adsjfl;sajkdf;lsd\njskl;sadkfjsl;df" />
+            android:fontFamily="monospace" />
 
     </RelativeLayout>
 

@@ -20,28 +20,19 @@ import java.util.List;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
-import forpdateam.ru.forpda.api.favorites.Favorites;
-import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
 import forpdateam.ru.forpda.api.news.Constants;
 import forpdateam.ru.forpda.api.news.NewsApi;
 import forpdateam.ru.forpda.api.news.models.NewsItem;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
-import forpdateam.ru.forpda.fragments.favorites.FavoritesAdapter;
-import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.news.details.NewsDetailsFragment;
 import forpdateam.ru.forpda.fragments.news.main.timeline.NewsListAdapter;
-import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
+import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
+import forpdateam.ru.forpda.fragments.notes.NotesFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
-import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by isanechek on 8/8/17.
@@ -132,27 +123,33 @@ public class NewsMainFragment extends TabFragment implements
         Log.d("PARENT", msg);
     }
 
-    private AlertDialogMenu<NewsMainFragment, NewsItem> favoriteDialogMenu, showedFavoriteDialogMenu;
+    private AlertDialogMenu<NewsMainFragment, NewsItem> dialogMenu, showedDialogMenu;
 
     @Override
     public boolean onLongItemClick(View view, NewsItem item, int position) {
-        if (favoriteDialogMenu == null) {
-            favoriteDialogMenu = new AlertDialogMenu<>();
-            showedFavoriteDialogMenu = new AlertDialogMenu<>();
-            favoriteDialogMenu.addItem("Скопировать ссылку", (context, data) -> {
+        if (dialogMenu == null) {
+            dialogMenu = new AlertDialogMenu<>();
+            showedDialogMenu = new AlertDialogMenu<>();
+            dialogMenu.addItem("Скопировать ссылку", (context, data) -> {
                 Utils.copyToClipBoard("https://4pda.ru/index.php?p=" + data.getId());
             });
-            favoriteDialogMenu.addItem("Поделиться", (context, data) -> {
+            dialogMenu.addItem("Поделиться", (context, data) -> {
                 Utils.shareText("https://4pda.ru/index.php?p=" + data.getId());
             });
+            dialogMenu.addItem("Создать заметку", (context1, data) -> {
+                String title = data.getTitle();
+                String url = "https://4pda.ru/index.php?p=" + data.getId();
+                NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);
+            });
         }
-        showedFavoriteDialogMenu.clear();
+        showedDialogMenu.clear();
 
-        showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(0));
-        showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(1));
+        showedDialogMenu.addItem(dialogMenu.get(0));
+        showedDialogMenu.addItem(dialogMenu.get(1));
+        showedDialogMenu.addItem(dialogMenu.get(2));
         new AlertDialog.Builder(getContext())
-                .setItems(showedFavoriteDialogMenu.getTitles(), (dialog, which) -> {
-                    showedFavoriteDialogMenu.onClick(which, NewsMainFragment.this, item);
+                .setItems(showedDialogMenu.getTitles(), (dialog, which) -> {
+                    showedDialogMenu.onClick(which, NewsMainFragment.this, item);
                 })
                 .show();
         return true;

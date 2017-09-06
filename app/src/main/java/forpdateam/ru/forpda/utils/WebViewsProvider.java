@@ -40,11 +40,13 @@ public class WebViewsProvider {
             webView = new ExtendedWebView(context);
             webView.setTag("WebView_tag ".concat(Long.toString(System.currentTimeMillis())));
         }
-        Log.d("WebViewsProvider", "Pull "+webView);
+        Log.d("WebViewsProvider", "Pull " + webView);
         return webView;
     }
 
     public void push(ExtendedWebView webView) {
+        if (webView == null)
+            return;
         ViewGroup parent = ((ViewGroup) webView.getParent());
         if (parent != null) {
             parent.removeView(webView);
@@ -52,7 +54,7 @@ public class WebViewsProvider {
         if (availableWebViews.size() < 10) {
             availableWebViews.add(webView);
         }
-        Log.d("WebViewsProvider", "Push "+webView);
+        Log.d("WebViewsProvider", "Push " + webView);
     }
 
     public void destroy() {

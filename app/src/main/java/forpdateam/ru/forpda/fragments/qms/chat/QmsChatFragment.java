@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
@@ -40,6 +41,8 @@ import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
+import forpdateam.ru.forpda.fragments.qms.QmsThemesFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.rxapi.apiclasses.QmsRx;
 import forpdateam.ru.forpda.settings.Preferences;
@@ -68,6 +71,8 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     private final static Pattern attachmentPattern = Pattern.compile("\\[url=https?:\\/\\/savepic\\.net\\/(\\d+)\\.[^\\]]*?\\]");
 
     private MenuItem blackListMenuItem;
+    private MenuItem noteMenuItem;
+    private MenuItem toDialogsMenuItem;
     final QmsChatModel currentChat = new QmsChatModel();
     private ChatThemeCreator themeCreator;
     private ExtendedWebView webView;
@@ -259,6 +264,21 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
                     }, new ArrayList<>());
                     return false;
                 });
+        noteMenuItem = getMenu().add("Создать заметку")
+                .setOnMenuItemClickListener(item -> {
+                    String title = "Диалог \"" + currentChat.getTitle() + "\" с " + currentChat.getNick();
+                    String url = "http://4pda.ru/forum/index.php?act=qms&mid=" + currentChat.getUserId() + "&t=" + currentChat.getThemeId();
+                    NotesAddPopup.showAddNoteDialog(getContext(), title, url);
+                    return true;
+                });
+        toDialogsMenuItem = getMenu().add("К диалогам")
+                .setOnMenuItemClickListener(item -> {
+                    Bundle args = new Bundle();
+                    args.putInt(QmsThemesFragment.USER_ID_ARG, currentChat.getUserId());
+                    args.putString(QmsThemesFragment.USER_AVATAR_ARG, currentChat.getAvatarUrl());
+                    TabManager.getInstance().add(QmsThemesFragment.class, args);
+                    return true;
+                });
         refreshToolbarMenuItems(false);
     }
 
@@ -267,8 +287,12 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         super.refreshToolbarMenuItems(enable);
         if (enable) {
             blackListMenuItem.setEnabled(true);
+            noteMenuItem.setEnabled(true);
+            toDialogsMenuItem.setEnabled(true);
         } else {
             blackListMenuItem.setEnabled(false);
+            noteMenuItem.setEnabled(false);
+            toDialogsMenuItem.setEnabled(false);
         }
     }
 
