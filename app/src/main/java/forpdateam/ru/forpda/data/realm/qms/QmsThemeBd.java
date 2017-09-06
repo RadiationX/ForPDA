@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.bdobjects.qms;
+package forpdateam.ru.forpda.data.realm.qms;
 
 import forpdateam.ru.forpda.api.qms.interfaces.IQmsTheme;
 import forpdateam.ru.forpda.api.qms.models.QmsTheme;

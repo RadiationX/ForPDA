@@ -13,6 +13,7 @@ import forpdateam.ru.forpda.fragments.forum.ForumFragment;
 import forpdateam.ru.forpda.fragments.history.HistoryFragment;
 import forpdateam.ru.forpda.fragments.mentions.MentionsFragment;
 import forpdateam.ru.forpda.fragments.news.main.NewsMainFragment;
+import forpdateam.ru.forpda.fragments.notes.NotesFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
 import forpdateam.ru.forpda.fragments.search.SearchFragment;
 
@@ -36,6 +37,7 @@ public class MenuItems {
         createdMenuItems.add(new MenuItem("Форум", R.drawable.ic_forum, ForumFragment.class));
         createdMenuItems.add(new MenuItem("Поиск", R.drawable.ic_search, SearchFragment.class));
         createdMenuItems.add(new MenuItem("История", R.drawable.ic_history, HistoryFragment.class));
+        createdMenuItems.add(new MenuItem("Заметки", R.drawable.ic_bookmark, NotesFragment.class));
         createdMenuItems.add(new MenuItem("Настройки", R.drawable.ic_settings, ACTION_APP_SETTINGS));
     }
 

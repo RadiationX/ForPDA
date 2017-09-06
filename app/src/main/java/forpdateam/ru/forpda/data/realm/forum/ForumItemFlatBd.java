@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.bdobjects.forum;
+package forpdateam.ru.forpda.data.realm.forum;
 
 import forpdateam.ru.forpda.api.forum.interfaces.IForumItemFlat;
 import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
