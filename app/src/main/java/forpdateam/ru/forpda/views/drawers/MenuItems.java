@@ -10,6 +10,7 @@ import forpdateam.ru.forpda.fragments.auth.AuthFragment;
 import forpdateam.ru.forpda.fragments.devdb.BrandsFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.forum.ForumFragment;
+import forpdateam.ru.forpda.fragments.history.HistoryFragment;
 import forpdateam.ru.forpda.fragments.mentions.MentionsFragment;
 import forpdateam.ru.forpda.fragments.news.main.NewsMainFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
@@ -34,6 +35,7 @@ public class MenuItems {
         //createdMenuItems.add(new MenuItem("DevDB dev", R.drawable.ic_devices_other, DeviceFragment.class));
         createdMenuItems.add(new MenuItem("Форум", R.drawable.ic_forum, ForumFragment.class));
         createdMenuItems.add(new MenuItem("Поиск", R.drawable.ic_search, SearchFragment.class));
+        createdMenuItems.add(new MenuItem("История", R.drawable.ic_history, HistoryFragment.class));
         createdMenuItems.add(new MenuItem("Настройки", R.drawable.ic_settings, ACTION_APP_SETTINGS));
     }
 

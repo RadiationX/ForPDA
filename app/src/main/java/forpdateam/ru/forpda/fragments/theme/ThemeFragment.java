@@ -50,6 +50,7 @@ import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
+import forpdateam.ru.forpda.fragments.history.HistoryFragment;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
@@ -377,6 +378,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             updateHistoryLast(currentPage);
         }
         updateFavorites(currentPage);
+        updateMainHistory(currentPage);
         updateView();
     }
 
@@ -390,10 +392,17 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     protected void updateFavorites(ThemePage themePage) {
         if (themePage.getPagination().getCurrent() < themePage.getPagination().getAll()) return;
-        String tag = TabManager.getInstance().getTagContainClass(FavoritesFragment.class);
-        if (tag == null) return;
-        Log.d(LOG_TAG, "UPDATE FOVARITE " + tag + " : " + TabManager.getInstance().get(tag));
-        ((FavoritesFragment) TabManager.getInstance().get(tag)).markRead(themePage.getId());
+        FavoritesFragment favoritesFragment = (FavoritesFragment) TabManager.getInstance().getByClass(FavoritesFragment.class);
+        if (favoritesFragment == null)
+            return;
+        Log.d(LOG_TAG, "UPDATE FaVoRITE " + favoritesFragment.getTag());
+        favoritesFragment.markRead(themePage.getId());
+    }
+
+    protected void updateMainHistory(ThemePage themePage) {
+        long time = System.currentTimeMillis();
+        HistoryFragment.addToHistory(themePage.getId(), themePage.getTitle());
+        Log.d("SUKA", "ADD TO HISTORY "+(System.currentTimeMillis()-time));
     }
 
     @CallSuper
