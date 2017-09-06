@@ -40,6 +40,8 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.devdb.device.comments.CommentsFragment;
 import forpdateam.ru.forpda.fragments.devdb.device.posts.PostsFragment;
 import forpdateam.ru.forpda.fragments.devdb.device.specs.SpecsFragment;
+import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
+import forpdateam.ru.forpda.fragments.notes.NotesFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
@@ -199,6 +201,13 @@ public class NewsDetailsFragment extends TabFragment {
                     Utils.shareText("https://4pda.ru/index.php?p=" + newsId);
                     return false;
                 });
+        getMenu().add("Создать заметку")
+                .setOnMenuItemClickListener(menuItem -> {
+                    String title = newsTitle;
+                    String url = "https://4pda.ru/index.php?p=" + newsId;
+                    NotesAddPopup.showAddNoteDialog(getContext(), title, url);
+                    return false;
+                });
     }
 
     @Override
@@ -273,6 +282,7 @@ public class NewsDetailsFragment extends TabFragment {
         public FragmentPagerAdapter(FragmentManager fm, DetailsPage article) {
             super(fm);
             this.article = article;
+            Log.e("SUKA", "CREATE FragmentPagerAdapter " + article);
 
             fragments.add(new ArticleContentFragment().setArticle(this.article));
             titles.add("Контент");

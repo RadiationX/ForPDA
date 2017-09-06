@@ -4,6 +4,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,9 +15,13 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.devdb.models.Brand;
+import forpdateam.ru.forpda.api.devdb.models.Brands;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.devdb.adapters.BrandAdapter;
+import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
 import forpdateam.ru.forpda.rxapi.RxApi;
+import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.messagepanel.AutoFitRecyclerView;
 
@@ -32,6 +37,8 @@ public class BrandFragment extends TabFragment {
     private Subscriber<Brand> mainSubscriber = new Subscriber<>(this);
     private BrandAdapter adapter;
     private String catId, brandId;
+    private Brand currentData;
+    private AlertDialogMenu<BrandFragment, Brand.DeviceItem> dialogMenu, showedDialogMenu;
 
     public BrandFragment() {
         configuration.setDefaultTitle("Произовдитель");
@@ -74,6 +81,34 @@ public class BrandFragment extends TabFragment {
             TabManager.getInstance().add(DeviceFragment.class, args);
         });
 
+        adapter.setOnLongItemClickListener(item -> {
+            if (dialogMenu == null) {
+                dialogMenu = new AlertDialogMenu<>();
+                showedDialogMenu = new AlertDialogMenu<>();
+                dialogMenu.addItem("Скопировать ссылку", (context, data) -> {
+                    Utils.copyToClipBoard("http://4pda.ru/devdb/" + data.getId());
+                });
+                dialogMenu.addItem("Поделиться", (context, data) -> {
+                    Utils.shareText("https://4pda.ru/devdb/" + data.getId());
+                });
+                dialogMenu.addItem("Создать заметку", (context1, data) -> {
+                    String title = "DevDb: " + currentData.getTitle() + " " + data.getTitle();
+                    String url = "https://4pda.ru/devdb/" + data.getId();
+                    NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);
+                });
+            }
+            showedDialogMenu.clear();
+
+            showedDialogMenu.addItem(dialogMenu.get(0));
+            showedDialogMenu.addItem(dialogMenu.get(1));
+            showedDialogMenu.addItem(dialogMenu.get(2));
+            new AlertDialog.Builder(getContext())
+                    .setItems(showedDialogMenu.getTitles(), (dialog, which) -> {
+                        showedDialogMenu.onClick(which, BrandFragment.this, item);
+                    })
+                    .show();
+        });
+
         return view;
     }
 
@@ -86,6 +121,7 @@ public class BrandFragment extends TabFragment {
 
     private void onLoad(Brand brand) {
         refreshLayout.setRefreshing(false);
+        currentData = brand;
         adapter.addAll(brand.getDevices());
         setTitle(brand.getTitle());
         setSubtitle(brand.getCatTitle());

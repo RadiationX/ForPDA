@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.fragments.theme;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -14,7 +15,10 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.IBaseForumPost;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
 import forpdateam.ru.forpda.client.ClientHelper;
+import forpdateam.ru.forpda.data.models.notes.NoteItem;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
+import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
+import forpdateam.ru.forpda.fragments.notes.NotesFragment;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
@@ -111,6 +115,11 @@ public class ThemeDialogsHelper {
                 String url = "https://4pda.ru/forum/index.php?s=&showtopic=" + data.getTopicId() + "&view=findpost&p=" + data.getId();
                 Utils.copyToClipBoard(url);
             });
+            postMenu.addItem("Создать заметку", (context1, data) -> {
+                String title = "Пост " + data.getNick() + ", #" + data.getId();
+                String url = "https://4pda.ru/forum/index.php?s=&showtopic=" + data.getTopicId() + "&view=findpost&p=" + data.getId();
+                NotesAddPopup.showAddNoteDialog(context, title, url);
+            });
         }
         showedPostMenu.clear();
         if (ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN) {
@@ -124,6 +133,7 @@ public class ThemeDialogsHelper {
                 showedPostMenu.addItem(postMenu.get(3));
         }
         showedPostMenu.addItem(postMenu.get(4));
+        showedPostMenu.addItem(postMenu.get(5));
         new AlertDialog.Builder(context)
                 .setItems(showedPostMenu.getTitles(), (dialogInterface, i) -> showedPostMenu.onClick(i, theme, post))
                 .show();

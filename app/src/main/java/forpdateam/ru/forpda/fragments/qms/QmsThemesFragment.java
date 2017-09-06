@@ -23,6 +23,7 @@ import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import forpdateam.ru.forpda.data.realm.qms.QmsThemesBd;
 import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsThemesAdapter;
 import forpdateam.ru.forpda.fragments.qms.chat.QmsChatFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
@@ -39,6 +40,7 @@ public class QmsThemesFragment extends ListFragment {
     public final static String USER_ID_ARG = "USER_ID_ARG";
     public final static String USER_AVATAR_ARG = "USER_AVATAR_ARG";
     private MenuItem blackListMenuItem;
+    private MenuItem noteMenuItem;
     private String avatarUrl;
     private QmsThemes currentThemes = new QmsThemes();
     private QmsThemesAdapter adapter;
@@ -46,7 +48,7 @@ public class QmsThemesFragment extends ListFragment {
     private RealmResults<QmsThemesBd> results;
     private Subscriber<QmsThemes> mainSubscriber = new Subscriber<>(this);
     private Subscriber<ArrayList<QmsContact>> contactsSubscriber = new Subscriber<>(this);
-    private AlertDialogMenu<QmsThemesFragment, IQmsTheme> contactDialogMenu;
+    private AlertDialogMenu<QmsThemesFragment, IQmsTheme> dialogMenu;
     private QmsThemesAdapter.OnItemClickListener onItemClickListener =
             theme -> {
                 Bundle args = new Bundle();
@@ -60,14 +62,19 @@ public class QmsThemesFragment extends ListFragment {
             };
     private QmsThemesAdapter.OnItemClickListener onLongItemClickListener =
             theme -> {
-                if (contactDialogMenu == null) {
-                    contactDialogMenu = new AlertDialogMenu<>();
-                    contactDialogMenu.addItem("Удалить", (context, data) -> {
+                if (dialogMenu == null) {
+                    dialogMenu = new AlertDialogMenu<>();
+                    dialogMenu.addItem("Удалить", (context, data) -> {
                         mainSubscriber.subscribe(RxApi.Qms().deleteTheme(currentThemes.getUserId(), data.getId()), this::onLoadThemes, currentThemes, v -> loadData());
+                    });
+                    dialogMenu.addItem("Создать заметку", (context1, data) -> {
+                        String title = "Диалог \"" + data.getName() + "\" с " + currentThemes.getNick();
+                        String url = "http://4pda.ru/forum/index.php?act=qms&mid=" + currentThemes.getUserId() + "&t=" + data.getId();
+                        NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);
                     });
                 }
                 new AlertDialog.Builder(getContext())
-                        .setItems(contactDialogMenu.getTitles(), (dialog, which) -> contactDialogMenu.onClick(which, QmsThemesFragment.this, theme)).show();
+                        .setItems(dialogMenu.getTitles(), (dialog, which) -> dialogMenu.onClick(which, QmsThemesFragment.this, theme)).show();
             };
 
 
@@ -186,6 +193,13 @@ public class QmsThemesFragment extends ListFragment {
                     }, new ArrayList<>());
                     return false;
                 });
+        noteMenuItem = getMenu().add("Создать заметку")
+                .setOnMenuItemClickListener(item -> {
+                    String title = "Диалоги с " + currentThemes.getNick();
+                    String url = "http://4pda.ru/forum/index.php?act=qms&mid=" + currentThemes.getUserId();
+                    NotesAddPopup.showAddNoteDialog(getContext(), title, url);
+                    return true;
+                });
         refreshToolbarMenuItems(false);
     }
 
@@ -194,8 +208,10 @@ public class QmsThemesFragment extends ListFragment {
         super.refreshToolbarMenuItems(enable);
         if (enable) {
             blackListMenuItem.setEnabled(true);
+            noteMenuItem.setEnabled(true);
         } else {
             blackListMenuItem.setEnabled(false);
+            noteMenuItem.setEnabled(false);
         }
     }
 

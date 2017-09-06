@@ -40,9 +40,11 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.devdb.device.comments.CommentsFragment;
 import forpdateam.ru.forpda.fragments.devdb.device.posts.PostsFragment;
 import forpdateam.ru.forpda.fragments.devdb.device.specs.SpecsFragment;
+import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
 import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 
 /**
@@ -96,7 +98,6 @@ public class DeviceFragment extends TabFragment {
     }
 
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -147,26 +148,40 @@ public class DeviceFragment extends TabFragment {
         return view;
     }
 
-    private MenuItem copyLinkMenuItem, toBrandMenuItem, toBrandsMenuItem;
+    private MenuItem copyLinkMenuItem, shareMenuItem, noteMenuItem, toBrandMenuItem, toBrandsMenuItem;
 
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
         copyLinkMenuItem = getMenu().add("Скопировать ссылку")
                 .setOnMenuItemClickListener(item -> {
-                    IntentHandler.handle("http://4pda.ru/devdb/" + currentData.getId());
+                    Utils.copyToClipBoard("https://4pda.ru/devdb/" + currentData.getId());
+                    return true;
+                });
+
+        shareMenuItem = getMenu().add("Поделиться")
+                .setOnMenuItemClickListener(item -> {
+                    Utils.shareText("https://4pda.ru/devdb/" + currentData.getId());
+                    return true;
+                });
+
+        noteMenuItem = getMenu().add("Создать заметку")
+                .setOnMenuItemClickListener(item -> {
+                    String title = "DevDb: " + currentData.getBrandTitle() + " " + currentData.getTitle();
+                    String url = "https://4pda.ru/devdb/" + currentData.getId();
+                    NotesAddPopup.showAddNoteDialog(getContext(), title, url);
                     return true;
                 });
 
         toBrandMenuItem = getMenu().add("Устройства")
                 .setOnMenuItemClickListener(item -> {
-                    IntentHandler.handle("http://4pda.ru/devdb/" + currentData.getCatId() + "/" + currentData.getBrandId());
+                    IntentHandler.handle("https://4pda.ru/devdb/" + currentData.getCatId() + "/" + currentData.getBrandId());
                     return true;
                 });
 
         toBrandsMenuItem = getMenu().add("Устройства")
                 .setOnMenuItemClickListener(item -> {
-                    IntentHandler.handle("http://4pda.ru/devdb/" + currentData.getCatId());
+                    IntentHandler.handle("https://4pda.ru/devdb/" + currentData.getCatId());
                     return true;
                 });
 
@@ -178,10 +193,14 @@ public class DeviceFragment extends TabFragment {
         super.refreshToolbarMenuItems(enable);
         if (enable) {
             copyLinkMenuItem.setEnabled(true);
+            shareMenuItem.setEnabled(true);
+            noteMenuItem.setEnabled(true);
             toBrandMenuItem.setVisible(true);
             toBrandsMenuItem.setVisible(true);
         } else {
             copyLinkMenuItem.setEnabled(false);
+            shareMenuItem.setEnabled(false);
+            noteMenuItem.setEnabled(false);
             toBrandMenuItem.setVisible(false);
             toBrandsMenuItem.setVisible(false);
         }

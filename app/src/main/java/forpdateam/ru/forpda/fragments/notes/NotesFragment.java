@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.fragments.notes;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -11,13 +12,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.data.models.notes.NoteItem;
+import forpdateam.ru.forpda.data.realm.history.HistoryItemBd;
 import forpdateam.ru.forpda.data.realm.notes.NoteItemBd;
 import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
+import forpdateam.ru.forpda.fragments.history.HistoryFragment;
 import forpdateam.ru.forpda.fragments.notes.adapters.NotesAdapter;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -161,4 +166,21 @@ public class NotesFragment extends ListFragment implements NotesAdapter.ClickLis
                 .show();
         return true;
     }
+
+    public static void addNote(NoteItem item) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransactionAsync(realm1 -> {
+            realm1.insertOrUpdate(new NoteItemBd(item));
+        }, () -> {
+            realm.close();
+            NotesFragment notesFragment = (NotesFragment) TabManager.getInstance().getByClass(NotesFragment.class);
+            if (notesFragment == null) {
+                return;
+            }
+            notesFragment.loadCacheData();
+        });
+
+    }
+
+
 }

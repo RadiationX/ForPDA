@@ -24,6 +24,7 @@ public class NotesAddPopup {
     private EditText titleField, linkField, contentField;
 
     public NotesAddPopup(Context context, NoteItem item, NoteActionListener noteActionListener) {
+        this.noteActionListener = noteActionListener;
         dialog = new BottomSheetDialog(context);
         View view = View.inflate(context, R.layout.popup_notes, null);
         title = (TextView) view.findViewById(R.id.popup_title);
@@ -44,7 +45,7 @@ public class NotesAddPopup {
         }
 
         addButton.setOnClickListener(v -> {
-            if (noteActionListener != null) {
+            if (NotesAddPopup.this.noteActionListener != null) {
                 String title = titleField.getText().toString().trim();
                 String link = linkField.getText().toString().trim();
                 String content = contentField.getText().toString().trim();
@@ -62,7 +63,7 @@ public class NotesAddPopup {
                 result.setTitle(title);
                 result.setLink(link);
                 result.setContent(content);
-                noteActionListener.onAddNote(result);
+                NotesAddPopup.this.noteActionListener.onAddNote(result);
             }
             dialog.dismiss();
         });
@@ -71,11 +72,42 @@ public class NotesAddPopup {
         dialog.show();
     }
 
-    public void setNoteActionListener(NoteActionListener noteActionListener) {
+    public NotesAddPopup setTitle(String title) {
+        titleField.setText(title);
+        return this;
+    }
+
+    public NotesAddPopup setLink(String link) {
+        linkField.setText(link);
+        return this;
+    }
+
+    public NotesAddPopup setContent(String content) {
+        contentField.setText(content);
+        return this;
+    }
+
+    public NotesAddPopup setNoteActionListener(NoteActionListener noteActionListener) {
         this.noteActionListener = noteActionListener;
+        return this;
     }
 
     public interface NoteActionListener {
         void onAddNote(NoteItem item);
+    }
+
+    public static void showAddNoteDialog(Context context, String title, String link) {
+        new NotesAddPopup(context, null, null)
+                .setTitle(title)
+                .setLink(link)
+                .setNoteActionListener(NotesFragment::addNote);
+    }
+
+    public static void showAddNoteDialog(Context context, String title, String link, String content) {
+        new NotesAddPopup(context, null, null)
+                .setTitle(title)
+                .setLink(link)
+                .setContent(content)
+                .setNoteActionListener(NotesFragment::addNote);
     }
 }
