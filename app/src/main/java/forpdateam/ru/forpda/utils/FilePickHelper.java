@@ -27,21 +27,22 @@ import forpdateam.ru.forpda.api.RequestFile;
 public class FilePickHelper {
     private final static String LOG_TAG = FilePickHelper.class.getSimpleName();
 
-    public static Intent pickImage(boolean onlyImages) {
-        /*Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image*//*");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        }
-        startActivityForResult(intent, PICK_IMAGE);*/
-
-
+    public static Intent pickFile(boolean onlyImages) {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         if (onlyImages) {
             intent.setType("image/*");
         } else {
             intent.setType("*/*");
         }
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        return Intent.createChooser(intent, "Select file");
+    }
+
+    public static Intent pickFile(String mimeType) {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.setType(mimeType);
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setAction(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);

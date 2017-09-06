@@ -1,7 +1,9 @@
 package forpdateam.ru.forpda.fragments.notes;
 
-import android.content.Context;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,21 +12,35 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
+import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.data.models.notes.NoteItem;
-import forpdateam.ru.forpda.data.realm.history.HistoryItemBd;
 import forpdateam.ru.forpda.data.realm.notes.NoteItemBd;
 import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
-import forpdateam.ru.forpda.fragments.history.HistoryFragment;
 import forpdateam.ru.forpda.fragments.notes.adapters.NotesAdapter;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import io.realm.Realm;
@@ -78,6 +94,21 @@ public class NotesFragment extends ListFragment implements NotesAdapter.ClickLis
                     return true;
                 })
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        getMenu()
+                .add("Импорт")
+                .setOnMenuItemClickListener(item -> {
+                    App.getInstance().checkStoragePermission(() -> {
+                        startActivityForResult(FilePickHelper.pickFile(false), REQUEST_PICK_FILE);
+                    }, App.getActivity());
+                    return true;
+                });
+        getMenu()
+                .add("Экспорт")
+                .setOnMenuItemClickListener(item -> {
+                    App.getInstance().checkStoragePermission(this::exportNotes, App.getActivity());
+                    return true;
+                });
+
     }
 
     @Override
@@ -182,5 +213,118 @@ public class NotesFragment extends ListFragment implements NotesAdapter.ClickLis
 
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            if (data == null) {
+                //Display an error
+                return;
+            }
+            if (requestCode == REQUEST_PICK_FILE) {
+                List<RequestFile> files = FilePickHelper.onActivityResult(getContext(), data);
+                RequestFile file = files.get(0);
+                if (file.getFileName().matches("[\\s\\S]*?\\.json$")) {
+                    BufferedReader r = new BufferedReader(new InputStreamReader(file.getFileStream()));
+                    StringBuilder total = new StringBuilder();
+                    String line;
+                    try {
+                        while ((line = r.readLine()) != null) {
+                            total.append(line).append('\n');
+                        }
+                        r.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(getContext(), "Ошибка при чтении файла", Toast.LENGTH_SHORT).show();
+                    }
+                    importNotes(total.toString());
+                } else {
+                    Toast.makeText(getContext(), "Файл имеет неправильное расширение", Toast.LENGTH_SHORT).show();
+                }
+            } else if (requestCode == REQUEST_SAVE_FILE) {
 
+            }
+        }
+    }
+
+    private void importNotes(String jsonSource) {
+        ArrayList<NoteItem> noteItems = new ArrayList<>();
+        try {
+            final JSONArray jsonBody = new JSONArray(jsonSource);
+            for (int i = 0; i < jsonBody.length(); i++) {
+                try {
+                    JSONObject jsonItem = jsonBody.getJSONObject(i);
+                    NoteItem item = new NoteItem();
+                    item.setId(jsonItem.getLong("id"));
+                    item.setTitle(jsonItem.getString("title"));
+                    item.setLink(jsonItem.getString("link"));
+                    item.setContent(jsonItem.getString("content"));
+                    noteItems.add(item);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Ошибка разбора файла: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        Toast.makeText(getContext(), "Заметки успешно импортированы", Toast.LENGTH_SHORT).show();
+        realm.executeTransactionAsync(realm1 -> {
+            for (NoteItem item : noteItems) {
+                realm1.insertOrUpdate(new NoteItemBd(item));
+            }
+        }, this::loadCacheData);
+    }
+
+    private void exportNotes() {
+        if (realm.isClosed())
+            return;
+        RealmResults<NoteItemBd> results = realm.where(NoteItemBd.class).findAllSorted("id", Sort.DESCENDING);
+
+        ArrayList<NoteItem> noteItems = new ArrayList<>();
+        for (NoteItemBd item : results) {
+            noteItems.add(new NoteItem(item));
+        }
+
+        final JSONArray jsonBody = new JSONArray();
+        for (NoteItem item : noteItems) {
+            try {
+                JSONObject jsonItem = new JSONObject();
+                jsonItem.put("id", item.getId());
+                jsonItem.put("title", item.getTitle());
+                jsonItem.put("link", item.getLink());
+                jsonItem.put("content", item.getContent());
+                jsonBody.put(jsonItem);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        Log.d("SUKA", "json to export: " + jsonBody.toString());
+        saveImageToExternalStorage(jsonBody.toString());
+    }
+
+    private void saveImageToExternalStorage(String json) {
+        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
+        String date = new SimpleDateFormat("MMddyyy-HHmmss", Locale.getDefault()).format(new Date(System.currentTimeMillis()));
+        String fileName = "ForPDA_Notes_" + date + ".json";
+        File file = new File(root, fileName);
+        if (file.exists())
+            file.delete();
+        try {
+            FileOutputStream fOut = new FileOutputStream(file);
+            OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
+            myOutWriter.append(json);
+
+            myOutWriter.close();
+
+            fOut.flush();
+            fOut.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Файл не сохранён: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        Toast.makeText(getContext(), "Заметки успешно экспортированы в " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+    }
 }
