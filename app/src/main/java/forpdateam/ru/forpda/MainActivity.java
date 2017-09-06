@@ -95,8 +95,6 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                if (TabManager.getInstance().getSize() > 0)
-                    TabManager.getInstance().getActive().hidePopupWindows();
                 if (drawerView.getId() == R.id.menu_drawer) {
                     if (App.getInstance().getPreferences().getBoolean("drawers.tooltip.link_open", true)) {
                         SimpleTooltip tooltip = new SimpleTooltip.Builder(MainActivity.this)
@@ -146,6 +144,10 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
             @Override
             public void onDrawerStateChanged(int newState) {
+                if (newState == DrawerLayout.STATE_DRAGGING) {
+                    if (TabManager.getInstance().getSize() > 0)
+                        TabManager.getInstance().getActive().hidePopupWindows();
+                }
             }
         });
         RxPermissions.getInstance(this);
@@ -177,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         }
 
 
-        if(lastHeight!=App.getStatusBarHeight()){
+        if (lastHeight != App.getStatusBarHeight()) {
             Log.d(LOG_TAG, "Calc SB: " + App.getStatusBarHeight() + ", NB: " + App.getNavigationBarHeight());
             App.getInstance().getStatusBarSizeObservables().notifyObservers();
         }

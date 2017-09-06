@@ -663,7 +663,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     }
 
     public void tryPickFile() {
-        App.getInstance().checkStoragePermission(() -> startActivityForResult(FilePickHelper.pickImage(false), REQUEST_PICK_FILE), App.getActivity());
+        App.getInstance().checkStoragePermission(() -> startActivityForResult(FilePickHelper.pickFile(false), REQUEST_PICK_FILE), App.getActivity());
     }
 
     @Override

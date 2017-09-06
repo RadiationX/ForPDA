@@ -479,7 +479,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     }
 
     public void tryPickFile() {
-        App.getInstance().checkStoragePermission(() -> startActivityForResult(FilePickHelper.pickImage(true), REQUEST_PICK_FILE), App.getActivity());
+        App.getInstance().checkStoragePermission(() -> startActivityForResult(FilePickHelper.pickFile(true), REQUEST_PICK_FILE), App.getActivity());
     }
 
     @Override
