@@ -64,9 +64,7 @@ public class HistoryFragment extends ListFragment implements HistoryAdapter.Clic
         if (!realm.isClosed()) {
             refreshLayout.setRefreshing(true);
             RealmResults<HistoryItemBd> results = realm.where(HistoryItemBd.class).findAllSorted("unixTime", Sort.DESCENDING);
-            if (results.size() != 0) {
-                adapter.addAll(results);
-            }
+            adapter.addAll(results);
         }
         refreshLayout.setRefreshing(false);
     }
