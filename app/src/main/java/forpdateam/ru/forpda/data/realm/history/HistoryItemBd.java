@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.bdobjects;
+package forpdateam.ru.forpda.data.realm.history;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;

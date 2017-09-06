@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.bdobjects;
+package forpdateam.ru.forpda.data.realm;
 
 import forpdateam.ru.forpda.api.others.user.IForumUser;
 import io.realm.RealmObject;

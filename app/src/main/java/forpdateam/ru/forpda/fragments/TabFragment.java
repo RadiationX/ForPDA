@@ -297,13 +297,22 @@ public class TabFragment extends Fragment {
         inflater.inflate(res, fragmentContent, true);
     }
 
+    protected void setListsBackground(View view) {
+        view.setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_for_lists));
+    }
+
     protected void setListsBackground() {
-        fragmentContent.setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_for_lists));
+        setListsBackground(fragmentContent);
+    }
+
+    protected void setCardsBackground(View view) {
+        view.setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_for_cards));
     }
 
     protected void setCardsBackground() {
-        fragmentContent.setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_for_cards));
+        setCardsBackground(fragmentContent);
     }
+
 
     protected void viewsReady() {
         addBaseToolbarMenu();
@@ -374,7 +383,7 @@ public class TabFragment extends Fragment {
         refreshLayout.setColorSchemeColors(App.getColorFromAttr(getContext(), R.attr.colorAccent));
     }
 
-    protected void refreshLayoutLongTrigger(SwipeRefreshLayout refreshLayout){
+    protected void refreshLayoutLongTrigger(SwipeRefreshLayout refreshLayout) {
         refreshLayout.setDistanceToTriggerSync(App.px48 * 3);
         refreshLayout.setProgressViewEndTarget(false, App.px48 * 3);
     }

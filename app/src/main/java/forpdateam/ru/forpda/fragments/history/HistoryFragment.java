@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import forpdateam.ru.forpda.TabManager;
-import forpdateam.ru.forpda.bdobjects.HistoryItemBd;
+import forpdateam.ru.forpda.data.realm.history.HistoryItemBd;
 import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.history.adapters.HistoryAdapter;
@@ -105,7 +105,7 @@ public class HistoryFragment extends ListFragment implements HistoryAdapter.Clic
                     showedDialogMenu.onClick(which, HistoryFragment.this, item);
                 })
                 .show();
-        return false;
+        return true;
     }
 
     private void delete(int id) {

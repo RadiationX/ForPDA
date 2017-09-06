@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.bdobjects.favorites;
+package forpdateam.ru.forpda.data.realm.favorites;
 
 import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
 import io.realm.RealmObject;

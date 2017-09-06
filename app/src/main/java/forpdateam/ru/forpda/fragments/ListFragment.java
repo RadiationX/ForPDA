@@ -46,7 +46,7 @@ public abstract class ListFragment extends TabFragment {
         //listScrollView = (NestedScrollView) findViewById(R.id.list_scroll_view);
 
         //recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_for_lists));
+        setListsBackground(recyclerView);
         recyclerView.setHasFixedSize(true);
         refreshLayoutStyle(refreshLayout);
         return view;
