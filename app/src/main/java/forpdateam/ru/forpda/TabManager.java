@@ -221,10 +221,16 @@ public class TabManager {
     public String getTagContainClass(final Class aClass) {
         String className = aClass.getSimpleName();
         for (TabFragment fragment : existingFragments) {
-            Log.d("SUKA", "getTagContainClass " + fragment);
-        }
-        for (TabFragment fragment : existingFragments) {
             if (fragment.getClass().getSimpleName().equals(className)) return fragment.getTag();
+        }
+        return null;
+    }
+
+    public TabFragment getByClass(final Class aClass) {
+        String className = aClass.getSimpleName();
+        for (TabFragment fragment : existingFragments) {
+            if (fragment.getClass().getSimpleName().equals(className))
+                return fragment;
         }
         return null;
     }

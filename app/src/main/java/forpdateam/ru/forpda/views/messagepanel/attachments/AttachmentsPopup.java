@@ -68,10 +68,10 @@ public class AttachmentsPopup {
         recyclerView.setColumnWidth(App.getInstance().dpToPx(112));
         recyclerView.setAdapter(adapter);
 
-        /*addFile.setOnClickListener(v -> {
+        /*addFile.setClickListener(v -> {
             uploadFiles();
         });*/
-        //deleteFile.setOnClickListener(v -> adapter.deleteSelected());
+        //deleteFile.setClickListener(v -> adapter.deleteSelected());
 
         adapter.setOnSelectedListener(this::onSelected);
         adapter.setOnDataChangeListener(this::onDataChange);

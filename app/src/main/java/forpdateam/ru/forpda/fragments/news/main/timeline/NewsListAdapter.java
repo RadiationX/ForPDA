@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.fragments.news.main.timeline;
 
+import android.support.annotation.LayoutRes;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -38,11 +39,11 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == FULL_LAYOUT) {
-            return new FullHolder(getItemLayout(parent, R.layout.news_main_full_item_layout));
+            return new FullHolder(inflateLayout(parent, R.layout.news_main_full_item_layout));
         } else if (viewType == COMPAT_LAYOUT) {
-            return new CompatHolder(getItemLayout(parent, R.layout.news_main_compat_item_layout));
+            return new CompatHolder(inflateLayout(parent, R.layout.news_main_compat_item_layout));
         } else if (viewType == LOAD_MORE_LAYOUT) {
-            return new LoadMoreHolder(getItemLayout(parent, R.layout.news_list_load_more_layout));
+            return new LoadMoreHolder(inflateLayout(parent, R.layout.news_list_load_more_layout));
         }
         throw new IllegalArgumentException("Еблан что ле? Чего ты тут заслал, мудила. Смотри внимательней. Сучка!");
     }
@@ -90,7 +91,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.items.clear();
     }
 
-    private View getItemLayout(ViewGroup parent, int id) {
+    private View inflateLayout(ViewGroup parent, @LayoutRes int id) {
         return LayoutInflater.from(parent.getContext()).inflate(id, parent, false);
     }
 
