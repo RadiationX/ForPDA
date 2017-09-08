@@ -107,10 +107,10 @@ public class DrawerHeader {
             linkField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
             linkField.setText(url);
             new AlertDialog.Builder(activity)
-                    .setTitle("Перейти по ссылке")
+                    .setTitle(R.string.follow_link)
                     .setView(frameLayout)
-                    .setPositiveButton("Перейти", (dialog, which) -> IntentHandler.handle(linkField.getText().toString()))
-                    .setNegativeButton("Отмена", null)
+                    .setPositiveButton(R.string.follow, (dialog, which) -> IntentHandler.handle(linkField.getText().toString()))
+                    .setNegativeButton(R.string.cancel, null)
                     .show();
         });
         ClientHelper.getInstance().addLoginObserver(loginObserver);
@@ -137,7 +137,7 @@ public class DrawerHeader {
         } else {
             headerLayout.setOnClickListener(null);
             ImageLoader.getInstance().displayImage("assets://av.png", avatar);
-            nick.setText("Гость");
+            nick.setText(R.string.auth_guest);
         }
     }
 

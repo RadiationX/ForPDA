@@ -46,7 +46,7 @@ public class ReputationFragment extends ListFragment {
 
 
     public ReputationFragment() {
-        configuration.setDefaultTitle("Репутация");
+        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_reputation));
     }
 
     @Override
@@ -74,7 +74,6 @@ public class ReputationFragment extends ListFragment {
         recyclerView.setAdapter(adapter);
 
 
-
         paginationHelper = new PaginationHelper(getActivity());
         paginationHelper.addInToolbar(inflater, toolbarLayout);
         //paginationHelper.addInList(inflater, listContainer);
@@ -100,10 +99,10 @@ public class ReputationFragment extends ListFragment {
     private void someClick(RepItem item) {
         if (repDialogMenu == null) {
             repDialogMenu = new AlertDialogMenu<>();
-            repDialogMenu.addItem("Профиль", (context, data1) -> {
+            repDialogMenu.addItem(getString(R.string.profile), (context, data1) -> {
                 IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data1.getUserId());
             });
-            repDialogMenu.addItem("Перейти к сообщению", (context, data1) -> {
+            repDialogMenu.addItem(getString(R.string.go_to_message), (context, data1) -> {
                 IntentHandler.handle(data1.getSourceUrl());
             });
         }
@@ -130,20 +129,20 @@ public class ReputationFragment extends ListFragment {
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        SubMenu subMenu = getMenu().addSubMenu("Сортировка");
+        SubMenu subMenu = getMenu().addSubMenu(R.string.sorting);
         subMenu.getItem().setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         subMenu.getItem().setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_sort));
-        descSortMenuItem = subMenu.add("По убыванию").setOnMenuItemClickListener(menuItem -> {
+        descSortMenuItem = subMenu.add(R.string.sorting_desc).setOnMenuItemClickListener(menuItem -> {
             data.setSort(Reputation.SORT_DESC);
             loadData();
             return false;
         });
-        ascSortMenuItem = subMenu.add("По возрастанию").setOnMenuItemClickListener(menuItem -> {
+        ascSortMenuItem = subMenu.add(R.string.sorting_asc).setOnMenuItemClickListener(menuItem -> {
             data.setSort(Reputation.SORT_ASC);
             loadData();
             return false;
         });
-        repModeMenuItem = getMenu().add(data.getMode().equals(Reputation.MODE_FROM) ? "Репутация пользователя" : "Кому изменял")
+        repModeMenuItem = getMenu().add(data.getMode().equals(Reputation.MODE_FROM) ? getString(R.string.reputation_mode_from) : getString(R.string.reputation_mode_to))
                 .setOnMenuItemClickListener(item -> {
                     if (data.getMode().equals(Reputation.MODE_FROM))
                         data.setMode(Reputation.MODE_TO);
@@ -152,12 +151,12 @@ public class ReputationFragment extends ListFragment {
                     loadData();
                     return false;
                 });
-        upRepMenuItem = getMenu().add("Повысить")
+        upRepMenuItem = getMenu().add(R.string.increase)
                 .setOnMenuItemClickListener(item -> {
                     changeReputation(true);
                     return false;
                 });
-        downRepMenuItem = getMenu().add("Понизить")
+        downRepMenuItem = getMenu().add(R.string.decrease)
                 .setOnMenuItemClickListener(item -> {
                     changeReputation(false);
                     return false;
@@ -172,7 +171,7 @@ public class ReputationFragment extends ListFragment {
             descSortMenuItem.setEnabled(true);
             ascSortMenuItem.setEnabled(true);
             repModeMenuItem.setEnabled(true);
-            repModeMenuItem.setTitle(data.getMode().equals(Reputation.MODE_FROM) ? "Репутация пользователя" : "Кому изменял");
+            repModeMenuItem.setTitle(data.getMode().equals(Reputation.MODE_FROM) ? getString(R.string.reputation_mode_from) : getString(R.string.reputation_mode_to));
             if (data.getId() != ClientHelper.getUserId()) {
                 upRepMenuItem.setEnabled(true);
                 upRepMenuItem.setVisible(true);
@@ -197,17 +196,17 @@ public class ReputationFragment extends ListFragment {
         assert layout != null;
         final TextView text = (TextView) layout.findViewById(R.id.reputation_text);
         final EditText messageField = (EditText) layout.findViewById(R.id.reputation_text_field);
-        text.setText((type ? "Повысить" : "Понизить").concat(" репутацию ").concat(data.getNick()).concat(" ?"));
+        text.setText((type ? getString(R.string.increase) : getString(R.string.decrease)).concat(" репутацию ").concat(data.getNick()).concat(" ?"));
 
         new AlertDialog.Builder(getContext())
                 .setView(layout)
-                .setPositiveButton("Да", (dialogInterface, i) -> {
+                .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
                     changeReputation(s -> {
-                        Toast.makeText(getContext(), s.isEmpty() ? "Репутация изменена" : s, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), s.isEmpty() ? getString(R.string.reputatuib_changed) : s, Toast.LENGTH_SHORT).show();
                         loadData();
                     }, 0, data.getId(), type, messageField.getText().toString());
                 })
-                .setNegativeButton("Отмена", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 

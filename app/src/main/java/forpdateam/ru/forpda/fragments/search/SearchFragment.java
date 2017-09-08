@@ -136,7 +136,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
     }
 
     public SearchFragment() {
-        configuration.setDefaultTitle("Поиск");
+        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_search));
     }
 
     @Override
@@ -279,7 +279,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
             }
         });
 
-        searchView.setQueryHint("Ключевые слова");
+        searchView.setQueryHint(getString(R.string.search_keywords));
         fillSettingsData();
         searchItem.expandActionView();
         submitButton.setOnClickListener(v -> startSearch());
@@ -306,16 +306,16 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
             if (createdTopicsDialogMenu == null) {
                 createdTopicsDialogMenu = new AlertDialogMenu<>();
                 tempTopicsDialogMenu = new AlertDialogMenu<>();
-                createdTopicsDialogMenu.addItem("К первому", (context, data1) -> {
+                createdTopicsDialogMenu.addItem(getString(R.string.topic_to_begin), (context, data1) -> {
                     IntentHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + data1.getTopicId());
                 });
-                createdTopicsDialogMenu.addItem("К непрочитанному", (context, data1) -> {
+                createdTopicsDialogMenu.addItem(getString(R.string.topic_newposts), (context, data1) -> {
                     IntentHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + data1.getTopicId() + "&view=getnewpost");
                 });
-                createdTopicsDialogMenu.addItem("К последнему", (context, data1) -> {
+                createdTopicsDialogMenu.addItem(getString(R.string.topic_lastposts), (context, data1) -> {
                     IntentHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + data1.getTopicId() + "&view=getlastpost");
                 });
-                createdTopicsDialogMenu.addItem("Скопировать ссылку", (context, data1) -> {
+                createdTopicsDialogMenu.addItem(getString(R.string.menu_copy_link), (context, data1) -> {
                     String url = "";
                     if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
                         url = "https://4pda.ru/index.php?p=" + item.getId();
@@ -327,12 +327,12 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
                     }
                     Utils.copyToClipBoard(url);
                 });
-                createdTopicsDialogMenu.addItem("Открыть форум темы", (context, data1) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data1.getForumId()));
-                createdTopicsDialogMenu.addItem("Добавить в избранное", ((context, data1) -> {
+                createdTopicsDialogMenu.addItem(getString(R.string.open_theme_forum), (context, data1) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data1.getForumId()));
+                createdTopicsDialogMenu.addItem(getString(R.string.add_to_favorites), ((context, data1) -> {
                     new AlertDialog.Builder(context.getContext())
                             .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> {
                                 FavoritesHelper.add(aBoolean -> {
-                                    Toast.makeText(getContext(), aBoolean ? "Тема добавлена в избранное" : "Ошибочка вышла", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.fovorites_adding_error), Toast.LENGTH_SHORT).show();
                                 }, data1.getId(), Favorites.SUB_TYPES[which1]);
                             })
                             .show();
@@ -361,7 +361,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
                             if (settingsMenuItem == itemView.getItemData()) {
                                 tooltip = new SimpleTooltip.Builder(getContext())
                                         .anchorView(itemView)
-                                        .text("Нажимите сюда, чтобы настроить поисковой запрос")
+                                        .text(R.string.tooltip_search_settings)
                                         .gravity(Gravity.BOTTOM)
                                         .animated(false)
                                         .modal(true)
@@ -392,14 +392,14 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        getMenu().add("Скопировать ссылку")
+        getMenu().add(R.string.menu_copy_link)
                 .setOnMenuItemClickListener(menuItem -> {
                     Utils.copyToClipBoard(settings.toUrl());
                     return false;
                 });
         toolbar.inflateMenu(R.menu.qms_contacts_menu);
 
-        settingsMenuItem = getMenu().add("Настройки")
+        settingsMenuItem = getMenu().add(R.string.settings)
                 .setIcon(R.drawable.ic_toolbar_tune).setOnMenuItemClickListener(menuItem -> {
                     hidePopupWindows();
                     if (searchSettingsView != null && searchSettingsView.getParent() != null && searchSettingsView.getParent() instanceof ViewGroup) {
@@ -813,12 +813,12 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
     @Override
     public void reply(IBaseForumPost post) {
-        Toast.makeText(getContext(), "Действие невозможно", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), R.string.js_action_not_available, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void quotePost(String text, IBaseForumPost post) {
-        Toast.makeText(getContext(), "Действие невозможно", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), R.string.js_action_not_available, Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.util.Log;
 import android.webkit.WebView;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
@@ -20,12 +21,12 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 public class DialogsHelper {
     private static AlertDialogMenu<Context, Pair<String, String>> alertDialogMenu;
     private static AlertDialogMenu<Context, Pair<String, String>> showedAlertDialogMenu;
-    private final static String openNewTab = "Открыть в новой вкладке";
-    private final static String openBrowser = "Открыть в браузере";
-    private final static String copyUrl = "Скопировать ссылку";
-    private final static String openImage = "Открыть изображение";
-    private final static String saveImage = "Сохранить изображение";
-    private final static String copyImageUrl = "Скопировать ссылку изображения";
+    private final static String openNewTab = App.getInstance().getString(R.string.wv_open_new_tab);
+    private final static String openBrowser = App.getInstance().getString(R.string.wv_open_in_browser);
+    private final static String copyUrl = App.getInstance().getString(R.string.wv_copy_link);
+    private final static String openImage = App.getInstance().getString(R.string.wv_open_image);
+    private final static String saveImage = App.getInstance().getString(R.string.wv_save_image);
+    private final static String copyImageUrl = App.getInstance().getString(R.string.wv_copy_image_link);
 
     public static void handleContextMenu(Context context, int type, String extra, String nodeHref) {
         Log.d("DialogsHelper", "handleContextMenu " + type + " : " + extra + " : " + nodeHref);

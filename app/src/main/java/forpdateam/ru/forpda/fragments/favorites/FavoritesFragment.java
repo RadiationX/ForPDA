@@ -64,22 +64,22 @@ public class FavoritesFragment extends ListFragment {
                 if (favoriteDialogMenu == null) {
                     favoriteDialogMenu = new AlertDialogMenu<>();
                     showedFavoriteDialogMenu = new AlertDialogMenu<>();
-                    favoriteDialogMenu.addItem("Скопировать ссылку", (context, data) -> {
+                    favoriteDialogMenu.addItem(getString(R.string.menu_copy_link), (context, data) -> {
                         if (data.isForum()) {
                             Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getForumId())));
                         } else {
                             Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data.getTopicId())));
                         }
                     });
-                    favoriteDialogMenu.addItem("Вложения", (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=attach&code=showtopic&tid=" + data.getTopicId()));
-                    favoriteDialogMenu.addItem("Открыть форум темы", (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getForumId()));
-                    favoriteDialogMenu.addItem("Изменить тип подписки", (context, data) -> {
+                    favoriteDialogMenu.addItem(getString(R.string.attachments), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=attach&code=showtopic&tid=" + data.getTopicId()));
+                    favoriteDialogMenu.addItem(getString(R.string.open_theme_forum), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getForumId()));
+                    favoriteDialogMenu.addItem(getString(R.string.change_subscribe_type), (context, data) -> {
                         new AlertDialog.Builder(context.getContext())
                                 .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> context.changeFav(Favorites.ACTION_EDIT_SUB_TYPE, Favorites.SUB_TYPES[which1], data.getFavId()))
                                 .show();
                     });
                     favoriteDialogMenu.addItem(getPinText(favItem.isPin()), (context, data) -> context.changeFav(Favorites.ACTION_EDIT_PIN_STATE, data.isPin() ? "unpin" : "pin", data.getFavId()));
-                    favoriteDialogMenu.addItem("Удалить", (context, data) -> context.changeFav(Favorites.ACTION_DELETE, null, data.getFavId()));
+                    favoriteDialogMenu.addItem(getString(R.string.delete), (context, data) -> context.changeFav(Favorites.ACTION_DELETE, null, data.getFavId()));
                 }
                 showedFavoriteDialogMenu.clear();
 
@@ -141,11 +141,11 @@ public class FavoritesFragment extends ListFragment {
     public FavoritesFragment() {
         configuration.setAlone(true);
         //configuration.setUseCache(true);
-        configuration.setDefaultTitle("Избранное");
+        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_favorite));
     }
 
     private CharSequence getPinText(boolean b) {
-        return b ? "Открепить" : "Закрепить";
+        return getString(b ? R.string.fav_unpin : R.string.fav_pin);
     }
 
     @Override
@@ -175,7 +175,6 @@ public class FavoritesFragment extends ListFragment {
         dialog = new BottomSheetDialog(getContext());
 
 
-
         viewsReady();
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
@@ -202,8 +201,8 @@ public class FavoritesFragment extends ListFragment {
             }
         });
 
-        setItems(keySpinner, new String[]{"Последнее сообщение", "Название"}, 0);
-        setItems(orderSpinner, new String[]{"Возрастание", "Убывание"}, 0);
+        setItems(keySpinner, new String[]{getString(R.string.fav_sort_last_post), getString(R.string.fav_sort_title)}, 0);
+        setItems(orderSpinner, new String[]{getString(R.string.sorting_asc), getString(R.string.sorting_desc)}, 0);
         selectSpinners(sorting);
         sortApply.setOnClickListener(v -> {
             switch (keySpinner.getSelectedItemPosition()) {
@@ -244,21 +243,21 @@ public class FavoritesFragment extends ListFragment {
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        getMenu().add("Отметить все прочитанными")
+        getMenu().add(R.string.mark_all_read)
                 .setOnMenuItemClickListener(item -> {
                     new AlertDialog.Builder(getContext())
-                            .setMessage("Отметить все прочитанными?")
-                            .setPositiveButton("Да", (dialog, which) -> {
+                            .setMessage(App.getInstance().getString(R.string.mark_all_read) + "?")
+                            .setPositiveButton(R.string.ok, (dialog, which) -> {
                                 ForumHelper.markAllRead(o -> {
                                     loadData();
                                 });
                             })
-                            .setNegativeButton("Нет", null)
+                            .setNegativeButton(R.string.no, null)
                             .show();
                     return false;
                 });
 
-        getMenu().add("Сортировка")
+        getMenu().add(R.string.sorting)
                 .setIcon(R.drawable.ic_toolbar_sort).setOnMenuItemClickListener(menuItem -> {
             hidePopupWindows();
             if (sortingView != null && sortingView.getParent() != null && sortingView.getParent() instanceof ViewGroup) {
@@ -380,16 +379,16 @@ public class FavoritesFragment extends ListFragment {
 
             adapter.clear();
             if (pinnedUnread.size() > 0) {
-                adapter.addSection(new Pair<>("Непрочитанные закрепленные темы", pinnedUnread));
+                adapter.addSection(new Pair<>(getString(R.string.fav_unreaded_pinned), pinnedUnread));
             }
             if (itemsUnread.size() > 0) {
-                adapter.addSection(new Pair<>("Непрочитанные темы", itemsUnread));
+                adapter.addSection(new Pair<>(getString(R.string.fav_unreaded), itemsUnread));
             }
             if (pinned.size() > 0) {
-                adapter.addSection(new Pair<>("Закрепленные темы", pinned));
+                adapter.addSection(new Pair<>(getString(R.string.fav_pinned), pinned));
             }
-            adapter.addSection(new Pair<>("Темы", items));
-            Log.e("SUKA", "bindView notifyDataSetChanged "+recyclerView.isLayoutFrozen());
+            adapter.addSection(new Pair<>(getString(R.string.fav_themes), items));
+            Log.e("SUKA", "bindView notifyDataSetChanged " + recyclerView.isLayoutFrozen());
             adapter.notifyDataSetChanged();
         }
         if (!Client.getInstance().getNetworkState()) {
@@ -436,7 +435,7 @@ public class FavoritesFragment extends ListFragment {
     private void onChangeFav(boolean v) {
         /*if (!v)
             Toast.makeText(getContext(), "При выполнении операции произошла ошибка", Toast.LENGTH_SHORT).show();*/
-        Toast.makeText(getContext(), "Действие выполнено", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), R.string.action_complete, Toast.LENGTH_SHORT).show();
         loadData();
     }
 

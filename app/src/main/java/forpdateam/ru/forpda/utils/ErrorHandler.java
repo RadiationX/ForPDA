@@ -10,6 +10,7 @@ import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.client.OkHttpResponseException;
 import forpdateam.ru.forpda.client.OnlyShowException;
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -53,7 +54,7 @@ public class ErrorHandler {
         //if (isNetworkEx) {
         Snackbar snackbar = Snackbar.make(fragment.getCoordinatorLayout(), text, /*listener != null ? Snackbar.LENGTH_INDEFINITE :*/ Snackbar.LENGTH_LONG);
         if (listener != null /*&& isNetworkEx*/)
-            snackbar.setAction("Повторить", listener);
+            snackbar.setAction(R.string.retry, listener);
         snackbar.setActionTextColor(Color.WHITE);
         try {
             TextView textView = (TextView)snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);

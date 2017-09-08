@@ -88,7 +88,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
             }
             menu.clear();
 
-            menu.add("Копировать")
+            menu.add(R.string.copy)
                     .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_content_copy))
                     .setOnMenuItemClickListener(item -> {
                         webView.evalJs("copySelectedText()");
@@ -97,7 +97,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
                     })
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
             if (currentPage.canQuote())
-                menu.add("Цитировать")
+                menu.add(R.string.quote)
                         .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_quote_post))
                         .setOnMenuItemClickListener(item -> {
                             webView.evalJs("selectionToQuote()");
@@ -105,14 +105,14 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
                             return true;
                         })
                         .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-            menu.add("Весь текст")
+            menu.add(R.string.all_text)
                     .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_select_all))
                     .setOnMenuItemClickListener(item -> {
                         webView.evalJs("selectAllPostText()");
                         return true;
                     })
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-            menu.add("Поделиться")
+            menu.add(R.string.share)
                     .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_share))
                     .setOnMenuItemClickListener(item -> {
                         webView.evalJs("shareSelectedText()");
@@ -565,7 +565,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
     @JavascriptInterface
     public void copySpoilerLink(String postId, String spoilNumber) {
         webView.runInUiThread(() -> {
-            Toast.makeText(getContext(), "Ссылка на спойлер скопирована", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.spoiler_link_copied, Toast.LENGTH_SHORT).show();
             IBaseForumPost post = getPostById(Integer.parseInt(postId));
             String s = "https://4pda.ru/forum/index.php?act=findpost&pid=" + post.getId() + "&anchor=Spoil-" + post.getId() + "-" + spoilNumber;
             Utils.copyToClipBoard(s);
@@ -602,12 +602,12 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
             IBaseForumPost post = getPostById(Integer.parseInt(postId));
             String link = "https://4pda.ru/forum/index.php?act=findpost&pid=" + post.getId() + "&anchor=" + name;
             new AlertDialog.Builder(getContext())
-                    .setTitle("Ссылка на якорь")
+                    .setTitle(R.string.link_to_anchor)
                     .setMessage(link)
-                    .setPositiveButton("Скопировать", (dialog, which) -> {
+                    .setPositiveButton(R.string.copy, (dialog, which) -> {
                         Utils.copyToClipBoard(link);
                     })
-                    .setNegativeButton("Отмена", null)
+                    .setNegativeButton(R.string.cancel, null)
                     .show();
         });
     }

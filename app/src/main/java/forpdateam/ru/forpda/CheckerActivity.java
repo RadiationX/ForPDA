@@ -63,7 +63,7 @@ public class CheckerActivity extends AppCompatActivity {
 
         currentInfo.setText(generateCurrentInfo(BuildConfig.VERSION_NAME, BuildConfig.BUILD_DATE));
 
-        toolbar.getMenu().add("Обновить")
+        toolbar.getMenu().add(R.string.refresh)
                 .setIcon(App.getVecDrawable(toolbar.getContext(), R.drawable.ic_toolbar_refresh))
                 .setOnMenuItemClickListener(item -> {
                     refreshInfo();

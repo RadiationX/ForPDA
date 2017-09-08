@@ -44,7 +44,7 @@ public class PollChoicesAdapter extends RecyclerView.Adapter<PollChoicesAdapter.
             //notifyItemInserted(choices.indexOf(choice));
             notifyDataSetChanged();
         } else {
-            Toast.makeText(App.getContext(), "Максимальное кол-во ответов: " + poll.getMaxChoices(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(App.getContext(), App.getInstance().getString(R.string.poll_max_answers) + ": " + poll.getMaxChoices(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -70,7 +70,7 @@ public class PollChoicesAdapter extends RecyclerView.Adapter<PollChoicesAdapter.
 
         holder.myCustomEditTextListener.updatePosition(holder.getAdapterPosition());
         holder.title.getEditText().setText(item.getTitle());
-        holder.title.setHint("Ответ " + (holder.getAdapterPosition() + 1));
+        holder.title.setHint(App.getInstance().getString(R.string.answer) + " " + (holder.getAdapterPosition() + 1));
 
 
     }
@@ -90,8 +90,8 @@ public class PollChoicesAdapter extends RecyclerView.Adapter<PollChoicesAdapter.
             this.title.getEditText().addTextChangedListener(myCustomEditTextListener);
             delete.setOnClickListener(v1 -> {
                 new AlertDialog.Builder(v.getContext())
-                        .setMessage("Удалить ответ?")
-                        .setPositiveButton("Да", (dialog, which) -> {
+                        .setMessage(R.string.ask_delete_answer)
+                        .setPositiveButton(R.string.ok, (dialog, which) -> {
                             EditPoll.Choice choice = choices.get(getLayoutPosition());
                             //notifyItemRemoved(getLayoutPosition());
                             if (choice.getIndex() > question.getBaseIndexOffset()) {
@@ -108,7 +108,7 @@ public class PollChoicesAdapter extends RecyclerView.Adapter<PollChoicesAdapter.
                             choices.remove(getLayoutPosition());
                             notifyDataSetChanged();
                         })
-                        .setNegativeButton("Нет", null)
+                        .setNegativeButton(R.string.no, null)
                         .show();
 
             });

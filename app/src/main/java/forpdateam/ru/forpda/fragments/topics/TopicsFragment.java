@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.topcis.models.TopicItem;
@@ -38,7 +40,7 @@ public class TopicsFragment extends ListFragment {
     private Subscriber<TopicsData> mainSubscriber = new Subscriber<>(this);
 
     public TopicsFragment() {
-        configuration.setDefaultTitle("Темы форума");
+        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_topics));
     }
 
     @Override
@@ -82,13 +84,13 @@ public class TopicsFragment extends ListFragment {
             if (fullTopicsDialogMenu == null) {
                 fullTopicsDialogMenu = new AlertDialogMenu<>();
                 topicsDialogMenu = new AlertDialogMenu<>();
-                fullTopicsDialogMenu.addItem("Скопировать ссылку", (context, data1) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data1.getId()))));
-                fullTopicsDialogMenu.addItem("Открыть форум темы", (context, data1) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getId()));
-                fullTopicsDialogMenu.addItem("Добавить в избранное", ((context, data1) -> {
+                fullTopicsDialogMenu.addItem(getString(R.string.menu_copy_link), (context, data1) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data1.getId()))));
+                fullTopicsDialogMenu.addItem(getString(R.string.open_theme_forum), (context, data1) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getId()));
+                fullTopicsDialogMenu.addItem(getString(R.string.add_to_favorites), ((context, data1) -> {
                     new AlertDialog.Builder(context.getContext())
                             .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> {
                                 FavoritesHelper.add(aBoolean -> {
-                                    Toast.makeText(getContext(), aBoolean ? "Тема добавлена в избранное" : "Ошибочка вышла", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
                                 }, data1.getId(), Favorites.SUB_TYPES[which1]);
                             })
                             .show();
@@ -140,12 +142,12 @@ public class TopicsFragment extends ListFragment {
         setTitle(data.getTitle());
         adapter.clear();
         if (data.getForumItems().size() > 0)
-            adapter.addItems(new Pair<>("Разделы", data.getForumItems()));
+            adapter.addItems(new Pair<>(getString(R.string.forum_section), data.getForumItems()));
         if (data.getAnnounceItems().size() > 0)
-            adapter.addItems(new Pair<>("Объявления", data.getAnnounceItems()));
+            adapter.addItems(new Pair<>(getString(R.string.announce_section), data.getAnnounceItems()));
         if (data.getPinnedItems().size() > 0)
-            adapter.addItems(new Pair<>("Закрепленные темы", data.getPinnedItems()));
-        adapter.addItems(new Pair<>("Темы", data.getTopicItems()));
+            adapter.addItems(new Pair<>(getString(R.string.pinned_section), data.getPinnedItems()));
+        adapter.addItems(new Pair<>(getString(R.string.themes_section), data.getTopicItems()));
         adapter.notifyDataSetChanged();
         paginationHelper.updatePagination(data.getPagination());
         setSubtitle(paginationHelper.getTitle());
@@ -156,7 +158,7 @@ public class TopicsFragment extends ListFragment {
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
         getMenu()
-                .add("Открыть форум")
+                .add(R.string.open_forum)
                 .setOnMenuItemClickListener(item -> {
                     Bundle args = new Bundle();
                     args.putInt(ForumFragment.ARG_FORUM_ID, id);

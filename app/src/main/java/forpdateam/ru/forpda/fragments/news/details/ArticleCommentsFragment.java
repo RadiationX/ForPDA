@@ -173,9 +173,9 @@ public class ArticleCommentsFragment extends Fragment implements ArticleComments
             fillMessageField(comment);
         } else {
             new AlertDialog.Builder(getContext())
-                    .setMessage("Уже имеется введёный текст, очистить?")
-                    .setPositiveButton("Да", (dialog, which) -> fillMessageField(comment))
-                    .setNegativeButton("Отмена", null)
+                    .setMessage(R.string.article_comment_reply_warning_1)
+                    .setPositiveButton(getString(R.string.ok), (dialog, which) -> fillMessageField(comment))
+                    .setNegativeButton(getString(R.string.cancel), null)
                     .show();
         }
 

@@ -12,6 +12,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.data.realm.history.HistoryItemBd;
 import forpdateam.ru.forpda.fragments.ListFragment;
@@ -36,7 +38,7 @@ public class HistoryFragment extends ListFragment implements HistoryAdapter.Clic
 
     public HistoryFragment() {
         configuration.setUseCache(true);
-        configuration.setDefaultTitle("История");
+        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_history));
     }
 
     @Override
@@ -87,10 +89,10 @@ public class HistoryFragment extends ListFragment implements HistoryAdapter.Clic
         if (dialogMenu == null) {
             dialogMenu = new AlertDialogMenu<>();
             showedDialogMenu = new AlertDialogMenu<>();
-            dialogMenu.addItem("Скопировать ссылку", (context, data) -> {
+            dialogMenu.addItem(getString(R.string.menu_copy_link), (context, data) -> {
                 Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=" + data.getId());
             });
-            dialogMenu.addItem("Удалить", (context, data) -> {
+            dialogMenu.addItem(getString(R.string.delete), (context, data) -> {
                 context.delete(data.getId());
             });
         }

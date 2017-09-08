@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.mentions.models.MentionsData;
 import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -38,7 +40,7 @@ public class MentionsFragment extends ListFragment {
 
     public MentionsFragment(){
         configuration.setAlone(true);
-        configuration.setDefaultTitle("Ответы");
+        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_mentions));
     }
 
     @Nullable

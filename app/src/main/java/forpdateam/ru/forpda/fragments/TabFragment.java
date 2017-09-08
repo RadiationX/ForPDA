@@ -275,7 +275,7 @@ public class TabFragment extends Fragment {
         boolean isMenu = configuration.isAlone() || configuration.isMenu();
         toolbar.setNavigationOnClickListener(isMenu ? getMainActivity().getToggleListener() : getMainActivity().getRemoveTabListener());
         toolbar.setNavigationIcon(isMenu ? R.drawable.ic_toolbar_hamburger : R.drawable.ic_toolbar_arrow_back);
-        toolbar.setNavigationContentDescription(isMenu ? "Открыть меню" : "Закрыть вкладку");
+        toolbar.setNavigationContentDescription(isMenu ? getString(R.string.open_menu) : getString(R.string.close_tab));
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             findViewById(R.id.toolbar_shadow_prelp).setVisibility(View.VISIBLE);

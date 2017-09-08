@@ -71,7 +71,7 @@ public class DeviceFragment extends TabFragment {
     };
 
     public DeviceFragment() {
-        configuration.setDefaultTitle("Устройство");
+        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_device_title));
     }
 
     @Override
@@ -153,19 +153,19 @@ public class DeviceFragment extends TabFragment {
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        copyLinkMenuItem = getMenu().add("Скопировать ссылку")
+        copyLinkMenuItem = getMenu().add(R.string.menu_copy_link)
                 .setOnMenuItemClickListener(item -> {
                     Utils.copyToClipBoard("https://4pda.ru/devdb/" + currentData.getId());
                     return true;
                 });
 
-        shareMenuItem = getMenu().add("Поделиться")
+        shareMenuItem = getMenu().add(R.string.menu_share)
                 .setOnMenuItemClickListener(item -> {
                     Utils.shareText("https://4pda.ru/devdb/" + currentData.getId());
                     return true;
                 });
 
-        noteMenuItem = getMenu().add("Создать заметку")
+        noteMenuItem = getMenu().add(R.string.menu_create_note)
                 .setOnMenuItemClickListener(item -> {
                     String title = "DevDb: " + currentData.getBrandTitle() + " " + currentData.getTitle();
                     String url = "https://4pda.ru/devdb/" + currentData.getId();
@@ -267,23 +267,23 @@ public class DeviceFragment extends TabFragment {
             this.device = device;
             if (this.device.getSpecs().size() > 0) {
                 fragments.add(new SpecsFragment().setDevice(this.device));
-                titles.add("Характеристики");
+                titles.add(App.getInstance().getString(R.string.device_page_specs));
             }
             if (this.device.getComments().size() > 0) {
                 fragments.add(new CommentsFragment().setDevice(this.device));
-                titles.add("Отзывы (" + this.device.getComments().size() + ")");
+                titles.add(App.getInstance().getString(R.string.device_page_comments) + " (" + this.device.getComments().size() + ")");
             }
             if (this.device.getDiscussions().size() > 0) {
                 fragments.add(new PostsFragment().setSource(PostsFragment.SRC_DISCUSSIONS).setDevice(this.device));
-                titles.add("Обсуждения (" + this.device.getDiscussions().size() + ")");
+                titles.add(App.getInstance().getString(R.string.device_page_discussions) + " (" + this.device.getDiscussions().size() + ")");
             }
             if (this.device.getNews().size() > 0) {
                 fragments.add(new PostsFragment().setSource(PostsFragment.SRC_NEWS).setDevice(this.device));
-                titles.add("Публикации (" + this.device.getNews().size() + ")");
+                titles.add(App.getInstance().getString(R.string.device_page_news) + " (" + this.device.getNews().size() + ")");
             }
             if (this.device.getFirmwares().size() > 0) {
                 fragments.add(new PostsFragment().setSource(PostsFragment.SRC_FIRMWARES).setDevice(this.device));
-                titles.add("Прошивки (" + this.device.getFirmwares().size() + ")");
+                titles.add(App.getInstance().getString(R.string.device_page_firmwares) + " (" + this.device.getFirmwares().size() + ")");
             }
         }
 

@@ -34,8 +34,8 @@ public class SettingsFragment extends PreferenceFragment {
             findPreference("auth.action.logout")
                     .setOnPreferenceClickListener(preference -> {
                         new AlertDialog.Builder(getActivity())
-                                .setMessage("Вы уверены, что хотите выйти из аккаунта?")
-                                .setPositiveButton("Да", (dialog, which) -> RxApi.Auth().logout().onErrorReturn(throwable -> false)
+                                .setMessage(R.string.ask_logout)
+                                .setPositiveButton(R.string.ok, (dialog, which) -> RxApi.Auth().logout().onErrorReturn(throwable -> false)
                                         .subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe(aBoolean -> {
@@ -46,7 +46,7 @@ public class SettingsFragment extends PreferenceFragment {
                                                 Toast.makeText(App.getContext(), "Logout error", Toast.LENGTH_LONG).show();
                                             }
                                         }))
-                                .setNegativeButton("Нет", null)
+                                .setNegativeButton(R.string.no, null)
                                 .show();
                         return false;
                     });
@@ -56,7 +56,7 @@ public class SettingsFragment extends PreferenceFragment {
         }
 
         findPreference("about.application")
-                .setSummary("Версия " + BuildConfig.VERSION_NAME);
+                .setSummary(getString(R.string.version) + " " + BuildConfig.VERSION_NAME);
 
         findPreference("about.check_update")
                 .setOnPreferenceClickListener(preference -> {
@@ -92,11 +92,11 @@ public class SettingsFragment extends PreferenceFragment {
                         }
                     });
                     AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                            .setTitle("Размер шрифта")
+                            .setTitle(R.string.text_size)
                             .setView(v)
-                            .setPositiveButton("Ок", (dialog1, which) -> Preferences.Main.setWebViewSize(seekBar.getProgress() + 1 + 7))
-                            .setNegativeButton("Отмена", null)
-                            .setNeutralButton("Сброс", null)
+                            .setPositiveButton(R.string.ok, (dialog1, which) -> Preferences.Main.setWebViewSize(seekBar.getProgress() + 1 + 7))
+                            .setNegativeButton(R.string.cancel, null)
+                            .setNeutralButton(R.string.reset, null)
                             .show();
                     dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(v1 -> {
                         seekBar.setProgress(16 - 1 - 7);

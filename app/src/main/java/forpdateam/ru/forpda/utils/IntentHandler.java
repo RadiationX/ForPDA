@@ -20,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
@@ -219,7 +220,7 @@ public class IntentHandler {
             //App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK));
 
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK);
-            App.getInstance().startActivity(Intent.createChooser(intent, "Открыть в").addFlags(FLAG_ACTIVITY_NEW_TASK));
+            App.getInstance().startActivity(Intent.createChooser(intent, App.getInstance().getString(R.string.ext_intent_open_in)).addFlags(FLAG_ACTIVITY_NEW_TASK));
         } catch (ActivityNotFoundException e) {
             ACRA.getErrorReporter().handleException(e);
         }
@@ -365,11 +366,11 @@ public class IntentHandler {
         Activity activity = App.getActivity();
         if (activity != null) {
             new AlertDialog.Builder(activity)
-                    .setMessage("Загрузить файл " + fileName + "?")
-                    .setPositiveButton("Да", (dialog, which) -> {
+                    .setMessage(activity.getString(R.string.intent_load_file) + fileName + "?")
+                    .setPositiveButton(activity.getString(R.string.ok), (dialog, which) -> {
                         redirectDownload(fileName, url);
                     })
-                    .setNegativeButton("Нет", null)
+                    .setNegativeButton(activity.getString(R.string.cancel), null)
                     .show();
         } else {
             redirectDownload(fileName, url);
@@ -377,25 +378,25 @@ public class IntentHandler {
     }
 
     private static void redirectDownload(String fileName, String url) {
-        Toast.makeText(App.getContext(), "Запрашиваю ссылку для загрузки ".concat(fileName), Toast.LENGTH_SHORT).show();
+        Toast.makeText(App.getContext(), App.getInstance().getString(R.string.intent_request_link).concat(fileName), Toast.LENGTH_SHORT).show();
         Observable.fromCallable(() -> Client.getInstance().request(new NetworkRequest.Builder().url(url).withoutBody().build()))
                 .onErrorReturn(throwable -> new NetworkResponse(null))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
                     if (response.getUrl() == null) {
-                        Toast.makeText(App.getContext(), "Произошла ошибка", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(App.getContext(), R.string.error_occurred, Toast.LENGTH_SHORT).show();
                         return;
                     }
                     if (!Preferences.Main.isSystemDownloader()) {
                         externalDownloader(response.getRedirect());
                     } else {
                         Runnable checkAction = () -> {
-                            Toast.makeText(App.getContext(), "Выполняется загрузка ".concat(fileName), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(App.getContext(), App.getInstance().getString(R.string.intent_perform_loading).concat(fileName), Toast.LENGTH_SHORT).show();
                             try {
                                 systemDownloader(fileName, response.getRedirect());
                             } catch (Exception exception) {
-                                Toast.makeText(App.getContext(), "Произошла ошибка. Будет загружено через внешний загрузчик.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(App.getContext(), R.string.intent_perform_loading_error, Toast.LENGTH_SHORT).show();
                                 externalDownloader(response.getRedirect());
                             }
                         };
@@ -425,7 +426,7 @@ public class IntentHandler {
     public static void externalDownloader(String url) {
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK);
-            App.getInstance().startActivity(Intent.createChooser(intent, "Загрузить через").addFlags(FLAG_ACTIVITY_NEW_TASK));
+            App.getInstance().startActivity(Intent.createChooser(intent, App.getInstance().getString(R.string.ext_intent_load)).addFlags(FLAG_ACTIVITY_NEW_TASK));
         } catch (ActivityNotFoundException e) {
             ACRA.getErrorReporter().handleException(e);
         }

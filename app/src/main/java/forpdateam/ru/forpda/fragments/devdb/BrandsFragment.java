@@ -13,6 +13,8 @@ import android.widget.ArrayAdapter;
 import java.util.ArrayList;
 import java.util.Map;
 
+import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.devdb.models.Brands;
 import forpdateam.ru.forpda.fragments.ListFragment;
@@ -26,7 +28,11 @@ import forpdateam.ru.forpda.utils.rx.Subscriber;
 
 public class BrandsFragment extends ListFragment {
     public final static String ARG_CATEGORY_ID = "CATEGORY_ID";
-    private final static String[] spinnerTitles = {"Телефоны", "Планшеты", "Эл. книги", "Смарт часы"};
+    private final static String[] spinnerTitles = {
+            App.getInstance().getString(R.string.brands_cat_phones),
+            App.getInstance().getString(R.string.brands_cat_tabs),
+            App.getInstance().getString(R.string.brands_cat_ebook),
+            App.getInstance().getString(R.string.brands_cat_smartwatch)};
     private final static String[] mansCats = {"phones", "pad", "ebook", "smartwatch"};
     private Subscriber<Brands> mainSubscriber = new Subscriber<>(this);
     private BrandsAdapter adapter;
@@ -35,7 +41,7 @@ public class BrandsFragment extends ListFragment {
 
     public BrandsFragment() {
         //configuration.setAlone(true);
-        configuration.setDefaultTitle("Произовдители");
+        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_brands_title));
     }
 
     @Override

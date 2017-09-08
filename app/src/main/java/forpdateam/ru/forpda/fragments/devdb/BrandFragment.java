@@ -40,7 +40,7 @@ public class BrandFragment extends TabFragment {
     private AlertDialogMenu<BrandFragment, Brand.DeviceItem> dialogMenu, showedDialogMenu;
 
     public BrandFragment() {
-        configuration.setDefaultTitle("Произовдитель");
+        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_brand_title));
     }
 
     @Override
@@ -84,13 +84,13 @@ public class BrandFragment extends TabFragment {
             if (dialogMenu == null) {
                 dialogMenu = new AlertDialogMenu<>();
                 showedDialogMenu = new AlertDialogMenu<>();
-                dialogMenu.addItem("Скопировать ссылку", (context, data) -> {
+                dialogMenu.addItem(getString(R.string.menu_copy_link), (context, data) -> {
                     Utils.copyToClipBoard("http://4pda.ru/devdb/" + data.getId());
                 });
-                dialogMenu.addItem("Поделиться", (context, data) -> {
+                dialogMenu.addItem(getString(R.string.menu_share), (context, data) -> {
                     Utils.shareText("https://4pda.ru/devdb/" + data.getId());
                 });
-                dialogMenu.addItem("Создать заметку", (context1, data) -> {
+                dialogMenu.addItem(getString(R.string.menu_create_note), (context1, data) -> {
                     String title = "DevDb: " + currentData.getTitle() + " " + data.getTitle();
                     String url = "https://4pda.ru/devdb/" + data.getId();
                     NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);

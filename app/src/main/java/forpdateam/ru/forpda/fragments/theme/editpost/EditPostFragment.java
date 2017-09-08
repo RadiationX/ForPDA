@@ -117,7 +117,7 @@ public class EditPostFragment extends TabFragment {
         Bundle args = getArguments();
         if (args != null) {
             String title = args.getString(ARG_THEME_NAME);
-            setTitle((postForm.getType() == TYPE_NEW_POST ? "Ответ" : "Редактирование").concat(title != null ? " в ".concat(title) : ""));
+            setTitle((App.getInstance().getString(postForm.getType() == TYPE_NEW_POST ? R.string.editpost_title_answer : R.string.editpost_title_edit)).concat(title != null ? title : ""));
         }
         messagePanel.getEditPollButton().setOnClickListener(v -> {
             if (pollPopup != null)
@@ -192,11 +192,11 @@ public class EditPostFragment extends TabFragment {
     private boolean showExitDialog() {
         if (postForm.getType() == TYPE_EDIT_POST) {
             new AlertDialog.Builder(getContext())
-                    .setMessage("Забыть изменения?")
-                    .setPositiveButton("Да", (dialog, which) -> {
+                    .setMessage(R.string.editpost_lose_changes)
+                    .setPositiveButton(R.string.ok, (dialog, which) -> {
                         TabManager.getInstance().remove(EditPostFragment.this);
                     })
-                    .setNegativeButton("Нет", null)
+                    .setNegativeButton(R.string.no, null)
                     .show();
             return true;
         }
@@ -205,15 +205,15 @@ public class EditPostFragment extends TabFragment {
 
     private void showSyncDialog(ThemeFragment themeFragment) {
         new AlertDialog.Builder(getContext())
-                .setMessage("Синхронизировать изменения с полем ввода в теме?")
-                .setPositiveButton("Да", (dialog, which) -> {
+                .setMessage(R.string.editpost_sync)
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
                     themeFragment.getMessagePanel().setText(messagePanel.getMessage());
                     int[] selectionRange = messagePanel.getSelectionRange();
                     themeFragment.getMessagePanel().getMessageField().setSelection(selectionRange[0], selectionRange[1]);
                     themeFragment.getAttachmentsPopup().setAttachments(messagePanel.getAttachments());
                     TabManager.getInstance().remove(EditPostFragment.this);
                 })
-                .setNegativeButton("Нет", ((dialog, which) -> {
+                .setNegativeButton(R.string.no, ((dialog, which) -> {
                     if (!showExitDialog()) {
                         TabManager.getInstance().remove(EditPostFragment.this);
                     }
@@ -264,7 +264,7 @@ public class EditPostFragment extends TabFragment {
             messagePanel.getMessageField().setVisibility(View.VISIBLE);
             messagePanel.getFormProgress().setVisibility(View.GONE);
             if (form.getErrorCode() != ERROR_NONE) {
-                Toast.makeText(getContext(), "Вам нельзя редактировать это сообщение", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.editpost_error_edit, Toast.LENGTH_SHORT).show();
                 TabManager.getInstance().remove(EditPostFragment.this);
                 return;
             }
@@ -320,13 +320,13 @@ public class EditPostFragment extends TabFragment {
         editText.setText(postForm.getEditReason());
 
         new AlertDialog.Builder(getContext())
-                .setTitle("Причина редактирования")
+                .setTitle(R.string.editpost_reason)
                 .setView(view)
-                .setPositiveButton("Отправить", (dialog1, which) -> {
+                .setPositiveButton(R.string.send, (dialog1, which) -> {
                     postForm.setEditReason(editText.getText().toString());
                     sendMessage();
                 })
-                .setNegativeButton("Отмена", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
