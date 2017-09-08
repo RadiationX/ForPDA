@@ -2,11 +2,9 @@ package forpdateam.ru.forpda.fragments.qms;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,7 +23,6 @@ import forpdateam.ru.forpda.api.qms.interfaces.IQmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.fragments.news.details.NewsDetailsFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsContactsAdapter;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
@@ -80,7 +77,7 @@ public class QmsBlackListFragment extends ListFragment {
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
         getMenu().add("Добавить")
-                .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_add))
+                .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_add))
                 .setOnMenuItemClickListener(item -> {
                     String nick = "";
                     if (nickField.getText() != null)

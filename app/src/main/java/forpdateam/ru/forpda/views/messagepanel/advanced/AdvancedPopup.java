@@ -155,7 +155,7 @@ public class AdvancedPopup {
     }
 
     private void hidePopup() {
-        messagePanel.getAdvancedButton().setImageDrawable(App.getAppDrawable(context, R.drawable.ic_add));
+        messagePanel.getAdvancedButton().setImageDrawable(App.getVecDrawable(context, R.drawable.ic_add));
 
         if (popupWindow.isShowing())
             popupWindow.dismiss();
@@ -174,7 +174,7 @@ public class AdvancedPopup {
     }
 
     private void showPopup() {
-        messagePanel.getAdvancedButton().setImageDrawable(App.getAppDrawable(context, R.drawable.ic_keyboard));
+        messagePanel.getAdvancedButton().setImageDrawable(App.getVecDrawable(context, R.drawable.ic_keyboard));
 
         if (!popupWindow.isShowing())
             popupWindow.showAtLocation(fragmentContainer, Gravity.BOTTOM, 0, 0);

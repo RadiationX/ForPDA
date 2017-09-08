@@ -30,7 +30,7 @@
             android:layout_width="164dp"
             android:layout_height="64dp"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/get_in_gp"
+            android:src="@drawable/icon_get_in_gp"
             android:layout_marginTop="@dimen/dp24"/>
 
         <TextView

@@ -35,7 +35,7 @@ public class DefaultForumHolder extends TreeNode.BaseNodeViewHolder<ForumItemTre
         currentValue = value;
         title.setText(value.getTitle());
 
-        icon.setImageDrawable(App.getAppDrawable(context, value.getForums() == null ? R.drawable.ic_forum_go_to_topics : (node.isExpanded() ? R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_more_black_24dp)));
+        icon.setImageDrawable(App.getVecDrawable(context, value.getForums() == null ? R.drawable.ic_forum_go_to_topics : (node.isExpanded() ? R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_more_black_24dp)));
 
         if (value.getForums() == null) {
             int suka = App.getDrawableResAttr(context, R.attr.count_background);
@@ -51,7 +51,7 @@ public class DefaultForumHolder extends TreeNode.BaseNodeViewHolder<ForumItemTre
     public void toggle(boolean active) {
         if (currentValue.getForums() != null) {
             icon.setRotationY(active ? 1f : 0f);
-            icon.setImageDrawable(App.getAppDrawable(context, active ? R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_more_black_24dp));
+            icon.setImageDrawable(App.getVecDrawable(context, active ? R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_more_black_24dp));
         }
     }
 }

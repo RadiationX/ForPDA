@@ -152,7 +152,7 @@ public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.Vi
                 if (item.getTypeFile() == AttachmentItem.TYPE_IMAGE) {
                     ImageLoader.getInstance().displayImage(item.getImageUrl(), holder.imageView);
                 } else {
-                    holder.imageView.setImageDrawable(App.getAppDrawable(holder.itemView.getContext(), R.drawable.ic_insert_drive_file_gray_24dp));
+                    holder.imageView.setImageDrawable(App.getVecDrawable(holder.itemView.getContext(), R.drawable.ic_insert_drive_file_gray_24dp));
                 }
                 break;
         }

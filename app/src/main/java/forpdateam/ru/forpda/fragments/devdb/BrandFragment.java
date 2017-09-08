@@ -15,7 +15,6 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.devdb.models.Brand;
-import forpdateam.ru.forpda.api.devdb.models.Brands;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.devdb.adapters.BrandAdapter;
 import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;

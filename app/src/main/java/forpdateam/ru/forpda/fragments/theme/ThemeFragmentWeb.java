@@ -74,9 +74,9 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
         });
         webView.setOnDirectionListener(direction -> {
             if (webView.getDirection() == ExtendedWebView.DIRECTION_DOWN) {
-                fab.setImageDrawable(App.getAppDrawable(fab.getContext(), R.drawable.ic_arrow_down));
+                fab.setImageDrawable(App.getVecDrawable(fab.getContext(), R.drawable.ic_arrow_down));
             } else if (webView.getDirection() == ExtendedWebView.DIRECTION_UP) {
-                fab.setImageDrawable(App.getAppDrawable(fab.getContext(), R.drawable.ic_arrow_up));
+                fab.setImageDrawable(App.getVecDrawable(fab.getContext(), R.drawable.ic_arrow_up));
             }
         });
         //Кастомизация менюхи при выделении текста
@@ -89,7 +89,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
             menu.clear();
 
             menu.add("Копировать")
-                    .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_content_copy))
+                    .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_content_copy))
                     .setOnMenuItemClickListener(item -> {
                         webView.evalJs("copySelectedText()");
                         actionMode.finish();
@@ -98,7 +98,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
             if (currentPage.canQuote())
                 menu.add("Цитировать")
-                        .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_quote_post))
+                        .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_quote_post))
                         .setOnMenuItemClickListener(item -> {
                             webView.evalJs("selectionToQuote()");
                             actionMode.finish();
@@ -106,14 +106,14 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
                         })
                         .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
             menu.add("Весь текст")
-                    .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_select_all))
+                    .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_select_all))
                     .setOnMenuItemClickListener(item -> {
                         webView.evalJs("selectAllPostText()");
                         return true;
                     })
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
             menu.add("Поделиться")
-                    .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_share))
+                    .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_share))
                     .setOnMenuItemClickListener(item -> {
                         webView.evalJs("shareSelectedText()");
                         return true;

@@ -3,26 +3,13 @@ package forpdateam.ru.forpda.fragments;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetDialog;
-import android.support.design.widget.TabLayout;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
 
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.favorites.Sorting;
-import forpdateam.ru.forpda.fragments.favorites.FavoritesAdapter;
-import forpdateam.ru.forpda.settings.Preferences;
-import forpdateam.ru.forpda.views.pagination.PaginationHelper;
 
 /**
  * Created by radiationx on 14.08.17.

@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.List;
 
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.fragments.mentions.MentionsFragment;
 import forpdateam.ru.forpda.utils.animation.DetailsTransition;
 
 public class TabManager {

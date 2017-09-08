@@ -73,7 +73,7 @@ public class ChatThemeCreator {
         titleField.addTextChangedListener(textWatcher);
         nickField.addTextChangedListener(textWatcher);
         editItem = fragment.getMenu().add("Изменить")
-                .setIcon(App.getAppDrawable(fragment.getContext(), R.drawable.ic_fab_create))
+                .setIcon(App.getVecDrawable(fragment.getContext(), R.drawable.ic_fab_create))
                 .setOnMenuItemClickListener(menuItem -> {
                     viewStub.setVisibility(View.VISIBLE);
                     doneItem.setVisible(true);
@@ -81,7 +81,7 @@ public class ChatThemeCreator {
                     return false;
                 });
         doneItem = fragment.getMenu().add("Ок")
-                .setIcon(App.getAppDrawable(fragment.getContext(), R.drawable.ic_toolbar_done))
+                .setIcon(App.getVecDrawable(fragment.getContext(), R.drawable.ic_toolbar_done))
                 .setOnMenuItemClickListener(menuItem -> {
                     viewStub.setVisibility(View.GONE);
                     editItem.setVisible(true);

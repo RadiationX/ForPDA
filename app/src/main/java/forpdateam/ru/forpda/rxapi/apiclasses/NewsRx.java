@@ -10,7 +10,6 @@ import forpdateam.ru.forpda.api.news.models.Comment;
 import forpdateam.ru.forpda.api.news.models.DetailsPage;
 import forpdateam.ru.forpda.api.news.models.Material;
 import forpdateam.ru.forpda.api.news.models.NewsItem;
-import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import io.reactivex.Observable;
 
 /**

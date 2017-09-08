@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.rxapi;
 
-import forpdateam.ru.forpda.api.news.NewsApi;
 import forpdateam.ru.forpda.rxapi.apiclasses.AuthRx;
 import forpdateam.ru.forpda.rxapi.apiclasses.DevDbRx;
 import forpdateam.ru.forpda.rxapi.apiclasses.EditPostRx;

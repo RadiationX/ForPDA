@@ -226,9 +226,9 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         });
         webView.setOnDirectionListener(direction -> {
             if (webView.getDirection() == ExtendedWebView.DIRECTION_DOWN) {
-                fab.setImageDrawable(App.getAppDrawable(fab.getContext(), R.drawable.ic_arrow_down));
+                fab.setImageDrawable(App.getVecDrawable(fab.getContext(), R.drawable.ic_arrow_down));
             } else if (webView.getDirection() == ExtendedWebView.DIRECTION_UP) {
-                fab.setImageDrawable(App.getAppDrawable(fab.getContext(), R.drawable.ic_arrow_up));
+                fab.setImageDrawable(App.getVecDrawable(fab.getContext(), R.drawable.ic_arrow_up));
             }
         });
 

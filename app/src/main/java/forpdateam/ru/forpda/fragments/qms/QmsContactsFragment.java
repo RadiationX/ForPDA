@@ -104,7 +104,7 @@ public class QmsContactsFragment extends ListFragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
-        fab.setImageDrawable(App.getAppDrawable(getContext(), R.drawable.ic_fab_create));
+        fab.setImageDrawable(App.getVecDrawable(getContext(), R.drawable.ic_fab_create));
         fab.setOnClickListener(view1 -> TabManager.getInstance().add(QmsChatFragment.class));
         fab.setVisibility(View.VISIBLE);
 
