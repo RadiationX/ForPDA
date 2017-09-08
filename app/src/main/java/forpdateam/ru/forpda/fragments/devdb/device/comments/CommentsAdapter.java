@@ -84,8 +84,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
             like = (Button) v.findViewById(R.id.item_like_btn);
             dislike = (Button) v.findViewById(R.id.item_dislike_btn);
 
-            like.setCompoundDrawablesRelativeWithIntrinsicBounds(App.getAppDrawable(v.getContext(), R.drawable.ic_thumb_up), null, null, null);
-            dislike.setCompoundDrawablesRelativeWithIntrinsicBounds(App.getAppDrawable(v.getContext(), R.drawable.ic_thumb_down), null, null, null);
+            like.setCompoundDrawablesRelativeWithIntrinsicBounds(App.getVecDrawable(v.getContext(), R.drawable.ic_thumb_up), null, null, null);
+            dislike.setCompoundDrawablesRelativeWithIntrinsicBounds(App.getVecDrawable(v.getContext(), R.drawable.ic_thumb_down), null, null, null);
             title.setOnClickListener(this::onTitleClick);
             rating.setBackground(App.getDrawableAttr(rating.getContext(), R.attr.count_background));
         }

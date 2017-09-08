@@ -38,7 +38,7 @@ public class NotesAddPopup {
             titleField.setText(item.getTitle());
             linkField.setText(item.getLink());
             contentField.setText(item.getContent());
-            addButton.setImageDrawable(App.getAppDrawable(context, R.drawable.ic_toolbar_done));
+            addButton.setImageDrawable(App.getVecDrawable(context, R.drawable.ic_toolbar_done));
 
         } else {
             title.setText("Создание заметки");

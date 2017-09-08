@@ -88,7 +88,7 @@ public class NotesFragment extends ListFragment implements NotesAdapter.ClickLis
         super.addBaseToolbarMenu();
         getMenu()
                 .add("Добавить")
-                .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_add))
+                .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_add))
                 .setOnMenuItemClickListener(item -> {
                     new NotesAddPopup(getContext(), null, this);
                     return true;

@@ -7,7 +7,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
@@ -43,7 +42,7 @@ public class FabOnScroll extends FloatingActionButton.Behavior {
         super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed);
         //Log.d("SUKA", "FabOnScroll onNestedPreScroll" + consumed[1] + " : " + dy);
         if (child.getAlpha() == 0.0f && Math.abs(dy) > App.px24) {
-            child.setImageDrawable(App.getAppDrawable(child.getContext(), dy > 0 ? R.drawable.ic_arrow_down : R.drawable.ic_arrow_up));
+            child.setImageDrawable(App.getVecDrawable(child.getContext(), dy > 0 ? R.drawable.ic_arrow_down : R.drawable.ic_arrow_up));
             child.clearAnimation();
             child.animate()
                     .scaleX(1.0f)

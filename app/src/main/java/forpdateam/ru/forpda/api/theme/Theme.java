@@ -2,9 +2,7 @@ package forpdateam.ru.forpda.api.theme;
 
 import android.util.Log;
 
-import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,7 +18,6 @@ import forpdateam.ru.forpda.api.theme.models.PollQuestionItem;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.client.ClientHelper;
-import okhttp3.MultipartBody;
 
 /**
  * Created by radiationx on 04.08.16.

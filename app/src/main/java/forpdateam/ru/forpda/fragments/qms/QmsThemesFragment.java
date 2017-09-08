@@ -106,7 +106,7 @@ public class QmsThemesFragment extends ListFragment {
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        fab.setImageDrawable(App.getAppDrawable(getContext(), R.drawable.ic_fab_create));
+        fab.setImageDrawable(App.getVecDrawable(getContext(), R.drawable.ic_fab_create));
         fab.setOnClickListener(view1 -> {
             Bundle args = new Bundle();
             args.putInt(QmsChatFragment.USER_ID_ARG, currentThemes.getUserId());

@@ -9,7 +9,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -28,9 +27,9 @@ import forpdateam.ru.forpda.api.favorites.Sorting;
 import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
 import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
-import forpdateam.ru.forpda.data.realm.favorites.FavItemBd;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
+import forpdateam.ru.forpda.data.realm.favorites.FavItemBd;
 import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.forum.ForumHelper;
@@ -174,6 +173,7 @@ public class FavoritesFragment extends ListFragment {
         orderSpinner = (Spinner) sortingView.findViewById(R.id.sorting_order);
         sortApply = (Button) sortingView.findViewById(R.id.sorting_apply);
         dialog = new BottomSheetDialog(getContext());
+
 
 
         viewsReady();

@@ -57,7 +57,7 @@ public class PanelItemAdapter extends RecyclerView.Adapter<PanelItemAdapter.View
                 }
             });
         } else if (type == TYPE_DRAWABLE) {
-            holder.button.setImageDrawable(App.getAppDrawable(holder.itemView.getContext(), item.getIconRes()));
+            holder.button.setImageDrawable(App.getVecDrawable(holder.itemView.getContext(), item.getIconRes()));
             //holder.button.setColorFilter(colorFilter);
         }
         if (item.getTitle() == null) {

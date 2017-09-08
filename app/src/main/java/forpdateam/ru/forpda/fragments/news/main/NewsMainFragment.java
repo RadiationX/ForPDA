@@ -28,7 +28,6 @@ import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.fragments.news.details.NewsDetailsFragment;
 import forpdateam.ru.forpda.fragments.news.main.timeline.NewsListAdapter;
 import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
-import forpdateam.ru.forpda.fragments.notes.NotesFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.Utils;

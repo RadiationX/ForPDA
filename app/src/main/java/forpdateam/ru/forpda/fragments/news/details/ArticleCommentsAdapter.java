@@ -1,14 +1,11 @@
 package forpdateam.ru.forpda.fragments.news.details;
 
-import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +18,7 @@ import java.util.Collection;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.news.models.Comment;
-import forpdateam.ru.forpda.api.news.models.DetailsPage;
 import forpdateam.ru.forpda.client.ClientHelper;
-import forpdateam.ru.forpda.rxapi.RxApi;
-import forpdateam.ru.forpda.utils.IntentHandler;
 
 /**
  * Created by radiationx on 03.09.17.
@@ -173,8 +167,8 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
             date = (TextView) v.findViewById(R.id.comment_date);
             likeCount = (TextView) v.findViewById(R.id.comment_like_count);
             likeImage = (ImageView) v.findViewById(R.id.comment_like_image);
-            heart = App.getAppDrawable(v.getContext(), R.drawable.ic_heart);
-            heart_outline = App.getAppDrawable(v.getContext(), R.drawable.ic_heart_outline);
+            heart = App.getVecDrawable(v.getContext(), R.drawable.ic_heart);
+            heart_outline = App.getVecDrawable(v.getContext(), R.drawable.ic_heart_outline);
             nick.setOnClickListener(v1 -> {
                 if (clickListener != null) {
                     clickListener.onNickClick(getItem(getLayoutPosition()), getLayoutPosition());

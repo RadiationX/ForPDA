@@ -428,7 +428,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     private void showMessagePanel() {
         messagePanel.setVisibility(View.VISIBLE);
         messagePanel.getHeightChangeListener().onChangedHeight(messagePanel.getLastHeight());
-        toggleMessagePanelItem.setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_transcribe_close));
+        toggleMessagePanelItem.setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_transcribe_close));
     }
 
     private void hideMessagePanel() {
@@ -436,7 +436,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         messagePanel.hidePopupWindows();
         hidePopupWindows();
         messagePanel.getHeightChangeListener().onChangedHeight(0);
-        toggleMessagePanelItem.setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_create));
+        toggleMessagePanelItem.setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_create));
     }
 
     @Override
@@ -444,7 +444,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         super.addBaseToolbarMenu();
         toggleMessagePanelItem = getMenu()
                 .add("Ответить")
-                .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_create))
+                .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_create))
                 .setOnMenuItemClickListener(menuItem -> {
                     toggleMessagePanel();
                     return false;
@@ -452,7 +452,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         refreshMenuItem = getMenu().add("Обновить")
-                .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_refresh))
+                .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_refresh))
                 .setOnMenuItemClickListener(menuItem -> {
                     loadData(REFRESH_ACTION);
                     return false;
@@ -569,11 +569,11 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                 getContext().getTheme().resolveAttribute(android.R.attr.actionBarItemBackground, outValue, true);
 
                 AppCompatImageButton btnNext = new AppCompatImageButton(searchView.getContext());
-                btnNext.setImageDrawable(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_search_next));
+                btnNext.setImageDrawable(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_search_next));
                 btnNext.setBackgroundResource(outValue.resourceId);
 
                 AppCompatImageButton btnPrev = new AppCompatImageButton(searchView.getContext());
-                btnPrev.setImageDrawable(App.getAppDrawable(getContext(), R.drawable.ic_toolbar_search_prev));
+                btnPrev.setImageDrawable(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_search_prev));
                 btnPrev.setBackgroundResource(outValue.resourceId);
 
                 ((LinearLayout) searchView.getChildAt(0)).addView(btnPrev, navButtonsParams);

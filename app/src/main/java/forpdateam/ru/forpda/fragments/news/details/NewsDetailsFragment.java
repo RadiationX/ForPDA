@@ -1,28 +1,20 @@
 package forpdateam.ru.forpda.fragments.news.details;
 
-import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -34,19 +26,12 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import java.util.ArrayList;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.devdb.models.Device;
 import forpdateam.ru.forpda.api.news.models.DetailsPage;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.fragments.devdb.device.comments.CommentsFragment;
-import forpdateam.ru.forpda.fragments.devdb.device.posts.PostsFragment;
-import forpdateam.ru.forpda.fragments.devdb.device.specs.SpecsFragment;
 import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
-import forpdateam.ru.forpda.fragments.notes.NotesFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
-import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
-import forpdateam.ru.forpda.views.ExtendedWebView;
 import forpdateam.ru.forpda.views.ScrimHelper;
 
 import static forpdateam.ru.forpda.utils.Utils.log;

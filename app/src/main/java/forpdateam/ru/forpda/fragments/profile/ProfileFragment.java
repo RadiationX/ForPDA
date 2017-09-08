@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.fragments.profile;
 
-import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -14,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
-import android.support.v7.graphics.Palette;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
@@ -23,9 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.view.Window;
 import android.view.animation.AlphaAnimation;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -148,7 +144,7 @@ public class ProfileFragment extends TabFragment {
                     return false;
                 });
         writeMenuItem = getMenu().add("Написать")
-                .setIcon(App.getAppDrawable(getContext(), R.drawable.ic_profile_toolbar_create))
+                .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_profile_toolbar_create))
                 .setOnMenuItemClickListener(item -> {
                     IntentHandler.handle(currentProfile.getContacts().get(0).first);
                     return false;
@@ -400,7 +396,7 @@ public class ProfileFragment extends TabFragment {
                 int px = dpToPx(20);
                 findViewById(R.id.drawer_item_icon).setPadding(px, px, px, px);
             }
-            ((ImageView) findViewById(R.id.drawer_item_icon)).setImageDrawable(App.getAppDrawable(getContext(), iconRes));
+            ((ImageView) findViewById(R.id.drawer_item_icon)).setImageDrawable(App.getVecDrawable(getContext(), iconRes));
         }
 
         public void setText(String text) {

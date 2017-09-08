@@ -13,6 +13,7 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -22,11 +23,11 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.content.res.AppCompatResources;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.SparseArray;
 import android.util.TypedValue;
 import android.webkit.WebSettings;
 import android.widget.Toast;
@@ -46,11 +47,8 @@ import org.acra.annotation.ReportsCrashes;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,7 +62,6 @@ import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.SimpleObservable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -104,7 +101,7 @@ public class App extends android.app.Application {
     public static int keyboardHeight = 0;
     public static int statusBarHeight = 0;
     public static int navigationBarHeight = 0;
-    public static SparseArray<Drawable> drawableCache = new SparseArray<>();
+    //public static SparseArray<Drawable> drawableCache = new SparseArray<>();
     private static App instance;
     //private final static Object lock = new Object();
 
@@ -153,7 +150,7 @@ public class App extends android.app.Application {
     }
 
     public static Drawable getDrawableAttr(Context context, @AttrRes int attr) {
-        return getAppDrawable(context, getDrawableResAttr(context, attr));
+        return getVecDrawable(context, getDrawableResAttr(context, attr));
     }
 
     public boolean isDarkTheme() {
@@ -174,8 +171,9 @@ public class App extends android.app.Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+
         RxJavaPlugins.setErrorHandler(throwable -> {
-            Log.d("SUKA", "RxJavaPlugins errorHandler "+throwable);
+            Log.d("SUKA", "RxJavaPlugins errorHandler " + throwable);
             throwable.printStackTrace();
         });
         setTheme(R.style.LightAppTheme);
@@ -204,13 +202,13 @@ public class App extends android.app.Application {
         px64 = getContext().getResources().getDimensionPixelSize(R.dimen.dp64);
 
         //Для более быстрого доступа к drawable при работе программы
-        for (Field f : R.drawable.class.getFields()) {
+        /*for (Field f : R.drawable.class.getFields()) {
             try {
                 if (!f.getName().contains("abc_"))
                     drawableCache.put(f.getInt(f), AppCompatResources.getDrawable(App.getContext(), f.getInt(f)));
             } catch (Exception ignore) {
             }
-        }
+        }*/
         keyboardHeight = getPreferences().getInt("keyboard_height", getContext().getResources().getDimensionPixelSize(R.dimen.default_keyboard_height));
         savedKeyboardHeight = keyboardHeight;
 
@@ -353,12 +351,17 @@ public class App extends android.app.Application {
         return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
-    public static Drawable getAppDrawable(int id) {
+    public static Drawable getAppVecDrawable(@DrawableRes int id) {
         return AppCompatResources.getDrawable(App.getContext(), id);
     }
 
-    public static Drawable getAppDrawable(Context context, int id) {
-        return AppCompatResources.getDrawable(context, id);
+    /*Only vector icon*/
+    public static Drawable getVecDrawable(Context context, @DrawableRes int id) {
+        Drawable drawable = AppCompatResources.getDrawable(context, id);
+        if (!(drawable instanceof VectorDrawableCompat || drawable instanceof VectorDrawable)) {
+            throw new RuntimeException();
+        }
+        return drawable;
     }
 
     private static DisplayImageOptions.Builder options = new DisplayImageOptions.Builder()
