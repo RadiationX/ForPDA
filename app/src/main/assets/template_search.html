@@ -46,16 +46,16 @@
                 <div class="header_wrapper">
                     <div class="avatar ${none_avatar} aec">
                         <b class="letter" onclick="IPostFunctions.showUserMenu('${post_id}')">${nick_letter}</b>
-                        <div class="img" style="background-image:url(${avatar});" onclick="IPostFunctions.showUserMenu('${post_id}')"></div>
-                        <div class="reputation" onclick="IPostFunctions.showReputationMenu('${post_id}')"><span>${reputation}</span>
+                        <div class="img" style="background-image:url(${avatar});" onclick="IPostFunctions.showUserMenu('${post_id}')" role="button" aria-label="Аватар"></div>
+                        <div class="reputation" onclick="IPostFunctions.showReputationMenu('${post_id}')" role="button" aria-label="Репутация ${reputation}"><span>${reputation}</span>
                         </div>
                     </div>
                     <span class="inf nick aec">
                         <span class="aec" onclick="IPostFunctions.showUserMenu('${post_id}')"><b>${nick}</b></span>
-                    <span class="group aec" style="color:${group_color};" onclick="ISearch.toast('Группа: ${group}')"><span>${group}</span></span>
+                    <span class="group aec" style="color:${group_color};" onclick="ISearch.toast('Группа: ${group}')" role="button" aria-label="Группа ${group}"><span>${group}</span></span>
                     </span>
                     <span class="inf date"><span>${date}</span></span>
-                    <a class="btn inf menu aec" onclick="IPostFunctions.showPostMenu('${post_id}')"><span>Меню</span></a>
+                    <a class="btn inf menu aec" onclick="IPostFunctions.showPostMenu('${post_id}')" role="button" aria-label="Меню сообщения"><span>Меню</span></a>
                 </div>
             </div>
             <div class="post_body emoticons">${body}</div>
@@ -63,11 +63,11 @@
         <!-- $EndBlock post -->
     </div>
     <div class="navigation">
-        <span class="button first ${first_disable} hidden" onclick="ITheme.firstPage()"><i class="icon"></i></span>
-        <span class="button prev ${prev_disable}" onclick="ITheme.prevPage()"><i class="icon"></i></span>
-        <span class="button page" onclick="ITheme.selectPage()"><b>Выбор</b><i class="icon"></i></span>
-        <span class="button next ${next_disable}" onclick="ITheme.nextPage()" ><i class="icon"></i></span>
-        <span class="button last ${last_disable} hidden" onclick="ITheme.lastPage()"><i class="icon"></i></span>
+        <span class="button first ${first_disable} hidden" onclick="ITheme.firstPage()" role="button" aria-label="К первой странице"><i class="icon"></i></span>
+        <span class="button prev ${prev_disable}" onclick="ITheme.prevPage()" role="button" aria-label="К предыдущей странице"><i class="icon"></i></span>
+        <span class="button page" onclick="ITheme.selectPage()" role="button" aria-label="Выбор страницы"><b>Выбор</b><i class="icon"></i></span>
+        <span class="button next ${next_disable}" onclick="ITheme.nextPage()" role="button" aria-label="К следующей странице"><i class="icon"></i></span>
+        <span class="button last ${last_disable} hidden" onclick="ITheme.lastPage()" role="button" aria-label="К последней странице"><i class="icon"></i></span>
     </div>
     <!--<div id="padding_for_message_panel" style="padding-bottom: 4em;"></div>-->
     <script type="text/javascript">

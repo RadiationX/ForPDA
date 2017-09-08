@@ -38,7 +38,6 @@
                     android:id="@+id/toolbar_image_background"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:contentDescription="@string/parallax_background"
                     android:scaleType="centerCrop"
                     android:transitionName="toolbarCover"
                     app:layout_collapseMode="parallax"

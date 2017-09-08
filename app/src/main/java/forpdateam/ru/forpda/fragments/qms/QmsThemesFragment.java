@@ -128,6 +128,7 @@ public class QmsThemesFragment extends ListFragment {
             ImageLoader.getInstance().displayImage(avatarUrl, toolbarImageView);
             toolbarImageView.setVisibility(View.VISIBLE);
             toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + currentThemes.getUserId()));
+            toolbarImageView.setContentDescription("Аватар пользователя");
         } else {
             toolbarImageView.setVisibility(View.GONE);
         }

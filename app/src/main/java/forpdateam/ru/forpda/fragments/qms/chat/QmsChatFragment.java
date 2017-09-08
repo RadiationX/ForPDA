@@ -411,6 +411,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
             ImageLoader.getInstance().displayImage(currentChat.getAvatarUrl(), toolbarImageView);
             toolbarImageView.setVisibility(View.VISIBLE);
             toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + currentChat.getUserId()));
+            toolbarImageView.setContentDescription("Аватар пользователя");
         } else {
             toolbarImageView.setVisibility(View.GONE);
         }

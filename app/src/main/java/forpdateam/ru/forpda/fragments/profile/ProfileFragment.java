@@ -124,10 +124,10 @@ public class ProfileFragment extends TabFragment {
 
         ScrimHelper scrimHelper = new ScrimHelper(appBarLayout, toolbarLayout);
         scrimHelper.setScrimListener(scrim1 -> {
-            if(scrim1){
+            if (scrim1) {
                 toolbar.getNavigationIcon().clearColorFilter();
                 toolbar.getOverflowIcon().clearColorFilter();
-            }else {
+            } else {
                 toolbar.getNavigationIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
                 toolbar.getOverflowIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
             }
@@ -214,9 +214,10 @@ public class ProfileFragment extends TabFragment {
         infoBlock.addView(infoItem);
     }
 
-    private void addContactItem(int iconRes, String data) {
+    private void addContactItem(int iconRes, String data, String text) {
         ContactItem contactItem = new ContactItem(getContext());
         contactItem.setIcon(iconRes);
+        contactItem.setText(text);
         contactItem.setOnClickListener(view1 -> IntentHandler.handle(data));
         contactList.addView(contactItem);
     }
@@ -334,7 +335,7 @@ public class ProfileFragment extends TabFragment {
         }
         if (currentProfile.getContacts().size() > 1) {
             for (int i = 1; i < currentProfile.getContacts().size(); i++)
-                addContactItem(getIconRes(currentProfile.getContacts().get(i).second), currentProfile.getContacts().get(i).first);
+                addContactItem(getIconRes(currentProfile.getContacts().get(i).second), currentProfile.getContacts().get(i).first, currentProfile.getContacts().get(i).second);
             findViewById(R.id.profile_block_contacts).setVisibility(View.VISIBLE);
         }
         if (currentProfile.getDevices().size() > 0) {
@@ -400,6 +401,10 @@ public class ProfileFragment extends TabFragment {
                 findViewById(R.id.drawer_item_icon).setPadding(px, px, px, px);
             }
             ((ImageView) findViewById(R.id.drawer_item_icon)).setImageDrawable(App.getAppDrawable(getContext(), iconRes));
+        }
+
+        public void setText(String text) {
+            setContentDescription(text);
         }
     }
 

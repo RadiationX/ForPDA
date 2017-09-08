@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -38,6 +39,8 @@ import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.settings.Preferences;
 import io.reactivex.disposables.CompositeDisposable;
+
+import static android.content.Context.ACCESSIBILITY_SERVICE;
 
 /**
  * Created by radiationx on 07.08.16.
@@ -269,8 +272,10 @@ public class TabFragment extends Fragment {
 
         //fragmentContainer.setPadding(0, App.getStatusBarHeight(), 0, 0);
 
-        toolbar.setNavigationOnClickListener(configuration.isAlone() || configuration.isMenu() ? getMainActivity().getToggleListener() : getMainActivity().getRemoveTabListener());
-        toolbar.setNavigationIcon(configuration.isAlone() || configuration.isMenu() ? R.drawable.ic_toolbar_hamburger : R.drawable.ic_toolbar_arrow_back);
+        boolean isMenu = configuration.isAlone() || configuration.isMenu();
+        toolbar.setNavigationOnClickListener(isMenu ? getMainActivity().getToggleListener() : getMainActivity().getRemoveTabListener());
+        toolbar.setNavigationIcon(isMenu ? R.drawable.ic_toolbar_hamburger : R.drawable.ic_toolbar_arrow_back);
+        toolbar.setNavigationContentDescription(isMenu ? "Открыть меню" : "Закрыть вкладку");
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             findViewById(R.id.toolbar_shadow_prelp).setVisibility(View.VISIBLE);
@@ -432,6 +437,15 @@ public class TabFragment extends Fragment {
         Client.getInstance().removeNetworkObserver(networkObserver);
         App.getInstance().removePreferenceChangeObserver(tabPreferenceObserver);
         App.getInstance().removeStatusBarSizeObserver(statusBarSizeObserver);
+    }
+
+    protected boolean isTalkBackEnabled() {
+        AccessibilityManager am = (AccessibilityManager) getActivity().getSystemService(ACCESSIBILITY_SERVICE);
+        boolean isAccessibilityEnabled = am.isEnabled();
+        boolean isExploreByTouchEnabled = am.isTouchExplorationEnabled();
+        Log.d("SUKA", "CHECK TALKBACK " + isAccessibilityEnabled + " : " + isExploreByTouchEnabled);
+        //return isExploreByTouchEnabled;
+        return false;
     }
 
     /* Experiment */

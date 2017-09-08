@@ -116,13 +116,32 @@ public class PaginationHelper {
 
     private void setupTabLayout(TabLayout tabLayout, boolean firstLast) {
         if (firstLast) {
-            tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_toolbar_chevron_double_left).setTag(TAG_FIRST));
+            tabLayout.addTab(tabLayout.newTab()
+                    .setIcon(R.drawable.ic_toolbar_chevron_double_left)
+                    .setTag(TAG_FIRST)
+                    .setContentDescription("К первой странице"));
         }
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_toolbar_chevron_left).setTag(TAG_PREV));
-        tabLayout.addTab(tabLayout.newTab().setText("Выбор").setTag(TAG_SELECT));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_toolbar_chevron_right).setTag(TAG_NEXT));
+
+        tabLayout.addTab(tabLayout.newTab()
+                .setIcon(R.drawable.ic_toolbar_chevron_left)
+                .setTag(TAG_PREV)
+                .setContentDescription("К предыдущей странице"));
+
+        tabLayout.addTab(tabLayout.newTab()
+                .setText("Выбор")
+                .setTag(TAG_SELECT)
+                .setContentDescription("Выбор страницы"));
+
+        tabLayout.addTab(tabLayout.newTab()
+                .setIcon(R.drawable.ic_toolbar_chevron_right)
+                .setTag(TAG_NEXT)
+                .setContentDescription("К следующей странице"));
+
         if (firstLast) {
-            tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_toolbar_chevron_double_right).setTag(TAG_LAST));
+            tabLayout.addTab(tabLayout.newTab()
+                    .setIcon(R.drawable.ic_toolbar_chevron_double_right)
+                    .setTag(TAG_LAST)
+                    .setContentDescription("К последней странице"));
         }
 
         tabLayout.addOnTabSelectedListener(tabSelectedListener);

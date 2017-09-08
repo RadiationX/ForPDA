@@ -62,7 +62,9 @@ public class PanelItemAdapter extends RecyclerView.Adapter<PanelItemAdapter.View
         }
         if (item.getTitle() == null) {
             holder.title.setVisibility(View.GONE);
+            holder.itemView.setContentDescription(item.getText());
         } else {
+            holder.itemView.setContentDescription(item.getTitle());
             holder.title.setText(item.getTitle());
             holder.title.setVisibility(View.VISIBLE);
         }

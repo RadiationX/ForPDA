@@ -367,6 +367,9 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         }
         if (currentPage == null) {
             new Handler().postDelayed(() -> (appBarLayout).setExpanded(false, true), 225);
+            /*if (!isTalkBackEnabled()) {
+                new Handler().postDelayed(() -> (appBarLayout).setExpanded(false, true), 225);
+            }*/
         }
 
         currentPage = newPage;
@@ -402,7 +405,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     protected void updateMainHistory(ThemePage themePage) {
         long time = System.currentTimeMillis();
         HistoryFragment.addToHistory(themePage.getId(), themePage.getTitle());
-        Log.d("SUKA", "ADD TO HISTORY "+(System.currentTimeMillis()-time));
+        Log.d("SUKA", "ADD TO HISTORY " + (System.currentTimeMillis() - time));
     }
 
     @CallSuper
