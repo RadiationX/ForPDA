@@ -53,6 +53,10 @@ public class KeyboardUtil {
             int diff = height - r.bottom;
             //Log.e("SUKA", "GLL " + height + " : " + diff);
 
+            //Фикс для мультиоконности
+            if (diff < 0) {
+                return;
+            }
             //if it could be a keyboard add the padding to the view
             if (diff != 0) {
                 // if the use-able screen height differs from the total screen height we assume that it shows a keyboard now
