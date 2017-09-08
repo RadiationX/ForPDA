@@ -95,7 +95,7 @@ public class CodesPanelItem extends BasePanelItem {
 
         if (App.getInstance().getPreferences().getBoolean("message_panel.tooltip.user_sorting", true)) {
             SimpleInstruction instruction = new SimpleInstruction(getContext());
-            instruction.setText("Вы можете настроить расположение элементов, перемещая их!");
+            instruction.setText(App.getInstance().getString(R.string.code_panel_instruction));
             instruction.setOnCloseClick((v) -> {
                 App.getInstance().getPreferences().edit().putBoolean("message_panel.tooltip.user_sorting", false).apply();
             });
@@ -109,13 +109,13 @@ public class CodesPanelItem extends BasePanelItem {
         String tag = "LIST";
         if (selected.length() > 0) {
             new AlertDialog.Builder(getContext())
-                    .setMessage("Преобразовать выделенную строку в список?")
-                    .setPositiveButton("Да", (dialog, which) -> {
+                    .setMessage(R.string.transform_string_to_list)
+                    .setPositiveButton(R.string.ok, (dialog, which) -> {
                         String[] lines = TextUtils.split(selected, "\n");
                         Collections.addAll(listLines, lines);
                         messagePanel.deleteSelected();
                     })
-                    .setNegativeButton("Нет", null)
+                    .setNegativeButton(R.string.no, null)
                     .setOnDismissListener(dialog -> listInsert(tag, num, listLines))
                     .show();
         } else {
@@ -130,11 +130,11 @@ public class CodesPanelItem extends BasePanelItem {
         final EditText messageField = (EditText) layout.findViewById(R.id.report_text_field);
         final TextInputLayout inputLayout = (TextInputLayout) layout.findViewById(R.id.report_input_layout);
         final int[] i = {listLines.size() + 1};
-        inputLayout.setHint("Пункт списка " + i[0]);
+        inputLayout.setHint(App.getInstance().getString(R.string.codes_list_item) + i[0]);
         AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                 .setView(layout)
-                .setPositiveButton("Добавить", null)
-                .setNegativeButton("Закрыть", (dialog, which) -> {
+                .setPositiveButton(R.string.add, null)
+                .setNegativeButton(R.string.close, (dialog, which) -> {
                     StringBuilder body = new StringBuilder();
                     for (String line : listLines) {
                         body.append("[*]").append(line).append('\n');
@@ -181,16 +181,19 @@ public class CodesPanelItem extends BasePanelItem {
 
     private void sizeInsert(ButtonData item) {
         CharSequence[] items = {
-                "Размер 1 (8pt)",
-                "Размер 2 (10pt)",
-                "Размер 3 (12pt)",
-                "Размер 4 (14pt)",
-                "Размер 5 (18pt)",
-                "Размер 6 (24pt)",
-                "Размер 7 (36pt)"
+                "1 (8pt)",
+                "2 (10pt)",
+                "3 (12pt)",
+                "4 (14pt)",
+                "5 (18pt)",
+                "6 (24pt)",
+                "7 (36pt)"
         };
+        for (int i = 0; i < items.length; i++) {
+            items[i] = App.getInstance().getString(R.string.codes_text_size_item) + items[i];
+        }
         new AlertDialog.Builder(getContext())
-                .setTitle("Размер текста")
+                .setTitle(R.string.codes_text_size)
                 .setItems(items, (dialog, which) -> {
                     List<Pair<String, String>> resultHeaders = new ArrayList<>();
                     resultHeaders.add(new Pair<>(null, Integer.toString(which + 1)));
@@ -198,16 +201,16 @@ public class CodesPanelItem extends BasePanelItem {
                     messagePanel.insertText(bbcodes[0], bbcodes[1]);
                     dialog.dismiss();
                 })
-                .setNegativeButton("Отмена", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
     private void urlInsert(ButtonData item) {
         String selected = messagePanel.getSelectedText();
         InsertHelper insertHelper = new InsertHelper(getContext());
-        insertHelper.addHeader("Ссылка", null);
+        insertHelper.addHeader(App.getInstance().getString(R.string.codes_link), null);
         if (selected.length() == 0)
-            insertHelper.setBody("Текст ссылки", null);
+            insertHelper.setBody(App.getInstance().getString(R.string.codes_link_text), null);
         insertHelper.setInsertListener((resultHeaders, bodyResult) -> {
             String[] bbcodes = createBbCode(item.getText(), resultHeaders, bodyResult);
             messagePanel.insertText(bbcodes[0], bbcodes[1]);
@@ -218,9 +221,9 @@ public class CodesPanelItem extends BasePanelItem {
     private void spoilerInsert(ButtonData item) {
         String selected = messagePanel.getSelectedText();
         InsertHelper insertHelper = new InsertHelper(getContext());
-        insertHelper.addHeader("Заголовок", null);
+        insertHelper.addHeader(App.getInstance().getString(R.string.codes_block_title), null);
         if (selected.length() == 0)
-            insertHelper.setBody("Текст спойлера", null);
+            insertHelper.setBody(App.getInstance().getString(R.string.codes_spoiler_text), null);
         insertHelper.setInsertListener((resultHeaders, bodyResult) -> {
             String[] bbcodes = createBbCode(item.getText(), resultHeaders, bodyResult);
             messagePanel.insertText(bbcodes[0], bbcodes[1]);
@@ -231,9 +234,9 @@ public class CodesPanelItem extends BasePanelItem {
     private void codeInsert(ButtonData item) {
         String selected = messagePanel.getSelectedText();
         InsertHelper insertHelper = new InsertHelper(getContext());
-        insertHelper.addHeader("Заголовок", null);
+        insertHelper.addHeader(App.getInstance().getString(R.string.codes_block_title), null);
         if (selected.length() == 0)
-            insertHelper.setBody("Код", null);
+            insertHelper.setBody(App.getInstance().getString(R.string.codes_code_text), null);
         insertHelper.setInsertListener((resultHeaders, bodyResult) -> {
             String[] bbcodes = createBbCode(item.getText(), resultHeaders, bodyResult);
             messagePanel.insertText(bbcodes[0], bbcodes[1]);
@@ -244,11 +247,11 @@ public class CodesPanelItem extends BasePanelItem {
     private void quoteInsert(ButtonData item) {
         String selected = messagePanel.getSelectedText();
         InsertHelper insertHelper = new InsertHelper(getContext());
-        insertHelper.addHeader("Заголовок", "name");
+        insertHelper.addHeader(App.getInstance().getString(R.string.codes_block_title), "name");
         /*insertHelper.addHeader("Дата", "date");
         insertHelper.addHeader("ID поста", "post");*/
         if (selected.length() == 0)
-            insertHelper.setBody("Текст цитаты", null);
+            insertHelper.setBody(App.getInstance().getString(R.string.codes_quote_text), null);
         insertHelper.setInsertListener((resultHeaders, bodyResult) -> {
             String[] bbcodes = createBbCode(item.getText(), resultHeaders, bodyResult);
             messagePanel.insertText(bbcodes[0], bbcodes[1]);
@@ -310,7 +313,6 @@ public class CodesPanelItem extends BasePanelItem {
     }
 
 
-
     @Override
     protected void onDetachedFromWindow() {
         List<String> listCodes = new ArrayList<>();
@@ -326,29 +328,29 @@ public class CodesPanelItem extends BasePanelItem {
         if (codes != null) return codes;
         codes = new ArrayList<>();
         ArrayList<ButtonData> tempCodes = new ArrayList<>();
-        tempCodes.add(new ButtonData("B", R.drawable.ic_code_bold, "Жирный"));
-        tempCodes.add(new ButtonData("I", R.drawable.ic_code_italic, "Курсив"));
-        tempCodes.add(new ButtonData("U", R.drawable.ic_code_underline, "Подчеркнуть"));
-        tempCodes.add(new ButtonData("S", R.drawable.ic_code_s, "Зачеркнуть"));
-        tempCodes.add(new ButtonData("URL", R.drawable.ic_code_url, "Ссылка"));
-        tempCodes.add(new ButtonData("SPOILER", R.drawable.ic_code_spoiler, "Спойлер"));
-        tempCodes.add(new ButtonData("OFFTOP", R.drawable.ic_code_offtop, "Оффтоп"));
-        tempCodes.add(new ButtonData("QUOTE", R.drawable.ic_code_quote, "Цитата"));
-        tempCodes.add(new ButtonData("CODE", R.drawable.ic_code_code, "Код"));
-        tempCodes.add(new ButtonData("COLOR", R.drawable.ic_code_color, "Цвет текста"));
-        tempCodes.add(new ButtonData("SIZE", R.drawable.ic_code_size, "Размер текста"));
+        tempCodes.add(new ButtonData("B", R.drawable.ic_code_bold, App.getInstance().getString(R.string.codes_name_bold)));
+        tempCodes.add(new ButtonData("I", R.drawable.ic_code_italic, App.getInstance().getString(R.string.codes_name_italic)));
+        tempCodes.add(new ButtonData("U", R.drawable.ic_code_underline, App.getInstance().getString(R.string.codes_name_underline)));
+        tempCodes.add(new ButtonData("S", R.drawable.ic_code_s, App.getInstance().getString(R.string.codes_name_s)));
+        tempCodes.add(new ButtonData("URL", R.drawable.ic_code_url, App.getInstance().getString(R.string.codes_name_link)));
+        tempCodes.add(new ButtonData("SPOILER", R.drawable.ic_code_spoiler, App.getInstance().getString(R.string.codes_name_spoiler)));
+        tempCodes.add(new ButtonData("OFFTOP", R.drawable.ic_code_offtop, App.getInstance().getString(R.string.codes_name_offtop)));
+        tempCodes.add(new ButtonData("QUOTE", R.drawable.ic_code_quote, App.getInstance().getString(R.string.codes_name_quote)));
+        tempCodes.add(new ButtonData("CODE", R.drawable.ic_code_code, App.getInstance().getString(R.string.codes_name_code)));
+        tempCodes.add(new ButtonData("COLOR", R.drawable.ic_code_color, App.getInstance().getString(R.string.codes_name_text_color)));
+        tempCodes.add(new ButtonData("SIZE", R.drawable.ic_code_size, App.getInstance().getString(R.string.codes_name_text_size)));
 
-        tempCodes.add(new ButtonData("HIDE", R.drawable.ic_code_hide, "Скрытый"));
-        tempCodes.add(new ButtonData("BACKGROUND", R.drawable.ic_code_background, "Цвет фона"));
-        tempCodes.add(new ButtonData("LIST", R.drawable.ic_code_list, "Обычный список"));
-        tempCodes.add(new ButtonData("NUMLIST", R.drawable.ic_code_numlist, "Нумерованный список"));
+        tempCodes.add(new ButtonData("HIDE", R.drawable.ic_code_hide, App.getInstance().getString(R.string.codes_name_hide)));
+        tempCodes.add(new ButtonData("BACKGROUND", R.drawable.ic_code_background, App.getInstance().getString(R.string.codes_name_bg_color)));
+        tempCodes.add(new ButtonData("LIST", R.drawable.ic_code_list, App.getInstance().getString(R.string.codes_name_list)));
+        tempCodes.add(new ButtonData("NUMLIST", R.drawable.ic_code_numlist, App.getInstance().getString(R.string.codes_name_numlist)));
 
-        tempCodes.add(new ButtonData("LEFT", R.drawable.ic_code_left, "Влево"));
-        tempCodes.add(new ButtonData("CENTER", R.drawable.ic_code_center, "По центру"));
-        tempCodes.add(new ButtonData("RIGHT", R.drawable.ic_code_right, "Вправо"));
-        tempCodes.add(new ButtonData("SUB", R.drawable.ic_code_sub, "Снизу"));
-        tempCodes.add(new ButtonData("SUP", R.drawable.ic_code_sup, "Сверху"));
-        tempCodes.add(new ButtonData("CUR", R.drawable.ic_code_cur, "Куратор"));
+        tempCodes.add(new ButtonData("LEFT", R.drawable.ic_code_left, App.getInstance().getString(R.string.codes_name_left)));
+        tempCodes.add(new ButtonData("CENTER", R.drawable.ic_code_center, App.getInstance().getString(R.string.codes_name_center)));
+        tempCodes.add(new ButtonData("RIGHT", R.drawable.ic_code_right, App.getInstance().getString(R.string.codes_name_right)));
+        tempCodes.add(new ButtonData("SUB", R.drawable.ic_code_sub, App.getInstance().getString(R.string.codes_name_sub)));
+        tempCodes.add(new ButtonData("SUP", R.drawable.ic_code_sup, App.getInstance().getString(R.string.codes_name_sup)));
+        tempCodes.add(new ButtonData("CUR", R.drawable.ic_code_cur, App.getInstance().getString(R.string.codes_name_curator)));
 
 
         String sorted = App.getInstance().getPreferences().getString("message_panel.bb_codes.sorted", null);

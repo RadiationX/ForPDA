@@ -64,7 +64,7 @@ public class InsertHelper {
     public void show() {
         AlertDialog alertDialog = new AlertDialog.Builder(context)
                 .setView(layoutContainer)
-                .setPositiveButton("Вставить", (dialog, which) -> {
+                .setPositiveButton(R.string.insert, (dialog, which) -> {
                     if (insertListener != null) {
                         ArrayList<Pair<String, String>> resultHeaders = new ArrayList<>();
                         for (int i = 0; i < headers.size(); i++) {
@@ -85,7 +85,7 @@ public class InsertHelper {
                         }
                     }
                 })
-                .setNegativeButton("Отмена", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
         if (alertDialog.getWindow() != null)
             alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);

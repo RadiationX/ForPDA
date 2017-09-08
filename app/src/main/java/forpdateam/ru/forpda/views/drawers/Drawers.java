@@ -359,8 +359,8 @@ public class Drawers {
 
     public void closeAllTabs() {
         new AlertDialog.Builder(activity)
-                .setMessage("Закрыть остальные вкладки?")
-                .setPositiveButton("Да", (dialog, which) -> {
+                .setMessage(R.string.ask_close_othher_tabs)
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
                     closeTabs();
                     List<TabFragment> fragmentList = new ArrayList<>();
 
@@ -374,7 +374,7 @@ public class Drawers {
                         TabManager.getInstance().remove(fragment);
                     }
                 })
-                .setNegativeButton("Нет", null)
+                .setNegativeButton(R.string.no, null)
                 .show();
     }
 

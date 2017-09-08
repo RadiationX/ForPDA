@@ -72,7 +72,7 @@ public class ChatThemeCreator {
     private void initCreatorViews() {
         titleField.addTextChangedListener(textWatcher);
         nickField.addTextChangedListener(textWatcher);
-        editItem = fragment.getMenu().add("Изменить")
+        editItem = fragment.getMenu().add(R.string.menu_edit_chat)
                 .setIcon(App.getVecDrawable(fragment.getContext(), R.drawable.ic_fab_create))
                 .setOnMenuItemClickListener(menuItem -> {
                     viewStub.setVisibility(View.VISIBLE);
@@ -80,7 +80,7 @@ public class ChatThemeCreator {
                     editItem.setVisible(false);
                     return false;
                 });
-        doneItem = fragment.getMenu().add("Ок")
+        doneItem = fragment.getMenu().add(R.string.ok)
                 .setIcon(App.getVecDrawable(fragment.getContext(), R.drawable.ic_toolbar_done))
                 .setOnMenuItemClickListener(menuItem -> {
                     viewStub.setVisibility(View.GONE);
@@ -117,11 +117,11 @@ public class ChatThemeCreator {
 
     public void sendNewTheme() {
         if (userNick == null || userNick.isEmpty()) {
-            Toast.makeText(fragment.getContext(), "Введите ник пользователя", Toast.LENGTH_SHORT).show();
+            Toast.makeText(fragment.getContext(), R.string.chat_creator_enter_nick, Toast.LENGTH_SHORT).show();
         } else if (titleField.getText().toString().isEmpty()) {
-            Toast.makeText(fragment.getContext(), "Введите название темы", Toast.LENGTH_SHORT).show();
+            Toast.makeText(fragment.getContext(), R.string.chat_creator_enter_title, Toast.LENGTH_SHORT).show();
         } else if (fragment.getMessagePanel().getMessage().isEmpty()) {
-            Toast.makeText(fragment.getContext(), "Введите сообщение", Toast.LENGTH_SHORT).show();
+            Toast.makeText(fragment.getContext(), R.string.chat_creator_enter_message, Toast.LENGTH_SHORT).show();
         } else {
             this.fragment.onCreateNewTheme(userNick, titleField.getText().toString(), fragment.getMessagePanel().getMessage());
         }

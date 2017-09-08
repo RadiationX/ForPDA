@@ -57,19 +57,19 @@ public class QmsContactsFragment extends ListFragment {
     private QmsContactsAdapter.OnItemClickListener onLongItemClickListener = contact -> {
         if (dialogMenu == null) {
             dialogMenu = new AlertDialogMenu<>();
-            dialogMenu.addItem("Профиль", (context, data) -> {
+            dialogMenu.addItem(getString(R.string.profile), (context, data) -> {
                 IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data.getId());
             });
-            dialogMenu.addItem("В черный список", (context, data) -> {
+            dialogMenu.addItem(getString(R.string.add_to_blacklist), (context, data) -> {
                 mainSubscriber.subscribe(RxApi.Qms().blockUser(data.getNick()), qmsContacts -> {
                     if (qmsContacts.size() > 0) {
-                        Toast.makeText(getContext(), "Пользователь добавлен в черный список", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), R.string.user_added_to_blacklist, Toast.LENGTH_SHORT).show();
                     }
                 }, new ArrayList<>());
             });
-            dialogMenu.addItem("Удалить", (context, data) -> context.deleteDialog(data.getId()));
-            dialogMenu.addItem("Создать заметку", (context1, data) -> {
-                String title = "Диалоги с " + data.getNick();
+            dialogMenu.addItem(getString(R.string.delete), (context, data) -> context.deleteDialog(data.getId()));
+            dialogMenu.addItem(getString(R.string.menu_create_note), (context1, data) -> {
+                String title = getString(R.string.dialogs_with) + " " + data.getNick();
                 String url = "http://4pda.ru/forum/index.php?act=qms&mid=" + data.getId();
                 NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);
             });
@@ -82,7 +82,7 @@ public class QmsContactsFragment extends ListFragment {
     public QmsContactsFragment() {
         configuration.setAlone(true);
         configuration.setMenu(true);
-        configuration.setDefaultTitle("Контакты");
+        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_contacts));
     }
 
     @Override
@@ -155,8 +155,8 @@ public class QmsContactsFragment extends ListFragment {
                 return false;
             }
         });
-        searchView.setQueryHint("Пользователь");
-        getMenu().add("Черный список")
+        searchView.setQueryHint(getString(R.string.user));
+        getMenu().add(R.string.blacklist)
                 .setOnMenuItemClickListener(item -> {
                     TabManager.getInstance().add(QmsBlackListFragment.class);
                     return false;

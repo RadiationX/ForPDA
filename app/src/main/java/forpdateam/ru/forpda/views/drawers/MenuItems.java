@@ -4,6 +4,7 @@ import android.support.annotation.DrawableRes;
 
 import java.util.ArrayList;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.auth.AuthFragment;
@@ -26,19 +27,19 @@ public class MenuItems {
     private ArrayList<MenuItem> createdMenuItems = new ArrayList<>();
 
     public MenuItems() {
-        createdMenuItems.add(new MenuItem("Авторизация", R.drawable.ic_person_add, AuthFragment.class));
+        createdMenuItems.add(new MenuItem(App.getInstance().getString(R.string.fragment_title_auth), R.drawable.ic_person_add, AuthFragment.class));
         //if (Objects.equals(BuildConfig.FLAVOR, "dev"))
-            createdMenuItems.add(new MenuItem("Новости", R.drawable.ic_newspaper, NewsMainFragment.class));
-        createdMenuItems.add(new MenuItem("Избранное", R.drawable.ic_star, FavoritesFragment.class));
-        createdMenuItems.add(new MenuItem("Контакты", R.drawable.ic_contacts, QmsContactsFragment.class));
-        createdMenuItems.add(new MenuItem("Ответы", R.drawable.ic_notifications, MentionsFragment.class));
-        createdMenuItems.add(new MenuItem("DevDB", R.drawable.ic_devices_other, BrandsFragment.class));
+            createdMenuItems.add(new MenuItem(App.getInstance().getString(R.string.fragment_title_news), R.drawable.ic_newspaper, NewsMainFragment.class));
+        createdMenuItems.add(new MenuItem(App.getInstance().getString(R.string.fragment_title_favorite), R.drawable.ic_star, FavoritesFragment.class));
+        createdMenuItems.add(new MenuItem(App.getInstance().getString(R.string.fragment_title_contacts), R.drawable.ic_contacts, QmsContactsFragment.class));
+        createdMenuItems.add(new MenuItem(App.getInstance().getString(R.string.fragment_title_mentions), R.drawable.ic_notifications, MentionsFragment.class));
+        createdMenuItems.add(new MenuItem(App.getInstance().getString(R.string.fragment_title_devdb), R.drawable.ic_devices_other, BrandsFragment.class));
         //createdMenuItems.add(new MenuItem("DevDB dev", R.drawable.ic_devices_other, DeviceFragment.class));
-        createdMenuItems.add(new MenuItem("Форум", R.drawable.ic_forum, ForumFragment.class));
-        createdMenuItems.add(new MenuItem("Поиск", R.drawable.ic_search, SearchFragment.class));
-        createdMenuItems.add(new MenuItem("История", R.drawable.ic_history, HistoryFragment.class));
-        createdMenuItems.add(new MenuItem("Заметки", R.drawable.ic_bookmark, NotesFragment.class));
-        createdMenuItems.add(new MenuItem("Настройки", R.drawable.ic_settings, ACTION_APP_SETTINGS));
+        createdMenuItems.add(new MenuItem(App.getInstance().getString(R.string.fragment_title_forum), R.drawable.ic_forum, ForumFragment.class));
+        createdMenuItems.add(new MenuItem(App.getInstance().getString(R.string.fragment_title_search), R.drawable.ic_search, SearchFragment.class));
+        createdMenuItems.add(new MenuItem(App.getInstance().getString(R.string.fragment_title_history), R.drawable.ic_history, HistoryFragment.class));
+        createdMenuItems.add(new MenuItem(App.getInstance().getString(R.string.fragment_title_notes), R.drawable.ic_bookmark, NotesFragment.class));
+        createdMenuItems.add(new MenuItem(App.getInstance().getString(R.string.activity_title_settings), R.drawable.ic_settings, ACTION_APP_SETTINGS));
     }
 
     public ArrayList<MenuItem> getCreatedMenuItems() {

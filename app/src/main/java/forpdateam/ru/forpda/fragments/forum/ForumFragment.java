@@ -15,6 +15,7 @@ import com.unnamed.b.atv.view.AndroidTreeView;
 import java.util.ArrayList;
 import java.util.List;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
@@ -54,13 +55,13 @@ public class ForumFragment extends TabFragment {
         if (forumMenu == null) {
             forumMenu = new AlertDialogMenu<>();
             showedForumMenu = new AlertDialogMenu<>();
-            forumMenu.addItem("Открыть форум", (context, data) -> {
+            forumMenu.addItem(getString(R.string.open_forum), (context, data) -> {
                 Bundle args = new Bundle();
                 args.putInt(TopicsFragment.TOPICS_ID_ARG, data.getId());
                 TabManager.getInstance().add(TopicsFragment.class, args);
             });
-            forumMenu.addItem("Скопировать ссылку", (context, data) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getId()))));
-            forumMenu.addItem("Отметить прочитанным", (context, data) -> {
+            forumMenu.addItem(getString(R.string.menu_copy_link), (context, data) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getId()))));
+            forumMenu.addItem(getString(R.string.mark_read), (context, data) -> {
 
             });
         }
@@ -81,7 +82,7 @@ public class ForumFragment extends TabFragment {
 
     public ForumFragment() {
         configuration.setUseCache(true);
-        configuration.setDefaultTitle("Форум");
+        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_forum));
     }
 
     @Override
@@ -109,21 +110,21 @@ public class ForumFragment extends TabFragment {
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        getMenu().add("Обновить форумы")
+        getMenu().add(R.string.refresh_forums)
                 .setOnMenuItemClickListener(item -> {
                     loadData();
                     return false;
                 });
-        getMenu().add("Отметить все прочитанными")
+        getMenu().add(R.string.mark_all_read)
                 .setOnMenuItemClickListener(item -> {
                     new AlertDialog.Builder(getContext())
-                            .setMessage("Отметить все прочитанными?")
-                            .setPositiveButton("Да", (dialog, which) -> {
+                            .setMessage(getString(R.string.mark_all_read) + "?")
+                            .setPositiveButton(R.string.ok, (dialog, which) -> {
                                 ForumHelper.markAllRead(o -> {
                                     loadData();
                                 });
                             })
-                            .setNegativeButton("Нет", null)
+                            .setNegativeButton(R.string.no, null)
                             .show();
                     return false;
                 });
@@ -133,8 +134,8 @@ public class ForumFragment extends TabFragment {
     public void loadData() {
         super.loadData();
         updateDialog = new AlertDialog.Builder(getContext())
-                .setTitle("Обновление")
-                .setMessage("Загрузка данных")
+                .setTitle(R.string.refreshing)
+                .setMessage(R.string.loading_data)
                 .setCancelable(false)
                 .show();
         mainSubscriber.subscribe(RxApi.Forum().getForums(), this::onLoadThemes, new ForumItemTree(), null);
@@ -147,9 +148,9 @@ public class ForumFragment extends TabFragment {
         results = realm.where(ForumItemFlatBd.class).findAll();
         if (updateDialog != null && updateDialog.isShowing()) {
             if (results.size() != 0) {
-                updateDialog.setMessage("Обновление прошло успешно");
+                updateDialog.setMessage(getString(R.string.forum_update_complete));
             } else {
-                updateDialog.setMessage("Произошла ошибка");
+                updateDialog.setMessage(getString(R.string.forum_update_error));
             }
             new Handler().postDelayed(() -> {
                 if (updateDialog != null)
@@ -164,10 +165,10 @@ public class ForumFragment extends TabFragment {
     }
 
     private void onLoadThemes(ForumItemTree forumRoot) {
-        updateDialog.setMessage("Обновление базы данных");
+        updateDialog.setMessage(getString(R.string.forum_update));
 
         if (forumRoot.getForums() == null) {
-            updateDialog.setMessage("Произошла ошибка");
+            updateDialog.setMessage(getString(R.string.forum_update_error));
             new Handler().postDelayed(() -> {
                 if (updateDialog != null)
                     updateDialog.cancel();

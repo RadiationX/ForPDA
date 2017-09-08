@@ -36,16 +36,16 @@ public class ThemeDialogsHelper {
         if (userMenu == null) {
             userMenu = new AlertDialogMenu<>();
             showedUserMenu = new AlertDialogMenu<>();
-            userMenu.addItem("Профиль", (context1, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data.getUserId()));
-            userMenu.addItem("Личные сообщения QMS", (context1, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=qms&amp;mid=" + data.getUserId()));
-            userMenu.addItem("Темы пользователя", (context1, data) -> {
+            userMenu.addItem(App.getInstance().getString(R.string.profile), (context1, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data.getUserId()));
+            userMenu.addItem(App.getInstance().getString(R.string.pm_qms), (context1, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=qms&amp;mid=" + data.getUserId()));
+            userMenu.addItem(App.getInstance().getString(R.string.user_themes), (context1, data) -> {
                 SearchSettings settings = new SearchSettings();
                 settings.setSource(SearchSettings.SOURCE_ALL.first);
                 settings.setNick(data.getNick());
                 settings.setResult(SearchSettings.RESULT_TOPICS.first);
                 IntentHandler.handle(settings.toUrl());
             });
-            userMenu.addItem("Сообщения в этой теме", (context1, data) -> {
+            userMenu.addItem(App.getInstance().getString(R.string.messages_in_this_theme), (context1, data) -> {
                 SearchSettings settings = new SearchSettings();
                 settings.addForum(data.getForumId());
                 settings.addTopic(data.getTopicId());
@@ -55,7 +55,7 @@ public class ThemeDialogsHelper {
                 settings.setSubforums(SearchSettings.SUB_FORUMS_FALSE);
                 IntentHandler.handle(settings.toUrl());
             });
-            userMenu.addItem("Сообщения пользователя", (context1, data) -> {
+            userMenu.addItem(App.getInstance().getString(R.string.user_messages), (context1, data) -> {
                 SearchSettings settings = new SearchSettings();
                 settings.setSource(SearchSettings.SOURCE_CONTENT.first);
                 settings.setNick(data.getNick());
@@ -81,9 +81,9 @@ public class ThemeDialogsHelper {
         if (reputationMenu == null) {
             reputationMenu = new AlertDialogMenu<>();
             showedReputationMenu = new AlertDialogMenu<>();
-            reputationMenu.addItem("Повысить", (context1, data) -> context1.changeReputation(data, true));
-            reputationMenu.addItem("Посмотреть", (context1, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=rep&view=history&amp;mid=" + data.getUserId()));
-            reputationMenu.addItem("Понизить", (context1, data) -> context1.changeReputation(data, false));
+            reputationMenu.addItem(App.getInstance().getString(R.string.increase), (context1, data) -> context1.changeReputation(data, true));
+            reputationMenu.addItem(App.getInstance().getString(R.string.look), (context1, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=rep&view=history&amp;mid=" + data.getUserId()));
+            reputationMenu.addItem(App.getInstance().getString(R.string.decrease), (context1, data) -> context1.changeReputation(data, false));
         }
         showedReputationMenu.clear();
         if (ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN) {
@@ -94,7 +94,7 @@ public class ThemeDialogsHelper {
                 showedReputationMenu.addItem(reputationMenu.get(2));
         }
         new AlertDialog.Builder(context)
-                .setTitle("Репутация ".concat(post.getNick()))
+                .setTitle(App.getInstance().getString(R.string.reputation) + " ".concat(post.getNick()))
                 .setItems(showedReputationMenu.getTitles(), (dialogInterface, i) -> showedReputationMenu.onClick(i, theme, post))
                 .show();
     }
@@ -104,15 +104,15 @@ public class ThemeDialogsHelper {
         if (postMenu == null) {
             postMenu = new AlertDialogMenu<>();
             showedPostMenu = new AlertDialogMenu<>();
-            postMenu.addItem("Ответить", IPostFunctions::reply);
-            postMenu.addItem("Пожаловаться", IPostFunctions::reportPost);
-            postMenu.addItem("Изменить", IPostFunctions::editPost);
-            postMenu.addItem("Удалить", IPostFunctions::deletePost);
-            postMenu.addItem("Скопировать ссылку", (context1, data) -> {
+            postMenu.addItem(App.getInstance().getString(R.string.reply), IPostFunctions::reply);
+            postMenu.addItem(App.getInstance().getString(R.string.report), IPostFunctions::reportPost);
+            postMenu.addItem(App.getInstance().getString(R.string.edit), IPostFunctions::editPost);
+            postMenu.addItem(App.getInstance().getString(R.string.delete), IPostFunctions::deletePost);
+            postMenu.addItem(App.getInstance().getString(R.string.menu_copy_link), (context1, data) -> {
                 String url = "https://4pda.ru/forum/index.php?s=&showtopic=" + data.getTopicId() + "&view=findpost&p=" + data.getId();
                 Utils.copyToClipBoard(url);
             });
-            postMenu.addItem("Создать заметку", (context1, data) -> {
+            postMenu.addItem(App.getInstance().getString(R.string.menu_create_note), (context1, data) -> {
                 String title = "Пост " + data.getNick() + ", #" + data.getId();
                 String url = "https://4pda.ru/forum/index.php?s=&showtopic=" + data.getTopicId() + "&view=findpost&p=" + data.getId();
                 NotesAddPopup.showAddNoteDialog(context, title, url);
@@ -139,9 +139,9 @@ public class ThemeDialogsHelper {
     public static void tryReportPost(Context context, IBaseForumPost post) {
         if (App.getInstance().getPreferences().getBoolean("show_report_warning", true)) {
             new AlertDialog.Builder(context)
-                    .setTitle("Внимание!")
+                    .setTitle(R.string.alarma)
                     .setMessage(reportWarningText)
-                    .setPositiveButton("Ок", (dialogInterface, i) -> {
+                    .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
                         App.getInstance().getPreferences().edit().putBoolean("show_report_warning", false).apply();
                         ThemeDialogsHelper.showReportDialog(context, post);
                     })
@@ -160,27 +160,27 @@ public class ThemeDialogsHelper {
         final EditText messageField = (EditText) layout.findViewById(R.id.report_text_field);
 
         new AlertDialog.Builder(context)
-                .setTitle("Жалоба на пост ".concat(post.getNick()))
+                .setTitle(App.getInstance().getString(R.string.report_to_message) + " ".concat(post.getNick()))
                 .setView(layout)
-                .setPositiveButton("Отправить", (dialogInterface, i) -> {
+                .setPositiveButton(R.string.send, (dialogInterface, i) -> {
                     ThemeHelper.reportPost(s -> {
-                        Toast.makeText(context, s.isEmpty() ? "Неизвестная ошибка" : s, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, s.isEmpty() ? App.getInstance().getString(R.string.unknown_error) : s, Toast.LENGTH_SHORT).show();
                     }, post.getTopicId(), post.getId(), messageField.getText().toString());
                 })
-                .setNegativeButton("Отмена", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
     public static void deletePost(Context context, IBaseForumPost post, Consumer<Boolean> onNext) {
         new AlertDialog.Builder(context)
-                .setMessage("Удалить пост ".concat(post.getNick()).concat(" ?"))
-                .setPositiveButton("Да", (dialogInterface, i) -> {
+                .setMessage(App.getInstance().getString(R.string.delete_message) + " ".concat(post.getNick()).concat(" ?"))
+                .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
                     ThemeHelper.deletePost(b -> {
                         onNext.accept(b);
-                        Toast.makeText(context, b ? "Сообщение удалено" : "Ошибка", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, b ? App.getInstance().getString(R.string.message_deleted) : App.getInstance().getString(R.string.error), Toast.LENGTH_SHORT).show();
                     }, post.getId());
                 })
-                .setNegativeButton("Отмена", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
@@ -192,16 +192,16 @@ public class ThemeDialogsHelper {
         assert layout != null;
         final TextView text = (TextView) layout.findViewById(R.id.reputation_text);
         final EditText messageField = (EditText) layout.findViewById(R.id.reputation_text_field);
-        text.setText((type ? "Повысить" : "Понизить").concat(" репутацию ").concat(post.getNick()).concat(" ?"));
+        text.setText((type ? App.getInstance().getString(R.string.increase) : App.getInstance().getString(R.string.decrease)).concat(" репутацию ").concat(post.getNick()).concat(" ?"));
 
         new AlertDialog.Builder(context)
                 .setView(layout)
-                .setPositiveButton("Да", (dialogInterface, i) -> {
+                .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
                     ThemeHelper.changeReputation(s -> {
-                        Toast.makeText(context, s.isEmpty() ? "Репутация изменена" : s, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, s.isEmpty() ? App.getInstance().getString(R.string.reputatuib_changed) : s, Toast.LENGTH_SHORT).show();
                     }, post.getId(), post.getUserId(), type, messageField.getText().toString());
                 })
-                .setNegativeButton("Отмена", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 }

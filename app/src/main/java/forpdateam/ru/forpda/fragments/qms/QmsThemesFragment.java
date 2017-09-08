@@ -64,10 +64,10 @@ public class QmsThemesFragment extends ListFragment {
             theme -> {
                 if (dialogMenu == null) {
                     dialogMenu = new AlertDialogMenu<>();
-                    dialogMenu.addItem("Удалить", (context, data) -> {
+                    dialogMenu.addItem(getString(R.string.delete), (context, data) -> {
                         mainSubscriber.subscribe(RxApi.Qms().deleteTheme(currentThemes.getUserId(), data.getId()), this::onLoadThemes, currentThemes, v -> loadData());
                     });
-                    dialogMenu.addItem("Создать заметку", (context1, data) -> {
+                    dialogMenu.addItem(getString(R.string.menu_create_note), (context1, data) -> {
                         String title = "Диалог \"" + data.getName() + "\" с " + currentThemes.getNick();
                         String url = "http://4pda.ru/forum/index.php?act=qms&mid=" + currentThemes.getUserId() + "&t=" + data.getId();
                         NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);
@@ -80,7 +80,7 @@ public class QmsThemesFragment extends ListFragment {
 
     public QmsThemesFragment() {
         //configuration.setUseCache(true);
-        configuration.setDefaultTitle("Диалоги");
+        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_dialogs));
     }
 
     @Override
@@ -128,7 +128,7 @@ public class QmsThemesFragment extends ListFragment {
             ImageLoader.getInstance().displayImage(avatarUrl, toolbarImageView);
             toolbarImageView.setVisibility(View.VISIBLE);
             toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + currentThemes.getUserId()));
-            toolbarImageView.setContentDescription("Аватар пользователя");
+            toolbarImageView.setContentDescription(App.getInstance().getString(R.string.user_avatar));
         } else {
             toolbarImageView.setVisibility(View.GONE);
         }
@@ -151,7 +151,7 @@ public class QmsThemesFragment extends ListFragment {
         recyclerView.scrollToPosition(0);
         currentThemes = themes;
 
-        setTabTitle("Диалоги с ".concat(currentThemes.getNick()));
+        setTabTitle(getString(R.string.dialogs_with) + " ".concat(currentThemes.getNick()));
         setTitle(currentThemes.getNick());
         if (currentThemes.getThemes().size() == 0 && currentThemes.getNick() != null) {
             Bundle args = new Bundle();
@@ -185,18 +185,18 @@ public class QmsThemesFragment extends ListFragment {
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        blackListMenuItem = getMenu().add("В черный список")
+        blackListMenuItem = getMenu().add(R.string.add_to_blacklist)
                 .setOnMenuItemClickListener(item -> {
                     contactsSubscriber.subscribe(RxApi.Qms().blockUser(currentThemes.getNick()), qmsContacts -> {
                         if (qmsContacts.size() > 0) {
-                            Toast.makeText(getContext(), "Пользователь добавлен в черный список", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), R.string.user_added_to_blacklist, Toast.LENGTH_SHORT).show();
                         }
                     }, new ArrayList<>());
                     return false;
                 });
-        noteMenuItem = getMenu().add("Создать заметку")
+        noteMenuItem = getMenu().add(R.string.menu_create_note)
                 .setOnMenuItemClickListener(item -> {
-                    String title = "Диалоги с " + currentThemes.getNick();
+                    String title = getString(R.string.dialogs_with) + " " + currentThemes.getNick();
                     String url = "http://4pda.ru/forum/index.php?act=qms&mid=" + currentThemes.getUserId();
                     NotesAddPopup.showAddNoteDialog(getContext(), title, url);
                     return true;

@@ -119,29 +119,29 @@ public class PaginationHelper {
             tabLayout.addTab(tabLayout.newTab()
                     .setIcon(R.drawable.ic_toolbar_chevron_double_left)
                     .setTag(TAG_FIRST)
-                    .setContentDescription("К первой странице"));
+                    .setContentDescription(R.string.pagination_first));
         }
 
         tabLayout.addTab(tabLayout.newTab()
                 .setIcon(R.drawable.ic_toolbar_chevron_left)
                 .setTag(TAG_PREV)
-                .setContentDescription("К предыдущей странице"));
+                .setContentDescription(R.string.pagination_prev));
 
         tabLayout.addTab(tabLayout.newTab()
-                .setText("Выбор")
+                .setText(R.string.pagination_select)
                 .setTag(TAG_SELECT)
-                .setContentDescription("Выбор страницы"));
+                .setContentDescription(R.string.pagination_select_desc));
 
         tabLayout.addTab(tabLayout.newTab()
                 .setIcon(R.drawable.ic_toolbar_chevron_right)
                 .setTag(TAG_NEXT)
-                .setContentDescription("К следующей странице"));
+                .setContentDescription(R.string.pagination_next));
 
         if (firstLast) {
             tabLayout.addTab(tabLayout.newTab()
                     .setIcon(R.drawable.ic_toolbar_chevron_double_right)
                     .setTag(TAG_LAST)
-                    .setContentDescription("К последней странице"));
+                    .setContentDescription(R.string.pagination_last));
         }
 
         tabLayout.addOnTabSelectedListener(tabSelectedListener);

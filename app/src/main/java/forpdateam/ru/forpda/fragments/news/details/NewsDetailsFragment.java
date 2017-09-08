@@ -25,6 +25,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 
 import java.util.ArrayList;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.news.models.DetailsPage;
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -74,7 +75,7 @@ public class NewsDetailsFragment extends TabFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        configuration.setDefaultTitle("Новость");
+        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_news));
         configuration.setUseCache(false); // back
         configuration.setAlone(false);
         if (getArguments() != null) {
@@ -176,17 +177,17 @@ public class NewsDetailsFragment extends TabFragment {
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        getMenu().add("Скопировать ссылку")
+        getMenu().add(R.string.menu_copy_link)
                 .setOnMenuItemClickListener(menuItem -> {
                     Utils.copyToClipBoard("https://4pda.ru/index.php?p=" + newsId);
                     return false;
                 });
-        getMenu().add("Поделиться")
+        getMenu().add(R.string.menu_share)
                 .setOnMenuItemClickListener(menuItem -> {
                     Utils.shareText("https://4pda.ru/index.php?p=" + newsId);
                     return false;
                 });
-        getMenu().add("Создать заметку")
+        getMenu().add(R.string.menu_create_note)
                 .setOnMenuItemClickListener(menuItem -> {
                     String title = newsTitle;
                     String url = "https://4pda.ru/index.php?p=" + newsId;
@@ -273,10 +274,10 @@ public class NewsDetailsFragment extends TabFragment {
             Log.e("SUKA", "CREATE FragmentPagerAdapter " + article);
 
             fragments.add(new ArticleContentFragment().setArticle(this.article));
-            titles.add("Контент");
+            titles.add(App.getInstance().getString(R.string.news_page_content));
 
             fragments.add(new ArticleCommentsFragment().setArticle(this.article));
-            titles.add("Комментарии");
+            titles.add(App.getInstance().getString(R.string.news_page_comments));
         }
 
         @Override

@@ -34,14 +34,14 @@ public class NotesAddPopup {
         contentField = (EditText) view.findViewById(R.id.content_field);
 
         if (item != null) {
-            title.setText("Редактирование заметки");
+            title.setText(R.string.note_edit);
             titleField.setText(item.getTitle());
             linkField.setText(item.getLink());
             contentField.setText(item.getContent());
             addButton.setImageDrawable(App.getVecDrawable(context, R.drawable.ic_toolbar_done));
 
         } else {
-            title.setText("Создание заметки");
+            title.setText(R.string.note_create);
         }
 
         addButton.setOnClickListener(v -> {
@@ -51,7 +51,7 @@ public class NotesAddPopup {
                 String content = contentField.getText().toString().trim();
 
                 if (title.length() == 0) {
-                    Toast.makeText(context, "Напишите заголовок", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, R.string.note_enter_title, Toast.LENGTH_SHORT).show();
                     return;
                 }
 

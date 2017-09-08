@@ -43,7 +43,7 @@ public class QmsBlackListFragment extends ListFragment {
     private Subscriber<List<ForumUser>> searchUserSubscriber = new Subscriber<>(this);
 
     public QmsBlackListFragment() {
-        configuration.setDefaultTitle("Изгои мира сего");
+        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_blacklist));
     }
 
     @Nullable
@@ -76,7 +76,7 @@ public class QmsBlackListFragment extends ListFragment {
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        getMenu().add("Добавить")
+        getMenu().add(R.string.add)
                 .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_add))
                 .setOnMenuItemClickListener(item -> {
                     String nick = "";
@@ -91,15 +91,15 @@ public class QmsBlackListFragment extends ListFragment {
     private void someClick(IQmsContact contact) {
         if (contactDialogMenu == null) {
             contactDialogMenu = new AlertDialogMenu<>();
-            contactDialogMenu.addItem("Профиль", (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data.getId()));
-            contactDialogMenu.addItem("Диалоги", (context, data) -> {
+            contactDialogMenu.addItem(getString(R.string.profile), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data.getId()));
+            contactDialogMenu.addItem(getString(R.string.dialogs), (context, data) -> {
                 Bundle args = new Bundle();
                 args.putString(TabFragment.ARG_TITLE, data.getNick());
                 args.putInt(QmsThemesFragment.USER_ID_ARG, data.getId());
                 args.putString(QmsThemesFragment.USER_AVATAR_ARG, data.getAvatar());
                 TabManager.getInstance().add(QmsThemesFragment.class, args);
             });
-            contactDialogMenu.addItem("Удалить", (context, data) -> context.unBlockUser(new int[]{data.getId()}));
+            contactDialogMenu.addItem(getString(R.string.delete), (context, data) -> context.unBlockUser(new int[]{data.getId()}));
         }
         new AlertDialog.Builder(getContext())
                 .setItems(contactDialogMenu.getTitles(), (dialog, which) -> contactDialogMenu.onClick(which, QmsBlackListFragment.this, contact)).show();

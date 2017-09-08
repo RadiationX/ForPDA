@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         /*
         * Т.к. 2 вьюхи, делаю цвет в 2 раза прозрачнее, чтобы компенсировать это.
         * P.S. Чем больше вьюх в DrawerLayout находятся до NavigationView, тем сильнее будет затенение
+        * P.S.S. Первая вьюха - контейнер фрагментов, вторая - view_for_measure
         * */
         drawerLayout.setScrimColor(0x4C000000);
         drawers = new Drawers(this, drawerLayout);
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
                     if (App.getInstance().getPreferences().getBoolean("drawers.tooltip.link_open", true)) {
                         SimpleTooltip tooltip = new SimpleTooltip.Builder(MainActivity.this)
                                 .anchorView(drawerView.findViewById(R.id.drawer_header_open_link))
-                                .text("Вы можете вручную переходить по ссылкам")
+                                .text(R.string.tooltip_link)
                                 .gravity(Gravity.BOTTOM)
                                 .animated(false)
                                 .modal(true)
@@ -122,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
                     if (App.getInstance().getPreferences().getBoolean("drawers.tooltip.tabs_drawer", true)) {
                         SimpleTooltip tooltip = new SimpleTooltip.Builder(MainActivity.this)
                                 .anchorView(drawers.getTabDrawer())
-                                .text("Справа находится панель с открытыми вкладками.\nОна позволяет удобно осуществлять навигацию между ними")
+                                .text(R.string.tooltip_tabs)
                                 .gravity(Gravity.START)
                                 .animated(false)
                                 .modal(true)

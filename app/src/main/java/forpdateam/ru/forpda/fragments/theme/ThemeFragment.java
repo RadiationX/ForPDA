@@ -228,7 +228,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         if (App.getInstance().getPreferences().getBoolean("theme.tooltip.long_click_send", true)) {
             tooltip = new SimpleTooltip.Builder(getContext())
                     .anchorView(messagePanel.getSendButton())
-                    .text("Долгое нажатие откроет полную форму ответа")
+                    .text(R.string.tooltip_full_form)
                     .gravity(Gravity.TOP)
                     .animated(false)
                     .modal(true)
@@ -310,12 +310,12 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         }
         if ((messagePanel.getMessage() != null && !messagePanel.getMessage().isEmpty()) || messagePanel.getAttachments().size() > 0) {
             new AlertDialog.Builder(getContext())
-                    .setMessage("Забыть изменения?")
-                    .setPositiveButton("Да", (dialog, which) -> {
+                    .setMessage(R.string.editpost_lose_changes)
+                    .setPositiveButton(R.string.ok, (dialog, which) -> {
                         history.clear();
                         TabManager.getInstance().remove(ThemeFragment.this);
                     })
-                    .setNegativeButton("Нет", null)
+                    .setNegativeButton(R.string.no, null)
                     .show();
             return true;
         }
@@ -443,7 +443,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
         toggleMessagePanelItem = getMenu()
-                .add("Ответить")
+                .add(R.string.reply)
                 .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_create))
                 .setOnMenuItemClickListener(menuItem -> {
                     toggleMessagePanel();
@@ -451,14 +451,14 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                 })
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
-        refreshMenuItem = getMenu().add("Обновить")
+        refreshMenuItem = getMenu().add(R.string.refresh)
                 .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_refresh))
                 .setOnMenuItemClickListener(menuItem -> {
                     loadData(REFRESH_ACTION);
                     return false;
                 });
 
-        copyLinkMenuItem = getMenu().add("Скопировать ссылку")
+        copyLinkMenuItem = getMenu().add(R.string.menu_copy_link)
                 .setOnMenuItemClickListener(menuItem -> {
                     String url = tab_url;
                     if (currentPage != null) {
@@ -468,38 +468,38 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                     return false;
                 });
         addSearchOnPageItem(getMenu());
-        searchInThemeMenuItem = getMenu().add("Найти в теме")
+        searchInThemeMenuItem = getMenu().add(R.string.search_in_theme)
                 .setOnMenuItemClickListener(menuItem -> {
                     IntentHandler.handle("https://4pda.ru/forum/index.php?forums=" + currentPage.getForumId() + "&topics=" + currentPage.getId() + "&act=search&source=pst&result=posts");
                     return false;
                 });
 
-        SubMenu subMenu = getMenu().addSubMenu("Опции темы");
-        deleteFavoritesMenuItem = subMenu.add("Удалить из избранного")
+        SubMenu subMenu = getMenu().addSubMenu(R.string.theme_options);
+        deleteFavoritesMenuItem = subMenu.add(R.string.delete_from_favorites)
                 .setOnMenuItemClickListener(menuItem -> {
                     if (currentPage.getFavId() == 0) {
                         Toast.makeText(App.getContext(), "ID темы не найден, попробуйте перезагрузить страницу", Toast.LENGTH_SHORT).show();
                         return false;
                     }
                     FavoritesHelper.delete(aBoolean -> {
-                        Toast.makeText(App.getContext(), aBoolean ? "Тема удалена из избранного" : "Ошибка", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(App.getContext(), aBoolean ? getString(R.string.favorite_theme_deleted) : getString(R.string.error), Toast.LENGTH_SHORT).show();
                         currentPage.setInFavorite(!aBoolean);
                         refreshToolbarMenuItems(true);
                     }, currentPage.getFavId());
                     return false;
                 });
-        addFavoritesMenuItem = subMenu.add("Добавить в избранное")
+        addFavoritesMenuItem = subMenu.add(R.string.add_to_favorites)
                 .setOnMenuItemClickListener(menuItem -> {
                     new AlertDialog.Builder(getContext())
                             .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> FavoritesHelper.add(aBoolean -> {
-                                Toast.makeText(App.getContext(), aBoolean ? "Тема добавлена в избранное" : "Ошибка", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(App.getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error), Toast.LENGTH_SHORT).show();
                                 currentPage.setInFavorite(aBoolean);
                                 refreshToolbarMenuItems(true);
                             }, currentPage.getId(), Favorites.SUB_TYPES[which1]))
                             .show();
                     return false;
                 });
-        openForumMenuItem = subMenu.add("Открыть форум темы")
+        openForumMenuItem = subMenu.add(R.string.open_theme_forum)
                 .setOnMenuItemClickListener(menuItem -> {
                     IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + currentPage.getForumId());
                     return false;
@@ -861,9 +861,9 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     @Override
     public void votePost(IBaseForumPost post, boolean type) {
         new AlertDialog.Builder(getContext())
-                .setMessage((type ? "Повысить" : "Понизить").concat(" репутацию поста пользователя ").concat(post.getNick()).concat("?"))
-                .setPositiveButton("Да", (dialog, which) -> ThemeHelper.votePost(s -> toast(s.isEmpty() ? "Неизвестная ошибка" : s), post.getId(), type))
-                .setNegativeButton("Отмена", null)
+                .setMessage((type ? getString(R.string.increase) : getString(R.string.decrease)).concat(" репутацию поста пользователя ").concat(post.getNick()).concat("?"))
+                .setPositiveButton(R.string.ok, (dialog, which) -> ThemeHelper.votePost(s -> toast(s.isEmpty() ? getString(R.string.unknown_error) : s), post.getId(), type))
+                .setNegativeButton(R.string.cancel, null)
                 .show();
 
     }

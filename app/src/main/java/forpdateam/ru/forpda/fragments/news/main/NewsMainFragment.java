@@ -129,13 +129,13 @@ public class NewsMainFragment extends TabFragment implements
         if (dialogMenu == null) {
             dialogMenu = new AlertDialogMenu<>();
             showedDialogMenu = new AlertDialogMenu<>();
-            dialogMenu.addItem("Скопировать ссылку", (context, data) -> {
+            dialogMenu.addItem(getString(R.string.menu_copy_link), (context, data) -> {
                 Utils.copyToClipBoard("https://4pda.ru/index.php?p=" + data.getId());
             });
-            dialogMenu.addItem("Поделиться", (context, data) -> {
+            dialogMenu.addItem(getString(R.string.menu_share), (context, data) -> {
                 Utils.shareText("https://4pda.ru/index.php?p=" + data.getId());
             });
-            dialogMenu.addItem("Создать заметку", (context1, data) -> {
+            dialogMenu.addItem(getString(R.string.menu_create_note), (context1, data) -> {
                 String title = data.getTitle();
                 String url = "https://4pda.ru/index.php?p=" + data.getId();
                 NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);

@@ -57,7 +57,7 @@ public class NotesFragment extends ListFragment implements NotesAdapter.ClickLis
     private AlertDialogMenu<NotesFragment, NoteItem> dialogMenu, showedDialogMenu;
 
     public NotesFragment() {
-        configuration.setDefaultTitle("Заметки");
+        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_notes));
         configuration.setUseCache(true);
     }
 
@@ -87,7 +87,7 @@ public class NotesFragment extends ListFragment implements NotesAdapter.ClickLis
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
         getMenu()
-                .add("Добавить")
+                .add(R.string.add)
                 .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_add))
                 .setOnMenuItemClickListener(item -> {
                     new NotesAddPopup(getContext(), null, this);
@@ -95,7 +95,7 @@ public class NotesFragment extends ListFragment implements NotesAdapter.ClickLis
                 })
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         getMenu()
-                .add("Импорт")
+                .add(R.string.import_s)
                 .setOnMenuItemClickListener(item -> {
                     App.getInstance().checkStoragePermission(() -> {
                         startActivityForResult(FilePickHelper.pickFile(false), REQUEST_PICK_FILE);
@@ -103,7 +103,7 @@ public class NotesFragment extends ListFragment implements NotesAdapter.ClickLis
                     return true;
                 });
         getMenu()
-                .add("Экспорт")
+                .add(R.string.export_s)
                 .setOnMenuItemClickListener(item -> {
                     App.getInstance().checkStoragePermission(this::exportNotes, App.getActivity());
                     return true;
@@ -175,13 +175,13 @@ public class NotesFragment extends ListFragment implements NotesAdapter.ClickLis
         if (dialogMenu == null) {
             dialogMenu = new AlertDialogMenu<>();
             showedDialogMenu = new AlertDialogMenu<>();
-            dialogMenu.addItem("Скопировать ссылку", (context, data) -> {
+            dialogMenu.addItem(getString(R.string.menu_copy_link), (context, data) -> {
                 Utils.copyToClipBoard("" + data.getLink());
             });
-            dialogMenu.addItem("Редактировать", (context, data) -> {
+            dialogMenu.addItem(getString(R.string.edit), (context, data) -> {
                 new NotesAddPopup(context.getContext(), data, context);
             });
-            dialogMenu.addItem("Удалить", (context, data) -> {
+            dialogMenu.addItem(getString(R.string.delete), (context, data) -> {
                 context.deleteNote(data.getId());
             });
         }

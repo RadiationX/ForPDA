@@ -153,7 +153,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     };
 
     public QmsChatFragment() {
-        configuration.setDefaultTitle("Чат");
+        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_chat));
     }
 
     public MessagePanel getMessagePanel() {
@@ -255,23 +255,23 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        blackListMenuItem = getMenu().add("В черный список")
+        blackListMenuItem = getMenu().add(R.string.add_to_blacklist)
                 .setOnMenuItemClickListener(item -> {
                     contactsSubscriber.subscribe(RxApi.Qms().blockUser(currentChat.getNick()), qmsContacts -> {
                         if (qmsContacts.size() > 0) {
-                            Toast.makeText(getContext(), "Пользователь добавлен в черный список", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), R.string.user_added_to_blacklist, Toast.LENGTH_SHORT).show();
                         }
                     }, new ArrayList<>());
                     return false;
                 });
-        noteMenuItem = getMenu().add("Создать заметку")
+        noteMenuItem = getMenu().add(R.string.menu_create_note)
                 .setOnMenuItemClickListener(item -> {
-                    String title = "Диалог \"" + currentChat.getTitle() + "\" с " + currentChat.getNick();
+                    String title = getString(R.string.dialog)+" \"" + currentChat.getTitle() + "\" с " + currentChat.getNick();
                     String url = "http://4pda.ru/forum/index.php?act=qms&mid=" + currentChat.getUserId() + "&t=" + currentChat.getThemeId();
                     NotesAddPopup.showAddNoteDialog(getContext(), title, url);
                     return true;
                 });
-        toDialogsMenuItem = getMenu().add("К диалогам")
+        toDialogsMenuItem = getMenu().add(R.string.to_dialogs)
                 .setOnMenuItemClickListener(item -> {
                     Bundle args = new Bundle();
                     args.putInt(QmsThemesFragment.USER_ID_ARG, currentChat.getUserId());
@@ -411,7 +411,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
             ImageLoader.getInstance().displayImage(currentChat.getAvatarUrl(), toolbarImageView);
             toolbarImageView.setVisibility(View.VISIBLE);
             toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + currentChat.getUserId()));
-            toolbarImageView.setContentDescription("Аватар пользователя");
+            toolbarImageView.setContentDescription(getString(R.string.user_avatar));
         } else {
             toolbarImageView.setVisibility(View.GONE);
         }
