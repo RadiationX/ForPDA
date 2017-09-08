@@ -94,6 +94,7 @@
             android:id="@+id/button_send"
             android:layout_width="@dimen/dp48"
             android:layout_height="@dimen/dp40"
+            android:contentDescription="Отправить сообщение"
             android:background="?attr/selectableItemBackgroundBorderless"
             app:srcCompat="@drawable/ic_send" />
 

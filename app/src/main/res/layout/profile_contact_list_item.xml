@@ -6,7 +6,6 @@
     android:background="?attr/selectableItemBackgroundBorderless">
 
     <android.support.v7.widget.AppCompatImageView
-        android:contentDescription="@string/empty"
         android:id="@+id/drawer_item_icon"
         android:layout_width="80dp"
         android:layout_height="80dp"

@@ -60,6 +60,7 @@
             android:layout_marginStart="-8dp"
             android:layout_toEndOf="@+id/button_advanced_input"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="BB-коды и смайлы"
             app:srcCompat="@drawable/ic_attachment" />
 
         <android.support.v7.widget.AppCompatImageButton
@@ -69,8 +70,9 @@
             android:layout_marginStart="-8dp"
             android:layout_toEndOf="@+id/button_attachments"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:srcCompat="@drawable/ic_poll_box"
-            android:visibility="gone"/>
+            android:contentDescription="Вложения"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_poll_box" />
 
         <FrameLayout
             android:id="@+id/send_container"
@@ -83,6 +85,7 @@
                 android:layout_width="@dimen/dp48"
                 android:layout_height="@dimen/dp48"
                 android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Отправить сообщение"
                 app:srcCompat="@drawable/ic_send" />
 
             <ProgressBar

@@ -238,6 +238,9 @@ public class NewsDetailsFragment extends TabFragment {
         fragmentsPager.setAdapter(pagerAdapter);
         if (article.getCommentId() != 0) {
             appBarLayout.setExpanded(false, true);
+            /*if (!isTalkBackEnabled()) {
+                appBarLayout.setExpanded(false, true);
+            }*/
             fragmentsPager.setCurrentItem(1, true);
         }
 
