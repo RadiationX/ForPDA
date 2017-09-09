@@ -1,76 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:title="Уведомления">
-    <PreferenceCategory android:title="Общие">
+    android:title="@string/pref_title_notifications">
+    <PreferenceCategory android:title="@string/pref_title_main">
         <SwitchPreference
             android:defaultValue="true"
             android:key="notifications.main.enabled"
-            android:title="Уведомлять" />
+            android:title="@string/pref_title_notify" />
 
         <SwitchPreference
             android:key="notifications.main.sound_enabled"
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
-            android:title="Звук" />
+            android:title="@string/pref_title_sound" />
 
         <SwitchPreference
             android:key="notifications.main.vibration_enabled"
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
-            android:title="Вибрация" />
+            android:title="@string/pref_title_vibration" />
 
         <SwitchPreference
             android:key="notifications.main.indicator_enabled"
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
-            android:title="Индикатор" />
+            android:title="@string/pref_title_indicator" />
 
         <SwitchPreference
             android:key="notifications.main.avatars_enabled"
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
-            android:title="Загружать аватары" />
+            android:title="@string/pref_title_enable_avatars" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Избранное">
+    <PreferenceCategory android:title="@string/pref_title_favorites">
         <SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.fav.enabled"
-            android:title="Уведомлять" />
+            android:title="@string/pref_title_notify" />
 
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:key="notifications.fav.only_important"
             android:defaultValue="false"
             android:dependency="notifications.fav.enabled"
-            android:title="Только важные" />
+            android:title="@string/pref_title_only_important" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Ответы">
+    <PreferenceCategory android:title="@string/pref_title_mentions">
         <SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.mentions.enabled"
-            android:title="Уведомлять" />
+            android:title="@string/pref_title_notify" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Личные сообщения QMS">
+    <PreferenceCategory android:title="@string/pref_title_pm_qms">
         <SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.qms.enabled"
-            android:title="Уведомлять" />
+            android:title="@string/pref_title_notify" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Обновления программы">
+    <PreferenceCategory android:title="@string/pref_title_app_updates">
         <SwitchPreference
             android:defaultValue="true"
             android:key="notifications.update.enabled"
-            android:title="Уведомлять" />
+            android:title="@string/pref_title_notify" />
 
     </PreferenceCategory>
 </PreferenceScreen>

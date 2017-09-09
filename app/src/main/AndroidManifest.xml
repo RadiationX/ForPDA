@@ -94,7 +94,7 @@
         <activity
             android:name=".settings.SettingsActivity"
             android:exported="true"
-            android:label="Настройки"
+            android:label="@string/activity_title_settings"
             android:theme="@style/LightAppTheme.NoActionBar">
             <meta-data
                 android:name="android.max_aspect"

@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <resources>
     <!-- Автоматический тестовый перевод, потом обязательн нужно будет сделать по-человечески -->
-
     <string name="action_complete">The action is performed</string>
     <string name="action_not_available">Action impossible</string>
     <string name="activity_title_settings">Settings</string>
     <string name="add">Add</string>
+    <string name="add_attachment">To add attachments</string>
+    <string name="add_in_spoiler">In spoiler</string>
     <string name="add_to_blacklist">In the black list</string>
     <string name="add_to_favorites">Add to favorites</string>
     <string name="add_user">To add a user</string>
     <string name="all_text">All of the text</string>
     <string name="announce_section">Ads</string>
     <string name="app_name">ForPDA</string>
+    <string name="apply">Apply</string>
     <string name="ask_close_other_tabs">Close other tabs?</string>
     <string name="ask_delete_answer">To remove the answer?</string>
     <string name="ask_delete_post_Nick" formatted="false">Delete post %s ?</string>
@@ -42,8 +43,10 @@
     <string name="chat_creator_enter_nick">Enter the user\'s nick</string>
     <string name="chat_creator_enter_title">Enter the name of the theme</string>
     <string name="close">Close</string>
+    <string name="close_other_tabs">Close other</string>
     <string name="close_tab">To close the tab</string>
     <string name="code_panel_instruction">You can customize the layout, moving them!</string>
+    <string name="codes_and_smiles">Design and smiles</string>
     <string name="codes_block_title">Header</string>
     <string name="codes_code_text">Code</string>
     <string name="codes_link">Link</string>
@@ -86,13 +89,16 @@
     <string name="crash_toast_text">There was something very scary. Help us, send bug report, we don\'t want to live in fear…</string>
     <string name="create_note">To create a note</string>
     <string name="decrease">Lower</string>
+    <string name="default_s">By default</string>
     <string name="delete">Remove</string>
     <string name="delete_from_favorites">To remove from favorites</string>
+    <string name="delete_selected_attachments">To remove the selected attachment</string>
     <string name="device_page_comments">Reviews</string>
     <string name="device_page_discussions">Discussion</string>
     <string name="device_page_firmwares">Firmware</string>
     <string name="device_page_news">Publication</string>
     <string name="device_page_specs">Characteristics</string>
+    <string name="devices">Device</string>
     <string name="dialog_Title_Nick" formatted="false">Dialog \"%s\" %s</string>
     <string name="dialogs">Dialogs</string>
     <string name="dialogs_Nick" formatted="false">Dialogues with %s</string>
@@ -147,16 +153,23 @@
     <string name="fragment_title_reputation">Reputation</string>
     <string name="fragment_title_search">Search</string>
     <string name="fragment_title_topics">Themes of the forum</string>
+    <string name="full_form">Full form</string>
     <string name="go_to_message">Go to the message</string>
     <string name="group">Group</string>
     <string name="hat">The cap threads</string>
+    <string name="hide_form">Hide form</string>
     <string name="image_viewer_subtitle_Cur_All" formatted="false">%d %d</string>
     <string name="import_s">Import</string>
     <string name="increase">To increase</string>
     <string name="insert">Insert</string>
+    <string name="lang_changed">The application language has been changed, restart the application?</string>
     <string name="link_to_anchor">Link to the anchor</string>
+    <string name="load">Content</string>
     <string name="load_file">To download the file</string>
+    <string name="load_from">Download S</string>
+    <string name="load_more">Load more</string>
     <string name="load_with">To download through</string>
+    <string name="loading_1">Download…</string>
     <string name="loading_data">Download data</string>
     <string name="look">View</string>
     <string name="mark_all_read">Mark all read</string>
@@ -172,9 +185,12 @@
     <string name="no">No</string>
     <string name="no_attachments">No attachments</string>
     <string name="no_network">There is no connection</string>
+    <string name="no_updates">Updates yet</string>
+    <string name="note_content">Content</string>
     <string name="note_create">The creation of the notes</string>
     <string name="note_edit">Edit the notes</string>
     <string name="note_enter_title">Write the header</string>
+    <string name="note_link_hint">Link, not necessarily</string>
     <string name="notification_content_mention_Title" formatted="false">Answered You in the topic \"%s\"</string>
     <string name="notification_content_news">You replied to a comment on the website</string>
     <string name="notification_content_qms_Nick_Count" formatted="false">%s: %d unread messages</string>
@@ -185,6 +201,7 @@
     <string name="notification_summary_qms">Chat QMS</string>
     <string name="ok">OK</string>
     <string name="open_forum">To access the forum</string>
+    <string name="open_link">To open the link</string>
     <string name="open_menu">To open the menu</string>
     <string name="open_theme_forum">To open a forum topic</string>
     <string name="open_with">Open V</string>
@@ -200,9 +217,13 @@
     <string name="perform_request_link">Request a download link</string>
     <string name="pinned_section">Pinned topic</string>
     <string name="pm_qms">Private messages QMS</string>
+    <string name="poll">Survey</string>
     <string name="poll_all_votes_count">Total votes</string>
+    <string name="poll_answer">Response</string>
     <string name="poll_answer_Pos" formatted="false">Answer %d</string>
     <string name="poll_answers_Max" formatted="false">Maximum number of answers: %d</string>
+    <string name="poll_more_then_one_answer">More than one answer</string>
+    <string name="poll_question">Question</string>
     <string name="poll_question_Pos" formatted="false">Question %d</string>
     <string name="poll_questions_Max" formatted="false">Maximum # of questions: %d</string>
     <string name="poll_results_btn">Results</string>
@@ -210,6 +231,50 @@
     <string name="poll_title">The title of the survey</string>
     <string name="poll_vote_btn">To vote</string>
     <string name="post_Nick_Number" formatted="false">Post %s, #%d</string>
+    <string name="pref_lang_title">Language</string>
+    <string name="pref_summary_history_snapback">Maintains a history of the snapback transitions</string>
+    <string name="pref_summary_load_all">To download all the themes chosen. Consumes more traffic.</string>
+    <string name="pref_summary_monospace">The font of the message editor</string>
+    <string name="pref_summary_panel_hidden">The default is to hide the message editor</string>
+    <string name="pref_summary_scroll_button">Appears when best personal Finance in the subject and search</string>
+    <string name="pref_summary_system_downloader">To use the boot loader files</string>
+    <string name="pref_summary_text_size">Used for which to search, and chat</string>
+    <string name="pref_title_about">About the program</string>
+    <string name="pref_title_account">Account</string>
+    <string name="pref_title_app_updates">Updates</string>
+    <string name="pref_title_appereance">Appearance</string>
+    <string name="pref_title_check_updates">To check for updates</string>
+    <string name="pref_title_circle_avatars">Round avatars</string>
+    <string name="pref_title_dark_theme">The dark theme</string>
+    <string name="pref_title_enable_avatars">To upload an avatar</string>
+    <string name="pref_title_fav_dot">Counter favourites</string>
+    <string name="pref_title_favorites">Favorites</string>
+    <string name="pref_title_history_snapback">History of navigation on the page</string>
+    <string name="pref_title_indicator">Indicator</string>
+    <string name="pref_title_lists">Lists</string>
+    <string name="pref_title_load_all">All the themes chosen</string>
+    <string name="pref_title_logout">Out</string>
+    <string name="pref_title_main">Common</string>
+    <string name="pref_title_mention_dot">Counter references</string>
+    <string name="pref_title_mentions">Answers</string>
+    <string name="pref_title_monospace">A monospaced font</string>
+    <string name="pref_title_notifications">Notice</string>
+    <string name="pref_title_notify">Notify</string>
+    <string name="pref_title_notify_dot">The indicator counters</string>
+    <string name="pref_title_only_important">Only the important</string>
+    <string name="pref_title_panel_hidden">Hidden message editor</string>
+    <string name="pref_title_pm_qms">Private messages QMS</string>
+    <string name="pref_title_qms_dot">Counter QMS</string>
+    <string name="pref_title_scroll_button">Button for quick scrolling</string>
+    <string name="pref_title_show_avatars">To display avatars</string>
+    <string name="pref_title_show_dot">Indicator new messages</string>
+    <string name="pref_title_sound">Sound</string>
+    <string name="pref_title_system_downloader">A boot loader</string>
+    <string name="pref_title_tab_bottom">Tabs at the bottom</string>
+    <string name="pref_title_text_size">The size of the font</string>
+    <string name="pref_title_themes">View topics</string>
+    <string name="pref_title_unread_top">Unread on top</string>
+    <string name="pref_title_vibration">Vibration</string>
     <string name="profile">Profile</string>
     <string name="profile_button_save">Save</string>
     <string name="profile_hint_note">This is your personal Notepad. Here You can store excerpts of messages or any other information that is important to You</string>
@@ -226,6 +291,7 @@
     <string name="profile_item_text_site_posts">News</string>
     <string name="profile_item_text_themes">The</string>
     <string name="profile_item_text_user_time">Time of the user</string>
+    <string name="profile_note_saved">The record is saved</string>
     <string name="profile_title_about">About yourself</string>
     <string name="profile_title_contacts">Contacts</string>
     <string name="profile_title_devices">Device</string>
@@ -237,6 +303,7 @@
     <string name="refreshing">Update</string>
     <string name="reply">Reply</string>
     <string name="report">To complain</string>
+    <string name="report_text">The text of the complaint</string>
     <string name="report_to_post_Nick" formatted="false">Make complaints against post %s</string>
     <string name="report_warning">You do not need to specify a subject and message, the moderator will automatically receive this information. Please use this forum only for complaints about the incorrect message! To contact a moderator, use the private messages.</string>
     <string name="reputation">Reputation</string>
@@ -281,6 +348,7 @@
     <string name="search_settings_sorting">Sort</string>
     <string name="search_settings_source">To look for</string>
     <string name="send">Send</string>
+    <string name="send_message">To send a message</string>
     <string name="settings">Settings</string>
     <string name="share">Share</string>
     <string name="shortcut_contacts">Contacts</string>
@@ -288,6 +356,8 @@
     <string name="shortcut_mentions">Answers</string>
     <string name="shortcut_news">News</string>
     <string name="smiles_title">Smiles</string>
+    <string name="sort_by">Sort by</string>
+    <string name="sort_order">Order</string>
     <string name="sorting_asc">The ascending order</string>
     <string name="sorting_desc">Descending</string>
     <string name="sorting_title">Sort</string>
@@ -307,6 +377,7 @@
     <string name="theme">Theme</string>
     <string name="theme_options">Theme option</string>
     <string name="themes_section">Theme</string>
+    <string name="title">Header</string>
     <string name="to_dialogs">To the dialogues</string>
     <string name="tooltip_btn_msg_panel_accept">Accepted</string>
     <string name="tooltip_full_form">Long press will open the full reply form</string>
@@ -321,6 +392,9 @@
     <string name="unknown_error">Unknown error</string>
     <string name="update_complete">The upgrade was successful</string>
     <string name="update_data_base">The updating of the database</string>
+    <string name="updater_current_info" formatted="false">Version %s Assembly %s</string>
+    <string name="updater_notification_content_VerName">New version: %s</string>
+    <string name="updater_notification_title">Update ForPDA</string>
     <string name="user">User</string>
     <string name="user_added_to_blacklist">The user added to the blacklist</string>
     <string name="user_avatar">User avatar</string>
@@ -336,5 +410,6 @@
     <string name="wv_open_image">To open the image</string>
     <string name="wv_open_in_browser">Open in browser</string>
     <string name="wv_open_new_tab">Open in a new tab</string>
-    <string name="wv_save_image">To save the image.</string>
+    <string name="wv_save_image">To save the image</string>
+    <string name="your_profile">Your profile.</string>
 </resources>
