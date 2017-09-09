@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.settings;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
@@ -12,6 +13,7 @@ import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.utils.LocaleHelper;
 
 /**
  * Created by radiationx on 25.12.16.
@@ -36,6 +38,11 @@ public class SettingsActivity extends AppCompatActivity {
     };
 
     @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleHelper.onAttach(base));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         currentThemeIsDark = App.getInstance().isDarkTheme();
@@ -47,6 +54,7 @@ public class SettingsActivity extends AppCompatActivity {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setTitle(R.string.activity_title_settings);
         }
         PreferenceFragment fragment = null;
         Intent intent = getIntent();

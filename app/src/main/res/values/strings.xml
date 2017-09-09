@@ -139,6 +139,7 @@
     <string name="load_from">Загрузить с</string>
     <string name="devices">Устройства</string>
     <string name="lang_changed">Язык приложения был изменен, перезапустить приложение?</string>
+    <string name="search_in_page">Найти на странице</string>
 
 
     <!-- Fragment titles -->
@@ -498,6 +499,7 @@
     <!-- News article -->
     <string name="res_s_comments">@string/comments</string>
     <string name="res_s_comments_do_swipe">@string/comments_do_swipe</string>
+
 
 
 </resources>

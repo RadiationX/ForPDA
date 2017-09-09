@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,6 +26,7 @@ import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.LocaleHelper;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -44,6 +46,11 @@ public class CheckerActivity extends AppCompatActivity {
     private LinearLayout updateContent;
     private View divider;
     private ProgressBar progressBar;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleHelper.onAttach(base));
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

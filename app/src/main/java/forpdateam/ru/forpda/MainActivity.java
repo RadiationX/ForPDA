@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -28,6 +29,7 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.EmptyActivity;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.LocaleHelper;
 import forpdateam.ru.forpda.utils.WebViewsProvider;
 import forpdateam.ru.forpda.utils.permission.RxPermissions;
 import forpdateam.ru.forpda.views.drawers.DrawerHeader;
@@ -322,6 +324,12 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         Log.d(LOG_TAG, "onResumeFragments");
     }
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleHelper.onAttach(base));
+    }
+
+
     private String lang = null;
 
     @Override
@@ -332,12 +340,13 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         if (receiver != null)
             receiver.registerReceiver();
         if (lang == null) {
-            lang = App.getInstance().getPreferences().getString("language", "default");
+            lang = LocaleHelper.getLanguage(this);
         }
-        if (!App.getInstance().getPreferences().getString("language", "default").equals(lang)) {
+        if (!LocaleHelper.getLanguage(this).equals(lang)) {
+            Context newContext = LocaleHelper.onAttach(this);
             new AlertDialog.Builder(this)
-                    .setMessage(R.string.lang_changed)
-                    .setPositiveButton(R.string.ok, (dialog, which) -> {
+                    .setMessage(newContext.getString(R.string.lang_changed))
+                    .setPositiveButton(newContext.getString(R.string.ok), (dialog, which) -> {
                         Intent mStartActivity = new Intent(MainActivity.this, MainActivity.class);
                         int mPendingIntentId = 123456;
                         PendingIntent mPendingIntent = PendingIntent.getActivity(MainActivity.this, mPendingIntentId, mStartActivity,
@@ -347,7 +356,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
                         finish();
                         System.exit(0);
                     })
-                    .setNegativeButton(R.string.cancel, null)
+                    .setNegativeButton(newContext.getString(R.string.cancel), null)
                     .show();
         }
         if (currentThemeIsDark != App.getInstance().isDarkTheme()) {

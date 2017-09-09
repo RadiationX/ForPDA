@@ -338,6 +338,7 @@
     <string name="reset">Reset</string>
     <string name="retry">Repeat</string>
     <string name="save">Save</string>
+    <string name="search_in_page">Search in page</string>
     <string name="search_in_theme">Find in the subject</string>
     <string name="search_keywords">Key words</string>
     <string name="search_settings_btn_save">Save</string>
