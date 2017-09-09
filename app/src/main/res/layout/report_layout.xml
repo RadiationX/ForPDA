@@ -11,7 +11,7 @@
         android:id="@+id/report_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Текст жалобы">
+        android:hint="@string/report_text">
 
         <android.support.v7.widget.AppCompatEditText
             android:id="@+id/report_text_field"

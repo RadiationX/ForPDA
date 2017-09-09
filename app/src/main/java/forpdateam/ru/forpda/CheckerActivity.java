@@ -165,12 +165,12 @@ public class CheckerActivity extends AppCompatActivity {
                 alertDialogMenu.addItem("Google Play", (context, data) -> IntentHandler.handle(GOOGLE_PLAY_LINK));
 
                 new AlertDialog.Builder(CheckerActivity.this)
-                        .setTitle("Загрузить с")
+                        .setTitle(R.string.load_from)
                         .setItems(alertDialogMenu.getTitles(), (dialog, which) -> alertDialogMenu.onClick(which, CheckerActivity.this, null))
                         .show();
             });
         } else {
-            updateInfo.setText("Обновлений нет");
+            updateInfo.setText(R.string.no_updates);
             updateInfo.setVisibility(View.VISIBLE);
             updateContent.setVisibility(View.GONE);
             updateButton.setVisibility(View.GONE);
@@ -216,7 +216,7 @@ public class CheckerActivity extends AppCompatActivity {
     }
 
     private String generateCurrentInfo(String name, String date) {
-        return "Версия " + name + "\n" + "Сборка от " + date;
+        return String.format(getString(R.string.updater_current_info), name, date);
     }
 
     @Override

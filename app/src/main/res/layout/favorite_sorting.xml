@@ -22,7 +22,7 @@
                 android:layout_height="wrap_content"
                 android:paddingEnd="@dimen/dp16"
                 android:paddingStart="@dimen/dp16"
-                android:text="Сортировать по"
+                android:text="@string/sort_by"
                 android:textColor="?attr/second_text_color" />
 
             <android.support.v7.widget.AppCompatSpinner
@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:paddingEnd="@dimen/dp16"
                 android:paddingStart="@dimen/dp16"
-                android:text="Порядок"
+                android:text="@string/sort_order"
                 android:textColor="?attr/second_text_color" />
 
             <android.support.v7.widget.AppCompatSpinner
@@ -68,7 +68,7 @@
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Применить" />
+                android:text="@string/apply" />
         </LinearLayout>
     </LinearLayout>
 

@@ -92,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:gravity="start|center_vertical"
-                android:text="Закрыть остальные" />
+                android:text="@string/close_other_tabs" />
         </RelativeLayout>
 
     </android.support.design.widget.NavigationView>

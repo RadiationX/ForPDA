@@ -47,7 +47,7 @@
                 android:layout_alignEnd="@+id/divider_add_buttons"
                 android:layout_alignParentStart="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:text="В спойлер" />
+                android:text="@string/add_in_spoiler" />
 
             <View
                 android:id="@+id/divider_add_buttons"
@@ -63,7 +63,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignStart="@+id/divider_add_buttons"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:text="Вставить" />
+                android:text="@string/insert" />
 
             <View
                 android:id="@+id/divider_all_buttons"
@@ -86,7 +86,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Добавить вложения"
+                android:contentDescription="@string/add_attachment"
                 app:srcCompat="@drawable/ic_toolbar_add" />
 
             <android.support.v7.widget.AppCompatImageButton
@@ -95,7 +95,7 @@
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:visibility="gone"
-                android:contentDescription="Удалить выбранные вложения"
+                android:contentDescription="@string/delete_selected_attachments"
                 app:srcCompat="@drawable/ic_toolbar_delete" />
         </FrameLayout>
     </RelativeLayout>

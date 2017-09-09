@@ -77,7 +77,7 @@
         android:layout_below="@+id/topic_item_desc"
         android:textColor="?attr/second_text_color"
         tools:text="@string/test_topic_last_nick"
-        android:contentDescription="Пользователь"/>
+        android:contentDescription="@string/user"/>
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/topic_item_date"
