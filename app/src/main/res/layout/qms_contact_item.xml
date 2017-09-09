@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="56dp"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="?attr/selectableItemBackground">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -22,7 +23,7 @@
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/qms_contact_count"
         android:textColor="?attr/default_text_color"
-        android:text="@string/test_nick"/>
+        tools:text="@string/test_nick"/>
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/qms_contact_count"
@@ -35,7 +36,7 @@
         android:background="?count_background"
         android:paddingEnd="8dp"
         android:paddingStart="8dp"
-        android:text="@string/test_count_number"
+        tools:text="@string/test_count_number"
         android:gravity="center"
         android:textColor="?attr/contrast_text_color"
         android:textStyle="bold"/>

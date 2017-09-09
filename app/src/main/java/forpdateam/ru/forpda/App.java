@@ -331,7 +331,7 @@ public class App extends android.app.Application {
                 template = new MiniTemplator.Builder().build(stream, Charset.forName("utf-8"));
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(getContext(), "Ошибка шаблона [" + name + "]: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), String.format(getString(R.string.template_error), name, e.getMessage()), Toast.LENGTH_LONG).show();
                 //создание пустого шаблона
                 template = new MiniTemplator.Builder().build(new ByteArrayInputStream("Template error!".getBytes(Charset.forName("utf-8"))), Charset.forName("utf-8"));
             }

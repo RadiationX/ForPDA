@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
         android:id="@+id/drawer_item_wrapper"
@@ -21,7 +22,7 @@
             android:paddingEnd="8dp"
             android:paddingStart="0dp"
             android:paddingTop="8dp"
-            android:text="@string/test_drawer_item_name"
+            tools:text="@string/test_drawer_item_name"
             android:textColor="?attr/default_text_color"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -47,7 +48,7 @@
             android:minWidth="24dp"
             android:paddingEnd="8dp"
             android:paddingStart="8dp"
-            android:text="@string/test_count_number"
+            tools:text="@string/test_count_number"
             android:textColor="?attr/contrast_text_color"
             android:textStyle="bold" />
     </RelativeLayout>

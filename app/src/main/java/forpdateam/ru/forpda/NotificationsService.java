@@ -630,33 +630,33 @@ public class NotificationsService extends Service {
 
     public String createContent(NotificationEvent event) {
         if (event.fromQms())
-            return event.getSourceTitle() + ": " + event.getMsgCount() + " непрочитанных сообщений";
+            return String.format(getString(R.string.notification_content_qms_Nick_Count), event.getSourceTitle(), event.getMsgCount());
 
         if (event.fromTheme()) {
             if (event.isMention())
-                return "Ответил Вам в теме \"" + event.getSourceTitle() + "\"";
+                return String.format(getString(R.string.notification_content_mention_Title), event.getSourceTitle());
 
-            return "Написал сообщение в теме \"" + event.getSourceTitle() + "\"";
+            return String.format(getString(R.string.notification_content_theme_Title), event.getSourceTitle());
         }
 
         if (event.fromSite())
-            return "Вам ответили на комментарий на сайте";
+            return getString(R.string.notification_content_news);
 
         return "";
     }
 
     public String createSummary(NotificationEvent event) {
         if (event.isMention())
-            return "Упоминание";
+            return getString(R.string.notification_summary_mention);
 
         if (event.fromQms())
-            return "Чат QMS";
+            return getString(R.string.notification_summary_qms);
 
         if (event.fromTheme())
-            return "Избранное";
+            return getString(R.string.notification_summary_fav);
 
         if (event.fromSite())
-            return "Комментарий";
+            return getString(R.string.notification_summary_comment);
 
         return "";
     }

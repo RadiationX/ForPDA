@@ -175,7 +175,7 @@ public class NotesFragment extends ListFragment implements NotesAdapter.ClickLis
         if (dialogMenu == null) {
             dialogMenu = new AlertDialogMenu<>();
             showedDialogMenu = new AlertDialogMenu<>();
-            dialogMenu.addItem(getString(R.string.menu_copy_link), (context, data) -> {
+            dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
                 Utils.copyToClipBoard("" + data.getLink());
             });
             dialogMenu.addItem(getString(R.string.edit), (context, data) -> {

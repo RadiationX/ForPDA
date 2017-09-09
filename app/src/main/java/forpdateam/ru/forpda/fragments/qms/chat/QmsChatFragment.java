@@ -264,9 +264,9 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
                     }, new ArrayList<>());
                     return false;
                 });
-        noteMenuItem = getMenu().add(R.string.menu_create_note)
+        noteMenuItem = getMenu().add(R.string.create_note)
                 .setOnMenuItemClickListener(item -> {
-                    String title = getString(R.string.dialog)+" \"" + currentChat.getTitle() + "\" с " + currentChat.getNick();
+                    String title = String.format(getString(R.string.dialog_Title_Nick), currentChat.getTitle(), currentChat.getNick());
                     String url = "http://4pda.ru/forum/index.php?act=qms&mid=" + currentChat.getUserId() + "&t=" + currentChat.getThemeId();
                     NotesAddPopup.showAddNoteDialog(getContext(), title, url);
                     return true;

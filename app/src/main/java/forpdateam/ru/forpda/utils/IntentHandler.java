@@ -220,7 +220,7 @@ public class IntentHandler {
             //App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK));
 
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK);
-            App.getInstance().startActivity(Intent.createChooser(intent, App.getInstance().getString(R.string.ext_intent_open_in)).addFlags(FLAG_ACTIVITY_NEW_TASK));
+            App.getInstance().startActivity(Intent.createChooser(intent, App.getInstance().getString(R.string.open_with)).addFlags(FLAG_ACTIVITY_NEW_TASK));
         } catch (ActivityNotFoundException e) {
             ACRA.getErrorReporter().handleException(e);
         }
@@ -366,7 +366,7 @@ public class IntentHandler {
         Activity activity = App.getActivity();
         if (activity != null) {
             new AlertDialog.Builder(activity)
-                    .setMessage(activity.getString(R.string.intent_load_file) + fileName + "?")
+                    .setMessage(activity.getString(R.string.load_file) + fileName + "?")
                     .setPositiveButton(activity.getString(R.string.ok), (dialog, which) -> {
                         redirectDownload(fileName, url);
                     })
@@ -378,7 +378,7 @@ public class IntentHandler {
     }
 
     private static void redirectDownload(String fileName, String url) {
-        Toast.makeText(App.getContext(), App.getInstance().getString(R.string.intent_request_link).concat(fileName), Toast.LENGTH_SHORT).show();
+        Toast.makeText(App.getContext(), App.getInstance().getString(R.string.perform_request_link).concat(fileName), Toast.LENGTH_SHORT).show();
         Observable.fromCallable(() -> Client.getInstance().request(new NetworkRequest.Builder().url(url).withoutBody().build()))
                 .onErrorReturn(throwable -> new NetworkResponse(null))
                 .subscribeOn(Schedulers.io())
@@ -392,11 +392,11 @@ public class IntentHandler {
                         externalDownloader(response.getRedirect());
                     } else {
                         Runnable checkAction = () -> {
-                            Toast.makeText(App.getContext(), App.getInstance().getString(R.string.intent_perform_loading).concat(fileName), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(App.getContext(), App.getInstance().getString(R.string.perform_loading).concat(fileName), Toast.LENGTH_SHORT).show();
                             try {
                                 systemDownloader(fileName, response.getRedirect());
                             } catch (Exception exception) {
-                                Toast.makeText(App.getContext(), R.string.intent_perform_loading_error, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(App.getContext(), R.string.perform_loading_error, Toast.LENGTH_SHORT).show();
                                 externalDownloader(response.getRedirect());
                             }
                         };
@@ -426,7 +426,7 @@ public class IntentHandler {
     public static void externalDownloader(String url) {
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK);
-            App.getInstance().startActivity(Intent.createChooser(intent, App.getInstance().getString(R.string.ext_intent_load)).addFlags(FLAG_ACTIVITY_NEW_TASK));
+            App.getInstance().startActivity(Intent.createChooser(intent, App.getInstance().getString(R.string.load_with)).addFlags(FLAG_ACTIVITY_NEW_TASK));
         } catch (ActivityNotFoundException e) {
             ACRA.getErrorReporter().handleException(e);
         }

@@ -6,6 +6,8 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 
+import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.views.messagepanel.advanced.adapters.PanelItemAdapter;
 
@@ -19,7 +21,7 @@ public class SmilesPanelItem extends BasePanelItem {
     private static List<String> urlToAssets = null;
 
     public SmilesPanelItem(Context context, MessagePanel panel) {
-        super(context, panel, "Смайлы");
+        super(context, panel, App.getInstance().getString(R.string.smiles_title));
         PanelItemAdapter adapter = new PanelItemAdapter(getSmiles(), getUrlToAssets(), PanelItemAdapter.TYPE_ASSET);
         adapter.setOnItemClickListener(item -> {
             messagePanel.insertText(" ".concat(item.getText()).concat(" "));

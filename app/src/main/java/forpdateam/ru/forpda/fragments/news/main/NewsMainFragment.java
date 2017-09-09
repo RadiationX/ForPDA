@@ -47,14 +47,14 @@ public class NewsMainFragment extends TabFragment implements
     //private Realm realm;
 
     public NewsMainFragment() {
-
+        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_news_list));
+        configuration.setAlone(true);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        configuration.setDefaultTitle(getString(R.string.default_news_title));
-        configuration.setAlone(true);
+
         //configuration.setUseCache(true);
         //realm = Realm.getDefaultInstance();
     }
@@ -129,13 +129,13 @@ public class NewsMainFragment extends TabFragment implements
         if (dialogMenu == null) {
             dialogMenu = new AlertDialogMenu<>();
             showedDialogMenu = new AlertDialogMenu<>();
-            dialogMenu.addItem(getString(R.string.menu_copy_link), (context, data) -> {
+            dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
                 Utils.copyToClipBoard("https://4pda.ru/index.php?p=" + data.getId());
             });
-            dialogMenu.addItem(getString(R.string.menu_share), (context, data) -> {
+            dialogMenu.addItem(getString(R.string.share), (context, data) -> {
                 Utils.shareText("https://4pda.ru/index.php?p=" + data.getId());
             });
-            dialogMenu.addItem(getString(R.string.menu_create_note), (context1, data) -> {
+            dialogMenu.addItem(getString(R.string.create_note), (context1, data) -> {
                 String title = data.getTitle();
                 String url = "https://4pda.ru/index.php?p=" + data.getId();
                 NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);

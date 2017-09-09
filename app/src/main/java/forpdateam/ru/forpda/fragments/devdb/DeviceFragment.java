@@ -71,7 +71,7 @@ public class DeviceFragment extends TabFragment {
     };
 
     public DeviceFragment() {
-        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_device_title));
+        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_device));
     }
 
     @Override
@@ -153,19 +153,19 @@ public class DeviceFragment extends TabFragment {
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        copyLinkMenuItem = getMenu().add(R.string.menu_copy_link)
+        copyLinkMenuItem = getMenu().add(R.string.copy_link)
                 .setOnMenuItemClickListener(item -> {
                     Utils.copyToClipBoard("https://4pda.ru/devdb/" + currentData.getId());
                     return true;
                 });
 
-        shareMenuItem = getMenu().add(R.string.menu_share)
+        shareMenuItem = getMenu().add(R.string.share)
                 .setOnMenuItemClickListener(item -> {
                     Utils.shareText("https://4pda.ru/devdb/" + currentData.getId());
                     return true;
                 });
 
-        noteMenuItem = getMenu().add(R.string.menu_create_note)
+        noteMenuItem = getMenu().add(R.string.create_note)
                 .setOnMenuItemClickListener(item -> {
                     String title = "DevDb: " + currentData.getBrandTitle() + " " + currentData.getTitle();
                     String url = "https://4pda.ru/devdb/" + currentData.getId();

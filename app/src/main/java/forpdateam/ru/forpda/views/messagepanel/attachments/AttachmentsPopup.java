@@ -128,10 +128,10 @@ public class AttachmentsPopup {
 
     private void onDataChange(int count) {
         if (count > 0) {
-            noAttachments.setText("Вложений: " + count);
+            noAttachments.setText(String.format(App.getInstance().getString(R.string.attachments_count), count));
             //dialog.setPeekHeight(App.getKeyboardHeight());
         } else {
-            noAttachments.setText("Нет вложений");
+            noAttachments.setText(R.string.no_attachments);
             //dialog.setPeekHeight(App.px48);
         }
     }

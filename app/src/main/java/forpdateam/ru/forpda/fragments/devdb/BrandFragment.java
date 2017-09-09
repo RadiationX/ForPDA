@@ -40,7 +40,7 @@ public class BrandFragment extends TabFragment {
     private AlertDialogMenu<BrandFragment, Brand.DeviceItem> dialogMenu, showedDialogMenu;
 
     public BrandFragment() {
-        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_brand_title));
+        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_brand));
     }
 
     @Override
@@ -84,13 +84,13 @@ public class BrandFragment extends TabFragment {
             if (dialogMenu == null) {
                 dialogMenu = new AlertDialogMenu<>();
                 showedDialogMenu = new AlertDialogMenu<>();
-                dialogMenu.addItem(getString(R.string.menu_copy_link), (context, data) -> {
+                dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
                     Utils.copyToClipBoard("http://4pda.ru/devdb/" + data.getId());
                 });
-                dialogMenu.addItem(getString(R.string.menu_share), (context, data) -> {
+                dialogMenu.addItem(getString(R.string.share), (context, data) -> {
                     Utils.shareText("https://4pda.ru/devdb/" + data.getId());
                 });
-                dialogMenu.addItem(getString(R.string.menu_create_note), (context1, data) -> {
+                dialogMenu.addItem(getString(R.string.create_note), (context1, data) -> {
                     String title = "DevDb: " + currentData.getTitle() + " " + data.getTitle();
                     String url = "https://4pda.ru/devdb/" + data.getId();
                     NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);

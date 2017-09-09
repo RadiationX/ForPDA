@@ -29,10 +29,10 @@ import forpdateam.ru.forpda.utils.rx.Subscriber;
 public class BrandsFragment extends ListFragment {
     public final static String ARG_CATEGORY_ID = "CATEGORY_ID";
     private final static String[] spinnerTitles = {
-            App.getInstance().getString(R.string.brands_cat_phones),
-            App.getInstance().getString(R.string.brands_cat_tabs),
-            App.getInstance().getString(R.string.brands_cat_ebook),
-            App.getInstance().getString(R.string.brands_cat_smartwatch)};
+            App.getInstance().getString(R.string.brands_category_phones),
+            App.getInstance().getString(R.string.brands_category_tabs),
+            App.getInstance().getString(R.string.brands_category_ebook),
+            App.getInstance().getString(R.string.brands_category_smartwatch)};
     private final static String[] mansCats = {"phones", "pad", "ebook", "smartwatch"};
     private Subscriber<Brands> mainSubscriber = new Subscriber<>(this);
     private BrandsAdapter adapter;
@@ -41,7 +41,7 @@ public class BrandsFragment extends ListFragment {
 
     public BrandsFragment() {
         //configuration.setAlone(true);
-        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_brands_title));
+        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_brands));
     }
 
     @Override

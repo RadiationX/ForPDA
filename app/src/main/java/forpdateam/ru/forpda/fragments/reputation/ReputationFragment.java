@@ -129,7 +129,7 @@ public class ReputationFragment extends ListFragment {
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        SubMenu subMenu = getMenu().addSubMenu(R.string.sorting);
+        SubMenu subMenu = getMenu().addSubMenu(R.string.sorting_title);
         subMenu.getItem().setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         subMenu.getItem().setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_sort));
         descSortMenuItem = subMenu.add(R.string.sorting_desc).setOnMenuItemClickListener(menuItem -> {
@@ -142,7 +142,7 @@ public class ReputationFragment extends ListFragment {
             loadData();
             return false;
         });
-        repModeMenuItem = getMenu().add(data.getMode().equals(Reputation.MODE_FROM) ? getString(R.string.reputation_mode_from) : getString(R.string.reputation_mode_to))
+        repModeMenuItem = getMenu().add(getString(data.getMode().equals(Reputation.MODE_FROM) ? R.string.reputation_mode_from : R.string.reputation_mode_to))
                 .setOnMenuItemClickListener(item -> {
                     if (data.getMode().equals(Reputation.MODE_FROM))
                         data.setMode(Reputation.MODE_TO);
@@ -171,7 +171,7 @@ public class ReputationFragment extends ListFragment {
             descSortMenuItem.setEnabled(true);
             ascSortMenuItem.setEnabled(true);
             repModeMenuItem.setEnabled(true);
-            repModeMenuItem.setTitle(data.getMode().equals(Reputation.MODE_FROM) ? getString(R.string.reputation_mode_from) : getString(R.string.reputation_mode_to));
+            repModeMenuItem.setTitle(getString(data.getMode().equals(Reputation.MODE_FROM) ? R.string.reputation_mode_from : R.string.reputation_mode_to));
             if (data.getId() != ClientHelper.getUserId()) {
                 upRepMenuItem.setEnabled(true);
                 upRepMenuItem.setVisible(true);
@@ -196,13 +196,13 @@ public class ReputationFragment extends ListFragment {
         assert layout != null;
         final TextView text = (TextView) layout.findViewById(R.id.reputation_text);
         final EditText messageField = (EditText) layout.findViewById(R.id.reputation_text_field);
-        text.setText((type ? getString(R.string.increase) : getString(R.string.decrease)).concat(" репутацию ").concat(data.getNick()).concat(" ?"));
+        text.setText(String.format(getString(R.string.change_reputation_Type_Nick), getString(type ? R.string.increase : R.string.decrease), data.getNick()));
 
         new AlertDialog.Builder(getContext())
                 .setView(layout)
                 .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
                     changeReputation(s -> {
-                        Toast.makeText(getContext(), s.isEmpty() ? getString(R.string.reputatuib_changed) : s, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), s.isEmpty() ? getString(R.string.reputation_changed) : s, Toast.LENGTH_SHORT).show();
                         loadData();
                     }, 0, data.getId(), type, messageField.getText().toString());
                 })

@@ -138,12 +138,12 @@ public class ProfileFragment extends TabFragment {
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        copyLinkMenuItem = getMenu().add("Скопировать ссылку")
+        copyLinkMenuItem = getMenu().add(R.string.copy_link)
                 .setOnMenuItemClickListener(menuItem -> {
                     Utils.copyToClipBoard(tab_url);
                     return false;
                 });
-        writeMenuItem = getMenu().add("Написать")
+        writeMenuItem = getMenu().add(R.string.write)
                 .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_profile_toolbar_create))
                 .setOnMenuItemClickListener(item -> {
                     IntentHandler.handle(currentProfile.getContacts().get(0).first);
@@ -286,7 +286,7 @@ public class ProfileFragment extends TabFragment {
         });
 
 
-        setTabTitle("Профиль ".concat(currentProfile.getNick()));
+        setTabTitle(String.format(getString(R.string.profile_with_Nick), currentProfile.getNick()));
         setTitle(currentProfile.getNick());
         nick.setText(currentProfile.getNick());
         group.setText(currentProfile.getGroup());

@@ -359,7 +359,7 @@ public class Drawers {
 
     public void closeAllTabs() {
         new AlertDialog.Builder(activity)
-                .setMessage(R.string.ask_close_othher_tabs)
+                .setMessage(R.string.ask_close_other_tabs)
                 .setPositiveButton(R.string.ok, (dialog, which) -> {
                     closeTabs();
                     List<TabFragment> fragmentList = new ArrayList<>();

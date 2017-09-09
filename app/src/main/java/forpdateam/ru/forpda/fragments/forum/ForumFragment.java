@@ -60,7 +60,7 @@ public class ForumFragment extends TabFragment {
                 args.putInt(TopicsFragment.TOPICS_ID_ARG, data.getId());
                 TabManager.getInstance().add(TopicsFragment.class, args);
             });
-            forumMenu.addItem(getString(R.string.menu_copy_link), (context, data) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getId()))));
+            forumMenu.addItem(getString(R.string.copy_link), (context, data) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getId()))));
             forumMenu.addItem(getString(R.string.mark_read), (context, data) -> {
 
             });
@@ -110,7 +110,7 @@ public class ForumFragment extends TabFragment {
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        getMenu().add(R.string.refresh_forums)
+        getMenu().add(R.string.forum_refresh)
                 .setOnMenuItemClickListener(item -> {
                     loadData();
                     return false;
@@ -148,9 +148,9 @@ public class ForumFragment extends TabFragment {
         results = realm.where(ForumItemFlatBd.class).findAll();
         if (updateDialog != null && updateDialog.isShowing()) {
             if (results.size() != 0) {
-                updateDialog.setMessage(getString(R.string.forum_update_complete));
+                updateDialog.setMessage(getString(R.string.update_complete));
             } else {
-                updateDialog.setMessage(getString(R.string.forum_update_error));
+                updateDialog.setMessage(getString(R.string.error_occurred));
             }
             new Handler().postDelayed(() -> {
                 if (updateDialog != null)
@@ -165,10 +165,10 @@ public class ForumFragment extends TabFragment {
     }
 
     private void onLoadThemes(ForumItemTree forumRoot) {
-        updateDialog.setMessage(getString(R.string.forum_update));
+        updateDialog.setMessage(getString(R.string.update_data_base));
 
         if (forumRoot.getForums() == null) {
-            updateDialog.setMessage(getString(R.string.forum_update_error));
+            updateDialog.setMessage(getString(R.string.error_occurred));
             new Handler().postDelayed(() -> {
                 if (updateDialog != null)
                     updateDialog.cancel();

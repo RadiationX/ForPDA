@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:foreground="?attr/selectableItemBackgroundBorderless">
 
     <android.support.v7.widget.AppCompatTextView
@@ -13,7 +14,7 @@
         android:layout_marginStart="@dimen/dp16"
         android:layout_marginTop="@dimen/dp16"
         android:layout_toStartOf="@+id/forum_item_icon"
-        android:text="@string/test_forum_title"
+        tools:text="@string/test_forum_title"
         android:textSize="16sp"
         android:textStyle="bold" />
 

@@ -177,17 +177,17 @@ public class NewsDetailsFragment extends TabFragment {
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        getMenu().add(R.string.menu_copy_link)
+        getMenu().add(R.string.copy_link)
                 .setOnMenuItemClickListener(menuItem -> {
                     Utils.copyToClipBoard("https://4pda.ru/index.php?p=" + newsId);
                     return false;
                 });
-        getMenu().add(R.string.menu_share)
+        getMenu().add(R.string.share)
                 .setOnMenuItemClickListener(menuItem -> {
                     Utils.shareText("https://4pda.ru/index.php?p=" + newsId);
                     return false;
                 });
-        getMenu().add(R.string.menu_create_note)
+        getMenu().add(R.string.create_note)
                 .setOnMenuItemClickListener(menuItem -> {
                     String title = newsTitle;
                     String url = "https://4pda.ru/index.php?p=" + newsId;
