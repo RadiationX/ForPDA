@@ -42,7 +42,15 @@ var listElem = document.querySelector(".mess_list");
     listElem.insertAdjacentHTML("beforeend", listSrc);
     addedNewMessages();
     if (withScroll) {
-        getLastMess().scrollIntoView();
+        setTimeout(function () {
+            try{
+                getLastMess().focus();
+                getLastMess().querySelector(".accessibility_anchor").focus();
+            }catch(ex){
+                console.error(ex);
+            }
+            getLastMess().scrollIntoView();
+        }, 100);
     }
 }
 

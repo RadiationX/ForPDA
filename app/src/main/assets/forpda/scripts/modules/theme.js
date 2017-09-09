@@ -114,6 +114,13 @@ function scrollToElement(name) {
 
 function doScroll(tAnchorElem) {
     // console.log(anchorElem);
+    try{
+        tAnchorElem.focus();
+        tAnchorElem.querySelector(".accessibility_anchor").focus();
+    }catch(ex){
+        console.error(ex);
+    }
+
     tAnchorElem.scrollIntoView();
 
     //Активация элементов, убирается класс active с уже активированных
