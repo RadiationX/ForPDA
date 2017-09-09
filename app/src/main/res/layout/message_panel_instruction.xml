@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:gravity="center"
-        android:text="@string/msg_panel_tooltip_useful"
+        android:text="@string/tooltip_msg_panel_useful"
         android:textAllCaps="true"
         android:textSize="16sp"
         android:textStyle="bold" />
@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="16dp"
-        android:text="@string/msg_panel_tooltip_btn_acccept" />
+        android:text="@string/tooltip_btn_msg_panel_accept" />
 
 
 </LinearLayout>

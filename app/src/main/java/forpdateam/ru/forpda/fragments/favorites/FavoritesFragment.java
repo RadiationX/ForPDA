@@ -64,7 +64,7 @@ public class FavoritesFragment extends ListFragment {
                 if (favoriteDialogMenu == null) {
                     favoriteDialogMenu = new AlertDialogMenu<>();
                     showedFavoriteDialogMenu = new AlertDialogMenu<>();
-                    favoriteDialogMenu.addItem(getString(R.string.menu_copy_link), (context, data) -> {
+                    favoriteDialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
                         if (data.isForum()) {
                             Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getForumId())));
                         } else {
@@ -73,7 +73,7 @@ public class FavoritesFragment extends ListFragment {
                     });
                     favoriteDialogMenu.addItem(getString(R.string.attachments), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=attach&code=showtopic&tid=" + data.getTopicId()));
                     favoriteDialogMenu.addItem(getString(R.string.open_theme_forum), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getForumId()));
-                    favoriteDialogMenu.addItem(getString(R.string.change_subscribe_type), (context, data) -> {
+                    favoriteDialogMenu.addItem(getString(R.string.fav_change_subscribe_type), (context, data) -> {
                         new AlertDialog.Builder(context.getContext())
                                 .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> context.changeFav(Favorites.ACTION_EDIT_SUB_TYPE, Favorites.SUB_TYPES[which1], data.getFavId()))
                                 .show();
@@ -257,7 +257,7 @@ public class FavoritesFragment extends ListFragment {
                     return false;
                 });
 
-        getMenu().add(R.string.sorting)
+        getMenu().add(R.string.sorting_title)
                 .setIcon(R.drawable.ic_toolbar_sort).setOnMenuItemClickListener(menuItem -> {
             hidePopupWindows();
             if (sortingView != null && sortingView.getParent() != null && sortingView.getParent() instanceof ViewGroup) {

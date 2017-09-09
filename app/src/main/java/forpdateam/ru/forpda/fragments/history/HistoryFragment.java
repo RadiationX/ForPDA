@@ -89,7 +89,7 @@ public class HistoryFragment extends ListFragment implements HistoryAdapter.Clic
         if (dialogMenu == null) {
             dialogMenu = new AlertDialogMenu<>();
             showedDialogMenu = new AlertDialogMenu<>();
-            dialogMenu.addItem(getString(R.string.menu_copy_link), (context, data) -> {
+            dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
                 Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=" + data.getId());
             });
             dialogMenu.addItem(getString(R.string.delete), (context, data) -> {

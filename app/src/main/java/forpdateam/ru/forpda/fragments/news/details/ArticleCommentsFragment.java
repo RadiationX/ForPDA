@@ -173,7 +173,7 @@ public class ArticleCommentsFragment extends Fragment implements ArticleComments
             fillMessageField(comment);
         } else {
             new AlertDialog.Builder(getContext())
-                    .setMessage(R.string.article_comment_reply_warning_1)
+                    .setMessage(R.string.comment_reply_warning)
                     .setPositiveButton(getString(R.string.ok), (dialog, which) -> fillMessageField(comment))
                     .setNegativeButton(getString(R.string.cancel), null)
                     .show();

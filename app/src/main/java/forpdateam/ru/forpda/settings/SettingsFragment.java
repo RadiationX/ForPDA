@@ -56,7 +56,7 @@ public class SettingsFragment extends PreferenceFragment {
         }
 
         findPreference("about.application")
-                .setSummary(getString(R.string.version) + " " + BuildConfig.VERSION_NAME);
+                .setSummary(String.format(getString(R.string.version_Build), BuildConfig.VERSION_NAME));
 
         findPreference("about.check_update")
                 .setOnPreferenceClickListener(preference -> {

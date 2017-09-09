@@ -84,7 +84,7 @@ public class CodesPanelItem extends BasePanelItem {
     };
 
     public CodesPanelItem(Context context, MessagePanel panel) {
-        super(context, panel, "Оформление");
+        super(context, panel, App.getInstance().getString(R.string.codes_title));
         PanelItemAdapter adapter = new PanelItemAdapter(getCodes(), null, PanelItemAdapter.TYPE_DRAWABLE);
         adapter.setOnItemClickListener(clickListener);
 
@@ -130,7 +130,7 @@ public class CodesPanelItem extends BasePanelItem {
         final EditText messageField = (EditText) layout.findViewById(R.id.report_text_field);
         final TextInputLayout inputLayout = (TextInputLayout) layout.findViewById(R.id.report_input_layout);
         final int[] i = {listLines.size() + 1};
-        inputLayout.setHint(App.getInstance().getString(R.string.codes_list_item) + i[0]);
+        inputLayout.setHint(String.format(App.getInstance().getString(R.string.codes_list_item_Pos), i[0]));
         AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                 .setView(layout)
                 .setPositiveButton(R.string.add, null)
@@ -153,7 +153,7 @@ public class CodesPanelItem extends BasePanelItem {
             i[0]++;
             listLines.add(messageField.getText().toString());
             messageField.setText("");
-            inputLayout.setHint("Пункт списка " + i[0]);
+            inputLayout.setHint(String.format(App.getInstance().getString(R.string.codes_list_item_Pos), i[0]));
         });
         messageField.addTextChangedListener(new SimpleTextWatcher() {
             @Override
@@ -190,7 +190,7 @@ public class CodesPanelItem extends BasePanelItem {
                 "7 (36pt)"
         };
         for (int i = 0; i < items.length; i++) {
-            items[i] = App.getInstance().getString(R.string.codes_text_size_item) + items[i];
+            items[i] = String.format(App.getInstance().getString(R.string.codes_text_size_item_Size), items[i]);
         }
         new AlertDialog.Builder(getContext())
                 .setTitle(R.string.codes_text_size)

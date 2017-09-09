@@ -44,7 +44,7 @@ public class PollChoicesAdapter extends RecyclerView.Adapter<PollChoicesAdapter.
             //notifyItemInserted(choices.indexOf(choice));
             notifyDataSetChanged();
         } else {
-            Toast.makeText(App.getContext(), App.getInstance().getString(R.string.poll_max_answers) + ": " + poll.getMaxChoices(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(App.getContext(), String.format(App.getInstance().getString(R.string.poll_answers_Max), poll.getMaxChoices()), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -70,7 +70,7 @@ public class PollChoicesAdapter extends RecyclerView.Adapter<PollChoicesAdapter.
 
         holder.myCustomEditTextListener.updatePosition(holder.getAdapterPosition());
         holder.title.getEditText().setText(item.getTitle());
-        holder.title.setHint(App.getInstance().getString(R.string.answer) + " " + (holder.getAdapterPosition() + 1));
+        holder.title.setHint(String.format(App.getInstance().getString(R.string.poll_answer_Pos), holder.getAdapterPosition() + 1));
 
 
     }

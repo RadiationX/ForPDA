@@ -67,8 +67,8 @@ public class QmsThemesFragment extends ListFragment {
                     dialogMenu.addItem(getString(R.string.delete), (context, data) -> {
                         mainSubscriber.subscribe(RxApi.Qms().deleteTheme(currentThemes.getUserId(), data.getId()), this::onLoadThemes, currentThemes, v -> loadData());
                     });
-                    dialogMenu.addItem(getString(R.string.menu_create_note), (context1, data) -> {
-                        String title = "Диалог \"" + data.getName() + "\" с " + currentThemes.getNick();
+                    dialogMenu.addItem(getString(R.string.create_note), (context1, data) -> {
+                        String title = String.format(getString(R.string.dialog_Title_Nick), data.getName(), currentThemes.getNick());
                         String url = "http://4pda.ru/forum/index.php?act=qms&mid=" + currentThemes.getUserId() + "&t=" + data.getId();
                         NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);
                     });
@@ -151,7 +151,7 @@ public class QmsThemesFragment extends ListFragment {
         recyclerView.scrollToPosition(0);
         currentThemes = themes;
 
-        setTabTitle(getString(R.string.dialogs_with) + " ".concat(currentThemes.getNick()));
+        setTabTitle(getString(R.string.dialogs_Nick) + " ".concat(currentThemes.getNick()));
         setTitle(currentThemes.getNick());
         if (currentThemes.getThemes().size() == 0 && currentThemes.getNick() != null) {
             Bundle args = new Bundle();
@@ -194,9 +194,9 @@ public class QmsThemesFragment extends ListFragment {
                     }, new ArrayList<>());
                     return false;
                 });
-        noteMenuItem = getMenu().add(R.string.menu_create_note)
+        noteMenuItem = getMenu().add(R.string.create_note)
                 .setOnMenuItemClickListener(item -> {
-                    String title = getString(R.string.dialogs_with) + " " + currentThemes.getNick();
+                    String title = getString(R.string.dialogs_Nick) + " " + currentThemes.getNick();
                     String url = "http://4pda.ru/forum/index.php?act=qms&mid=" + currentThemes.getUserId();
                     NotesAddPopup.showAddNoteDialog(getContext(), title, url);
                     return true;

@@ -26,9 +26,7 @@ import io.reactivex.functions.Consumer;
  */
 
 public class ThemeDialogsHelper {
-    private final static String reportWarningText = "Вам не нужно указывать здесь тему и сообщение, модератор автоматически получит эту информацию.\n\n" +
-            "Пожалуйста, используйте эту возможность форума только для жалоб о некорректном сообщении!\n" +
-            "Для связи с модератором используйте личные сообщения.";
+    private final static String reportWarningText = App.getInstance().getString(R.string.report_warning);
     private static AlertDialogMenu<IPostFunctions, IBaseForumPost> userMenu, reputationMenu, postMenu;
     private static AlertDialogMenu<IPostFunctions, IBaseForumPost> showedUserMenu, showedReputationMenu, showedPostMenu;
 
@@ -108,12 +106,12 @@ public class ThemeDialogsHelper {
             postMenu.addItem(App.getInstance().getString(R.string.report), IPostFunctions::reportPost);
             postMenu.addItem(App.getInstance().getString(R.string.edit), IPostFunctions::editPost);
             postMenu.addItem(App.getInstance().getString(R.string.delete), IPostFunctions::deletePost);
-            postMenu.addItem(App.getInstance().getString(R.string.menu_copy_link), (context1, data) -> {
+            postMenu.addItem(App.getInstance().getString(R.string.copy_link), (context1, data) -> {
                 String url = "https://4pda.ru/forum/index.php?s=&showtopic=" + data.getTopicId() + "&view=findpost&p=" + data.getId();
                 Utils.copyToClipBoard(url);
             });
-            postMenu.addItem(App.getInstance().getString(R.string.menu_create_note), (context1, data) -> {
-                String title = "Пост " + data.getNick() + ", #" + data.getId();
+            postMenu.addItem(App.getInstance().getString(R.string.create_note), (context1, data) -> {
+                String title = String.format(App.getInstance().getString(R.string.post_Nick_Number), data.getNick(), data.getId());
                 String url = "https://4pda.ru/forum/index.php?s=&showtopic=" + data.getTopicId() + "&view=findpost&p=" + data.getId();
                 NotesAddPopup.showAddNoteDialog(context, title, url);
             });
@@ -139,7 +137,7 @@ public class ThemeDialogsHelper {
     public static void tryReportPost(Context context, IBaseForumPost post) {
         if (App.getInstance().getPreferences().getBoolean("show_report_warning", true)) {
             new AlertDialog.Builder(context)
-                    .setTitle(R.string.alarma)
+                    .setTitle(R.string.attention)
                     .setMessage(reportWarningText)
                     .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
                         App.getInstance().getPreferences().edit().putBoolean("show_report_warning", false).apply();
@@ -160,7 +158,7 @@ public class ThemeDialogsHelper {
         final EditText messageField = (EditText) layout.findViewById(R.id.report_text_field);
 
         new AlertDialog.Builder(context)
-                .setTitle(App.getInstance().getString(R.string.report_to_message) + " ".concat(post.getNick()))
+                .setTitle(String.format(App.getInstance().getString(R.string.report_to_post_Nick), post.getNick()))
                 .setView(layout)
                 .setPositiveButton(R.string.send, (dialogInterface, i) -> {
                     ThemeHelper.reportPost(s -> {
@@ -173,7 +171,7 @@ public class ThemeDialogsHelper {
 
     public static void deletePost(Context context, IBaseForumPost post, Consumer<Boolean> onNext) {
         new AlertDialog.Builder(context)
-                .setMessage(App.getInstance().getString(R.string.delete_message) + " ".concat(post.getNick()).concat(" ?"))
+                .setMessage(String.format(App.getInstance().getString(R.string.ask_delete_post_Nick), post.getNick()))
                 .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
                     ThemeHelper.deletePost(b -> {
                         onNext.accept(b);
@@ -192,13 +190,13 @@ public class ThemeDialogsHelper {
         assert layout != null;
         final TextView text = (TextView) layout.findViewById(R.id.reputation_text);
         final EditText messageField = (EditText) layout.findViewById(R.id.reputation_text_field);
-        text.setText((type ? App.getInstance().getString(R.string.increase) : App.getInstance().getString(R.string.decrease)).concat(" репутацию ").concat(post.getNick()).concat(" ?"));
+        text.setText(String.format(context.getString(R.string.change_reputation_Type_Nick), context.getString(type ? R.string.increase : R.string.decrease), post.getNick()));
 
         new AlertDialog.Builder(context)
                 .setView(layout)
                 .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
                     ThemeHelper.changeReputation(s -> {
-                        Toast.makeText(context, s.isEmpty() ? App.getInstance().getString(R.string.reputatuib_changed) : s, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, s.isEmpty() ? App.getInstance().getString(R.string.reputation_changed) : s, Toast.LENGTH_SHORT).show();
                     }, post.getId(), post.getUserId(), type, messageField.getText().toString());
                 })
                 .setNegativeButton(R.string.cancel, null)

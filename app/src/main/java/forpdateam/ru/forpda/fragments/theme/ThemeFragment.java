@@ -458,7 +458,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                     return false;
                 });
 
-        copyLinkMenuItem = getMenu().add(R.string.menu_copy_link)
+        copyLinkMenuItem = getMenu().add(R.string.copy_link)
                 .setOnMenuItemClickListener(menuItem -> {
                     String url = tab_url;
                     if (currentPage != null) {
@@ -478,7 +478,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         deleteFavoritesMenuItem = subMenu.add(R.string.delete_from_favorites)
                 .setOnMenuItemClickListener(menuItem -> {
                     if (currentPage.getFavId() == 0) {
-                        Toast.makeText(App.getContext(), "ID темы не найден, попробуйте перезагрузить страницу", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(App.getContext(), R.string.fav_delete_error_id_not_found, Toast.LENGTH_SHORT).show();
                         return false;
                     }
                     FavoritesHelper.delete(aBoolean -> {
@@ -861,7 +861,8 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     @Override
     public void votePost(IBaseForumPost post, boolean type) {
         new AlertDialog.Builder(getContext())
-                .setMessage((type ? getString(R.string.increase) : getString(R.string.decrease)).concat(" репутацию поста пользователя ").concat(post.getNick()).concat("?"))
+                .setMessage(String.format(getString(R.string.change_post_reputation_Type_Nick), getString(type ? R.string.increase : R.string.decrease), post.getNick()))
+
                 .setPositiveButton(R.string.ok, (dialog, which) -> ThemeHelper.votePost(s -> toast(s.isEmpty() ? getString(R.string.unknown_error) : s), post.getId(), type))
                 .setNegativeButton(R.string.cancel, null)
                 .show();

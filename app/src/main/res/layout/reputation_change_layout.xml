@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="@string/reputation_hint_reason"
+            android:hint="@string/reputation_reason"
             android:inputType="text|textCapSentences|textMultiLine"
             android:scrollHorizontally="true"/>
 

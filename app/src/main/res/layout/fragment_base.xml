@@ -175,7 +175,6 @@
                 <android.support.v7.widget.AppCompatImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:contentDescription="@string/icon_no_network"
                     android:padding="8dp"
                     app:srcCompat="@drawable/ic_cloud_off_black_24dp" />
 

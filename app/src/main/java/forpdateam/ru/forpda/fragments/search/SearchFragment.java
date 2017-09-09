@@ -315,7 +315,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
                 createdTopicsDialogMenu.addItem(getString(R.string.topic_lastposts), (context, data1) -> {
                     IntentHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + data1.getTopicId() + "&view=getlastpost");
                 });
-                createdTopicsDialogMenu.addItem(getString(R.string.menu_copy_link), (context, data1) -> {
+                createdTopicsDialogMenu.addItem(getString(R.string.copy_link), (context, data1) -> {
                     String url = "";
                     if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
                         url = "https://4pda.ru/index.php?p=" + item.getId();
@@ -332,7 +332,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
                     new AlertDialog.Builder(context.getContext())
                             .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> {
                                 FavoritesHelper.add(aBoolean -> {
-                                    Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.fovorites_adding_error), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
                                 }, data1.getId(), Favorites.SUB_TYPES[which1]);
                             })
                             .show();
@@ -392,7 +392,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
     @Override
     protected void addBaseToolbarMenu() {
         super.addBaseToolbarMenu();
-        getMenu().add(R.string.menu_copy_link)
+        getMenu().add(R.string.copy_link)
                 .setOnMenuItemClickListener(menuItem -> {
                     Utils.copyToClipBoard(settings.toUrl());
                     return false;
@@ -813,12 +813,12 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
     @Override
     public void reply(IBaseForumPost post) {
-        Toast.makeText(getContext(), R.string.js_action_not_available, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), R.string.action_not_available, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void quotePost(String text, IBaseForumPost post) {
-        Toast.makeText(getContext(), R.string.js_action_not_available, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), R.string.action_not_available, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -836,7 +836,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
     @Override
     public void votePost(IBaseForumPost post, boolean type) {
-        ThemeHelper.votePost(s -> toast(s.isEmpty() ? "Неизвестная ошибка" : s), post.getId(), type);
+        ThemeHelper.votePost(s -> toast(s.isEmpty() ? getString(R.string.unknown_error) : s), post.getId(), type);
     }
 
     @Override

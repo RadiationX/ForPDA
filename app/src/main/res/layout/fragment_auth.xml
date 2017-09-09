@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:fillViewport="true"
     android:fitsSystemWindows="true">
 
@@ -50,7 +51,7 @@
                 android:layout_marginTop="@dimen/dp32"
                 android:textSize="26sp"
                 android:visibility="gone"
-                android:text="@string/test_auth_nick"/>
+                tools:text="@string/test_auth_nick"/>
         </RelativeLayout>
 
 
@@ -74,7 +75,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:ems="10"
-                    android:hint="@string/auth_hint_login"
+                    android:hint="@string/auth_login"
                     android:inputType="textPersonName"
                     android:maxLines="1"
                     android:scrollHorizontally="true" />
@@ -92,7 +93,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:hint="@string/auth_hint_password"
+                    android:hint="@string/auth_password"
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:scrollHorizontally="true" />
@@ -126,7 +127,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:hint="@string/auth_hint_captcha"
+                    android:hint="@string/auth_captcha"
                     android:inputType="number"
                     android:maxLength="4"
                     android:maxLines="1"
@@ -143,7 +144,7 @@
                     android:id="@+id/auth_hidden"
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
-                    android:text="@string/auth_chk_hidden"
+                    android:text="@string/auth_hidden"
                     android:textAllCaps="true"
                     android:textStyle="bold"/>
 

@@ -84,7 +84,7 @@ public class TopicsFragment extends ListFragment {
             if (fullTopicsDialogMenu == null) {
                 fullTopicsDialogMenu = new AlertDialogMenu<>();
                 topicsDialogMenu = new AlertDialogMenu<>();
-                fullTopicsDialogMenu.addItem(getString(R.string.menu_copy_link), (context, data1) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data1.getId()))));
+                fullTopicsDialogMenu.addItem(getString(R.string.copy_link), (context, data1) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data1.getId()))));
                 fullTopicsDialogMenu.addItem(getString(R.string.open_theme_forum), (context, data1) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getId()));
                 fullTopicsDialogMenu.addItem(getString(R.string.add_to_favorites), ((context, data1) -> {
                     new AlertDialog.Builder(context.getContext())

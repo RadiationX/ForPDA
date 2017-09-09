@@ -148,7 +148,7 @@ public class ImageViewerActivity extends AppCompatActivity {
 
     @SuppressLint("DefaultLocale")
     private void updateTitle(int selectedPageIndex) {
-        toolbar.setTitle(String.format("%d из %d", selectedPageIndex + 1, urls.size()));
+        toolbar.setTitle(String.format(getString(R.string.image_viewer_subtitle_Cur_All), selectedPageIndex + 1, urls.size()));
     }
 
     @Override

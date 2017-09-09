@@ -45,7 +45,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         } else if (viewType == LOAD_MORE_LAYOUT) {
             return new LoadMoreHolder(inflateLayout(parent, R.layout.news_list_load_more_layout));
         }
-        throw new IllegalArgumentException("Еблан что ле? Чего ты тут заслал, мудила. Смотри внимательней. Сучка!");
+        return null;
     }
 
     @Override

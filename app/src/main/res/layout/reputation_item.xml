@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="?attr/selectableItemBackground"
     android:clickable="true"
     android:paddingBottom="@dimen/dp12"
@@ -18,7 +19,7 @@
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/rep_item_image"
         android:textSize="16sp"
-        android:text="@string/test_topic_title"/>
+        tools:text="@string/test_topic_title"/>
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/rep_item_image"
@@ -33,7 +34,7 @@
         android:layout_below="@+id/rep_item_title"
         android:textColor="?attr/second_text_color"
         android:textSize="14sp"
-        android:text="@string/test_topic_description"/>
+        tools:text="@string/test_topic_description"/>
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/rep_item_last_nick"
@@ -41,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/rep_item_desc"
         android:textColor="?attr/second_text_color"
-        android:text="@string/test_nick"/>
+        tools:text="@string/test_nick"/>
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/rep_item_date"
@@ -50,6 +51,6 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/rep_item_desc"
         android:textColor="?attr/second_text_color"
-        android:text="@string/test_topic_date"/>
+        tools:text="@string/test_topic_date"/>
 
 </RelativeLayout>
