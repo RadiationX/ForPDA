@@ -103,6 +103,7 @@ public class App extends android.app.Application {
     public static int statusBarHeight = 0;
     public static int navigationBarHeight = 0;
     //public static SparseArray<Drawable> drawableCache = new SparseArray<>();
+    public static HashMap<String, String> templateStringCache = new HashMap<>();
     private static App instance;
     //private final static Object lock = new Object();
 
@@ -210,6 +211,19 @@ public class App extends android.app.Application {
             } catch (Exception ignore) {
             }
         }*/
+
+        for (Field f : R.string.class.getFields()) {
+            try {
+                if (f.getName().contains("res_s_")) {
+                    templateStringCache.put(f.getName(), getString(f.getInt(f)));
+                }
+            } catch (Exception ignore) {
+            }
+        }
+
+        for (Map.Entry<String, String> entry : templateStringCache.entrySet()) {
+            Log.d("SUKA", "TEMPL_____|: " + entry.getKey() + " : " + entry.getValue());
+        }
         keyboardHeight = getPreferences().getInt("keyboard_height", getContext().getResources().getDimensionPixelSize(R.dimen.default_keyboard_height));
         savedKeyboardHeight = keyboardHeight;
 
@@ -260,6 +274,20 @@ public class App extends android.app.Application {
 
             registerReceiver(receiver, new IntentFilter(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED));
         }
+    }
+
+    public static HashMap<String, String> getTemplateStringCache() {
+        return templateStringCache;
+    }
+
+    public static MiniTemplator setTemplateResStrings(MiniTemplator t) {
+        for (Map.Entry<String, String> entry : t.getVariables().entrySet()) {
+            String cacheValue = App.getTemplateStringCache().get(entry.getKey());
+            if (cacheValue != null) {
+                t.setVariable(entry.getKey(), cacheValue);
+            }
+        }
+        return t;
     }
 
     public static int getToolBarHeight(Context context) {

@@ -44,6 +44,7 @@ public class ThemeRx {
         if (withHtml) {
             int memberId = ClientHelper.getUserId();
             MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_THEME);
+            App.setTemplateResStrings(t);
             boolean authorized = ClientHelper.getAuthState();
             boolean prevDisabled = page.getPagination().getCurrent() <= 1;
             boolean nextDisabled = page.getPagination().getCurrent() == page.getPagination().getAll();

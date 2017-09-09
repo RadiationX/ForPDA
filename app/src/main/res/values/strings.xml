@@ -92,6 +92,12 @@
     <string name="user_nick">Ник пользователя</string>
     <string name="theme">Тема</string>
     <string name="no_network">Нет соединения</string>
+    <string name="group">Группа</string>
+    <string name="menu">Меню</string>
+    <string name="hat">Шапка темы</string>
+    <string name="avatar">Аватар</string>
+    <string name="vote_good">Хорошо</string>
+    <string name="vote_bad">Плохо</string>
 
     <!-- Other -->
     <string name="ask_close_other_tabs">Закрыть остальные вкладки?</string>
@@ -196,6 +202,8 @@
     <string name="news_page_content">Контент</string>
     <string name="news_page_comments">Комментарии</string>
     <string name="comment_reply_warning">Уже имеется введёный текст, очистить?</string>
+    <string name="comments">Комментарии</string>
+    <string name="comments_do_swipe">Сделайте свайп справа налево</string>
 
     <!-- DevDb-->
     <string name="brands_category_phones">Телефоны</string>
@@ -289,6 +297,11 @@
     <string name="poll_question_Pos" formatted="false">Вопрос %d</string>
     <string name="ask_delete_answer">Удалить ответ?</string>
     <string name="ask_delete_question">Удалить вопрос?</string>
+    <string name="poll_title">Заголовок опроса</string>
+    <string name="poll_all_votes_count">Всего голосов</string>
+    <string name="poll_vote_btn">Голосовать</string>
+    <string name="poll_results_btn">Результаты</string>
+    <string name="poll_show_btn">Пункты опроса</string>
 
     <!-- Profile -->
     <string name="profile_with_Nick" formatted="false">Профиль %s</string>
@@ -353,6 +366,45 @@
     <string name="search_settings_source">Искать</string>
     <string name="search_settings_btn_save">Сохранить</string>
     <string name="search_settings_btn_search">Поиск</string>
+
+
+    <!--
+    
+        Templates
+    
+    -->
+
+    <!-- Theme -->
+    <string name="res_s_poll_title">@string/poll_title</string>
+    <string name="res_s_poll_all_votes_count">@string/poll_all_votes_count</string>
+    <string name="res_s_poll_vote_btn">@string/poll_vote_btn</string>
+    <string name="res_s_poll_results_btn">@string/poll_results_btn</string>
+    <string name="res_s_poll_show_btn">@string/poll_show_btn</string>
+
+    <string name="res_s_hat">@string/hat</string>
+
+    <string name="res_s_avatar">@string/avatar</string>
+    <string name="res_s_reputation">@string/reputation</string>
+    <string name="res_s_group">@string/group</string>
+    <string name="res_s_menu">@string/menu</string>
+
+    <string name="res_s_report">@string/report</string>
+    <string name="res_s_reply">@string/reply</string>
+    <string name="res_s_vote_good">@string/vote_good</string>
+    <string name="res_s_vote_bad">@string/vote_bad</string>
+    <string name="res_s_delete">@string/delete</string>
+    <string name="res_s_edit">@string/change</string>
+
+    <string name="res_s_first">@string/pagination_first</string>
+    <string name="res_s_prev">@string/pagination_prev</string>
+    <string name="res_s_select_desc">@string/pagination_select_desc</string>
+    <string name="res_s_select">@string/pagination_select</string>
+    <string name="res_s_next">@string/pagination_next</string>
+    <string name="res_s_last">@string/pagination_last</string>
+
+    <!-- News article -->
+    <string name="res_s_comments">@string/comments</string>
+    <string name="res_s_comments_do_swipe">@string/comments_do_swipe</string>
 
 
 </resources>
