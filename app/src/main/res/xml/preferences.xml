@@ -6,6 +6,13 @@
             android:title="Уведомления" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Общие">
+        <ListPreference
+            android:dialogTitle="@string/pref_lang_title"
+            android:entries="@array/entries_lang"
+            android:entryValues="@array/entry_values_lang"
+            android:key="language"
+            android:title="@string/pref_lang_title" />
+
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:key="main.is_system_downloader"
@@ -105,8 +112,8 @@
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="false"
             android:key="lists.favorites.load_all"
-            android:title="Все темы избранного"
-            android:summary="Загружать все темы избранного. Расходуется больше трафика."/>
+            android:summary="Загружать все темы избранного. Расходуется больше трафика."
+            android:title="Все темы избранного" />
 
     </PreferenceCategory>
 

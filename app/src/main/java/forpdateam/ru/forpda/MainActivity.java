@@ -1,6 +1,10 @@
 package forpdateam.ru.forpda;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -9,6 +13,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -317,13 +322,34 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         Log.d(LOG_TAG, "onResumeFragments");
     }
 
+    private String lang = null;
+
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(LOG_TAG, "onPause");
+        Log.d(LOG_TAG, "onResume");
         Log.d(LOG_TAG, "TabManager active tab: " + TabManager.getActiveIndex() + " : " + TabManager.getActiveTag());
         if (receiver != null)
             receiver.registerReceiver();
+        if (lang == null) {
+            lang = App.getInstance().getPreferences().getString("language", "default");
+        }
+        if (!App.getInstance().getPreferences().getString("language", "default").equals(lang)) {
+            new AlertDialog.Builder(this)
+                    .setMessage(R.string.lang_changed)
+                    .setPositiveButton(R.string.ok, (dialog, which) -> {
+                        Intent mStartActivity = new Intent(MainActivity.this, MainActivity.class);
+                        int mPendingIntentId = 123456;
+                        PendingIntent mPendingIntent = PendingIntent.getActivity(MainActivity.this, mPendingIntentId, mStartActivity,
+                                PendingIntent.FLAG_CANCEL_CURRENT);
+                        AlarmManager mgr = (AlarmManager) MainActivity.this.getSystemService(Context.ALARM_SERVICE);
+                        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+                        finish();
+                        System.exit(0);
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
+        }
         if (currentThemeIsDark != App.getInstance().isDarkTheme()) {
             recreate();
         }
