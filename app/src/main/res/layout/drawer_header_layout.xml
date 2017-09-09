@@ -25,7 +25,7 @@
         android:textSize="14sp"
         android:textStyle="bold"
         android:lines="1"
-        android:contentDescription="Ваш профиль"
+        android:contentDescription="@string/your_profile"
         tools:text="@string/test_nick"/>
 
     <android.support.v7.widget.AppCompatImageButton
@@ -37,6 +37,6 @@
         android:layout_marginEnd="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
-        android:contentDescription="Открыть ссылку"
+        android:contentDescription="@string/open_link"
         app:srcCompat="@drawable/ic_link" />
 </RelativeLayout>

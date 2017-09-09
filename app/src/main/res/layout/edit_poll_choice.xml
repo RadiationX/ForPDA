@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp16"
         android:layout_toStartOf="@+id/poll_choice_delete"
-        android:hint="Ответ">
+        android:hint="@string/poll_answer">
 
         <android.support.v7.widget.AppCompatEditText
             android:layout_width="match_parent"

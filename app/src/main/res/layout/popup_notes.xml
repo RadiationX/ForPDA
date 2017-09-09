@@ -25,7 +25,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:hint="Заголовок"
+                    android:hint="@string/title"
                     android:textSize="16sp" />
             </android.support.design.widget.TextInputLayout>
 
@@ -39,7 +39,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:hint="Ссылка, не обязательно"
+                    android:hint="@string/note_link_hint"
                     android:textSize="16sp" />
             </android.support.design.widget.TextInputLayout>
 
@@ -55,7 +55,7 @@
                     android:layout_gravity="center_horizontal"
                     android:fontFamily="monospace"
                     android:gravity="top|start"
-                    android:hint="Содержание"
+                    android:hint="@string/note_content"
                     android:imeOptions="flagNoFullscreen"
                     android:inputType="textCapSentences|textMultiLine"
                     android:minLines="4"

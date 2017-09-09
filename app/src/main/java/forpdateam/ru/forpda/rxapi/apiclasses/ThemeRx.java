@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.theme.models.Poll;
@@ -144,7 +145,7 @@ public class ThemeRx {
                 Poll poll = page.getPoll();
                 boolean isResult = poll.isResult();
                 t.setVariableOpt("poll_type", isResult ? "result" : "default");
-                t.setVariableOpt("poll_title", poll.getTitle().isEmpty() || poll.getTitle().equals("-") ? "Опрос" : poll.getTitle());
+                t.setVariableOpt("poll_title", poll.getTitle().isEmpty() || poll.getTitle().equals("-") ? App.getInstance().getString(R.string.poll) : poll.getTitle());
 
                 for (PollQuestion question : poll.getQuestions()) {
                     t.setVariableOpt("question_title", question.getTitle());

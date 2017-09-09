@@ -173,13 +173,13 @@ public class DeviceFragment extends TabFragment {
                     return true;
                 });
 
-        toBrandMenuItem = getMenu().add("Устройства")
+        toBrandMenuItem = getMenu().add(R.string.devices)
                 .setOnMenuItemClickListener(item -> {
                     IntentHandler.handle("https://4pda.ru/devdb/" + currentData.getCatId() + "/" + currentData.getBrandId());
                     return true;
                 });
 
-        toBrandsMenuItem = getMenu().add("Устройства")
+        toBrandsMenuItem = getMenu().add(R.string.devices)
                 .setOnMenuItemClickListener(item -> {
                     IntentHandler.handle("https://4pda.ru/devdb/" + currentData.getCatId());
                     return true;

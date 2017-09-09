@@ -65,6 +65,8 @@
     <string name="update_complete">Обновление прошло успешно</string>
     <string name="update_data_base">Обновление базы данных</string>
     <string name="sorting_title">Сортировка</string>
+    <string name="sort_by">Сортировать по</string>
+    <string name="sort_order">Порядок</string>
     <string name="mark_all_read">Отметить все прочитанными</string>
     <string name="mark_read">Отметить прочитанным</string>
     <string name="refreshing">Обновление</string>
@@ -111,6 +113,29 @@
     <string name="report_warning">Вам не нужно указывать здесь тему и сообщение, модератор автоматически получит эту информацию.  Пожалуйста, используйте эту возможность форума только для жалоб о некорректном сообщении! Для связи с модератором используйте личные сообщения.</string>
     <string name="image_viewer_subtitle_Cur_All" formatted="false">%d из %d</string>
     <string name="msg_panel_hint_message">Сообщение</string>
+    <string name="no_updates">Обновлений нет</string>
+    <string name="updater_current_info">Версия %s Сборка от %s</string>
+    <string name="updater_notification_title">Обновление ForPDA</string>
+    <string name="updater_notification_content_VerName">Новая версия: %s</string>
+    <string name="close_other_tabs">Закрыть остальные</string>
+    <string name="your_profile">Ваш профиль</string>
+    <string name="open_link">Открыть ссылку</string>
+    <string name="apply">Применить</string>
+    <string name="add_in_spoiler">В спойлер</string>
+    <string name="add_attachment">Добавить вложения</string>
+    <string name="delete_selected_attachments">Удалить выбранные вложения</string>
+    <string name="send_message">Отправить сообщение</string>
+    <string name="full_form">Полная форма</string>
+    <string name="hide_form">Скрыть форму</string>
+    <string name="loading_1">Загрузка…</string>
+    <string name="load_more">Загрузить больше</string>
+    <string name="title">Заголовок</string>
+    <string name="note_link_hint">Ссылка, не обязательно</string>
+    <string name="note_content">Содержание</string>
+    <string name="load">Содержание</string>
+    <string name="report_text">Текст жалобы</string>
+    <string name="load_from">Загрузить с</string>
+    <string name="devices">Устройства</string>
 
 
     <!-- Fragment titles -->
@@ -136,6 +161,7 @@
     <string name="activity_title_settings">Настройки</string>
 
     <!-- Codes -->
+    <string name="codes_and_smiles">Оформление и смайлы</string>
     <string name="smiles_title">Смайлы</string>
     <string name="codes_title">Оформление</string>
     <string name="codes_text_size">Размер текста</string>
@@ -302,6 +328,10 @@
     <string name="poll_vote_btn">Голосовать</string>
     <string name="poll_results_btn">Результаты</string>
     <string name="poll_show_btn">Пункты опроса</string>
+    <string name="poll">Опрос</string>
+    <string name="poll_answer">Ответ</string>
+    <string name="poll_question">Вопрос</string>
+    <string name="poll_more_then_one_answer">Более одного варианта ответа</string>
 
     <!-- Profile -->
     <string name="profile_with_Nick" formatted="false">Профиль %s</string>
@@ -326,6 +356,7 @@
     <string name="profile_item_text_reg">Регистрация</string>
     <string name="profile_item_text_last_online">Последнее посещение</string>
     <string name="profile_item_text_alerts">Предупреждения</string>
+    <string name="profile_note_saved">Запись сохранена</string>
 
     <!-- Reputation -->
     <string name="reputation_mode_from">Репутация пользователя</string>

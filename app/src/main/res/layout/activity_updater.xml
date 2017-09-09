@@ -82,30 +82,31 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp">
+
                 <ProgressBar
                     android:id="@+id/progress_bar"
                     android:layout_width="@dimen/dp48"
                     android:layout_height="@dimen/dp48"
-                    android:layout_centerInParent="true"/>
+                    android:layout_centerInParent="true" />
 
                 <TextView
                     android:id="@+id/update_info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:singleLine="false"
-                    android:visibility="gone"
-                    android:layout_toStartOf="@+id/update_button"
                     android:layout_alignParentStart="true"
-                    android:layout_marginEnd="@dimen/dp8"/>
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/dp8"
+                    android:layout_toStartOf="@+id/update_button"
+                    android:singleLine="false"
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@+id/update_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:text="Загрузить"
-                    android:visibility="gone"/>
+                    android:text="@string/load"
+                    android:visibility="gone" />
             </RelativeLayout>
 
             <View
@@ -115,7 +116,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="@dimen/dp16"
                 android:background="#ddd"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/update_content"

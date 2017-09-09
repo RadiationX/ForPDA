@@ -192,7 +192,7 @@ public class ProfileFragment extends TabFragment {
 
 
     private void onNoteSave(boolean b) {
-        Toast.makeText(getContext(), b ? "Запись сохранена" : "Возникла ошибка, запись не сохранена", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), getString(b ? R.string.profile_note_saved : R.string.error_occurred), Toast.LENGTH_SHORT).show();
     }
 
     private void addCountItem(String title, Pair<String, String> data) {

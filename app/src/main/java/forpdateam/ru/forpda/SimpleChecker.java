@@ -60,8 +60,8 @@ public class SimpleChecker {
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
             mBuilder.setSmallIcon(R.drawable.ic_notify_mention);
 
-            mBuilder.setContentTitle("Обновление ForPDA");
-            mBuilder.setContentText("Новая версия: " + versionName);
+            mBuilder.setContentTitle(context.getString(R.string.updater_notification_title));
+            mBuilder.setContentText(String.format(context.getString(R.string.updater_notification_content_VerName), versionName));
 
 
             Intent notifyIntent = new Intent(context, CheckerActivity.class);

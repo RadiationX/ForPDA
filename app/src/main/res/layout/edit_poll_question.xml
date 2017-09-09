@@ -23,7 +23,7 @@
                 android:gravity="center_vertical"
                 android:paddingEnd="@dimen/dp16"
                 android:paddingStart="@dimen/dp16"
-                android:text="Вопрос"
+                android:text="@string/poll_question"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -41,7 +41,7 @@
             android:id="@+id/poll_question_title_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Вопрос"
+            android:hint="@string/poll_question"
             android:textSize="16sp"
             android:layout_marginStart="@dimen/dp16"
             android:layout_marginEnd="@dimen/dp16"/>
@@ -51,7 +51,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Более одного варианта ответа"
+            android:text="@string/poll_more_then_one_answer"
             android:layout_marginStart="@dimen/dp16"
             android:layout_marginEnd="@dimen/dp16"/>
 
@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginTop="@dimen/dp8"
-            android:text="Добавить" />
+            android:text="@string/add" />
     </LinearLayout>
 
 </android.support.v7.widget.CardView>
