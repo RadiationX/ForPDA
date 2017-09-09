@@ -83,7 +83,7 @@ public class QmsRx {
     public static QmsChatModel transform(QmsChatModel chatModel, boolean withHtml) throws Exception {
         if (withHtml) {
             MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT);
-
+            App.setTemplateResStrings(t);
             t.setVariableOpt("style_type", App.getInstance().getCssStyleType());
             t.setVariableOpt("chat_title", Utils.htmlEncode(chatModel.getTitle()));
             t.setVariableOpt("chatId", chatModel.getThemeId());
@@ -95,6 +95,7 @@ public class QmsRx {
             int startIndex = Math.max(endIndex - 30, 0);
             chatModel.setShowedMessIndex(startIndex);
             MiniTemplator messTemp = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
+            App.setTemplateResStrings(t);
             generateMess(messTemp, chatModel.getMessages(), startIndex, endIndex);
             t.setVariableOpt("messages", messTemp.generateOutput());
             messTemp.reset();

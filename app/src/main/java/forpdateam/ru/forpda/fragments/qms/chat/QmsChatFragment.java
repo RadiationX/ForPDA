@@ -325,6 +325,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     //Chat
     private void loadBaseWebContainer() {
         MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT);
+        App.setTemplateResStrings(t);
         t.setVariableOpt("style_type", App.getInstance().getCssStyleType());
         t.setVariableOpt("body_type", "qms");
         t.setVariableOpt("messages", "");
@@ -345,6 +346,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         currentChat.getMessages().addAll(loadedChat.getMessages());
 
         MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
+        App.setTemplateResStrings(t);
         int end = currentChat.getMessages().size();
         int start = Math.max(end - 30, 0);
         QmsRx.generateMess(t, currentChat.getMessages(), start, end);
@@ -372,6 +374,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
             Log.d(LOG_TAG, "Returned messages " + qmsMessage.size());
             if (qmsMessage.size() > 0) {
                 MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
+                App.setTemplateResStrings(t);
                 for (int i = 0; i < qmsMessage.size(); i++) {
                     QmsMessage message = qmsMessage.get(i);
                     for (QmsMessage viewmessage : currentChat.getMessages()) {
@@ -420,6 +423,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     @JavascriptInterface
     public void showMoreMess() {
         MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
+        App.setTemplateResStrings(t);
         int endIndex = currentChat.getShowedMessIndex();
         int startIndex = Math.max(endIndex - 30, 0);
         currentChat.setShowedMessIndex(startIndex);

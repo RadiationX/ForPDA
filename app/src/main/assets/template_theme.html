@@ -43,7 +43,7 @@
 <body id="${body_type}">
     <!-- $BeginBlock poll_block -->
     <div class="poll ${poll_type} ${poll_state_class}">
-        <a class="btn title aec" onclick="toggleButton(this, 'body', 'poll')" role="button" aria-label="Заголовок опроса: ${poll_title}"><span>${poll_title}</span><i class="icon"></i></a>
+        <a class="btn title aec" onclick="toggleButton(this, 'body', 'poll')" role="button" aria-label="${res_s_poll_title}: ${poll_title}"><span>${poll_title}</span><i class="icon"></i></a>
         <form action="index.php" method="get" class="body" ${poll_body_state}>
             <div class="questions">
                 <!-- $BeginBlock poll_question_block -->
@@ -69,15 +69,15 @@
                 </div>
                 <!-- $EndBlock poll_question_block -->
             </div>
-            <div class="votes_info"><span>Всего голосов: ${poll_votes_count}</span></div>
+            <div class="votes_info"><span>${res_s_poll_all_votes_count}: ${poll_votes_count}</span></div>
             <!-- $BeginBlock poll_buttons -->
             <div class="buttons">
                 <!-- $BeginBlock poll_vote_button -->
-                <button type="submit" class="btn vote aec" role="button" aria-label="Голосовать"><span>Голосовать</span></button>
+                <button type="submit" class="btn vote aec" role="button" aria-label="${res_s_poll_vote_btn}"><span>${res_s_poll_vote_btn}</span></button>
                 <!-- $EndBlock poll_vote_button -->
-                <!-- $BeginBlock poll_show_results_button --><a class="btn show_results aec" onclick="ITheme.showPollResults()" role="button" aria-label="Показать результаты"><span>Результаты</span></a>
+                <!-- $BeginBlock poll_show_results_button --><a class="btn show_results aec" onclick="ITheme.showPollResults()" role="button" aria-label="${res_s_poll_results_btn}"><span>${res_s_poll_results_btn}</span></a>
                 <!-- $EndBlock poll_show_results_button -->
-                <!-- $BeginBlock poll_show_poll_button --><a class="btn show_poll aec" onclick="ITheme.showPoll()" role="button" aria-label="Показать пункты опроса"><span>Пункты опроса</span></a>
+                <!-- $BeginBlock poll_show_poll_button --><a class="btn show_poll aec" onclick="ITheme.showPoll()" role="button" aria-label="${res_s_poll_show_btn}"><span>${res_s_poll_show_btn}</span></a>
                 <!-- $EndBlock poll_show_poll_button -->
             </div>
             <!-- $EndBlock poll_buttons -->
@@ -88,7 +88,7 @@
     <div class="posts_list">
         <!-- $BeginBlock post -->
         <div name="entry${post_id}" class="post_container ${user_online} ${disable_avatar} ${avatar_type} ${hat_state_class}" data-post-id="${post_id}" data-user-id="${user_id}" data-nick="${nick}">
-            <!-- $BeginBlock hat_button --><a class="btn hat_button aec" onclick="toggleButton(this, 'hat_content', 'hat')" role="button" aria-label="Шапка темы"><span>Шапка темы</span><i class="icon"></i></a>
+            <!-- $BeginBlock hat_button --><a class="btn hat_button aec" onclick="toggleButton(this, 'hat_content', 'hat')" role="button" aria-label="${res_s_hat}"><span>${res_s_hat}</span><i class="icon"></i></a>
             <!-- $EndBlock hat_button -->
             <!-- $BeginBlock hat_content_start -->
             <div class="hat_content" ${hat_body_state}>
@@ -98,32 +98,32 @@
                     <div class="header_wrapper">
                         <div class="avatar ${none_avatar} aec">
                             <b class="letter" onclick="IPostFunctions.showUserMenu('${post_id}')">${nick_letter}</b>
-                            <div class="img" style="background-image:url(${avatar});" onclick="IPostFunctions.showUserMenu('${post_id}')" role="button" aria-label="Аватар"></div>
-                            <div class="reputation" onclick="IPostFunctions.showReputationMenu('${post_id}')" role="button" aria-label="Репутация ${reputation}"><span>${reputation}</span></div>
+                            <div class="img" style="background-image:url(${avatar});" onclick="IPostFunctions.showUserMenu('${post_id}')" role="button" aria-label="${res_s_avatar}"></div>
+                            <div class="reputation" onclick="IPostFunctions.showReputationMenu('${post_id}')" role="button" aria-label="${res_s_reputation} ${reputation}"><span>${reputation}</span></div>
                         </div>
                         <span class="inf nick">
                     <span class="aec" onclick="IPostFunctions.showUserMenu('${post_id}')"><b>${nick}</b></span>
-                        <span class="group aec" style="color:${group_color};" onclick="ITheme.toast('Группа: ${group}')" role="button" aria-label="Группа ${group}"><span>${group}</span></span>
+                        <span class="group aec" style="color:${group_color};" onclick="ITheme.toast('${res_s_group}: ${group}')" role="button" aria-label="${res_s_group} ${group}"><span>${group}</span></span>
                         </span>
                         <span class="inf date"><span>${date}</span></span>
-                        <a class="btn inf menu aec" onclick="IPostFunctions.showPostMenu('${post_id}')" role="button" aria-label="Меню сообщения"><span>Меню</span></a>
+                        <a class="btn inf menu aec" onclick="IPostFunctions.showPostMenu('${post_id}')" role="button" aria-label="${res_s_menu}"><span>${res_s_menu}</span></a>
                     </div>
                 </div>
                 <div class="post_body emoticons">${body}</div>
                 <div class="post_footer">
                     <!-- $BeginBlock report_block -->
-                    <!--<a class="btn report" onclick="IPostFunctions.reportPost(${post_id})"><span>Жалоба</span></a>-->
+                    <!--<a class="btn report" onclick="IPostFunctions.reportPost(${post_id})"><span>${res_s_report}</span></a>-->
                     <!-- $EndBlock report_block -->
-                    <!-- $BeginBlock reply_block --><a class="btn reply aec" onclick="IPostFunctions.reply('${post_id}')" role="button" aria-label="Ответить"><span>Ответить</span></a>
+                    <!-- $BeginBlock reply_block --><a class="btn reply aec" onclick="IPostFunctions.reply('${post_id}')" role="button" aria-label="${res_s_reply}"><span>${res_s_reply}</span></a>
                     <!-- $EndBlock reply_block -->
-                    <!-- $BeginBlock vote_block --><a class="btn vote good aec" onclick="IPostFunctions.votePost('${post_id}', false)" role="button" aria-label="Оценка плохо"><span>Плохо</span></a>
-                    <a class="btn vote bad aec" onclick="IPostFunctions.votePost('${post_id}', true)" role="button" aria-label="Оценка хорошо"><span>Хорошо</span></a>
+                    <!-- $BeginBlock vote_block --><a class="btn vote good aec" onclick="IPostFunctions.votePost('${post_id}', false)" role="button" aria-label="${res_s_vote_bad}"><span>${res_s_vote_bad}</span></a>
+                    <a class="btn vote bad aec" onclick="IPostFunctions.votePost('${post_id}', true)" role="button" aria-label="${res_s_vote_good}"><span>${res_s_vote_good}</span></a>
                     <!-- $EndBlock vote_block -->
                     <!-- $BeginBlock delete_block -->
-                    <!--<a class="btn delete" onclick="IPostFunctions.deletePost('${post_id}')"><span>Удалить</span></a>-->
+                    <!--<a class="btn delete" onclick="IPostFunctions.deletePost('${post_id}')"><span>${res_s_delete}</span></a>-->
                     <!-- $EndBlock delete_block -->
                     <!-- $BeginBlock edit_block -->
-                    <!--<a class="btn edit" onclick="IPostFunctions.editPost('${post_id}')"><span>Изменить</span></a>-->
+                    <!--<a class="btn edit" onclick="IPostFunctions.editPost('${post_id}')"><span>${res_s_edit}</span></a>-->
                     <!-- $EndBlock edit_block -->
                 </div>
                 <!-- $BeginBlock hat_content_end -->
@@ -133,11 +133,11 @@
         <!-- $EndBlock post -->
     </div>
     <div class="navigation">
-        <span class="button first ${first_disable} hidden" onclick="ITheme.firstPage()" role="button" aria-label="К первой странице"><i class="icon"></i></span>
-        <span class="button prev ${prev_disable}" onclick="ITheme.prevPage()" role="button" aria-label="К предыдущей странице"><i class="icon"></i></span>
-        <span class="button page" onclick="ITheme.selectPage()" role="button" aria-label="Выбор страницы"><b>Выбор</b><i class="icon"></i></span>
-        <span class="button next ${next_disable}" onclick="ITheme.nextPage()" role="button" aria-label="К следующей странице"><i class="icon"></i></span>
-        <span class="button last ${last_disable} hidden" onclick="ITheme.lastPage()" role="button" aria-label="К последней странице"><i class="icon"></i></span>
+        <span class="button first ${first_disable} hidden" onclick="ITheme.firstPage()" role="button" aria-label="${res_s_first}"><i class="icon"></i></span>
+        <span class="button prev ${prev_disable}" onclick="ITheme.prevPage()" role="button" aria-label="${res_s_prev}"><i class="icon"></i></span>
+        <span class="button page" onclick="ITheme.selectPage()" role="button" aria-label="${res_s_select_desc}"><b>${res_s_select}</b><i class="icon"></i></span>
+        <span class="button next ${next_disable}" onclick="ITheme.nextPage()" role="button" aria-label="${res_s_next}"><i class="icon"></i></span>
+        <span class="button last ${last_disable} hidden" onclick="ITheme.lastPage()" role="button" aria-label="${res_s_last}"><i class="icon"></i></span>
     </div>
     <div id="padding_for_message_panel" style="padding-bottom: 0em;"></div>
     <script type="text/javascript">

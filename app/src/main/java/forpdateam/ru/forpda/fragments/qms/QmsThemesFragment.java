@@ -151,7 +151,7 @@ public class QmsThemesFragment extends ListFragment {
         recyclerView.scrollToPosition(0);
         currentThemes = themes;
 
-        setTabTitle(getString(R.string.dialogs_Nick) + " ".concat(currentThemes.getNick()));
+        setTabTitle(String.format(getString(R.string.dialogs_Nick), currentThemes.getNick()));
         setTitle(currentThemes.getNick());
         if (currentThemes.getThemes().size() == 0 && currentThemes.getNick() != null) {
             Bundle args = new Bundle();
@@ -196,7 +196,7 @@ public class QmsThemesFragment extends ListFragment {
                 });
         noteMenuItem = getMenu().add(R.string.create_note)
                 .setOnMenuItemClickListener(item -> {
-                    String title = getString(R.string.dialogs_Nick) + " " + currentThemes.getNick();
+                    String title = String.format(getString(R.string.dialogs_Nick), currentThemes.getNick());
                     String url = "http://4pda.ru/forum/index.php?act=qms&mid=" + currentThemes.getUserId();
                     NotesAddPopup.showAddNoteDialog(getContext(), title, url);
                     return true;
