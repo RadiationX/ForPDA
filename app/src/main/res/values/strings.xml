@@ -401,6 +401,65 @@
     <string name="search_settings_btn_save">Сохранить</string>
     <string name="search_settings_btn_search">Поиск</string>
 
+    <!-- Preferences/Settings -->
+    <string name="pref_title_notifications">Уведомления</string>
+
+    <string name="pref_title_main">Общие</string>
+
+    <string name="pref_title_system_downloader">Системный загрузчик</string>
+    <string name="pref_summary_system_downloader">Использовать системный загрузчик файлов</string>
+
+    <string name="pref_title_appereance">Внешний вид</string>
+
+    <string name="pref_title_dark_theme">Тёмная тема</string>
+
+    <string name="pref_title_text_size">Размер шрифта</string>
+    <string name="pref_summary_text_size">Применяется для тем, поиска и чата</string>
+
+    <string name="pref_title_monospace">Моноширинный шрифт</string>
+    <string name="pref_summary_monospace">Шрифт редактора сообщений</string>
+
+    <string name="pref_title_panel_hidden">Скрытый редактор сообщений</string>
+    <string name="pref_summary_panel_hidden">По умолчанию скрыть редактор сообщений</string>
+
+    <string name="pref_title_scroll_button">Кнопка быстрого скролла</string>
+    <string name="pref_summary_scroll_button">Появляется при скролле в теме и поиске</string>
+
+    <string name="pref_title_tab_bottom">Вкладки снизу</string>
+    <string name="pref_title_notify_dot">Индикатор счетчиков</string>
+    <string name="pref_title_fav_dot">Счетчик избранного</string>
+    <string name="pref_title_qms_dot">Счетчик QMS</string>
+    <string name="pref_title_mention_dot">Счетчик упоминаний</string>
+    <string name="pref_title_themes">Просмотр тем</string>
+    <string name="pref_title_show_avatars">Отображать аватарки</string>
+    <string name="pref_title_circle_avatars">Круглые аватарки</string>
+
+    <string name="pref_title_history_snapback">История переходов на странице</string>
+    <string name="pref_summary_history_snapback">Сохраняет историю переходов snapback</string>
+
+    <string name="pref_title_lists">Списки</string>
+    <string name="pref_title_unread_top">Непрочитанные сверху</string>
+    <string name="pref_title_show_dot">Индикатор новых сообщений</string>
+
+    <string name="pref_title_load_all">Все темы избранного</string>
+    <string name="pref_summary_load_all">Загружать все темы избранного. Расходуется больше трафика.</string>
+
+    <string name="pref_title_account">Аккаунт</string>
+    <string name="pref_title_logout">Выйти</string>
+    <string name="pref_title_about">О программе</string>
+    <string name="pref_title_check_updates">Проверить обновления</string>
+    <!-- notifications -->
+    <string name="pref_title_sound">Звук</string>
+    <string name="pref_title_vibration">Вибрация</string>
+    <string name="pref_title_indicator">Индикатор</string>
+    <string name="pref_title_enable_avatars">Загружать аватары</string>
+    <string name="pref_title_favorites">Избранное</string>
+    <string name="pref_title_only_important">Только важные</string>
+    <string name="pref_title_mentions">Ответы</string>
+    <string name="pref_title_pm_qms">Личные сообщения QMS</string>
+    <string name="pref_title_app_updates">Обновления программы</string>
+    <string name="pref_title_notify">Уведомлять</string>
+
 
     <!--
     

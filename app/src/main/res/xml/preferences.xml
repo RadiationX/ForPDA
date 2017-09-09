@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="Уведомления">
+    <PreferenceCategory android:title="@string/pref_title_notifications">
         <Preference
             android:key="open_notifications"
-            android:title="Уведомления" />
+            android:title="@string/pref_title_notifications" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="Общие">
+    <PreferenceCategory android:title="@string/pref_title_main">
         <ListPreference
             android:dialogTitle="@string/pref_lang_title"
             android:entries="@array/entries_lang"
@@ -16,118 +16,118 @@
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:key="main.is_system_downloader"
-            android:summary="Использовать системный загрузчик файлов"
-            android:title="Системный загрузчик" />
+            android:summary="@string/pref_summary_system_downloader"
+            android:title="@string/pref_title_system_downloader" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Внешний вид">
+    <PreferenceCategory android:title="@string/pref_title_appereance">
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="false"
             android:key="main.theme.is_dark"
-            android:title="Тёмная тема" />
+            android:title="@string/pref_title_dark_theme" />
 
         <Preference
             android:key="main.webview.font_size"
-            android:summary="Применяется для тем, поиска и чата"
-            android:title="Размер шрифта" />
+            android:summary="@string/pref_summary_text_size"
+            android:title="@string/pref_title_text_size" />
 
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:key="message_panel.is_monospace"
-            android:summary="Шрифт редактора сообщений"
-            android:title="Моноширинный шрифт" />
+            android:summary="@string/pref_summary_monospace"
+            android:title="@string/pref_title_monospace" />
 
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:key="message_panel.is_default_hidden"
-            android:summary="По умолчанию скрыть редактор сообщений"
-            android:title="Скрытый редактор сообщений" />
+            android:summary="@string/pref_summary_panel_hidden"
+            android:title="@string/pref_title_panel_hidden" />
 
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="false"
             android:key="main.scroll_button.enable"
-            android:summary="Появляется при скролле в теме и поиске"
-            android:title="Кнопка быстрого скролла" />
+            android:summary="@string/pref_summary_scroll_button"
+            android:title="@string/pref_title_scroll_button" />
 
 
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="false"
             android:key="main.drawers.tab_stack_bottom"
-            android:title="Вкладки снизу" />
+            android:title="@string/pref_title_tab_bottom" />
 
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:key="main.show_notify_dot"
-            android:title="Индикатор счетчиков" />
+            android:title="@string/pref_title_notify_dot" />
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:dependency="main.show_notify_dot"
             android:key="main.notify_dot_fav"
-            android:title="Счетчик избранного" />
+            android:title="@string/pref_title_fav_dot" />
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:dependency="main.show_notify_dot"
             android:key="main.notify_dot_qms"
-            android:title="Счетчик QMS" />
+            android:title="@string/pref_title_qms_dot" />
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:dependency="main.show_notify_dot"
             android:key="main.notify_dot_mentions"
-            android:title="Счетчик упоминаний" />
+            android:title="@string/pref_title_mention_dot" />
 
     </PreferenceCategory>
 
 
-    <PreferenceCategory android:title="Просмотр тем">
+    <PreferenceCategory android:title="@string/pref_title_themes">
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:key="theme.show_avatars"
-            android:title="Отображать аватарки" />
+            android:title="@string/pref_title_show_avatars" />
 
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:key="theme.circle_avatars"
-            android:title="Круглые аватарки" />
+            android:title="@string/pref_title_circle_avatars" />
 
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:key="theme.anchor_history"
-            android:summary="Сохраняет историю переходов snapback"
-            android:title="История переходов на странице" />
+            android:summary="@string/pref_summary_history_snapback"
+            android:title="@string/pref_title_history_snapback" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Списки">
+    <PreferenceCategory android:title="@string/pref_title_lists">
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="false"
             android:key="lists.topic.unread_top"
-            android:title="Непрочитанные сверху" />
+            android:title="@string/pref_title_unread_top" />
 
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="false"
             android:key="lists.topic.show_dot"
-            android:title="Индикатор новых сообщений" />
+            android:title="@string/pref_title_show_dot" />
 
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="false"
             android:key="lists.favorites.load_all"
-            android:summary="Загружать все темы избранного. Расходуется больше трафика."
-            android:title="Все темы избранного" />
+            android:summary="@string/pref_summary_load_all"
+            android:title="@string/pref_title_load_all" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Аккаунт">
+    <PreferenceCategory android:title="@string/pref_title_account">
         <Preference
             android:key="auth.action.logout"
-            android:title="Выйти" />
+            android:title="@string/pref_title_logout" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="О программе">
+    <PreferenceCategory android:title="@string/pref_title_about">
         <Preference
             android:key="about.check_update"
-            android:title="Проверить обновления" />
+            android:title="@string/pref_title_check_updates" />
         <Preference
             android:key="about.application"
             android:title="ForPDA" />
