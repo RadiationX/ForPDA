@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
@@ -12,7 +13,12 @@ import android.util.Log;
 import android.view.ActionMode;
 import android.view.ContextMenu;
 import android.view.SoundEffectConstants;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityNodeInfo;
+import android.view.accessibility.AccessibilityNodeProvider;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
@@ -135,6 +141,7 @@ public class ExtendedWebView extends NestedGeckoView implements IBase {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        requestFocus();
         isJsReady = false;
         for (Runnable action : actionsForWebView) {
             mHandler.removeCallbacks(action);

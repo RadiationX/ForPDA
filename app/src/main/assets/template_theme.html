@@ -87,13 +87,14 @@
     <!-- $EndBlock poll_block -->
     <div class="posts_list">
         <!-- $BeginBlock post -->
-        <div name="entry${post_id}" role="document" class="post_container ${user_online} ${disable_avatar} ${avatar_type} ${hat_state_class}" data-post-id="${post_id}" data-user-id="${user_id}" data-nick="${nick}">
+        <div name="entry${post_id}" class="post_container ${user_online} ${disable_avatar} ${avatar_type} ${hat_state_class}" data-post-id="${post_id}" data-user-id="${user_id}" data-nick="${nick}">
             <!-- $BeginBlock hat_button --><a class="btn hat_button aec" onclick="toggleButton(this, 'hat_content', 'hat')" role="button" aria-label="Шапка темы"><span>Шапка темы</span><i class="icon"></i></a>
             <!-- $EndBlock hat_button -->
             <!-- $BeginBlock hat_content_start -->
             <div class="hat_content" ${hat_body_state}>
                 <!-- $EndBlock hat_content_start -->
                 <div class="post_header">
+                    <div tabindex="-1" class="accessibility_anchor"></div>
                     <div class="header_wrapper">
                         <div class="avatar ${none_avatar} aec">
                             <b class="letter" onclick="IPostFunctions.showUserMenu('${post_id}')">${nick_letter}</b>
