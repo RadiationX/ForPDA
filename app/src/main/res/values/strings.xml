@@ -28,6 +28,8 @@
     <string name="test_topic_section_title">Topic section title</string>
 
     <!-- Base -->
+    <string name="default_s">По умолчанию</string>
+    <string name="pref_lang_title">Язык</string>
     <string name="ok">Ок</string>
     <string name="cancel">Отмена</string>
     <string name="no">Нет</string>
@@ -114,7 +116,7 @@
     <string name="image_viewer_subtitle_Cur_All" formatted="false">%d из %d</string>
     <string name="msg_panel_hint_message">Сообщение</string>
     <string name="no_updates">Обновлений нет</string>
-    <string name="updater_current_info">Версия %s Сборка от %s</string>
+    <string name="updater_current_info" formatted="false">Версия %s Сборка от %s</string>
     <string name="updater_notification_title">Обновление ForPDA</string>
     <string name="updater_notification_content_VerName">Новая версия: %s</string>
     <string name="close_other_tabs">Закрыть остальные</string>
@@ -136,6 +138,7 @@
     <string name="report_text">Текст жалобы</string>
     <string name="load_from">Загрузить с</string>
     <string name="devices">Устройства</string>
+    <string name="lang_changed">Язык приложения был изменен, перезапустить приложение?</string>
 
 
     <!-- Fragment titles -->

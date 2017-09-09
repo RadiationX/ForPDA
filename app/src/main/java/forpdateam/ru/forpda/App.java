@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -54,6 +55,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Observer;
 import java.util.regex.Pattern;
@@ -107,6 +109,8 @@ public class App extends android.app.Application {
     private static App instance;
     //private final static Object lock = new Object();
 
+    private Locale locale;
+    private String lang;
     private Map<String, MiniTemplator> templates = new HashMap<>();
     private float density = 1.0f;
     private SharedPreferences preferences;
@@ -170,6 +174,17 @@ public class App extends android.app.Application {
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Log.d("KEK", "CHANGE CONFIG " + locale.getLanguage() + " : " + newConfig.locale.getLanguage());
+        Configuration config = getResources().getConfiguration();
+        locale = new Locale(lang);
+        Locale.setDefault(locale);
+        config.locale = locale;
+        getResources().updateConfiguration(config, null);
+    }
+
+    @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
@@ -178,6 +193,19 @@ public class App extends android.app.Application {
             Log.d("SUKA", "RxJavaPlugins errorHandler " + throwable);
             throwable.printStackTrace();
         });
+
+        {
+            Configuration config = getResources().getConfiguration();
+            lang = getPreferences().getString("language", "default");
+            if (lang.equals("default")) {
+                lang = config.locale.getLanguage();
+            }
+            locale = new Locale(lang);
+            Locale.setDefault(locale);
+            config.locale = locale;
+            getResources().updateConfiguration(config, null);
+        }
+
         setTheme(R.style.LightAppTheme);
 
         if (!BuildConfig.DEBUG) {
