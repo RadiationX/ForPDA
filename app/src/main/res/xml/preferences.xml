@@ -10,7 +10,7 @@
             android:dialogTitle="@string/pref_lang_title"
             android:entries="@array/entries_lang"
             android:entryValues="@array/entry_values_lang"
-            android:key="language"
+            android:key="Locale.Helper.Selected.Language"
             android:title="@string/pref_lang_title" />
 
         <forpdateam.ru.forpda.settings.SwitchPreference

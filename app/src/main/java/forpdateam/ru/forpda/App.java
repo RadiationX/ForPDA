@@ -41,6 +41,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
+import com.nostra13.universalimageloader.utils.L;
 
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
@@ -64,6 +65,7 @@ import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.settings.Preferences;
+import forpdateam.ru.forpda.utils.LocaleHelper;
 import forpdateam.ru.forpda.utils.SimpleObservable;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.realm.Realm;
@@ -173,7 +175,7 @@ public class App extends android.app.Application {
         return webViewNotFound;
     }
 
-    @Override
+    /*@Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         Log.d("KEK", "CHANGE CONFIG " + locale.getLanguage() + " : " + newConfig.locale.getLanguage());
@@ -182,6 +184,19 @@ public class App extends android.app.Application {
         Locale.setDefault(locale);
         config.locale = locale;
         getResources().updateConfiguration(config, null);
+    }*/
+
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        /*String lang = PreferenceManager.getDefaultSharedPreferences(base).getString("language", "default");
+        Log.e("SUKA", "LOAD LENG " + lang);
+        if (lang.equals("default")) {
+            base = LocaleHelper.onAttach(base);
+        } else {
+            base = LocaleHelper.onAttach(base, lang);
+        }*/
+        super.attachBaseContext(LocaleHelper.onAttach(base, "ru"));
     }
 
     @Override
@@ -194,9 +209,10 @@ public class App extends android.app.Application {
             throwable.printStackTrace();
         });
 
-        {
+        /*{
             Configuration config = getResources().getConfiguration();
             lang = getPreferences().getString("language", "default");
+            Log.e("SUKA", "LOAD LENG " + lang);
             if (lang.equals("default")) {
                 lang = config.locale.getLanguage();
             }
@@ -204,7 +220,7 @@ public class App extends android.app.Application {
             Locale.setDefault(locale);
             config.locale = locale;
             getResources().updateConfiguration(config, null);
-        }
+        }*/
 
         setTheme(R.style.LightAppTheme);
 
