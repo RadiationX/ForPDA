@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ForPDA</string>
+    <string name="app_name" translatable="false">ForPDA</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
@@ -144,8 +144,8 @@
 
     <!-- Fragment titles -->
     <string name="fragment_title_news_list">Новости</string>
-    <string name="fragment_title_brand">Произовдитель</string>
-    <string name="fragment_title_brands">Произовдители</string>
+    <string name="fragment_title_brand">Производитель</string>
+    <string name="fragment_title_brands">Производители</string>
     <string name="fragment_title_device">Устройство</string>
     <string name="fragment_title_favorite">Избранное</string>
     <string name="fragment_title_forum">Форум</string>

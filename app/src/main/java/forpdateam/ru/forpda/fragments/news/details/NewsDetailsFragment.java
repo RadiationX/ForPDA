@@ -197,6 +197,15 @@ public class NewsDetailsFragment extends TabFragment {
     }
 
     @Override
+    public boolean onBackPressed() {
+        if (fragmentsPager.getCurrentItem() == 1) {
+            fragmentsPager.setCurrentItem(0);
+            return true;
+        }
+        return super.onBackPressed();
+    }
+
+    @Override
     public void loadData() {
         super.loadData();
         //webViewContainer.setRefreshing(true);
