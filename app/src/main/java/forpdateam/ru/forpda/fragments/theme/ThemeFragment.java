@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatImageButton;
@@ -555,6 +556,19 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     private void addSearchOnPageItem(Menu menu) {
         toolbar.inflateMenu(R.menu.theme_search_menu);
         searchOnPageMenuItem = menu.findItem(R.id.action_search);
+        MenuItemCompat.setOnActionExpandListener(searchOnPageMenuItem, new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                toggleMessagePanelItem.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                toggleMessagePanelItem.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
+                return true;
+            }
+        });
         SearchView searchView = (SearchView) searchOnPageMenuItem.getActionView();
         searchView.setTag(searchViewTag);
 
@@ -586,8 +600,9 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         });
 
         SearchManager searchManager = (SearchManager) getMainActivity().getSystemService(Context.SEARCH_SERVICE);
-        if (null != searchManager)
+        if (null != searchManager){
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getMainActivity().getComponentName()));
+        }
 
         searchView.setIconifiedByDefault(true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

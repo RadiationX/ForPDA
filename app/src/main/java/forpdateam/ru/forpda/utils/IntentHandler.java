@@ -315,7 +315,7 @@ public class IntentHandler {
     }
 
     private static boolean handleSite(Uri uri, Bundle args) {
-        Matcher matcher = Pattern.compile("https?:\\/\\/4pda\\.ru\\/(?:.+?p=|\\d{4}\\/\\d{2}\\/\\d{2}\\/)(\\d+)(?:\\/#comment(\\d+))?").matcher(uri.toString());
+        Matcher matcher = Pattern.compile("https?:\\/\\/4pda\\.ru\\/(?:.+?p=|\\d+\\/\\d+\\/\\d+\\/)(\\d+)(?:\\/#comment(\\d+))?").matcher(uri.toString());
         if (matcher.find()) {
             int id = Integer.parseInt(matcher.group(1));
             if (matcher.group(2) != null) {

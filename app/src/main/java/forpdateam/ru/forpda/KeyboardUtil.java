@@ -39,12 +39,38 @@ public class KeyboardUtil {
         }
     }
 
-
     //a small helper to allow showing the editText focus
     ViewTreeObserver.OnGlobalLayoutListener onGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override
         public void onGlobalLayout() {
-            Rect r = new Rect();
+            int windowHeight = contentView.getRootView().getHeight();
+            int fragmentContainerHeight = contentView.getRootView().findViewById(R.id.view_for_measure).getHeight();
+            int statusBarHeight = App.getStatusBarHeight();
+            int navigationBarHeight = App.getNavigationBarHeight();
+
+            int newKeyboardHeight = windowHeight - fragmentContainerHeight - statusBarHeight - navigationBarHeight;
+
+
+        /*if (lastKeyboardHeight == newKeyboardHeight)
+            return;*/
+
+            Log.d("FORPDA_LOG", "KeyboardUtil " + newKeyboardHeight + " = " + windowHeight + " - " + fragmentContainerHeight + " - " + statusBarHeight + " - " + navigationBarHeight);
+            if (newKeyboardHeight !=0) {
+                App.setKeyboardHeight(newKeyboardHeight);
+                if (contentView.getPaddingBottom() != newKeyboardHeight) {
+                    //set the padding of the contentView for the keyboard
+                    Log.e("SUKA", "KeyboardUtil " + newKeyboardHeight);
+                    contentView.setPadding(0, 0, 0, newKeyboardHeight);
+                }
+            } else {
+                if (contentView.getPaddingBottom() != 0) {
+                    //reset the padding of the contentView
+                    Log.e("SUKA", "KeyboardUtil h " + 0);
+                    contentView.setPadding(0, 0, 0, 0);
+                }
+            }
+
+            /*Rect r = new Rect();
             //r will be populated with the coordinates of your view that area still visible.
             decorView.getWindowVisibleDisplayFrame(r);
 
@@ -54,6 +80,10 @@ public class KeyboardUtil {
             //Log.e("SUKA", "GLL " + height + " : " + diff);
 
             //Фикс для мультиоконности
+            if (diff < 0) {
+                diff += r.top;
+            }
+            Log.e("SUKA", "new diff " + diff + "= " + height + " : " + r.bottom + " : " + r.top);
             if (diff < 0) {
                 return;
             }
@@ -73,7 +103,7 @@ public class KeyboardUtil {
                     Log.e("SUKA", "KeyboardUtil h " + 0);
                     contentView.setPadding(0, 0, 0, 0);
                 }
-            }
+            }*/
         }
     };
 

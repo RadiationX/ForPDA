@@ -196,7 +196,7 @@ public class App extends android.app.Application {
         } else {
             base = LocaleHelper.onAttach(base, lang);
         }*/
-        super.attachBaseContext(LocaleHelper.onAttach(base, "ru"));
+        super.attachBaseContext(LocaleHelper.onAttach(base));
     }
 
     @Override
