@@ -24,6 +24,7 @@ import forpdateam.ru.forpda.api.regex.RegexStorage;
 import forpdateam.ru.forpda.api.regex.parser.Document;
 import forpdateam.ru.forpda.api.regex.parser.Node;
 import forpdateam.ru.forpda.api.regex.parser.Parser;
+import forpdateam.ru.forpda.client.OkHttpResponseException;
 
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_ALL;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_ARTICLES;
@@ -76,23 +77,30 @@ import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_WP7_SOFTWARE;
  * Created by radiationx on 31.07.16.
  */
 public class NewsApi {
+
+    public enum NavType {
+
+        NEWER, OLDER
+    }
+
     /*
-    * 1. Дата курильщика (2017-08-24T07:00:00+00:00)
-    * 2. Урл изображения
-    * 3. Заголовок
-    * 4. Дата нормального человека (24.08.17)
-    * 5. Id автора
-    * 6. Ник автора
-    * 7. Кол-во комментов
-    * 8. Сорсы тегов
-    * 9. Вроде как контент
-    * 10. Сорсы материалов по теме, их может не быть (null у group(9))
-    * 11. Магический относительный id новости для навигации вперёд/назад
-    * 12. Строка, по которой можно узнать доступность комментирования, если null или пустая, то низя
-    * 13. Сорсы комментов
-    * 14. Сорсы karma
+    * 1. id
+    * 2. Дата курильщика (2017-08-24T07:00:00+00:00)
+    * 3. Урл изображения
+    * 4. Заголовок
+    * 5. Дата нормального человека (24.08.17)
+    * 6. Id автора
+    * 7. Ник автора
+    * 8. Кол-во комментов
+    * 9. Сорсы тегов
+    * 10. Вроде как контент
+    * 11. Сорсы материалов по теме, их может не быть (null у group(9))
+    * 12. Магический относительный id новости для навигации вперёд/назад
+    * 13. Строка, по которой можно узнать доступность комментирования, если null или пустая, то низя
+    * 14. Сорсы комментов
+    * 15. Сорсы karma
     * */
-    private final Pattern detailsPattern = Pattern.compile("<section[^>]*>[^<]*?<article[^>]*?>[\\s\\S]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"photo\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"description\"[^>]*?>[^<]*?<h1[^>]*?>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?<\\/h1>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[^<]*?<span[^>]*?class=\"name\"[^>]*?>[^<]*?<a[^>]*?href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?class=\"more-box\"[^>]*?>[^<]*?<a[^>]*?>(\\d+)<\\/a>[\\s\\S]*?<div[^>]*?class=\"meta\"[^>]*?>([\\s\\S]*?)<\\/div>[\\s\\S]*?<div class=\"content-box\" itemprop=\"articleBody\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>(?:[^<]*?<div class=\"materials-box\"[^>]*?>[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>[^<]*?<\\/div>)?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>[\\s\\S]*?<div class=\"comment-box\" id=\"comments\"[^>]*?>[^<]*?<div class=\"heading\"[^>]*?>[^>]*?<h2>[^<]*?<\\/h2>([\\s\\S]*?)<\\/div>([\\s\\S]*?)[^<]*?<br[^>]*?>[^<]*?<\\/div>[^<]*?<ul class=\"page-nav");
+    private final Pattern detailsPattern = Pattern.compile("<section[^>]*>[^<]*?<article[^>]*?>[^<]*?<div[^>]*?data-ztm=\"\\d+:(\\d+)[^\"]*?\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"photo\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"description\"[^>]*?>[^<]*?<h1[^>]*?>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?<\\/h1>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[^<]*?<span[^>]*?class=\"name\"[^>]*?>[^<]*?<a[^>]*?href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?class=\"more-box\"[^>]*?>[^<]*?<a[^>]*?>(\\d+)<\\/a>[\\s\\S]*?<div[^>]*?class=\"meta\"[^>]*?>([\\s\\S]*?)<\\/div>[\\s\\S]*?<div class=\"content-box\" itemprop=\"articleBody\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>(?:[^<]*?<div class=\"materials-box\"[^>]*?>[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>[^<]*?<\\/div>)?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>[\\s\\S]*?<div class=\"comment-box\" id=\"comments\"[^>]*?>[^<]*?<div class=\"heading\"[^>]*?>[^>]*?<h2>[^<]*?<\\/h2>([\\s\\S]*?)<\\/div>([\\s\\S]*?)[^<]*?<br[^>]*?>[^<]*?<\\/div>[^<]*?<ul class=\"page-nav");
     private final Pattern excludeFormCommentPattern = Pattern.compile("<form[\\s\\S]*");
 
     /*
@@ -163,34 +171,41 @@ public class NewsApi {
 
     public DetailsPage getDetails(int id) throws Exception {
         String response = Api.getWebClient().get("https://4pda.ru/index.php?p=" + id).getBody();
-        return parseArticle(id, response);
+        return parseArticle(response);
     }
 
-    private DetailsPage parseArticle(int id, String response) {
+    public DetailsPage getDetails(String url) throws Exception {
+        String response = Api.getWebClient().get(url).getBody();
+        return parseArticle(response);
+    }
+
+    private DetailsPage parseArticle(String response) throws Exception{
         long time = System.currentTimeMillis();
         Matcher matcher = detailsPattern.matcher(response);
         DetailsPage page = new DetailsPage();
         if (matcher.find()) {
             Log.e("TIME", "Article found: " + (System.currentTimeMillis() - time));
-            page.setId(id);
-            page.setImgUrl(matcher.group(2));
-            page.setTitle(Utils.fromHtml(matcher.group(3)));
-            page.setDate(matcher.group(4));
-            page.setAuthor(Utils.fromHtml(matcher.group(6)));
-            page.setCommentsCount(Integer.parseInt(matcher.group(7)));
-            parseTags(page.getTags(), matcher.group(8));
-            page.setHtml(matcher.group(9));
-            parseMaterials(page.getMaterials(), matcher.group(10));
-            page.setNavId(matcher.group(11));
+            page.setId(Integer.parseInt(matcher.group(1)));
+            page.setImgUrl(matcher.group(3));
+            page.setTitle(Utils.fromHtml(matcher.group(4)));
+            page.setDate(matcher.group(5));
+            page.setAuthor(Utils.fromHtml(matcher.group(7)));
+            page.setCommentsCount(Integer.parseInt(matcher.group(8)));
+            parseTags(page.getTags(), matcher.group(9));
+            page.setHtml(matcher.group(10));
+            parseMaterials(page.getMaterials(), matcher.group(11));
+            page.setNavId(matcher.group(12));
 
             parseKarma(page.getKarmaMap(), response);
 
-            String comments = matcher.group(13);
+            String comments = matcher.group(14);
             comments = excludeFormCommentPattern.matcher(comments).replaceFirst("");
             page.setCommentsSource(comments);
 
             /*Comment commentTree = parseComments(page.getKarmaMap(), page.getCommentsSource());
             page.setCommentTree(commentTree);*/
+        } else {
+            throw new OkHttpResponseException(404, "Not found", "");
         }
         Log.e("TIME", "Article: " + (System.currentTimeMillis() - time));
         return page;
@@ -368,7 +383,7 @@ public class NewsApi {
                 .formHeader("comment", comment, true);
         NetworkResponse response = Api.getWebClient().request(builder.build());
 
-        DetailsPage newArticle = parseArticle(article.getId(), response.getBody());
+        DetailsPage newArticle = parseArticle(response.getBody());
 
         return updateComments(article, newArticle);
     }

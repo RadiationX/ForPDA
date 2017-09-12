@@ -315,13 +315,16 @@ public class IntentHandler {
     }
 
     private static boolean handleSite(Uri uri, Bundle args) {
-        Matcher matcher = Pattern.compile("https?:\\/\\/4pda\\.ru\\/(?:.+?p=|\\d+\\/\\d+\\/\\d+\\/)(\\d+)(?:\\/#comment(\\d+))?").matcher(uri.toString());
+        Matcher matcher = Pattern.compile("https?:\\/\\/4pda\\.ru\\/(?:.+?p=|\\d+\\/\\d+\\/\\d+\\/|[\\w\\/]*?\\/?(newer|older)\\/)(\\d+)(?:\\/#comment(\\d+))?").matcher(uri.toString());
         if (matcher.find()) {
-            int id = Integer.parseInt(matcher.group(1));
             if (matcher.group(2) != null) {
-                args.putInt(NewsDetailsFragment.ARG_NEWS_COMMENT_ID, Integer.parseInt(matcher.group(2)));
+                args.putInt(NewsDetailsFragment.ARG_NEWS_ID, Integer.parseInt(matcher.group(2)));
             }
-            args.putInt(NewsDetailsFragment.ARG_NEWS_ID, id);
+            if (matcher.group(3) != null) {
+                args.putInt(NewsDetailsFragment.ARG_NEWS_COMMENT_ID, Integer.parseInt(matcher.group(3)));
+            }
+            args.putString(NewsDetailsFragment.ARG_NEWS_URL, uri.toString());
+
             TabManager.getInstance().add(NewsDetailsFragment.class, args);
             return true;
         }
