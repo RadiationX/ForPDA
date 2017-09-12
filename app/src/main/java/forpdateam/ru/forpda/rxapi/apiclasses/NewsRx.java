@@ -33,6 +33,10 @@ public class NewsRx {
         return Observable.fromCallable(() -> transform(Api.NewsApi().getDetails(id)));
     }
 
+    public Observable<DetailsPage> getDetails(final String url) {
+        return Observable.fromCallable(() -> transform(Api.NewsApi().getDetails(url)));
+    }
+
     public static DetailsPage transform(DetailsPage page) throws Exception {
         MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_NEWS);
         App.setTemplateResStrings(t);

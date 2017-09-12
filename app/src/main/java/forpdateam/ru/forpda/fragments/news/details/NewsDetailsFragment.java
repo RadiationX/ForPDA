@@ -34,6 +34,7 @@ import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.ScrimHelper;
+import io.reactivex.Observable;
 
 import static forpdateam.ru.forpda.utils.Utils.log;
 
@@ -43,6 +44,7 @@ import static forpdateam.ru.forpda.utils.Utils.log;
 
 public class NewsDetailsFragment extends TabFragment {
 
+    public static final String ARG_NEWS_URL = "ARG_NEWS_URL";
     public static final String ARG_NEWS_ID = "ARG_NEWS_ID";
     public static final String ARG_NEWS_COMMENT_ID = "ARG_NEWS_COMMENT_ID";
     public static final String ARG_NEWS_TITLE = "ARG_NEWS_TITLE";
@@ -64,6 +66,7 @@ public class NewsDetailsFragment extends TabFragment {
     private TextView detailsDate;
     //private Realm realm;
     //private News news;
+    private String newsUrl;
     private int newsId;
     private int commentId;
     private String newsTitle;
@@ -79,6 +82,7 @@ public class NewsDetailsFragment extends TabFragment {
         configuration.setUseCache(false); // back
         configuration.setAlone(false);
         if (getArguments() != null) {
+            newsUrl = getArguments().getString(ARG_NEWS_URL);
             newsId = getArguments().getInt(ARG_NEWS_ID, 0);
             commentId = getArguments().getInt(ARG_NEWS_COMMENT_ID, 0);
             newsTitle = getArguments().getString(ARG_NEWS_TITLE);
@@ -211,7 +215,13 @@ public class NewsDetailsFragment extends TabFragment {
         //webViewContainer.setRefreshing(true);
         progressBar.setVisibility(View.VISIBLE);
         loadCoverImage();
-        mainSubscriber.subscribe(RxApi.NewsList().getDetails(newsId), this::onLoadArticle, new DetailsPage(), v -> loadData());
+        Observable<DetailsPage> observable = null;
+        if (newsUrl != null) {
+            observable = RxApi.NewsList().getDetails(newsUrl);
+        } else {
+            observable = RxApi.NewsList().getDetails(newsId);
+        }
+        mainSubscriber.subscribe(observable, this::onLoadArticle, new DetailsPage(), v -> loadData());
     }
 
     private void onLoadArticle(DetailsPage article) {
