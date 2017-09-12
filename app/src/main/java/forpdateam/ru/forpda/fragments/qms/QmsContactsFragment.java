@@ -186,8 +186,6 @@ public class QmsContactsFragment extends ListFragment {
     private void onLoadContacts(ArrayList<QmsContact> data) {
         refreshLayout.setRefreshing(false);
         recyclerView.scrollToPosition(0);
-        if (data.size() == 0)
-            return;
 
         realm.executeTransactionAsync(r -> {
             r.delete(QmsContactBd.class);
@@ -203,9 +201,7 @@ public class QmsContactsFragment extends ListFragment {
     private void bindView() {
         if (realm.isClosed()) return;
         results = realm.where(QmsContactBd.class).findAll();
-        if (results.size() != 0) {
-            adapter.addAll(results);
-        }
+        adapter.addAll(results);
     }
 
     public void deleteDialog(int mid) {

@@ -301,9 +301,6 @@ public class FavoritesFragment extends ListFragment {
                 break;
         }
 
-        if (data.getItems().size() == 0)
-            return;
-
         realm.executeTransactionAsync(r -> {
             r.delete(FavItemBd.class);
             List<FavItemBd> bdList = new ArrayList<>();
@@ -351,46 +348,44 @@ public class FavoritesFragment extends ListFragment {
         Log.e("SUKA", "bindView call");
         results = realm.where(FavItemBd.class).findAll();
         Log.e("SUKA", "bindView result");
-        if (results.size() != 0) {
-            ArrayList<IFavItem> nonBdResult = new ArrayList<>();
-            for (FavItemBd itemBd : results) {
-                nonBdResult.add(new FavItem(itemBd));
-            }
-            ArrayList<IFavItem> pinnedUnread = new ArrayList<>();
-            ArrayList<IFavItem> itemsUnread = new ArrayList<>();
-            ArrayList<IFavItem> pinned = new ArrayList<>();
-            ArrayList<IFavItem> items = new ArrayList<>();
-            for (IFavItem item : nonBdResult) {
-                if (item.isPin()) {
-                    if (unreadTop && item.isNewMessages()) {
-                        pinnedUnread.add(item);
-                    } else {
-                        pinned.add(item);
-                    }
+        ArrayList<IFavItem> nonBdResult = new ArrayList<>();
+        for (FavItemBd itemBd : results) {
+            nonBdResult.add(new FavItem(itemBd));
+        }
+        ArrayList<IFavItem> pinnedUnread = new ArrayList<>();
+        ArrayList<IFavItem> itemsUnread = new ArrayList<>();
+        ArrayList<IFavItem> pinned = new ArrayList<>();
+        ArrayList<IFavItem> items = new ArrayList<>();
+        for (IFavItem item : nonBdResult) {
+            if (item.isPin()) {
+                if (unreadTop && item.isNewMessages()) {
+                    pinnedUnread.add(item);
                 } else {
-                    if (unreadTop && item.isNewMessages()) {
-                        itemsUnread.add(item);
-                    } else {
-                        items.add(item);
-                    }
+                    pinned.add(item);
+                }
+            } else {
+                if (unreadTop && item.isNewMessages()) {
+                    itemsUnread.add(item);
+                } else {
+                    items.add(item);
                 }
             }
-
-
-            adapter.clear();
-            if (pinnedUnread.size() > 0) {
-                adapter.addSection(new Pair<>(getString(R.string.fav_unreaded_pinned), pinnedUnread));
-            }
-            if (itemsUnread.size() > 0) {
-                adapter.addSection(new Pair<>(getString(R.string.fav_unreaded), itemsUnread));
-            }
-            if (pinned.size() > 0) {
-                adapter.addSection(new Pair<>(getString(R.string.fav_pinned), pinned));
-            }
-            adapter.addSection(new Pair<>(getString(R.string.fav_themes), items));
-            Log.e("SUKA", "bindView notifyDataSetChanged " + recyclerView.isLayoutFrozen());
-            adapter.notifyDataSetChanged();
         }
+
+
+        adapter.clear();
+        if (pinnedUnread.size() > 0) {
+            adapter.addSection(new Pair<>(getString(R.string.fav_unreaded_pinned), pinnedUnread));
+        }
+        if (itemsUnread.size() > 0) {
+            adapter.addSection(new Pair<>(getString(R.string.fav_unreaded), itemsUnread));
+        }
+        if (pinned.size() > 0) {
+            adapter.addSection(new Pair<>(getString(R.string.fav_pinned), pinned));
+        }
+        adapter.addSection(new Pair<>(getString(R.string.fav_themes), items));
+        Log.e("SUKA", "bindView notifyDataSetChanged " + recyclerView.isLayoutFrozen());
+        adapter.notifyDataSetChanged();
         if (!Client.getInstance().getNetworkState()) {
             ClientHelper.getInstance().notifyCountsChanged();
         }

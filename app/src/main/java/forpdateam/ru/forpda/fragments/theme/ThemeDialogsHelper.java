@@ -115,6 +115,10 @@ public class ThemeDialogsHelper {
                 String url = "https://4pda.ru/forum/index.php?s=&showtopic=" + data.getTopicId() + "&view=findpost&p=" + data.getId();
                 NotesAddPopup.showAddNoteDialog(context, title, url);
             });
+            postMenu.addItem(App.getInstance().getString(R.string.share), (context12, data) -> {
+                String url = "https://4pda.ru/forum/index.php?s=&showtopic=" + data.getTopicId() + "&view=findpost&p=" + data.getId();
+                Utils.shareText(url);
+            });
         }
         showedPostMenu.clear();
         if (ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN) {
@@ -129,6 +133,7 @@ public class ThemeDialogsHelper {
         }
         showedPostMenu.addItem(postMenu.get(4));
         showedPostMenu.addItem(postMenu.get(5));
+        showedPostMenu.addItem(postMenu.get(6));
         new AlertDialog.Builder(context)
                 .setItems(showedPostMenu.getTitles(), (dialogInterface, i) -> showedPostMenu.onClick(i, theme, post))
                 .show();
