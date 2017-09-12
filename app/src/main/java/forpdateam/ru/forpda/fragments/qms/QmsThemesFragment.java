@@ -160,12 +160,10 @@ public class QmsThemesFragment extends ListFragment {
             args.putString(QmsChatFragment.USER_AVATAR_ARG, avatarUrl);
             TabManager.getInstance().add(QmsChatFragment.class, args);
             //new Handler().postDelayed(() -> TabManager.getInstance().remove(getTag()), 500);
-            return;
         }
-        if (currentThemes.getThemes().size() == 0)
-            return;
+
         realm.executeTransactionAsync(r -> {
-            r.delete(QmsThemesBd.class);
+            r.where(QmsThemesBd.class).equalTo("userId", currentThemes.getUserId()).findAll().deleteAllFromRealm();
             QmsThemesBd qmsThemesBd = new QmsThemesBd(currentThemes);
             r.copyToRealmOrUpdate(qmsThemesBd);
             qmsThemesBd.getThemes().clear();
@@ -176,9 +174,8 @@ public class QmsThemesFragment extends ListFragment {
         if (realm.isClosed()) return;
         results = realm.where(QmsThemesBd.class).equalTo("userId", currentThemes.getUserId()).findAll();
 
-        if (results.size() != 0 && results.last().getThemes().size() != 0) {
-            adapter.addAll(results.last().getThemes());
-        }
+        adapter.addAll(results.last().getThemes());
+        adapter.notifyDataSetChanged();
         refreshToolbarMenuItems(true);
     }
 

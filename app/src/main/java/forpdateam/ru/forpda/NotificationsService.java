@@ -320,7 +320,7 @@ public class NotificationsService extends Service {
             List<NotificationEvent> savedEvents = getSavedEvents(source);
             //savedEvents = new ArrayList<>();
             saveEvents(loadedEvents, source);
-            List<NotificationEvent> newEvents = compareEvents(savedEvents, loadedEvents, source);
+            List<NotificationEvent> newEvents = compareEvents(savedEvents, loadedEvents, event, source);
             List<NotificationEvent> stackedNewEvents = new ArrayList<>(newEvents);
 
             if (event != null) {
@@ -379,7 +379,7 @@ public class NotificationsService extends Service {
         App.getInstance().getPreferences().edit().putStringSet(prefKey, savedEvents).apply();
     }
 
-    private List<NotificationEvent> compareEvents(List<NotificationEvent> savedEvents, List<NotificationEvent> loadedEvents, NotificationEvent.Source source) {
+    private List<NotificationEvent> compareEvents(List<NotificationEvent> savedEvents, List<NotificationEvent> loadedEvents, NotificationEvent event, NotificationEvent.Source source) {
         List<NotificationEvent> resultEvents = new ArrayList<>();
 
         boolean onlyImportant = false;
@@ -398,8 +398,10 @@ public class NotificationsService extends Service {
             }
 
             if (onlyImportant) {
-                if (!loaded.isImportant()) {
-                    isNew = false;
+                if (!(event != null && event.isMention() && event.getSourceId() == loaded.getSourceId())) {
+                    if (!loaded.isImportant()) {
+                        isNew = false;
+                    }
                 }
             }
 
