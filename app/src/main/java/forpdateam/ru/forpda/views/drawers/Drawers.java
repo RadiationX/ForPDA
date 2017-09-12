@@ -225,6 +225,14 @@ public class Drawers {
         }
     }
 
+    public void selectMenuItem(Class<? extends TabFragment> classObject) {
+        try {
+            MenuItems.MenuItem item = findMenuItem(classObject);
+            selectMenuItem(item);
+        } catch (Exception ignore) {
+        }
+    }
+
     private void selectMenuItem(MenuItems.MenuItem item) {
         Log.d(LOG_TAG, "selectMenuItem " + item);
         if (item == null) return;
