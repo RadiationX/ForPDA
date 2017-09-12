@@ -61,6 +61,7 @@ import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.CustomWebViewClient;
 import forpdateam.ru.forpda.utils.FabOnScroll;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
@@ -697,7 +698,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
     public void onPageComplete(final ArrayList<String> actions) {
     }
 
-    private class SearchWebViewClient extends WebViewClient {
+    private class SearchWebViewClient extends CustomWebViewClient {
 
         @SuppressWarnings("deprecation")
         @Override

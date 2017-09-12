@@ -63,15 +63,41 @@ function transformQuotes() {
             titleBlock.innerHTML = titleBlock.innerHTML.replace(match[0], "");
             titleBlock.insertAdjacentHTML("afterbegin", newTextSrc);
             var match2 = /([a-zA-Zа-яА-Я])/.exec(nick);
+            var letter;
             if (match2) {
-                nick = match2[1];
+                letter = match2[1];
             } else {
-                nick = nick.charAt(0);
+                letter = nick.charAt(0);
             }
-            titleBlock.insertAdjacentHTML("afterbegin", "<div class=\"avatar\">" + nick + "</div>")
+            titleBlock.insertAdjacentHTML("afterbegin", "<div class=\"avatar\"><span class=\"image\"></span>" + letter + "</div>");
+
+            loadAvatar(titleBlock, nick);
+
+
         }
         quote.classList.add("transformed");
     }
+}
+
+function loadAvatar(block, nick) {
+    console.log(1337);
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'app_cache:avatars?nick=' + nick, true);
+    xhr.send();
+    xhr.onreadystatechange = function () {
+        console.log(xhr.responseURL + ' : ' + xhr.status+" : "+xhr.responseText.length);
+        if (xhr.status != 200) {
+            console.log(xhr.status + ': ' + xhr.statusText);
+        } else {
+            var responseText = xhr.responseText;
+            if (xhr.responseText.length == 0) {
+                return;
+            }
+            var imageEl = block.querySelector(".avatar .image");
+            imageEl.style.backgroundImage = "url(\"" + responseText + "\")";
+        }
+    }
+    console.log(1488);
 }
 
 function improveCodeBlock() {
@@ -230,16 +256,17 @@ function blocksOpenClose() {
         }
     }*/
 }
- function toggler(c, o, t) {
-        if (t.classList.contains(c)) {
-            t.classList.remove(c);
-            t.classList.add(o);
-            addImgesSrc(t);
-        } else if (t.classList.contains(o)) {
-            t.classList.remove(o);
-            t.classList.add(c);
-        }
+
+function toggler(c, o, t) {
+    if (t.classList.contains(c)) {
+        t.classList.remove(c);
+        t.classList.add(o);
+        addImgesSrc(t);
+    } else if (t.classList.contains(o)) {
+        t.classList.remove(o);
+        t.classList.add(c);
     }
+}
 /**
  *		==================
  *		SPOIL CLOSE BUTTON
@@ -250,11 +277,11 @@ function spoilCloseButton(t) {
     console.log("spoilCloseButton data-brackets-id " + t.getAttribute("data-brackets-id"));
     var el = t;
     if (t.classList.contains('spoil')) {
-        
+
         t = t.querySelector(".block-body");
-        
-        console.log("body "+t);
-        
+
+        console.log("body " + t);
+
         if (t.querySelector('img[src]')) {
             var images = t.querySelectorAll('img[src]');
             images[images.length - 1].addEventListener("load", function () {
@@ -262,11 +289,11 @@ function spoilCloseButton(t) {
             });
         }
 
-        
+
         for (var i = t.childNodes.length; i >= 0; i--) {
             var node = t.childNodes.item(i);
-            console.log("NODE "+t.classList);
-            if ((!!node)&&(!!node.classList)&&node.classList.contains("btns_container")) {
+            console.log("NODE " + t.classList);
+            if ((!!node) && (!!node.classList) && node.classList.contains("btns_container")) {
                 var btn = node;
                 console.log("SUKA " + (t.clientHeight > document.documentElement.clientHeight) + " : " + btn.style.display);
                 console.log("data-brackets-id " + btn.parentElement.getAttribute("data-brackets-id"));
@@ -304,10 +331,10 @@ function removeImgesSrc() {
         var images = codeBlock.querySelector(".block-body").querySelectorAll("img");
         for (var j = 0; j < images.length; j++) {
             var img = images[j];
-            console.log("removeImgesSrc "+img.src+" : "+img.dataset.src);
+            console.log("removeImgesSrc " + img.src + " : " + img.dataset.src);
             if (!img.hasAttribute('src') || img.dataset.imageSrc) continue;
             var srcUrl = img.dataset.src;
-            if(!srcUrl){
+            if (!srcUrl) {
                 srcUrl = img.src;
             }
             img.dataset.imageSrc = srcUrl;
@@ -326,11 +353,11 @@ function addImgesSrc(target) {
             var images = target.querySelectorAll('img');
             for (var i = 0; i < images.length; i++) {
                 var img = images[i];
-                console.log("addImgesSrc "+img.src+" : "+img.dataset.imageSrc);
+                console.log("addImgesSrc " + img.src + " : " + img.dataset.imageSrc);
                 if (img.hasAttribute('src') || !img.dataset.imageSrc) continue;
                 img.src = img.dataset.imageSrc;
                 img.removeAttribute('data-image-src');
-                if(typeof corrector !== 'undefined')
+                if (typeof corrector !== 'undefined')
                     corrector.startObserver();
             }
             return;

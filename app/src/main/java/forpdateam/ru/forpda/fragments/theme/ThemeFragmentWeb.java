@@ -3,9 +3,11 @@ package forpdateam.ru.forpda.fragments.theme;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v7.app.AlertDialog;
+import android.util.Base64;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
@@ -14,10 +16,17 @@ import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,11 +34,14 @@ import java.util.regex.Pattern;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.IBaseForumPost;
+import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.api.theme.Theme;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
+import forpdateam.ru.forpda.rxapi.ForumUsersCache;
+import forpdateam.ru.forpda.utils.CustomWebViewClient;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.views.ExtendedWebView;
@@ -212,7 +224,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
         getMainActivity().getWebViewsProvider().push(webView);
     }
 
-    private class ThemeWebViewClient extends WebViewClient {
+    private class ThemeWebViewClient extends CustomWebViewClient {
 
         @SuppressWarnings("deprecation")
         @Override
@@ -333,47 +345,6 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
             /*//TODO сделать привязку к событиям js, вместо этого говнища
             updateHistoryLastHtml();*/
         }
-
-        // Можно будет заюзать для загрузки аватаров из кеша юзеров
-        /*@TargetApi(Build.VERSION_CODES.N)
-        @Override
-        public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-            Log.d("SUKA_WV", "shouldInterceptRequest19: " + request.getUrl());
-            String url = request.getUrl().toString();
-            Matcher matcher = p.matcher(url);
-            if (matcher.find()) {
-                return interceptImages(url, matcher.group(1));
-            }
-            return super.shouldInterceptRequest(view, request);
-        }
-
-        @Override
-        public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-            Log.d("SUKA_WV", "shouldInterceptRequest19: " + url);
-            //WebResourceResponse webResourceResponse = new WebResourceResponse();
-            Matcher matcher = p.matcher(url);
-            if (matcher.find()) {
-                return interceptImages(url, matcher.group(1));
-            }
-            return super.shouldInterceptRequest(view, url);
-        }
-
-        private WebResourceResponse interceptImages(String url, String extension) {
-            long time = System.currentTimeMillis();
-            String mimeType = MimeTypeUtil.getType(extension);
-            String encoding = "UTF-8";
-
-            InputStream inputStream = null;
-            try {
-                inputStream = Client.getInstance().loadImage(url);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            Log.d("SUKA_WV", "interceptImages: " + mimeType + " : " + encoding + ";;; Time: " + (System.currentTimeMillis() - time));
-
-            return new WebResourceResponse(mimeType, encoding, inputStream);
-        }*/
     }
 
     private class ThemeChromeClient extends WebChromeClient {

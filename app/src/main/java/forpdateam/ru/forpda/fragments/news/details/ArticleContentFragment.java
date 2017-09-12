@@ -16,6 +16,7 @@ import android.webkit.WebViewClient;
 
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.api.news.models.DetailsPage;
+import forpdateam.ru.forpda.utils.CustomWebViewClient;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.views.ExtendedWebView;
 
@@ -60,7 +61,7 @@ public class ArticleContentFragment extends Fragment {
         }
     }
 
-    private class ArticleWebViewClient extends WebViewClient {
+    private class ArticleWebViewClient extends CustomWebViewClient {
 
         @SuppressWarnings("deprecation")
         @Override

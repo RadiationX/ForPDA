@@ -49,6 +49,7 @@ import forpdateam.ru.forpda.fragments.qms.QmsThemesFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.rxapi.apiclasses.QmsRx;
 import forpdateam.ru.forpda.settings.Preferences;
+import forpdateam.ru.forpda.utils.CustomWebViewClient;
 import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
@@ -445,7 +446,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     public void onPageComplete(final ArrayList<String> actions) {
     }
 
-    private class QmsWebViewClient extends WebViewClient {
+    private class QmsWebViewClient extends CustomWebViewClient {
 
         @SuppressWarnings("deprecation")
         @Override
