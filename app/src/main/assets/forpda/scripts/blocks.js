@@ -71,21 +71,30 @@ function transformQuotes() {
             }
             titleBlock.insertAdjacentHTML("afterbegin", "<div class=\"avatar\"><span class=\"image\"></span>" + letter + "</div>");
 
-            loadAvatar(titleBlock, nick);
-
+            try {
+                if (PageInfo.enableAvatars) {
+                    loadAvatar(titleBlock);
+                }
+            } catch (ex) {
+                console.error(ex);
+            }
 
         }
         quote.classList.add("transformed");
     }
 }
 
-function loadAvatar(block, nick) {
-    console.log(1337);
+function loadAvatar(block) {
+    var imageEl = block.querySelector(".avatar .image");
+    if (imageEl.style.backgroundImage.includes("base64")) {
+        return;
+    }
+    var nick = block.querySelector(".name").innerHTML;
     var xhr = new XMLHttpRequest();
     xhr.open('GET', 'app_cache:avatars?nick=' + nick, true);
     xhr.send();
     xhr.onreadystatechange = function () {
-        console.log(xhr.responseURL + ' : ' + xhr.status+" : "+xhr.responseText.length);
+        console.log(xhr.responseURL + ' : ' + xhr.status + " : " + xhr.responseText.length);
         if (xhr.status != 200) {
             console.log(xhr.status + ': ' + xhr.statusText);
         } else {
@@ -93,11 +102,10 @@ function loadAvatar(block, nick) {
             if (xhr.responseText.length == 0) {
                 return;
             }
-            var imageEl = block.querySelector(".avatar .image");
+
             imageEl.style.backgroundImage = "url(\"" + responseText + "\")";
         }
     }
-    console.log(1488);
 }
 
 function improveCodeBlock() {

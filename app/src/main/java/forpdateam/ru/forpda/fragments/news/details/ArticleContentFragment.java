@@ -16,6 +16,7 @@ import android.webkit.WebViewClient;
 
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.api.news.models.DetailsPage;
+import forpdateam.ru.forpda.utils.CustomWebChromeClient;
 import forpdateam.ru.forpda.utils.CustomWebViewClient;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.views.ExtendedWebView;
@@ -40,6 +41,7 @@ public class ArticleContentFragment extends Fragment {
         webView = ((MainActivity) getActivity()).getWebViewsProvider().pull(getContext());
         registerForContextMenu(webView);
         webView.setWebViewClient(new ArticleWebViewClient());
+        webView.setWebChromeClient(new CustomWebChromeClient());
         webView.addJavascriptInterface(this, JS_INTERFACE);
         webView.loadDataWithBaseURL("https://4pda.ru/forum/", article.getHtml(), "text/html", "utf-8", null);
         return webView;

@@ -49,6 +49,7 @@ import forpdateam.ru.forpda.fragments.qms.QmsThemesFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.rxapi.apiclasses.QmsRx;
 import forpdateam.ru.forpda.settings.Preferences;
+import forpdateam.ru.forpda.utils.CustomWebChromeClient;
 import forpdateam.ru.forpda.utils.CustomWebViewClient;
 import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -196,6 +197,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         webView.addJavascriptInterface(this, JS_INTERFACE);
         registerForContextMenu(webView);
         webView.setWebViewClient(new QmsWebViewClient());
+        webView.setWebChromeClient(new CustomWebChromeClient());
         loadBaseWebContainer();
 
         attachmentsPopup = messagePanel.getAttachmentsPopup();

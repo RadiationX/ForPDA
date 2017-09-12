@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.rxapi.apiclasses;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -7,10 +9,13 @@ import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.Utils;
+import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.api.search.models.SearchItem;
 import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
+import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.client.ClientHelper;
+import forpdateam.ru.forpda.rxapi.ForumUsersCache;
 import forpdateam.ru.forpda.settings.Preferences;
 import io.reactivex.Observable;
 
@@ -27,6 +32,15 @@ public class SearchRx {
 
     public static SearchResult transform(SearchResult page, boolean withHtml) throws Exception {
         if (withHtml) {
+            List<ForumUser> forumUsers = new ArrayList<>();
+            for (SearchItem post : page.getItems()) {
+                ForumUser forumUser = new ForumUser();
+                forumUser.setId(post.getUserId());
+                forumUser.setNick(post.getNick());
+                forumUser.setAvatar(post.getAvatar());
+            }
+            ForumUsersCache.saveUsers(forumUsers);
+
             int memberId = ClientHelper.getUserId();
             MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_SEARCH);
             App.setTemplateResStrings(t);
@@ -36,26 +50,23 @@ public class SearchRx {
 
             t.setVariableOpt("style_type", App.getInstance().getCssStyleType());
 
-            /*t.setVariableOpt("topic_title", Utils.htmlEncode(page.getTitle()));
-            t.setVariableOpt("topic_description", Utils.htmlEncode(page.getDesc()));
-            t.setVariableOpt("topic_url", page.getUrl());
-            t.setVariableOpt("in_favorite", Boolean.toString(page.isInFavorite()));
-            t.setVariableOpt("all_pages", page.getPagination().getAll());
-            t.setVariableOpt("posts_on_page", page.getPagination().getPerPage());
-            t.setVariableOpt("current_page", page.getPagination().getCurrent());
-            t.setVariableOpt("authorized", Boolean.toString(authorized));
-            t.setVariableOpt("is_curator", Boolean.toString(page.isCurator()));
-            t.setVariableOpt("member_id", ClientHelper.getUserId());
-            t.setVariableOpt("elem_to_scroll", page.getElementToScroll());*/
+            t.setVariableOpt("all_pages_int", page.getPagination().getAll());
+            t.setVariableOpt("posts_on_page_int", page.getPagination().getPerPage());
+            t.setVariableOpt("current_page_int", page.getPagination().getCurrent());
+            t.setVariableOpt("authorized_bool", Boolean.toString(authorized));
+            t.setVariableOpt("member_id_int", ClientHelper.getUserId());
+
+
             t.setVariableOpt("body_type", "search");
             t.setVariableOpt("navigation_disable", ThemeRx.getDisableStr(prevDisabled && nextDisabled));
             t.setVariableOpt("first_disable", ThemeRx.getDisableStr(prevDisabled));
             t.setVariableOpt("prev_disable", ThemeRx.getDisableStr(prevDisabled));
             t.setVariableOpt("next_disable", ThemeRx.getDisableStr(nextDisabled));
             t.setVariableOpt("last_disable", ThemeRx.getDisableStr(nextDisabled));
-            boolean isDisableAvatar = Preferences.Theme.isShowAvatars();
-            t.setVariableOpt("disable_avatar_js", Boolean.toString(isDisableAvatar));
-            t.setVariableOpt("disable_avatar", isDisableAvatar ? "show_avatar" : "hide_avatar");
+
+            boolean isEnableAvatars = Preferences.Theme.isShowAvatars();
+            t.setVariableOpt("enable_avatars_bool", Boolean.toString(isEnableAvatars));
+            t.setVariableOpt("enable_avatars", isEnableAvatars ? "show_avatar" : "hide_avatar");
             t.setVariableOpt("avatar_type", Preferences.Theme.isCircleAvatars() ? "circle_avatar" : "square_avatar");
 
 
@@ -69,7 +80,7 @@ public class SearchRx {
                 t.setVariableOpt("user_id", post.getUserId());
 
                 //Post header
-                t.setVariableOpt("avatar", post.getAvatar().isEmpty() ? "" : "https://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
+                t.setVariableOpt("avatar", post.getAvatar());
                 t.setVariableOpt("none_avatar", post.getAvatar().isEmpty() ? "none_avatar" : "");
 
                 if (letterMatcher != null) {

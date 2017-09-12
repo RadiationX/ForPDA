@@ -67,7 +67,11 @@ public class Search {
                     item.setDate(matcher.group(5));
                     //item.setNumber(Integer.parseInt(matcher.group(6)));
                     item.setOnline(matcher.group(7).contains("green"));
-                    item.setAvatar(matcher.group(8));
+                    String avatar = matcher.group(8);
+                    if (!avatar.isEmpty()) {
+                        avatar = "https://s.4pda.to/forum/uploads/".concat(avatar);
+                    }
+                    item.setAvatar(avatar);
                     item.setNick(Utils.fromHtml(matcher.group(9)));
                     item.setUserId(Integer.parseInt(matcher.group(10)));
                     item.setCurator(matcher.group(11) != null);

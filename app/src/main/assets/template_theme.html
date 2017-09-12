@@ -9,17 +9,20 @@
             url: "${topic_url}",
             title: "${topic_title}",
             description: "${topic_description}",
-            inFavorite: "${in_favorite}",
             elemToScroll: "${elem_to_scroll}",
             bodyType: "${body_type}",
-            disableAvatar: "${disable_avatar_js}",
+
+            enableAvatars: ${enable_avatars_bool},
             avatarType: "${avatar_type}",
-            allPagesCount: "${all_pages}",
-            postsOnPageCount: "${posts_on_page}",
-            currentPage: "${current_page}",
-            authorized: "${authorized}",
-            isCurator: "${is_curator}",
-            memberId: "${member_id}"
+
+            allPagesCount: ${all_pages_int},
+            postsOnPageCount: ${posts_on_page_int},
+            currentPage: ${current_page_int},
+
+            inFavorite: ${in_favorite_bool},
+            authorized: ${authorized_bool},
+            isCurator: ${is_curator_bool},
+            memberId: ${member_id_int}
         }
 
         function setPaddingBottom(newPadding) {
@@ -40,7 +43,7 @@
     <script type="text/javascript" src="file:///android_asset/forpda/scripts/z_emoticons.js"></script>
 </head>
 
-<body id="${body_type}">
+<body id="${body_type}" class="${enable_avatars} ${avatar_type}">
     <!-- $BeginBlock poll_block -->
     <div class="poll ${poll_type} ${poll_state_class}">
         <a class="btn title aec" onclick="toggleButton(this, 'body', 'poll')" role="button" aria-label="${res_s_poll_title}: ${poll_title}"><span>${poll_title}</span><i class="icon"></i></a>
@@ -87,7 +90,7 @@
     <!-- $EndBlock poll_block -->
     <div class="posts_list">
         <!-- $BeginBlock post -->
-        <div name="entry${post_id}" class="post_container ${user_online} ${disable_avatar} ${avatar_type} ${hat_state_class}" data-post-id="${post_id}" data-user-id="${user_id}" data-nick="${nick}">
+        <div name="entry${post_id}" class="post_container ${user_online} ${hat_state_class}" data-post-id="${post_id}" data-user-id="${user_id}" data-nick="${nick}">
             <!-- $BeginBlock hat_button --><a class="btn hat_button aec" onclick="toggleButton(this, 'hat_content', 'hat')" role="button" aria-label="${res_s_hat}"><span>${res_s_hat}</span><i class="icon"></i></a>
             <!-- $EndBlock hat_button -->
             <!-- $BeginBlock hat_content_start -->

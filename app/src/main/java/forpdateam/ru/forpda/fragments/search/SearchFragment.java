@@ -61,6 +61,7 @@ import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.CustomWebChromeClient;
 import forpdateam.ru.forpda.utils.CustomWebViewClient;
 import forpdateam.ru.forpda.utils.FabOnScroll;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -633,6 +634,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
             if (webViewClient == null) {
                 webViewClient = new SearchWebViewClient();
                 webView.setWebViewClient(webViewClient);
+                webView.setWebChromeClient(new CustomWebChromeClient());
             }
             webView.loadDataWithBaseURL("https://4pda.ru/forum/", data.getHtml(), "text/html", "utf-8", null);
         } else {

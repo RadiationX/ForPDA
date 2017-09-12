@@ -17,6 +17,9 @@ import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsMessage;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
+import forpdateam.ru.forpda.api.theme.models.ThemePage;
+import forpdateam.ru.forpda.api.theme.models.ThemePost;
+import forpdateam.ru.forpda.rxapi.ForumUsersCache;
 import io.reactivex.Observable;
 
 /**
@@ -39,7 +42,7 @@ public class QmsRx {
 
     //Contacts
     public Observable<ArrayList<QmsContact>> getContactList() {
-        return Observable.fromCallable(() -> Api.Qms().getContactList());
+        return Observable.fromCallable(() -> interceptContacts(Api.Qms().getContactList()));
     }
 
     public Observable<ArrayList<QmsContact>> getBlackList() {
@@ -61,7 +64,6 @@ public class QmsRx {
     }
 
 
-
     //Chat
     public Observable<QmsChatModel> getChat(final int userId, final int themeId) {
         return Observable.fromCallable(() -> transform(Api.Qms().getChat(userId, themeId), false));
@@ -81,6 +83,18 @@ public class QmsRx {
 
     public Observable<List<AttachmentItem>> uploadFiles(List<RequestFile> files, List<AttachmentItem> pending) {
         return Observable.fromCallable(() -> Api.Qms().uploadFiles(files, pending));
+    }
+
+    public static ArrayList<QmsContact> interceptContacts(ArrayList<QmsContact> contacts) throws Exception {
+        List<ForumUser> forumUsers = new ArrayList<>();
+        for (QmsContact post : contacts) {
+            ForumUser forumUser = new ForumUser();
+            forumUser.setId(post.getId());
+            forumUser.setNick(post.getNick());
+            forumUser.setAvatar(post.getAvatar());
+        }
+        ForumUsersCache.saveUsers(forumUsers);
+        return contacts;
     }
 
     public static QmsChatModel transform(QmsChatModel chatModel, boolean withHtml) throws Exception {
@@ -137,7 +151,7 @@ public class QmsRx {
         return t;
     }
 
-    public static String transformMessageSrc(String messagesSrc){
+    public static String transformMessageSrc(String messagesSrc) {
         messagesSrc = messagesSrc.replaceAll("\n", "").replaceAll("'", "&apos;");
         messagesSrc = JSONObject.quote(messagesSrc);
         messagesSrc = messagesSrc.substring(1, messagesSrc.length() - 1);

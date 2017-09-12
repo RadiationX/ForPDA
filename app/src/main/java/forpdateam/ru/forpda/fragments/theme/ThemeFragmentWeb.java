@@ -41,6 +41,7 @@ import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.imageviewer.ImageViewerActivity;
 import forpdateam.ru.forpda.rxapi.ForumUsersCache;
+import forpdateam.ru.forpda.utils.CustomWebChromeClient;
 import forpdateam.ru.forpda.utils.CustomWebViewClient;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
@@ -347,44 +348,13 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
         }
     }
 
-    private class ThemeChromeClient extends WebChromeClient {
-        final static String tag = "WebConsole";
-
+    private class ThemeChromeClient extends CustomWebChromeClient {
         @Override
         public void onProgressChanged(WebView view, int progress) {
             if (loadAction == NORMAL_ACTION)
                 webView.evalJs("onProgressChanged()");
             /*else if (loadAction == BACK_ACTION || loadAction == REFRESH_ACTION)
                 webView.scrollTo(0, currentPage.getScrollY());*/
-        }
-
-        @Override
-        public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-            String message = "";
-            message += "\"" + consoleMessage.message() + "\"";
-            String source = consoleMessage.sourceId();
-            if (source != null) {
-                int cut = source.lastIndexOf('/');
-                if (cut != -1) {
-                    source = source.substring(cut + 1);
-                }
-                message += ", [" + source + "]";
-            }
-
-            message += ", (" + consoleMessage.lineNumber() + ")";
-
-
-            ConsoleMessage.MessageLevel level = consoleMessage.messageLevel();
-            if (level == ConsoleMessage.MessageLevel.DEBUG) {
-                Log.d(tag, message);
-            } else if (level == ConsoleMessage.MessageLevel.ERROR) {
-                Log.d(tag, message);
-            } else if (level == ConsoleMessage.MessageLevel.WARNING) {
-                Log.w(tag, message);
-            } else if (level == ConsoleMessage.MessageLevel.LOG || level == ConsoleMessage.MessageLevel.TIP) {
-                Log.i(tag, message);
-            }
-            return true;
         }
     }
 
