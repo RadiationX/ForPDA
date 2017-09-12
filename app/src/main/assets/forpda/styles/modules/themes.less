@@ -503,7 +503,7 @@ button,
             right: 8/16rem;
             border-top: 1/16rem dashed @second_text_color;
         }
-        &:active{
+        &:active {
             background: @tapColor;
         }
     }
@@ -576,9 +576,57 @@ button,
         opacity: 0;
     }
 }
+@avatarSize: 56/16em;
+@fullAvatarSize: (56+2)/16em;
+body {
+    &.circle_avatar {
+        .post_header {
+            .avatar {
+                .img {
+                    .bRad(@avatarSize);
+                }
+                >.letter {
+                    .bRad(@avatarSize);
+                }
+            }
+        }
+    }
+    &.square_avatar {
+        .post_header {
+            .avatar {
+                .img {}
+                >.letter {}
+            }
+        }
+        .post-block.quote > .block-title .avatar {
+            .bRad(0px);
+        }
+    }
+    &.hide_avatar {
+        .post_header {
+            .avatar {
+                .img {
+                    display: none;
+                }
+                .letter {
+                    display: block;
+                }
+            }
+        }
+        .post-block.quote > .block-title .avatar .image {
+            display: none;
+        }
+    }
+    &.show_avatar {
+        .post_header {
+            .avatar {
+                .img {}
+                .letter {}
+            }
+        }
+    }
+}
 .post_container {
-    @avatarSize: 56/16em;
-    @fullAvatarSize: (56+2)/16em;
     .mainBox;
     position: relative;
     .hat_button {
@@ -649,49 +697,6 @@ button,
             .icon {
                 -webkit-transform: rotateX(180deg) translateZ(0);
                 transform: rotateX(180deg) translateZ(0);
-            }
-        }
-    }
-    &.circle_avatar {
-        .post_header {
-            .avatar {
-                .img {
-                    .bRad(@avatarSize);
-                }
-                >.letter {
-                    .bRad(@avatarSize);
-                }
-            }
-        }
-    }
-    &.square_avatar {
-        .post_header {
-            .avatar {
-                .img {}
-                >.letter {}
-            }
-        }
-        .post-block.quote > .block-title .avatar {
-            .bRad(0px);
-        }
-    }
-    &.hide_avatar {
-        .post_header {
-            .avatar {
-                .img {
-                    display: none;
-                }
-                .letter {
-                    display: block;
-                }
-            }
-        }
-    }
-    &.show_avatar {
-        .post_header {
-            .avatar {
-                .img {}
-                .letter {}
             }
         }
     }

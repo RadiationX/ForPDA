@@ -3,28 +3,25 @@
 
 <head>
     <title>${topic_title}</title>
-    <!-- <script type="text/javascript">
+     <script type="text/javascript">
         var PageInfo = {
-            url: "${topic_url}",
-            title: "${topic_title}",
-            description: "${topic_description}",
-            inFavorite: "${in_favorite}",
-            elemToScroll: "${elem_to_scroll}",
             bodyType: "${body_type}",
-            disableAvatar: "${disable_avatar_js}",
+
+            enableAvatars: ${enable_avatars_bool},
             avatarType: "${avatar_type}",
-            allPagesCount: "${all_pages}",
-            postsOnPageCount: "${posts_on_page}",
-            currentPage: "${current_page}",
-            authorized: "${authorized}",
-            isCurator: "${is_curator}",
-            memberId: "${member_id}"
+
+            allPagesCount: ${all_pages_int},
+            postsOnPageCount: ${posts_on_page_int},
+            currentPage: ${current_page_int},
+
+            authorized: ${authorized_bool},
+            memberId: ${member_id_int}
         }
         function setPaddingBottom(newPadding){
             document.getElementById("padding_for_message_panel").style.paddingBottom = Number(newPadding)+"px";
         }
 
-    </script>-->
+    </script>
     <script type="text/javascript" src="file:///android_asset/forpda/scripts/main.js"></script>
     <script type="text/javascript" src="file:///android_asset/forpda/scripts/modules/posts_functions.js"></script>
     <script type="text/javascript" src="file:///android_asset/forpda/scripts/attach_transformer.js"></script>
@@ -37,10 +34,10 @@
     <script type="text/javascript" src="file:///android_asset/forpda/scripts/z_emoticons.js"></script>
 </head>
 
-<body id="${body_type}">
+<body id="${body_type}" class="${enable_avatars} ${avatar_type}">
     <div class="posts_list">
         <!-- $BeginBlock post -->
-        <div name="entry${post_id}" class="post_container ${user_online} ${disable_avatar} ${avatar_type} ${hat_state_class}" data-post-id="${post_id}" data-user-id="${user_id}" data-nick="${nick}">
+        <div name="entry${post_id}" class="post_container ${user_online} ${hat_state_class}" data-post-id="${post_id}" data-user-id="${user_id}" data-nick="${nick}">
             <div class="post_title"><a href="http://4pda.ru/forum/index.php?showtopic=${topic_id}&view=findpost&p=${post_id}">${post_title}</a></div>
             <div class="post_header">
                 <div tabindex="-1" class="accessibility_anchor"></div>
