@@ -350,7 +350,7 @@ li {
                 font-style: normal;
                 color: @avatar_letter_color;
                 text-transform: uppercase;
-                &:before {
+                &:after {
                     content: "";
                     position: absolute;
                     bottom: -1/16rem;
@@ -365,6 +365,17 @@ li {
                     background-size: 100%;
                     border: 1/16rem solid @avatar_overlap_color;
                     box-sizing: border-box;
+                }
+                .image {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    height: 36/16rem;
+                    width: 36/16rem;
+                    .bRad(36/16rem);
+                    background-repeat: no-repeat;
+                    background-size: cover;
+                    background-position: center;
                 }
             }
             .title {

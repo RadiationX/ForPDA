@@ -360,7 +360,7 @@ li .post-block.hidden {
   color: #ffffff;
   text-transform: uppercase;
 }
-.post-block.quote > .block-title .avatar:before {
+.post-block.quote > .block-title .avatar:after {
   content: "";
   position: absolute;
   bottom: -0.0625rem;
@@ -376,6 +376,18 @@ li .post-block.hidden {
   background-size: 100%;
   border: 0.0625rem solid #ffffff;
   box-sizing: border-box;
+}
+.post-block.quote > .block-title .avatar .image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 2.25rem;
+  width: 2.25rem;
+  -webkit-border-radius: 2.25rem;
+  border-radius: 2.25rem;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 .post-block.quote > .block-title .title {
   display: block;
