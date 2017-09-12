@@ -1,5 +1,8 @@
 package forpdateam.ru.forpda.rxapi.apiclasses;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -132,5 +135,18 @@ public class QmsRx {
         t.addBlockOpt("item");
 
         return t;
+    }
+
+    public static String transformMessageSrc(String messagesSrc){
+        messagesSrc = messagesSrc.replaceAll("\n", "").replaceAll("'", "&apos;");
+        messagesSrc = JSONObject.quote(messagesSrc);
+        messagesSrc = messagesSrc.substring(1, messagesSrc.length() - 1);
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("src", messagesSrc);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return messagesSrc;
     }
 }

@@ -166,6 +166,14 @@
                     android:visibility="gone" />
             </FrameLayout>
 
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/auth_skip"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp48"
+                android:layout_marginTop="8dp"
+                android:layout_gravity="end"
+                android:text="@string/auth_skip" />
         </LinearLayout>
     </RelativeLayout>
 </ScrollView>

@@ -134,7 +134,7 @@
     <string name="title">Заголовок</string>
     <string name="note_link_hint">Ссылка, не обязательно</string>
     <string name="note_content">Содержание</string>
-    <string name="load">Содержание</string>
+    <string name="load">Загрузить</string>
     <string name="report_text">Текст жалобы</string>
     <string name="load_from">Загрузить с</string>
     <string name="devices">Устройства</string>
@@ -219,6 +219,7 @@
     <string name="auth_captcha">Введите число</string>
     <string name="auth_hidden">Скрытый</string>
     <string name="auth_btn_login">Войти</string>
+    <string name="auth_skip">Пропустить</string>
 
     <!-- Notes -->
     <string name="create_note">Создать заметку</string>
@@ -500,6 +501,7 @@
     <string name="res_s_comments">@string/comments</string>
     <string name="res_s_comments_do_swipe">@string/comments_do_swipe</string>
 
+    <!-- New res -->
 
 
 </resources>

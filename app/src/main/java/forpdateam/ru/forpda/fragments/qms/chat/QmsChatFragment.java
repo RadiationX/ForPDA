@@ -23,6 +23,9 @@ import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observer;
@@ -353,11 +356,11 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         String messagesSrc = t.generateOutput();
         t.reset();
         currentChat.setShowedMessIndex(start);
-        messagesSrc = messagesSrc.replaceAll("\n", "").replaceAll("'", "&apos;");
-        final String finalMessagesSrc = messagesSrc;
+
+        messagesSrc = QmsRx.transformMessageSrc(messagesSrc);
 
         Log.d(LOG_TAG, "showNewMess");
-        webView.evalJs("showNewMess('".concat(finalMessagesSrc).concat("', true)"));
+        webView.evalJs("showNewMess('".concat(messagesSrc).concat("', true)"));
 
         refreshToolbarMenuItems(true);
         if (currentChat.getNick() != null) {
@@ -387,7 +390,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
                 }
                 String messagesSrc = t.generateOutput();
                 t.reset();
-                messagesSrc = messagesSrc.replaceAll("\n", "").replaceAll("'", "&apos;");
+                messagesSrc = QmsRx.transformMessageSrc(messagesSrc);
                 webView.evalJs("showNewMess('".concat(messagesSrc).concat("', true)"));
             }
 
@@ -429,8 +432,8 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         currentChat.setShowedMessIndex(startIndex);
         QmsRx.generateMess(t, currentChat.getMessages(), startIndex, endIndex);
         String messagesSrc = t.generateOutput();
-        messagesSrc = messagesSrc.replaceAll("\n", "");
         t.reset();
+        messagesSrc = QmsRx.transformMessageSrc(messagesSrc);
         webView.evalJs("showMoreMess('" + messagesSrc + "')");
     }
 

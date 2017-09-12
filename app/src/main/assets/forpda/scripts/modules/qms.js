@@ -24,13 +24,13 @@ window.addEventListener("scroll", function (e) {
 });
 
 function getLastMess() {
-var listElem = document.querySelector(".mess_list");
+    var listElem = document.querySelector(".mess_list");
     var messages = listElem.querySelectorAll(".mess_container");
     return messages[messages.length - 1];
 }
 
 function showMoreMess(listSrc) {
-var listElem = document.querySelector(".mess_list");
+    var listElem = document.querySelector(".mess_list");
     var lastHeight = listElem.offsetHeight;
     listElem.insertAdjacentHTML("afterbegin", listSrc);
     addedNewMessages();
@@ -38,7 +38,9 @@ var listElem = document.querySelector(".mess_list");
 }
 
 function showNewMess(listSrc, withScroll) {
-var listElem = document.querySelector(".mess_list");
+console.log("SHOW NEW MESS "+listSrc);
+    //listSrc = JSON.parse(listSrc);
+    var listElem = document.querySelector(".mess_list");
     listElem.insertAdjacentHTML("beforeend", listSrc);
     addedNewMessages();
     if (withScroll) {

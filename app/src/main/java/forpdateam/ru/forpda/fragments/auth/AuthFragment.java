@@ -29,10 +29,12 @@ import forpdateam.ru.forpda.api.auth.models.AuthForm;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.news.main.NewsMainFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.EmptyActivity;
 import forpdateam.ru.forpda.utils.SimpleTextWatcher;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
+import forpdateam.ru.forpda.views.drawers.Drawers;
 
 /**
  * Created by radiationx on 29.07.16.
@@ -42,6 +44,7 @@ public class AuthFragment extends TabFragment {
     private ImageView captchaImage, avatar;
     private AuthForm authForm;
     private Button sendButton;
+    private Button skipButton;
     private ProgressBar loginProgress;
     private CheckBox hiddenAuth;
 
@@ -73,12 +76,18 @@ public class AuthFragment extends TabFragment {
         progressView = (CircularProgressView) findViewById(R.id.auth_progress);
         loginProgress = (ProgressBar) findViewById(R.id.login_progress);
         hiddenAuth = (CheckBox) findViewById(R.id.auth_hidden);
+        sendButton = (Button) findViewById(R.id.auth_send);
+        skipButton = (Button) findViewById(R.id.auth_skip);
 
         viewsReady();
         setListsBackground();
+        skipButton.setOnClickListener(v -> {
+            Drawers drawers = getMainActivity().getDrawers();
+            drawers.selectMenuItem(NewsMainFragment.class);
+            TabManager.getInstance().remove(AuthFragment.this);
+        });
         appBarLayout.setVisibility(View.GONE);
         notifyDot.setVisibility(View.GONE);
-        sendButton = (Button) findViewById(R.id.auth_send);
         sendButton.setOnClickListener(view -> tryLogin());
         MyTW myTW = new MyTW();
         nick.addTextChangedListener(myTW);
