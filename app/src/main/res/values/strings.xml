@@ -5,8 +5,8 @@
 
     <!-- ACRA Crash dialog-->
     <string name="crash_toast_text">Произошло нечто очень страшное. Помогите нам, отправьте отчет об ошибке, мы не хотим больше жить в страхе…</string>
-    <string name="crash_notif_ticker_text">1val</string>
     <string name="crash_notif_title">Ошибка в работе программы</string>
+    <string name="crash_notif_ticker_text" translatable="false">@string/crash_notif_title</string>
     <string name="crash_notif_text">Помогите нам исправить её - отправьте отчет об ошибке</string>
 
     <!-- Shortcuts -->
@@ -16,16 +16,16 @@
     <string name="shortcut_mentions">Ответы</string>
 
     <!-- Test -->
-    <string name="test_count_number">250</string>
-    <string name="test_drawer_item_name">Favorites</string>
-    <string name="test_forum_title">Long forum item title lalal xiomi mizu sasung aple</string>
-    <string name="test_auth_nick">Hello, RadiationX!</string>
-    <string name="test_topic_title">Topic title</string>
-    <string name="test_topic_description">Topic description</string>
-    <string name="test_topic_last_nick">Topic last nick</string>
-    <string name="test_topic_date">03.03.2017</string>
-    <string name="test_nick">RadiationX</string>
-    <string name="test_topic_section_title">Topic section title</string>
+    <string name="test_count_number" translatable="false">250</string>
+    <string name="test_drawer_item_name" translatable="false">Favorites</string>
+    <string name="test_forum_title" translatable="false">Long forum item title lalal xiomi mizu sasung aple</string>
+    <string name="test_auth_nick" translatable="false">Hello, RadiationX!</string>
+    <string name="test_topic_title" translatable="false">Topic title</string>
+    <string name="test_topic_description" translatable="false">Topic description</string>
+    <string name="test_topic_last_nick" translatable="false">Topic last nick</string>
+    <string name="test_topic_date" translatable="false">03.03.2017</string>
+    <string name="test_nick" translatable="false">RadiationX</string>
+    <string name="test_topic_section_title" translatable="false">Topic section title</string>
 
     <!-- Base -->
     <string name="default_s">По умолчанию</string>
@@ -154,7 +154,7 @@
     <string name="fragment_title_auth">Авторизация</string>
     <string name="fragment_title_news">Новости</string>
     <string name="fragment_title_contacts">Контакты</string>
-    <string name="fragment_title_devdb">DevDB</string>
+    <string name="fragment_title_devdb" translatable="false">DevDB</string>
     <string name="fragment_title_search">Поиск</string>
     <string name="fragment_title_notes">Заметки</string>
     <string name="fragment_title_blacklist">Изгои мира сего</string>
@@ -470,36 +470,36 @@
     -->
 
     <!-- Theme -->
-    <string name="res_s_poll_title">@string/poll_title</string>
-    <string name="res_s_poll_all_votes_count">@string/poll_all_votes_count</string>
-    <string name="res_s_poll_vote_btn">@string/poll_vote_btn</string>
-    <string name="res_s_poll_results_btn">@string/poll_results_btn</string>
-    <string name="res_s_poll_show_btn">@string/poll_show_btn</string>
+    <string name="res_s_poll_title" translatable="false">@string/poll_title</string>
+    <string name="res_s_poll_all_votes_count" translatable="false">@string/poll_all_votes_count</string>
+    <string name="res_s_poll_vote_btn" translatable="false">@string/poll_vote_btn</string>
+    <string name="res_s_poll_results_btn" translatable="false">@string/poll_results_btn</string>
+    <string name="res_s_poll_show_btn" translatable="false">@string/poll_show_btn</string>
 
-    <string name="res_s_hat">@string/hat</string>
+    <string name="res_s_hat" translatable="false">@string/hat</string>
 
-    <string name="res_s_avatar">@string/avatar</string>
-    <string name="res_s_reputation">@string/reputation</string>
-    <string name="res_s_group">@string/group</string>
-    <string name="res_s_menu">@string/menu</string>
+    <string name="res_s_avatar" translatable="false">@string/avatar</string>
+    <string name="res_s_reputation" translatable="false">@string/reputation</string>
+    <string name="res_s_group" translatable="false">@string/group</string>
+    <string name="res_s_menu" translatable="false">@string/menu</string>
 
-    <string name="res_s_report">@string/report</string>
-    <string name="res_s_reply">@string/reply</string>
-    <string name="res_s_vote_good">@string/vote_good</string>
-    <string name="res_s_vote_bad">@string/vote_bad</string>
-    <string name="res_s_delete">@string/delete</string>
-    <string name="res_s_edit">@string/change</string>
+    <string name="res_s_report" translatable="false">@string/report</string>
+    <string name="res_s_reply" translatable="false">@string/reply</string>
+    <string name="res_s_vote_good" translatable="false">@string/vote_good</string>
+    <string name="res_s_vote_bad" translatable="false">@string/vote_bad</string>
+    <string name="res_s_delete" translatable="false">@string/delete</string>
+    <string name="res_s_edit" translatable="false">@string/change</string>
 
-    <string name="res_s_first">@string/pagination_first</string>
-    <string name="res_s_prev">@string/pagination_prev</string>
-    <string name="res_s_select_desc">@string/pagination_select_desc</string>
-    <string name="res_s_select">@string/pagination_select</string>
-    <string name="res_s_next">@string/pagination_next</string>
-    <string name="res_s_last">@string/pagination_last</string>
+    <string name="res_s_first" translatable="false">@string/pagination_first</string>
+    <string name="res_s_prev" translatable="false">@string/pagination_prev</string>
+    <string name="res_s_select_desc" translatable="false">@string/pagination_select_desc</string>
+    <string name="res_s_select" translatable="false">@string/pagination_select</string>
+    <string name="res_s_next" translatable="false">@string/pagination_next</string>
+    <string name="res_s_last" translatable="false">@string/pagination_last</string>
 
     <!-- News article -->
-    <string name="res_s_comments">@string/comments</string>
-    <string name="res_s_comments_do_swipe">@string/comments_do_swipe</string>
+    <string name="res_s_comments" translatable="false">@string/comments</string>
+    <string name="res_s_comments_do_swipe" translatable="false">@string/comments_do_swipe</string>
 
     <!-- New res -->
 
