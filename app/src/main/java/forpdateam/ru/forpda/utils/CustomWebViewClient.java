@@ -15,6 +15,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,7 +44,9 @@ public class CustomWebViewClient extends WebViewClient {
             try {
                 Log.d(LOG_TAG, "intercepted " + url);
                 WebResourceResponse resourceResponse = null;
-                ForumUser forumUser = ForumUsersCache.loadUserByNick(matcher.group(1));
+                String nick = matcher.group(1);
+                nick = URLDecoder.decode(nick, "UTF-8");
+                ForumUser forumUser = ForumUsersCache.loadUserByNick(nick);
                 Log.d(LOG_TAG, "Loaded user " + forumUser.getId() + " : " + forumUser.getNick() + " : " + forumUser.getAvatar());
                 Bitmap bitmap = ImageLoader.getInstance().loadImageSync(forumUser.getAvatar());
                 String base64Bitmap = convert(bitmap);

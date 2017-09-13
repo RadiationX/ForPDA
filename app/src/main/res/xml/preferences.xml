@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="@string/pref_title_notifications">
+    <PreferenceCategory
+        android:layout="@layout/preference_divider"
+        android:title="@string/pref_title_notifications">
         <Preference
             android:key="open_notifications"
             android:title="@string/pref_title_notifications" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_title_main">
+    <PreferenceCategory
+        android:layout="@layout/preference_divider"
+        android:title="@string/pref_title_main">
         <ListPreference
             android:dialogTitle="@string/pref_lang_title"
             android:entries="@array/entries_lang"
@@ -22,7 +26,9 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_title_appereance">
+    <PreferenceCategory
+        android:layout="@layout/preference_divider"
+        android:title="@string/pref_title_appereance">
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="false"
             android:key="main.theme.is_dark"
@@ -80,7 +86,9 @@
     </PreferenceCategory>
 
 
-    <PreferenceCategory android:title="@string/pref_title_themes">
+    <PreferenceCategory
+        android:layout="@layout/preference_divider"
+        android:title="@string/pref_title_themes">
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:key="theme.show_avatars"
@@ -99,7 +107,9 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_title_lists">
+    <PreferenceCategory
+        android:layout="@layout/preference_divider"
+        android:title="@string/pref_title_lists">
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="false"
             android:key="lists.topic.unread_top"
@@ -118,14 +128,18 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_title_account">
+    <PreferenceCategory
+        android:layout="@layout/preference_divider"
+        android:title="@string/pref_title_account">
         <Preference
             android:key="auth.action.logout"
             android:title="@string/pref_title_logout" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_title_about">
+    <PreferenceCategory
+        android:layout="@layout/preference_divider"
+        android:title="@string/pref_title_about">
         <Preference
             android:key="about.check_update"
             android:title="@string/pref_title_check_updates" />

@@ -2,12 +2,14 @@ package forpdateam.ru.forpda.settings;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.util.Observer;
 
@@ -46,7 +48,7 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         currentThemeIsDark = App.getInstance().isDarkTheme();
-        setTheme(currentThemeIsDark ? R.style.DarkAppTheme : R.style.LightAppTheme);
+        setTheme(currentThemeIsDark ? R.style.PreferenceAppThemeDark : R.style.PreferenceAppThemeLight);
         setContentView(R.layout.activity_settings);
 
         ActionBar actionBar = getSupportActionBar();
@@ -72,6 +74,9 @@ public class SettingsActivity extends AppCompatActivity {
 
         getFragmentManager().beginTransaction().replace(R.id.fragment_content, fragment).commit();
 
+        /*View view = findViewById(R.id.fragment_content);
+        view.setBackgroundColor(Color.TRANSPARENT);
+        view.setBackgroundColor(Color.rgb(4, 26, 55));*/
 
         App.getInstance().addPreferenceChangeObserver(appThemeChangeObserver);
     }

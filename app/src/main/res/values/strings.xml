@@ -443,8 +443,8 @@
     <string name="pref_title_unread_top">Непрочитанные сверху</string>
     <string name="pref_title_show_dot">Индикатор новых сообщений</string>
 
-    <string name="pref_title_load_all">Все темы избранного</string>
-    <string name="pref_summary_load_all">Загружать все темы избранного. Расходуется больше трафика.</string>
+    <string name="pref_title_load_all">Весь список избранного</string>
+    <string name="pref_summary_load_all">Загружать весь список избранного. Расходуется больше трафика.</string>
 
     <string name="pref_title_account">Аккаунт</string>
     <string name="pref_title_logout">Выйти</string>

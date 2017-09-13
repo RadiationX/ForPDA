@@ -69,8 +69,6 @@
         <item name="android:background">@color/light_card_background</item>-->
     </style>
 
-    <style name="LightAppTheme.Settings" parent="LightAppTheme" />
-
     <style name="LightAppTheme.NoActionBarBase" parent="LightAppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -84,6 +82,11 @@
 
     <style name="LightAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
         <item name="elevation">0dp</item>
+    </style>
+
+    <style name="PreferenceAppThemeLight" parent="LightAppTheme">
+        <!--<item name="android:listDivider">@color/md_amber_800</item>
+        <item name="android:dividerHeight">1dp</item>-->
     </style>
 
 
@@ -166,6 +169,11 @@
 
     <style name="DarkAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat">
         <item name="elevation">0dp</item>
+    </style>
+
+    <style name="PreferenceAppThemeDark" parent="DarkAppTheme">
+        <!--<item name="android:listDivider">@color/md_amber_800</item>
+        <item name="android:dividerHeight">1dp</item>-->
     </style>
 
 
