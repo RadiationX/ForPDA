@@ -59,7 +59,9 @@ public class ForumUsersCache {
 
         List<ForumUser> loadedForumUsers = Api.Qms().findUser(nick);
         for (ForumUser user : loadedForumUsers) {
+            Log.d("SUKA", "COMPARE " + nick + " : " + user.getNick());
             if (nick.equals(user.getNick())) {
+                Log.d("SUKA", "COMPARE YEEEEAAA" + nick + " : " + user.getNick());
                 resultUser = user;
                 break;
             }

@@ -2,38 +2,42 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:title="@string/pref_title_notifications">
-    <PreferenceCategory android:title="@string/pref_title_main">
+    <PreferenceCategory
+        android:layout="@layout/preference_divider"
+        android:title="@string/pref_title_main">
         <SwitchPreference
             android:defaultValue="true"
             android:key="notifications.main.enabled"
             android:title="@string/pref_title_notify" />
 
         <SwitchPreference
-            android:key="notifications.main.sound_enabled"
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
+            android:key="notifications.main.sound_enabled"
             android:title="@string/pref_title_sound" />
 
         <SwitchPreference
-            android:key="notifications.main.vibration_enabled"
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
+            android:key="notifications.main.vibration_enabled"
             android:title="@string/pref_title_vibration" />
 
         <SwitchPreference
-            android:key="notifications.main.indicator_enabled"
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
+            android:key="notifications.main.indicator_enabled"
             android:title="@string/pref_title_indicator" />
 
         <SwitchPreference
-            android:key="notifications.main.avatars_enabled"
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
+            android:key="notifications.main.avatars_enabled"
             android:title="@string/pref_title_enable_avatars" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_title_favorites">
+    <PreferenceCategory
+        android:layout="@layout/preference_divider"
+        android:title="@string/pref_title_favorites">
         <SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
@@ -41,14 +45,16 @@
             android:title="@string/pref_title_notify" />
 
         <forpdateam.ru.forpda.settings.SwitchPreference
-            android:key="notifications.fav.only_important"
             android:defaultValue="false"
             android:dependency="notifications.fav.enabled"
+            android:key="notifications.fav.only_important"
             android:title="@string/pref_title_only_important" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_title_mentions">
+    <PreferenceCategory
+        android:layout="@layout/preference_divider"
+        android:title="@string/pref_title_mentions">
         <SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
@@ -57,7 +63,9 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_title_pm_qms">
+    <PreferenceCategory
+        android:layout="@layout/preference_divider"
+        android:title="@string/pref_title_pm_qms">
         <SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
@@ -66,7 +74,9 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_title_app_updates">
+    <PreferenceCategory
+        android:layout="@layout/preference_divider"
+        android:title="@string/pref_title_app_updates">
         <SwitchPreference
             android:defaultValue="true"
             android:key="notifications.update.enabled"

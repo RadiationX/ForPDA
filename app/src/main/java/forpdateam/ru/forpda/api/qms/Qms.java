@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.api.qms;
 
+import android.util.Log;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -192,13 +194,14 @@ public class Qms {
     }
 
     public List<ForumUser> findUser(final String nick) throws Exception {
-        NetworkResponse response = Api.getWebClient().get("https://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=" + URLEncoder.encode(nick, "UTF-8") /*+ "&limit=150&timestamp=" + System.currentTimeMillis()*/);
+        String encodedNick = URLEncoder.encode(nick, "UTF-8");
+        NetworkResponse response = Api.getWebClient().get("https://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=" + encodedNick /*+ "&limit=150&timestamp=" + System.currentTimeMillis()*/);
         List<ForumUser> list = new ArrayList<>();
         Matcher m = findUserPattern.matcher(response.getBody());
         while (m.find()) {
             ForumUser user = new ForumUser();
             user.setId(Integer.parseInt(m.group(1)));
-            user.setNick(Utils.htmlEncode(m.group(2)));
+            user.setNick(Utils.fromHtml(m.group(2)));
             String avatar = m.group(3);
             if (avatar.substring(0, 2).equals("//")) {
                 avatar = "https:".concat(avatar);
@@ -206,6 +209,7 @@ public class Qms {
                 avatar = "https://4pda.ru".concat(avatar);
             }
             user.setAvatar(avatar);
+            Log.d("SUKA", "" + user.getId() + " : " + user.getNick());
             list.add(user);
         }
         return list;

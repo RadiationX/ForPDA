@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.settings;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
@@ -29,7 +30,6 @@ public class SettingsFragment extends PreferenceFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
-
         if (ClientHelper.getAuthState()) {
             findPreference("auth.action.logout")
                     .setOnPreferenceClickListener(preference -> {
@@ -113,5 +113,12 @@ public class SettingsFragment extends PreferenceFragment {
                     startActivity(intent);
                     return true;
                 });
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
     }
 }
