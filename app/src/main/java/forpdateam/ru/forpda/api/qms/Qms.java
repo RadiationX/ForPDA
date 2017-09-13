@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.api.qms;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -191,7 +192,7 @@ public class Qms {
     }
 
     public List<ForumUser> findUser(final String nick) throws Exception {
-        NetworkResponse response = Api.getWebClient().get("https://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=" + nick /*+ "&limit=150&timestamp=" + System.currentTimeMillis()*/);
+        NetworkResponse response = Api.getWebClient().get("https://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=" + URLEncoder.encode(nick, "UTF-8") /*+ "&limit=150&timestamp=" + System.currentTimeMillis()*/);
         List<ForumUser> list = new ArrayList<>();
         Matcher m = findUserPattern.matcher(response.getBody());
         while (m.find()) {
