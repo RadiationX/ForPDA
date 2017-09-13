@@ -158,7 +158,7 @@ public class App extends android.app.Application {
     }
 
     public static Drawable getDrawableAttr(Context context, @AttrRes int attr) {
-        return getVecDrawable(context, getDrawableResAttr(context, attr));
+        return AppCompatResources.getDrawable(context, getDrawableResAttr(context, attr));
     }
 
     public boolean isDarkTheme() {
