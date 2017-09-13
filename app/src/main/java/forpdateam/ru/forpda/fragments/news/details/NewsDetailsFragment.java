@@ -230,14 +230,17 @@ public class NewsDetailsFragment extends TabFragment {
         newsTitle = article.getTitle();
         newsNick = article.getAuthor();
         newsDate = article.getDate();
-        newsImageUrl = article.getImgUrl();
+        newsId = article.getId();
+        if (newsImageUrl == null) {
+            newsImageUrl = article.getImgUrl();
+            loadCoverImage();
+        }
 
         setTitle(newsTitle);
         detailsTitle.setText(newsTitle);
         detailsNick.setText(newsNick);
         detailsDate.setText(newsDate);
 
-        loadCoverImage();
 
         FragmentPagerAdapter pagerAdapter = new FragmentPagerAdapter(getChildFragmentManager(), article);
         fragmentsPager.setAdapter(pagerAdapter);

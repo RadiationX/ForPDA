@@ -172,11 +172,15 @@ public class QmsThemesFragment extends ListFragment {
 
     private void bindView() {
         if (realm.isClosed()) return;
+        refreshToolbarMenuItems(true);
         results = realm.where(QmsThemesBd.class).equalTo("userId", currentThemes.getUserId()).findAll();
 
-        adapter.addAll(results.last().getThemes());
+        QmsThemesBd qmsThemesBd = results.last(null);
+        if (qmsThemesBd == null) {
+            return;
+        }
+        adapter.addAll(qmsThemesBd.getThemes());
         adapter.notifyDataSetChanged();
-        refreshToolbarMenuItems(true);
     }
 
     @Override

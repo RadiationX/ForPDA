@@ -5,7 +5,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <!-- ACRA Crash dialog-->
     <string name="crash_toast_text">Something has gone wrong, so wrong. Help us by sending a crash report, we don\'t want to live in fear anymore…</string>
-    <string name="crash_notif_ticker_text">1val</string>
     <string name="crash_notif_title">A bug in the program</string>
     <string name="crash_notif_text">Help us fix it - send the crash log</string>
     <!-- Shortcuts -->
@@ -14,16 +13,6 @@
     <string name="shortcut_contacts">Private Messages</string>
     <string name="shortcut_mentions">Mentions</string>
     <!-- Test -->
-    <string name="test_count_number">250</string>
-    <string name="test_drawer_item_name">Favorites</string>
-    <string name="test_forum_title">Long forum item title lalal xiomi mizu sasung aple</string>
-    <string name="test_auth_nick">Hello, RadiationX!</string>
-    <string name="test_topic_title">Topic title</string>
-    <string name="test_topic_description">Topic description</string>
-    <string name="test_topic_last_nick">Topic last nick</string>
-    <string name="test_topic_date">03.03.2017</string>
-    <string name="test_nick">RadiationX</string>
-    <string name="test_topic_section_title">Topic section title</string>
     <!-- Base -->
     <string name="default_s">Default</string>
     <string name="pref_lang_title">Language</string>
@@ -44,7 +33,7 @@
     <string name="share">Share</string>
     <string name="error">Error</string>
     <string name="look">Show</string>
-    <string name="reputation">Karma of</string>
+    <string name="reputation">Reputation of</string>
     <string name="reply">Reply</string>
     <string name="report">Report</string>
     <string name="attention">Attention!</string>
@@ -74,68 +63,68 @@
     <string name="open_with">Open via</string>
     <string name="load_with">Download via</string>
     <string name="action_not_available">Action denied</string>
-    <string name="user_avatar">User avatar</string>
+    <string name="user_avatar">Userpic</string>
     <string name="user">User</string>
     <string name="settings">Settings</string>
     <string name="unknown_error">Unknown error</string>
     <string name="go_to_message">Go to post</string>
     <string name="search_keywords">Keywords</string>
     <string name="pm_qms">QMS private messages</string>
-    <string name="user_themes">User topics</string>
-    <string name="messages_in_this_theme">Posts in this topic</string>
-    <string name="user_messages">User posts</string>
+    <string name="user_themes">Topics started by user</string>
+    <string name="messages_in_this_theme">User\'s posts in this topic</string>
+    <string name="user_messages">Posts written by user</string>
     <string name="search_in_theme">Search in topic</string>
-    <string name="theme_options">Theme options</string>
-    <string name="spoiler_link_copied">Link to spoiler copied</string>
-    <string name="link_to_anchor">Link to anchor</string>
-    <string name="write">Write</string>
-    <string name="add_user">Add user</string>
+    <string name="theme_options">Topic options</string>
+    <string name="spoiler_link_copied">Spoiler link is copied</string>
+    <string name="link_to_anchor">Anchor link</string>
+    <string name="write">Write a message</string>
+    <string name="add_user">Add a user</string>
     <string name="user_nick">User nick</string>
-    <string name="theme">Theme</string>
-    <string name="no_network">No connection</string>
+    <string name="theme">Subject</string>
+    <string name="no_network">Connection is unavailable</string>
     <string name="group">Group</string>
     <string name="menu">Menu</string>
     <string name="hat">Topic header</string>
-    <string name="avatar">Avatar</string>
-    <string name="vote_good">Good</string>
-    <string name="vote_bad">Bad</string>
+    <string name="avatar">Userpic</string>
+    <string name="vote_good">Like</string>
+    <string name="vote_bad">Dislike</string>
     <!-- Other -->
     <string name="ask_close_other_tabs">Close other tabs?</string>
     <string name="version_Build">Version %s</string>
     <string name="open_menu">Open menu</string>
     <string name="close_tab">Close tab</string>
-    <string name="report_to_post_Nick" formatted="false">Report to post %s</string>
-    <string name="ask_delete_post_Nick" formatted="false">Delete post %s ?</string>
+    <string name="report_to_post_Nick" formatted="false">Report for %s\'s post</string>
+    <string name="ask_delete_post_Nick" formatted="false">Delete %s\'s post?</string>
     <string name="template_error" formatted="false">Template error [%s]: %s</string>
     <string name="post_Nick_Number" formatted="false">Post %s, #%d</string>
-    <string name="report_warning">You do have to specify the topic and the post here, a moderator will receive this information automatically. Please use this section for reporting unacceptable messages only! Use QMS to contact the moderator privately.</string>
+    <string name="report_warning">You don\'t have to specify the topic and post here, a moderator will receive this information automatically. Please use this section for reporting unacceptable messages only! Use QMS to contact the moderator privately.</string>
     <string name="image_viewer_subtitle_Cur_All" formatted="false">%d of %d</string>
     <string name="msg_panel_hint_message">Message</string>
-    <string name="no_updates">No updates</string>
-    <string name="updater_current_info" formatted="false">Version %s Build by %s</string>
-    <string name="updater_notification_title">Update ForPDA</string>
+    <string name="no_updates">No update available</string>
+    <string name="updater_current_info" formatted="false">Version %s Build from %s</string>
+    <string name="updater_notification_title">ForPDA update available</string>
     <string name="updater_notification_content_VerName">New version: %s</string>
     <string name="close_other_tabs">Close other tabs</string>
     <string name="your_profile">Your profile</string>
-    <string name="open_link">Open link</string>
+    <string name="open_link">Open the link</string>
     <string name="apply">Apply</string>
-    <string name="add_in_spoiler">In spoiler</string>
+    <string name="add_in_spoiler">To spoiler</string>
     <string name="add_attachment">Add attachments</string>
     <string name="delete_selected_attachments">Delete selected attachments</string>
-    <string name="send_message">Send message</string>
-    <string name="full_form">Full form</string>
-    <string name="hide_form">Hide form</string>
-    <string name="loading_1">Download ...</string>
+    <string name="send_message">Send a post</string>
+    <string name="full_form">Go advanced</string>
+    <string name="hide_form">Switch to input field</string>
+    <string name="loading_1">Download…</string>
     <string name="load_more">Load more</string>
     <string name="title">Title</string>
-    <string name="note_link_hint">Link, not necessary</string>
+    <string name="note_link_hint">Link (unnecessary)</string>
     <string name="note_content">Content</string>
     <string name="load">Load</string>
-    <string name="report_text">Report text</string>
+    <string name="report_text">Enter your report here</string>
     <string name="load_from">Load from</string>
     <string name="devices">Devices</string>
     <string name="lang_changed">Language has been changed, restart the application?</string>
-    <string name="search_in_page">Find on page</string>
+    <string name="search_in_page">Find on this page</string>
     <!-- Fragment titles -->
     <string name="fragment_title_news_list">News</string>
     <string name="fragment_title_brand">Brand</string>
@@ -148,23 +137,22 @@
     <string name="fragment_title_auth">Authorization</string>
     <string name="fragment_title_news">News</string>
     <string name="fragment_title_contacts">Contacts</string>
-    <string name="fragment_title_devdb">DevDB</string>
     <string name="fragment_title_search">Search</string>
     <string name="fragment_title_notes">Notes</string>
-    <string name="fragment_title_blacklist">Rogue of the world</string>
+    <string name="fragment_title_blacklist">Outcasts of this world</string>
     <string name="fragment_title_chat">Chat</string>
     <string name="fragment_title_dialogs">Dialogs</string>
     <string name="fragment_title_reputation">Reputation</string>
     <string name="fragment_title_topics">Forum topics</string>
     <string name="activity_title_settings">Settings</string>
     <!-- Codes -->
-    <string name="codes_and_smiles">Appearance and smiles</string>
+    <string name="codes_and_smiles">Formating and smiles</string>
     <string name="smiles_title">Smiles</string>
-    <string name="codes_title">Appearance</string>
+    <string name="codes_title">Formating</string>
     <string name="codes_text_size">Text size</string>
     <string name="codes_text_size_item_Size" formatted="false">Size %s</string>
-    <string name="codes_link">Link</string>
-    <string name="codes_link_text">Link text</string>
+    <string name="codes_link">URL</string>
+    <string name="codes_link_text">Copy the URL</string>
     <string name="codes_block_title">Title</string>
     <string name="codes_spoiler_text">Spoiler text</string>
     <string name="codes_code_text">Code</string>
@@ -173,48 +161,48 @@
     <string name="codes_name_italic">Italic</string>
     <string name="codes_name_underline">Underline</string>
     <string name="codes_name_s">Strikethrough</string>
-    <string name="codes_name_link">Link</string>
+    <string name="codes_name_link">URL</string>
     <string name="codes_name_spoiler">Spoiler</string>
     <string name="codes_name_offtop">Offtopic</string>
-    <string name="codes_name_quote">Qoute</string>
+    <string name="codes_name_quote">Quote</string>
     <string name="codes_name_code">Code</string>
     <string name="codes_name_text_color">Text color</string>
     <string name="codes_name_text_size">Text size</string>
     <string name="codes_name_hide">Hidden</string>
     <string name="codes_name_bg_color">Background color</string>
-    <string name="codes_name_list">List</string>
-    <string name="codes_name_numlist">Numbered list</string>
+    <string name="codes_name_list">Bulleted List</string>
+    <string name="codes_name_numlist">Numeric list</string>
     <string name="codes_name_left">Left</string>
-    <string name="codes_name_center">Center</string>
+    <string name="codes_name_center">Centered</string>
     <string name="codes_name_right">Right</string>
-    <string name="codes_name_sub">Bottom</string>
-    <string name="codes_name_sup">Top</string>
-    <string name="codes_name_curator">Curator</string>
+    <string name="codes_name_sub">Subscript</string>
+    <string name="codes_name_sup">Superscript</string>
+    <string name="codes_name_curator">Contributor</string>
     <string name="codes_list_item_Pos" formatted="false">Item %d</string>
-    <string name="transform_string_to_list">Convert the selected string in the list?</string>
+    <string name="transform_string_to_list">Transform selected string into the list?</string>
     <!-- Tooltips -->
     <string name="tooltip_tabs">On the right there\'s a panel with openned tabs. It allows you to conveniently navigate between them.</string>
     <string name="tooltip_link">You can access the links manually</string>
-    <string name="tooltip_search_settings">Click here to customize search</string>
+    <string name="tooltip_search_settings">Click here to customize search query</string>
     <string name="tooltip_full_form">Long press to open advanced response form</string>
-    <string name="code_panel_instruction">You can customize the layout by moving them!</string>
+    <string name="code_panel_instruction">You can customize the layout by moving items!</string>
     <string name="tooltip_msg_panel_useful">Useful</string>
     <string name="tooltip_btn_msg_panel_accept">Accepted</string>
     <!-- Auth -->
     <string name="auth_hello">Hello</string>
     <string name="auth_guest">Guest</string>
-    <string name="ask_logout">Are you sure you want to exit your account?</string>
-    <string name="auth_login">Login</string>
+    <string name="ask_logout">Are you sure want to quit your account?</string>
+    <string name="auth_login">Username</string>
     <string name="auth_password">Password</string>
-    <string name="auth_captcha">Enter number</string>
-    <string name="auth_hidden">Hidden</string>
-    <string name="auth_btn_login">Log in</string>
+    <string name="auth_captcha">Enter the number</string>
+    <string name="auth_hidden">Hide online</string>
+    <string name="auth_btn_login">Sign in</string>
     <string name="auth_skip">Skip</string>
     <!-- Notes -->
-    <string name="create_note">Create note</string>
-    <string name="note_edit">Editing note</string>
+    <string name="create_note">Create a note</string>
+    <string name="note_edit">Note editing</string>
     <string name="note_create">Creating note</string>
-    <string name="note_enter_title">Write title</string>
+    <string name="note_enter_title">Type the title</string>
     <!-- News list-->
     <!-- News article-->
     <string name="news_page_content">Content</string>
@@ -225,34 +213,34 @@
     <!-- DevDb-->
     <string name="brands_category_phones">Phones</string>
     <string name="brands_category_tabs">Tablets</string>
-    <string name="brands_category_ebook">E. books</string>
-    <string name="brands_category_smartwatch">Smart watches</string>
+    <string name="brands_category_ebook">E-Books</string>
+    <string name="brands_category_smartwatch">Smartwatches</string>
     <string name="device_page_specs">Specifications</string>
-    <string name="device_page_comments">Comments</string>
+    <string name="device_page_comments">Reviews</string>
     <string name="device_page_discussions">Discussions</string>
     <string name="device_page_news">News</string>
     <string name="device_page_firmwares">Firmwares</string>
     <!-- Qms -->
-    <string name="chat_creator_enter_nick">Enter user nick</string>
-    <string name="chat_creator_enter_title">Enter topic title</string>
-    <string name="chat_creator_enter_message">Enter message</string>
+    <string name="chat_creator_enter_nick">Enter recipient username first</string>
+    <string name="chat_creator_enter_title">Enter the subject first</string>
+    <string name="chat_creator_enter_message">Type a message</string>
     <string name="add_to_blacklist">Add to blacklist</string>
-    <string name="user_added_to_blacklist">User added to blacklist</string>
+    <string name="user_added_to_blacklist">User is added to blacklist</string>
     <string name="blacklist">Blacklist</string>
     <string name="dialogs">Dialogs</string>
-    <string name="to_dialogs">To dialogs</string>
+    <string name="to_dialogs">Go to dialogs</string>
     <string name="dialogs_Nick" formatted="false">Dialogs with %s</string>
     <string name="dialog_Title_Nick" formatted="false">Dialog \"%s\" with %s</string>
     <!-- WebView -->
     <string name="wv_open_new_tab">Open in new tab</string>
     <string name="wv_open_in_browser">Open in browser</string>
-    <string name="wv_copy_link">Copy link</string>
+    <string name="wv_copy_link">Copy the link</string>
     <string name="wv_open_image">Open image</string>
     <string name="wv_save_image">Save image</string>
-    <string name="wv_copy_image_link">Copy image link</string>
+    <string name="wv_copy_image_link">Copy the image link</string>
     <!-- Favorites -->
     <string name="fav_subscribe_none">Don\'t notify</string>
-    <string name="fav_subscribe_delayed">First time</string>
+    <string name="fav_subscribe_delayed">Single time</string>
     <string name="fav_subscribe_immediate">Immediate</string>
     <string name="fav_subscribe_daily">Daily</string>
     <string name="fav_subscribe_weekly">Weekly</string>
@@ -261,21 +249,21 @@
     <string name="fav_pin">Pin</string>
     <string name="fav_sort_last_post">Last post</string>
     <string name="fav_sort_title">Title</string>
-    <string name="fav_unreaded_pinned">Unreaded pinned topics</string>
-    <string name="fav_unreaded">Unreaded topics</string>
-    <string name="fav_pinned">Pinnde topics</string>
+    <string name="fav_unreaded_pinned">Unread pinned topics</string>
+    <string name="fav_unreaded">Unread topics</string>
+    <string name="fav_pinned">Pinned topics</string>
     <string name="fav_themes">Topics</string>
     <string name="fav_change_subscribe_type">Change subscription type</string>
     <string name="add_to_favorites">Add to favorites</string>
-    <string name="favorites_added">Topic added to Favorites</string>
+    <string name="favorites_added">Topic is added to favorites</string>
     <string name="delete_from_favorites">Delete from favorites</string>
-    <string name="favorite_theme_deleted">Topic deleted from favorites</string>
+    <string name="favorite_theme_deleted">Topic has been removed from favorites</string>
     <string name="fav_delete_error_id_not_found">Topic ID is not found, try reloading the page</string>
     <!-- Edit post -->
     <string name="editpost_title_answer">Answer</string>
     <string name="editpost_title_edit">Editing</string>
-    <string name="editpost_lose_changes">Lose changes?</string>
-    <string name="editpost_sync">Synchronize changes with the input field in the theme?</string>
+    <string name="editpost_lose_changes">Forget changes?</string>
+    <string name="editpost_sync">Upstream changes with the input field in topic?</string>
     <string name="editpost_error_edit">You cannot edit this post</string>
     <string name="editpost_reason">Reason for editing</string>
     <!-- Pagination -->
@@ -283,18 +271,18 @@
     <string name="pagination_first">To the first page</string>
     <string name="pagination_prev">To the previous page</string>
     <string name="pagination_select_desc">Select a page</string>
-    <string name="pagination_select">Choice</string>
+    <string name="pagination_select">Select</string>
     <string name="pagination_next">To the next page</string>
     <string name="pagination_last">To the last page</string>
     <!-- Attachments -->
     <string name="attachments">Attachments</string>
     <string name="attachments_count">Attachments: %d</string>
-    <string name="no_attachments">No attachments</string>
+    <string name="no_attachments">There is no attachment yet</string>
     <!-- Forum -->
-    <string name="forum_refresh">Update forums</string>
+    <string name="forum_refresh">Refresh forums</string>
     <!-- Intent -->
-    <string name="load_file">Download file</string>
-    <string name="perform_request_link">Requesting link to download</string>
+    <string name="load_file">Download a file</string>
+    <string name="perform_request_link">Requesting download link</string>
     <string name="perform_loading">Performing download</string>
     <string name="perform_loading_error">An error has occurred. Will be loaded via an external downloader.</string>
     <!-- Poll -->
@@ -305,7 +293,7 @@
     <string name="ask_delete_answer">Delete answer?</string>
     <string name="ask_delete_question">Delete question?</string>
     <string name="poll_title">Poll title</string>
-    <string name="poll_all_votes_count">All votes</string>
+    <string name="poll_all_votes_count">Votes in total</string>
     <string name="poll_vote_btn">Vote</string>
     <string name="poll_results_btn">Results</string>
     <string name="poll_show_btn">Poll items</string>
@@ -324,99 +312,99 @@
     <string name="profile_hint_note">This is your personal Notepad. Here you can store message fragments or any other information that is important to you</string>
     <string name="profile_button_save">Save</string>
     <string name="profile_item_text_posts">Posts</string>
-    <string name="profile_item_text_themes">Themes</string>
-    <string name="profile_item_text_rep">Reputation</string>
+    <string name="profile_item_text_themes">Topics</string>
+    <string name="profile_item_text_rep">Repo</string>
     <string name="profile_item_text_karma">Karma</string>
-    <string name="profile_item_text_site_posts">News</string>
+    <string name="profile_item_text_site_posts">Pubs</string>
     <string name="profile_item_text_comments">Comments</string>
     <string name="profile_item_text_gender">Gender</string>
     <string name="profile_item_text_birthday">Date of birth</string>
     <string name="profile_item_text_city">City</string>
     <string name="profile_item_text_user_time">User time</string>
-    <string name="profile_item_text_reg">Registered</string>
+    <string name="profile_item_text_reg">Registered since</string>
     <string name="profile_item_text_last_online">Last visit</string>
     <string name="profile_item_text_alerts">Warnings</string>
     <string name="profile_note_saved">Note saved</string>
     <!-- Reputation -->
     <string name="reputation_mode_from">User reputation</string>
-    <string name="reputation_mode_to">Participation</string>
-    <string name="increase">Increase</string>
-    <string name="decrease">Decrease</string>
-    <string name="change_reputation_Type_Nick" formatted="false">%s reputation %s?</string>
-    <string name="change_post_reputation_Type_Nick" formatted="false">%s reputation user post %s?</string>
-    <string name="reputation_changed">Reputation changed</string>
-    <string name="reputation_reason">Reason for change</string>
+    <string name="reputation_mode_to">Involved in</string>
+    <string name="increase">Upvote</string>
+    <string name="decrease">Denounce</string>
+    <string name="change_reputation_Type_Nick" formatted="false">%s %s reputation?</string>
+    <string name="change_post_reputation_Type_Nick" formatted="false">%s %s user post?</string>
+    <string name="reputation_changed">Reputation was changed successfully</string>
+    <string name="reputation_reason">Reason of editing</string>
     <!-- Topics -->
-    <string name="forum_section">Sections</string>
+    <string name="forum_section">Sub-forums</string>
     <string name="announce_section">Announcements</string>
     <string name="pinned_section">Pinned topics</string>
     <string name="themes_section">Topics</string>
-    <string name="topic_to_begin">To begin</string>
-    <string name="topic_newposts">To new</string>
-    <string name="topic_lastposts">To last</string>
-    <string name="open_theme_forum">Open topic forum</string>
-    <string name="open_forum">Open forum</string>
+    <string name="topic_to_begin">Go to first post</string>
+    <string name="topic_newposts">Go to unread posts</string>
+    <string name="topic_lastposts">Go to latest post</string>
+    <string name="open_theme_forum">Open topic subforum</string>
+    <string name="open_forum">Open subforum</string>
     <!-- Notifications -->
     <string name="notification_content_qms_Nick_Count" formatted="false">%s:%d unread messages</string>
     <string name="notification_content_mention_Title" formatted="false">Replied to you in the topic \"%s\"</string>
     <string name="notification_content_theme_Title" formatted="false">Wrote a post in the topic \"%s\"</string>
-    <string name="notification_content_news">You replied to a comment on the site</string>
+    <string name="notification_content_news">You\'ve been mentioned in a comment on the portal</string>
     <string name="notification_summary_mention">Mention</string>
-    <string name="notification_summary_qms">Chat QMS</string>
+    <string name="notification_summary_qms">QMS Chat</string>
     <string name="notification_summary_fav">Favorites</string>
-    <string name="notification_summary_comment">Comments</string>
+    <string name="notification_summary_comment">Comment</string>
     <!-- Search -->
-    <string name="search_settings_resource">Resource</string>
-    <string name="search_settings_hint_nick">User nick</string>
-    <string name="search_settings_result">Result</string>
+    <string name="search_settings_resource">Search from</string>
+    <string name="search_settings_hint_nick">Search by nickname</string>
+    <string name="search_settings_result">Perform as</string>
     <string name="search_settings_sorting">Sorting</string>
     <string name="search_settings_source">Source</string>
-    <string name="search_settings_btn_save">Save</string>
+    <string name="search_settings_btn_save">Apply</string>
     <string name="search_settings_btn_search">Search</string>
     <!-- Preferences/Settings -->
     <string name="pref_title_notifications">Notifications</string>
-    <string name="pref_title_main">Main</string>
+    <string name="pref_title_main">General</string>
     <string name="pref_title_system_downloader">System downloader</string>
     <string name="pref_summary_system_downloader">Use system downloader</string>
     <string name="pref_title_appereance">Appearance</string>
     <string name="pref_title_dark_theme">Dark theme</string>
     <string name="pref_title_text_size">Text size</string>
-    <string name="pref_summary_text_size">Apply for themes, search and chat</string>
+    <string name="pref_summary_text_size">Being applied for topics, search and chat</string>
     <string name="pref_title_monospace">Monospaced font</string>
-    <string name="pref_summary_monospace">Editor message font</string>
-    <string name="pref_title_panel_hidden">Hidden message editor</string>
-    <string name="pref_summary_panel_hidden">By default, hide message editor</string>
+    <string name="pref_summary_monospace">Font used in post editor</string>
+    <string name="pref_title_panel_hidden">Hidden input field</string>
+    <string name="pref_summary_panel_hidden">Hide the post typing field by default</string>
     <string name="pref_title_scroll_button">Fast scroll button</string>
-    <string name="pref_summary_scroll_button">Apply for theme and search</string>
-    <string name="pref_title_tab_bottom">Tabs stack bottom</string>
+    <string name="pref_summary_scroll_button">Appears in topics and search while scrolling</string>
+    <string name="pref_title_tab_bottom">Tabs stack at the bottom</string>
     <string name="pref_title_notify_dot">Counter indicator</string>
-    <string name="pref_title_fav_dot">Favourite counter</string>
+    <string name="pref_title_fav_dot">Favorites counter</string>
     <string name="pref_title_qms_dot">QMS Counter</string>
     <string name="pref_title_mention_dot">Mentions counter</string>
-    <string name="pref_title_themes">Themes</string>
-    <string name="pref_title_show_avatars">Show avatars</string>
-    <string name="pref_title_circle_avatars">Round avatars</string>
+    <string name="pref_title_themes">Topics</string>
+    <string name="pref_title_show_avatars">Show userpics</string>
+    <string name="pref_title_circle_avatars">Round userpics</string>
     <string name="pref_title_history_snapback">Page navigation history</string>
-    <string name="pref_summary_history_snapback">Saves the story transitions \"snapback\"</string>
-    <string name="pref_title_lists">Lists</string>
-    <string name="pref_title_unread_top">Unread on top</string>
-    <string name="pref_title_show_dot">New messages indicator</string>
-    <string name="pref_title_load_all">All favorites</string>
-    <string name="pref_summary_load_all">Download all themes. More traffic.</string>
+    <string name="pref_summary_history_snapback">Remember the history of snapback transitions</string>
+    <string name="pref_title_lists">Listings</string>
+    <string name="pref_title_unread_top">Show unread topics on top</string>
+    <string name="pref_title_show_dot">Indicate for new posts</string>
+    <string name="pref_title_load_all">Complete listing</string>
+    <string name="pref_summary_load_all">Load all pages of favorites. Consumes more traffic.</string>
     <string name="pref_title_account">Account</string>
     <string name="pref_title_logout">Logout</string>
-    <string name="pref_title_about">About appplication</string>
+    <string name="pref_title_about">About app</string>
     <string name="pref_title_check_updates">Check for updates</string>
     <!-- notifications -->
     <string name="pref_title_sound">Sound</string>
     <string name="pref_title_vibration">Vibration</string>
-    <string name="pref_title_indicator">Indicator</string>
-    <string name="pref_title_enable_avatars">Download avatars</string>
+    <string name="pref_title_indicator">Indication</string>
+    <string name="pref_title_enable_avatars">Load userpics</string>
     <string name="pref_title_favorites">Favorites</string>
-    <string name="pref_title_only_important">Only important</string>
+    <string name="pref_title_only_important">Pinned only</string>
     <string name="pref_title_mentions">Mentions</string>
-    <string name="pref_title_pm_qms">Personal messages QMS</string>
-    <string name="pref_title_app_updates">Application updates</string>
+    <string name="pref_title_pm_qms">QMS private messages</string>
+    <string name="pref_title_app_updates">App updates</string>
     <string name="pref_title_notify">Notify</string>
     <!--
 
@@ -424,30 +412,6 @@
 
       -->
     <!-- Theme -->
-    <string name="res_s_poll_title">@string/poll_title</string>
-    <string name="res_s_poll_all_votes_count">@string/poll_all_votes_count</string>
-    <string name="res_s_poll_vote_btn">@string/poll_vote_btn</string>
-    <string name="res_s_poll_results_btn">@string/poll_results_btn</string>
-    <string name="res_s_poll_show_btn">@string/poll_show_btn</string>
-    <string name="res_s_hat">@string/hat</string>
-    <string name="res_s_avatar">@string/avatar</string>
-    <string name="res_s_reputation">@string/reputation</string>
-    <string name="res_s_group">@string/group</string>
-    <string name="res_s_menu">@string/menu</string>
-    <string name="res_s_report">@string/report</string>
-    <string name="res_s_reply">@string/reply</string>
-    <string name="res_s_vote_good">@string/vote_good</string>
-    <string name="res_s_vote_bad">@string/vote_bad</string>
-    <string name="res_s_delete">@string/delete</string>
-    <string name="res_s_edit">@string/change</string>
-    <string name="res_s_first">@string/pagination_first</string>
-    <string name="res_s_prev">@string/pagination_prev</string>
-    <string name="res_s_select_desc">@string/pagination_select_desc</string>
-    <string name="res_s_select">@string/pagination_select</string>
-    <string name="res_s_next">@string/pagination_next</string>
-    <string name="res_s_last">@string/pagination_last</string>
     <!-- News article -->
-    <string name="res_s_comments">@string/comments</string>
-    <string name="res_s_comments_do_swipe">@string/comments_do_swipe</string>
     <!-- New res -->
 </resources>
