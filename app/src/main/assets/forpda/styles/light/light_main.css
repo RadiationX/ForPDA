@@ -644,7 +644,7 @@ a.snapback {
   font-weight: bold;
   position: relative;
 }
-a.snapback:before {
+a.snapback .icon:before {
   content: "@";
   position: relative;
   font-family: "Roboto", sans-serif;

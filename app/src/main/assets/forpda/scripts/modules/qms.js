@@ -38,7 +38,7 @@ function showMoreMess(listSrc) {
 }
 
 function showNewMess(listSrc, withScroll) {
-console.log("SHOW NEW MESS "+listSrc);
+//console.log("SHOW NEW MESS "+listSrc);
     //listSrc = JSON.parse(listSrc);
     var listElem = document.querySelector(".mess_list");
     listElem.insertAdjacentHTML("beforeend", listSrc);
