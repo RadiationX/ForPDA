@@ -8,9 +8,9 @@ import android.widget.TextView;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
+import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.views.adapters.BaseViewHolder;
-import forpdateam.ru.forpda.fragments.TabFragment;
 
 /**
  * Created by radiationx on 02.05.17.

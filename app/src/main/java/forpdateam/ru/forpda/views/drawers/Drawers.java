@@ -19,7 +19,6 @@ import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.client.ClientHelper;
-import forpdateam.ru.forpda.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.auth.AuthFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
@@ -28,6 +27,7 @@ import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
 import forpdateam.ru.forpda.fragments.qms.QmsContactsFragment;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.settings.SettingsActivity;
+import forpdateam.ru.forpda.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.views.drawers.adapters.MenuAdapter;
 import forpdateam.ru.forpda.views.drawers.adapters.TabAdapter;
 
@@ -125,7 +125,8 @@ public class Drawers {
 
         menuListView.setAdapter(menuAdapter);
         tabListView.setAdapter(tabAdapter);
-        menuAdapter.addAll(menuItems);
+
+        menuAdapter.setItems(menuItems);
 
         tabCloseAllButton.setOnClickListener(v -> closeAllTabs());
         App.getInstance().addPreferenceChangeObserver(preferenceObserver);

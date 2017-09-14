@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.api.news.models.DetailsPage;

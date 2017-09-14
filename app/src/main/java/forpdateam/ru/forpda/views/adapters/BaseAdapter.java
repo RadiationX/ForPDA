@@ -16,6 +16,11 @@ import java.util.Collection;
 public abstract class BaseAdapter<E, VH extends BaseViewHolder> extends RecyclerView.Adapter<VH> {
     protected ArrayList<E> items = new ArrayList<>();
 
+    public void setItems(ArrayList<E> items) {
+        clear();
+        this.items = items;
+    }
+
     public void addAll(Collection<? extends E> items) {
         addAll(items, true);
     }

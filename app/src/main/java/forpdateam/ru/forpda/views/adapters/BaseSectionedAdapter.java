@@ -11,8 +11,6 @@ import com.afollestad.sectionedrecyclerview.SectionedRecyclerViewAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import forpdateam.ru.forpda.views.adapters.BaseSectionedViewHolder;
-
 /**
  * Created by radiationx on 14.09.17.
  */
