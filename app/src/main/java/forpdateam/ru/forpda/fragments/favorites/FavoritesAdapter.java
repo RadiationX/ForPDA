@@ -10,9 +10,9 @@ import android.widget.TextView;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
-import forpdateam.ru.forpda.views.adapters.BaseSectionedViewHolder;
-import forpdateam.ru.forpda.views.adapters.BaseSectionedAdapter;
 import forpdateam.ru.forpda.settings.Preferences;
+import forpdateam.ru.forpda.views.adapters.BaseSectionedAdapter;
+import forpdateam.ru.forpda.views.adapters.BaseSectionedViewHolder;
 
 /**
  * Created by radiationx on 22.09.16.

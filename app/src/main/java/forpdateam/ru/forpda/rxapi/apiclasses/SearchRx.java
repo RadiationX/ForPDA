@@ -13,7 +13,6 @@ import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.api.search.models.SearchItem;
 import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
-import forpdateam.ru.forpda.api.theme.models.ThemePost;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.rxapi.ForumUsersCache;
 import forpdateam.ru.forpda.settings.Preferences;

@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda;
 
 import android.app.Activity;
-import android.graphics.Rect;
 import android.os.Build;
 import android.util.Log;
 import android.view.View;

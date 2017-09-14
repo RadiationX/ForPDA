@@ -7,8 +7,8 @@ import android.widget.TextView;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.devdb.models.Brands;
 import forpdateam.ru.forpda.api.topcis.models.TopicItem;
-import forpdateam.ru.forpda.views.adapters.BaseSectionedViewHolder;
 import forpdateam.ru.forpda.views.adapters.BaseSectionedAdapter;
+import forpdateam.ru.forpda.views.adapters.BaseSectionedViewHolder;
 
 /**
  * Created by radiationx on 08.08.17.

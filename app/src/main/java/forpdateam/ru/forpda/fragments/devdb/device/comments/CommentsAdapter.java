@@ -10,10 +10,10 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.devdb.models.Device;
-import forpdateam.ru.forpda.views.adapters.BaseAdapter;
-import forpdateam.ru.forpda.views.adapters.BaseViewHolder;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.views.adapters.BaseAdapter;
+import forpdateam.ru.forpda.views.adapters.BaseViewHolder;
 
 /**
  * Created by radiationx on 09.08.17.
