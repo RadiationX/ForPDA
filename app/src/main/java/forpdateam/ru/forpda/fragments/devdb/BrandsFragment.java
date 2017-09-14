@@ -26,7 +26,7 @@ import forpdateam.ru.forpda.utils.rx.Subscriber;
  * Created by radiationx on 08.08.17.
  */
 
-public class BrandsFragment extends ListFragment {
+public class BrandsFragment extends ListFragment implements BrandsAdapter.OnItemClickListener<Brands.Item> {
     public final static String ARG_CATEGORY_ID = "CATEGORY_ID";
     private final static String[] spinnerTitles = {
             App.getInstance().getString(R.string.brands_category_phones),
@@ -93,12 +93,7 @@ public class BrandsFragment extends ListFragment {
             }
         });
 
-        adapter.setOnItemClickListener(item -> {
-            Bundle args = new Bundle();
-            args.putString(BrandFragment.ARG_CATEGORY_ID, currentData.getCatId());
-            args.putString(BrandFragment.ARG_BRAND_ID, item.getId());
-            TabManager.getInstance().add(BrandFragment.class, args);
-        });
+        adapter.setOnItemClickListener(this);
 
         return view;
     }
@@ -119,5 +114,18 @@ public class BrandsFragment extends ListFragment {
         }
         adapter.notifyDataSetChanged();
         setTitle(brands.getCatTitle());
+    }
+
+    @Override
+    public void onItemClick(Brands.Item item) {
+        Bundle args = new Bundle();
+        args.putString(BrandFragment.ARG_CATEGORY_ID, currentData.getCatId());
+        args.putString(BrandFragment.ARG_BRAND_ID, item.getId());
+        TabManager.getInstance().add(BrandFragment.class, args);
+    }
+
+    @Override
+    public boolean onItemLongClick(Brands.Item item) {
+        return false;
     }
 }

@@ -36,7 +36,7 @@ import io.reactivex.schedulers.Schedulers;
  * Created by radiationx on 20.03.17.
  */
 
-public class ReputationFragment extends ListFragment {
+public class ReputationFragment extends ListFragment implements ReputationAdapter.OnItemClickListener<RepItem> {
     private ReputationAdapter adapter;
     private Subscriber<RepData> mainSubscriber = new Subscriber<>(this);
     private PaginationHelper paginationHelper;
@@ -90,8 +90,7 @@ public class ReputationFragment extends ListFragment {
             }
         });
 
-        adapter.setOnItemClickListener(this::someClick);
-        adapter.setOnLongItemClickListener(this::someClick);
+        adapter.setOnItemClickListener(this);
 
         return view;
     }
@@ -245,5 +244,16 @@ public class ReputationFragment extends ListFragment {
     public void onDestroy() {
         super.onDestroy();
         paginationHelper.destroy();
+    }
+
+    @Override
+    public void onItemClick(RepItem item) {
+        someClick(item);
+    }
+
+    @Override
+    public boolean onItemLongClick(RepItem item) {
+        someClick(item);
+        return false;
     }
 }

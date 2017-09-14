@@ -47,62 +47,8 @@ import io.realm.RealmResults;
  * Created by radiationx on 22.09.16.
  */
 
-public class FavoritesFragment extends ListFragment {
-    private FavoritesAdapter.OnItemClickListener onItemClickListener =
-            favItem -> {
-                Bundle args = new Bundle();
-                args.putString(TabFragment.ARG_TITLE, favItem.getTopicTitle());
-                if (favItem.isForum()) {
-                    IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + favItem.getForumId(), args);
-                } else {
-                    IntentHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + favItem.getTopicId() + "&view=getnewpost", args);
-                }
-            };
+public class FavoritesFragment extends ListFragment implements FavoritesAdapter.OnItemClickListener<IFavItem> {
     private AlertDialogMenu<FavoritesFragment, IFavItem> favoriteDialogMenu, showedFavoriteDialogMenu;
-    private FavoritesAdapter.OnItemClickListener onLongItemClickListener =
-            favItem -> {
-                if (favoriteDialogMenu == null) {
-                    favoriteDialogMenu = new AlertDialogMenu<>();
-                    showedFavoriteDialogMenu = new AlertDialogMenu<>();
-                    favoriteDialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
-                        if (data.isForum()) {
-                            Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getForumId())));
-                        } else {
-                            Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data.getTopicId())));
-                        }
-                    });
-                    favoriteDialogMenu.addItem(getString(R.string.attachments), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=attach&code=showtopic&tid=" + data.getTopicId()));
-                    favoriteDialogMenu.addItem(getString(R.string.open_theme_forum), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getForumId()));
-                    favoriteDialogMenu.addItem(getString(R.string.fav_change_subscribe_type), (context, data) -> {
-                        new AlertDialog.Builder(context.getContext())
-                                .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> context.changeFav(Favorites.ACTION_EDIT_SUB_TYPE, Favorites.SUB_TYPES[which1], data.getFavId()))
-                                .show();
-                    });
-                    favoriteDialogMenu.addItem(getPinText(favItem.isPin()), (context, data) -> context.changeFav(Favorites.ACTION_EDIT_PIN_STATE, data.isPin() ? "unpin" : "pin", data.getFavId()));
-                    favoriteDialogMenu.addItem(getString(R.string.delete), (context, data) -> context.changeFav(Favorites.ACTION_DELETE, null, data.getFavId()));
-                }
-                showedFavoriteDialogMenu.clear();
-
-                showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(0));
-                if (!favItem.isForum()) {
-                    showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(1));
-                    showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(2));
-                }
-                showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(3));
-                showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(4));
-                showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(5));
-
-                int index = showedFavoriteDialogMenu.containsIndex(getPinText(!favItem.isPin()));
-                if (index != -1)
-                    showedFavoriteDialogMenu.changeTitle(index, getPinText(favItem.isPin()));
-
-                new AlertDialog.Builder(getContext())
-                        .setItems(showedFavoriteDialogMenu.getTitles(), (dialog, which) -> {
-                            showedFavoriteDialogMenu.onClick(which, FavoritesFragment.this, favItem);
-                        })
-                        .show();
-            };
-
     private Realm realm;
     private RealmResults<FavItemBd> results;
     private FavoritesAdapter adapter;
@@ -181,8 +127,7 @@ public class FavoritesFragment extends ListFragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         //recyclerView.addItemDecoration(new DividerItemDecoration(getContext()));
         adapter = new FavoritesAdapter();
-        adapter.setOnItemClickListener(onItemClickListener);
-        adapter.setOnLongItemClickListener(onLongItemClickListener);
+        adapter.setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
 
         paginationHelper = new PaginationHelper(getActivity());
@@ -434,4 +379,59 @@ public class FavoritesFragment extends ListFragment {
         loadData();
     }
 
+    @Override
+    public void onItemClick(IFavItem item) {
+        Bundle args = new Bundle();
+        args.putString(TabFragment.ARG_TITLE, item.getTopicTitle());
+        if (item.isForum()) {
+            IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + item.getForumId(), args);
+        } else {
+            IntentHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + item.getTopicId() + "&view=getnewpost", args);
+        }
+    }
+
+    @Override
+    public boolean onItemLongClick(IFavItem item) {
+        if (favoriteDialogMenu == null) {
+            favoriteDialogMenu = new AlertDialogMenu<>();
+            showedFavoriteDialogMenu = new AlertDialogMenu<>();
+            favoriteDialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
+                if (data.isForum()) {
+                    Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getForumId())));
+                } else {
+                    Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data.getTopicId())));
+                }
+            });
+            favoriteDialogMenu.addItem(getString(R.string.attachments), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=attach&code=showtopic&tid=" + data.getTopicId()));
+            favoriteDialogMenu.addItem(getString(R.string.open_theme_forum), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getForumId()));
+            favoriteDialogMenu.addItem(getString(R.string.fav_change_subscribe_type), (context, data) -> {
+                new AlertDialog.Builder(context.getContext())
+                        .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> context.changeFav(Favorites.ACTION_EDIT_SUB_TYPE, Favorites.SUB_TYPES[which1], data.getFavId()))
+                        .show();
+            });
+            favoriteDialogMenu.addItem(getPinText(item.isPin()), (context, data) -> context.changeFav(Favorites.ACTION_EDIT_PIN_STATE, data.isPin() ? "unpin" : "pin", data.getFavId()));
+            favoriteDialogMenu.addItem(getString(R.string.delete), (context, data) -> context.changeFav(Favorites.ACTION_DELETE, null, data.getFavId()));
+        }
+        showedFavoriteDialogMenu.clear();
+
+        showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(0));
+        if (!item.isForum()) {
+            showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(1));
+            showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(2));
+        }
+        showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(3));
+        showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(4));
+        showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(5));
+
+        int index = showedFavoriteDialogMenu.containsIndex(getPinText(!item.isPin()));
+        if (index != -1)
+            showedFavoriteDialogMenu.changeTitle(index, getPinText(item.isPin()));
+
+        new AlertDialog.Builder(getContext())
+                .setItems(showedFavoriteDialogMenu.getTitles(), (dialog, which) -> {
+                    showedFavoriteDialogMenu.onClick(which, FavoritesFragment.this, item);
+                })
+                .show();
+        return false;
+    }
 }

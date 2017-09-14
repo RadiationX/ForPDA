@@ -19,6 +19,7 @@ import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.client.ClientHelper;
+import forpdateam.ru.forpda.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.auth.AuthFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
@@ -118,11 +119,13 @@ public class Drawers {
         tabListView.setLayoutManager(tabListLayoutManager);
 
 
-        menuAdapter = new MenuAdapter(menuItems);
+        menuAdapter = new MenuAdapter();
+
         tabAdapter = new TabAdapter();
 
         menuListView.setAdapter(menuAdapter);
         tabListView.setAdapter(tabAdapter);
+        menuAdapter.addAll(menuItems);
 
         tabCloseAllButton.setOnClickListener(v -> closeAllTabs());
         App.getInstance().addPreferenceChangeObserver(preferenceObserver);
@@ -205,9 +208,17 @@ public class Drawers {
         fillMenuItems();
         ClientHelper.getInstance().addLoginObserver(loginObserver);
         ClientHelper.getInstance().addCountsObserver(countsObserver);
-        menuAdapter.setItemClickListener((menuItem, position) -> {
-            selectMenuItem(menuItem);
-            closeMenu();
+        menuAdapter.setItemClickListener(new BaseAdapter.OnItemClickListener<MenuItems.MenuItem>() {
+            @Override
+            public void onItemClick(MenuItems.MenuItem item) {
+                selectMenuItem(item);
+                closeMenu();
+            }
+
+            @Override
+            public boolean onItemLongClick(MenuItems.MenuItem item) {
+                return false;
+            }
         });
     }
 
@@ -327,14 +338,31 @@ public class Drawers {
     }
 
     private void initTabs(Bundle savedInstanceState) {
-        tabAdapter.setItemClickListener((tabFragment, position) -> {
-            TabManager.getInstance().select(tabFragment);
-            closeTabs();
+        tabAdapter.setItemClickListener(new BaseAdapter.OnItemClickListener<TabFragment>() {
+            @Override
+            public void onItemClick(TabFragment item) {
+                TabManager.getInstance().select(item);
+                closeTabs();
+            }
+
+            @Override
+            public boolean onItemLongClick(TabFragment item) {
+                return false;
+            }
         });
-        tabAdapter.setCloseClickListener((tabFragment, position) -> {
-            TabManager.getInstance().remove(tabFragment);
-            if (TabManager.getInstance().getSize() < 1) {
-                activity.finish();
+
+        tabAdapter.setCloseClickListener(new BaseAdapter.OnItemClickListener<TabFragment>() {
+            @Override
+            public void onItemClick(TabFragment item) {
+                TabManager.getInstance().remove(item);
+                if (TabManager.getInstance().getSize() < 1) {
+                    activity.finish();
+                }
+            }
+
+            @Override
+            public boolean onItemLongClick(TabFragment item) {
+                return false;
             }
         });
         TabManager.getInstance().loadState(savedInstanceState);

@@ -34,7 +34,7 @@ import forpdateam.ru.forpda.utils.rx.Subscriber;
  * Created by radiationx on 22.03.17.
  */
 
-public class QmsBlackListFragment extends ListFragment {
+public class QmsBlackListFragment extends ListFragment implements QmsContactsAdapter.OnItemClickListener<IQmsContact> {
     private AppCompatAutoCompleteTextView nickField;
     private QmsContactsAdapter adapter;
     private Subscriber<ArrayList<QmsContact>> mainSubscriber = new Subscriber<>(this);
@@ -68,8 +68,7 @@ public class QmsBlackListFragment extends ListFragment {
 
         adapter = new QmsContactsAdapter();
         recyclerView.setAdapter(adapter);
-        adapter.setOnLongItemClickListener(this::someClick);
-        adapter.setOnItemClickListener(this::someClick);
+        adapter.setOnItemClickListener(this);
         return view;
     }
 
@@ -150,4 +149,14 @@ public class QmsBlackListFragment extends ListFragment {
         nickField.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, nicks));
     }
 
+    @Override
+    public void onItemClick(IQmsContact item) {
+        someClick(item);
+    }
+
+    @Override
+    public boolean onItemLongClick(IQmsContact item) {
+        someClick(item);
+        return false;
+    }
 }

@@ -51,7 +51,7 @@ import io.realm.Sort;
  * Created by radiationx on 06.09.17.
  */
 
-public class NotesFragment extends ListFragment implements NotesAdapter.ClickListener, NotesAddPopup.NoteActionListener {
+public class NotesFragment extends ListFragment implements NotesAdapter.OnItemClickListener<NoteItem>, NotesAddPopup.NoteActionListener {
     private NotesAdapter adapter;
     private Realm realm;
     private AlertDialogMenu<NotesFragment, NoteItem> dialogMenu, showedDialogMenu;
@@ -161,42 +161,6 @@ public class NotesFragment extends ListFragment implements NotesAdapter.ClickLis
         }, this::loadCacheData);
     }
 
-    @Override
-    public void onItemClick(NoteItem item, int position) {
-        try {
-            IntentHandler.handle(item.getLink());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    @Override
-    public boolean onLongItemClick(NoteItem item, int position) {
-        if (dialogMenu == null) {
-            dialogMenu = new AlertDialogMenu<>();
-            showedDialogMenu = new AlertDialogMenu<>();
-            dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
-                Utils.copyToClipBoard("" + data.getLink());
-            });
-            dialogMenu.addItem(getString(R.string.edit), (context, data) -> {
-                new NotesAddPopup(context.getContext(), data, context);
-            });
-            dialogMenu.addItem(getString(R.string.delete), (context, data) -> {
-                context.deleteNote(data.getId());
-            });
-        }
-        showedDialogMenu.clear();
-        showedDialogMenu.addItem(dialogMenu.get(0));
-        showedDialogMenu.addItem(dialogMenu.get(1));
-        showedDialogMenu.addItem(dialogMenu.get(2));
-
-        new AlertDialog.Builder(getContext())
-                .setItems(showedDialogMenu.getTitles(), (dialog, which) -> {
-                    showedDialogMenu.onClick(which, NotesFragment.this, item);
-                })
-                .show();
-        return true;
-    }
 
     public static void addNote(NoteItem item) {
         Realm realm = Realm.getDefaultInstance();
@@ -326,5 +290,42 @@ public class NotesFragment extends ListFragment implements NotesAdapter.ClickLis
             Toast.makeText(getContext(), "Файл не сохранён: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         Toast.makeText(getContext(), "Заметки успешно экспортированы в " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onItemClick(NoteItem item) {
+        try {
+            IntentHandler.handle(item.getLink());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean onItemLongClick(NoteItem item) {
+        if (dialogMenu == null) {
+            dialogMenu = new AlertDialogMenu<>();
+            showedDialogMenu = new AlertDialogMenu<>();
+            dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
+                Utils.copyToClipBoard("" + data.getLink());
+            });
+            dialogMenu.addItem(getString(R.string.edit), (context, data) -> {
+                new NotesAddPopup(context.getContext(), data, context);
+            });
+            dialogMenu.addItem(getString(R.string.delete), (context, data) -> {
+                context.deleteNote(data.getId());
+            });
+        }
+        showedDialogMenu.clear();
+        showedDialogMenu.addItem(dialogMenu.get(0));
+        showedDialogMenu.addItem(dialogMenu.get(1));
+        showedDialogMenu.addItem(dialogMenu.get(2));
+
+        new AlertDialog.Builder(getContext())
+                .setItems(showedDialogMenu.getTitles(), (dialog, which) -> {
+                    showedDialogMenu.onClick(which, NotesFragment.this, item);
+                })
+                .show();
+        return true;
     }
 }

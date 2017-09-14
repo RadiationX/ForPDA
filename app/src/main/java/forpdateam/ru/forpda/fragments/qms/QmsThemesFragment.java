@@ -36,7 +36,7 @@ import io.realm.RealmResults;
 /**
  * Created by radiationx on 25.08.16.
  */
-public class QmsThemesFragment extends ListFragment {
+public class QmsThemesFragment extends ListFragment implements QmsThemesAdapter.OnItemClickListener<IQmsTheme> {
     public final static String USER_ID_ARG = "USER_ID_ARG";
     public final static String USER_AVATAR_ARG = "USER_AVATAR_ARG";
     private MenuItem blackListMenuItem;
@@ -49,34 +49,6 @@ public class QmsThemesFragment extends ListFragment {
     private Subscriber<QmsThemes> mainSubscriber = new Subscriber<>(this);
     private Subscriber<ArrayList<QmsContact>> contactsSubscriber = new Subscriber<>(this);
     private AlertDialogMenu<QmsThemesFragment, IQmsTheme> dialogMenu;
-    private QmsThemesAdapter.OnItemClickListener onItemClickListener =
-            theme -> {
-                Bundle args = new Bundle();
-                args.putString(TabFragment.ARG_TITLE, theme.getName());
-                args.putString(TabFragment.TAB_SUBTITLE, getTitle());
-                args.putInt(QmsChatFragment.USER_ID_ARG, currentThemes.getUserId());
-                args.putString(QmsChatFragment.USER_AVATAR_ARG, avatarUrl);
-                args.putInt(QmsChatFragment.THEME_ID_ARG, theme.getId());
-                args.putString(QmsChatFragment.THEME_TITLE_ARG, theme.getName());
-                TabManager.getInstance().add(QmsChatFragment.class, args);
-            };
-    private QmsThemesAdapter.OnItemClickListener onLongItemClickListener =
-            theme -> {
-                if (dialogMenu == null) {
-                    dialogMenu = new AlertDialogMenu<>();
-                    dialogMenu.addItem(getString(R.string.delete), (context, data) -> {
-                        mainSubscriber.subscribe(RxApi.Qms().deleteTheme(currentThemes.getUserId(), data.getId()), this::onLoadThemes, currentThemes, v -> loadData());
-                    });
-                    dialogMenu.addItem(getString(R.string.create_note), (context1, data) -> {
-                        String title = String.format(getString(R.string.dialog_Title_Nick), data.getName(), currentThemes.getNick());
-                        String url = "http://4pda.ru/forum/index.php?act=qms&mid=" + currentThemes.getUserId() + "&t=" + data.getId();
-                        NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);
-                    });
-                }
-                new AlertDialog.Builder(getContext())
-                        .setItems(dialogMenu.getTitles(), (dialog, which) -> dialogMenu.onClick(which, QmsThemesFragment.this, theme)).show();
-            };
-
 
     public QmsThemesFragment() {
         //configuration.setUseCache(true);
@@ -116,8 +88,7 @@ public class QmsThemesFragment extends ListFragment {
         });
         fab.setVisibility(View.VISIBLE);
         adapter = new QmsThemesAdapter();
-        adapter.setOnItemClickListener(onItemClickListener);
-        adapter.setOnLongItemClickListener(onLongItemClickListener);
+        adapter.setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
         bindView();
         return view;
@@ -221,5 +192,35 @@ public class QmsThemesFragment extends ListFragment {
     public void onDestroy() {
         super.onDestroy();
         realm.close();
+    }
+
+    @Override
+    public void onItemClick(IQmsTheme item) {
+        Bundle args = new Bundle();
+        args.putString(TabFragment.ARG_TITLE, item.getName());
+        args.putString(TabFragment.TAB_SUBTITLE, getTitle());
+        args.putInt(QmsChatFragment.USER_ID_ARG, currentThemes.getUserId());
+        args.putString(QmsChatFragment.USER_AVATAR_ARG, avatarUrl);
+        args.putInt(QmsChatFragment.THEME_ID_ARG, item.getId());
+        args.putString(QmsChatFragment.THEME_TITLE_ARG, item.getName());
+        TabManager.getInstance().add(QmsChatFragment.class, args);
+    }
+
+    @Override
+    public boolean onItemLongClick(IQmsTheme item) {
+        if (dialogMenu == null) {
+            dialogMenu = new AlertDialogMenu<>();
+            dialogMenu.addItem(getString(R.string.delete), (context, data) -> {
+                mainSubscriber.subscribe(RxApi.Qms().deleteTheme(currentThemes.getUserId(), data.getId()), this::onLoadThemes, currentThemes, v -> loadData());
+            });
+            dialogMenu.addItem(getString(R.string.create_note), (context1, data) -> {
+                String title = String.format(getString(R.string.dialog_Title_Nick), data.getName(), currentThemes.getNick());
+                String url = "http://4pda.ru/forum/index.php?act=qms&mid=" + currentThemes.getUserId() + "&t=" + data.getId();
+                NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);
+            });
+        }
+        new AlertDialog.Builder(getContext())
+                .setItems(dialogMenu.getTitles(), (dialog, which) -> dialogMenu.onClick(which, QmsThemesFragment.this, item)).show();
+        return false;
     }
 }

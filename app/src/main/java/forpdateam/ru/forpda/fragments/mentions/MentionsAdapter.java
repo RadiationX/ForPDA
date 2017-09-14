@@ -2,28 +2,28 @@ package forpdateam.ru.forpda.fragments.mentions;
 
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.mentions.models.MentionItem;
+import forpdateam.ru.forpda.views.adapters.BaseAdapter;
+import forpdateam.ru.forpda.views.adapters.BaseViewHolder;
 
 /**
  * Created by radiationx on 21.01.17.
  */
 
-public class MentionsAdapter extends RecyclerView.Adapter<MentionsAdapter.ViewHolder> {
-    private List<MentionItem> list = new ArrayList<>();
-
+class MentionsAdapter extends BaseAdapter<MentionItem, MentionsAdapter.MentionHolder> {
     private int titleColorNew, titleColor;
+    private BaseAdapter.OnItemClickListener<MentionItem> itemClickListener;
+
+    public void setOnItemClickListener(BaseAdapter.OnItemClickListener<MentionItem> mItemClickListener) {
+        this.itemClickListener = mItemClickListener;
+    }
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
@@ -32,56 +32,22 @@ public class MentionsAdapter extends RecyclerView.Adapter<MentionsAdapter.ViewHo
         titleColorNew = App.getColorFromAttr(recyclerView.getContext(), R.attr.default_text_color);
     }
 
-    public void addAll(Collection<MentionItem> results) {
-        list.clear();
-        list.addAll(results);
-        notifyDataSetChanged();
-    }
-
-    private MentionsAdapter.OnItemClickListener itemClickListener;
-    private MentionsAdapter.OnItemClickListener longItemClickListener;
-
-    public interface OnItemClickListener {
-        void onItemClick(MentionItem favItem);
-    }
-
-    public void setOnItemClickListener(final MentionsAdapter.OnItemClickListener mItemClickListener) {
-        this.itemClickListener = mItemClickListener;
-    }
-
-    public void setOnLongItemClickListener(final MentionsAdapter.OnItemClickListener longItemClickListener) {
-        this.longItemClickListener = longItemClickListener;
+    @Override
+    public MentionHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = inflateLayout(parent, R.layout.topic_item);
+        return new MentionHolder(v);
     }
 
     @Override
-    public MentionsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.topic_item, parent, false);
-        return new MentionsAdapter.ViewHolder(v);
+    public void onBindViewHolder(MentionHolder holder, int position) {
+        holder.bind(getItem(position), position);
     }
 
-    @Override
-    public void onBindViewHolder(MentionsAdapter.ViewHolder holder, int position) {
-        MentionItem item = list.get(position);
-        holder.title.setText(item.getTitle());
-        holder.title.setTypeface(item.getState() == MentionItem.STATE_UNREAD ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
-        holder.title.setTextColor(item.getState() == MentionItem.STATE_UNREAD ? titleColorNew : titleColor);
-        holder.lastNick.setText(item.getNick());
-        holder.date.setText(item.getDate());
-        if (holder.desc.getVisibility() == View.VISIBLE) {
-            holder.desc.setVisibility(View.GONE);
-        }
-    }
+    class MentionHolder extends BaseViewHolder<MentionItem> implements View.OnClickListener, View.OnLongClickListener {
+        TextView title, lastNick, date, desc;
+        ImageView forumIcon, lockIcon, pollIcon;
 
-    @Override
-    public int getItemCount() {
-        return list.size();
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        public TextView title, lastNick, date, desc;
-        public ImageView forumIcon, lockIcon, pollIcon;
-
-        public ViewHolder(View v) {
+        MentionHolder(View v) {
             super(v);
             title = (TextView) v.findViewById(R.id.topic_item_title);
             desc = (TextView) v.findViewById(R.id.topic_item_desc);
@@ -96,6 +62,18 @@ public class MentionsAdapter extends RecyclerView.Adapter<MentionsAdapter.ViewHo
         }
 
         @Override
+        public void bind(MentionItem item, int position) {
+            title.setText(item.getTitle());
+            title.setTypeface(item.getState() == MentionItem.STATE_UNREAD ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+            title.setTextColor(item.getState() == MentionItem.STATE_UNREAD ? titleColorNew : titleColor);
+            lastNick.setText(item.getNick());
+            date.setText(item.getDate());
+            if (desc.getVisibility() == View.VISIBLE) {
+                desc.setVisibility(View.GONE);
+            }
+        }
+
+        @Override
         public void onClick(View view) {
             if (itemClickListener != null) {
                 itemClickListener.onItemClick(getItem(getLayoutPosition()));
@@ -104,15 +82,12 @@ public class MentionsAdapter extends RecyclerView.Adapter<MentionsAdapter.ViewHo
 
         @Override
         public boolean onLongClick(View view) {
-            if (longItemClickListener != null) {
-                longItemClickListener.onItemClick(getItem(getLayoutPosition()));
+            if (itemClickListener != null) {
+                itemClickListener.onItemLongClick(getItem(getLayoutPosition()));
                 return true;
             }
             return false;
         }
     }
 
-    public MentionItem getItem(int position) {
-        return list.get(position);
-    }
 }

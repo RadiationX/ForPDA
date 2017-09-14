@@ -38,46 +38,13 @@ import io.realm.RealmResults;
 /**
  * Created by radiationx on 25.08.16.
  */
-public class QmsContactsFragment extends ListFragment {
+public class QmsContactsFragment extends ListFragment implements QmsContactsAdapter.OnItemClickListener<IQmsContact> {
     private QmsContactsAdapter adapter;
     private Subscriber<ArrayList<QmsContact>> mainSubscriber = new Subscriber<>(this);
     private Subscriber<String> helperSubscriber = new Subscriber<>(this);
     private Realm realm;
     private RealmResults<QmsContactBd> results;
     private AlertDialogMenu<QmsContactsFragment, IQmsContact> dialogMenu;
-    private QmsContactsAdapter.OnItemClickListener onItemClickListener =
-            contact -> {
-                Bundle args = new Bundle();
-                args.putString(TabFragment.ARG_TITLE, contact.getNick());
-                args.putInt(QmsThemesFragment.USER_ID_ARG, contact.getId());
-                args.putString(QmsThemesFragment.USER_AVATAR_ARG, contact.getAvatar());
-                TabManager.getInstance().add(QmsThemesFragment.class, args);
-            };
-
-    private QmsContactsAdapter.OnItemClickListener onLongItemClickListener = contact -> {
-        if (dialogMenu == null) {
-            dialogMenu = new AlertDialogMenu<>();
-            dialogMenu.addItem(getString(R.string.profile), (context, data) -> {
-                IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data.getId());
-            });
-            dialogMenu.addItem(getString(R.string.add_to_blacklist), (context, data) -> {
-                mainSubscriber.subscribe(RxApi.Qms().blockUser(data.getNick()), qmsContacts -> {
-                    if (qmsContacts.size() > 0) {
-                        Toast.makeText(getContext(), R.string.user_added_to_blacklist, Toast.LENGTH_SHORT).show();
-                    }
-                }, new ArrayList<>());
-            });
-            dialogMenu.addItem(getString(R.string.delete), (context, data) -> context.deleteDialog(data.getId()));
-            dialogMenu.addItem(getString(R.string.create_note), (context1, data) -> {
-                String title = String.format(getString(R.string.dialogs_Nick), data.getNick());
-                String url = "http://4pda.ru/forum/index.php?act=qms&mid=" + data.getId();
-                NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);
-            });
-        }
-        new AlertDialog.Builder(getContext())
-                .setItems(dialogMenu.getTitles(), (dialog, which) -> dialogMenu.onClick(which, QmsContactsFragment.this, contact)).show();
-    };
-
 
     public QmsContactsFragment() {
         configuration.setAlone(true);
@@ -109,8 +76,7 @@ public class QmsContactsFragment extends ListFragment {
         fab.setVisibility(View.VISIBLE);
 
         adapter = new QmsContactsAdapter();
-        adapter.setOnLongItemClickListener(onLongItemClickListener);
-        adapter.setOnItemClickListener(onItemClickListener);
+        adapter.setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
         Log.d("suka", "QCF cp2 " + (System.currentTimeMillis() - time));
 
@@ -217,5 +183,40 @@ public class QmsContactsFragment extends ListFragment {
     public void onDestroy() {
         super.onDestroy();
         realm.close();
+    }
+
+    @Override
+    public void onItemClick(IQmsContact item) {
+        Bundle args = new Bundle();
+        args.putString(TabFragment.ARG_TITLE, item.getNick());
+        args.putInt(QmsThemesFragment.USER_ID_ARG, item.getId());
+        args.putString(QmsThemesFragment.USER_AVATAR_ARG, item.getAvatar());
+        TabManager.getInstance().add(QmsThemesFragment.class, args);
+    }
+
+    @Override
+    public boolean onItemLongClick(IQmsContact item) {
+        if (dialogMenu == null) {
+            dialogMenu = new AlertDialogMenu<>();
+            dialogMenu.addItem(getString(R.string.profile), (context, data) -> {
+                IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data.getId());
+            });
+            dialogMenu.addItem(getString(R.string.add_to_blacklist), (context, data) -> {
+                mainSubscriber.subscribe(RxApi.Qms().blockUser(data.getNick()), qmsContacts -> {
+                    if (qmsContacts.size() > 0) {
+                        Toast.makeText(getContext(), R.string.user_added_to_blacklist, Toast.LENGTH_SHORT).show();
+                    }
+                }, new ArrayList<>());
+            });
+            dialogMenu.addItem(getString(R.string.delete), (context, data) -> context.deleteDialog(data.getId()));
+            dialogMenu.addItem(getString(R.string.create_note), (context1, data) -> {
+                String title = String.format(getString(R.string.dialogs_Nick), data.getNick());
+                String url = "http://4pda.ru/forum/index.php?act=qms&mid=" + data.getId();
+                NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);
+            });
+        }
+        new AlertDialog.Builder(getContext())
+                .setItems(dialogMenu.getTitles(), (dialog, which) -> dialogMenu.onClick(which, QmsContactsFragment.this, item)).show();
+        return false;
     }
 }
