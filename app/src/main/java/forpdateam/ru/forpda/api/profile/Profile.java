@@ -18,10 +18,10 @@ public class Profile {
     private static final Pattern mainPattern = Pattern.compile("<div[^>]*?user-box[\\s\\S]*?<img src=\"([^\"]*?)\"[\\s\\S]*?<h1>([^<]*?)<\\/h1>[\\s\\S]*?(?=<span class=\"title\">([^<]*?)<\\/span>| )[\\s\\S]*?<h2>(?:<span style[^>]*?>|)([^\"<]*?)(?:<\\/span>|)<\\/h2>[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?<div class=\"u-note\">([\\s\\S]*?)<\\/div>[^<]*?(?:<\\/li>|<div)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)");
     private static final Pattern info = Pattern.compile("<li[\\s\\S]*?title[^>]*?>([^>]*?)<[\\s\\S]*?div[^>]*>([\\s\\S]*?)</div>");
     private static final Pattern personal = Pattern.compile("<li[\\s\\S]*?title[^>]*?>([^>]*?)<[\\s\\S]*?(?=<div[^>]*>([^<]*)[\\s\\S]*?</div>|)<");
-    private static final Pattern contacts = Pattern.compile("<a[^>]*?href=\"([^\"]*?)\"[^>]*?>(?=<strong>([\\s\\S]*?)</strong>|([\\s\\S]*?)</a>)");
+    private static final Pattern contacts = Pattern.compile("<a[^>]*?href=\"([^\"]*?)\"[^>]*?>(?:<strong>)?([\\s\\S]*?)(?:<\\/strong>)?<\\/a>");
     private static final Pattern devices = Pattern.compile("<a[^>]*?href=\"([^\"]*?)\"[^>]*?>([\\s\\S]*?)</a>([\\s\\S]*?)</li>");
-    private static final Pattern siteStats = Pattern.compile("<span class=\"title\">([^<]*?)</span>[\\s\\S]*?<div class=\"area\">[\\s\\S]*?(?=<a[^>]*?href=\"([^\"]*?)\"[^>]*?>([\\s\\S]*?)<|([\\s\\S]*?)</div>)");
-    private static final Pattern forumStats = Pattern.compile("<span class=\"title\">([^<]*?)</span>[\\s\\S]*?<div class=\"area\">[\\s\\S]*?<a[^>]*?href=\"([^\"]*?(history|pst|topics)[^\"]*?)\"[^>]*?>[^<]*?(<span[^>]*?>|)([^<]*?)(</span>|)</a>");
+    private static final Pattern siteStats = Pattern.compile("<span class=\"title\">([^<]*?)<\\/span>[\\s\\S]*?<div class=\"area\">[\\s\\S]*?(?:<a[^>]*?href=\"([^\"]*?)\"[^>]*?>)?([\\s\\S]*?)(?:<\\/a>)?<\\/div>");
+    private static final Pattern forumStats = Pattern.compile("<span class=\"title\">([^<]*?)<\\/span>[\\s\\S]*?<div class=\"area\">[\\s\\S]*?<a[^>]*?href=\"([^\"]*?)\"[^>]*?>[^<]*?(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?<\\/a>");
     private static final Pattern note = Pattern.compile("<textarea[^>]*?profile-textarea\"[^>]*?>([\\s\\S]*?)</textarea>");
     private static final Pattern about = Pattern.compile("<div[^>]*?div-custom-about[^>]*?>([\\s\\S]*?)</div>");
 
@@ -39,10 +39,10 @@ public class Profile {
 
             Matcher data = info.matcher(mainMatcher.group(5));
             while (data.find()) {
-                if (data.group(1).contains("Рег"))
+                String field = data.group(1);
+                if (field.contains("Рег"))
                     profile.setRegDate(safe(data.group(2)));
-
-                if (data.group(1).contains("Последнее"))
+                else if (field.contains("Последнее"))
                     profile.setOnlineDate(safe(Utils.fromHtml(data.group(2).trim())));
             }
 
@@ -51,51 +51,110 @@ public class Profile {
 
             data = personal.matcher(mainMatcher.group(7));
             while (data.find()) {
-                if (data.group(2) == null || data.group(2).isEmpty())
+                String field = data.group(2);
+                if (field == null || field.isEmpty())
                     profile.setGender(safe(data.group(1)));
 
-                if (data.group(1).contains("Дата"))
+                field = data.group(1);
+                if (field.contains("Дата")) {
                     profile.setBirthDay(safe(data.group(2)));
-
-                if (data.group(1).contains("Время"))
+                } else if (field.contains("Время")) {
                     profile.setUserTime(safe(data.group(2)));
-
-                if (data.group(1).contains("Город"))
+                } else if (field.contains("Город")) {
                     profile.setCity(safe(data.group(2)));
+                }
             }
 
             data = contacts.matcher(mainMatcher.group(8));
-            while (data.find())
-                profile.addContact(Pair.create(safe(data.group(1)), safe(data.group(3) == null ? data.group(2) : data.group(3))));
+            while (data.find()) {
+                ProfileModel.Contact contact = new ProfileModel.Contact();
+                contact.setUrl(safe(data.group(1)));
+                String title = safe(data.group(2));
+                contact.setTitle(title);
+                ProfileModel.ContactType type;
+                switch (title) {
+                    case "QMS":
+                        type = ProfileModel.ContactType.QMS;
+                        break;
+                    case "Вебсайт":
+                        type = ProfileModel.ContactType.WEBSITE;
+                        break;
+                    case "ICQ":
+                        type = ProfileModel.ContactType.ICQ;
+                        break;
+                    case "Twitter":
+                        type = ProfileModel.ContactType.TWITTER;
+                        break;
+                    case "Вконтакте":
+                        type = ProfileModel.ContactType.VKONTAKTE;
+                        break;
+                    case "Google+":
+                        type = ProfileModel.ContactType.GOOGLE_PLUS;
+                        break;
+                    case "Facebook":
+                        type = ProfileModel.ContactType.FACEBOOK;
+                        break;
+                    case "Instagram":
+                        type = ProfileModel.ContactType.INSTAGRAM;
+                        break;
+                    case "Jabber":
+                        type = ProfileModel.ContactType.JABBER;
+                        break;
+                    case "Telegram":
+                        type = ProfileModel.ContactType.TELEGRAM;
+                        break;
+                    case "Mail.ru":
+                        type = ProfileModel.ContactType.MAIL_RU;
+                        break;
+                    case "Windows Live":
+                        type = ProfileModel.ContactType.WINDOWS_LIVE;
+                        break;
+                    default:
+                        type = ProfileModel.ContactType.WEBSITE;
+                }
+                contact.setType(type);
+                profile.addContact(contact);
+            }
 
             data = devices.matcher(mainMatcher.group(9));
-            while (data.find())
-                profile.addDevice(Pair.create(safe(data.group(1)), safe(data.group(2)) + safe(data.group(3))));
+            while (data.find()) {
+                ProfileModel.Device device = new ProfileModel.Device();
+                device.setId(safe(data.group(1)));
+                device.setName(safe(data.group(2)));
+                device.setAccessory(safe(data.group(3)));
+                profile.addDevice(device);
+            }
 
             data = siteStats.matcher(mainMatcher.group(10));
             while (data.find()) {
-                Pair<String, String> pair = Pair.create(safe(data.group(2)), safe(data.group(3) == null ? data.group(4) : data.group(3)));
-                if (data.group(1).contains("Карма"))
-                    profile.setKarma(pair);
+                ProfileModel.Stat stat = new ProfileModel.Stat();
+                stat.setUrl(data.group(2));
+                stat.setValue(Integer.parseInt(data.group(3)));
 
-                if (data.group(1).contains("Постов"))
-                    profile.setSitePosts(pair);
-
-                if (data.group(1).contains("Комментов"))
-                    profile.setComments(pair);
+                String field = data.group(1);
+                if (field.contains("Карма")) {
+                    profile.setKarma(stat);
+                } else if (field.contains("Постов")) {
+                    profile.setSitePosts(stat);
+                } else if (field.contains("Комментов")) {
+                    profile.setComments(stat);
+                }
             }
 
             data = forumStats.matcher(mainMatcher.group(11));
             while (data.find()) {
-                Pair<String, String> pair = Pair.create(safe(data.group(2)), safe(data.group(5)));
-                if (data.group(1).contains("Репу"))
-                    profile.setReputation(pair);
+                ProfileModel.Stat stat = new ProfileModel.Stat();
+                stat.setUrl(data.group(2));
+                stat.setValue(Integer.parseInt(data.group(3)));
+                String field = data.group(1);
 
-                if (data.group(1).contains("Тем"))
-                    profile.setTopics(pair);
-
-                if (data.group(1).contains("Постов"))
-                    profile.setPosts(pair);
+                if (field.contains("Репу")) {
+                    profile.setReputation(stat);
+                } else if (field.contains("Тем")) {
+                    profile.setTopics(stat);
+                } else if (field.contains("Постов")) {
+                    profile.setPosts(stat);
+                }
             }
             data = note.matcher(response.getBody());
             if (data.find()) {
