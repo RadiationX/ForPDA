@@ -15,9 +15,7 @@
             style="@style/CardStyle.Wide"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="@dimen/card_margin_horizontal"
-            android:visibility="gone">
+            android:layout_alignParentStart="true">
 
             <HorizontalScrollView
                 android:layout_width="wrap_content"
@@ -39,8 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/profile_block_counts"
             android:descendantFocusability="beforeDescendants"
-            android:focusableInTouchMode="true"
-            android:visibility="gone">
+            android:focusableInTouchMode="true">
 
             <android.support.v7.widget.AppCompatTextView
                 android:layout_width="match_parent"
@@ -68,8 +65,7 @@
             style="@style/CardStyle.Wide"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/profile_block_about"
-            android:visibility="gone">
+            android:layout_below="@+id/profile_block_about">
 
             <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
