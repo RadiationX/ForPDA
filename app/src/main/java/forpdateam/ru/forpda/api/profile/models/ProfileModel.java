@@ -12,14 +12,32 @@ import forpdateam.ru.forpda.api.profile.interfaces.IProfileModel;
  */
 public class ProfileModel {
     public enum ContactType {
-        QMS, WEBSITE, ICQ, TWITTER, VKONTAKTE, GOOGLE_PLUS, FACEBOOK, INSTAGRAM, TELEGRAM, MAIL_RU, JABBER, WINDOWS_LIVE;
+        QMS, WEBSITE, ICQ, TWITTER, VKONTAKTE, GOOGLE_PLUS, FACEBOOK, INSTAGRAM, TELEGRAM, MAIL_RU, JABBER, WINDOWS_LIVE
+    }
+
+    public enum InfoType {
+        AVATAR, NICK, STATUS, GROUP, REG_DATE, ALERTS, ONLINDE_DATA, GENDER, BIRTHDAY, USER_TIME, CITY, NOTE
+    }
+
+    public enum StatType {
+        SITE_KARMA, SITE_POSTS, SITE_COMMENTS, FORUM_REPUTATION, FORUM_TOPICS, FORUM_POSTS;
     }
 
     private String avatar, nick, status, group, regDate, alerts, onlineDate, gender, birthday, userTime, note, city;
+    private Stat karma, sitePosts, comments, reputation, topics, posts;
     private Spanned sign, about;
     private ArrayList<Contact> contacts = new ArrayList<>();
     private ArrayList<Device> devices = new ArrayList<>();
-    private Stat karma, sitePosts, comments, reputation, topics, posts;
+    private ArrayList<Info> info = new ArrayList<>();
+    private ArrayList<Stat> stats = new ArrayList<>();
+
+    public void addInfo(Info info) {
+        this.info.add(info);
+    }
+
+    public void addStat(Stat stat) {
+        this.stats.add(stat);
+    }
 
     public String getAvatar() {
         return avatar;
@@ -197,10 +215,31 @@ public class ProfileModel {
         this.city = city;
     }
 
+    public static class Info {
+        private InfoType type;
+        private String value;
+
+        public InfoType getType() {
+            return type;
+        }
+
+        public void setType(InfoType type) {
+            this.type = type;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+    }
+
     public static class Contact {
+        private ContactType type = ContactType.WEBSITE;
         private String url;
         private String title;
-        private ContactType type = ContactType.WEBSITE;
 
         public String getUrl() {
             return url;
@@ -258,6 +297,7 @@ public class ProfileModel {
     }
 
     public static class Stat {
+        private StatType type;
         private String url;
         private int value;
 
@@ -275,6 +315,14 @@ public class ProfileModel {
 
         public void setValue(int value) {
             this.value = value;
+        }
+
+        public StatType getType() {
+            return type;
+        }
+
+        public void setType(StatType type) {
+            this.type = type;
         }
     }
 }

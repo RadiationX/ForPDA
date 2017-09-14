@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.api.profile;
 
-import android.util.Pair;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -132,13 +130,16 @@ public class Profile {
                 stat.setValue(Integer.parseInt(data.group(3)));
 
                 String field = data.group(1);
+                ProfileModel.StatType type = null;
                 if (field.contains("Карма")) {
-                    profile.setKarma(stat);
+                    type = ProfileModel.StatType.SITE_KARMA;
                 } else if (field.contains("Постов")) {
-                    profile.setSitePosts(stat);
+                    type = ProfileModel.StatType.SITE_POSTS;
                 } else if (field.contains("Комментов")) {
-                    profile.setComments(stat);
+                    type = ProfileModel.StatType.SITE_COMMENTS;
                 }
+                stat.setType(type);
+                profile.addStat(stat);
             }
 
             data = forumStats.matcher(mainMatcher.group(11));
@@ -148,13 +149,17 @@ public class Profile {
                 stat.setValue(Integer.parseInt(data.group(3)));
                 String field = data.group(1);
 
+                ProfileModel.StatType type = null;
                 if (field.contains("Репу")) {
-                    profile.setReputation(stat);
+                    type = ProfileModel.StatType.FORUM_REPUTATION;
                 } else if (field.contains("Тем")) {
-                    profile.setTopics(stat);
+                    type = ProfileModel.StatType.FORUM_TOPICS;
                 } else if (field.contains("Постов")) {
-                    profile.setPosts(stat);
+                    type = ProfileModel.StatType.FORUM_POSTS;
                 }
+
+                stat.setType(type);
+                profile.addStat(stat);
             }
             data = note.matcher(response.getBody());
             if (data.find()) {

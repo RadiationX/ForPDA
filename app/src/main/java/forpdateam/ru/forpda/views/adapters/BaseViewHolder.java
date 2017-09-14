@@ -16,6 +16,9 @@ public class BaseViewHolder<T> extends RecyclerView.ViewHolder {
     public void bind(T item, int section) {
     }
 
+    public void bind(T item) {
+    }
+
     public void bind(int position) {
     }
 

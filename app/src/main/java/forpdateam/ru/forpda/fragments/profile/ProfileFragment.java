@@ -318,6 +318,7 @@ public class ProfileFragment extends TabFragment {
             addCountItem(getContext().getString(R.string.profile_item_text_site_posts), currentProfile.getSitePosts());
         if (currentProfile.getComments() != null)
             addCountItem(getContext().getString(R.string.profile_item_text_comments), currentProfile.getComments());
+
         if (currentProfile.getGender() != null)
             addInfoItem(getContext().getString(R.string.profile_item_text_gender), currentProfile.getGender());
         if (currentProfile.getBirthDay() != null)
