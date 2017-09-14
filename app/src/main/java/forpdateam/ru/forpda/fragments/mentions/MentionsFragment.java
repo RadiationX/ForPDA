@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.api.mentions.models.MentionItem;
 import forpdateam.ru.forpda.api.mentions.models.MentionsData;
 import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -22,15 +23,8 @@ import forpdateam.ru.forpda.views.pagination.PaginationHelper;
  * Created by radiationx on 21.01.17.
  */
 
-public class MentionsFragment extends ListFragment {
+public class MentionsFragment extends ListFragment implements MentionsAdapter.OnItemClickListener<MentionItem> {
     private MentionsAdapter adapter;
-    private MentionsAdapter.OnItemClickListener onItemClickListener =
-            favItem -> {
-                Bundle args = new Bundle();
-                args.putString(TabFragment.ARG_TITLE, favItem.getTitle());
-                IntentHandler.handle(favItem.getLink(), args);
-            };
-
     private Subscriber<MentionsData> mainSubscriber = new Subscriber<>(this);
 
     private PaginationHelper paginationHelper;
@@ -38,7 +32,7 @@ public class MentionsFragment extends ListFragment {
     private int currentSt = 0;
 
 
-    public MentionsFragment(){
+    public MentionsFragment() {
         configuration.setAlone(true);
         configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_mentions));
     }
@@ -69,7 +63,7 @@ public class MentionsFragment extends ListFragment {
         });
         //recyclerView.addItemDecoration(new DividerItemDecoration(getContext()));
         adapter = new MentionsAdapter();
-        adapter.setOnItemClickListener(onItemClickListener);
+        adapter.setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
 
         return view;
@@ -96,5 +90,17 @@ public class MentionsFragment extends ListFragment {
     public void onDestroy() {
         super.onDestroy();
         paginationHelper.destroy();
+    }
+
+    @Override
+    public void onItemClick(MentionItem item) {
+        Bundle args = new Bundle();
+        args.putString(TabFragment.ARG_TITLE, item.getTitle());
+        IntentHandler.handle(item.getLink(), args);
+    }
+
+    @Override
+    public boolean onItemLongClick(MentionItem item) {
+        return false;
     }
 }

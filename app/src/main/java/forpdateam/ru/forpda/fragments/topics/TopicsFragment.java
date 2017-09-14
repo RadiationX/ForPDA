@@ -33,7 +33,7 @@ import forpdateam.ru.forpda.views.pagination.PaginationHelper;
  * Created by radiationx on 01.03.17.
  */
 
-public class TopicsFragment extends ListFragment {
+public class TopicsFragment extends ListFragment implements TopicsAdapter.OnItemClickListener<TopicItem> {
     public final static String TOPICS_ID_ARG = "TOPICS_ID_ARG";
     private int id;
     private TopicsAdapter adapter;
@@ -69,44 +69,7 @@ public class TopicsFragment extends ListFragment {
 
         adapter = new TopicsAdapter();
         recyclerView.setAdapter(adapter);
-        adapter.setOnItemClickListener(item -> {
-            if (item.isAnnounce()) return;
-            if (item.isForum()) {
-                IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + item.getId());
-                return;
-            }
-            Bundle args = new Bundle();
-            args.putString(TabFragment.ARG_TITLE, item.getTitle());
-            IntentHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + item.getId() + "&view=getnewpost", args);
-        });
-        adapter.setOnLongItemClickListener(item -> {
-            if (item.isAnnounce()) return;
-            if (fullTopicsDialogMenu == null) {
-                fullTopicsDialogMenu = new AlertDialogMenu<>();
-                topicsDialogMenu = new AlertDialogMenu<>();
-                fullTopicsDialogMenu.addItem(getString(R.string.copy_link), (context, data1) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data1.getId()))));
-                fullTopicsDialogMenu.addItem(getString(R.string.open_theme_forum), (context, data1) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getId()));
-                fullTopicsDialogMenu.addItem(getString(R.string.add_to_favorites), ((context, data1) -> {
-                    new AlertDialog.Builder(context.getContext())
-                            .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> {
-                                FavoritesHelper.add(aBoolean -> {
-                                    Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
-                                }, data1.getId(), Favorites.SUB_TYPES[which1]);
-                            })
-                            .show();
-                }));
-            }
-            topicsDialogMenu.clear();
-            topicsDialogMenu.addItem(fullTopicsDialogMenu.get(0));
-            topicsDialogMenu.addItem(fullTopicsDialogMenu.get(1));
-            if (ClientHelper.getAuthState()) {
-                topicsDialogMenu.addItem(fullTopicsDialogMenu.get(2));
-            }
-
-            new AlertDialog.Builder(getContext())
-                    .setItems(topicsDialogMenu.getTitles(), (dialog, which) -> topicsDialogMenu.onClick(which, TopicsFragment.this, item))
-                    .show();
-        });
+        adapter.setOnItemClickListener(this);
 
         paginationHelper = new PaginationHelper(getActivity());
         paginationHelper.addInToolbar(inflater, toolbarLayout);
@@ -142,12 +105,12 @@ public class TopicsFragment extends ListFragment {
         setTitle(data.getTitle());
         adapter.clear();
         if (data.getForumItems().size() > 0)
-            adapter.addItems(new Pair<>(getString(R.string.forum_section), data.getForumItems()));
+            adapter.addSection(new Pair<>(getString(R.string.forum_section), data.getForumItems()));
         if (data.getAnnounceItems().size() > 0)
-            adapter.addItems(new Pair<>(getString(R.string.announce_section), data.getAnnounceItems()));
+            adapter.addSection(new Pair<>(getString(R.string.announce_section), data.getAnnounceItems()));
         if (data.getPinnedItems().size() > 0)
-            adapter.addItems(new Pair<>(getString(R.string.pinned_section), data.getPinnedItems()));
-        adapter.addItems(new Pair<>(getString(R.string.themes_section), data.getTopicItems()));
+            adapter.addSection(new Pair<>(getString(R.string.pinned_section), data.getPinnedItems()));
+        adapter.addSection(new Pair<>(getString(R.string.themes_section), data.getTopicItems()));
         adapter.notifyDataSetChanged();
         paginationHelper.updatePagination(data.getPagination());
         setSubtitle(paginationHelper.getTitle());
@@ -171,5 +134,48 @@ public class TopicsFragment extends ListFragment {
     public void onDestroy() {
         super.onDestroy();
         paginationHelper.destroy();
+    }
+
+    @Override
+    public void onItemClick(TopicItem item) {
+        if (item.isAnnounce()) return;
+        if (item.isForum()) {
+            IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + item.getId());
+            return;
+        }
+        Bundle args = new Bundle();
+        args.putString(TabFragment.ARG_TITLE, item.getTitle());
+        IntentHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + item.getId() + "&view=getnewpost", args);
+    }
+
+    @Override
+    public boolean onItemLongClick(TopicItem item) {
+        if (item.isAnnounce()) return false;
+        if (fullTopicsDialogMenu == null) {
+            fullTopicsDialogMenu = new AlertDialogMenu<>();
+            topicsDialogMenu = new AlertDialogMenu<>();
+            fullTopicsDialogMenu.addItem(getString(R.string.copy_link), (context, data1) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data1.getId()))));
+            fullTopicsDialogMenu.addItem(getString(R.string.open_theme_forum), (context, data1) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getId()));
+            fullTopicsDialogMenu.addItem(getString(R.string.add_to_favorites), ((context, data1) -> {
+                new AlertDialog.Builder(context.getContext())
+                        .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> {
+                            FavoritesHelper.add(aBoolean -> {
+                                Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
+                            }, data1.getId(), Favorites.SUB_TYPES[which1]);
+                        })
+                        .show();
+            }));
+        }
+        topicsDialogMenu.clear();
+        topicsDialogMenu.addItem(fullTopicsDialogMenu.get(0));
+        topicsDialogMenu.addItem(fullTopicsDialogMenu.get(1));
+        if (ClientHelper.getAuthState()) {
+            topicsDialogMenu.addItem(fullTopicsDialogMenu.get(2));
+        }
+
+        new AlertDialog.Builder(getContext())
+                .setItems(topicsDialogMenu.getTitles(), (dialog, which) -> topicsDialogMenu.onClick(which, TopicsFragment.this, item))
+                .show();
+        return false;
     }
 }

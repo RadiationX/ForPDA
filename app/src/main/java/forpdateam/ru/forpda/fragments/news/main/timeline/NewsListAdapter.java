@@ -1,10 +1,7 @@
 package forpdateam.ru.forpda.fragments.news.main.timeline;
 
-import android.support.annotation.LayoutRes;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -15,54 +12,57 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.news.models.NewsItem;
+import forpdateam.ru.forpda.views.adapters.BaseAdapter;
+import forpdateam.ru.forpda.views.adapters.BaseViewHolder;
 
 /**
  * Created by isanechek on 8/8/17.
  */
 
-public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder> {
     private static final int COMPAT_LAYOUT = 1;
     private static final int FULL_LAYOUT = 2;
     private static final int LOAD_MORE_LAYOUT = 3;
-
-    private ArrayList<NewsItem> items = new ArrayList<>();
+    private boolean showBtn = false;
     private NewsListAdapter.ItemClickListener mItemClickListener;
 
-    private boolean showBtn = false;
+    public void setOnClickListener(NewsListAdapter.ItemClickListener onClickListener) {
+        this.mItemClickListener = onClickListener;
+    }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == FULL_LAYOUT) {
-            return new FullHolder(inflateLayout(parent, R.layout.news_main_full_item_layout));
-        } else if (viewType == COMPAT_LAYOUT) {
-            return new CompatHolder(inflateLayout(parent, R.layout.news_main_compat_item_layout));
-        } else if (viewType == LOAD_MORE_LAYOUT) {
-            return new LoadMoreHolder(inflateLayout(parent, R.layout.news_list_load_more_layout));
+    public void addAll(Collection<? extends NewsItem> items, boolean clearList) {
+        showBtn = true;
+        super.addAll(items, clearList);
+    }
+
+    @Override
+    public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        switch (viewType) {
+            case FULL_LAYOUT:
+                return new FullHolder(inflateLayout(parent, R.layout.news_main_full_item_layout));
+            case COMPAT_LAYOUT:
+                return new FullHolder(inflateLayout(parent, R.layout.news_main_compat_item_layout));
+            case LOAD_MORE_LAYOUT:
+                return new FullHolder(inflateLayout(parent, R.layout.news_list_load_more_layout));
         }
         return null;
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(BaseViewHolder holder, int position) {
         if (COMPAT_LAYOUT == getItemViewType(position)) {
-            ((CompatHolder) holder).bind(items.get(position), position);
+            ((CompatHolder) holder).bind(getItem(position), position);
         } else if (FULL_LAYOUT == getItemViewType(position)) {
-            ((FullHolder) holder).bind(items.get(position), position);
+            ((FullHolder) holder).bind(getItem(position), position);
         } else if (LOAD_MORE_LAYOUT == getItemViewType(position)) {
-            ((LoadMoreHolder) holder).bind();
+            holder.bind();
         }
-    }
-
-
-    @Override
-    public int getItemCount() {
-        return items.size();
     }
 
     @Override
@@ -73,30 +73,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return FULL_LAYOUT;
     }
 
-    public void setOnClickListener(NewsListAdapter.ItemClickListener onClickListener) {
-        this.mItemClickListener = onClickListener;
-    }
-
-    public NewsItem getItem(int position) {
-        return items.get(position);
-    }
-
-    public void addAll(List<NewsItem> list) {
-        this.items.addAll(list);
-        showBtn = true;
-    }
-
-
-    public void clear() {
-        this.items.clear();
-    }
-
-    private View inflateLayout(ViewGroup parent, @LayoutRes int id) {
-        return LayoutInflater.from(parent.getContext()).inflate(id, parent, false);
-    }
-
-    private class CompatHolder extends RecyclerView.ViewHolder {
-
+    private class CompatHolder extends BaseViewHolder<NewsItem> {
         private LinearLayout clickContainer;
         private TextView title;
         private TextView description;
@@ -107,7 +84,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private ImageButton save;
         private ImageButton share;
 
-        public CompatHolder(View itemView) {
+        CompatHolder(View itemView) {
             super(itemView);
             clickContainer = (LinearLayout) itemView.findViewById(R.id.news_list_item_click_container);
             title = (TextView) itemView.findViewById(R.id.news_list_item_title);
@@ -124,8 +101,8 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             });
         }
 
+        @Override
         public void bind(NewsItem item, int position) {
-
             title.setText(item.getTitle());
             description.setText(item.getDescription());
             ImageLoader.getInstance().displayImage(item.getImgUrl(), cover);
@@ -134,8 +111,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    public class FullHolder extends RecyclerView.ViewHolder {
-
+    private class FullHolder extends BaseViewHolder<NewsItem> {
         private TextView username;
         private TextView category;
         private TextView title;
@@ -148,7 +124,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private CardView root;
 
 
-        public FullHolder(View itemView) {
+        FullHolder(View itemView) {
             super(itemView);
             username = (TextView) itemView.findViewById(R.id.news_full_item_username);
             category = (TextView) itemView.findViewById(R.id.news_full_item_category);
@@ -178,19 +154,18 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    public class LoadMoreHolder extends RecyclerView.ViewHolder {
-
+    private class LoadMoreHolder extends BaseViewHolder {
         private LinearLayout container;
         private Button btn;
 
-        public LoadMoreHolder(View itemView) {
+        LoadMoreHolder(View itemView) {
             super(itemView);
             container = (LinearLayout) itemView.findViewById(R.id.nl_lm_container);
             btn = (Button) itemView.findViewById(R.id.nl_lm_btn);
         }
 
-
-        public void bind() {
+        @Override
+        public void bind(int position) {
             if (showBtn && container.getVisibility() == View.VISIBLE) {
                 container.setVisibility(View.GONE);
                 btn.setVisibility(View.VISIBLE);

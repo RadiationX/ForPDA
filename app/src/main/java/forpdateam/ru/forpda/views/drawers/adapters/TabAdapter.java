@@ -1,8 +1,6 @@
 package forpdateam.ru.forpda.views.drawers.adapters;
 
 import android.graphics.Color;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -10,34 +8,30 @@ import android.widget.TextView;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
+import forpdateam.ru.forpda.views.adapters.BaseAdapter;
+import forpdateam.ru.forpda.views.adapters.BaseViewHolder;
 import forpdateam.ru.forpda.fragments.TabFragment;
 
 /**
  * Created by radiationx on 02.05.17.
  */
 
-public class TabAdapter extends RecyclerView.Adapter<TabAdapter.ViewHolder> {
+public class TabAdapter extends BaseAdapter<TabFragment, TabAdapter.TabHolder> {
     private int color = Color.argb(48, 128, 128, 128);
 
-    private TabAdapter.OnItemClickListener itemClickListener;
-    private TabAdapter.OnItemClickListener closeClickListener;
+    private BaseAdapter.OnItemClickListener<TabFragment> itemClickListener;
+    private BaseAdapter.OnItemClickListener<TabFragment> closeClickListener;
 
-    public void setItemClickListener(OnItemClickListener itemClickListener) {
+    public void setItemClickListener(BaseAdapter.OnItemClickListener<TabFragment> itemClickListener) {
         this.itemClickListener = itemClickListener;
     }
 
-    public void setCloseClickListener(OnItemClickListener closeClickListener) {
+    public void setCloseClickListener(BaseAdapter.OnItemClickListener<TabFragment> closeClickListener) {
         this.closeClickListener = closeClickListener;
     }
 
-    public TabFragment getItem(int position){
+    public TabFragment getItem(int position) {
         return TabManager.getInstance().get(position);
-    }
-
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.drawer_tab_item, parent, false);
-        return new TabAdapter.ViewHolder(v);
     }
 
     @Override
@@ -46,22 +40,21 @@ public class TabAdapter extends RecyclerView.Adapter<TabAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        TabFragment fragment = TabManager.getInstance().get(position);
-        if (position == TabManager.getActiveIndex())
-            holder.itemView.setBackgroundColor(color);
-        else
-            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
-
-        holder.text.setText(fragment.getTabTitle());
+    public TabHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = inflateLayout(parent, R.layout.drawer_tab_item);
+        return new TabHolder(v);
     }
 
+    @Override
+    public void onBindViewHolder(TabHolder holder, int position) {
+        holder.bind(getItem(position), position);
+    }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class TabHolder extends BaseViewHolder<TabFragment> implements View.OnClickListener {
         public TextView text;
         public ImageView close;
 
-        public ViewHolder(View v) {
+        TabHolder(View v) {
             super(v);
             text = (TextView) v.findViewById(R.id.drawer_item_title);
             close = (ImageView) v.findViewById(R.id.drawer_item_close);
@@ -69,20 +62,26 @@ public class TabAdapter extends RecyclerView.Adapter<TabAdapter.ViewHolder> {
             v.setOnClickListener(this);
             close.setOnClickListener(v1 -> {
                 if (closeClickListener != null) {
-                    closeClickListener.onItemClick(getItem(getLayoutPosition()), getLayoutPosition());
+                    closeClickListener.onItemClick(getItem(getLayoutPosition()));
                 }
             });
         }
 
         @Override
+        public void bind(TabFragment item, int position) {
+            if (position == TabManager.getActiveIndex())
+                itemView.setBackgroundColor(color);
+            else
+                itemView.setBackgroundColor(Color.TRANSPARENT);
+
+            text.setText(item.getTabTitle());
+        }
+
+        @Override
         public void onClick(View view) {
             if (itemClickListener != null) {
-                itemClickListener.onItemClick(getItem(getLayoutPosition()), getLayoutPosition());
+                itemClickListener.onItemClick(getItem(getLayoutPosition()));
             }
         }
-    }
-
-    public interface OnItemClickListener {
-        void onItemClick(TabFragment tabFragment, int position);
     }
 }

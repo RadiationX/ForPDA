@@ -30,7 +30,7 @@ import io.realm.Sort;
  * Created by radiationx on 06.09.17.
  */
 
-public class HistoryFragment extends ListFragment implements HistoryAdapter.ClickListener {
+public class HistoryFragment extends ListFragment implements HistoryAdapter.OnItemClickListener<HistoryItemBd> {
     private final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM.dd.yy, HH:mm", Locale.getDefault());
     private HistoryAdapter adapter;
     private Realm realm;
@@ -54,7 +54,7 @@ public class HistoryFragment extends ListFragment implements HistoryAdapter.Clic
         adapter = new HistoryAdapter();
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter.setClickListener(this);
+        adapter.setItemClickListener(this);
         viewsReady();
         refreshLayout.setOnRefreshListener(this::loadCacheData);
         return view;
@@ -78,14 +78,14 @@ public class HistoryFragment extends ListFragment implements HistoryAdapter.Clic
     }
 
     @Override
-    public void onItemClick(HistoryItemBd item, int position) {
+    public void onItemClick(HistoryItemBd item) {
         Bundle args = new Bundle();
         args.putString(TabFragment.ARG_TITLE, item.getTitle());
         IntentHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + item.getId(), args);
     }
 
     @Override
-    public boolean onLongItemClick(HistoryItemBd item, int position) {
+    public boolean onItemLongClick(HistoryItemBd item) {
         if (dialogMenu == null) {
             dialogMenu = new AlertDialogMenu<>();
             showedDialogMenu = new AlertDialogMenu<>();

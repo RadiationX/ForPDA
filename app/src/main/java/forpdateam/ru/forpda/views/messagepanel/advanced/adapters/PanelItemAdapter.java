@@ -29,7 +29,6 @@ import forpdateam.ru.forpda.views.messagepanel.advanced.ButtonData;
 public class PanelItemAdapter extends RecyclerView.Adapter<PanelItemAdapter.ViewHolder> implements ItemDragCallback.ItemTouchHelperAdapter {
     public final static int TYPE_ASSET = 0;
     public final static int TYPE_DRAWABLE = 1;
-    private final ColorFilter colorFilter = new PorterDuffColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
     private List<ButtonData> items;
     private List<String> urlsToAssets;
     private int type = -1;

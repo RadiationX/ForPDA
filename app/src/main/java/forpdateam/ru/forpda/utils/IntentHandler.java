@@ -413,13 +413,6 @@ public class IntentHandler {
     private static void systemDownloader(String fileName, String url) {
         DownloadManager dm = (DownloadManager) App.getContext().getSystemService(Context.DOWNLOAD_SERVICE);
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-
-                            /*Map<String, Cookie> cookies = Client.getInstance().getCookies();
-                            String stringCookies = "";
-                            for (Map.Entry<String, Cookie> cookieEntry : cookies.entrySet()) {
-                                stringCookies = stringCookies.concat(cookieEntry.getKey()).concat("=").concat(cookieEntry.getValue().value()).concat(";");
-                            }
-                            request.addRequestHeader("Cookie", stringCookies);*/
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
 

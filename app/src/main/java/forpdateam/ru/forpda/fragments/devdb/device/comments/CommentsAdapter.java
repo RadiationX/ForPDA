@@ -1,19 +1,17 @@
 package forpdateam.ru.forpda.fragments.devdb.device.comments;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.devdb.models.Device;
+import forpdateam.ru.forpda.views.adapters.BaseAdapter;
+import forpdateam.ru.forpda.views.adapters.BaseViewHolder;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.IntentHandler;
 
@@ -21,53 +19,19 @@ import forpdateam.ru.forpda.utils.IntentHandler;
  * Created by radiationx on 09.08.17.
  */
 
-public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHolder> {
-    private ArrayList<Device.Comment> list = new ArrayList<>();
-
-    public void addAll(Collection<Device.Comment> results) {
-        addAll(results, true);
-    }
-
-    public void addAll(Collection<Device.Comment> results, boolean clearList) {
-        if (clearList)
-            clear();
-        list.addAll(results);
-        notifyDataSetChanged();
-    }
-
-    public void clear() {
-        list.clear();
-    }
-
-
+public class CommentsAdapter extends BaseAdapter<Device.Comment, CommentsAdapter.CommentHolder> {
     @Override
-    public CommentsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public CommentHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.device_comment_item, parent, false);
-        return new CommentsAdapter.ViewHolder(v);
+        return new CommentHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(CommentsAdapter.ViewHolder holder, int position) {
-        Device.Comment item = list.get(position);
-        holder.title.setText(item.getNick());
-        holder.date.setText(item.getDate());
-        holder.desc.setText(Utils.spannedFromHtml(item.getText()));
-        holder.rating.setText(Integer.toString(item.getRating()));
-        holder.like.setText(Integer.toString(item.getLikes()));
-        holder.dislike.setText(Integer.toString(item.getDislikes()));
-        holder.rating.getBackground().setColorFilter(RxApi.DevDb().getColorFilter(item.getRating()));
+    public void onBindViewHolder(CommentHolder holder, int position) {
+        holder.bind(getItem(position), position);
     }
 
-    @Override
-    public int getItemCount() {
-        return list.size();
-    }
-
-    public Device.Comment getItem(int position) {
-        return list.get(position);
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class CommentHolder extends BaseViewHolder<Device.Comment> {
         public TextView title;
         public TextView date;
         public TextView desc;
@@ -75,7 +39,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
         public Button like;
         public Button dislike;
 
-        public ViewHolder(View v) {
+        public CommentHolder(View v) {
             super(v);
             title = (TextView) v.findViewById(R.id.item_title);
             date = (TextView) v.findViewById(R.id.item_date);
@@ -88,6 +52,17 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
             dislike.setCompoundDrawablesRelativeWithIntrinsicBounds(App.getVecDrawable(v.getContext(), R.drawable.ic_thumb_down), null, null, null);
             title.setOnClickListener(this::onTitleClick);
             rating.setBackground(App.getDrawableAttr(rating.getContext(), R.attr.count_background));
+        }
+
+        @Override
+        public void bind(Device.Comment item, int position) {
+            title.setText(item.getNick());
+            date.setText(item.getDate());
+            desc.setText(Utils.spannedFromHtml(item.getText()));
+            rating.setText(Integer.toString(item.getRating()));
+            like.setText(Integer.toString(item.getLikes()));
+            dislike.setText(Integer.toString(item.getDislikes()));
+            rating.getBackground().setColorFilter(RxApi.DevDb().getColorFilter(item.getRating()));
         }
 
         private void onTitleClick(View v) {

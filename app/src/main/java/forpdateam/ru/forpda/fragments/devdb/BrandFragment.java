@@ -28,7 +28,7 @@ import forpdateam.ru.forpda.views.messagepanel.AutoFitRecyclerView;
  * Created by radiationx on 08.08.17.
  */
 
-public class BrandFragment extends TabFragment {
+public class BrandFragment extends TabFragment implements BrandAdapter.OnItemClickListener<Brand.DeviceItem> {
     public final static String ARG_CATEGORY_ID = "CATEGORY_ID";
     public final static String ARG_BRAND_ID = "BRAND_ID";
     private SwipeRefreshLayout refreshLayout;
@@ -74,39 +74,7 @@ public class BrandFragment extends TabFragment {
             ex.printStackTrace();
         }
 
-        adapter.setOnItemClickListener(deviceItem -> {
-            Bundle args = new Bundle();
-            args.putString(DeviceFragment.ARG_DEVICE_ID, deviceItem.getId());
-            TabManager.getInstance().add(DeviceFragment.class, args);
-        });
-
-        adapter.setOnLongItemClickListener(item -> {
-            if (dialogMenu == null) {
-                dialogMenu = new AlertDialogMenu<>();
-                showedDialogMenu = new AlertDialogMenu<>();
-                dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
-                    Utils.copyToClipBoard("http://4pda.ru/devdb/" + data.getId());
-                });
-                dialogMenu.addItem(getString(R.string.share), (context, data) -> {
-                    Utils.shareText("https://4pda.ru/devdb/" + data.getId());
-                });
-                dialogMenu.addItem(getString(R.string.create_note), (context1, data) -> {
-                    String title = "DevDb: " + currentData.getTitle() + " " + data.getTitle();
-                    String url = "https://4pda.ru/devdb/" + data.getId();
-                    NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);
-                });
-            }
-            showedDialogMenu.clear();
-
-            showedDialogMenu.addItem(dialogMenu.get(0));
-            showedDialogMenu.addItem(dialogMenu.get(1));
-            showedDialogMenu.addItem(dialogMenu.get(2));
-            new AlertDialog.Builder(getContext())
-                    .setItems(showedDialogMenu.getTitles(), (dialog, which) -> {
-                        showedDialogMenu.onClick(which, BrandFragment.this, item);
-                    })
-                    .show();
-        });
+        adapter.setItemClickListener(this);
 
         return view;
     }
@@ -124,6 +92,43 @@ public class BrandFragment extends TabFragment {
         adapter.addAll(brand.getDevices());
         setTitle(brand.getTitle());
         setSubtitle(brand.getCatTitle());
+    }
+
+    @Override
+    public void onItemClick(Brand.DeviceItem item) {
+        Bundle args = new Bundle();
+        args.putString(DeviceFragment.ARG_DEVICE_ID, item.getId());
+        TabManager.getInstance().add(DeviceFragment.class, args);
+    }
+
+    @Override
+    public boolean onItemLongClick(Brand.DeviceItem item) {
+        if (dialogMenu == null) {
+            dialogMenu = new AlertDialogMenu<>();
+            showedDialogMenu = new AlertDialogMenu<>();
+            dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
+                Utils.copyToClipBoard("http://4pda.ru/devdb/" + data.getId());
+            });
+            dialogMenu.addItem(getString(R.string.share), (context, data) -> {
+                Utils.shareText("https://4pda.ru/devdb/" + data.getId());
+            });
+            dialogMenu.addItem(getString(R.string.create_note), (context1, data) -> {
+                String title = "DevDb: " + currentData.getTitle() + " " + data.getTitle();
+                String url = "https://4pda.ru/devdb/" + data.getId();
+                NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);
+            });
+        }
+        showedDialogMenu.clear();
+
+        showedDialogMenu.addItem(dialogMenu.get(0));
+        showedDialogMenu.addItem(dialogMenu.get(1));
+        showedDialogMenu.addItem(dialogMenu.get(2));
+        new AlertDialog.Builder(getContext())
+                .setItems(showedDialogMenu.getTitles(), (dialog, which) -> {
+                    showedDialogMenu.onClick(which, BrandFragment.this, item);
+                })
+                .show();
+        return false;
     }
 
     public static class SpacingItemDecoration extends RecyclerView.ItemDecoration {
