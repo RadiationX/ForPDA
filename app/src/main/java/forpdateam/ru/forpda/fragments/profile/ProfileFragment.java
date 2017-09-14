@@ -32,13 +32,16 @@ import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.devdb.DeviceFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.BitmapUtils;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -146,7 +149,7 @@ public class ProfileFragment extends TabFragment {
         writeMenuItem = getMenu().add(R.string.write)
                 .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_profile_toolbar_create))
                 .setOnMenuItemClickListener(item -> {
-                    IntentHandler.handle(currentProfile.getContacts().get(0).first);
+                    IntentHandler.handle(currentProfile.getContacts().get(0).getUrl());
                     return false;
                 })
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
@@ -195,11 +198,11 @@ public class ProfileFragment extends TabFragment {
         Toast.makeText(getContext(), getString(b ? R.string.profile_note_saved : R.string.error_occurred), Toast.LENGTH_SHORT).show();
     }
 
-    private void addCountItem(String title, Pair<String, String> data) {
+    private void addCountItem(String title, ProfileModel.Stat stat) {
         CountItem countItem = new CountItem(getContext());
         countItem.setTitle(title);
-        countItem.setDesc(data.second);
-        countItem.setOnClickListener(view1 -> IntentHandler.handle(data.first));
+        countItem.setDesc(Integer.toString(stat.getValue()));
+        countItem.setOnClickListener(view1 -> IntentHandler.handle(stat.getUrl()));
         countList.addView(countItem);
     }
 
@@ -210,41 +213,49 @@ public class ProfileFragment extends TabFragment {
         infoBlock.addView(infoItem);
     }
 
-    private void addContactItem(int iconRes, String data, String text) {
+    private void addContactItem(ProfileModel.Contact contact) {
         ContactItem contactItem = new ContactItem(getContext());
-        contactItem.setIcon(iconRes);
-        contactItem.setText(text);
-        contactItem.setOnClickListener(view1 -> IntentHandler.handle(data));
+        contactItem.setIcon(getIconRes(contact.getType()));
+        contactItem.setText(contact.getTitle());
+        contactItem.setOnClickListener(view1 -> IntentHandler.handle(contact.getUrl()));
         contactList.addView(contactItem);
     }
 
-    private void addDeviceItem(String text, String link) {
+    private void addDeviceItem(ProfileModel.Device device) {
         DeviceItem deviceItem = new DeviceItem(getContext());
-        deviceItem.setText(text);
-        deviceItem.setOnClickListener(view1 -> IntentHandler.handle(link));
+        deviceItem.setText(device.getName() + " " + device.getAccessory());
+        deviceItem.setOnClickListener(view1 -> {
+            Bundle args = new Bundle();
+            args.putString(DeviceFragment.ARG_DEVICE_ID, device.getId());
+            TabManager.getInstance().add(DeviceFragment.class, args);
+        });
         devicesList.addView(deviceItem);
     }
 
-    private int getIconRes(String name) {
-        switch (name) {
-            case "Вебсайт":
+    private int getIconRes(ProfileModel.ContactType type) {
+        switch (type) {
+            case WEBSITE:
                 return R.drawable.contact_site;
-            case "ICQ":
+            case ICQ:
                 return R.drawable.contact_icq;
-            case "Twitter":
+            case TWITTER:
                 return R.drawable.contact_twitter;
-            case "Jabber":
+            case JABBER:
                 return R.drawable.contact_jabber;
-            case "Вконтакте":
+            case VKONTAKTE:
                 return R.drawable.contact_vk;
-            case "Google+":
+            case GOOGLE_PLUS:
                 return R.drawable.contact_google_plus;
-            case "Facebook":
+            case FACEBOOK:
                 return R.drawable.contact_facebook;
-            case "Instagram":
+            case INSTAGRAM:
                 return R.drawable.contact_instagram;
-            case "Mail.ru":
+            case MAIL_RU:
                 return R.drawable.contact_mail_ru;
+            case TELEGRAM:
+                return R.drawable.contact_telegram;
+            /*case WINDOWS_LIVE:
+                return R.drawable.contact_site;*/
             default:
                 return R.drawable.contact_site;
         }
@@ -329,14 +340,18 @@ public class ProfileFragment extends TabFragment {
                 writeMenuItem.setVisible(false);
             }
         }
-        if (currentProfile.getContacts().size() > 1) {
-            for (int i = 1; i < currentProfile.getContacts().size(); i++)
-                addContactItem(getIconRes(currentProfile.getContacts().get(i).second), currentProfile.getContacts().get(i).first, currentProfile.getContacts().get(i).second);
+        if (currentProfile.getContacts().size() > 0) {
+            for (ProfileModel.Contact contact : currentProfile.getContacts()) {
+                if (contact.getType() == ProfileModel.ContactType.QMS) {
+                    continue;
+                }
+                addContactItem(contact);
+            }
             findViewById(R.id.profile_block_contacts).setVisibility(View.VISIBLE);
         }
         if (currentProfile.getDevices().size() > 0) {
-            for (Pair<String, String> device : currentProfile.getDevices()) {
-                addDeviceItem(device.second, device.first);
+            for (ProfileModel.Device device : currentProfile.getDevices()) {
+                addDeviceItem(device);
             }
             findViewById(R.id.profile_block_devices).setVisibility(View.VISIBLE);
         }

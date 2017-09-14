@@ -5,6 +5,8 @@ import android.util.Pair;
 
 import java.util.ArrayList;
 
+import forpdateam.ru.forpda.api.profile.models.ProfileModel;
+
 /**
  * Created by radiationx on 03.08.16.
  */
@@ -33,7 +35,7 @@ public interface IProfileModel {
 
     ArrayList<Pair<String, String>> getContacts();
 
-    ArrayList<Pair<String, String>> getDevices();
+    ArrayList<ProfileModel.Device> getDevices();
 
     Pair<String, String> getKarma();
 

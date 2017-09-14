@@ -10,219 +10,181 @@ import forpdateam.ru.forpda.api.profile.interfaces.IProfileModel;
 /**
  * Created by radiationx on 03.08.16.
  */
-public class ProfileModel implements IProfileModel {
+public class ProfileModel {
+    public enum ContactType {
+        QMS, WEBSITE, ICQ, TWITTER, VKONTAKTE, GOOGLE_PLUS, FACEBOOK, INSTAGRAM, TELEGRAM, MAIL_RU, JABBER, WINDOWS_LIVE;
+    }
+
     private String avatar, nick, status, group, regDate, alerts, onlineDate, gender, birthday, userTime, note, city;
     private Spanned sign, about;
-    private ArrayList<Pair<String, String>> contacts = new ArrayList<>();
-    private ArrayList<Pair<String, String>> devices = new ArrayList<>();
-    private Pair<String, String> karma, sitePosts, comments, reputation, topics, posts;
+    private ArrayList<Contact> contacts = new ArrayList<>();
+    private ArrayList<Device> devices = new ArrayList<>();
+    private Stat karma, sitePosts, comments, reputation, topics, posts;
 
-    @Override
     public String getAvatar() {
         return avatar;
     }
 
-    @Override
     public String getNick() {
         return nick;
     }
 
-    @Override
     public String getStatus() {
         return status;
     }
 
-    @Override
     public String getGroup() {
         return group;
     }
 
-    @Override
     public String getRegDate() {
         return regDate;
     }
 
-    @Override
     public String getAlerts() {
         return alerts;
     }
 
-    @Override
     public String getOnlineDate() {
         return onlineDate;
     }
 
-    @Override
     public Spanned getSign() {
         return sign;
     }
 
-    @Override
     public String getGender() {
         return gender;
     }
 
-    @Override
     public String getBirthDay() {
         return birthday;
     }
 
-    @Override
     public String getUserTime() {
         return userTime;
     }
 
-    @Override
-    public ArrayList<Pair<String, String>> getContacts() {
+    public ArrayList<Contact> getContacts() {
         return contacts;
     }
 
-    @Override
-    public ArrayList<Pair<String, String>> getDevices() {
+    public ArrayList<Device> getDevices() {
         return devices;
     }
 
-    @Override
-    public Pair<String, String> getKarma() {
+    public Stat getKarma() {
         return karma;
     }
 
-    @Override
-    public Pair<String, String> getSitePosts() {
+    public Stat getSitePosts() {
         return sitePosts;
     }
 
-    @Override
-    public Pair<String, String> getComments() {
+    public Stat getComments() {
         return comments;
     }
 
-    @Override
-    public Pair<String, String> getReputation() {
+    public Stat getReputation() {
         return reputation;
     }
 
-    @Override
-    public Pair<String, String> getTopics() {
+    public Stat getTopics() {
         return topics;
     }
 
-    @Override
-    public Pair<String, String> getPosts() {
+    public Stat getPosts() {
         return posts;
     }
 
-    @Override
     public String getNote() {
         return note;
     }
 
-    @Override
     public Spanned getAbout() {
         return about;
     }
 
-    @Override
     public void setAvatar(String arg) {
         avatar = arg;
     }
 
-    @Override
     public void setNick(String arg) {
         nick = arg;
     }
 
-    @Override
     public void setStatus(String arg) {
         status = arg;
     }
 
-    @Override
     public void setGroup(String arg) {
         group = arg;
     }
 
-    @Override
     public void setRegDate(String arg) {
         regDate = arg;
     }
 
-    @Override
     public void setAlerts(String arg) {
         alerts = arg;
     }
 
-    @Override
     public void setOnlineDate(String arg) {
         onlineDate = arg;
     }
 
-    @Override
     public void setSign(Spanned arg) {
         sign = arg;
     }
 
-    @Override
     public void setGender(String arg) {
         gender = arg;
     }
 
-    @Override
     public void setBirthDay(String arg) {
         birthday = arg;
     }
 
-    @Override
     public void setUserTime(String arg) {
         userTime = arg;
     }
 
-    @Override
-    public void addContact(Pair<String, String> arg) {
+    public void addContact(Contact arg) {
         contacts.add(arg);
     }
 
-    @Override
-    public void addDevice(Pair<String, String> arg) {
+    public void addDevice(Device arg) {
         devices.add(arg);
     }
 
-    @Override
-    public void setKarma(Pair<String, String> arg) {
+    public void setKarma(Stat arg) {
         karma = arg;
     }
 
-    @Override
-    public void setSitePosts(Pair<String, String> arg) {
+    public void setSitePosts(Stat arg) {
         sitePosts = arg;
     }
 
-    @Override
-    public void setComments(Pair<String, String> arg) {
+    public void setComments(Stat arg) {
         comments = arg;
     }
 
-    @Override
-    public void setReputation(Pair<String, String> arg) {
+    public void setReputation(Stat arg) {
         reputation = arg;
     }
 
-    @Override
-    public void setTopics(Pair<String, String> arg) {
+    public void setTopics(Stat arg) {
         topics = arg;
     }
 
-    @Override
-    public void setPosts(Pair<String, String> arg) {
+    public void setPosts(Stat arg) {
         posts = arg;
     }
 
-    @Override
     public void setNote(String arg) {
         note = arg;
     }
 
-    @Override
     public void setAbout(Spanned arg) {
         about = arg;
     }
@@ -233,5 +195,86 @@ public class ProfileModel implements IProfileModel {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public static class Contact {
+        private String url;
+        private String title;
+        private ContactType type = ContactType.WEBSITE;
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public ContactType getType() {
+            return type;
+        }
+
+        public void setType(ContactType type) {
+            this.type = type;
+        }
+    }
+
+    public static class Device {
+        private String id;
+        private String name;
+        private String accessory;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getAccessory() {
+            return accessory;
+        }
+
+        public void setAccessory(String accessory) {
+            this.accessory = accessory;
+        }
+    }
+
+    public static class Stat {
+        private String url;
+        private int value;
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
     }
 }
