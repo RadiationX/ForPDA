@@ -4,36 +4,49 @@ function transformSnapbacks() {
     var snapBacks = document.querySelectorAll("a[href*=findpost][title='Перейти к сообщению'],a[href*=showuser]");
     for (var i = 0; i < snapBacks.length; i++) {
         var snapBack = snapBacks[i];
+        //console.log("SNAPBACK " + snapBack.href);
+        //console.log(snapBack);
         if (snapBack.classList.contains("snapback")) {
             break;
         }
-        if (!(snapBack.href.indexOf("showuser") != -1)) {
-            var temp = snapBack.nextElementSibling;
-            if (temp != null && temp != undefined) {
-                snapBack.innerHTML = temp.textContent;
-                temp = snapBack;
-                while (temp != null) {
-                    //console.log(temp);
-                    temp = temp.nextSibling;
-                    if (!temp) break;
-                    if (temp.nodeName === "#text") {
-                        if (temp.nodeValue === " ") {
-                            temp.nodeValue = "";
-                        }
-                        continue;
-                    }
-                    if (temp.tagName == "B") {
-                        break;
-                    }
-                }
-                if (temp) {
-                    temp.parentNode.removeChild(temp);
-                }
+        if (snapBack.href.includes("showuser")) {
+            var temp = snapBack;
+            while (temp.firstElementChild != null) {
+                temp = temp.firstElementChild;
             }
+            temp.insertAdjacentHTML("afterbegin", "<span class=\"icon\"></span>");
+            snapBack.classList.add("user");
+        } else {
+            var temp;
+            
+            //Удаление изображения
             temp = snapBack.getElementsByTagName("IMG");
             if (temp.length > 0) {
                 temp = temp[0];
                 temp.parentNode.removeChild(temp);
+            }
+
+            //Обычно идёт следующий эелемент
+            temp = snapBack.nextElementSibling;
+            if (temp != null && temp != undefined) {
+                var nick = temp.textContent;
+                //console.log(nick);
+                //Обычно ник вконце с запятой
+                if (nick.charAt(nick.length - 1) === ",") {
+                    //Удаляем из текста и вставляем в ссылку
+                    temp.parentNode.removeChild(temp);
+                    snapBack.appendChild(temp);
+
+                    //Поиск самого "глубокого" элемента для иконки
+                    while (temp.firstElementChild != null) {
+                        temp = temp.firstElementChild;
+                    }
+                    temp.insertAdjacentHTML("afterbegin", "<span class=\"icon\"></span>");
+                }
+
+
+
+                snapBack.classList.add("post");
             }
         }
         snapBack.classList.add("snapback");
@@ -339,7 +352,7 @@ function removeImgesSrc() {
         var images = codeBlock.querySelector(".block-body").querySelectorAll("img");
         for (var j = 0; j < images.length; j++) {
             var img = images[j];
-            console.log("removeImgesSrc " + img.src + " : " + img.dataset.src);
+            //console.log("removeImgesSrc " + img.src + " : " + img.dataset.src);
             if (!img.hasAttribute('src') || img.dataset.imageSrc) continue;
             var srcUrl = img.dataset.src;
             if (!srcUrl) {
