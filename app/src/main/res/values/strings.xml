@@ -28,6 +28,7 @@
     <string name="test_topic_section_title" translatable="false">Topic section title</string>
 
     <!-- Base -->
+    <string name="undefined" translatable="false">Undefined</string>
     <string name="default_s">По умолчанию</string>
     <string name="pref_lang_title">Язык</string>
     <string name="ok">Ок</string>
@@ -348,20 +349,32 @@
     <string name="profile_title_note">Блокнот</string>
     <string name="profile_hint_note">Это ваш персональный блокнот. Здесь Вы можете хранить отрывки сообщений или любую другую информацию, которая для Вас важна</string>
     <string name="profile_button_save">Сохранить</string>
-    <string name="profile_item_text_posts">Постов</string>
-    <string name="profile_item_text_themes">Тем</string>
-    <string name="profile_item_text_rep">Репутация</string>
-    <string name="profile_item_text_karma">Карма</string>
-    <string name="profile_item_text_site_posts">Новостей</string>
-    <string name="profile_item_text_comments">Комментариев</string>
-    <string name="profile_item_text_gender">Пол</string>
-    <string name="profile_item_text_birthday">Дата рождения</string>
-    <string name="profile_item_text_city">Город</string>
-    <string name="profile_item_text_user_time">Время у юзера</string>
-    <string name="profile_item_text_reg">Регистрация</string>
-    <string name="profile_item_text_last_online">Последнее посещение</string>
-    <string name="profile_item_text_alerts">Предупреждения</string>
+    <string name="profile_stat_forum_posts">Постов</string>
+    <string name="profile_stat_forum_topics">Тем</string>
+    <string name="profile_stat_forum_reputation">Репутация</string>
+    <string name="profile_stat_site_karma">Карма</string>
+    <string name="profile_stat_site_posts">Новостей</string>
+    <string name="profile_stat_site_comments">Комментариев</string>
+    <string name="profile_info_gender">Пол</string>
+    <string name="profile_info_birthday">Дата рождения</string>
+    <string name="profile_info_city">Город</string>
+    <string name="profile_info_user_time">Время у юзера</string>
+    <string name="profile_info_reg">Регистрация</string>
+    <string name="profile_info_last_online">Последнее посещение</string>
+    <string name="profile_info_alerts">Предупреждения</string>
     <string name="profile_note_saved">Запись сохранена</string>
+    <string name="profile_contact_qms">QMS</string>
+    <string name="profile_contact_site">Вебсайт</string>
+    <string name="profile_contact_icq">ICQ</string>
+    <string name="profile_contact_twitter">Twitter</string>
+    <string name="profile_contact_jabber">Jabber</string>
+    <string name="profile_contact_vk">Вконтакте</string>
+    <string name="profile_contact_google_plus">Google+</string>
+    <string name="profile_contact_facebook">Facebook</string>
+    <string name="profile_contact_instagram">Instagram</string>
+    <string name="profile_contact_mail_ru">Mail.ru</string>
+    <string name="profile_contact_telegram">Telegram</string>
+    <string name="profile_contact_windows_live">Windows Live</string>
 
     <!-- Reputation -->
     <string name="reputation_mode_from">Репутация пользователя</string>
