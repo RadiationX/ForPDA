@@ -18,7 +18,7 @@ function transformSnapbacks() {
             snapBack.classList.add("user");
         } else {
             var temp;
-            
+
             //Удаление изображения
             temp = snapBack.getElementsByTagName("IMG");
             if (temp.length > 0) {
@@ -32,17 +32,15 @@ function transformSnapbacks() {
                 var nick = temp.textContent;
                 //console.log(nick);
                 //Обычно ник вконце с запятой
-                if (nick.charAt(nick.length - 1) === ",") {
-                    //Удаляем из текста и вставляем в ссылку
-                    temp.parentNode.removeChild(temp);
-                    snapBack.appendChild(temp);
+                //Удаляем из текста и вставляем в ссылку
+                temp.parentNode.removeChild(temp);
+                snapBack.appendChild(temp);
 
-                    //Поиск самого "глубокого" элемента для иконки
-                    while (temp.firstElementChild != null) {
-                        temp = temp.firstElementChild;
-                    }
-                    temp.insertAdjacentHTML("afterbegin", "<span class=\"icon\"></span>");
+                //Поиск самого "глубокого" элемента для иконки
+                while (temp.firstElementChild != null && temp.tagName.toLocaleLowerCase === "img") {
+                    temp = temp.firstElementChild;
                 }
+                temp.insertAdjacentHTML("afterbegin", "<span class=\"icon\"></span>");
 
 
 

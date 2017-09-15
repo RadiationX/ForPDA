@@ -45,7 +45,7 @@
     <string name="message_deleted">Message deleted successfully</string>
     <string name="follow_link">Go to</string>
     <string name="follow">Follow</string>
-    <string name="copy_link">Copy the link</string>
+    <string name="copy_link">Copy URL</string>
     <string name="change">Change</string>
     <string name="sorting_asc">Ascending</string>
     <string name="sorting_desc">Descending</string>
@@ -75,7 +75,7 @@
     <string name="user_messages">Posts written by user</string>
     <string name="search_in_theme">Search in topic</string>
     <string name="theme_options">Topic options</string>
-    <string name="spoiler_link_copied">Spoiler link is copied</string>
+    <string name="spoiler_link_copied">Spoiler URL has been copied</string>
     <string name="link_to_anchor">Anchor link</string>
     <string name="write">Write a message</string>
     <string name="add_user">Add a user</string>
@@ -84,7 +84,7 @@
     <string name="no_network">Connection is unavailable</string>
     <string name="group">Group</string>
     <string name="menu">Menu</string>
-    <string name="hat">Topic header</string>
+    <string name="hat">Original Post</string>
     <string name="avatar">Userpic</string>
     <string name="vote_good">Like</string>
     <string name="vote_bad">Dislike</string>
@@ -99,7 +99,7 @@
     <string name="post_Nick_Number" formatted="false">Post %s, #%d</string>
     <string name="report_warning">You don\'t have to specify the topic and post here, a moderator will receive this information automatically. Please use this section for reporting unacceptable messages only! Use QMS to contact the moderator privately.</string>
     <string name="image_viewer_subtitle_Cur_All" formatted="false">%d of %d</string>
-    <string name="msg_panel_hint_message">Message</string>
+    <string name="msg_panel_hint_message">Type a message</string>
     <string name="no_updates">No update available</string>
     <string name="updater_current_info" formatted="false">Version %s Build from %s</string>
     <string name="updater_notification_title">ForPDA update available</string>
@@ -152,7 +152,7 @@
     <string name="codes_text_size">Text size</string>
     <string name="codes_text_size_item_Size" formatted="false">Size %s</string>
     <string name="codes_link">URL</string>
-    <string name="codes_link_text">Copy the URL</string>
+    <string name="codes_link_text">Copy the URL text</string>
     <string name="codes_block_title">Title</string>
     <string name="codes_spoiler_text">Spoiler text</string>
     <string name="codes_code_text">Code</string>
@@ -171,7 +171,7 @@
     <string name="codes_name_hide">Hidden</string>
     <string name="codes_name_bg_color">Background color</string>
     <string name="codes_name_list">Bulleted List</string>
-    <string name="codes_name_numlist">Numeric list</string>
+    <string name="codes_name_numlist">Numeric List</string>
     <string name="codes_name_left">Left</string>
     <string name="codes_name_center">Centered</string>
     <string name="codes_name_right">Right</string>
@@ -179,7 +179,7 @@
     <string name="codes_name_sup">Superscript</string>
     <string name="codes_name_curator">Contributor</string>
     <string name="codes_list_item_Pos" formatted="false">Item %d</string>
-    <string name="transform_string_to_list">Transform selected string into the list?</string>
+    <string name="transform_string_to_list">Transform selected string into the listing?</string>
     <!-- Tooltips -->
     <string name="tooltip_tabs">On the right there\'s a panel with openned tabs. It allows you to conveniently navigate between them.</string>
     <string name="tooltip_link">You can access the links manually</string>
@@ -199,9 +199,9 @@
     <string name="auth_btn_login">Sign in</string>
     <string name="auth_skip">Skip</string>
     <!-- Notes -->
-    <string name="create_note">Create a note</string>
+    <string name="create_note">Take a note</string>
     <string name="note_edit">Note editing</string>
-    <string name="note_create">Creating note</string>
+    <string name="note_create">Note taking</string>
     <string name="note_enter_title">Type the title</string>
     <!-- News list-->
     <!-- News article-->
@@ -234,10 +234,10 @@
     <!-- WebView -->
     <string name="wv_open_new_tab">Open in new tab</string>
     <string name="wv_open_in_browser">Open in browser</string>
-    <string name="wv_copy_link">Copy the link</string>
+    <string name="wv_copy_link">Copy URL</string>
     <string name="wv_open_image">Open image</string>
     <string name="wv_save_image">Save image</string>
-    <string name="wv_copy_image_link">Copy the image link</string>
+    <string name="wv_copy_image_link">Copy the image URL</string>
     <!-- Favorites -->
     <string name="fav_subscribe_none">Don\'t notify</string>
     <string name="fav_subscribe_delayed">Single time</string>
@@ -260,9 +260,9 @@
     <string name="favorite_theme_deleted">Topic has been removed from favorites</string>
     <string name="fav_delete_error_id_not_found">Topic ID is not found, try reloading the page</string>
     <!-- Edit post -->
-    <string name="editpost_title_answer">Answer</string>
+    <string name="editpost_title_answer">Reply to </string>
     <string name="editpost_title_edit">Editing</string>
-    <string name="editpost_lose_changes">Forget changes?</string>
+    <string name="editpost_lose_changes">Cancel post editing?</string>
     <string name="editpost_sync">Upstream changes with the input field in topic?</string>
     <string name="editpost_error_edit">You cannot edit this post</string>
     <string name="editpost_reason">Reason for editing</string>
@@ -277,7 +277,7 @@
     <!-- Attachments -->
     <string name="attachments">Attachments</string>
     <string name="attachments_count">Attachments: %d</string>
-    <string name="no_attachments">There is no attachment yet</string>
+    <string name="no_attachments">Nothing is being attached yet</string>
     <!-- Forum -->
     <string name="forum_refresh">Refresh forums</string>
     <!-- Intent -->
@@ -325,6 +325,8 @@
     <string name="profile_info_last_online">Last visit</string>
     <string name="profile_info_alerts">Warnings</string>
     <string name="profile_note_saved">Note saved</string>
+    <string name="profile_contact_site">Website</string>
+    <string name="profile_contact_vk">Vkontakte</string>
     <!-- Reputation -->
     <string name="reputation_mode_from">User reputation</string>
     <string name="reputation_mode_to">Involved in</string>
@@ -389,7 +391,7 @@
     <string name="pref_title_lists">Listings</string>
     <string name="pref_title_unread_top">Show unread topics on top</string>
     <string name="pref_title_show_dot">Indicate for new posts</string>
-    <string name="pref_title_load_all">Complete listing</string>
+    <string name="pref_title_load_all">All favorites</string>
     <string name="pref_summary_load_all">Load all pages of favorites. Consumes more traffic.</string>
     <string name="pref_title_account">Account</string>
     <string name="pref_title_logout">Logout</string>
