@@ -29,6 +29,7 @@ public class SearchSettings {
     public final static String ARG_QUERY_FORUM = "query";
     public final static String ARG_QUERY_NEWS = "s";
     public final static String ARG_NICK = "username";
+    public final static String ARG_USER_ID = "username-id";
     public final static String ARG_FORUMS_SIMPLE = "forums";
     public final static String ARG_TOPICS_SIMPLE = "topics";
     public final static String ARG_FORUMS = "forums%5B%5D";

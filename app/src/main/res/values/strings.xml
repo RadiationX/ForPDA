@@ -89,6 +89,7 @@
     <string name="messages_in_this_theme">Сообщения в этой теме</string>
     <string name="user_messages">Сообщения пользователя</string>
     <string name="search_in_theme">Найти в теме</string>
+    <string name="search_my_posts">Найти мои посты</string>
     <string name="theme_options">Опции темы</string>
     <string name="spoiler_link_copied">Ссылка на спойлер скопирована</string>
     <string name="link_to_anchor">Ссылка на якорь</string>

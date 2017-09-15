@@ -133,6 +133,25 @@ public class IntentHandler {
             //Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
         }
 
+        matcher = Pattern.compile("(?:http?s?:)?\\/\\/[\\s\\S]*?4pda\\.(?:ru|to)\\/forum\\/lofiversion\\/[^\\?]*?\\?(t|f)(\\d+)(?:-(\\d+))?").matcher(url);
+        if (matcher.find()) {
+            url = "http://4pda.ru/forum/index.php?";
+            switch (matcher.group(1)) {
+                case "t":
+                    url += "showtopic=";
+                    break;
+                case "f":
+                    url += "showforum=";
+                    break;
+            }
+            url += matcher.group(2);
+
+            if (matcher.group(3) != null) {
+                url += "&st=" + matcher.group(3);
+            }
+        }
+
+
         if (url.matches("(?:http?s?:)?\\/\\/[\\s\\S]*?4pda\\.(?:ru|to)[\\s\\S]*")) {
             /*if (!url.contains("4pda.ru")||!url.contains("4pda.to")) {
                 url = "https://4pda.ru".concat(url.substring(0, 1).equals("/") ? "" : "/").concat(url);

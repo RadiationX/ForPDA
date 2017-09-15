@@ -77,7 +77,7 @@ public class BrandsAdapter extends BaseSectionedAdapter<Brands.Item, BaseSection
         }
 
         @Override
-        public void bind(Brands.Item item, int section, int relativePosition, int absolutePosition) {
+        public void bind(Brands.Item item) {
             title.setText(item.getTitle());
             count.setText(Integer.toString(item.getCount()));
         }
