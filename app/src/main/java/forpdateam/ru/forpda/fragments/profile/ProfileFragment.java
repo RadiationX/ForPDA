@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.fragments.profile;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -15,18 +14,14 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.view.animation.AlphaAnimation;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,16 +29,13 @@ import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
-import forpdateam.ru.forpda.fragments.devdb.DeviceFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.BitmapUtils;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -56,9 +48,9 @@ import io.reactivex.Observable;
 /**
  * Created by radiationx on 03.08.16.
  */
-public class ProfileFragment extends TabFragment {
+public class ProfileFragment extends TabFragment implements ProfileAdapter.ClickListener {
     //private LayoutInflater inflater;
-    private TextView nick, group, sign, about;
+    private TextView nick, group, sign;
     private ImageView avatar;
     //private LinearLayout countList, infoBlock, contactList, devicesList;
     //private EditText noteText;
@@ -83,13 +75,12 @@ public class ProfileFragment extends TabFragment {
             tab_url = "https://4pda.ru/forum/index.php?showuser=".concat(Integer.toString(ClientHelper.getUserId() == 0 ? 2556269 : ClientHelper.getUserId()));
     }
 
-    RecyclerView recyclerView;
-    ProfileAdapter adapter;
+    private RecyclerView recyclerView;
+    private ProfileAdapter adapter;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //this.inflater = inflater;
         super.onCreateView(inflater, container, savedInstanceState);
         baseInflateFragment(inflater, R.layout.fragment_profile);
         ViewStub viewStub = (ViewStub) findViewById(R.id.toolbar_content);
@@ -98,21 +89,15 @@ public class ProfileFragment extends TabFragment {
         nick = (TextView) findViewById(R.id.profile_nick);
         group = (TextView) findViewById(R.id.profile_group);
         sign = (TextView) findViewById(R.id.profile_sign);
-        about = (TextView) findViewById(R.id.profile_about_text);
         avatar = (ImageView) findViewById(R.id.profile_avatar);
         recyclerView = (RecyclerView) findViewById(R.id.profile_list);
-
-
-        /*countList = (LinearLayout) findViewById(R.id.profile_list_counts);
-        infoBlock = (LinearLayout) findViewById(R.id.profile_list_information);
-        contactList = (LinearLayout) findViewById(R.id.profile_list_contacts);
-        devicesList = (LinearLayout) findViewById(R.id.profile_list_devices);*/
         progressView = (CircularProgressView) findViewById(R.id.profile_progress);
         viewsReady();
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         adapter = new ProfileAdapter();
+        adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 
         toolbarLayout.setExpandedTitleColor(Color.TRANSPARENT);
@@ -120,18 +105,8 @@ public class ProfileFragment extends TabFragment {
         toolbarLayout.setTitleEnabled(true);
         toolbarTitleView.setVisibility(View.GONE);
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) toolbarLayout.getLayoutParams();
-        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED); // list other flags here by |
+        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED);
         toolbarLayout.setLayoutParams(params);
-        /*toolbarLayout.setExpandedTitleGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL);
-        toolbarLayout.setExpandedTitleMarginTop(dpToPx(216));
-        toolbarLayout.setScrimVisibleHeightTrigger(dpToPx(144));
-        toolbarLayout.setExpandedTitleTextAppearance(R.style.QText);
-        toolbarLayout.setScrimAnimationDuration(225);
-*/
-        //noteText = (EditText) findViewById(R.id.profile_note_text);
-        //noteText.clearFocus();
-        //findViewById(R.id.profile_save_note).setOnClickListener(view1 -> saveNote());
-        //toolbar.setTitleTextColor(Color.TRANSPARENT);
 
 
         ScrimHelper scrimHelper = new ScrimHelper(appBarLayout, toolbarLayout);
@@ -181,103 +156,25 @@ public class ProfileFragment extends TabFragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    public int dpToPx(int dp) {
-        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
-        return (int) ((dp * displayMetrics.density) + 0.5);
-    }
-
-    @Override
     public void loadData() {
         super.loadData();
         refreshToolbarMenuItems(false);
         mainSubscriber.subscribe(RxApi.Profile().getProfile(tab_url), this::onProfileLoad, new ProfileModel(), v -> loadData());
     }
 
-    public void saveNote() {
-        //saveNoteSubscriber.subscribe(RxApi.Profile().saveNote(noteText.getText().toString()), this::onNoteSave, false, v -> saveNote());
+    @Override
+    public void onSaveClick(String text) {
+        saveNoteSubscriber.subscribe(RxApi.Profile().saveNote(text), this::onNoteSave, false, v -> onSaveClick(text));
     }
-
 
     private void onNoteSave(boolean b) {
         Toast.makeText(getContext(), getString(b ? R.string.profile_note_saved : R.string.error_occurred), Toast.LENGTH_SHORT).show();
     }
 
-    /*private void addCountItem(String title, ProfileModel.Stat stat) {
-        CountItem countItem = new CountItem(getContext());
-        countItem.setTitle(title);
-        countItem.setDesc(Integer.toString(stat.getValue()));
-        countItem.setOnClickListener(view1 -> IntentHandler.handle(stat.getUrl()));
-        countList.addView(countItem);
-    }
-
-    private void addInfoItem(String title, String data) {
-        InfoItem infoItem = new InfoItem(getContext());
-        infoItem.setTitle(title);
-        infoItem.setDesc(data);
-        infoBlock.addView(infoItem);
-    }
-
-    private void addContactItem(ProfileModel.Contact contact) {
-        ContactItem contactItem = new ContactItem(getContext());
-        contactItem.setIcon(getIconRes(contact.getType()));
-        contactItem.setText(contact.getTitle());
-        contactItem.setOnClickListener(view1 -> IntentHandler.handle(contact.getUrl()));
-        contactList.addView(contactItem);
-    }
-
-    private void addDeviceItem(ProfileModel.Device device) {
-        DeviceItem deviceItem = new DeviceItem(getContext());
-        deviceItem.setText(device.getName() + " " + device.getAccessory());
-        deviceItem.setOnClickListener(view1 -> {
-            Bundle args = new Bundle();
-            args.putString(DeviceFragment.ARG_DEVICE_ID, device.getId());
-            TabManager.getInstance().add(DeviceFragment.class, args);
-        });
-        devicesList.addView(deviceItem);
-    }*/
-
-    private int getIconRes(ProfileModel.ContactType type) {
-        switch (type) {
-            case WEBSITE:
-                return R.drawable.contact_site;
-            case ICQ:
-                return R.drawable.contact_icq;
-            case TWITTER:
-                return R.drawable.contact_twitter;
-            case JABBER:
-                return R.drawable.contact_jabber;
-            case VKONTAKTE:
-                return R.drawable.contact_vk;
-            case GOOGLE_PLUS:
-                return R.drawable.contact_google_plus;
-            case FACEBOOK:
-                return R.drawable.contact_facebook;
-            case INSTAGRAM:
-                return R.drawable.contact_instagram;
-            case MAIL_RU:
-                return R.drawable.contact_mail_ru;
-            case TELEGRAM:
-                return R.drawable.contact_telegram;
-            /*case WINDOWS_LIVE:
-                return R.drawable.contact_site;*/
-            default:
-                return R.drawable.contact_site;
-        }
-    }
-
     private void onProfileLoad(ProfileModel profile) {
         currentProfile = profile;
         if (currentProfile.getNick() == null) return;
-        adapter.setData(currentProfile);
+        adapter.setProfile(currentProfile);
         adapter.notifyDataSetChanged();
         refreshToolbarMenuItems(true);
         ImageLoader.getInstance().loadImage(currentProfile.getAvatar(), new SimpleImageLoadingListener() {
@@ -321,35 +218,6 @@ public class ProfileFragment extends TabFragment {
             sign.setVisibility(View.VISIBLE);
             sign.setMovementMethod(LinkMovementMethod.getInstance());
         }
-        /*if (currentProfile.getPosts() != null)
-            addCountItem(getContext().getString(R.string.profile_item_text_posts), currentProfile.getPosts());
-        if (currentProfile.getTopics() != null)
-            addCountItem(getContext().getString(R.string.profile_item_text_themes), currentProfile.getTopics());
-        if (currentProfile.getReputation() != null)
-            addCountItem(getContext().getString(R.string.profile_item_text_rep), currentProfile.getReputation());
-        if (currentProfile.getKarma() != null)
-            addCountItem(getContext().getString(R.string.profile_item_text_karma), currentProfile.getKarma());
-        if (currentProfile.getSitePosts() != null)
-            addCountItem(getContext().getString(R.string.profile_item_text_site_posts), currentProfile.getSitePosts());
-        if (currentProfile.getComments() != null)
-            addCountItem(getContext().getString(R.string.profile_item_text_comments), currentProfile.getComments());
-
-        if (currentProfile.getGender() != null)
-            addInfoItem(getContext().getString(R.string.profile_item_text_gender), currentProfile.getGender());
-        if (currentProfile.getBirthDay() != null)
-            addInfoItem(getContext().getString(R.string.profile_item_text_birthday), currentProfile.getBirthDay());
-        if (currentProfile.getCity() != null)
-            addInfoItem(getContext().getString(R.string.profile_item_text_city), currentProfile.getCity());
-        if (currentProfile.getUserTime() != null)
-            addInfoItem(getContext().getString(R.string.profile_item_text_user_time), currentProfile.getUserTime());
-        inflater.inflate(R.layout.profile_divider, infoBlock);
-        if (currentProfile.getRegDate() != null)
-            addInfoItem(getContext().getString(R.string.profile_item_text_reg), currentProfile.getRegDate());
-        if (currentProfile.getOnlineDate() != null)
-            addInfoItem(getContext().getString(R.string.profile_item_text_last_online), currentProfile.getOnlineDate());
-        if (currentProfile.getAlerts() != null)
-            addInfoItem(getContext().getString(R.string.profile_item_text_alerts), currentProfile.getAlerts());*/
-
 
         if (currentProfile.getContacts().size() > 0) {
             if (!Pattern.compile("showuser=".concat(Integer.toString(ClientHelper.getUserId()))).matcher(tab_url).find()) {
@@ -357,94 +225,6 @@ public class ProfileFragment extends TabFragment {
             } else {
                 writeMenuItem.setVisible(false);
             }
-        }
-        /*if (currentProfile.getContacts().size() > 0) {
-            for (ProfileModel.Contact contact : currentProfile.getContacts()) {
-                if (contact.getType() == ProfileModel.ContactType.QMS) {
-                    continue;
-                }
-                addContactItem(contact);
-            }
-            findViewById(R.id.profile_block_contacts).setVisibility(View.VISIBLE);
-        }
-        if (currentProfile.getDevices().size() > 0) {
-            for (ProfileModel.Device device : currentProfile.getDevices()) {
-                addDeviceItem(device);
-            }
-            findViewById(R.id.profile_block_devices).setVisibility(View.VISIBLE);
-        }
-
-        if (currentProfile.getNote() != null) {
-            noteText.setText(currentProfile.getNote());
-            findViewById(R.id.profile_block_note).setVisibility(View.VISIBLE);
-        }*/
-        /*if (currentProfile.getAbout() != null) {
-            about.setText(currentProfile.getAbout());
-            about.setMovementMethod(LinkMovementMethod.getInstance());
-            findViewById(R.id.profile_block_about).setVisibility(View.VISIBLE);
-        }
-
-        findViewById(R.id.profile_block_counts).setVisibility(View.VISIBLE);
-        findViewById(R.id.profile_block_information).setVisibility(View.VISIBLE);*/
-    }
-
-    class CountItem extends LinearLayout {
-        public CountItem(Context context) {
-            super(context);
-            inflate(context, R.layout.profile_counts_list_item, this);
-        }
-
-        public void setTitle(String title) {
-            ((TextView) findViewById(R.id.item_title)).setText(title);
-        }
-
-        public void setDesc(String desc) {
-            ((TextView) findViewById(R.id.item_desc)).setText(desc);
-        }
-    }
-
-    class InfoItem extends LinearLayout {
-        public InfoItem(Context context) {
-            super(context);
-            inflate(context, R.layout.profile_info_list_item, this);
-        }
-
-        public void setTitle(String title) {
-            ((TextView) findViewById(R.id.item_title)).setText(title);
-        }
-
-        public void setDesc(String desc) {
-            ((TextView) findViewById(R.id.item_desc)).setText(desc);
-        }
-    }
-
-    class ContactItem extends LinearLayout {
-        public ContactItem(Context context) {
-            super(context);
-            inflate(context, R.layout.profile_contact_list_item, this);
-        }
-
-        public void setIcon(int iconRes) {
-            if (iconRes == R.drawable.contact_icq) {
-                int px = dpToPx(20);
-                findViewById(R.id.drawer_item_icon).setPadding(px, px, px, px);
-            }
-            ((ImageView) findViewById(R.id.drawer_item_icon)).setImageDrawable(App.getVecDrawable(getContext(), iconRes));
-        }
-
-        public void setText(String text) {
-            setContentDescription(text);
-        }
-    }
-
-    class DeviceItem extends LinearLayout {
-        public DeviceItem(Context context) {
-            super(context);
-            inflate(context, R.layout.profile_device_list_item, this);
-        }
-
-        public void setText(String text) {
-            ((TextView) findViewById(R.id.item_text)).setText(text);
         }
     }
 
