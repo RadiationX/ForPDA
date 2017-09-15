@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
+import forpdateam.ru.forpda.rxapi.apiclasses.ProfileRx;
 import forpdateam.ru.forpda.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.views.adapters.BaseViewHolder;
 
@@ -13,7 +14,7 @@ import forpdateam.ru.forpda.views.adapters.BaseViewHolder;
  * Created by radiationx on 14.09.17.
  */
 
-public class InfoAdapter extends BaseAdapter<ProfileModel.Info, InfoAdapter.InfoHolder> {
+class InfoAdapter extends BaseAdapter<ProfileModel.Info, InfoAdapter.InfoHolder> {
     @Override
     public InfoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new InfoHolder(inflateLayout(parent, R.layout.profile_sub_item_info));
@@ -36,7 +37,7 @@ public class InfoAdapter extends BaseAdapter<ProfileModel.Info, InfoAdapter.Info
 
         @Override
         public void bind(ProfileModel.Info item) {
-            title.setText("?");
+            title.setText(ProfileRx.getTypeString(item.getType()));
             value.setText(item.getValue());
         }
     }

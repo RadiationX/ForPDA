@@ -34,8 +34,13 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private final static int NOTE_VIEW_TYPE = 6;
     private ArrayList<Integer> items = new ArrayList<>();
     private ProfileModel profileModel;
+    private ClickListener clickListener;
 
-    public void setData(ProfileModel profile) {
+    public void setClickListener(ClickListener clickListener) {
+        this.clickListener = clickListener;
+    }
+
+    public void setProfile(ProfileModel profile) {
         items.add(STATS_VIEW_TYPE);
         if (profile.getAbout() != null) {
             items.add(ABOUT_VIEW_TYPE);
@@ -47,7 +52,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         if (profile.getContacts().size() > 1) {
             items.add(CONTACTS_VIEW_TYPE);
         }
-        items.add(NOTE_VIEW_TYPE);
+        if (profile.getNote() != null) {
+            items.add(NOTE_VIEW_TYPE);
+        }
         profileModel = profile;
     }
 
@@ -77,7 +84,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
-        Log.d("KEK", "BIND " + holder + " : " + getItemViewType(position));
         switch (getItemViewType(position)) {
             case STATS_VIEW_TYPE:
                 ((StatsHolder) holder).bind(profileModel);
@@ -125,7 +131,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
         @Override
         public void bind(ProfileModel item) {
-            Log.d("KEK", "STATS " + adapter.getItemCount() + " : " + item.getStats().size());
             if (adapter.getItemCount() == 0) {
                 ArrayList<ProfileModel.Stat> list = new ArrayList<>(item.getStats());
                 Collections.reverse(list);
@@ -231,5 +236,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         public void bind(ProfileModel item) {
             note.setText(item.getNote());
         }
+    }
+
+    public interface ClickListener {
+        void onSaveClick(String text);
     }
 }

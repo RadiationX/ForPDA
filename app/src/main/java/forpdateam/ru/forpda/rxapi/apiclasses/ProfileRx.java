@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.rxapi.apiclasses;
 
+import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
 
 import forpdateam.ru.forpda.R;
@@ -91,6 +92,36 @@ public class ProfileRx {
                 return R.string.profile_stat_forum_posts;
             default:
                 return R.string.undefined;
+        }
+    }
+
+    @DrawableRes
+    public static int getContactIcon(ProfileModel.ContactType type) {
+        switch (type) {
+            case WEBSITE:
+                return R.drawable.contact_site;
+            case ICQ:
+                return R.drawable.contact_icq;
+            case TWITTER:
+                return R.drawable.contact_twitter;
+            case JABBER:
+                return R.drawable.contact_jabber;
+            case VKONTAKTE:
+                return R.drawable.contact_vk;
+            case GOOGLE_PLUS:
+                return R.drawable.contact_google_plus;
+            case FACEBOOK:
+                return R.drawable.contact_facebook;
+            case INSTAGRAM:
+                return R.drawable.contact_instagram;
+            case MAIL_RU:
+                return R.drawable.contact_mail_ru;
+            case TELEGRAM:
+                return R.drawable.contact_telegram;
+            /*case WINDOWS_LIVE:
+                return R.drawable.contact_site;*/
+            default:
+                return R.drawable.contact_site;
         }
     }
 }
