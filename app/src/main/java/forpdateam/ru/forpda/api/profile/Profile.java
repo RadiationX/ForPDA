@@ -131,7 +131,7 @@ public class Profile {
             data = devices.matcher(mainMatcher.group(9));
             while (data.find()) {
                 ProfileModel.Device device = new ProfileModel.Device();
-                device.setId(safe(data.group(1)));
+                device.setUrl(safe(data.group(1)));
                 device.setName(safe(data.group(2)));
                 device.setAccessory(safe(data.group(3)));
                 profile.addDevice(device);

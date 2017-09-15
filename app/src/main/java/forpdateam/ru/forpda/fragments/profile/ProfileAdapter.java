@@ -217,7 +217,11 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
         @Override
         public void bind(ProfileModel item) {
-            adapter.addAll(item.getContacts());
+            ArrayList<ProfileModel.Contact> contacts = item.getContacts();
+            if (contacts.get(0).getType() == ProfileModel.ContactType.QMS) {
+                contacts.remove(0);
+            }
+            adapter.addAll(contacts);
         }
     }
 
@@ -230,6 +234,11 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             super(itemView);
             note = (EditText) itemView.findViewById(R.id.profile_note_text);
             save = (Button) itemView.findViewById(R.id.profile_save_note);
+            save.setOnClickListener(v -> {
+                if (clickListener != null) {
+                    clickListener.onSaveClick(note.getText().toString());
+                }
+            });
         }
 
         @Override

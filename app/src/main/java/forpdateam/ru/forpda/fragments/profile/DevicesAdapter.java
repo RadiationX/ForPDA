@@ -9,6 +9,7 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.fragments.devdb.DeviceFragment;
+import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.views.adapters.BaseViewHolder;
 
@@ -33,11 +34,7 @@ class DevicesAdapter extends BaseAdapter<ProfileModel.Device, DevicesAdapter.Inf
         InfoHolder(View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.item_title);
-            itemView.setOnClickListener(v -> {
-                Bundle args = new Bundle();
-                args.putString(DeviceFragment.ARG_DEVICE_ID, getItem(getLayoutPosition()).getId());
-                TabManager.getInstance().add(DeviceFragment.class, args);
-            });
+            itemView.setOnClickListener(v -> IntentHandler.handle(getItem(getLayoutPosition()).getUrl()));
         }
 
         @Override
