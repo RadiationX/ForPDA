@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.fragments.profile;
 import android.support.annotation.LayoutRes;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +12,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
+import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.utils.LinkMovementMethod;
 import forpdateam.ru.forpda.views.adapters.BaseViewHolder;
 
@@ -21,7 +25,7 @@ import forpdateam.ru.forpda.views.adapters.BaseViewHolder;
  * Created by radiationx on 14.09.17.
  */
 
-public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private final static int STATS_VIEW_TYPE = 1;
     private final static int ABOUT_VIEW_TYPE = 2;
     private final static int INFO_VIEW_TYPE = 3;
@@ -29,8 +33,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final static int CONTACTS_VIEW_TYPE = 5;
     private final static int NOTE_VIEW_TYPE = 6;
     private ArrayList<Integer> items = new ArrayList<>();
+    private ProfileModel profileModel;
 
-    public ProfileAdapter(ProfileModel profile) {
+    public void setData(ProfileModel profile) {
         items.add(STATS_VIEW_TYPE);
         if (profile.getAbout() != null) {
             items.add(ABOUT_VIEW_TYPE);
@@ -43,6 +48,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             items.add(CONTACTS_VIEW_TYPE);
         }
         items.add(NOTE_VIEW_TYPE);
+        profileModel = profile;
     }
 
     @Override
@@ -51,7 +57,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case STATS_VIEW_TYPE:
                 return new StatsHolder(inflateLayout(parent, R.layout.profile_item_stats));
@@ -70,25 +76,26 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(BaseViewHolder holder, int position) {
+        Log.d("KEK", "BIND " + holder + " : " + getItemViewType(position));
         switch (getItemViewType(position)) {
             case STATS_VIEW_TYPE:
-                ((StatsHolder) holder).bind();
+                ((StatsHolder) holder).bind(profileModel);
                 break;
             case ABOUT_VIEW_TYPE:
-                ((AboutHolder) holder).bind();
+                ((AboutHolder) holder).bind(profileModel);
                 break;
             case INFO_VIEW_TYPE:
-                ((InfoHolder) holder).bind();
+                ((InfoHolder) holder).bind(profileModel);
                 break;
             case DEVICES_VIEW_TYPE:
-                ((DeviceHolder) holder).bind();
+                ((DeviceHolder) holder).bind(profileModel);
                 break;
             case CONTACTS_VIEW_TYPE:
-                ((ContactHolder) holder).bind();
+                ((ContactHolder) holder).bind(profileModel);
                 break;
             case NOTE_VIEW_TYPE:
-                ((NoteHolder) holder).bind();
+                ((NoteHolder) holder).bind(profileModel);
                 break;
         }
     }
@@ -103,23 +110,28 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private class StatsHolder extends BaseViewHolder<ProfileModel> {
-
-        private RecyclerView statsList;
+        private RecyclerView list;
         private StatsAdapter adapter;
-        private ArrayList<ProfileModel.Stat> stats = new ArrayList<>();
 
         StatsHolder(View itemView) {
             super(itemView);
-            statsList = (RecyclerView) itemView.findViewById(R.id.profile_stats_list);
+            list = (RecyclerView) itemView.findViewById(R.id.profile_stats_list);
+            list.setHasFixedSize(true);
+            list.setLayoutManager(new LinearLayoutManager(list.getContext(), LinearLayoutManager.HORIZONTAL, false));
             adapter = new StatsAdapter();
-            statsList.setAdapter(adapter);
-            statsList.setHasFixedSize(true);
-            statsList.setLayoutManager(new LinearLayoutManager(statsList.getContext(), LinearLayoutManager.HORIZONTAL, false));
+            list.setAdapter(adapter);
+            list.setNestedScrollingEnabled(false);
         }
 
         @Override
         public void bind(ProfileModel item) {
-            adapter.addAll(stats);
+            Log.d("KEK", "STATS " + adapter.getItemCount() + " : " + item.getStats().size());
+            if (adapter.getItemCount() == 0) {
+                ArrayList<ProfileModel.Stat> list = new ArrayList<>(item.getStats());
+                Collections.reverse(list);
+                adapter.addAll(list);
+                adapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -141,43 +153,66 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private class InfoHolder extends BaseViewHolder<ProfileModel> {
 
-        private RecyclerView infoList;
+        private RecyclerView list;
+        private InfoAdapter adapter;
 
         InfoHolder(View itemView) {
             super(itemView);
-            infoList = (RecyclerView) itemView.findViewById(R.id.profile_info_list);
-            infoList.setHasFixedSize(true);
-            infoList.setLayoutManager(new LinearLayoutManager(infoList.getContext()));
+            list = (RecyclerView) itemView.findViewById(R.id.profile_info_list);
+            list.setHasFixedSize(true);
+            list.setLayoutManager(new LinearLayoutManager(list.getContext()));
+            list.setNestedScrollingEnabled(false);
+            list.addItemDecoration(new BrandFragment.SpacingItemDecoration(App.px16, true));
+            adapter = new InfoAdapter();
+            list.setAdapter(adapter);
         }
 
         @Override
         public void bind(ProfileModel item) {
+            if (adapter.getItemCount() == 0) {
+                adapter.addAll(item.getInfo());
+                adapter.notifyDataSetChanged();
+            }
         }
     }
 
     private class DeviceHolder extends BaseViewHolder<ProfileModel> {
-        private RecyclerView devices;
+        private RecyclerView list;
+        private DevicesAdapter adapter;
 
         DeviceHolder(View itemView) {
             super(itemView);
-            devices = (RecyclerView) itemView.findViewById(R.id.profile_devices_list);
+            list = (RecyclerView) itemView.findViewById(R.id.profile_devices_list);
+            list.setHasFixedSize(true);
+            list.setLayoutManager(new LinearLayoutManager(list.getContext()));
+            list.setNestedScrollingEnabled(false);
+            adapter = new DevicesAdapter();
+            list.setAdapter(adapter);
         }
 
         @Override
         public void bind(ProfileModel item) {
+            adapter.addAll(item.getDevices());
         }
     }
 
     private class ContactHolder extends BaseViewHolder<ProfileModel> {
-        private RecyclerView contacts;
+        private RecyclerView list;
+        private ContactsAdapter adapter;
 
         ContactHolder(View itemView) {
             super(itemView);
-            contacts = (RecyclerView) itemView.findViewById(R.id.profile_contacts_list);
+            list = (RecyclerView) itemView.findViewById(R.id.profile_contacts_list);
+            list.setHasFixedSize(true);
+            list.setLayoutManager(new LinearLayoutManager(list.getContext(), LinearLayoutManager.HORIZONTAL, false));
+            adapter = new ContactsAdapter();
+            list.setAdapter(adapter);
+            list.setNestedScrollingEnabled(false);
         }
 
         @Override
         public void bind(ProfileModel item) {
+            adapter.addAll(item.getContacts());
         }
     }
 

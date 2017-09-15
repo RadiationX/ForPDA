@@ -30,6 +30,7 @@ public class Profile {
 
         final Matcher mainMatcher = mainPattern.matcher(response.getBody());
         if (mainMatcher.find()) {
+
             profile.setAvatar(safe(mainMatcher.group(1)));
             profile.setNick(Utils.fromHtml(safe(mainMatcher.group(2))));
             profile.setStatus(safe(mainMatcher.group(3)));
@@ -38,10 +39,15 @@ public class Profile {
             Matcher data = info.matcher(mainMatcher.group(5));
             while (data.find()) {
                 String field = data.group(1);
-                if (field.contains("Рег"))
-                    profile.setRegDate(safe(data.group(2)));
-                else if (field.contains("Последнее"))
-                    profile.setOnlineDate(safe(Utils.fromHtml(data.group(2).trim())));
+
+                if (field.contains("Рег")) {
+                    profile.addInfo(ProfileModel.InfoType.REG_DATE,
+                            safe(data.group(2)));
+
+                } else if (field.contains("Последнее")) {
+                    profile.addInfo(ProfileModel.InfoType.ONLINE_DATE,
+                            safe(Utils.fromHtml(data.group(2).trim())));
+                }
             }
 
             String signString = safe(mainMatcher.group(6));
@@ -50,16 +56,24 @@ public class Profile {
             data = personal.matcher(mainMatcher.group(7));
             while (data.find()) {
                 String field = data.group(2);
-                if (field == null || field.isEmpty())
-                    profile.setGender(safe(data.group(1)));
+                if (field == null || field.isEmpty()) {
+                    profile.addInfo(ProfileModel.InfoType.GENDER,
+                            safe(data.group(1)));
+                    continue;
+                }
 
                 field = data.group(1);
                 if (field.contains("Дата")) {
-                    profile.setBirthDay(safe(data.group(2)));
+                    profile.addInfo(ProfileModel.InfoType.BIRTHDAY,
+                            safe(data.group(2)));
+
                 } else if (field.contains("Время")) {
-                    profile.setUserTime(safe(data.group(2)));
+                    profile.addInfo(ProfileModel.InfoType.USER_TIME,
+                            safe(data.group(2)));
+
                 } else if (field.contains("Город")) {
-                    profile.setCity(safe(data.group(2)));
+                    profile.addInfo(ProfileModel.InfoType.CITY,
+                            safe(data.group(2)));
                 }
             }
 
