@@ -363,18 +363,18 @@
     <string name="profile_info_last_online">Последнее посещение</string>
     <string name="profile_info_alerts">Предупреждения</string>
     <string name="profile_note_saved">Запись сохранена</string>
-    <string name="profile_contact_qms">QMS</string>
+    <string name="profile_contact_qms" translatable="false">QMS</string>
     <string name="profile_contact_site">Вебсайт</string>
-    <string name="profile_contact_icq">ICQ</string>
-    <string name="profile_contact_twitter">Twitter</string>
-    <string name="profile_contact_jabber">Jabber</string>
+    <string name="profile_contact_icq" translatable="false">ICQ</string>
+    <string name="profile_contact_twitter" translatable="false">Twitter</string>
+    <string name="profile_contact_jabber" translatable="false">Jabber</string>
     <string name="profile_contact_vk">Вконтакте</string>
-    <string name="profile_contact_google_plus">Google+</string>
-    <string name="profile_contact_facebook">Facebook</string>
-    <string name="profile_contact_instagram">Instagram</string>
-    <string name="profile_contact_mail_ru">Mail.ru</string>
-    <string name="profile_contact_telegram">Telegram</string>
-    <string name="profile_contact_windows_live">Windows Live</string>
+    <string name="profile_contact_google_plus" translatable="false">Google+</string>
+    <string name="profile_contact_facebook" translatable="false">Facebook</string>
+    <string name="profile_contact_instagram" translatable="false">Instagram</string>
+    <string name="profile_contact_mail_ru" translatable="false">Mail.ru</string>
+    <string name="profile_contact_telegram" translatable="false">Telegram</string>
+    <string name="profile_contact_windows_live" translatable="false">Windows Live</string>
 
     <!-- Reputation -->
     <string name="reputation_mode_from">Репутация пользователя</string>

@@ -98,6 +98,8 @@ public class ProfileRx {
     @DrawableRes
     public static int getContactIcon(ProfileModel.ContactType type) {
         switch (type) {
+            case QMS:
+                return R.drawable.contact_qms;
             case WEBSITE:
                 return R.drawable.contact_site;
             case ICQ:

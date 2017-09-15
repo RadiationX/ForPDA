@@ -1,12 +1,8 @@
 package forpdateam.ru.forpda.api.profile.models;
 
 import android.text.Spanned;
-import android.util.Pair;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-
-import forpdateam.ru.forpda.api.profile.interfaces.IProfileModel;
 
 /**
  * Created by radiationx on 03.08.16.
@@ -174,16 +170,16 @@ public class ProfileModel {
     }
 
     public static class Device {
-        private String id;
+        private String url;
         private String name;
         private String accessory;
 
-        public String getId() {
-            return id;
+        public String getUrl() {
+            return url;
         }
 
-        public void setId(String id) {
-            this.id = id;
+        public void setUrl(String url) {
+            this.url = url;
         }
 
         public String getName() {
