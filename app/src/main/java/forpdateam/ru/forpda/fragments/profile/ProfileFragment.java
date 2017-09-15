@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
@@ -55,11 +57,11 @@ import io.reactivex.Observable;
  * Created by radiationx on 03.08.16.
  */
 public class ProfileFragment extends TabFragment {
-    private LayoutInflater inflater;
+    //private LayoutInflater inflater;
     private TextView nick, group, sign, about;
     private ImageView avatar;
-    private LinearLayout countList, infoBlock, contactList, devicesList;
-    private EditText noteText;
+    //private LinearLayout countList, infoBlock, contactList, devicesList;
+    //private EditText noteText;
     private CircularProgressView progressView;
 
     private Subscriber<ProfileModel> mainSubscriber = new Subscriber<>(this);
@@ -81,10 +83,13 @@ public class ProfileFragment extends TabFragment {
             tab_url = "https://4pda.ru/forum/index.php?showuser=".concat(Integer.toString(ClientHelper.getUserId() == 0 ? 2556269 : ClientHelper.getUserId()));
     }
 
+    RecyclerView recyclerView;
+    ProfileAdapter adapter;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        this.inflater = inflater;
+        //this.inflater = inflater;
         super.onCreateView(inflater, container, savedInstanceState);
         baseInflateFragment(inflater, R.layout.fragment_profile);
         ViewStub viewStub = (ViewStub) findViewById(R.id.toolbar_content);
@@ -95,12 +100,20 @@ public class ProfileFragment extends TabFragment {
         sign = (TextView) findViewById(R.id.profile_sign);
         about = (TextView) findViewById(R.id.profile_about_text);
         avatar = (ImageView) findViewById(R.id.profile_avatar);
-        countList = (LinearLayout) findViewById(R.id.profile_list_counts);
+        recyclerView = (RecyclerView) findViewById(R.id.profile_list);
+
+
+        /*countList = (LinearLayout) findViewById(R.id.profile_list_counts);
         infoBlock = (LinearLayout) findViewById(R.id.profile_list_information);
         contactList = (LinearLayout) findViewById(R.id.profile_list_contacts);
-        devicesList = (LinearLayout) findViewById(R.id.profile_list_devices);
+        devicesList = (LinearLayout) findViewById(R.id.profile_list_devices);*/
         progressView = (CircularProgressView) findViewById(R.id.profile_progress);
         viewsReady();
+
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
+        adapter = new ProfileAdapter();
+        recyclerView.setAdapter(adapter);
 
         toolbarLayout.setExpandedTitleColor(Color.TRANSPARENT);
         toolbarLayout.setCollapsedTitleTextColor(Color.TRANSPARENT);
@@ -115,9 +128,9 @@ public class ProfileFragment extends TabFragment {
         toolbarLayout.setExpandedTitleTextAppearance(R.style.QText);
         toolbarLayout.setScrimAnimationDuration(225);
 */
-        noteText = (EditText) findViewById(R.id.profile_note_text);
-        noteText.clearFocus();
-        findViewById(R.id.profile_save_note).setOnClickListener(view1 -> saveNote());
+        //noteText = (EditText) findViewById(R.id.profile_note_text);
+        //noteText.clearFocus();
+        //findViewById(R.id.profile_save_note).setOnClickListener(view1 -> saveNote());
         //toolbar.setTitleTextColor(Color.TRANSPARENT);
 
 
@@ -190,7 +203,7 @@ public class ProfileFragment extends TabFragment {
     }
 
     public void saveNote() {
-        saveNoteSubscriber.subscribe(RxApi.Profile().saveNote(noteText.getText().toString()), this::onNoteSave, false, v -> saveNote());
+        //saveNoteSubscriber.subscribe(RxApi.Profile().saveNote(noteText.getText().toString()), this::onNoteSave, false, v -> saveNote());
     }
 
 
@@ -198,7 +211,7 @@ public class ProfileFragment extends TabFragment {
         Toast.makeText(getContext(), getString(b ? R.string.profile_note_saved : R.string.error_occurred), Toast.LENGTH_SHORT).show();
     }
 
-    private void addCountItem(String title, ProfileModel.Stat stat) {
+    /*private void addCountItem(String title, ProfileModel.Stat stat) {
         CountItem countItem = new CountItem(getContext());
         countItem.setTitle(title);
         countItem.setDesc(Integer.toString(stat.getValue()));
@@ -230,7 +243,7 @@ public class ProfileFragment extends TabFragment {
             TabManager.getInstance().add(DeviceFragment.class, args);
         });
         devicesList.addView(deviceItem);
-    }
+    }*/
 
     private int getIconRes(ProfileModel.ContactType type) {
         switch (type) {
@@ -264,6 +277,8 @@ public class ProfileFragment extends TabFragment {
     private void onProfileLoad(ProfileModel profile) {
         currentProfile = profile;
         if (currentProfile.getNick() == null) return;
+        adapter.setData(currentProfile);
+        adapter.notifyDataSetChanged();
         refreshToolbarMenuItems(true);
         ImageLoader.getInstance().loadImage(currentProfile.getAvatar(), new SimpleImageLoadingListener() {
             @Override
@@ -306,7 +321,7 @@ public class ProfileFragment extends TabFragment {
             sign.setVisibility(View.VISIBLE);
             sign.setMovementMethod(LinkMovementMethod.getInstance());
         }
-        if (currentProfile.getPosts() != null)
+        /*if (currentProfile.getPosts() != null)
             addCountItem(getContext().getString(R.string.profile_item_text_posts), currentProfile.getPosts());
         if (currentProfile.getTopics() != null)
             addCountItem(getContext().getString(R.string.profile_item_text_themes), currentProfile.getTopics());
@@ -333,7 +348,9 @@ public class ProfileFragment extends TabFragment {
         if (currentProfile.getOnlineDate() != null)
             addInfoItem(getContext().getString(R.string.profile_item_text_last_online), currentProfile.getOnlineDate());
         if (currentProfile.getAlerts() != null)
-            addInfoItem(getContext().getString(R.string.profile_item_text_alerts), currentProfile.getAlerts());
+            addInfoItem(getContext().getString(R.string.profile_item_text_alerts), currentProfile.getAlerts());*/
+
+
         if (currentProfile.getContacts().size() > 0) {
             if (!Pattern.compile("showuser=".concat(Integer.toString(ClientHelper.getUserId()))).matcher(tab_url).find()) {
                 writeMenuItem.setVisible(true);
@@ -341,7 +358,7 @@ public class ProfileFragment extends TabFragment {
                 writeMenuItem.setVisible(false);
             }
         }
-        if (currentProfile.getContacts().size() > 0) {
+        /*if (currentProfile.getContacts().size() > 0) {
             for (ProfileModel.Contact contact : currentProfile.getContacts()) {
                 if (contact.getType() == ProfileModel.ContactType.QMS) {
                     continue;
@@ -360,15 +377,15 @@ public class ProfileFragment extends TabFragment {
         if (currentProfile.getNote() != null) {
             noteText.setText(currentProfile.getNote());
             findViewById(R.id.profile_block_note).setVisibility(View.VISIBLE);
-        }
-        if (currentProfile.getAbout() != null) {
+        }*/
+        /*if (currentProfile.getAbout() != null) {
             about.setText(currentProfile.getAbout());
             about.setMovementMethod(LinkMovementMethod.getInstance());
             findViewById(R.id.profile_block_about).setVisibility(View.VISIBLE);
         }
 
         findViewById(R.id.profile_block_counts).setVisibility(View.VISIBLE);
-        findViewById(R.id.profile_block_information).setVisibility(View.VISIBLE);
+        findViewById(R.id.profile_block_information).setVisibility(View.VISIBLE);*/
     }
 
     class CountItem extends LinearLayout {

@@ -10,13 +10,13 @@ import forpdateam.ru.forpda.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.views.adapters.BaseViewHolder;
 
 /**
- * Created by radiationx on 14.09.17.
+ * Created by radiationx on 15.09.17.
  */
 
-public class InfoAdapter extends BaseAdapter<ProfileModel.Info, InfoAdapter.InfoHolder> {
+public class DevicesAdapter extends BaseAdapter<ProfileModel.Device, DevicesAdapter.InfoHolder> {
     @Override
     public InfoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new InfoHolder(inflateLayout(parent, R.layout.profile_sub_item_info));
+        return new InfoHolder(inflateLayout(parent, R.layout.profile_sub_item_device));
     }
 
     @Override
@@ -24,20 +24,17 @@ public class InfoAdapter extends BaseAdapter<ProfileModel.Info, InfoAdapter.Info
         holder.bind(getItem(position));
     }
 
-    class InfoHolder extends BaseViewHolder<ProfileModel.Info> {
+    class InfoHolder extends BaseViewHolder<ProfileModel.Device> {
         private TextView title;
-        private TextView value;
 
         InfoHolder(View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.item_title);
-            value = (TextView) itemView.findViewById(R.id.item_value);
         }
 
         @Override
-        public void bind(ProfileModel.Info item) {
-            title.setText("?");
-            value.setText(item.getValue());
+        public void bind(ProfileModel.Device item) {
+            title.setText(String.format("%s %s", item.getName(), item.getAccessory()));
         }
     }
 }

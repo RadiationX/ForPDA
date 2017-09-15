@@ -4,6 +4,7 @@ import android.text.Spanned;
 import android.util.Pair;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import forpdateam.ru.forpda.api.profile.interfaces.IProfileModel;
 
@@ -16,27 +17,89 @@ public class ProfileModel {
     }
 
     public enum InfoType {
-        AVATAR, NICK, STATUS, GROUP, REG_DATE, ALERTS, ONLINDE_DATA, GENDER, BIRTHDAY, USER_TIME, CITY, NOTE
+        REG_DATE, ALERTS, ONLINE_DATE, GENDER, BIRTHDAY, USER_TIME, CITY
     }
 
     public enum StatType {
         SITE_KARMA, SITE_POSTS, SITE_COMMENTS, FORUM_REPUTATION, FORUM_TOPICS, FORUM_POSTS;
     }
 
-    private String avatar, nick, status, group, regDate, alerts, onlineDate, gender, birthday, userTime, note, city;
-    private Stat karma, sitePosts, comments, reputation, topics, posts;
     private Spanned sign, about;
+    private String avatar, nick, status, group, note;
     private ArrayList<Contact> contacts = new ArrayList<>();
-    private ArrayList<Device> devices = new ArrayList<>();
     private ArrayList<Info> info = new ArrayList<>();
     private ArrayList<Stat> stats = new ArrayList<>();
+    private ArrayList<Device> devices = new ArrayList<>();
 
-    public void addInfo(Info info) {
+    public void addInfo(InfoType type, String value) {
+        Info info = new Info();
+        info.setType(type);
+        info.setValue(value);
         this.info.add(info);
     }
 
     public void addStat(Stat stat) {
         this.stats.add(stat);
+    }
+
+    public void addContact(Contact arg) {
+        contacts.add(arg);
+    }
+
+    public void addDevice(Device arg) {
+        devices.add(arg);
+    }
+
+    public void setSign(Spanned sign) {
+        this.sign = sign;
+    }
+
+    public void setAbout(Spanned about) {
+        this.about = about;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public void setNick(String nick) {
+        this.nick = nick;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public Spanned getSign() {
+        return sign;
+    }
+
+    public Spanned getAbout() {
+        return about;
+    }
+
+    public ArrayList<Contact> getContacts() {
+        return contacts;
+    }
+
+    public ArrayList<Info> getInfo() {
+        return info;
+    }
+
+    public ArrayList<Stat> getStats() {
+        return stats;
+    }
+
+    public ArrayList<Device> getDevices() {
+        return devices;
     }
 
     public String getAvatar() {
@@ -55,164 +118,8 @@ public class ProfileModel {
         return group;
     }
 
-    public String getRegDate() {
-        return regDate;
-    }
-
-    public String getAlerts() {
-        return alerts;
-    }
-
-    public String getOnlineDate() {
-        return onlineDate;
-    }
-
-    public Spanned getSign() {
-        return sign;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public String getBirthDay() {
-        return birthday;
-    }
-
-    public String getUserTime() {
-        return userTime;
-    }
-
-    public ArrayList<Contact> getContacts() {
-        return contacts;
-    }
-
-    public ArrayList<Device> getDevices() {
-        return devices;
-    }
-
-    public Stat getKarma() {
-        return karma;
-    }
-
-    public Stat getSitePosts() {
-        return sitePosts;
-    }
-
-    public Stat getComments() {
-        return comments;
-    }
-
-    public Stat getReputation() {
-        return reputation;
-    }
-
-    public Stat getTopics() {
-        return topics;
-    }
-
-    public Stat getPosts() {
-        return posts;
-    }
-
     public String getNote() {
         return note;
-    }
-
-    public Spanned getAbout() {
-        return about;
-    }
-
-    public void setAvatar(String arg) {
-        avatar = arg;
-    }
-
-    public void setNick(String arg) {
-        nick = arg;
-    }
-
-    public void setStatus(String arg) {
-        status = arg;
-    }
-
-    public void setGroup(String arg) {
-        group = arg;
-    }
-
-    public void setRegDate(String arg) {
-        regDate = arg;
-    }
-
-    public void setAlerts(String arg) {
-        alerts = arg;
-    }
-
-    public void setOnlineDate(String arg) {
-        onlineDate = arg;
-    }
-
-    public void setSign(Spanned arg) {
-        sign = arg;
-    }
-
-    public void setGender(String arg) {
-        gender = arg;
-    }
-
-    public void setBirthDay(String arg) {
-        birthday = arg;
-    }
-
-    public void setUserTime(String arg) {
-        userTime = arg;
-    }
-
-    public void addContact(Contact arg) {
-        contacts.add(arg);
-    }
-
-    public void addDevice(Device arg) {
-        devices.add(arg);
-    }
-
-    public void setKarma(Stat arg) {
-        karma = arg;
-    }
-
-    public void setSitePosts(Stat arg) {
-        sitePosts = arg;
-    }
-
-    public void setComments(Stat arg) {
-        comments = arg;
-    }
-
-    public void setReputation(Stat arg) {
-        reputation = arg;
-    }
-
-    public void setTopics(Stat arg) {
-        topics = arg;
-    }
-
-    public void setPosts(Stat arg) {
-        posts = arg;
-    }
-
-    public void setNote(String arg) {
-        note = arg;
-    }
-
-    public void setAbout(Spanned arg) {
-        about = arg;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
     }
 
     public static class Info {

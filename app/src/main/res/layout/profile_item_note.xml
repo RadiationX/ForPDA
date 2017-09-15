@@ -6,22 +6,22 @@
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true">
 
-    <android.support.v7.widget.AppCompatTextView
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:gravity="center_vertical"
-        android:paddingEnd="@dimen/dp16"
-        android:paddingStart="@dimen/dp16"
-        android:text="@string/profile_title_note"
-        android:textColor="?attr/default_text_color"
-        android:textSize="14sp"
-        android:textStyle="bold" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp48"
         android:orientation="vertical">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingEnd="@dimen/dp16"
+            android:paddingStart="@dimen/dp16"
+            android:paddingTop="@dimen/dp16"
+            android:text="@string/profile_title_note"
+            android:textColor="?attr/default_text_color"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/profile_note_text"
@@ -35,13 +35,13 @@
             android:gravity="top"
             android:hint="@string/profile_hint_note"
             android:labelFor="@+id/profile_note_text"
-            android:minLines="4" />
+            android:minLines="4"
+            android:textSize="14sp" />
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/profile_save_note"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
             android:layout_marginStart="16dp"
             android:background="?attr/selectableItemBackground"
             android:text="@string/profile_button_save" />

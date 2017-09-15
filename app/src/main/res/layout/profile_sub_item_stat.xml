@@ -8,6 +8,7 @@
     android:paddingBottom="32dp"
     android:paddingStart="24dp"
     android:paddingEnd="24dp"
+    android:clickable="true"
     android:background="?attr/selectableItemBackgroundBorderless">
 
     <android.support.v7.widget.AppCompatTextView
