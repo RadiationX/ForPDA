@@ -33,6 +33,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -44,9 +47,11 @@ import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.IBaseForumPost;
 import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.favorites.Favorites;
+import forpdateam.ru.forpda.api.search.models.SearchSettings;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
+import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
@@ -78,8 +83,9 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     protected MenuItem toggleMessagePanelItem;
     protected MenuItem refreshMenuItem;
     protected MenuItem copyLinkMenuItem;
-    protected MenuItem searchInThemeMenuItem;
     protected MenuItem searchOnPageMenuItem;
+    protected MenuItem searchInThemeMenuItem;
+    protected MenuItem searchPostsMenuItem;
     protected MenuItem deleteFavoritesMenuItem;
     protected MenuItem addFavoritesMenuItem;
     protected MenuItem openForumMenuItem;
@@ -474,6 +480,22 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                     IntentHandler.handle("https://4pda.ru/forum/index.php?forums=" + currentPage.getForumId() + "&topics=" + currentPage.getId() + "&act=search&source=pst&result=posts");
                     return false;
                 });
+        searchPostsMenuItem = getMenu().add(R.string.search_my_posts)
+                .setOnMenuItemClickListener(menuItem -> {
+                    String url = "https://4pda.ru/forum/index.php?forums="
+                            + currentPage.getForumId()
+                            + "&topics="
+                            + currentPage.getId()
+                            + "&act=search&source=pst&result=posts&username=";
+
+                    try {
+                        url += URLEncoder.encode(App.getInstance().getPreferences().getString("auth.user.nick", "null"), "windows-1251");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    IntentHandler.handle(url);
+                    return false;
+                });
 
         SubMenu subMenu = getMenu().addSubMenu(R.string.theme_options);
         deleteFavoritesMenuItem = subMenu.add(R.string.delete_from_favorites)
@@ -520,6 +542,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             refreshMenuItem.setEnabled(true);
             copyLinkMenuItem.setEnabled(pageNotNull);
             searchInThemeMenuItem.setEnabled(pageNotNull);
+            searchPostsMenuItem.setEnabled(pageNotNull);
             searchOnPageMenuItem.setEnabled(pageNotNull);
             deleteFavoritesMenuItem.setEnabled(pageNotNull);
             addFavoritesMenuItem.setEnabled(pageNotNull);
@@ -538,6 +561,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             refreshMenuItem.setEnabled(true);
             copyLinkMenuItem.setEnabled(false);
             searchInThemeMenuItem.setEnabled(false);
+            searchPostsMenuItem.setEnabled(false);
             searchOnPageMenuItem.setEnabled(false);
             deleteFavoritesMenuItem.setEnabled(false);
             addFavoritesMenuItem.setEnabled(false);
@@ -549,6 +573,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             toggleMessagePanelItem.setVisible(false);
             deleteFavoritesMenuItem.setVisible(false);
             addFavoritesMenuItem.setVisible(false);
+            searchPostsMenuItem.setEnabled(false);
             hideMessagePanel();
         }
     }
@@ -600,7 +625,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         });
 
         SearchManager searchManager = (SearchManager) getMainActivity().getSystemService(Context.SEARCH_SERVICE);
-        if (null != searchManager){
+        if (null != searchManager) {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getMainActivity().getComponentName()));
         }
 

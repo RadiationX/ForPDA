@@ -74,6 +74,7 @@
     <string name="messages_in_this_theme">User\'s posts in this topic</string>
     <string name="user_messages">Posts written by user</string>
     <string name="search_in_theme">Search in topic</string>
+    <string name="search_my_posts">Find my posts</string>
     <string name="theme_options">Topic options</string>
     <string name="spoiler_link_copied">Spoiler URL has been copied</string>
     <string name="link_to_anchor">Anchor link</string>
@@ -391,7 +392,7 @@
     <string name="pref_title_lists">Listings</string>
     <string name="pref_title_unread_top">Show unread topics on top</string>
     <string name="pref_title_show_dot">Indicate for new posts</string>
-    <string name="pref_title_load_all">All favorites</string>
+    <string name="pref_title_load_all">Complete favorites</string>
     <string name="pref_summary_load_all">Load all pages of favorites. Consumes more traffic.</string>
     <string name="pref_title_account">Account</string>
     <string name="pref_title_logout">Logout</string>
