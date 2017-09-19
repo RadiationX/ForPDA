@@ -133,6 +133,7 @@ public class QmsThemesFragment extends ListFragment implements QmsThemesAdapter.
             //new Handler().postDelayed(() -> TabManager.getInstance().remove(getTag()), 500);
         }
 
+        if (realm.isClosed()) return;
         realm.executeTransactionAsync(r -> {
             r.where(QmsThemesBd.class).equalTo("userId", currentThemes.getUserId()).findAll().deleteAllFromRealm();
             QmsThemesBd qmsThemesBd = new QmsThemesBd(currentThemes);

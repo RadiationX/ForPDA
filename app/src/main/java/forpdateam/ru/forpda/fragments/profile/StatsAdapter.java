@@ -4,8 +4,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.Locale;
-
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.rxapi.apiclasses.ProfileRx;
@@ -42,7 +40,7 @@ class StatsAdapter extends BaseAdapter<ProfileModel.Stat, StatsAdapter.StatHolde
         @Override
         public void bind(ProfileModel.Stat item) {
             title.setText(ProfileRx.getTypeString(item.getType()));
-            value.setText(String.format(Locale.getDefault(), "%d", item.getValue()));
+            value.setText(item.getValue());
         }
     }
 }

@@ -177,6 +177,7 @@ public class ForumFragment extends TabFragment {
         }
 
 
+        if (realm.isClosed()) return;
         realm.executeTransactionAsync(r -> {
             r.delete(ForumItemFlatBd.class);
             List<ForumItemFlatBd> items = new ArrayList<>();

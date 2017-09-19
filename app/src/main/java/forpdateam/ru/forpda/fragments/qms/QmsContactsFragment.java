@@ -153,6 +153,7 @@ public class QmsContactsFragment extends ListFragment implements QmsContactsAdap
         refreshLayout.setRefreshing(false);
         recyclerView.scrollToPosition(0);
 
+        if (realm.isClosed()) return;
         realm.executeTransactionAsync(r -> {
             r.delete(QmsContactBd.class);
             List<QmsContactBd> bdList = new ArrayList<>();

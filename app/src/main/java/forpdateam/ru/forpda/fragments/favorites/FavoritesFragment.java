@@ -246,6 +246,7 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
                 break;
         }
 
+        if (realm.isClosed()) return;
         realm.executeTransactionAsync(r -> {
             r.delete(FavItemBd.class);
             List<FavItemBd> bdList = new ArrayList<>();
