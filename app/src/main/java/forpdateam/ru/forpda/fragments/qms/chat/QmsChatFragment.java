@@ -24,6 +24,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Observer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -206,8 +207,13 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
             }
             attachmentsPopup.onDeleteFiles(selectedFiles);
         });
-        attachmentsPopup.setInsertAttachmentListener(item -> "\n[url=http://savepic.net/" + item.getId() + "." + item.getExtension() + "]" +
-                "Файл: " + item.getName() + ", Размер: " + item.getWeight() + ", ID: " + item.getId() + "[/url]");
+        attachmentsPopup.setInsertAttachmentListener(item -> String.format(Locale.getDefault(),
+                "\n[url=http://savepic.net/%d.%s]Файл: %s, Размер: %s, ID: %d[/url]\n",
+                item.getId(),
+                item.getExtension(),
+                item.getName(),
+                item.getWeight(),
+                item.getId()));
         messagePanel.addSendOnClickListener(v -> {
             if (currentChat.getThemeId() == QmsChatModel.NOT_CREATED) {
                 themeCreator.sendNewTheme();

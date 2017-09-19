@@ -141,7 +141,7 @@ public class Profile {
             while (data.find()) {
                 ProfileModel.Stat stat = new ProfileModel.Stat();
                 stat.setUrl(data.group(2));
-                stat.setValue(Integer.parseInt(data.group(3)));
+                stat.setValue(data.group(3));
 
                 String field = data.group(1);
                 ProfileModel.StatType type = null;
@@ -160,7 +160,7 @@ public class Profile {
             while (data.find()) {
                 ProfileModel.Stat stat = new ProfileModel.Stat();
                 stat.setUrl(data.group(2));
-                stat.setValue(Integer.parseInt(data.group(3)));
+                stat.setValue(data.group(3));
                 String field = data.group(1);
 
                 ProfileModel.StatType type = null;

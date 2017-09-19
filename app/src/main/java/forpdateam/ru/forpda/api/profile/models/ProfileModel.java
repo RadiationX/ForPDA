@@ -202,7 +202,7 @@ public class ProfileModel {
     public static class Stat {
         private StatType type;
         private String url;
-        private int value;
+        private String value;
 
         public String getUrl() {
             return url;
@@ -212,11 +212,11 @@ public class ProfileModel {
             this.url = url;
         }
 
-        public int getValue() {
+        public String getValue() {
             return value;
         }
 
-        public void setValue(int value) {
+        public void setValue(String value) {
             this.value = value;
         }
 

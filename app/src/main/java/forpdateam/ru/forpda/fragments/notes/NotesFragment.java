@@ -233,6 +233,7 @@ public class NotesFragment extends ListFragment implements NotesAdapter.OnItemCl
             Toast.makeText(getContext(), "Ошибка разбора файла: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         Toast.makeText(getContext(), "Заметки успешно импортированы", Toast.LENGTH_SHORT).show();
+        if (realm.isClosed()) return;
         realm.executeTransactionAsync(realm1 -> {
             for (NoteItem item : noteItems) {
                 realm1.insertOrUpdate(new NoteItemBd(item));
