@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.fragments.news.main.timeline;
 
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.Collection;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import forpdateam.ru.forpda.R;
@@ -37,7 +39,6 @@ public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder> {
 
     @Override
     public void addAll(Collection<? extends NewsItem> items, boolean clearList) {
-        showBtn = true;
         super.addAll(items, clearList);
     }
 
@@ -49,7 +50,7 @@ public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder> {
             case COMPAT_LAYOUT:
                 return new FullHolder(inflateLayout(parent, R.layout.news_main_compat_item_layout));
             case LOAD_MORE_LAYOUT:
-                return new FullHolder(inflateLayout(parent, R.layout.news_list_load_more_layout));
+                return new LoadMoreHolder(inflateLayout(parent, R.layout.news_list_load_more_layout));
         }
         return null;
     }
@@ -61,7 +62,7 @@ public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder> {
         } else if (FULL_LAYOUT == getItemViewType(position)) {
             ((FullHolder) holder).bind(getItem(position), position);
         } else if (LOAD_MORE_LAYOUT == getItemViewType(position)) {
-            holder.bind();
+            holder.bind(position);
         }
     }
 
@@ -71,6 +72,12 @@ public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder> {
             return LOAD_MORE_LAYOUT;
         }
         return FULL_LAYOUT;
+    }
+
+    public void insertMore(List<NewsItem> list) {
+        this.items.addAll(list);
+        notifyItemRangeInserted(items.size(), list.size());
+        showBtn = true;
     }
 
     private class CompatHolder extends BaseViewHolder<NewsItem> {
@@ -148,7 +155,7 @@ public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder> {
             //category.setText(news.category);
             title.setText(news.getTitle());
             description.setText(news.getDescription());
-            commentsCount.setText(Integer.toString(news.getCommentsCount()));
+            commentsCount.setText(String.valueOf(news.getCommentsCount()));
             date.setText(news.getDate());
             ImageLoader.getInstance().displayImage(news.getImgUrl(), cover);
         }
@@ -162,6 +169,12 @@ public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder> {
             super(itemView);
             container = (LinearLayout) itemView.findViewById(R.id.nl_lm_container);
             btn = (Button) itemView.findViewById(R.id.nl_lm_btn);
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.e("VSEMY PIZDOS", "RABOTAET");
+                }
+            });
         }
 
         @Override
@@ -170,6 +183,7 @@ public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder> {
                 container.setVisibility(View.GONE);
                 btn.setVisibility(View.VISIBLE);
                 btn.setOnClickListener(v -> {
+                    Log.d("EBA", "CLICK");
                     btn.setVisibility(View.GONE);
                     showBtn = false;
                     container.setVisibility(View.VISIBLE);
@@ -180,6 +194,7 @@ public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder> {
                     btn.setVisibility(View.GONE);
                     container.setVisibility(View.VISIBLE);
                     mItemClickListener.onLoadMoreClick();
+                    Log.d("EBA", "CLICK 1");
                 });
             }
         }
