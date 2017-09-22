@@ -182,15 +182,11 @@ public class NewsMainFragment extends TabFragment implements
     private void onLoadNews(List<NewsItem> list, boolean withClear) {
         refreshLayout.setRefreshing(false);
         if (withClear) {
-            adapter.clear();
-        }
-        int startIndex = adapter.getItemCount();
-        Log.d("SUKA", "ADAPTER SIZE " + adapter.getItemCount() + " : " + withClear);
-        if (list.size() > 0) {
-            adapter.addAll(list);
-        }
-        adapter.notifyDataSetChanged();
-        //adapter.notifyItemRangeInserted(startIndex, adapter.getItemCount());
+            if (list.size() > 0) {
+                adapter.clear();
+                adapter.addAll(list);
+            }
+        } else adapter.insertMore(list);
     }
 
     private void toast(String message) {
