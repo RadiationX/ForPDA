@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.settings;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -24,7 +23,7 @@ import io.reactivex.schedulers.Schedulers;
  * Created by radiationx on 25.12.16.
  */
 
-public class SettingsFragment extends PreferenceFragment {
+public class SettingsFragment extends BasePrefsFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,12 +111,5 @@ public class SettingsFragment extends PreferenceFragment {
                     startActivity(intent);
                     return true;
                 });
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-
     }
 }

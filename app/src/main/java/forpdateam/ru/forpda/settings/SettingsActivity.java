@@ -3,10 +3,10 @@ package forpdateam.ru.forpda.settings;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.MenuItem;
 
 import java.util.Observer;
@@ -56,7 +56,7 @@ public class SettingsActivity extends AppCompatActivity {
             actionBar.setDisplayShowTitleEnabled(true);
             actionBar.setTitle(R.string.activity_title_settings);
         }
-        PreferenceFragment fragment = null;
+        PreferenceFragmentCompat fragment = null;
         Intent intent = getIntent();
         if (intent != null) {
             String settingsArgument = intent.getStringExtra(ARG_NEW_PREFERENCE_SCREEN);
@@ -70,7 +70,7 @@ public class SettingsActivity extends AppCompatActivity {
             fragment = new SettingsFragment();
         }
 
-        getFragmentManager().beginTransaction().replace(R.id.fragment_content, fragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content, fragment).commit();
 
         /*View view = findViewById(R.id.fragment_content);
         view.setBackgroundColor(Color.TRANSPARENT);

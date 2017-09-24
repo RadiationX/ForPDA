@@ -85,10 +85,18 @@
     </style>
 
     <style name="PreferenceAppThemeLight" parent="LightAppTheme">
+        <!--<item name="textAppearanceListItem">@style/CodeFont</item>
+        <item name="android:textAppearanceListItem">@style/CodeFont</item>
+        <item name="textAppearanceListItemSmall">@style/CodeFont</item>
+        <item name="android:textAppearanceListItemSmall">@style/CodeFont</item>-->
         <!--<item name="android:listDivider">@color/md_amber_800</item>
         <item name="android:dividerHeight">1dp</item>-->
     </style>
-
+    <style name="CodeFont">
+        <item name="android:textColor">#00FF00</item>
+        <item name="android:typeface">monospace</item>
+        <item name="android:textSize">10sp</item>
+    </style>
 
     <!--
         DARK THEME

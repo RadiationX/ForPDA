@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.settings;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.support.v7.preference.SwitchPreferenceCompat;
 import android.util.AttributeSet;
 
 /**
@@ -13,7 +14,7 @@ import android.util.AttributeSet;
 * Исправляет самопроизвольные переключения настроек в киткате.
 * Пи*дец, да.
 * */
-public class SwitchPreference extends android.preference.SwitchPreference {
+public class SwitchPreference extends SwitchPreferenceCompat {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public SwitchPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);

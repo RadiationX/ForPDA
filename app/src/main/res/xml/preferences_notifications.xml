@@ -1,85 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:title="@string/pref_title_notifications">
     <PreferenceCategory
-        android:layout="@layout/preference_divider"
+        android:layout="@layout/preference_category_custom"
         android:title="@string/pref_title_main">
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:key="notifications.main.enabled"
+            android:layout="@layout/preference_custom"
             android:title="@string/pref_title_notify" />
 
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.main.sound_enabled"
+            android:layout="@layout/preference_custom"
             android:title="@string/pref_title_sound" />
 
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.main.vibration_enabled"
+            android:layout="@layout/preference_custom"
             android:title="@string/pref_title_vibration" />
 
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.main.indicator_enabled"
+            android:layout="@layout/preference_custom"
             android:title="@string/pref_title_indicator" />
 
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.main.avatars_enabled"
+            android:layout="@layout/preference_custom"
             android:title="@string/pref_title_enable_avatars" />
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:layout="@layout/preference_divider"
+        android:layout="@layout/preference_category_custom"
         android:title="@string/pref_title_favorites">
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.fav.enabled"
+            android:layout="@layout/preference_custom"
             android:title="@string/pref_title_notify" />
 
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="false"
             android:dependency="notifications.fav.enabled"
             android:key="notifications.fav.only_important"
+            android:layout="@layout/preference_custom"
             android:title="@string/pref_title_only_important" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:layout="@layout/preference_divider"
+        android:layout="@layout/preference_category_custom"
         android:title="@string/pref_title_mentions">
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.mentions.enabled"
+            android:layout="@layout/preference_custom"
             android:title="@string/pref_title_notify" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:layout="@layout/preference_divider"
+        android:layout="@layout/preference_category_custom"
         android:title="@string/pref_title_pm_qms">
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.qms.enabled"
+            android:layout="@layout/preference_custom"
             android:title="@string/pref_title_notify" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:layout="@layout/preference_divider"
+        android:layout="@layout/preference_category_custom"
         android:title="@string/pref_title_app_updates">
-        <SwitchPreference
+        <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:key="notifications.update.enabled"
+            android:layout="@layout/preference_custom"
             android:title="@string/pref_title_notify" />
 
     </PreferenceCategory>
