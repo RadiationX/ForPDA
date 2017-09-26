@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,13 +14,19 @@ import android.widget.Toast;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
+import forpdateam.ru.forpda.api.events.models.NotificationEvent;
 import forpdateam.ru.forpda.api.qms.interfaces.IQmsTheme;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
+import forpdateam.ru.forpda.api.qms.models.QmsTheme;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
+import forpdateam.ru.forpda.data.models.TabNotification;
+import forpdateam.ru.forpda.data.realm.qms.QmsThemeBd;
 import forpdateam.ru.forpda.data.realm.qms.QmsThemesBd;
 import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -45,10 +52,15 @@ public class QmsThemesFragment extends ListFragment implements QmsThemesAdapter.
     private QmsThemes currentThemes = new QmsThemes();
     private QmsThemesAdapter adapter;
     private Realm realm;
-    private RealmResults<QmsThemesBd> results;
     private Subscriber<QmsThemes> mainSubscriber = new Subscriber<>(this);
     private Subscriber<ArrayList<QmsContact>> contactsSubscriber = new Subscriber<>(this);
     private AlertDialogMenu<QmsThemesFragment, IQmsTheme> dialogMenu;
+
+    private Observer notification = (observable, o) -> {
+        if (o == null) return;
+        TabNotification event = (TabNotification) o;
+        runInUiThread(() -> handleEvent(event));
+    };
 
     public QmsThemesFragment() {
         //configuration.setUseCache(true);
@@ -91,6 +103,7 @@ public class QmsThemesFragment extends ListFragment implements QmsThemesAdapter.
         adapter.setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
         bindView();
+        App.getInstance().subscribeQms(notification);
         return view;
     }
 
@@ -145,14 +158,74 @@ public class QmsThemesFragment extends ListFragment implements QmsThemesAdapter.
     private void bindView() {
         if (realm.isClosed()) return;
         refreshToolbarMenuItems(true);
-        results = realm.where(QmsThemesBd.class).equalTo("userId", currentThemes.getUserId()).findAll();
+        RealmResults<QmsThemesBd> results = realm
+                .where(QmsThemesBd.class)
+                .equalTo("userId", currentThemes.getUserId())
+                .findAll();
 
         QmsThemesBd qmsThemesBd = results.last(null);
         if (qmsThemesBd == null) {
             return;
         }
-        adapter.addAll(qmsThemesBd.getThemes());
+        currentItems.clear();
+        for (QmsThemeBd qmsThemeBd : qmsThemesBd.getThemes()) {
+            QmsTheme qmsTheme = new QmsTheme(qmsThemeBd);
+            currentItems.add(qmsTheme);
+        }
+        adapter.addAll(currentItems);
         adapter.notifyDataSetChanged();
+    }
+
+    private ArrayList<QmsTheme> currentItems = new ArrayList<>();
+
+    private void handleEvent(TabNotification event) {
+        if (event.getType() == NotificationEvent.Type.READ) {
+            for (QmsTheme item : currentItems) {
+                if (item.getId() == event.getEvent().getSourceId()) {
+                    item.setCountNew(0);
+                    break;
+                }
+            }
+        } else {
+            SparseIntArray sparseArray = new SparseIntArray();
+            for (NotificationEvent loadedEvent : event.getLoadedEvents()) {
+                int count = sparseArray.get(loadedEvent.getSourceId());
+                count += loadedEvent.getMsgCount();
+                sparseArray.put(loadedEvent.getSourceId(), count);
+            }
+            for (int i = sparseArray.size() - 1; i >= 0; i--) {
+                int id = sparseArray.keyAt(i);
+                int count = sparseArray.valueAt(i);
+                for (QmsTheme item : currentItems) {
+                    if (item.getId() == id) {
+                        item.setCountMessages(item.getCountMessages() + count);
+                        item.setCountNew(count);
+                        Collections.swap(currentItems, currentItems.indexOf(item), 0);
+                        break;
+                    }
+                }
+            }
+        }
+
+
+
+        QmsContactsFragment contactsFragment = (QmsContactsFragment) TabManager.getInstance().getByClass(QmsContactsFragment.class);
+        if (contactsFragment != null) {
+            int count = 0;
+            for (QmsTheme qmsTheme : currentItems) {
+                count += qmsTheme.getCountNew();
+            }
+            contactsFragment.updateCount(currentThemes.getUserId(), count);
+        }
+        if (realm.isClosed()) return;
+        realm.executeTransactionAsync(r -> {
+            r.where(QmsThemesBd.class).equalTo("userId", currentThemes.getUserId()).findAll().deleteAllFromRealm();
+            currentThemes.getThemes().clear();
+            currentThemes.getThemes().addAll(currentItems);
+            QmsThemesBd qmsThemesBd = new QmsThemesBd(currentThemes);
+            r.copyToRealmOrUpdate(qmsThemesBd);
+            qmsThemesBd.getThemes().clear();
+        }, this::bindView);
     }
 
     @Override
@@ -193,6 +266,7 @@ public class QmsThemesFragment extends ListFragment implements QmsThemesAdapter.
     public void onDestroy() {
         super.onDestroy();
         realm.close();
+        App.getInstance().unSubscribeQms(notification);
     }
 
     @Override

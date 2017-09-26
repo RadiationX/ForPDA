@@ -13,6 +13,13 @@ public class QmsContact implements IQmsContact {
     public QmsContact() {
     }
 
+    public QmsContact(IQmsContact contact) {
+        nick = contact.getNick();
+        avatar = contact.getAvatar();
+        id = contact.getId();
+        count = contact.getCount();
+    }
+
     public String getNick() {
         return nick;
     }

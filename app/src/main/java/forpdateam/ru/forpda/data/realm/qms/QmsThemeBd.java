@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.data.realm.qms;
 
 import forpdateam.ru.forpda.api.qms.interfaces.IQmsTheme;
-import forpdateam.ru.forpda.api.qms.models.QmsTheme;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -18,7 +17,7 @@ public class QmsThemeBd extends RealmObject implements IQmsTheme {
     public QmsThemeBd() {
     }
 
-    public QmsThemeBd(QmsTheme qmsTheme) {
+    public QmsThemeBd(IQmsTheme qmsTheme) {
         id = qmsTheme.getId();
         countMessages = qmsTheme.getCountMessages();
         countNew = qmsTheme.getCountNew();

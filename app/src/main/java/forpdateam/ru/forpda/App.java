@@ -60,6 +60,7 @@ import java.util.regex.Pattern;
 
 import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.client.Client;
+import forpdateam.ru.forpda.data.models.TabNotification;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.LocaleHelper;
@@ -120,6 +121,9 @@ public class App extends android.app.Application {
         preferenceChangeObservables.notifyObservers(key);
     };
     private SimpleObservable statusBarSizeObservables = new SimpleObservable();
+
+    private SimpleObservable favoriteEvents = new SimpleObservable();
+    private SimpleObservable qmsEvents = new SimpleObservable();
 
 
     public App() {
@@ -337,6 +341,31 @@ public class App extends android.app.Application {
         int toolBarHeight = ta.getDimensionPixelSize(0, -1);
         ta.recycle();
         return toolBarHeight;
+    }
+
+
+    public void subscribeFavorites(Observer observer) {
+        favoriteEvents.addObserver(observer);
+    }
+
+    public void unSubscribeFavorites(Observer observer) {
+        favoriteEvents.deleteObserver(observer);
+    }
+
+    public void notifyFavorites(TabNotification event) {
+        favoriteEvents.notifyObservers(event);
+    }
+
+    public void subscribeQms(Observer observer) {
+        qmsEvents.addObserver(observer);
+    }
+
+    public void unSubscribeQms(Observer observer) {
+        qmsEvents.deleteObserver(observer);
+    }
+
+    public void notifyQms(TabNotification event) {
+        qmsEvents.notifyObservers(event);
     }
 
     public void addPreferenceChangeObserver(Observer observer) {

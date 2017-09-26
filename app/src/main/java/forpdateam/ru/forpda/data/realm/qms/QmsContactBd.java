@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.data.realm.qms;
 
 import forpdateam.ru.forpda.api.qms.interfaces.IQmsContact;
-import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -19,7 +18,7 @@ public class QmsContactBd extends RealmObject implements IQmsContact {
     public QmsContactBd() {
     }
 
-    public QmsContactBd(QmsContact contact) {
+    public QmsContactBd(IQmsContact contact) {
         nick = contact.getNick();
         avatar = contact.getAvatar();
         id = contact.getId();

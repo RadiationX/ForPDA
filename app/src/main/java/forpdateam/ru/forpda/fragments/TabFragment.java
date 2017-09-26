@@ -2,6 +2,8 @@ package forpdateam.ru.forpda.fragments;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.CallSuper;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
@@ -60,6 +62,8 @@ public class TabFragment extends Fragment {
     public final static int REQUEST_SAVE_FILE = 1117;
     public final static int REQUEST_STORAGE = 1;
 
+    private Handler mHandler = new Handler(Looper.getMainLooper());
+    private Thread mUiThread;
 
     protected TabConfiguration configuration = new TabConfiguration();
 
@@ -224,6 +228,7 @@ public class TabFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mUiThread = Thread.currentThread();
         Log.d(LOG_TAG, "onDestroy " + this);
         if (savedInstanceState != null) {
             title = savedInstanceState.getString(BUNDLE_PREFIX.concat(BUNDLE_TITLE));
@@ -446,6 +451,14 @@ public class TabFragment extends Fragment {
         Log.d("SUKA", "CHECK TALKBACK " + isAccessibilityEnabled + " : " + isExploreByTouchEnabled);
         //return isExploreByTouchEnabled;
         return false;
+    }
+
+    public final void runInUiThread(final Runnable action) {
+        if (Thread.currentThread() == mUiThread) {
+            action.run();
+        } else {
+            mHandler.post(action);
+        }
     }
 
     /* Experiment */

@@ -14,7 +14,7 @@ public class NotificationEvent {
     public final static String SRC_TYPE_QMS = "q";
 
 
-    public enum Event {
+    public enum Type {
         NEW(2),
         READ(4),
         MENTION(8),
@@ -22,7 +22,7 @@ public class NotificationEvent {
 
         private final int value;
 
-        Event(int value) {
+        Type(int value) {
             this.value = value;
         }
 
@@ -47,7 +47,7 @@ public class NotificationEvent {
         }
     }
 
-    private Event event;
+    private Type type;
     private Source source;
 
     private int messageId = 0;
@@ -74,12 +74,12 @@ public class NotificationEvent {
         this.messageId = messageId;
     }
 
-    public Event getEvent() {
-        return event;
+    public Type getType() {
+        return type;
     }
 
-    public void setEvent(Event event) {
-        this.event = event;
+    public void setType(Type type) {
+        this.type = type;
     }
 
     public Source getSource() {
@@ -167,15 +167,15 @@ public class NotificationEvent {
     * */
 
     public boolean isNew() {
-        return NotificationEvent.isNew(event);
+        return NotificationEvent.isNew(type);
     }
 
     public boolean isRead() {
-        return NotificationEvent.isRead(event);
+        return NotificationEvent.isRead(type);
     }
 
     public boolean isMention() {
-        return NotificationEvent.isMention(event);
+        return NotificationEvent.isMention(type);
     }
 
     public boolean fromTheme() {
@@ -191,16 +191,16 @@ public class NotificationEvent {
     }
 
 
-    public static boolean isNew(Event event) {
-        return event != null && event == Event.NEW;
+    public static boolean isNew(Type type) {
+        return type != null && type == Type.NEW;
     }
 
-    public static boolean isRead(Event event) {
-        return event != null && event == Event.READ;
+    public static boolean isRead(Type type) {
+        return type != null && type == Type.READ;
     }
 
-    public static boolean isMention(Event event) {
-        return event != null && event == Event.MENTION;
+    public static boolean isMention(Type type) {
+        return type != null && type == Type.MENTION;
     }
 
     public static boolean fromTheme(Source source) {
@@ -220,10 +220,10 @@ public class NotificationEvent {
     *
     * */
     public int notifyId() {
-        return notifyId(event);
+        return notifyId(type);
     }
 
-    public int notifyId(Event event) {
-        return (sourceId / 4) + event.getValue() + event.getValue();
+    public int notifyId(Type type) {
+        return (sourceId / 4) + type.getValue() + type.getValue();
     }
 }

@@ -13,6 +13,14 @@ public class QmsTheme implements IQmsTheme {
     public QmsTheme() {
     }
 
+    public QmsTheme(IQmsTheme qmsTheme) {
+        id = qmsTheme.getId();
+        countMessages = qmsTheme.getCountMessages();
+        countNew = qmsTheme.getCountNew();
+        name = qmsTheme.getName();
+        date = qmsTheme.getDate();
+    }
+
     public int getId() {
         return id;
     }

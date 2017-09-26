@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
@@ -32,6 +33,7 @@ import forpdateam.ru.forpda.api.events.models.NotificationEvent;
 import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
+import forpdateam.ru.forpda.data.models.TabNotification;
 import forpdateam.ru.forpda.rxapi.ForumUsersCache;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.BitmapUtils;
@@ -126,7 +128,7 @@ public class NotificationsService extends Service {
             NotificationEvent event = Api.UniversalEvents().parseWebSocketEvent(matcher);
             try {
                 if (event != null) {
-                    if (event.getEvent() != NotificationEvent.Event.HAT_EDITED) {
+                    if (event.getType() != NotificationEvent.Type.HAT_EDITED) {
                         handleWebSocketEvent(event);
                     }
                 }
@@ -156,10 +158,10 @@ public class NotificationsService extends Service {
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             Log.d(LOG_TAG, "WSListener onFailure: " + t.getMessage() + " " + response);
             t.printStackTrace();
-            if (NotificationsService.this.webSocket != null) {
-                NotificationsService.this.webSocket.cancel();
-                NotificationsService.this.webSocket = null;
-            }
+            stop();
+            new Handler().postDelayed(()->{
+                start(false);
+            }, 1000);
         }
     };
 
@@ -215,8 +217,13 @@ public class NotificationsService extends Service {
     }
 
     private void stop() {
-        if (webSocket != null)
-            webSocket.close(1000, null);
+        if (webSocket != null){
+            try{
+                webSocket.close(1000, null);
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+        }
         webSocket = null;
     }
 
@@ -248,7 +255,12 @@ public class NotificationsService extends Service {
 
     private void handleWebSocketEvent(NotificationEvent event) {
         if (event.isRead()) {
-            NotificationEvent oldEvent = eventsHistory.get(event.notifyId(NotificationEvent.Event.NEW));
+            TabNotification tabNotification = new TabNotification();
+            tabNotification.setType(event.getType());
+            tabNotification.setSource(event.getSource());
+            tabNotification.setEvent(event);
+            notifyTabs(tabNotification);
+            NotificationEvent oldEvent = eventsHistory.get(event.notifyId(NotificationEvent.Type.NEW));
             boolean delete = false;
 
             if (event.fromTheme()) {
@@ -259,7 +271,7 @@ public class NotificationsService extends Service {
                 }
 
                 //Убираем уведомление упоминаний
-                oldEvent = eventsHistory.get(event.notifyId(NotificationEvent.Event.MENTION));
+                oldEvent = eventsHistory.get(event.notifyId(NotificationEvent.Type.MENTION));
                 if (oldEvent != null) {
                     mNotificationManager.cancel(oldEvent.notifyId());
                     delete = true;
@@ -274,7 +286,7 @@ public class NotificationsService extends Service {
             }
 
             if (delete) {
-                eventsHistory.remove(event.notifyId(NotificationEvent.Event.NEW));
+                eventsHistory.remove(event.notifyId(NotificationEvent.Type.NEW));
             }
             return;
         }
@@ -328,8 +340,17 @@ public class NotificationsService extends Service {
                 for (NotificationEvent newEvent : newEvents) {
                     if (newEvent.getSourceId() == event.getSourceId()) {
                         stackedNewEvents.remove(newEvent);
-                        newEvent.setEvent(event.getEvent());
+                        newEvent.setType(event.getType());
                         newEvent.setMessageId(event.getMessageId());
+
+                        TabNotification tabNotification = new TabNotification();
+                        tabNotification.setType(newEvent.getType());
+                        tabNotification.setSource(newEvent.getSource());
+                        tabNotification.setEvent(newEvent);
+                        tabNotification.getLoadedEvents().addAll(loadedEvents);
+                        tabNotification.getNewEvents().addAll(newEvents);
+                        notifyTabs(tabNotification);
+
                         sendNotification(newEvent);
                     } else if (event.isMention() && !Preferences.Notifications.Favorites.isEnabled()) {
                         stackedNewEvents.remove(newEvent);
@@ -452,8 +473,19 @@ public class NotificationsService extends Service {
         return bitmap;
     }
 
+    public void notifyTabs(TabNotification event) {
+        switch (event.getSource()) {
+            case THEME:
+                App.getInstance().notifyFavorites(event);
+                break;
+            case QMS:
+                App.getInstance().notifyQms(event);
+        }
+    }
+
     public void sendNotification(NotificationEvent event, Bitmap avatar) {
         eventsHistory.put(event.notifyId(), event);
+
 
         String title = createTitle(event);
         String text = createContent(event);
