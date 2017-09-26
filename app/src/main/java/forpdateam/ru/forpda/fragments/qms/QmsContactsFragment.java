@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,13 +16,18 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
+import forpdateam.ru.forpda.api.events.models.NotificationEvent;
 import forpdateam.ru.forpda.api.qms.interfaces.IQmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
+import forpdateam.ru.forpda.client.ClientHelper;
+import forpdateam.ru.forpda.data.models.TabNotification;
 import forpdateam.ru.forpda.data.realm.qms.QmsContactBd;
 import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -45,6 +51,12 @@ public class QmsContactsFragment extends ListFragment implements QmsContactsAdap
     private Realm realm;
     private RealmResults<QmsContactBd> results;
     private AlertDialogMenu<QmsContactsFragment, IQmsContact> dialogMenu;
+
+    private Observer notification = (observable, o) -> {
+        if (o == null) return;
+        TabNotification event = (TabNotification) o;
+        runInUiThread(() -> handleEvent(event));
+    };
 
     public QmsContactsFragment() {
         configuration.setAlone(true);
@@ -78,10 +90,9 @@ public class QmsContactsFragment extends ListFragment implements QmsContactsAdap
         adapter = new QmsContactsAdapter();
         adapter.setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
-        Log.d("suka", "QCF cp2 " + (System.currentTimeMillis() - time));
 
         bindView();
-        Log.d("suka", "QCF cp3 " + (System.currentTimeMillis() - time));
+        App.getInstance().subscribeQms(notification);
         return view;
     }
 
@@ -165,10 +176,83 @@ public class QmsContactsFragment extends ListFragment implements QmsContactsAdap
         }, this::bindView);
     }
 
+    private ArrayList<QmsContact> currentItems = new ArrayList<>();
+
     private void bindView() {
         if (realm.isClosed()) return;
         results = realm.where(QmsContactBd.class).findAll();
-        adapter.addAll(results);
+        currentItems.clear();
+        for (QmsContactBd qmsContactBd : results) {
+            QmsContact contact = new QmsContact(qmsContactBd);
+            currentItems.add(contact);
+        }
+        int count = 0;
+        for (QmsContact contact : currentItems) {
+            if (contact.getCount() > 0) {
+                count += contact.getCount();
+            }
+        }
+
+        ClientHelper.setQmsCount(count);
+        ClientHelper.getInstance().notifyCountsChanged();
+
+        adapter.addAll(currentItems);
+    }
+
+    private void handleEvent(TabNotification event) {
+        SparseIntArray sparseArray = new SparseIntArray();
+
+        for (NotificationEvent loadedEvent : event.getLoadedEvents()) {
+            int count = sparseArray.get(loadedEvent.getUserId());
+            count += loadedEvent.getMsgCount();
+            sparseArray.put(loadedEvent.getUserId(), count);
+        }
+        for (int i = sparseArray.size() - 1; i >= 0; i--) {
+            int id = sparseArray.keyAt(i);
+            int count = sparseArray.valueAt(i);
+            for (QmsContact item : currentItems) {
+                if (item.getId() == id) {
+                    item.setCount(count);
+                    Collections.swap(currentItems, currentItems.indexOf(item), 0);
+                    break;
+                }
+            }
+        }
+
+        if (realm.isClosed()) return;
+        realm.executeTransactionAsync(r -> {
+            r.delete(QmsContactBd.class);
+            List<QmsContactBd> bdList = new ArrayList<>();
+            for (QmsContact qmsContact : currentItems) {
+                bdList.add(new QmsContactBd(qmsContact));
+            }
+            r.copyToRealmOrUpdate(bdList);
+            bdList.clear();
+        }, this::bindView);
+
+        //adapter.notifyDataSetChanged();
+        /*ArrayList<IFavItem> newItems = new ArrayList<>();
+        newItems.addAll(currentItems);
+        refreshList(newItems);*/
+    }
+
+    public void updateCount(int id, int count){
+        for (QmsContact item : currentItems) {
+            if (item.getId() == id) {
+                item.setCount(count);
+                break;
+            }
+        }
+        if (realm.isClosed()) return;
+        realm.executeTransactionAsync(r -> {
+            r.delete(QmsContactBd.class);
+            List<QmsContactBd> bdList = new ArrayList<>();
+            for (QmsContact qmsContact : currentItems) {
+                bdList.add(new QmsContactBd(qmsContact));
+            }
+            r.copyToRealmOrUpdate(bdList);
+            bdList.clear();
+        }, this::bindView);
     }
 
     public void deleteDialog(int mid) {
@@ -184,6 +268,7 @@ public class QmsContactsFragment extends ListFragment implements QmsContactsAdap
     public void onDestroy() {
         super.onDestroy();
         realm.close();
+        App.getInstance().unSubscribeQms(notification);
     }
 
     @Override

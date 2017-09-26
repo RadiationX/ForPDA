@@ -28,7 +28,7 @@ public class BaseSectionedAdapter<E, VH extends BaseSectionedViewHolder> extends
         sections.clear();
     }
 
-    protected int[] getItemPosition(int layPos) {
+    public int[] getItemPosition(int layPos) {
         int result[] = new int[]{-1, -1};
         int sumPrevSections = 0;
         for (int i = 0; i < getSectionCount(); i++) {

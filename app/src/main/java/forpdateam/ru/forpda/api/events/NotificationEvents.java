@@ -48,16 +48,16 @@ public class NotificationEvents {
 
             switch (Integer.parseInt(matcher.group(5))) {
                 case NotificationEvent.SRC_EVENT_NEW:
-                    wsEvent.setEvent(NotificationEvent.Event.NEW);
+                    wsEvent.setType(NotificationEvent.Type.NEW);
                     break;
                 case NotificationEvent.SRC_EVENT_READ:
-                    wsEvent.setEvent(NotificationEvent.Event.READ);
+                    wsEvent.setType(NotificationEvent.Type.READ);
                     break;
                 case NotificationEvent.SRC_EVENT_MENTION:
-                    wsEvent.setEvent(NotificationEvent.Event.MENTION);
+                    wsEvent.setType(NotificationEvent.Type.MENTION);
                     break;
                 case NotificationEvent.SRC_EVENT_HAT_EDITED:
-                    wsEvent.setEvent(NotificationEvent.Event.HAT_EDITED);
+                    wsEvent.setType(NotificationEvent.Type.HAT_EDITED);
                     break;
             }
             wsEvent.setMessageId(Integer.parseInt(matcher.group(6)));
@@ -85,7 +85,7 @@ public class NotificationEvents {
         NotificationEvent event = new NotificationEvent();
         event.setSourceEventText(matcher.group());
         event.setSource(NotificationEvent.Source.THEME);
-        event.setEvent(NotificationEvent.Event.NEW);
+        event.setType(NotificationEvent.Type.NEW);
         event.setSourceId(Integer.parseInt(matcher.group(1)));
         event.setSourceTitle(Utils.fromHtml(matcher.group(2)));
         event.setMsgCount(Integer.parseInt(matcher.group(3)));
@@ -116,7 +116,7 @@ public class NotificationEvents {
         NotificationEvent event = new NotificationEvent();
         event.setSourceEventText(matcher.group());
         event.setSource(NotificationEvent.Source.QMS);
-        event.setEvent(NotificationEvent.Event.NEW);
+        event.setType(NotificationEvent.Type.NEW);
         event.setSourceId(Integer.parseInt(matcher.group(1)));
         event.setSourceTitle(Utils.fromHtml(matcher.group(2)));
         event.setUserId(Integer.parseInt(matcher.group(3)));

@@ -17,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Observer;
 
@@ -29,6 +30,7 @@ import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
+import forpdateam.ru.forpda.data.models.TabNotification;
 import forpdateam.ru.forpda.data.realm.favorites.FavItemBd;
 import forpdateam.ru.forpda.fragments.ListFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -50,7 +52,7 @@ import io.realm.RealmResults;
 public class FavoritesFragment extends ListFragment implements FavoritesAdapter.OnItemClickListener<IFavItem> {
     private AlertDialogMenu<FavoritesFragment, IFavItem> favoriteDialogMenu, showedFavoriteDialogMenu;
     private Realm realm;
-    private RealmResults<FavItemBd> results;
+    private ArrayList<IFavItem> currentItems = new ArrayList<>();
     private FavoritesAdapter adapter;
     private Subscriber<FavData> mainSubscriber = new Subscriber<>(this);
     boolean markedRead = false;
@@ -82,6 +84,12 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
                 break;
             }
         }
+    };
+
+    private Observer notification = (observable, o) -> {
+        if (o == null) return;
+        TabNotification event = (TabNotification) o;
+        handleEvent(event);
     };
 
     public FavoritesFragment() {
@@ -182,6 +190,7 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
 
         bindView();
         App.getInstance().addPreferenceChangeObserver(favoritesPreferenceObserver);
+        App.getInstance().subscribeFavorites(notification);
         return view;
     }
 
@@ -291,18 +300,22 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
 
     private void bindView() {
         if (realm.isClosed()) return;
-        Log.e("SUKA", "bindView call");
-        results = realm.where(FavItemBd.class).findAll();
-        Log.e("SUKA", "bindView result");
+        RealmResults<FavItemBd> results = realm.where(FavItemBd.class).findAll();
         ArrayList<IFavItem> nonBdResult = new ArrayList<>();
         for (FavItemBd itemBd : results) {
             nonBdResult.add(new FavItem(itemBd));
         }
+        refreshList(nonBdResult);
+    }
+
+    private void refreshList(Collection<IFavItem> newList) {
+        currentItems.clear();
+        currentItems.addAll(newList);
         ArrayList<IFavItem> pinnedUnread = new ArrayList<>();
         ArrayList<IFavItem> itemsUnread = new ArrayList<>();
         ArrayList<IFavItem> pinned = new ArrayList<>();
         ArrayList<IFavItem> items = new ArrayList<>();
-        for (IFavItem item : nonBdResult) {
+        for (IFavItem item : newList) {
             if (item.isPin()) {
                 if (unreadTop && item.isNewMessages()) {
                     pinnedUnread.add(item);
@@ -317,7 +330,6 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
                 }
             }
         }
-
 
         adapter.clear();
         if (pinnedUnread.size() > 0) {
@@ -337,8 +349,27 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
         }
     }
 
-    private void offerToSubscribe() {
+    private void handleEvent(TabNotification event) {
+        /*FavItem item = null;
+        for (IFavItem item1 : currentItems) {
+            if (event.getSourceId() == item1.getTopicId()) {
+                item = (FavItem) item1;
+                break;
+            }
+        }
+        Log.d("SUKA", "HANDLE EVENT, ITEM: " + item);
+        if (item != null) {
+            currentItems.remove(item);
 
+            item.setNewMessages(true);
+            item.setLastUserNick(event.getUserNick());
+            item.setLastUserId(event.getUserId());
+            item.setPin(event.isImportant());
+            currentItems.add(0, item);
+        }
+        ArrayList<IFavItem> newItems = new ArrayList<>();
+        newItems.addAll(currentItems);
+        refreshList(newItems);*/
     }
 
     public void changeFav(int action, String type, int favId) {
@@ -369,6 +400,7 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
     public void onDestroy() {
         super.onDestroy();
         App.getInstance().removePreferenceChangeObserver(favoritesPreferenceObserver);
+        App.getInstance().unSubscribeFavorites(notification);
         paginationHelper.destroy();
         realm.close();
     }

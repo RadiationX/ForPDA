@@ -38,8 +38,7 @@ import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsMessage;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
-import forpdateam.ru.forpda.client.Client;
-import forpdateam.ru.forpda.client.ClientHelper;
+import forpdateam.ru.forpda.data.models.TabNotification;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
 import forpdateam.ru.forpda.fragments.qms.QmsThemesFragment;
@@ -54,10 +53,6 @@ import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.ExtendedWebView;
 import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.views.messagepanel.attachments.AttachmentsPopup;
-import okhttp3.Response;
-import okhttp3.WebSocket;
-import okhttp3.WebSocketListener;
-import okio.ByteString;
 
 /**
  * Created by radiationx on 25.08.16.
@@ -97,61 +92,10 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         }
     };
 
-
-    private WebSocket webSocket;
-
-    private WebSocketListener webSocketListener = new WebSocketListener() {
-        Pattern pattern = Pattern.compile("\\[(\\d+),(\\d+),\"([\\s\\S])(\\d+)\",(\\d+),(\\d+)\\]");
-
-        @Override
-        public void onOpen(WebSocket webSocket, Response response) {
-            Log.d(LOG_TAG, "ON OPEN: " + response.toString());
-            webSocket.send("[0,\"sv\"]");
-            webSocket.send("[0, \"ea\", \"u" + ClientHelper.getUserId() + "\"]");
-        }
-
-
-        @Override
-        public void onMessage(WebSocket webSocket, String text) {
-            Log.d(LOG_TAG, "ON T MESSAGE: " + text);
-            Matcher matcher = pattern.matcher(text);
-            if (matcher.find()) {
-                int themeId = Integer.parseInt(matcher.group(4));
-                int eventCode = Integer.parseInt(matcher.group(5));
-                int messageId = Integer.parseInt(matcher.group(6));
-                if (themeId == currentChat.getThemeId()) {
-                    if (eventCode == 1) {
-                        Log.d(LOG_TAG, "NEW QMS MESSAGE " + themeId + " : " + messageId);
-                        onNewWsMessage(themeId, messageId);
-                    } else if (eventCode == 2) {
-                        Log.d(LOG_TAG, "THREAD READED");
-                        webView.evalJs("makeAllRead();");
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onMessage(WebSocket webSocket, ByteString bytes) {
-            Log.d(LOG_TAG, "ON B MESSAGE: " + bytes.hex());
-        }
-
-        @Override
-        public void onClosing(WebSocket webSocket, int code, String reason) {
-            Log.d(LOG_TAG, "ON CLOSING: " + code + " " + reason);
-            webSocket.close(1000, null);
-        }
-
-        @Override
-        public void onClosed(WebSocket webSocket, int code, String reason) {
-            Log.d(LOG_TAG, "ON CLOSED: " + code + " " + reason);
-        }
-
-        @Override
-        public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-            Log.d(LOG_TAG, "ON FAILURE: " + t.getMessage() + " " + response);
-            t.printStackTrace();
-        }
+    private Observer notification = (observable, o) -> {
+        if (o == null) return;
+        TabNotification event = (TabNotification) o;
+        runInUiThread(() -> handleEvent(event));
     };
 
     public QmsChatFragment() {
@@ -342,11 +286,26 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         webView.loadDataWithBaseURL("https://4pda.ru/forum/", html, "text/html", "utf-8", null);
     }
 
+    private void handleEvent(TabNotification event) {
+        int themeId = event.getEvent().getSourceId();
+        int messageId = event.getEvent().getMessageId();
+        if (themeId == currentChat.getThemeId()) {
+            switch (event.getType()) {
+                case NEW:
+                    Log.d(LOG_TAG, "NEW QMS MESSAGE " + themeId + " : " + messageId);
+                    onNewWsMessage(themeId, messageId);
+                    break;
+                case READ:
+                    Log.d(LOG_TAG, "THREAD READED");
+                    webView.evalJs("makeAllRead();");
+                    break;
+            }
+        }
+    }
 
     private void onLoadChat(QmsChatModel loadedChat) {
+        App.getInstance().subscribeQms(notification);
         progressBar.setVisibility(View.GONE);
-        if (webSocket == null)
-            webSocket = Client.getInstance().createWebSocketConnection(webSocketListener);
         currentChat.setThemeId(loadedChat.getThemeId());
         currentChat.setTitle(loadedChat.getTitle());
         currentChat.setUserId(loadedChat.getUserId());
@@ -511,8 +470,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     public void onDestroy() {
         super.onDestroy();
         App.getInstance().removePreferenceChangeObserver(chatPreferenceObserver);
-        if (webSocket != null)
-            webSocket.close(1000, null);
+        App.getInstance().unSubscribeQms(notification);
         messagePanel.onDestroy();
         unregisterForContextMenu(webView);
         webView.removeJavascriptInterface(JS_INTERFACE);
