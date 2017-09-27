@@ -23,6 +23,7 @@ import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.api.events.models.NotificationEvent;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.favorites.Sorting;
 import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
@@ -350,6 +351,38 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
     }
 
     private void handleEvent(TabNotification event) {
+        for (int i = event.getLoadedEvents().size() - 1; i >= 0; i--) {
+            NotificationEvent loadedEvent = event.getLoadedEvents().get(i);
+            int id = loadedEvent.getSourceId();
+            for (IFavItem item : currentItems) {
+                if (item.getTopicId() == id) {
+                    currentItems.remove(item);
+                    item.setNewMessages(true);
+                    item.setLastUserNick(loadedEvent.getUserNick());
+                    item.setLastUserId(loadedEvent.getUserId());
+                    item.setPin(loadedEvent.isImportant());
+                    //Collections.swap(currentItems, currentItems.indexOf(item), 0);
+                    currentItems.add(0, item);
+                    break;
+                }
+            }
+        }
+
+        if (realm.isClosed()) return;
+        realm.executeTransactionAsync(r -> {
+            r.delete(FavItemBd.class);
+            List<FavItemBd> bdList = new ArrayList<>();
+            for (IFavItem item : currentItems) {
+                bdList.add(new FavItemBd(item));
+            }
+            r.copyToRealmOrUpdate(bdList);
+            bdList.clear();
+        }, this::bindView);
+
+
+
+
+
         /*FavItem item = null;
         for (IFavItem item1 : currentItems) {
             if (event.getSourceId() == item1.getTopicId()) {
