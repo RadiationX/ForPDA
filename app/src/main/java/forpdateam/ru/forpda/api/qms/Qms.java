@@ -266,7 +266,6 @@ public class Qms {
     Pattern messageInfoPattern = Pattern.compile("\"id_to\":(\\d+)");
 
     public ArrayList<QmsMessage> getMessagesFromWs(int themeId, int messageId, int afterMessageId) throws Exception {
-        ArrayList<QmsMessage> messages = new ArrayList<>();
         NetworkRequest.Builder messInfoBuilder = new NetworkRequest.Builder()
                 .url("https://4pda.ru/forum/index.php?act=qms-xhr&")
                 .formHeader("action", "message-info")
@@ -275,21 +274,25 @@ public class Qms {
         NetworkResponse messInfoResponse = Api.getWebClient().request(messInfoBuilder.build());
 
         Matcher matcher = messageInfoPattern.matcher(messInfoResponse.getBody());
-        int idTo = 0;
+        int userId = 0;
         if (matcher.find()) {
-            idTo = Integer.parseInt(matcher.group(1));
+            userId = Integer.parseInt(matcher.group(1));
         }
+        return getMessagesAfter(userId, themeId, afterMessageId);
+    }
 
+    public ArrayList<QmsMessage> getMessagesAfter(int userId, int themeId, int afterMessageId) throws Exception {
+        ArrayList<QmsMessage> messages = new ArrayList<>();
         NetworkRequest.Builder threadMessagesBuilder = new NetworkRequest.Builder()
                 .url("https://4pda.ru/forum/index.php?act=qms-xhr&")
                 .xhrHeader()
                 .formHeader("action", "get-thread-messages")
-                .formHeader("mid", Integer.toString(idTo))
+                .formHeader("mid", Integer.toString(userId))
                 .formHeader("t", Integer.toString(themeId))
                 .formHeader("after-message", Integer.toString(afterMessageId));
         NetworkResponse threadMessagesResponse = Api.getWebClient().request(threadMessagesBuilder.build());
 
-        matcher = chatPattern.matcher(threadMessagesResponse.getBody());
+        Matcher matcher = chatPattern.matcher(threadMessagesResponse.getBody());
         while (matcher.find()) {
             QmsMessage item = new QmsMessage();
             if (matcher.group(1) == null && matcher.group(7) != null) {

@@ -337,28 +337,45 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
 
 
     private void onNewWsMessage(int themeId, int messageId) {
-        messageSubscriber.subscribe(RxApi.Qms().getMessagesFromWs(themeId, messageId, currentChat.getMessages().get(currentChat.getMessages().size() - 1).getId()), qmsMessage -> {
-            Log.d(LOG_TAG, "Returned messages " + qmsMessage.size());
-            if (qmsMessage.size() > 0) {
-                MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
-                App.setTemplateResStrings(t);
-                for (int i = 0; i < qmsMessage.size(); i++) {
-                    QmsMessage message = qmsMessage.get(i);
-                    for (QmsMessage viewmessage : currentChat.getMessages()) {
-                        if (viewmessage.getId() == message.getId()) {
-                            return;
-                        }
-                    }
-                    currentChat.addMessage(message);
-                    QmsRx.generateMess(t, message);
-                }
-                String messagesSrc = t.generateOutput();
-                t.reset();
-                messagesSrc = QmsRx.transformMessageSrc(messagesSrc);
-                webView.evalJs("showNewMess('".concat(messagesSrc).concat("', true)"));
-            }
+        int lastMessId = currentChat.getMessages().get(currentChat.getMessages().size() - 1).getId();
+        messageSubscriber.subscribe(
+                RxApi.Qms().getMessagesFromWs(themeId, messageId, lastMessId),
+                this::onNewMessages,
+                new ArrayList<>());
+    }
 
-        }, new ArrayList<>());
+    private void checkNewMessages() {
+        if (currentChat.getMessages().size() > 0) {
+            int userId = currentChat.getUserId();
+            int themeId = currentChat.getThemeId();
+            int lastMessId = currentChat.getMessages().get(currentChat.getMessages().size() - 1).getId();
+            messageSubscriber.subscribe(
+                    RxApi.Qms().getMessagesAfter(userId, themeId, lastMessId),
+                    this::onNewMessages,
+                    new ArrayList<>());
+        }
+    }
+
+    private void onNewMessages(ArrayList<QmsMessage> qmsMessage) {
+        Log.d(LOG_TAG, "Returned messages " + qmsMessage.size());
+        if (qmsMessage.size() > 0) {
+            MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
+            App.setTemplateResStrings(t);
+            for (int i = 0; i < qmsMessage.size(); i++) {
+                QmsMessage message = qmsMessage.get(i);
+                for (QmsMessage viewmessage : currentChat.getMessages()) {
+                    if (viewmessage.getId() == message.getId()) {
+                        return;
+                    }
+                }
+                currentChat.addMessage(message);
+                QmsRx.generateMess(t, message);
+            }
+            String messagesSrc = t.generateOutput();
+            t.reset();
+            messagesSrc = QmsRx.transformMessageSrc(messagesSrc);
+            webView.evalJs("showNewMess('".concat(messagesSrc).concat("', true)"));
+        }
     }
 
 
@@ -464,6 +481,10 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     public void onResume() {
         super.onResume();
         messagePanel.onResume();
+        if (currentChat.getUserId() != QmsChatModel.NOT_CREATED && currentChat.getThemeId() != QmsChatModel.NOT_CREATED) {
+            App.getInstance().subscribeQms(notification);
+            checkNewMessages();
+        }
     }
 
     @Override
@@ -482,6 +503,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     @Override
     public void onPause() {
         super.onPause();
+        App.getInstance().unSubscribeQms(notification);
         messagePanel.onPause();
     }
 

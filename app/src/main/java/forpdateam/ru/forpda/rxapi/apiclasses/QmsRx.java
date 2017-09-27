@@ -79,6 +79,10 @@ public class QmsRx {
         return Observable.fromCallable(() -> Api.Qms().getMessagesFromWs(themeId, messageId, afterMessageId));
     }
 
+    public Observable<ArrayList<QmsMessage>> getMessagesAfter(int userId, int themeId, int afterMessageId) {
+        return Observable.fromCallable(() -> Api.Qms().getMessagesAfter(userId, themeId, afterMessageId));
+    }
+
     public Observable<List<AttachmentItem>> uploadFiles(List<RequestFile> files, List<AttachmentItem> pending) {
         return Observable.fromCallable(() -> Api.Qms().uploadFiles(files, pending));
     }
