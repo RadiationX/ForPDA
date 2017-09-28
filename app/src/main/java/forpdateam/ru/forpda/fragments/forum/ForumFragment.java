@@ -82,7 +82,7 @@ public class ForumFragment extends TabFragment {
 
     public ForumFragment() {
         configuration.setUseCache(true);
-        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_forum));
+        configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_forum));
     }
 
     @Override

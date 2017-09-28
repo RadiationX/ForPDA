@@ -117,7 +117,7 @@ public class EditPostFragment extends TabFragment {
         Bundle args = getArguments();
         if (args != null) {
             String title = args.getString(ARG_THEME_NAME);
-            setTitle((App.getInstance().getString(postForm.getType() == TYPE_NEW_POST ? R.string.editpost_title_answer : R.string.editpost_title_edit)).concat(title != null ? title : ""));
+            setTitle((App.get().getString(postForm.getType() == TYPE_NEW_POST ? R.string.editpost_title_answer : R.string.editpost_title_edit)).concat(" ").concat(title != null ? title : ""));
         }
         messagePanel.getEditPollButton().setOnClickListener(v -> {
             if (pollPopup != null)
@@ -299,7 +299,7 @@ public class EditPostFragment extends TabFragment {
 
 
     public void tryPickFile() {
-        App.getInstance().checkStoragePermission(() -> startActivityForResult(FilePickHelper.pickFile(false), REQUEST_PICK_FILE), App.getActivity());
+        App.get().checkStoragePermission(() -> startActivityForResult(FilePickHelper.pickFile(false), REQUEST_PICK_FILE), App.getActivity());
     }
 
     @Override

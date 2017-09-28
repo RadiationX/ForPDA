@@ -139,7 +139,7 @@ public class MessagePanel extends CardView {
             }
         });
         messageField.setTypeface(isMonospace ? Typeface.MONOSPACE : Typeface.DEFAULT);
-        App.getInstance().addPreferenceChangeObserver(preferenceObserver);
+        App.get().addPreferenceChangeObserver(preferenceObserver);
     }
 
     public int getLastHeight() {
@@ -320,7 +320,7 @@ public class MessagePanel extends CardView {
     public void onDestroy() {
         if (advancedPopup != null)
             advancedPopup.onDestroy();
-        App.getInstance().removePreferenceChangeObserver(preferenceObserver);
+        App.get().removePreferenceChangeObserver(preferenceObserver);
     }
 
     public void onPause() {

@@ -64,7 +64,7 @@ public class QmsThemesFragment extends ListFragment implements QmsThemesAdapter.
 
     public QmsThemesFragment() {
         //configuration.setUseCache(true);
-        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_dialogs));
+        configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_dialogs));
     }
 
     @Override
@@ -103,7 +103,7 @@ public class QmsThemesFragment extends ListFragment implements QmsThemesAdapter.
         adapter.setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
         bindView();
-        App.getInstance().subscribeQms(notification);
+        App.get().subscribeQms(notification);
         return view;
     }
 
@@ -112,7 +112,7 @@ public class QmsThemesFragment extends ListFragment implements QmsThemesAdapter.
             ImageLoader.getInstance().displayImage(avatarUrl, toolbarImageView);
             toolbarImageView.setVisibility(View.VISIBLE);
             toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + currentThemes.getUserId()));
-            toolbarImageView.setContentDescription(App.getInstance().getString(R.string.user_avatar));
+            toolbarImageView.setContentDescription(App.get().getString(R.string.user_avatar));
         } else {
             toolbarImageView.setVisibility(View.GONE);
         }
@@ -143,7 +143,7 @@ public class QmsThemesFragment extends ListFragment implements QmsThemesAdapter.
             args.putString(QmsChatFragment.USER_NICK_ARG, currentThemes.getNick());
             args.putString(QmsChatFragment.USER_AVATAR_ARG, avatarUrl);
             TabManager.getInstance().add(QmsChatFragment.class, args);
-            //new Handler().postDelayed(() -> TabManager.getInstance().remove(getTag()), 500);
+            //new Handler().postDelayed(() -> TabManager.get().remove(getTag()), 500);
         }
 
         if (realm.isClosed()) return;
@@ -266,7 +266,7 @@ public class QmsThemesFragment extends ListFragment implements QmsThemesAdapter.
     public void onDestroy() {
         super.onDestroy();
         realm.close();
-        App.getInstance().unSubscribeQms(notification);
+        App.get().unSubscribeQms(notification);
     }
 
     @Override

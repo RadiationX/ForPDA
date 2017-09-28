@@ -34,7 +34,6 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,11 +46,9 @@ import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.IBaseForumPost;
 import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.favorites.Favorites;
-import forpdateam.ru.forpda.api.search.models.SearchSettings;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
-import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
@@ -227,12 +224,12 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         addShowingView();
         setFontSize(Preferences.Main.getWebViewSize());
         viewsReady();
-        App.getInstance().addPreferenceChangeObserver(themePreferenceObserver);
+        App.get().addPreferenceChangeObserver(themePreferenceObserver);
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(() -> {
             loadData(REFRESH_ACTION);
         });
-        if (App.getInstance().getPreferences().getBoolean("theme.tooltip.long_click_send", true)) {
+        if (App.get().getPreferences().getBoolean("theme.tooltip.long_click_send", true)) {
             tooltip = new SimpleTooltip.Builder(getContext())
                     .anchorView(messagePanel.getSendButton())
                     .text(R.string.tooltip_full_form)
@@ -245,7 +242,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                     .padding((float) App.px16)
                     .build();
             tooltip.show();
-            App.getInstance().getPreferences().edit().putBoolean("theme.tooltip.long_click_send", false).apply();
+            App.get().getPreferences().edit().putBoolean("theme.tooltip.long_click_send", false).apply();
         }
 
         if (Preferences.Main.isEditorDefaultHidden()) {
@@ -271,7 +268,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     @Override
     public void onDestroy() {
         super.onDestroy();
-        App.getInstance().removePreferenceChangeObserver(themePreferenceObserver);
+        App.get().removePreferenceChangeObserver(themePreferenceObserver);
         history.clear();
         messagePanel.onDestroy();
         paginationHelper.destroy();
@@ -298,7 +295,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             toolbar.collapseActionView();
             return true;
         }
-        if (App.getInstance().getPreferences().getBoolean("theme.anchor_history", true)) {
+        if (App.get().getPreferences().getBoolean("theme.anchor_history", true)) {
             if (currentPage != null && currentPage.getAnchors().size() > 1) {
                 currentPage.removeAnchor();
                 scrollToAnchor(currentPage.getAnchor());
@@ -489,7 +486,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                             + "&act=search&source=pst&result=posts&username=";
 
                     try {
-                        url += URLEncoder.encode(App.getInstance().getPreferences().getString("auth.user.nick", "null"), "windows-1251");
+                        url += URLEncoder.encode(App.get().getPreferences().getString("auth.user.nick", "null"), "windows-1251");
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
@@ -706,7 +703,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     }
 
     public void tryPickFile() {
-        App.getInstance().checkStoragePermission(() -> startActivityForResult(FilePickHelper.pickFile(false), REQUEST_PICK_FILE), App.getActivity());
+        App.get().checkStoragePermission(() -> startActivityForResult(FilePickHelper.pickFile(false), REQUEST_PICK_FILE), App.getActivity());
     }
 
     @Override

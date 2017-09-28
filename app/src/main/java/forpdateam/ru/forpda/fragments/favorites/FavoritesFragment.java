@@ -96,7 +96,7 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
     public FavoritesFragment() {
         configuration.setAlone(true);
         //configuration.setUseCache(true);
-        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_favorite));
+        configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_favorite));
     }
 
     private CharSequence getPinText(boolean b) {
@@ -190,8 +190,8 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
         });
 
         bindView();
-        App.getInstance().addPreferenceChangeObserver(favoritesPreferenceObserver);
-        App.getInstance().subscribeFavorites(notification);
+        App.get().addPreferenceChangeObserver(favoritesPreferenceObserver);
+        App.get().subscribeFavorites(notification);
         return view;
     }
 
@@ -201,7 +201,7 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
         getMenu().add(R.string.mark_all_read)
                 .setOnMenuItemClickListener(item -> {
                     new AlertDialog.Builder(getContext())
-                            .setMessage(App.getInstance().getString(R.string.mark_all_read) + "?")
+                            .setMessage(App.get().getString(R.string.mark_all_read) + "?")
                             .setPositiveButton(R.string.ok, (dialog, which) -> {
                                 ForumHelper.markAllRead(o -> {
                                     loadData();
@@ -432,8 +432,8 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
     @Override
     public void onDestroy() {
         super.onDestroy();
-        App.getInstance().removePreferenceChangeObserver(favoritesPreferenceObserver);
-        App.getInstance().unSubscribeFavorites(notification);
+        App.get().removePreferenceChangeObserver(favoritesPreferenceObserver);
+        App.get().unSubscribeFavorites(notification);
         paginationHelper.destroy();
         realm.close();
     }

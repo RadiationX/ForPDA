@@ -57,7 +57,7 @@ public class NotesFragment extends ListFragment implements NotesAdapter.OnItemCl
     private AlertDialogMenu<NotesFragment, NoteItem> dialogMenu, showedDialogMenu;
 
     public NotesFragment() {
-        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_notes));
+        configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_notes));
         configuration.setUseCache(true);
     }
 
@@ -97,7 +97,7 @@ public class NotesFragment extends ListFragment implements NotesAdapter.OnItemCl
         getMenu()
                 .add(R.string.import_s)
                 .setOnMenuItemClickListener(item -> {
-                    App.getInstance().checkStoragePermission(() -> {
+                    App.get().checkStoragePermission(() -> {
                         startActivityForResult(FilePickHelper.pickFile(false), REQUEST_PICK_FILE);
                     }, App.getActivity());
                     return true;
@@ -105,7 +105,7 @@ public class NotesFragment extends ListFragment implements NotesAdapter.OnItemCl
         getMenu()
                 .add(R.string.export_s)
                 .setOnMenuItemClickListener(item -> {
-                    App.getInstance().checkStoragePermission(this::exportNotes, App.getActivity());
+                    App.get().checkStoragePermission(this::exportNotes, App.getActivity());
                     return true;
                 });
 

@@ -256,7 +256,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
                             }
                             Log.d(LOG_TAG, " scroll to " + postId + " : " + elem);
                             String finalAnchor = (elem == null ? "entry" : "").concat(elem != null ? elem : postId);
-                            if (App.getInstance().getPreferences().getBoolean("theme.anchor_history", true)) {
+                            if (App.get().getPreferences().getBoolean("theme.anchor_history", true)) {
                                 currentPage.addAnchor(finalAnchor);
                             }
                             scrollToAnchor(finalAnchor);
@@ -351,7 +351,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
     public void onDomContentComplete(final ArrayList<String> actions) {
         Log.d(LOG_TAG, "DOMContentLoaded");
         actions.add("setLoadAction(" + loadAction + ");");
-        actions.add("setLoadScrollY(" + ((int) (currentPage.getScrollY() / App.getInstance().getDensity())) + ");");
+        actions.add("setLoadScrollY(" + ((int) (currentPage.getScrollY() / App.get().getDensity())) + ");");
     }
 
     @Override

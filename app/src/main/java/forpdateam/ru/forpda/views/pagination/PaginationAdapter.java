@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.util.Locale;
+
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 
@@ -14,7 +16,7 @@ import forpdateam.ru.forpda.R;
  * Created by radiationx on 26.10.16.
  */
 public class PaginationAdapter extends BaseAdapter {
-    private final String page = App.getInstance().getString(R.string.pagination_page_number) + "  №";
+    private final String page = App.get().getString(R.string.pagination_page_number);
     private final LayoutInflater inflater;
     private final int[] data;
 
@@ -52,7 +54,8 @@ public class PaginationAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.text.setText(page.concat(Integer.toString((int) getItem(position))));
+
+        holder.text.setText(String.format(Locale.getDefault(), page, (int) getItem(position)));
         return convertView;
     }
 

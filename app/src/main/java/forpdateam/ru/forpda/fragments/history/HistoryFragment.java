@@ -38,7 +38,7 @@ public class HistoryFragment extends ListFragment implements HistoryAdapter.OnIt
 
     public HistoryFragment() {
         configuration.setUseCache(true);
-        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_history));
+        configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_history));
     }
 
     @Override

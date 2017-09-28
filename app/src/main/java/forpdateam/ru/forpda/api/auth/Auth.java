@@ -67,7 +67,7 @@ public class Auth {
     private boolean checkLogin(String response) {
         Matcher matcher = Pattern.compile("<i class=\"icon-profile\">[\\s\\S]*?<ul class=\"dropdown-menu\">[\\s\\S]*?showuser=(\\d+)\"[\\s\\S]*?action=logout[^\"]*?k=([a-z0-9]{32})").matcher(response);
         if (matcher.find()) {
-            App.getInstance().getPreferences().edit().putString("auth_key", matcher.group(2)).apply();
+            App.get().getPreferences().edit().putString("auth_key", matcher.group(2)).apply();
             return true;
         }
         return false;
@@ -81,7 +81,7 @@ public class Auth {
             throw new Exception("You already logout");
 
         Api.getWebClient().clearCookies();
-        App.getInstance().getPreferences().edit().remove("cookie_member_id").remove("cookie_pass_hash").apply();
+        App.get().getPreferences().edit().remove("cookie_member_id").remove("cookie_pass_hash").apply();
         ClientHelper.setAuthState(ClientHelper.AUTH_STATE_LOGOUT);
 
         return !checkLogin(Api.getWebClient().get(IWebClient.MINIMAL_PAGE).getBody());

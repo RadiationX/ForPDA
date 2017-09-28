@@ -217,10 +217,10 @@
     <string name="brands_category_ebook">E-Books</string>
     <string name="brands_category_smartwatch">Smartwatches</string>
     <string name="device_page_specs">Specifications</string>
-    <string name="device_page_comments">Reviews</string>
-    <string name="device_page_discussions">Discussions</string>
-    <string name="device_page_news">News</string>
-    <string name="device_page_firmwares">Firmwares</string>
+    <string name="device_page_comments" formatted="false">Reviews (%d)</string>
+    <string name="device_page_discussions" formatted="false">Discussions (%d)</string>
+    <string name="device_page_news" formatted="false">News (%d)</string>
+    <string name="device_page_firmwares" formatted="false">Firmwares (%d)</string>
     <!-- Qms -->
     <string name="chat_creator_enter_nick">Enter recipient username first</string>
     <string name="chat_creator_enter_title">Enter the subject first</string>
@@ -268,7 +268,7 @@
     <string name="editpost_error_edit">You cannot edit this post</string>
     <string name="editpost_reason">Reason for editing</string>
     <!-- Pagination -->
-    <string name="pagination_page_number">Page</string>
+    <string name="pagination_page_number" formatted="false">Page №%d</string>
     <string name="pagination_first">To the first page</string>
     <string name="pagination_prev">To the previous page</string>
     <string name="pagination_select_desc">Select a page</string>
@@ -282,9 +282,9 @@
     <!-- Forum -->
     <string name="forum_refresh">Refresh forums</string>
     <!-- Intent -->
-    <string name="load_file">Download a file</string>
-    <string name="perform_request_link">Requesting download link</string>
-    <string name="perform_loading">Performing download</string>
+    <string name="load_file" formatted="false">Download a file %s?</string>
+    <string name="perform_request_link" formatted="false">Requesting download link %s</string>
+    <string name="perform_loading" formatted="false">Performing download %s</string>
     <string name="perform_loading_error">An error has occurred. Will be loaded via an external downloader.</string>
     <!-- Poll -->
     <string name="poll_answers_Max" formatted="false">Max number of answers: %d</string>

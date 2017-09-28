@@ -21,7 +21,7 @@ public class SmilesPanelItem extends BasePanelItem {
     private static List<String> urlToAssets = null;
 
     public SmilesPanelItem(Context context, MessagePanel panel) {
-        super(context, panel, App.getInstance().getString(R.string.smiles_title));
+        super(context, panel, App.get().getString(R.string.smiles_title));
         PanelItemAdapter adapter = new PanelItemAdapter(getSmiles(), getUrlToAssets(), PanelItemAdapter.TYPE_ASSET);
         adapter.setOnItemClickListener(item -> {
             messagePanel.insertText(" ".concat(item.getText()).concat(" "));

@@ -27,7 +27,7 @@ public class EmptyActivity extends AppCompatActivity {
 
     private static final String app = "org.softeg.slartus.forpdaplus";
     public static boolean empty(String s) {
-        return !App.getInstance().getPreferences().getBoolean("uu", false) && s.equalsIgnoreCase("Googleoff");
+        return !App.get().getPreferences().getBoolean("uu", false) && s.equalsIgnoreCase("Googleoff");
     }
     public static void start(Context context, String s) {
         Intent intent = new Intent(context, EmptyActivity.class);
@@ -70,7 +70,7 @@ public class EmptyActivity extends AppCompatActivity {
                 if (action == MotionEvent.ACTION_DOWN) {
                     count++;
                     if (count > 9) {
-                        App.getInstance().getPreferences().edit().putBoolean("uu", true).apply();
+                        App.get().getPreferences().edit().putBoolean("uu", true).apply();
                         Toast.makeText(EmptyActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(EmptyActivity.this, MainActivity.class));
                         EmptyActivity.this.finish();

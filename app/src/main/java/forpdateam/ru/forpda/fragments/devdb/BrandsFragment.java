@@ -29,10 +29,10 @@ import forpdateam.ru.forpda.utils.rx.Subscriber;
 public class BrandsFragment extends ListFragment implements BrandsAdapter.OnItemClickListener<Brands.Item> {
     public final static String ARG_CATEGORY_ID = "CATEGORY_ID";
     private final static String[] spinnerTitles = {
-            App.getInstance().getString(R.string.brands_category_phones),
-            App.getInstance().getString(R.string.brands_category_tabs),
-            App.getInstance().getString(R.string.brands_category_ebook),
-            App.getInstance().getString(R.string.brands_category_smartwatch)};
+            App.get().getString(R.string.brands_category_phones),
+            App.get().getString(R.string.brands_category_tabs),
+            App.get().getString(R.string.brands_category_ebook),
+            App.get().getString(R.string.brands_category_smartwatch)};
     private final static String[] mansCats = {"phones", "pad", "ebook", "smartwatch"};
     private Subscriber<Brands> mainSubscriber = new Subscriber<>(this);
     private BrandsAdapter adapter;
@@ -41,7 +41,7 @@ public class BrandsFragment extends ListFragment implements BrandsAdapter.OnItem
 
     public BrandsFragment() {
         //configuration.setAlone(true);
-        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_brands));
+        configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_brands));
     }
 
     @Override

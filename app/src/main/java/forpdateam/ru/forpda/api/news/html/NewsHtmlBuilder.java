@@ -20,7 +20,7 @@ public class NewsHtmlBuilder extends HtmlBuilder {
     @Override
     public void addStyleSheetLink(StringBuilder sb) {
         super.addStyleSheetLink(sb);
-        if (App.getInstance().isDarkTheme()) {
+        if (App.get().isDarkTheme()) {
             sb.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"file:///android_asset/news/news_dark.css\"/>\n");
         } else {
             sb.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"file:///android_asset/news/news_light.css\"/>\n");

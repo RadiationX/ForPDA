@@ -31,6 +31,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.robohorse.pagerbullet.PagerBullet;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
@@ -71,7 +72,7 @@ public class DeviceFragment extends TabFragment {
     };
 
     public DeviceFragment() {
-        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_device));
+        configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_device));
     }
 
     @Override
@@ -144,7 +145,7 @@ public class DeviceFragment extends TabFragment {
 
         imagesPager.setIndicatorTintColorScheme(App.getColorFromAttr(getContext(), R.attr.default_text_color), App.getColorFromAttr(getContext(), R.attr.second_text_color));
 
-        App.getInstance().addStatusBarSizeObserver(statusBarSizeObserver);
+        App.get().addStatusBarSizeObserver(statusBarSizeObserver);
         return view;
     }
 
@@ -254,7 +255,7 @@ public class DeviceFragment extends TabFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        App.getInstance().removeStatusBarSizeObserver(statusBarSizeObserver);
+        App.get().removeStatusBarSizeObserver(statusBarSizeObserver);
     }
 
     private class FragmentPagerAdapter extends android.support.v4.app.FragmentPagerAdapter {
@@ -267,23 +268,35 @@ public class DeviceFragment extends TabFragment {
             this.device = device;
             if (this.device.getSpecs().size() > 0) {
                 fragments.add(new SpecsFragment().setDevice(this.device));
-                titles.add(App.getInstance().getString(R.string.device_page_specs));
+                titles.add(App.get().getString(R.string.device_page_specs));
             }
             if (this.device.getComments().size() > 0) {
                 fragments.add(new CommentsFragment().setDevice(this.device));
-                titles.add(App.getInstance().getString(R.string.device_page_comments) + " (" + this.device.getComments().size() + ")");
+                String title = String.format(Locale.getDefault(),
+                        App.get().getString(R.string.device_page_comments),
+                        this.device.getComments().size());
+                titles.add(title);
             }
             if (this.device.getDiscussions().size() > 0) {
                 fragments.add(new PostsFragment().setSource(PostsFragment.SRC_DISCUSSIONS).setDevice(this.device));
-                titles.add(App.getInstance().getString(R.string.device_page_discussions) + " (" + this.device.getDiscussions().size() + ")");
+                String title = String.format(Locale.getDefault(),
+                        App.get().getString(R.string.device_page_discussions),
+                        this.device.getDiscussions().size());
+                titles.add(title);
             }
             if (this.device.getNews().size() > 0) {
                 fragments.add(new PostsFragment().setSource(PostsFragment.SRC_NEWS).setDevice(this.device));
-                titles.add(App.getInstance().getString(R.string.device_page_news) + " (" + this.device.getNews().size() + ")");
+                String title = String.format(Locale.getDefault(),
+                        App.get().getString(R.string.device_page_news),
+                        this.device.getNews().size());
+                titles.add(title);
             }
             if (this.device.getFirmwares().size() > 0) {
                 fragments.add(new PostsFragment().setSource(PostsFragment.SRC_FIRMWARES).setDevice(this.device));
-                titles.add(App.getInstance().getString(R.string.device_page_firmwares) + " (" + this.device.getFirmwares().size() + ")");
+                String title = String.format(Locale.getDefault(),
+                        App.get().getString(R.string.device_page_firmwares),
+                        this.device.getFirmwares().size());
+                titles.add(title);
             }
         }
 

@@ -21,13 +21,13 @@ import forpdateam.ru.forpda.utils.LocaleHelper;
 
 public class SettingsActivity extends AppCompatActivity {
     public final static String ARG_NEW_PREFERENCE_SCREEN = "new_preference_screen";
-    private boolean currentThemeIsDark = App.getInstance().isDarkTheme();
+    private boolean currentThemeIsDark = App.get().isDarkTheme();
     private Observer appThemeChangeObserver = (observable, o) -> {
         if (o == null) return;
         String key = (String) o;
         switch (key) {
             case Preferences.Main.Theme.IS_DARK: {
-                boolean themeIsDark = App.getInstance().isDarkTheme();
+                boolean themeIsDark = App.get().isDarkTheme();
                 if (currentThemeIsDark != themeIsDark) {
                     currentThemeIsDark = themeIsDark;
                     recreate();
@@ -45,7 +45,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        currentThemeIsDark = App.getInstance().isDarkTheme();
+        currentThemeIsDark = App.get().isDarkTheme();
         setTheme(currentThemeIsDark ? R.style.PreferenceAppThemeDark : R.style.PreferenceAppThemeLight);
         setContentView(R.layout.activity_settings);
 
@@ -76,7 +76,7 @@ public class SettingsActivity extends AppCompatActivity {
         view.setBackgroundColor(Color.TRANSPARENT);
         view.setBackgroundColor(Color.rgb(4, 26, 55));*/
 
-        App.getInstance().addPreferenceChangeObserver(appThemeChangeObserver);
+        App.get().addPreferenceChangeObserver(appThemeChangeObserver);
     }
 
 
@@ -90,12 +90,12 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        App.getInstance().removePreferenceChangeObserver(appThemeChangeObserver);
+        App.get().removePreferenceChangeObserver(appThemeChangeObserver);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        App.getInstance().onRequestPermissionsResult(requestCode, permissions, grantResults);
+        App.get().onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

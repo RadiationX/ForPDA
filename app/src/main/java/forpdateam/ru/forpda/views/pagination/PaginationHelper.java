@@ -95,7 +95,7 @@ public class PaginationHelper {
         TabLayout tabLayout = (TabLayout) inflater.inflate(R.layout.pagination_toolbar, target, false);
         target.addView(tabLayout, target.indexOfChild(target.findViewById(R.id.toolbar)));
         tabLayoutInToolbar = tabLayout;
-        App.getInstance().addStatusBarSizeObserver(statusBarSizeObserver);
+        App.get().addStatusBarSizeObserver(statusBarSizeObserver);
 
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) target.getLayoutParams();
         params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
@@ -245,7 +245,7 @@ public class PaginationHelper {
     }
 
     public void destroy() {
-        App.getInstance().removeStatusBarSizeObserver(statusBarSizeObserver);
+        App.get().removeStatusBarSizeObserver(statusBarSizeObserver);
     }
 
     public interface PaginationListener {

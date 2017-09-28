@@ -99,7 +99,7 @@ public class SettingsFragment extends BasePrefsFragment {
                     dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(v1 -> {
                         seekBar.setProgress(16 - 1 - 7);
                         Preferences.Main.setWebViewSize(16);
-                        App.getInstance().getPreferences().edit().putInt(Preferences.Main.WEBVIEW_FONT_SIZE, 16).apply();
+                        App.get().getPreferences().edit().putInt(Preferences.Main.WEBVIEW_FONT_SIZE, 16).apply();
                     });
                     return false;
                 });

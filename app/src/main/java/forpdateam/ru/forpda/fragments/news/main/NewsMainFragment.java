@@ -47,7 +47,7 @@ public class NewsMainFragment extends TabFragment implements
     //private Realm realm;
 
     public NewsMainFragment() {
-        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_news_list));
+        configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_news_list));
         configuration.setAlone(true);
     }
 

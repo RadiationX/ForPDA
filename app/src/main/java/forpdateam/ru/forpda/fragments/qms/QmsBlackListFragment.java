@@ -43,7 +43,7 @@ public class QmsBlackListFragment extends ListFragment implements QmsContactsAda
     private Subscriber<List<ForumUser>> searchUserSubscriber = new Subscriber<>(this);
 
     public QmsBlackListFragment() {
-        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_blacklist));
+        configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_blacklist));
     }
 
     @Nullable

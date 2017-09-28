@@ -61,7 +61,7 @@ public class QmsContactsFragment extends ListFragment implements QmsContactsAdap
     public QmsContactsFragment() {
         configuration.setAlone(true);
         configuration.setMenu(true);
-        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_contacts));
+        configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_contacts));
     }
 
     @Override
@@ -92,7 +92,7 @@ public class QmsContactsFragment extends ListFragment implements QmsContactsAdap
         recyclerView.setAdapter(adapter);
 
         bindView();
-        App.getInstance().subscribeQms(notification);
+        App.get().subscribeQms(notification);
         return view;
     }
 
@@ -268,7 +268,7 @@ public class QmsContactsFragment extends ListFragment implements QmsContactsAdap
     public void onDestroy() {
         super.onDestroy();
         realm.close();
-        App.getInstance().unSubscribeQms(notification);
+        App.get().unSubscribeQms(notification);
     }
 
     @Override

@@ -66,7 +66,7 @@ public class Drawers {
             selectMenuItem(findMenuItem(FavoritesFragment.class));
         }
         if (!(boolean) o) {
-            App.getInstance().getPreferences().edit().remove("menu_drawer_last").apply();
+            App.get().getPreferences().edit().remove("menu_drawer_last").apply();
         }
     };
 
@@ -129,8 +129,8 @@ public class Drawers {
         menuAdapter.setItems(menuItems);
 
         tabCloseAllButton.setOnClickListener(v -> closeAllTabs());
-        App.getInstance().addPreferenceChangeObserver(preferenceObserver);
-        App.getInstance().addStatusBarSizeObserver(statusBarSizeObserver);
+        App.get().addPreferenceChangeObserver(preferenceObserver);
+        App.get().addStatusBarSizeObserver(statusBarSizeObserver);
     }
 
     public NavigationView getMenuDrawer() {
@@ -155,7 +155,7 @@ public class Drawers {
             return;
         isFirstSelected = true;
         String className = ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN ? FavoritesFragment.class.getSimpleName() : AuthFragment.class.getSimpleName();
-        String last = App.getInstance().getPreferences().getString("menu_drawer_last", className);
+        String last = App.get().getPreferences().getString("menu_drawer_last", className);
         last = ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN && last.equals(AuthFragment.class.getSimpleName()) ? FavoritesFragment.class.getSimpleName() : last;
         Log.d(LOG_TAG, "Last item " + last);
 
@@ -192,8 +192,8 @@ public class Drawers {
     }
 
     public void destroy() {
-        App.getInstance().removePreferenceChangeObserver(preferenceObserver);
-        App.getInstance().removeStatusBarSizeObserver(statusBarSizeObserver);
+        App.get().removePreferenceChangeObserver(preferenceObserver);
+        App.get().removeStatusBarSizeObserver(statusBarSizeObserver);
         ClientHelper.getInstance().removeLoginObserver(loginObserver);
         ClientHelper.getInstance().removeCountsObserver(countsObserver);
         //menuAdapter.clear();
@@ -282,7 +282,7 @@ public class Drawers {
                 item.setActive(true);
                 lastActive = item;
                 menuAdapter.notifyDataSetChanged();
-                App.getInstance().getPreferences().edit().putString("menu_drawer_last", item.getTabClass().getSimpleName()).apply();
+                App.get().getPreferences().edit().putString("menu_drawer_last", item.getTabClass().getSimpleName()).apply();
             }
         } catch (Exception e) {
             e.printStackTrace();
