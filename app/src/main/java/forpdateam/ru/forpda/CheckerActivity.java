@@ -229,7 +229,7 @@ public class CheckerActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        App.getInstance().onRequestPermissionsResult(requestCode, permissions, grantResults);
+        App.get().onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
 }

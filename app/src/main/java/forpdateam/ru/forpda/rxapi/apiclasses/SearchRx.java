@@ -41,13 +41,13 @@ public class SearchRx {
             ForumUsersCache.saveUsers(forumUsers);
 
             int memberId = ClientHelper.getUserId();
-            MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_SEARCH);
+            MiniTemplator t = App.get().getTemplate(App.TEMPLATE_SEARCH);
             App.setTemplateResStrings(t);
             boolean authorized = ClientHelper.getAuthState();
             boolean prevDisabled = page.getPagination().getCurrent() <= 1;
             boolean nextDisabled = page.getPagination().getCurrent() == page.getPagination().getAll();
 
-            t.setVariableOpt("style_type", App.getInstance().getCssStyleType());
+            t.setVariableOpt("style_type", App.get().getCssStyleType());
 
             t.setVariableOpt("all_pages_int", page.getPagination().getAll());
             t.setVariableOpt("posts_on_page_int", page.getPagination().getPerPage());

@@ -40,7 +40,7 @@ public class Utils {
         sendIntent.putExtra(Intent.EXTRA_TEXT, text);
         sendIntent.setType("text/plain");
         sendIntent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-        App.getInstance().startActivity(Intent.createChooser(sendIntent, App.getInstance().getString(R.string.share)).addFlags(FLAG_ACTIVITY_NEW_TASK));
+        App.get().startActivity(Intent.createChooser(sendIntent, App.get().getString(R.string.share)).addFlags(FLAG_ACTIVITY_NEW_TASK));
     }
 
     public static <T> T checkNotNull(T value, String message) {

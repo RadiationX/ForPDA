@@ -38,9 +38,9 @@ public class NewsRx {
     }
 
     public static DetailsPage transform(DetailsPage page) throws Exception {
-        MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_NEWS);
+        MiniTemplator t = App.get().getTemplate(App.TEMPLATE_NEWS);
         App.setTemplateResStrings(t);
-        t.setVariableOpt("style_type", App.getInstance().getCssStyleType());
+        t.setVariableOpt("style_type", App.get().getCssStyleType());
         t.setVariableOpt("details_title", Utils.htmlEncode(page.getTitle()));
         t.setVariableOpt("body_type", "news");
         t.setVariableOpt("details_content", page.getHtml());

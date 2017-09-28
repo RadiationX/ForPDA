@@ -130,7 +130,7 @@ public class App extends android.app.Application {
         instance = this;
     }
 
-    public static App getInstance() {
+    public static App get() {
         if (instance == null) {
             instance = new App();
         }
@@ -138,7 +138,7 @@ public class App extends android.app.Application {
     }
 
     public static Context getContext() {
-        return getInstance();
+        return get();
     }
 
     @ColorInt
@@ -413,7 +413,7 @@ public class App extends android.app.Application {
         Log.d("FORPDA_LOG", "setKeyboardHeight " + newKeyboardHeight);
         keyboardHeight = newKeyboardHeight;
         if (keyboardHeight == savedKeyboardHeight) return;
-        App.getInstance().getPreferences().edit().putInt("keyboard_height", keyboardHeight).apply();
+        App.get().getPreferences().edit().putInt("keyboard_height", keyboardHeight).apply();
     }
 
 
@@ -424,7 +424,7 @@ public class App extends android.app.Application {
     private MiniTemplator findTemplate(String name) {
         MiniTemplator template = null;
         try {
-            InputStream stream = App.getInstance().getAssets().open("template_".concat(name).concat(".html"));
+            InputStream stream = App.get().getAssets().open("template_".concat(name).concat(".html"));
             try {
                 template = new MiniTemplator.Builder().build(stream, Charset.forName("utf-8"));
             } catch (Exception e) {

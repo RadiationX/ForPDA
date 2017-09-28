@@ -78,7 +78,7 @@ public class NewsDetailsFragment extends TabFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_news));
+        configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_news));
         configuration.setUseCache(false); // back
         configuration.setAlone(false);
         if (getArguments() != null) {
@@ -296,10 +296,10 @@ public class NewsDetailsFragment extends TabFragment {
             Log.e("SUKA", "CREATE FragmentPagerAdapter " + article);
 
             fragments.add(new ArticleContentFragment().setArticle(this.article));
-            titles.add(App.getInstance().getString(R.string.news_page_content));
+            titles.add(App.get().getString(R.string.news_page_content));
 
             fragments.add(new ArticleCommentsFragment().setArticle(this.article));
-            titles.add(App.getInstance().getString(R.string.news_page_comments));
+            titles.add(App.get().getString(R.string.news_page_comments));
         }
 
         @Override

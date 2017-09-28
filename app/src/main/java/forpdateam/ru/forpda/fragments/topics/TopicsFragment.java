@@ -40,7 +40,7 @@ public class TopicsFragment extends ListFragment implements TopicsAdapter.OnItem
     private Subscriber<TopicsData> mainSubscriber = new Subscriber<>(this);
 
     public TopicsFragment() {
-        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_topics));
+        configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_topics));
     }
 
     @Override

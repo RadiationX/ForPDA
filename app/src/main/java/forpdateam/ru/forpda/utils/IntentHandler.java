@@ -236,10 +236,10 @@ public class IntentHandler {
     private static void externalIntent(String url) {
         Log.d(LOG_TAG, "Start external intent");
         try {
-            //App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK));
+            //App.get().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK));
 
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK);
-            App.getInstance().startActivity(Intent.createChooser(intent, App.getInstance().getString(R.string.open_with)).addFlags(FLAG_ACTIVITY_NEW_TASK));
+            App.get().startActivity(Intent.createChooser(intent, App.get().getString(R.string.open_with)).addFlags(FLAG_ACTIVITY_NEW_TASK));
         } catch (ActivityNotFoundException e) {
             ACRA.getErrorReporter().handleException(e);
         }
@@ -275,7 +275,7 @@ public class IntentHandler {
             int id = param == null ? -1 : Integer.parseInt(param);
             /*if (!ForumFragment.checkIsLink(id)) {
                 args.putInt(ForumFragment.ARG_FORUM_ID, id);
-                TabManager.getInstance().add(new TabFragment.Builder<>(ForumFragment.class).setArgs(args).build());
+                TabManager.get().add(new TabFragment.Builder<>(ForumFragment.class).setArgs(args).build());
             } else {
 
             }*/
@@ -387,8 +387,9 @@ public class IntentHandler {
         Log.d(LOG_TAG, "handleDownload " + fileName + " : " + url);
         Activity activity = App.getActivity();
         if (activity != null) {
+
             new AlertDialog.Builder(activity)
-                    .setMessage(activity.getString(R.string.load_file) + fileName + "?")
+                    .setMessage(String.format(activity.getString(R.string.load_file), fileName))
                     .setPositiveButton(activity.getString(R.string.ok), (dialog, which) -> {
                         redirectDownload(fileName, url);
                     })
@@ -400,7 +401,7 @@ public class IntentHandler {
     }
 
     private static void redirectDownload(String fileName, String url) {
-        Toast.makeText(App.getContext(), App.getInstance().getString(R.string.perform_request_link).concat(fileName), Toast.LENGTH_SHORT).show();
+        Toast.makeText(App.getContext(), String.format(App.get().getString(R.string.perform_request_link), fileName), Toast.LENGTH_SHORT).show();
         Observable.fromCallable(() -> Client.getInstance().request(new NetworkRequest.Builder().url(url).withoutBody().build()))
                 .onErrorReturn(throwable -> new NetworkResponse(null))
                 .subscribeOn(Schedulers.io())
@@ -414,7 +415,7 @@ public class IntentHandler {
                         externalDownloader(response.getRedirect());
                     } else {
                         Runnable checkAction = () -> {
-                            Toast.makeText(App.getContext(), App.getInstance().getString(R.string.perform_loading).concat(fileName), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(App.getContext(), String.format(App.get().getString(R.string.perform_request_link), fileName), Toast.LENGTH_SHORT).show();
                             try {
                                 systemDownloader(fileName, response.getRedirect());
                             } catch (Exception exception) {
@@ -424,7 +425,7 @@ public class IntentHandler {
                         };
 
                         Activity activity = App.getActivity();
-                        App.getInstance().checkStoragePermission(checkAction, activity);
+                        App.get().checkStoragePermission(checkAction, activity);
                     }
                 });
     }
@@ -441,7 +442,7 @@ public class IntentHandler {
     public static void externalDownloader(String url) {
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK);
-            App.getInstance().startActivity(Intent.createChooser(intent, App.getInstance().getString(R.string.load_with)).addFlags(FLAG_ACTIVITY_NEW_TASK));
+            App.get().startActivity(Intent.createChooser(intent, App.get().getString(R.string.load_with)).addFlags(FLAG_ACTIVITY_NEW_TASK));
         } catch (ActivityNotFoundException e) {
             ACRA.getErrorReporter().handleException(e);
         }

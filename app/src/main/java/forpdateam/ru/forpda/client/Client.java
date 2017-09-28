@@ -71,12 +71,12 @@ public class Client implements IWebClient {
         }
         cookies = new HashMap<>();
         listCookies = new ArrayList<>();
-        String member_id = App.getInstance().getPreferences().getString("cookie_member_id", null);
-        String pass_hash = App.getInstance().getPreferences().getString("cookie_pass_hash", null);
-        String session_id = App.getInstance().getPreferences().getString("cookie_session_id", null);
-        String anonymous = App.getInstance().getPreferences().getString("cookie_anonymous", null);
-        ClientHelper.setUserId(App.getInstance().getPreferences().getString("member_id", null));
-        //Log.d("FORPDA_LOG", "INIT AUTH DATA " + member_id + " : " + pass_hash + " : " + session_id + " : " + App.getInstance().getPreferences().getString("member_id", null));
+        String member_id = App.get().getPreferences().getString("cookie_member_id", null);
+        String pass_hash = App.get().getPreferences().getString("cookie_pass_hash", null);
+        String session_id = App.get().getPreferences().getString("cookie_session_id", null);
+        String anonymous = App.get().getPreferences().getString("cookie_anonymous", null);
+        ClientHelper.setUserId(App.get().getPreferences().getString("member_id", null));
+        //Log.d("FORPDA_LOG", "INIT AUTH DATA " + member_id + " : " + pass_hash + " : " + session_id + " : " + App.get().getPreferences().getString("member_id", null));
 
 
         cookies.put("ngx_mb", mobileCookie);
@@ -94,7 +94,7 @@ public class Client implements IWebClient {
     }
 
     public String getAuthKey() {
-        return App.getInstance().getPreferences().getString("auth_key", "0");
+        return App.get().getPreferences().getString("auth_key", "0");
     }
 
     public static Client getInstance() {
@@ -137,26 +137,26 @@ public class Client implements IWebClient {
                     boolean isAnonymous = cookie.name().equals("anonymous");
                     if (isMemberId || isPassHash || isSessionId || isAnonymous) {
                         if (cookie.value().equals("deleted")) {
-                            App.getInstance().getPreferences().edit().remove("cookie_".concat(cookie.name())).apply();
+                            App.get().getPreferences().edit().remove("cookie_".concat(cookie.name())).apply();
                             if (Client.cookies.containsKey(cookie.name())) {
                                 Client.cookies.remove(cookie.name());
                             }
                         } else {
                             //Сохранение кукисов cookie_member_id и cookie_pass_hash
-                            App.getInstance().getPreferences().edit().putString("cookie_".concat(cookie.name()), cookieToPref(url.toString(), cookie)).apply();
+                            App.get().getPreferences().edit().putString("cookie_".concat(cookie.name()), cookieToPref(url.toString(), cookie)).apply();
                             if (isMemberId) {
-                                App.getInstance().getPreferences().edit().putString("member_id", cookie.value()).apply();
+                                App.get().getPreferences().edit().putString("member_id", cookie.value()).apply();
                                 ClientHelper.setUserId(cookie.value());
                             }
                             if (isPassHash) {
-                                //App.getInstance().getPreferences().edit().putString("cookie_pass_hash", cookieToPref(url.toString(), cookie)).apply();
-                                //App.getInstance().getPreferences().edit().putString("auth_key", cookie.value()).apply();
+                                //App.get().getPreferences().edit().putString("cookie_pass_hash", cookieToPref(url.toString(), cookie)).apply();
+                                //App.get().getPreferences().edit().putString("auth_key", cookie.value()).apply();
                             }
                             if (isSessionId) {
-                                //App.getInstance().getPreferences().edit().putString("cookie_session_id", cookieToPref(url.toString(), cookie)).apply();
+                                //App.get().getPreferences().edit().putString("cookie_session_id", cookieToPref(url.toString(), cookie)).apply();
                             }
                             if (isAnonymous) {
-                                //App.getInstance().getPreferences().edit().putString("cookie_anonymous", cookieToPref(url.toString(), cookie)).apply();
+                                //App.get().getPreferences().edit().putString("cookie_anonymous", cookieToPref(url.toString(), cookie)).apply();
                             }
                             if (!Client.cookies.containsKey(cookie.name())) {
                                 Client.cookies.put(cookie.name(), cookie);

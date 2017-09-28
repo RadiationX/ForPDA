@@ -175,7 +175,7 @@ public class NotificationsService extends Service {
     public void onCreate() {
         Log.i(LOG_TAG, "onCreate");
         Client.getInstance().addNetworkObserver(networkObserver);
-        App.getInstance().addPreferenceChangeObserver(notificationSettingObserver);
+        App.get().addPreferenceChangeObserver(notificationSettingObserver);
     }
 
     @Override
@@ -231,7 +231,7 @@ public class NotificationsService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.i(LOG_TAG, "onDestroy");
-        App.getInstance().removePreferenceChangeObserver(notificationSettingObserver);
+        App.get().removePreferenceChangeObserver(notificationSettingObserver);
         Client.getInstance().removeNetworkObserver(networkObserver);
         stop();
     }
@@ -370,7 +370,7 @@ public class NotificationsService extends Service {
             prefKey = Preferences.Notifications.Data.FAVORITES_EVENTS;
         }
 
-        Set<String> savedEvents = App.getInstance().getPreferences().getStringSet(prefKey, new ArraySet<>());
+        Set<String> savedEvents = App.get().getPreferences().getStringSet(prefKey, new ArraySet<>());
         StringBuilder responseBuilder = new StringBuilder();
         for (String saved : savedEvents) {
             responseBuilder.append(saved).append('\n');
@@ -397,7 +397,7 @@ public class NotificationsService extends Service {
         for (NotificationEvent event : loadedEvents) {
             savedEvents.add(event.getSourceEventText());
         }
-        App.getInstance().getPreferences().edit().putStringSet(prefKey, savedEvents).apply();
+        App.get().getPreferences().edit().putStringSet(prefKey, savedEvents).apply();
     }
 
     private List<NotificationEvent> compareEvents(List<NotificationEvent> savedEvents, List<NotificationEvent> loadedEvents, NotificationEvent event, NotificationEvent.Source source) {
@@ -476,10 +476,10 @@ public class NotificationsService extends Service {
     public void notifyTabs(TabNotification event) {
         switch (event.getSource()) {
             case THEME:
-                App.getInstance().notifyFavorites(event);
+                App.get().notifyFavorites(event);
                 break;
             case QMS:
-                App.getInstance().notifyQms(event);
+                App.get().notifyQms(event);
         }
     }
 

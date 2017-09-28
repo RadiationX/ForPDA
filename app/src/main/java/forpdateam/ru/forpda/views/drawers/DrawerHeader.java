@@ -59,11 +59,11 @@ public class DrawerHeader {
             TabManager.getInstance().select(tabFragment);
             ;
         }
-        /*TabFragment fragment = TabManager.getInstance().get(TabManager.getInstance().getTagContainClass(ProfileFragment.class));
+        /*TabFragment fragment = TabManager.get().get(TabManager.get().getTagContainClass(ProfileFragment.class));
         if (fragment == null | (fragment != null && fragment.getConfiguration().isMenu())) {
-            TabManager.getInstance().add(new TabFragment.Builder<>(ProfileFragment.class).setIsMenu().build());
+            TabManager.get().add(new TabFragment.Builder<>(ProfileFragment.class).setIsMenu().build());
         } else {
-            TabManager.getInstance().select(fragment);
+            TabManager.get().select(fragment);
         }*/
         activity.getDrawers().closeMenu();
         activity.getDrawers().closeTabs();
@@ -152,7 +152,7 @@ public class DrawerHeader {
         Log.d("FORPDA_LOG", "ONLOAD PROFILE " + profileModel.getNick() + " : " + profileModel.getAvatar());
         ImageLoader.getInstance().displayImage(profileModel.getAvatar(), avatar);
         nick.setText(profileModel.getNick());
-        App.getInstance().getPreferences().edit().putString("auth.user.nick", profileModel.getNick()).apply();
+        App.get().getPreferences().edit().putString("auth.user.nick", profileModel.getNick()).apply();
     }
 
     public void setStatusBarHeight(int height) {

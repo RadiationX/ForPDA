@@ -532,7 +532,7 @@ public class Html {
                     AbsoluteSizeSpan s = ((AbsoluteSizeSpan) style[j]);
                     float sizeDip = s.getSize();
                     if (!s.getDip()) {
-                        Application application = App.getInstance();
+                        Application application = App.get();
                         sizeDip /= application.getResources().getDisplayMetrics().density;
                     }
                     // px in CSS is the equivalance of dip in Android

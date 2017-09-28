@@ -273,7 +273,7 @@ public class TabFragment extends Fragment {
         toolbarTitleView.setHorizontalFadingEdgeEnabled(true);
         toolbarTitleView.setFadingEdgeLength(App.px16);
 
-        App.getInstance().addStatusBarSizeObserver(statusBarSizeObserver);
+        App.get().addStatusBarSizeObserver(statusBarSizeObserver);
 
         //fragmentContainer.setPadding(0, App.getStatusBarHeight(), 0, 0);
 
@@ -300,7 +300,7 @@ public class TabFragment extends Fragment {
         updateNotifyDot();
         ClientHelper.getInstance().addCountsObserver(countsObserver);
         Client.getInstance().addNetworkObserver(networkObserver);
-        App.getInstance().addPreferenceChangeObserver(tabPreferenceObserver);
+        App.get().addPreferenceChangeObserver(tabPreferenceObserver);
         return view;
     }
 
@@ -440,8 +440,8 @@ public class TabFragment extends Fragment {
         hidePopupWindows();
         ClientHelper.getInstance().removeCountsObserver(countsObserver);
         Client.getInstance().removeNetworkObserver(networkObserver);
-        App.getInstance().removePreferenceChangeObserver(tabPreferenceObserver);
-        App.getInstance().removeStatusBarSizeObserver(statusBarSizeObserver);
+        App.get().removePreferenceChangeObserver(tabPreferenceObserver);
+        App.get().removeStatusBarSizeObserver(statusBarSizeObserver);
     }
 
     protected boolean isTalkBackEnabled() {

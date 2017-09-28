@@ -40,7 +40,7 @@ public class BrandFragment extends TabFragment implements BrandAdapter.OnItemCli
     private AlertDialogMenu<BrandFragment, Brand.DeviceItem> dialogMenu, showedDialogMenu;
 
     public BrandFragment() {
-        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_brand));
+        configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_brand));
     }
 
     @Override
@@ -65,7 +65,7 @@ public class BrandFragment extends TabFragment implements BrandAdapter.OnItemCli
         refreshLayout.setOnRefreshListener(this::loadData);
 
         adapter = new BrandAdapter();
-        recyclerView.setColumnWidth(App.getInstance().dpToPx(144));
+        recyclerView.setColumnWidth(App.get().dpToPx(144));
         recyclerView.setAdapter(adapter);
         try {
             GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();

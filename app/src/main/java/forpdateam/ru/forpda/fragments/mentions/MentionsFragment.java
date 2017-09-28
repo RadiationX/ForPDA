@@ -34,7 +34,7 @@ public class MentionsFragment extends ListFragment implements MentionsAdapter.On
 
     public MentionsFragment() {
         configuration.setAlone(true);
-        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_mentions));
+        configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_mentions));
     }
 
     @Nullable

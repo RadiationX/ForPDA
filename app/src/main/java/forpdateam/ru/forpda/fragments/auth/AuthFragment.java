@@ -187,14 +187,14 @@ public class AuthFragment extends TabFragment {
         if (EmptyActivity.empty(profile.getNick())) {
             loginProgress.setVisibility(View.GONE);
             // Надо записать иначе будет каждый раз просить авторизацию
-            App.getInstance().getPreferences().edit().putString("auth.user.nick", profile.getNick()).apply();
+            App.get().getPreferences().edit().putString("auth.user.nick", profile.getNick()).apply();
             EmptyActivity.start(getActivity(), profile.getNick());
             getMainActivity().finish();
             return;
         }
-        App.getInstance().getPreferences().edit().putString("auth.user.nick", profile.getNick()).apply();
+        App.get().getPreferences().edit().putString("auth.user.nick", profile.getNick()).apply();
         ImageLoader.getInstance().displayImage(profile.getAvatar(), avatar);
-        completeText.setText(Utils.spannedFromHtml(getString(R.string.auth_hello) + ", <b>" + profile.getNick() + "</b>!"));
+        completeText.setText(Utils.spannedFromHtml(String.format("%s, <b>%s</b>!", getString(R.string.auth_hello), profile.getNick())));
         completeText.setVisibility(View.VISIBLE);
         AlphaAnimation animation = new AlphaAnimation(0.0f, 1.0f);
         animation.setDuration(1000);

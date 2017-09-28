@@ -244,10 +244,10 @@
     <string name="brands_category_ebook">Эл. книги</string>
     <string name="brands_category_smartwatch">Смарт часы</string>
     <string name="device_page_specs">Характеристики</string>
-    <string name="device_page_comments">Отзывы</string>
-    <string name="device_page_discussions">Обсуждения</string>
-    <string name="device_page_news">Публикации</string>
-    <string name="device_page_firmwares">Прошивки</string>
+    <string name="device_page_comments" formatted="false">Отзывы (%d)</string>
+    <string name="device_page_discussions" formatted="false">Обсуждения (%d)</string>
+    <string name="device_page_news" formatted="false">Публикации (%d)</string>
+    <string name="device_page_firmwares" formatted="false">Прошивки (%d)</string>
 
     <!-- Qms -->
     <string name="chat_creator_enter_nick">Введите ник пользователя</string>
@@ -300,7 +300,7 @@
     <string name="editpost_reason">Причина редактирования</string>
 
     <!-- Pagination -->
-    <string name="pagination_page_number">Страница</string>
+    <string name="pagination_page_number" formatted="false">Страница №%d</string>
     <string name="pagination_first">К первой странице</string>
     <string name="pagination_prev">К предыдущей странице</string>
     <string name="pagination_select_desc">Выбор страницы</string>
@@ -318,9 +318,9 @@
     <string name="forum_refresh">Обновить форумы</string>
 
     <!-- Intent -->
-    <string name="load_file">Загрузить файл</string>
-    <string name="perform_request_link">Запрашиваю ссылку для загрузки</string>
-    <string name="perform_loading">Выполняется загрузка</string>
+    <string name="load_file" formatted="false">Загрузить файл %s?</string>
+    <string name="perform_request_link" formatted="false">Запрашиваю ссылку для загрузки %s</string>
+    <string name="perform_loading" formatted="false">Выполняется загрузка %s</string>
     <string name="perform_loading_error">Произошла ошибка. Будет загружено через внешний загрузчик.</string>
 
     <!-- Poll -->

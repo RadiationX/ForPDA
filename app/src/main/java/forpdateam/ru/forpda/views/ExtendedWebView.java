@@ -169,7 +169,7 @@ public class ExtendedWebView extends NestedGeckoView implements IBase {
     //0.0f, 1.0f, 2.3f, etc
     public void setRelativeScale(float scale) {
         try {
-            relativeScale = (int) (scale * (App.getInstance().getDensity() * 100));
+            relativeScale = (int) (scale * (App.get().getDensity() * 100));
             fontScale = scale;
         } catch (Exception ignore) {
             ignore.printStackTrace();
@@ -187,7 +187,7 @@ public class ExtendedWebView extends NestedGeckoView implements IBase {
 
     public void setPaddingBottom(int padding) {
         paddingBottom = padding;
-        evalJs("setPaddingBottom(" + ((paddingBottom / App.getInstance().getDensity()) * (1 / fontScale)) + ");");
+        evalJs("setPaddingBottom(" + ((paddingBottom / App.get().getDensity()) * (1 / fontScale)) + ");");
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)

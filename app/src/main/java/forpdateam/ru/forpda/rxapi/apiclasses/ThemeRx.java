@@ -58,13 +58,13 @@ public class ThemeRx {
             ForumUsersCache.saveUsers(forumUsers);
 
             int memberId = ClientHelper.getUserId();
-            MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_THEME);
+            MiniTemplator t = App.get().getTemplate(App.TEMPLATE_THEME);
             App.setTemplateResStrings(t);
             boolean authorized = ClientHelper.getAuthState();
             boolean prevDisabled = page.getPagination().getCurrent() <= 1;
             boolean nextDisabled = page.getPagination().getCurrent() == page.getPagination().getAll();
 
-            t.setVariableOpt("style_type", App.getInstance().getCssStyleType());
+            t.setVariableOpt("style_type", App.get().getCssStyleType());
 
             t.setVariableOpt("topic_title", Utils.htmlEncode(page.getTitle()));
             t.setVariableOpt("topic_description", Utils.htmlEncode(page.getDesc()));
@@ -163,7 +163,7 @@ public class ThemeRx {
                 Poll poll = page.getPoll();
                 boolean isResult = poll.isResult();
                 t.setVariableOpt("poll_type", isResult ? "result" : "default");
-                t.setVariableOpt("poll_title", poll.getTitle().isEmpty() || poll.getTitle().equals("-") ? App.getInstance().getString(R.string.poll) : poll.getTitle());
+                t.setVariableOpt("poll_title", poll.getTitle().isEmpty() || poll.getTitle().equals("-") ? App.get().getString(R.string.poll) : poll.getTitle());
 
                 for (PollQuestion question : poll.getQuestions()) {
                     t.setVariableOpt("question_title", question.getTitle());

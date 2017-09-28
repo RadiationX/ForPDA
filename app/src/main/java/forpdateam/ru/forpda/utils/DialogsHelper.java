@@ -21,12 +21,12 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 public class DialogsHelper {
     private static AlertDialogMenu<Context, Pair<String, String>> alertDialogMenu;
     private static AlertDialogMenu<Context, Pair<String, String>> showedAlertDialogMenu;
-    private final static String openNewTab = App.getInstance().getString(R.string.wv_open_new_tab);
-    private final static String openBrowser = App.getInstance().getString(R.string.wv_open_in_browser);
-    private final static String copyUrl = App.getInstance().getString(R.string.wv_copy_link);
-    private final static String openImage = App.getInstance().getString(R.string.wv_open_image);
-    private final static String saveImage = App.getInstance().getString(R.string.wv_save_image);
-    private final static String copyImageUrl = App.getInstance().getString(R.string.wv_copy_image_link);
+    private final static String openNewTab = App.get().getString(R.string.wv_open_new_tab);
+    private final static String openBrowser = App.get().getString(R.string.wv_open_in_browser);
+    private final static String copyUrl = App.get().getString(R.string.wv_copy_link);
+    private final static String openImage = App.get().getString(R.string.wv_open_image);
+    private final static String saveImage = App.get().getString(R.string.wv_save_image);
+    private final static String copyImageUrl = App.get().getString(R.string.wv_copy_image_link);
 
     public static void handleContextMenu(Context context, int type, String extra, String nodeHref) {
         Log.d("DialogsHelper", "handleContextMenu " + type + " : " + extra + " : " + nodeHref);
@@ -60,7 +60,7 @@ public class DialogsHelper {
             showedAlertDialogMenu = new AlertDialogMenu<>();
 
             alertDialogMenu.addItem(openNewTab, (context1, data) -> IntentHandler.handle(data.second));
-            alertDialogMenu.addItem(openBrowser, (context1, data) -> App.getInstance().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(data.second)).addFlags(FLAG_ACTIVITY_NEW_TASK)));
+            alertDialogMenu.addItem(openBrowser, (context1, data) -> App.get().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(data.second)).addFlags(FLAG_ACTIVITY_NEW_TASK)));
             alertDialogMenu.addItem(copyUrl, (context1, data) -> Utils.copyToClipBoard(data.second));
             alertDialogMenu.addItem(openImage, (context1, data) -> ImageViewerActivity.startActivity(context1, data.first));
             alertDialogMenu.addItem(saveImage, (context1, data) -> IntentHandler.handleDownload(data.second));

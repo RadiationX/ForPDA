@@ -10,7 +10,7 @@ import forpdateam.ru.forpda.App;
 
 public class Preferences {
     private static SharedPreferences preferences() {
-        return App.getInstance().getPreferences();
+        return App.get().getPreferences();
     }
 
     public final static class Main {
@@ -64,7 +64,7 @@ public class Preferences {
         }
 
         public static int getWebViewSize() {
-            int size = App.getInstance().getPreferences().getInt(Preferences.Main.WEBVIEW_FONT_SIZE, 16);
+            int size = App.get().getPreferences().getInt(Preferences.Main.WEBVIEW_FONT_SIZE, 16);
             size = Math.max(Math.min(size, 64), 8);
             return size;
         }

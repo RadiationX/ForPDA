@@ -99,7 +99,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     };
 
     public QmsChatFragment() {
-        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_chat));
+        configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_chat));
     }
 
     public MessagePanel getMessagePanel() {
@@ -168,7 +168,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
 
 
         viewsReady();
-        App.getInstance().addPreferenceChangeObserver(chatPreferenceObserver);
+        App.get().addPreferenceChangeObserver(chatPreferenceObserver);
         tryShowAvatar();
 
         if (currentChat.getNick() != null) {
@@ -276,9 +276,9 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
 
     //Chat
     private void loadBaseWebContainer() {
-        MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT);
+        MiniTemplator t = App.get().getTemplate(App.TEMPLATE_QMS_CHAT);
         App.setTemplateResStrings(t);
-        t.setVariableOpt("style_type", App.getInstance().getCssStyleType());
+        t.setVariableOpt("style_type", App.get().getCssStyleType());
         t.setVariableOpt("body_type", "qms");
         t.setVariableOpt("messages", "");
         String html = t.generateOutput();
@@ -304,7 +304,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     }
 
     private void onLoadChat(QmsChatModel loadedChat) {
-        App.getInstance().subscribeQms(notification);
+        App.get().subscribeQms(notification);
         progressBar.setVisibility(View.GONE);
         currentChat.setThemeId(loadedChat.getThemeId());
         currentChat.setTitle(loadedChat.getTitle());
@@ -312,7 +312,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         currentChat.setNick(loadedChat.getNick());
         currentChat.getMessages().addAll(loadedChat.getMessages());
 
-        MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
+        MiniTemplator t = App.get().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
         App.setTemplateResStrings(t);
         int end = currentChat.getMessages().size();
         int start = Math.max(end - 30, 0);
@@ -359,7 +359,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     private void onNewMessages(ArrayList<QmsMessage> qmsMessage) {
         Log.d(LOG_TAG, "Returned messages " + qmsMessage.size());
         if (qmsMessage.size() > 0) {
-            MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
+            MiniTemplator t = App.get().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
             App.setTemplateResStrings(t);
             for (int i = 0; i < qmsMessage.size(); i++) {
                 QmsMessage message = qmsMessage.get(i);
@@ -406,7 +406,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
 
     @JavascriptInterface
     public void showMoreMess() {
-        MiniTemplator t = App.getInstance().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
+        MiniTemplator t = App.get().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
         App.setTemplateResStrings(t);
         int endIndex = currentChat.getShowedMessIndex();
         int startIndex = Math.max(endIndex - 30, 0);
@@ -468,7 +468,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     }
 
     public void tryPickFile() {
-        App.getInstance().checkStoragePermission(() -> startActivityForResult(FilePickHelper.pickFile(true), REQUEST_PICK_FILE), App.getActivity());
+        App.get().checkStoragePermission(() -> startActivityForResult(FilePickHelper.pickFile(true), REQUEST_PICK_FILE), App.getActivity());
     }
 
     @Override
@@ -482,7 +482,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         super.onResume();
         messagePanel.onResume();
         if (currentChat.getUserId() != QmsChatModel.NOT_CREATED && currentChat.getThemeId() != QmsChatModel.NOT_CREATED) {
-            App.getInstance().subscribeQms(notification);
+            App.get().subscribeQms(notification);
             checkNewMessages();
         }
     }
@@ -490,8 +490,8 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     @Override
     public void onDestroy() {
         super.onDestroy();
-        App.getInstance().removePreferenceChangeObserver(chatPreferenceObserver);
-        App.getInstance().unSubscribeQms(notification);
+        App.get().removePreferenceChangeObserver(chatPreferenceObserver);
+        App.get().unSubscribeQms(notification);
         messagePanel.onDestroy();
         unregisterForContextMenu(webView);
         webView.removeJavascriptInterface(JS_INTERFACE);
@@ -503,7 +503,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     @Override
     public void onPause() {
         super.onPause();
-        App.getInstance().unSubscribeQms(notification);
+        App.get().unSubscribeQms(notification);
         messagePanel.onPause();
     }
 

@@ -65,7 +65,7 @@ public class AttachmentsPopup {
         addToSpoiler = (Button) bottomSheet.findViewById(R.id.add_to_spoiler);
         addToText = (Button) bottomSheet.findViewById(R.id.add_to_text);
 
-        recyclerView.setColumnWidth(App.getInstance().dpToPx(112));
+        recyclerView.setColumnWidth(App.get().dpToPx(112));
         recyclerView.setAdapter(adapter);
 
         /*addFile.setItemClickListener(v -> {
@@ -128,7 +128,7 @@ public class AttachmentsPopup {
 
     private void onDataChange(int count) {
         if (count > 0) {
-            noAttachments.setText(String.format(App.getInstance().getString(R.string.attachments_count), count));
+            noAttachments.setText(String.format(App.get().getString(R.string.attachments_count), count));
             //dialog.setPeekHeight(App.getKeyboardHeight());
         } else {
             noAttachments.setText(R.string.no_attachments);

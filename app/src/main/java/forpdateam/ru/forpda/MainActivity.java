@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     private final View.OnClickListener toggleListener = view -> drawers.toggleMenu();
     private final View.OnClickListener removeTabListener = view -> backHandler(true);
     private List<SimpleTooltip> tooltips = new ArrayList<>();
-    private boolean currentThemeIsDark = App.getInstance().isDarkTheme();
+    private boolean currentThemeIsDark = App.get().isDarkTheme();
 
 
     public View.OnClickListener getToggleListener() {
@@ -64,17 +64,17 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (EmptyActivity.empty(App.getInstance().getPreferences().getString("auth.user.nick", ""))) {
+        if (EmptyActivity.empty(App.get().getPreferences().getString("auth.user.nick", ""))) {
             startActivity(new Intent(this, EmptyActivity.class));
             finish();
             return;
         }
-        if (App.getInstance().isWebViewNotFound()) {
+        if (App.get().isWebViewNotFound()) {
             startActivity(new Intent(this, WebVewNotFoundActivity.class));
             finish();
             return;
         }
-        currentThemeIsDark = App.getInstance().isDarkTheme();
+        currentThemeIsDark = App.get().isDarkTheme();
         setTheme(currentThemeIsDark ? R.style.DarkAppTheme_NoActionBar : R.style.LightAppTheme_NoActionBar);
         setContentView(R.layout.activity_main);
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             @Override
             public void onDrawerOpened(View drawerView) {
                 if (drawerView.getId() == R.id.menu_drawer) {
-                    if (App.getInstance().getPreferences().getBoolean("drawers.tooltip.link_open", true)) {
+                    if (App.get().getPreferences().getBoolean("drawers.tooltip.link_open", true)) {
                         SimpleTooltip tooltip = new SimpleTooltip.Builder(MainActivity.this)
                                 .anchorView(drawerView.findViewById(R.id.drawer_header_open_link))
                                 .text(R.string.tooltip_link)
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
                                 .build();
                         tooltip.show();
                         tooltips.add(tooltip);
-                        App.getInstance().getPreferences().edit().putBoolean("drawers.tooltip.link_open", false).apply();
+                        App.get().getPreferences().edit().putBoolean("drawers.tooltip.link_open", false).apply();
                     }
 
                 }
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             @Override
             public void onDrawerClosed(View drawerView) {
                 if (drawerView.getId() == R.id.menu_drawer) {
-                    if (App.getInstance().getPreferences().getBoolean("drawers.tooltip.tabs_drawer", true)) {
+                    if (App.get().getPreferences().getBoolean("drawers.tooltip.tabs_drawer", true)) {
                         SimpleTooltip tooltip = new SimpleTooltip.Builder(MainActivity.this)
                                 .anchorView(drawers.getTabDrawer())
                                 .text(R.string.tooltip_tabs)
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
                         tooltip.show();
                         tooltips.add(tooltip);
-                        App.getInstance().getPreferences().edit().putBoolean("drawers.tooltip.tabs_drawer", false).apply();
+                        App.get().getPreferences().edit().putBoolean("drawers.tooltip.tabs_drawer", false).apply();
                     }
                 }
             }
@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
         if (lastHeight != App.getStatusBarHeight()) {
             Log.d(LOG_TAG, "Calc SB: " + App.getStatusBarHeight() + ", NB: " + App.getNavigationBarHeight());
-            App.getInstance().getStatusBarSizeObservables().notifyObservers();
+            App.get().getStatusBarSizeObservables().notifyObservers();
         }
     }
 
@@ -289,12 +289,12 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     }
 
     public void backHandler(boolean fromToolbar) {
-        /*if (TabManager.getInstance().getSize() <= 1) {
+        /*if (TabManager.get().getSize() <= 1) {
             super.onBackPressed();
         } else {
-            if (fromToolbar || !TabManager.getInstance().getActive().onBackPressed()) {
+            if (fromToolbar || !TabManager.get().getActive().onBackPressed()) {
                 hideKeyboard();
-                TabManager.getInstance().remove(TabManager.getInstance().getActive());
+                TabManager.get().remove(TabManager.get().getActive());
             }
         }*/
 
@@ -357,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
                     .setNegativeButton(newContext.getString(R.string.cancel), null)
                     .show();
         }
-        if (currentThemeIsDark != App.getInstance().isDarkTheme()) {
+        if (currentThemeIsDark != App.get().isDarkTheme()) {
             recreate();
         }
     }
@@ -391,6 +391,6 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        App.getInstance().onRequestPermissionsResult(requestCode, permissions, grantResults);
+        App.get().onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

@@ -46,7 +46,7 @@ public class ReputationFragment extends ListFragment implements ReputationAdapte
 
 
     public ReputationFragment() {
-        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_reputation));
+        configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_reputation));
     }
 
     @Override

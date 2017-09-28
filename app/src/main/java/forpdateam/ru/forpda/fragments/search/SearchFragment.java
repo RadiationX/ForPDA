@@ -138,13 +138,13 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
     }
 
     public SearchFragment() {
-        configuration.setDefaultTitle(App.getInstance().getString(R.string.fragment_title_search));
+        configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_search));
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String savedSettings = App.getInstance().getPreferences().getString("search_settings", null);
+        String savedSettings = App.get().getPreferences().getString("search_settings", null);
         if (savedSettings != null) {
             settings = SearchSettings.parseSettings(settings, savedSettings);
         }
@@ -237,7 +237,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         refreshLayout.addView(recyclerView);
         viewsReady();
         setCardsBackground();
-        App.getInstance().addPreferenceChangeObserver(searchPreferenceObserver);
+        App.get().addPreferenceChangeObserver(searchPreferenceObserver);
         paginationHelper = new PaginationHelper(getActivity());
         paginationHelper.addInToolbar(inflater, toolbarLayout);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
@@ -294,7 +294,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         refreshLayout.setOnRefreshListener(this::loadData);
         adapter.setOnItemClickListener(this);
 
-        if (App.getInstance().getPreferences().getBoolean("search.tooltip.settings", true)) {
+        if (App.get().getPreferences().getBoolean("search.tooltip.settings", true)) {
             for (int toolbarChildIndex = 0; toolbarChildIndex < toolbar.getChildCount(); toolbarChildIndex++) {
                 View view = toolbar.getChildAt(toolbarChildIndex);
                 if (view instanceof ActionMenuView) {
@@ -324,7 +324,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
                 }
             }
 
-            App.getInstance().getPreferences().edit().putBoolean("search.tooltip.settings", false).apply();
+            App.get().getPreferences().edit().putBoolean("search.tooltip.settings", false).apply();
         }
 
 
@@ -497,7 +497,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         saveSettings.setSource(settings.getSource());
         String saveUrl = saveSettings.toUrl();
         Log.d(LOG_TAG, "SAVE SETTINGS " + saveUrl);
-        App.getInstance().getPreferences().edit().putString("search_settings", saveUrl).apply();
+        App.get().getPreferences().edit().putString("search_settings", saveUrl).apply();
     }
 
     private void startSearch() {
@@ -618,7 +618,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        App.getInstance().removePreferenceChangeObserver(searchPreferenceObserver);
+        App.get().removePreferenceChangeObserver(searchPreferenceObserver);
         unregisterForContextMenu(webView);
         webView.removeJavascriptInterface(JS_INTERFACE);
         webView.removeJavascriptInterface(JS_POSTS_FUNCTIONS);
