@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.views.messagepanel;
 
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.CardView;
 import android.view.View;
@@ -11,7 +12,6 @@ import forpdateam.ru.forpda.App;
  */
 
 public class MessagePanelBehavior extends CoordinatorLayout.Behavior<CardView> {
-    private int scrolled = 0;
     private boolean canScrolling = true;
 
     public MessagePanelBehavior() {
@@ -26,26 +26,23 @@ public class MessagePanelBehavior extends CoordinatorLayout.Behavior<CardView> {
         return canScrolling;
     }
 
-    @Override
-    public void onNestedScroll(final CoordinatorLayout coordinatorLayout,
-                               final CardView child,
-                               final View target, final int dxConsumed, final int dyConsumed,
-                               final int dxUnconsumed, final int dyUnconsumed) {
-        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
-
-    }
-
-    @Override
-    public void onNestedPreScroll(CoordinatorLayout coordinatorLayout, CardView child, View target, int dx, int dy, int[] consumed) {
-        super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed);
-        if (!canScrolling) return;
-        scrolled += dy + consumed[1];
-        scrolled = Math.max(scrolled, -child.getMeasuredHeight() - (2 * App.px8));
-        scrolled = Math.min(scrolled, 0);
-        child.setTranslationY(-(float) scrolled);
-    }
 
     public void setCanScrolling(boolean canScrolling) {
         this.canScrolling = canScrolling;
+    }
+
+
+    @Override
+    public boolean layoutDependsOn(CoordinatorLayout parent, CardView child, View dependency) {
+        return dependency instanceof AppBarLayout;
+    }
+
+    @Override
+    public boolean onDependentViewChanged(CoordinatorLayout parent, CardView child, View dependency) {
+        if (!canScrolling) return false;
+        float percent = 1.0f - ((float) -dependency.getTop() / (float) dependency.getMeasuredHeight());
+        int scrolled = (int) ((child.getMeasuredHeight() + (2 * App.px8)) * percent);
+        child.setTranslationY(scrolled);
+        return true;
     }
 }

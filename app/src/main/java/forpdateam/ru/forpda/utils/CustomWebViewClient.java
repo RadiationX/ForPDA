@@ -28,8 +28,10 @@ import forpdateam.ru.forpda.rxapi.ForumUsersCache;
 
 public class CustomWebViewClient extends WebViewClient {
     private final static String LOG_TAG = CustomWebViewClient.class.getSimpleName();
+    private final static String TYPE_NICK = "nick";
+    private final static String TYPE_URL = "url";
 
-    private Pattern cachePattern = Pattern.compile("app_cache:avatars\\?nick=([\\s\\S]*)");
+    private Pattern cachePattern = Pattern.compile("app_cache:avatars\\?(url|nick)=([\\s\\S]*)");
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -44,14 +46,29 @@ public class CustomWebViewClient extends WebViewClient {
             try {
                 Log.d(LOG_TAG, "intercepted " + url);
                 WebResourceResponse resourceResponse = null;
-                String nick = matcher.group(1);
-                nick = URLDecoder.decode(nick, "UTF-8");
-                ForumUser forumUser = ForumUsersCache.loadUserByNick(nick);
-                Log.d(LOG_TAG, "Loaded user " + forumUser.getId() + " : " + forumUser.getNick() + " : " + forumUser.getAvatar());
-                Bitmap bitmap = ImageLoader.getInstance().loadImageSync(forumUser.getAvatar());
+                String type = matcher.group(1);
+                String value = matcher.group(2);
+                value = URLDecoder.decode(value, "UTF-8");
+
+                String avatarUrl = null;
+                switch (type){
+                    case TYPE_NICK:
+                        ForumUser forumUser = ForumUsersCache.loadUserByNick(value);
+                        Log.d(LOG_TAG, "Loaded user " + forumUser.getId() + " : " + forumUser.getNick() + " : " + forumUser.getAvatar());
+                        avatarUrl = forumUser.getAvatar();
+                        break;
+                    case TYPE_URL:
+                        avatarUrl = value;
+                        break;
+                }
+
+                Bitmap bitmap = ImageLoader.getInstance().loadImageSync(avatarUrl);
                 String base64Bitmap = convert(bitmap);
                 base64Bitmap = "data:image/png;base64," + base64Bitmap;
-                resourceResponse = new WebResourceResponse("text/text", null, new ByteArrayInputStream(base64Bitmap.getBytes()));
+                resourceResponse = new WebResourceResponse(
+                        "text/text",
+                        null,
+                        new ByteArrayInputStream(base64Bitmap.getBytes()));
                 return resourceResponse;
             } catch (Exception e) {
                 e.printStackTrace();
