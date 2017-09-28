@@ -1,4 +1,10 @@
 console.log("LOAD JS SOURCE blocks.js");
+var loader;
+try {
+    loader = new AvatarLoader();
+} catch (ex) {
+    console.error(ex);
+}
 
 function transformSnapbacks() {
     var snapBacks = document.querySelectorAll("a[href*=findpost][title='Перейти к сообщению'],a[href*=showuser]");
@@ -9,7 +15,7 @@ function transformSnapbacks() {
         if (snapBack.classList.contains("snapback")) {
             break;
         }
-        if (snapBack.href.includes("showuser")) {
+        if (snapBack.href.indexOf("showuser") != -1) {
             var temp = snapBack;
             while (temp.firstElementChild != null) {
                 temp = temp.firstElementChild;
@@ -97,26 +103,13 @@ function transformQuotes() {
 
 function loadAvatar(block) {
     var imageEl = block.querySelector(".avatar .image");
-    if (imageEl.style.backgroundImage.includes("base64")) {
+    if (imageEl.style.backgroundImage.indexOf("base64") != -1) {
         return;
     }
     var nick = block.querySelector(".name").innerHTML;
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'app_cache:avatars?nick=' + nick, true);
-    xhr.send();
-    xhr.onreadystatechange = function () {
-        console.log(xhr.responseURL + ' : ' + xhr.status + " : " + xhr.responseText.length);
-        if (xhr.status != 200) {
-            console.log(xhr.status + ': ' + xhr.statusText);
-        } else {
-            var responseText = xhr.responseText;
-            if (xhr.responseText.length == 0) {
-                return;
-            }
-
-            imageEl.style.backgroundImage = "url(\"" + responseText + "\")";
-        }
-    }
+    loader.loadByNick(nick, function(loaded){
+        imageEl.style.backgroundImage = "url(\"" + loaded + "\")";
+    })
 }
 
 function improveCodeBlock() {
