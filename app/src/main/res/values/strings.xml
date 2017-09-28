@@ -166,6 +166,10 @@
     <string name="fragment_title_topics">Темы форума</string>
     <string name="activity_title_settings">Настройки</string>
 
+    <string name="fragment_tab_title_theme" formatted="false">Тема \"%s\"</string>
+    <string name="fragment_tab_title_chat" formatted="false">@string/dialog_Title_Nick</string>
+    <string name="fragment_tab_title_article" formatted="false">Новость \"%s\"</string>
+
     <!-- Codes -->
     <string name="codes_and_smiles">Оформление и смайлы</string>
     <string name="smiles_title">Смайлы</string>

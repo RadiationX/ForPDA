@@ -176,6 +176,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         }
         if (currentChat.getTitle() != null) {
             setTitle(currentChat.getTitle());
+            setTabTitle(String.format(getString(R.string.fragment_tab_title_chat), currentChat.getTitle(), currentChat.getNick()));
         }
         if (currentChat.getThemeId() == QmsChatModel.NOT_CREATED) {
             themeCreator = new ChatThemeCreator(this);
@@ -332,6 +333,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         }
         if (currentChat.getTitle() != null) {
             setTitle(currentChat.getTitle());
+            setTabTitle(String.format(getString(R.string.fragment_tab_title_chat), currentChat.getTitle(), currentChat.getNick()));
         }
     }
 
