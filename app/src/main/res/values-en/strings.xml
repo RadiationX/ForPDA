@@ -146,6 +146,10 @@
     <string name="fragment_title_reputation">Reputation</string>
     <string name="fragment_title_topics">Forum topics</string>
     <string name="activity_title_settings">Settings</string>
+
+    <string name="fragment_tab_title_article" formatted="false">News \"%s\"</string>
+    <string name="fragment_tab_title_chat" formatted="false">@string/dialog_Title_Nick</string>
+    <string name="fragment_tab_title_theme" formatted="false">Topic \"%s\"</string>
     <!-- Codes -->
     <string name="codes_and_smiles">Formating and smiles</string>
     <string name="smiles_title">Smiles</string>

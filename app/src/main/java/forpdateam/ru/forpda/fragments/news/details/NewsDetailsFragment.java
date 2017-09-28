@@ -164,6 +164,7 @@ public class NewsDetailsFragment extends TabFragment {
         //toolbarLayout.requestLayout();
         if (newsTitle != null) {
             setTitle(newsTitle);
+            setTabTitle(String.format(getString(R.string.fragment_tab_title_article), newsTitle));
             detailsTitle.setText(newsTitle);
         }
         if (newsNick != null) {
@@ -237,6 +238,7 @@ public class NewsDetailsFragment extends TabFragment {
         }
 
         setTitle(newsTitle);
+        setTabTitle(String.format(getString(R.string.fragment_tab_title_article), newsTitle));
         detailsTitle.setText(newsTitle);
         detailsNick.setText(newsNick);
         detailsDate.setText(newsDate);

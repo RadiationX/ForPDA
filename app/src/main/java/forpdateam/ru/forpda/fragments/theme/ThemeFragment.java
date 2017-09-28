@@ -391,6 +391,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     protected void updateTitle() {
         setTitle(currentPage.getTitle());
+        setTabTitle(String.format(getString(R.string.fragment_tab_title_theme), currentPage.getTitle()));
     }
 
     protected void updateSubTitle() {
