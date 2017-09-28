@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationManagerCompat;
@@ -159,7 +160,7 @@ public class NotificationsService extends Service {
             Log.d(LOG_TAG, "WSListener onFailure: " + t.getMessage() + " " + response);
             t.printStackTrace();
             stop();
-            new Handler().postDelayed(()->{
+            new Handler(Looper.getMainLooper()).postDelayed(()->{
                 start(false);
             }, 1000);
         }
@@ -254,12 +255,13 @@ public class NotificationsService extends Service {
     }
 
     private void handleWebSocketEvent(NotificationEvent event) {
+        TabNotification tabNotification = new TabNotification();
+        tabNotification.setType(event.getType());
+        tabNotification.setSource(event.getSource());
+        tabNotification.setEvent(event);
+        tabNotification.setWebSocket(true);
+        notifyTabs(tabNotification);
         if (event.isRead()) {
-            TabNotification tabNotification = new TabNotification();
-            tabNotification.setType(event.getType());
-            tabNotification.setSource(event.getSource());
-            tabNotification.setEvent(event);
-            notifyTabs(tabNotification);
             NotificationEvent oldEvent = eventsHistory.get(event.notifyId(NotificationEvent.Type.NEW));
             boolean delete = false;
 
@@ -349,6 +351,7 @@ public class NotificationsService extends Service {
                         tabNotification.setEvent(newEvent);
                         tabNotification.getLoadedEvents().addAll(loadedEvents);
                         tabNotification.getNewEvents().addAll(newEvents);
+                        tabNotification.setWebSocket(false);
                         notifyTabs(tabNotification);
 
                         sendNotification(newEvent);

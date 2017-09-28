@@ -118,7 +118,7 @@
     <string name="image_viewer_subtitle_Cur_All" formatted="false">%d из %d</string>
     <string name="msg_panel_hint_message">Сообщение</string>
     <string name="no_updates">Обновлений нет</string>
-    <string name="updater_current_info" formatted="false">Версия %s Сборка от %s</string>
+    <string name="updater_current_info" formatted="false">Версия %s\nСборка от %s</string>
     <string name="updater_notification_title">Обновление ForPDA</string>
     <string name="updater_notification_content_VerName">Новая версия: %s</string>
     <string name="close_other_tabs">Закрыть остальные</string>
@@ -208,7 +208,7 @@
 
 
     <!-- Tooltips -->
-    <string name="tooltip_tabs">Справа находится панель с открытыми вкладками. Она позволяет удобно осуществлять навигацию между ними.</string>
+    <string name="tooltip_tabs">Справа находится панель с открытыми вкладками.\nОна позволяет удобно осуществлять навигацию между ними.</string>
     <string name="tooltip_link">Вы можете вручную переходить по ссылкам</string>
     <string name="tooltip_search_settings">Нажимите сюда, чтобы настроить поисковой запрос</string>
     <string name="tooltip_full_form">Долгое нажатие откроет полную форму ответа</string>
@@ -352,7 +352,7 @@
     <string name="profile_title_devices">Устройства</string>
     <string name="profile_title_contacts">Контакты</string>
     <string name="profile_title_note">Блокнот</string>
-    <string name="profile_hint_note">Это ваш персональный блокнот. Здесь Вы можете хранить отрывки сообщений или любую другую информацию, которая для Вас важна</string>
+    <string name="profile_hint_note">Это ваш персональный блокнот.\nЗдесь Вы можете хранить отрывки сообщений или любую другую информацию, которая для Вас важна</string>
     <string name="profile_button_save">Сохранить</string>
     <string name="profile_stat_forum_posts">Постов</string>
     <string name="profile_stat_forum_topics">Тем</string>

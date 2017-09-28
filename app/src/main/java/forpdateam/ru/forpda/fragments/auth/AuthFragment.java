@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.fragments.auth;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,9 +83,15 @@ public class AuthFragment extends TabFragment {
         viewsReady();
         setListsBackground();
         skipButton.setOnClickListener(v -> {
-            Drawers drawers = getMainActivity().getDrawers();
-            drawers.selectMenuItem(NewsMainFragment.class);
-            TabManager.getInstance().remove(AuthFragment.this);
+            new AlertDialog.Builder(getContext())
+                    .setMessage("Без авторизации будут недоступны некоторые функции приложения.")
+                    .setPositiveButton(R.string.ok, (dialog, which) -> {
+                        Drawers drawers = getMainActivity().getDrawers();
+                        drawers.selectMenuItem(NewsMainFragment.class);
+                        TabManager.getInstance().remove(AuthFragment.this);
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
         });
         appBarLayout.setVisibility(View.GONE);
         notifyDot.setVisibility(View.GONE);

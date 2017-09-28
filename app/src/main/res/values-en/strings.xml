@@ -102,7 +102,7 @@
     <string name="image_viewer_subtitle_Cur_All" formatted="false">%d of %d</string>
     <string name="msg_panel_hint_message">Type a message</string>
     <string name="no_updates">No update available</string>
-    <string name="updater_current_info" formatted="false">Version %s Build from %s</string>
+    <string name="updater_current_info" formatted="false">Version %s\nBuild from %s</string>
     <string name="updater_notification_title">ForPDA update available</string>
     <string name="updater_notification_content_VerName">New version: %s</string>
     <string name="close_other_tabs">Close other tabs</string>
@@ -186,7 +186,7 @@
     <string name="codes_list_item_Pos" formatted="false">Item %d</string>
     <string name="transform_string_to_list">Transform selected string into the listing?</string>
     <!-- Tooltips -->
-    <string name="tooltip_tabs">On the right there\'s a panel with openned tabs. It allows you to conveniently navigate between them.</string>
+    <string name="tooltip_tabs">On the right there\'s a panel with openned tabs.\nIt allows you to conveniently navigate between them.</string>
     <string name="tooltip_link">You can access the links manually</string>
     <string name="tooltip_search_settings">Click here to customize search query</string>
     <string name="tooltip_full_form">Long press to open advanced response form</string>
@@ -314,7 +314,7 @@
     <string name="profile_title_devices">Devices</string>
     <string name="profile_title_contacts">Contacts</string>
     <string name="profile_title_note">Notepad</string>
-    <string name="profile_hint_note">This is your personal Notepad. Here you can store message fragments or any other information that is important to you</string>
+    <string name="profile_hint_note">This is your personal Notepad.\nHere you can store message fragments or any other information that is important to you</string>
     <string name="profile_button_save">Save</string>
     <string name="profile_stat_forum_posts">Posts</string>
     <string name="profile_stat_forum_topics">Topics</string>
