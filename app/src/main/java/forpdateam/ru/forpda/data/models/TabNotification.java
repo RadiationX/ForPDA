@@ -13,6 +13,7 @@ public class TabNotification {
     private NotificationEvent.Source source;
     private NotificationEvent.Type type;
     private NotificationEvent event;
+    private boolean webSocket = false;
     private List<NotificationEvent> loadedEvents = new ArrayList<>();
     private List<NotificationEvent> newEvents = new ArrayList<>();
 
@@ -46,5 +47,13 @@ public class TabNotification {
 
     public List<NotificationEvent> getNewEvents() {
         return newEvents;
+    }
+
+    public boolean isWebSocket() {
+        return webSocket;
+    }
+
+    public void setWebSocket(boolean webSocket) {
+        this.webSocket = webSocket;
     }
 }

@@ -297,7 +297,7 @@ li .post-block.hidden {
   color: #000000 !important;
   -webkit-border-radius: 0.125rem;
   border-radius: 0.125rem;
-  display: inline-block;
+  display: block;
 }
 .post-block.spoil > .block-body > .btns_container > .spoil_close:active {
   background-color: rgba(0, 0, 0, 0.1);

@@ -237,7 +237,7 @@ public class QmsContactsFragment extends ListFragment implements QmsContactsAdap
     }
 
     public void updateCount(int id, int count){
-        for (QmsContact item : currentItems) {
+        /*for (QmsContact item : currentItems) {
             if (item.getId() == id) {
                 item.setCount(count);
                 break;
@@ -252,7 +252,7 @@ public class QmsContactsFragment extends ListFragment implements QmsContactsAdap
             }
             r.copyToRealmOrUpdate(bdList);
             bdList.clear();
-        }, this::bindView);
+        }, this::bindView);*/
     }
 
     public void deleteDialog(int mid) {
