@@ -21,6 +21,8 @@ import android.util.SparseArray;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import org.acra.ACRA;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observer;
@@ -160,7 +162,7 @@ public class NotificationsService extends Service {
             Log.d(LOG_TAG, "WSListener onFailure: " + t.getMessage() + " " + response);
             t.printStackTrace();
             stop();
-            new Handler(Looper.getMainLooper()).postDelayed(()->{
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 start(false);
             }, 1000);
         }
@@ -218,10 +220,10 @@ public class NotificationsService extends Service {
     }
 
     private void stop() {
-        if (webSocket != null){
-            try{
+        if (webSocket != null) {
+            try {
                 webSocket.close(1000, null);
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
@@ -255,12 +257,16 @@ public class NotificationsService extends Service {
     }
 
     private void handleWebSocketEvent(NotificationEvent event) {
-        TabNotification tabNotification = new TabNotification();
-        tabNotification.setType(event.getType());
-        tabNotification.setSource(event.getSource());
-        tabNotification.setEvent(event);
-        tabNotification.setWebSocket(true);
-        notifyTabs(tabNotification);
+        try {
+            TabNotification tabNotification = new TabNotification();
+            tabNotification.setType(event.getType());
+            tabNotification.setSource(event.getSource());
+            tabNotification.setEvent(event);
+            tabNotification.setWebSocket(true);
+            notifyTabs(tabNotification);
+        } catch (Exception ex) {
+            ACRA.getErrorReporter().handleException(ex);
+        }
         if (event.isRead()) {
             NotificationEvent oldEvent = eventsHistory.get(event.notifyId(NotificationEvent.Type.NEW));
             boolean delete = false;
