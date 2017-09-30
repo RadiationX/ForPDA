@@ -90,7 +90,7 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
     private Observer notification = (observable, o) -> {
         if (o == null) return;
         TabNotification event = (TabNotification) o;
-        handleEvent(event);
+        runInUiThread(() -> handleEvent(event));
     };
 
     public FavoritesFragment() {

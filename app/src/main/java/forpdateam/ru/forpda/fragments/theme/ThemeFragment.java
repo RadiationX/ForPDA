@@ -29,8 +29,10 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
@@ -45,11 +47,13 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.IBaseForumPost;
 import forpdateam.ru.forpda.api.RequestFile;
+import forpdateam.ru.forpda.api.events.models.NotificationEvent;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.client.ClientHelper;
+import forpdateam.ru.forpda.data.models.TabNotification;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
@@ -125,6 +129,48 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         }
     };
 
+    private Observer notification = (observable, o) -> {
+        if (o == null) return;
+        TabNotification event = (TabNotification) o;
+        runInUiThread(() -> handleEvent(event));
+    };
+
+    private void handleEvent(TabNotification event) {
+        Log.e("SUKAT", "handleEvent " + event.isWebSocket() + " : " + event.getSource() + " : " + event.getType());
+        if (event.isWebSocket())
+            return;
+        if (currentPage == null)
+            return;
+        Log.e("SUKAT", "handleEvent " + event.getEvent().getSourceId() + " : " + currentPage.getId());
+        if (event.getEvent().getSourceId() != currentPage.getId())
+            return;
+
+        if (event.getSource() == NotificationEvent.Source.THEME) {
+            switch (event.getType()) {
+                case NEW:
+                    onEventNew(event);
+                    break;
+                case READ:
+                    onEventRead(event);
+                    break;
+                case MENTION:
+
+                    break;
+            }
+        }
+
+    }
+
+    private void onEventNew(TabNotification event) {
+        Log.d("SUKAT", "onEventNew " + event.getEvent().getMessageId());
+        notificationView.setVisibility(View.VISIBLE);
+    }
+
+    private void onEventRead(TabNotification event) {
+        Log.d("SUKAT", "onEventRead " + event.getEvent().getMessageId());
+        notificationView.setVisibility(View.GONE);
+    }
+
 
     protected abstract void addShowingView();
 
@@ -162,6 +208,10 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         fab.requestLayout();
     }
 
+    private View notificationView;
+    private TextView notificationTitle;
+    private ImageButton notificationButton;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -176,8 +226,25 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         fab.setScaleX(0.0f);
         fab.setScaleY(0.0f);
         fab.setAlpha(0.0f);
+
+
         baseInflateFragment(inflater, R.layout.fragment_theme);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
+
+        notificationView = inflater.inflate(R.layout.new_message_notification, null);
+        fragmentContent.addView(notificationView, 0);
+        notificationTitle = (TextView) notificationView.findViewById(R.id.title);
+        notificationButton = (ImageButton) notificationView.findViewById(R.id.icon);
+        notificationTitle.setText("Новое сообщение!");
+        notificationView.setVisibility(View.GONE);
+        notificationButton.setOnClickListener(v -> {
+            notificationView.setVisibility(View.GONE);
+        });
+        notificationView.setOnClickListener(v -> {
+            tab_url = "https://4pda.ru/forum/index.php?showtopic=" + currentPage.getId() + "&view=getnewpost";
+            loadData(NORMAL_ACTION);
+        });
+
 
         messagePanel = new MessagePanel(getContext(), fragmentContainer, coordinatorLayout, false);
         messagePanel.enableBehavior();
@@ -250,6 +317,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         } else {
             showMessagePanel();
         }
+        App.get().subscribeFavorites(notification);
         return view;
     }
 
@@ -269,6 +337,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     public void onDestroy() {
         super.onDestroy();
         App.get().removePreferenceChangeObserver(themePreferenceObserver);
+        App.get().unSubscribeFavorites(notification);
         history.clear();
         messagePanel.onDestroy();
         paginationHelper.destroy();
