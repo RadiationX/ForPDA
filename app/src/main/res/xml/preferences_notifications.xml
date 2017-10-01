@@ -37,6 +37,15 @@
             android:key="notifications.main.avatars_enabled"
             android:layout="@layout/preference_custom"
             android:title="@string/pref_title_enable_avatars" />
+
+        <ListPreference
+            android:dialogTitle="Раз в"
+            android:entries="@array/entries_notify_limit"
+            android:entryValues="@array/entry_values_notify_limit"
+            android:key="notifications.main.limit_period"
+            android:layout="@layout/preference_custom"
+            android:summary="%s"
+            android:title="Ограничение частоты" />
     </PreferenceCategory>
 
     <PreferenceCategory
