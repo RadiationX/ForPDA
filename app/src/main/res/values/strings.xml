@@ -158,7 +158,7 @@
     <string name="fragment_title_contacts">Контакты</string>
     <string name="fragment_title_devdb" translatable="false">DevDB</string>
     <string name="fragment_title_search">Поиск</string>
-    <string name="fragment_title_notes">Заметки</string>
+    <string name="fragment_title_notes">Закладки</string>
     <string name="fragment_title_blacklist">Изгои мира сего</string>
     <string name="fragment_title_chat">Чат</string>
     <string name="fragment_title_dialogs">Диалоги</string>
@@ -229,8 +229,8 @@
 
     <!-- Notes -->
     <string name="create_note">Создать заметку</string>
-    <string name="note_edit">Редактирование заметки</string>
-    <string name="note_create">Создание заметки</string>
+    <string name="note_edit">Редактирование закладки</string>
+    <string name="note_create">Создание закладки</string>
     <string name="note_enter_title">Напишите заголовок</string>
 
     <!-- News list-->

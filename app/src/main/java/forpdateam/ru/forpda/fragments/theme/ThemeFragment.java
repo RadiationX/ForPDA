@@ -137,7 +137,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     private void handleEvent(TabNotification event) {
         Log.e("SUKAT", "handleEvent " + event.isWebSocket() + " : " + event.getSource() + " : " + event.getType());
-        if (event.isWebSocket())
+        if (!event.isWebSocket())
             return;
         if (currentPage == null)
             return;
@@ -162,12 +162,12 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     }
 
     private void onEventNew(TabNotification event) {
-        Log.d("SUKAT", "onEventNew " + event.getEvent().getMessageId());
+        Log.d("SUKAT", "onEventNew");
         notificationView.setVisibility(View.VISIBLE);
     }
 
     private void onEventRead(TabNotification event) {
-        Log.d("SUKAT", "onEventRead " + event.getEvent().getMessageId());
+        Log.d("SUKAT", "onEventRead");
         notificationView.setVisibility(View.GONE);
     }
 

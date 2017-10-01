@@ -139,7 +139,7 @@
     <string name="fragment_title_news">News</string>
     <string name="fragment_title_contacts">Contacts</string>
     <string name="fragment_title_search">Search</string>
-    <string name="fragment_title_notes">Notes</string>
+    <string name="fragment_title_notes">Bookmarks</string>
     <string name="fragment_title_blacklist">Outcasts of this world</string>
     <string name="fragment_title_chat">Chat</string>
     <string name="fragment_title_dialogs">Dialogs</string>
@@ -204,9 +204,9 @@
     <string name="auth_btn_login">Sign in</string>
     <string name="auth_skip">Skip</string>
     <!-- Notes -->
-    <string name="create_note">Take a note</string>
-    <string name="note_edit">Note editing</string>
-    <string name="note_create">Note taking</string>
+    <string name="create_note">Take a bookmark</string>
+    <string name="note_edit">Bookmark editing</string>
+    <string name="note_create">Bookmark taking</string>
     <string name="note_enter_title">Type the title</string>
     <!-- News list-->
     <!-- News article-->

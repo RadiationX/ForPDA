@@ -75,9 +75,10 @@ public class NotificationsService extends Service {
     private Observer networkObserver = (observable, o) -> {
         if (o == null) o = true;
         if ((boolean) o) {
-            if (Preferences.Notifications.Main.isEnabled()) {
+            /*if (Preferences.Notifications.Main.isEnabled()) {
                 start(true);
-            }
+            }*/
+            start(true);
         }
     };
 
@@ -86,11 +87,11 @@ public class NotificationsService extends Service {
         String key = (String) o;
         switch (key) {
             case Preferences.Notifications.Main.ENABLED: {
-                if (Preferences.Notifications.Main.isEnabled()) {
+                /*if (Preferences.Notifications.Main.isEnabled()) {
                     start(true);
                 } else {
                     stop();
-                }
+                }*/
                 break;
             }
             case Preferences.Notifications.Favorites.ENABLED: {
@@ -188,20 +189,20 @@ public class NotificationsService extends Service {
         if (mNotificationManager == null) {
             mNotificationManager = NotificationManagerCompat.from(this);
         }
-        if (Preferences.Notifications.Main.isEnabled()) {
-            boolean checkEvents = intent != null && intent.getAction() != null && intent.getAction().equals(CHECK_LAST_EVENTS);
-            long time = System.currentTimeMillis();
+        //if (Preferences.Notifications.Main.isEnabled()) {
+        boolean checkEvents = intent != null && intent.getAction() != null && intent.getAction().equals(CHECK_LAST_EVENTS);
+        long time = System.currentTimeMillis();
 
-            Log.d(LOG_TAG, "Handle check last events: " + time + " : " + lastHardCheckTime + " : " + (time - lastHardCheckTime));
+        Log.d(LOG_TAG, "Handle check last events: " + time + " : " + lastHardCheckTime + " : " + (time - lastHardCheckTime));
 
-            if (checkEvents && ((time - lastHardCheckTime) >= 1000 * 60 * 1)) {
-                lastHardCheckTime = time;
-                checkEvents = true;
-            } else {
-                checkEvents = false;
-            }
-            start(checkEvents);
+        if (checkEvents && ((time - lastHardCheckTime) >= 1000 * 60 * 1)) {
+            lastHardCheckTime = time;
+            checkEvents = true;
+        } else {
+            checkEvents = false;
         }
+        start(checkEvents);
+        //}
         return START_STICKY;
     }
 
@@ -301,50 +302,57 @@ public class NotificationsService extends Service {
         handleEvent(event);
     }
 
-    private void handleEvent(NotificationEvent.Source source) {
-        handleEvent(null, source);
-    }
-
-    private void handleEvent(NotificationEvent event) {
-        handleEvent(event, event.getSource());
-    }
-
-    private void handleEvent(@Nullable NotificationEvent event, NotificationEvent.Source source) {
+    private boolean checkNotify(@Nullable NotificationEvent event, NotificationEvent.Source source) {
         if (!Preferences.Notifications.Main.isEnabled()) {
-            return;
-        }
-
-        if (NotificationEvent.fromSite(source)) {
-            if (Preferences.Notifications.Mentions.isEnabled()) {
-                sendNotification(event);
-            }
-            return;
+            return false;
         }
         if (NotificationEvent.fromQms(source)) {
             if (!Preferences.Notifications.Qms.isEnabled()) {
-                return;
+                return false;
             }
         } else if (NotificationEvent.fromTheme(source)) {
             if (event != null && event.isMention()) {
                 if (!Preferences.Notifications.Mentions.isEnabled()) {
-                    return;
+                    return false;
                 }
             } else {
                 if (!Preferences.Notifications.Favorites.isEnabled()) {
-                    return;
+                    return false;
                 }
             }
+        }
+        return true;
+    }
+
+    private void handleEvent(NotificationEvent.Source source) {
+        handleEvent(new ArrayList<>(), source);
+    }
+
+    private void handleEvent(NotificationEvent event) {
+        List<NotificationEvent> events = new ArrayList<>();
+        events.add(event);
+        handleEvent(events, event.getSource());
+    }
+
+    private void handleEvent(List<NotificationEvent> events, NotificationEvent.Source source) {
+        if (NotificationEvent.fromSite(source)) {
+            if (Preferences.Notifications.Mentions.isEnabled()) {
+                for (NotificationEvent event : events) {
+                    sendNotification(event);
+                }
+            }
+            return;
         }
 
         loadEvents(loadedEvents -> {
             List<NotificationEvent> savedEvents = getSavedEvents(source);
             //savedEvents = new ArrayList<>();
             saveEvents(loadedEvents, source);
-            List<NotificationEvent> newEvents = compareEvents(savedEvents, loadedEvents, event, source);
+            List<NotificationEvent> newEvents = compareEvents(savedEvents, loadedEvents, events, source);
             List<NotificationEvent> stackedNewEvents = new ArrayList<>(newEvents);
 
-            if (event != null) {
-                //Удаляем из общего уведомления текущее уведомление
+            //Удаляем из общего уведомления текущие уведомление
+            for (NotificationEvent event : events) {
                 for (NotificationEvent newEvent : newEvents) {
                     if (newEvent.getSourceId() == event.getSourceId()) {
                         stackedNewEvents.remove(newEvent);
@@ -367,9 +375,10 @@ public class NotificationsService extends Service {
                 }
             }
 
-            sendNotifications(stackedNewEvents);
+            sendNotifications(stackedNewEvents, source);
         }, source);
     }
+
 
     private List<NotificationEvent> getSavedEvents(NotificationEvent.Source source) {
         String prefKey = "";
@@ -409,38 +418,40 @@ public class NotificationsService extends Service {
         App.get().getPreferences().edit().putStringSet(prefKey, savedEvents).apply();
     }
 
-    private List<NotificationEvent> compareEvents(List<NotificationEvent> savedEvents, List<NotificationEvent> loadedEvents, NotificationEvent event, NotificationEvent.Source source) {
-        List<NotificationEvent> resultEvents = new ArrayList<>();
-
-        boolean onlyImportant = false;
-        if (NotificationEvent.fromTheme(source)) {
-            onlyImportant = Preferences.Notifications.Favorites.isOnlyImportant();
-        }
+    private List<NotificationEvent> compareEvents(List<NotificationEvent> savedEvents,
+                                                  List<NotificationEvent> loadedEvents,
+                                                  List<NotificationEvent> events,
+                                                  NotificationEvent.Source source) {
+        List<NotificationEvent> newEvents = new ArrayList<>();
 
         for (NotificationEvent loaded : loadedEvents) {
-            boolean isNew = true;
             for (NotificationEvent saved : savedEvents) {
-                if (loaded.getSourceId() == saved.getSourceId()) {
-                    if (loaded.getTimeStamp() <= saved.getTimeStamp()) {
-                        isNew = false;
-                    }
+                if (loaded.getSourceId() == saved.getSourceId() && loaded.getTimeStamp() > saved.getTimeStamp()) {
+                    newEvents.add(loaded);
+                    Log.d("SUKA", "ADD NEW " + loaded.getSourceId());
                 }
-            }
-
-            if (onlyImportant) {
-                if (!(event != null && event.isMention() && event.getSourceId() == loaded.getSourceId())) {
-                    if (!loaded.isImportant()) {
-                        isNew = false;
-                    }
-                }
-            }
-
-            if (isNew) {
-                resultEvents.add(loaded);
             }
         }
 
-        return resultEvents;
+
+        if (NotificationEvent.fromTheme(source) && Preferences.Notifications.Favorites.isOnlyImportant()) {
+            for (NotificationEvent event : events) {
+                if (!event.isMention()) {
+                    for (NotificationEvent newEvent : newEvents) {
+                        if (newEvent.getSourceId() == event.getSourceId() && !newEvent.isImportant()) {
+                            newEvents.remove(newEvent);
+                            Log.d("SUKA", "REMOVE NEW " + newEvent.getSourceId());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        Log.d("SUKA", "FINAL SIZE " + newEvents.size());
+
+        return newEvents;
     }
 
     private void loadEvents(Consumer<List<NotificationEvent>> consumer, NotificationEvent.Source source) {
@@ -492,6 +503,23 @@ public class NotificationsService extends Service {
         }
     }
 
+    private void configureNotification(NotificationCompat.Builder builder) {
+        builder.setAutoCancel(true);
+        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        builder.setCategory(NotificationCompat.CATEGORY_SOCIAL);
+        int defaults = 0;
+        if (Preferences.Notifications.Main.isSoundEnabled()) {
+            defaults |= NotificationCompat.DEFAULT_SOUND;
+        }
+        if (Preferences.Notifications.Main.isVibrationEnabled()) {
+            defaults |= NotificationCompat.DEFAULT_VIBRATE;
+        }
+        if (Preferences.Notifications.Main.isIndicatorEnabled()) {
+            defaults |= NotificationCompat.DEFAULT_LIGHTS;
+        }
+        builder.setDefaults(defaults);
+    }
+
     public void sendNotification(NotificationEvent event, Bitmap avatar) {
         eventsHistory.put(event.notifyId(), event);
 
@@ -524,23 +552,7 @@ public class NotificationsService extends Service {
         PendingIntent notifyPendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, 0);
         builder.setContentIntent(notifyPendingIntent);
 
-        builder.setAutoCancel(true);
-
-        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        builder.setCategory(NotificationCompat.CATEGORY_SOCIAL);
-
-
-        int defaults = 0;
-        if (Preferences.Notifications.Main.isSoundEnabled()) {
-            defaults |= NotificationCompat.DEFAULT_SOUND;
-        }
-        if (Preferences.Notifications.Main.isVibrationEnabled()) {
-            defaults |= NotificationCompat.DEFAULT_VIBRATE;
-        }
-        if (Preferences.Notifications.Main.isIndicatorEnabled()) {
-            defaults |= NotificationCompat.DEFAULT_LIGHTS;
-        }
-        builder.setDefaults(defaults);
+        configureNotification(builder);
 
         mNotificationManager.cancel(event.notifyId());
         mNotificationManager.notify(event.notifyId(), builder.build());
@@ -548,6 +560,10 @@ public class NotificationsService extends Service {
 
     public void sendNotification(NotificationEvent event) {
         if (event.getUserId() == ClientHelper.getUserId()) {
+            return;
+        }
+
+        if (!checkNotify(event, event.getSource())) {
             return;
         }
 
@@ -575,7 +591,7 @@ public class NotificationsService extends Service {
     }
 
 
-    public void sendNotifications(List<NotificationEvent> events) {
+    public void sendNotifications(List<NotificationEvent> events, NotificationEvent.Source tSource) {
         if (events.size() == 0) {
             return;
         }
@@ -583,8 +599,9 @@ public class NotificationsService extends Service {
             sendNotification(events.get(0));
             return;
         }
-        // WebSocketEvent webSocketEvent = notificationEvent.getWebSocketEvent();
-
+        if (!checkNotify(null, tSource)) {
+            return;
+        }
 
         String title = createStackedTitle(events);
         CharSequence text = createStackedContent(events);
@@ -595,35 +612,22 @@ public class NotificationsService extends Service {
         bigTextStyle.bigText(text);
         bigTextStyle.setSummaryText(summaryText);
 
-        NotificationCompat.MessagingStyle messagingStyle = new NotificationCompat.MessagingStyle("SU4KA");
-        messagingStyle.setConversationTitle("CONV TITLE");
-        for (NotificationEvent event : events) {
-            messagingStyle.addMessage(event.getSourceTitle(), event.getTimeStamp(), event.getUserNick());
-        }
+        NotificationCompat.Builder builder;
+        builder = new NotificationCompat.Builder(this);
 
+        builder.setSmallIcon(createStackedSmallIcon(events));
 
-        NotificationCompat.Builder mBuilder;
-        mBuilder = new NotificationCompat.Builder(this);
-
-
-        mBuilder.setSmallIcon(createStackedSmallIcon(events));
-
-        mBuilder.setContentTitle(title);
-        mBuilder.setContentText(text);
-        mBuilder.setStyle(bigTextStyle);
-
+        builder.setContentTitle(title);
+        builder.setContentText(text);
+        builder.setStyle(bigTextStyle);
 
         Intent notifyIntent = new Intent(this, MainActivity.class);
         notifyIntent.setData(Uri.parse(createStackedIntentUrl(events)));
         notifyIntent.setAction(Intent.ACTION_VIEW);
         PendingIntent notifyPendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, 0);
-        mBuilder.setContentIntent(notifyPendingIntent);
+        builder.setContentIntent(notifyPendingIntent);
 
-        mBuilder.setAutoCancel(true);
-
-        mBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        mBuilder.setCategory(NotificationCompat.CATEGORY_SOCIAL);
-        mBuilder.setDefaults(NotificationCompat.DEFAULT_LIGHTS | NotificationCompat.DEFAULT_VIBRATE | NotificationCompat.DEFAULT_SOUND);
+        configureNotification(builder);
 
         int id = 0;
         NotificationEvent event = events.get(0);
@@ -632,7 +636,7 @@ public class NotificationsService extends Service {
         } else if (event.fromTheme()) {
             id = NOTIFY_STACKED_FAV_ID;
         }
-        mNotificationManager.notify(id, mBuilder.build());
+        mNotificationManager.notify(id, builder.build());
     }
 
 

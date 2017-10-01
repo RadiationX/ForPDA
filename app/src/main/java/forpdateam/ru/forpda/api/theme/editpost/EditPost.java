@@ -81,13 +81,6 @@ public class EditPost {
             EditPost.printPoll(poll);
         }
 
-
-        /*response = Api.getWebClient().get("https://4pda.ru/forum/index.php?&act=attach&code=attach_upload_show&attach_rel_id=".concat(Integer.toString(postId)));
-        matcher = loadedAttachments.matcher(response);
-        while (matcher.find())
-            form.addAttachment(fillAttachment(new AttachmentItem(), matcher));
-        Log.d("FORPDA_LOG", "ATTACHES " + form.getAttachments().size());
-*/
         response = Api.getWebClient().get("https://4pda.ru/forum/index.php?act=attach&index=1&relId=" + postId + "&maxSize=134217728&allowExt=&code=init&unlinked=");
         matcher = attachmentsPattern.matcher(response.getBody());
         while (matcher.find()) {

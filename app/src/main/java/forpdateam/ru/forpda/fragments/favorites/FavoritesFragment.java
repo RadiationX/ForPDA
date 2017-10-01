@@ -182,12 +182,6 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
                 dialog.dismiss();
             }
         });
-        recyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                Log.e("SUKA", "recycler onLayoutChange " + v.getHeight() + " : " + v.getMeasuredHeight());
-            }
-        });
 
         bindView();
         App.get().addPreferenceChangeObserver(favoritesPreferenceObserver);
@@ -343,7 +337,6 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
             adapter.addSection(new Pair<>(getString(R.string.fav_pinned), pinned));
         }
         adapter.addSection(new Pair<>(getString(R.string.fav_themes), items));
-        Log.e("SUKA", "bindView notifyDataSetChanged " + recyclerView.isLayoutFrozen());
         adapter.notifyDataSetChanged();
         if (!Client.getInstance().getNetworkState()) {
             ClientHelper.getInstance().notifyCountsChanged();
@@ -378,31 +371,6 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
             r.copyToRealmOrUpdate(bdList);
             bdList.clear();
         }, this::bindView);
-
-
-
-
-
-        /*FavItem item = null;
-        for (IFavItem item1 : currentItems) {
-            if (event.getSourceId() == item1.getTopicId()) {
-                item = (FavItem) item1;
-                break;
-            }
-        }
-        Log.d("SUKA", "HANDLE EVENT, ITEM: " + item);
-        if (item != null) {
-            currentItems.remove(item);
-
-            item.setNewMessages(true);
-            item.setLastUserNick(event.getUserNick());
-            item.setLastUserId(event.getUserId());
-            item.setPin(event.isImportant());
-            currentItems.add(0, item);
-        }
-        ArrayList<IFavItem> newItems = new ArrayList<>();
-        newItems.addAll(currentItems);
-        refreshList(newItems);*/
     }
 
     public void changeFav(int action, String type, int favId) {
