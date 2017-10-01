@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.api.qms;
 
-import android.util.Log;
-
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -209,7 +207,6 @@ public class Qms {
                 avatar = "https://4pda.ru".concat(avatar);
             }
             user.setAvatar(avatar);
-            Log.d("SUKA", "" + user.getId() + " : " + user.getNick());
             list.add(user);
         }
         return list;

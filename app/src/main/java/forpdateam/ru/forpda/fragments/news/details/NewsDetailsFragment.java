@@ -295,7 +295,6 @@ public class NewsDetailsFragment extends TabFragment {
         public FragmentPagerAdapter(FragmentManager fm, DetailsPage article) {
             super(fm);
             this.article = article;
-            Log.e("SUKA", "CREATE FragmentPagerAdapter " + article);
 
             fragments.add(new ArticleContentFragment().setArticle(this.article));
             titles.add(App.get().getString(R.string.news_page_content));

@@ -261,7 +261,6 @@ public class Client implements IWebClient {
     }
 
     private Request.Builder prepareRequest(NetworkRequest request, ProgressListener uploadProgressListener) {
-        //Log.d("FORPDA_LOG", "request url " + request.getUrl());
         String url = request.getUrl();
         if (request.getUrl().substring(0, 2).equals("//")) {
             url = "https:".concat(request.getUrl());
@@ -348,11 +347,8 @@ public class Client implements IWebClient {
                 checkForumErrors(response.getBody());
             }
 
-            //Log.d("SUKA", "" + request.isWithoutBody() + " : " + response.toString());
             Log.d(LOG_TAG, "Response: " + response.toString());
-        } /*catch (InterruptedIOException iioe){
-            iioe.printStackTrace();
-        }*/finally {
+        }finally {
             if (okHttpResponse != null)
                 okHttpResponse.close();
         }

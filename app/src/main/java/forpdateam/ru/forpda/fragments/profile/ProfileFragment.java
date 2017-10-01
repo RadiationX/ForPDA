@@ -14,7 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -233,7 +232,6 @@ public class ProfileFragment extends TabFragment implements ProfileAdapter.Click
         float scaleFactor = 3;
         int radius = 4;
         Observable<Bitmap> observable = Observable.fromCallable(() -> {
-            Log.d("SUKA", "BKG " + bkg.getWidth() + " : " + bkg.getHeight() + " : " + toolbarBackground.getWidth() + " : " + toolbarBackground.getHeight() + " : " + scaleFactor);
             Bitmap overlay = BitmapUtils.centerCrop(bkg, toolbarBackground.getWidth(), toolbarBackground.getHeight(), scaleFactor);
             BitmapUtils.fastBlur(overlay, radius, true);
             return overlay;

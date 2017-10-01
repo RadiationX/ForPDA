@@ -63,7 +63,7 @@ public class Utils {
             int start = i * maxLogSize;
             int end = (i + 1) * maxLogSize;
             end = end > msg.length() ? msg.length() : end;
-            Log.v("FORPDA_LOG", msg.substring(start, end));
+            Log.v("LONG_LOG", msg.substring(start, end));
         }
     }
 

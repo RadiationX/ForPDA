@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -74,10 +73,8 @@ public class QmsContactsFragment extends ListFragment implements QmsContactsAdap
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        long time = System.currentTimeMillis();
         initFabBehavior();
         viewsReady();
-        Log.d("suka", "QCF cp1 " + (System.currentTimeMillis() - time));
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

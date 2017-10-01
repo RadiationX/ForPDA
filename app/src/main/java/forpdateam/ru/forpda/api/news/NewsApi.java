@@ -249,7 +249,6 @@ public class NewsApi {
                     int commentId = Integer.parseInt(matcher.group(1));
                     karma.setStatus(Integer.parseInt(matcher.group(2)));
                     karma.setCount(Integer.parseInt(matcher.group(5)));
-                    //Log.d("SUKA", "parseKarma " + commentId + " : " + karma.getCount());
                     karmaMap.put(commentId, karma);
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -269,9 +268,6 @@ public class NewsApi {
         Document document = Parser.parse(source);
         Comment comments = new Comment();
         recurseComments(karmaMap, document, comments, 0);
-
-        Log.e("TIME", "Comments: " + (System.currentTimeMillis() - time));
-        Log.e("SUKA", "Comments: " + comments.getChildren().size() + " : " + comments.getChildren().get(0).getChildren().size());
         return comments;
     }
 
@@ -329,15 +325,6 @@ public class NewsApi {
             comment.setContent(Utils.fromHtml(content));
             comment.setLevel(level);
             comment.setKarma(karmaMap.get(comment.getId()));
-
-            /*String levelPadding = "";
-            for (int i = 0; i < level; i++) {
-                levelPadding += "\t";
-            }
-*/
-
-            //Log.d("SUKA", levelPadding + id + " : " + content);
-
 
             parentComment.addChild(comment);
 
@@ -401,7 +388,6 @@ public class NewsApi {
     }
 
     private static String getUrlCategory(@Nullable String category) {
-        Log.d("SUKA", "getUrlCategory " + category);
         if (category == null) return NEWS_URL_ALL;
         switch (category) {
             case NEWS_CATEGORY_ALL:

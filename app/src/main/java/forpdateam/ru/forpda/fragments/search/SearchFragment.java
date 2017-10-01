@@ -552,9 +552,6 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         recyclerView.scrollToPosition(0);
         hidePopupWindows();
         data = searchResult;
-        /*if (refreshLayout.getChildCount() > 1) {
-            Log.d("FORPDA_LOG", "" + refreshLayout.getChildAt(0));
-        }*/
         if (data.getSettings().getResult().equals(SearchSettings.RESULT_POSTS.first) && data.getSettings().getResourceType().equals(SearchSettings.RESOURCE_FORUM.first)) {
             if (refreshLayout.getChildCount() > 1) {
                 if (refreshLayout.getChildAt(0) instanceof RecyclerView) {

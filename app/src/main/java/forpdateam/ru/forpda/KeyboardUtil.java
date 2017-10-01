@@ -2,7 +2,6 @@ package forpdateam.ru.forpda;
 
 import android.app.Activity;
 import android.os.Build;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
@@ -14,26 +13,26 @@ import android.view.inputmethod.InputMethodManager;
 public class KeyboardUtil {
     private View decorView;
     private View contentView;
-    private int suka = Build.VERSION_CODES.LOLLIPOP;
+    private int minV = Build.VERSION_CODES.LOLLIPOP;
 
     public KeyboardUtil(Activity act, View contentView) {
         this.decorView = act.getWindow().getDecorView();
         this.contentView = contentView;
 
         //only required on newer android versions. it was working on API level 19
-        if (Build.VERSION.SDK_INT >= suka) {
+        if (Build.VERSION.SDK_INT >= minV) {
             decorView.getViewTreeObserver().addOnGlobalLayoutListener(onGlobalLayoutListener);
         }
     }
 
     public void enable() {
-        if (Build.VERSION.SDK_INT >= suka) {
+        if (Build.VERSION.SDK_INT >= minV) {
             decorView.getViewTreeObserver().addOnGlobalLayoutListener(onGlobalLayoutListener);
         }
     }
 
     public void disable() {
-        if (Build.VERSION.SDK_INT >= suka) {
+        if (Build.VERSION.SDK_INT >= minV) {
             decorView.getViewTreeObserver().removeOnGlobalLayoutListener(onGlobalLayoutListener);
         }
     }
@@ -53,18 +52,18 @@ public class KeyboardUtil {
         /*if (lastKeyboardHeight == newKeyboardHeight)
             return;*/
 
-            Log.d("FORPDA_LOG", "KeyboardUtil " + newKeyboardHeight + " = " + windowHeight + " - " + fragmentContainerHeight + " - " + statusBarHeight + " - " + navigationBarHeight);
+            //Log.d("FORPDA_LOG", "KeyboardUtil " + newKeyboardHeight + " = " + windowHeight + " - " + fragmentContainerHeight + " - " + statusBarHeight + " - " + navigationBarHeight);
             if (newKeyboardHeight !=0) {
                 App.setKeyboardHeight(newKeyboardHeight);
                 if (contentView.getPaddingBottom() != newKeyboardHeight) {
                     //set the padding of the contentView for the keyboard
-                    Log.e("SUKA", "KeyboardUtil " + newKeyboardHeight);
+                    //Log.e("SUKA", "KeyboardUtil " + newKeyboardHeight);
                     contentView.setPadding(0, 0, 0, newKeyboardHeight);
                 }
             } else {
                 if (contentView.getPaddingBottom() != 0) {
                     //reset the padding of the contentView
-                    Log.e("SUKA", "KeyboardUtil h " + 0);
+                    //Log.e("SUKA", "KeyboardUtil h " + 0);
                     contentView.setPadding(0, 0, 0, 0);
                 }
             }

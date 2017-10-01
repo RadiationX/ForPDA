@@ -203,6 +203,7 @@ public class App extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        long time = System.currentTimeMillis();
         instance = this;
 
         RxJavaPlugins.setErrorHandler(throwable -> {
@@ -266,9 +267,6 @@ public class App extends android.app.Application {
             }
         }
 
-        for (Map.Entry<String, String> entry : templateStringCache.entrySet()) {
-            Log.d("SUKA", "TEMPL_____|: " + entry.getKey() + " : " + entry.getValue());
-        }
         keyboardHeight = getPreferences().getInt("keyboard_height", getContext().getResources().getDimensionPixelSize(R.dimen.default_keyboard_height));
         savedKeyboardHeight = keyboardHeight;
 
@@ -319,6 +317,7 @@ public class App extends android.app.Application {
 
             registerReceiver(receiver, new IntentFilter(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED));
         }
+        Log.e("SUKAA", "TIME APP " + (System.currentTimeMillis() - time));
     }
 
     public static HashMap<String, String> getTemplateStringCache() {
