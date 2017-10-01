@@ -67,7 +67,7 @@ public class NotificationsService extends Service {
     private long lastHardCheckTime = 0;
     private long timerPeriod = Preferences.Notifications.Main.getLimit();
     private HashMap<NotificationEvent.Source, SparseArray<NotificationEvent>> pendingEvents = new HashMap<>(3);
-    private Timer checkTimer = new Timer();
+    private Timer checkTimer;
     private Runnable timerRunnable = () -> {
         Log.d(LOG_TAG, "Call timer runnable");
         /*int count = 0;
@@ -236,11 +236,15 @@ public class NotificationsService extends Service {
         return START_STICKY;
     }
 
-    private void resetTimer() {
+    private void cancelTimer(){
         if (checkTimer != null) {
             checkTimer.cancel();
             checkTimer.purge();
+            checkTimer = null;
         }
+    }
+    private void resetTimer() {
+        cancelTimer();
         checkTimer = new Timer();
         checkTimer.schedule(new TimerTask() {
             @Override
@@ -276,8 +280,7 @@ public class NotificationsService extends Service {
             }
         }
         webSocket = null;
-        checkTimer.cancel();
-        checkTimer.purge();
+        cancelTimer();
     }
 
     @Override
