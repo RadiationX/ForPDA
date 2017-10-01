@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observer;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Matcher;
 
 import forpdateam.ru.forpda.api.Api;
@@ -55,13 +57,16 @@ import okio.ByteString;
 
 public class NotificationsService extends Service {
     private final static String LOG_TAG = NotificationsService.class.getSimpleName();
+    public final static String CHECK_LAST_EVENTS = "CHECK_LAST_EVENTS";
     private final static int NOTIFY_STACKED_QMS_ID = -123;
     private final static int NOTIFY_STACKED_FAV_ID = -234;
-    public final static String CHECK_LAST_EVENTS = "CHECK_LAST_EVENTS";
     private NotificationManagerCompat mNotificationManager;
     private SparseArray<NotificationEvent> eventsHistory = new SparseArray<>();
     private WebSocket webSocket;
     private long lastHardCheckTime = 0;
+    private SparseArray<NotificationEvent> qmsPendingEvents = new SparseArray<>();
+    private SparseArray<NotificationEvent> themePendingEvents = new SparseArray<>();
+    private Timer checkTimer = new Timer();
 
     /*private boolean notificationsEnabled = Preferences.Notifications.Main.isEnabled();
     private boolean favoritesEnabled = Preferences.Notifications.Main.isEnabled();
@@ -217,6 +222,15 @@ public class NotificationsService extends Service {
                 handleEvent(NotificationEvent.Source.THEME);
                 handleEvent(NotificationEvent.Source.QMS);
             }
+
+            checkTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Log.d("SUKA", "TIMER SCHEDULE " + qmsPendingEvents.size() + " : " + themePendingEvents.size());
+                    handlePendingEvents(NotificationEvent.Source.QMS);
+                    handlePendingEvents(NotificationEvent.Source.THEME);
+                }
+            }, 0, 15 * 1000);
         }
     }
 
@@ -229,6 +243,8 @@ public class NotificationsService extends Service {
             }
         }
         webSocket = null;
+        checkTimer.cancel();
+        checkTimer.purge();
     }
 
     @Override
@@ -344,6 +360,26 @@ public class NotificationsService extends Service {
             return;
         }
 
+        SparseArray<NotificationEvent> pending = null;
+        switch (source) {
+            case THEME: {
+                pending = themePendingEvents;
+                break;
+            }
+            case QMS: {
+                pending = qmsPendingEvents;
+                break;
+            }
+        }
+        if (pending != null) {
+            for (NotificationEvent event : events) {
+                pending.put(event.getSourceId(), event);
+            }
+        }
+    }
+
+    private void hardHandleEvent(List<NotificationEvent> events, NotificationEvent.Source source) {
+        Log.d("SUKA", "hardHandleEvent " + events.size() + " : " + source);
         loadEvents(loadedEvents -> {
             List<NotificationEvent> savedEvents = getSavedEvents(source);
             //savedEvents = new ArrayList<>();
@@ -377,6 +413,29 @@ public class NotificationsService extends Service {
 
             sendNotifications(stackedNewEvents, source);
         }, source);
+    }
+
+    private void handlePendingEvents(NotificationEvent.Source source) {
+        List<NotificationEvent> events = null;
+        SparseArray<NotificationEvent> pending = null;
+        switch (source) {
+            case THEME: {
+                pending = themePendingEvents;
+                break;
+            }
+            case QMS: {
+                pending = qmsPendingEvents;
+                break;
+            }
+        }
+        if (pending != null && pending.size() > 0) {
+            events = new ArrayList<>();
+            for (int i = 0; i < pending.size(); i++) {
+                events.add(pending.valueAt(i));
+            }
+            hardHandleEvent(events, source);
+            pending.clear();
+        }
     }
 
 
