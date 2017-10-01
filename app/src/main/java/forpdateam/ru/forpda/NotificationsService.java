@@ -24,6 +24,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import org.acra.ACRA;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Observer;
 import java.util.Set;
@@ -64,14 +65,27 @@ public class NotificationsService extends Service {
     private SparseArray<NotificationEvent> eventsHistory = new SparseArray<>();
     private WebSocket webSocket;
     private long lastHardCheckTime = 0;
-    private SparseArray<NotificationEvent> qmsPendingEvents = new SparseArray<>();
-    private SparseArray<NotificationEvent> themePendingEvents = new SparseArray<>();
+    private long timerPeriod = Preferences.Notifications.Main.getLimit();
+    private HashMap<NotificationEvent.Source, SparseArray<NotificationEvent>> pendingEvents = new HashMap<>(3);
     private Timer checkTimer = new Timer();
+    private Runnable timerRunnable = () -> {
+        Log.d(LOG_TAG, "Call timer runnable");
+        /*int count = 0;
+        for (NotificationEvent.Source source : pendingEvents.keySet()) {
+            SparseArray<NotificationEvent> pending = pendingEvents.get(source);
+            count += pending.size();
+        }
 
-    /*private boolean notificationsEnabled = Preferences.Notifications.Main.isEnabled();
-    private boolean favoritesEnabled = Preferences.Notifications.Main.isEnabled();
-    private boolean mentionsEnabled = Preferences.Notifications.Main.isEnabled();
-    private boolean qmsEnabled = Preferences.Notifications.Main.isEnabled();*/
+        if (count == 0) {
+            checkTimer.cancel();
+            checkTimer.purge();
+            return;
+        }*/
+
+        for (NotificationEvent.Source source : pendingEvents.keySet()) {
+            handlePendingEvents(source);
+        }
+    };
 
     private Observer loginObserver = (observable, o) -> {
         if (o == null) o = false;
@@ -99,18 +113,25 @@ public class NotificationsService extends Service {
                 }*/
                 break;
             }
+            case Preferences.Notifications.Main.LIMIT: {
+                timerPeriod = Preferences.Notifications.Main.getLimit();
+                Log.d(LOG_TAG, "NEW timer period " + timerPeriod);
+                resetTimer();
+                break;
+            }
             case Preferences.Notifications.Favorites.ENABLED: {
                 if (Preferences.Notifications.Favorites.isEnabled()) {
-                    handleEvent(NotificationEvent.Source.THEME);
+                    hardHandleEvent(NotificationEvent.Source.THEME);
                 }
                 break;
             }
             case Preferences.Notifications.Qms.ENABLED: {
                 if (Preferences.Notifications.Qms.isEnabled()) {
-                    handleEvent(NotificationEvent.Source.QMS);
+                    hardHandleEvent(NotificationEvent.Source.QMS);
                 }
                 break;
             }
+
             /*case Preferences.Notifications.Mentions.ENABLED: {
 
                 break;
@@ -144,7 +165,6 @@ public class NotificationsService extends Service {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-
         }
 
         @Override
@@ -194,6 +214,11 @@ public class NotificationsService extends Service {
         if (mNotificationManager == null) {
             mNotificationManager = NotificationManagerCompat.from(this);
         }
+        if (pendingEvents.size() == 0) {
+            pendingEvents.put(NotificationEvent.Source.QMS, new SparseArray<>());
+            pendingEvents.put(NotificationEvent.Source.THEME, new SparseArray<>());
+            pendingEvents.put(NotificationEvent.Source.SITE, new SparseArray<>());
+        }
         //if (Preferences.Notifications.Main.isEnabled()) {
         boolean checkEvents = intent != null && intent.getAction() != null && intent.getAction().equals(CHECK_LAST_EVENTS);
         long time = System.currentTimeMillis();
@@ -211,6 +236,20 @@ public class NotificationsService extends Service {
         return START_STICKY;
     }
 
+    private void resetTimer() {
+        if (checkTimer != null) {
+            checkTimer.cancel();
+            checkTimer.purge();
+        }
+        checkTimer = new Timer();
+        checkTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                timerRunnable.run();
+            }
+        }, 0, timerPeriod);
+    }
+
     private void start(boolean checkEvents) {
         if (Client.getInstance().getNetworkState()) {
             if (webSocket == null) {
@@ -219,18 +258,12 @@ public class NotificationsService extends Service {
             webSocket.send("[0,\"sv\"]");
             webSocket.send("[0, \"ea\", \"u" + ClientHelper.getUserId() + "\"]");
             if (checkEvents) {
-                handleEvent(NotificationEvent.Source.THEME);
-                handleEvent(NotificationEvent.Source.QMS);
+                hardHandleEvent(NotificationEvent.Source.THEME);
+                hardHandleEvent(NotificationEvent.Source.QMS);
             }
+            Log.d("SUKA", "PERIOD BLYAD " + timerPeriod);
 
-            checkTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    Log.d("SUKA", "TIMER SCHEDULE " + qmsPendingEvents.size() + " : " + themePendingEvents.size());
-                    handlePendingEvents(NotificationEvent.Source.QMS);
-                    handlePendingEvents(NotificationEvent.Source.THEME);
-                }
-            }, 0, 15 * 1000);
+            resetTimer();
         }
     }
 
@@ -315,7 +348,9 @@ public class NotificationsService extends Service {
             }
             return;
         }
-        handleEvent(event);
+        List<NotificationEvent> events = new ArrayList<>();
+        events.add(event);
+        handleEvent(events, event.getSource());
     }
 
     private boolean checkNotify(@Nullable NotificationEvent event, NotificationEvent.Source source) {
@@ -340,17 +375,22 @@ public class NotificationsService extends Service {
         return true;
     }
 
-    private void handleEvent(NotificationEvent.Source source) {
+
+    private void handleEvent(List<NotificationEvent> events, NotificationEvent.Source source) {
+        SparseArray<NotificationEvent> pending = pendingEvents.get(source);
+        if (pending != null) {
+            for (NotificationEvent event : events) {
+                pending.put(event.getSourceId(), event);
+            }
+        }
+    }
+
+    private void hardHandleEvent(NotificationEvent.Source source) {
         handleEvent(new ArrayList<>(), source);
     }
 
-    private void handleEvent(NotificationEvent event) {
-        List<NotificationEvent> events = new ArrayList<>();
-        events.add(event);
-        handleEvent(events, event.getSource());
-    }
-
-    private void handleEvent(List<NotificationEvent> events, NotificationEvent.Source source) {
+    private void hardHandleEvent(List<NotificationEvent> events, NotificationEvent.Source source) {
+        Log.d("SUKA", "hardHandleEvent " + events.size() + " : " + source);
         if (NotificationEvent.fromSite(source)) {
             if (Preferences.Notifications.Mentions.isEnabled()) {
                 for (NotificationEvent event : events) {
@@ -359,27 +399,6 @@ public class NotificationsService extends Service {
             }
             return;
         }
-
-        SparseArray<NotificationEvent> pending = null;
-        switch (source) {
-            case THEME: {
-                pending = themePendingEvents;
-                break;
-            }
-            case QMS: {
-                pending = qmsPendingEvents;
-                break;
-            }
-        }
-        if (pending != null) {
-            for (NotificationEvent event : events) {
-                pending.put(event.getSourceId(), event);
-            }
-        }
-    }
-
-    private void hardHandleEvent(List<NotificationEvent> events, NotificationEvent.Source source) {
-        Log.d("SUKA", "hardHandleEvent " + events.size() + " : " + source);
         loadEvents(loadedEvents -> {
             List<NotificationEvent> savedEvents = getSavedEvents(source);
             //savedEvents = new ArrayList<>();
@@ -416,20 +435,9 @@ public class NotificationsService extends Service {
     }
 
     private void handlePendingEvents(NotificationEvent.Source source) {
-        List<NotificationEvent> events = null;
-        SparseArray<NotificationEvent> pending = null;
-        switch (source) {
-            case THEME: {
-                pending = themePendingEvents;
-                break;
-            }
-            case QMS: {
-                pending = qmsPendingEvents;
-                break;
-            }
-        }
+        SparseArray<NotificationEvent> pending = pendingEvents.get(source);
         if (pending != null && pending.size() > 0) {
-            events = new ArrayList<>();
+            List<NotificationEvent> events = new ArrayList<>();
             for (int i = 0; i < pending.size(); i++) {
                 events.add(pending.valueAt(i));
             }
@@ -515,9 +523,9 @@ public class NotificationsService extends Service {
 
     private void loadEvents(Consumer<List<NotificationEvent>> consumer, NotificationEvent.Source source) {
         Observable<List<NotificationEvent>> observable = null;
-        if (source == NotificationEvent.Source.QMS) {
+        if (NotificationEvent.fromQms(source)) {
             observable = Observable.fromCallable(() -> Api.UniversalEvents().getQmsEvents());
-        } else if (source == NotificationEvent.Source.THEME) {
+        } else if (NotificationEvent.fromTheme(source)) {
             observable = Observable.fromCallable(() -> Api.UniversalEvents().getFavoritesEvents());
         }
 

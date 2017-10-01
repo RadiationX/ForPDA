@@ -161,6 +161,7 @@ public class Preferences {
             public final static String VIBRATION_ENABLED = PREFIX + "vibration_enabled";
             public final static String INDICATOR_ENABLED = PREFIX + "indicator_enabled";
             public final static String AVATARS_ENABLED = PREFIX + "avatars_enabled";
+            public final static String LIMIT = PREFIX + "limit_period";
 
             public static boolean isEnabled() {
                 return preferences().getBoolean(ENABLED, true);
@@ -180,6 +181,10 @@ public class Preferences {
 
             public static boolean isAvatarsEnabled() {
                 return preferences().getBoolean(AVATARS_ENABLED, true);
+            }
+
+            public static long getLimit() {
+                return Integer.parseInt(preferences().getString(LIMIT, "10"))*1000;
             }
         }
 
