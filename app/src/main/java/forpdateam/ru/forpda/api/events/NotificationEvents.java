@@ -42,6 +42,9 @@ public class NotificationEvents {
                 case NotificationEvent.SRC_TYPE_QMS:
                     wsEvent.setSource(NotificationEvent.Source.QMS);
                     break;
+                default:
+                    //// TODO: 02.10.17 сделать обратку нотификации форума
+                    return null;
             }
 
             wsEvent.setSourceId(Integer.parseInt(matcher.group(4)));
