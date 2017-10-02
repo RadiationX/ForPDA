@@ -53,7 +53,6 @@ import io.realm.RealmResults;
 public class FavoritesFragment extends ListFragment implements FavoritesAdapter.OnItemClickListener<IFavItem> {
     private AlertDialogMenu<FavoritesFragment, IFavItem> favoriteDialogMenu, showedFavoriteDialogMenu;
     private Realm realm;
-    private ArrayList<IFavItem> currentItems = new ArrayList<>();
     private FavoritesAdapter adapter;
     private Subscriber<FavData> mainSubscriber = new Subscriber<>(this);
     boolean markedRead = false;
@@ -304,8 +303,6 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
     }
 
     private void refreshList(Collection<IFavItem> newList) {
-        currentItems.clear();
-        currentItems.addAll(newList);
         ArrayList<IFavItem> pinnedUnread = new ArrayList<>();
         ArrayList<IFavItem> itemsUnread = new ArrayList<>();
         ArrayList<IFavItem> pinned = new ArrayList<>();
@@ -344,6 +341,13 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
     }
 
     private void handleEvent(TabNotification event) {
+        if (realm.isClosed()) return;
+        RealmResults<FavItemBd> results = realm.where(FavItemBd.class).findAll();
+        ArrayList<IFavItem> currentItems = new ArrayList<>();
+        for (FavItemBd itemBd : results) {
+            currentItems.add(new FavItem(itemBd));
+        }
+
         for (int i = event.getLoadedEvents().size() - 1; i >= 0; i--) {
             NotificationEvent loadedEvent = event.getLoadedEvents().get(i);
             int id = loadedEvent.getSourceId();

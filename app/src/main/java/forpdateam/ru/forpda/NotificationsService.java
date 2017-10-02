@@ -236,13 +236,14 @@ public class NotificationsService extends Service {
         return START_STICKY;
     }
 
-    private void cancelTimer(){
+    private void cancelTimer() {
         if (checkTimer != null) {
             checkTimer.cancel();
             checkTimer.purge();
             checkTimer = null;
         }
     }
+
     private void resetTimer() {
         cancelTimer();
         checkTimer = new Timer();
@@ -495,16 +496,25 @@ public class NotificationsService extends Service {
         List<NotificationEvent> newEvents = new ArrayList<>();
 
         for (NotificationEvent loaded : loadedEvents) {
+            boolean isNew = true;
             for (NotificationEvent saved : savedEvents) {
-                if (loaded.getSourceId() == saved.getSourceId() && loaded.getTimeStamp() > saved.getTimeStamp()) {
-                    newEvents.add(loaded);
-                    Log.d("SUKA", "ADD NEW " + loaded.getSourceId());
+                Log.d("SUKA", "compare " + loaded.getSourceId() + " : " + saved.getSourceId() + " : " + (loaded.getTimeStamp() <= saved.getTimeStamp()));
+                if (loaded.getSourceId() == saved.getSourceId() && loaded.getTimeStamp() <= saved.getTimeStamp()) {
+                    isNew = false;
+                    break;
                 }
+            }
+
+            if (isNew) {
+                Log.d("SUKA", "ADD NEW " + loaded.getSourceId());
+                newEvents.add(loaded);
             }
         }
 
+        Log.d("SUKA", "new events " + newEvents.size());
 
-        if (NotificationEvent.fromTheme(source) && Preferences.Notifications.Favorites.isOnlyImportant()) {
+
+        /*if (NotificationEvent.fromTheme(source) && Preferences.Notifications.Favorites.isOnlyImportant()) {
             for (NotificationEvent event : events) {
                 if (!event.isMention()) {
                     for (NotificationEvent newEvent : newEvents) {
@@ -515,6 +525,24 @@ public class NotificationsService extends Service {
                         }
                     }
                 }
+            }
+        }*/
+
+
+        if (NotificationEvent.fromTheme(source) && Preferences.Notifications.Favorites.isOnlyImportant()) {
+
+
+            for (NotificationEvent newEvent : newEvents) {
+                for (NotificationEvent event : events) {
+                    if (!event.isMention()) {
+                        if (newEvent.getSourceId() == event.getSourceId() && !newEvent.isImportant()) {
+                            newEvents.remove(newEvent);
+                            Log.d("SUKA", "REMOVE NEW " + newEvent.getSourceId());
+                            break;
+                        }
+                    }
+                }
+
             }
         }
 

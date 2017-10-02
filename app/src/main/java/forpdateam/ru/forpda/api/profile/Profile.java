@@ -42,7 +42,7 @@ public class Profile {
 
                 if (field.contains("Рег")) {
                     profile.addInfo(ProfileModel.InfoType.REG_DATE,
-                            safe(data.group(2)));
+                            safe(Utils.fromHtml(data.group(2))));
 
                 } else if (field.contains("Последнее")) {
                     profile.addInfo(ProfileModel.InfoType.ONLINE_DATE,
