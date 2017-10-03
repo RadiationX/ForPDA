@@ -13,11 +13,11 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
 
-    def versionNumber = 52
+    def versionNumber = 53
 
     def versionMajor = 0
     def versionMinor = 5
-    def versionPatch = 41
+    def versionPatch = 5
 
     def versionBuild = -1
     def versionPropsFile = file('version.properties')
@@ -26,6 +26,7 @@ android {
         versionProps.load(new FileInputStream(versionPropsFile))
         versionBuild = versionProps['VERSION_BUILD'].toInteger() + 1
         versionProps['VERSION_BUILD'] = versionBuild.toString()
+        versionProps['DATE_BUILD'] = getDateTime()
         versionProps.store(versionPropsFile.newWriter(), null)
     }
 
