@@ -12,10 +12,12 @@ import android.widget.Toast;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.IBaseForumPost;
+import forpdateam.ru.forpda.api.search.models.SearchItem;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
+import forpdateam.ru.forpda.fragments.search.SearchFragment;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
@@ -45,8 +47,8 @@ public class ThemeDialogsHelper {
             });
             userMenu.addItem(App.get().getString(R.string.messages_in_this_theme), (context1, data) -> {
                 SearchSettings settings = new SearchSettings();
-                settings.addForum(data.getForumId());
-                settings.addTopic(data.getTopicId());
+                settings.addForum(Integer.toString(data.getForumId()));
+                settings.addTopic(Integer.toString(data.getTopicId()));
                 settings.setSource(SearchSettings.SOURCE_CONTENT.first);
                 settings.setNick(data.getNick());
                 settings.setResult(SearchSettings.RESULT_POSTS.first);
@@ -111,7 +113,15 @@ public class ThemeDialogsHelper {
                 Utils.copyToClipBoard(url);
             });
             postMenu.addItem(App.get().getString(R.string.create_note), (context1, data) -> {
-                String title = String.format(App.get().getString(R.string.post_Nick_Number), data.getNick(), data.getId());
+                String themeTitle = null;
+                if (context1 instanceof SearchFragment) {
+                    SearchItem searchItem = (SearchItem) data;
+                    themeTitle = searchItem.getTitle();
+                } else if (context1 instanceof ThemeFragment) {
+                    ThemeFragment themeFragment = (ThemeFragment) context1;
+                    themeTitle = themeFragment.currentPage.getTitle();
+                }
+                String title = String.format(App.get().getString(R.string.post_Topic_Nick_Number), themeTitle, data.getNick(), data.getId());
                 String url = "https://4pda.ru/forum/index.php?s=&showtopic=" + data.getTopicId() + "&view=findpost&p=" + data.getId();
                 NotesAddPopup.showAddNoteDialog(context, title, url);
             });

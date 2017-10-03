@@ -212,7 +212,11 @@ public class CodesPanelItem extends BasePanelItem {
         if (selected.length() == 0)
             insertHelper.setBody(App.get().getString(R.string.codes_link_text), null);
         insertHelper.setInsertListener((resultHeaders, bodyResult) -> {
-            String[] bbcodes = createBbCode(item.getText(), resultHeaders, bodyResult);
+            String body = null;
+            if (resultHeaders != null && resultHeaders.size() > 0) {
+                body = resultHeaders.get(0).second;
+            }
+            String[] bbcodes = createBbCode(item.getText(), resultHeaders, body);
             messagePanel.insertText(bbcodes[0], bbcodes[1]);
         });
         insertHelper.show();
