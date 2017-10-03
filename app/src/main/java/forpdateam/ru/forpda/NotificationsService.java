@@ -390,7 +390,7 @@ public class NotificationsService extends Service {
     }
 
     private void hardHandleEvent(NotificationEvent.Source source) {
-        handleEvent(new ArrayList<>(), source);
+        hardHandleEvent(new ArrayList<>(), source);
     }
 
     private void hardHandleEvent(List<NotificationEvent> events, NotificationEvent.Source source) {
@@ -498,7 +498,6 @@ public class NotificationsService extends Service {
         for (NotificationEvent loaded : loadedEvents) {
             boolean isNew = true;
             for (NotificationEvent saved : savedEvents) {
-                Log.d("SUKA", "compare " + loaded.getSourceId() + " : " + saved.getSourceId() + " : " + (loaded.getTimeStamp() <= saved.getTimeStamp()));
                 if (loaded.getSourceId() == saved.getSourceId() && loaded.getTimeStamp() <= saved.getTimeStamp()) {
                     isNew = false;
                     break;
@@ -506,48 +505,21 @@ public class NotificationsService extends Service {
             }
 
             if (isNew) {
-                Log.d("SUKA", "ADD NEW " + loaded.getSourceId());
                 newEvents.add(loaded);
             }
         }
 
-        Log.d("SUKA", "new events " + newEvents.size());
-
-
-        /*if (NotificationEvent.fromTheme(source) && Preferences.Notifications.Favorites.isOnlyImportant()) {
-            for (NotificationEvent event : events) {
-                if (!event.isMention()) {
-                    for (NotificationEvent newEvent : newEvents) {
-                        if (newEvent.getSourceId() == event.getSourceId() && !newEvent.isImportant()) {
-                            newEvents.remove(newEvent);
-                            Log.d("SUKA", "REMOVE NEW " + newEvent.getSourceId());
-                            break;
-                        }
-                    }
-                }
-            }
-        }*/
-
-
         if (NotificationEvent.fromTheme(source) && Preferences.Notifications.Favorites.isOnlyImportant()) {
-
-
             for (NotificationEvent newEvent : newEvents) {
                 for (NotificationEvent event : events) {
-                    if (!event.isMention()) {
-                        if (newEvent.getSourceId() == event.getSourceId() && !newEvent.isImportant()) {
-                            newEvents.remove(newEvent);
-                            Log.d("SUKA", "REMOVE NEW " + newEvent.getSourceId());
-                            break;
-                        }
+                    if (!event.isMention() && !newEvent.isImportant()) {
+                        newEvents.remove(newEvent);
+                        break;
                     }
                 }
 
             }
         }
-
-
-        Log.d("SUKA", "FINAL SIZE " + newEvents.size());
 
         return newEvents;
     }

@@ -59,7 +59,7 @@ function transformSnapbacks() {
 
 function transformQuotes() {
     var quotes = document.querySelectorAll(".post-block.quote");
-    var myRegexp = /([\s\S]*?) @ ((?:\d+.\d+.\d+|[a-zA-zа-я-А-Я]+)(?:, \d+:\d+)?)/g;
+    var myRegexp = /([\s\S]*?) @ ((?:\d+.\d+.\d+|[a-zA-zа-я-А-Я]+)(?:, \d+:\d+)?)?/g;
     for (var i = 0; i < quotes.length; i++) {
         var quote = quotes[i];
         if (quote.classList.contains("transformed")) {
@@ -68,14 +68,23 @@ function transformQuotes() {
         var titleBlock = quote.querySelector(".block-title");
 
         var titleText = titleBlock.textContent;
-        //console.log(titleText);
+        console.log(titleText);
         var match;
         while (match = myRegexp.exec(titleText)) {
             var newTextSrc = "<span class=\"title\">";
             var nick = match[1];
+            var date = match[2];
+            var validNick = true;
+            if (nick.length == 0) {
+                validNick = false;
+                nick = "undefined";
+            }
+            if (date == null || date == undefined) {
+                date = "undefined";
+            }
 
             newTextSrc += "<span class=\"name\">" + nick + "</span>";
-            newTextSrc += "<span class=\"date\">" + match[2] + "</span>";
+            newTextSrc += "<span class=\"date\">" + date + "</span>";
             newTextSrc + "</span>";
             titleBlock.innerHTML = titleBlock.innerHTML.replace(match[0], "");
             titleBlock.insertAdjacentHTML("afterbegin", newTextSrc);
@@ -88,14 +97,15 @@ function transformQuotes() {
             }
             titleBlock.insertAdjacentHTML("afterbegin", "<div class=\"avatar\"><span class=\"image\"></span>" + letter + "</div>");
 
-            try {
-                if (PageInfo.enableAvatars) {
-                    loadAvatar(titleBlock);
+            if (validNick) {
+                try {
+                    if (PageInfo.enableAvatars) {
+                        loadAvatar(titleBlock);
+                    }
+                } catch (ex) {
+                    console.error(ex);
                 }
-            } catch (ex) {
-                console.error(ex);
             }
-
         }
         quote.classList.add("transformed");
     }
@@ -107,7 +117,7 @@ function loadAvatar(block) {
         return;
     }
     var nick = block.querySelector(".name").innerHTML;
-    loader.loadByNick(nick, function(loaded){
+    loader.loadByNick(nick, function (loaded) {
         imageEl.style.backgroundImage = "url(\"" + loaded + "\")";
     })
 }

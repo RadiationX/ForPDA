@@ -10,6 +10,7 @@ import io.realm.annotations.PrimaryKey;
 public class HistoryItemBd extends RealmObject {
     @PrimaryKey
     private int id;
+    private String url;
     private String date;
     private String title;
     private long unixTime;
@@ -24,6 +25,14 @@ public class HistoryItemBd extends RealmObject {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getDate() {
