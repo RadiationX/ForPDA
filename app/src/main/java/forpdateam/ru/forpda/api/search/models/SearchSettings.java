@@ -29,14 +29,15 @@ public class SearchSettings {
     public final static String ARG_QUERY_FORUM = "query";
     public final static String ARG_QUERY_NEWS = "s";
     public final static String ARG_NICK = "username";
-    public final static String ARG_USER_ID = "username-id";
     public final static String ARG_FORUMS_SIMPLE = "forums";
     public final static String ARG_TOPICS_SIMPLE = "topics";
-    public final static String ARG_FORUMS = "forums%5B%5D";
-    public final static String ARG_TOPICS = "topics%5B%5D";
+    public final static String ARG_FORUMS = "forums%5b%5d";
+    public final static String ARG_TOPICS = "topics%5b%5d";
     public final static String ARG_SUB_FORUMS = "subforums";
     public final static String ARG_NO_FORM = "noform";
     public final static String ARG_ST = "st";
+    public final static String ARG_USER_ID = "username-id";
+    public final static String ARG_EXCLUDE_TRASH = "exclude_trash";
 
     public final static Pair<String, String> RESULT_TOPICS = new Pair<>("topics", "Темы");
     public final static Pair<String, String> RESULT_POSTS = new Pair<>("posts", "Сообщения");
@@ -54,8 +55,9 @@ public class SearchSettings {
 
     private String resourceType, result, sort, source, query, nick;
     private int subforums;
+    private int excludeTrash;
     private int st = 0;
-    private List<Integer> forums, topics;
+    private List<String> forums, topics;
 
     public SearchSettings() {
         resourceType = RESOURCE_FORUM.first;
@@ -118,19 +120,19 @@ public class SearchSettings {
         this.nick = nick;
     }
 
-    public List<Integer> getForums() {
+    public List<String> getForums() {
         return forums;
     }
 
-    public void addForum(int forum) {
+    public void addForum(String forum) {
         forums.add(forum);
     }
 
-    public List<Integer> getTopics() {
+    public List<String> getTopics() {
         return topics;
     }
 
-    public void addTopic(int topic) {
+    public void addTopic(String topic) {
         topics.add(topic);
     }
 
@@ -142,6 +144,14 @@ public class SearchSettings {
         this.subforums = subforums;
     }
 
+    public int getExcludeTrash() {
+        return excludeTrash;
+    }
+
+    public void setExcludeTrash(int excludeTrash) {
+        this.excludeTrash = excludeTrash;
+    }
+
     public static SearchSettings parseSettings(String url) {
         return parseSettings(new SearchSettings(), url);
     }
@@ -150,7 +160,7 @@ public class SearchSettings {
         Matcher matcher = argsPattern.matcher(url);
         String name, value;
         while (matcher.find()) {
-            name = matcher.group(1);
+            name = matcher.group(1).toLowerCase();
             value = matcher.group(2);
             switch (name) {
                 case SearchSettings.ARG_ST:
@@ -191,20 +201,22 @@ public class SearchSettings {
                 case SearchSettings.ARG_SUB_FORUMS:
                     settings.setSubforums(Integer.parseInt(value));
                     break;
+                case SearchSettings.ARG_EXCLUDE_TRASH:
+                    settings.setExcludeTrash(Integer.parseInt(value));
+                    break;
             }
-            if (name.contains(SearchSettings.ARG_FORUMS_SIMPLE)) {
+
+            if (name.equals(SearchSettings.ARG_FORUMS) || name.equals(SearchSettings.ARG_FORUMS_SIMPLE)) {
                 try {
-                    settings.addForum(Integer.parseInt(value));
+                    settings.addForum(value);
                 } catch (NumberFormatException ignore) {
                 }
-                continue;
             }
-            if (name.contains(SearchSettings.ARG_TOPICS_SIMPLE)) {
+            if (name.equals(SearchSettings.ARG_TOPICS) || name.equals(SearchSettings.ARG_TOPICS_SIMPLE)) {
                 try {
-                    settings.addTopic(Integer.parseInt(value));
+                    settings.addTopic(value);
                 } catch (NumberFormatException ignore) {
                 }
-                continue;
             }
         }
         return settings;
@@ -247,15 +259,16 @@ public class SearchSettings {
                 }
             }
 
-            for (int forum : settings.getForums())
-                builder.appendQueryParameter(ARG_FORUMS, Integer.toString(forum));
+            for (String forum : settings.getForums())
+                builder.appendQueryParameter(ARG_FORUMS, forum);
 
-            for (int topic : settings.getTopics())
-                builder.appendQueryParameter(ARG_TOPICS, Integer.toString(topic));
+            for (String topic : settings.getTopics())
+                builder.appendQueryParameter(ARG_TOPICS, topic);
 
             builder.appendQueryParameter(ARG_SUB_FORUMS, Integer.toString(settings.getSubforums()));
             builder.appendQueryParameter(ARG_NO_FORM, "1");
             builder.appendQueryParameter(ARG_ST, Integer.toString(settings.getSt()));
+            builder.appendQueryParameter(ARG_EXCLUDE_TRASH, Integer.toString(settings.getExcludeTrash()));
         }
 
         String url = builder.build().toString();
@@ -267,7 +280,7 @@ public class SearchSettings {
         return url;
     }
 
-    public static SearchSettings fromBundle(SearchSettings settings, Bundle arguments){
+    public static SearchSettings fromBundle(SearchSettings settings, Bundle arguments) {
         String url = arguments.getString(TabFragment.ARG_TAB);
         if (url != null)
             settings = SearchSettings.parseSettings(settings, url);

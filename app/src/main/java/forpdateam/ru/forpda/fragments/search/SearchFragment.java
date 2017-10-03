@@ -837,7 +837,14 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
     @Override
     public void editPost(IBaseForumPost post) {
-        TabManager.getInstance().add(EditPostFragment.newInstance(post.getId(), post.getTopicId(), post.getForumId(), 0, "?Сообщение из поиска?"));
+        String title;
+        if (post instanceof SearchItem) {
+            SearchItem item = (SearchItem) post;
+            title = item.getTitle();
+        } else {
+            title = "пост из поиска_";
+        }
+        TabManager.getInstance().add(EditPostFragment.newInstance(post.getId(), post.getTopicId(), post.getForumId(), 0, title));
     }
 
     @Override

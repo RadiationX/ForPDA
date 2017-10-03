@@ -97,7 +97,7 @@
     <string name="report_to_post_Nick" formatted="false">Report for %s\'s post</string>
     <string name="ask_delete_post_Nick" formatted="false">Delete %s\'s post?</string>
     <string name="template_error" formatted="false">Template error [%s]: %s</string>
-    <string name="post_Nick_Number" formatted="false">Post %s, #%d</string>
+    <string name="post_Topic_Nick_Number" formatted="false">Topic %s (Post %s #%d)</string>
     <string name="report_warning">You don\'t have to specify the topic and post here, a moderator will receive this information automatically. Please use this section for reporting unacceptable messages only! Use QMS to contact the moderator privately.</string>
     <string name="image_viewer_subtitle_Cur_All" formatted="false">%d of %d</string>
     <string name="msg_panel_hint_message">Type a message</string>

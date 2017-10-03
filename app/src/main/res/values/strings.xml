@@ -113,7 +113,7 @@
     <string name="report_to_post_Nick" formatted="false">Жалоба на пост %s</string>
     <string name="ask_delete_post_Nick" formatted="false">Удалить пост %s ?</string>
     <string name="template_error" formatted="false">Ошибка шаблона [%s]: %s</string>
-    <string name="post_Nick_Number" formatted="false">Пост %s, #%d</string>
+    <string name="post_Topic_Nick_Number" formatted="false">Тема %s (Пост %s, #%d)</string>
     <string name="report_warning">Вам не нужно указывать здесь тему и сообщение, модератор автоматически получит эту информацию.  Пожалуйста, используйте эту возможность форума только для жалоб о некорректном сообщении! Для связи с модератором используйте личные сообщения.</string>
     <string name="image_viewer_subtitle_Cur_All" formatted="false">%d из %d</string>
     <string name="msg_panel_hint_message">Сообщение</string>
