@@ -311,16 +311,13 @@ public class NotificationsService extends Service {
     }
 
     private void handleWebSocketEvent(NotificationEvent event) {
-        try {
-            TabNotification tabNotification = new TabNotification();
-            tabNotification.setType(event.getType());
-            tabNotification.setSource(event.getSource());
-            tabNotification.setEvent(event);
-            tabNotification.setWebSocket(true);
-            notifyTabs(tabNotification);
-        } catch (Exception ex) {
-            ACRA.getErrorReporter().handleException(ex);
-        }
+        TabNotification tabNotification = new TabNotification();
+        tabNotification.setType(event.getType());
+        tabNotification.setSource(event.getSource());
+        tabNotification.setEvent(event);
+        tabNotification.setWebSocket(true);
+        notifyTabs(tabNotification);
+
         if (event.isRead()) {
             NotificationEvent oldEvent = eventsHistory.get(event.notifyId(NotificationEvent.Type.NEW));
             boolean delete = false;
@@ -511,13 +508,19 @@ public class NotificationsService extends Service {
 
         if (NotificationEvent.fromTheme(source) && Preferences.Notifications.Favorites.isOnlyImportant()) {
             for (NotificationEvent newEvent : newEvents) {
+                boolean remove = false;
                 for (NotificationEvent event : events) {
                     if (!event.isMention() && !newEvent.isImportant()) {
-                        newEvents.remove(newEvent);
+                        remove = true;
                         break;
                     }
                 }
-
+                if (!newEvent.isImportant()) {
+                    remove = true;
+                }
+                if (remove) {
+                    newEvents.remove(newEvent);
+                }
             }
         }
 
@@ -564,12 +567,17 @@ public class NotificationsService extends Service {
     }
 
     public void notifyTabs(TabNotification event) {
-        switch (event.getSource()) {
-            case THEME:
-                App.get().notifyFavorites(event);
-                break;
-            case QMS:
-                App.get().notifyQms(event);
+        Log.d("SUKA", "notifyTabs");
+        try {
+            switch (event.getSource()) {
+                case THEME:
+                    App.get().notifyFavorites(event);
+                    break;
+                case QMS:
+                    App.get().notifyQms(event);
+            }
+        } catch (Exception ex) {
+            ACRA.getErrorReporter().handleException(ex);
         }
     }
 
@@ -588,6 +596,7 @@ public class NotificationsService extends Service {
             defaults |= NotificationCompat.DEFAULT_LIGHTS;
         }
         builder.setDefaults(defaults);
+        builder.setVibrate(new long[]{0L});
     }
 
     public void sendNotification(NotificationEvent event, Bitmap avatar) {

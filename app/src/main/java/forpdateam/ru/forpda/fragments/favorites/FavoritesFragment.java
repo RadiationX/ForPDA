@@ -341,6 +341,7 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
     }
 
     private void handleEvent(TabNotification event) {
+        if (event.isWebSocket()) return;
         if (realm.isClosed()) return;
         RealmResults<FavItemBd> results = realm.where(FavItemBd.class).findAll();
         ArrayList<IFavItem> currentItems = new ArrayList<>();
@@ -348,22 +349,23 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
             currentItems.add(new FavItem(itemBd));
         }
 
-        for (int i = event.getLoadedEvents().size() - 1; i >= 0; i--) {
-            NotificationEvent loadedEvent = event.getLoadedEvents().get(i);
-            int id = loadedEvent.getSourceId();
-            for (IFavItem item : currentItems) {
-                if (item.getTopicId() == id) {
-                    currentItems.remove(item);
-                    item.setNewMessages(true);
-                    item.setLastUserNick(loadedEvent.getUserNick());
-                    item.setLastUserId(loadedEvent.getUserId());
-                    item.setPin(loadedEvent.isImportant());
-                    //Collections.swap(currentItems, currentItems.indexOf(item), 0);
-                    currentItems.add(0, item);
-                    break;
-                }
+        //for (int i = event.getLoadedEvents().size() - 1; i >= 0; i--) {
+        //NotificationEvent loadedEvent = event.getLoadedEvents().get(i);
+        NotificationEvent loadedEvent = event.getEvent();
+        int id = loadedEvent.getSourceId();
+        for (IFavItem item : currentItems) {
+            if (item.getTopicId() == id) {
+                currentItems.remove(item);
+                item.setNewMessages(true);
+                item.setLastUserNick(loadedEvent.getUserNick());
+                item.setLastUserId(loadedEvent.getUserId());
+                item.setPin(loadedEvent.isImportant());
+                //Collections.swap(currentItems, currentItems.indexOf(item), 0);
+                currentItems.add(0, item);
+                break;
             }
         }
+        //}
 
         if (realm.isClosed()) return;
         realm.executeTransactionAsync(r -> {
