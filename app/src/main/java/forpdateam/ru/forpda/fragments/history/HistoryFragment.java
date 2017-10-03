@@ -81,7 +81,7 @@ public class HistoryFragment extends ListFragment implements HistoryAdapter.OnIt
     public void onItemClick(HistoryItemBd item) {
         Bundle args = new Bundle();
         args.putString(TabFragment.ARG_TITLE, item.getTitle());
-        IntentHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + item.getId(), args);
+        IntentHandler.handle(item.getUrl(), args);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class HistoryFragment extends ListFragment implements HistoryAdapter.OnIt
             dialogMenu = new AlertDialogMenu<>();
             showedDialogMenu = new AlertDialogMenu<>();
             dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
-                Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=" + data.getId());
+                Utils.copyToClipBoard(data.getUrl());
             });
             dialogMenu.addItem(getString(R.string.delete), (context, data) -> {
                 context.delete(data.getId());
@@ -120,7 +120,7 @@ public class HistoryFragment extends ListFragment implements HistoryAdapter.OnIt
 
     }
 
-    public static void addToHistory(int id, String title) {
+    public static void addToHistory(int id, String url, String title) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransactionAsync(realm1 -> {
             HistoryItemBd item = realm1
@@ -131,10 +131,12 @@ public class HistoryFragment extends ListFragment implements HistoryAdapter.OnIt
                 HistoryItemBd newItem = new HistoryItemBd();
                 newItem.setTitle(title);
                 newItem.setId(id);
+                newItem.setUrl(url);
                 newItem.setUnixTime(System.currentTimeMillis());
                 newItem.setDate(dateFormat.format(new Date(newItem.getUnixTime())));
                 realm1.insert(newItem);
             } else {
+                item.setUrl(url);
                 item.setUnixTime(System.currentTimeMillis());
                 item.setDate(dateFormat.format(new Date(item.getUnixTime())));
                 realm1.insertOrUpdate(item);

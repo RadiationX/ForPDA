@@ -478,7 +478,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     protected void updateMainHistory(ThemePage themePage) {
         long time = System.currentTimeMillis();
-        HistoryFragment.addToHistory(themePage.getId(), themePage.getTitle());
+        HistoryFragment.addToHistory(themePage.getId(), themePage.getUrl(), themePage.getTitle());
         Log.d("SUKA", "ADD TO HISTORY " + (System.currentTimeMillis() - time));
     }
 
