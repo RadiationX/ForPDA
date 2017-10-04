@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +16,14 @@ import android.webkit.WebView;
 
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.api.news.models.DetailsPage;
+import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.CustomWebChromeClient;
 import forpdateam.ru.forpda.utils.CustomWebViewClient;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.views.ExtendedWebView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 03.09.17.
@@ -42,14 +47,38 @@ public class ArticleContentFragment extends Fragment {
         webView.setWebViewClient(new ArticleWebViewClient());
         webView.setWebChromeClient(new CustomWebChromeClient());
         webView.addJavascriptInterface(this, JS_INTERFACE);
-        webView.loadDataWithBaseURL("https://4pda.ru/forum/", article.getHtml(), "text/html", "utf-8", null);
+        loadHtml();
         return webView;
+    }
+
+    private void loadHtml(){
+        webView.loadDataWithBaseURL("https://4pda.ru/forum/", article.getHtml(), "text/html", "utf-8", null);
     }
 
     @JavascriptInterface
     public void toComments() {
         webView.runInUiThread(() -> {
             ((NewsDetailsFragment) getParentFragment()).getFragmentsPager().setCurrentItem(1);
+        });
+    }
+
+    @JavascriptInterface
+    public void sendPoll(String id, String answer, String from) {
+        webView.runInUiThread(() -> {
+            int pollId = Integer.parseInt(id);
+            int answerId = Integer.parseInt(answer);
+            Log.d("SUKA", "NEWS SEND POLL " + pollId + " : " + answerId);
+            Disposable disposable = RxApi.NewsList().sendPoll(from, pollId, answerId)
+                    .subscribeOn(Schedulers.io())
+                    .onErrorReturn(throwable -> new DetailsPage())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(page -> {
+                        article.setHtml(page.getHtml());
+                        loadHtml();
+                    }, throwable -> {
+
+                    });
+            ((NewsDetailsFragment) getParentFragment()).getDisposable().add(disposable);
         });
     }
 
