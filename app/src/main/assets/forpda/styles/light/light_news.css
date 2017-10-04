@@ -444,7 +444,6 @@ body {
   display: none;
 }
 #news > .content div[id*="poll-ajax-frame"] {
-  background: #f2f2f2;
   /* Форма */
   /* Ответы */
 }
@@ -459,10 +458,11 @@ body {
 #news > .content div[id*="poll-ajax-frame"] > form > ul.poll-list {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 #news > .content div[id*="poll-ajax-frame"] > form > ul.poll-list li label.text {
   padding: 0.75rem 1rem;
-  padding-left: 2.5rem;
+  padding-left: 1.5rem;
   display: block;
   position: relative;
 }
@@ -470,7 +470,7 @@ body {
   margin: 0;
   padding: 0;
   position: absolute;
-  left: 1rem;
+  left: 0rem;
   top: 50%;
   transform: translateY(-50%);
 }
@@ -481,6 +481,68 @@ body {
   content: "";
   display: table;
   clear: both;
+}
+#news > .content div[id*="poll-ajax-frame"] > ul.poll-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+#news > .content div[id*="poll-ajax-frame"] > ul.poll-list li {
+  position: relative;
+  margin: 0.5rem 0;
+}
+#news > .content div[id*="poll-ajax-frame"] > ul.poll-list li .title {
+  position: relative;
+  z-index: 1;
+  padding: 0.375rem 0.75rem;
+  margin-right: 2.5rem;
+  display: block;
+  font-weight: bold;
+  font-size: 0.875rem;
+}
+#news > .content div[id*="poll-ajax-frame"] > ul.poll-list li .slider {
+  position: absolute;
+  -webkit-border-radius: 0.125rem;
+  border-radius: 0.125rem;
+  bottom: 0;
+  right: 0;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.1);
+}
+#news > .content div[id*="poll-ajax-frame"] > ul.poll-list li .slider .range {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  top: 0;
+  left: 0;
+}
+#news > .content div[id*="poll-ajax-frame"] > ul.poll-list li .slider .range .fill {
+  -webkit-border-radius: 0.125rem;
+  border-radius: 0.125rem;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.1) !important;
+}
+#news > .content div[id*="poll-ajax-frame"] > ul.poll-list li .slider .value {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 0.375rem 0.5rem;
+}
+#news > .content div[id*="poll-ajax-frame"] .btn {
+  border: none;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  font-weight: bold;
+  margin: 0.5rem 0;
+}
+#news > .content div[id*="poll-ajax-frame"] .small-desc {
+  padding: 0.5rem 0;
 }
 #news > .content .btn {
   padding: 0.75em;

@@ -22,7 +22,7 @@ body {
         border: none!important;
         height: auto!important;
     }
-    >a[data-lightbox]{
+    >a[data-lightbox] {
         margin: 0 -16/16rem;
         display: inline-block;
     }
@@ -295,7 +295,7 @@ body {
         border-left: 4/16rem solid @quote_border_color;
         margin: 0.5rem 0;
         padding-right: 0;
-        >p{
+        >p {
             margin: 0;
         }
         /*&:before {
@@ -459,37 +459,35 @@ body {
             display: none;
         }
     }*/
-    div[id*="poll-ajax-frame"]{
-        background: #f2f2f2;
-        >h2{
-            >strong{
-                
-            }
+    div[id*="poll-ajax-frame"] {
+        >h2 {
+            >strong {}
         }
         /* Форма */
-        >form{
+        >form {
             .noselect();
-            >ul.poll-list{
+            >ul.poll-list {
                 list-style: none;
                 padding: 0;
-                li{
-                    label.text{
+                margin: 0;
+                li {
+                    label.text {
                         padding: 12/16rem 16/16rem;
-                        padding-left: (16+24)/16rem;
+                        padding-left: (0+24)/16rem;
                         display: block;
                         position: relative;
-                        input{
+                        input {
                             margin: 0;
                             padding: 0;
                             position: absolute;
-                            left: 16/16rem;
+                            left: 0/16rem;
                             top: 50%;
                             transform: translateY(-50%);
                         }
-                        &:active{
+                        &:active {
                             background: @tapColor;
                         }
-                        &:after{
+                        &:after {
                             content: "";
                             display: table;
                             clear: both;
@@ -498,31 +496,67 @@ body {
                 }
             }
         }
-        
         /* Ответы */
-        >ul.poll-list{
-            li{
-                .title{
-                    
+        >ul.poll-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            li {
+                position: relative;
+                margin: 8/16rem 0;
+                .title {
+                    position: relative;
+                    z-index: 1;
+                    padding: 6/16rem 12/16rem;
+                    margin-right: 40/16rem;
+                    display: block;
+                    font-weight: bold;
+                    font-size: 14/16rem;
                 }
-                .slider{
-                    .range{
-                        
+                .slider {
+                    position: absolute;
+                    .bRad(2/16rem);
+                    bottom: 0;
+                    right: 0;
+                    top: 0;
+                    left: 0;
+                    background: @poll_range_bar_background;
+                    .range {
+                        position: absolute;
+                        bottom: 0;
+                        right: 0;
+                        top: 0;
+                        left: 0;
+                        .fill {
+                            .bRad(2/16rem);
+                            height: 100%;
+                            position: absolute;
+                            left: 0;
+                            top: 0;
+                            background: @poll_range_bar_background !important;
+                        }
                     }
-                    .value{
-                        
+                    .value {
+                        position: absolute;
+                        right: 0;
+                        top: 0;
+                        font-size: 12/16rem;
+                        font-weight: bold;
+                        padding: 6/16rem 8/16rem;
                     }
                 }
             }
         }
-        .small-desc{
-            button{
-                
-            }
-            
+        .btn {
+            border: none;
+            font-size: 14/16rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin: 8/16rem 0;
         }
-        
-        
+        .small-desc {
+            padding: 8/16rem 0;
+        }
     }
     .btn {
         padding: 0.75em;
@@ -608,7 +642,7 @@ body {
                 padding-right: 8/16rem;
                 font-weight: 500;
             }
-            &:after{
+            &:after {
                 content: "";
                 display: table;
                 clear: both;
