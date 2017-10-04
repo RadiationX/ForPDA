@@ -57,7 +57,7 @@ public class NewsDetailsFragment extends TabFragment {
 
     private FrameLayout webViewContainer;
     private ViewPager fragmentsPager;
-    private ProgressBar progressBar;
+    ProgressBar progressBar;
     private ProgressBar imageProgressBar;
     private ImageView detailsImage;
 
