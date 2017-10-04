@@ -450,7 +450,7 @@ body {
             clear: both;
         }
     }*/
-    div[id*="poll"] {
+    /*div[id*="poll"] {
         background: @postBlockBg;
         &:before {
             content: "Опросы временно не поддерживаются";
@@ -458,6 +458,71 @@ body {
         >* {
             display: none;
         }
+    }*/
+    div[id*="poll-ajax-frame"]{
+        background: #f2f2f2;
+        >h2{
+            >strong{
+                
+            }
+        }
+        /* Форма */
+        >form{
+            .noselect();
+            >ul.poll-list{
+                list-style: none;
+                padding: 0;
+                li{
+                    label.text{
+                        padding: 12/16rem 16/16rem;
+                        padding-left: (16+24)/16rem;
+                        display: block;
+                        position: relative;
+                        input{
+                            margin: 0;
+                            padding: 0;
+                            position: absolute;
+                            left: 16/16rem;
+                            top: 50%;
+                            transform: translateY(-50%);
+                        }
+                        &:active{
+                            background: @tapColor;
+                        }
+                        &:after{
+                            content: "";
+                            display: table;
+                            clear: both;
+                        }
+                    }
+                }
+            }
+        }
+        
+        /* Ответы */
+        >ul.poll-list{
+            li{
+                .title{
+                    
+                }
+                .slider{
+                    .range{
+                        
+                    }
+                    .value{
+                        
+                    }
+                }
+            }
+        }
+        .small-desc{
+            button{
+                
+            }
+            
+        }
+        
+        
     }
     .btn {
         padding: 0.75em;

@@ -179,7 +179,7 @@ public class NewsApi {
         return parseArticle(response);
     }
 
-    private DetailsPage parseArticle(String response) throws Exception{
+    private DetailsPage parseArticle(String response) throws Exception {
         long time = System.currentTimeMillis();
         Matcher matcher = detailsPattern.matcher(response);
         DetailsPage page = new DetailsPage();
@@ -385,6 +385,19 @@ public class NewsApi {
         Comment newComments = parseComments(article.getKarmaMap(), newArticle.getCommentsSource());
         article.setCommentTree(newComments);
         return newComments;
+    }
+
+    public DetailsPage sendPoll(String from, int pollId, int answerId) throws Exception {
+        String url = "https://4pda.ru/pages/poll/?act=vote&poll_id=" + pollId;
+        NetworkRequest request = new NetworkRequest.Builder()
+                .url(url)
+                .xhrHeader()
+                .formHeader("from", from)
+                .formHeader("answer[]", Integer.toString(answerId))
+                .multipart()
+                .build();
+        NetworkResponse response = Api.getWebClient().request(request);
+        return parseArticle(response.getBody());
     }
 
     private static String getUrlCategory(@Nullable String category) {

@@ -109,6 +109,15 @@ body {
             clear: both;
         }
     }*/
+  /*div[id*="poll"] {
+        background: @postBlockBg;
+        &:before {
+            content: "Опросы временно не поддерживаются";
+        }
+        >* {
+            display: none;
+        }
+    }*/
 }
 #news > .content > p:first-of-type {
   margin-top: 0;
@@ -434,14 +443,44 @@ body {
 #news > .content .mb_source + br {
   display: none;
 }
-#news > .content div[id*="poll"] {
-  background: rgba(0, 0, 0, 0.05);
+#news > .content div[id*="poll-ajax-frame"] {
+  background: #f2f2f2;
+  /* Форма */
+  /* Ответы */
 }
-#news > .content div[id*="poll"]:before {
-  content: "Опросы временно не поддерживаются";
+#news > .content div[id*="poll-ajax-frame"] > form {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
-#news > .content div[id*="poll"] > * {
-  display: none;
+#news > .content div[id*="poll-ajax-frame"] > form > ul.poll-list {
+  list-style: none;
+  padding: 0;
+}
+#news > .content div[id*="poll-ajax-frame"] > form > ul.poll-list li label.text {
+  padding: 0.75rem 1rem;
+  padding-left: 2.5rem;
+  display: block;
+  position: relative;
+}
+#news > .content div[id*="poll-ajax-frame"] > form > ul.poll-list li label.text input {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+#news > .content div[id*="poll-ajax-frame"] > form > ul.poll-list li label.text:active {
+  background: rgba(0, 0, 0, 0.1);
+}
+#news > .content div[id*="poll-ajax-frame"] > form > ul.poll-list li label.text:after {
+  content: "";
+  display: table;
+  clear: both;
 }
 #news > .content .btn {
   padding: 0.75em;
