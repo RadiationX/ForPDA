@@ -208,6 +208,8 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         submitButton = (Button) searchSettingsView.findViewById(R.id.search_submit);
         saveSettingsButton = (Button) searchSettingsView.findViewById(R.id.search_save_settings);
 
+        contentController.setMainRefresh(refreshLayout);
+
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
         webView.setJsLifeCycleListener(this);
         webView.addJavascriptInterface(this, ThemeFragmentWeb.JS_INTERFACE);

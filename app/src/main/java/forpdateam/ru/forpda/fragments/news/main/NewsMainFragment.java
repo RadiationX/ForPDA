@@ -3,15 +3,12 @@ package forpdateam.ru.forpda.fragments.news.main;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -21,9 +18,8 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.news.Constants;
-import forpdateam.ru.forpda.api.news.NewsApi;
 import forpdateam.ru.forpda.api.news.models.NewsItem;
-import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.fragments.news.details.NewsDetailsFragment;
 import forpdateam.ru.forpda.fragments.news.main.timeline.NewsListAdapter;
@@ -37,14 +33,11 @@ import forpdateam.ru.forpda.utils.rx.Subscriber;
  * Created by isanechek on 8/8/17.
  */
 
-public class NewsMainFragment extends TabFragment implements
+public class NewsMainFragment extends RecyclerFragment implements
         NewsListAdapter.ItemClickListener {
-    private SwipeRefreshLayout refreshLayout;
     private NewsListAdapter adapter;
-    private NewsApi mApi;
     private String category = Constants.NEWS_CATEGORY_ALL;
     private Subscriber<List<NewsItem>> mainSubscriber = new Subscriber<>(this);
-    //private Realm realm;
 
     public NewsMainFragment() {
         configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_news_list));
@@ -54,9 +47,6 @@ public class NewsMainFragment extends TabFragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //configuration.setUseCache(true);
-        //realm = Realm.getDefaultInstance();
     }
 
     @Nullable
@@ -64,24 +54,13 @@ public class NewsMainFragment extends TabFragment implements
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         setCardsBackground();
-        baseInflateFragment(inflater, R.layout.news_list_fragment);
-
-        ProgressBar progressBar = (ProgressBar) findViewById(R.id.news_list_progress);
-        progressBar.setVisibility(View.GONE);
-        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.news_list_refresh);
-        refreshLayoutStyle(refreshLayout);
-        refreshLayout.setVisibility(View.VISIBLE);
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.news_list);
-
         refreshLayout.setOnRefreshListener(this::loadData);
-        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(new BrandFragment.SpacingItemDecoration(App.px8, true));
 
         adapter = new NewsListAdapter();
         adapter.setOnClickListener(this);
         recyclerView.setAdapter(adapter);
-        mApi = new NewsApi();
         viewsReady();
         return view;
     }
@@ -182,7 +161,7 @@ public class NewsMainFragment extends TabFragment implements
     private void onLoadNews(List<NewsItem> list, boolean withClear) {
         setRefreshing(false);
         if (withClear) {
-            if (list.size() > 0) {
+            if (!list.isEmpty()) {
                 adapter.clear();
                 adapter.addAll(list);
             }

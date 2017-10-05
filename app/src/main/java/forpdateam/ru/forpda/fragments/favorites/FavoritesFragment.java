@@ -325,13 +325,13 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         }
 
         adapter.clear();
-        if (pinnedUnread.size() > 0) {
+        if (!pinnedUnread.isEmpty()) {
             adapter.addSection(new Pair<>(getString(R.string.fav_unreaded_pinned), pinnedUnread));
         }
-        if (itemsUnread.size() > 0) {
+        if (!itemsUnread.isEmpty()) {
             adapter.addSection(new Pair<>(getString(R.string.fav_unreaded), itemsUnread));
         }
-        if (pinned.size() > 0) {
+        if (!pinned.isEmpty()) {
             adapter.addSection(new Pair<>(getString(R.string.fav_pinned), pinned));
         }
         adapter.addSection(new Pair<>(getString(R.string.fav_themes), items));

@@ -609,7 +609,7 @@ public class MimeTypeUtil {
     }
 
     public static String getType(String extension) {
-        if (types.size() == 0) init();
+        if (types.isEmpty()) init();
         String res = types.get(extension);
         Log.d("MimeTypeUtil", "getType " + extension + " : " + res);
         return res;

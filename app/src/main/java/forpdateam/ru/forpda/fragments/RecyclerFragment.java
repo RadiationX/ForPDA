@@ -18,23 +18,17 @@ import forpdateam.ru.forpda.R;
 public abstract class RecyclerFragment extends TabFragment {
     protected SwipeRefreshLayout refreshLayout;
     protected RecyclerView recyclerView;
-    //protected LinearLayout listContainer;
-    //protected NestedScrollView listScrollView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        setCardsBackground();
+        setListsBackground();
         baseInflateFragment(inflater, R.layout.fragment_base_list);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
-        //listContainer = (LinearLayout) findViewById(R.id.list_container);
         recyclerView = (RecyclerView) findViewById(R.id.base_list);
-        refreshController.setMainRefresh(refreshLayout);
-        //listScrollView = (NestedScrollView) findViewById(R.id.list_scroll_view);
-
-        //recyclerView.setNestedScrollingEnabled(false);
-        setListsBackground(recyclerView);
+        contentController.setMainRefresh(refreshLayout);
+        //setListsBackground(recyclerView);
         recyclerView.setHasFixedSize(true);
         refreshLayoutStyle(refreshLayout);
         return view;
@@ -42,9 +36,7 @@ public abstract class RecyclerFragment extends TabFragment {
 
     protected void listScrollTop() {
         new Handler().postDelayed(() -> {
-            //listScrollView.fullScroll(View.FOCUS_UP);
             recyclerView.smoothScrollToPosition(0);
-            //appBarLayout.setExpanded(true, true);
         }, 225);
     }
 }

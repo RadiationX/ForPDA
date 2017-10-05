@@ -24,7 +24,7 @@ public class WebViewsProvider {
             @Override
             public void run() {
                 Log.d("WebViewsProvider", "try remove webview " + this);
-                if (availableWebViews.size() > 0) {
+                if (!availableWebViews.isEmpty()) {
                     Log.d("WebViewsProvider", "remove webview " + availableWebViews.element().getTag());
                     availableWebViews.remove();
                 }
@@ -34,7 +34,7 @@ public class WebViewsProvider {
 
     public ExtendedWebView pull(Context context) {
         ExtendedWebView webView;
-        if (availableWebViews.size() > 0) {
+        if (!availableWebViews.isEmpty()) {
             webView = availableWebViews.poll();
         } else {
             webView = new ExtendedWebView(context);

@@ -60,6 +60,7 @@ public class BrandFragment extends TabFragment implements BrandAdapter.OnItemCli
         baseInflateFragment(inflater, R.layout.fragment_brand);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
         recyclerView = (AutoFitRecyclerView) findViewById(R.id.base_list);
+        contentController.setMainRefresh(refreshLayout);
         viewsReady();
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);

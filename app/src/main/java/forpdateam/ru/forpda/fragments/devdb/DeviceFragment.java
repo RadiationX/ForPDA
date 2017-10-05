@@ -242,7 +242,7 @@ public class DeviceFragment extends TabFragment {
             rating.setBackground(App.getDrawableAttr(rating.getContext(), R.attr.count_background));
             rating.getBackground().setColorFilter(RxApi.DevDb().getColorFilter(device.getRating()));
             rating.setVisibility(View.VISIBLE);
-            if (device.getComments().size() > 0) {
+            if (!device.getComments().isEmpty()) {
                 rating.setClickable(true);
                 rating.setOnClickListener(v -> fragmentsPager.setCurrentItem(1, true));
             }
@@ -266,32 +266,32 @@ public class DeviceFragment extends TabFragment {
         public FragmentPagerAdapter(FragmentManager fm, Device device) {
             super(fm);
             this.device = device;
-            if (this.device.getSpecs().size() > 0) {
+            if (!this.device.getSpecs().isEmpty()) {
                 fragments.add(new SpecsFragment().setDevice(this.device));
                 titles.add(App.get().getString(R.string.device_page_specs));
             }
-            if (this.device.getComments().size() > 0) {
+            if (!this.device.getComments().isEmpty()) {
                 fragments.add(new CommentsFragment().setDevice(this.device));
                 String title = String.format(Locale.getDefault(),
                         App.get().getString(R.string.device_page_comments),
                         this.device.getComments().size());
                 titles.add(title);
             }
-            if (this.device.getDiscussions().size() > 0) {
+            if (!this.device.getDiscussions().isEmpty()) {
                 fragments.add(new PostsFragment().setSource(PostsFragment.SRC_DISCUSSIONS).setDevice(this.device));
                 String title = String.format(Locale.getDefault(),
                         App.get().getString(R.string.device_page_discussions),
                         this.device.getDiscussions().size());
                 titles.add(title);
             }
-            if (this.device.getNews().size() > 0) {
+            if (!this.device.getNews().isEmpty()) {
                 fragments.add(new PostsFragment().setSource(PostsFragment.SRC_NEWS).setDevice(this.device));
                 String title = String.format(Locale.getDefault(),
                         App.get().getString(R.string.device_page_news),
                         this.device.getNews().size());
                 titles.add(title);
             }
-            if (this.device.getFirmwares().size() > 0) {
+            if (!this.device.getFirmwares().isEmpty()) {
                 fragments.add(new PostsFragment().setSource(PostsFragment.SRC_FIRMWARES).setDevice(this.device));
                 String title = String.format(Locale.getDefault(),
                         App.get().getString(R.string.device_page_firmwares),

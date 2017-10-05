@@ -147,7 +147,7 @@ public class ForumFragment extends TabFragment {
         if (realm.isClosed()) return;
         results = realm.where(ForumItemFlatBd.class).findAll();
         if (updateDialog != null && updateDialog.isShowing()) {
-            if (results.size() != 0) {
+            if (!results.isEmpty()) {
                 updateDialog.setMessage(getString(R.string.update_complete));
             } else {
                 updateDialog.setMessage(getString(R.string.error_occurred));
@@ -157,7 +157,7 @@ public class ForumFragment extends TabFragment {
                     updateDialog.cancel();
             }, 500);
         }
-        if (results.size() == 0) {
+        if (results.isEmpty()) {
             loadData();
         } else {
             bindView();
@@ -242,7 +242,7 @@ public class ForumFragment extends TabFragment {
 
     private TreeNode findNodeById(int id, TreeNode root) {
         if (root.getValue() != null && ((ForumItemTree) root.getValue()).getId() == id) return root;
-        if (root.getChildren() == null && root.getChildren().size() == 0) return null;
+        if (root.getChildren() == null && root.getChildren().isEmpty()) return null;
         for (TreeNode item : root.getChildren()) {
             TreeNode node = findNodeById(id, item);
             if (node != null) return node;
@@ -262,7 +262,7 @@ public class ForumFragment extends TabFragment {
 
     public static boolean checkIsLink(int id) {
         Realm realm = Realm.getDefaultInstance();
-        boolean res = realm.where(ForumItemFlatBd.class).equalTo("parentId", id).findAll().size() == 0;
+        boolean res = realm.where(ForumItemFlatBd.class).equalTo("parentId", id).findAll().isEmpty();
         realm.close();
         return res;
     }

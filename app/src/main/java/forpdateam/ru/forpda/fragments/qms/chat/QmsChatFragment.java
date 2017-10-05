@@ -211,7 +211,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         blackListMenuItem = getMenu().add(R.string.add_to_blacklist)
                 .setOnMenuItemClickListener(item -> {
                     contactsSubscriber.subscribe(RxApi.Qms().blockUser(currentChat.getNick()), qmsContacts -> {
-                        if (qmsContacts.size() > 0) {
+                        if (!qmsContacts.isEmpty()) {
                             Toast.makeText(getContext(), R.string.user_added_to_blacklist, Toast.LENGTH_SHORT).show();
                         }
                     }, new ArrayList<>());
@@ -347,7 +347,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     }
 
     private void checkNewMessages() {
-        if (currentChat.getMessages().size() > 0) {
+        if (!currentChat.getMessages().isEmpty()) {
             int userId = currentChat.getUserId();
             int themeId = currentChat.getThemeId();
             int lastMessId = currentChat.getMessages().get(currentChat.getMessages().size() - 1).getId();
@@ -360,7 +360,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
 
     private void onNewMessages(ArrayList<QmsMessage> qmsMessage) {
         Log.d(LOG_TAG, "Returned messages " + qmsMessage.size());
-        if (qmsMessage.size() > 0) {
+        if (!qmsMessage.isEmpty()) {
             MiniTemplator t = App.get().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
             App.setTemplateResStrings(t);
             for (int i = 0; i < qmsMessage.size(); i++) {
@@ -386,7 +386,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         addUnusedAttachments();
         messageSubscriber.subscribe(RxApi.Qms().sendMessage(currentChat.getUserId(), currentChat.getThemeId(), messagePanel.getMessage()), qmsMessage -> {
             messagePanel.setProgressState(false);
-            if (qmsMessage.size() > 0 && qmsMessage.get(0).getContent() != null) {
+            if (!qmsMessage.isEmpty() && qmsMessage.get(0).getContent() != null) {
                 //Empty because result returned from websocket
                 messagePanel.clearMessage();
                 messagePanel.clearAttachments();

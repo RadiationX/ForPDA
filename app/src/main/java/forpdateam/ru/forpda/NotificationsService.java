@@ -214,7 +214,7 @@ public class NotificationsService extends Service {
         if (mNotificationManager == null) {
             mNotificationManager = NotificationManagerCompat.from(this);
         }
-        if (pendingEvents.size() == 0) {
+        if (pendingEvents.isEmpty()) {
             pendingEvents.put(NotificationEvent.Source.QMS, new SparseArray<>());
             pendingEvents.put(NotificationEvent.Source.THEME, new SparseArray<>());
             pendingEvents.put(NotificationEvent.Source.SITE, new SparseArray<>());
@@ -671,7 +671,7 @@ public class NotificationsService extends Service {
 
 
     public void sendNotifications(List<NotificationEvent> events, NotificationEvent.Source tSource) {
-        if (events.size() == 0) {
+        if (events.isEmpty()) {
             return;
         }
         if (events.size() == 1) {

@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             @Override
             public void onDrawerStateChanged(int newState) {
                 if (newState == DrawerLayout.STATE_DRAGGING) {
-                    if (TabManager.getInstance().getSize() > 0)
+                    if (!TabManager.getInstance().isEmpty())
                         TabManager.getInstance().getActive().hidePopupWindows();
                 }
             }
@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
     void checkIntent(Intent intent) {
         if (intent == null || intent.getData() == null) {
-            if (TabManager.getInstance().getSize() == 0) {
+            if (TabManager.getInstance().isEmpty()) {
                 drawers.firstSelect();
             }
             return;
@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         new Handler().post(() -> {
             Log.d(LOG_TAG, "Handler.post checkIntent: " + intent);
             boolean handled = IntentHandler.handle(intent.getData().toString());
-            if (!handled || TabManager.getInstance().getSize() == 0) {
+            if (!handled || TabManager.getInstance().isEmpty()) {
                 drawers.firstSelect();
             }
             setIntent(null);
@@ -261,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     @Override
     public void onBackPressed() {
         Log.d(LOG_TAG, "onBackPressed");
-        if (tooltips.size() > 0) {
+        if (!tooltips.isEmpty()) {
             tooltips.get(tooltips.size() - 1).dismiss();
             return;
         }
