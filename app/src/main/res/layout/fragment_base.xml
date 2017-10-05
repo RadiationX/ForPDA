@@ -5,6 +5,7 @@
     android:id="@+id/fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/background_base"
     android:fitsSystemWindows="true">
 
     <android.support.design.widget.CoordinatorLayout
@@ -149,13 +150,6 @@
 
 
         <FrameLayout
-            android:id="@+id/fragment_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="?attr/background_base"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-
-        <FrameLayout
             android:id="@+id/additional_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -170,6 +164,11 @@
 
         </FrameLayout>
 
+        <FrameLayout
+            android:id="@+id/fragment_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
         <LinearLayout
             android:id="@+id/no_network"

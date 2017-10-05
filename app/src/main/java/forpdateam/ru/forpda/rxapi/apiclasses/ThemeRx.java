@@ -94,7 +94,7 @@ public class ThemeRx {
 
 
             int hatPostId = 0;
-            if (page.getPosts().size() > 0) {
+            if (!page.getPosts().isEmpty()) {
                 hatPostId = page.getPosts().get(0).getId();
             }
             Matcher letterMatcher = null;

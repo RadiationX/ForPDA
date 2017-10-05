@@ -78,7 +78,6 @@ public class NotesFragment extends RecyclerFragment implements NotesAdapter.OnIt
         viewsReady();
         refreshLayout.setOnRefreshListener(this::loadCacheData);
         recyclerView.addItemDecoration(new BrandFragment.SpacingItemDecoration(App.px8, false));
-        setCardsBackground(recyclerView);
         return view;
     }
 

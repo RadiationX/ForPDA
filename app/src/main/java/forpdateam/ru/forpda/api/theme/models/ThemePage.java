@@ -23,11 +23,11 @@ public class ThemePage implements IThemePage {
     }
 
     public String getAnchor() {
-        return anchors.size() == 0 ? null : anchors.get(anchors.size() - 1);
+        return anchors.isEmpty() ? null : anchors.get(anchors.size() - 1);
     }
 
     public String removeAnchor() {
-        return anchors.size() == 0 ? null : anchors.remove(anchors.size() - 1);
+        return anchors.isEmpty() ? null : anchors.remove(anchors.size() - 1);
     }
 
     public List<String> getAnchors() {

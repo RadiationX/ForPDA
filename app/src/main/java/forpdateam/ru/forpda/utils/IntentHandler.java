@@ -170,7 +170,7 @@ public class IntentHandler {
                 Log.d(LOG_TAG, "Uri path: " + path);
             }
 
-            if (uri.getPathSegments().size() > 0) {
+            if (!uri.getPathSegments().isEmpty()) {
                 switch (uri.getPathSegments().get(0)) {
                     case "pages":
                         if (uri.getPathSegments().size() > 1) {
@@ -347,12 +347,12 @@ public class IntentHandler {
             TabManager.getInstance().add(NewsDetailsFragment.class, args);
             return true;
         }
-        if (uri.getPathSegments().size() > 0 && uri.getPathSegments().get(0).contains("special")) {
+        if (!uri.getPathSegments().isEmpty() && uri.getPathSegments().get(0).contains("special")) {
             run("show special");
             Toast.makeText(App.getContext(), "Не поддерживается: special", Toast.LENGTH_SHORT).show();
             return true;
         }
-        if (uri.getPathSegments().size() == 0) {
+        if (uri.getPathSegments().isEmpty()) {
             TabManager.getInstance().add(NewsMainFragment.class);
             run("show newslist");
             return true;

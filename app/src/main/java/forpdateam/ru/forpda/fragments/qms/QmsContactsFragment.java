@@ -37,6 +37,7 @@ import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
+import forpdateam.ru.forpda.views.AdditionalController;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -154,6 +155,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
     public void loadData() {
         super.loadData();
         setRefreshing(true);
+        contentController.hideContent(AdditionalController.TAG_NO_DATA);
         mainSubscriber.subscribe(RxApi.Qms().getContactList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
     }
 
@@ -179,6 +181,12 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
         setRefreshing(false);
         if (realm.isClosed()) return;
         results = realm.where(QmsContactBd.class).findAll();
+
+        if (results.isEmpty()) {
+            contentController.addContent(getContext(), AdditionalController.TAG_NO_DATA, R.layout.funny_contact_no_data);
+            contentController.showContent(AdditionalController.TAG_NO_DATA);
+        }
+
         currentItems.clear();
         for (QmsContactBd qmsContactBd : results) {
             QmsContact contact = new QmsContact(qmsContactBd);
@@ -234,7 +242,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
         refreshList(newItems);*/
     }
 
-    public void updateCount(int id, int count){
+    public void updateCount(int id, int count) {
         /*for (QmsContact item : currentItems) {
             if (item.getId() == id) {
                 item.setCount(count);
@@ -287,7 +295,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
             });
             dialogMenu.addItem(getString(R.string.add_to_blacklist), (context, data) -> {
                 mainSubscriber.subscribe(RxApi.Qms().blockUser(data.getNick()), qmsContacts -> {
-                    if (qmsContacts.size() > 0) {
+                    if (!qmsContacts.isEmpty()) {
                         Toast.makeText(getContext(), R.string.user_added_to_blacklist, Toast.LENGTH_SHORT).show();
                     }
                 }, new ArrayList<>());

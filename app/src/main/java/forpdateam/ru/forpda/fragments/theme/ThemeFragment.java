@@ -245,6 +245,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             loadData(NORMAL_ACTION);
         });
 
+        contentController.setMainRefresh(refreshLayout);
 
         messagePanel = new MessagePanel(getContext(), fragmentContainer, coordinatorLayout, false);
         messagePanel.enableBehavior();
@@ -381,7 +382,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             updateView();
             return true;
         }
-        if ((messagePanel.getMessage() != null && !messagePanel.getMessage().isEmpty()) || messagePanel.getAttachments().size() > 0) {
+        if ((messagePanel.getMessage() != null && !messagePanel.getMessage().isEmpty()) || !messagePanel.getAttachments().isEmpty()) {
             new AlertDialog.Builder(getContext())
                     .setMessage(R.string.editpost_lose_changes)
                     .setPositiveButton(R.string.ok, (dialog, which) -> {

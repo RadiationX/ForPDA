@@ -137,7 +137,7 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
 
         setTabTitle(String.format(getString(R.string.dialogs_Nick), currentThemes.getNick()));
         setTitle(currentThemes.getNick());
-        if (currentThemes.getThemes().size() == 0 && currentThemes.getNick() != null) {
+        if (currentThemes.getThemes().isEmpty() && currentThemes.getNick() != null) {
             Bundle args = new Bundle();
             args.putInt(QmsChatFragment.USER_ID_ARG, currentThemes.getUserId());
             args.putString(QmsChatFragment.USER_NICK_ARG, currentThemes.getNick());
@@ -235,7 +235,7 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
         blackListMenuItem = getMenu().add(R.string.add_to_blacklist)
                 .setOnMenuItemClickListener(item -> {
                     contactsSubscriber.subscribe(RxApi.Qms().blockUser(currentThemes.getNick()), qmsContacts -> {
-                        if (qmsContacts.size() > 0) {
+                        if (!qmsContacts.isEmpty()) {
                             Toast.makeText(getContext(), R.string.user_added_to_blacklist, Toast.LENGTH_SHORT).show();
                         }
                     }, new ArrayList<>());

@@ -84,6 +84,10 @@ public class TabManager {
         return existingFragments.size();
     }
 
+    public boolean isEmpty() {
+        return getSize() == 0;
+    }
+
     public static String getActiveTag() {
         return activeTag;
     }

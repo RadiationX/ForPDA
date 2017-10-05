@@ -40,7 +40,7 @@ import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.settings.Preferences;
-import forpdateam.ru.forpda.views.RefreshController;
+import forpdateam.ru.forpda.views.AdditionalController;
 import io.reactivex.disposables.CompositeDisposable;
 
 import static android.content.Context.ACCESSIBILITY_SERVICE;
@@ -90,7 +90,7 @@ public class TabFragment extends Fragment {
     private boolean notifyDotQms = Preferences.Main.isShowNotifyDotQms();
     private boolean notifyDotMentions = Preferences.Main.isShowNotifyDotMentions();
     private boolean alreadyCallLoad = false;
-    protected RefreshController refreshController;
+    protected AdditionalController contentController;
 
     protected CompositeDisposable disposable = new CompositeDisposable();
 
@@ -273,7 +273,7 @@ public class TabFragment extends Fragment {
         //// TODO: 20.03.17 удалить и юзать только там, где нужно
         fab = (FloatingActionButton) coordinatorLayout.findViewById(R.id.fab);
 
-        refreshController = new RefreshController(contentProgress, fragmentContent);
+        contentController = new AdditionalController(contentProgress, additionalContent, fragmentContent);
 
         toolbarTitleView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
         toolbarTitleView.setHorizontallyScrolling(true);
@@ -322,7 +322,7 @@ public class TabFragment extends Fragment {
     }
 
     protected void setListsBackground() {
-        setListsBackground(fragmentContent);
+        setListsBackground(fragmentContainer);
     }
 
     protected void setCardsBackground(View view) {
@@ -330,7 +330,7 @@ public class TabFragment extends Fragment {
     }
 
     protected void setCardsBackground() {
-        setCardsBackground(fragmentContent);
+        setCardsBackground(fragmentContainer);
     }
 
 
@@ -447,6 +447,7 @@ public class TabFragment extends Fragment {
         if (!disposable.isDisposed())
             disposable.dispose();
         hidePopupWindows();
+        contentController.destroy();
         ClientHelper.getInstance().removeCountsObserver(countsObserver);
         Client.getInstance().removeNetworkObserver(networkObserver);
         App.get().removePreferenceChangeObserver(tabPreferenceObserver);
@@ -471,18 +472,18 @@ public class TabFragment extends Fragment {
     }
 
     protected void startRefreshing() {
-        refreshController.startLoad();
+        contentController.startRefreshing();
     }
 
-    protected void endRefreshing() {
-        refreshController.endLoad();
+    protected void stopRefreshing() {
+        contentController.stopRefreshing();
     }
 
-    protected void setRefreshing(boolean refreshing){
-        if(refreshing)
+    protected void setRefreshing(boolean refreshing) {
+        if (refreshing)
             startRefreshing();
         else
-            endRefreshing();
+            stopRefreshing();
     }
 
     /* Experiment */

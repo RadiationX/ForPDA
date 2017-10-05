@@ -112,7 +112,7 @@ public class Favorites {
                 }
                 FavData favData = getFavorites(data.getPagination().getPage(data.getPagination().getCurrent()), false, sorting);
                 data.setPagination(favData.getPagination());
-                if (favData.getItems().size() == 0) {
+                if (favData.getItems().isEmpty()) {
                     break;
                 }
                 for (FavItem favItem : favData.getItems()) {

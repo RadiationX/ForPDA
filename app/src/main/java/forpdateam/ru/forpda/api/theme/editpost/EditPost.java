@@ -393,7 +393,7 @@ public class EditPost {
         if (form.getType() == EditPostForm.TYPE_EDIT_POST)
             builder.formHeader("post_edit_reason", form.getEditReason());
         StringBuilder ids = new StringBuilder();
-        if (form.getAttachments() != null && form.getAttachments().size() > 0) {
+        if (form.getAttachments() != null && !form.getAttachments().isEmpty()) {
             for (int i = 0; i < form.getAttachments().size(); i++) {
                 int id = form.getAttachments().get(i).getId();
                 ids.append(id);

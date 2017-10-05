@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.fragments.profile;
 import android.support.annotation.LayoutRes;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +45,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             items.add(ABOUT_VIEW_TYPE);
         }
         items.add(INFO_VIEW_TYPE);
-        if (profile.getDevices().size() > 0) {
+        if (!profile.getDevices().isEmpty()) {
             items.add(DEVICES_VIEW_TYPE);
         }
         if (profile.getContacts().size() > 1) {

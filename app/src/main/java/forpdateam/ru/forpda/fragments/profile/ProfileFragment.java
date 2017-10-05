@@ -218,7 +218,7 @@ public class ProfileFragment extends TabFragment implements ProfileAdapter.Click
             sign.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
-        if (currentProfile.getContacts().size() > 0) {
+        if (!currentProfile.getContacts().isEmpty()) {
             if (!Pattern.compile("showuser=".concat(Integer.toString(ClientHelper.getUserId()))).matcher(tab_url).find()) {
                 writeMenuItem.setVisible(true);
             } else {

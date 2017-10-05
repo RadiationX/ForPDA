@@ -104,11 +104,11 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
 
         setTitle(data.getTitle());
         adapter.clear();
-        if (data.getForumItems().size() > 0)
+        if (!data.getForumItems().isEmpty())
             adapter.addSection(new Pair<>(getString(R.string.forum_section), data.getForumItems()));
-        if (data.getAnnounceItems().size() > 0)
+        if (!data.getAnnounceItems().isEmpty())
             adapter.addSection(new Pair<>(getString(R.string.announce_section), data.getAnnounceItems()));
-        if (data.getPinnedItems().size() > 0)
+        if (!data.getPinnedItems().isEmpty())
             adapter.addSection(new Pair<>(getString(R.string.pinned_section), data.getPinnedItems()));
         adapter.addSection(new Pair<>(getString(R.string.themes_section), data.getTopicItems()));
         adapter.notifyDataSetChanged();
