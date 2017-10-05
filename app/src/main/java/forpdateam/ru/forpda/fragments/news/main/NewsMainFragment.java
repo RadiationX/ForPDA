@@ -89,7 +89,7 @@ public class NewsMainFragment extends TabFragment implements
     @Override
     public void loadData() {
         super.loadData();
-        refreshLayout.setRefreshing(true);
+        setRefreshing(true);
         page = 1;
         loadDataNews(page, true);
     }
@@ -180,7 +180,7 @@ public class NewsMainFragment extends TabFragment implements
     }
 
     private void onLoadNews(List<NewsItem> list, boolean withClear) {
-        refreshLayout.setRefreshing(false);
+        setRefreshing(false);
         if (withClear) {
             if (list.size() > 0) {
                 adapter.clear();

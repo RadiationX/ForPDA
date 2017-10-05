@@ -542,13 +542,13 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         /*if (searchSettingsView.getVisibility() == View.VISIBLE) {
             searchSettingsView.setVisibility(View.GONE);
         }*/
-        refreshLayout.setRefreshing(true);
+        setRefreshing(true);
         boolean withHtml = settings.getResult().equals(SearchSettings.RESULT_POSTS.first) && settings.getResourceType().equals(SearchSettings.RESOURCE_FORUM.first);
         mainSubscriber.subscribe(RxApi.Search().getSearch(settings, withHtml), this::onLoadData, new SearchResult(), v -> loadData());
     }
 
     private void onLoadData(SearchResult searchResult) {
-        refreshLayout.setRefreshing(false);
+        setRefreshing(false);
         recyclerView.scrollToPosition(0);
         hidePopupWindows();
         data = searchResult;

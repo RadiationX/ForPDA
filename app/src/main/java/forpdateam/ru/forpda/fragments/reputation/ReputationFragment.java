@@ -22,7 +22,7 @@ import forpdateam.ru.forpda.api.reputation.Reputation;
 import forpdateam.ru.forpda.api.reputation.models.RepData;
 import forpdateam.ru.forpda.api.reputation.models.RepItem;
 import forpdateam.ru.forpda.client.ClientHelper;
-import forpdateam.ru.forpda.fragments.ListFragment;
+import forpdateam.ru.forpda.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -36,7 +36,7 @@ import io.reactivex.schedulers.Schedulers;
  * Created by radiationx on 20.03.17.
  */
 
-public class ReputationFragment extends ListFragment implements ReputationAdapter.OnItemClickListener<RepItem> {
+public class ReputationFragment extends RecyclerFragment implements ReputationAdapter.OnItemClickListener<RepItem> {
     private ReputationAdapter adapter;
     private Subscriber<RepData> mainSubscriber = new Subscriber<>(this);
     private PaginationHelper paginationHelper;
@@ -219,13 +219,13 @@ public class ReputationFragment extends ListFragment implements ReputationAdapte
     @Override
     public void loadData() {
         super.loadData();
-        refreshLayout.setRefreshing(true);
+        setRefreshing(true);
         refreshToolbarMenuItems(false);
         mainSubscriber.subscribe(RxApi.Reputation().getReputation(data), this::onLoadThemes, data, v -> loadData());
     }
 
     private void onLoadThemes(RepData data) {
-        refreshLayout.setRefreshing(false);
+        setRefreshing(false);
 
         this.data = data;
 

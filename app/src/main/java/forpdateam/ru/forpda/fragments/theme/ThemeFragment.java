@@ -419,7 +419,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     @Override
     public void loadData() {
         super.loadData();
-        refreshLayout.setRefreshing(true);
+        setRefreshing(true);
 
         refreshToolbarMenuItems(false);
         boolean hatOpen = false;
@@ -432,7 +432,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     }
 
     protected void onLoadData(ThemePage newPage) throws Exception {
-        refreshLayout.setRefreshing(false);
+        setRefreshing(false);
         if (newPage == null || newPage.getId() == 0 || newPage.getUrl() == null) {
             if (currentPage != null)
                 tab_url = currentPage.getUrl();

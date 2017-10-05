@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -40,15 +40,13 @@
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
                     android:transitionName="toolbarCover"
-                    app:layout_collapseMode="parallax"
-                    tools:src="@drawable/test_img"
-                    tools:targetApi="lollipop" />
+                    app:layout_collapseMode="parallax"/>
 
                 <ViewStub
                     android:id="@+id/toolbar_content"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:fitsSystemWindows="true" />
+                    android:fitsSystemWindows="true"/>
 
 
                 <android.support.v7.widget.Toolbar
@@ -75,7 +73,7 @@
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:layout_marginEnd="16dp"
-                            android:visibility="gone" />
+                            android:visibility="gone"/>
 
                         <LinearLayout
                             android:id="@+id/toolbar_titles_wrapper"
@@ -98,8 +96,7 @@
                                     android:maxLines="1"
                                     android:textColor="?attr/default_text_color"
                                     android:textSize="18sp"
-                                    android:textStyle="bold"
-                                    tools:text="BlaBlaBlaBlaBlaBlaBlaBlaBlaBlaBlaBlaBlaBlaBlaBla" />
+                                    android:textStyle="bold"/>
 
                                 <android.support.v7.widget.AppCompatTextView
                                     android:id="@+id/toolbar_subtitle"
@@ -107,9 +104,7 @@
                                     android:layout_height="wrap_content"
                                     android:textColor="?attr/second_text_color"
                                     android:textSize="12sp"
-                                    android:visibility="gone"
-                                    tools:text="subtitle"
-                                    tools:visibility="visible" />
+                                    android:visibility="gone"/>
                             </LinearLayout>
 
                             <ProgressBar
@@ -120,15 +115,14 @@
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginEnd="@dimen/dp8"
                                 android:layout_marginStart="@dimen/dp8"
-                                android:visibility="invisible"
-                                tools:visibility="visible" />
+                                android:visibility="invisible"/>
                         </LinearLayout>
 
                         <android.support.v7.widget.AppCompatSpinner
                             android:id="@+id/toolbar_spinner"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:visibility="gone" />
+                            android:visibility="gone"/>
 
                     </LinearLayout>
                 </android.support.v7.widget.Toolbar>
@@ -146,7 +140,7 @@
                         android:layout_gravity="center_vertical|end"
                         android:layout_marginEnd="16dp"
                         android:layout_marginTop="-8dp"
-                        android:background="@drawable/notify_dot" />
+                        android:background="@drawable/notify_dot"/>
                 </FrameLayout>
 
             </android.support.design.widget.CollapsingToolbarLayout>
@@ -154,38 +148,55 @@
         </android.support.design.widget.AppBarLayout>
 
 
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/fragment_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="?attr/background_base"
-            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+        <FrameLayout
+            android:id="@+id/additional_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="false">
+
+            <ProgressBar
+                android:id="@+id/content_progress"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+
+        </FrameLayout>
+
+
+        <LinearLayout
+            android:id="@+id/no_network"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:paddingBottom="@dimen/dp4"
+            android:paddingEnd="@dimen/dp8"
+            android:paddingStart="@dimen/dp8"
+            android:paddingTop="@dimen/dp4"
+            android:visibility="gone"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <LinearLayout
-                android:id="@+id/no_network"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="@dimen/dp4"
-                android:paddingEnd="@dimen/dp8"
-                android:paddingStart="@dimen/dp8"
-                android:paddingTop="@dimen/dp4"
-                android:visibility="gone">
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="8dp"
+                app:srcCompat="@drawable/ic_cloud_off_white_24dp"/>
 
-                <android.support.v7.widget.AppCompatImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="8dp"
-                    app:srcCompat="@drawable/ic_cloud_off_black_24dp" />
-
-                <android.support.v7.widget.AppCompatTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="8dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/no_network"
-                    android:textStyle="bold" />
-            </LinearLayout>
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:gravity="center_vertical"
+                android:text="@string/no_network"
+                android:textColor="#ffffff"
+                android:textStyle="bold"/>
         </LinearLayout>
 
         <View
@@ -194,7 +205,7 @@
             android:layout_height="4dp"
             android:background="@drawable/toolbar_shadow_prelp"
             android:visibility="gone"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
@@ -204,7 +215,7 @@
             android:layout_margin="@dimen/fab_margin"
             android:clickable="true"
             android:visibility="gone"
-            app:fabSize="normal" />
+            app:fabSize="normal"/>
 
     </android.support.design.widget.CoordinatorLayout>
 </RelativeLayout>

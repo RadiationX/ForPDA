@@ -21,7 +21,7 @@ import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.api.qms.interfaces.IQmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
-import forpdateam.ru.forpda.fragments.ListFragment;
+import forpdateam.ru.forpda.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsContactsAdapter;
 import forpdateam.ru.forpda.rxapi.RxApi;
@@ -34,7 +34,7 @@ import forpdateam.ru.forpda.utils.rx.Subscriber;
  * Created by radiationx on 22.03.17.
  */
 
-public class QmsBlackListFragment extends ListFragment implements QmsContactsAdapter.OnItemClickListener<IQmsContact> {
+public class QmsBlackListFragment extends RecyclerFragment implements QmsContactsAdapter.OnItemClickListener<IQmsContact> {
     private AppCompatAutoCompleteTextView nickField;
     private QmsContactsAdapter adapter;
     private Subscriber<ArrayList<QmsContact>> mainSubscriber = new Subscriber<>(this);
@@ -108,29 +108,29 @@ public class QmsBlackListFragment extends ListFragment implements QmsContactsAda
     @Override
     public void loadData() {
         super.loadData();
-        refreshLayout.setRefreshing(true);
+        setRefreshing(true);
         mainSubscriber.subscribe(RxApi.Qms().getBlackList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
     }
 
     private void onLoadContacts(ArrayList<QmsContact> data) {
-        refreshLayout.setRefreshing(false);
+        setRefreshing(false);
         recyclerView.scrollToPosition(0);
         currentData = data;
         adapter.addAll(currentData);
     }
 
     private void blockUser(String nick) {
-        refreshLayout.setRefreshing(true);
+        setRefreshing(true);
         mainSubscriber.subscribe(RxApi.Qms().blockUser(nick), this::onEditedList, currentData, null);
     }
 
     private void unBlockUser(int[] userIds) {
-        refreshLayout.setRefreshing(true);
+        setRefreshing(true);
         mainSubscriber.subscribe(RxApi.Qms().unBlockUsers(userIds), this::onEditedList, currentData, null);
     }
 
     private void onEditedList(ArrayList<QmsContact> data) {
-        refreshLayout.setRefreshing(false);
+        setRefreshing(false);
         if (currentData == data) return;
         currentData = data;
         adapter.addAll(currentData);

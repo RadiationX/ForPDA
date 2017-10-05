@@ -32,7 +32,7 @@
         android:id="@+id/news_list_no_network"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        app:srcCompat="@drawable/ic_cloud_off_black_24dp"
+        app:srcCompat="@drawable/ic_cloud_off_white_24dp"
         android:layout_centerVertical="true"
         android:visibility="gone"
         android:layout_centerHorizontal="true" />

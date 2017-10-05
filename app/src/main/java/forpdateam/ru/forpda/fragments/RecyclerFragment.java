@@ -15,7 +15,7 @@ import forpdateam.ru.forpda.R;
  * Created by radiationx on 14.08.17.
  */
 
-public abstract class ListFragment extends TabFragment {
+public abstract class RecyclerFragment extends TabFragment {
     protected SwipeRefreshLayout refreshLayout;
     protected RecyclerView recyclerView;
     //protected LinearLayout listContainer;
@@ -30,6 +30,7 @@ public abstract class ListFragment extends TabFragment {
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
         //listContainer = (LinearLayout) findViewById(R.id.list_container);
         recyclerView = (RecyclerView) findViewById(R.id.base_list);
+        refreshController.setMainRefresh(refreshLayout);
         //listScrollView = (NestedScrollView) findViewById(R.id.list_scroll_view);
 
         //recyclerView.setNestedScrollingEnabled(false);

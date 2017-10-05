@@ -228,7 +228,7 @@
     <string name="auth_skip">Пропустить</string>
 
     <!-- Notes -->
-    <string name="create_note">Создать заметку</string>
+    <string name="create_note">Создать закладку</string>
     <string name="note_edit">Редактирование закладки</string>
     <string name="note_create">Создание закладки</string>
     <string name="note_enter_title">Напишите заголовок</string>

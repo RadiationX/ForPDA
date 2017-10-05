@@ -16,7 +16,7 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.data.realm.history.HistoryItemBd;
-import forpdateam.ru.forpda.fragments.ListFragment;
+import forpdateam.ru.forpda.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.history.adapters.HistoryAdapter;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
@@ -30,7 +30,7 @@ import io.realm.Sort;
  * Created by radiationx on 06.09.17.
  */
 
-public class HistoryFragment extends ListFragment implements HistoryAdapter.OnItemClickListener<HistoryItemBd> {
+public class HistoryFragment extends RecyclerFragment implements HistoryAdapter.OnItemClickListener<HistoryItemBd> {
     private final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM.dd.yy, HH:mm", Locale.getDefault());
     private HistoryAdapter adapter;
     private Realm realm;
@@ -64,11 +64,11 @@ public class HistoryFragment extends ListFragment implements HistoryAdapter.OnIt
     public void loadCacheData() {
         super.loadCacheData();
         if (!realm.isClosed()) {
-            refreshLayout.setRefreshing(true);
+            setRefreshing(true);
             RealmResults<HistoryItemBd> results = realm.where(HistoryItemBd.class).findAllSorted("unixTime", Sort.DESCENDING);
             adapter.addAll(results);
         }
-        refreshLayout.setRefreshing(false);
+        setRefreshing(false);
     }
 
     @Override
