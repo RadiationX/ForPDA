@@ -35,7 +35,7 @@ import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.data.models.notes.NoteItem;
 import forpdateam.ru.forpda.data.realm.notes.NoteItemBd;
-import forpdateam.ru.forpda.fragments.ListFragment;
+import forpdateam.ru.forpda.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.fragments.notes.adapters.NotesAdapter;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
@@ -50,7 +50,7 @@ import io.realm.Sort;
  * Created by radiationx on 06.09.17.
  */
 
-public class NotesFragment extends ListFragment implements NotesAdapter.OnItemClickListener<NoteItem>, NotesAddPopup.NoteActionListener {
+public class NotesFragment extends RecyclerFragment implements NotesAdapter.OnItemClickListener<NoteItem>, NotesAddPopup.NoteActionListener {
     private NotesAdapter adapter;
     private Realm realm;
     private AlertDialogMenu<NotesFragment, NoteItem> dialogMenu, showedDialogMenu;
@@ -114,7 +114,7 @@ public class NotesFragment extends ListFragment implements NotesAdapter.OnItemCl
     public void loadCacheData() {
         super.loadCacheData();
         if (!realm.isClosed()) {
-            refreshLayout.setRefreshing(true);
+            setRefreshing(true);
             RealmResults<NoteItemBd> results = realm.where(NoteItemBd.class).findAllSorted("id", Sort.DESCENDING);
 
             ArrayList<NoteItem> nonBdResult = new ArrayList<>();
@@ -123,7 +123,7 @@ public class NotesFragment extends ListFragment implements NotesAdapter.OnItemCl
             }
             adapter.addAll(nonBdResult);
         }
-        refreshLayout.setRefreshing(false);
+        setRefreshing(false);
     }
 
     @Override

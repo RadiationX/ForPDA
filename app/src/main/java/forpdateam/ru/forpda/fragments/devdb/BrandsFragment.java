@@ -17,7 +17,7 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.devdb.models.Brands;
-import forpdateam.ru.forpda.fragments.ListFragment;
+import forpdateam.ru.forpda.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.fragments.devdb.adapters.BrandsAdapter;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
@@ -26,7 +26,7 @@ import forpdateam.ru.forpda.utils.rx.Subscriber;
  * Created by radiationx on 08.08.17.
  */
 
-public class BrandsFragment extends ListFragment implements BrandsAdapter.OnItemClickListener<Brands.Item> {
+public class BrandsFragment extends RecyclerFragment implements BrandsAdapter.OnItemClickListener<Brands.Item> {
     public final static String ARG_CATEGORY_ID = "CATEGORY_ID";
     private final static String[] spinnerTitles = {
             App.get().getString(R.string.brands_category_phones),
@@ -101,13 +101,13 @@ public class BrandsFragment extends ListFragment implements BrandsAdapter.OnItem
     @Override
     public void loadData() {
         super.loadData();
-        refreshLayout.setRefreshing(true);
+        setRefreshing(true);
         mainSubscriber.subscribe(RxApi.DevDb().getBrands(mansCats[selected]), this::onLoad, new Brands());
     }
 
     private void onLoad(Brands brands) {
         currentData = brands;
-        refreshLayout.setRefreshing(false);
+        setRefreshing(false);
         adapter.clear();
         for (Map.Entry<String, ArrayList<Brands.Item>> entry : brands.getLetterMap().entrySet()) {
             adapter.addSection(new Pair<>(entry.getKey(), entry.getValue()));

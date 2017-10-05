@@ -18,7 +18,7 @@ import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.topcis.models.TopicItem;
 import forpdateam.ru.forpda.api.topcis.models.TopicsData;
 import forpdateam.ru.forpda.client.ClientHelper;
-import forpdateam.ru.forpda.fragments.ListFragment;
+import forpdateam.ru.forpda.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.fragments.forum.ForumFragment;
@@ -33,7 +33,7 @@ import forpdateam.ru.forpda.views.pagination.PaginationHelper;
  * Created by radiationx on 01.03.17.
  */
 
-public class TopicsFragment extends ListFragment implements TopicsAdapter.OnItemClickListener<TopicItem> {
+public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.OnItemClickListener<TopicItem> {
     public final static String TOPICS_ID_ARG = "TOPICS_ID_ARG";
     private int id;
     private TopicsAdapter adapter;
@@ -93,12 +93,12 @@ public class TopicsFragment extends ListFragment implements TopicsAdapter.OnItem
     @Override
     public void loadData() {
         super.loadData();
-        refreshLayout.setRefreshing(true);
+        setRefreshing(true);
         mainSubscriber.subscribe(RxApi.Topics().getTopics(id, currentSt), this::onLoadThemes, new TopicsData(), v -> loadData());
     }
 
     private void onLoadThemes(TopicsData data) {
-        refreshLayout.setRefreshing(false);
+        setRefreshing(false);
 
         this.data = data;
 

@@ -12,7 +12,7 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.mentions.models.MentionItem;
 import forpdateam.ru.forpda.api.mentions.models.MentionsData;
-import forpdateam.ru.forpda.fragments.ListFragment;
+import forpdateam.ru.forpda.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -23,7 +23,7 @@ import forpdateam.ru.forpda.views.pagination.PaginationHelper;
  * Created by radiationx on 21.01.17.
  */
 
-public class MentionsFragment extends ListFragment implements MentionsAdapter.OnItemClickListener<MentionItem> {
+public class MentionsFragment extends RecyclerFragment implements MentionsAdapter.OnItemClickListener<MentionItem> {
     private MentionsAdapter adapter;
     private Subscriber<MentionsData> mainSubscriber = new Subscriber<>(this);
 
@@ -72,12 +72,12 @@ public class MentionsFragment extends ListFragment implements MentionsAdapter.On
     @Override
     public void loadData() {
         super.loadData();
-        refreshLayout.setRefreshing(true);
+        setRefreshing(true);
         mainSubscriber.subscribe(RxApi.Mentions().getMentions(currentSt), this::onLoadThemes, new MentionsData(), v -> loadData());
     }
 
     private void onLoadThemes(MentionsData data) {
-        refreshLayout.setRefreshing(false);
+        setRefreshing(false);
 
         this.data = data;
         adapter.addAll(data.getItems());

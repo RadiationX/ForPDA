@@ -28,7 +28,7 @@ import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.data.models.TabNotification;
 import forpdateam.ru.forpda.data.realm.qms.QmsContactBd;
-import forpdateam.ru.forpda.fragments.ListFragment;
+import forpdateam.ru.forpda.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsContactsAdapter;
@@ -43,7 +43,7 @@ import io.realm.RealmResults;
 /**
  * Created by radiationx on 25.08.16.
  */
-public class QmsContactsFragment extends ListFragment implements QmsContactsAdapter.OnItemClickListener<IQmsContact> {
+public class QmsContactsFragment extends RecyclerFragment implements QmsContactsAdapter.OnItemClickListener<IQmsContact> {
     private QmsContactsAdapter adapter;
     private Subscriber<ArrayList<QmsContact>> mainSubscriber = new Subscriber<>(this);
     private Subscriber<String> helperSubscriber = new Subscriber<>(this);
@@ -153,12 +153,12 @@ public class QmsContactsFragment extends ListFragment implements QmsContactsAdap
     @Override
     public void loadData() {
         super.loadData();
-        refreshLayout.setRefreshing(true);
+        setRefreshing(true);
         mainSubscriber.subscribe(RxApi.Qms().getContactList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
     }
 
     private void onLoadContacts(ArrayList<QmsContact> data) {
-        refreshLayout.setRefreshing(false);
+        setRefreshing(false);
         recyclerView.scrollToPosition(0);
 
         if (realm.isClosed()) return;
@@ -176,6 +176,7 @@ public class QmsContactsFragment extends ListFragment implements QmsContactsAdap
     private ArrayList<QmsContact> currentItems = new ArrayList<>();
 
     private void bindView() {
+        setRefreshing(false);
         if (realm.isClosed()) return;
         results = realm.where(QmsContactBd.class).findAll();
         currentItems.clear();
@@ -253,7 +254,7 @@ public class QmsContactsFragment extends ListFragment implements QmsContactsAdap
     }
 
     public void deleteDialog(int mid) {
-        refreshLayout.setRefreshing(true);
+        setRefreshing(true);
         helperSubscriber.subscribe(RxApi.Qms().deleteDialog(mid), this::onDeletedDialog, "");
     }
 

@@ -40,6 +40,7 @@ import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.settings.Preferences;
+import forpdateam.ru.forpda.views.RefreshController;
 import io.reactivex.disposables.CompositeDisposable;
 
 import static android.content.Context.ACCESSIBILITY_SERVICE;
@@ -71,7 +72,10 @@ public class TabFragment extends Fragment {
 
     protected ProgressBar toolbarProgress;
     protected RelativeLayout fragmentContainer;
-    protected LinearLayout fragmentContent, noNetwork, titlesWrapper;
+    protected ViewGroup fragmentContent;
+    protected ViewGroup additionalContent;
+    protected ProgressBar contentProgress;
+    protected LinearLayout noNetwork, titlesWrapper;
     protected CoordinatorLayout coordinatorLayout;
     protected AppBarLayout appBarLayout;
     protected CollapsingToolbarLayout toolbarLayout;
@@ -86,6 +90,7 @@ public class TabFragment extends Fragment {
     private boolean notifyDotQms = Preferences.Main.isShowNotifyDotQms();
     private boolean notifyDotMentions = Preferences.Main.isShowNotifyDotMentions();
     private boolean alreadyCallLoad = false;
+    protected RefreshController refreshController;
 
     protected CompositeDisposable disposable = new CompositeDisposable();
 
@@ -261,10 +266,14 @@ public class TabFragment extends Fragment {
         titlesWrapper = (LinearLayout) toolbar.findViewById(R.id.toolbar_titles_wrapper);
         toolbarSpinner = (Spinner) toolbar.findViewById(R.id.toolbar_spinner);
         notifyDot = findViewById(R.id.notify_dot);
-        fragmentContent = (LinearLayout) coordinatorLayout.findViewById(R.id.fragment_content);
-        noNetwork = (LinearLayout) fragmentContent.findViewById(R.id.no_network);
+        fragmentContent = (ViewGroup) coordinatorLayout.findViewById(R.id.fragment_content);
+        additionalContent = (ViewGroup) coordinatorLayout.findViewById(R.id.additional_content);
+        contentProgress = (ProgressBar) additionalContent.findViewById(R.id.content_progress);
+        noNetwork = (LinearLayout) coordinatorLayout.findViewById(R.id.no_network);
         //// TODO: 20.03.17 удалить и юзать только там, где нужно
         fab = (FloatingActionButton) coordinatorLayout.findViewById(R.id.fab);
+
+        refreshController = new RefreshController(contentProgress, fragmentContent);
 
         toolbarTitleView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
         toolbarTitleView.setHorizontallyScrolling(true);
@@ -459,6 +468,21 @@ public class TabFragment extends Fragment {
         } else {
             mHandler.post(action);
         }
+    }
+
+    protected void startRefreshing() {
+        refreshController.startLoad();
+    }
+
+    protected void endRefreshing() {
+        refreshController.endLoad();
+    }
+
+    protected void setRefreshing(boolean refreshing){
+        if(refreshing)
+            startRefreshing();
+        else
+            endRefreshing();
     }
 
     /* Experiment */

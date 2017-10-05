@@ -28,7 +28,7 @@ import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import forpdateam.ru.forpda.data.models.TabNotification;
 import forpdateam.ru.forpda.data.realm.qms.QmsThemeBd;
 import forpdateam.ru.forpda.data.realm.qms.QmsThemesBd;
-import forpdateam.ru.forpda.fragments.ListFragment;
+import forpdateam.ru.forpda.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsThemesAdapter;
@@ -43,7 +43,7 @@ import io.realm.RealmResults;
 /**
  * Created by radiationx on 25.08.16.
  */
-public class QmsThemesFragment extends ListFragment implements QmsThemesAdapter.OnItemClickListener<IQmsTheme> {
+public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdapter.OnItemClickListener<IQmsTheme> {
     public final static String USER_ID_ARG = "USER_ID_ARG";
     public final static String USER_AVATAR_ARG = "USER_AVATAR_ARG";
     private MenuItem blackListMenuItem;
@@ -122,7 +122,7 @@ public class QmsThemesFragment extends ListFragment implements QmsThemesAdapter.
     @Override
     public void loadData() {
         super.loadData();
-        refreshLayout.setRefreshing(true);
+        setRefreshing(true);
 
         refreshToolbarMenuItems(false);
 
@@ -130,7 +130,7 @@ public class QmsThemesFragment extends ListFragment implements QmsThemesAdapter.
     }
 
     private void onLoadThemes(QmsThemes themes) {
-        refreshLayout.setRefreshing(false);
+        setRefreshing(false);
 
         recyclerView.scrollToPosition(0);
         currentThemes = themes;
@@ -156,6 +156,7 @@ public class QmsThemesFragment extends ListFragment implements QmsThemesAdapter.
     }
 
     private void bindView() {
+        setRefreshing(false);
         if (realm.isClosed()) return;
         refreshToolbarMenuItems(true);
         RealmResults<QmsThemesBd> results = realm

@@ -33,7 +33,7 @@ import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.data.models.TabNotification;
 import forpdateam.ru.forpda.data.realm.favorites.FavItemBd;
-import forpdateam.ru.forpda.fragments.ListFragment;
+import forpdateam.ru.forpda.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.forum.ForumHelper;
 import forpdateam.ru.forpda.rxapi.RxApi;
@@ -50,7 +50,7 @@ import io.realm.RealmResults;
  * Created by radiationx on 22.09.16.
  */
 
-public class FavoritesFragment extends ListFragment implements FavoritesAdapter.OnItemClickListener<IFavItem> {
+public class FavoritesFragment extends RecyclerFragment implements FavoritesAdapter.OnItemClickListener<IFavItem> {
     private AlertDialogMenu<FavoritesFragment, IFavItem> favoriteDialogMenu, showedFavoriteDialogMenu;
     private Realm realm;
     private FavoritesAdapter adapter;
@@ -222,12 +222,12 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
     @Override
     public void loadData() {
         super.loadData();
-        refreshLayout.setRefreshing(true);
+        setRefreshing(true);
         mainSubscriber.subscribe(RxApi.Favorites().getFavorites(currentSt, loadAll, sorting), this::onLoadThemes, new FavData(), v -> loadData());
     }
 
     private void onLoadThemes(FavData data) {
-        refreshLayout.setRefreshing(false);
+        setRefreshing(false);
 
 
         sorting = data.getSorting();
@@ -293,6 +293,7 @@ public class FavoritesFragment extends ListFragment implements FavoritesAdapter.
     }
 
     private void bindView() {
+        setRefreshing(false);
         if (realm.isClosed()) return;
         RealmResults<FavItemBd> results = realm.where(FavItemBd.class).findAll();
         ArrayList<IFavItem> nonBdResult = new ArrayList<>();
