@@ -186,7 +186,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
             if(!contentController.contains(ContentController.TAG_NO_DATA)){
                 FunnyContent funnyContent = new FunnyContent(getContext())
                         .setImage(R.drawable.ic_contacts)
-                        .setTitle("Список контактов пуст");
+                        .setTitle(R.string.funny_contacts_nodata_title);
                 contentController.addContent(funnyContent, ContentController.TAG_NO_DATA);
             }
             contentController.showContent(ContentController.TAG_NO_DATA);

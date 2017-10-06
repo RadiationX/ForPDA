@@ -72,8 +72,8 @@ public class HistoryFragment extends RecyclerFragment implements HistoryAdapter.
                 if(!contentController.contains(ContentController.TAG_NO_DATA)){
                     FunnyContent funnyContent = new FunnyContent(getContext())
                             .setImage(R.drawable.ic_history)
-                            .setTitle("История пуста")
-                            .setDesc("Тут будет отображается история просмотра тем");
+                            .setTitle(R.string.funny_history_nodata_title)
+                            .setDesc(R.string.funny_history_nodata_desc);
                     contentController.addContent(funnyContent, ContentController.TAG_NO_DATA);
                 }
                 contentController.showContent(ContentController.TAG_NO_DATA);

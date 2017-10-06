@@ -12,7 +12,7 @@ import java.util.HashMap;
  * Created by radiationx on 05.10.17.
  */
 /*
-* Для управления рефрешем
+* Для управления и дополнительными вьюхами, когда нет данных и т.д.
 * */
 public class ContentController {
     public final static String TAG_NO_DATA = "NO_DATA";

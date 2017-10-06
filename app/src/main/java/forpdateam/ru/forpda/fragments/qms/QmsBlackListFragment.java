@@ -120,8 +120,8 @@ public class QmsBlackListFragment extends RecyclerFragment implements QmsContact
             if(!contentController.contains(ContentController.TAG_NO_DATA)){
                 FunnyContent funnyContent = new FunnyContent(getContext())
                         .setImage(R.drawable.ic_contacts)
-                        .setTitle("Черный список пуст")
-                        .setDesc("Пользователи из этого списка не смогут писать вам");
+                        .setTitle(R.string.funny_blacklist_nodata_title)
+                        .setDesc(R.string.funny_blacklist_nodata_desc);
                 contentController.addContent(funnyContent, ContentController.TAG_NO_DATA);
             }
             contentController.showContent(ContentController.TAG_NO_DATA);

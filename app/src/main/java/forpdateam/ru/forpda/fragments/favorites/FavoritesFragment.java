@@ -303,8 +303,8 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
             if(!contentController.contains(ContentController.TAG_NO_DATA)){
                 FunnyContent funnyContent = new FunnyContent(getContext())
                         .setImage(R.drawable.ic_star)
-                        .setTitle("Нет избранных тем")
-                        .setDesc("Добавьте тему в избранное, чтобы удобно отслеживать обновления в теме");
+                        .setTitle(R.string.funny_favorites_nodata_title)
+                        .setDesc(R.string.funny_favorites_nodata_desc);
                 contentController.addContent(funnyContent, ContentController.TAG_NO_DATA);
             }
             contentController.showContent(ContentController.TAG_NO_DATA);

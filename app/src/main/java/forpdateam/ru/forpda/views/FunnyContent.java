@@ -31,21 +31,21 @@ public class FunnyContent extends RelativeLayout {
         return this;
     }
 
-    public FunnyContent setTitle(String text) {
+    /*public FunnyContent setTitle(String text) {
         title.setText(text);
         title.setVisibility(VISIBLE);
         return this;
-    }
+    }*/
+
+    /*public FunnyContent setDesc(String text) {
+        desc.setText(text);
+        desc.setVisibility(VISIBLE);
+        return this;
+    }*/
 
     public FunnyContent setTitle(@StringRes int resId) {
         title.setText(resId);
         title.setVisibility(VISIBLE);
-        return this;
-    }
-
-    public FunnyContent setDesc(String text) {
-        desc.setText(text);
-        desc.setVisibility(VISIBLE);
         return this;
     }
 
