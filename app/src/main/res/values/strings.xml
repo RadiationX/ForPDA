@@ -532,6 +532,7 @@
     <string name="funny_search_nodata_title">Ничего не найдено</string>
     <string name="funny_search_nodata_desc">Настройте поисковой запрос иначе</string>
     <string name="favorites_subscribe_email">Уведомления на Email</string>
+    <string name="quote_from_clipboard">Цитата из буфера обмена</string>
 
     <!-- New res -->
 

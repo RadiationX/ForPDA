@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +30,7 @@ import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
+import forpdateam.ru.forpda.views.PauseOnScrollListener;
 
 /**
  * Created by isanechek on 8/8/17.
@@ -57,7 +60,8 @@ public class NewsMainFragment extends RecyclerFragment implements
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(new BrandFragment.SpacingItemDecoration(App.px8, true));
-
+        PauseOnScrollListener pauseOnScrollListener = new PauseOnScrollListener(ImageLoader.getInstance(), true, true);
+        recyclerView.addOnScrollListener(pauseOnScrollListener);
         adapter = new NewsListAdapter();
         adapter.setOnClickListener(this);
         recyclerView.setAdapter(adapter);
