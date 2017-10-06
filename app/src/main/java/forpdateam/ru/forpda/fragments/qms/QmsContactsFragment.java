@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +41,7 @@ import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.ContentController;
 import forpdateam.ru.forpda.views.FunnyContent;
+import forpdateam.ru.forpda.views.PauseOnScrollListener;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -81,6 +84,8 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        PauseOnScrollListener pauseOnScrollListener = new PauseOnScrollListener(ImageLoader.getInstance(),true, true);
+        recyclerView.addOnScrollListener(pauseOnScrollListener);
 
 
         fab.setImageDrawable(App.getVecDrawable(getContext(), R.drawable.ic_fab_create));

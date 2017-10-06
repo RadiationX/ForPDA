@@ -37,6 +37,7 @@ public class ThemeDialogsHelper {
             userMenu = new AlertDialogMenu<>();
             showedUserMenu = new AlertDialogMenu<>();
             userMenu.addItem(App.get().getString(R.string.profile), (context1, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data.getUserId()));
+            userMenu.addItem(App.get().getString(R.string.reputation), IPostFunctions::showReputationMenu);
             userMenu.addItem(App.get().getString(R.string.pm_qms), (context1, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=qms&amp;mid=" + data.getUserId()));
             userMenu.addItem(App.get().getString(R.string.user_themes), (context1, data) -> {
                 SearchSettings settings = new SearchSettings();
@@ -66,11 +67,12 @@ public class ThemeDialogsHelper {
         }
         showedUserMenu.clear();
         showedUserMenu.addItem(userMenu.get(0));
+        showedUserMenu.addItem(userMenu.get(1));
         if (ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN && post.getUserId() != ClientHelper.getUserId())
-            showedUserMenu.addItem(userMenu.get(1));
-        showedUserMenu.addItem(userMenu.get(2));
+            showedUserMenu.addItem(userMenu.get(2));
         showedUserMenu.addItem(userMenu.get(3));
         showedUserMenu.addItem(userMenu.get(4));
+        showedUserMenu.addItem(userMenu.get(5));
         new AlertDialog.Builder(context)
                 .setTitle(post.getNick())
                 .setItems(showedUserMenu.getTitles(), (dialogInterface, i) -> showedUserMenu.onClick(i, theme, post))
@@ -105,6 +107,12 @@ public class ThemeDialogsHelper {
             postMenu = new AlertDialogMenu<>();
             showedPostMenu = new AlertDialogMenu<>();
             postMenu.addItem(App.get().getString(R.string.reply), IPostFunctions::reply);
+            postMenu.addItem(App.get().getString(R.string.quote_from_clipboard), (context1, data) -> {
+                String text = Utils.readFromClipboard();
+                if (text != null && !text.isEmpty()) {
+                    theme.quotePost(text, data);
+                }
+            });
             postMenu.addItem(App.get().getString(R.string.report), IPostFunctions::reportPost);
             postMenu.addItem(App.get().getString(R.string.edit), IPostFunctions::editPost);
             postMenu.addItem(App.get().getString(R.string.delete), IPostFunctions::deletePost);
@@ -132,18 +140,20 @@ public class ThemeDialogsHelper {
         }
         showedPostMenu.clear();
         if (ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN) {
-            if (post.canQuote())
+            if (post.canQuote()) {
                 showedPostMenu.addItem(postMenu.get(0));
-            if (post.canReport())
                 showedPostMenu.addItem(postMenu.get(1));
-            if (post.canEdit())
+            }
+            if (post.canReport())
                 showedPostMenu.addItem(postMenu.get(2));
-            if (post.canDelete())
+            if (post.canEdit())
                 showedPostMenu.addItem(postMenu.get(3));
+            if (post.canDelete())
+                showedPostMenu.addItem(postMenu.get(4));
         }
-        showedPostMenu.addItem(postMenu.get(4));
         showedPostMenu.addItem(postMenu.get(5));
         showedPostMenu.addItem(postMenu.get(6));
+        showedPostMenu.addItem(postMenu.get(7));
         new AlertDialog.Builder(context)
                 .setItems(showedPostMenu.getTitles(), (dialogInterface, i) -> showedPostMenu.onClick(i, theme, post))
                 .show();

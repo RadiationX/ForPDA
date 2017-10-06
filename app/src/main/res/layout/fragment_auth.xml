@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:fillViewport="true"
-    android:fitsSystemWindows="true">
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:fitsSystemWindows="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -23,14 +23,14 @@
             android:visibility="gone">
 
             <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/auth_avatar"
-                android:layout_width="128dp"
-                android:layout_height="128dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="2dp"
-                android:scaleType="centerCrop"
-                app:civ_border_color="#00000000"
-                app:civ_border_width="0dp" />
+                                                          android:id="@+id/auth_avatar"
+                                                          android:layout_width="128dp"
+                                                          android:layout_height="128dp"
+                                                          android:layout_centerHorizontal="true"
+                                                          android:layout_marginTop="2dp"
+                                                          android:scaleType="centerCrop"
+                                                          app:civ_border_color="#00000000"
+                                                          app:civ_border_width="0dp"/>
 
             <com.github.rahatarmanahmed.cpv.CircularProgressView
                 android:id="@+id/auth_progress"
@@ -40,7 +40,7 @@
                 android:scaleType="centerCrop"
                 app:cpv_animAutostart="true"
                 app:cpv_color="#000000"
-                app:cpv_indeterminate="true" />
+                app:cpv_indeterminate="true"/>
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/auth_complete_text"
@@ -78,7 +78,7 @@
                     android:hint="@string/auth_login"
                     android:inputType="textPersonName"
                     android:maxLines="1"
-                    android:scrollHorizontally="true" />
+                    android:scrollHorizontally="true"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -96,26 +96,31 @@
                     android:hint="@string/auth_password"
                     android:inputType="textPassword"
                     android:maxLines="1"
-                    android:scrollHorizontally="true" />
+                    android:scrollHorizontally="true"/>
             </android.support.design.widget.TextInputLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:animateLayoutChanges="true"
                 android:orientation="vertical">
+
+                <ProgressBar
+                    android:id="@+id/captcha_progress"
+                    android:layout_width="@dimen/dp48"
+                    android:layout_height="@dimen/dp48"
+                    android:layout_centerInParent="true"/>
 
                 <android.support.v7.widget.AppCompatImageView
                     android:id="@+id/captchaImage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
+                    android:layout_centerHorizontal="true"
                     android:adjustViewBounds="true"
                     android:padding="@dimen/dp8"
-                    android:scaleType="fitCenter" />
+                    android:scaleType="fitCenter"/>
 
-            </LinearLayout>
+            </RelativeLayout>
 
 
             <android.support.design.widget.TextInputLayout
@@ -131,7 +136,7 @@
                     android:inputType="number"
                     android:maxLength="4"
                     android:maxLines="1"
-                    android:scrollHorizontally="true" />
+                    android:scrollHorizontally="true"/>
             </android.support.design.widget.TextInputLayout>
 
 
@@ -155,15 +160,15 @@
                     android:layout_height="@dimen/dp48"
                     android:layout_gravity="end"
                     android:enabled="false"
-                    android:text="@string/auth_btn_login" />
+                    android:text="@string/auth_btn_login"/>
 
                 <ProgressBar
                     android:id="@+id/login_progress"
                     android:layout_width="@dimen/dp36"
                     android:layout_height="@dimen/dp36"
-                    android:layout_marginEnd="@dimen/dp16"
                     android:layout_gravity="end|center_vertical"
-                    android:visibility="gone" />
+                    android:layout_marginEnd="@dimen/dp16"
+                    android:visibility="gone"/>
             </FrameLayout>
 
             <android.support.v7.widget.AppCompatButton
@@ -171,9 +176,9 @@
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp48"
-                android:layout_marginTop="8dp"
                 android:layout_gravity="end"
-                android:text="@string/auth_skip" />
+                android:layout_marginTop="8dp"
+                android:text="@string/auth_skip"/>
         </LinearLayout>
     </RelativeLayout>
 </ScrollView>

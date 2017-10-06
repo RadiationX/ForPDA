@@ -34,6 +34,7 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.RequestFile;
+import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsMessage;
@@ -42,6 +43,7 @@ import forpdateam.ru.forpda.data.models.TabNotification;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
 import forpdateam.ru.forpda.fragments.qms.QmsThemesFragment;
+import forpdateam.ru.forpda.rxapi.ForumUsersCache;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.rxapi.apiclasses.QmsRx;
 import forpdateam.ru.forpda.settings.Preferences;
@@ -53,6 +55,9 @@ import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.ExtendedWebView;
 import forpdateam.ru.forpda.views.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.views.messagepanel.attachments.AttachmentsPopup;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 25.08.16.
@@ -312,6 +317,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         currentChat.setUserId(loadedChat.getUserId());
         currentChat.setNick(loadedChat.getNick());
         currentChat.getMessages().addAll(loadedChat.getMessages());
+        tryShowAvatar();
 
         MiniTemplator t = App.get().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
         App.setTemplateResStrings(t);
@@ -396,11 +402,22 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
 
 
     private void tryShowAvatar() {
-        if (currentChat.getAvatarUrl() != null && currentChat.getUserId() != QmsChatModel.NOT_CREATED) {
+        toolbarImageView.setContentDescription(getString(R.string.user_avatar));
+        if (currentChat.getUserId() != QmsChatModel.NOT_CREATED) {
+            toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + currentChat.getUserId()));
+        }
+        if (currentChat.getAvatarUrl() != null) {
             ImageLoader.getInstance().displayImage(currentChat.getAvatarUrl(), toolbarImageView);
             toolbarImageView.setVisibility(View.VISIBLE);
-            toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + currentChat.getUserId()));
-            toolbarImageView.setContentDescription(getString(R.string.user_avatar));
+        } else if (currentChat.getNick() != null) {
+            Observable.fromCallable(() -> ForumUsersCache.loadUserByNick(currentChat.getNick()))
+                    .onErrorReturn(throwable -> new ForumUser())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(forumUser -> {
+                        ImageLoader.getInstance().displayImage(forumUser.getAvatar(), toolbarImageView);
+                        toolbarImageView.setVisibility(View.VISIBLE);
+                    });
         } else {
             toolbarImageView.setVisibility(View.GONE);
         }

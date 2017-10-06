@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.fragments.auth;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -46,7 +48,7 @@ public class AuthFragment extends TabFragment {
     private AuthForm authForm;
     private Button sendButton;
     private Button skipButton;
-    private ProgressBar loginProgress;
+    private ProgressBar loginProgress, captchaProgress;
     private CheckBox hiddenAuth;
 
     private LinearLayout mainForm;
@@ -70,6 +72,7 @@ public class AuthFragment extends TabFragment {
         password = (EditText) findViewById(R.id.auth_password);
         captcha = (EditText) findViewById(R.id.auth_captcha);
         captchaImage = (ImageView) findViewById(R.id.captchaImage);
+        captchaProgress = (ProgressBar) findViewById(R.id.captcha_progress);
         avatar = (ImageView) findViewById(R.id.auth_avatar);
         mainForm = (LinearLayout) findViewById(R.id.auth_main_form);
         complete = (RelativeLayout) findViewById(R.id.auth_complete);
@@ -132,7 +135,15 @@ public class AuthFragment extends TabFragment {
     private void onLoadForm(AuthForm authForm) {
         if (authForm.getBody() == null) return;
         this.authForm = authForm;
-        ImageLoader.getInstance().displayImage(authForm.getCaptchaImageUrl(), captchaImage);
+        captchaProgress.setVisibility(View.VISIBLE);
+        captchaImage.setVisibility(View.GONE);
+        ImageLoader.getInstance().displayImage(authForm.getCaptchaImageUrl(), captchaImage, new SimpleImageLoadingListener() {
+            @Override
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                captchaProgress.setVisibility(View.GONE);
+                captchaImage.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void tryLogin() {

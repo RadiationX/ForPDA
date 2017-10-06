@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
@@ -22,6 +24,7 @@ import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
+import forpdateam.ru.forpda.views.PauseOnScrollListener;
 import forpdateam.ru.forpda.views.messagepanel.AutoFitRecyclerView;
 
 /**
@@ -64,6 +67,9 @@ public class BrandFragment extends TabFragment implements BrandAdapter.OnItemCli
         viewsReady();
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
+
+        PauseOnScrollListener pauseOnScrollListener = new PauseOnScrollListener(ImageLoader.getInstance(), true, true);
+        recyclerView.addOnScrollListener(pauseOnScrollListener);
 
         adapter = new BrandAdapter();
         recyclerView.setColumnWidth(App.get().dpToPx(144));

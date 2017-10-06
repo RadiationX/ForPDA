@@ -47,7 +47,7 @@
         <!-- Other settings -->
         <item name="ProfileToolbarTextStyle">@style/ProfileToolbarTextStyle</item>
         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
-        <!--<item name="windowActionModeOverlay">true</item>-->
+        <item name="windowActionModeOverlay">true</item>
         <!--<item name="actionModeStyle">@style/ActionModeStyle</item>-->
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
 
@@ -143,7 +143,7 @@
         <!-- Other settings -->
         <item name="ProfileToolbarTextStyle">@style/ProfileToolbarTextStyle</item>
         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
-        <!--<item name="windowActionModeOverlay">true</item>-->
+        <item name="windowActionModeOverlay">true</item>
         <!--<item name="actionModeStyle">@style/ActionModeStyle</item>-->
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
 

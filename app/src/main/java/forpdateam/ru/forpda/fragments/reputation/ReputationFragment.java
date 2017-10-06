@@ -16,13 +16,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.api.reputation.Reputation;
 import forpdateam.ru.forpda.api.reputation.models.RepData;
 import forpdateam.ru.forpda.api.reputation.models.RepItem;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.RecyclerFragment;
+import forpdateam.ru.forpda.rxapi.ForumUsersCache;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -30,6 +34,7 @@ import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.ContentController;
 import forpdateam.ru.forpda.views.FunnyContent;
 import forpdateam.ru.forpda.views.pagination.PaginationHelper;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
@@ -226,11 +231,28 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
         mainSubscriber.subscribe(RxApi.Reputation().getReputation(data), this::onLoadThemes, data, v -> loadData());
     }
 
+    private void tryShowAvatar() {
+        toolbarImageView.setContentDescription(getString(R.string.user_avatar));
+        toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data.getId()));
+        if (data.getNick() != null) {
+            Observable.fromCallable(() -> ForumUsersCache.loadUserByNick(data.getNick()))
+                    .onErrorReturn(throwable -> new ForumUser())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(forumUser -> {
+                        ImageLoader.getInstance().displayImage(forumUser.getAvatar(), toolbarImageView);
+                        toolbarImageView.setVisibility(View.VISIBLE);
+                    });
+        } else {
+            toolbarImageView.setVisibility(View.GONE);
+        }
+    }
+
     private void onLoadThemes(RepData data) {
         setRefreshing(false);
 
         if (data.getItems().isEmpty()) {
-            if(!contentController.contains(ContentController.TAG_NO_DATA)){
+            if (!contentController.contains(ContentController.TAG_NO_DATA)) {
                 FunnyContent funnyContent = new FunnyContent(getContext())
                         .setImage(R.drawable.ic_history)
                         .setTitle(R.string.funny_reputation_nodata_title);
@@ -242,6 +264,7 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
         }
 
         this.data = data;
+        tryShowAvatar();
 
 
         adapter.addAll(data.getItems());

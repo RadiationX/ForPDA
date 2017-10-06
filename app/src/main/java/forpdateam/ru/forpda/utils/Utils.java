@@ -1,7 +1,9 @@
 package forpdateam.ru.forpda.utils;
 
 import android.content.ClipData;
+import android.content.ClipDescription;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -32,6 +34,17 @@ public class Utils {
         ClipboardManager clipboard = (ClipboardManager) App.getContext().getSystemService(CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("label", s);
         clipboard.setPrimaryClip(clip);
+    }
+
+    public static String readFromClipboard() {
+        ClipboardManager clipboard = (ClipboardManager) App.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+        if (clipboard.hasPrimaryClip()) {
+            android.content.ClipDescription description = clipboard.getPrimaryClipDescription();
+            android.content.ClipData data = clipboard.getPrimaryClip();
+            if (data != null && description != null && description.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN))
+                return String.valueOf(data.getItemAt(0).getText());
+        }
+        return null;
     }
 
     public static void shareText(String text) {

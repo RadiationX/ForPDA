@@ -1,8 +1,5 @@
 package forpdateam.ru.forpda.views.drawers;
 
-import android.content.ClipDescription;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
@@ -29,6 +26,7 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.profile.ProfileFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.Utils;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -95,7 +93,7 @@ public class DrawerHeader {
             activity.getDrawers().closeMenu();
             activity.getDrawers().closeTabs();
             String url;
-            url = readFromClipboard(activity);
+            url = Utils.readFromClipboard();
             if (url == null) url = "";
             final FrameLayout frameLayout = new FrameLayout(activity);
             frameLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -115,17 +113,6 @@ public class DrawerHeader {
         ClientHelper.getInstance().addLoginObserver(loginObserver);
         Client.getInstance().addNetworkObserver(networkObserver);
         state(ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN);
-    }
-
-    public String readFromClipboard(Context context) {
-        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-        if (clipboard.hasPrimaryClip()) {
-            android.content.ClipDescription description = clipboard.getPrimaryClipDescription();
-            android.content.ClipData data = clipboard.getPrimaryClip();
-            if (data != null && description != null && description.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN))
-                return String.valueOf(data.getItemAt(0).getText());
-        }
-        return null;
     }
 
     private void state(boolean b) {

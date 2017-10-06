@@ -427,6 +427,7 @@
     <string name="funny_blacklist_nodata_title">Black list is empty</string>
     <string name="funny_blacklist_nodata_desc">Users from this list can not write to you</string>
     <string name="favorites_subscribe_email">Notifications to Email</string>
+    <string name="quote_from_clipboard">Quote from clipboard</string>
     <!--
 
           Templates
