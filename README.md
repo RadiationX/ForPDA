@@ -1,16 +1,16 @@
 ![API](https://img.shields.io/badge/API-19%2B-blue.svg?style=flat)
 # ForPDA #
 
-<a href="http://4pda.ru/forum/index.php?showtopic=820313" target="_blank"><img src="https://lh3.googleusercontent.com/CSHwChA4QhrV3sDtXT53OP3ZCnDQaW5cEVUxdQo0xBTueRrl23U1HwK9u_qyGyTYlRI=w300" height="200px" alt="Логотип 4pda" /></a>
+<a href="http://4pda.ru/forum/index.php?showtopic=820313" target="_blank"><img src="https://raw.githubusercontent.com/RadiationX/ForPDA/master/gh_res/logo.png" height="192px" alt="Логотип ForPDA" /></a>
 
 ##
 **Скриншоты:**
 
-![](https://raw.githubusercontent.com/SnowVolf/GirlUpdater/master/files/ForPDA/screen1.png)![](https://raw.githubusercontent.com/SnowVolf/GirlUpdater/master/files/ForPDA/screen2.png)![](https://raw.githubusercontent.com/SnowVolf/GirlUpdater/master/files/ForPDA/screen3.png)
+![](https://raw.githubusercontent.com/RadiationX/ForPDA/master/gh_res/screen1.png)![](https://raw.githubusercontent.com/RadiationX/ForPDA/master/gh_res/screen2.png)![](https://raw.githubusercontent.com/RadiationX/ForPDA/master/gh_res/screen3.png)
 ##
 
 <a href="https://play.google.com/store/apps/details?id=ru.forpdateam.forpda"><img alt="Get it on Google Play" src="https://play.google.com/intl/ru_ru/badges/images/apps/ru-play-badge.png" height="48px"/></a>
-<a href="http://4pda.ru/forum/index.php?showtopic=820313" target="_blank"><img src="http://s.4pda.to/hoDPUCVswtc80crtp5RkFz1z0jON6RW9If6z2r6nq7o5nTqz2s2r1Ii2.png" height="48px" alt="Тема на форуме 4PDA" /></a>
+<a href="http://4pda.ru/forum/index.php?showtopic=820313" target="_blank"><img src="https://raw.githubusercontent.com/RadiationX/ForPDA/master/gh_res/icon_4pda.png" height="48px" alt="Тема на форуме 4PDA" /></a>
 ##
 
 **ForPDA** - это простой и удобный клиент для сайта [4pda.ru](http://4pda.ru/)
