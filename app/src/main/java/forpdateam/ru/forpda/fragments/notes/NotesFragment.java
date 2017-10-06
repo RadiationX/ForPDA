@@ -122,7 +122,7 @@ public class NotesFragment extends RecyclerFragment implements NotesAdapter.OnIt
                 if(!contentController.contains(ContentController.TAG_NO_DATA)){
                     FunnyContent funnyContent = new FunnyContent(getContext())
                             .setImage(R.drawable.ic_bookmark)
-                            .setTitle("Нет закладок");
+                            .setTitle(R.string.funny_notes_nodata_title);
                     contentController.addContent(funnyContent, ContentController.TAG_NO_DATA);
                 }
                 contentController.showContent(ContentController.TAG_NO_DATA);

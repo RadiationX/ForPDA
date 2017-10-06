@@ -561,8 +561,8 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
             if(!contentController.contains(ContentController.TAG_NO_DATA)){
                 FunnyContent funnyContent = new FunnyContent(getContext())
                         .setImage(R.drawable.ic_search)
-                        .setTitle("Ничего не найдено")
-                        .setDesc("Настройте поисковой запрос иначе");
+                        .setTitle(R.string.funny_search_nodata_title)
+                        .setDesc(R.string.funny_search_nodata_desc);
                 contentController.addContent(funnyContent, ContentController.TAG_NO_DATA);
             }
             contentController.showContent(ContentController.TAG_NO_DATA);

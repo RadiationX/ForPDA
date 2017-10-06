@@ -85,8 +85,8 @@ public class MentionsFragment extends RecyclerFragment implements MentionsAdapte
             if(!contentController.contains(ContentController.TAG_NO_DATA)){
                 FunnyContent funnyContent = new FunnyContent(getContext())
                         .setImage(R.drawable.ic_notifications)
-                        .setTitle("Нет упоминаний")
-                        .setDesc("Тут будут отображаться упоминания в темах и комментариях");
+                        .setTitle(R.string.funny_mentions_nodata_title)
+                        .setDesc(R.string.funny_mentions_nodata_desc);
                 contentController.addContent(funnyContent, ContentController.TAG_NO_DATA);
             }
             contentController.showContent(ContentController.TAG_NO_DATA);

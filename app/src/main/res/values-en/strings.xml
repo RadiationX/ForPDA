@@ -413,6 +413,19 @@
     <string name="pref_title_pm_qms">QMS private messages</string>
     <string name="pref_title_app_updates">App updates</string>
     <string name="pref_title_notify">Notify</string>
+    <string name="funny_search_nodata_title">Nothing found</string>
+    <string name="funny_search_nodata_desc">Set your search query differently</string>
+    <string name="funny_reputation_nodata_title">No reputation</string>
+    <string name="funny_notes_nodata_title">No bookmarks</string>
+    <string name="funny_mentions_nodata_title">No mentions</string>
+    <string name="funny_mentions_nodata_desc">There will be mentions in topics and comments</string>
+    <string name="funny_history_nodata_title">Empty history</string>
+    <string name="funny_history_nodata_desc">This will display the history of the topic view</string>
+    <string name="funny_favorites_nodata_title">No favorites</string>
+    <string name="funny_favorites_nodata_desc">Add a topic to your favorites to keep track of updates in the theme</string>
+    <string name="funny_contacts_nodata_title">Contact list is empty</string>
+    <string name="funny_blacklist_nodata_title">Black list is empty</string>
+    <string name="funny_blacklist_nodata_desc">Users from this list can not write to you</string>
     <!--
 
           Templates

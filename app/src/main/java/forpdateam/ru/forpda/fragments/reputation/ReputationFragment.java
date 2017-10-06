@@ -233,7 +233,7 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
             if(!contentController.contains(ContentController.TAG_NO_DATA)){
                 FunnyContent funnyContent = new FunnyContent(getContext())
                         .setImage(R.drawable.ic_history)
-                        .setTitle("Нет репутации");
+                        .setTitle(R.string.funny_reputation_nodata_title);
                 contentController.addContent(funnyContent, ContentController.TAG_NO_DATA);
             }
             contentController.showContent(ContentController.TAG_NO_DATA);
