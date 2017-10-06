@@ -37,7 +37,8 @@ import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
-import forpdateam.ru.forpda.views.AdditionalController;
+import forpdateam.ru.forpda.views.ContentController;
+import forpdateam.ru.forpda.views.FunnyContent;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -155,7 +156,6 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
     public void loadData() {
         super.loadData();
         setRefreshing(true);
-        contentController.hideContent(AdditionalController.TAG_NO_DATA);
         mainSubscriber.subscribe(RxApi.Qms().getContactList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
     }
 
@@ -183,8 +183,15 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
         results = realm.where(QmsContactBd.class).findAll();
 
         if (results.isEmpty()) {
-            contentController.addContent(getContext(), AdditionalController.TAG_NO_DATA, R.layout.funny_contact_no_data);
-            contentController.showContent(AdditionalController.TAG_NO_DATA);
+            if(!contentController.contains(ContentController.TAG_NO_DATA)){
+                FunnyContent funnyContent = new FunnyContent(getContext())
+                        .setImage(R.drawable.ic_contacts)
+                        .setTitle("Список контактов пуст");
+                contentController.addContent(funnyContent, ContentController.TAG_NO_DATA);
+            }
+            contentController.showContent(ContentController.TAG_NO_DATA);
+        } else {
+            contentController.hideContent(ContentController.TAG_NO_DATA);
         }
 
         currentItems.clear();

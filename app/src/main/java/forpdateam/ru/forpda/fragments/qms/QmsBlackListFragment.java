@@ -29,6 +29,8 @@ import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.SimpleTextWatcher;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
+import forpdateam.ru.forpda.views.ContentController;
+import forpdateam.ru.forpda.views.FunnyContent;
 
 /**
  * Created by radiationx on 22.03.17.
@@ -114,6 +116,18 @@ public class QmsBlackListFragment extends RecyclerFragment implements QmsContact
 
     private void onLoadContacts(ArrayList<QmsContact> data) {
         setRefreshing(false);
+        if (data.isEmpty()) {
+            if(!contentController.contains(ContentController.TAG_NO_DATA)){
+                FunnyContent funnyContent = new FunnyContent(getContext())
+                        .setImage(R.drawable.ic_contacts)
+                        .setTitle("Черный список пуст")
+                        .setDesc("Пользователи из этого списка не смогу писать вам");
+                contentController.addContent(funnyContent, ContentController.TAG_NO_DATA);
+            }
+            contentController.showContent(ContentController.TAG_NO_DATA);
+        } else {
+            contentController.hideContent(ContentController.TAG_NO_DATA);
+        }
         recyclerView.scrollToPosition(0);
         currentData = data;
         adapter.addAll(currentData);
