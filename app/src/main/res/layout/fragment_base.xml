@@ -150,6 +150,12 @@
 
 
         <FrameLayout
+            android:id="@+id/fragment_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+        <FrameLayout
             android:id="@+id/additional_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -163,12 +169,6 @@
                 android:visibility="gone"/>
 
         </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/fragment_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
         <LinearLayout
             android:id="@+id/no_network"

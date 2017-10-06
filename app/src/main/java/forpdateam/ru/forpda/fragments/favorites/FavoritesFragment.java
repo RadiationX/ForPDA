@@ -42,6 +42,8 @@ import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
+import forpdateam.ru.forpda.views.ContentController;
+import forpdateam.ru.forpda.views.FunnyContent;
 import forpdateam.ru.forpda.views.pagination.PaginationHelper;
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -296,6 +298,20 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         setRefreshing(false);
         if (realm.isClosed()) return;
         RealmResults<FavItemBd> results = realm.where(FavItemBd.class).findAll();
+
+        if (results.isEmpty()) {
+            if(!contentController.contains(ContentController.TAG_NO_DATA)){
+                FunnyContent funnyContent = new FunnyContent(getContext())
+                        .setImage(R.drawable.ic_star)
+                        .setTitle("Нет избранных тем")
+                        .setDesc("Добавьте тему в избранное, чтобы удобно отслеживать обновления в теме");
+                contentController.addContent(funnyContent, ContentController.TAG_NO_DATA);
+            }
+            contentController.showContent(ContentController.TAG_NO_DATA);
+        } else {
+            contentController.hideContent(ContentController.TAG_NO_DATA);
+        }
+
         ArrayList<IFavItem> nonBdResult = new ArrayList<>();
         for (FavItemBd itemBd : results) {
             nonBdResult.add(new FavItem(itemBd));

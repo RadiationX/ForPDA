@@ -40,7 +40,7 @@ import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.settings.Preferences;
-import forpdateam.ru.forpda.views.AdditionalController;
+import forpdateam.ru.forpda.views.ContentController;
 import io.reactivex.disposables.CompositeDisposable;
 
 import static android.content.Context.ACCESSIBILITY_SERVICE;
@@ -90,7 +90,7 @@ public class TabFragment extends Fragment {
     private boolean notifyDotQms = Preferences.Main.isShowNotifyDotQms();
     private boolean notifyDotMentions = Preferences.Main.isShowNotifyDotMentions();
     private boolean alreadyCallLoad = false;
-    protected AdditionalController contentController;
+    protected ContentController contentController;
 
     protected CompositeDisposable disposable = new CompositeDisposable();
 
@@ -273,7 +273,7 @@ public class TabFragment extends Fragment {
         //// TODO: 20.03.17 удалить и юзать только там, где нужно
         fab = (FloatingActionButton) coordinatorLayout.findViewById(R.id.fab);
 
-        contentController = new AdditionalController(contentProgress, additionalContent, fragmentContent);
+        contentController = new ContentController(contentProgress, additionalContent, fragmentContent);
 
         toolbarTitleView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
         toolbarTitleView.setHorizontallyScrolling(true);

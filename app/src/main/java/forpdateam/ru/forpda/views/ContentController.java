@@ -14,7 +14,7 @@ import java.util.HashMap;
 /*
 * Для управления рефрешем
 * */
-public class AdditionalController {
+public class ContentController {
     public final static String TAG_NO_DATA = "NO_DATA";
     private View additionalRefresh;
     private ViewGroup additionalContent;
@@ -24,7 +24,7 @@ public class AdditionalController {
 
     private HashMap<Object, View> contents = new HashMap<>();
 
-    public AdditionalController(View additionalRefresh, ViewGroup additionalContent, ViewGroup mainContent) {
+    public ContentController(View additionalRefresh, ViewGroup additionalContent, ViewGroup mainContent) {
         this.additionalRefresh = additionalRefresh;
         this.additionalContent = additionalContent;
         this.mainContent = mainContent;
@@ -35,7 +35,22 @@ public class AdditionalController {
         this.mainRefresh = mainRefresh;
     }
 
-    public View addContent(Context context, Object tag, @LayoutRes int id) {
+    public boolean contains(Object tag) {
+        return contents.get(tag) != null;
+    }
+
+    public View addContent(View content, Object tag) {
+        View view = contents.get(tag);
+        if (view == null) {
+            view = content;
+            view.setVisibility(View.GONE);
+            contents.put(tag, view);
+            additionalContent.addView(view, 0);
+        }
+        return view;
+    }
+
+    public View addContent(Context context, @LayoutRes int id, Object tag) {
         View view = contents.get(tag);
         if (view == null) {
             view = View.inflate(context, id, null);
@@ -50,6 +65,7 @@ public class AdditionalController {
         View view = contents.get(tag);
         if (view != null) {
             view.setVisibility(View.VISIBLE);
+            //mainContent.setVisibility(View.GONE);
         }
     }
 
@@ -57,6 +73,7 @@ public class AdditionalController {
         View view = contents.get(tag);
         if (view != null) {
             view.setVisibility(View.GONE);
+            //mainContent.setVisibility(View.VISIBLE);
         }
     }
 

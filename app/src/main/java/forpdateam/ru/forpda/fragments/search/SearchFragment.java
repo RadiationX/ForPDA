@@ -67,7 +67,9 @@ import forpdateam.ru.forpda.utils.FabOnScroll;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
+import forpdateam.ru.forpda.views.ContentController;
 import forpdateam.ru.forpda.views.ExtendedWebView;
+import forpdateam.ru.forpda.views.FunnyContent;
 import forpdateam.ru.forpda.views.pagination.PaginationHelper;
 import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
 
@@ -554,6 +556,19 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         recyclerView.scrollToPosition(0);
         hidePopupWindows();
         data = searchResult;
+        Log.d("SUKA", "SEARCH SIZE "+searchResult.getItems().size());
+        if (data.getItems().isEmpty()) {
+            if(!contentController.contains(ContentController.TAG_NO_DATA)){
+                FunnyContent funnyContent = new FunnyContent(getContext())
+                        .setImage(R.drawable.ic_search)
+                        .setTitle("Ничего не найдено")
+                        .setDesc("Настройте поисковой запрос иначе");
+                contentController.addContent(funnyContent, ContentController.TAG_NO_DATA);
+            }
+            contentController.showContent(ContentController.TAG_NO_DATA);
+        } else {
+            contentController.hideContent(ContentController.TAG_NO_DATA);
+        }
         if (data.getSettings().getResult().equals(SearchSettings.RESULT_POSTS.first) && data.getSettings().getResourceType().equals(SearchSettings.RESOURCE_FORUM.first)) {
             if (refreshLayout.getChildCount() > 1) {
                 if (refreshLayout.getChildAt(0) instanceof RecyclerView) {

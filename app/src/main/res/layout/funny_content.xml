@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:padding="@dimen/dp24">
+
+    <ImageView
+        android:id="@+id/funny_image"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/funny_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/funny_image"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:fontFamily="monospace"
+        android:gravity="center_horizontal"
+        android:text="Список контактов пуст"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/funny_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/funny_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:fontFamily="monospace"
+        android:gravity="center_horizontal"
+        android:text="Список контактов пуст"
+        android:textSize="16sp"
+        android:visibility="gone"/>
+
+</RelativeLayout>

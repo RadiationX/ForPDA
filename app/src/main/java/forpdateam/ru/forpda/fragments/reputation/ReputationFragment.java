@@ -27,6 +27,8 @@ import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
+import forpdateam.ru.forpda.views.ContentController;
+import forpdateam.ru.forpda.views.FunnyContent;
 import forpdateam.ru.forpda.views.pagination.PaginationHelper;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
@@ -226,6 +228,18 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
 
     private void onLoadThemes(RepData data) {
         setRefreshing(false);
+
+        if (data.getItems().isEmpty()) {
+            if(!contentController.contains(ContentController.TAG_NO_DATA)){
+                FunnyContent funnyContent = new FunnyContent(getContext())
+                        .setImage(R.drawable.ic_history)
+                        .setTitle("Нет репутации");
+                contentController.addContent(funnyContent, ContentController.TAG_NO_DATA);
+            }
+            contentController.showContent(ContentController.TAG_NO_DATA);
+        } else {
+            contentController.hideContent(ContentController.TAG_NO_DATA);
+        }
 
         this.data = data;
 

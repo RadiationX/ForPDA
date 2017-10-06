@@ -42,6 +42,8 @@ import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
+import forpdateam.ru.forpda.views.ContentController;
+import forpdateam.ru.forpda.views.FunnyContent;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
@@ -115,6 +117,18 @@ public class NotesFragment extends RecyclerFragment implements NotesAdapter.OnIt
         if (!realm.isClosed()) {
             setRefreshing(true);
             RealmResults<NoteItemBd> results = realm.where(NoteItemBd.class).findAllSorted("id", Sort.DESCENDING);
+
+            if (results.isEmpty()) {
+                if(!contentController.contains(ContentController.TAG_NO_DATA)){
+                    FunnyContent funnyContent = new FunnyContent(getContext())
+                            .setImage(R.drawable.ic_bookmark)
+                            .setTitle("Нет закладок");
+                    contentController.addContent(funnyContent, ContentController.TAG_NO_DATA);
+                }
+                contentController.showContent(ContentController.TAG_NO_DATA);
+            } else {
+                contentController.hideContent(ContentController.TAG_NO_DATA);
+            }
 
             ArrayList<NoteItem> nonBdResult = new ArrayList<>();
             for (NoteItemBd item : results) {

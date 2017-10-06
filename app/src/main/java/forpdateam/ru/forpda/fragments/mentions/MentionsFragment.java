@@ -17,6 +17,8 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
+import forpdateam.ru.forpda.views.ContentController;
+import forpdateam.ru.forpda.views.FunnyContent;
 import forpdateam.ru.forpda.views.pagination.PaginationHelper;
 
 /**
@@ -78,6 +80,19 @@ public class MentionsFragment extends RecyclerFragment implements MentionsAdapte
 
     private void onLoadThemes(MentionsData data) {
         setRefreshing(false);
+
+        if (data.getItems().isEmpty()) {
+            if(!contentController.contains(ContentController.TAG_NO_DATA)){
+                FunnyContent funnyContent = new FunnyContent(getContext())
+                        .setImage(R.drawable.ic_notifications)
+                        .setTitle("Нет упоминаний")
+                        .setDesc("Тут будут отображаться упоминания в темах и комментариях");
+                contentController.addContent(funnyContent, ContentController.TAG_NO_DATA);
+            }
+            contentController.showContent(ContentController.TAG_NO_DATA);
+        } else {
+            contentController.hideContent(ContentController.TAG_NO_DATA);
+        }
 
         this.data = data;
         adapter.addAll(data.getItems());
