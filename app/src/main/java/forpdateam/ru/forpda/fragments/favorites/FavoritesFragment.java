@@ -131,6 +131,7 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         dialog = new BottomSheetDialog(getContext());
 
 
+        contentController.setFirstLoad(false);
         viewsReady();
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
@@ -295,7 +296,7 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
     }
 
     private void bindView() {
-        setRefreshing(false);
+        //setRefreshing(false);
         if (realm.isClosed()) return;
         RealmResults<FavItemBd> results = realm.where(FavItemBd.class).findAll();
 
@@ -463,6 +464,7 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
             favoriteDialogMenu.addItem(getString(R.string.open_theme_forum), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getForumId()));
             favoriteDialogMenu.addItem(getString(R.string.fav_change_subscribe_type), (context, data) -> {
                 new AlertDialog.Builder(context.getContext())
+                        .setTitle(R.string.favorites_subscribe_email)
                         .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> context.changeFav(Favorites.ACTION_EDIT_SUB_TYPE, Favorites.SUB_TYPES[which1], data.getFavId()))
                         .show();
             });
