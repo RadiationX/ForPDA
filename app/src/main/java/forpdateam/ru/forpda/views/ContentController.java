@@ -100,6 +100,10 @@ public class ContentController {
         }
     }
 
+    public void setFirstLoad(boolean b) {
+        firstLoad = b;
+    }
+
     public void destroy() {
         additionalRefresh = null;
         mainContent = null;

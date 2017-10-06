@@ -76,6 +76,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         initFabBehavior();
+        contentController.setFirstLoad(false);
         viewsReady();
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
@@ -178,7 +179,6 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
     private ArrayList<QmsContact> currentItems = new ArrayList<>();
 
     private void bindView() {
-        setRefreshing(false);
         if (realm.isClosed()) return;
         results = realm.where(QmsContactBd.class).findAll();
 

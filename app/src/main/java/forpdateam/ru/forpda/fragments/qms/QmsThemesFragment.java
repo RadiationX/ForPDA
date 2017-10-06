@@ -83,6 +83,7 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
         super.onCreateView(inflater, container, savedInstanceState);
         initFabBehavior();
         tryShowAvatar();
+        contentController.setFirstLoad(false);
         viewsReady();
 
 
@@ -156,7 +157,6 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
     }
 
     private void bindView() {
-        setRefreshing(false);
         if (realm.isClosed()) return;
         refreshToolbarMenuItems(true);
         RealmResults<QmsThemesBd> results = realm
