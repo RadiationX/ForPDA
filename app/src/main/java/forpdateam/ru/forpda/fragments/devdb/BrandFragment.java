@@ -114,7 +114,7 @@ public class BrandFragment extends TabFragment implements BrandAdapter.OnItemCli
             dialogMenu = new AlertDialogMenu<>();
             showedDialogMenu = new AlertDialogMenu<>();
             dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
-                Utils.copyToClipBoard("http://4pda.ru/devdb/" + data.getId());
+                Utils.copyToClipBoard("https://4pda.ru/devdb/" + data.getId());
             });
             dialogMenu.addItem(getString(R.string.share), (context, data) -> {
                 Utils.shareText("https://4pda.ru/devdb/" + data.getId());

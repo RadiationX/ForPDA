@@ -169,7 +169,7 @@ public class Theme {
 
     public String reportPost(int topicId, int postId, String message) throws Exception {
         NetworkRequest request = new NetworkRequest.Builder()
-                .url("http://4pda.ru/forum/index.php?act=report&send=1&t=" + Integer.toString(topicId) + "&p=" + Integer.toString(postId))
+                .url("https://4pda.ru/forum/index.php?act=report&send=1&t=" + Integer.toString(topicId) + "&p=" + Integer.toString(postId))
                 .formHeader("message", URLEncoder.encode(message, "windows-1251"), true)
                 .build();
         NetworkResponse response = Api.getWebClient().request(request);

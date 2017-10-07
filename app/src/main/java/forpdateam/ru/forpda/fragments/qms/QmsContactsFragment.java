@@ -315,7 +315,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
             dialogMenu.addItem(getString(R.string.delete), (context, data) -> context.deleteDialog(data.getId()));
             dialogMenu.addItem(getString(R.string.create_note), (context1, data) -> {
                 String title = String.format(getString(R.string.dialogs_Nick), data.getNick());
-                String url = "http://4pda.ru/forum/index.php?act=qms&mid=" + data.getId();
+                String url = "https://4pda.ru/forum/index.php?act=qms&mid=" + data.getId();
                 NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);
             });
         }

@@ -30,7 +30,7 @@ import forpdateam.ru.forpda.api.theme.models.ThemePage;
  */
 
 public class EditPost {
-    private final static Pattern formInfoPattern = Pattern.compile("is_mod\\s*?=\\s*?(\\d+)[\\s\\S]*?poll_questions\\s*?=\\s*?(\\{[\\s\\S]*?\\})\\n,[\\s\\S]*?poll_choices\\s*?=\\s*?(\\{[\\s\\S]*?\\})\\n[\\s\\S]*?poll_votes\\s*?=\\s*?(\\{[\\s\\S]*?\\})\\n[\\s\\S]*?poll_multi\\s*?=\\s*?(\\{[\\s\\S]*?\\})\\n[\\s\\S]*?max_poll_questions\\s*?=\\s*?(\\d+)[\\s\\S]*?max_poll_choices\\s*?=\\s*?(\\d+)[\\s\\S]*?<input[^>]*?name=\"poll_question\"[^>]*?value=\"([^\"]*?)\"");
+    private final static Pattern pollInfoPattern = Pattern.compile("is_mod\\s*?=\\s*?(\\d+)[\\s\\S]*?poll_questions\\s*?=\\s*?(\\{[\\s\\S]*?\\})\\n,[\\s\\S]*?poll_choices\\s*?=\\s*?(\\{[\\s\\S]*?\\})\\n[\\s\\S]*?poll_votes\\s*?=\\s*?(\\{[\\s\\S]*?\\})\\n[\\s\\S]*?poll_multi\\s*?=\\s*?(\\{[\\s\\S]*?\\})\\n[\\s\\S]*?max_poll_questions\\s*?=\\s*?(\\d+)[\\s\\S]*?max_poll_choices\\s*?=\\s*?(\\d+)[\\s\\S]*?<input[^>]*?name=\"poll_question\"[^>]*?value=\"([^\"]*?)\"");
 
     private final static Pattern fckngInvalidJsonPattern = Pattern.compile("(?:\\{|\\,)[\\\"\\']?(\\d+)(?:_(\\d+))?[\\\"\\']?\\s*?\\:\\s*?[\\\"\\']([^\\'\\\"]*?)[\\\"\\'](?:\\})?");
     //private final static Pattern pollIndicesPattern = Pattern.compile("(\\d+)_(\\d+)");
@@ -74,7 +74,7 @@ public class EditPost {
             form.setMessage(Utils.fromHtml(Utils.escapeNewLine(matcher.group(1))));
             form.setEditReason(matcher.group(2));
         }
-        matcher = formInfoPattern.matcher(response.getBody());
+        matcher = pollInfoPattern.matcher(response.getBody());
         if (matcher.find()) {
             EditPoll poll = createPoll(matcher);
             form.setPoll(poll);
@@ -299,11 +299,12 @@ public class EditPost {
 
     private AttachmentItem fillAttachmentV2(AttachmentItem item, Matcher matcher) {
         item.setId(Integer.parseInt(matcher.group(1)));
-        try {
+        item.setName(matcher.group(2));
+        /*try {
             item.setName(URLDecoder.decode(matcher.group(2), "utf-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-        }
+        }*/
         item.setExtension(matcher.group(3));
         String temp = readableFileSize(Long.parseLong(matcher.group(5)));
         item.setWeight(temp);
@@ -375,16 +376,16 @@ public class EditPost {
         EditPoll poll = form.getPoll();
         if (poll != null) {
             EditPost.printPoll(poll);
-            builder.formHeader("poll_question", poll.getTitle().replaceAll("\n"," "));
+            builder.formHeader("poll_question", poll.getTitle().replaceAll("\n", " "));
             for (int i = 0; i < poll.getQuestions().size(); i++) {
                 EditPoll.Question question = poll.getQuestion(i);
                 int q_index = i + 1;
-                builder.formHeader("question[" + q_index + "]", question.getTitle().replaceAll("\n"," "));
+                builder.formHeader("question[" + q_index + "]", question.getTitle().replaceAll("\n", " "));
                 builder.formHeader("multi[" + q_index + "]", question.isMulti() ? "1" : "0");
                 for (int j = 0; j < question.getChoices().size(); j++) {
                     EditPoll.Choice choice = question.getChoice(j);
                     int c_index = j + 1;
-                    builder.formHeader("choice[" + q_index + '_' + c_index + "]", choice.getTitle().replaceAll("\n"," "));
+                    builder.formHeader("choice[" + q_index + '_' + c_index + "]", choice.getTitle().replaceAll("\n", " "));
                 }
             }
         }

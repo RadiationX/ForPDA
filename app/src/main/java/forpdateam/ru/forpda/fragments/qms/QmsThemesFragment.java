@@ -244,7 +244,7 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
         noteMenuItem = getMenu().add(R.string.create_note)
                 .setOnMenuItemClickListener(item -> {
                     String title = String.format(getString(R.string.dialogs_Nick), currentThemes.getNick());
-                    String url = "http://4pda.ru/forum/index.php?act=qms&mid=" + currentThemes.getUserId();
+                    String url = "https://4pda.ru/forum/index.php?act=qms&mid=" + currentThemes.getUserId();
                     NotesAddPopup.showAddNoteDialog(getContext(), title, url);
                     return true;
                 });
@@ -291,7 +291,7 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
             });
             dialogMenu.addItem(getString(R.string.create_note), (context1, data) -> {
                 String title = String.format(getString(R.string.dialog_Title_Nick), data.getName(), currentThemes.getNick());
-                String url = "http://4pda.ru/forum/index.php?act=qms&mid=" + currentThemes.getUserId() + "&t=" + data.getId();
+                String url = "https://4pda.ru/forum/index.php?act=qms&mid=" + currentThemes.getUserId() + "&t=" + data.getId();
                 NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);
             });
         }
