@@ -411,7 +411,8 @@ public class IntentHandler {
                         Toast.makeText(App.getContext(), R.string.error_occurred, Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    if (!Preferences.Main.isSystemDownloader()) {
+                    Activity activity = App.getActivity();
+                    if (!Preferences.Main.isSystemDownloader() || activity == null) {
                         externalDownloader(response.getRedirect());
                     } else {
                         Runnable checkAction = () -> {
@@ -423,8 +424,6 @@ public class IntentHandler {
                                 externalDownloader(response.getRedirect());
                             }
                         };
-
-                        Activity activity = App.getActivity();
                         App.get().checkStoragePermission(checkAction, activity);
                     }
                 });

@@ -181,8 +181,6 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
         }, this::bindView);
     }
 
-    private ArrayList<QmsContact> currentItems = new ArrayList<>();
-
     private void bindView() {
         if (realm.isClosed()) return;
         results = realm.where(QmsContactBd.class).findAll();
@@ -199,7 +197,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
             contentController.hideContent(ContentController.TAG_NO_DATA);
         }
 
-        currentItems.clear();
+        ArrayList<QmsContact> currentItems = new ArrayList<>();
         for (QmsContactBd qmsContactBd : results) {
             QmsContact contact = new QmsContact(qmsContactBd);
             currentItems.add(contact);
@@ -219,6 +217,15 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
 
     private void handleEvent(TabNotification event) {
         SparseIntArray sparseArray = new SparseIntArray();
+
+        if (realm.isClosed()) return;
+        results = realm.where(QmsContactBd.class).findAll();
+
+        ArrayList<QmsContact> currentItems = new ArrayList<>();
+        for (QmsContactBd qmsContactBd : results) {
+            QmsContact contact = new QmsContact(qmsContactBd);
+            currentItems.add(contact);
+        }
 
         for (NotificationEvent loadedEvent : event.getLoadedEvents()) {
             int count = sparseArray.get(loadedEvent.getUserId());

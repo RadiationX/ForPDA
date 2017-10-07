@@ -552,6 +552,9 @@ public class App extends android.app.Application {
     private List<Runnable> permissionCallbacks = new ArrayList<>();
 
     public void checkStoragePermission(Runnable runnable, Activity activity) {
+        if (runnable == null || activity == null)
+            return;
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, TabFragment.REQUEST_STORAGE);
