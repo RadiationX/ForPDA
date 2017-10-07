@@ -386,41 +386,6 @@ function transformAnchor() {
     });
 }
 
-function fixImagesSizeWithDensity() {
-    const density = window.devicePixelRatio;
-    if (density == 1) {
-        return;
-    }
-    var images = document.querySelectorAll("img.attach, img.linked-image");
-    images.forEach(function (item, i, arr) {
-        fixSize(item);
-        item.addEventListener("load", onLoadImage);
-    });
-
-    function onLoadImage(ev) {
-        fixSize(ev.target);
-    }
-
-    function fixSize(img) {
-        if (img.classList.contains("size_fixed")) {
-            return;
-        }
-        var width = Number(img.width);
-        var height = Number(img.height);
-
-        width /= density;
-        height /= density;
-        if (width > 16 && height > 16) {
-            console.log(width + " : " + height);
-            img.setAttribute("width", "" + width + "px");
-            img.setAttribute("height", "" + height + "px");
-        }
-
-        img.classList.add("size_fixed");
-    }
-}
-
-nativeEvents.addEventListener("DOMContentLoaded", fixImagesSizeWithDensity);
 nativeEvents.addEventListener("DOMContentLoaded", transformAnchor);
 nativeEvents.addEventListener("DOMContentLoaded", initScrollCorrector);
 nativeEvents.addEventListener("DOMContentLoaded", scrollToElement);
