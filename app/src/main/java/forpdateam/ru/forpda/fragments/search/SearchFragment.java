@@ -556,9 +556,9 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         recyclerView.scrollToPosition(0);
         hidePopupWindows();
         data = searchResult;
-        Log.d("SUKA", "SEARCH SIZE "+searchResult.getItems().size());
+        Log.d("SUKA", "SEARCH SIZE " + searchResult.getItems().size());
         if (data.getItems().isEmpty()) {
-            if(!contentController.contains(ContentController.TAG_NO_DATA)){
+            if (!contentController.contains(ContentController.TAG_NO_DATA)) {
                 FunnyContent funnyContent = new FunnyContent(getContext())
                         .setImage(R.drawable.ic_search)
                         .setTitle(R.string.funny_search_nodata_title)
@@ -569,18 +569,16 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         } else {
             contentController.hideContent(ContentController.TAG_NO_DATA);
         }
+        Log.d("SUKA", "" + data.getSettings().getResult() + " : " + data.getSettings().getResourceType());
         if (data.getSettings().getResult().equals(SearchSettings.RESULT_POSTS.first) && data.getSettings().getResourceType().equals(SearchSettings.RESOURCE_FORUM.first)) {
-            if (refreshLayout.getChildCount() > 1) {
-                if (refreshLayout.getChildAt(0) instanceof RecyclerView) {
-                    refreshLayout.removeViewAt(0);
+            for (int i = 0; i < refreshLayout.getChildCount(); i++) {
+                if (refreshLayout.getChildAt(i) instanceof RecyclerView) {
+                    refreshLayout.removeViewAt(i);
                     fixTargetView();
-                    if (scrollButtonEnable) {
-                        fab.setVisibility(View.VISIBLE);
-                    }
-                    refreshLayout.addView(webView);
-                    Log.d(LOG_TAG, "add webview");
+                    break;
                 }
-            } else {
+            }
+            if (refreshLayout.getChildCount() <= 1) {
                 if (scrollButtonEnable) {
                     fab.setVisibility(View.VISIBLE);
                 }
@@ -592,21 +590,21 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
                 webView.setWebViewClient(webViewClient);
                 webView.setWebChromeClient(new CustomWebChromeClient());
             }
+            Log.d("SUKA", "SEARCH SHOW WEBVIEW");
             webView.loadDataWithBaseURL("https://4pda.ru/forum/", data.getHtml(), "text/html", "utf-8", null);
         } else {
-            if (refreshLayout.getChildCount() > 1) {
-                if (refreshLayout.getChildAt(0) instanceof ExtendedWebView) {
-                    refreshLayout.removeViewAt(0);
+            for (int i = 0; i < refreshLayout.getChildCount(); i++) {
+                if (refreshLayout.getChildAt(i) instanceof ExtendedWebView) {
+                    refreshLayout.removeViewAt(i);
                     fixTargetView();
-                    fab.setVisibility(View.GONE);
-                    refreshLayout.addView(recyclerView);
-                    Log.d(LOG_TAG, "add recyclerview");
                 }
-            } else {
+            }
+            if (refreshLayout.getChildCount() <= 1) {
                 fab.setVisibility(View.GONE);
                 refreshLayout.addView(recyclerView);
                 Log.d(LOG_TAG, "add recyclerview");
             }
+            Log.d("SUKA", "SEARCH SHOW RECYCLERVIEW");
             adapter.clear();
             adapter.addAll(data.getItems());
         }

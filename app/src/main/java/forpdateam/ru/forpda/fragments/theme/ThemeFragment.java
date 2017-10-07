@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -29,6 +30,7 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -104,6 +106,12 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     protected Subscriber<List<AttachmentItem>> attachmentSubscriber = new Subscriber<>(this);
     protected String tab_url = "";
     protected SimpleTooltip tooltip;
+    private View notificationView;
+    private TextView notificationTitle;
+    private ImageButton notificationButton;
+    private Handler notificationHandler = new Handler(Looper.getMainLooper());
+    private Runnable notifyRunnable = () -> notificationView.setVisibility(View.VISIBLE);
+
     private Observer themePreferenceObserver = (observable, o) -> {
         if (o == null) return;
         String key = (String) o;
@@ -161,13 +169,16 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     }
 
+
     private void onEventNew(TabNotification event) {
         Log.d("SUKAT", "onEventNew");
-        notificationView.setVisibility(View.VISIBLE);
+        notificationHandler.postDelayed(notifyRunnable, 2000);
+
     }
 
     private void onEventRead(TabNotification event) {
         Log.d("SUKAT", "onEventRead");
+        notificationHandler.removeCallbacks(notifyRunnable);
         notificationView.setVisibility(View.GONE);
     }
 
@@ -208,9 +219,6 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         fab.requestLayout();
     }
 
-    private View notificationView;
-    private TextView notificationTitle;
-    private ImageButton notificationButton;
 
     @Nullable
     @Override
@@ -232,7 +240,8 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
 
         notificationView = inflater.inflate(R.layout.new_message_notification, null);
-        fragmentContent.addView(notificationView, 0);
+        fragmentContent.addView(notificationView);
+        notificationView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         notificationTitle = (TextView) notificationView.findViewById(R.id.title);
         notificationButton = (ImageButton) notificationView.findViewById(R.id.icon);
         notificationTitle.setText("Новое сообщение!");

@@ -507,6 +507,7 @@ public class NotificationsService extends Service {
         }
 
         if (NotificationEvent.fromTheme(source) && Preferences.Notifications.Favorites.isOnlyImportant()) {
+            List<NotificationEvent> toRemove = new ArrayList<>();
             for (NotificationEvent newEvent : newEvents) {
                 boolean remove = false;
                 for (NotificationEvent event : events) {
@@ -519,8 +520,11 @@ public class NotificationsService extends Service {
                     remove = true;
                 }
                 if (remove) {
-                    newEvents.remove(newEvent);
+                    toRemove.add(newEvent);
                 }
+            }
+            for (NotificationEvent removeEvent : toRemove) {
+                newEvents.remove(removeEvent);
             }
         }
 
