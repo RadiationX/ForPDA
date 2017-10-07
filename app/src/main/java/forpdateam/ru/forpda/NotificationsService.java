@@ -526,6 +526,7 @@ public class NotificationsService extends Service {
             for (NotificationEvent removeEvent : toRemove) {
                 newEvents.remove(removeEvent);
             }
+            toRemove.clear();
         }
 
         return newEvents;

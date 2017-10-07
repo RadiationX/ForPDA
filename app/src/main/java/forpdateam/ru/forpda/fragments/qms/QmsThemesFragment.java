@@ -168,7 +168,7 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
         if (qmsThemesBd == null) {
             return;
         }
-        currentItems.clear();
+        ArrayList<QmsTheme> currentItems = new ArrayList<>();
         for (QmsThemeBd qmsThemeBd : qmsThemesBd.getThemes()) {
             QmsTheme qmsTheme = new QmsTheme(qmsThemeBd);
             currentItems.add(qmsTheme);
@@ -177,9 +177,23 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
         adapter.notifyDataSetChanged();
     }
 
-    private ArrayList<QmsTheme> currentItems = new ArrayList<>();
-
     private void handleEvent(TabNotification event) {
+        if (realm.isClosed()) return;
+        RealmResults<QmsThemesBd> results = realm
+                .where(QmsThemesBd.class)
+                .equalTo("userId", currentThemes.getUserId())
+                .findAll();
+
+        QmsThemesBd qmsThemesBdLast = results.last(null);
+        if (qmsThemesBdLast == null) {
+            return;
+        }
+        ArrayList<QmsTheme> currentItems = new ArrayList<>();
+        for (QmsThemeBd qmsThemeBd : qmsThemesBdLast.getThemes()) {
+            QmsTheme qmsTheme = new QmsTheme(qmsThemeBd);
+            currentItems.add(qmsTheme);
+        }
+
         if (event.getType() == NotificationEvent.Type.READ) {
             for (QmsTheme item : currentItems) {
                 if (item.getId() == event.getEvent().getSourceId()) {
