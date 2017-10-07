@@ -135,7 +135,7 @@ public class IntentHandler {
 
         matcher = Pattern.compile("(?:http?s?:)?\\/\\/[\\s\\S]*?4pda\\.(?:ru|to)\\/forum\\/lofiversion\\/[^\\?]*?\\?(t|f)(\\d+)(?:-(\\d+))?").matcher(url);
         if (matcher.find()) {
-            url = "http://4pda.ru/forum/index.php?";
+            url = "https://4pda.ru/forum/index.php?";
             switch (matcher.group(1)) {
                 case "t":
                     url += "showtopic=";

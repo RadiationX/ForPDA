@@ -351,7 +351,7 @@ public class NewsApi {
     }
 
     public Boolean likeComment(int articleId, int commentId) throws Exception {
-        String url = "http://4pda.ru/wp-content/plugins/karma/ajax.php?p=" + articleId + "&c=" + commentId + "&v=1";
+        String url = "https://4pda.ru/wp-content/plugins/karma/ajax.php?p=" + articleId + "&c=" + commentId + "&v=1";
         Api.getWebClient().request(new NetworkRequest.Builder().url(url).xhrHeader().build());
         return true;
     }
