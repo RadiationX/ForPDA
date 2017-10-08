@@ -58,13 +58,19 @@ public class KeyboardUtil {
                 if (contentView.getPaddingBottom() != newKeyboardHeight) {
                     //set the padding of the contentView for the keyboard
                     //Log.e("SUKA", "KeyboardUtil " + newKeyboardHeight);
-                    contentView.setPadding(0, 0, 0, newKeyboardHeight);
+                    contentView.setPadding(contentView.getPaddingLeft(),
+                            contentView.getPaddingTop(),
+                            contentView.getPaddingRight(),
+                            newKeyboardHeight);
                 }
             } else {
                 if (contentView.getPaddingBottom() != 0) {
                     //reset the padding of the contentView
                     //Log.e("SUKA", "KeyboardUtil h " + 0);
-                    contentView.setPadding(0, 0, 0, 0);
+                    contentView.setPadding(contentView.getPaddingLeft(),
+                            contentView.getPaddingTop(),
+                            contentView.getPaddingRight(),
+                            0);
                 }
             }
 

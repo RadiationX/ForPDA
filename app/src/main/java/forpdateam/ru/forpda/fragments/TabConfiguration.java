@@ -8,6 +8,7 @@ public class TabConfiguration {
     private boolean isAlone = false;
     private boolean isMenu = false;
     private boolean useCache = false;
+    private boolean fitSystemWindow = false;
     private String defaultTitle = "";
 
     public boolean isAlone() {
@@ -32,6 +33,14 @@ public class TabConfiguration {
 
     public void setUseCache(boolean useCache) {
         this.useCache = useCache;
+    }
+
+    public boolean isFitSystemWindow() {
+        return fitSystemWindow;
+    }
+
+    public void setFitSystemWindow(boolean fitSystemWindow) {
+        this.fitSystemWindow = fitSystemWindow;
     }
 
     public String getDefaultTitle() {

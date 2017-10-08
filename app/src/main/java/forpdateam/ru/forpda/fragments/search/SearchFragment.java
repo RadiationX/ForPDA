@@ -243,7 +243,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         setCardsBackground();
         App.get().addPreferenceChangeObserver(searchPreferenceObserver);
         paginationHelper = new PaginationHelper(getActivity());
-        paginationHelper.addInToolbar(inflater, toolbarLayout);
+        paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow());
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {

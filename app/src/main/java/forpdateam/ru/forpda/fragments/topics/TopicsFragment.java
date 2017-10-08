@@ -72,7 +72,7 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
         adapter.setOnItemClickListener(this);
 
         paginationHelper = new PaginationHelper(getActivity());
-        paginationHelper.addInToolbar(inflater, toolbarLayout);
+        paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow());
         //paginationHelper.addInList(inflater, listContainer);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override

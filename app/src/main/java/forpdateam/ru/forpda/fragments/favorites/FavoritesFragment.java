@@ -142,7 +142,7 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         recyclerView.setAdapter(adapter);
 
         paginationHelper = new PaginationHelper(getActivity());
-        paginationHelper.addInToolbar(inflater, toolbarLayout);
+        paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow());
         //paginationHelper.addInList(inflater, listContainer);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override

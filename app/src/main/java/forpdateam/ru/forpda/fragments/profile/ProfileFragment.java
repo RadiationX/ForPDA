@@ -64,6 +64,10 @@ public class ProfileFragment extends TabFragment implements ProfileAdapter.Click
     private MenuItem copyLinkMenuItem;
     private MenuItem writeMenuItem;
 
+    public ProfileFragment() {
+        configuration.setFitSystemWindow(true);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

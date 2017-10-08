@@ -282,7 +282,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         attachmentsPopup.setDeleteOnClickListener(v -> removeFiles());
 
         paginationHelper = new PaginationHelper(getActivity());
-        paginationHelper.addInToolbar(inflater, toolbarLayout);
+        paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow());
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {
