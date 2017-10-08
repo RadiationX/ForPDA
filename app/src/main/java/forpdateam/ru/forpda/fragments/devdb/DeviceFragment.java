@@ -145,7 +145,9 @@ public class DeviceFragment extends TabFragment {
 
         imagesPager.setIndicatorTintColorScheme(App.getColorFromAttr(getContext(), R.attr.default_text_color), App.getColorFromAttr(getContext(), R.attr.second_text_color));
 
-        App.get().addStatusBarSizeObserver(statusBarSizeObserver);
+        if (configuration.isFitSystemWindow()) {
+            App.get().addStatusBarSizeObserver(statusBarSizeObserver);
+        }
         return view;
     }
 

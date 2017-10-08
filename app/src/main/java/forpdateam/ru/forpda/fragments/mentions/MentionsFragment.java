@@ -49,7 +49,7 @@ public class MentionsFragment extends RecyclerFragment implements MentionsAdapte
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         paginationHelper = new PaginationHelper(getActivity());
-        paginationHelper.addInToolbar(inflater, toolbarLayout);
+        paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow());
         //paginationHelper.addInList(inflater, listContainer);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override

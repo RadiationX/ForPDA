@@ -91,11 +91,13 @@ public class PaginationHelper {
         this.pagination = pagination;
     }
 
-    public void addInToolbar(LayoutInflater inflater, CollapsingToolbarLayout target) {
+    public void addInToolbar(LayoutInflater inflater, CollapsingToolbarLayout target, boolean enablePadding) {
         TabLayout tabLayout = (TabLayout) inflater.inflate(R.layout.pagination_toolbar, target, false);
         target.addView(tabLayout, target.indexOfChild(target.findViewById(R.id.toolbar)));
         tabLayoutInToolbar = tabLayout;
-        App.get().addStatusBarSizeObserver(statusBarSizeObserver);
+        if (enablePadding) {
+            App.get().addStatusBarSizeObserver(statusBarSizeObserver);
+        }
 
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) target.getLayoutParams();
         params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);

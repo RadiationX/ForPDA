@@ -75,12 +75,16 @@ public class NewsDetailsFragment extends TabFragment {
     private String newsImageUrl;
     private Subscriber<DetailsPage> mainSubscriber = new Subscriber<>(this);
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public NewsDetailsFragment() {
         configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_news));
         configuration.setUseCache(false); // back
         configuration.setAlone(false);
+        configuration.setFitSystemWindow(true);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             newsUrl = getArguments().getString(ARG_NEWS_URL);
             newsId = getArguments().getInt(ARG_NEWS_ID, 0);

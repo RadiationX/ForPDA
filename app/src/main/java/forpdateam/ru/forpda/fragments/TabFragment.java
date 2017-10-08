@@ -66,7 +66,7 @@ public class TabFragment extends Fragment {
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private Thread mUiThread;
 
-    protected TabConfiguration configuration = new TabConfiguration();
+    protected final TabConfiguration configuration = new TabConfiguration();
 
     private String title = null, tabTitle = null, subtitle = null, parentTag = null;
 
@@ -131,6 +131,15 @@ public class TabFragment extends Fragment {
         }
     };
     private Observer statusBarSizeObserver = (observable1, o) -> {
+        Log.d("SUKA", "statusBarSizeObserver "+App.getStatusBarHeight());
+        if (!configuration.isFitSystemWindow()) {
+            fragmentContainer.setPadding(fragmentContainer.getPaddingLeft(),
+                    App.getStatusBarHeight(),
+                    fragmentContainer.getPaddingRight(),
+                    fragmentContainer.getPaddingBottom());
+
+            return;
+        }
         if (notifyDot != null) {
             CollapsingToolbarLayout.LayoutParams params = (CollapsingToolbarLayout.LayoutParams) notifyDot.getLayoutParams();
             params.topMargin = App.getStatusBarHeight();
@@ -254,6 +263,9 @@ public class TabFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_base, container, false);
         //Осторожно! Чувствительно к структуре разметки! (по идеи так должно работать чуть быстрее)
         fragmentContainer = (RelativeLayout) findViewById(R.id.fragment_container);
+        /*if (configuration.isFitSystemWindow()) {
+            fragmentContainer.setFitsSystemWindows(true);
+        }*/
         coordinatorLayout = (CoordinatorLayout) fragmentContainer.findViewById(R.id.coordinator_layout);
         appBarLayout = (AppBarLayout) coordinatorLayout.findViewById(R.id.appbar_layout);
         toolbarLayout = (CollapsingToolbarLayout) appBarLayout.findViewById(R.id.toolbar_layout);
@@ -282,7 +294,9 @@ public class TabFragment extends Fragment {
         toolbarTitleView.setHorizontalFadingEdgeEnabled(true);
         toolbarTitleView.setFadingEdgeLength(App.px16);
 
+        //if (configuration.isFitSystemWindow()) {
         App.get().addStatusBarSizeObserver(statusBarSizeObserver);
+        //}
 
         //fragmentContainer.setPadding(0, App.getStatusBarHeight(), 0, 0);
 

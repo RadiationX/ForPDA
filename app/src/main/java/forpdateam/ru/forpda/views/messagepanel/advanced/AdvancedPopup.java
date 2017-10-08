@@ -164,7 +164,11 @@ public class AdvancedPopup {
         //fragmentContainer.setPadding(0, 0, 0, 0);
         if (fragmentContainer.getPaddingBottom() != 0){
             Log.d("SUKA", "hidePopup SET PADDING 0");
-            fragmentContainer.setPadding(0, 0, 0, 0);
+            //fragmentContainer.setPadding(0, 0, 0, 0);
+            fragmentContainer.setPadding(fragmentContainer.getPaddingLeft(),
+                    fragmentContainer.getPaddingTop(),
+                    fragmentContainer.getPaddingRight(),
+                    0);
         }
 
         if (stateListener != null)
@@ -184,12 +188,18 @@ public class AdvancedPopup {
         if (!isShowingKeyboard){
             if(fragmentContainer.getPaddingBottom()!=App.getKeyboardHeight()){
                 Log.d("SUKA", "showPopup SET PADDING "+ App.getKeyboardHeight());
-                fragmentContainer.setPadding(0, 0, 0,App.getKeyboardHeight());
+                fragmentContainer.setPadding(fragmentContainer.getPaddingLeft(),
+                        fragmentContainer.getPaddingTop(),
+                        fragmentContainer.getPaddingRight(),
+                        App.getKeyboardHeight());
             }
         }
         else {
             Log.d("SUKA", "showPopup SET PADDING "+ 0);
-            fragmentContainer.setPadding(0, 0, 0, 0);
+            fragmentContainer.setPadding(fragmentContainer.getPaddingLeft(),
+                    fragmentContainer.getPaddingTop(),
+                    fragmentContainer.getPaddingRight(),
+                    0);
         }
 
         if (stateListener != null)
