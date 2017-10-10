@@ -9,13 +9,14 @@ import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
 public class FavItem implements IFavItem {
     private int favId;
     private int topicId, forumId, authorId, lastUserId, stParam, pages;
-    private String trackType, info, infoColor, topicTitle, forumTitle, authorUserNick, lastUserNick, date, desc;
-    private boolean pin = false, isNewMessages = false, isForum = false;
+    private String trackType, infoColor, topicTitle, forumTitle, authorUserNick, lastUserNick, date, desc;
+    private boolean pin = false, isForum = false;
+    private boolean isNew, isPoll, isClosed;
 
     public FavItem() {
     }
 
-    public FavItem(IFavItem item){
+    public FavItem(IFavItem item) {
         favId = item.getFavId();
         topicId = item.getTopicId();
         forumId = item.getForumId();
@@ -25,7 +26,6 @@ public class FavItem implements IFavItem {
         pages = item.getPages();
 
         trackType = item.getTrackType();
-        info = item.getInfo();
         infoColor = item.getInfoColor();
         topicTitle = item.getTopicTitle();
         forumTitle = item.getForumTitle();
@@ -35,8 +35,10 @@ public class FavItem implements IFavItem {
         desc = item.getDesc();
 
         pin = item.isPin();
-        isNewMessages = item.isNewMessages();
         isForum = item.isForum();
+        isNew = item.isNew();
+        isPoll = item.isPoll();
+        isClosed = item.isClosed();
     }
 
     public String getDesc() {
@@ -111,14 +113,6 @@ public class FavItem implements IFavItem {
         this.trackType = trackType;
     }
 
-    public String getInfo() {
-        return info;
-    }
-
-    public void setInfo(String info) {
-        this.info = info;
-    }
-
     public String getInfoColor() {
         return infoColor;
     }
@@ -175,19 +169,35 @@ public class FavItem implements IFavItem {
         this.pin = pin;
     }
 
-    public boolean isNewMessages() {
-        return isNewMessages;
-    }
-
-    public void setNewMessages(boolean newMessages) {
-        isNewMessages = newMessages;
-    }
-
     public boolean isForum() {
         return isForum;
     }
 
     public void setForum(boolean forum) {
         isForum = forum;
+    }
+
+    public boolean isNew() {
+        return isNew;
+    }
+
+    public void setNew(boolean aNew) {
+        isNew = aNew;
+    }
+
+    public boolean isPoll() {
+        return isPoll;
+    }
+
+    public void setPoll(boolean poll) {
+        isPoll = poll;
+    }
+
+    public boolean isClosed() {
+        return isClosed;
+    }
+
+    public void setClosed(boolean closed) {
+        isClosed = closed;
     }
 }

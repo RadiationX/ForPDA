@@ -62,6 +62,7 @@ import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.data.models.TabNotification;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.realm.DbMigration;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.LocaleHelper;
 import forpdateam.ru.forpda.utils.SimpleObservable;
@@ -287,8 +288,8 @@ public class App extends android.app.Application {
         Realm.init(this);
         RealmConfiguration configuration = new RealmConfiguration.Builder()
                 .name("forpda.realm")
-                .schemaVersion(1)
-                .deleteRealmIfMigrationNeeded()
+                .schemaVersion(2)
+                .migration(new DbMigration())
                 .build();
         Realm.setDefaultConfiguration(configuration);
         Client.getInstance();

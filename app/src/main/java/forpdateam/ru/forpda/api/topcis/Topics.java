@@ -51,11 +51,9 @@ public class Topics {
             item.setId(Integer.parseInt(matcher.group(1)));
             int p = 0;
             String tmp = matcher.group(2);
-            if (tmp.contains("+")) p |= TopicItem.NEW_POST;
-            if (tmp.contains("-")) p |= TopicItem.NO_NEW_POST;
-            if (tmp.contains("^")) p |= TopicItem.POLL;
-            if (tmp.contains("Х")) p |= TopicItem.CLOSED;
-            item.setParams(p);
+            item.setNew(tmp.contains("+"));
+            item.setPoll(tmp.contains("^"));
+            item.setClosed(tmp.contains("Х"));
             item.setPinned(matcher.group(3) != null);
             item.setTitle(Utils.fromHtml(matcher.group(4)));
             tmp = matcher.group(5);
@@ -78,7 +76,7 @@ public class Topics {
             }
         }
         matcher = forumPattern.matcher(response.getBody());
-        while (matcher.find()){
+        while (matcher.find()) {
             TopicItem topicItem = new TopicItem();
             topicItem.setId(Integer.parseInt(matcher.group(1)));
             topicItem.setTitle(Utils.fromHtml(matcher.group(2)));

@@ -68,7 +68,10 @@ public class Favorites {
                 item.setInfoColor(matcher.group(4));
             }
             if (matcher.group(5) != null) {
-                item.setInfo(matcher.group(5));
+                String tmp = matcher.group(5);
+                item.setNew(tmp.contains("+"));
+                item.setPoll(tmp.contains("^"));
+                item.setClosed(tmp.contains("Х"));
             }
             if (isForum) {
                 item.setForumId(Integer.parseInt(matcher.group(6)));
@@ -76,7 +79,6 @@ public class Favorites {
 
                 item.setTopicId(Integer.parseInt(matcher.group(6)));
             }
-            item.setNewMessages(item.getInfo() != null && item.getInfo().contains("+"));
             item.setTopicTitle(Utils.fromHtml(matcher.group(8)));
 
             if (isForum) {

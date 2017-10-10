@@ -108,9 +108,9 @@ public class FavoritesAdapter extends BaseSectionedAdapter<IFavItem, BaseSection
         public void bind(IFavItem item, int section, int relativePosition, int absolutePosition) {
             title.setText(item.getTopicTitle());
 
-            title.setTypeface(item.isNewMessages() ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
-            title.setTextColor(item.isNewMessages() ? titleColorNew : titleColor);
-            dot.setVisibility(showDot && item.isNewMessages() ? View.VISIBLE : View.GONE);
+            title.setTypeface(item.isNew() ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+            title.setTextColor(item.isNew() ? titleColorNew : titleColor);
+            dot.setVisibility(showDot && item.isNew() ? View.VISIBLE : View.GONE);
 
             forumIcon.setVisibility(item.isForum() ? View.VISIBLE : View.GONE);
 
@@ -118,8 +118,8 @@ public class FavoritesAdapter extends BaseSectionedAdapter<IFavItem, BaseSection
                 lockIcon.setVisibility(View.GONE);
                 pollIcon.setVisibility(View.GONE);
             } else {
-                lockIcon.setVisibility(item.getInfo().contains("X") ? View.VISIBLE : View.GONE);
-                pollIcon.setVisibility(item.getInfo().contains("^") ? View.VISIBLE : View.GONE);
+                lockIcon.setVisibility(item.isClosed() ? View.VISIBLE : View.GONE);
+                pollIcon.setVisibility(item.isPoll() ? View.VISIBLE : View.GONE);
             }
 
             lastNick.setText(item.getLastUserNick());

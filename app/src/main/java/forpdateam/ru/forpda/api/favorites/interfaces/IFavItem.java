@@ -23,8 +23,6 @@ public interface IFavItem {
 
     String getTrackType();
 
-    String getInfo();
-
     String getInfoColor();
 
     String getTopicTitle();
@@ -39,9 +37,13 @@ public interface IFavItem {
 
     boolean isPin();
 
-    boolean isNewMessages();
-
     boolean isForum();
+
+    boolean isNew();
+
+    boolean isPoll();
+
+    boolean isClosed();
 
     void setFavId(int favId);
 
@@ -61,8 +63,6 @@ public interface IFavItem {
 
     void setTrackType(String trackType);
 
-    void setInfo(String info);
-
     void setInfoColor(String infoColor);
 
     void setTopicTitle(String topicTitle);
@@ -77,7 +77,11 @@ public interface IFavItem {
 
     void setPin(boolean pin);
 
-    void setNewMessages(boolean newMessages);
-
     void setForum(boolean isForum);
+
+    void setNew(boolean aNew);
+
+    void setPoll(boolean poll);
+
+    void setClosed(boolean closed);
 }

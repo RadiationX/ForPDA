@@ -150,8 +150,8 @@ public class TopicsAdapter extends BaseSectionedAdapter<TopicItem, BaseSectioned
         @Override
         public void bind(TopicItem item) {
             title.setText(item.getTitle());
-            title.setTypeface((item.getParams() & TopicItem.NEW_POST) != 0 ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
-            title.setTextColor((item.getParams() & TopicItem.NEW_POST) != 0 ? titleColorNew : titleColor);
+            title.setTypeface(item.isNew() ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+            title.setTextColor(item.isNew() ? titleColorNew : titleColor);
             if (false && item.getDesc() != null) {
                 desc.setVisibility(View.VISIBLE);
                 desc.setText(item.getDesc());
@@ -159,8 +159,8 @@ public class TopicsAdapter extends BaseSectionedAdapter<TopicItem, BaseSectioned
                 desc.setVisibility(View.GONE);
             }
             //forumIcon.setVisibility(item.isPinned() ? View.VISIBLE : View.GONE);
-            lockIcon.setVisibility((item.getParams() & TopicItem.CLOSED) != 0 ? View.VISIBLE : View.GONE);
-            pollIcon.setVisibility((item.getParams() & TopicItem.POLL) != 0 ? View.VISIBLE : View.GONE);
+            lockIcon.setVisibility(item.isClosed() ? View.VISIBLE : View.GONE);
+            pollIcon.setVisibility(item.isPoll() ? View.VISIBLE : View.GONE);
             lastNick.setText(item.getLastUserNick());
             date.setText(item.getDate());
         }

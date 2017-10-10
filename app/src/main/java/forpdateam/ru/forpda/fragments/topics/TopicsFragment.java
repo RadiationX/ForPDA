@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -105,6 +106,13 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
         this.data = data;
 
         setTitle(data.getTitle());
+        refreshList();
+        paginationHelper.updatePagination(data.getPagination());
+        setSubtitle(paginationHelper.getTitle());
+        listScrollTop();
+    }
+
+    private void refreshList() {
         adapter.clear();
         if (!data.getForumItems().isEmpty())
             adapter.addSection(new Pair<>(getString(R.string.forum_section), data.getForumItems()));
@@ -114,9 +122,16 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
             adapter.addSection(new Pair<>(getString(R.string.pinned_section), data.getPinnedItems()));
         adapter.addSection(new Pair<>(getString(R.string.themes_section), data.getTopicItems()));
         adapter.notifyDataSetChanged();
-        paginationHelper.updatePagination(data.getPagination());
-        setSubtitle(paginationHelper.getTitle());
-        listScrollTop();
+    }
+
+    public void markRead(int topicId) {
+        Log.d("SUKA", "markRead " + topicId);
+        for (TopicItem item : data.getTopicItems()) {
+            if (item.getId() == topicId) {
+                item.setNew(false);
+            }
+        }
+        adapter.notifyDataSetChanged();
     }
 
     @Override
