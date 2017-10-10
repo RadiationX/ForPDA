@@ -57,6 +57,8 @@ public class ArticleContentFragment extends Fragment {
 
     @JavascriptInterface
     public void toComments() {
+        if (getContext() == null)
+            return;
         webView.runInUiThread(() -> {
             ((NewsDetailsFragment) getParentFragment()).getFragmentsPager().setCurrentItem(1);
         });
@@ -64,6 +66,8 @@ public class ArticleContentFragment extends Fragment {
 
     @JavascriptInterface
     public void sendPoll(String id, String answer, String from) {
+        if (getContext() == null)
+            return;
         webView.runInUiThread(() -> {
             int pollId = Integer.parseInt(id);
             int answerId = Integer.parseInt(answer);

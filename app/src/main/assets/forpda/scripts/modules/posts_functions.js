@@ -51,6 +51,7 @@ function deletePost(id) {
 
 function fixImagesSizeWithDensity() {
     const density = window.devicePixelRatio;
+    console.log("Density: " + density);
     if (density == 1) {
         return;
     }
@@ -70,6 +71,7 @@ function fixImagesSizeWithDensity() {
         }
         var width = Number(img.width);
         var height = Number(img.height);
+        console.log("WH: " + width + " : " + height);
 
         width /= density;
         height /= density;
@@ -77,8 +79,8 @@ function fixImagesSizeWithDensity() {
             //console.log(width + " : " + height);
             img.setAttribute("width", "" + width + "px");
             img.setAttribute("height", "" + height + "px");
+            img.classList.add("size_fixed");
         }
-        img.classList.add("size_fixed");
     }
 }
 

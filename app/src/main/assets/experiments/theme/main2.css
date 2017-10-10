@@ -1,0 +1,29 @@
+body {
+    background: #eee;
+}
+html,
+body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.poll{
+    margin: 10px 20px;
+    background: #fff;
+    height: 50px;
+    flex: 0 0 auto;
+}
+.posts_list {
+    margin: 20px;
+    background: #999;
+    flex: 1 0 auto;
+}
+.item{
+    background: white;
+    margin: 10px 0;
+}
+.navigation {
+    flex: 0 0 auto;
+    height: 50px;
+    background: red;
+}
