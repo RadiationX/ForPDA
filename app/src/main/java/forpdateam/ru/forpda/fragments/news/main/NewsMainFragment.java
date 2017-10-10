@@ -7,6 +7,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -22,10 +23,12 @@ import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.news.Constants;
 import forpdateam.ru.forpda.api.news.models.NewsItem;
 import forpdateam.ru.forpda.fragments.RecyclerFragment;
+import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.fragments.news.details.NewsDetailsFragment;
 import forpdateam.ru.forpda.fragments.news.main.timeline.NewsListAdapter;
 import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
+import forpdateam.ru.forpda.fragments.search.SearchFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.Utils;
@@ -67,6 +70,21 @@ public class NewsMainFragment extends RecyclerFragment implements
         recyclerView.setAdapter(adapter);
         viewsReady();
         return view;
+    }
+
+    @Override
+    protected void addBaseToolbarMenu() {
+        super.addBaseToolbarMenu();
+        getMenu().add(R.string.fragment_title_search)
+                .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_search))
+                .setOnMenuItemClickListener(item -> {
+                    String url = "https://4pda.ru/?s=";
+                    Bundle args = new Bundle();
+                    args.putString(TabFragment.ARG_TAB, url);
+                    TabManager.getInstance().add(SearchFragment.class, args);
+                    return true;
+                })
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
     }
 
     @Override

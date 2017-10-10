@@ -369,121 +369,161 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
     @JavascriptInterface
     @Override
     public void firstPage() {
-        webView.runInUiThread(super::firstPage);
+        if (getContext() == null)
+            return;
+        runInUiThread(super::firstPage);
     }
 
     @JavascriptInterface
     @Override
     public void prevPage() {
-        webView.runInUiThread(super::prevPage);
+        if (getContext() == null)
+            return;
+        runInUiThread(super::prevPage);
     }
 
     @JavascriptInterface
     @Override
     public void nextPage() {
-        webView.runInUiThread(super::nextPage);
+        if (getContext() == null)
+            return;
+        runInUiThread(super::nextPage);
     }
 
     @JavascriptInterface
     @Override
     public void lastPage() {
-        webView.runInUiThread(super::lastPage);
+        if (getContext() == null)
+            return;
+        runInUiThread(super::lastPage);
     }
 
     @JavascriptInterface
     @Override
     public void selectPage() {
-        webView.runInUiThread(super::selectPage);
+        if (getContext() == null)
+            return;
+        runInUiThread(super::selectPage);
     }
 
     @JavascriptInterface
     @Override
     public void showUserMenu(final String postId) {
-        webView.runInUiThread(() -> super.showUserMenu(postId));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> super.showUserMenu(postId));
     }
 
     @JavascriptInterface
     @Override
     public void showReputationMenu(final String postId) {
-        webView.runInUiThread(() -> super.showReputationMenu(postId));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> super.showReputationMenu(postId));
     }
 
     @JavascriptInterface
     @Override
     public void showPostMenu(final String postId) {
-        webView.runInUiThread(() -> super.showPostMenu(postId));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> super.showPostMenu(postId));
     }
 
     @JavascriptInterface
     @Override
     public void reportPost(final String postId) {
-        webView.runInUiThread(() -> super.reportPost(postId));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> super.reportPost(postId));
     }
 
     @JavascriptInterface
     @Override
     public void reply(final String postId) {
-        webView.runInUiThread(() -> super.reply(postId));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> super.reply(postId));
     }
 
     @JavascriptInterface
     @Override
     public void quotePost(final String text, final String postId) {
-        webView.runInUiThread(() -> super.quotePost(text, postId));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> super.quotePost(text, postId));
     }
 
     @JavascriptInterface
     @Override
     public void deletePost(final String postId) {
-        webView.runInUiThread(() -> super.deletePost(postId));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> super.deletePost(postId));
     }
 
     @JavascriptInterface
     @Override
     public void editPost(final String postId) {
-        webView.runInUiThread(() -> super.editPost(postId));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> super.editPost(postId));
     }
 
     @JavascriptInterface
     @Override
     public void votePost(final String postId, final boolean type) {
-        webView.runInUiThread(() -> super.votePost(postId, type));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> super.votePost(postId, type));
     }
 
     @JavascriptInterface
     @Override
     public void setHistoryBody(final String index, final String body) {
-        webView.runInUiThread(() -> super.setHistoryBody(index, body));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> super.setHistoryBody(index, body));
     }
 
     @JavascriptInterface
     @Override
     public void copySelectedText(final String text) {
-        webView.runInUiThread(() -> super.copySelectedText(text));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> super.copySelectedText(text));
     }
 
     @JavascriptInterface
     @Override
     public void toast(final String text) {
-        webView.runInUiThread(() -> super.toast(text));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> super.toast(text));
     }
 
     @JavascriptInterface
     @Override
     public void log(final String text) {
-        webView.runInUiThread(() -> super.log(text));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> super.log(text));
     }
 
     @JavascriptInterface
     @Override
     public void showPollResults() {
-        webView.runInUiThread(super::showPollResults);
+        if (getContext() == null)
+            return;
+        runInUiThread(super::showPollResults);
     }
 
     @JavascriptInterface
     @Override
     public void showPoll() {
-        webView.runInUiThread(super::showPoll);
+        if (getContext() == null)
+            return;
+        runInUiThread(super::showPoll);
     }
 
     @Override
@@ -493,7 +533,9 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
 
     @JavascriptInterface
     public void copySpoilerLink(String postId, String spoilNumber) {
-        webView.runInUiThread(() -> {
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> {
             Toast.makeText(getContext(), R.string.spoiler_link_copied, Toast.LENGTH_SHORT).show();
             IBaseForumPost post = getPostById(Integer.parseInt(postId));
             String s = "https://4pda.ru/forum/index.php?act=findpost&pid=" + post.getId() + "&anchor=Spoil-" + post.getId() + "-" + spoilNumber;
@@ -503,8 +545,9 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
 
     @JavascriptInterface
     public void setPollOpen(String sValue) {
-
-        webView.runInUiThread(() -> {
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> {
             boolean value = Boolean.parseBoolean(sValue);
             currentPage.setPollOpen(value);
         });
@@ -512,7 +555,9 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
 
     @JavascriptInterface
     public void setHatOpen(String sValue) {
-        webView.runInUiThread(() -> {
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> {
             boolean value = Boolean.parseBoolean(sValue);
             currentPage.setHatOpen(value);
         });
@@ -520,14 +565,18 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
 
     @JavascriptInterface
     public void shareSelectedText(String text) {
-        webView.runInUiThread(() -> {
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> {
             Utils.shareText(text);
         });
     }
 
     @JavascriptInterface
     public void anchorDialog(String postId, String name) {
-        webView.runInUiThread(() -> {
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> {
             IBaseForumPost post = getPostById(Integer.parseInt(postId));
             String link = "https://4pda.ru/forum/index.php?act=findpost&pid=" + post.getId() + "&anchor=" + name;
             new AlertDialog.Builder(getContext())

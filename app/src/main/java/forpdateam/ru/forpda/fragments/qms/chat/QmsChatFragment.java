@@ -425,6 +425,8 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
 
     @JavascriptInterface
     public void showMoreMess() {
+        if (getContext() == null)
+            return;
         MiniTemplator t = App.get().getTemplate(App.TEMPLATE_QMS_CHAT_MESS);
         App.setTemplateResStrings(t);
         int endIndex = currentChat.getShowedMessIndex();

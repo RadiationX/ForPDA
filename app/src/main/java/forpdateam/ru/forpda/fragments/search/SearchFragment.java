@@ -33,9 +33,12 @@ import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -52,6 +55,7 @@ import forpdateam.ru.forpda.api.search.models.SearchItem;
 import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.fragments.theme.ThemeDialogsHelper;
@@ -70,6 +74,7 @@ import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.ContentController;
 import forpdateam.ru.forpda.views.ExtendedWebView;
 import forpdateam.ru.forpda.views.FunnyContent;
+import forpdateam.ru.forpda.views.PauseOnScrollListener;
 import forpdateam.ru.forpda.views.pagination.PaginationHelper;
 import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
 
@@ -286,12 +291,24 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         });
 
         searchView.setQueryHint(getString(R.string.search_keywords));
+
+        LinearLayout searchEditFrame = (LinearLayout) searchView.findViewById(R.id.search_edit_frame);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) searchEditFrame.getLayoutParams();
+        params.leftMargin = 0;
+
+        View searchSrcText = searchView.findViewById(R.id.search_src_text);
+        searchSrcText.setPadding(0, searchSrcText.getPaddingTop(), 0, searchSrcText.getPaddingBottom());
+
+
         fillSettingsData();
         searchItem.expandActionView();
         submitButton.setOnClickListener(v -> startSearch());
         saveSettingsButton.setOnClickListener(v -> saveSettings());
         //recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.addItemDecoration(new BrandFragment.SpacingItemDecoration(App.px8, true));
+        PauseOnScrollListener pauseOnScrollListener = new PauseOnScrollListener(ImageLoader.getInstance(), true, true);
+        recyclerView.addOnScrollListener(pauseOnScrollListener);
         recyclerView.setAdapter(adapter);
         refreshLayoutStyle(refreshLayout);
         refreshLayoutLongTrigger(refreshLayout);
@@ -741,27 +758,37 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
     @JavascriptInterface
     public void firstPage() {
-        webView.runInUiThread(() -> paginationHelper.firstPage());
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> paginationHelper.firstPage());
     }
 
     @JavascriptInterface
     public void prevPage() {
-        webView.runInUiThread(() -> paginationHelper.prevPage());
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> paginationHelper.prevPage());
     }
 
     @JavascriptInterface
     public void nextPage() {
-        webView.runInUiThread(() -> paginationHelper.nextPage());
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> paginationHelper.nextPage());
     }
 
     @JavascriptInterface
     public void lastPage() {
-        webView.runInUiThread(() -> paginationHelper.lastPage());
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> paginationHelper.lastPage());
     }
 
     @JavascriptInterface
     public void selectPage() {
-        webView.runInUiThread(() -> paginationHelper.selectPageDialog());
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> paginationHelper.selectPageDialog());
     }
 
 
@@ -774,42 +801,58 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
     @JavascriptInterface
     public void showUserMenu(final String postId) {
-        webView.runInUiThread(() -> showUserMenu(getPostById(Integer.parseInt(postId))));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> showUserMenu(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void showReputationMenu(final String postId) {
-        webView.runInUiThread(() -> showReputationMenu(getPostById(Integer.parseInt(postId))));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> showReputationMenu(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void showPostMenu(final String postId) {
-        webView.runInUiThread(() -> showPostMenu(getPostById(Integer.parseInt(postId))));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> showPostMenu(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void reply(final String postId) {
-        webView.runInUiThread(() -> reply(getPostById(Integer.parseInt(postId))));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> reply(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void quotePost(final String text, final String postId) {
-        webView.runInUiThread(() -> quotePost(text, getPostById(Integer.parseInt(postId))));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> quotePost(text, getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void deletePost(final String postId) {
-        webView.runInUiThread(() -> deletePost(getPostById(Integer.parseInt(postId))));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> deletePost(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void editPost(final String postId) {
-        webView.runInUiThread(() -> editPost(getPostById(Integer.parseInt(postId))));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> editPost(getPostById(Integer.parseInt(postId))));
     }
 
     @JavascriptInterface
     public void votePost(final String postId, final boolean type) {
-        webView.runInUiThread(() -> votePost(getPostById(Integer.parseInt(postId)), type));
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> votePost(getPostById(Integer.parseInt(postId)), type));
     }
 
     @Override
@@ -874,6 +917,8 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
     @JavascriptInterface
     public void toast(final String text) {
-        webView.runInUiThread(() -> Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show());
+        if (getContext() == null)
+            return;
+        runInUiThread(() -> Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show());
     }
 }
