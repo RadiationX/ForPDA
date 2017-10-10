@@ -62,6 +62,7 @@ import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.fragments.history.HistoryFragment;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
+import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.FabOnScroll;
@@ -478,12 +479,25 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     }
 
     protected void updateFavorites(ThemePage themePage) {
-        if (themePage.getPagination().getCurrent() < themePage.getPagination().getAll()) return;
-        FavoritesFragment favoritesFragment = (FavoritesFragment) TabManager.getInstance().getByClass(FavoritesFragment.class);
-        if (favoritesFragment == null)
+        if (!ClientHelper.getAuthState()
+                || themePage.getPagination().getCurrent() < themePage.getPagination().getAll())
             return;
-        Log.d(LOG_TAG, "UPDATE FaVoRITE " + favoritesFragment.getTag());
-        favoritesFragment.markRead(themePage.getId());
+
+        int topicId = themePage.getId();
+
+        TabFragment parentTab = TabManager.getInstance().get(getParentTag());
+        if (parentTab == null) {
+            parentTab = TabManager.getInstance().getByClass(FavoritesFragment.class);
+        }
+
+        if (parentTab == null)
+            return;
+
+        if (parentTab instanceof FavoritesFragment) {
+            ((FavoritesFragment) parentTab).markRead(topicId);
+        } else if (parentTab instanceof TopicsFragment) {
+            ((TopicsFragment) parentTab).markRead(topicId);
+        }
     }
 
     protected void updateMainHistory(ThemePage themePage) {

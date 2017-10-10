@@ -301,7 +301,7 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         RealmResults<FavItemBd> results = realm.where(FavItemBd.class).findAll();
 
         if (results.isEmpty()) {
-            if(!contentController.contains(ContentController.TAG_NO_DATA)){
+            if (!contentController.contains(ContentController.TAG_NO_DATA)) {
                 FunnyContent funnyContent = new FunnyContent(getContext())
                         .setImage(R.drawable.ic_star)
                         .setTitle(R.string.funny_favorites_nodata_title)
@@ -327,13 +327,13 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         ArrayList<IFavItem> items = new ArrayList<>();
         for (IFavItem item : newList) {
             if (item.isPin()) {
-                if (unreadTop && item.isNewMessages()) {
+                if (unreadTop && item.isNew()) {
                     pinnedUnread.add(item);
                 } else {
                     pinned.add(item);
                 }
             } else {
-                if (unreadTop && item.isNewMessages()) {
+                if (unreadTop && item.isNew()) {
                     itemsUnread.add(item);
                 } else {
                     items.add(item);
@@ -374,7 +374,8 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         for (IFavItem item : currentItems) {
             if (item.getTopicId() == id) {
                 currentItems.remove(item);
-                item.setNewMessages(true);
+                if (item.getLastUserId() != ClientHelper.getUserId())
+                    item.setNew(true);
                 item.setLastUserNick(loadedEvent.getUserNick());
                 item.setLastUserId(loadedEvent.getUserId());
                 item.setPin(loadedEvent.isImportant());
@@ -406,7 +407,7 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         realm.executeTransactionAsync(realm1 -> {
             IFavItem favItem = realm1.where(FavItemBd.class).equalTo("topicId", topicId).findFirst();
             if (favItem != null) {
-                favItem.setNewMessages(false);
+                favItem.setNew(false);
             }
         });
         markedRead = true;

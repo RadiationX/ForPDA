@@ -5,12 +5,9 @@ package forpdateam.ru.forpda.api.topcis.models;
  */
 
 public class TopicItem {
-    public final static int NO_NEW_POST = 2;
-    public final static int NEW_POST = 4;
-    public final static int POLL = 8;
-    public final static int CLOSED = 16;
     private boolean pinned = false, announce = false, forum = false;
-    private int id = 0, authorId = 0, lastUserId = 0, curatorId = 0, params = 0;
+    private boolean isNew = false, isPoll = false, isClosed = false;
+    private int id = 0, authorId = 0, lastUserId = 0, curatorId = 0;
     private String title, desc, authorNick, lastUserNick, date, curatorNick, announceUrl;
 
     public boolean isPinned() {
@@ -61,12 +58,36 @@ public class TopicItem {
         this.curatorId = curatorId;
     }
 
-    public int getParams() {
+    /*public int getParams() {
         return params;
     }
 
     public void setParams(int params) {
         this.params = params;
+    }*/
+
+    public boolean isNew() {
+        return isNew;
+    }
+
+    public void setNew(boolean aNew) {
+        isNew = aNew;
+    }
+
+    public boolean isPoll() {
+        return isPoll;
+    }
+
+    public void setPoll(boolean poll) {
+        isPoll = poll;
+    }
+
+    public boolean isClosed() {
+        return isClosed;
+    }
+
+    public void setClosed(boolean closed) {
+        isClosed = closed;
     }
 
     public String getTitle() {
