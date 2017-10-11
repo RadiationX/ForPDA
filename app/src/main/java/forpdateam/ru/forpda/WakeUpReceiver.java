@@ -16,5 +16,7 @@ public class WakeUpReceiver extends BroadcastReceiver {
         } else {
             context.startService(new Intent(context, NotificationsService.class));
         }*/
+
+        context.startService(new Intent(context, NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS));
     }
 }
