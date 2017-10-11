@@ -131,14 +131,17 @@ public class ForumFragment extends TabFragment {
     }
 
     @Override
-    public void loadData() {
-        super.loadData();
+    public boolean loadData() {
+        if(!super.loadData()){
+            return false;
+        }
         updateDialog = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.refreshing)
                 .setMessage(R.string.loading_data)
                 .setCancelable(false)
                 .show();
         mainSubscriber.subscribe(RxApi.Forum().getForums(), this::onLoadThemes, new ForumItemTree(), null);
+        return true;
     }
 
     @Override

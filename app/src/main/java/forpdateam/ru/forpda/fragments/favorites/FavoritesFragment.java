@@ -223,10 +223,13 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
     }
 
     @Override
-    public void loadData() {
-        super.loadData();
+    public boolean loadData() {
+        if(!super.loadData()){
+            return false;
+        }
         setRefreshing(true);
         mainSubscriber.subscribe(RxApi.Favorites().getFavorites(currentSt, loadAll, sorting), this::onLoadThemes, new FavData(), v -> loadData());
+        return true;
     }
 
     private void onLoadThemes(FavData data) {

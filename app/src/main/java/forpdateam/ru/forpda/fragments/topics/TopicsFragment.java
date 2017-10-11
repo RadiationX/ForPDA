@@ -94,10 +94,13 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
 
 
     @Override
-    public void loadData() {
-        super.loadData();
+    public boolean loadData() {
+        if(!super.loadData()){
+            return false;
+        }
         setRefreshing(true);
         mainSubscriber.subscribe(RxApi.Topics().getTopics(id, currentSt), this::onLoadThemes, new TopicsData(), v -> loadData());
+        return true;
     }
 
     private void onLoadThemes(TopicsData data) {

@@ -131,7 +131,7 @@ public class TabFragment extends Fragment {
         }
     };
     private Observer statusBarSizeObserver = (observable1, o) -> {
-        Log.d("SUKA", "statusBarSizeObserver "+App.getStatusBarHeight());
+        Log.d("SUKA", "statusBarSizeObserver " + App.getStatusBarHeight());
         if (!configuration.isFitSystemWindow()) {
             fragmentContainer.setPadding(fragmentContainer.getPaddingLeft(),
                     App.getStatusBarHeight(),
@@ -224,9 +224,13 @@ public class TabFragment extends Fragment {
 
     //Загрузка каких-то данных, выполняется только при наличии сети
     @CallSuper
-    public void loadData() {
+    public boolean loadData() {
+        if (!Client.getInstance().getNetworkState()) {
+            setRefreshing(false);
+            return false;
+        }
         alreadyCallLoad = true;
-
+        return true;
     }
 
     @CallSuper

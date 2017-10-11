@@ -141,14 +141,17 @@ public class EditPostFragment extends TabFragment {
     }
 
     @Override
-    public void loadData() {
-        super.loadData();
+    public boolean loadData() {
+        if(!super.loadData()){
+            return false;
+        }
         if (postForm.getType() == TYPE_EDIT_POST) {
             loadForm();
         } else {
             messagePanel.insertText(postForm.getMessage());
             messagePanel.getAttachmentsPopup().onLoadAttachments(postForm);
         }
+        return true;
     }
 
     @Override

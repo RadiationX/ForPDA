@@ -99,10 +99,13 @@ public class BrandsFragment extends RecyclerFragment implements BrandsAdapter.On
     }
 
     @Override
-    public void loadData() {
-        super.loadData();
+    public boolean loadData() {
+        if(!super.loadData()){
+            return false;
+        }
         setRefreshing(true);
         mainSubscriber.subscribe(RxApi.DevDb().getBrands(mansCats[selected]), this::onLoad, new Brands());
+        return true;
     }
 
     private void onLoad(Brands brands) {

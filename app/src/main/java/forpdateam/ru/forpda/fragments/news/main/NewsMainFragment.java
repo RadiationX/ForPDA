@@ -88,11 +88,14 @@ public class NewsMainFragment extends RecyclerFragment implements
     }
 
     @Override
-    public void loadData() {
-        super.loadData();
+    public boolean loadData() {
+        if(!super.loadData()){
+            return false;
+        }
         setRefreshing(true);
         page = 1;
         loadDataNews(page, true);
+        return true;
     }
 
     /*@Override

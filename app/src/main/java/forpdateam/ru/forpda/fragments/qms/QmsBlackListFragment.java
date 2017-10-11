@@ -108,10 +108,13 @@ public class QmsBlackListFragment extends RecyclerFragment implements QmsContact
 
 
     @Override
-    public void loadData() {
-        super.loadData();
+    public boolean loadData() {
+        if(!super.loadData()){
+            return false;
+        }
         setRefreshing(true);
         mainSubscriber.subscribe(RxApi.Qms().getBlackList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
+        return true;
     }
 
     private void onLoadContacts(ArrayList<QmsContact> data) {

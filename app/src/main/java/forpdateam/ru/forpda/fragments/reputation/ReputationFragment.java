@@ -224,11 +224,14 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
     }
 
     @Override
-    public void loadData() {
-        super.loadData();
+    public boolean loadData() {
+        if(!super.loadData()){
+            return false;
+        }
         setRefreshing(true);
         refreshToolbarMenuItems(false);
         mainSubscriber.subscribe(RxApi.Reputation().getReputation(data), this::onLoadThemes, data, v -> loadData());
+        return true;
     }
 
     private void tryShowAvatar() {

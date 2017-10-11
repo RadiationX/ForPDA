@@ -159,10 +159,13 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
     }
 
     @Override
-    public void loadData() {
-        super.loadData();
+    public boolean loadData() {
+        if(!super.loadData()){
+            return false;
+        }
         setRefreshing(true);
         mainSubscriber.subscribe(RxApi.Qms().getContactList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
+        return true;
     }
 
     private void onLoadContacts(ArrayList<QmsContact> data) {

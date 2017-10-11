@@ -428,8 +428,10 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     }
 
     @Override
-    public void loadData() {
-        super.loadData();
+    public boolean loadData() {
+        if(!super.loadData()){
+            return false;
+        }
         setRefreshing(true);
 
         refreshToolbarMenuItems(false);
@@ -440,6 +442,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             pollOpen = currentPage.isPollOpen();
         }
         mainSubscriber.subscribe(RxApi.Theme().getTheme(tab_url, true, hatOpen, pollOpen), this::onLoadData, new ThemePage(), v -> loadData());
+        return true;
     }
 
     protected void onLoadData(ThemePage newPage) throws Exception {

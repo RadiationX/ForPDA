@@ -87,10 +87,13 @@ public class BrandFragment extends TabFragment implements BrandAdapter.OnItemCli
     }
 
     @Override
-    public void loadData() {
-        super.loadData();
+    public boolean loadData() {
+        if(!super.loadData()){
+            return false;
+        }
         setRefreshing(true);
         mainSubscriber.subscribe(RxApi.DevDb().getBrand(catId, brandId), this::onLoad, new Brand());
+        return true;
     }
 
     private void onLoad(Brand brand) {
