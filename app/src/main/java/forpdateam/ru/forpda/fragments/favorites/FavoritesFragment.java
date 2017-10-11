@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Observer;
 
@@ -224,7 +225,7 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
 
     @Override
     public boolean loadData() {
-        if(!super.loadData()){
+        if (!super.loadData()) {
             return false;
         }
         setRefreshing(true);
@@ -370,27 +371,47 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
             currentItems.add(new FavItem(itemBd));
         }
 
-        //for (int i = event.getLoadedEvents().size() - 1; i >= 0; i--) {
-        //NotificationEvent loadedEvent = event.getLoadedEvents().get(i);
         NotificationEvent loadedEvent = event.getEvent();
         int id = loadedEvent.getSourceId();
         for (IFavItem item : currentItems) {
             if (item.getTopicId() == id) {
-                currentItems.remove(item);
                 if (item.getLastUserId() != ClientHelper.getUserId())
                     item.setNew(true);
                 item.setLastUserNick(loadedEvent.getUserNick());
                 item.setLastUserId(loadedEvent.getUserId());
                 item.setPin(loadedEvent.isImportant());
-                //Collections.swap(currentItems, currentItems.indexOf(item), 0);
-                currentItems.add(0, item);
                 break;
             }
         }
-        //}
+
+        Collections.sort(currentItems, (o1, o2) -> {
+            if (sorting.getKey().equals(Sorting.Key.TITLE)) {
+                if (sorting.getOrder().equals(Sorting.Order.ASC)) {
+                    return o1.getTopicTitle().compareToIgnoreCase(o2.getTopicTitle());
+                } else if (sorting.getOrder().equals(Sorting.Order.DESC)) {
+                    return o2.getTopicTitle().compareToIgnoreCase(o1.getTopicTitle());
+                }
+            }
+            return 0;
+        });
+
+        if (sorting.getKey().equals(Sorting.Key.LAST_POST)) {
+            for (IFavItem item : currentItems) {
+                if (item.getTopicId() == id) {
+                    currentItems.remove(item);
+                    int index = 0;
+                    if (sorting.getOrder().equals(Sorting.Order.ASC)) {
+                        index = currentItems.size();
+                    }
+                    currentItems.add(index, item);
+                    break;
+                }
+            }
+        }
+
 
         if (realm.isClosed()) return;
-        realm.executeTransactionAsync(r -> {
+        realm.executeTransaction(r -> {
             r.delete(FavItemBd.class);
             List<FavItemBd> bdList = new ArrayList<>();
             for (IFavItem item : currentItems) {
@@ -398,7 +419,8 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
             }
             r.copyToRealmOrUpdate(bdList);
             bdList.clear();
-        }, this::bindView);
+        });
+        bindView();
     }
 
     public void changeFav(int action, String type, int favId) {
