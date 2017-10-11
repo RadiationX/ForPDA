@@ -157,6 +157,13 @@ function makePostGp() {
     var result = changesContent;
 
     postGpField.value = result;
+    if (result.length > 500) {
+        if (!postGpField.classList.contains("error")) {
+            postGpField.classList.add("error");
+        }
+    }else{
+        postGpField.classList.remove("error");
+    }
 }
 
 function makeJson() {
