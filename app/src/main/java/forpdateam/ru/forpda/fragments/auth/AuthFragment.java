@@ -127,9 +127,12 @@ public class AuthFragment extends TabFragment {
     }
 
     @Override
-    public void loadData() {
-        super.loadData();
+    public boolean loadData() {
+        if(!super.loadData()){
+            return false;
+        }
         mainSubscriber.subscribe(RxApi.Auth().getForm(), this::onLoadForm, new AuthForm(), view1 -> loadData());
+        return true;
     }
 
     private void onLoadForm(AuthForm authForm) {

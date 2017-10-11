@@ -33,7 +33,7 @@ import io.realm.Sort;
  */
 
 public class HistoryFragment extends RecyclerFragment implements HistoryAdapter.OnItemClickListener<HistoryItemBd> {
-    private final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM.dd.yy, HH:mm", Locale.getDefault());
+    private final static SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy, HH:mm", Locale.getDefault());
     private HistoryAdapter adapter;
     private Realm realm;
     private AlertDialogMenu<HistoryFragment, HistoryItemBd> dialogMenu, showedDialogMenu;

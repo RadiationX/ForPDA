@@ -121,13 +121,16 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
 
 
     @Override
-    public void loadData() {
-        super.loadData();
+    public boolean loadData() {
+        if(!super.loadData()){
+            return false;
+        }
         setRefreshing(true);
 
         refreshToolbarMenuItems(false);
 
         mainSubscriber.subscribe(RxApi.Qms().getThemesList(currentThemes.getUserId()), this::onLoadThemes, currentThemes, v -> loadData());
+        return true;
     }
 
     private void onLoadThemes(QmsThemes themes) {

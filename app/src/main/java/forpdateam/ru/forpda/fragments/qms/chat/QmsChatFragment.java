@@ -264,13 +264,16 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     }
 
     @Override
-    public void loadData() {
-        super.loadData();
+    public boolean loadData() {
+        if(!super.loadData()){
+            return false;
+        }
         if (currentChat.getUserId() != QmsChatModel.NOT_CREATED && currentChat.getThemeId() != QmsChatModel.NOT_CREATED) {
             refreshToolbarMenuItems(false);
             progressBar.setVisibility(View.VISIBLE);
             mainSubscriber.subscribe(RxApi.Qms().getChat(currentChat.getUserId(), currentChat.getThemeId()), this::onLoadChat, new QmsChatModel(), v -> loadData());
         }
+        return true;
     }
 
     private void onNewThemeCreate(QmsChatModel chat) {

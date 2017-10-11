@@ -215,8 +215,10 @@ public class NewsDetailsFragment extends TabFragment {
     }
 
     @Override
-    public void loadData() {
-        super.loadData();
+    public boolean loadData() {
+        if(!super.loadData()){
+            return false;
+        }
         //webViewContainer.setRefreshing(true);
         progressBar.setVisibility(View.VISIBLE);
         loadCoverImage();
@@ -227,6 +229,7 @@ public class NewsDetailsFragment extends TabFragment {
             observable = RxApi.NewsList().getDetails(newsId);
         }
         mainSubscriber.subscribe(observable, this::onLoadArticle, new DetailsPage(), v -> loadData());
+        return true;
     }
 
     private void onLoadArticle(DetailsPage article) {

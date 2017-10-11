@@ -553,10 +553,12 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
     }
 
     @Override
-    public void loadData() {
-        super.loadData();
+    public boolean loadData() {
+        if(!super.loadData()){
+            return false;
+        }
         if (settings.getQuery().isEmpty() && settings.getNick().isEmpty()) {
-            return;
+            return true;
         }
         buildTitle();
         hidePopupWindows();
@@ -566,6 +568,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         setRefreshing(true);
         boolean withHtml = settings.getResult().equals(SearchSettings.RESULT_POSTS.first) && settings.getResourceType().equals(SearchSettings.RESOURCE_FORUM.first);
         mainSubscriber.subscribe(RxApi.Search().getSearch(settings, withHtml), this::onLoadData, new SearchResult(), v -> loadData());
+        return true;
     }
 
     private void onLoadData(SearchResult searchResult) {

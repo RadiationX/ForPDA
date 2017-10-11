@@ -1,6 +1,12 @@
 package forpdateam.ru.forpda.realm;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import io.realm.DynamicRealm;
 import io.realm.RealmMigration;
@@ -21,14 +27,36 @@ public class DbMigration implements RealmMigration {
         RealmSchema schema = realm.getSchema();
 
         if (oldVersion == 1) {
-            RealmObjectSchema schemaNews = schema.get("FavItemBd");
-            if (schemaNews != null) {
-                schemaNews
+            RealmObjectSchema favSchema = schema.get("FavItemBd");
+            if (favSchema != null) {
+                favSchema
                         .removeField("isNewMessages")
                         .removeField("info")
                         .addField("isNew", boolean.class)
                         .addField("isPoll", boolean.class)
                         .addField("isClosed", boolean.class);
+            }
+
+            oldVersion++;
+        }
+
+        if (oldVersion == 2) {
+            RealmObjectSchema historySchema = schema.get("HistoryItemBd");
+            if (historySchema != null) {
+                SimpleDateFormat oldDateFormat = new SimpleDateFormat("MM.dd.yy, HH:mm", Locale.getDefault());
+                SimpleDateFormat newDateFormat = new SimpleDateFormat("dd.MM.yy, HH:mm", Locale.getDefault());
+                historySchema
+                        .transform(dynamicRealmObject -> {
+                            String dateString = dynamicRealmObject.getString("date");
+                            Date date = new Date();
+                            try {
+                                date = oldDateFormat.parse(dateString);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            Log.d("SUKA", "DATES " + dateString + " : " + newDateFormat.format(date));
+                            dynamicRealmObject.setString("date", newDateFormat.format(date));
+                        });
             }
 
             oldVersion++;

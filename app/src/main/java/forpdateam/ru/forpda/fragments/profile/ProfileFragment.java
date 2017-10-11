@@ -159,10 +159,13 @@ public class ProfileFragment extends TabFragment implements ProfileAdapter.Click
     }
 
     @Override
-    public void loadData() {
-        super.loadData();
+    public boolean loadData() {
+        if(!super.loadData()){
+            return false;
+        }
         refreshToolbarMenuItems(false);
         mainSubscriber.subscribe(RxApi.Profile().getProfile(tab_url), this::onProfileLoad, new ProfileModel(), v -> loadData());
+        return true;
     }
 
     @Override

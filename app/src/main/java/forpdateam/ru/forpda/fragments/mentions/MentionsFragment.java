@@ -72,10 +72,13 @@ public class MentionsFragment extends RecyclerFragment implements MentionsAdapte
     }
 
     @Override
-    public void loadData() {
-        super.loadData();
+    public boolean loadData() {
+        if(!super.loadData()){
+            return false;
+        }
         setRefreshing(true);
         mainSubscriber.subscribe(RxApi.Mentions().getMentions(currentSt), this::onLoadThemes, new MentionsData(), v -> loadData());
+        return true;
     }
 
     private void onLoadThemes(MentionsData data) {
