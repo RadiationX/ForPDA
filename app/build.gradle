@@ -13,11 +13,11 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
 
-    def versionNumber = 53
+    def versionNumber = 54
 
     def versionMajor = 0
     def versionMinor = 5
-    def versionPatch = 54
+    def versionPatch = 6
 
     def versionBuild = -1
     def versionPropsFile = file('version.properties')
