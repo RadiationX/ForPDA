@@ -51,6 +51,11 @@ body {
 .wrapper .block input[type="text"]:focus {
   border: 1px solid #b3b3b3;
 }
+.wrapper .block textarea.error,
+.wrapper .block input[type="text"].error {
+  border-color: #eb4d4d;
+  box-shadow: 0 1px 3px -1px #eb4d4d;
+}
 .wrapper .block input[type="text"] {
   width: auto;
 }
