@@ -8,9 +8,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationManagerCompat;
@@ -50,7 +48,6 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
-import okio.ByteString;
 
 /**
  * Created by radiationx on 31.07.17.
@@ -64,6 +61,7 @@ public class NotificationsService extends Service {
     private NotificationManagerCompat mNotificationManager;
     private SparseArray<NotificationEvent> eventsHistory = new SparseArray<>();
     private WebSocket webSocket;
+    private boolean connected = false;
     private long lastHardCheckTime = 0;
     private long timerPeriod = Preferences.Notifications.Main.getLimit();
     private HashMap<NotificationEvent.Source, SparseArray<NotificationEvent>> pendingEvents = new HashMap<>(3);
@@ -145,6 +143,7 @@ public class NotificationsService extends Service {
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
             Log.d(LOG_TAG, "WSListener onOpen: " + response.toString());
+            connected = true;
         }
 
         @Override
@@ -168,19 +167,9 @@ public class NotificationsService extends Service {
         }
 
         @Override
-        public void onMessage(WebSocket webSocket, ByteString bytes) {
-            Log.d(LOG_TAG, "WSListener onMessage: " + bytes.hex());
-        }
-
-        @Override
-        public void onClosing(WebSocket webSocket, int code, String reason) {
-            Log.d(LOG_TAG, "WSListener onClosing: " + code + " " + reason);
-            webSocket.close(1000, null);
-        }
-
-        @Override
         public void onClosed(WebSocket webSocket, int code, String reason) {
             Log.d(LOG_TAG, "WSListener onClosed: " + code + " " + reason);
+            stop();
         }
 
         @Override
@@ -188,9 +177,6 @@ public class NotificationsService extends Service {
             Log.d(LOG_TAG, "WSListener onFailure: " + t.getMessage() + " " + response);
             t.printStackTrace();
             stop();
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                start(false);
-            }, 1000);
         }
     };
 
@@ -257,7 +243,7 @@ public class NotificationsService extends Service {
 
     private void start(boolean checkEvents) {
         if (Client.getInstance().getNetworkState()) {
-            if (webSocket == null) {
+            if (!connected) {
                 webSocket = Client.getInstance().createWebSocketConnection(webSocketListener);
             }
             webSocket.send("[0,\"sv\"]");
@@ -273,14 +259,8 @@ public class NotificationsService extends Service {
     }
 
     private void stop() {
-        if (webSocket != null) {
-            try {
-                webSocket.close(1000, null);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-        webSocket = null;
+        connected = false;
+        webSocket.cancel();
         cancelTimer();
     }
 
@@ -297,9 +277,7 @@ public class NotificationsService extends Service {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         Log.i(LOG_TAG, "onTaskRemoved");
-        if (webSocket != null) {
-            webSocket.close(1000, null);
-        }
+        stop();
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
             Intent restartIntent = new Intent(this, getClass());
 

@@ -189,18 +189,17 @@ public class Client implements IWebClient {
     };
 
     private final OkHttpClient client = new OkHttpClient.Builder()
-            .connectTimeout(60, TimeUnit.SECONDS)
-            .writeTimeout(60, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
-            //.addInterceptor(new ChuckInterceptor(App.getContext()))
+            .connectTimeout(45, TimeUnit.SECONDS)
+            .writeTimeout(45, TimeUnit.SECONDS)
+            .readTimeout(45, TimeUnit.SECONDS)
             .cookieJar(cookieJar)
             .build();
 
     private final OkHttpClient webSocketClient = new OkHttpClient.Builder()
-            .connectTimeout(60, TimeUnit.SECONDS)
-            .writeTimeout(60, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
-            //.addInterceptor(new ChuckInterceptor(App.getContext()))
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(true)
             .cookieJar(cookieJar)
             .build();
 
