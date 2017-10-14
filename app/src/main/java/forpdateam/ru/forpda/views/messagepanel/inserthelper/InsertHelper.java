@@ -10,6 +10,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -47,10 +48,12 @@ public class InsertHelper {
     }
 
     public void setBody(String title, String value) {
-        if (false) {
+        if (true) {
             this.body = new Pair<>(title, value);
             TextInputLayout inputLayout = (TextInputLayout) inflater.inflate(R.layout.insert_helper_item, null);
             inputLayout.setHint(title);
+            TextView textView = (TextView) inputLayout.findViewById(R.id.insert_helper_item_text);
+            textView.setText(value);
             bodyLayout = inputLayout.getEditText();
             itemsContainer.addView(inputLayout);
         }

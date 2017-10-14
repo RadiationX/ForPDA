@@ -167,6 +167,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
         Log.d(LOG_TAG, "updateHistoryLast " + themePage + " : " + currentPage);
         ThemePage lastHistory = history.get(history.size() - 1);
         themePage.getAnchors().addAll(lastHistory.getAnchors());
+        themePage.setScrollY(lastHistory.getScrollY());
         history.set(history.size() - 1, themePage);
     }
 
@@ -351,6 +352,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
     public void onDomContentComplete(final ArrayList<String> actions) {
         Log.d(LOG_TAG, "DOMContentLoaded");
         actions.add("setLoadAction(" + loadAction + ");");
+        Log.e("WebConsole", "" + currentPage.getScrollY() + " : " + App.get().getDensity() + " : " + ((int) (currentPage.getScrollY() / App.get().getDensity())));
         actions.add("setLoadScrollY(" + ((int) (currentPage.getScrollY() / App.get().getDensity())) + ");");
     }
 

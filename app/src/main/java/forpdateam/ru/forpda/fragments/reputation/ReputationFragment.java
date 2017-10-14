@@ -225,7 +225,7 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
 
     @Override
     public boolean loadData() {
-        if(!super.loadData()){
+        if (!super.loadData()) {
             return false;
         }
         setRefreshing(true);
@@ -243,8 +243,10 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(forumUser -> {
-                        ImageLoader.getInstance().displayImage(forumUser.getAvatar(), toolbarImageView);
-                        toolbarImageView.setVisibility(View.VISIBLE);
+                        if (forumUser.getAvatar() != null && !forumUser.getAvatar().isEmpty()) {
+                            ImageLoader.getInstance().displayImage(forumUser.getAvatar(), toolbarImageView);
+                            toolbarImageView.setVisibility(View.VISIBLE);
+                        }
                     });
         } else {
             toolbarImageView.setVisibility(View.GONE);
