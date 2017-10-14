@@ -265,7 +265,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
 
     @Override
     public boolean loadData() {
-        if(!super.loadData()){
+        if (!super.loadData()) {
             return false;
         }
         if (currentChat.getUserId() != QmsChatModel.NOT_CREATED && currentChat.getThemeId() != QmsChatModel.NOT_CREATED) {
@@ -418,8 +418,10 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(forumUser -> {
-                        ImageLoader.getInstance().displayImage(forumUser.getAvatar(), toolbarImageView);
-                        toolbarImageView.setVisibility(View.VISIBLE);
+                        if (forumUser.getAvatar() != null && !forumUser.getAvatar().isEmpty()) {
+                            ImageLoader.getInstance().displayImage(forumUser.getAvatar(), toolbarImageView);
+                            toolbarImageView.setVisibility(View.VISIBLE);
+                        }
                     });
         } else {
             toolbarImageView.setVisibility(View.GONE);

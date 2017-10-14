@@ -91,7 +91,7 @@ function scrollToElement(name) {
     console.log("ANCHOR " + name);
     console.log("loadAction " + window.loadAction);
     console.log("loadScrollY " + window.loadScrollY);
-    if (window.loadAction == BACK_ACTION) {
+    if (window.loadAction == BACK_ACTION||window.loadAction == REFRESH_ACTION) {
         setTimeout(function () {
             window.scrollTo(0, window.loadScrollY);
         }, 1);
@@ -100,7 +100,7 @@ function scrollToElement(name) {
                 window.scrollTo(0, window.loadScrollY);
             }, 1);
         });
-    } else {
+    } else if(window.loadAction == NORMAL_ACTION) {
         setTimeout(function () {
             doScroll(anchorElem);
         }, 1);

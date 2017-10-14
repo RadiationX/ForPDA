@@ -465,7 +465,9 @@ public class TabFragment extends Fragment {
         if (!disposable.isDisposed())
             disposable.dispose();
         hidePopupWindows();
-        contentController.destroy();
+        if (contentController != null) {
+            contentController.destroy();
+        }
         ClientHelper.getInstance().removeCountsObserver(countsObserver);
         Client.getInstance().removeNetworkObserver(networkObserver);
         App.get().removePreferenceChangeObserver(tabPreferenceObserver);

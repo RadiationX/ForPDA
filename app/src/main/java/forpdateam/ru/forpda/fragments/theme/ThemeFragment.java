@@ -421,7 +421,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     public void loadData(int action) {
         setAction(action);
-        if (action == NORMAL_ACTION) {
+        if (action == NORMAL_ACTION || action == REFRESH_ACTION) {
             updateHistoryLastHtml();
         }
         loadData();
@@ -429,7 +429,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     @Override
     public boolean loadData() {
-        if(!super.loadData()){
+        if (!super.loadData()) {
             return false;
         }
         setRefreshing(true);

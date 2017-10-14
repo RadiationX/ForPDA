@@ -26,6 +26,18 @@ public class DbMigration implements RealmMigration {
     public void migrate(@NonNull DynamicRealm realm, long oldVersion, long newVersion) {
         RealmSchema schema = realm.getSchema();
 
+        /*
+            for oldest versions
+            */
+        RealmObjectSchema oldFavSchema = schema.get("FavItemBd");
+        if (oldFavSchema != null && !oldFavSchema.hasField("isForum")) {
+            oldFavSchema.addField("isForum", boolean.class);
+        }
+        RealmObjectSchema oldHistorySchema = schema.get("HistoryItemBd");
+        if (oldHistorySchema != null && !oldHistorySchema.hasField("url")) {
+            oldHistorySchema.addField("url", String.class);
+        }
+
         if (oldVersion == 1) {
             RealmObjectSchema favSchema = schema.get("FavItemBd");
             if (favSchema != null) {
