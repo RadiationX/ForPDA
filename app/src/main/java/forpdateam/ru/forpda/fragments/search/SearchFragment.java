@@ -554,7 +554,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
     @Override
     public boolean loadData() {
-        if(!super.loadData()){
+        if (!super.loadData()) {
             return false;
         }
         if (settings.getQuery().isEmpty() && settings.getNick().isEmpty()) {
@@ -860,36 +860,50 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
     @Override
     public void showUserMenu(IBaseForumPost post) {
+        if (getContext() == null)
+            return;
         ThemeDialogsHelper.showUserMenu(getContext(), this, post);
     }
 
     @Override
     public void showReputationMenu(IBaseForumPost post) {
+        if (getContext() == null)
+            return;
         ThemeDialogsHelper.showReputationMenu(getContext(), this, post);
     }
 
     @Override
     public void showPostMenu(IBaseForumPost post) {
+        if (getContext() == null)
+            return;
         ThemeDialogsHelper.showPostMenu(getContext(), this, post);
     }
 
     @Override
     public void reportPost(IBaseForumPost post) {
+        if (getContext() == null)
+            return;
         ThemeDialogsHelper.tryReportPost(getContext(), post);
     }
 
     @Override
     public void reply(IBaseForumPost post) {
+        if (getContext() == null)
+            return;
         Toast.makeText(getContext(), R.string.action_not_available, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void quotePost(String text, IBaseForumPost post) {
+        if (getContext() == null)
+            return;
         Toast.makeText(getContext(), R.string.action_not_available, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void deletePost(IBaseForumPost post) {
+        if (getContext() == null)
+            return;
         ThemeDialogsHelper.deletePost(getContext(), post, aBoolean -> {
             if (aBoolean)
                 webView.evalJs("deletePost(" + post.getId() + ");");
@@ -910,11 +924,15 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
     @Override
     public void votePost(IBaseForumPost post, boolean type) {
+        if (getContext() == null)
+            return;
         ThemeHelper.votePost(s -> toast(s.isEmpty() ? getString(R.string.unknown_error) : s), post.getId(), type);
     }
 
     @Override
     public void changeReputation(IBaseForumPost post, boolean type) {
+        if (getContext() == null)
+            return;
         ThemeDialogsHelper.changeReputation(getContext(), post, type);
     }
 

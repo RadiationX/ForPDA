@@ -8,7 +8,9 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationManagerCompat;
@@ -58,6 +60,7 @@ public class NotificationsService extends Service {
     public final static String CHECK_LAST_EVENTS = "CHECK_LAST_EVENTS";
     private final static int NOTIFY_STACKED_QMS_ID = -123;
     private final static int NOTIFY_STACKED_FAV_ID = -234;
+    private Handler wsHandler = new Handler(Looper.getMainLooper());
     private NotificationManagerCompat mNotificationManager;
     private SparseArray<NotificationEvent> eventsHistory = new SparseArray<>();
     private WebSocket webSocket;
@@ -158,7 +161,7 @@ public class NotificationsService extends Service {
             try {
                 if (event != null) {
                     if (event.getType() != NotificationEvent.Type.HAT_EDITED) {
-                        handleWebSocketEvent(event);
+                        wsHandler.post(() -> handleWebSocketEvent(event));
                     }
                 }
             } catch (Exception ex) {
@@ -169,14 +172,16 @@ public class NotificationsService extends Service {
         @Override
         public void onClosed(WebSocket webSocket, int code, String reason) {
             Log.d(LOG_TAG, "WSListener onClosed: " + code + " " + reason);
-            stop();
+            //stop();
+            wsHandler.post(() -> stop());
         }
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             Log.d(LOG_TAG, "WSListener onFailure: " + t.getMessage() + " " + response);
             t.printStackTrace();
-            stop();
+            //stop();
+            wsHandler.post(() -> stop());
         }
     };
 

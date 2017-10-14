@@ -936,6 +936,8 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     }
 
     public void toast(final String text) {
+        if (getContext() == null)
+            return;
         Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
     }
 
@@ -961,27 +963,37 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     @Override
     public void showUserMenu(IBaseForumPost post) {
+        if (getContext() == null)
+            return;
         ThemeDialogsHelper.showUserMenu(getContext(), this, post);
     }
 
     @Override
     public void showReputationMenu(IBaseForumPost post) {
+        if (getContext() == null)
+            return;
         ThemeDialogsHelper.showReputationMenu(getContext(), this, post);
     }
 
     @Override
     public void showPostMenu(IBaseForumPost post) {
+        if (getContext() == null)
+            return;
         ThemeDialogsHelper.showPostMenu(getContext(), this, post);
     }
 
     @Override
     public void reportPost(IBaseForumPost post) {
+        if (getContext() == null)
+            return;
         ThemeDialogsHelper.tryReportPost(getContext(), post);
     }
 
     //Удаление сообщения
     @Override
     public void deletePost(IBaseForumPost post) {
+        if (getContext() == null)
+            return;
         ThemeDialogsHelper.deletePost(getContext(), post, aBoolean -> {
             if (aBoolean)
                 deletePostUi(post);
@@ -994,6 +1006,8 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     //Изменение репутации сообщения
     @Override
     public void votePost(IBaseForumPost post, boolean type) {
+        if (getContext() == null)
+            return;
         new AlertDialog.Builder(getContext())
                 .setMessage(String.format(getString(R.string.change_post_reputation_Type_Nick), getString(type ? R.string.increase : R.string.decrease), post.getNick()))
 
@@ -1007,6 +1021,8 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     @SuppressLint("InflateParams")
     @Override
     public void changeReputation(IBaseForumPost post, boolean type) {
+        if (getContext() == null)
+            return;
         ThemeDialogsHelper.changeReputation(getContext(), post, type);
     }
 

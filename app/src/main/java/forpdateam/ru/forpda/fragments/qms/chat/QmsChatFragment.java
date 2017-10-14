@@ -348,7 +348,10 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
 
 
     private void onNewWsMessage(int themeId, int messageId) {
-        int lastMessId = currentChat.getMessages().get(currentChat.getMessages().size() - 1).getId();
+        int lastMessId = 0;
+        if (!currentChat.getMessages().isEmpty()) {
+            lastMessId = currentChat.getMessages().get(currentChat.getMessages().size() - 1).getId();
+        }
         messageSubscriber.subscribe(
                 RxApi.Qms().getMessagesFromWs(themeId, messageId, lastMessId),
                 this::onNewMessages,
@@ -359,7 +362,10 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         if (!currentChat.getMessages().isEmpty()) {
             int userId = currentChat.getUserId();
             int themeId = currentChat.getThemeId();
-            int lastMessId = currentChat.getMessages().get(currentChat.getMessages().size() - 1).getId();
+            int lastMessId = 0;
+            if (!currentChat.getMessages().isEmpty()) {
+                lastMessId = currentChat.getMessages().get(currentChat.getMessages().size() - 1).getId();
+            }
             messageSubscriber.subscribe(
                     RxApi.Qms().getMessagesAfter(userId, themeId, lastMessId),
                     this::onNewMessages,
