@@ -383,17 +383,14 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
                 break;
             }
         }
-
-        Collections.sort(currentItems, (o1, o2) -> {
-            if (sorting.getKey().equals(Sorting.Key.TITLE)) {
-                if (sorting.getOrder().equals(Sorting.Order.ASC)) {
+        if (sorting.getKey().equals(Sorting.Key.TITLE)) {
+            Collections.sort(currentItems, (o1, o2) -> {
+                /*if (sorting.getOrder().equals(Sorting.Order.ASC)) {} else */
+                if (sorting.getOrder().equals(Sorting.Order.ASC))
                     return o1.getTopicTitle().compareToIgnoreCase(o2.getTopicTitle());
-                } else if (sorting.getOrder().equals(Sorting.Order.DESC)) {
-                    return o2.getTopicTitle().compareToIgnoreCase(o1.getTopicTitle());
-                }
-            }
-            return 0;
-        });
+                return o2.getTopicTitle().compareToIgnoreCase(o1.getTopicTitle());
+            });
+        }
 
         if (sorting.getKey().equals(Sorting.Key.LAST_POST)) {
             for (IFavItem item : currentItems) {
