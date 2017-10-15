@@ -137,7 +137,6 @@ public class TabFragment extends Fragment {
                     App.getStatusBarHeight(),
                     fragmentContainer.getPaddingRight(),
                     fragmentContainer.getPaddingBottom());
-
             return;
         }
         if (notifyDot != null) {
@@ -225,7 +224,7 @@ public class TabFragment extends Fragment {
     //Загрузка каких-то данных, выполняется только при наличии сети
     @CallSuper
     public boolean loadData() {
-        if (!Client.getInstance().getNetworkState()) {
+        if (!Client.get().getNetworkState()) {
             setRefreshing(false);
             return false;
         }
@@ -267,9 +266,6 @@ public class TabFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_base, container, false);
         //Осторожно! Чувствительно к структуре разметки! (по идеи так должно работать чуть быстрее)
         fragmentContainer = (RelativeLayout) findViewById(R.id.fragment_container);
-        /*if (configuration.isFitSystemWindow()) {
-            fragmentContainer.setFitsSystemWindows(true);
-        }*/
         coordinatorLayout = (CoordinatorLayout) fragmentContainer.findViewById(R.id.coordinator_layout);
         appBarLayout = (AppBarLayout) coordinatorLayout.findViewById(R.id.appbar_layout);
         toolbarLayout = (CollapsingToolbarLayout) appBarLayout.findViewById(R.id.toolbar_layout);
@@ -290,6 +286,16 @@ public class TabFragment extends Fragment {
         fab = (FloatingActionButton) coordinatorLayout.findViewById(R.id.fab);
 
         contentController = new ContentController(contentProgress, additionalContent, fragmentContent);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        App.get().addStatusBarSizeObserver(statusBarSizeObserver);
+        ClientHelper.get().addCountsObserver(countsObserver);
+        Client.get().addNetworkObserver(networkObserver);
+        App.get().addPreferenceChangeObserver(tabPreferenceObserver);
 
         toolbarTitleView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
         toolbarTitleView.setHorizontallyScrolling(true);
@@ -298,37 +304,30 @@ public class TabFragment extends Fragment {
         toolbarTitleView.setHorizontalFadingEdgeEnabled(true);
         toolbarTitleView.setFadingEdgeLength(App.px16);
 
-        //if (configuration.isFitSystemWindow()) {
-        App.get().addStatusBarSizeObserver(statusBarSizeObserver);
-        //}
-
-        //fragmentContainer.setPadding(0, App.getStatusBarHeight(), 0, 0);
-
-        boolean isMenu = configuration.isAlone() || configuration.isMenu();
-        toolbar.setNavigationOnClickListener(isMenu ? getMainActivity().getToggleListener() : getMainActivity().getRemoveTabListener());
-        toolbar.setNavigationIcon(isMenu ? R.drawable.ic_toolbar_hamburger : R.drawable.ic_toolbar_arrow_back);
-        toolbar.setNavigationContentDescription(isMenu ? getString(R.string.open_menu) : getString(R.string.close_tab));
+        boolean isToggle = configuration.isAlone() || configuration.isMenu();
+        toolbar.setNavigationOnClickListener(isToggle ? getMainActivity().getToggleListener() : getMainActivity().getRemoveTabListener());
+        toolbar.setNavigationIcon(isToggle ? R.drawable.ic_toolbar_hamburger : R.drawable.ic_toolbar_arrow_back);
+        toolbar.setNavigationContentDescription(isToggle ? getString(R.string.open_menu) : getString(R.string.close_tab));
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             findViewById(R.id.toolbar_shadow_prelp).setVisibility(View.VISIBLE);
         }
 
-        if (!Client.getInstance().getNetworkState()) {
+        if (!Client.get().getNetworkState()) {
             if (!configuration.isUseCache())
                 noNetwork.setVisibility(View.VISIBLE);
-            //if (!getTag().equals(TabManager.getActiveTag())) return view;
             Snackbar.make(getCoordinatorLayout(), "No network connection", Snackbar.LENGTH_LONG).show();
         }
 
-        //Для обновления вьюх
         setTitle(title);
         setSubtitle(subtitle);
-
         updateNotifyDot();
-        ClientHelper.getInstance().addCountsObserver(countsObserver);
-        Client.getInstance().addNetworkObserver(networkObserver);
-        App.get().addPreferenceChangeObserver(tabPreferenceObserver);
-        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
     }
 
     protected void baseInflateFragment(LayoutInflater inflater, @LayoutRes int res) {
@@ -354,7 +353,7 @@ public class TabFragment extends Fragment {
 
     protected void viewsReady() {
         addBaseToolbarMenu();
-        if (Client.getInstance().getNetworkState() && !configuration.isUseCache()) {
+        if (Client.get().getNetworkState() && !configuration.isUseCache()) {
             if (!alreadyCallLoad)
                 loadData();
         } else {
@@ -372,13 +371,6 @@ public class TabFragment extends Fragment {
     protected void refreshToolbarMenuItems(boolean enable) {
 
     }
-
-   /* @CallSuper
-    protected void refreshToolbarMenu(){
-        getMenu().clear();
-        addBaseToolbarMenu();
-
-    }*/
 
     protected void updateNotifyDot() {
         if (!showNotifyDot) {
@@ -403,10 +395,8 @@ public class TabFragment extends Fragment {
             if (ClientHelper.getMentionsCount() > 0 && notifyDotMentions) {
                 return true;
             }
-            return false;
-        } else {
-            return false;
         }
+        return false;
     }
 
     protected void initFabBehavior() {
@@ -468,8 +458,8 @@ public class TabFragment extends Fragment {
         if (contentController != null) {
             contentController.destroy();
         }
-        ClientHelper.getInstance().removeCountsObserver(countsObserver);
-        Client.getInstance().removeNetworkObserver(networkObserver);
+        ClientHelper.get().removeCountsObserver(countsObserver);
+        Client.get().removeNetworkObserver(networkObserver);
         App.get().removePreferenceChangeObserver(tabPreferenceObserver);
         App.get().removeStatusBarSizeObserver(statusBarSizeObserver);
     }

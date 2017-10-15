@@ -402,7 +402,7 @@ public class IntentHandler {
 
     private static void redirectDownload(String fileName, String url) {
         Toast.makeText(App.getContext(), String.format(App.get().getString(R.string.perform_request_link), fileName), Toast.LENGTH_SHORT).show();
-        Observable.fromCallable(() -> Client.getInstance().request(new NetworkRequest.Builder().url(url).withoutBody().build()))
+        Observable.fromCallable(() -> Client.get().request(new NetworkRequest.Builder().url(url).withoutBody().build()))
                 .onErrorReturn(throwable -> new NetworkResponse(null))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

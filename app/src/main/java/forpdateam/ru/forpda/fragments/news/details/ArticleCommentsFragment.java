@@ -146,7 +146,7 @@ public class ArticleCommentsFragment extends Fragment implements ArticleComments
             writePanel.setVisibility(View.GONE);
         }
 
-        ClientHelper.getInstance().addLoginObserver(loginObserver);
+        ClientHelper.get().addLoginObserver(loginObserver);
         return view;
     }
 
@@ -210,6 +210,6 @@ public class ArticleCommentsFragment extends Fragment implements ArticleComments
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ClientHelper.getInstance().removeLoginObserver(loginObserver);
+        ClientHelper.get().removeLoginObserver(loginObserver);
     }
 }

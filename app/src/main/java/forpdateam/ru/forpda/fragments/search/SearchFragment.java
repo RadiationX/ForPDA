@@ -185,18 +185,9 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         initFabBehavior();
-        fab.setSize(FloatingActionButton.SIZE_MINI);
-        if (scrollButtonEnable) {
-            fab.setVisibility(View.VISIBLE);
-        } else {
-            fab.setVisibility(View.GONE);
-        }
-        fab.setScaleX(0.0f);
-        fab.setScaleY(0.0f);
-        fab.setAlpha(0.0f);
+
         baseInflateFragment(inflater, R.layout.fragment_search);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
-        //recyclerView = (RecyclerView) findViewById(R.id.base_list);
         searchSettingsView = (ViewGroup) View.inflate(getContext(), R.layout.search_settings, null);
 
         nickBlock = (ViewGroup) searchSettingsView.findViewById(R.id.search_nick_block);
@@ -215,18 +206,23 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         submitButton = (Button) searchSettingsView.findViewById(R.id.search_submit);
         saveSettingsButton = (Button) searchSettingsView.findViewById(R.id.search_save_settings);
 
-        contentController.setMainRefresh(refreshLayout);
-
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
-        webView.setJsLifeCycleListener(this);
-        webView.addJavascriptInterface(this, ThemeFragmentWeb.JS_INTERFACE);
-        webView.addJavascriptInterface(this, JS_INTERFACE);
-        webView.addJavascriptInterface(this, JS_POSTS_FUNCTIONS);
-        webView.setRelativeFontSize(Preferences.Main.getWebViewSize());
         recyclerView = new RecyclerView(getContext());
-
         recyclerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         webView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        refreshLayout.addView(recyclerView);
+
+        paginationHelper = new PaginationHelper(getActivity());
+        paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow());
+
+        contentController.setMainRefresh(refreshLayout);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        viewsReady();
 
         fab.setOnClickListener(v -> {
             if (webView.getDirection() == ExtendedWebView.DIRECTION_DOWN) {
@@ -243,12 +239,25 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
             }
         });
 
-        refreshLayout.addView(recyclerView);
-        viewsReady();
+        webView.setJsLifeCycleListener(this);
+        webView.addJavascriptInterface(this, ThemeFragmentWeb.JS_INTERFACE);
+        webView.addJavascriptInterface(this, JS_INTERFACE);
+        webView.addJavascriptInterface(this, JS_POSTS_FUNCTIONS);
+        webView.setRelativeFontSize(Preferences.Main.getWebViewSize());
+
+        fab.setSize(FloatingActionButton.SIZE_MINI);
+        if (scrollButtonEnable) {
+            fab.setVisibility(View.VISIBLE);
+        } else {
+            fab.setVisibility(View.GONE);
+        }
+        fab.setScaleX(0.0f);
+        fab.setScaleY(0.0f);
+        fab.setAlpha(0.0f);
+
         setCardsBackground();
         App.get().addPreferenceChangeObserver(searchPreferenceObserver);
-        paginationHelper = new PaginationHelper(getActivity());
-        paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow());
+
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {
@@ -317,9 +326,9 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
         if (App.get().getPreferences().getBoolean("search.tooltip.settings", true)) {
             for (int toolbarChildIndex = 0; toolbarChildIndex < toolbar.getChildCount(); toolbarChildIndex++) {
-                View view = toolbar.getChildAt(toolbarChildIndex);
-                if (view instanceof ActionMenuView) {
-                    ActionMenuView menuView = (ActionMenuView) view;
+                View childView = toolbar.getChildAt(toolbarChildIndex);
+                if (childView instanceof ActionMenuView) {
+                    ActionMenuView menuView = (ActionMenuView) childView;
                     for (int menuChildIndex = 0; menuChildIndex < menuView.getChildCount(); menuChildIndex++) {
                         try {
                             ActionMenuItemView itemView = (ActionMenuItemView) menuView.getChildAt(menuChildIndex);
@@ -349,7 +358,6 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         }
 
 
-        return view;
     }
 
     private MenuItem settingsMenuItem;

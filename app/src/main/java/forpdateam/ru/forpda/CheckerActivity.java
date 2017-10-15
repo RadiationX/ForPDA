@@ -110,7 +110,7 @@ public class CheckerActivity extends AppCompatActivity {
         setRefreshing(true);
         updateContent.removeAllViews();
         Observable.fromCallable(() -> {
-            NetworkResponse response = Client.getInstance().get(JSON_LINK);
+            NetworkResponse response = Client.get().get(JSON_LINK);
             String body;
             body = response.getBody();
             return body;

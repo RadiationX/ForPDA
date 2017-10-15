@@ -4,9 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Pair;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
@@ -61,13 +59,11 @@ public class BrandsFragment extends RecyclerFragment implements BrandsAdapter.On
         }
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         viewsReady();
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
         titlesWrapper.setVisibility(View.GONE);
         toolbarSpinner.setVisibility(View.VISIBLE);
@@ -94,13 +90,11 @@ public class BrandsFragment extends RecyclerFragment implements BrandsAdapter.On
         });
 
         adapter.setOnItemClickListener(this);
-
-        return view;
     }
 
     @Override
     public boolean loadData() {
-        if(!super.loadData()){
+        if (!super.loadData()) {
             return false;
         }
         setRefreshing(true);

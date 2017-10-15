@@ -72,18 +72,20 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        paginationHelper = new PaginationHelper(getActivity());
+        paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow());
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         viewsReady();
-        refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         adapter = new ReputationAdapter();
         recyclerView.setAdapter(adapter);
-
-
-        paginationHelper = new PaginationHelper(getActivity());
-        paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow());
-        //paginationHelper.addInList(inflater, listContainer);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {
@@ -98,8 +100,6 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
         });
 
         adapter.setOnItemClickListener(this);
-
-        return view;
     }
 
     private void someClick(RepItem item) {

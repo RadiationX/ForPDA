@@ -79,8 +79,8 @@ public class DrawerHeader {
 
     public void destroy() {
         activity = null;
-        ClientHelper.getInstance().removeLoginObserver(loginObserver);
-        Client.getInstance().removeNetworkObserver(networkObserver);
+        ClientHelper.get().removeLoginObserver(loginObserver);
+        Client.get().removeNetworkObserver(networkObserver);
     }
 
     public DrawerHeader(MainActivity activity, DrawerLayout drawerLayout) {
@@ -110,8 +110,8 @@ public class DrawerHeader {
                     .setNegativeButton(R.string.cancel, null)
                     .show();
         });
-        ClientHelper.getInstance().addLoginObserver(loginObserver);
-        Client.getInstance().addNetworkObserver(networkObserver);
+        ClientHelper.get().addLoginObserver(loginObserver);
+        Client.get().addNetworkObserver(networkObserver);
         state(ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN);
     }
 

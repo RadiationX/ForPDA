@@ -56,6 +56,12 @@ public class QmsBlackListFragment extends RecyclerFragment implements QmsContact
         viewStub.setLayoutResource(R.layout.toolbar_qms_black_list);
         viewStub.inflate();
         nickField = (AppCompatAutoCompleteTextView) findViewById(R.id.qms_black_list_nick_field);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         viewsReady();
         nickField.addTextChangedListener(new SimpleTextWatcher() {
             @Override
@@ -64,14 +70,12 @@ public class QmsBlackListFragment extends RecyclerFragment implements QmsContact
             }
         });
 
-        refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         adapter = new QmsContactsAdapter();
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener(this);
-        return view;
     }
 
     @Override
@@ -109,7 +113,7 @@ public class QmsBlackListFragment extends RecyclerFragment implements QmsContact
 
     @Override
     public boolean loadData() {
-        if(!super.loadData()){
+        if (!super.loadData()) {
             return false;
         }
         setRefreshing(true);
@@ -120,7 +124,7 @@ public class QmsBlackListFragment extends RecyclerFragment implements QmsContact
     private void onLoadContacts(ArrayList<QmsContact> data) {
         setRefreshing(false);
         if (data.isEmpty()) {
-            if(!contentController.contains(ContentController.TAG_NO_DATA)){
+            if (!contentController.contains(ContentController.TAG_NO_DATA)) {
                 FunnyContent funnyContent = new FunnyContent(getContext())
                         .setImage(R.drawable.ic_contacts)
                         .setTitle(R.string.funny_blacklist_nodata_title)

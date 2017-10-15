@@ -6,10 +6,8 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -39,8 +37,7 @@ import forpdateam.ru.forpda.views.PauseOnScrollListener;
  * Created by isanechek on 8/8/17.
  */
 
-public class NewsMainFragment extends RecyclerFragment implements
-        NewsListAdapter.ItemClickListener {
+public class NewsMainFragment extends RecyclerFragment implements NewsListAdapter.ItemClickListener {
     private NewsListAdapter adapter;
     private String category = Constants.NEWS_CATEGORY_ALL;
     private Subscriber<List<NewsItem>> mainSubscriber = new Subscriber<>(this);
@@ -51,14 +48,9 @@ public class NewsMainFragment extends RecyclerFragment implements
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        viewsReady();
         setCardsBackground();
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -68,8 +60,6 @@ public class NewsMainFragment extends RecyclerFragment implements
         adapter = new NewsListAdapter();
         adapter.setOnClickListener(this);
         recyclerView.setAdapter(adapter);
-        viewsReady();
-        return view;
     }
 
     @Override
@@ -89,7 +79,7 @@ public class NewsMainFragment extends RecyclerFragment implements
 
     @Override
     public boolean loadData() {
-        if(!super.loadData()){
+        if (!super.loadData()) {
             return false;
         }
         setRefreshing(true);

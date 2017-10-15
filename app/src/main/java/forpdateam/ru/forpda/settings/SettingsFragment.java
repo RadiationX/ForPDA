@@ -39,7 +39,7 @@ public class SettingsFragment extends BasePrefsFragment {
                                         .subscribe(aBoolean -> {
                                             if (aBoolean) {
                                                 Toast.makeText(App.getContext(), "Logout complete", Toast.LENGTH_LONG).show();
-                                                ClientHelper.getInstance().notifyAuthChanged(ClientHelper.AUTH_STATE_LOGOUT);
+                                                ClientHelper.get().notifyAuthChanged(ClientHelper.AUTH_STATE_LOGOUT);
                                             } else {
                                                 Toast.makeText(App.getContext(), "Logout error", Toast.LENGTH_LONG).show();
                                             }

@@ -43,14 +43,17 @@ public class MentionsFragment extends RecyclerFragment implements MentionsAdapte
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        viewsReady();
-        refreshLayoutStyle(refreshLayout);
-        refreshLayout.setOnRefreshListener(this::loadData);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
         paginationHelper = new PaginationHelper(getActivity());
         paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow());
-        //paginationHelper.addInList(inflater, listContainer);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        viewsReady();
+        refreshLayout.setOnRefreshListener(this::loadData);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {
@@ -63,12 +66,9 @@ public class MentionsFragment extends RecyclerFragment implements MentionsAdapte
                 loadData();
             }
         });
-        //recyclerView.addItemDecoration(new DividerItemDecoration(getContext()));
         adapter = new MentionsAdapter();
         adapter.setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
-
-        return view;
     }
 
     @Override
