@@ -669,7 +669,8 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
     @Override
     public void onDestroy() {
         super.onDestroy();
-        paginationHelper.destroy();
+        if (paginationHelper != null)
+            paginationHelper.destroy();
     }
 
     @Override

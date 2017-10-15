@@ -163,7 +163,8 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
     @Override
     public void onDestroy() {
         super.onDestroy();
-        paginationHelper.destroy();
+        if (paginationHelper != null)
+            paginationHelper.destroy();
     }
 
     @Override

@@ -184,7 +184,7 @@ public class Preferences {
             }
 
             public static long getLimit() {
-                return Integer.parseInt(preferences().getString(LIMIT, "10"))*1000;
+                return Integer.parseInt(preferences().getString(LIMIT, "10")) * 1000;
             }
         }
 
@@ -192,6 +192,7 @@ public class Preferences {
             private final static String PREFIX = Notifications.PREFIX + "fav.";
             public final static String ENABLED = PREFIX + "enabled";
             public final static String ONLY_IMPORTANT = PREFIX + "only_important";
+            public final static String LIVE_TAB = PREFIX + "live_tab";
 
             public static boolean isEnabled() {
                 return preferences().getBoolean(ENABLED, true);
@@ -199,6 +200,10 @@ public class Preferences {
 
             public static boolean isOnlyImportant() {
                 return preferences().getBoolean(ONLY_IMPORTANT, false);
+            }
+
+            public static boolean isLiveTab() {
+                return preferences().getBoolean(LIVE_TAB, true);
             }
         }
 

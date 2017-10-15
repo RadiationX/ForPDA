@@ -370,6 +370,8 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
     }
 
     private void handleEvent(TabNotification event) {
+        Log.e("SUKA", "LIVE TAB " + Preferences.Notifications.Favorites.isLiveTab());
+        if (!Preferences.Notifications.Favorites.isLiveTab()) return;
         if (event.isWebSocket()) return;
         if (realm.isClosed()) return;
         RealmResults<FavItemBd> results = realm.where(FavItemBd.class).findAll();
@@ -456,7 +458,8 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         super.onDestroy();
         App.get().removePreferenceChangeObserver(favoritesPreferenceObserver);
         App.get().unSubscribeFavorites(notification);
-        paginationHelper.destroy();
+        if (paginationHelper != null)
+            paginationHelper.destroy();
         realm.close();
     }
 
