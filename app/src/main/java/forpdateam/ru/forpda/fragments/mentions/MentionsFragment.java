@@ -73,7 +73,7 @@ public class MentionsFragment extends RecyclerFragment implements MentionsAdapte
 
     @Override
     public boolean loadData() {
-        if(!super.loadData()){
+        if (!super.loadData()) {
             return false;
         }
         setRefreshing(true);
@@ -85,7 +85,7 @@ public class MentionsFragment extends RecyclerFragment implements MentionsAdapte
         setRefreshing(false);
 
         if (data.getItems().isEmpty()) {
-            if(!contentController.contains(ContentController.TAG_NO_DATA)){
+            if (!contentController.contains(ContentController.TAG_NO_DATA)) {
                 FunnyContent funnyContent = new FunnyContent(getContext())
                         .setImage(R.drawable.ic_notifications)
                         .setTitle(R.string.funny_mentions_nodata_title)
@@ -107,7 +107,8 @@ public class MentionsFragment extends RecyclerFragment implements MentionsAdapte
     @Override
     public void onDestroy() {
         super.onDestroy();
-        paginationHelper.destroy();
+        if (paginationHelper != null)
+            paginationHelper.destroy();
     }
 
     @Override

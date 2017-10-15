@@ -362,7 +362,8 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         App.get().unSubscribeFavorites(notification);
         history.clear();
         messagePanel.onDestroy();
-        paginationHelper.destroy();
+        if (paginationHelper != null)
+            paginationHelper.destroy();
     }
 
     @Override

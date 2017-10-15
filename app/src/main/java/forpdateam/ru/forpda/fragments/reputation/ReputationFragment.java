@@ -277,7 +277,8 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
     @Override
     public void onDestroy() {
         super.onDestroy();
-        paginationHelper.destroy();
+        if (paginationHelper != null)
+            paginationHelper.destroy();
     }
 
     @Override

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    android:title="@string/pref_title_notifications">
+                  android:title="@string/pref_title_notifications">
     <PreferenceCategory
         android:layout="@layout/preference_category_custom"
         android:title="@string/pref_title_main">
@@ -8,35 +8,35 @@
             android:defaultValue="true"
             android:key="notifications.main.enabled"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_notify" />
+            android:title="@string/pref_title_notify"/>
 
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.main.sound_enabled"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_sound" />
+            android:title="@string/pref_title_sound"/>
 
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.main.vibration_enabled"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_vibration" />
+            android:title="@string/pref_title_vibration"/>
 
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.main.indicator_enabled"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_indicator" />
+            android:title="@string/pref_title_indicator"/>
 
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.main.avatars_enabled"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_enable_avatars" />
+            android:title="@string/pref_title_enable_avatars"/>
 
         <ListPreference
             android:dialogTitle="Раз в"
@@ -45,7 +45,7 @@
             android:key="notifications.main.limit_period"
             android:layout="@layout/preference_custom"
             android:summary="%s"
-            android:title="Ограничение частоты" />
+            android:title="Ограничение частоты"/>
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -56,14 +56,22 @@
             android:dependency="notifications.main.enabled"
             android:key="notifications.fav.enabled"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_notify" />
+            android:title="@string/pref_title_notify"/>
 
         <forpdateam.ru.forpda.settings.SwitchPreference
             android:defaultValue="false"
             android:dependency="notifications.fav.enabled"
             android:key="notifications.fav.only_important"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_only_important" />
+            android:title="@string/pref_title_only_important"/>
+
+        <forpdateam.ru.forpda.settings.SwitchPreference
+            android:defaultValue="true"
+            android:dependency="notifications.fav.enabled"
+            android:key="notifications.fav.live_tab"
+            android:layout="@layout/preference_custom"
+            android:title="Живой список"
+            android:summary="Обновлять данные во вкладке"/>
 
     </PreferenceCategory>
 
@@ -75,7 +83,7 @@
             android:dependency="notifications.main.enabled"
             android:key="notifications.mentions.enabled"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_notify" />
+            android:title="@string/pref_title_notify"/>
 
     </PreferenceCategory>
 
@@ -87,7 +95,7 @@
             android:dependency="notifications.main.enabled"
             android:key="notifications.qms.enabled"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_notify" />
+            android:title="@string/pref_title_notify"/>
 
     </PreferenceCategory>
 
@@ -98,7 +106,7 @@
             android:defaultValue="true"
             android:key="notifications.update.enabled"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_notify" />
+            android:title="@string/pref_title_notify"/>
 
     </PreferenceCategory>
 </PreferenceScreen>
