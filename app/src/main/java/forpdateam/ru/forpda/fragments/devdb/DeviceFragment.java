@@ -71,6 +71,8 @@ public class DeviceFragment extends TabFragment {
         }
     };
 
+    private MenuItem copyLinkMenuItem, shareMenuItem, noteMenuItem, toBrandMenuItem, toBrandsMenuItem;
+
     public DeviceFragment() {
         configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_device));
     }
@@ -103,44 +105,47 @@ public class DeviceFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        setCardsBackground();
         baseInflateFragment(inflater, R.layout.fragment_device);
         ViewStub viewStub = (ViewStub) findViewById(R.id.toolbar_content);
         viewStub.setLayoutResource(R.layout.toolbar_device);
         toolbarContent = (RelativeLayout) viewStub.inflate();
-
         imagesPager = (PagerBullet) findViewById(R.id.images_pager);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         rating = (TextView) findViewById(R.id.item_rating);
-        viewsReady();
+        fragmentsPager = (ViewPager) findViewById(R.id.view_pager);
 
-        toolbarTitleView.setShadowLayer(App.px2, 0, 0, App.getColorFromAttr(getContext(), R.attr.colorPrimary));
-        toolbarSubtitleView.setShadowLayer(App.px2, 0, 0, App.getColorFromAttr(getContext(), R.attr.colorPrimary));
+        tabLayout = new TabLayout(getContext());
+        CollapsingToolbarLayout.LayoutParams tabParams = new CollapsingToolbarLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM);
+        tabParams.setCollapseMode(CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN);
+        tabLayout.setLayoutParams(tabParams);
+        toolbarLayout.addView(tabLayout);
 
-        toolbarLayout.setExpandedTitleColor(Color.TRANSPARENT);
-        toolbarLayout.setCollapsedTitleTextColor(Color.TRANSPARENT);
-        toolbarLayout.setTitleEnabled(false);
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) toolbarLayout.getLayoutParams();
-        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED); // list other flags here by |
+        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
         toolbarLayout.setLayoutParams(params);
-
 
         CollapsingToolbarLayout.LayoutParams newParams = (CollapsingToolbarLayout.LayoutParams) toolbar.getLayoutParams();
         newParams.setCollapseMode(CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN);
         newParams.bottomMargin = App.px48;
         toolbar.setLayoutParams(newParams);
         toolbar.requestLayout();
+        return view;
+    }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        viewsReady();
 
-        tabLayout = new TabLayout(getContext());
-        CollapsingToolbarLayout.LayoutParams tabparams = new CollapsingToolbarLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM);
-        tabparams.setCollapseMode(CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN);
-        tabLayout.setLayoutParams(tabparams);
+        setCardsBackground();
+        toolbarTitleView.setShadowLayer(App.px2, 0, 0, App.getColorFromAttr(getContext(), R.attr.colorPrimary));
+        toolbarSubtitleView.setShadowLayer(App.px2, 0, 0, App.getColorFromAttr(getContext(), R.attr.colorPrimary));
+
+        toolbarLayout.setExpandedTitleColor(Color.TRANSPARENT);
+        toolbarLayout.setCollapsedTitleTextColor(Color.TRANSPARENT);
+        toolbarLayout.setTitleEnabled(false);
+
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
-        toolbarLayout.addView(tabLayout);
-
-
-        fragmentsPager = (ViewPager) findViewById(R.id.view_pager);
         tabLayout.setupWithViewPager(fragmentsPager);
 
         imagesPager.setIndicatorTintColorScheme(App.getColorFromAttr(getContext(), R.attr.default_text_color), App.getColorFromAttr(getContext(), R.attr.second_text_color));
@@ -148,10 +153,7 @@ public class DeviceFragment extends TabFragment {
         if (configuration.isFitSystemWindow()) {
             App.get().addStatusBarSizeObserver(statusBarSizeObserver);
         }
-        return view;
     }
-
-    private MenuItem copyLinkMenuItem, shareMenuItem, noteMenuItem, toBrandMenuItem, toBrandsMenuItem;
 
     @Override
     protected void addBaseToolbarMenu() {

@@ -120,37 +120,26 @@ public class NewsDetailsFragment extends TabFragment {
         fragmentsPager = (ViewPager) findViewById(R.id.view_pager);
         webViewContainer = (FrameLayout) findViewById(R.id.swipe_refresh_list);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-
-
-        ViewStub viewStub = (ViewStub) findViewById(R.id.toolbar_content);
-        viewStub.setLayoutResource(R.layout.toolbar_news_details);
-        viewStub.inflate();
         detailsImage = (ImageView) findViewById(R.id.article_image);
         detailsTitle = (TextView) findViewById(R.id.article_title);
         detailsNick = (TextView) findViewById(R.id.article_nick);
         detailsDate = (TextView) findViewById(R.id.article_date);
         imageProgressBar = (ProgressBar) findViewById(R.id.article_progress_bar);
-        viewsReady();
-        //webViewContainer.setOnRefreshListener(this::loadData);
-        //refreshLayoutStyle(webViewContainer);
+        ViewStub viewStub = (ViewStub) findViewById(R.id.toolbar_content);
+        viewStub.setLayoutResource(R.layout.toolbar_news_details);
+        viewStub.inflate();
 
-
-
-        /*toolbar.removeViewAt(0);
-
-        toolbarLayout.setTitleEnabled(true);
-        toolbar.setTitle(news.newsTitle);
-        toolbarLayout.setTitle(news.newsTitle);
-        toolbarLayout.setExpandedTitleGravity(Gravity.BOTTOM | Gravity.LEFT);
-        //toolbarLayout.setExpandedTitleMarginTop(App.px64 );
-        //toolbarLayout.setScrimVisibleHeightTrigger(App.px36);
-        toolbarLayout.setExpandedTitleColor(Color.RED);
-        toolbarLayout.setCollapsedTitleTextColor(Color.BLUE);
-        //toolbarLayout.setExpandedTitleTextAppearance(R.style.QText);
-        toolbarLayout.setScrimAnimationDuration(225);*/
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) toolbarLayout.getLayoutParams();
         params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
         toolbarLayout.setLayoutParams(params);
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        viewsReady();
 
         ScrimHelper scrimHelper = new ScrimHelper(appBarLayout, toolbarLayout);
         scrimHelper.setScrimListener(scrim1 -> {
@@ -180,7 +169,6 @@ public class NewsDetailsFragment extends TabFragment {
         toolbarTitleView.setVisibility(View.GONE);
         toolbar.getNavigationIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         toolbar.getOverflowIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-        return view;
     }
 
     @Override

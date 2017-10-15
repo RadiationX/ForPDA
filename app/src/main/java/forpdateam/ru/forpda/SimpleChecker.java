@@ -23,7 +23,7 @@ import io.reactivex.schedulers.Schedulers;
 public class SimpleChecker {
     public void checkFromGitHub(Context context) {
         Observable.fromCallable(() -> {
-            NetworkResponse response = Client.getInstance().get(CheckerActivity.JSON_LINK);
+            NetworkResponse response = Client.get().get(CheckerActivity.JSON_LINK);
             return response.getBody();
         })
                 .onErrorReturn(throwable -> "")

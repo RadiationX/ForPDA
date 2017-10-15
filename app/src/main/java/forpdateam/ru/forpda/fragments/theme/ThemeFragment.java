@@ -6,6 +6,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -226,38 +227,45 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         initFabBehavior();
-        fab.setSize(FloatingActionButton.SIZE_MINI);
-        if (Preferences.Main.isScrollButtonEnable()) {
-            fab.setVisibility(View.VISIBLE);
-        } else {
-            fab.setVisibility(View.GONE);
-        }
-        fab.setScaleX(0.0f);
-        fab.setScaleY(0.0f);
-        fab.setAlpha(0.0f);
-
-
         baseInflateFragment(inflater, R.layout.fragment_theme);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
+        messagePanel = new MessagePanel(getContext(), fragmentContainer, coordinatorLayout, false);
+        paginationHelper = new PaginationHelper(getActivity());
+        paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow());
 
         notificationView = inflater.inflate(R.layout.new_message_notification, null);
-        fragmentContent.addView(notificationView);
-        notificationView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         notificationTitle = (TextView) notificationView.findViewById(R.id.title);
         notificationButton = (ImageButton) notificationView.findViewById(R.id.icon);
-        notificationTitle.setText("Новое сообщение!");
+        fragmentContent.addView(notificationView);
+        notificationView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        contentController.setMainRefresh(refreshLayout);
+
+        addShowingView();
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        viewsReady();
+        setFontSize(Preferences.Main.getWebViewSize());
+
+        notificationButton.setColorFilter(App.getColorFromAttr(getContext(), R.attr.contrast_text_color), PorterDuff.Mode.SRC_ATOP);
+        notificationTitle.setText("Новое сообщение");
         notificationView.setVisibility(View.GONE);
         notificationButton.setOnClickListener(v -> {
             notificationView.setVisibility(View.GONE);
         });
-        notificationView.setOnClickListener(v -> {
-            tab_url = "https://4pda.ru/forum/index.php?showtopic=" + currentPage.getId() + "&view=getnewpost";
-            loadData(NORMAL_ACTION);
-        });
+        notificationView.findViewById(R.id.new_message_card)
+                .setOnClickListener(v -> {
+                    tab_url = "https://4pda.ru/forum/index.php?showtopic=" + currentPage.getId() + "&view=getnewpost";
+                    loadData(NORMAL_ACTION);
+                    notificationView.setVisibility(View.GONE);
+                });
 
-        contentController.setMainRefresh(refreshLayout);
 
-        messagePanel = new MessagePanel(getContext(), fragmentContainer, coordinatorLayout, false);
+
         messagePanel.enableBehavior();
         messagePanel.addSendOnClickListener(v -> sendMessage());
         messagePanel.getSendButton().setOnLongClickListener(v -> {
@@ -282,8 +290,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         attachmentsPopup.setAddOnClickListener(v -> tryPickFile());
         attachmentsPopup.setDeleteOnClickListener(v -> removeFiles());
 
-        paginationHelper = new PaginationHelper(getActivity());
-        paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow());
+
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {
@@ -299,9 +306,17 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                 loadData(NORMAL_ACTION);
             }
         });
-        addShowingView();
-        setFontSize(Preferences.Main.getWebViewSize());
-        viewsReady();
+
+        fab.setSize(FloatingActionButton.SIZE_MINI);
+        if (Preferences.Main.isScrollButtonEnable()) {
+            fab.setVisibility(View.VISIBLE);
+        } else {
+            fab.setVisibility(View.GONE);
+        }
+        fab.setScaleX(0.0f);
+        fab.setScaleY(0.0f);
+        fab.setAlpha(0.0f);
+
         App.get().addPreferenceChangeObserver(themePreferenceObserver);
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(() -> {
@@ -329,7 +344,6 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             showMessagePanel();
         }
         App.get().subscribeFavorites(notification);
-        return view;
     }
 
     @Override

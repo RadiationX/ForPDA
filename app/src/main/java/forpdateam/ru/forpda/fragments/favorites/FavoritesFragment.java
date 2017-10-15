@@ -130,21 +130,22 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         orderSpinner = (Spinner) sortingView.findViewById(R.id.sorting_order);
         sortApply = (Button) sortingView.findViewById(R.id.sorting_apply);
         dialog = new BottomSheetDialog(getContext());
-
-
+        paginationHelper = new PaginationHelper(getActivity());
+        paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow());
         contentController.setFirstLoad(false);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         viewsReady();
-        refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        //recyclerView.addItemDecoration(new DividerItemDecoration(getContext()));
         adapter = new FavoritesAdapter();
         adapter.setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
 
-        paginationHelper = new PaginationHelper(getActivity());
-        paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow());
-        //paginationHelper.addInList(inflater, listContainer);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {
@@ -189,7 +190,6 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         bindView();
         App.get().addPreferenceChangeObserver(favoritesPreferenceObserver);
         App.get().subscribeFavorites(notification);
-        return view;
     }
 
     @Override
@@ -357,8 +357,8 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         }
         adapter.addSection(new Pair<>(getString(R.string.fav_themes), items));
         adapter.notifyDataSetChanged();
-        if (!Client.getInstance().getNetworkState()) {
-            ClientHelper.getInstance().notifyCountsChanged();
+        if (!Client.get().getNetworkState()) {
+            ClientHelper.get().notifyCountsChanged();
         }
     }
 

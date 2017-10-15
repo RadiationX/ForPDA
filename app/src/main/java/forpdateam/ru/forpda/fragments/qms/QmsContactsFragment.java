@@ -78,13 +78,19 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        initFabBehavior();
         contentController.setFirstLoad(false);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         viewsReady();
+        initFabBehavior();
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        PauseOnScrollListener pauseOnScrollListener = new PauseOnScrollListener(ImageLoader.getInstance(),true, true);
+        PauseOnScrollListener pauseOnScrollListener = new PauseOnScrollListener(ImageLoader.getInstance(), true, true);
         recyclerView.addOnScrollListener(pauseOnScrollListener);
 
 
@@ -98,7 +104,6 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
 
         bindView();
         App.get().subscribeQms(notification);
-        return view;
     }
 
     @Override
@@ -160,7 +165,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
 
     @Override
     public boolean loadData() {
-        if(!super.loadData()){
+        if (!super.loadData()) {
             return false;
         }
         setRefreshing(true);
@@ -189,7 +194,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
         results = realm.where(QmsContactBd.class).findAll();
 
         if (results.isEmpty()) {
-            if(!contentController.contains(ContentController.TAG_NO_DATA)){
+            if (!contentController.contains(ContentController.TAG_NO_DATA)) {
                 FunnyContent funnyContent = new FunnyContent(getContext())
                         .setImage(R.drawable.ic_contacts)
                         .setTitle(R.string.funny_contacts_nodata_title);
@@ -213,7 +218,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
         }
 
         ClientHelper.setQmsCount(count);
-        ClientHelper.getInstance().notifyCountsChanged();
+        ClientHelper.get().notifyCountsChanged();
 
         adapter.addAll(currentItems);
     }

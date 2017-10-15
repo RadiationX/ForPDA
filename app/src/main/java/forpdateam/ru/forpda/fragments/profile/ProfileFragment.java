@@ -95,8 +95,17 @@ public class ProfileFragment extends TabFragment implements ProfileAdapter.Click
         avatar = (ImageView) findViewById(R.id.profile_avatar);
         recyclerView = (RecyclerView) findViewById(R.id.profile_list);
         progressView = (CircularProgressView) findViewById(R.id.profile_progress);
-        viewsReady();
 
+        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) toolbarLayout.getLayoutParams();
+        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED);
+        toolbarLayout.setLayoutParams(params);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        viewsReady();
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         adapter = new ProfileAdapter();
@@ -107,10 +116,6 @@ public class ProfileFragment extends TabFragment implements ProfileAdapter.Click
         toolbarLayout.setCollapsedTitleTextColor(Color.TRANSPARENT);
         toolbarLayout.setTitleEnabled(true);
         toolbarTitleView.setVisibility(View.GONE);
-        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) toolbarLayout.getLayoutParams();
-        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED);
-        toolbarLayout.setLayoutParams(params);
-
 
         ScrimHelper scrimHelper = new ScrimHelper(appBarLayout, toolbarLayout);
         scrimHelper.setScrimListener(scrim1 -> {
@@ -125,9 +130,7 @@ public class ProfileFragment extends TabFragment implements ProfileAdapter.Click
 
         toolbar.getNavigationIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         toolbar.getOverflowIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-        return view;
     }
-
 
     @Override
     protected void addBaseToolbarMenu() {

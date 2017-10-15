@@ -194,8 +194,8 @@ public class Drawers {
     public void destroy() {
         App.get().removePreferenceChangeObserver(preferenceObserver);
         App.get().removeStatusBarSizeObserver(statusBarSizeObserver);
-        ClientHelper.getInstance().removeLoginObserver(loginObserver);
-        ClientHelper.getInstance().removeCountsObserver(countsObserver);
+        ClientHelper.get().removeLoginObserver(loginObserver);
+        ClientHelper.get().removeCountsObserver(countsObserver);
         //menuAdapter.clear();
         //tabAdapter.clear();
     }
@@ -207,8 +207,8 @@ public class Drawers {
 
     private void initMenu(Bundle savedInstanceState) {
         fillMenuItems();
-        ClientHelper.getInstance().addLoginObserver(loginObserver);
-        ClientHelper.getInstance().addCountsObserver(countsObserver);
+        ClientHelper.get().addLoginObserver(loginObserver);
+        ClientHelper.get().addCountsObserver(countsObserver);
         menuAdapter.setItemClickListener(new BaseAdapter.OnItemClickListener<MenuItems.MenuItem>() {
             @Override
             public void onItemClick(MenuItems.MenuItem item) {

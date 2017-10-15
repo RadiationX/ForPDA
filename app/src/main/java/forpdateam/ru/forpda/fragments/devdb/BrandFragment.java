@@ -59,12 +59,18 @@ public class BrandFragment extends TabFragment implements BrandAdapter.OnItemCli
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        setCardsBackground();
         baseInflateFragment(inflater, R.layout.fragment_brand);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
         recyclerView = (AutoFitRecyclerView) findViewById(R.id.base_list);
         contentController.setMainRefresh(refreshLayout);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         viewsReady();
+        setCardsBackground();
         refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
 
@@ -82,13 +88,11 @@ public class BrandFragment extends TabFragment implements BrandAdapter.OnItemCli
         }
 
         adapter.setItemClickListener(this);
-
-        return view;
     }
 
     @Override
     public boolean loadData() {
-        if(!super.loadData()){
+        if (!super.loadData()) {
             return false;
         }
         setRefreshing(true);

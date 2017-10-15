@@ -65,8 +65,15 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        paginationHelper = new PaginationHelper(getActivity());
+        paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow());
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         viewsReady();
-        refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -74,9 +81,6 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener(this);
 
-        paginationHelper = new PaginationHelper(getActivity());
-        paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow());
-        //paginationHelper.addInList(inflater, listContainer);
         paginationHelper.setListener(new PaginationHelper.PaginationListener() {
             @Override
             public boolean onTabSelected(TabLayout.Tab tab) {
@@ -89,9 +93,7 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
                 loadData();
             }
         });
-        return view;
     }
-
 
     @Override
     public boolean loadData() {

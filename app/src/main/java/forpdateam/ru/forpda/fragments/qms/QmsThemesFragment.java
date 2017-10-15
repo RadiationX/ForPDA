@@ -81,13 +81,17 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        contentController.setFirstLoad(false);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        viewsReady();
         initFabBehavior();
         tryShowAvatar();
-        contentController.setFirstLoad(false);
-        viewsReady();
 
-
-        refreshLayoutStyle(refreshLayout);
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -105,7 +109,6 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
         recyclerView.setAdapter(adapter);
         bindView();
         App.get().subscribeQms(notification);
-        return view;
     }
 
     private void tryShowAvatar() {
@@ -122,7 +125,7 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
 
     @Override
     public boolean loadData() {
-        if(!super.loadData()){
+        if (!super.loadData()) {
             return false;
         }
         setRefreshing(true);
@@ -224,7 +227,6 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
                 }
             }
         }
-
 
 
         QmsContactsFragment contactsFragment = (QmsContactsFragment) TabManager.getInstance().getByClass(QmsContactsFragment.class);

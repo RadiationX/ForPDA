@@ -132,21 +132,24 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         chatContainer = (FrameLayout) findViewById(R.id.qms_chat_container);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         messagePanel = new MessagePanel(getContext(), fragmentContainer, coordinatorLayout, false);
-        messagePanel.setHeightChangeListener(newHeight -> {
-            webView.setPaddingBottom(newHeight);
-        });
-
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
-        webView.setJsLifeCycleListener(this);
-
         chatContainer.addView(webView, 0);
+        attachmentsPopup = messagePanel.getAttachmentsPopup();
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        webView.setJsLifeCycleListener(this);
         webView.addJavascriptInterface(this, JS_INTERFACE);
         registerForContextMenu(webView);
         webView.setWebViewClient(new QmsWebViewClient());
         webView.setWebChromeClient(new CustomWebChromeClient());
         loadBaseWebContainer();
 
-        attachmentsPopup = messagePanel.getAttachmentsPopup();
+        viewsReady();
+
         attachmentsPopup.setAddOnClickListener(v -> tryPickFile());
         attachmentsPopup.setDeleteOnClickListener(v -> {
             attachmentsPopup.preDeleteFiles();
@@ -172,7 +175,10 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         });
 
 
-        viewsReady();
+
+        messagePanel.setHeightChangeListener(newHeight -> {
+            webView.setPaddingBottom(newHeight);
+        });
         App.get().addPreferenceChangeObserver(chatPreferenceObserver);
         tryShowAvatar();
 
@@ -186,8 +192,6 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         if (currentChat.getThemeId() == QmsChatModel.NOT_CREATED) {
             themeCreator = new ChatThemeCreator(this);
         }
-
-        return view;
     }
 
     private void addUnusedAttachments() {

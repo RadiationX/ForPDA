@@ -194,7 +194,7 @@ public class NotificationsService extends Service {
     @Override
     public void onCreate() {
         Log.i(LOG_TAG, "onCreate");
-        Client.getInstance().addNetworkObserver(networkObserver);
+        Client.get().addNetworkObserver(networkObserver);
         App.get().addPreferenceChangeObserver(notificationSettingObserver);
     }
 
@@ -247,9 +247,9 @@ public class NotificationsService extends Service {
     }
 
     private void start(boolean checkEvents) {
-        if (Client.getInstance().getNetworkState()) {
+        if (Client.get().getNetworkState()) {
             if (!connected) {
-                webSocket = Client.getInstance().createWebSocketConnection(webSocketListener);
+                webSocket = Client.get().createWebSocketConnection(webSocketListener);
             }
             webSocket.send("[0,\"sv\"]");
             webSocket.send("[0, \"ea\", \"u" + ClientHelper.getUserId() + "\"]");
@@ -265,7 +265,9 @@ public class NotificationsService extends Service {
 
     private void stop() {
         connected = false;
-        webSocket.cancel();
+        if (webSocket != null) {
+            webSocket.cancel();
+        }
         cancelTimer();
     }
 
@@ -274,7 +276,7 @@ public class NotificationsService extends Service {
         super.onDestroy();
         Log.i(LOG_TAG, "onDestroy");
         App.get().removePreferenceChangeObserver(notificationSettingObserver);
-        Client.getInstance().removeNetworkObserver(networkObserver);
+        Client.get().removeNetworkObserver(networkObserver);
         stop();
     }
 

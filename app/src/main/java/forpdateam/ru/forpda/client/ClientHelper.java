@@ -21,7 +21,7 @@ public class ClientHelper {
     private static int userId = 0;
     private static int qmsCount = 0, mentionsCount = 0, favoritesCount = 0;
 
-    public static ClientHelper getInstance() {
+    public static ClientHelper get() {
         if (clientHelper == null) clientHelper = new ClientHelper();
         return clientHelper;
     }

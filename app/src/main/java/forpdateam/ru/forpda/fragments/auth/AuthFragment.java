@@ -82,7 +82,12 @@ public class AuthFragment extends TabFragment {
         hiddenAuth = (CheckBox) findViewById(R.id.auth_hidden);
         sendButton = (Button) findViewById(R.id.auth_send);
         skipButton = (Button) findViewById(R.id.auth_skip);
+        return view;
+    }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         viewsReady();
         setListsBackground();
         skipButton.setOnClickListener(v -> {
@@ -98,28 +103,15 @@ public class AuthFragment extends TabFragment {
         });
         appBarLayout.setVisibility(View.GONE);
         notifyDot.setVisibility(View.GONE);
-        sendButton.setOnClickListener(view -> tryLogin());
-        MyTW myTW = new MyTW();
-        nick.addTextChangedListener(myTW);
-        password.addTextChangedListener(myTW);
-        captcha.addTextChangedListener(myTW);
+        sendButton.setOnClickListener(v -> tryLogin());
+        LoginTextWatcher loginTextWatcher = new LoginTextWatcher();
+        nick.addTextChangedListener(loginTextWatcher);
+        password.addTextChangedListener(loginTextWatcher);
+        captcha.addTextChangedListener(loginTextWatcher);
         fragmentContainer.setFitsSystemWindows(true);
         fragmentContent.setFitsSystemWindows(true);
-        return view;
     }
 
-    private class MyTW extends SimpleTextWatcher {
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (!nick.getText().toString().isEmpty() && !password.getText().toString().isEmpty() && captcha.getText().toString().length() == 4) {
-                if (!sendButton.isEnabled())
-                    sendButton.setEnabled(true);
-            } else {
-                if (sendButton.isEnabled())
-                    sendButton.setEnabled(false);
-            }
-        }
-    }
 
     @Override
     protected void updateNotifyDot() {
@@ -128,7 +120,7 @@ public class AuthFragment extends TabFragment {
 
     @Override
     public boolean loadData() {
-        if(!super.loadData()){
+        if (!super.loadData()) {
             return false;
         }
         mainSubscriber.subscribe(RxApi.Auth().getForm(), this::onLoadForm, new AuthForm(), view1 -> loadData());
@@ -241,10 +233,23 @@ public class AuthFragment extends TabFragment {
         });
         progressView.startAnimation(animation1);
         new Handler().postDelayed(() -> {
-            ClientHelper.getInstance().notifyAuthChanged(ClientHelper.AUTH_STATE_LOGIN);
+            ClientHelper.get().notifyAuthChanged(ClientHelper.AUTH_STATE_LOGIN);
             new Handler().postDelayed(() -> {
                 TabManager.getInstance().remove(AuthFragment.this);
             }, 500);
         }, 2000);
+    }
+
+    private class LoginTextWatcher extends SimpleTextWatcher {
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (!nick.getText().toString().isEmpty() && !password.getText().toString().isEmpty() && captcha.getText().toString().length() == 4) {
+                if (!sendButton.isEnabled())
+                    sendButton.setEnabled(true);
+            } else {
+                if (sendButton.isEnabled())
+                    sendButton.setEnabled(false);
+            }
+        }
     }
 }

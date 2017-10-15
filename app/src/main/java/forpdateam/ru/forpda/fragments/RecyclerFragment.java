@@ -23,15 +23,19 @@ public abstract class RecyclerFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        setListsBackground();
         baseInflateFragment(inflater, R.layout.fragment_base_list);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_list);
         recyclerView = (RecyclerView) findViewById(R.id.base_list);
         contentController.setMainRefresh(refreshLayout);
-        //setListsBackground(recyclerView);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setListsBackground();
         recyclerView.setHasFixedSize(true);
         refreshLayoutStyle(refreshLayout);
-        return view;
     }
 
     protected void listScrollTop() {

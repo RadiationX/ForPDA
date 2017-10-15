@@ -97,7 +97,7 @@ public class Client implements IWebClient {
         return App.get().getPreferences().getString("auth_key", "0");
     }
 
-    public static Client getInstance() {
+    public static Client get() {
         if (INSTANCE == null) INSTANCE = new Client();
         return INSTANCE;
     }
@@ -398,7 +398,7 @@ public class Client implements IWebClient {
             } catch (Exception exception) {
                 Log.d("WATAFUCK", res);
             }
-            observerHandler.post(() -> ClientHelper.getInstance().notifyCountsChanged());
+            observerHandler.post(() -> ClientHelper.get().notifyCountsChanged());
         }
     }
 

@@ -101,8 +101,15 @@ public class EditPostFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        //baseInflateFragment(inflater, R.layout.fragment_qms_chat);
         messagePanel = new MessagePanel(getContext(), fragmentContainer, fragmentContent, true);
+        attachmentsPopup = messagePanel.getAttachmentsPopup();
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        viewsReady();
         messagePanel.addSendOnClickListener(v -> {
             if (postForm.getType() == TYPE_EDIT_POST) {
                 showReasonDialog();
@@ -110,10 +117,8 @@ public class EditPostFragment extends TabFragment {
                 sendMessage();
             }
         });
-        attachmentsPopup = messagePanel.getAttachmentsPopup();
         attachmentsPopup.setAddOnClickListener(v -> tryPickFile());
         attachmentsPopup.setDeleteOnClickListener(v -> removeFiles());
-        viewsReady();
         Bundle args = getArguments();
         if (args != null) {
             String title = args.getString(ARG_THEME_NAME);
@@ -123,9 +128,6 @@ public class EditPostFragment extends TabFragment {
             if (pollPopup != null)
                 pollPopup.show();
         });
-
-
-        return view;
     }
 
     @Override
