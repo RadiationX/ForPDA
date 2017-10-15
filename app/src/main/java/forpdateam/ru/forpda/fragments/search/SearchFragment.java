@@ -14,7 +14,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -50,7 +49,6 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.IBaseForumPost;
-import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.search.models.SearchItem;
 import forpdateam.ru.forpda.api.search.models.SearchResult;
 import forpdateam.ru.forpda.api.search.models.SearchSettings;
@@ -64,9 +62,9 @@ import forpdateam.ru.forpda.fragments.theme.ThemeHelper;
 import forpdateam.ru.forpda.fragments.theme.editpost.EditPostFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.settings.Preferences;
-import forpdateam.ru.forpda.utils.AlertDialogMenu;
 import forpdateam.ru.forpda.utils.CustomWebChromeClient;
 import forpdateam.ru.forpda.utils.CustomWebViewClient;
+import forpdateam.ru.forpda.utils.DynamicDialogMenu;
 import forpdateam.ru.forpda.utils.FabOnScroll;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
@@ -108,7 +106,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
     private StringBuilder titleBuilder = new StringBuilder();
     private PaginationHelper paginationHelper;
-    private AlertDialogMenu<SearchFragment, IBaseForumPost> createdTopicsDialogMenu, tempTopicsDialogMenu;
+    private DynamicDialogMenu<SearchFragment, IBaseForumPost> dialogMenu;
 
     private Observer searchPreferenceObserver = (observable, o) -> {
         if (o == null) return;
@@ -698,19 +696,18 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
     @Override
     public boolean onItemLongClick(SearchItem item) {
-        if (createdTopicsDialogMenu == null) {
-            createdTopicsDialogMenu = new AlertDialogMenu<>();
-            tempTopicsDialogMenu = new AlertDialogMenu<>();
-            createdTopicsDialogMenu.addItem(getString(R.string.topic_to_begin), (context, data1) -> {
+        if (dialogMenu == null) {
+            dialogMenu = new DynamicDialogMenu<>();
+            dialogMenu.addItem(getString(R.string.topic_to_begin), (context, data1) -> {
                 IntentHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + data1.getTopicId());
             });
-            createdTopicsDialogMenu.addItem(getString(R.string.topic_newposts), (context, data1) -> {
+            dialogMenu.addItem(getString(R.string.topic_newposts), (context, data1) -> {
                 IntentHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + data1.getTopicId() + "&view=getnewpost");
             });
-            createdTopicsDialogMenu.addItem(getString(R.string.topic_lastposts), (context, data1) -> {
+            dialogMenu.addItem(getString(R.string.topic_lastposts), (context, data1) -> {
                 IntentHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + data1.getTopicId() + "&view=getlastpost");
             });
-            createdTopicsDialogMenu.addItem(getString(R.string.copy_link), (context, data1) -> {
+            dialogMenu.addItem(getString(R.string.copy_link), (context, data1) -> {
                 String url = "";
                 if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
                     url = "https://4pda.ru/index.php?p=" + item.getId();
@@ -722,27 +719,20 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
                 }
                 Utils.copyToClipBoard(url);
             });
-            createdTopicsDialogMenu.addItem(getString(R.string.open_theme_forum), (context, data1) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data1.getForumId()));
-            createdTopicsDialogMenu.addItem(getString(R.string.add_to_favorites), ((context, data1) -> {
-                new AlertDialog.Builder(context.getContext())
-                        .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> {
-                            FavoritesHelper.add(aBoolean -> {
-                                Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
-                            }, data1.getId(), Favorites.SUB_TYPES[which1]);
-                        })
-                        .show();
+            dialogMenu.addItem(getString(R.string.open_theme_forum), (context, data1) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data1.getForumId()));
+            dialogMenu.addItem(getString(R.string.add_to_favorites), ((context, data1) -> {
+                FavoritesHelper.addWithDialog(getContext(), aBoolean -> {
+                    Toast.makeText(getContext(), getString(aBoolean ? R.string.favorites_added : R.string.error_occurred), Toast.LENGTH_SHORT).show();
+                }, data1.getId());
             }));
         }
-        tempTopicsDialogMenu.clear();
+        dialogMenu.disallowAll();
         if (settings.getResourceType().equals(SearchSettings.RESOURCE_NEWS.first)) {
-            tempTopicsDialogMenu.addItem(createdTopicsDialogMenu.get(3));
+            dialogMenu.allow(3);
         } else {
-            tempTopicsDialogMenu.addItems(createdTopicsDialogMenu.getItems());
+            dialogMenu.allowAll();
         }
-
-        new AlertDialog.Builder(getContext())
-                .setItems(tempTopicsDialogMenu.getTitles(), (dialog, which) -> tempTopicsDialogMenu.onClick(which, SearchFragment.this, item))
-                .show();
+        dialogMenu.show(getContext(), SearchFragment.this, item);
         return false;
     }
 

@@ -18,7 +18,7 @@ import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
 import forpdateam.ru.forpda.fragments.search.SearchFragment;
-import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.DynamicDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import io.reactivex.functions.Consumer;
@@ -29,13 +29,11 @@ import io.reactivex.functions.Consumer;
 
 public class ThemeDialogsHelper {
     private final static String reportWarningText = App.get().getString(R.string.report_warning);
-    private static AlertDialogMenu<IPostFunctions, IBaseForumPost> userMenu, reputationMenu, postMenu;
-    private static AlertDialogMenu<IPostFunctions, IBaseForumPost> showedUserMenu, showedReputationMenu, showedPostMenu;
+    private static DynamicDialogMenu<IPostFunctions, IBaseForumPost> userMenu, reputationMenu, postMenu;
 
     public static void showUserMenu(Context context, IPostFunctions theme, IBaseForumPost post) {
         if (userMenu == null) {
-            userMenu = new AlertDialogMenu<>();
-            showedUserMenu = new AlertDialogMenu<>();
+            userMenu = new DynamicDialogMenu<>();
             userMenu.addItem(App.get().getString(R.string.profile), (context1, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data.getUserId()));
             userMenu.addItem(App.get().getString(R.string.reputation), IPostFunctions::showReputationMenu);
             userMenu.addItem(App.get().getString(R.string.pm_qms), (context1, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=qms&amp;mid=" + data.getUserId()));
@@ -65,47 +63,44 @@ public class ThemeDialogsHelper {
                 IntentHandler.handle(settings.toUrl());
             });
         }
-        showedUserMenu.clear();
-        showedUserMenu.addItem(userMenu.get(0));
-        showedUserMenu.addItem(userMenu.get(1));
-        if (ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN && post.getUserId() != ClientHelper.getUserId())
-            showedUserMenu.addItem(userMenu.get(2));
-        showedUserMenu.addItem(userMenu.get(3));
-        showedUserMenu.addItem(userMenu.get(4));
-        showedUserMenu.addItem(userMenu.get(5));
-        new AlertDialog.Builder(context)
-                .setTitle(post.getNick())
-                .setItems(showedUserMenu.getTitles(), (dialogInterface, i) -> showedUserMenu.onClick(i, theme, post))
-                .show();
+        userMenu.disallowAll();
+        userMenu.allow(0);
+        userMenu.allow(1);
+        if (ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN
+                && post.getUserId() != ClientHelper.getUserId()) {
+            userMenu.allow(2);
+        }
+        userMenu.allow(3);
+        userMenu.allow(4);
+        userMenu.allow(5);
+        userMenu.show(context, theme, post);
     }
 
     public static void showReputationMenu(Context context, IPostFunctions theme, IBaseForumPost post) {
         if (reputationMenu == null) {
-            reputationMenu = new AlertDialogMenu<>();
-            showedReputationMenu = new AlertDialogMenu<>();
+            reputationMenu = new DynamicDialogMenu<>();
             reputationMenu.addItem(App.get().getString(R.string.increase), (context1, data) -> context1.changeReputation(data, true));
             reputationMenu.addItem(App.get().getString(R.string.look), (context1, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=rep&view=history&amp;mid=" + data.getUserId()));
             reputationMenu.addItem(App.get().getString(R.string.decrease), (context1, data) -> context1.changeReputation(data, false));
         }
-        showedReputationMenu.clear();
+        reputationMenu.disallowAll();
         if (ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN) {
-            if (post.canPlusRep())
-                showedReputationMenu.addItem(reputationMenu.get(0));
-            showedReputationMenu.addItem(reputationMenu.get(1));
-            if (post.canMinusRep())
-                showedReputationMenu.addItem(reputationMenu.get(2));
+            if (post.canPlusRep()) {
+                reputationMenu.allow(0);
+            }
+            reputationMenu.allow(1);
+            if (post.canMinusRep()) {
+                reputationMenu.allow(2);
+            }
         }
-        new AlertDialog.Builder(context)
-                .setTitle(App.get().getString(R.string.reputation) + " ".concat(post.getNick()))
-                .setItems(showedReputationMenu.getTitles(), (dialogInterface, i) -> showedReputationMenu.onClick(i, theme, post))
-                .show();
+        String title = App.get().getString(R.string.reputation) + " ".concat(post.getNick());
+        reputationMenu.show(context, title, theme, post);
     }
 
 
     public static void showPostMenu(Context context, IPostFunctions theme, IBaseForumPost post) {
         if (postMenu == null) {
-            postMenu = new AlertDialogMenu<>();
-            showedPostMenu = new AlertDialogMenu<>();
+            postMenu = new DynamicDialogMenu<>();
             postMenu.addItem(App.get().getString(R.string.reply), IPostFunctions::reply);
             postMenu.addItem(App.get().getString(R.string.quote_from_clipboard), (context1, data) -> {
                 String text = Utils.readFromClipboard();
@@ -138,25 +133,23 @@ public class ThemeDialogsHelper {
                 Utils.shareText(url);
             });
         }
-        showedPostMenu.clear();
+        postMenu.disallowAll();
         if (ClientHelper.getAuthState() == ClientHelper.AUTH_STATE_LOGIN) {
             if (post.canQuote()) {
-                showedPostMenu.addItem(postMenu.get(0));
-                showedPostMenu.addItem(postMenu.get(1));
+                postMenu.allow(0);
+                postMenu.allow(1);
             }
             if (post.canReport())
-                showedPostMenu.addItem(postMenu.get(2));
+                postMenu.allow(2);
             if (post.canEdit())
-                showedPostMenu.addItem(postMenu.get(3));
+                postMenu.allow(3);
             if (post.canDelete())
-                showedPostMenu.addItem(postMenu.get(4));
+                postMenu.allow(4);
         }
-        showedPostMenu.addItem(postMenu.get(5));
-        showedPostMenu.addItem(postMenu.get(6));
-        showedPostMenu.addItem(postMenu.get(7));
-        new AlertDialog.Builder(context)
-                .setItems(showedPostMenu.getTitles(), (dialogInterface, i) -> showedPostMenu.onClick(i, theme, post))
-                .show();
+        postMenu.allow(5);
+        postMenu.allow(6);
+        postMenu.allow(7);
+        postMenu.show(context, theme, post);
     }
 
     public static void tryReportPost(Context context, IBaseForumPost post) {

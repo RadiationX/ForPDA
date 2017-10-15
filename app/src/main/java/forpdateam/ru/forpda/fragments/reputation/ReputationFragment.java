@@ -28,7 +28,7 @@ import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.rxapi.ForumUsersCache;
 import forpdateam.ru.forpda.rxapi.RxApi;
-import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.DynamicDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.ContentController;
@@ -48,8 +48,7 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
     private Subscriber<RepData> mainSubscriber = new Subscriber<>(this);
     private PaginationHelper paginationHelper;
     private RepData data = new RepData();
-    private static AlertDialogMenu<ReputationFragment, RepItem> repDialogMenu;
-    private AlertDialogMenu<ReputationFragment, RepItem> showedRepDialogMenu;
+    private DynamicDialogMenu<ReputationFragment, RepItem> dialogMenu;
 
 
     public ReputationFragment() {
@@ -103,27 +102,20 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
     }
 
     private void someClick(RepItem item) {
-        if (repDialogMenu == null) {
-            repDialogMenu = new AlertDialogMenu<>();
-            repDialogMenu.addItem(getString(R.string.profile), (context, data1) -> {
+        if (dialogMenu == null) {
+            dialogMenu = new DynamicDialogMenu<>();
+            dialogMenu.addItem(getString(R.string.profile), (context, data1) -> {
                 IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data1.getUserId());
             });
-            repDialogMenu.addItem(getString(R.string.go_to_message), (context, data1) -> {
+            dialogMenu.addItem(getString(R.string.go_to_message), (context, data1) -> {
                 IntentHandler.handle(data1.getSourceUrl());
             });
         }
-        if (showedRepDialogMenu == null)
-            showedRepDialogMenu = new AlertDialogMenu<>();
-
-        showedRepDialogMenu.clear();
-        showedRepDialogMenu.addItem(repDialogMenu.get(0));
+        dialogMenu.disallowAll();
+        dialogMenu.allow(0);
         if (item.getSourceUrl() != null)
-            showedRepDialogMenu.addItem(repDialogMenu.get(1));
-
-        new AlertDialog.Builder(getContext())
-                .setTitle(item.getUserNick())
-                .setItems(showedRepDialogMenu.getTitles(), (dialog, which) -> showedRepDialogMenu.onClick(which, ReputationFragment.this, item))
-                .show();
+            dialogMenu.allow(1);
+        dialogMenu.show(getContext(), item.getUserNick(), ReputationFragment.this, item);
     }
 
     private MenuItem descSortMenuItem;

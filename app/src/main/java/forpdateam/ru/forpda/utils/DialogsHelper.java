@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.util.Pair;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.webkit.WebView;
 
@@ -19,8 +18,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
  */
 
 public class DialogsHelper {
-    private static AlertDialogMenu<Context, Pair<String, String>> alertDialogMenu;
-    private static AlertDialogMenu<Context, Pair<String, String>> showedAlertDialogMenu;
+    private static DynamicDialogMenu<Context, Pair<String, String>> dynamicDialogMenu;
     private final static String openNewTab = App.get().getString(R.string.wv_open_new_tab);
     private final static String openBrowser = App.get().getString(R.string.wv_open_in_browser);
     private final static String copyUrl = App.get().getString(R.string.wv_copy_link);
@@ -55,31 +53,29 @@ public class DialogsHelper {
         if (!anchor && !image)
             return;
 
-        if (alertDialogMenu == null) {
-            alertDialogMenu = new AlertDialogMenu<>();
-            showedAlertDialogMenu = new AlertDialogMenu<>();
+        if (dynamicDialogMenu == null) {
+            dynamicDialogMenu = new DynamicDialogMenu<>();
 
-            alertDialogMenu.addItem(openNewTab, (context1, data) -> IntentHandler.handle(data.second));
-            alertDialogMenu.addItem(openBrowser, (context1, data) -> App.get().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(data.second)).addFlags(FLAG_ACTIVITY_NEW_TASK)));
-            alertDialogMenu.addItem(copyUrl, (context1, data) -> Utils.copyToClipBoard(data.second));
-            alertDialogMenu.addItem(openImage, (context1, data) -> ImageViewerActivity.startActivity(context1, data.first));
-            alertDialogMenu.addItem(saveImage, (context1, data) -> IntentHandler.handleDownload(data.second));
-            alertDialogMenu.addItem(copyImageUrl, (context1, data) -> Utils.copyToClipBoard(data.first));
+            dynamicDialogMenu.addItem(openNewTab, (context1, data) -> IntentHandler.handle(data.second));
+            dynamicDialogMenu.addItem(openBrowser, (context1, data) -> App.get().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(data.second)).addFlags(FLAG_ACTIVITY_NEW_TASK)));
+            dynamicDialogMenu.addItem(copyUrl, (context1, data) -> Utils.copyToClipBoard(data.second));
+            dynamicDialogMenu.addItem(openImage, (context1, data) -> ImageViewerActivity.startActivity(context1, data.first));
+            dynamicDialogMenu.addItem(saveImage, (context1, data) -> IntentHandler.handleDownload(data.second));
+            dynamicDialogMenu.addItem(copyImageUrl, (context1, data) -> Utils.copyToClipBoard(data.first));
         }
-        showedAlertDialogMenu.clear();
+        dynamicDialogMenu.disallowAll();
 
         if (anchor) {
-            showedAlertDialogMenu.addItem(alertDialogMenu.get(0));
-            showedAlertDialogMenu.addItem(alertDialogMenu.get(1));
-            showedAlertDialogMenu.addItem(alertDialogMenu.get(2));
+            dynamicDialogMenu.allow(0);
+            dynamicDialogMenu.allow(1);
+            dynamicDialogMenu.allow(2);
         }
         if (image) {
-            showedAlertDialogMenu.addItem(alertDialogMenu.get(3));
-            showedAlertDialogMenu.addItem(alertDialogMenu.get(4));
-            showedAlertDialogMenu.addItem(alertDialogMenu.get(5));
+            dynamicDialogMenu.allow(3);
+            dynamicDialogMenu.allow(4);
+            dynamicDialogMenu.allow(5);
         }
-        new AlertDialog.Builder(context)
-                .setItems(showedAlertDialogMenu.getTitles(), (dialog, which) -> showedAlertDialogMenu.onClick(which, context, new Pair<>(extra, nodeHref == null ? extra : nodeHref)))
-                .show();
+        Pair<String, String> item = new Pair<>(extra, nodeHref == null ? extra : nodeHref);
+        dynamicDialogMenu.show(context, context, item);
     }
 }

@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.fragments.qms;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
@@ -25,7 +24,7 @@ import forpdateam.ru.forpda.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsContactsAdapter;
 import forpdateam.ru.forpda.rxapi.RxApi;
-import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.DynamicDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.SimpleTextWatcher;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
@@ -40,7 +39,7 @@ public class QmsBlackListFragment extends RecyclerFragment implements QmsContact
     private AppCompatAutoCompleteTextView nickField;
     private QmsContactsAdapter adapter;
     private Subscriber<ArrayList<QmsContact>> mainSubscriber = new Subscriber<>(this);
-    private AlertDialogMenu<QmsBlackListFragment, IQmsContact> contactDialogMenu;
+    private DynamicDialogMenu<QmsBlackListFragment, IQmsContact> dialogMenu;
     private ArrayList<QmsContact> currentData;
     private Subscriber<List<ForumUser>> searchUserSubscriber = new Subscriber<>(this);
 
@@ -94,20 +93,21 @@ public class QmsBlackListFragment extends RecyclerFragment implements QmsContact
     }
 
     private void someClick(IQmsContact contact) {
-        if (contactDialogMenu == null) {
-            contactDialogMenu = new AlertDialogMenu<>();
-            contactDialogMenu.addItem(getString(R.string.profile), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data.getId()));
-            contactDialogMenu.addItem(getString(R.string.dialogs), (context, data) -> {
+        if (dialogMenu == null) {
+            dialogMenu = new DynamicDialogMenu<>();
+            dialogMenu.addItem(getString(R.string.profile), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data.getId()));
+            dialogMenu.addItem(getString(R.string.dialogs), (context, data) -> {
                 Bundle args = new Bundle();
                 args.putString(TabFragment.ARG_TITLE, data.getNick());
                 args.putInt(QmsThemesFragment.USER_ID_ARG, data.getId());
                 args.putString(QmsThemesFragment.USER_AVATAR_ARG, data.getAvatar());
                 TabManager.getInstance().add(QmsThemesFragment.class, args);
             });
-            contactDialogMenu.addItem(getString(R.string.delete), (context, data) -> context.unBlockUser(new int[]{data.getId()}));
+            dialogMenu.addItem(getString(R.string.delete), (context, data) -> context.unBlockUser(new int[]{data.getId()}));
         }
-        new AlertDialog.Builder(getContext())
-                .setItems(contactDialogMenu.getTitles(), (dialog, which) -> contactDialogMenu.onClick(which, QmsBlackListFragment.this, contact)).show();
+        dialogMenu.disallowAll();
+        dialogMenu.allowAll();
+        dialogMenu.show(getContext(), QmsBlackListFragment.this, contact);
     }
 
 

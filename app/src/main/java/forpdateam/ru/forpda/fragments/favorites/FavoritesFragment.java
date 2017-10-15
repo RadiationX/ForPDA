@@ -39,7 +39,7 @@ import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.forum.ForumHelper;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.settings.Preferences;
-import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.DynamicDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
@@ -54,7 +54,14 @@ import io.realm.RealmResults;
  */
 
 public class FavoritesFragment extends RecyclerFragment implements FavoritesAdapter.OnItemClickListener<IFavItem> {
-    private AlertDialogMenu<FavoritesFragment, IFavItem> favoriteDialogMenu, showedFavoriteDialogMenu;
+    public final static CharSequence[] SUB_NAMES = {
+            App.get().getString(R.string.fav_subscribe_none),
+            App.get().getString(R.string.fav_subscribe_delayed),
+            App.get().getString(R.string.fav_subscribe_immediate),
+            App.get().getString(R.string.fav_subscribe_daily),
+            App.get().getString(R.string.fav_subscribe_weekly),
+            App.get().getString(R.string.fav_subscribe_pinned)};
+    private DynamicDialogMenu<FavoritesFragment, IFavItem> dialogMenu;
     private Realm realm;
     private FavoritesAdapter adapter;
     private Subscriber<FavData> mainSubscriber = new Subscriber<>(this);
@@ -473,47 +480,42 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
 
     @Override
     public boolean onItemLongClick(IFavItem item) {
-        if (favoriteDialogMenu == null) {
-            favoriteDialogMenu = new AlertDialogMenu<>();
-            showedFavoriteDialogMenu = new AlertDialogMenu<>();
-            favoriteDialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
+        if (dialogMenu == null) {
+            dialogMenu = new DynamicDialogMenu<>();
+
+            dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
                 if (data.isForum()) {
                     Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getForumId())));
                 } else {
                     Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data.getTopicId())));
                 }
             });
-            favoriteDialogMenu.addItem(getString(R.string.attachments), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=attach&code=showtopic&tid=" + data.getTopicId()));
-            favoriteDialogMenu.addItem(getString(R.string.open_theme_forum), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getForumId()));
-            favoriteDialogMenu.addItem(getString(R.string.fav_change_subscribe_type), (context, data) -> {
+            dialogMenu.addItem(getString(R.string.attachments), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=attach&code=showtopic&tid=" + data.getTopicId()));
+            dialogMenu.addItem(getString(R.string.open_theme_forum), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getForumId()));
+            dialogMenu.addItem(getString(R.string.fav_change_subscribe_type), (context, data) -> {
                 new AlertDialog.Builder(context.getContext())
                         .setTitle(R.string.favorites_subscribe_email)
-                        .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> context.changeFav(Favorites.ACTION_EDIT_SUB_TYPE, Favorites.SUB_TYPES[which1], data.getFavId()))
+                        .setItems(SUB_NAMES, (dialog1, which1) -> context.changeFav(Favorites.ACTION_EDIT_SUB_TYPE, Favorites.SUB_TYPES[which1], data.getFavId()))
                         .show();
             });
-            favoriteDialogMenu.addItem(getPinText(item.isPin()), (context, data) -> context.changeFav(Favorites.ACTION_EDIT_PIN_STATE, data.isPin() ? "unpin" : "pin", data.getFavId()));
-            favoriteDialogMenu.addItem(getString(R.string.delete), (context, data) -> context.changeFav(Favorites.ACTION_DELETE, null, data.getFavId()));
+            dialogMenu.addItem(getPinText(item.isPin()), (context, data) -> context.changeFav(Favorites.ACTION_EDIT_PIN_STATE, data.isPin() ? "unpin" : "pin", data.getFavId()));
+            dialogMenu.addItem(getString(R.string.delete), (context, data) -> context.changeFav(Favorites.ACTION_DELETE, null, data.getFavId()));
         }
-        showedFavoriteDialogMenu.clear();
-
-        showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(0));
+        dialogMenu.disallowAll();
+        dialogMenu.allow(0);
         if (!item.isForum()) {
-            showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(1));
-            showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(2));
+            dialogMenu.allow(1);
+            dialogMenu.allow(2);
         }
-        showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(3));
-        showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(4));
-        showedFavoriteDialogMenu.addItem(favoriteDialogMenu.get(5));
+        dialogMenu.allow(3);
+        dialogMenu.allow(4);
+        dialogMenu.allow(5);
 
-        int index = showedFavoriteDialogMenu.containsIndex(getPinText(!item.isPin()));
+        int index = dialogMenu.containsIndex(getPinText(!item.isPin()));
         if (index != -1)
-            showedFavoriteDialogMenu.changeTitle(index, getPinText(item.isPin()));
+            dialogMenu.changeTitle(index, getPinText(item.isPin()));
 
-        new AlertDialog.Builder(getContext())
-                .setItems(showedFavoriteDialogMenu.getTitles(), (dialog, which) -> {
-                    showedFavoriteDialogMenu.onClick(which, FavoritesFragment.this, item);
-                })
-                .show();
+        dialogMenu.show(getContext(), FavoritesFragment.this, item);
         return false;
     }
 }

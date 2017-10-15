@@ -5,7 +5,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -24,7 +23,7 @@ import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
-import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.DynamicDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.LocaleHelper;
 import io.reactivex.Observable;
@@ -164,17 +163,15 @@ public class CheckerActivity extends AppCompatActivity {
             updateButton.setVisibility(View.VISIBLE);
             divider.setVisibility(View.VISIBLE);
             updateButton.setOnClickListener(v -> {
-                AlertDialogMenu<CheckerActivity, String> alertDialogMenu = new AlertDialogMenu<>();
-                alertDialogMenu.addItem("github.com", (context, data) -> IntentHandler.handleDownload(linkGit));
+                DynamicDialogMenu<CheckerActivity, Object> dialogMenu = new DynamicDialogMenu<>();
+                dialogMenu.addItem("github.com", (context, data) -> IntentHandler.handleDownload(linkGit));
                 if (ClientHelper.getAuthState()) {
-                    alertDialogMenu.addItem("4pda.ru", (context, data) -> IntentHandler.handleDownload(link4pda));
+                    dialogMenu.addItem("4pda.ru", (context, data) -> IntentHandler.handleDownload(link4pda));
                 }
-                alertDialogMenu.addItem("Google Play", (context, data) -> IntentHandler.handle(GOOGLE_PLAY_LINK));
-
-                new AlertDialog.Builder(CheckerActivity.this)
-                        .setTitle(R.string.load_from)
-                        .setItems(alertDialogMenu.getTitles(), (dialog, which) -> alertDialogMenu.onClick(which, CheckerActivity.this, null))
-                        .show();
+                dialogMenu.addItem("Google Play", (context, data) -> IntentHandler.handle(GOOGLE_PLAY_LINK));
+                dialogMenu.allowAll();
+                String title = getString(R.string.load_from);
+                dialogMenu.show(CheckerActivity.this, title, CheckerActivity.this, null);
             });
         } else {
             updateInfo.setText(R.string.no_updates);

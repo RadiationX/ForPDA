@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.fragments.topics;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.util.Pair;
@@ -16,7 +15,6 @@ import android.widget.Toast;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
-import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.topcis.models.TopicItem;
 import forpdateam.ru.forpda.api.topcis.models.TopicsData;
 import forpdateam.ru.forpda.client.ClientHelper;
@@ -26,7 +24,7 @@ import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.fragments.forum.ForumFragment;
 import forpdateam.ru.forpda.fragments.search.SearchFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
-import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.DynamicDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
@@ -58,8 +56,7 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
     private PaginationHelper paginationHelper;
     private int currentSt = 0;
     TopicsData data;
-    private AlertDialogMenu<TopicsFragment, TopicItem> fullTopicsDialogMenu;
-    private AlertDialogMenu<TopicsFragment, TopicItem> topicsDialogMenu;
+    private DynamicDialogMenu<TopicsFragment, TopicItem> dialogMenu;
 
     @Nullable
     @Override
@@ -97,7 +94,7 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
 
     @Override
     public boolean loadData() {
-        if(!super.loadData()){
+        if (!super.loadData()) {
             return false;
         }
         setRefreshing(true);
@@ -184,31 +181,23 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
     @Override
     public boolean onItemLongClick(TopicItem item) {
         if (item.isAnnounce()) return false;
-        if (fullTopicsDialogMenu == null) {
-            fullTopicsDialogMenu = new AlertDialogMenu<>();
-            topicsDialogMenu = new AlertDialogMenu<>();
-            fullTopicsDialogMenu.addItem(getString(R.string.copy_link), (context, data1) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data1.getId()))));
-            fullTopicsDialogMenu.addItem(getString(R.string.open_theme_forum), (context, data1) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getId()));
-            fullTopicsDialogMenu.addItem(getString(R.string.add_to_favorites), ((context, data1) -> {
-                new AlertDialog.Builder(context.getContext())
-                        .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> {
-                            FavoritesHelper.add(aBoolean -> {
-                                Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
-                            }, data1.getId(), Favorites.SUB_TYPES[which1]);
-                        })
-                        .show();
+        if (dialogMenu == null) {
+            dialogMenu = new DynamicDialogMenu<>();
+            dialogMenu.addItem(getString(R.string.copy_link), (context, data1) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data1.getId()))));
+            dialogMenu.addItem(getString(R.string.open_theme_forum), (context, data1) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getId()));
+            dialogMenu.addItem(getString(R.string.add_to_favorites), ((context, data1) -> {
+                FavoritesHelper.addWithDialog(getContext(), aBoolean -> {
+                    Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
+                }, data1.getId());
             }));
         }
-        topicsDialogMenu.clear();
-        topicsDialogMenu.addItem(fullTopicsDialogMenu.get(0));
-        topicsDialogMenu.addItem(fullTopicsDialogMenu.get(1));
+        dialogMenu.disallowAll();
+        dialogMenu.allow(0);
+        dialogMenu.allow(1);
         if (ClientHelper.getAuthState()) {
-            topicsDialogMenu.addItem(fullTopicsDialogMenu.get(2));
+            dialogMenu.allow(2);
         }
-
-        new AlertDialog.Builder(getContext())
-                .setItems(topicsDialogMenu.getTitles(), (dialog, which) -> topicsDialogMenu.onClick(which, TopicsFragment.this, item))
-                .show();
+        dialogMenu.show(getContext(), TopicsFragment.this, item);
         return false;
     }
 }

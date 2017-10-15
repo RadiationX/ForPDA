@@ -3,9 +3,7 @@ package forpdateam.ru.forpda.fragments.news.main;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -28,7 +26,7 @@ import forpdateam.ru.forpda.fragments.news.main.timeline.NewsListAdapter;
 import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
 import forpdateam.ru.forpda.fragments.search.SearchFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
-import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.DynamicDialogMenu;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.PauseOnScrollListener;
@@ -41,6 +39,7 @@ public class NewsMainFragment extends RecyclerFragment implements NewsListAdapte
     private NewsListAdapter adapter;
     private String category = Constants.NEWS_CATEGORY_ALL;
     private Subscriber<List<NewsItem>> mainSubscriber = new Subscriber<>(this);
+    private DynamicDialogMenu<NewsMainFragment, NewsItem> dialogMenu;
 
     public NewsMainFragment() {
         configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_news_list));
@@ -88,41 +87,11 @@ public class NewsMainFragment extends RecyclerFragment implements NewsListAdapte
         return true;
     }
 
-    /*@Override
-    public void loadCacheData() {
-        super.loadCacheData();
-        if (realm.isClosed()) return;
-        List<News> list = realm.where(News.class).findAll();
-        d("from realm " + list.size());
-        if (list.size() > 0) adapter.insertData(list);
-        else loadData();
-    }
-*/
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        /*if (realm != null) {
-            realm.close();
-        }*/
-    }
-
-    private void d(String msg) {
-        Log.d("PARENT", msg);
-    }
-
-    private AlertDialogMenu<NewsMainFragment, NewsItem> dialogMenu, showedDialogMenu;
 
     @Override
     public boolean onLongItemClick(View view, NewsItem item, int position) {
         if (dialogMenu == null) {
-            dialogMenu = new AlertDialogMenu<>();
-            showedDialogMenu = new AlertDialogMenu<>();
+            dialogMenu = new DynamicDialogMenu<>();
             dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
                 Utils.copyToClipBoard("https://4pda.ru/index.php?p=" + data.getId());
             });
@@ -135,16 +104,9 @@ public class NewsMainFragment extends RecyclerFragment implements NewsListAdapte
                 NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);
             });
         }
-        showedDialogMenu.clear();
-
-        showedDialogMenu.addItem(dialogMenu.get(0));
-        showedDialogMenu.addItem(dialogMenu.get(1));
-        showedDialogMenu.addItem(dialogMenu.get(2));
-        new AlertDialog.Builder(getContext())
-                .setItems(showedDialogMenu.getTitles(), (dialog, which) -> {
-                    showedDialogMenu.onClick(which, NewsMainFragment.this, item);
-                })
-                .show();
+        dialogMenu.disallowAll();
+        dialogMenu.allowAll();
+        dialogMenu.show(getContext(), NewsMainFragment.this, item);
         return true;
     }
 
