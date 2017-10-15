@@ -28,7 +28,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -51,7 +50,6 @@ import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.IBaseForumPost;
 import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.events.models.NotificationEvent;
-import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
@@ -263,7 +261,6 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                     loadData(NORMAL_ACTION);
                     notificationView.setVisibility(View.GONE);
                 });
-
 
 
         messagePanel.enableBehavior();
@@ -605,32 +602,29 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                     return false;
                 });
 
-        SubMenu subMenu = getMenu().addSubMenu(R.string.theme_options);
-        deleteFavoritesMenuItem = subMenu.add(R.string.delete_from_favorites)
+        deleteFavoritesMenuItem = getMenu().add(R.string.delete_from_favorites)
                 .setOnMenuItemClickListener(menuItem -> {
                     if (currentPage.getFavId() == 0) {
                         Toast.makeText(App.getContext(), R.string.fav_delete_error_id_not_found, Toast.LENGTH_SHORT).show();
                         return false;
                     }
-                    FavoritesHelper.delete(aBoolean -> {
-                        Toast.makeText(App.getContext(), aBoolean ? getString(R.string.favorite_theme_deleted) : getString(R.string.error), Toast.LENGTH_SHORT).show();
+                    FavoritesHelper.deleteWithDialog(getContext(), aBoolean -> {
+                        Toast.makeText(App.getContext(), getString(aBoolean ? R.string.favorite_theme_deleted : R.string.error), Toast.LENGTH_SHORT).show();
                         currentPage.setInFavorite(!aBoolean);
                         refreshToolbarMenuItems(true);
                     }, currentPage.getFavId());
                     return false;
                 });
-        addFavoritesMenuItem = subMenu.add(R.string.add_to_favorites)
+        addFavoritesMenuItem = getMenu().add(R.string.add_to_favorites)
                 .setOnMenuItemClickListener(menuItem -> {
-                    new AlertDialog.Builder(getContext())
-                            .setItems(Favorites.SUB_NAMES, (dialog1, which1) -> FavoritesHelper.add(aBoolean -> {
-                                Toast.makeText(App.getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error), Toast.LENGTH_SHORT).show();
-                                currentPage.setInFavorite(aBoolean);
-                                refreshToolbarMenuItems(true);
-                            }, currentPage.getId(), Favorites.SUB_TYPES[which1]))
-                            .show();
+                    FavoritesHelper.addWithDialog(getContext(), aBoolean -> {
+                        Toast.makeText(App.getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error), Toast.LENGTH_SHORT).show();
+                        currentPage.setInFavorite(aBoolean);
+                        refreshToolbarMenuItems(true);
+                    }, currentPage.getId());
                     return false;
                 });
-        openForumMenuItem = subMenu.add(R.string.open_theme_forum)
+        openForumMenuItem = getMenu().add(R.string.open_theme_forum)
                 .setOnMenuItemClickListener(menuItem -> {
                     IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + currentPage.getForumId());
                     return false;

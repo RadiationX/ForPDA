@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.fragments.qms;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
@@ -34,7 +33,7 @@ import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsThemesAdapter;
 import forpdateam.ru.forpda.fragments.qms.chat.QmsChatFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
-import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.DynamicDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import io.realm.Realm;
@@ -54,7 +53,7 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
     private Realm realm;
     private Subscriber<QmsThemes> mainSubscriber = new Subscriber<>(this);
     private Subscriber<ArrayList<QmsContact>> contactsSubscriber = new Subscriber<>(this);
-    private AlertDialogMenu<QmsThemesFragment, IQmsTheme> dialogMenu;
+    private DynamicDialogMenu<QmsThemesFragment, IQmsTheme> dialogMenu;
 
     private Observer notification = (observable, o) -> {
         if (o == null) return;
@@ -304,7 +303,7 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
     @Override
     public boolean onItemLongClick(IQmsTheme item) {
         if (dialogMenu == null) {
-            dialogMenu = new AlertDialogMenu<>();
+            dialogMenu = new DynamicDialogMenu<>();
             dialogMenu.addItem(getString(R.string.delete), (context, data) -> {
                 mainSubscriber.subscribe(RxApi.Qms().deleteTheme(currentThemes.getUserId(), data.getId()), this::onLoadThemes, currentThemes, v -> loadData());
             });
@@ -314,8 +313,9 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
                 NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);
             });
         }
-        new AlertDialog.Builder(getContext())
-                .setItems(dialogMenu.getTitles(), (dialog, which) -> dialogMenu.onClick(which, QmsThemesFragment.this, item)).show();
+        dialogMenu.disallowAll();
+        dialogMenu.allowAll();
+        dialogMenu.show(getContext(), QmsThemesFragment.this, item);
         return false;
     }
 }

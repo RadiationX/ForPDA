@@ -4,7 +4,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SearchView;
 import android.util.SparseIntArray;
@@ -36,7 +35,7 @@ import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
 import forpdateam.ru.forpda.fragments.qms.adapters.QmsContactsAdapter;
 import forpdateam.ru.forpda.fragments.qms.chat.QmsChatFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
-import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.DynamicDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.ContentController;
@@ -54,7 +53,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
     private Subscriber<String> helperSubscriber = new Subscriber<>(this);
     private Realm realm;
     private RealmResults<QmsContactBd> results;
-    private AlertDialogMenu<QmsContactsFragment, IQmsContact> dialogMenu;
+    private DynamicDialogMenu<QmsContactsFragment, IQmsContact> dialogMenu;
 
     private Observer notification = (observable, o) -> {
         if (o == null) return;
@@ -316,7 +315,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
     @Override
     public boolean onItemLongClick(IQmsContact item) {
         if (dialogMenu == null) {
-            dialogMenu = new AlertDialogMenu<>();
+            dialogMenu = new DynamicDialogMenu<>();
             dialogMenu.addItem(getString(R.string.profile), (context, data) -> {
                 IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data.getId());
             });
@@ -334,8 +333,9 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
                 NotesAddPopup.showAddNoteDialog(context1.getContext(), title, url);
             });
         }
-        new AlertDialog.Builder(getContext())
-                .setItems(dialogMenu.getTitles(), (dialog, which) -> dialogMenu.onClick(which, QmsContactsFragment.this, item)).show();
+        dialogMenu.disallowAll();
+        dialogMenu.allowAll();
+        dialogMenu.show(getContext(), QmsContactsFragment.this, item);
         return false;
     }
 }

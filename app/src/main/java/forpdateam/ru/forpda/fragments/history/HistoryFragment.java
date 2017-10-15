@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.fragments.history;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
@@ -17,7 +16,7 @@ import forpdateam.ru.forpda.data.realm.history.HistoryItemBd;
 import forpdateam.ru.forpda.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.history.adapters.HistoryAdapter;
-import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.DynamicDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.views.ContentController;
@@ -34,7 +33,7 @@ public class HistoryFragment extends RecyclerFragment implements HistoryAdapter.
     private final static SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy, HH:mm", Locale.getDefault());
     private HistoryAdapter adapter;
     private Realm realm;
-    private AlertDialogMenu<HistoryFragment, HistoryItemBd> dialogMenu, showedDialogMenu;
+    private DynamicDialogMenu<HistoryFragment, HistoryItemBd> dialogMenu;
 
     public HistoryFragment() {
         configuration.setUseCache(true);
@@ -65,7 +64,7 @@ public class HistoryFragment extends RecyclerFragment implements HistoryAdapter.
             setRefreshing(true);
             RealmResults<HistoryItemBd> results = realm.where(HistoryItemBd.class).findAllSorted("unixTime", Sort.DESCENDING);
             if (results.isEmpty()) {
-                if(!contentController.contains(ContentController.TAG_NO_DATA)){
+                if (!contentController.contains(ContentController.TAG_NO_DATA)) {
                     FunnyContent funnyContent = new FunnyContent(getContext())
                             .setImage(R.drawable.ic_history)
                             .setTitle(R.string.funny_history_nodata_title)
@@ -97,8 +96,7 @@ public class HistoryFragment extends RecyclerFragment implements HistoryAdapter.
     @Override
     public boolean onItemLongClick(HistoryItemBd item) {
         if (dialogMenu == null) {
-            dialogMenu = new AlertDialogMenu<>();
-            showedDialogMenu = new AlertDialogMenu<>();
+            dialogMenu = new DynamicDialogMenu<>();
             dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
                 Utils.copyToClipBoard(data.getUrl());
             });
@@ -106,15 +104,9 @@ public class HistoryFragment extends RecyclerFragment implements HistoryAdapter.
                 context.delete(data.getId());
             });
         }
-        showedDialogMenu.clear();
-        showedDialogMenu.addItem(dialogMenu.get(0));
-        showedDialogMenu.addItem(dialogMenu.get(1));
-
-        new AlertDialog.Builder(getContext())
-                .setItems(showedDialogMenu.getTitles(), (dialog, which) -> {
-                    showedDialogMenu.onClick(which, HistoryFragment.this, item);
-                })
-                .show();
+        dialogMenu.disallowAll();
+        dialogMenu.allowAll();
+        dialogMenu.show(getContext(), HistoryFragment.this, item);
         return true;
     }
 

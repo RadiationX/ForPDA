@@ -24,7 +24,7 @@ import forpdateam.ru.forpda.data.realm.forum.ForumItemFlatBd;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
-import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.DynamicDialogMenu;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import io.realm.Realm;
@@ -40,7 +40,7 @@ public class ForumFragment extends TabFragment {
     private NestedScrollView treeContainer;
     private Realm realm;
     private RealmResults<ForumItemFlatBd> results;
-    private static AlertDialogMenu<ForumFragment, ForumItemTree> forumMenu, showedForumMenu;
+    private DynamicDialogMenu<ForumFragment, ForumItemTree> dialogMenu;
     private AlertDialog updateDialog;
     private TreeNode.TreeNodeClickListener nodeClickListener = (node, value) -> {
         ForumItemTree item = (ForumItemTree) value;
@@ -52,27 +52,24 @@ public class ForumFragment extends TabFragment {
     };
     private TreeNode.TreeNodeLongClickListener nodeLongClickListener = (node, value) -> {
         ForumItemTree item = (ForumItemTree) value;
-        if (forumMenu == null) {
-            forumMenu = new AlertDialogMenu<>();
-            showedForumMenu = new AlertDialogMenu<>();
-            forumMenu.addItem(getString(R.string.open_forum), (context, data) -> {
+        if (dialogMenu == null) {
+            dialogMenu = new DynamicDialogMenu<>();
+            dialogMenu.addItem(getString(R.string.open_forum), (context, data) -> {
                 Bundle args = new Bundle();
                 args.putInt(TopicsFragment.TOPICS_ID_ARG, data.getId());
                 TabManager.getInstance().add(TopicsFragment.class, args);
             });
-            forumMenu.addItem(getString(R.string.copy_link), (context, data) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getId()))));
-            forumMenu.addItem(getString(R.string.mark_read), (context, data) -> {
+            dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getId()))));
+            dialogMenu.addItem(getString(R.string.mark_read), (context, data) -> {
 
             });
         }
-        showedForumMenu.clear();
+        dialogMenu.disallowAll();
         if (item.getLevel() > 0)
-            showedForumMenu.addItem(forumMenu.get(0));
-        showedForumMenu.addItem(forumMenu.get(1));
-        showedForumMenu.addItem(forumMenu.get(2));
-        new AlertDialog.Builder(getContext())
-                .setItems(showedForumMenu.getTitles(), (dialogInterface, i) -> showedForumMenu.onClick(i, ForumFragment.this, item))
-                .show();
+            dialogMenu.allow(0);
+        dialogMenu.allow(1);
+        dialogMenu.allow(2);
+        dialogMenu.show(getContext(), ForumFragment.this, item);
         return false;
     };
     TreeNode root;

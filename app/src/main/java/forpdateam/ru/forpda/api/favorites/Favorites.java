@@ -7,8 +7,6 @@ import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
@@ -30,13 +28,6 @@ public class Favorites {
     public final static int ACTION_DELETE = 2;
     public final static int ACTION_ADD = 3;
     public final static String[] SUB_TYPES = {"none", "delayed", "immediate", "daily", "weekly", "pinned"};
-    public final static CharSequence[] SUB_NAMES = {
-            App.get().getString(R.string.fav_subscribe_none),
-            App.get().getString(R.string.fav_subscribe_delayed),
-            App.get().getString(R.string.fav_subscribe_immediate),
-            App.get().getString(R.string.fav_subscribe_daily),
-            App.get().getString(R.string.fav_subscribe_weekly),
-            App.get().getString(R.string.fav_subscribe_pinned)};
 
     private final static Comparator<FavItem> DESC_ORDER = (item1, item2) -> item1.getTopicTitle().compareToIgnoreCase(item2.getTopicTitle());
     private final static Comparator<FavItem> ASC_ORDER = (item1, item2) -> item2.getTopicTitle().compareToIgnoreCase(item1.getTopicTitle());

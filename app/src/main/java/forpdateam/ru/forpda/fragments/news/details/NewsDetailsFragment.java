@@ -117,6 +117,9 @@ public class NewsDetailsFragment extends TabFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         baseInflateFragment(inflater, R.layout.news_details_fragment_layout);
+        ViewStub viewStub = (ViewStub) findViewById(R.id.toolbar_content);
+        viewStub.setLayoutResource(R.layout.toolbar_news_details);
+        viewStub.inflate();
         fragmentsPager = (ViewPager) findViewById(R.id.view_pager);
         webViewContainer = (FrameLayout) findViewById(R.id.swipe_refresh_list);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
@@ -125,9 +128,6 @@ public class NewsDetailsFragment extends TabFragment {
         detailsNick = (TextView) findViewById(R.id.article_nick);
         detailsDate = (TextView) findViewById(R.id.article_date);
         imageProgressBar = (ProgressBar) findViewById(R.id.article_progress_bar);
-        ViewStub viewStub = (ViewStub) findViewById(R.id.toolbar_content);
-        viewStub.setLayoutResource(R.layout.toolbar_news_details);
-        viewStub.inflate();
 
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) toolbarLayout.getLayoutParams();
         params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);

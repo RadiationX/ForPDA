@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,7 +35,7 @@ import forpdateam.ru.forpda.data.realm.notes.NoteItemBd;
 import forpdateam.ru.forpda.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.fragments.notes.adapters.NotesAdapter;
-import forpdateam.ru.forpda.utils.AlertDialogMenu;
+import forpdateam.ru.forpda.utils.DynamicDialogMenu;
 import forpdateam.ru.forpda.utils.FilePickHelper;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
@@ -53,7 +52,7 @@ import io.realm.Sort;
 public class NotesFragment extends RecyclerFragment implements NotesAdapter.OnItemClickListener<NoteItem>, NotesAddPopup.NoteActionListener {
     private NotesAdapter adapter;
     private Realm realm;
-    private AlertDialogMenu<NotesFragment, NoteItem> dialogMenu, showedDialogMenu;
+    private DynamicDialogMenu<NotesFragment, NoteItem> dialogMenu;
 
     public NotesFragment() {
         configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_notes));
@@ -115,7 +114,7 @@ public class NotesFragment extends RecyclerFragment implements NotesAdapter.OnIt
             RealmResults<NoteItemBd> results = realm.where(NoteItemBd.class).findAllSorted("id", Sort.DESCENDING);
 
             if (results.isEmpty()) {
-                if(!contentController.contains(ContentController.TAG_NO_DATA)){
+                if (!contentController.contains(ContentController.TAG_NO_DATA)) {
                     FunnyContent funnyContent = new FunnyContent(getContext())
                             .setImage(R.drawable.ic_bookmark)
                             .setTitle(R.string.funny_notes_nodata_title);
@@ -311,8 +310,7 @@ public class NotesFragment extends RecyclerFragment implements NotesAdapter.OnIt
     @Override
     public boolean onItemLongClick(NoteItem item) {
         if (dialogMenu == null) {
-            dialogMenu = new AlertDialogMenu<>();
-            showedDialogMenu = new AlertDialogMenu<>();
+            dialogMenu = new DynamicDialogMenu<>();
             dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
                 Utils.copyToClipBoard("" + data.getLink());
             });
@@ -323,16 +321,9 @@ public class NotesFragment extends RecyclerFragment implements NotesAdapter.OnIt
                 context.deleteNote(data.getId());
             });
         }
-        showedDialogMenu.clear();
-        showedDialogMenu.addItem(dialogMenu.get(0));
-        showedDialogMenu.addItem(dialogMenu.get(1));
-        showedDialogMenu.addItem(dialogMenu.get(2));
-
-        new AlertDialog.Builder(getContext())
-                .setItems(showedDialogMenu.getTitles(), (dialog, which) -> {
-                    showedDialogMenu.onClick(which, NotesFragment.this, item);
-                })
-                .show();
+        dialogMenu.disallowAll();
+        dialogMenu.allowAll();
+        dialogMenu.show(getContext(), NotesFragment.this, item);
         return true;
     }
 }
