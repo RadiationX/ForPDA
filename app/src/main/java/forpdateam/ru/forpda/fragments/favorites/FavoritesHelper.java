@@ -16,8 +16,9 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class FavoritesHelper {
-
-
+    public static void addForum(@NonNull Consumer<Boolean> onNext, int id, String subType) {
+        changeFav(onNext, Favorites.ACTION_ADD_FORUM, -1, id, subType);
+    }
 
     public static void add(@NonNull Consumer<Boolean> onNext, int id, String subType) {
         changeFav(onNext, Favorites.ACTION_ADD, -1, id, subType);
@@ -34,6 +35,14 @@ public class FavoritesHelper {
     public static void changeSubType(@NonNull Consumer<Boolean> onNext, int favId, String subType) {
         changeFav(onNext, Favorites.ACTION_EDIT_SUB_TYPE, favId, -1, subType);
     }*/
+
+    public static void addForumWithDialog(Context context, @NonNull Consumer<Boolean> onNext, int id) {
+        new AlertDialog.Builder(context)
+                .setItems(FavoritesFragment.SUB_NAMES, (dialog1, which1) -> {
+                    addForum(onNext, id, Favorites.SUB_TYPES[which1]);
+                })
+                .show();
+    }
 
     public static void addWithDialog(Context context, @NonNull Consumer<Boolean> onNext, int id) {
         new AlertDialog.Builder(context)

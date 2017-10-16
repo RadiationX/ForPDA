@@ -27,6 +27,7 @@ public class Favorites {
     public final static int ACTION_EDIT_PIN_STATE = 1;
     public final static int ACTION_DELETE = 2;
     public final static int ACTION_ADD = 3;
+    public final static int ACTION_ADD_FORUM = 4;
     public final static String[] SUB_TYPES = {"none", "delayed", "immediate", "daily", "weekly", "pinned"};
 
     private final static Comparator<FavItem> DESC_ORDER = (item1, item2) -> item1.getTopicTitle().compareToIgnoreCase(item2.getTopicTitle());
@@ -150,8 +151,15 @@ public class Favorites {
         return checkIsComplete(response.getBody());
     }
 
-    public boolean add(int id, String type) throws Exception {
-        NetworkResponse response = Api.getWebClient().request(new NetworkRequest.Builder().url("https://4pda.ru/forum/index.php?act=fav&type=add&t=" + id + "&track_type=" + type).build());
+    public boolean add(int id, int action, String type) throws Exception {
+        String url = "https://4pda.ru/forum/index.php?act=fav&type=add&track_type=" + type;
+        if (action == ACTION_ADD_FORUM) {
+            url += "&f=";
+        } else if (action == ACTION_ADD) {
+            url += "&t=";
+        }
+        url += id;
+        NetworkResponse response = Api.getWebClient().request(new NetworkRequest.Builder().url(url).build());
         return checkIsComplete(response.getBody());
     }
 

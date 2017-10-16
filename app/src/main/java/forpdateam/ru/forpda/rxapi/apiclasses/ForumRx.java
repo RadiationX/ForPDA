@@ -20,6 +20,10 @@ public class ForumRx {
         return Observable.fromCallable(() -> Api.Forum().markAllRead());
     }
 
+    public Observable<Object> markRead(int id) {
+        return Observable.fromCallable(() -> Api.Forum().markRead(id));
+    }
+
     public Observable<ForumRules> getRules(boolean withHtml) {
         return Observable.fromCallable(() -> transform(Api.Forum().getRules(), withHtml));
     }
