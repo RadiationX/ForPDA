@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.utils;
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.util.Base64;
 import android.util.Log;
@@ -51,7 +52,7 @@ public class CustomWebViewClient extends WebViewClient {
                 value = URLDecoder.decode(value, "UTF-8");
 
                 String avatarUrl = null;
-                switch (type){
+                switch (type) {
                     case TYPE_NICK:
                         ForumUser forumUser = ForumUsersCache.loadUserByNick(value);
                         Log.d(LOG_TAG, "Loaded user " + forumUser.getId() + " : " + forumUser.getNick() + " : " + forumUser.getAvatar());
@@ -92,5 +93,22 @@ public class CustomWebViewClient extends WebViewClient {
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
 
         return Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+        return handleUri(Uri.parse(url));
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    @Override
+    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+        return handleUri(request.getUrl());
+    }
+
+    private boolean handleUri(Uri uri) {
+        IntentHandler.handle(uri.toString());
+        return true;
     }
 }

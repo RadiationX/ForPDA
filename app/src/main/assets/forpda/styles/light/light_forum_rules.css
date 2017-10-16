@@ -27,7 +27,6 @@ body {
   font-family: "Roboto Mono", monospace;
 }
 .content .rules_list .item {
-  padding-left: 0.25rem;
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
 }

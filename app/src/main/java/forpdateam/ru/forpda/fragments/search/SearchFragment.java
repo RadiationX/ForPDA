@@ -1,11 +1,9 @@
 package forpdateam.ru.forpda.fragments.search;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.SearchManager;
 import android.content.Context;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -27,8 +25,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -102,7 +98,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
     private RecyclerView recyclerView;
     private SwipeRefreshLayout refreshLayout;
     private SearchAdapter adapter = new SearchAdapter();
-    private SearchWebViewClient webViewClient;
+    private CustomWebViewClient webViewClient;
 
     private StringBuilder titleBuilder = new StringBuilder();
     private PaginationHelper paginationHelper;
@@ -612,7 +608,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
                 Log.d(LOG_TAG, "add webview");
             }
             if (webViewClient == null) {
-                webViewClient = new SearchWebViewClient();
+                webViewClient = new CustomWebViewClient();
                 webView.setWebViewClient(webViewClient);
                 webView.setWebChromeClient(new CustomWebChromeClient());
             }
@@ -736,27 +732,6 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         dialogMenu.show(getContext(), SearchFragment.this, item);
         return false;
     }
-
-    private class SearchWebViewClient extends CustomWebViewClient {
-
-        @SuppressWarnings("deprecation")
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            return handleUri(Uri.parse(url));
-        }
-
-        @TargetApi(Build.VERSION_CODES.N)
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-            return handleUri(request.getUrl());
-        }
-
-        private boolean handleUri(Uri uri) {
-            IntentHandler.handle(uri.toString());
-            return true;
-        }
-    }
-
 
     @JavascriptInterface
     public void firstPage() {

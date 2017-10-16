@@ -25,6 +25,7 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.forum.models.ForumRules;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
+import forpdateam.ru.forpda.utils.CustomWebViewClient;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.ExtendedWebView;
@@ -59,6 +60,7 @@ public class ForumRulesFragment extends TabFragment {
         super.onViewCreated(view, savedInstanceState);
         viewsReady();
         webView.addJavascriptInterface(this, JS_INTERFACE);
+        webView.setWebViewClient(new CustomWebViewClient());
         webView.setJsLifeCycleListener(new ExtendedWebView.JsLifeCycleListener() {
             @Override
             public void onDomContentComplete(ArrayList<String> actions) {

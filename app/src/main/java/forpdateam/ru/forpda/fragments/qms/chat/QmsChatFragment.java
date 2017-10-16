@@ -1,11 +1,8 @@
 package forpdateam.ru.forpda.fragments.qms.chat;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -14,8 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -144,7 +139,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         webView.setJsLifeCycleListener(this);
         webView.addJavascriptInterface(this, JS_INTERFACE);
         registerForContextMenu(webView);
-        webView.setWebViewClient(new QmsWebViewClient());
+        webView.setWebViewClient(new CustomWebViewClient());
         webView.setWebChromeClient(new CustomWebChromeClient());
         loadBaseWebContainer();
 
@@ -460,26 +455,6 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
 
     @Override
     public void onPageComplete(final ArrayList<String> actions) {
-    }
-
-    private class QmsWebViewClient extends CustomWebViewClient {
-
-        @SuppressWarnings("deprecation")
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            return handleUri(Uri.parse(url));
-        }
-
-        @TargetApi(Build.VERSION_CODES.N)
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-            return handleUri(request.getUrl());
-        }
-
-        private boolean handleUri(Uri uri) {
-            IntentHandler.handle(uri.toString());
-            return true;
-        }
     }
 
     /* ATTACHMENTS LOADER */

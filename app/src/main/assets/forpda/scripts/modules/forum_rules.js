@@ -10,7 +10,10 @@ function setupListeners() {
 
     function listener(ev) {
         var item = ev.target;
-        while(!item.classList.contains("item")){
+        if (item.tagName == "A") {
+            return;
+        }
+        while (!item.classList.contains("item")) {
             item = item.parentElement;
         }
         var text = (item.textContent).trim();

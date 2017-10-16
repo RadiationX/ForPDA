@@ -30,6 +30,7 @@ import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.fragments.devdb.BrandsFragment;
 import forpdateam.ru.forpda.fragments.devdb.DeviceFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
+import forpdateam.ru.forpda.fragments.forum.ForumRulesFragment;
 import forpdateam.ru.forpda.fragments.mentions.MentionsFragment;
 import forpdateam.ru.forpda.fragments.news.details.NewsDetailsFragment;
 import forpdateam.ru.forpda.fragments.news.main.NewsMainFragment;
@@ -306,6 +307,7 @@ public class IntentHandler {
                     return true;
                 case "boardrules":
                     run("boardrules");
+                    TabManager.getInstance().add(ForumRulesFragment.class);
                     return false;
                 case "search":
                     run("search " + uri.toString());
