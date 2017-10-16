@@ -36,7 +36,8 @@ public class AspectRatioImageView extends android.support.v7.widget.AppCompatIma
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(widthMeasureSpec, (int) (getMeasuredWidth() * aspectRatio));
+        float height = Math.min(getMeasuredWidth() * aspectRatio, getMaxHeight());
+        setMeasuredDimension(widthMeasureSpec, (int) (height));
     }
 
     public void setAspectRatio(float aspectRatio) {
