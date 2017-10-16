@@ -164,6 +164,7 @@
     <string name="fragment_title_dialogs">Диалоги</string>
     <string name="fragment_title_reputation">Репутация</string>
     <string name="fragment_title_topics">Темы форума</string>
+    <string name="fragment_title_forum_rules">Правила форума</string>
     <string name="activity_title_settings">Настройки</string>
 
     <string name="fragment_tab_title_theme" formatted="false">Тема \"%s\"</string>
@@ -297,6 +298,7 @@
     <string name="delete_from_favorites">Удалить из избранного</string>
     <string name="favorite_theme_deleted">Тема удалена из избранного</string>
     <string name="fav_delete_error_id_not_found">ID темы не найден, попробуйте перезагрузить страницу</string>
+    <string name="fav_ask_delete">Удалить тему из избранного?</string>
 
     <!-- Edit post -->
     <string name="editpost_title_answer">Ответ</string>

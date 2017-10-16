@@ -14,7 +14,6 @@ function setupListeners() {
             item = item.parentElement;
         }
         var text = (item.textContent).trim();
-        console.log(text);
         IRules.copyRule(text);
     }
 }
