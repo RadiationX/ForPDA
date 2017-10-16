@@ -1,0 +1,33 @@
+body {
+    background: @background_for_cards;
+}
+.content {
+    .mainBox();
+    padding: 16/16rem;
+    font-family:  @fontMono;
+    .rules_list {
+        .item {
+            padding-left: 4/16rem;
+            padding-top: 4/16rem;
+            padding-bottom: 4/16rem;
+            b {}
+            span {
+                margin-left: 4/16rem;
+            }
+            &.header {
+                padding-left: 0;
+                margin-top: 8/16rem;
+                font-weight: bold;
+                &:first-child{
+                    margin-top: 0;
+                }
+                &:last-child{
+                    margin-bottom: 0;
+                }
+            }
+            &:not(.header):active{
+                background: @tapColor;
+            }
+        }
+    }
+}

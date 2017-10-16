@@ -173,6 +173,7 @@
     <string name="codes_name_code">Code</string>
     <string name="codes_name_text_color">Text color</string>
     <string name="codes_name_text_size">Text size</string>
+    <string name="codes_name_font">Font</string>
     <string name="codes_name_hide">Hidden</string>
     <string name="codes_name_bg_color">Background color</string>
     <string name="codes_name_list">Bulleted List</string>
@@ -183,6 +184,8 @@
     <string name="codes_name_sub">Subscript</string>
     <string name="codes_name_sup">Superscript</string>
     <string name="codes_name_curator">Contributor</string>
+    <string name="codes_font">Font name</string>
+    <string name="codes_font_text">Text</string>
     <string name="codes_list_item_Pos" formatted="false">Item %d</string>
     <string name="transform_string_to_list">Transform selected string into the listing?</string>
     <!-- Tooltips -->
