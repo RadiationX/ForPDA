@@ -1,8 +1,5 @@
 package forpdateam.ru.forpda.fragments.news.details;
 
-import android.annotation.TargetApi;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,15 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebView;
 
 import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.api.news.models.DetailsPage;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.CustomWebChromeClient;
 import forpdateam.ru.forpda.utils.CustomWebViewClient;
-import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.views.ExtendedWebView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -44,14 +38,14 @@ public class ArticleContentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         webView = ((MainActivity) getActivity()).getWebViewsProvider().pull(getContext());
         registerForContextMenu(webView);
-        webView.setWebViewClient(new ArticleWebViewClient());
+        webView.setWebViewClient(new CustomWebViewClient());
         webView.setWebChromeClient(new CustomWebChromeClient());
         webView.addJavascriptInterface(this, JS_INTERFACE);
         loadHtml();
         return webView;
     }
 
-    private void loadHtml(){
+    private void loadHtml() {
         webView.loadDataWithBaseURL("https://4pda.ru/forum/", article.getHtml(), "text/html", "utf-8", null);
     }
 
@@ -92,26 +86,6 @@ public class ArticleContentFragment extends Fragment {
         if (webView != null) {
             webView.destroy();
             ((MainActivity) getActivity()).getWebViewsProvider().push(webView);
-        }
-    }
-
-    private class ArticleWebViewClient extends CustomWebViewClient {
-
-        @SuppressWarnings("deprecation")
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            return handleUri(Uri.parse(url));
-        }
-
-        @TargetApi(Build.VERSION_CODES.N)
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-            return handleUri(request.getUrl());
-        }
-
-        private boolean handleUri(Uri uri) {
-            IntentHandler.handle(uri.toString());
-            return true;
         }
     }
 }

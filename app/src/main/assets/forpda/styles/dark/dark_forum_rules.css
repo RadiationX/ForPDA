@@ -19,3 +19,31 @@
 body {
   background: #0a0a0a;
 }
+.content {
+  background: #212121;
+  margin: 0.5em 0;
+  box-shadow: 0rem 0.0625rem 0.0625rem rgba(0, 0, 0, 0.12), 0rem 0rem 0.0625rem rgba(0, 0, 0, 0.12);
+  padding: 1rem;
+  font-family: "Roboto Mono", monospace;
+}
+.content .rules_list .item {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+.content .rules_list .item span {
+  margin-left: 0.25rem;
+}
+.content .rules_list .item.header {
+  padding-left: 0;
+  margin-top: 0.5rem;
+  font-weight: bold;
+}
+.content .rules_list .item.header:first-child {
+  margin-top: 0;
+}
+.content .rules_list .item.header:last-child {
+  margin-bottom: 0;
+}
+.content .rules_list .item:not(.header):active {
+  background: rgba(255, 255, 255, 0.1);
+}
