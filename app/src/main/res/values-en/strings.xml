@@ -145,6 +145,7 @@
     <string name="fragment_title_dialogs">Dialogs</string>
     <string name="fragment_title_reputation">Reputation</string>
     <string name="fragment_title_topics">Forum topics</string>
+    <string name="fragment_title_forum_rules">Forum rules</string>
     <string name="activity_title_settings">Settings</string>
 
     <string name="fragment_tab_title_article" formatted="false">News \"%s\"</string>
@@ -267,6 +268,7 @@
     <string name="delete_from_favorites">Delete from favorites</string>
     <string name="favorite_theme_deleted">Topic has been removed from favorites</string>
     <string name="fav_delete_error_id_not_found">Topic ID is not found, try reloading the page</string>
+    <string name="fav_ask_delete">Delete topic from favorites?</string>
     <!-- Edit post -->
     <string name="editpost_title_answer">Reply to </string>
     <string name="editpost_title_edit">Editing</string>

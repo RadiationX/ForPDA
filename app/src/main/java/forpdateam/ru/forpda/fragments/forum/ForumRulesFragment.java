@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.fragments.forum;
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatImageButton;
@@ -16,6 +17,8 @@ import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import java.util.ArrayList;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -56,6 +59,17 @@ public class ForumRulesFragment extends TabFragment {
         super.onViewCreated(view, savedInstanceState);
         viewsReady();
         webView.addJavascriptInterface(this, JS_INTERFACE);
+        webView.setJsLifeCycleListener(new ExtendedWebView.JsLifeCycleListener() {
+            @Override
+            public void onDomContentComplete(ArrayList<String> actions) {
+                setRefreshing(false);
+            }
+
+            @Override
+            public void onPageComplete(ArrayList<String> actions) {
+
+            }
+        });
     }
 
     @Override
@@ -75,8 +89,11 @@ public class ForumRulesFragment extends TabFragment {
     }
 
     private void onLoad(ForumRules rules) {
-        setRefreshing(false);
         webView.loadDataWithBaseURL("https://4pda.ru/forum/", rules.getHtml(), "text/html", "utf-8", null);
+        new Handler().postDelayed(() -> {
+            if (isAdded())
+                setRefreshing(false);
+        }, 1000);
     }
 
     @JavascriptInterface

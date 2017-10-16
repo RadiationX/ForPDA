@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 
+import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -44,9 +45,9 @@ public class FavoritesHelper {
 
     public static void deleteWithDialog(Context context, @NonNull Consumer<Boolean> onNext, int favId) {
         new AlertDialog.Builder(context)
-                .setItems(FavoritesFragment.SUB_NAMES, (dialog1, which1) -> {
-                    delete(onNext, favId);
-                })
+                .setMessage(R.string.fav_ask_delete)
+                .setPositiveButton(R.string.ok, (dialog, which) -> delete(onNext, favId))
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 

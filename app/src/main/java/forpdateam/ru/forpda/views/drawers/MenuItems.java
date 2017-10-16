@@ -40,7 +40,7 @@ public class MenuItems {
         createdMenuItems.add(new MenuItem(App.get().getString(R.string.fragment_title_search), R.drawable.ic_search, SearchFragment.class));
         createdMenuItems.add(new MenuItem(App.get().getString(R.string.fragment_title_history), R.drawable.ic_history, HistoryFragment.class));
         createdMenuItems.add(new MenuItem(App.get().getString(R.string.fragment_title_notes), R.drawable.ic_bookmark, NotesFragment.class));
-        createdMenuItems.add(new MenuItem("Правила форума", R.drawable.ic_book_open, ForumRulesFragment.class));
+        createdMenuItems.add(new MenuItem(App.get().getString(R.string.fragment_title_forum_rules), R.drawable.ic_book_open, ForumRulesFragment.class));
         createdMenuItems.add(new MenuItem(App.get().getString(R.string.activity_title_settings), R.drawable.ic_settings, ACTION_APP_SETTINGS));
     }
 
