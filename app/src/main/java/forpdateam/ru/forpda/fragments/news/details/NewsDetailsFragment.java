@@ -134,6 +134,8 @@ public class NewsDetailsFragment extends TabFragment {
         detailsDate = (TextView) findViewById(R.id.article_date);
         imageProgressBar = (ProgressBar) findViewById(R.id.article_progress_bar);
 
+        detailsImage.setMaxHeight(App.px24 * 10);
+
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) toolbarLayout.getLayoutParams();
         params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
         toolbarLayout.setLayoutParams(params);
