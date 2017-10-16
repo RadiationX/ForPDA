@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content">
 
     <ProgressBar
         android:id="@+id/article_progress_bar"
@@ -19,12 +19,12 @@
         android:scaleType="centerCrop"
         app:aspectRatio="0.75"
         app:layout_collapseMode="parallax"
-        tools:src="@drawable/test_img" />
+        tools:src="@drawable/test_img"/>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/profile_overlay_bg" />
+        android:background="?attr/profile_overlay_bg"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -43,9 +43,9 @@
             android:layout_height="wrap_content"
             android:gravity="start"
             android:singleLine="false"
-            tools:text="asuiodauspoudioauiosdupoiausioudoiauopisuoiduaiouspodiuaopsudoaipusoai"
             android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="asuiodauspoudioauiosdupoiausioudoiauopisuoiduaiouspodiuaopsudoaipusoai"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -59,9 +59,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                tools:text="LONG NICK"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="LONG NICK"/>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/article_comments_count"
+                style="?ProfileToolbarTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/dp16"
+                android:layout_gravity="end"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="2560"/>
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/article_date"
@@ -69,9 +80,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                tools:text="LONG NICK"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="LONG NICK"/>
         </LinearLayout>
 
 

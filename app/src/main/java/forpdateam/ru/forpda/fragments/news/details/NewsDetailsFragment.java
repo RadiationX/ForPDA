@@ -50,6 +50,7 @@ public class NewsDetailsFragment extends TabFragment {
     public static final String ARG_NEWS_TITLE = "ARG_NEWS_TITLE";
     public static final String ARG_NEWS_AUTHOR_NICK = "ARG_NEWS_AUTHOR_NICK";
     public static final String ARG_NEWS_AUTHOR_ID = "ARG_NEWS_AUTHOR_ID";
+    public static final String ARG_NEWS_COMMENTS_COUNT = "ARG_NEWS_COMMENTS_COUNT";
     public static final String ARG_NEWS_DATE = "ARG_NEWS_DATE";
     public static final String ARG_NEWS_IMAGE = "ARG_NEWS_IMAGE";
 
@@ -63,6 +64,7 @@ public class NewsDetailsFragment extends TabFragment {
 
     private TextView detailsTitle;
     private TextView detailsNick;
+    private TextView detailsCount;
     private TextView detailsDate;
     //private Realm realm;
     //private News news;
@@ -71,6 +73,7 @@ public class NewsDetailsFragment extends TabFragment {
     private int commentId;
     private String newsTitle;
     private String newsNick;
+    private int newsCount = -1;
     private String newsDate;
     private String newsImageUrl;
     private Subscriber<DetailsPage> mainSubscriber = new Subscriber<>(this);
@@ -93,6 +96,7 @@ public class NewsDetailsFragment extends TabFragment {
             newsNick = getArguments().getString(ARG_NEWS_AUTHOR_NICK);
             newsDate = getArguments().getString(ARG_NEWS_DATE);
             newsImageUrl = getArguments().getString(ARG_NEWS_IMAGE);
+            newsCount = getArguments().getInt(ARG_NEWS_COMMENTS_COUNT);
 
             Log.d("SUKA", "" + newsId + " : " + newsTitle + " : " + newsNick + " : " + newsDate + " : " + newsImageUrl);
             //realm = Realm.getDefaultInstance();
@@ -116,7 +120,7 @@ public class NewsDetailsFragment extends TabFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        baseInflateFragment(inflater, R.layout.news_details_fragment_layout);
+        baseInflateFragment(inflater, R.layout.fragment_article);
         ViewStub viewStub = (ViewStub) findViewById(R.id.toolbar_content);
         viewStub.setLayoutResource(R.layout.toolbar_news_details);
         viewStub.inflate();
@@ -126,6 +130,7 @@ public class NewsDetailsFragment extends TabFragment {
         detailsImage = (ImageView) findViewById(R.id.article_image);
         detailsTitle = (TextView) findViewById(R.id.article_title);
         detailsNick = (TextView) findViewById(R.id.article_nick);
+        detailsCount = (TextView) findViewById(R.id.article_comments_count);
         detailsDate = (TextView) findViewById(R.id.article_date);
         imageProgressBar = (ProgressBar) findViewById(R.id.article_progress_bar);
 
@@ -162,6 +167,9 @@ public class NewsDetailsFragment extends TabFragment {
         }
         if (newsNick != null) {
             detailsNick.setText(newsNick);
+        }
+        if (newsCount != -1) {
+            detailsCount.setText(Integer.toString(newsCount));
         }
         if (newsDate != null) {
             detailsDate.setText(newsDate);
@@ -204,7 +212,7 @@ public class NewsDetailsFragment extends TabFragment {
 
     @Override
     public boolean loadData() {
-        if(!super.loadData()){
+        if (!super.loadData()) {
             return false;
         }
         //webViewContainer.setRefreshing(true);
@@ -227,6 +235,7 @@ public class NewsDetailsFragment extends TabFragment {
         newsNick = article.getAuthor();
         newsDate = article.getDate();
         newsId = article.getId();
+        newsCount = article.getCommentsCount();
         if (newsImageUrl == null) {
             newsImageUrl = article.getImgUrl();
             loadCoverImage();
@@ -237,6 +246,7 @@ public class NewsDetailsFragment extends TabFragment {
         detailsTitle.setText(newsTitle);
         detailsNick.setText(newsNick);
         detailsDate.setText(newsDate);
+        detailsCount.setText(Integer.toString(newsCount));
 
 
         FragmentPagerAdapter pagerAdapter = new FragmentPagerAdapter(getChildFragmentManager(), article);

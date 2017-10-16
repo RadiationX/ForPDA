@@ -26,7 +26,7 @@ public class NotesAddPopup {
     public NotesAddPopup(Context context, NoteItem item, NoteActionListener noteActionListener) {
         this.noteActionListener = noteActionListener;
         dialog = new BottomSheetDialog(context);
-        View view = View.inflate(context, R.layout.popup_notes, null);
+        View view = View.inflate(context, R.layout.notes_popup, null);
         title = (TextView) view.findViewById(R.id.popup_title);
         addButton = (ImageButton) view.findViewById(R.id.add_button);
         titleField = (EditText) view.findViewById(R.id.title_field);

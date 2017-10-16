@@ -46,11 +46,11 @@ public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder> {
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case FULL_LAYOUT:
-                return new FullHolder(inflateLayout(parent, R.layout.news_main_full_item_layout));
+                return new FullHolder(inflateLayout(parent, R.layout.news_item));
             case COMPAT_LAYOUT:
-                return new FullHolder(inflateLayout(parent, R.layout.news_main_compat_item_layout));
+                return new FullHolder(inflateLayout(parent, R.layout.news_item_compat));
             case LOAD_MORE_LAYOUT:
-                return new LoadMoreHolder(inflateLayout(parent, R.layout.news_list_load_more_layout));
+                return new LoadMoreHolder(inflateLayout(parent, R.layout.news_item_load_more));
         }
         return null;
     }

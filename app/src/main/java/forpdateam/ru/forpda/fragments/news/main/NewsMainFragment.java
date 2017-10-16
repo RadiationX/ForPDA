@@ -119,6 +119,7 @@ public class NewsMainFragment extends RecyclerFragment implements NewsListAdapte
         args.putString(NewsDetailsFragment.ARG_NEWS_AUTHOR_NICK, item.getAuthor());
         args.putString(NewsDetailsFragment.ARG_NEWS_DATE, item.getDate());
         args.putString(NewsDetailsFragment.ARG_NEWS_IMAGE, item.getImgUrl());
+        args.putInt(NewsDetailsFragment.ARG_NEWS_COMMENTS_COUNT, item.getCommentsCount());
         args.putBoolean(NewsDetailsFragment.OTHER_CASE, true);
         TabManager.getInstance().add(NewsDetailsFragment.class, args);
     }

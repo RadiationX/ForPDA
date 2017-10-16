@@ -351,6 +351,7 @@
     <string name="profile_title_information">Информация</string>
     <string name="profile_title_devices">Устройства</string>
     <string name="profile_title_contacts">Контакты</string>
+    <string name="profile_title_warnings">Журнал предупреждений</string>
     <string name="profile_title_note">Блокнот</string>
     <string name="profile_hint_note">Это ваш персональный блокнот.\nЗдесь Вы можете хранить отрывки сообщений или любую другую информацию, которая для Вас важна</string>
     <string name="profile_button_save">Сохранить</string>
@@ -521,7 +522,7 @@
     <string name="funny_favorites_nodata_title">Нет избранных тем</string>
     <string name="funny_favorites_nodata_desc">Добавьте тему в избранное, чтобы удобно отслеживать обновления в теме</string>
     <string name="funny_history_nodata_title">История пуста</string>
-    <string name="funny_history_nodata_desc">Тут будет отображается история просмотра тем</string>
+    <string name="funny_history_nodata_desc">Тут будет отображаться история просмотра тем</string>
     <string name="funny_mentions_nodata_title">Нет упоминаний</string>
     <string name="funny_mentions_nodata_desc">Тут будут отображаться упоминания в темах и комментариях</string>
     <string name="funny_notes_nodata_title">Нет закладок</string>
