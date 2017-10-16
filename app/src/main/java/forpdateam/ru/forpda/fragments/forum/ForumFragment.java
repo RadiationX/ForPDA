@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
@@ -20,8 +21,10 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
+import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.data.realm.forum.ForumItemFlatBd;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.DynamicDialogMenu;
@@ -61,14 +64,27 @@ public class ForumFragment extends TabFragment {
             });
             dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getId()))));
             dialogMenu.addItem(getString(R.string.mark_read), (context, data) -> {
-
+                new AlertDialog.Builder(getContext())
+                        .setMessage(getString(R.string.mark_read) + "?")
+                        .setPositiveButton(R.string.ok, (dialog, which) -> ForumHelper.markRead(o -> Toast.makeText(getContext(), R.string.action_complete, Toast.LENGTH_SHORT).show(), data.getId()))
+                        .setNegativeButton(R.string.cancel, null)
+                        .show();
+            });
+            dialogMenu.addItem(getString(R.string.add_to_favorites), (context, data) -> {
+                FavoritesHelper.addWithDialog(getContext(), aBoolean -> {
+                    Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
+                }, data.getId());
             });
         }
         dialogMenu.disallowAll();
         if (item.getLevel() > 0)
             dialogMenu.allow(0);
         dialogMenu.allow(1);
-        dialogMenu.allow(2);
+        if (ClientHelper.getAuthState()) {
+            dialogMenu.allow(2);
+            dialogMenu.allow(3);
+        }
+
         dialogMenu.show(getContext(), ForumFragment.this, item);
         return false;
     };

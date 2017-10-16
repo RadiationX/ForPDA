@@ -25,7 +25,8 @@ public class FavoritesRx {
             case Favorites.ACTION_DELETE:
                 return Observable.fromCallable(() -> Api.Favorites().delete(favId));
             case Favorites.ACTION_ADD:
-                return Observable.fromCallable(() -> Api.Favorites().add(id, type));
+            case Favorites.ACTION_ADD_FORUM:
+                return Observable.fromCallable(() -> Api.Favorites().add(id, act, type));
             default:
                 return Observable.just(false);
         }

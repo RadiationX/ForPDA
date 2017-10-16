@@ -12,6 +12,12 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class ForumHelper {
+    public static void markRead(@NonNull Consumer<Object> onNext, int id) {
+        RxApi.Forum().markRead(id).onErrorReturn(throwable -> false)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNext);
+    }
 
     public static void markAllRead(@NonNull Consumer<Object> onNext) {
         RxApi.Forum().markAllRead().onErrorReturn(throwable -> false)

@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.fragments.topics;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.util.Pair;
@@ -22,6 +23,7 @@ import forpdateam.ru.forpda.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.fragments.forum.ForumFragment;
+import forpdateam.ru.forpda.fragments.forum.ForumHelper;
 import forpdateam.ru.forpda.fragments.search.SearchFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.DynamicDialogMenu;
@@ -147,6 +149,19 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
                     TabManager.getInstance().add(ForumFragment.class, args);
                     return true;
                 });
+        if (ClientHelper.getAuthState()) {
+            getMenu()
+                    .add(R.string.mark_read)
+                    .setOnMenuItemClickListener(item -> {
+                        new AlertDialog.Builder(getContext())
+                                .setMessage(getString(R.string.mark_read) + "?")
+                                .setPositiveButton(R.string.ok, (dialog, which) -> ForumHelper.markRead(o -> Toast.makeText(getContext(), R.string.action_complete, Toast.LENGTH_SHORT).show(), id))
+                                .setNegativeButton(R.string.cancel, null)
+                                .show();
+                        return true;
+                    });
+        }
+
 
         getMenu().add(R.string.fragment_title_search)
                 .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_search))

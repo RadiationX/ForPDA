@@ -264,11 +264,11 @@
     <string name="fav_themes">Topics</string>
     <string name="fav_change_subscribe_type">Change subscription type</string>
     <string name="add_to_favorites">Add to favorites</string>
-    <string name="favorites_added">Topic is added to favorites</string>
+    <string name="favorites_added">Added to favorites</string>
     <string name="delete_from_favorites">Delete from favorites</string>
-    <string name="favorite_theme_deleted">Topic has been removed from favorites</string>
-    <string name="fav_delete_error_id_not_found">Topic ID is not found, try reloading the page</string>
-    <string name="fav_ask_delete">Delete topic from favorites?</string>
+    <string name="favorite_theme_deleted">Has been removed from favorites</string>
+    <string name="fav_delete_error_id_not_found">ID is not found, try reloading the page</string>
+    <string name="fav_ask_delete">Delete from favorites?</string>
     <!-- Edit post -->
     <string name="editpost_title_answer">Reply to </string>
     <string name="editpost_title_edit">Editing</string>

@@ -97,6 +97,11 @@ public class Forum {
         return new Object();
     }
 
+    public Object markRead(int id) throws Exception {
+        Api.getWebClient().request(new NetworkRequest.Builder().url("https://4pda.ru/forum/index.php?act=auth&action=markforum&f=" + id + "&fromforum=" + id).withoutBody().build());
+        return new Object();
+    }
+
     public ForumRules getRules() throws Exception {
         ForumRules rules = new ForumRules();
 
