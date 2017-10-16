@@ -20,12 +20,17 @@ public class ProfileModel {
         SITE_KARMA, SITE_POSTS, SITE_COMMENTS, FORUM_REPUTATION, FORUM_TOPICS, FORUM_POSTS;
     }
 
+    public enum WarningType {
+        POSITIVE, NEGATIVE;
+    }
+
     private Spanned sign, about;
     private String avatar, nick, status, group, note;
     private ArrayList<Contact> contacts = new ArrayList<>();
     private ArrayList<Info> info = new ArrayList<>();
     private ArrayList<Stat> stats = new ArrayList<>();
     private ArrayList<Device> devices = new ArrayList<>();
+    private ArrayList<Warning> warnings = new ArrayList<>();
 
     public void addInfo(InfoType type, String value) {
         Info info = new Info();
@@ -44,6 +49,10 @@ public class ProfileModel {
 
     public void addDevice(Device arg) {
         devices.add(arg);
+    }
+
+    public void addWarning(Warning arg) {
+        warnings.add(arg);
     }
 
     public void setSign(Spanned sign) {
@@ -96,6 +105,10 @@ public class ProfileModel {
 
     public ArrayList<Device> getDevices() {
         return devices;
+    }
+
+    public ArrayList<Warning> getWarnings() {
+        return warnings;
     }
 
     public String getAvatar() {
@@ -225,6 +238,45 @@ public class ProfileModel {
         }
 
         public void setType(StatType type) {
+            this.type = type;
+        }
+    }
+
+    public static class Warning {
+        private WarningType type;
+        private String date;
+        private String title;
+        private Spanned content;
+
+        public String getDate() {
+            return date;
+        }
+
+        public void setDate(String date) {
+            this.date = date;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public Spanned getContent() {
+            return content;
+        }
+
+        public void setContent(Spanned content) {
+            this.content = content;
+        }
+
+        public WarningType getType() {
+            return type;
+        }
+
+        public void setType(WarningType type) {
             this.type = type;
         }
     }

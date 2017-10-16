@@ -17,6 +17,7 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
+import forpdateam.ru.forpda.utils.DividerItemDecoration;
 import forpdateam.ru.forpda.utils.LinkMovementMethod;
 import forpdateam.ru.forpda.views.adapters.BaseViewHolder;
 
@@ -31,6 +32,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private final static int DEVICES_VIEW_TYPE = 4;
     private final static int CONTACTS_VIEW_TYPE = 5;
     private final static int NOTE_VIEW_TYPE = 6;
+    private final static int WARNING_VIEW_TYPE = 7;
     private ArrayList<Integer> items = new ArrayList<>();
     private ProfileModel profileModel;
     private ClickListener clickListener;
@@ -54,6 +56,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         if (profile.getNote() != null) {
             items.add(NOTE_VIEW_TYPE);
         }
+        if (!profile.getWarnings().isEmpty()) {
+            items.add(WARNING_VIEW_TYPE);
+        }
         profileModel = profile;
     }
 
@@ -70,13 +75,15 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             case ABOUT_VIEW_TYPE:
                 return new AboutHolder(inflateLayout(parent, R.layout.profile_item_about));
             case INFO_VIEW_TYPE:
-                return new InfoHolder(inflateLayout(parent, R.layout.profile_item_info));
+                return new InfosHolder(inflateLayout(parent, R.layout.profile_item_list));
             case DEVICES_VIEW_TYPE:
-                return new DeviceHolder(inflateLayout(parent, R.layout.profile_item_devices));
+                return new DevicesHolder(inflateLayout(parent, R.layout.profile_item_list));
             case CONTACTS_VIEW_TYPE:
-                return new ContactHolder(inflateLayout(parent, R.layout.profile_item_contacts));
+                return new ContactsHolder(inflateLayout(parent, R.layout.profile_item_list));
             case NOTE_VIEW_TYPE:
                 return new NoteHolder(inflateLayout(parent, R.layout.profile_item_note));
+            case WARNING_VIEW_TYPE:
+                return new WarningsHolder(inflateLayout(parent, R.layout.profile_item_list));
         }
         return null;
     }
@@ -91,16 +98,19 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 ((AboutHolder) holder).bind(profileModel);
                 break;
             case INFO_VIEW_TYPE:
-                ((InfoHolder) holder).bind(profileModel);
+                ((InfosHolder) holder).bind(profileModel);
                 break;
             case DEVICES_VIEW_TYPE:
-                ((DeviceHolder) holder).bind(profileModel);
+                ((DevicesHolder) holder).bind(profileModel);
                 break;
             case CONTACTS_VIEW_TYPE:
-                ((ContactHolder) holder).bind(profileModel);
+                ((ContactsHolder) holder).bind(profileModel);
                 break;
             case NOTE_VIEW_TYPE:
                 ((NoteHolder) holder).bind(profileModel);
+                break;
+            case WARNING_VIEW_TYPE:
+                ((WarningsHolder) holder).bind(profileModel);
                 break;
         }
     }
@@ -155,20 +165,22 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         }
     }
 
-    private class InfoHolder extends BaseViewHolder<ProfileModel> {
-
+    private class InfosHolder extends BaseViewHolder<ProfileModel> {
+        private TextView title;
         private RecyclerView list;
         private InfoAdapter adapter;
 
-        InfoHolder(View itemView) {
+        InfosHolder(View itemView) {
             super(itemView);
-            list = (RecyclerView) itemView.findViewById(R.id.profile_info_list);
+            title = (TextView) itemView.findViewById(R.id.profile_sub_title);
+            list = (RecyclerView) itemView.findViewById(R.id.profile_sub_list);
             list.setHasFixedSize(true);
             list.setLayoutManager(new LinearLayoutManager(list.getContext()));
             list.setNestedScrollingEnabled(false);
             list.addItemDecoration(new BrandFragment.SpacingItemDecoration(App.px16, true));
             adapter = new InfoAdapter();
             list.setAdapter(adapter);
+            title.setText(R.string.profile_title_information);
         }
 
         @Override
@@ -180,18 +192,21 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         }
     }
 
-    private class DeviceHolder extends BaseViewHolder<ProfileModel> {
+    private class DevicesHolder extends BaseViewHolder<ProfileModel> {
+        private TextView title;
         private RecyclerView list;
         private DevicesAdapter adapter;
 
-        DeviceHolder(View itemView) {
+        DevicesHolder(View itemView) {
             super(itemView);
-            list = (RecyclerView) itemView.findViewById(R.id.profile_devices_list);
+            title = (TextView) itemView.findViewById(R.id.profile_sub_title);
+            list = (RecyclerView) itemView.findViewById(R.id.profile_sub_list);
             list.setHasFixedSize(true);
             list.setLayoutManager(new LinearLayoutManager(list.getContext()));
             list.setNestedScrollingEnabled(false);
             adapter = new DevicesAdapter();
             list.setAdapter(adapter);
+            title.setText(R.string.profile_title_devices);
         }
 
         @Override
@@ -200,18 +215,21 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         }
     }
 
-    private class ContactHolder extends BaseViewHolder<ProfileModel> {
+    private class ContactsHolder extends BaseViewHolder<ProfileModel> {
+        private TextView title;
         private RecyclerView list;
         private ContactsAdapter adapter;
 
-        ContactHolder(View itemView) {
+        ContactsHolder(View itemView) {
             super(itemView);
-            list = (RecyclerView) itemView.findViewById(R.id.profile_contacts_list);
+            title = (TextView) itemView.findViewById(R.id.profile_sub_title);
+            list = (RecyclerView) itemView.findViewById(R.id.profile_sub_list);
             list.setHasFixedSize(true);
             list.setLayoutManager(new LinearLayoutManager(list.getContext(), LinearLayoutManager.HORIZONTAL, false));
             adapter = new ContactsAdapter();
             list.setAdapter(adapter);
             list.setNestedScrollingEnabled(false);
+            title.setText(R.string.profile_title_contacts);
         }
 
         @Override
@@ -221,6 +239,30 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 contacts.remove(0);
             }
             adapter.addAll(contacts);
+        }
+    }
+
+    private class WarningsHolder extends BaseViewHolder<ProfileModel> {
+        private TextView title;
+        private RecyclerView list;
+        private WarningsAdapter adapter;
+
+        WarningsHolder(View itemView) {
+            super(itemView);
+            title = (TextView) itemView.findViewById(R.id.profile_sub_title);
+            list = (RecyclerView) itemView.findViewById(R.id.profile_sub_list);
+            list.setHasFixedSize(true);
+            list.setLayoutManager(new LinearLayoutManager(list.getContext()));
+            list.setNestedScrollingEnabled(false);
+            list.addItemDecoration(new DividerItemDecoration(list.getContext()));
+            adapter = new WarningsAdapter();
+            list.setAdapter(adapter);
+            title.setText(R.string.profile_title_warnings);
+        }
+
+        @Override
+        public void bind(ProfileModel item) {
+            adapter.addAll(item.getWarnings());
         }
     }
 

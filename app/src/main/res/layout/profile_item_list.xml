@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/CardStyle.Wide"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -10,20 +11,21 @@
         android:orientation="vertical">
 
         <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/profile_sub_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:paddingEnd="@dimen/dp16"
             android:paddingStart="@dimen/dp16"
             android:paddingTop="@dimen/dp16"
-            android:text="@string/profile_title_information"
+            android:text="@string/profile_title_devices"
             android:textColor="?attr/default_text_color"
             android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/profile_info_list"
+            android:id="@+id/profile_sub_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 </android.support.v7.widget.CardView>

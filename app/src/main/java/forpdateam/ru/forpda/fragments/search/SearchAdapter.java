@@ -42,7 +42,7 @@ class SearchAdapter extends BaseAdapter<SearchItem, BaseViewHolder<SearchItem>> 
             case TOPIC_LAYOUT:
                 return new SearchHolder(inflateLayout(parent, R.layout.search_item));
             case NEWS_LAYOUT:
-                return new FullHolder(inflateLayout(parent, R.layout.news_main_full_item_layout));
+                return new FullHolder(inflateLayout(parent, R.layout.news_item));
         }
         return null;
     }

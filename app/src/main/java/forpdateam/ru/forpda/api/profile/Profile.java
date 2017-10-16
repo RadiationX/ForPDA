@@ -22,6 +22,7 @@ public class Profile {
     private static final Pattern forumStats = Pattern.compile("<span class=\"title\">([^<]*?)<\\/span>[\\s\\S]*?<div class=\"area\">[\\s\\S]*?<a[^>]*?href=\"([^\"]*?)\"[^>]*?>[^<]*?(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?<\\/a>");
     private static final Pattern note = Pattern.compile("<textarea[^>]*?profile-textarea\"[^>]*?>([\\s\\S]*?)</textarea>");
     private static final Pattern about = Pattern.compile("<div[^>]*?div-custom-about[^>]*?>([\\s\\S]*?)</div>");
+    private static final Pattern warnings = Pattern.compile("<li class=\"wlog-([^\"]*?)\"[^>]*?>[\\s\\S]*?<span class=\"date\">([^<]*?)<\\/span>[\\s\\S]*?<span style[^>]*?>([^<]*?)<\\/span>[\\s\\S]*?<div class=\"a-content\">([\\s\\S]*?)<div class=\"profile-edit-links");
 
     public ProfileModel getProfile(String url) throws Exception {
         ProfileModel profile = new ProfileModel();
@@ -183,6 +184,22 @@ public class Profile {
             data = about.matcher(response.getBody());
             if (data.find()) {
                 profile.setAbout(Utils.coloredFromHtml(safe(data.group(1))));
+            }
+            data = warnings.matcher(response.getBody());
+            while (data.find()) {
+                ProfileModel.Warning warning = new ProfileModel.Warning();
+                switch (data.group(1)) {
+                    case "pos":
+                        warning.setType(ProfileModel.WarningType.POSITIVE);
+                        break;
+                    case "neg":
+                        warning.setType(ProfileModel.WarningType.NEGATIVE);
+                        break;
+                }
+                warning.setDate(data.group(2));
+                warning.setTitle(Utils.fromHtml(data.group(3)));
+                warning.setContent(Utils.spannedFromHtml(data.group(4)));
+                profile.addWarning(warning);
             }
         }
         return profile;
