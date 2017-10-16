@@ -59,7 +59,6 @@ public class CodesPanelItem extends BasePanelItem {
             }
             case "LIST": {
                 listInsert(item, false);
-
                 break;
             }
             case "NUMLIST": {
@@ -76,6 +75,10 @@ public class CodesPanelItem extends BasePanelItem {
             }
             case "SIZE": {
                 sizeInsert(item);
+                break;
+            }
+            case "FONT": {
+                fontInsert(item);
                 break;
             }
             default:
@@ -203,6 +206,20 @@ public class CodesPanelItem extends BasePanelItem {
                 })
                 .setNegativeButton(R.string.cancel, null)
                 .show();
+    }
+
+    private void fontInsert(ButtonData item) {
+        String selected = messagePanel.getSelectedText();
+        int[] range = messagePanel.getSelectionRange();
+        InsertHelper insertHelper = new InsertHelper(getContext());
+        insertHelper.addHeader(App.get().getString(R.string.codes_font), null);
+        if (selected.length() == 0)
+            insertHelper.setBody(App.get().getString(R.string.codes_font_text), null);
+        insertHelper.setInsertListener((resultHeaders, bodyResult) -> {
+            String[] bbcodes = createBbCode(item.getText(), resultHeaders, bodyResult);
+            messagePanel.insertText(bbcodes[0], bbcodes[1], range[0], range[1]);
+        });
+        insertHelper.show();
     }
 
     private void urlInsert(ButtonData item) {
@@ -343,6 +360,7 @@ public class CodesPanelItem extends BasePanelItem {
         tempCodes.add(new ButtonData("CODE", R.drawable.ic_code_code, App.get().getString(R.string.codes_name_code)));
         tempCodes.add(new ButtonData("COLOR", R.drawable.ic_code_color, App.get().getString(R.string.codes_name_text_color)));
         tempCodes.add(new ButtonData("SIZE", R.drawable.ic_code_size, App.get().getString(R.string.codes_name_text_size)));
+        tempCodes.add(new ButtonData("FONT", R.drawable.ic_code_font, App.get().getString(R.string.codes_name_font)));
 
         tempCodes.add(new ButtonData("HIDE", R.drawable.ic_code_hide, App.get().getString(R.string.codes_name_hide)));
         tempCodes.add(new ButtonData("BACKGROUND", R.drawable.ic_code_background, App.get().getString(R.string.codes_name_bg_color)));
@@ -359,11 +377,17 @@ public class CodesPanelItem extends BasePanelItem {
 
         String sorted = App.get().getPreferences().getString("message_panel.bb_codes.sorted", null);
         if (sorted != null) {
-            for (String code : TextUtils.split(sorted, ",")) {
-                for (ButtonData item : tempCodes) {
-                    if (item.getText().equals(code)) {
-                        codes.add(item);
-                        break;
+            String[] sortedArr = TextUtils.split(sorted, ",");
+            if (sortedArr.length != tempCodes.size()) {
+                App.get().getPreferences().edit().remove("message_panel.bb_codes.sorted").apply();
+                codes.addAll(tempCodes);
+            } else {
+                for (String code : sortedArr) {
+                    for (ButtonData item : tempCodes) {
+                        if (item.getText().equals(code)) {
+                            codes.add(item);
+                            break;
+                        }
                     }
                 }
             }

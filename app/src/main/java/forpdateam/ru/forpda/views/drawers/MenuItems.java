@@ -11,6 +11,7 @@ import forpdateam.ru.forpda.fragments.auth.AuthFragment;
 import forpdateam.ru.forpda.fragments.devdb.BrandsFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.fragments.forum.ForumFragment;
+import forpdateam.ru.forpda.fragments.forum.ForumRulesFragment;
 import forpdateam.ru.forpda.fragments.history.HistoryFragment;
 import forpdateam.ru.forpda.fragments.mentions.MentionsFragment;
 import forpdateam.ru.forpda.fragments.news.main.NewsMainFragment;
@@ -29,7 +30,7 @@ public class MenuItems {
     public MenuItems() {
         createdMenuItems.add(new MenuItem(App.get().getString(R.string.fragment_title_auth), R.drawable.ic_person_add, AuthFragment.class));
         //if (Objects.equals(BuildConfig.FLAVOR, "dev"))
-            createdMenuItems.add(new MenuItem(App.get().getString(R.string.fragment_title_news), R.drawable.ic_newspaper, NewsMainFragment.class));
+        createdMenuItems.add(new MenuItem(App.get().getString(R.string.fragment_title_news), R.drawable.ic_newspaper, NewsMainFragment.class));
         createdMenuItems.add(new MenuItem(App.get().getString(R.string.fragment_title_favorite), R.drawable.ic_star, FavoritesFragment.class));
         createdMenuItems.add(new MenuItem(App.get().getString(R.string.fragment_title_contacts), R.drawable.ic_contacts, QmsContactsFragment.class));
         createdMenuItems.add(new MenuItem(App.get().getString(R.string.fragment_title_mentions), R.drawable.ic_notifications, MentionsFragment.class));
@@ -39,6 +40,7 @@ public class MenuItems {
         createdMenuItems.add(new MenuItem(App.get().getString(R.string.fragment_title_search), R.drawable.ic_search, SearchFragment.class));
         createdMenuItems.add(new MenuItem(App.get().getString(R.string.fragment_title_history), R.drawable.ic_history, HistoryFragment.class));
         createdMenuItems.add(new MenuItem(App.get().getString(R.string.fragment_title_notes), R.drawable.ic_bookmark, NotesFragment.class));
+        createdMenuItems.add(new MenuItem("Правила форума", R.drawable.ic_book_open, ForumRulesFragment.class));
         createdMenuItems.add(new MenuItem(App.get().getString(R.string.activity_title_settings), R.drawable.ic_settings, ACTION_APP_SETTINGS));
     }
 

@@ -193,6 +193,7 @@
     <string name="codes_name_code">Код</string>
     <string name="codes_name_text_color">Цвет текста</string>
     <string name="codes_name_text_size">Размер текста</string>
+    <string name="codes_name_font">Шрифт</string>
     <string name="codes_name_hide">Скрытый</string>
     <string name="codes_name_bg_color">Цвет фона</string>
     <string name="codes_name_list">Обычный список</string>
@@ -203,6 +204,8 @@
     <string name="codes_name_sub">Снизу</string>
     <string name="codes_name_sup">Сверху</string>
     <string name="codes_name_curator">Куратор</string>
+    <string name="codes_font">Название шрифта</string>
+    <string name="codes_font_text">Текст</string>
     <string name="codes_list_item_Pos" formatted="false">Пункт списка %d</string>
     <string name="transform_string_to_list">Преобразовать выделенную строку в список?</string>
 

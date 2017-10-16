@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.api.forum;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,12 +15,15 @@ import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.forum.interfaces.IForumItemFlat;
 import forpdateam.ru.forpda.api.forum.models.ForumItemFlat;
 import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
+import forpdateam.ru.forpda.api.forum.models.ForumRules;
 
 /**
  * Created by radiationx on 15.02.17.
  */
 
 public class Forum {
+    private final static Pattern rulesHeaders = Pattern.compile("<b>([\\d\\.]+)\\s?([\\s\\S]*?)<\\/b>[^<]*?<[^>]*?br[^>]*?>([\\s\\S]*?<[^>]*?br[^>]*?>)(?=<[^>]*?br[^>]*?>(?:<b>|<[^>]*?br[^>]*?>))");
+    private final static Pattern rulesItems = Pattern.compile("([\\d\\.]+)\\s?([\\s\\S]*?)<[^>]*?br[^>]*?>(?=[\\d\\.]+|$)");
     private final static Pattern forumsFromSearch = Pattern.compile("<select[^>]*?name=[\"']forums(?:\\[\\])?[\"'][^>]*?>([\\s\\S]*?)<\\/select>");
     private final static Pattern forumItemFromSearch = Pattern.compile("<option[^>]*?value=[\"'](\\d+)['\"][^>]*?>[^-\\s]*?(-*?) ([\\s\\S]*?)<\\/option>");
 
@@ -87,8 +92,35 @@ public class Forum {
         parentsList.clear();
     }
 
-    public Object markAllRead() throws Exception{
+    public Object markAllRead() throws Exception {
         Api.getWebClient().request(new NetworkRequest.Builder().url("https://4pda.ru/forum/index.php?act=login&CODE=05").withoutBody().build());
         return new Object();
+    }
+
+    public ForumRules getRules() throws Exception {
+        ForumRules rules = new ForumRules();
+
+        String response = Api.getWebClient().get("https://4pda.ru/forum/index.php?act=boardrules").getBody();
+        Matcher headerMatcher = rulesHeaders.matcher(response);
+        Matcher itemMatcher = null;
+        while (headerMatcher.find()) {
+            ForumRules.Item header = new ForumRules.Item();
+            header.setHeader(true);
+            header.setNumber(headerMatcher.group(1));
+            header.setText(headerMatcher.group(2));
+            String itemContent = headerMatcher.group(3);
+            Log.d("SUKA", "RULE H " + header.getNumber());
+            itemMatcher = itemMatcher == null ? rulesItems.matcher(itemContent) : itemMatcher.reset(itemContent);
+            rules.addItem(header);
+            while (itemMatcher.find()) {
+                ForumRules.Item item = new ForumRules.Item();
+                item.setNumber(itemMatcher.group(1));
+                item.setText(itemMatcher.group(2));
+                Log.d("SUKA", "RULE " + item.getNumber());
+                rules.addItem(item);
+            }
+        }
+
+        return rules;
     }
 }
