@@ -207,45 +207,49 @@ public class CodesPanelItem extends BasePanelItem {
 
     private void urlInsert(ButtonData item) {
         String selected = messagePanel.getSelectedText();
+        int[] range = messagePanel.getSelectionRange();
         InsertHelper insertHelper = new InsertHelper(getContext());
         insertHelper.addHeader(App.get().getString(R.string.codes_link), null);
         if (selected.length() == 0)
             insertHelper.setBody(App.get().getString(R.string.codes_link_text), null);
         insertHelper.setInsertListener((resultHeaders, bodyResult) -> {
             String[] bbcodes = createBbCode(item.getText(), resultHeaders, bodyResult);
-            messagePanel.insertText(bbcodes[0], bbcodes[1]);
+            messagePanel.insertText(bbcodes[0], bbcodes[1], range[0], range[1]);
         });
         insertHelper.show();
     }
 
     private void spoilerInsert(ButtonData item) {
         String selected = messagePanel.getSelectedText();
+        int[] range = messagePanel.getSelectionRange();
         InsertHelper insertHelper = new InsertHelper(getContext());
         insertHelper.addHeader(App.get().getString(R.string.codes_block_title), null);
         if (selected.length() == 0)
             insertHelper.setBody(App.get().getString(R.string.codes_spoiler_text), null);
         insertHelper.setInsertListener((resultHeaders, bodyResult) -> {
             String[] bbcodes = createBbCode(item.getText(), resultHeaders, bodyResult);
-            messagePanel.insertText(bbcodes[0], bbcodes[1]);
+            messagePanel.insertText(bbcodes[0], bbcodes[1], range[0], range[1]);
         });
         insertHelper.show();
     }
 
     private void codeInsert(ButtonData item) {
         String selected = messagePanel.getSelectedText();
+        int[] range = messagePanel.getSelectionRange();
         InsertHelper insertHelper = new InsertHelper(getContext());
         insertHelper.addHeader(App.get().getString(R.string.codes_block_title), null);
         if (selected.length() == 0)
             insertHelper.setBody(App.get().getString(R.string.codes_code_text), null);
         insertHelper.setInsertListener((resultHeaders, bodyResult) -> {
             String[] bbcodes = createBbCode(item.getText(), resultHeaders, bodyResult);
-            messagePanel.insertText(bbcodes[0], bbcodes[1]);
+            messagePanel.insertText(bbcodes[0], bbcodes[1], range[0], range[1]);
         });
         insertHelper.show();
     }
 
     private void quoteInsert(ButtonData item) {
         String selected = messagePanel.getSelectedText();
+        int[] range = messagePanel.getSelectionRange();
         InsertHelper insertHelper = new InsertHelper(getContext());
         insertHelper.addHeader(App.get().getString(R.string.codes_block_title), "name");
         /*insertHelper.addHeader("Дата", "date");
@@ -254,7 +258,7 @@ public class CodesPanelItem extends BasePanelItem {
             insertHelper.setBody(App.get().getString(R.string.codes_quote_text), null);
         insertHelper.setInsertListener((resultHeaders, bodyResult) -> {
             String[] bbcodes = createBbCode(item.getText(), resultHeaders, bodyResult);
-            messagePanel.insertText(bbcodes[0], bbcodes[1]);
+            messagePanel.insertText(bbcodes[0], bbcodes[1], range[0], range[1]);
         });
         insertHelper.show();
     }
@@ -292,7 +296,7 @@ public class CodesPanelItem extends BasePanelItem {
         messagePanel.insertText(bbcodes[0], bbcodes[1]);
     }
 
-    private void defaultInsertText(ButtonData item) {
+   /* private void defaultInsertText(ButtonData item) {
         String tag = item.getText();
         String startText = null;
         String endText = null;
@@ -311,7 +315,7 @@ public class CodesPanelItem extends BasePanelItem {
             openedCodes.add(tag);
         }
     }
-
+*/
 
     @Override
     protected void onDetachedFromWindow() {

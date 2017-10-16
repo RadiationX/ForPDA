@@ -196,11 +196,19 @@ public class MessagePanel extends CardView {
         return insertText(startText, endText, true);
     }
 
+    public boolean insertText(String startText, String endText, int selectionStart, int selectionEnd) {
+        return insertText(startText, endText, selectionStart, selectionEnd, true);
+    }
+
     public boolean insertText(String startText, String endText, boolean selectionInside) {
-        show();
         int[] selectionRange = getSelectionRange();
         int selectionStart = selectionRange[0];
         int selectionEnd = selectionRange[1];
+        return insertText(startText, endText, selectionStart, selectionEnd, selectionInside);
+    }
+
+    public boolean insertText(String startText, String endText, int selectionStart, int selectionEnd, boolean selectionInside) {
+        show();
         if (endText != null && selectionStart != -1 && selectionStart != selectionEnd) {
             messageField.getText().insert(selectionStart, startText);
             messageField.getText().insert(selectionEnd + startText.length()/* - 1*/, endText);

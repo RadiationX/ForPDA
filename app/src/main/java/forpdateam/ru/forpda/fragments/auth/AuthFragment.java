@@ -234,6 +234,7 @@ public class AuthFragment extends TabFragment {
         progressView.startAnimation(animation1);
         new Handler().postDelayed(() -> {
             ClientHelper.get().notifyAuthChanged(ClientHelper.AUTH_STATE_LOGIN);
+            if (!isAdded()) return;
             new Handler().postDelayed(() -> {
                 TabManager.getInstance().remove(AuthFragment.this);
             }, 500);
