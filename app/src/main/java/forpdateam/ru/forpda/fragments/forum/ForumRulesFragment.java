@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import java.util.ArrayList;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.forum.models.ForumRules;
 import forpdateam.ru.forpda.fragments.TabFragment;
@@ -188,5 +189,14 @@ public class ForumRulesFragment extends TabFragment {
 
     protected void findText(String text) {
         webView.findAllAsync(text);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (webView != null) {
+            webView.endWork();
+            ((MainActivity) getActivity()).getWebViewsProvider().push(webView);
+        }
     }
 }

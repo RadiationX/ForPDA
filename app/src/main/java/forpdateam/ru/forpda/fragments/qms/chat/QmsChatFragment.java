@@ -507,7 +507,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         unregisterForContextMenu(webView);
         webView.removeJavascriptInterface(JS_INTERFACE);
         webView.setJsLifeCycleListener(null);
-        webView.destroy();
+        webView.endWork();
         getMainActivity().getWebViewsProvider().push(webView);
     }
 
