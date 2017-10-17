@@ -55,7 +55,17 @@ function fixImagesSizeWithDensity() {
     if (density == 1) {
         return;
     }
-    var images = document.querySelectorAll("img.attach, img.linked-image");
+    var selector = "";
+    var pageType = document.body.getAttribute("id") || "";
+    switch (pageType) {
+        case "announce":
+            selector = "img";
+            break;
+        default:
+            selector = "img.attach, img.linked-image";
+            break;
+    }
+    var images = document.querySelectorAll(selector);
     for (var i = 0; i < images.length; i++) {
         var item = images[i];
         fixSize(item);

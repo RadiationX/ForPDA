@@ -101,6 +101,7 @@ public class App extends android.app.Application {
     public final static String TEMPLATE_QMS_CHAT_MESS = "qms_chat_mess";
     public final static String TEMPLATE_NEWS = "news";
     public final static String TEMPLATE_FORUM_RULES = "forum_rules";
+    public final static String TEMPLATE_ANNOUNCE = "announce";
     public static int px2, px4, px6, px8, px12, px14, px16, px20, px24, px32, px36, px40, px48, px56, px64;
     private static int savedKeyboardHeight = 0;
     public static int keyboardHeight = 0;
@@ -285,6 +286,7 @@ public class App extends android.app.Application {
         templates.put(TEMPLATE_QMS_CHAT_MESS, findTemplate(TEMPLATE_QMS_CHAT_MESS));
         templates.put(TEMPLATE_NEWS, findTemplate(TEMPLATE_NEWS));
         templates.put(TEMPLATE_FORUM_RULES, findTemplate(TEMPLATE_FORUM_RULES));
+        templates.put(TEMPLATE_ANNOUNCE, findTemplate(TEMPLATE_ANNOUNCE));
 
         //init
         Realm.init(this);

@@ -184,7 +184,12 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
 
     @Override
     public void onItemClick(TopicItem item) {
-        if (item.isAnnounce()) return;
+        if (item.isAnnounce()) {
+            Bundle args = new Bundle();
+            args.putString(TabFragment.ARG_TITLE, item.getTitle());
+            IntentHandler.handle(item.getAnnounceUrl(), args);
+            return;
+        }
         if (item.isForum()) {
             IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + item.getId());
             return;
@@ -196,10 +201,17 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
 
     @Override
     public boolean onItemLongClick(TopicItem item) {
-        if (item.isAnnounce()) return false;
         if (dialogMenu == null) {
             dialogMenu = new DynamicDialogMenu<>();
-            dialogMenu.addItem(getString(R.string.copy_link), (context, data1) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data1.getId()))));
+            dialogMenu.addItem(getString(R.string.copy_link), (context, data1) -> {
+                String url;
+                if (item.isAnnounce()) {
+                    url = item.getAnnounceUrl();
+                } else {
+                    url = "https://4pda.ru/forum/index.php?showtopic=" + data1.getId();
+                }
+                Utils.copyToClipBoard(url);
+            });
             dialogMenu.addItem(getString(R.string.open_theme_forum), (context, data1) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getId()));
             dialogMenu.addItem(getString(R.string.add_to_favorites), ((context, data1) -> {
                 FavoritesHelper.addWithDialog(getContext(), aBoolean -> {
@@ -209,9 +221,11 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
         }
         dialogMenu.disallowAll();
         dialogMenu.allow(0);
-        dialogMenu.allow(1);
-        if (ClientHelper.getAuthState()) {
-            dialogMenu.allow(2);
+        if (!item.isAnnounce()) {
+            dialogMenu.allow(1);
+            if (ClientHelper.getAuthState()) {
+                dialogMenu.allow(2);
+            }
         }
         dialogMenu.show(getContext(), TopicsFragment.this, item);
         return false;

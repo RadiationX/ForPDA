@@ -30,6 +30,7 @@ import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.fragments.devdb.BrandsFragment;
 import forpdateam.ru.forpda.fragments.devdb.DeviceFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesFragment;
+import forpdateam.ru.forpda.fragments.forum.AnnounceFragment;
 import forpdateam.ru.forpda.fragments.forum.ForumRulesFragment;
 import forpdateam.ru.forpda.fragments.mentions.MentionsFragment;
 import forpdateam.ru.forpda.fragments.news.details.NewsDetailsFragment;
@@ -308,7 +309,15 @@ public class IntentHandler {
                 case "boardrules":
                     run("boardrules");
                     TabManager.getInstance().add(ForumRulesFragment.class);
-                    return false;
+                    return true;
+                case "announce":
+                    run("announce");
+                    int id = Integer.parseInt(uri.getQueryParameter("st"));
+                    int forumId = Integer.parseInt(uri.getQueryParameter("f"));
+                    args.putInt(AnnounceFragment.ARG_ANNOUNCE_ID, id);
+                    args.putInt(AnnounceFragment.ARG_FORUM_ID, forumId);
+                    TabManager.getInstance().add(AnnounceFragment.class, args);
+                    return true;
                 case "search":
                     run("search " + uri.toString());
                     args.putString(TabFragment.ARG_TAB, uri.toString());
