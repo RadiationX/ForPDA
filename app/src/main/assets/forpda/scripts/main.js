@@ -221,8 +221,8 @@ function AvatarLoader() {
         loadedAvatars[nick] = responseText;
         var loaded = loadedAvatars[nick];
 
-        for (var i = 0; i < loaded.length; i++) {
-            var item = loaded[i];
+        for (var i = 0; i < pendingLoad[nick].length; i++) {
+            var item = pendingLoad[nick][i];
             try {
                 item(loaded);
             } catch (ex) {
