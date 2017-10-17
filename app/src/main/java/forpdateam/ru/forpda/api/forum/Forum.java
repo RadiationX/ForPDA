@@ -13,6 +13,7 @@ import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.forum.interfaces.IForumItemFlat;
+import forpdateam.ru.forpda.api.forum.models.Announce;
 import forpdateam.ru.forpda.api.forum.models.ForumItemFlat;
 import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
 import forpdateam.ru.forpda.api.forum.models.ForumRules;
@@ -24,6 +25,7 @@ import forpdateam.ru.forpda.api.forum.models.ForumRules;
 public class Forum {
     private final static Pattern rulesHeaders = Pattern.compile("<b>([\\d\\.]+)\\s?([\\s\\S]*?)<\\/b>[^<]*?<[^>]*?br[^>]*?>([\\s\\S]*?<[^>]*?br[^>]*?>)(?=<[^>]*?br[^>]*?>(?:<b>|<[^>]*?br[^>]*?>))");
     private final static Pattern rulesItems = Pattern.compile("([\\d\\.]+)\\s?([\\s\\S]*?)<[^>]*?br[^>]*?>(?=[\\d\\.]+|$)");
+    private final static Pattern announcePattern = Pattern.compile("<title>([\\s\\S]*?)(?: - 4PDA)?<\\/title>[\\s\\S]*?<div[^>]*?class=\"[^\"]*?postcolor[^\"]*?\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/td>");
     private final static Pattern forumsFromSearch = Pattern.compile("<select[^>]*?name=[\"']forums(?:\\[\\])?[\"'][^>]*?>([\\s\\S]*?)<\\/select>");
     private final static Pattern forumItemFromSearch = Pattern.compile("<option[^>]*?value=[\"'](\\d+)['\"][^>]*?>[^-\\s]*?(-*?) ([\\s\\S]*?)<\\/option>");
 
@@ -127,5 +129,18 @@ public class Forum {
         }
 
         return rules;
+    }
+
+    public Announce getAnnounce(int id, int forumId) throws Exception {
+        Announce announce = new Announce();
+        announce.setId(id);
+        announce.setForumId(forumId);
+        String response = Api.getWebClient().get("https://4pda.ru/forum/index.php?act=announce&f=" + forumId + "&st=" + id).getBody();
+        Matcher matcher = announcePattern.matcher(response);
+        if (matcher.find()) {
+            announce.setTitle(matcher.group(1));
+            announce.setHtml(matcher.group(2));
+        }
+        return announce;
     }
 }
