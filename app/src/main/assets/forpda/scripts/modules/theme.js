@@ -91,7 +91,7 @@ function scrollToElement(name) {
     console.log("ANCHOR " + name);
     console.log("loadAction " + window.loadAction);
     console.log("loadScrollY " + window.loadScrollY);
-    if (window.loadAction == BACK_ACTION||window.loadAction == REFRESH_ACTION) {
+    if (window.loadAction == BACK_ACTION || window.loadAction == REFRESH_ACTION) {
         setTimeout(function () {
             window.scrollTo(0, window.loadScrollY);
         }, 1);
@@ -100,7 +100,7 @@ function scrollToElement(name) {
                 window.scrollTo(0, window.loadScrollY);
             }, 1);
         });
-    } else if(window.loadAction == NORMAL_ACTION) {
+    } else if (window.loadAction == NORMAL_ACTION) {
         setTimeout(function () {
             doScroll(anchorElem);
         }, 1);
@@ -373,7 +373,9 @@ function transformAnchor() {
             anchors.push(links[i]);
         }
     }
-    anchors.forEach(function (item, i, arr) {
+
+    for (var i = 0; i < anchors.length; i++) {
+        var item = anchors[i];
         item.classList.add("anchor");
         item.innerHTML = "";
         item.addEventListener("click", function (event) {
@@ -382,8 +384,8 @@ function transformAnchor() {
                 t = t.parentElement;
             }
             ITheme.anchorDialog(t.dataset.postId, event.target.name);
-        })
-    });
+        });
+    }
 }
 
 nativeEvents.addEventListener("DOMContentLoaded", transformAnchor);

@@ -58,7 +58,7 @@ public class NewsDetailsFragment extends TabFragment {
 
     private FrameLayout webViewContainer;
     private ViewPager fragmentsPager;
-    ProgressBar progressBar;
+    private ProgressBar progressBar;
     private ProgressBar imageProgressBar;
     private ImageView detailsImage;
 
@@ -96,7 +96,7 @@ public class NewsDetailsFragment extends TabFragment {
             newsNick = getArguments().getString(ARG_NEWS_AUTHOR_NICK);
             newsDate = getArguments().getString(ARG_NEWS_DATE);
             newsImageUrl = getArguments().getString(ARG_NEWS_IMAGE);
-            newsCount = getArguments().getInt(ARG_NEWS_COMMENTS_COUNT);
+            newsCount = getArguments().getInt(ARG_NEWS_COMMENTS_COUNT, -1);
 
             Log.d("SUKA", "" + newsId + " : " + newsTitle + " : " + newsNick + " : " + newsDate + " : " + newsImageUrl);
             //realm = Realm.getDefaultInstance();
