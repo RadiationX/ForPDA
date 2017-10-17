@@ -10,6 +10,7 @@ import android.webkit.WebChromeClient;
 
 public class CustomWebChromeClient extends WebChromeClient {
     private final static String CONSOLE_TAG = "WebConsole";
+
     @Override
     public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
         String message = "";
@@ -30,11 +31,13 @@ public class CustomWebChromeClient extends WebChromeClient {
         if (level == ConsoleMessage.MessageLevel.DEBUG) {
             Log.d(CONSOLE_TAG, message);
         } else if (level == ConsoleMessage.MessageLevel.ERROR) {
-            Log.d(CONSOLE_TAG, message);
+            Log.e(CONSOLE_TAG, message);
         } else if (level == ConsoleMessage.MessageLevel.WARNING) {
             Log.w(CONSOLE_TAG, message);
         } else if (level == ConsoleMessage.MessageLevel.LOG || level == ConsoleMessage.MessageLevel.TIP) {
             Log.i(CONSOLE_TAG, message);
+        } else {
+            Log.d(CONSOLE_TAG, message);
         }
         return true;
     }

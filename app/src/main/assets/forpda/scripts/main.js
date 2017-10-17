@@ -19,9 +19,7 @@ function NativeEvents() {
         while (funcArray.length > 0) {
             var func = funcArray.shift();
             try {
-                if (func != undefined || func != null) {
-                    console.log("Call function: " + func.name);
-                }
+                console.log("Call function: " + func.name);
                 func();
             } catch (e) {
                 console.error(e);
@@ -31,27 +29,37 @@ function NativeEvents() {
 
     document.addEventListener("DOMContentLoaded", function (e) {
         console.log("JS event: DOMContentLoaded");
-        try {
+        if (typeof IBase != 'undefined') {
             IBase.domContentLoaded();
-        } catch (ignore) {
+        } else {
             onNativeDomComplete();
         }
     });
     window.addEventListener("load", function (e) {
         console.log("JS event: load");
-        try {
+        if (typeof IBase != 'undefined') {
             IBase.onPageLoaded();
-        } catch (ignore) {
+        } else {
             onNativePageComplete();
         }
     });
 
     this.addEventListener = function (name, func) {
-        if (name === "DOMContentLoaded") {
-            nativeDomComplete.push(func);
-        }
-        if (name === "load") {
-            nativePageComplete.push(func);
+        try {
+            if (name == undefined | name == null | typeof name != "string") {
+                throw new Error("Name invalid");
+            }
+            if (func == undefined | func == null | typeof func != "function") {
+                throw new Error("Function invalid")
+            }
+            if (name === "DOMContentLoaded") {
+                nativeDomComplete.push(func);
+            }
+            if (name === "load") {
+                nativePageComplete.push(func);
+            }
+        } catch (err) {
+            console.error(err);
         }
     }
 
@@ -89,6 +97,7 @@ function NativeEvents() {
         return !target.eventListenerList ? [] : target.eventListenerList;
     };
 })();
+
 nativeEvents.addEventListener("DOMContentLoaded", function () {
     var elemsForClick = document.querySelectorAll(".post-block .block-title");
     for (var i = 0; i < elemsForClick.length; i++) {
@@ -212,13 +221,15 @@ function AvatarLoader() {
         loadedAvatars[nick] = responseText;
         var loaded = loadedAvatars[nick];
 
-        pendingLoad[nick].forEach(function (item, i, arr) {
+        for (var i = 0; i < loaded.length; i++) {
+            var item = loaded[i];
             try {
                 item(loaded);
             } catch (ex) {
                 console.error(ex);
             }
-        });
+        }
+
         pendingLoad[nick] = [];
     }
 

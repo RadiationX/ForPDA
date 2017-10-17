@@ -56,10 +56,11 @@ function fixImagesSizeWithDensity() {
         return;
     }
     var images = document.querySelectorAll("img.attach, img.linked-image");
-    images.forEach(function (item, i, arr) {
+    for (var i = 0; i < images.length; i++) {
+        var item = images[i];
         fixSize(item);
         item.addEventListener("load", onLoadImage);
-    });
+    }
 
     function onLoadImage(ev) {
         fixSize(ev.target);
