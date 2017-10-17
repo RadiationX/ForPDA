@@ -84,7 +84,7 @@ public class ArticleContentFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         if (webView != null) {
-            webView.destroy();
+            webView.endWork();
             ((MainActivity) getActivity()).getWebViewsProvider().push(webView);
         }
     }

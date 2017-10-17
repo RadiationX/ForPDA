@@ -210,7 +210,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
         webView.removeJavascriptInterface(JS_INTERFACE);
         webView.removeJavascriptInterface(JS_POSTS_FUNCTIONS);
         webView.setJsLifeCycleListener(null);
-        webView.destroy();
+        webView.endWork();
         getMainActivity().getWebViewsProvider().push(webView);
     }
 

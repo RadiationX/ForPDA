@@ -372,7 +372,7 @@ public class ExtendedWebView extends NestedGeckoView implements IBase {
         }).obtainMessage());
     }
 
-    public void destroy() {
+    public void endWork() {
         setActionModeListener(null);
         setWebChromeClient(null);
         setWebViewClient(null);
