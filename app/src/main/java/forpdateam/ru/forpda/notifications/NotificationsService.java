@@ -1,6 +1,8 @@
 package forpdateam.ru.forpda.notifications;
 
 import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -10,15 +12,16 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.util.ArraySet;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -63,6 +66,16 @@ import okhttp3.WebSocketListener;
 
 public class NotificationsService extends Service {
     private final static String LOG_TAG = NotificationsService.class.getSimpleName();
+    private final static String CHANNEL_DEFAULT_ID = "forpda_channel_default";
+    private final static String CHANNEL_DEFAULT_NAME = "forpda_channel_default";
+    private final static String CHANNEL_FAV_ID = "forpda_channel_fav";
+    private final static String CHANNEL_FAV_NAME = "forpda_channel_fav";
+    private final static String CHANNEL_QMS_ID = "forpda_channel_qms";
+    private final static String CHANNEL_QMS_NAME = "forpda_channel_qms";
+    private final static String CHANNEL_MENTION_ID = "forpda_channel_mention";
+    private final static String CHANNEL_MENTION_NAME = "forpda_channel_mention";
+    private final static String CHANNEL_SITE_ID = "forpda_channel_site";
+    private final static String CHANNEL_SITE_NAME = "forpda_channel_site";
     public final static String CHECK_LAST_EVENTS = "CHECK_LAST_EVENTS";
     private final static int NOTIFY_STACKED_QMS_ID = -123;
     private final static int NOTIFY_STACKED_FAV_ID = -234;
@@ -191,14 +204,36 @@ public class NotificationsService extends Service {
         }
     };
 
+    private IBinder mBinder = new MyBinder();
+
     public static void startAndCheck() {
-        App.getContext().startService(new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS));
+        Intent intent = new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS);
+        App.getContext().startService(intent);
+        App.getContext().bindService(intent, App.get().getmServiceConnection(), Context.BIND_AUTO_CREATE);
     }
 
-    @Nullable
+    public class MyBinder extends Binder {
+        public NotificationsService getService() {
+            return NotificationsService.this;
+        }
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        Log.v(LOG_TAG, "onBind");
+        return mBinder;
+    }
+
+    @Override
+    public void onRebind(Intent intent) {
+        Log.v(LOG_TAG, "onRebind");
+        super.onRebind(intent);
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.v(LOG_TAG, "onUnbind");
+        return true;
     }
 
     @Override
@@ -604,6 +639,38 @@ public class NotificationsService extends Service {
         builder.setVibrate(new long[]{0L});
     }
 
+    private String getChannelId(NotificationEvent event) {
+        if (event.isMention())
+            return CHANNEL_MENTION_ID;
+
+        if (event.fromQms())
+            return CHANNEL_QMS_ID;
+
+        if (event.fromTheme())
+            return CHANNEL_FAV_ID;
+
+        if (event.fromSite())
+            return CHANNEL_SITE_ID;
+
+        return CHANNEL_DEFAULT_ID;
+    }
+
+    private String getChannelName(NotificationEvent event) {
+        if (event.isMention())
+            return getString(R.string.notification_summary_mention);
+
+        if (event.fromQms())
+            return getString(R.string.notification_summary_qms);
+
+        if (event.fromTheme())
+            return getString(R.string.notification_summary_fav);
+
+        if (event.fromSite())
+            return getString(R.string.notification_summary_comment);
+
+        return CHANNEL_DEFAULT_NAME;
+    }
+
     public void sendNotification(NotificationEvent event, Bitmap avatar) {
         eventsHistory.put(event.notifyId(), event);
 
@@ -617,8 +684,16 @@ public class NotificationsService extends Service {
         bigTextStyle.bigText(text);
         bigTextStyle.setSummaryText(summaryText);
 
-        NotificationCompat.Builder builder;
-        builder = new NotificationCompat.Builder(this);
+        String channelId = getChannelId(event);
+        String channelName = getChannelName(event);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
+            getSystemService(NotificationManager.class).createNotificationChannel(channel);
+        }
+
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId);
 
         if (avatar != null && !event.fromSite()) {
             builder.setLargeIcon(avatar);
@@ -628,6 +703,7 @@ public class NotificationsService extends Service {
         builder.setContentTitle(title);
         builder.setContentText(text);
         builder.setStyle(bigTextStyle);
+        builder.setChannelId(channelId);
 
 
         Intent notifyIntent = new Intent(this, MainActivity.class);
@@ -696,6 +772,14 @@ public class NotificationsService extends Service {
         bigTextStyle.bigText(text);
         bigTextStyle.setSummaryText(summaryText);
 
+        String channelId = getChannelId(events.get(0));
+        String channelName = getChannelName(events.get(0));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
+            getSystemService(NotificationManager.class).createNotificationChannel(channel);
+        }
+
         NotificationCompat.Builder builder;
         builder = new NotificationCompat.Builder(this);
 
@@ -704,6 +788,7 @@ public class NotificationsService extends Service {
         builder.setContentTitle(title);
         builder.setContentText(text);
         builder.setStyle(bigTextStyle);
+        builder.setChannelId(channelId);
 
         Intent notifyIntent = new Intent(this, MainActivity.class);
         notifyIntent.setData(Uri.parse(createStackedIntentUrl(events)));
