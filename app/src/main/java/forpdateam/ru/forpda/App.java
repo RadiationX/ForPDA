@@ -3,9 +3,11 @@ package forpdateam.ru.forpda;
 import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
@@ -16,6 +18,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
 import android.os.Build;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.AttrRes;
@@ -210,6 +213,7 @@ public class App extends android.app.Application {
     }
 
     int mLastJobId;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -345,6 +349,28 @@ public class App extends android.app.Application {
                 .schedule();
         Log.e("SUKAA", "TIME APP " + (System.currentTimeMillis() - time));
     }
+
+    private NotificationsService mBoundService;
+    boolean mServiceBound = false;
+
+    public ServiceConnection getmServiceConnection() {
+        return mServiceConnection;
+    }
+
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mServiceBound = false;
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            NotificationsService.MyBinder myBinder = (NotificationsService.MyBinder) service;
+            mBoundService = myBinder.getService();
+            mServiceBound = true;
+        }
+    };
 
     public static HashMap<String, String> getTemplateStringCache() {
         return templateStringCache;
