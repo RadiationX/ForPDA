@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.fragments.profile;
 
-import android.support.annotation.DrawableRes;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;

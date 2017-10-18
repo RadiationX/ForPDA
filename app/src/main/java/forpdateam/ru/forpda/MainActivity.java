@@ -19,11 +19,14 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.evernote.android.job.JobManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import forpdateam.ru.forpda.client.NetworkStateReceiver;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.notifications.NotificationsService;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.EmptyActivity;
 import forpdateam.ru.forpda.utils.IntentHandler;
@@ -170,7 +173,8 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             new SimpleChecker().checkFromGitHub(this);
         }
         checkIntent(getIntent());
-
+        mJobManager = JobManager.instance();
+        //testPeriodic();
     }
 
     private void measureView(View v) {
@@ -189,12 +193,23 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         }
     }
 
+    int mLastJobId;
+    private JobManager mJobManager;
+
+    /*private void testPeriodic() {
+        mLastJobId = new JobRequest.Builder(NotificationsJob.TAG)
+                .setPeriodic(JobRequest.MIN_INTERVAL, JobRequest.MIN_FLEX)
+                .setRequiresCharging(false)
+                .setRequiresDeviceIdle(false)
+                .setRequiredNetworkType(JobRequest.NetworkType.ANY)
+                .build()
+                .schedule();
+    }*/
+
     @Override
     protected void onStart() {
         super.onStart();
-        /*Intent serviceIntent = new Intent(App.getContext(), NotificationsService.class);
-        startService(serviceIntent);*/
-        App.getContext().startService(new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS));
+        NotificationsService.startAndCheck();
     }
 
     public Drawers getDrawers() {

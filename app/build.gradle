@@ -10,8 +10,8 @@ static def getDateTime() {
     return df.format(new Date())+" г.";
 }
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.2"
 
     def versionNumber = 56
 
@@ -42,7 +42,7 @@ android {
         versionCode versionNumber
         versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})"
         minSdkVersion 19
-        targetSdkVersion 25
+        targetSdkVersion 26
         vectorDrawables.useSupportLibrary = true
         buildConfigField "String", 'BUILD_DATE', '"'+getDateTime()+'"'
         ndk {
@@ -112,7 +112,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '25.3.1'
+    supportLibVersion = '26.0.1'
     okHttpVersion = '3.9.0'
     rxCoreVersion = '2.1.5'
     rxAndroidVersion = '2.0.1'
@@ -154,4 +154,5 @@ dependencies {
     compile 'com.github.douglasjunior:android-simple-tooltip:0.2.0'
     compile 'com.robohorse.pagerbullet:pagerbullet:1.0.8'
     compile 'com.github.apg-mobile:android-round-textview:v0.0.3'
+    compile 'com.evernote:android-job:1.2.0'
 }
