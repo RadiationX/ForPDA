@@ -70,7 +70,7 @@ public class NewsMainFragment extends RecyclerFragment implements NewsListAdapte
                     String url = "https://4pda.ru/?s=";
                     Bundle args = new Bundle();
                     args.putString(TabFragment.ARG_TAB, url);
-                    TabManager.getInstance().add(SearchFragment.class, args);
+                    TabManager.get().add(SearchFragment.class, args);
                     return true;
                 })
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
@@ -121,7 +121,7 @@ public class NewsMainFragment extends RecyclerFragment implements NewsListAdapte
         args.putString(NewsDetailsFragment.ARG_NEWS_IMAGE, item.getImgUrl());
         args.putInt(NewsDetailsFragment.ARG_NEWS_COMMENTS_COUNT, item.getCommentsCount());
         args.putBoolean(NewsDetailsFragment.OTHER_CASE, true);
-        TabManager.getInstance().add(NewsDetailsFragment.class, args);
+        TabManager.get().add(NewsDetailsFragment.class, args);
     }
 
     int page = 1;

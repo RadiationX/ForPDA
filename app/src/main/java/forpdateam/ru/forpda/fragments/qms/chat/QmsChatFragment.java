@@ -233,7 +233,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
                     Bundle args = new Bundle();
                     args.putInt(QmsThemesFragment.USER_ID_ARG, currentChat.getUserId());
                     args.putString(QmsThemesFragment.USER_AVATAR_ARG, currentChat.getAvatarUrl());
-                    TabManager.getInstance().add(QmsThemesFragment.class, args);
+                    TabManager.get().add(QmsThemesFragment.class, args);
                     return true;
                 });
         refreshToolbarMenuItems(false);

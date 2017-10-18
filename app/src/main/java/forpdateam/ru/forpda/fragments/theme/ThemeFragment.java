@@ -268,7 +268,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         messagePanel.getSendButton().setOnLongClickListener(v -> {
             EditPostForm form = createEditPostForm();
             if (form != null) {
-                TabManager.getInstance().add(EditPostFragment.newInstance(createEditPostForm(), currentPage.getTitle()));
+                TabManager.get().add(EditPostFragment.newInstance(createEditPostForm(), currentPage.getTitle()));
             }
             return true;
         });
@@ -276,7 +276,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         messagePanel.getFullButton().setOnClickListener(v -> {
             EditPostForm form = createEditPostForm();
             if (form != null) {
-                TabManager.getInstance().add(EditPostFragment.newInstance(createEditPostForm(), currentPage.getTitle()));
+                TabManager.get().add(EditPostFragment.newInstance(createEditPostForm(), currentPage.getTitle()));
             }
         });
         messagePanel.getHideButton().setVisibility(View.VISIBLE);
@@ -409,7 +409,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                     .setMessage(R.string.editpost_lose_changes)
                     .setPositiveButton(R.string.ok, (dialog, which) -> {
                         history.clear();
-                        TabManager.getInstance().remove(ThemeFragment.this);
+                        TabManager.get().remove(ThemeFragment.this);
                     })
                     .setNegativeButton(R.string.no, null)
                     .show();
@@ -500,9 +500,9 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
         int topicId = themePage.getId();
 
-        TabFragment parentTab = TabManager.getInstance().get(getParentTag());
+        TabFragment parentTab = TabManager.get().get(getParentTag());
         if (parentTab == null) {
-            parentTab = TabManager.getInstance().getByClass(FavoritesFragment.class);
+            parentTab = TabManager.get().getByClass(FavoritesFragment.class);
         }
 
         if (parentTab == null)
@@ -925,7 +925,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     @Override
     public void editPost(IBaseForumPost post) {
-        TabManager.getInstance().add(EditPostFragment.newInstance(post.getId(), currentPage.getId(), currentPage.getForumId(), currentPage.getSt(), currentPage.getTitle()));
+        TabManager.get().add(EditPostFragment.newInstance(post.getId(), currentPage.getId(), currentPage.getForumId(), currentPage.getSt(), currentPage.getTitle()));
     }
 
     public void votePost(final String postId, final boolean type) {

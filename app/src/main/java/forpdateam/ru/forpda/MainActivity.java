@@ -149,8 +149,8 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             @Override
             public void onDrawerStateChanged(int newState) {
                 if (newState == DrawerLayout.STATE_DRAGGING) {
-                    if (!TabManager.getInstance().isEmpty())
-                        TabManager.getInstance().getActive().hidePopupWindows();
+                    if (!TabManager.get().isEmpty())
+                        TabManager.get().getActive().hidePopupWindows();
                 }
             }
         });
@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
 
     void checkIntent(Intent intent) {
         if (intent == null || intent.getData() == null) {
-            if (TabManager.getInstance().isEmpty()) {
+            if (TabManager.get().isEmpty()) {
                 drawers.firstSelect();
             }
             return;
@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         new Handler().post(() -> {
             Log.d(LOG_TAG, "Handler.post checkIntent: " + intent);
             boolean handled = IntentHandler.handle(intent.getData().toString());
-            if (!handled || TabManager.getInstance().isEmpty()) {
+            if (!handled || TabManager.get().isEmpty()) {
                 drawers.firstSelect();
             }
             setIntent(null);
@@ -229,11 +229,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        TabManager.getInstance().saveState(outState);
-    }
-
-    public void updateTabList() {
-        drawers.notifyTabsChanged();
+        TabManager.get().saveState(outState);
     }
 
     @Override
@@ -255,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     @Override
     public void onChange() {
         Log.d(LOG_TAG, "TabManager callback onChange");
-        updateTabList();
+        drawers.notifyTabsChanged();
     }
 
     @Override
@@ -298,15 +294,15 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             }
         }*/
 
-        TabFragment active = TabManager.getInstance().getActive();
+        TabFragment active = TabManager.get().getActive();
         if (active == null) {
             finish();
             return;
         }
         if (fromToolbar || !active.onBackPressed()) {
             hideKeyboard();
-            TabManager.getInstance().remove(active);
-            if (TabManager.getInstance().getSize() < 1) {
+            TabManager.get().remove(active);
+            if (TabManager.get().getSize() < 1) {
                 finish();
             }
         }

@@ -175,7 +175,7 @@ public class NotesFragment extends RecyclerFragment implements NotesAdapter.OnIt
             realm1.insertOrUpdate(new NoteItemBd(item));
         }, () -> {
             realm.close();
-            NotesFragment notesFragment = (NotesFragment) TabManager.getInstance().getByClass(NotesFragment.class);
+            NotesFragment notesFragment = (NotesFragment) TabManager.get().getByClass(NotesFragment.class);
             if (notesFragment == null) {
                 return;
             }

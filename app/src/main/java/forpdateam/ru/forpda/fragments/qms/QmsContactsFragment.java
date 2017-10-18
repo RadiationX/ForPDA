@@ -94,7 +94,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
 
 
         fab.setImageDrawable(App.getVecDrawable(getContext(), R.drawable.ic_fab_create));
-        fab.setOnClickListener(view1 -> TabManager.getInstance().add(QmsChatFragment.class));
+        fab.setOnClickListener(view1 -> TabManager.get().add(QmsChatFragment.class));
         fab.setVisibility(View.VISIBLE);
 
         adapter = new QmsContactsAdapter();
@@ -144,7 +144,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
         searchView.setQueryHint(getString(R.string.user));
         getMenu().add(R.string.blacklist)
                 .setOnMenuItemClickListener(item -> {
-                    TabManager.getInstance().add(QmsBlackListFragment.class);
+                    TabManager.get().add(QmsBlackListFragment.class);
                     return false;
                 });
     }
@@ -309,7 +309,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
         args.putString(TabFragment.ARG_TITLE, item.getNick());
         args.putInt(QmsThemesFragment.USER_ID_ARG, item.getId());
         args.putString(QmsThemesFragment.USER_AVATAR_ARG, item.getAvatar());
-        TabManager.getInstance().add(QmsThemesFragment.class, args);
+        TabManager.get().add(QmsThemesFragment.class, args);
     }
 
     @Override

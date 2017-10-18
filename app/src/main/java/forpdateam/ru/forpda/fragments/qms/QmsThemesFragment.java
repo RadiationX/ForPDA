@@ -100,7 +100,7 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
             args.putInt(QmsChatFragment.USER_ID_ARG, currentThemes.getUserId());
             args.putString(QmsChatFragment.USER_NICK_ARG, currentThemes.getNick());
             args.putString(QmsChatFragment.USER_AVATAR_ARG, avatarUrl);
-            TabManager.getInstance().add(QmsChatFragment.class, args);
+            TabManager.get().add(QmsChatFragment.class, args);
         });
         fab.setVisibility(View.VISIBLE);
         adapter = new QmsThemesAdapter();
@@ -148,7 +148,7 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
             args.putInt(QmsChatFragment.USER_ID_ARG, currentThemes.getUserId());
             args.putString(QmsChatFragment.USER_NICK_ARG, currentThemes.getNick());
             args.putString(QmsChatFragment.USER_AVATAR_ARG, avatarUrl);
-            TabManager.getInstance().add(QmsChatFragment.class, args);
+            TabManager.get().add(QmsChatFragment.class, args);
             //new Handler().postDelayed(() -> TabManager.get().remove(getTag()), 500);
         }
 
@@ -228,7 +228,7 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
         }
 
 
-        QmsContactsFragment contactsFragment = (QmsContactsFragment) TabManager.getInstance().getByClass(QmsContactsFragment.class);
+        QmsContactsFragment contactsFragment = (QmsContactsFragment) TabManager.get().getByClass(QmsContactsFragment.class);
         if (contactsFragment != null) {
             int count = 0;
             for (QmsTheme qmsTheme : currentItems) {
@@ -297,7 +297,7 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
         args.putString(QmsChatFragment.USER_AVATAR_ARG, avatarUrl);
         args.putInt(QmsChatFragment.THEME_ID_ARG, item.getId());
         args.putString(QmsChatFragment.THEME_TITLE_ARG, item.getName());
-        TabManager.getInstance().add(QmsChatFragment.class, args);
+        TabManager.get().add(QmsChatFragment.class, args);
     }
 
     @Override

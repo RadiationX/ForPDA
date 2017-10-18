@@ -118,7 +118,7 @@ public class BrandsFragment extends RecyclerFragment implements BrandsAdapter.On
         Bundle args = new Bundle();
         args.putString(BrandFragment.ARG_CATEGORY_ID, currentData.getCatId());
         args.putString(BrandFragment.ARG_BRAND_ID, item.getId());
-        TabManager.getInstance().add(BrandFragment.class, args);
+        TabManager.get().add(BrandFragment.class, args);
     }
 
     @Override

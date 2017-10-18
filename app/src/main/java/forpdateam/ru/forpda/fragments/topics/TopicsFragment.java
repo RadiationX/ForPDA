@@ -146,7 +146,7 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
                 .setOnMenuItemClickListener(item -> {
                     Bundle args = new Bundle();
                     args.putInt(ForumFragment.ARG_FORUM_ID, id);
-                    TabManager.getInstance().add(ForumFragment.class, args);
+                    TabManager.get().add(ForumFragment.class, args);
                     return true;
                 });
         if (ClientHelper.getAuthState()) {
@@ -169,7 +169,7 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
                     String url = "https://4pda.ru/forum/index.php?act=search&source=all&forums%5B%5D=" + id;
                     Bundle args = new Bundle();
                     args.putString(TabFragment.ARG_TAB, url);
-                    TabManager.getInstance().add(SearchFragment.class, args);
+                    TabManager.get().add(SearchFragment.class, args);
                     return true;
                 })
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);

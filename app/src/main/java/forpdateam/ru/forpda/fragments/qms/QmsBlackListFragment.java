@@ -101,7 +101,7 @@ public class QmsBlackListFragment extends RecyclerFragment implements QmsContact
                 args.putString(TabFragment.ARG_TITLE, data.getNick());
                 args.putInt(QmsThemesFragment.USER_ID_ARG, data.getId());
                 args.putString(QmsThemesFragment.USER_AVATAR_ARG, data.getAvatar());
-                TabManager.getInstance().add(QmsThemesFragment.class, args);
+                TabManager.get().add(QmsThemesFragment.class, args);
             });
             dialogMenu.addItem(getString(R.string.delete), (context, data) -> context.unBlockUser(new int[]{data.getId()}));
         }

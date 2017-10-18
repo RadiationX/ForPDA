@@ -25,6 +25,7 @@ import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.data.realm.forum.ForumItemFlatBd;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
+import forpdateam.ru.forpda.fragments.search.SearchFragment;
 import forpdateam.ru.forpda.fragments.topics.TopicsFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.DynamicDialogMenu;
@@ -50,7 +51,7 @@ public class ForumFragment extends TabFragment {
         if (item.getForums() == null) {
             Bundle args = new Bundle();
             args.putInt(TopicsFragment.TOPICS_ID_ARG, item.getId());
-            TabManager.getInstance().add(TopicsFragment.class, args);
+            TabManager.get().add(TopicsFragment.class, args);
         }
     };
     private TreeNode.TreeNodeLongClickListener nodeLongClickListener = (node, value) -> {
@@ -60,7 +61,7 @@ public class ForumFragment extends TabFragment {
             dialogMenu.addItem(getString(R.string.open_forum), (context, data) -> {
                 Bundle args = new Bundle();
                 args.putInt(TopicsFragment.TOPICS_ID_ARG, data.getId());
-                TabManager.getInstance().add(TopicsFragment.class, args);
+                TabManager.get().add(TopicsFragment.class, args);
             });
             dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getId()))));
             dialogMenu.addItem(getString(R.string.mark_read), (context, data) -> {
@@ -74,6 +75,12 @@ public class ForumFragment extends TabFragment {
                 FavoritesHelper.addWithDialog(getContext(), aBoolean -> {
                     Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
                 }, data.getId());
+            });
+            dialogMenu.addItem(getString(R.string.fragment_title_search), (context, data) -> {
+                String url = "https://4pda.ru/forum/index.php?act=search&source=all&forums%5B%5D=" + data.getId();
+                Bundle args = new Bundle();
+                args.putString(TabFragment.ARG_TAB, url);
+                TabManager.get().add(SearchFragment.class, args);
             });
         }
         dialogMenu.disallowAll();

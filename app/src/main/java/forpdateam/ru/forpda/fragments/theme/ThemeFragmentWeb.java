@@ -15,7 +15,6 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -538,10 +537,15 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
         if (getContext() == null)
             return;
         runInUiThread(() -> {
-            Toast.makeText(getContext(), R.string.spoiler_link_copied, Toast.LENGTH_SHORT).show();
-            IBaseForumPost post = getPostById(Integer.parseInt(postId));
-            String s = "https://4pda.ru/forum/index.php?act=findpost&pid=" + post.getId() + "&anchor=Spoil-" + post.getId() + "-" + spoilNumber;
-            Utils.copyToClipBoard(s);
+            new AlertDialog.Builder(getContext())
+                    .setMessage(R.string.spoiler_link_copy_ask)
+                    .setPositiveButton(R.string.ok, (dialog, which) -> {
+                        IBaseForumPost post = getPostById(Integer.parseInt(postId));
+                        String s = "https://4pda.ru/forum/index.php?act=findpost&pid=" + post.getId() + "&anchor=Spoil-" + post.getId() + "-" + spoilNumber;
+                        Utils.copyToClipBoard(s);
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
         });
     }
 

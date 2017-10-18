@@ -145,7 +145,7 @@ public class HistoryFragment extends RecyclerFragment implements HistoryAdapter.
             }
         }, () -> {
             realm.close();
-            HistoryFragment historyFragment = (HistoryFragment) TabManager.getInstance().getByClass(HistoryFragment.class);
+            HistoryFragment historyFragment = (HistoryFragment) TabManager.get().getByClass(HistoryFragment.class);
             if (historyFragment == null) {
                 return;
             }
