@@ -32,6 +32,9 @@ import android.util.TypedValue;
 import android.webkit.WebSettings;
 import android.widget.Toast;
 
+import com.evernote.android.job.JobConfig;
+import com.evernote.android.job.JobManager;
+import com.evernote.android.job.JobRequest;
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -62,6 +65,9 @@ import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.data.models.TabNotification;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.notifications.NotificationsJob;
+import forpdateam.ru.forpda.notifications.NotificationsJobCreator;
+import forpdateam.ru.forpda.notifications.NotificationsService;
 import forpdateam.ru.forpda.realm.DbMigration;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.utils.LocaleHelper;
@@ -203,6 +209,7 @@ public class App extends android.app.Application {
         super.attachBaseContext(LocaleHelper.onAttach(base));
     }
 
+    int mLastJobId;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -315,13 +322,27 @@ public class App extends android.app.Application {
                     } else {
                         // the device just woke up from doze mode
                         Log.d(App.class.getSimpleName(), "DOZE MODE DISABLYA");
-                        startService(new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS));
+                        NotificationsService.startAndCheck();
                     }
                 }
             };
 
             registerReceiver(receiver, new IntentFilter(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED));
         }
+        JobConfig.addLogger((priority, tag, message, t) -> {
+            // log
+            Log.e("SUKA", "Job: pr=" + priority + "; t=" + tag + "; m=" + message + "; th=" + t);
+        });
+        JobConfig.setLogcatEnabled(false);
+        JobManager.create(this).addJobCreator(new NotificationsJobCreator());
+        JobManager.instance().cancelAllForTag(NotificationsJob.TAG);
+        mLastJobId = new JobRequest.Builder(NotificationsJob.TAG)
+                .setPeriodic(JobRequest.MIN_INTERVAL, JobRequest.MIN_FLEX)
+                .setRequiresCharging(false)
+                .setRequiresDeviceIdle(false)
+                .setRequiredNetworkType(JobRequest.NetworkType.ANY)
+                .build()
+                .schedule();
         Log.e("SUKAA", "TIME APP " + (System.currentTimeMillis() - time));
     }
 

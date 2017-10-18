@@ -1,11 +1,14 @@
-package forpdateam.ru.forpda;
+package forpdateam.ru.forpda.notifications;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -32,6 +35,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
 
+import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.MainActivity;
+import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.events.NotificationEvents;
@@ -185,6 +191,10 @@ public class NotificationsService extends Service {
         }
     };
 
+    public static void startAndCheck() {
+        App.getContext().startService(new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS));
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -247,6 +257,11 @@ public class NotificationsService extends Service {
     }
 
     private void start(boolean checkEvents) {
+        ConnectivityManager cm =
+                (ConnectivityManager) App.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        Log.d("SUKA", "start CE=" + checkEvents + "; NS=" + Client.get().getNetworkState() + " : " + connected + " AN=" + activeNetwork);
         if (Client.get().getNetworkState()) {
             if (!connected) {
                 webSocket = Client.get().createWebSocketConnection(webSocketListener);
