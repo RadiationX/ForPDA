@@ -91,7 +91,7 @@
     <string name="search_in_theme">Найти в теме</string>
     <string name="search_my_posts">Найти мои посты</string>
     <string name="theme_options">Опции темы</string>
-    <string name="spoiler_link_copied">Ссылка на спойлер скопирована</string>
+    <string name="spoiler_link_copy_ask">Скопировать ссылку на спойлер в буфер обмена?</string>
     <string name="link_to_anchor">Ссылка на якорь</string>
     <string name="write">Написать</string>
     <string name="add_user">Добавить пользователя</string>

@@ -199,22 +199,22 @@ public class IntentHandler {
                                     run("devdb models brand");
                                     args.putString(BrandFragment.ARG_CATEGORY_ID, uri.getPathSegments().get(1));
                                     args.putString(BrandFragment.ARG_BRAND_ID, uri.getPathSegments().get(2));
-                                    TabManager.getInstance().add(BrandFragment.class, args);
+                                    TabManager.get().add(BrandFragment.class, args);
                                     return true;
                                 }
                                 run("devdb models");
                                 args.putString(BrandsFragment.ARG_CATEGORY_ID, uri.getPathSegments().get(1));
-                                TabManager.getInstance().add(BrandsFragment.class, args);
+                                TabManager.get().add(BrandsFragment.class, args);
                                 return true;
                             } else {
                                 run("devdb device");
                                 args.putString(DeviceFragment.ARG_DEVICE_ID, uri.getPathSegments().get(1));
-                                TabManager.getInstance().add(DeviceFragment.class, args);
+                                TabManager.get().add(DeviceFragment.class, args);
                                 return true;
                             }
                         } else {
                             run("devdb categories");
-                            TabManager.getInstance().add(BrandsFragment.class);
+                            TabManager.get().add(BrandsFragment.class);
                             return true;
                         }
                     default:
@@ -252,7 +252,7 @@ public class IntentHandler {
         if (param != null) {
             run("showuser " + param);
             args.putString(TabFragment.ARG_TAB, uri.toString());
-            TabManager.getInstance().add(ProfileFragment.class, args);
+            TabManager.get().add(ProfileFragment.class, args);
             return true;
         }
         param = uri.getQueryParameter("showtopic");
@@ -268,7 +268,7 @@ public class IntentHandler {
             }
             run("showtopic " + tid + " : " + view + " : " + st + " : " + pid);
             args.putString(TabFragment.ARG_TAB, uri.toString());
-            TabManager.getInstance().add(ThemeFragmentWeb.class, args);
+            TabManager.get().add(ThemeFragmentWeb.class, args);
             return true;
         }
         param = uri.getQueryParameter("showforum");
@@ -282,7 +282,7 @@ public class IntentHandler {
 
             }*/
             args.putInt(TopicsFragment.TOPICS_ID_ARG, id);
-            TabManager.getInstance().add(TopicsFragment.class, args);
+            TabManager.get().add(TopicsFragment.class, args);
             run("show topics in forum");
             return true;
         }
@@ -292,23 +292,23 @@ public class IntentHandler {
                 case "qms":
                     if (uri.getQueryParameter("mid") == null) {
                         run("qms contacts");
-                        TabManager.getInstance().add(QmsContactsFragment.class, args);
+                        TabManager.get().add(QmsContactsFragment.class, args);
                     } else {
                         if (uri.getQueryParameter("t") != null) {
                             run("qms chat " + uri.getQueryParameter("mid") + " : " + uri.getQueryParameter("t"));
                             args.putInt(QmsChatFragment.THEME_ID_ARG, Integer.parseInt(uri.getQueryParameter("t")));
                             args.putInt(QmsChatFragment.USER_ID_ARG, Integer.parseInt(uri.getQueryParameter("mid")));
-                            TabManager.getInstance().add(QmsChatFragment.class, args);
+                            TabManager.get().add(QmsChatFragment.class, args);
                         } else {
                             run("qms thread " + uri.getQueryParameter("mid"));
                             args.putInt(QmsThemesFragment.USER_ID_ARG, Integer.parseInt(uri.getQueryParameter("mid")));
-                            TabManager.getInstance().add(QmsThemesFragment.class, args);
+                            TabManager.get().add(QmsThemesFragment.class, args);
                         }
                     }
                     return true;
                 case "boardrules":
                     run("boardrules");
-                    TabManager.getInstance().add(ForumRulesFragment.class);
+                    TabManager.get().add(ForumRulesFragment.class);
                     return true;
                 case "announce":
                     run("announce");
@@ -316,28 +316,28 @@ public class IntentHandler {
                     int forumId = Integer.parseInt(uri.getQueryParameter("f"));
                     args.putInt(AnnounceFragment.ARG_ANNOUNCE_ID, id);
                     args.putInt(AnnounceFragment.ARG_FORUM_ID, forumId);
-                    TabManager.getInstance().add(AnnounceFragment.class, args);
+                    TabManager.get().add(AnnounceFragment.class, args);
                     return true;
                 case "search":
                     run("search " + uri.toString());
                     args.putString(TabFragment.ARG_TAB, uri.toString());
-                    TabManager.getInstance().add(SearchFragment.class, args);
+                    TabManager.get().add(SearchFragment.class, args);
                     return true;
                 case "rep":
                     args.putString(TabFragment.ARG_TAB, uri.toString());
-                    TabManager.getInstance().add(ReputationFragment.class, args);
+                    TabManager.get().add(ReputationFragment.class, args);
                     return true;
                 case "findpost":
                     args.putString(TabFragment.ARG_TAB, uri.toString());
-                    TabManager.getInstance().add(ThemeFragmentWeb.class, args);
+                    TabManager.get().add(ThemeFragmentWeb.class, args);
                     return true;
                 case "fav":
                     run("favorites");
-                    TabManager.getInstance().add(FavoritesFragment.class);
+                    TabManager.get().add(FavoritesFragment.class);
                     return true;
                 case "mentions":
                     run("mentions");
-                    TabManager.getInstance().add(MentionsFragment.class);
+                    TabManager.get().add(MentionsFragment.class);
                     return true;
             }
         }
@@ -355,7 +355,7 @@ public class IntentHandler {
             }
             args.putString(NewsDetailsFragment.ARG_NEWS_URL, uri.toString());
 
-            TabManager.getInstance().add(NewsDetailsFragment.class, args);
+            TabManager.get().add(NewsDetailsFragment.class, args);
             return true;
         }
         if (!uri.getPathSegments().isEmpty() && uri.getPathSegments().get(0).contains("special")) {
@@ -364,7 +364,7 @@ public class IntentHandler {
             return true;
         }
         if (uri.getPathSegments().isEmpty()) {
-            TabManager.getInstance().add(NewsMainFragment.class);
+            TabManager.get().add(NewsMainFragment.class);
             run("show newslist");
             return true;
         } else if (uri.getPathSegments().get(0).matches("news|articles|reviews|tag|software|games|review")) {

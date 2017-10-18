@@ -893,7 +893,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         } else {
             title = "пост из поиска_";
         }
-        TabManager.getInstance().add(EditPostFragment.newInstance(post.getId(), post.getTopicId(), post.getForumId(), 0, title));
+        TabManager.get().add(EditPostFragment.newInstance(post.getId(), post.getTopicId(), post.getForumId(), 0, title));
     }
 
     @Override

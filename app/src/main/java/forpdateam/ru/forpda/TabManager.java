@@ -56,7 +56,7 @@ public class TabManager {
         existingFragments = null;
     }
 
-    public static TabManager getInstance() {
+    public static TabManager get() {
         return instance;
     }
 
@@ -293,5 +293,9 @@ public class TabManager {
         activeIndex = existingFragments.indexOf(tabFragment);
         tabListener.onChange();
         tabListener.onSelectTab(tabFragment);
+    }
+
+    public void notifyTabDataChanged() {
+        tabListener.onChange();
     }
 }

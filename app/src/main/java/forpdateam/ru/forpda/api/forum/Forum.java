@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.api.forum;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -116,14 +114,12 @@ public class Forum {
             header.setNumber(headerMatcher.group(1));
             header.setText(headerMatcher.group(2));
             String itemContent = headerMatcher.group(3);
-            Log.d("SUKA", "RULE H " + header.getNumber());
             itemMatcher = itemMatcher == null ? rulesItems.matcher(itemContent) : itemMatcher.reset(itemContent);
             rules.addItem(header);
             while (itemMatcher.find()) {
                 ForumRules.Item item = new ForumRules.Item();
                 item.setNumber(itemMatcher.group(1));
                 item.setText(itemMatcher.group(2));
-                Log.d("SUKA", "RULE " + item.getNumber());
                 rules.addItem(item);
             }
         }

@@ -22,6 +22,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     private NetworkInfo.State mConnectionType;
 
     public NetworkStateReceiver(){
+
         context = App.getContext();
         managerDelegate = new ConnectivityManagerDelegate(context);
         mConnectionType = getCurrentConnectionType();

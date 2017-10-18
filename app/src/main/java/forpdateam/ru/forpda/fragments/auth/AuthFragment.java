@@ -96,7 +96,7 @@ public class AuthFragment extends TabFragment {
                     .setPositiveButton(R.string.ok, (dialog, which) -> {
                         Drawers drawers = getMainActivity().getDrawers();
                         drawers.selectMenuItem(NewsMainFragment.class);
-                        TabManager.getInstance().remove(AuthFragment.this);
+                        TabManager.get().remove(AuthFragment.this);
                     })
                     .setNegativeButton(R.string.cancel, null)
                     .show();
@@ -236,7 +236,7 @@ public class AuthFragment extends TabFragment {
             ClientHelper.get().notifyAuthChanged(ClientHelper.AUTH_STATE_LOGIN);
             if (!isAdded()) return;
             new Handler().postDelayed(() -> {
-                TabManager.getInstance().remove(AuthFragment.this);
+                TabManager.get().remove(AuthFragment.this);
             }, 500);
         }, 2000);
     }

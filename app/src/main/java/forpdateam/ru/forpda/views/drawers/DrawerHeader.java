@@ -42,7 +42,7 @@ public class DrawerHeader {
     private MainActivity activity;
     private View.OnClickListener headerClickListener = v -> {
         TabFragment tabFragment = null;
-        for (TabFragment fragment : TabManager.getInstance().getFragments()) {
+        for (TabFragment fragment : TabManager.get().getFragments()) {
             if (fragment.getClass().getSimpleName().equals(ProfileFragment.class.getSimpleName()) && fragment.getConfiguration().isMenu()) {
                 tabFragment = fragment;
                 break;
@@ -51,9 +51,9 @@ public class DrawerHeader {
         if (tabFragment == null) {
             tabFragment = new TabFragment.Builder<>(ProfileFragment.class).build();
             tabFragment.getConfiguration().setMenu(true);
-            TabManager.getInstance().add(tabFragment);
+            TabManager.get().add(tabFragment);
         } else {
-            TabManager.getInstance().select(tabFragment);
+            TabManager.get().select(tabFragment);
             ;
         }
         /*TabFragment fragment = TabManager.get().get(TabManager.get().getTagContainClass(ProfileFragment.class));

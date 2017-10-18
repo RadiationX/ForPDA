@@ -111,7 +111,7 @@ public class BrandFragment extends TabFragment implements BrandAdapter.OnItemCli
     public void onItemClick(Brand.DeviceItem item) {
         Bundle args = new Bundle();
         args.putString(DeviceFragment.ARG_DEVICE_ID, item.getId());
-        TabManager.getInstance().add(DeviceFragment.class, args);
+        TabManager.get().add(DeviceFragment.class, args);
     }
 
     @Override

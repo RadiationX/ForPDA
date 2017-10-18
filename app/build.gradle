@@ -17,7 +17,7 @@ android {
 
     def versionMajor = 0
     def versionMinor = 5
-    def versionPatch = 81
+    def versionPatch = 82
 
     def versionBuild = -1
     def versionPropsFile = file('version.properties')

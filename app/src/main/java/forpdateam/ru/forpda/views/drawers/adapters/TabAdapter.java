@@ -31,12 +31,12 @@ public class TabAdapter extends BaseAdapter<TabFragment, TabAdapter.TabHolder> {
     }
 
     public TabFragment getItem(int position) {
-        return TabManager.getInstance().get(position);
+        return TabManager.get().get(position);
     }
 
     @Override
     public int getItemCount() {
-        return TabManager.getInstance().getSize();
+        return TabManager.get().getSize();
     }
 
     @Override

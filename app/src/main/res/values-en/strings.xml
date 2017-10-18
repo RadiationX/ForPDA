@@ -76,7 +76,7 @@
     <string name="search_in_theme">Search in topic</string>
     <string name="search_my_posts">Find my posts</string>
     <string name="theme_options">Topic options</string>
-    <string name="spoiler_link_copied">Spoiler URL has been copied</string>
+    <string name="spoiler_link_copy_ask">Copy URL to spoiler on clipboard?</string>
     <string name="link_to_anchor">Anchor link</string>
     <string name="write">Write a message</string>
     <string name="add_user">Add a user</string>

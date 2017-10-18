@@ -61,7 +61,7 @@ public class Drawers {
         menuItems.clear();
         fillMenuItems();
         menuAdapter.notifyDataSetChanged();
-        if ((boolean) o && TabManager.getInstance().getSize() <= 1) {
+        if ((boolean) o && TabManager.get().getSize() <= 1) {
             //select(findByClassName(NewsTimelineFragment.class.getSimpleName()));
             selectMenuItem(findMenuItem(FavoritesFragment.class));
         }
@@ -161,7 +161,7 @@ public class Drawers {
 
         MenuItems.MenuItem item = null;
         if (this.savedInstanceState != null) {
-            TabFragment tabFragment = TabManager.getInstance().get(TabManager.getActiveTag());
+            TabFragment tabFragment = TabManager.get().get(TabManager.getActiveTag());
             if (tabFragment != null) {
                 item = findMenuItem(tabFragment.getClass());
             }
@@ -258,9 +258,9 @@ public class Drawers {
                 }
 
             } else {
-                TabFragment tabFragment = TabManager.getInstance().get(item.getAttachedTabTag());
+                TabFragment tabFragment = TabManager.get().get(item.getAttachedTabTag());
                 if (tabFragment == null) {
-                    for (TabFragment fragment : TabManager.getInstance().getFragments()) {
+                    for (TabFragment fragment : TabManager.get().getFragments()) {
                         if (fragment.getClass() == item.getTabClass() && fragment.getConfiguration().isMenu()) {
                             tabFragment = fragment;
                             break;
@@ -271,10 +271,10 @@ public class Drawers {
                 if (tabFragment == null) {
                     tabFragment = item.getTabClass().newInstance();
                     tabFragment.getConfiguration().setMenu(true);
-                    TabManager.getInstance().add(tabFragment);
+                    TabManager.get().add(tabFragment);
                     item.setAttachedTabTag(tabFragment.getTag());
                 } else {
-                    TabManager.getInstance().select(tabFragment);
+                    TabManager.get().select(tabFragment);
                 }
 
                 if (lastActive != null)
@@ -342,7 +342,7 @@ public class Drawers {
         tabAdapter.setItemClickListener(new BaseAdapter.OnItemClickListener<TabFragment>() {
             @Override
             public void onItemClick(TabFragment item) {
-                TabManager.getInstance().select(item);
+                TabManager.get().select(item);
                 closeTabs();
             }
 
@@ -355,8 +355,8 @@ public class Drawers {
         tabAdapter.setCloseClickListener(new BaseAdapter.OnItemClickListener<TabFragment>() {
             @Override
             public void onItemClick(TabFragment item) {
-                TabManager.getInstance().remove(item);
-                if (TabManager.getInstance().getSize() < 1) {
+                TabManager.get().remove(item);
+                if (TabManager.get().getSize() < 1) {
                     activity.finish();
                 }
             }
@@ -366,8 +366,8 @@ public class Drawers {
                 return false;
             }
         });
-        TabManager.getInstance().loadState(savedInstanceState);
-        TabManager.getInstance().updateFragmentList();
+        TabManager.get().loadState(savedInstanceState);
+        TabManager.get().updateFragmentList();
     }
 
     public void notifyTabsChanged() {
@@ -401,14 +401,14 @@ public class Drawers {
                     closeTabs();
                     List<TabFragment> fragmentList = new ArrayList<>();
 
-                    for (TabFragment fragment : TabManager.getInstance().getFragments()) {
+                    for (TabFragment fragment : TabManager.get().getFragments()) {
                         if (!fragment.getTag().equals(TabManager.getActiveTag())) {
                             fragmentList.add(fragment);
                         }
                     }
 
                     for (TabFragment fragment : fragmentList) {
-                        TabManager.getInstance().remove(fragment);
+                        TabManager.get().remove(fragment);
                     }
                 })
                 .setNegativeButton(R.string.no, null)

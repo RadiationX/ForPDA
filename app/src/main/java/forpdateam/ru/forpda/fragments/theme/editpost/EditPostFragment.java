@@ -185,7 +185,7 @@ public class EditPostFragment extends TabFragment {
         }
 
         //Синхронизация с полем в фрагменте темы
-        TabFragment fragment = TabManager.getInstance().get(getParentTag());
+        TabFragment fragment = TabManager.get().get(getParentTag());
         if (fragment != null && fragment instanceof ThemeFragment) {
             ThemeFragment themeFragment = (ThemeFragment) fragment;
             showSyncDialog(themeFragment);
@@ -199,7 +199,7 @@ public class EditPostFragment extends TabFragment {
             new AlertDialog.Builder(getContext())
                     .setMessage(R.string.editpost_lose_changes)
                     .setPositiveButton(R.string.ok, (dialog, which) -> {
-                        TabManager.getInstance().remove(EditPostFragment.this);
+                        TabManager.get().remove(EditPostFragment.this);
                     })
                     .setNegativeButton(R.string.no, null)
                     .show();
@@ -216,11 +216,11 @@ public class EditPostFragment extends TabFragment {
                     int[] selectionRange = messagePanel.getSelectionRange();
                     themeFragment.getMessagePanel().getMessageField().setSelection(selectionRange[0], selectionRange[1]);
                     themeFragment.getAttachmentsPopup().setAttachments(messagePanel.getAttachments());
-                    TabManager.getInstance().remove(EditPostFragment.this);
+                    TabManager.get().remove(EditPostFragment.this);
                 })
                 .setNegativeButton(R.string.no, ((dialog, which) -> {
                     if (!showExitDialog()) {
-                        TabManager.getInstance().remove(EditPostFragment.this);
+                        TabManager.get().remove(EditPostFragment.this);
                     }
                 }))
                 .show();
@@ -248,7 +248,7 @@ public class EditPostFragment extends TabFragment {
         sendSubscriber.subscribe(RxApi.EditPost().sendPost(postForm), s -> {
             messagePanel.setProgressState(false);
             if (s.getId() != 0) {
-                TabFragment fragment = TabManager.getInstance().get(getParentTag());
+                TabFragment fragment = TabManager.get().get(getParentTag());
                 if (fragment != null) {
                     if (fragment instanceof ThemeFragment) {
                         ThemeFragment themeFragment = (ThemeFragment) fragment;
@@ -259,7 +259,7 @@ public class EditPostFragment extends TabFragment {
                         }
                     }
                 }
-                TabManager.getInstance().remove(EditPostFragment.this);
+                TabManager.get().remove(EditPostFragment.this);
             }
 
         }, new ThemePage(), v -> loadData());
@@ -273,7 +273,7 @@ public class EditPostFragment extends TabFragment {
             messagePanel.getFormProgress().setVisibility(View.GONE);
             if (form.getErrorCode() != ERROR_NONE) {
                 Toast.makeText(getContext(), R.string.editpost_error_edit, Toast.LENGTH_SHORT).show();
-                TabManager.getInstance().remove(EditPostFragment.this);
+                TabManager.get().remove(EditPostFragment.this);
                 return;
             }
             postForm.setMessage(form.getMessage());

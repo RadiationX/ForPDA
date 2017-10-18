@@ -171,7 +171,7 @@ public class TabFragment extends Fragment {
     public final void setTitle(String newTitle) {
         this.title = newTitle;
         if (tabTitle == null)
-            getMainActivity().updateTabList();
+            TabManager.get().notifyTabDataChanged();
         toolbarTitleView.setText(getTitle());
     }
 
@@ -197,7 +197,7 @@ public class TabFragment extends Fragment {
 
     public void setTabTitle(String tabTitle) {
         this.tabTitle = tabTitle;
-        getMainActivity().updateTabList();
+        TabManager.get().notifyTabDataChanged();
     }
 
     public Menu getMenu() {
