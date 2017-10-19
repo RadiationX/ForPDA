@@ -529,6 +529,9 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
 
     @Override
     public void deletePostUi(IBaseForumPost post) {
+        if (getContext() == null || post == null) {
+            return;
+        }
         webView.evalJs("deletePost(" + post.getId() + ");");
     }
 

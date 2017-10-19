@@ -893,6 +893,9 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     @Override
     public void reply(IBaseForumPost post) {
+        if (getContext() == null || post == null) {
+            return;
+        }
         if (messagePanel.getVisibility() != View.VISIBLE) {
             showMessagePanel();
         }
@@ -925,6 +928,9 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     @Override
     public void editPost(IBaseForumPost post) {
+        if (getContext() == null) {
+            return;
+        }
         TabManager.get().add(EditPostFragment.newInstance(post.getId(), currentPage.getId(), currentPage.getForumId(), currentPage.getSt(), currentPage.getTitle()));
     }
 
@@ -972,28 +978,28 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     @Override
     public void showUserMenu(IBaseForumPost post) {
-        if (getContext() == null)
+        if (getContext() == null || post == null)
             return;
         ThemeDialogsHelper.showUserMenu(getContext(), this, post);
     }
 
     @Override
     public void showReputationMenu(IBaseForumPost post) {
-        if (getContext() == null)
+        if (getContext() == null || post == null)
             return;
         ThemeDialogsHelper.showReputationMenu(getContext(), this, post);
     }
 
     @Override
     public void showPostMenu(IBaseForumPost post) {
-        if (getContext() == null)
+        if (getContext() == null || post == null)
             return;
         ThemeDialogsHelper.showPostMenu(getContext(), this, post);
     }
 
     @Override
     public void reportPost(IBaseForumPost post) {
-        if (getContext() == null)
+        if (getContext() == null || post == null)
             return;
         ThemeDialogsHelper.tryReportPost(getContext(), post);
     }
@@ -1001,7 +1007,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     //Удаление сообщения
     @Override
     public void deletePost(IBaseForumPost post) {
-        if (getContext() == null)
+        if (getContext() == null || post == null)
             return;
         ThemeDialogsHelper.deletePost(getContext(), post, aBoolean -> {
             if (aBoolean)
@@ -1015,7 +1021,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     //Изменение репутации сообщения
     @Override
     public void votePost(IBaseForumPost post, boolean type) {
-        if (getContext() == null)
+        if (getContext() == null || post == null)
             return;
         new AlertDialog.Builder(getContext())
                 .setMessage(String.format(getString(R.string.change_post_reputation_Type_Nick), getString(type ? R.string.increase : R.string.decrease), post.getNick()))
@@ -1030,7 +1036,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     @SuppressLint("InflateParams")
     @Override
     public void changeReputation(IBaseForumPost post, boolean type) {
-        if (getContext() == null)
+        if (getContext() == null || post == null)
             return;
         ThemeDialogsHelper.changeReputation(getContext(), post, type);
     }

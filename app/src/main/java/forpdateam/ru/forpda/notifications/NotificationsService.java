@@ -89,7 +89,7 @@ public class NotificationsService extends Service {
     private HashMap<NotificationEvent.Source, SparseArray<NotificationEvent>> pendingEvents = new HashMap<>(3);
     private Timer checkTimer;
     private Runnable timerRunnable = () -> {
-        Log.d(LOG_TAG, "Call timer runnable");
+        //Log.d(LOG_TAG, "Call timer runnable");
         /*int count = 0;
         for (NotificationEvent.Source source : pendingEvents.keySet()) {
             SparseArray<NotificationEvent> pending = pendingEvents.get(source);
