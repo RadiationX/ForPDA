@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<adaptive-icon>
-    <background android:drawable="@color/light_link_color"/>
-    <foreground android:drawable="@drawable/ic_poll"/>
-</adaptive-icon>
