@@ -2,7 +2,6 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'realm-android'
 
 static def getDateTime() {
@@ -12,6 +11,8 @@ static def getDateTime() {
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.2"
+
+    def fileNaming = "apk/ForPDA"
 
     def versionNumber = 56
 
@@ -50,12 +51,16 @@ android {
         }
     }
 
+    flavorDimensions "wtf"
     productFlavors {
-        stable {}
+        stable {
+            dimension "wtf"
+        }
         beta {
             applicationId 'ru.forpdateam.forpda.beta'
             versionCode versionNumber
             versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild}) beta"
+            dimension "wtf"
         }
 
         dev {
@@ -63,16 +68,23 @@ android {
             applicationId 'ru.forpdateam.forpda.debug'
             versionCode versionNumber
             versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild}) dev_api_21"
+            dimension "wtf"
         }
     }
 
-    applicationVariants.all { variant ->
+    /*applicationVariants.all { variant ->
         variant.outputs.each { output ->
             def fileNaming = "apk/ForPDA"
             def outputFile = output.outputFile
             if (outputFile != null && outputFile.name.endsWith('.apk')) {
                 output.outputFile = new File(getProject().getRootDir(), "${fileNaming}-${versionMajor}.${versionMinor}.${versionPatch}-${outputFile.name}")
             }
+        }
+    }*/
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "${fileNaming}-${versionMajor}.${versionMinor}.${versionPatch}-${outputFile.name}.apk"
         }
     }
 
