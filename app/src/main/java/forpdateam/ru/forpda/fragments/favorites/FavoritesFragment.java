@@ -370,9 +370,8 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
     }
 
     private void handleEvent(TabNotification event) {
-        Log.e("SUKA", "LIVE TAB " + Preferences.Notifications.Favorites.isLiveTab());
         if (!Preferences.Notifications.Favorites.isLiveTab()) return;
-        if (event.isWebSocket()) return;
+        if (event.isWebSocket() && event.getEvent().isNew()) return;
         if (realm.isClosed()) return;
         RealmResults<FavItemBd> results = realm.where(FavItemBd.class).findAll();
         ArrayList<IFavItem> currentItems = new ArrayList<>();
@@ -382,35 +381,45 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
 
         NotificationEvent loadedEvent = event.getEvent();
         int id = loadedEvent.getSourceId();
-        for (IFavItem item : currentItems) {
-            if (item.getTopicId() == id) {
-                if (item.getLastUserId() != ClientHelper.getUserId())
-                    item.setNew(true);
-                item.setLastUserNick(loadedEvent.getUserNick());
-                item.setLastUserId(loadedEvent.getUserId());
-                item.setPin(loadedEvent.isImportant());
-                break;
-            }
-        }
-        if (sorting.getKey().equals(Sorting.Key.TITLE)) {
-            Collections.sort(currentItems, (o1, o2) -> {
-                /*if (sorting.getOrder().equals(Sorting.Order.ASC)) {} else */
-                if (sorting.getOrder().equals(Sorting.Order.ASC))
-                    return o1.getTopicTitle().compareToIgnoreCase(o2.getTopicTitle());
-                return o2.getTopicTitle().compareToIgnoreCase(o1.getTopicTitle());
-            });
-        }
-
-        if (sorting.getKey().equals(Sorting.Key.LAST_POST)) {
+        boolean isRead = loadedEvent.isRead();
+        if (isRead) {
             for (IFavItem item : currentItems) {
                 if (item.getTopicId() == id) {
-                    currentItems.remove(item);
-                    int index = 0;
-                    if (sorting.getOrder().equals(Sorting.Order.ASC)) {
-                        index = currentItems.size();
-                    }
-                    currentItems.add(index, item);
+                    item.setNew(false);
                     break;
+                }
+            }
+        } else {
+            for (IFavItem item : currentItems) {
+                if (item.getTopicId() == id) {
+                    if (item.getLastUserId() != ClientHelper.getUserId())
+                        item.setNew(true);
+                    item.setLastUserNick(loadedEvent.getUserNick());
+                    item.setLastUserId(loadedEvent.getUserId());
+                    item.setPin(loadedEvent.isImportant());
+                    break;
+                }
+            }
+            if (sorting.getKey().equals(Sorting.Key.TITLE)) {
+                Collections.sort(currentItems, (o1, o2) -> {
+                /*if (sorting.getOrder().equals(Sorting.Order.ASC)) {} else */
+                    if (sorting.getOrder().equals(Sorting.Order.ASC))
+                        return o1.getTopicTitle().compareToIgnoreCase(o2.getTopicTitle());
+                    return o2.getTopicTitle().compareToIgnoreCase(o1.getTopicTitle());
+                });
+            }
+
+            if (sorting.getKey().equals(Sorting.Key.LAST_POST)) {
+                for (IFavItem item : currentItems) {
+                    if (item.getTopicId() == id) {
+                        currentItems.remove(item);
+                        int index = 0;
+                        if (sorting.getOrder().equals(Sorting.Order.ASC)) {
+                            index = currentItems.size();
+                        }
+                        currentItems.add(index, item);
+                        break;
+                    }
                 }
             }
         }

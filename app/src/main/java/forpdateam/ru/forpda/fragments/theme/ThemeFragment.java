@@ -397,9 +397,10 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         if (history.size() > 1) {
             setAction(BACK_ACTION);
 
+            ThemePage removed = history.get(history.size() - 1);
             history.remove(history.size() - 1);
             currentPage = history.get(history.size() - 1);
-            Log.d(LOG_TAG, "BACK PRESS REMOVE " + currentPage);
+            Log.e(LOG_TAG, "BACK PRESS REMOVE " + removed + " :" + currentPage);
             tab_url = currentPage.getUrl();
             updateView();
             return true;

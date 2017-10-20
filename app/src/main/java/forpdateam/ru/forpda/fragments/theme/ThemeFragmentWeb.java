@@ -187,7 +187,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
 
     @Override
     protected void updateHistoryLastHtml() {
-        Log.d(LOG_TAG, "updateHistoryLastHtml");
+        Log.d(LOG_TAG, "updateHistoryLastHtml "+currentPage);
         webView.evalJs("ITheme.callbackUpdateHistoryHtml('<!DOCTYPE html><html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>')");
         Log.d(LOG_TAG, "save scrollY " + webView.getScrollY());
         webView.evalJs("console.log('JAVASCRIPT save scrollY '+window.scrollY)");
@@ -314,7 +314,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
         public void onLoadResource(WebView view, String url) {
             super.onLoadResource(view, url);
 
-            Log.d(LOG_TAG, "IThemeJ: " + url);
+            //Log.d(LOG_TAG, "IThemeJ: " + url);
             if (loadAction == NORMAL_ACTION) {
                 if (!url.contains("forum/uploads") && !url.contains("android_asset") && !url.contains("style_images") && m.reset(url).find()) {
                     webView.evalJs("onProgressChanged()");

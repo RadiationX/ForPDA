@@ -82,7 +82,7 @@ function fixImagesSizeWithDensity() {
         }
         var width = Number(img.width);
         var height = Number(img.height);
-        console.log("WH: " + width + " : " + height);
+        //console.log("WH: " + width + " : " + height);
 
         width /= density;
         height /= density;

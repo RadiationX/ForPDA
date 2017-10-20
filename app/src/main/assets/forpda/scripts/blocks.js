@@ -68,7 +68,7 @@ function transformQuotes() {
         var titleBlock = quote.querySelector(".block-title");
 
         var titleText = titleBlock.textContent;
-        console.log(titleText);
+        //console.log(titleText);
         var match;
         while (match = myRegexp.exec(titleText)) {
             var newTextSrc = "<span class=\"title\">";
