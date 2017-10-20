@@ -14,29 +14,14 @@ import forpdateam.ru.forpda.notifications.NotificationsService;
 public class WakeUpReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            NewWebSocketService.registerJob(context, 20); // for test interval 2 minute
-        } else {
-            context.startService(new Intent(context, NotificationsService.class));
-        }*/
-
-
-
-        /*Sent when the user is present after
-         * device wakes up (e.g when the keyguard is gone)
-         * */
-        if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
-
+        Log.d("SUKA", "RECIEVER ACTION " + intent.getAction());
+        String action = intent.getAction();
+        if (action != null) {
+            if (action.equals(Intent.ACTION_SCREEN_ON)) {
+                NotificationsService.startAndCheck();
+            } else if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
+                NotificationsService.startAndCheck();
+            }
         }
-        /*Device is shutting down. This is broadcast when the device
-         * is being shut down (completely turned off, not sleeping)
-         * */
-        else if (intent.getAction().equals(Intent.ACTION_SHUTDOWN)) {
-
-        }
-
-        Log.d("SUKA", "RECIEVER ACTION "+intent.getAction());
-
-        NotificationsService.startAndCheck();
     }
 }
