@@ -105,7 +105,7 @@ public class ForumRulesFragment extends TabFragment {
     public void copyRule(String text) {
         if (getContext() == null)
             return;
-        webView.runInUiThread(() -> {
+        runInUiThread(() -> {
             if (getContext() == null)
                 return;
             new AlertDialog.Builder(getContext())

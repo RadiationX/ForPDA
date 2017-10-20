@@ -287,7 +287,7 @@ public class ExtendedWebView extends NestedGeckoView implements IBase {
     }
 
     public final void runInUiThread(final Runnable action) {
-        Log.d(LOG_TAG, "runInUiThread " + (Thread.currentThread() == mUiThread));
+        //Log.d(LOG_TAG, "runInUiThread " + (Thread.currentThread() == mUiThread));
         if (Thread.currentThread() == mUiThread) {
             action.run();
         } else {
@@ -307,7 +307,7 @@ public class ExtendedWebView extends NestedGeckoView implements IBase {
 
 
     public void syncWithJs(final Runnable action) {
-        Log.d(LOG_TAG, "syncWithJs " + isJsReady);
+        //Log.d(LOG_TAG, "syncWithJs " + isJsReady);
         if (!isJsReady) {
             actionsForWebView.add(action);
         } else {

@@ -60,6 +60,9 @@ public class WebViewsProvider {
     public void destroy() {
         webViewCleaner.cancel();
         webViewCleaner.purge();
+        for (ExtendedWebView webView : availableWebViews) {
+            webView.destroy();
+        }
         availableWebViews.clear();
     }
 }

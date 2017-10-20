@@ -18,6 +18,7 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.LocaleHelper;
+import forpdateam.ru.forpda.utils.Utils;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -29,6 +30,7 @@ public class ImageViewerActivity extends AppCompatActivity {
     private static final String IMAGE_URLS_KEY = "IMAGE_URLS_KEY";
     private static final String SELECTED_INDEX_KEY = "SELECTED_INDEX_KEY";
     private ArrayList<String> urls = new ArrayList<>();
+    private ArrayList<String> names = new ArrayList<>();
     private boolean mVisible;
     private PullBackLayout backLayout;
     private PullBackLayout.Callback pullBackCallback = new PullBackLayout.Callback() {
@@ -106,10 +108,19 @@ public class ImageViewerActivity extends AppCompatActivity {
         mVisible = true;
 
         int currentIndex = 0;
+        ArrayList<String> extUrls = null;
         if (getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().containsKey(IMAGE_URLS_KEY)) {
-            urls = getIntent().getExtras().getStringArrayList(IMAGE_URLS_KEY);
+            extUrls = getIntent().getExtras().getStringArrayList(IMAGE_URLS_KEY);
         } else if (savedInstanceState != null && savedInstanceState.containsKey(IMAGE_URLS_KEY)) {
-            urls = savedInstanceState.getStringArrayList(IMAGE_URLS_KEY);
+            extUrls = savedInstanceState.getStringArrayList(IMAGE_URLS_KEY);
+        }
+
+        if (extUrls != null) {
+            urls.addAll(extUrls);
+            extUrls.clear();
+            for (String url : urls) {
+                names.add(Utils.getFileNameFromUrl(url));
+            }
         }
 
         if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_INDEX_KEY)) {
@@ -154,7 +165,8 @@ public class ImageViewerActivity extends AppCompatActivity {
 
     @SuppressLint("DefaultLocale")
     private void updateTitle(int selectedPageIndex) {
-        toolbar.setTitle(String.format(getString(R.string.image_viewer_subtitle_Cur_All), selectedPageIndex + 1, urls.size()));
+        toolbar.setTitle(names.get(selectedPageIndex));
+        toolbar.setSubtitle(String.format(getString(R.string.image_viewer_subtitle_Cur_All), selectedPageIndex + 1, urls.size()));
     }
 
     @Override

@@ -9,6 +9,8 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -28,6 +30,20 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 public class Utils {
     public static boolean isMM() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    }
+
+    public static String getFileNameFromUrl(String url){
+        String fileName = url;
+        try {
+            fileName = URLDecoder.decode(url, "CP1251");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        int cut = fileName.lastIndexOf('/');
+        if (cut != -1) {
+            fileName = fileName.substring(cut + 1);
+        }
+        return fileName;
     }
 
     public static void copyToClipBoard(String s) {

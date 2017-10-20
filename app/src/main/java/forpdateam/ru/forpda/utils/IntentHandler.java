@@ -381,16 +381,7 @@ public class IntentHandler {
 
     public static void handleDownload(String url) {
         Log.d(LOG_TAG, "handleDownload " + url);
-        String fileName = url;
-        try {
-            fileName = URLDecoder.decode(url, "CP1251");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        int cut = fileName.lastIndexOf('/');
-        if (cut != -1) {
-            fileName = fileName.substring(cut + 1);
-        }
+        String fileName = Utils.getFileNameFromUrl(url);
         handleDownload(fileName, url);
     }
 

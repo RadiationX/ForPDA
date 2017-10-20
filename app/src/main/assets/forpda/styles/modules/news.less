@@ -31,6 +31,21 @@ body {
         max-width: 100%;
         display: block;
     }
+    .test-engine {
+        padding: 16/16rem!important;
+        display: block!important;
+        border: none!important;
+        margin: 0!important;
+        transition: none!important;
+        background: @colorAccent!important;
+        color: @contrast_text_color!important;
+        >* {
+            display: none!important;
+        }
+        &:after {
+            content: "Тесты не поддерживаются в программе";
+        }
+    }
     .table4site {
         .bRad(2px);
         height: auto!important;

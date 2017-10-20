@@ -212,7 +212,7 @@ function AvatarLoader() {
             console.error(xhr.status + ': ' + xhr.statusText);
             return;
         }
-        console.log("AvResp: " + xhr.status + " : " + xhr.responseText.length);
+        //console.log("AvResp: " + xhr.status + " : " + xhr.responseText.length);
         var responseText = xhr.responseText;
         if (xhr.responseText.length == 0) {
             return;

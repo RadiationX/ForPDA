@@ -144,6 +144,21 @@ body {
   max-width: 100%;
   display: block;
 }
+#news > .content .test-engine {
+  padding: 1rem !important;
+  display: block!important;
+  border: none!important;
+  margin: 0!important;
+  transition: none!important;
+  background: #ffffff !important;
+  color: #212121 !important;
+}
+#news > .content .test-engine > * {
+  display: none!important;
+}
+#news > .content .test-engine:after {
+  content: "Тесты не поддерживаются в программе";
+}
 #news > .content .table4site {
   -webkit-border-radius: 2px;
   border-radius: 2px;
