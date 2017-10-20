@@ -319,7 +319,8 @@ public class App extends android.app.Application {
                 public void onReceive(Context context, Intent intent) {
                     Log.d(App.class.getSimpleName(), "DOZE ON RECEIVE " + intent);
                     PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-
+                    if (pm == null)
+                        return;
                     if (pm.isDeviceIdleMode()) {
                         // the device is now in doze mode
                         Log.d(App.class.getSimpleName(), "DOZE MODE ENABLYA");
@@ -333,6 +334,12 @@ public class App extends android.app.Application {
 
             registerReceiver(receiver, new IntentFilter(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED));
         }
+
+        IntentFilter wakeUpFilter = new IntentFilter();
+        wakeUpFilter.addAction(Intent.ACTION_BOOT_COMPLETED);
+        wakeUpFilter.addAction(Intent.ACTION_SCREEN_ON);
+        registerReceiver(new WakeUpReceiver(), wakeUpFilter);
+
         JobConfig.addLogger((priority, tag, message, t) -> {
             // log
             Log.e("SUKA", "Job: pr=" + priority + "; t=" + tag + "; m=" + message + "; th=" + t);

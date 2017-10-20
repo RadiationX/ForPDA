@@ -9,8 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
@@ -292,11 +290,6 @@ public class NotificationsService extends Service {
     }
 
     private void start(boolean checkEvents) {
-        ConnectivityManager cm =
-                (ConnectivityManager) App.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        Log.d("SUKA", "start CE=" + checkEvents + "; NS=" + Client.get().getNetworkState() + " : " + connected + " AN=" + activeNetwork);
         if (Client.get().getNetworkState()) {
             if (!connected) {
                 webSocket = Client.get().createWebSocketConnection(webSocketListener);
