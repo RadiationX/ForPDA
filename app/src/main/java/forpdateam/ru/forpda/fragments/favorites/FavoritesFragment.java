@@ -382,7 +382,10 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         NotificationEvent loadedEvent = event.getEvent();
         int id = loadedEvent.getSourceId();
         boolean isRead = loadedEvent.isRead();
+        int count = ClientHelper.getFavoritesCount();
+
         if (isRead) {
+            count--;
             for (IFavItem item : currentItems) {
                 if (item.getTopicId() == id) {
                     item.setNew(false);
@@ -390,6 +393,7 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
                 }
             }
         } else {
+            count = event.getLoadedEvents().size();
             for (IFavItem item : currentItems) {
                 if (item.getTopicId() == id) {
                     if (item.getLastUserId() != ClientHelper.getUserId())
@@ -423,7 +427,8 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
                 }
             }
         }
-
+        ClientHelper.setFavoritesCount(count);
+        ClientHelper.get().notifyCountsChanged();
 
         if (realm.isClosed()) return;
         realm.executeTransaction(r -> {
