@@ -102,7 +102,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
         recyclerView.setAdapter(adapter);
 
         bindView();
-        App.get().subscribeQms(notification);
+        QmsHelper.get().subscribeQms(notification);
     }
 
     @Override
@@ -223,6 +223,8 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
     }
 
     private void handleEvent(TabNotification event) {
+        bindView();
+        if (true) return;
         SparseIntArray sparseArray = new SparseIntArray();
 
         if (realm.isClosed()) return;
@@ -300,7 +302,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
     public void onDestroy() {
         super.onDestroy();
         realm.close();
-        App.get().unSubscribeQms(notification);
+        QmsHelper.get().unSubscribeQms(notification);
     }
 
     @Override

@@ -107,7 +107,7 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
         adapter.setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
         bindView();
-        App.get().subscribeQms(notification);
+        QmsHelper.get().subscribeQms(notification);
     }
 
     private void tryShowAvatar() {
@@ -184,6 +184,8 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
 
     private void handleEvent(TabNotification event) {
         if (realm.isClosed()) return;
+        bindView();
+        if(true) return;
         RealmResults<QmsThemesBd> results = realm
                 .where(QmsThemesBd.class)
                 .equalTo("userId", currentThemes.getUserId())
@@ -285,7 +287,7 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
     public void onDestroy() {
         super.onDestroy();
         realm.close();
-        App.get().unSubscribeQms(notification);
+        QmsHelper.get().unSubscribeQms(notification);
     }
 
     @Override

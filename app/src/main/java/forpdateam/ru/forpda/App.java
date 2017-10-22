@@ -68,6 +68,7 @@ import biz.source_code.miniTemplator.MiniTemplator;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.data.models.TabNotification;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.qms.QmsHelper;
 import forpdateam.ru.forpda.notifications.NotificationsJob;
 import forpdateam.ru.forpda.notifications.NotificationsJobCreator;
 import forpdateam.ru.forpda.notifications.NotificationsService;
@@ -354,6 +355,7 @@ public class App extends android.app.Application {
                 .setRequiredNetworkType(JobRequest.NetworkType.ANY)
                 .build()
                 .schedule();
+        QmsHelper.init();
         Log.e("SUKAA", "TIME APP " + (System.currentTimeMillis() - time));
     }
 
