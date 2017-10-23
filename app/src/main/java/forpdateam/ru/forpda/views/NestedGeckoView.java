@@ -5,10 +5,10 @@ package forpdateam.ru.forpda.views;
  */
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingChildHelper;
-import android.support.v4.view.VelocityTrackerCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -24,13 +24,15 @@ import android.webkit.WebView;
 public class NestedGeckoView extends WebView implements NestedScrollingChild {
     private static final String LOG_TAG = NestedGeckoView.class.getSimpleName();
 
-    OnLongClickListener longClickListener = v -> true;
+    private OnLongClickListener longClickListener = v -> true;
+    private OnTouchListener clickListener = (v, event) -> true;
 
     private static final int INVALID_POINTER = -1;
 
     public static final int SCROLL_STATE_IDLE = 0;
-    public static final int SCROLL_STATE_DRAGGING = 1;
     public static final int SCROLL_STATE_SETTLING = 2;
+    public static final int SCROLL_STATE_NESTED_SCROLL = 3;
+    public static final int SCROLL_STATE_SCROLL = 4;
     private int mScrollState = SCROLL_STATE_IDLE;
 
     private int mScrollPointerId = INVALID_POINTER;
@@ -74,23 +76,119 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
     }
 
     private void changeLongClickable(boolean enable) {
+        Log.e("SUKA", "SET CLICKABLE " + enable);
         if (enable) {
             setOnLongClickListener(null);
+            //setOnTouchListener(null);
             setLongClickable(true);
+            setClickable(true);
             setHapticFeedbackEnabled(true);
         } else {
             setOnLongClickListener(longClickListener);
+            //setOnTouchListener(clickListener);
             setLongClickable(false);
+            setClickable(false);
             setHapticFeedbackEnabled(false);
         }
     }
 
 
-    boolean lastDnps = false;
-    boolean lastDsbi = false;
+    private Handler clickHandler = new Handler();
+
+    private Runnable enableClick = () -> {
+        //changeLongClickable(true);
+    };
+
+    /*
+    * onInterceptTouchEvent не обязателен, вставил для красоты, вдруг он будет чем-то полезен
+    * */
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent e) {
+        if (mVelocityTracker == null) {
+            mVelocityTracker = VelocityTracker.obtain();
+        }
+        mVelocityTracker.addMovement(e);
+
+        final int action = MotionEventCompat.getActionMasked(e);
+        final int actionIndex = MotionEventCompat.getActionIndex(e);
+        Log.e("SUKA", "INTERCEPT A=" + action);
+
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                mScrollPointerId = e.getPointerId(0);
+                mInitialTouchX = mLastTouchX = (int) (e.getX() + 0.5f);
+                mInitialTouchY = mLastTouchY = (int) (e.getY() + 0.5f);
+
+                /*if (mScrollState == SCROLL_STATE_SETTLING) {
+                    getParent().requestDisallowInterceptTouchEvent(true);
+                    setScrollState(SCROLL_STATE_NESTED_SCROLL);
+                }*/
+
+                // Clear the nested offsets
+                mNestedOffsets[0] = mNestedOffsets[1] = 0;
+
+                int nestedScrollAxis = ViewCompat.SCROLL_AXIS_NONE;
+                nestedScrollAxis |= ViewCompat.SCROLL_AXIS_HORIZONTAL;
+                nestedScrollAxis |= ViewCompat.SCROLL_AXIS_VERTICAL;
+                startNestedScroll(nestedScrollAxis);
+                break;
+
+            case MotionEvent.ACTION_MOVE: {
+                final int index = e.findPointerIndex(mScrollPointerId);
+                if (index < 0) {
+                    Log.e(LOG_TAG, "Error processing scroll; pointer index for id " +
+                            mScrollPointerId + " not found. Did any MotionEvents get skipped?");
+                    return false;
+                }
+
+                final int x = (int) (e.getX(index) + 0.5f);
+                final int y = (int) (e.getY(index) + 0.5f);
+                if (mScrollState != SCROLL_STATE_SCROLL) {
+                    final int dx = x - mInitialTouchX;
+                    final int dy = y - mInitialTouchY;
+                    boolean startScroll = false;
+                    if (Math.abs(dx) > mTouchSlop) {
+                        mLastTouchX = mInitialTouchX + mTouchSlop * (dx < 0 ? -1 : 1);
+                        startScroll = true;
+                    }
+                    if (Math.abs(dy) > mTouchSlop) {
+                        mLastTouchY = mInitialTouchY + mTouchSlop * (dy < 0 ? -1 : 1);
+                        startScroll = true;
+                    }
+                    if (startScroll) {
+                        setScrollState(SCROLL_STATE_NESTED_SCROLL);
+                    }
+                }
+            }
+            break;
+
+            case MotionEvent.ACTION_UP: {
+                mVelocityTracker.clear();
+                stopNestedScroll();
+            }
+            break;
+
+            case MotionEvent.ACTION_CANCEL: {
+                cancelTouch();
+            }
+        }
+        Log.e("SUKAA", "INTERCEPT " + mScrollState);
+        return mScrollState == SCROLL_STATE_NESTED_SCROLL;
+    }
+
+    private MotionEvent reserved = null;
+
+    private void callReserved() {
+        if (reserved != null) {
+            super.onTouchEvent(reserved);
+            reserved.recycle();
+        }
+        reserved = null;
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
+
         if (mVelocityTracker == null) {
             mVelocityTracker = VelocityTracker.obtain();
         }
@@ -98,13 +196,14 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
 
         final MotionEvent vtev = MotionEvent.obtain(e);
         final int action = MotionEventCompat.getActionMasked(e);
+        Log.d("SUKA", "ONTOUCH S=" + mScrollState + "; A=" + action);
         final int actionIndex = MotionEventCompat.getActionIndex(e);
 
         if (action == MotionEvent.ACTION_DOWN) {
             mNestedOffsets[0] = mNestedOffsets[1] = 0;
         }
         vtev.offsetLocation(mNestedOffsets[0], mNestedOffsets[1]);
-
+        //Log.e("SUKAA", "ONTOUCH " + mScrollState + " : " + action);
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
                 mScrollPointerId = e.getPointerId(0);
@@ -115,7 +214,13 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
                 nestedScrollAxis |= ViewCompat.SCROLL_AXIS_HORIZONTAL;
                 nestedScrollAxis |= ViewCompat.SCROLL_AXIS_VERTICAL;
                 startNestedScroll(nestedScrollAxis);
+                //reserved = MotionEvent.obtain(e);
                 super.onTouchEvent(e);
+                /*if (mScrollState == SCROLL_STATE_SCROLL) {
+                } else {
+                    super.onTouchEvent(e);
+
+                }*/
             }
             break;
 
@@ -127,106 +232,74 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
                     return false;
                 }
 
-
-                boolean callSuper = false;
                 final int x = (int) (e.getX(index) + 0.5f);
                 final int y = (int) (e.getY(index) + 0.5f);
                 int dx = mLastTouchX - x;
                 int dy = mLastTouchY - y;
 
-                boolean dnps = dispatchNestedPreScroll(dx, dy, mScrollConsumed, mScrollOffset);
-                /*if (lastDnps != dnps) {
-                    Log.e("SUKA", "CHANGED DNPS " + dnps);
-                    lastDnps = dnps;
-                }*/
+                boolean preScrollConsumed = dispatchNestedPreScroll(dx, dy, mScrollConsumed, mScrollOffset);
 
-
-                if (dnps) {
+                if (preScrollConsumed) {
                     dx -= mScrollConsumed[0];
                     dy -= mScrollConsumed[1];
                     vtev.offsetLocation(mScrollOffset[0], mScrollOffset[1]);
                     // Updated the nested offsets
                     mNestedOffsets[0] += mScrollOffset[0];
                     mNestedOffsets[1] += mScrollOffset[1];
+                }
+
+                if (preScrollConsumed) {
+                    setScrollState(SCROLL_STATE_NESTED_SCROLL);
                 } else {
-                    callSuper = true;
-                }
-                //Log.e(LOG_TAG, "dispatchNestedPreScroll " + dnps + " : " + dy + " : " + mScrollConsumed[1] + " : " + mScrollOffset[1] + " : " + mNestedOffsets[1] + " : " + getScrollY());
-                if (mScrollState != SCROLL_STATE_DRAGGING) {
-                    boolean startScroll = false;
-                    if (Math.abs(dx) > mTouchSlop) {
-                        if (dx > 0) {
-                            dx -= mTouchSlop;
-                        } else {
-                            dx += mTouchSlop;
-                        }
-                        startScroll = true;
-                    }
-                    if (Math.abs(dy) > mTouchSlop) {
-                        if (dy > 0) {
-                            dy -= mTouchSlop;
-                        } else {
-                            dy += mTouchSlop;
-                        }
-                        startScroll = true;
-                    }
-                    if (startScroll) {
-
-                        setScrollState(SCROLL_STATE_DRAGGING);
-                    }
-                }
-
-                if (mScrollState == SCROLL_STATE_DRAGGING) {
                     if (isLongClickable()) {
                         changeLongClickable(false);
                     }
                     mLastTouchX = x - mScrollOffset[0];
                     mLastTouchY = y - mScrollOffset[1];
-                    boolean dsbi = ((dnps && dy >= 0) || (!dnps && dy <= 0)) && getScrollY() < 5;
-                    /*if (lastDsbi != dsbi) {
-                        Log.e("SUKA", "CHANGED dsbi " + dsbi);
-                        lastDsbi = dsbi;
-                    }
-                    Log.d("SUKA", "scrollByInternal " + dnps + " : " + dy + " : " + y + " : " + getScrollY() + " : " + dsbi);*/
-                    //Log.d("SUKA", "dsbi=" + dsbi);
+                    boolean dsbi = dy <= 0 && getScrollY() == 0;
 
                     if (dsbi) {
                         scrollByInternal(dx, dy, vtev);
-                        callSuper = false;
+                        setScrollState(SCROLL_STATE_NESTED_SCROLL);
                     } else {
-                        //super.onTouchEvent(e);
-                        callSuper = true;
-                    }
-                    if (!dnps && callSuper) {
-                        //Log.d("SUKA", "CALL SUPER");
-
+                        //Log.d("SUKAA", "WV MOVE");
+                        callReserved();
                         super.onTouchEvent(e);
+                        setScrollState(SCROLL_STATE_SCROLL);
                     }
                 }
-
             }
             break;
 
 
             case MotionEvent.ACTION_UP: {
-                mVelocityTracker.addMovement(vtev);
+                /*mVelocityTracker.addMovement(vtev);
                 eventAddedToVelocityTracker = true;
                 mVelocityTracker.computeCurrentVelocity(1000, mMaxFlingVelocity);
                 final float xvel = -VelocityTrackerCompat.getXVelocity(mVelocityTracker, mScrollPointerId);
                 final float yvel = -VelocityTrackerCompat.getYVelocity(mVelocityTracker, mScrollPointerId);
                 if (!((xvel != 0 || yvel != 0) && fling((int) xvel, (int) yvel))) {
-                    setScrollState(SCROLL_STATE_IDLE);
+                }*/
+                Log.d("SUKA", "A UP " + mScrollState);
+                if (mScrollState == SCROLL_STATE_NESTED_SCROLL) {
+                    reserved = null;
+                } else {
+                    callReserved();
                 }
+                setScrollState(SCROLL_STATE_IDLE);
                 resetTouch();
                 super.onTouchEvent(e);
                 changeLongClickable(true);
+                //clickHandler.postDelayed(enableClick, 500);
             }
             break;
 
             case MotionEvent.ACTION_CANCEL: {
                 cancelTouch();
+                reserved = null;
                 super.onTouchEvent(e);
                 changeLongClickable(true);
+                //clickHandler.postDelayed(enableClick, 500);
             }
             break;
         }
@@ -252,9 +325,9 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
             unconsumedY = y - consumedY;
         }
 
-        boolean dns = dispatchNestedScroll(consumedX, consumedY, unconsumedX, unconsumedY, mScrollOffset);
+        boolean scrollConsumed = dispatchNestedScroll(consumedX, consumedY, unconsumedX, unconsumedY, mScrollOffset);
 
-        if (dns) {
+        if (scrollConsumed) {
             // Update the last touch co-ords, taking any scroll offset into account
             mLastTouchX -= mScrollOffset[0];
             mLastTouchY -= mScrollOffset[1];
@@ -265,7 +338,8 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
             mNestedOffsets[1] += mScrollOffset[1];
 
         }
-        //Log.d(LOG_TAG, "dispatchNestedScroll " + dns + " : " + consumedY + " : " + unconsumedY + " : " + mScrollOffset[1] + " : " + mNestedOffsets[1]);
+        //Log.d("SUKA", "DNS " + scrollConsumed);
+        //Log.d(LOG_TAG, "dispatchNestedScroll " + scrollConsumed + " : " + consumedY + " : " + unconsumedY + " : " + mScrollOffset[1] + " : " + mNestedOffsets[1]);
     }
 
     public boolean fling(int velocityX, int velocityY) {
