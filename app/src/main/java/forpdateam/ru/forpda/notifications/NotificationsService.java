@@ -77,6 +77,7 @@ public class NotificationsService extends Service {
     public final static String CHECK_LAST_EVENTS = "CHECK_LAST_EVENTS";
     private final static int NOTIFY_STACKED_QMS_ID = -123;
     private final static int NOTIFY_STACKED_FAV_ID = -234;
+    private IBinder mBinder = new MyBinder();
     private Handler wsHandler = new Handler(Looper.getMainLooper());
     private NotificationManagerCompat mNotificationManager;
     private SparseArray<NotificationEvent> eventsHistory = new SparseArray<>();
@@ -87,19 +88,6 @@ public class NotificationsService extends Service {
     private HashMap<NotificationEvent.Source, SparseArray<NotificationEvent>> pendingEvents = new HashMap<>(3);
     private Timer checkTimer;
     private Runnable timerRunnable = () -> {
-        //Log.d(LOG_TAG, "Call timer runnable");
-        /*int count = 0;
-        for (NotificationEvent.Source source : pendingEvents.keySet()) {
-            SparseArray<NotificationEvent> pending = pendingEvents.get(source);
-            count += pending.size();
-        }
-
-        if (count == 0) {
-            checkTimer.cancel();
-            checkTimer.purge();
-            return;
-        }*/
-
         for (NotificationEvent.Source source : pendingEvents.keySet()) {
             handlePendingEvents(source);
         }
@@ -112,9 +100,6 @@ public class NotificationsService extends Service {
     private Observer networkObserver = (observable, o) -> {
         if (o == null) o = true;
         if ((boolean) o) {
-            /*if (Preferences.Notifications.Main.isEnabled()) {
-                start(true);
-            }*/
             start(true);
         }
     };
@@ -189,7 +174,6 @@ public class NotificationsService extends Service {
         @Override
         public void onClosed(WebSocket webSocket, int code, String reason) {
             Log.d(LOG_TAG, "WSListener onClosed: " + code + " " + reason);
-            //stop();
             wsHandler.post(() -> stop());
         }
 
@@ -197,12 +181,10 @@ public class NotificationsService extends Service {
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             Log.d(LOG_TAG, "WSListener onFailure: " + t.getMessage() + " " + response);
             t.printStackTrace();
-            //stop();
             wsHandler.post(() -> stop());
         }
     };
 
-    private IBinder mBinder = new MyBinder();
 
     public static void startAndCheck() {
         Intent intent = new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS);
@@ -210,11 +192,6 @@ public class NotificationsService extends Service {
         App.getContext().bindService(intent, App.get().getmServiceConnection(), Context.BIND_AUTO_CREATE);
     }
 
-    public class MyBinder extends Binder {
-        public NotificationsService getService() {
-            return NotificationsService.this;
-        }
-    }
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -940,5 +917,11 @@ public class NotificationsService extends Service {
             return "https://4pda.ru/forum/index.php?act=fav";
 
         return "";
+    }
+
+    public class MyBinder extends Binder {
+        public NotificationsService getService() {
+            return NotificationsService.this;
+        }
     }
 }

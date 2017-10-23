@@ -38,6 +38,7 @@ public class FavoritesHelper {
 
     public static void addForumWithDialog(Context context, @NonNull Consumer<Boolean> onNext, int id) {
         new AlertDialog.Builder(context)
+                .setTitle(R.string.favorites_subscribe_email)
                 .setItems(FavoritesFragment.SUB_NAMES, (dialog1, which1) -> {
                     addForum(onNext, id, Favorites.SUB_TYPES[which1]);
                 })
@@ -46,6 +47,7 @@ public class FavoritesHelper {
 
     public static void addWithDialog(Context context, @NonNull Consumer<Boolean> onNext, int id) {
         new AlertDialog.Builder(context)
+                .setTitle(R.string.favorites_subscribe_email)
                 .setItems(FavoritesFragment.SUB_NAMES, (dialog1, which1) -> {
                     add(onNext, id, Favorites.SUB_TYPES[which1]);
                 })

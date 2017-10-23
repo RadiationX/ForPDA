@@ -15,6 +15,9 @@ import forpdateam.ru.forpda.api.topcis.models.TopicsData;
  */
 
 public class Topics {
+    public final static Pattern navStripPattern = Pattern.compile("<div[^>]*?id=\"navstrip\"[^>]*?>([\\s\\S]*?)<\\/div>");
+    public final static Pattern navItemPattern = Pattern.compile("<a[^>]*?href=\"[^\"]*?showforum=(\\d+)[^\"]*?\"[^>]*?>([\\s\\S]*?)<\\/a>");
+
     private final static Pattern titlePattern = Pattern.compile("<div[^>]*?navstrip[^>]*?>[\\s\\S]*?showforum=(\\d+)[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/div>");
     private final static Pattern canNewTopicPattern = Pattern.compile("<a[^>]*?href=\"[^\"]*?do=new_post[^\"]*?\"[^>]*?>");
     private final static Pattern announcePattern = Pattern.compile("<div[^>]*?anonce_body[^>]*?>[\\s\\S]*?<a[^>]*?href=['\"]([^\"']*?)[\"'][^>]*?>([\\s\\S]*?)<\\/a>[^<]*?<\\/div>");
