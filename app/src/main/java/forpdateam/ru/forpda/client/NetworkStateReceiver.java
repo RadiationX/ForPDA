@@ -21,7 +21,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     private boolean mRegistered;
     private NetworkInfo.State mConnectionType;
 
-    public NetworkStateReceiver(){
+    public NetworkStateReceiver() {
 
         context = App.getContext();
         managerDelegate = new ConnectivityManagerDelegate(context);
@@ -67,7 +67,10 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "onReceive");
+        Log.d(TAG, "onReceive " + intent);
+        if (!(intent.getAction() != null && intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION))) {
+            return;
+        }
         NetworkInfo.State newConnectionType = getCurrentConnectionType();
         if (newConnectionType == mConnectionType) return;
 

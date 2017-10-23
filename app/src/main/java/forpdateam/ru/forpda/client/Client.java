@@ -46,13 +46,12 @@ import okio.Sink;
 
 public class Client implements IWebClient {
     public static final String USER_AGENT = "Mozilla/5.0 (Linux; Android 4.4; Nexus 5 Build/_BuildID_) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36";
-//    private final static String userAgent = WebSettings.getDefaultUserAgent(App.getContext());
+    //    private final static String userAgent = WebSettings.getDefaultUserAgent(App.getContext());
     private final static String LOG_TAG = Client.class.getSimpleName();
     private final static Pattern countsPattern = Pattern.compile("<a href=\"(?:https?)?\\/\\/4pda\\.ru\\/forum\\/index\\.php\\?act=mentions[^>]*?><i[^>]*?>(\\d+)<\\/i>[\\s\\S]*?act=fav[^>]*?><i[^>]*?>(\\d+)<\\/i>[\\s\\S]*?act=qms[^>]*?data-count=\"(\\d+)\">");
     private final static Pattern errorPattern = Pattern.compile("^[\\s\\S]*?wr va-m text\">([\\s\\S]*?)</div></div></div></div><div class=\"footer\">");
     private static Client INSTANCE = null;
     private static Map<String, Cookie> cookies;
-    private static List<Cookie> listCookies;
     private String userAgent;
     private SimpleObservable networkObservables = new SimpleObservable();
     private Handler observerHandler = new Handler(Looper.getMainLooper());
@@ -70,7 +69,6 @@ public class Client implements IWebClient {
             userAgent = "Linux; Android NaN; UNKNOWN";
         }
         cookies = new HashMap<>();
-        listCookies = new ArrayList<>();
         String member_id = App.get().getPreferences().getString("cookie_member_id", null);
         String pass_hash = App.get().getPreferences().getString("cookie_pass_hash", null);
         String session_id = App.get().getPreferences().getString("cookie_session_id", null);
@@ -116,10 +114,6 @@ public class Client implements IWebClient {
         return cookies;
     }
 
-    public List<Cookie> getListCookies() {
-        return listCookies;
-    }
-
     private final CookieJar cookieJar = new CookieJar() {
         private final Pattern authPattern = Pattern.compile("4pda\\.ru\\/forum\\/[\\s\\S]*?(?:act=(?:auth|logout)|#afterauth)");
 
@@ -147,16 +141,6 @@ public class Client implements IWebClient {
                             if (isMemberId) {
                                 App.get().getPreferences().edit().putString("member_id", cookie.value()).apply();
                                 ClientHelper.setUserId(cookie.value());
-                            }
-                            if (isPassHash) {
-                                //App.get().getPreferences().edit().putString("cookie_pass_hash", cookieToPref(url.toString(), cookie)).apply();
-                                //App.get().getPreferences().edit().putString("auth_key", cookie.value()).apply();
-                            }
-                            if (isSessionId) {
-                                //App.get().getPreferences().edit().putString("cookie_session_id", cookieToPref(url.toString(), cookie)).apply();
-                            }
-                            if (isAnonymous) {
-                                //App.get().getPreferences().edit().putString("cookie_anonymous", cookieToPref(url.toString(), cookie)).apply();
                             }
                             if (!Client.cookies.containsKey(cookie.name())) {
                                 Client.cookies.put(cookie.name(), cookie);
@@ -209,54 +193,14 @@ public class Client implements IWebClient {
         return request(new NetworkRequest.Builder().url(url).build());
     }
 
-    public class ProgressRequestBody extends RequestBody {
+    @Override
+    public NetworkResponse request(NetworkRequest request) throws Exception {
+        return request(request, this.client, null);
+    }
 
-        protected RequestBody mDelegate;
-        protected ProgressListener mListener;
-        protected CountingSink mCountingSink;
-
-        public ProgressRequestBody(RequestBody delegate, ProgressListener listener) {
-            mDelegate = delegate;
-            mListener = listener;
-        }
-
-        @Override
-        public MediaType contentType() {
-            return mDelegate.contentType();
-        }
-
-        @Override
-        public long contentLength() {
-            try {
-                return mDelegate.contentLength();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return -1;
-        }
-
-        @Override
-        public void writeTo(@NonNull BufferedSink sink) throws IOException {
-            mCountingSink = new CountingSink(sink);
-            BufferedSink bufferedSink = Okio.buffer(mCountingSink);
-            mDelegate.writeTo(bufferedSink);
-            bufferedSink.flush();
-        }
-
-        protected final class CountingSink extends ForwardingSink {
-            private long bytesWritten = 0;
-
-            public CountingSink(Sink delegate) {
-                super(delegate);
-            }
-
-            @Override
-            public void write(@NonNull Buffer source, long byteCount) throws IOException {
-                super.write(source, byteCount);
-                bytesWritten += byteCount;
-                mListener.onProgress((int) (100F * bytesWritten / contentLength()));
-            }
-        }
+    @Override
+    public NetworkResponse request(NetworkRequest request, ProgressListener uploadProgressListener) throws Exception {
+        return request(request, this.client, uploadProgressListener);
     }
 
     private Request.Builder prepareRequest(NetworkRequest request, ProgressListener uploadProgressListener) {
@@ -347,21 +291,11 @@ public class Client implements IWebClient {
             }
 
             Log.d(LOG_TAG, "Response: " + response.toString());
-        }finally {
+        } finally {
             if (okHttpResponse != null)
                 okHttpResponse.close();
         }
         return response;
-    }
-
-    @Override
-    public NetworkResponse request(NetworkRequest request) throws Exception {
-        return request(request, this.client, null);
-    }
-
-    @Override
-    public NetworkResponse request(NetworkRequest request, ProgressListener uploadProgressListener) throws Exception {
-        return request(request, this.client, uploadProgressListener);
     }
 
     public WebSocket createWebSocketConnection(WebSocketListener webSocketListener) {
@@ -369,9 +303,6 @@ public class Client implements IWebClient {
                 .url("ws://app.4pda.ru/ws/")
                 .build();
         return webSocketClient.newWebSocket(request, webSocketListener);
-
-        // Trigger shutdown of the dispatcher's executor so this process can exit cleanly.
-        //client.dispatcher().executorService().shutdown();
     }
 
     private void checkForumErrors(String res) throws Exception {
@@ -380,7 +311,6 @@ public class Client implements IWebClient {
             throw new OnlyShowException(Utils.fromHtml(errorMatcher.group(1)));
         }
     }
-
 
     private void getCounts(String res) {
         Matcher countsMatcher = countsPattern.matcher(res);
@@ -404,7 +334,6 @@ public class Client implements IWebClient {
 
     public void clearCookies() {
         cookies.clear();
-        listCookies.clear();
     }
 
     public void removeNetworkObserver(Observer observer) {
@@ -415,7 +344,7 @@ public class Client implements IWebClient {
         networkObservables.addObserver(observer);
     }
 
-    public void notifyNetworkObservers(Boolean b) {
+    void notifyNetworkObservers(Boolean b) {
         networkObservables.notifyObservers(b);
     }
 
@@ -423,7 +352,57 @@ public class Client implements IWebClient {
         ConnectivityManager cm =
                 (ConnectivityManager) App.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
+        assert cm != null;
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
+
+    public class ProgressRequestBody extends RequestBody {
+        RequestBody mDelegate;
+        ProgressListener mListener;
+        CountingSink mCountingSink;
+
+        ProgressRequestBody(RequestBody delegate, ProgressListener listener) {
+            mDelegate = delegate;
+            mListener = listener;
+        }
+
+        @Override
+        public MediaType contentType() {
+            return mDelegate.contentType();
+        }
+
+        @Override
+        public long contentLength() {
+            try {
+                return mDelegate.contentLength();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return -1;
+        }
+
+        @Override
+        public void writeTo(@NonNull BufferedSink sink) throws IOException {
+            mCountingSink = new CountingSink(sink);
+            BufferedSink bufferedSink = Okio.buffer(mCountingSink);
+            mDelegate.writeTo(bufferedSink);
+            bufferedSink.flush();
+        }
+
+        protected final class CountingSink extends ForwardingSink {
+            private long bytesWritten = 0;
+
+            CountingSink(Sink delegate) {
+                super(delegate);
+            }
+
+            @Override
+            public void write(@NonNull Buffer source, long byteCount) throws IOException {
+                super.write(source, byteCount);
+                bytesWritten += byteCount;
+                mListener.onProgress((int) (100F * bytesWritten / contentLength()));
+            }
+        }
     }
 }
