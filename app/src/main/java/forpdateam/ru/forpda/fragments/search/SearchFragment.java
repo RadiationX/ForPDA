@@ -201,6 +201,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         saveSettingsButton = (Button) searchSettingsView.findViewById(R.id.search_save_settings);
 
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
+        attachWebView(webView);
         recyclerView = new RecyclerView(getContext());
         recyclerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         webView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));

@@ -41,6 +41,7 @@ import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.settings.Preferences;
 import forpdateam.ru.forpda.views.ContentController;
+import forpdateam.ru.forpda.views.ExtendedWebView;
 import io.reactivex.disposables.CompositeDisposable;
 
 import static android.content.Context.ACCESSIBILITY_SERVICE;
@@ -438,6 +439,9 @@ public class TabFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "onResume " + this);
+        if (attachedWebView != null) {
+            attachedWebView.onResume();
+        }
     }
 
     @Override
@@ -445,12 +449,16 @@ public class TabFragment extends Fragment {
         super.onPause();
         Log.d(LOG_TAG, "onPause " + this);
         hidePopupWindows();
+        if (attachedWebView != null) {
+            attachedWebView.onPause();
+        }
     }
 
     @Override
     @CallSuper
     public void onDestroy() {
         super.onDestroy();
+        attachedWebView = null;
         Log.d(LOG_TAG, "onDestroy " + this);
         if (!disposable.isDisposed())
             disposable.dispose();
@@ -462,6 +470,12 @@ public class TabFragment extends Fragment {
         Client.get().removeNetworkObserver(networkObserver);
         App.get().removePreferenceChangeObserver(tabPreferenceObserver);
         App.get().removeStatusBarSizeObserver(statusBarSizeObserver);
+    }
+
+    private ExtendedWebView attachedWebView;
+
+    protected void attachWebView(ExtendedWebView webView) {
+        this.attachedWebView = webView;
     }
 
     protected boolean isTalkBackEnabled() {
