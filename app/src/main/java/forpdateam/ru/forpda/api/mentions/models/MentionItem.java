@@ -7,10 +7,10 @@ package forpdateam.ru.forpda.api.mentions.models;
 public class MentionItem {
     public final static int STATE_UNREAD = 0;
     public final static int STATE_READ = 1;
-    public final static int TYPE_FORUM = 0;
+    public final static int TYPE_TOPIC = 0;
     public final static int TYPE_NEWS = 1;
     private String title, desc, link, date, nick;
-    private int state = STATE_READ, type = TYPE_FORUM;
+    private int state = STATE_READ, type = TYPE_TOPIC;
 
     public String getTitle() {
         return title;
@@ -66,5 +66,13 @@ public class MentionItem {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public boolean isRead() {
+        return state == STATE_READ;
+    }
+
+    public boolean isTopic() {
+        return type == TYPE_TOPIC;
     }
 }

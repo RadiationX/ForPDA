@@ -134,8 +134,6 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
                         if (dy != 0) {
                             callReservedEvent();
                             setScrollState(SCROLL_STATE_SCROLL);
-                            //For horizontal scroll in viewpager
-                            requestDisallowInterceptTouchEvent(true);
                         }
                         super.onTouchEvent(e);
                     }
@@ -178,8 +176,6 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
     private void resetTouch() {
         stopNestedScroll();
         setScrollState(SCROLL_STATE_IDLE);
-        //For horizontal scroll in viewpager
-        requestDisallowInterceptTouchEvent(false);
     }
 
     void setScrollState(int state) {

@@ -510,9 +510,12 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
             dialogMenu.addItem(getString(R.string.attachments), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=attach&code=showtopic&tid=" + data.getTopicId()));
             dialogMenu.addItem(getString(R.string.open_theme_forum), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getForumId()));
             dialogMenu.addItem(getString(R.string.fav_change_subscribe_type), (context, data) -> {
-                FavoritesHelper.addWithDialog(getContext(), aBoolean -> {
-                    Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
-                }, data.getFavId());
+                new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.favorites_subscribe_email)
+                        .setItems(FavoritesFragment.SUB_NAMES, (dialog1, which1) -> {
+                            context.changeFav(Favorites.ACTION_EDIT_SUB_TYPE, Favorites.SUB_TYPES[which1], data.getFavId());
+                        })
+                        .show();
             });
             dialogMenu.addItem(getPinText(item.isPin()), (context, data) -> context.changeFav(Favorites.ACTION_EDIT_PIN_STATE, data.isPin() ? "unpin" : "pin", data.getFavId()));
             dialogMenu.addItem(getString(R.string.delete), (context, data) -> context.changeFav(Favorites.ACTION_DELETE, null, data.getFavId()));
