@@ -145,6 +145,8 @@ public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder> {
             root = (CardView) itemView.findViewById(R.id.news_full_item_root);
             itemView.setOnClickListener(v -> mItemClickListener.onItemClick(cover, getItem(getLayoutPosition()), getLayoutPosition()));
             itemView.setOnLongClickListener(v -> mItemClickListener.onLongItemClick(v, getItem(getLayoutPosition()), getLayoutPosition()));
+            username.setOnClickListener(v -> mItemClickListener.onNickClick(username, getItem(getLayoutPosition()), getLayoutPosition()));
+
         }
 
         public void bind(NewsItem news, int position) {
@@ -205,6 +207,8 @@ public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder> {
         boolean onLongItemClick(View view, NewsItem item, int position);
 
         void onItemClick(View view, NewsItem item, int position);
+
+        void onNickClick(View view, NewsItem item, int position);
 
         void onLoadMoreClick();
     }

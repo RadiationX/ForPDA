@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class DetailsPage {
     private int id;
     private int commentId;
+    private int authorId;
     private String url;
     private String title;
     private String description;
@@ -75,6 +76,14 @@ public class DetailsPage {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public int getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(int authorId) {
+        this.authorId = authorId;
     }
 
     public String getDate() {

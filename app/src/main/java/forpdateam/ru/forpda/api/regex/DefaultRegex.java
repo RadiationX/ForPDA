@@ -17,25 +17,26 @@ public class DefaultRegex {
             * 4. Image Url
             * 5. Comments Count
             * 6. Date
-            * 7. Author
-            * 8. Description
-            * 9  Tags
+            * 7. Author id
+            * 8. Author
+            * 9. Description
+            * 10.  Tags
             *
             * Groups  reviews:
-            * 10. Ссылка
-            * 11. Id
-            * 12. Ссылка изображения
-            * 13. Заголовок
-            * 14. Кол-во комментов
-            * 15. Дата курильщика
-            * 16. Дата нормального человека
-            * 17. Ник автора
-            * 18. Название девайса, возможно можно связать с devdb
-            * 19. Контент
+            * 11. Ссылка
+            * 12. Id
+            * 13. Ссылка изображения
+            * 14. Заголовок
+            * 15. Кол-во комментов
+            * 16. Дата курильщика
+            * 17. Дата нормального человека
+            * 18. Ник автора
+            * 19. Название девайса, возможно можно связать с devdb
+            * 20. Контент
             *
             * */
             public static String getListPattern() {
-                return "<article[^>]*?class=\"post\"[^>]*?>[^<]*?<div class=\"visual\">[^<]*?<a[^>]*?href=\"([^\"]*\\/(\\d+)\\/?)\"[^>]*?title=\"([^\"]*?)\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\"[\\s\\S]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[\\s\\S]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?itemprop=\"description\">([\\s\\S]*?)<\\/div>[\\s\\S]*?<div[^>]*?class=\"meta\">([\\s\\S]*?)<\\/div>[\\s\\S]*?<\\/article>|<li itemscope[^>]*?>[^<]*?<div class=\"photo\">[^<]*?<a[^>]*?href=\"([^\"]*\\/(\\d+)\\/?)\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?title=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<a[^>]*?class=\"v-count\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<meta[^>]*?content=\"((\\d+-\\d+-\\d+)[^\"]*?)\"[^>]*?>[\\s\\S]*?<div class=\"content\" itemprop=\"description\">[\\s\\S]*?<div class=\"summary\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[^<]*?<div itemprop=\"description\">([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<span class=\"bg-shadow\">";
+                return "<article[^>]*?class=\"post\"[^>]*?>[^<]*?<div class=\"visual\">[^<]*?<a[^>]*?href=\"([^\"]*\\/(\\d+)\\/?)\"[^>]*?title=\"([^\"]*?)\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\"[\\s\\S]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[\\s\\S]*?<a[^>]*?href=\"[^\"]*?showuser=(\\d+)\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?itemprop=\"description\">([\\s\\S]*?)<\\/div>[\\s\\S]*?<div[^>]*?class=\"meta\">([\\s\\S]*?)<\\/div>[\\s\\S]*?<\\/article>|<li itemscope[^>]*?>[^<]*?<div class=\"photo\">[^<]*?<a[^>]*?href=\"([^\"]*\\/(\\d+)\\/?)\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?title=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<a[^>]*?class=\"v-count\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<meta[^>]*?content=\"((\\d+-\\d+-\\d+)[^\"]*?)\"[^>]*?>[\\s\\S]*?<div class=\"content\" itemprop=\"description\">[\\s\\S]*?<div class=\"summary\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[^<]*?<div itemprop=\"description\">([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<span class=\"bg-shadow\">";
             }
         }
 
