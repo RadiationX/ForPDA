@@ -72,7 +72,7 @@ public class ForumFragment extends TabFragment {
                         .show();
             });
             dialogMenu.addItem(getString(R.string.add_to_favorites), (context, data) -> {
-                FavoritesHelper.addWithDialog(getContext(), aBoolean -> {
+                FavoritesHelper.addForumWithDialog(getContext(), aBoolean -> {
                     Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
                 }, data.getId());
             });
@@ -91,6 +91,7 @@ public class ForumFragment extends TabFragment {
             dialogMenu.allow(2);
             dialogMenu.allow(3);
         }
+        dialogMenu.allow(4);
 
         dialogMenu.show(getContext(), ForumFragment.this, item);
         return false;

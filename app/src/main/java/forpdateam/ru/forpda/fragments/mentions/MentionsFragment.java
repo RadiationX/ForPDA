@@ -7,15 +7,23 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.mentions.models.MentionItem;
 import forpdateam.ru.forpda.api.mentions.models.MentionsData;
+import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.rxapi.RxApi;
+import forpdateam.ru.forpda.utils.DynamicDialogMenu;
 import forpdateam.ru.forpda.utils.IntentHandler;
+import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.ContentController;
 import forpdateam.ru.forpda.views.FunnyContent;
@@ -26,6 +34,7 @@ import forpdateam.ru.forpda.views.pagination.PaginationHelper;
  */
 
 public class MentionsFragment extends RecyclerFragment implements MentionsAdapter.OnItemClickListener<MentionItem> {
+    private DynamicDialogMenu<MentionsFragment, MentionItem> dialogMenu;
     private MentionsAdapter adapter;
     private Subscriber<MentionsData> mainSubscriber = new Subscriber<>(this);
 
@@ -120,6 +129,29 @@ public class MentionsFragment extends RecyclerFragment implements MentionsAdapte
 
     @Override
     public boolean onItemLongClick(MentionItem item) {
+        if (dialogMenu == null) {
+            dialogMenu = new DynamicDialogMenu<>();
+
+            dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
+                Utils.copyToClipBoard(data.getLink());
+            });
+            dialogMenu.addItem(getString(R.string.add_to_favorites), (context, data) -> {
+                int id = 0;
+                Matcher matcher = Pattern.compile("showtopic=(\\d+)").matcher(data.getLink());
+                if (matcher.find()) {
+                    id = Integer.parseInt(matcher.group(1));
+                }
+                FavoritesHelper.addWithDialog(getContext(), aBoolean -> {
+                    Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
+                }, id);
+            });
+        }
+        dialogMenu.disallowAll();
+        dialogMenu.allow(0);
+        if (item.isTopic() && ClientHelper.getAuthState()) {
+            dialogMenu.allow(1);
+        }
+        dialogMenu.show(getContext(), MentionsFragment.this, item);
         return false;
     }
 }

@@ -24,7 +24,7 @@ public class Mentions {
         while (matcher.find()) {
             MentionItem item = new MentionItem();
             item.setState(matcher.group(1).equals("read") ? MentionItem.STATE_READ : MentionItem.STATE_UNREAD);
-            item.setType(matcher.group(2).equalsIgnoreCase("Форум") ? MentionItem.TYPE_FORUM : MentionItem.TYPE_NEWS);
+            item.setType(matcher.group(2).equalsIgnoreCase("Форум") ? MentionItem.TYPE_TOPIC : MentionItem.TYPE_NEWS);
             item.setLink(matcher.group(3));
             item.setTitle(Utils.fromHtml(matcher.group(4)));
             item.setDesc(Utils.fromHtml(matcher.group(5)));

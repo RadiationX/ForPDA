@@ -50,11 +50,10 @@ public class SearchSettings {
     public final static Pair<String, String> SOURCE_TITLES = new Pair<>("top", "Заголовки");
     public final static Pair<String, String> SOURCE_CONTENT = new Pair<>("pst", "Содержание");
 
-    public final static int SUB_FORUMS_TRUE = 1;
-    public final static int SUB_FORUMS_FALSE = 0;
+    public final static String SUB_FORUMS_TRUE = "1";
+    public final static String SUB_FORUMS_FALSE = "0";
 
-    private String resourceType, result, sort, source, query, nick;
-    private int subforums;
+    private String resourceType, result, sort, source, query, nick, subforums;
     private int excludeTrash;
     private int st = 0;
     private List<String> forums, topics;
@@ -66,7 +65,7 @@ public class SearchSettings {
         source = SOURCE_ALL.first;
         query = "";
         nick = "";
-        subforums = SUB_FORUMS_FALSE;
+        subforums = SUB_FORUMS_TRUE;
         forums = new ArrayList<>();
         topics = new ArrayList<>();
     }
@@ -136,11 +135,11 @@ public class SearchSettings {
         topics.add(topic);
     }
 
-    public int getSubforums() {
+    public String getSubforums() {
         return subforums;
     }
 
-    public void setSubforums(int subforums) {
+    public void setSubforums(String subforums) {
         this.subforums = subforums;
     }
 
@@ -199,7 +198,7 @@ public class SearchSettings {
                     }
                     break;
                 case SearchSettings.ARG_SUB_FORUMS:
-                    settings.setSubforums(Integer.parseInt(value));
+                    settings.setSubforums(value);
                     break;
                 case SearchSettings.ARG_EXCLUDE_TRASH:
                     settings.setExcludeTrash(Integer.parseInt(value));
@@ -265,7 +264,9 @@ public class SearchSettings {
             for (String topic : settings.getTopics())
                 builder.appendQueryParameter(ARG_TOPICS, topic);
 
-            builder.appendQueryParameter(ARG_SUB_FORUMS, Integer.toString(settings.getSubforums()));
+            if (settings.getSubforums() != null) {
+                builder.appendQueryParameter(ARG_SUB_FORUMS, settings.getSubforums());
+            }
             builder.appendQueryParameter(ARG_NO_FORM, "1");
             builder.appendQueryParameter(ARG_ST, Integer.toString(settings.getSt()));
             builder.appendQueryParameter(ARG_EXCLUDE_TRASH, Integer.toString(settings.getExcludeTrash()));
