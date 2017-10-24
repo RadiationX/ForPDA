@@ -150,18 +150,19 @@ public class NewsApi {
                 item.setImgUrl(matcher.group(4));
                 item.setCommentsCount(Integer.parseInt(matcher.group(5)));
                 item.setDate(matcher.group(6));
-                item.setAuthor(Utils.fromHtml(matcher.group(7)));
-                item.setDescription(Utils.fromHtml(matcher.group(8)));
-                parseTags(item.getTags(), matcher.group(9));
+                item.setAuthorId(Integer.parseInt(matcher.group(7)));
+                item.setAuthor(Utils.fromHtml(matcher.group(8)));
+                item.setDescription(Utils.fromHtml(matcher.group(9)));
+                parseTags(item.getTags(), matcher.group(10));
             } else {
-                item.setUrl(matcher.group(10));
-                item.setId(Integer.parseInt(matcher.group(11)));
-                item.setImgUrl(matcher.group(12));
-                item.setTitle(Utils.fromHtml(Utils.fromHtml(matcher.group(13))));
-                item.setCommentsCount(Integer.parseInt(matcher.group(14)));
-                item.setDate(matcher.group(16).replace('-', '.'));
-                item.setAuthor(Utils.fromHtml(matcher.group(17)));
-                item.setDescription(Utils.fromHtml(matcher.group(19).trim()));
+                item.setUrl(matcher.group(11));
+                item.setId(Integer.parseInt(matcher.group(12)));
+                item.setImgUrl(matcher.group(13));
+                item.setTitle(Utils.fromHtml(Utils.fromHtml(matcher.group(14))));
+                item.setCommentsCount(Integer.parseInt(matcher.group(15)));
+                item.setDate(matcher.group(17).replace('-', '.'));
+                item.setAuthor(Utils.fromHtml(matcher.group(18)));
+                item.setDescription(Utils.fromHtml(matcher.group(20).trim()));
             }
             items.add(item);
         }
@@ -189,6 +190,7 @@ public class NewsApi {
             page.setImgUrl(matcher.group(3));
             page.setTitle(Utils.fromHtml(matcher.group(4)));
             page.setDate(matcher.group(5));
+            page.setAuthorId(Integer.parseInt(matcher.group(6)));
             page.setAuthor(Utils.fromHtml(matcher.group(7)));
             page.setCommentsCount(Integer.parseInt(matcher.group(8)));
             parseTags(page.getTags(), matcher.group(9));

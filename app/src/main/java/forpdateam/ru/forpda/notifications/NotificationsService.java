@@ -67,13 +67,13 @@ public class NotificationsService extends Service {
     private final static String CHANNEL_DEFAULT_ID = "forpda_channel_default";
     private final static String CHANNEL_DEFAULT_NAME = "forpda_channel_default";
     private final static String CHANNEL_FAV_ID = "forpda_channel_fav";
-    private final static String CHANNEL_FAV_NAME = "forpda_channel_fav";
     private final static String CHANNEL_QMS_ID = "forpda_channel_qms";
-    private final static String CHANNEL_QMS_NAME = "forpda_channel_qms";
     private final static String CHANNEL_MENTION_ID = "forpda_channel_mention";
-    private final static String CHANNEL_MENTION_NAME = "forpda_channel_mention";
     private final static String CHANNEL_SITE_ID = "forpda_channel_site";
-    private final static String CHANNEL_SITE_NAME = "forpda_channel_site";
+    /*private final static String CHANNEL_FAV_NAME = "forpda_channel_fav";
+    private final static String CHANNEL_QMS_NAME = "forpda_channel_qms";
+    private final static String CHANNEL_MENTION_NAME = "forpda_channel_mention";
+    private final static String CHANNEL_SITE_NAME = "forpda_channel_site";*/
     public final static String CHECK_LAST_EVENTS = "CHECK_LAST_EVENTS";
     private final static int NOTIFY_STACKED_QMS_ID = -123;
     private final static int NOTIFY_STACKED_FAV_ID = -234;
@@ -315,6 +315,38 @@ public class NotificationsService extends Service {
         }
     }
 
+    private void checkOldEvent(NotificationEvent event) {
+        NotificationEvent oldEvent = eventsHistory.get(event.notifyId(NotificationEvent.Type.NEW));
+        boolean delete = false;
+
+        if (event.fromTheme()) {
+            //Убираем уведомления избранного
+            if (oldEvent != null && event.getMessageId() >= oldEvent.getMessageId()) {
+                mNotificationManager.cancel(oldEvent.notifyId());
+                delete = true;
+            }
+
+            //Убираем уведомление упоминаний
+            oldEvent = eventsHistory.get(event.notifyId(NotificationEvent.Type.MENTION));
+            if (oldEvent != null) {
+                mNotificationManager.cancel(oldEvent.notifyId());
+                delete = true;
+            }
+        } else if (event.fromQms()) {
+
+            //Убираем уведомление кумыса
+            if (oldEvent != null) {
+                mNotificationManager.cancel(oldEvent.notifyId());
+                delete = true;
+            }
+        }
+
+        if (delete) {
+            eventsHistory.remove(event.notifyId(NotificationEvent.Type.NEW));
+        }
+
+    }
+
     private void handleWebSocketEvent(NotificationEvent event) {
         TabNotification tabNotification = new TabNotification();
         tabNotification.setType(event.getType());
@@ -324,34 +356,7 @@ public class NotificationsService extends Service {
         notifyTabs(tabNotification);
 
         if (event.isRead()) {
-            NotificationEvent oldEvent = eventsHistory.get(event.notifyId(NotificationEvent.Type.NEW));
-            boolean delete = false;
-
-            if (event.fromTheme()) {
-                //Убираем уведомления избранного
-                if (oldEvent != null && event.getMessageId() >= oldEvent.getMessageId()) {
-                    mNotificationManager.cancel(oldEvent.notifyId());
-                    delete = true;
-                }
-
-                //Убираем уведомление упоминаний
-                oldEvent = eventsHistory.get(event.notifyId(NotificationEvent.Type.MENTION));
-                if (oldEvent != null) {
-                    mNotificationManager.cancel(oldEvent.notifyId());
-                    delete = true;
-                }
-            } else if (event.fromQms()) {
-
-                //Убираем уведомление кумыса
-                if (oldEvent != null) {
-                    mNotificationManager.cancel(oldEvent.notifyId());
-                    delete = true;
-                }
-            }
-
-            if (delete) {
-                eventsHistory.remove(event.notifyId(NotificationEvent.Type.NEW));
-            }
+            checkOldEvent(event);
             return;
         }
         List<NotificationEvent> events = new ArrayList<>();
@@ -411,6 +416,10 @@ public class NotificationsService extends Service {
             saveEvents(loadedEvents, source);
             List<NotificationEvent> newEvents = compareEvents(savedEvents, loadedEvents, events, source);
             List<NotificationEvent> stackedNewEvents = new ArrayList<>(newEvents);
+
+            /*for (NotificationEvent event : newEvents) {
+                checkOldEvent(event);
+            }*/
 
             //Удаляем из общего уведомления текущие уведомление
             for (NotificationEvent event : events) {

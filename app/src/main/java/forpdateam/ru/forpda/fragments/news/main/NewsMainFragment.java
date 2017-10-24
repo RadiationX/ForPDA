@@ -27,6 +27,7 @@ import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
 import forpdateam.ru.forpda.fragments.search.SearchFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.DynamicDialogMenu;
+import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.PauseOnScrollListener;
@@ -122,6 +123,13 @@ public class NewsMainFragment extends RecyclerFragment implements NewsListAdapte
         args.putInt(NewsDetailsFragment.ARG_NEWS_COMMENTS_COUNT, item.getCommentsCount());
         args.putBoolean(NewsDetailsFragment.OTHER_CASE, true);
         TabManager.get().add(NewsDetailsFragment.class, args);
+    }
+
+    @Override
+    public void onNickClick(View view, NewsItem item, int position) {
+        if (item.getAuthorId() != 0) {
+            IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + item.getAuthorId());
+        }
     }
 
     int page = 1;

@@ -16,6 +16,7 @@ import forpdateam.ru.forpda.CheckerActivity;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.rxapi.RxApi;
+import forpdateam.ru.forpda.utils.IntentHandler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -55,6 +56,18 @@ public class SettingsFragment extends BasePrefsFragment {
 
         findPreference("about.application")
                 .setSummary(String.format(getString(R.string.version_Build), BuildConfig.VERSION_NAME));
+
+        findPreference("about.app_faq")
+                .setOnPreferenceClickListener(preference -> {
+                    IntentHandler.externalIntent("https://4pda.ru/forum/index.php?showtopic=820313&st=1800#entry64077514");
+                    return false;
+                });
+
+        findPreference("about.app_topic")
+                .setOnPreferenceClickListener(preference -> {
+                    IntentHandler.externalIntent("https://4pda.ru/forum/index.php?showtopic=820313");
+                    return false;
+                });
 
         findPreference("about.check_update")
                 .setOnPreferenceClickListener(preference -> {

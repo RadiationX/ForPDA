@@ -235,7 +235,7 @@ public class IntentHandler {
         return false;
     }
 
-    private static void externalIntent(String url) {
+    public static void externalIntent(String url) {
         Log.d(LOG_TAG, "Start external intent");
         try {
             //App.get().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK));

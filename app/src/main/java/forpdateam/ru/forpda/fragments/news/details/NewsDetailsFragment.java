@@ -31,6 +31,7 @@ import forpdateam.ru.forpda.api.news.models.DetailsPage;
 import forpdateam.ru.forpda.fragments.TabFragment;
 import forpdateam.ru.forpda.fragments.notes.NotesAddPopup;
 import forpdateam.ru.forpda.rxapi.RxApi;
+import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.Utils;
 import forpdateam.ru.forpda.utils.rx.Subscriber;
 import forpdateam.ru.forpda.views.ScrimHelper;
@@ -76,6 +77,7 @@ public class NewsDetailsFragment extends TabFragment {
     private int newsCount = -1;
     private String newsDate;
     private String newsImageUrl;
+    private DetailsPage currentArticle;
     private Subscriber<DetailsPage> mainSubscriber = new Subscriber<>(this);
 
     public NewsDetailsFragment() {
@@ -231,6 +233,7 @@ public class NewsDetailsFragment extends TabFragment {
     }
 
     private void onLoadArticle(DetailsPage article) {
+        currentArticle = article;
         article.setCommentId(commentId);
         progressBar.setVisibility(View.GONE);
         newsTitle = article.getTitle();
@@ -261,6 +264,9 @@ public class NewsDetailsFragment extends TabFragment {
             fragmentsPager.setCurrentItem(1, true);
         }
 
+        detailsNick.setOnClickListener(v -> {
+            IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + currentArticle.getAuthorId());
+        });
 
     }
 

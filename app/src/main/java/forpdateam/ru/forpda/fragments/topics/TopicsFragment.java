@@ -214,9 +214,16 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
             });
             dialogMenu.addItem(getString(R.string.open_theme_forum), (context, data1) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getId()));
             dialogMenu.addItem(getString(R.string.add_to_favorites), ((context, data1) -> {
-                FavoritesHelper.addWithDialog(getContext(), aBoolean -> {
-                    Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
-                }, data1.getId());
+                if (data1.isForum()) {
+                    FavoritesHelper.addForumWithDialog(getContext(), aBoolean -> {
+                        Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
+                    }, data1.getId());
+                } else {
+                    FavoritesHelper.addWithDialog(getContext(), aBoolean -> {
+                        Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
+                    }, data1.getId());
+                }
+
             }));
         }
         dialogMenu.disallowAll();

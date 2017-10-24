@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public class NewsItem {
     private int id;
+    private int authorId = 0;
     private String url;
     private String title;
     private String description;
@@ -47,6 +48,14 @@ public class NewsItem {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(int authorId) {
+        this.authorId = authorId;
     }
 
     public String getAuthor() {
