@@ -127,11 +127,11 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
                         }
                         setScrollState(SCROLL_STATE_NESTED_SCROLL);
                     } else {
+                        callReservedEvent();
+                        super.onTouchEvent(e);
                         if (dy == 0) {
                             setScrollState(SCROLL_STATE_IDLE);
                         } else {
-                            callReservedEvent();
-                            super.onTouchEvent(e);
                             setScrollState(SCROLL_STATE_SCROLL);
                         }
                     }
