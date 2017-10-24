@@ -63,6 +63,7 @@ public class AnnounceFragment extends TabFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
+        attachWebView(webView);
         fragmentContent.addView(webView);
         return view;
     }

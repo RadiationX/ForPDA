@@ -59,6 +59,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
             webView.setPaddingBottom(newHeight);
         });
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
+        attachWebView(webView);
         webView.setJsLifeCycleListener(this);
         refreshLayout.addView(webView);
         refreshLayoutLongTrigger(refreshLayout);

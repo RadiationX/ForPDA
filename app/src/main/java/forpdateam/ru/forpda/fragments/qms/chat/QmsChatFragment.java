@@ -128,6 +128,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         messagePanel = new MessagePanel(getContext(), fragmentContainer, coordinatorLayout, false);
         webView = getMainActivity().getWebViewsProvider().pull(getContext());
+        attachWebView(webView);
         chatContainer.addView(webView, 0);
         attachmentsPopup = messagePanel.getAttachmentsPopup();
         return view;
