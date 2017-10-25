@@ -213,7 +213,7 @@ public class DeviceFragment extends TabFragment {
 
     @Override
     public boolean loadData() {
-        if(!super.loadData()){
+        if (!super.loadData()) {
             return false;
         }
         refreshToolbarMenuItems(false);
@@ -229,7 +229,8 @@ public class DeviceFragment extends TabFragment {
         toBrandsMenuItem.setTitle(currentData.getCatTitle());
         refreshToolbarMenuItems(true);
         setTitle(currentData.getTitle());
-        setSubtitle(currentData.getCatTitle() + " > " + currentData.getBrandTitle());
+        setTabTitle(currentData.getCatTitle() + " " + currentData.getBrandTitle() + ": " + currentData.getTitle());
+        setSubtitle(currentData.getCatTitle() + " " + currentData.getBrandTitle());
 
 
         ArrayList<String> urls = new ArrayList<>();

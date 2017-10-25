@@ -6,8 +6,9 @@ apply plugin: 'realm-android'
 
 static def getDateTime() {
     DateFormat df = new SimpleDateFormat("dd MMMMM yyyy");
-    return df.format(new Date())+" г.";
+    return df.format(new Date()) + " г.";
 }
+
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.2"
@@ -18,7 +19,7 @@ android {
 
     def versionMajor = "0"
     def versionMinor = "6"
-    def versionPatch = "1"
+    def versionPatch = "1.1"
 
     def versionBuild = -1
     def versionPropsFile = file('version.properties')
@@ -45,7 +46,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 26
         vectorDrawables.useSupportLibrary = true
-        buildConfigField "String", 'BUILD_DATE', '"'+getDateTime()+'"'
+        buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         ndk {
             abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
         }
@@ -132,6 +133,7 @@ ext {
 }
 
 dependencies {
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile "com.android.support:palette-v7:${supportLibVersion}"
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
