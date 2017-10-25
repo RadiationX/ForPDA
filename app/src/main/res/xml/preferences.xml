@@ -162,16 +162,6 @@
         android:title="@string/pref_title_about">
 
         <Preference
-            android:key="about.app_faq"
-            android:layout="@layout/preference_custom"
-            android:title="FAQ по программе"/>
-
-        <Preference
-            android:key="about.app_topic"
-            android:layout="@layout/preference_custom"
-            android:title="Обсуждение приложения"/>
-
-        <Preference
             android:key="about.check_update"
             android:layout="@layout/preference_custom"
             android:title="@string/pref_title_check_updates"/>
@@ -180,6 +170,16 @@
             android:key="about.application"
             android:layout="@layout/preference_custom"
             android:title="ForPDA"/>
+
+        <Preference
+            android:key="about.app_faq"
+            android:layout="@layout/preference_custom"
+            android:title="FAQ по программе"/>
+
+        <Preference
+            android:key="about.app_topic"
+            android:layout="@layout/preference_custom"
+            android:title="Обсуждение приложения"/>
 
     </PreferenceCategory>
 

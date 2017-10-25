@@ -104,6 +104,7 @@ public class BrandFragment extends TabFragment implements BrandAdapter.OnItemCli
         currentData = brand;
         adapter.addAll(brand.getDevices());
         setTitle(brand.getTitle());
+        setTabTitle(brand.getCatTitle() + " " + brand.getTitle());
         setSubtitle(brand.getCatTitle());
     }
 

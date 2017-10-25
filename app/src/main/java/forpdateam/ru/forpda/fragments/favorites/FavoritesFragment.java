@@ -275,7 +275,7 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         }, this::bindView);
         paginationHelper.updatePagination(data.getPagination());
         setSubtitle(paginationHelper.getTitle());
-        listScrollTop();
+        //listScrollTop();
 
     }
 

@@ -910,6 +910,9 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     @Override
     public void quotePost(String text, IBaseForumPost post) {
+        if (getContext() == null) {
+            return;
+        }
         if (messagePanel.getVisibility() != View.VISIBLE) {
             showMessagePanel();
         }

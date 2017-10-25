@@ -239,7 +239,7 @@ public class App extends android.app.Application {
             getResources().updateConfiguration(config, null);
         }*/
 
-        setTheme(R.style.LightAppTheme);
+        setTheme(isDarkTheme() ? R.style.DarkAppTheme : R.style.LightAppTheme);
 
         if (!BuildConfig.DEBUG) {
             ACRA.init(this);

@@ -65,6 +65,7 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
     private OnLongClickListener longClickListener = v -> true;
 
     private void changeLongClickable(boolean enable) {
+        //Log.d("SUKA", "CHANGE LONG " + enable);
         setOnLongClickListener(enable ? null : longClickListener);
         setLongClickable(enable);
         setHapticFeedbackEnabled(enable);
@@ -105,7 +106,7 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
                         break;
                     }
                 }
-                //Log.d("SUKA", "PREMOVE "  + dy + " : " + mScrollState);
+                //Log.d("SUKA", "PREMOVE " + dy + " : " + mScrollState);
                 final boolean preScrollConsumed = dispatchNestedPreScroll(dx, dy, mScrollConsumed, mScrollOffset);
 
                 if (preScrollConsumed) {
@@ -140,7 +141,9 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
                     }
                 }
                 if (mScrollState != SCROLL_STATE_IDLE) {
-                    changeLongClickable(false);
+                    if (isLongClickable()) {
+                        changeLongClickable(false);
+                    }
                 }
                 //Log.d("SUKA", "Move " + dy + " : " + mScrollState + " : ");
             }
@@ -149,7 +152,7 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
 
             case MotionEvent.ACTION_UP: {
                 //long dt = System.currentTimeMillis() - lastTouchTime;
-                //Log.e("SUKA", "ACT UP " + mScrollState + " : " + (reservedEvent != null) + " : dt=" + dt);
+                //Log.e("SUKA", "ACT UP " + mScrollState + " : dt=" + dt);
                 if (mScrollState == SCROLL_STATE_NESTED_SCROLL) {
                     e.setAction(MotionEvent.ACTION_CANCEL);
                 }
