@@ -35,16 +35,9 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
     private final int[] mScrollConsumed = new int[2];
     private final int[] mNestedOffsets = new int[2];
 
-    private Handler clickHandler = new Handler();
-    private MotionEvent reservedEvent = null;
     private long lastTouchTime = 0;
     private int longClickTimeout = 500;
-    private Runnable reservedRunnable = () -> {
-        Log.d("SUKA", "RESERVER CHECK " + mScrollState);
-        if (mScrollState == SCROLL_STATE_IDLE) {
-            callReservedEvent();
-        }
-    };
+    private int clickTimeout = 150;
 
     private NestedScrollingChildHelper mChildHelper;
 
@@ -56,20 +49,25 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
         this(context, attrs, android.R.attr.webViewStyle);
     }
 
+    private int mTouchSlop;
+
     public NestedGeckoView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mChildHelper = new NestedScrollingChildHelper(this);
         setNestedScrollingEnabled(true);
+        final ViewConfiguration vc = ViewConfiguration.get(context);
+        mTouchSlop = vc.getScaledTouchSlop();
         longClickTimeout = ViewConfiguration.getLongPressTimeout();
+        clickTimeout = ViewConfiguration.getTapTimeout();
+        Log.e("SUKA", "TIMEOUTS " + longClickTimeout + " : " + clickTimeout + " : " + mTouchSlop);
     }
 
-    private void callReservedEvent() {
-        if (reservedEvent != null) {
-            Log.d("SUKA", "callReservedEvent");
-            super.onTouchEvent(reservedEvent);
-            reservedEvent.recycle();
-        }
-        reservedEvent = null;
+    private OnLongClickListener longClickListener = v -> true;
+
+    private void changeLongClickable(boolean enable) {
+        setOnLongClickListener(enable ? null : longClickListener);
+        setLongClickable(enable);
+        setHapticFeedbackEnabled(enable);
     }
 
     @Override
@@ -83,6 +81,7 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
         vtev.offsetLocation(mNestedOffsets[0], mNestedOffsets[1]);
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
+                //Log.e("SUKA", "ACT DWN " + mScrollState);
                 lastTouchTime = System.currentTimeMillis();
                 mLastTouchX = (int) (e.getX() + 0.5f);
                 mLastTouchY = (int) (e.getY() + 0.5f);
@@ -91,9 +90,7 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
                 nestedScrollAxis |= ViewCompat.SCROLL_AXIS_HORIZONTAL;
                 nestedScrollAxis |= ViewCompat.SCROLL_AXIS_VERTICAL;
                 startNestedScroll(nestedScrollAxis);
-                reservedEvent = MotionEvent.obtain(e);
-                clickHandler.removeCallbacks(reservedRunnable);
-                clickHandler.postDelayed(reservedRunnable, longClickTimeout);
+                super.onTouchEvent(e);
             }
             break;
 
@@ -103,6 +100,12 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
                 int dx = mLastTouchX - x;
                 int dy = mLastTouchY - y;
 
+                if (mScrollState == SCROLL_STATE_IDLE) {
+                    if (Math.abs(dx) < mTouchSlop && Math.abs(dy) < mTouchSlop) {
+                        break;
+                    }
+                }
+                //Log.d("SUKA", "PREMOVE "  + dy + " : " + mScrollState);
                 final boolean preScrollConsumed = dispatchNestedPreScroll(dx, dy, mScrollConsumed, mScrollOffset);
 
                 if (preScrollConsumed) {
@@ -119,7 +122,6 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
                     mLastTouchX = x - mScrollOffset[0];
                     mLastTouchY = y - mScrollOffset[1];
 
-
                     if (dy < 0 && getScrollY() == 0) {
                         final boolean scrollConsumed = dispatchNestedScroll(0, 0, dx, dy, mScrollOffset);
                         if (scrollConsumed) {
@@ -128,43 +130,40 @@ public class NestedGeckoView extends WebView implements NestedScrollingChild {
                             vtev.offsetLocation(mScrollOffset[0], mScrollOffset[1]);
                             mNestedOffsets[0] += mScrollOffset[0];
                             mNestedOffsets[1] += mScrollOffset[1];
+                            setScrollState(SCROLL_STATE_NESTED_SCROLL);
                         }
-                        setScrollState(SCROLL_STATE_NESTED_SCROLL);
                     } else {
                         if (dy != 0) {
-                            callReservedEvent();
                             setScrollState(SCROLL_STATE_SCROLL);
                         }
                         super.onTouchEvent(e);
                     }
                 }
+                if (mScrollState != SCROLL_STATE_IDLE) {
+                    changeLongClickable(false);
+                }
+                //Log.d("SUKA", "Move " + dy + " : " + mScrollState + " : ");
             }
             break;
 
 
             case MotionEvent.ACTION_UP: {
-                clickHandler.removeCallbacks(reservedRunnable);
-                if (mScrollState == SCROLL_STATE_IDLE) {
-                    callReservedEvent();
-                    if (System.currentTimeMillis() - lastTouchTime < longClickTimeout) {
-                        super.onTouchEvent(e);
-                    }
-                } else if (mScrollState == SCROLL_STATE_NESTED_SCROLL) {
-                    reservedEvent = null;
-                    super.onTouchEvent(e);
-                } else {
-                    callReservedEvent();
-                    super.onTouchEvent(e);
+                //long dt = System.currentTimeMillis() - lastTouchTime;
+                //Log.e("SUKA", "ACT UP " + mScrollState + " : " + (reservedEvent != null) + " : dt=" + dt);
+                if (mScrollState == SCROLL_STATE_NESTED_SCROLL) {
+                    e.setAction(MotionEvent.ACTION_CANCEL);
                 }
+                super.onTouchEvent(e);
                 resetTouch();
+                changeLongClickable(true);
             }
             break;
 
             case MotionEvent.ACTION_CANCEL: {
-                clickHandler.removeCallbacks(reservedRunnable);
-                reservedEvent = null;
+                //Log.e("SUKA", "ACT CANCEL " + mScrollState);
                 super.onTouchEvent(e);
                 resetTouch();
+                changeLongClickable(true);
             }
             break;
         }
