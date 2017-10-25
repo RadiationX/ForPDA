@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.preference.Preference;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -57,17 +58,23 @@ public class SettingsFragment extends BasePrefsFragment {
         findPreference("about.application")
                 .setSummary(String.format(getString(R.string.version_Build), BuildConfig.VERSION_NAME));
 
-        findPreference("about.app_faq")
-                .setOnPreferenceClickListener(preference -> {
-                    IntentHandler.externalIntent("https://4pda.ru/forum/index.php?showtopic=820313&st=1800#entry64077514");
-                    return false;
-                });
+        {
+            Preference fPref = findPreference("about.app_faq");
+            fPref.setIcon(App.getAppVecDrawable(R.drawable.contact_site));
+            fPref.setOnPreferenceClickListener(preference -> {
+                IntentHandler.externalIntent("http://4pda.ru/forum/index.php?s=&showtopic=820313&view=findpost&p=64077514");
+                return false;
+            });
+        }
 
-        findPreference("about.app_topic")
-                .setOnPreferenceClickListener(preference -> {
-                    IntentHandler.externalIntent("https://4pda.ru/forum/index.php?showtopic=820313");
-                    return false;
-                });
+        {
+            Preference fPref = findPreference("about.app_topic");
+            fPref.setIcon(App.getAppVecDrawable(R.drawable.contact_site));
+            fPref.setOnPreferenceClickListener(preference -> {
+                IntentHandler.externalIntent("https://4pda.ru/forum/index.php?showtopic=820313");
+                return false;
+            });
+        }
 
         findPreference("about.check_update")
                 .setOnPreferenceClickListener(preference -> {

@@ -162,13 +162,11 @@
         android:title="@string/pref_title_about">
 
         <Preference
-            android:icon="@drawable/contact_site"
             android:key="about.app_faq"
             android:layout="@layout/preference_custom"
             android:title="FAQ по программе"/>
 
         <Preference
-            android:icon="@drawable/contact_site"
             android:key="about.app_topic"
             android:layout="@layout/preference_custom"
             android:title="Обсуждение приложения"/>
