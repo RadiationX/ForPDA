@@ -88,6 +88,7 @@ import static org.acra.ReportField.CUSTOM_DATA;
 import static org.acra.ReportField.LOGCAT;
 import static org.acra.ReportField.PHONE_MODEL;
 import static org.acra.ReportField.STACK_TRACE;
+import static org.acra.ReportField.USER_APP_START_DATE;
 
 /**
  * Created by radiationx on 28.07.16.
@@ -95,13 +96,13 @@ import static org.acra.ReportField.STACK_TRACE;
 
 @ReportsCrashes(
         mailTo = "rxdevlab@gmail.com",
-        customReportContent = {APP_VERSION_CODE, APP_VERSION_NAME, ANDROID_VERSION, PHONE_MODEL, CUSTOM_DATA, STACK_TRACE, LOGCAT},
-        mode = ReportingInteractionMode.NOTIFICATION,
-        resNotifTickerText = R.string.crash_notif_ticker_text,
-        resNotifTitle = R.string.crash_notif_title,
-        resNotifText = R.string.crash_notif_text,
-        resNotifIcon = android.R.drawable.stat_notify_error,
-        resDialogText = R.string.crash_toast_text
+        customReportContent = {APP_VERSION_CODE, APP_VERSION_NAME, ANDROID_VERSION, PHONE_MODEL, CUSTOM_DATA, STACK_TRACE, LOGCAT, USER_APP_START_DATE},
+        mode = ReportingInteractionMode.DIALOG,
+        resDialogIcon = R.mipmap.ic_launcher,
+        resDialogTitle = R.string.crash_title,
+        resDialogText = R.string.crash_toast_text,
+        resDialogTheme = R.style.DarkAppTheme_Dialog,
+        reportDialogClass = CustomCrashDialog.class
 )
 
 public class App extends android.app.Application {
@@ -241,10 +242,9 @@ public class App extends android.app.Application {
 
         setTheme(isDarkTheme() ? R.style.DarkAppTheme : R.style.LightAppTheme);
 
-        if (!BuildConfig.DEBUG) {
-            ACRA.init(this);
-            ACRA.getErrorReporter().putCustomData("USER_NICK", getPreferences().getString("auth.user.nick", "null"));
-        }
+        ACRA.init(this);
+        Log.d("SUKA", "ACRA initialezd " + ACRA.isInitialised());
+        ACRA.getErrorReporter().putCustomData("USER_NICK", getPreferences().getString("auth.user.nick", "null"));
         density = getResources().getDisplayMetrics().density;
         initImageLoader(this);
 
