@@ -535,6 +535,7 @@
     <string name="funny_reputation_nodata_title">Нет репутации</string>
     <string name="funny_search_nodata_title">Ничего не найдено</string>
     <string name="funny_search_nodata_desc">Настройте поисковой запрос иначе</string>
+    <string name="funny_article_comments_nodata_title">Нет комментариев</string>
     <string name="favorites_subscribe_email">Уведомления на Email</string>
     <string name="quote_from_clipboard">Цитата из буфера обмена</string>
 

@@ -2,6 +2,8 @@ package forpdateam.ru.forpda.utils;
 
 import android.util.Log;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 
 /**
@@ -608,15 +610,25 @@ public class MimeTypeUtil {
         types.put("zip", "application/zip");
     }
 
-    public static String getType(String extension) {
+    public static String getType(String nameOrExtension) {
         if (types.isEmpty()) init();
-        String res = types.get(extension);
-        Log.d("MimeTypeUtil", "getType " + extension + " : " + res);
-        return res;
+        String extension = getExtension(nameOrExtension);
+        String type = types.get(extension);
+        Log.d("MimeTypeUtil", "input=" + nameOrExtension + "; ext=" + extension + "; type=" + type);
+        return type;
     }
 
-    public static boolean isImage(String extension) {
-        String type = getType(extension);
+    public static String getExtension(String name) {
+        String extension = name;
+        int cut = name.lastIndexOf('.');
+        if (cut != -1) {
+            extension = extension.substring(cut + 1);
+        }
+        return extension;
+    }
+
+    public static boolean isImage(String nameOrExtension) {
+        String type = getType(nameOrExtension);
         if (type == null)
             return false;
         return type.contains("image/");
