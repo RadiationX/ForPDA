@@ -32,6 +32,8 @@ import forpdateam.ru.forpda.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.rxapi.RxApi;
 import forpdateam.ru.forpda.utils.IntentHandler;
 import forpdateam.ru.forpda.utils.SimpleTextWatcher;
+import forpdateam.ru.forpda.views.ContentController;
+import forpdateam.ru.forpda.views.FunnyContent;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -51,6 +53,8 @@ public class ArticleCommentsFragment extends Fragment implements ArticleComments
     private DetailsPage article;
     private ArticleCommentsAdapter adapter;
     private Comment currentReplyComment;
+    private ContentController contentController;
+    private ViewGroup additionalContent;
 
     private Observer loginObserver = (observable, o) -> {
         if (o == null) o = false;
@@ -80,6 +84,7 @@ public class ArticleCommentsFragment extends Fragment implements ArticleComments
         sendContainer = (FrameLayout) view.findViewById(R.id.send_container);
         buttonSend = (AppCompatImageButton) view.findViewById(R.id.button_send);
         progressBarSend = (ProgressBar) view.findViewById(R.id.send_progress);
+        additionalContent = (ViewGroup) view.findViewById(R.id.additional_content);
 
         refreshLayout.setProgressBackgroundColorSchemeColor(App.getColorFromAttr(getContext(), R.attr.colorPrimary));
         refreshLayout.setColorSchemeColors(App.getColorFromAttr(getContext(), R.attr.colorAccent));
@@ -95,6 +100,7 @@ public class ArticleCommentsFragment extends Fragment implements ArticleComments
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(comments -> {
                         refreshLayout.setRefreshing(false);
+                        createFunny(comments);
                         adapter.addAll(comments);
                     });
         });
@@ -116,6 +122,7 @@ public class ArticleCommentsFragment extends Fragment implements ArticleComments
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(comments -> {
+                    createFunny(comments);
                     adapter.addAll(comments);
                     if (article.getCommentId() > 0) {
                         for (int i = 0; i < comments.size(); i++) {
@@ -147,7 +154,23 @@ public class ArticleCommentsFragment extends Fragment implements ArticleComments
         }
 
         ClientHelper.get().addLoginObserver(loginObserver);
+        contentController = new ContentController(null, additionalContent, refreshLayout);
         return view;
+    }
+
+    private void createFunny(ArrayList<Comment> comments) {
+        if (comments.isEmpty()) {
+            if (!contentController.contains(ContentController.TAG_NO_DATA)) {
+                FunnyContent funnyContent = new FunnyContent(getContext())
+                        .setImage(R.drawable.ic_comment)
+                        .setTitle(R.string.funny_article_comments_nodata_title);
+                contentController.addContent(funnyContent, ContentController.TAG_NO_DATA);
+            }
+            contentController.showContent(ContentController.TAG_NO_DATA);
+        } else {
+            contentController.hideContent(ContentController.TAG_NO_DATA);
+        }
+
     }
 
     @Override

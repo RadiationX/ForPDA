@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_list"
@@ -20,6 +20,13 @@
             android:scrollbars="vertical"/>
     </android.support.v4.widget.SwipeRefreshLayout>
 
+    <FrameLayout
+        android:id="@+id/additional_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/comment_write_panel"
+        android:layout_alignParentTop="true"
+        android:clickable="false"/>
 
     <RelativeLayout
         android:id="@+id/comment_write_panel"
@@ -32,7 +39,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?divider_line" />
+            android:background="?divider_line"/>
 
         <EditText
             android:id="@+id/message_field"
@@ -51,7 +58,7 @@
             android:paddingStart="@dimen/dp16"
             android:paddingTop="@dimen/dp8"
             android:textSize="16sp"
-            tools:text="jdkal;dsasd\n\n\njdklasjdlkas" />
+            tools:text="jdkal;dsasd\n\n\njdklasjdlkas"/>
 
         <FrameLayout
             android:id="@+id/send_container"
@@ -65,7 +72,7 @@
                 android:layout_width="@dimen/dp48"
                 android:layout_height="@dimen/dp48"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                app:srcCompat="@drawable/ic_send" />
+                app:srcCompat="@drawable/ic_send"/>
 
             <ProgressBar
                 android:id="@+id/send_progress"
@@ -73,7 +80,7 @@
                 android:layout_height="@dimen/dp48"
                 android:clickable="false"
                 android:padding="@dimen/dp8"
-                android:visibility="gone" />
+                android:visibility="gone"/>
         </FrameLayout>
 
     </RelativeLayout>
