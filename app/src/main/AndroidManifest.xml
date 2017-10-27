@@ -122,6 +122,13 @@
             android:launchMode="singleTop"
             android:theme="@style/LightAppTheme.NoActionBar"/>
 
+        <activity
+            android:name=".CustomCrashDialog"
+            android:excludeFromRecents="true"
+            android:finishOnTaskLaunch="true"
+            android:launchMode="singleInstance"
+            android:theme="@style/DarkAppTheme.Dialog"/>
+
         <service android:name=".notifications.NotificationsService"/>
 
         <receiver

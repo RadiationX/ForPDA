@@ -5,8 +5,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <!-- ACRA Crash dialog-->
     <string name="crash_toast_text">Something has gone wrong, so wrong. Help us by sending a crash report, we don\'t want to live in fear anymore…</string>
-    <string name="crash_notif_title">A bug in the program</string>
-    <string name="crash_notif_text">Help us fix it - send the crash log</string>
+    <string name="crash_title">A bug in the program</string>
     <!-- Shortcuts -->
     <string name="shortcut_news">News</string>
     <string name="shortcut_favorites">Favorites</string>

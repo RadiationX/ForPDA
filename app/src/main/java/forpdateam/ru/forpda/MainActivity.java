@@ -21,6 +21,8 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.evernote.android.job.JobManager;
 
+import org.acra.ACRA;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             finish();
             return;
         }
+        ACRA.getErrorReporter().handleException(new Exception("SASi"));
         currentThemeIsDark = App.get().isDarkTheme();
         setTheme(currentThemeIsDark ? R.style.DarkAppTheme_NoActionBar : R.style.LightAppTheme_NoActionBar);
         setContentView(R.layout.activity_main);

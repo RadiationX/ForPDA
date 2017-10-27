@@ -125,7 +125,7 @@ public class Theme {
         matcher = pollMainPattern.matcher(response.getBody());
         if (matcher.find()) {
             Poll poll = new Poll();
-            final boolean isResult = matcher.group().contains("img");
+            final boolean isResult = matcher.group().contains("<img");
             poll.setIsResult(isResult);
             poll.setTitle(Utils.fromHtml(matcher.group(1)));
             Matcher matcher1 = pollQuestions.matcher(matcher.group(2));

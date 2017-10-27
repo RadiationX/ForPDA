@@ -4,10 +4,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <!-- ACRA Crash dialog-->
-    <string name="crash_toast_text">Произошло нечто очень страшное. Помогите нам, отправьте отчет об ошибке, мы не хотим больше жить в страхе…</string>
-    <string name="crash_notif_title">Ошибка в работе программы</string>
-    <string name="crash_notif_ticker_text" translatable="false">@string/crash_notif_title</string>
-    <string name="crash_notif_text">Помогите нам исправить её - отправьте отчет об ошибке</string>
+    <string name="crash_toast_text">Произошло нечто очень страшное. Помогите нам – отправьте отчет об ошибке, мы не хотим больше жить в страхе…</string>
+    <string name="crash_title">Ошибка в работе программы</string>
 
     <!-- Shortcuts -->
     <string name="shortcut_news">Новости</string>

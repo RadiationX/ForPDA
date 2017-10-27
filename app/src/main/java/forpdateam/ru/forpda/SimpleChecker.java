@@ -1,10 +1,13 @@
 package forpdateam.ru.forpda;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v7.app.NotificationCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,13 +58,28 @@ public class SimpleChecker {
         if (versionCode > currentVersionCode) {
             final String versionName = updateObject.getString("version_name");
 
+
+            String channelId = "forpda_channel_updates";
+            String channelName = context.getString(R.string.updater_notification_title);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
+                NotificationManager manager = context.getSystemService(NotificationManager.class);
+                if (manager != null) {
+                    manager.createNotificationChannel(channel);
+                }
+            }
+
+
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, channelId);
+
             NotificationManagerCompat mNotificationManager = NotificationManagerCompat.from(context);
 
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
             mBuilder.setSmallIcon(R.drawable.ic_notify_mention);
 
             mBuilder.setContentTitle(context.getString(R.string.updater_notification_title));
             mBuilder.setContentText(String.format(context.getString(R.string.updater_notification_content_VerName), versionName));
+            mBuilder.setChannelId(channelId);
 
 
             Intent notifyIntent = new Intent(context, CheckerActivity.class);
