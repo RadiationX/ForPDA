@@ -60,6 +60,7 @@ public class AuthFragment extends TabFragment {
     private Subscriber<ProfileModel> profileSubscriber = new Subscriber<>(this);
 
     public AuthFragment() {
+        configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_auth));
         configuration.setAlone(true);
     }
 

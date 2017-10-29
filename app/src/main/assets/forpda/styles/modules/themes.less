@@ -1,6 +1,36 @@
 body {
     background: @background_for_cards;
 }
+.hat_content {
+    &.close {
+        display: none;
+    }
+}
+#search {
+    .panel.bottom:empty+#bottomMargin {
+        display: none;
+    }
+    .hat_content {
+        &.close {
+            display: block;
+            max-height: 360/16rem;
+            overflow: hidden;
+            position: relative;
+            &.over_height {
+                &:after {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    bottom: 0;
+                    right: 0;
+                    height: 96/16rem;
+                    box-shadow: inset 0 -96/16rem 48/16rem -48/16rem @colorPrimary;
+                    z-index: 100;
+                }
+            }
+        }
+    }
+}
 button,
 .btn {
     display: block;
@@ -947,11 +977,6 @@ body {
         content: "";
         display: table;
         clear: both;
-    }
-}
-#search {
-    .panel.bottom:empty+#bottomMargin {
-        display: none;
     }
 }
 .posts_list {

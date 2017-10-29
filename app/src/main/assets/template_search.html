@@ -23,6 +23,7 @@
 
     </script>
     <script type="text/javascript" src="file:///android_asset/forpda/scripts/main.js"></script>
+    <script type="text/javascript" src="file:///android_asset/forpda/scripts/modules/search.js"></script>
     <script type="text/javascript" src="file:///android_asset/forpda/scripts/modules/posts_functions.js"></script>
     <script type="text/javascript" src="file:///android_asset/forpda/scripts/attach_transformer.js"></script>
     <script type="text/javascript" src="file:///android_asset/forpda/scripts/blocks.js"></script>
@@ -37,7 +38,7 @@
 <body id="${body_type}" class="${enable_avatars} ${avatar_type}">
     <div class="posts_list">
         <!-- $BeginBlock post -->
-        <div name="entry${post_id}" class="post_container ${user_online} ${hat_state_class}" data-post-id="${post_id}" data-user-id="${user_id}" data-nick="${nick}">
+        <div name="entry${post_id}" class="post_container ${user_online} close" data-post-id="${post_id}" data-user-id="${user_id}" data-nick="${nick}">
             <div class="post_title"><a href="http://4pda.ru/forum/index.php?showtopic=${topic_id}&view=findpost&p=${post_id}">${post_title}</a></div>
             <div class="post_header">
                 <div tabindex="-1" class="accessibility_anchor"></div>
@@ -48,14 +49,17 @@
                         <div class="reputation" onclick="IPostFunctions.showReputationMenu('${post_id}')" role="button" aria-label="${res_s_reputation} ${reputation}"><span>${reputation}</span></div>
                     </div>
                     <span class="inf nick">
-                    <span class="aec" onclick="IPostFunctions.showUserMenu('${post_id}')"><b>${nick}</b></span>
-                        <span class="group aec" style="color:${group_color};" onclick="ISearch.toast('${res_s_group}: ${group}')" role="button" aria-label="${res_s_group} ${group}"><span>${group}</span></span>
-                        </span>
+                        <span class="aec" onclick="IPostFunctions.showUserMenu('${post_id}')"><b>${nick}</b></span>
+                            <span class="group aec" style="color:${group_color};" onclick="ISearch.toast('${res_s_group}: ${group}')" role="button" aria-label="${res_s_group} ${group}"><span>${group}</span></span>
+                            </span>
                     <span class="inf date"><span>${date}</span></span>
                     <a class="btn inf menu aec" onclick="IPostFunctions.showPostMenu('${post_id}')" role="button" aria-label="${res_s_menu}"><span>${res_s_menu}</span></a>
                 </div>
             </div>
-            <div class="post_body emoticons">${body}</div>
+            <a class="btn hat_button aec" onclick="toggleButton(this, 'hat_content', 'search')" role="button" aria-label="${res_s_hat}"><span>Содержимое поста</span><i class="icon"></i></a>
+            <div class="hat_content close">
+                <div class="post_body emoticons">${body}</div>
+            </div>
         </div>
         <!-- $EndBlock post -->
     </div>

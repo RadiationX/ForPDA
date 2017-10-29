@@ -66,6 +66,10 @@ public class Drawers {
             selectMenuItem(findMenuItem(FavoritesFragment.class));
         }
         if (!(boolean) o) {
+            ClientHelper.setQmsCount(0);
+            ClientHelper.setFavoritesCount(0);
+            ClientHelper.setMentionsCount(0);
+            ClientHelper.get().notifyCountsChanged();
             App.get().getPreferences().edit().remove("menu_drawer_last").apply();
         }
     };

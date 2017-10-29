@@ -19,6 +19,28 @@
 body {
   background: #eeeeee;
 }
+.hat_content.close {
+  display: none;
+}
+#search .panel.bottom:empty + #bottomMargin {
+  display: none;
+}
+#search .hat_content.close {
+  display: block;
+  max-height: 22.5rem;
+  overflow: hidden;
+  position: relative;
+}
+#search .hat_content.close.over_height:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  height: 6rem;
+  box-shadow: inset 0 -6rem 3rem -3rem #ffffff;
+  z-index: 100;
+}
 button,
 .btn {
   display: block;
@@ -913,9 +935,6 @@ body.hide_avatar .post-block.quote > .block-title .avatar .image {
   content: "";
   display: table;
   clear: both;
-}
-#search .panel.bottom:empty + #bottomMargin {
-  display: none;
 }
 .posts_list.search-results .topic_title_post {
   border-bottom: 0.0625rem solid rgba(0, 0, 0, 0.05);

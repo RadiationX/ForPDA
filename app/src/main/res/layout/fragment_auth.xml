@@ -22,15 +22,16 @@
             android:paddingStart="@dimen/dp32"
             android:visibility="gone">
 
-            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                          android:id="@+id/auth_avatar"
-                                                          android:layout_width="128dp"
-                                                          android:layout_height="128dp"
-                                                          android:layout_centerHorizontal="true"
-                                                          android:layout_marginTop="2dp"
-                                                          android:scaleType="centerCrop"
-                                                          app:civ_border_color="#00000000"
-                                                          app:civ_border_width="0dp"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/auth_avatar"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="2dp"
+                android:scaleType="centerCrop"
+                app:civ_border_color="#00000000"
+                app:civ_border_width="0dp"/>
 
             <com.github.rahatarmanahmed.cpv.CircularProgressView
                 android:id="@+id/auth_progress"
