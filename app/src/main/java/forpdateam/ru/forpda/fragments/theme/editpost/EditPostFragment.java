@@ -152,6 +152,8 @@ public class EditPostFragment extends TabFragment {
         } else {
             messagePanel.insertText(postForm.getMessage());
             messagePanel.getAttachmentsPopup().onLoadAttachments(postForm);
+            messagePanel.getMessageField().requestFocus();
+            getMainActivity().showKeyboard(messagePanel.getMessageField());
         }
         return true;
     }
@@ -291,6 +293,8 @@ public class EditPostFragment extends TabFragment {
 
             attachmentsPopup.onLoadAttachments(form);
             messagePanel.insertText(postForm.getMessage());
+            messagePanel.getMessageField().requestFocus();
+            getMainActivity().showKeyboard(messagePanel.getMessageField());
         }, postForm, null);
     }
 

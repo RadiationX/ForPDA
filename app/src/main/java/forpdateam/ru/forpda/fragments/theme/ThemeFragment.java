@@ -338,7 +338,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         if (Preferences.Main.isEditorDefaultHidden()) {
             hideMessagePanel();
         } else {
-            showMessagePanel();
+            showMessagePanel(false);
         }
         App.get().subscribeFavorites(notification);
     }
@@ -535,14 +535,24 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         if (messagePanel.getVisibility() == View.VISIBLE) {
             hideMessagePanel();
         } else {
-            showMessagePanel();
+            showMessagePanel(true);
         }
     }
 
-    private void showMessagePanel() {
-        messagePanel.setVisibility(View.VISIBLE);
-        messagePanel.getHeightChangeListener().onChangedHeight(messagePanel.getLastHeight());
-        toggleMessagePanelItem.setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_transcribe_close));
+    private void showMessagePanel(boolean showKeyboard) {
+        if (messagePanel.getVisibility() != View.VISIBLE) {
+            messagePanel.setVisibility(View.VISIBLE);
+            if (showKeyboard) {
+                messagePanel.show();
+            }
+            messagePanel.getHeightChangeListener().onChangedHeight(messagePanel.getLastHeight());
+            toggleMessagePanelItem.setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_transcribe_close));
+        }
+        if (showKeyboard) {
+            //messagePanel.getMessageField().setSelection(messagePanel.getMessageField().length());
+            messagePanel.getMessageField().requestFocus();
+            getMainActivity().showKeyboard(messagePanel.getMessageField());
+        }
     }
 
     private void hideMessagePanel() {
@@ -897,11 +907,9 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         if (getContext() == null || post == null) {
             return;
         }
-        if (messagePanel.getVisibility() != View.VISIBLE) {
-            showMessagePanel();
-        }
         String insert = String.format(Locale.getDefault(), "[snapback]%s[/snapback] [b]%s,[/b] \n", post.getId(), post.getNick());
         messagePanel.insertText(insert);
+        showMessagePanel(true);
     }
 
     public void quotePost(final String text, final String postId) {
@@ -913,12 +921,10 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         if (getContext() == null) {
             return;
         }
-        if (messagePanel.getVisibility() != View.VISIBLE) {
-            showMessagePanel();
-        }
         String date = Utils.getForumDateTime(Utils.parseForumDateTime(post.getDate()));
         String insert = String.format(Locale.getDefault(), "[quote name=\"%s\" date=\"%s\" post=%S]%s[/quote]\n", post.getNick(), date, post.getId(), text);
         messagePanel.insertText(insert);
+        showMessagePanel(true);
     }
 
 

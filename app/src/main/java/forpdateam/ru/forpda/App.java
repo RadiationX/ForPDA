@@ -375,9 +375,13 @@ public class App extends android.app.Application {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            NotificationsService.MyBinder myBinder = (NotificationsService.MyBinder) service;
-            mBoundService = myBinder.getService();
-            mServiceBound = true;
+            if (service instanceof NotificationsService.MyBinder) {
+                NotificationsService.MyBinder myBinder = (NotificationsService.MyBinder) service;
+                mBoundService = myBinder.getService();
+                mServiceBound = true;
+            } else {
+                ACRA.getErrorReporter().handleException(new Throwable("What's wrong, bro? IBinder=" + service));
+            }
         }
     };
 

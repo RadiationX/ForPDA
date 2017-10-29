@@ -27,6 +27,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.acra.ACRA;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,7 @@ import java.util.Observer;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 
 import forpdateam.ru.forpda.App;
@@ -57,6 +59,7 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
+import okio.Timeout;
 
 /**
  * Created by radiationx on 31.07.17.
@@ -182,6 +185,9 @@ public class NotificationsService extends Service {
             Log.d(LOG_TAG, "WSListener onFailure: " + t.getMessage() + " " + response);
             t.printStackTrace();
             wsHandler.post(() -> stop());
+            if (t instanceof SocketTimeoutException || t instanceof TimeoutException) {
+                wsHandler.post(() -> start(true));
+            }
         }
     };
 
@@ -322,29 +328,59 @@ public class NotificationsService extends Service {
         if (event.fromTheme()) {
             //Убираем уведомления избранного
             if (oldEvent != null && event.getMessageId() >= oldEvent.getMessageId()) {
-                mNotificationManager.cancel(oldEvent.notifyId());
                 delete = true;
             }
 
             //Убираем уведомление упоминаний
             oldEvent = eventsHistory.get(event.notifyId(NotificationEvent.Type.MENTION));
             if (oldEvent != null) {
-                mNotificationManager.cancel(oldEvent.notifyId());
                 delete = true;
             }
         } else if (event.fromQms()) {
 
             //Убираем уведомление кумыса
             if (oldEvent != null) {
-                mNotificationManager.cancel(oldEvent.notifyId());
                 delete = true;
             }
         }
 
         if (delete) {
+            if (oldEvent != null) {
+                mNotificationManager.cancel(oldEvent.notifyId());
+            }
             eventsHistory.remove(event.notifyId(NotificationEvent.Type.NEW));
         }
 
+    }
+
+    private void checkOldEvents(List<NotificationEvent> loadedEvents, NotificationEvent.Source source) {
+        List<NotificationEvent> oldEvents = new ArrayList<>();
+        for (int i = 0; i < eventsHistory.size(); i++) {
+            NotificationEvent event = eventsHistory.valueAt(i);
+            if (event.getSource() == source) {
+                oldEvents.add(event);
+            }
+        }
+
+        for (NotificationEvent oldEvent : oldEvents) {
+            boolean exist = false;
+            for (NotificationEvent loadedEvent : loadedEvents) {
+                if (oldEvent.getSourceId() == loadedEvent.getSourceId()) {
+                    exist = true;
+                    break;
+                }
+            }
+            if (!exist) {
+                mNotificationManager.cancel(oldEvent.notifyId());
+                eventsHistory.remove(oldEvent.notifyId(NotificationEvent.Type.NEW));
+                TabNotification tabNotification = new TabNotification();
+                tabNotification.setSource(oldEvent.getSource());
+                tabNotification.setEvent(oldEvent);
+                tabNotification.setType(NotificationEvent.Type.READ);
+                tabNotification.setWebSocket(true);
+                notifyTabs(tabNotification);
+            }
+        }
     }
 
     private void handleWebSocketEvent(NotificationEvent event) {
@@ -417,9 +453,7 @@ public class NotificationsService extends Service {
             List<NotificationEvent> newEvents = compareEvents(savedEvents, loadedEvents, events, source);
             List<NotificationEvent> stackedNewEvents = new ArrayList<>(newEvents);
 
-            /*for (NotificationEvent event : newEvents) {
-                checkOldEvent(event);
-            }*/
+            checkOldEvents(loadedEvents, source);
 
             //Удаляем из общего уведомления текущие уведомление
             for (NotificationEvent event : events) {
@@ -890,7 +924,10 @@ public class NotificationsService extends Service {
         for (int i = 0; i < size; i++) {
             NotificationEvent event = events.get(i);
             if (event.fromQms()) {
-                content.append("<b>").append(event.getUserNick()).append("</b>");
+                String nick = event.getUserNick();
+                if (nick == null || nick.isEmpty())
+                    nick = "Сообщения 4PDA";
+                content.append("<b>").append(nick).append("</b>");
                 content.append(": ").append(event.getSourceTitle());
             } else if (event.fromTheme()) {
                 content.append(event.getSourceTitle());

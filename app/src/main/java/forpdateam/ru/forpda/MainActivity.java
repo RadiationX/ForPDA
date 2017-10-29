@@ -296,9 +296,14 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     }
 
     public void showKeyboard(View view) {
-        if (MainActivity.this.getCurrentFocus() != null)
-            ((InputMethodManager) MainActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE))
-                    .showSoftInput(view, 0);
+        if (MainActivity.this.getCurrentFocus() != null) {
+            InputMethodManager iim = ((InputMethodManager) MainActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE));
+            if (iim != null) {
+                iim.showSoftInput(view, InputMethodManager.SHOW_FORCED);
+
+            }
+        }
+
     }
 
     public void backHandler(boolean fromToolbar) {
