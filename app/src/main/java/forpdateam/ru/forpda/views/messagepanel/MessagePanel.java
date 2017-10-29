@@ -300,6 +300,10 @@ public class MessagePanel extends CardView {
         return messageField;
     }
 
+    public void showKeyboard(){
+
+    }
+
     public void setCanScrolling(boolean canScrolling) {
         panelBehavior.setCanScrolling(canScrolling);
     }

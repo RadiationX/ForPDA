@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.fragments.history;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.MenuItem;
 import android.view.View;
 
 import java.text.SimpleDateFormat;
@@ -55,6 +56,16 @@ public class HistoryFragment extends RecyclerFragment implements HistoryAdapter.
         adapter.setItemClickListener(this);
         recyclerView.setAdapter(adapter);
         viewsReady();
+    }
+
+    @Override
+    protected void addBaseToolbarMenu() {
+        super.addBaseToolbarMenu();
+        getMenu().add("Удалить историю")
+                .setOnMenuItemClickListener(item -> {
+                    clear();
+                    return false;
+                });
     }
 
     @Override
@@ -119,7 +130,14 @@ public class HistoryFragment extends RecyclerFragment implements HistoryAdapter.
                     .findAll()
                     .deleteAllFromRealm();
         }, this::loadCacheData);
+    }
 
+    private void clear() {
+        if (realm.isClosed())
+            return;
+        realm.executeTransactionAsync(realm1 -> {
+            realm1.delete(HistoryItemBd.class);
+        }, this::loadCacheData);
     }
 
     public static void addToHistory(int id, String url, String title) {
