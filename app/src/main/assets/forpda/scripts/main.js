@@ -261,3 +261,38 @@ function AvatarLoader() {
     this.loadByUrl = loadByUrl;
 
 }
+
+function toggleButton(button, bodyClass, name) {
+    var parent = button.parentNode;
+    var body;
+    if (bodyClass !== undefined)
+        body = parent.querySelector("." + bodyClass);
+    console.log("toggle "+parent.getAttribute("class")+" : "+body.getAttribute("class"));
+    if (parent.classList.contains("close") | (body != undefined && parent.classList.contains("close"))) {
+        parent.classList.remove("close");
+        parent.classList.add("open");
+        if (body !== undefined) {
+            body.classList.remove("close");
+            body.classList.add("open");
+            //body.removeAttribute("hidden");
+        }
+        if (name === "poll") {
+            ITheme.setPollOpen("true");
+        } else if (name === "hat") {
+            ITheme.setHatOpen("true");
+        }
+    } else {
+        parent.classList.remove("open");
+        parent.classList.add("close");
+        if (body !== undefined) {
+            body.classList.remove("open");
+            body.classList.add("close");
+            //body.setAttribute("hidden", "");
+        }
+        if (name === "poll") {
+            ITheme.setPollOpen("false");
+        } else if (name === "hat") {
+            ITheme.setHatOpen("false");
+        }
+    }
+}

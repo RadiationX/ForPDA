@@ -197,36 +197,6 @@ function selectAllPostText() {
     }
 }
 
-function toggleButton(button, bodyClass, name) {
-    var parent = button.parentNode;
-    var body;
-    if (bodyClass !== undefined)
-        body = parent.querySelector("." + bodyClass);
-    if (parent.classList.contains("close") | body.style.display == "none") {
-        parent.classList.remove("close");
-        parent.classList.add("open");
-        if (body !== undefined) {
-            body.removeAttribute("hidden");
-        }
-        if (name === "poll") {
-            ITheme.setPollOpen("true");
-        } else if (name === "hat") {
-            ITheme.setHatOpen("true");
-        }
-    } else {
-        parent.classList.remove("open");
-        parent.classList.add("close");
-        if (body !== undefined) {
-            body.setAttribute("hidden", "");
-        }
-        if (name === "poll") {
-            ITheme.setPollOpen("false");
-        } else if (name === "hat") {
-            ITheme.setHatOpen("false");
-        }
-    }
-}
-
 function ScrollCorrector() {
     console.log("Scroll Corrector initialized");
     var postElements = document.querySelectorAll(".post_container");

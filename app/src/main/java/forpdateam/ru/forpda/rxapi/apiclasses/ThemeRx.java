@@ -132,7 +132,7 @@ public class ThemeRx {
                 if (page.getPosts().size() > 1 && hatPostId == post.getId()) {
                     boolean hatOpened = prevDisabled || page.isHatOpen();
                     t.setVariableOpt("hat_state_class", prevDisabled || page.isHatOpen() ? "open" : "close");
-                    t.setVariableOpt("hat_body_state", prevDisabled || page.isHatOpen() ? "" : "hidden");
+                    //t.setVariableOpt("hat_body_state", prevDisabled || page.isHatOpen() ? "" : "hidden");
                     t.addBlockOpt("hat_button");
                     t.addBlockOpt("hat_content_start");
                     t.addBlockOpt("hat_content_end");
@@ -160,7 +160,7 @@ public class ThemeRx {
             //Poll block
             if (page.getPoll() != null) {
                 t.setVariableOpt("poll_state_class", page.isPollOpen() ? "open" : "close");
-                t.setVariableOpt("poll_body_state", page.isPollOpen() ? "" : "hidden");
+                //t.setVariableOpt("poll_body_state", page.isPollOpen() ? "" : "hidden");
                 Poll poll = page.getPoll();
                 boolean isResult = poll.isResult();
                 t.setVariableOpt("poll_type", isResult ? "result" : "default");

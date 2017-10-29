@@ -47,8 +47,8 @@
 <body id="${body_type}" class="${enable_avatars} ${avatar_type}">
     <!-- $BeginBlock poll_block -->
     <div class="poll ${poll_type} ${poll_state_class}">
-        <a class="btn title aec" onclick="toggleButton(this, 'body', 'poll')" role="button" aria-label="${res_s_poll_title}: ${poll_title}"><span>${poll_title}</span><i class="icon"></i></a>
-        <form action="index.php" method="get" class="body" ${poll_body_state}>
+        <a class="btn title aec" onclick="toggleButton(this, 'hat_content', 'poll')" role="button" aria-label="${res_s_poll_title}: ${poll_title}"><span>${poll_title}</span><i class="icon"></i></a>
+        <form action="index.php" method="get" class="hat_content body poll_state_class">
             <div class="questions">
                 <!-- $BeginBlock poll_question_block -->
                 <div class="question">
@@ -95,7 +95,7 @@
             <!-- $BeginBlock hat_button --><a class="btn hat_button aec" onclick="toggleButton(this, 'hat_content', 'hat')" role="button" aria-label="${res_s_hat}"><span>${res_s_hat}</span><i class="icon"></i></a>
             <!-- $EndBlock hat_button -->
             <!-- $BeginBlock hat_content_start -->
-            <div class="hat_content" ${hat_body_state}>
+            <div class="hat_content ${hat_state_class}">
                 <!-- $EndBlock hat_content_start -->
                 <div class="post_header">
                     <div tabindex="-1" class="accessibility_anchor"></div>
