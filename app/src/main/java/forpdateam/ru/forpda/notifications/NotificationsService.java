@@ -328,29 +328,28 @@ public class NotificationsService extends Service {
         if (event.fromTheme()) {
             //Убираем уведомления избранного
             if (oldEvent != null && event.getMessageId() >= oldEvent.getMessageId()) {
+                mNotificationManager.cancel(oldEvent.notifyId());
                 delete = true;
             }
 
             //Убираем уведомление упоминаний
             oldEvent = eventsHistory.get(event.notifyId(NotificationEvent.Type.MENTION));
             if (oldEvent != null) {
+                mNotificationManager.cancel(oldEvent.notifyId());
                 delete = true;
             }
         } else if (event.fromQms()) {
 
             //Убираем уведомление кумыса
             if (oldEvent != null) {
+                mNotificationManager.cancel(oldEvent.notifyId());
                 delete = true;
             }
         }
 
         if (delete) {
-            if (oldEvent != null) {
-                mNotificationManager.cancel(oldEvent.notifyId());
-            }
             eventsHistory.remove(event.notifyId(NotificationEvent.Type.NEW));
         }
-
     }
 
     private void checkOldEvents(List<NotificationEvent> loadedEvents, NotificationEvent.Source source) {
