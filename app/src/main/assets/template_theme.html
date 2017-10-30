@@ -48,7 +48,7 @@
     <!-- $BeginBlock poll_block -->
     <div class="poll ${poll_type} ${poll_state_class}">
         <a class="btn title aec" onclick="toggleButton(this, 'hat_content', 'poll')" role="button" aria-label="${res_s_poll_title}: ${poll_title}"><span>${poll_title}</span><i class="icon"></i></a>
-        <form action="index.php" method="get" class="hat_content body poll_state_class">
+        <form action="index.php" method="get" class="hat_content body ${poll_state_class}">
             <div class="questions">
                 <!-- $BeginBlock poll_question_block -->
                 <div class="question">

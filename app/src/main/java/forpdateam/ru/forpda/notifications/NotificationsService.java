@@ -193,9 +193,12 @@ public class NotificationsService extends Service {
 
 
     public static void startAndCheck() {
-        Intent intent = new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS);
-        App.getContext().startService(intent);
-        App.getContext().bindService(intent, App.get().getmServiceConnection(), Context.BIND_AUTO_CREATE);
+        try {
+            Intent intent = new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS);
+            App.getContext().startService(intent);
+            App.getContext().bindService(intent, App.get().getmServiceConnection(), Context.BIND_AUTO_CREATE);
+        } catch (Exception ignore) {
+        }
     }
 
 
