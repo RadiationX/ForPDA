@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-                                    xmlns:tools="http://schemas.android.com/tools"
-                                    android:id="@+id/news_full_item_root"
-                                    style="@style/CardStyle.Item.Wide"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:foreground="?attr/selectableItemBackground">
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/news_full_item_root"
+    style="@style/CardStyle.Item.Wide"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:foreground="?attr/selectableItemBackground">
 
 
     <LinearLayout
@@ -19,22 +20,21 @@
         android:orientation="vertical">
 
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="@dimen/dp8">
+            android:layout_marginBottom="@dimen/dp8"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/news_full_item_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/dp8"
                 android:layout_weight="1"
                 android:lineSpacingMultiplier="0.9"
-                android:layout_marginEnd="@dimen/dp8"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                tools:text="Самая крутая новость на сегодня. Завезли новости. Наконец-то, бля.\nasdasd\n " />
+                tools:text="Самая крутая новость на сегодня. Завезли новости. Наконец-то, бля.\nasdasd\n "/>
 
             <FrameLayout
                 android:layout_width="80dp"
@@ -46,7 +46,7 @@
                     android:layout_height="80dp"
                     android:layout_gravity="center_vertical"
                     android:scaleType="centerCrop"
-                    tools:src="@drawable/test_img" />
+                    tools:src="@drawable/test_img"/>
 
                 <LinearLayout
                     android:id="@+id/news_full_item_new_container"
@@ -67,7 +67,7 @@
                         android:text="new"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         tools:ignore="HardcodedText"
-                        tools:text="new" />
+                        tools:text="new"/>
 
                 </LinearLayout>
             </FrameLayout>
@@ -81,7 +81,7 @@
             android:ellipsize="end"
             android:maxLines="3"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            tools:text="Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала" />
+            tools:text="Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала Олала"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -91,16 +91,16 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/dp16"
                 android:layout_weight="1"
-                android:orientation="horizontal"
-                android:layout_marginEnd="@dimen/dp16">
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/news_full_item_username"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    tools:text="Вася в разносе" />
+                    tools:text="Вася в разносе"/>
 
                 <TextView
                     android:id="@+id/news_full_item_category"
@@ -108,7 +108,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:visibility="gone"
-                    tools:text="обзор" />
+                    tools:text="обзор"/>
             </LinearLayout>
 
             <TextView
@@ -117,14 +117,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/dp16"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                tools:text="2560" />
+                tools:text="2560"/>
 
             <TextView
                 android:id="@+id/news_full_item_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                tools:text="20.09.1985" />
+                tools:text="20.09.1985"/>
 
         </LinearLayout>
     </LinearLayout>
