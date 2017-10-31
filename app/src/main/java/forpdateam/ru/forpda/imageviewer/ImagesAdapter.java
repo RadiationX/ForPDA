@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.imageviewer;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +52,7 @@ public class ImagesAdapter extends PagerAdapter {
         this.tapListener = tapListener;
     }
 
-    public void setOnClickListener (ImagesAdapter.OnClickListener onClickListener) {
+    public void setOnClickListener(ImagesAdapter.OnClickListener onClickListener) {
         this.clickListener = onClickListener;
     }
 
@@ -66,6 +67,7 @@ public class ImagesAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
+        Log.d("SUKA", "instantiateItem " + position);
         View imageLayout = inflater.inflate(R.layout.img_view_page, container, false);
         assert imageLayout != null;
         container.addView(imageLayout, 0);
@@ -75,6 +77,7 @@ public class ImagesAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
+        Log.d("SUKA", "instantiateItem " + position);
         container.removeView((View) object);
     }
 
@@ -112,6 +115,7 @@ public class ImagesAdapter extends PagerAdapter {
                 progressBar.setVisibility(View.VISIBLE);
                 if (progressBar.isIndeterminate()) {
                     progressBar.setIndeterminate(false);
+                    progressBar.stopAnimation();
                 }
             }
         }, (s, view, i, i1) -> progressBar.setProgress((int) (100F * i / i1)));
