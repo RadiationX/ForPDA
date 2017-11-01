@@ -67,6 +67,11 @@ public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder> {
     }
 
     @Override
+    public int getItemCount() {
+        return super.getItemCount() + 1;
+    }
+
+    @Override
     public int getItemViewType(int position) {
         if (position == (getItemCount() - 1)) {
             return LOAD_MORE_LAYOUT;
