@@ -61,6 +61,7 @@
             android:layout_width="480dp"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:focusableInTouchMode="true"
             android:orientation="vertical"
             android:paddingEnd="@dimen/dp32"
             android:paddingStart="@dimen/dp32">
