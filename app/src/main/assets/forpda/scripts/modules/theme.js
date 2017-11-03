@@ -95,28 +95,30 @@ function scrollToElement(name) {
         setTimeout(function () {
             window.scrollTo(0, window.loadScrollY);
         }, 1);
-        window.addEventListener("load", function () {
-            setTimeout(function () {
+        nativeEvents.addEventListener(nativeEvents.PAGE, function () {
+            //setTimeout(function () {
                 window.scrollTo(0, window.loadScrollY);
-            }, 1);
+            //}, 1);
         });
     } else if (window.loadAction == NORMAL_ACTION) {
         setTimeout(function () {
             doScroll(anchorElem);
         }, 1);
-        window.addEventListener("load", function () {
-            setTimeout(function () {
+        nativeEvents.addEventListener(nativeEvents.PAGE, function () {
+            //setTimeout(function () {
                 doScroll(anchorElem);
-            }, 1);
+            //}, 1);
         });
     }
 }
 
 function doScroll(tAnchorElem) {
-    // console.log(anchorElem);
     try {
         tAnchorElem.focus();
-        tAnchorElem.querySelector(".accessibility_anchor").focus();
+        var access_anchor = tAnchorElem.querySelector(".accessibility_anchor");
+        if (access_anchor) {
+            access_anchor.focus();
+        }
     } catch (ex) {
         console.error(ex);
     }
@@ -128,8 +130,10 @@ function doScroll(tAnchorElem) {
         elemToActivation.classList.remove('active');
 
     var postElem = tAnchorElem;
-    while (!postElem.classList.contains("post_container")) {
+    console.log(postElem);
+    while (postElem && !postElem.classList.contains("post_container")) {
         postElem = postElem.parentElement;
+        console.log(postElem);
     }
     elemToActivation = postElem;
     if (elemToActivation)
@@ -358,6 +362,6 @@ function transformAnchor() {
     }
 }
 
-nativeEvents.addEventListener("DOMContentLoaded", transformAnchor);
-nativeEvents.addEventListener("DOMContentLoaded", initScrollCorrector);
-nativeEvents.addEventListener("DOMContentLoaded", scrollToElement);
+nativeEvents.addEventListener(nativeEvents.DOM, transformAnchor);
+nativeEvents.addEventListener(nativeEvents.DOM, initScrollCorrector);
+nativeEvents.addEventListener(nativeEvents.DOM, scrollToElement);

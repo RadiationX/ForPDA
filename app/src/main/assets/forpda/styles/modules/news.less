@@ -22,9 +22,49 @@ body {
         border: none!important;
         height: auto!important;
     }
-    >a[data-lightbox] {
+    /*p > a[data-lightbox] {
         margin: 0 -16/16rem;
         display: inline-block;
+        > img {
+            margin: 0 -16/16rem;
+            display: inline-block;
+        }
+    }*/
+    
+    p > img {
+        max-width: 100%;
+        width: auto!important;
+        height: auto!important;
+        margin: 0.5em auto;
+    }
+    
+    p.full_width{
+        margin: 0 -16/16rem;
+    }
+    ul {
+        //margin-top: -0.9em;
+    }
+    blockquote {
+        padding: 8/16rem 16/16rem;
+        background: none;
+        border: none;
+        border-left: 4/16rem solid @quote_border_color;
+        margin: 0.5rem 0;
+        padding-right: 0;
+        >p {
+            margin: 0;
+        }
+        /*&:before {
+            content: "Цитата";
+            height: 3em;
+            line-height: 3em;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.5em;
+        }
+        p {
+            display: inline;
+        }*/
     }
     iframe {
         margin: 0.5em auto;
@@ -291,39 +331,6 @@ body {
                 padding: 10px;
             }
         }
-    }
-    p {
-        img {
-            max-width: 100%;
-            width: auto!important;
-            height: auto!important;
-            margin: 0.5em auto;
-        }
-    }
-    ul {
-        //margin-top: -0.9em;
-    }
-    blockquote {
-        padding: 8/16rem 16/16rem;
-        background: none;
-        border: none;
-        border-left: 4/16rem solid @quote_border_color;
-        margin: 0.5rem 0;
-        padding-right: 0;
-        >p {
-            margin: 0;
-        }
-        /*&:before {
-            content: "Цитата";
-            height: 3em;
-            line-height: 3em;
-            font-weight: bold;
-            display: block;
-            margin-bottom: 0.5em;
-        }
-        p {
-            display: inline;
-        }*/
     }
     .review-bottom-informer {
         margin: 0.5em -1em;

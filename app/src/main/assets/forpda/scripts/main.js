@@ -1,76 +1,4 @@
 console.log("LOAD JS SOURCE main.js");
-var nativeEvents = new NativeEvents();
-
-function NativeEvents() {
-    var nativeDomComplete = [];
-    var nativePageComplete = [];
-
-    function onNativeDomComplete() {
-        console.log("JS event: onNativeDomComplete");
-        functionCaller(nativeDomComplete);
-    }
-
-    function onNativePageComplete() {
-        console.log("JS event: onNativePageComplete");
-        functionCaller(nativePageComplete);
-    }
-
-    function functionCaller(funcArray) {
-        while (funcArray.length > 0) {
-            var func = funcArray.shift();
-            try {
-                console.log("Call function: " + func.name);
-                func();
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    }
-
-    document.addEventListener("DOMContentLoaded", function (e) {
-        console.log("JS event: DOMContentLoaded");
-        if (typeof IBase != 'undefined') {
-            IBase.domContentLoaded();
-        } else {
-            onNativeDomComplete();
-        }
-    });
-    window.addEventListener("load", function (e) {
-        console.log("JS event: load");
-        if (typeof IBase != 'undefined') {
-            IBase.onPageLoaded();
-        } else {
-            onNativePageComplete();
-        }
-    });
-
-    this.addEventListener = function (name, func) {
-        try {
-            if (name == undefined | name == null | typeof name != "string") {
-                throw new Error("Name invalid");
-            }
-            if (func == undefined | func == null | typeof func != "function") {
-                throw new Error("Function invalid")
-            }
-            if (name === "DOMContentLoaded") {
-                nativeDomComplete.push(func);
-            }
-            if (name === "load") {
-                nativePageComplete.push(func);
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
-    this.onNativeDomComplete = function () {
-        onNativeDomComplete();
-    }
-
-    this.onNativePageComplete = function () {
-        onNativePageComplete();
-    }
-}
 (function () {
     //Element.prototype.eventListenerList = {};
 
@@ -98,16 +26,110 @@ function NativeEvents() {
     };
 })();
 
-nativeEvents.addEventListener("DOMContentLoaded", function () {
+function NativeEvents() {
+    this.DOM = "DOMContentLoaded";
+    this.PAGE = "load";
+
+    const DOM = this.DOM;
+    const PAGE = this.PAGE;
+    const LOG_TAG = "JS event: ";
+
+    var nativeDomComplete = [];
+    var nativePageComplete = [];
+    var instantDomComplete = [];
+    var instantPageComplete = [];
+
+    function onNativeDomComplete() {
+        console.log(LOG_TAG + "onNativeDomComplete");
+        functionCaller(nativeDomComplete);
+    }
+
+    function onNativePageComplete() {
+        console.log(LOG_TAG + "onNativePageComplete");
+        functionCaller(nativePageComplete);
+    }
+
+    function functionCaller(funcArray) {
+        while (funcArray.length > 0) {
+            var func = funcArray.shift();
+            try {
+                console.log(LOG_TAG + "Call function: '" + func.name + "'");
+                func();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }
+
+    document.addEventListener(DOM, function (e) {
+        console.log(LOG_TAG + DOM);
+        if (instantDomComplete.length > 0) {
+            console.log(LOG_TAG + "Call instant functions");
+            functionCaller(instantDomComplete);
+        }
+        if (typeof IBase != 'undefined') {
+            IBase.domContentLoaded();
+        } else {
+            onNativeDomComplete();
+        }
+    });
+    window.addEventListener(PAGE, function (e) {
+        console.log(LOG_TAG + PAGE);
+        if (instantPageComplete.length > 0) {
+            console.log(LOG_TAG + "Call instant functions");
+            functionCaller(instantPageComplete);
+        }
+        if (typeof IBase != 'undefined') {
+            IBase.onPageLoaded();
+        } else {
+            onNativePageComplete();
+        }
+    });
+
+    this.addEventListener = function (name, func, instantly) {
+        instantly = Boolean(instantly | false);
+        try {
+            if (name == undefined | name == null | typeof name != "string") {
+                throw new Error("Name invalid");
+            }
+            if (func == undefined | func == null | typeof func != "function") {
+                throw new Error("Function invalid")
+            }
+            if (name === DOM) {
+                if (instantly) {
+                    instantDomComplete.push(func);
+                } else {
+                    nativeDomComplete.push(func);
+                }
+            }
+            if (name === PAGE) {
+                if (instantly) {
+                    instantPageComplete.push(func);
+                } else {
+                    nativePageComplete.push(func);
+                }
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    this.onNativeDomComplete = function () {
+        onNativeDomComplete();
+    }
+
+    this.onNativePageComplete = function () {
+        onNativePageComplete();
+    }
+}
+var nativeEvents = new NativeEvents();
+
+nativeEvents.addEventListener(nativeEvents.DOM, function () {
     var elemsForClick = document.querySelectorAll(".post-block .block-title");
     for (var i = 0; i < elemsForClick.length; i++) {
         elemsForClick[i].classList.add("aec");
-        /*console.log(elemsForClick[i]);
-        if (!getEventListeners(elemsForClick[i]).includes(androidEffectClickListener)) {
-            elemsForClick[i].addEventListener("click", androidEffectClickListener);
-        }*/
     }
-    document.addEventListener("click", androidEffectClickListener);
+    document.addEventListener("click", AndroidEffectClick);
 });
 
 function getCoordinates(elem) {
@@ -141,34 +163,33 @@ function getCoordinates(elem) {
     };
 }
 
-function suka(target, x, y) {
+function isBelong(target, x, y) {
     var coords = getCoordinates(target);
-    //console.log(target.nodeName + " : " + coords.top + " : " + coords.left + " : " + target.offsetHeight + " : " + target.offsetWidth + " : " + y + " : " + x);
     var yNorm = y <= (coords.top + target.offsetHeight) && y >= coords.top;
     var xNorm = x <= (coords.left + target.offsetWidth) && x >= coords.left;
-
     return yNorm && xNorm;
 }
-const androidEffectClickListener = function AndroidEffectClick(e) {
+
+function AndroidEffectClick(e) {
     var target = e.target;
-    //console.log(e);
     if (target.nodeName == "A") {
         playClickEffect();
         return;
     }
-
     var temp = target.parentNode;
-    while (temp && temp.classList && !temp.classList.contains("aec")) {
+    while (temp &&
+        temp.classList &&
+        !temp.classList.contains("aec")) {
         temp = temp.parentNode;
     }
-    //console.log(target.parentElement);
-    //console.log(temp);
-    var targetContainClass = target.classList && target.classList.contains("aec");
-    var parentContainClass = temp != document && temp.classList && temp.classList.contains("aec");
-    var targetBelong = suka(target, e.pageX, e.pageY);
-    //var parentBelong = suka(temp, e.clientX, e.clientY);
-    var parentBelong = false;
-    //console.log(targetContainClass + " : " + parentContainClass + " : " + targetBelong + " : " + parentBelong);
+    var targetContainClass =
+        target.classList &&
+        target.classList.contains("aec");
+    var parentContainClass =
+        temp != document &&
+        temp.classList &&
+        temp.classList.contains("aec");
+    var targetBelong = isBelong(target, e.pageX, e.pageY);
     if ((targetContainClass || parentContainClass) && targetBelong) {
         playClickEffect();
     }
@@ -187,6 +208,8 @@ function playClickEffect() {
 function AvatarLoader() {
     var loadedAvatars = {};
     var pendingLoad = {};
+    this.loadByNick = loadByNick;
+    this.loadByUrl = loadByUrl;
 
     function registerRequest(nick, callback) {
         var loaded = loadedAvatars[nick];
@@ -256,10 +279,6 @@ function AvatarLoader() {
             }
         }
     }
-
-    this.loadByNick = loadByNick;
-    this.loadByUrl = loadByUrl;
-
 }
 
 function toggleButton(button, bodyClass, name) {
@@ -267,7 +286,7 @@ function toggleButton(button, bodyClass, name) {
     var body;
     if (bodyClass !== undefined)
         body = parent.querySelector("." + bodyClass);
-    console.log("toggle "+parent.getAttribute("class")+" : "+body.getAttribute("class"));
+    console.log("toggle " + parent.getAttribute("class") + " : " + body.getAttribute("class"));
     if (parent.classList.contains("close") | (body != undefined && parent.classList.contains("close"))) {
         parent.classList.remove("close");
         parent.classList.add("open");
@@ -293,6 +312,55 @@ function toggleButton(button, bodyClass, name) {
             ITheme.setPollOpen("false");
         } else if (name === "hat") {
             ITheme.setHatOpen("false");
+        }
+    }
+}
+
+function fixImagesSizeWithDensity() {
+    const density = window.devicePixelRatio;
+    console.log("Density: " + density);
+    if (density == 1) {
+        return;
+    }
+    var selector = "";
+    var pageType = document.body.getAttribute("id") || "";
+    switch (pageType) {
+        case "announce":
+            selector = "img";
+            break;
+        case "news":
+            selector = "img";
+            break;
+        default:
+            selector = "img.attach, img.linked-image";
+            break;
+    }
+    var images = document.querySelectorAll(selector);
+    for (var i = 0; i < images.length; i++) {
+        var item = images[i];
+        fixSize(item);
+        item.addEventListener("load", onLoadImage);
+    }
+
+    function onLoadImage(ev) {
+        fixSize(ev.target);
+    }
+
+    function fixSize(img) {
+        if (img.classList.contains("size_fixed")) {
+            return;
+        }
+        var width = Number(img.width);
+        var height = Number(img.height);
+        //console.log("WH: " + width + " : " + height);
+
+        width /= density;
+        height /= density;
+        if (width > 16 && height > 16) {
+            //console.log(width + " : " + height);
+            img.setAttribute("width", "" + width + "px");
+            img.setAttribute("height", "" + height + "px");
+            img.classList.add("size_fixed");
         }
     }
 }

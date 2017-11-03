@@ -16,7 +16,7 @@ function AttachmentTransformer() {
     const metaPattern = /([\s\S]*)\.([\s\S]*?) - [^:]*?: ([\s\S]*)/g;
     //1-name, 2-extension
     const namePattern = /([\s\S]*)\.([\s\S]*)/g
-    //1-weight
+        //1-weight
     const weightPattern = /\( ([\s\S]*?) \)/g;
     //1-count
     const countPattern = /(\d+)/g;
@@ -236,7 +236,7 @@ function startTransformer2() {
     const metaPattern = /([\s\S]*)\.([\s\S]*?) - [^:]*?: ([\s\S]*)/g;
     //1-name, 2-extension
     const namePattern = /([\s\S]*)\.([\s\S]*)/g
-    //1-weight
+        //1-weight
     const weightPattern = /\( ([\s\S]*?) \)/g;
     //1-count
     const countPattern = /(\d+)/g;
@@ -283,4 +283,4 @@ function startTransformer2() {
     }
 }
 //nativeEvents.addEventListener("DOMContentLoaded", startAttachTransformer);
-nativeEvents.addEventListener("DOMContentLoaded", startTransformer2);
+nativeEvents.addEventListener(nativeEvents.DOM, startTransformer2, true);

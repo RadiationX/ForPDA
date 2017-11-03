@@ -51,8 +51,7 @@ public class Client implements IWebClient {
     private final static Pattern countsPattern = Pattern.compile("<a href=\"(?:https?)?\\/\\/4pda\\.ru\\/forum\\/index\\.php\\?act=mentions[^>]*?><i[^>]*?>(\\d+)<\\/i>[\\s\\S]*?act=fav[^>]*?><i[^>]*?>(\\d+)<\\/i>[\\s\\S]*?act=qms[^>]*?data-count=\"(\\d+)\">");
     private final static Pattern errorPattern = Pattern.compile("^[\\s\\S]*?wr va-m text\">([\\s\\S]*?)</div></div></div></div><div class=\"footer\">");
     private static Client INSTANCE = null;
-    private static Map<String, Cookie> cookies;
-    private String userAgent;
+    private Map<String, Cookie> clientCookies = new HashMap<>();
     private SimpleObservable networkObservables = new SimpleObservable();
     private Handler observerHandler = new Handler(Looper.getMainLooper());
     private String tempGroup;
@@ -62,13 +61,6 @@ public class Client implements IWebClient {
     //Class
     public Client() {
         Api.setWebClient(this);
-        try {
-//            userAgent = WebSettings.getDefaultUserAgent(App.getContext());
-            userAgent = USER_AGENT;
-        } catch (Exception ignore) {
-            userAgent = "Linux; Android NaN; UNKNOWN";
-        }
-        cookies = new HashMap<>();
         String member_id = App.get().getPreferences().getString("cookie_member_id", null);
         String pass_hash = App.get().getPreferences().getString("cookie_pass_hash", null);
         String session_id = App.get().getPreferences().getString("cookie_session_id", null);
@@ -77,16 +69,16 @@ public class Client implements IWebClient {
         //Log.d("FORPDA_LOG", "INIT AUTH DATA " + member_id + " : " + pass_hash + " : " + session_id + " : " + App.get().getPreferences().getString("member_id", null));
 
 
-        cookies.put("ngx_mb", mobileCookie);
+        clientCookies.put("ngx_mb", mobileCookie);
         if (member_id != null && pass_hash != null) {
             ClientHelper.setAuthState(ClientHelper.AUTH_STATE_LOGIN);
             //Первичная загрузка кукисов
-            cookies.put("member_id", parseCookie(member_id));
-            cookies.put("pass_hash", parseCookie(pass_hash));
+            clientCookies.put("member_id", parseCookie(member_id));
+            clientCookies.put("pass_hash", parseCookie(pass_hash));
             if (session_id != null)
-                cookies.put("session_id", parseCookie(session_id));
+                clientCookies.put("session_id", parseCookie(session_id));
             if (anonymous != null) {
-                cookies.put("anonymous", parseCookie(anonymous));
+                clientCookies.put("anonymous", parseCookie(anonymous));
             }
         }
     }
@@ -110,8 +102,8 @@ public class Client implements IWebClient {
         return url.concat("|:|").concat(cookie.toString());
     }
 
-    public Map<String, Cookie> getCookies() {
-        return cookies;
+    public Map<String, Cookie> getClientCookies() {
+        return clientCookies;
     }
 
     private final CookieJar cookieJar = new CookieJar() {
@@ -119,7 +111,7 @@ public class Client implements IWebClient {
 
         @Override
         public void saveFromResponse(@NonNull HttpUrl url, @NonNull List<Cookie> cookies) {
-            /*for (Cookie cookie : cookies) {
+            /*for (Cookie cookie : clientCookies) {
                 Log.d("SUKA", "Cookie save: "+cookie.toString());
             }*/
             Matcher matcher = authPattern.matcher(url.toString());
@@ -132,8 +124,8 @@ public class Client implements IWebClient {
                     if (isMemberId || isPassHash || isSessionId || isAnonymous) {
                         if (cookie.value().equals("deleted")) {
                             App.get().getPreferences().edit().remove("cookie_".concat(cookie.name())).apply();
-                            if (Client.cookies.containsKey(cookie.name())) {
-                                Client.cookies.remove(cookie.name());
+                            if (clientCookies.containsKey(cookie.name())) {
+                                clientCookies.remove(cookie.name());
                             }
                         } else {
                             //Сохранение кукисов cookie_member_id и cookie_pass_hash
@@ -142,8 +134,8 @@ public class Client implements IWebClient {
                                 App.get().getPreferences().edit().putString("member_id", cookie.value()).apply();
                                 ClientHelper.setUserId(cookie.value());
                             }
-                            if (!Client.cookies.containsKey(cookie.name())) {
-                                Client.cookies.put(cookie.name(), cookie);
+                            if (!clientCookies.containsKey(cookie.name())) {
+                                clientCookies.put(cookie.name(), cookie);
                             }
                         }
                     }
@@ -151,12 +143,12 @@ public class Client implements IWebClient {
             } else {
                 for (Cookie cookie : cookies) {
                     if (cookie.value().equals("deleted")) {
-                        Client.cookies.remove(cookie.name());
+                        clientCookies.remove(cookie.name());
                     } else {
-                        if (!Client.cookies.containsKey(cookie.name())) {
-                            Client.cookies.remove(cookie.name());
+                        if (!clientCookies.containsKey(cookie.name())) {
+                            clientCookies.remove(cookie.name());
                         }
-                        Client.cookies.put(cookie.name(), cookie);
+                        clientCookies.put(cookie.name(), cookie);
                     }
                 }
             }
@@ -167,8 +159,8 @@ public class Client implements IWebClient {
             if (!url.host().toLowerCase().contains("4pda")) {
                 return new ArrayList<>();
             }
-            cookies.put("ngx_mb", mobileCookie);
-            return new ArrayList<>(Client.cookies.values());
+            clientCookies.put("ngx_mb", mobileCookie);
+            return new ArrayList<>(clientCookies.values());
         }
     };
 
@@ -333,7 +325,7 @@ public class Client implements IWebClient {
     }
 
     public void clearCookies() {
-        cookies.clear();
+        clientCookies.clear();
     }
 
     public void removeNetworkObserver(Observer observer) {

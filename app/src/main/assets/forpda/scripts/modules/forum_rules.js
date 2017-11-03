@@ -31,4 +31,4 @@ function setupListeners() {
 
 
 
-nativeEvents.addEventListener("DOMContentLoaded", setupListeners);
+nativeEvents.addEventListener(nativeEvents.DOM, setupListeners, true);

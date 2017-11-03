@@ -46,7 +46,6 @@ public class NewsRx {
         App.setTemplateResStrings(t);
         t.setVariableOpt("style_type", App.get().getCssStyleType());
         t.setVariableOpt("details_title", Utils.htmlEncode(page.getTitle()));
-        t.setVariableOpt("body_type", "news");
         t.setVariableOpt("details_content", page.getHtml());
         for (Material material : page.getMaterials()) {
             t.setVariableOpt("material_id", material.getId());

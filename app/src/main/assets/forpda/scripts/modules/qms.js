@@ -9,9 +9,7 @@ function initQms() {
 function scrollQms() {
     getLastMess().scrollIntoView();
 }
-nativeEvents.addEventListener("DOMContentLoaded", initQms);
 
-nativeEvents.addEventListener("load", scrollQms);
 
 var lastMessRequestTS = new Date().getTime();
 
@@ -92,3 +90,6 @@ function addedNewMessages() {
     addIcons();
     jsEmoticons.parseAll();
 }
+
+nativeEvents.addEventListener(nativeEvents.DOM, initQms);
+nativeEvents.addEventListener(nativeEvents.PAGE, scrollQms);

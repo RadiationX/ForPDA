@@ -431,15 +431,13 @@ function improveSpoilBlock() {
             }
         }
     }
-
-
 }
 
-nativeEvents.addEventListener("DOMContentLoaded", transformSnapbacks);
-nativeEvents.addEventListener("DOMContentLoaded", transformQuotes);
+nativeEvents.addEventListener(nativeEvents.DOM, transformSnapbacks, true);
+nativeEvents.addEventListener(nativeEvents.DOM, transformQuotes, true);
 
-nativeEvents.addEventListener("DOMContentLoaded", improveSpoilBlock);
-nativeEvents.addEventListener("DOMContentLoaded", improveCodeBlock);
-nativeEvents.addEventListener("DOMContentLoaded", blocksOpenClose);
-nativeEvents.addEventListener("DOMContentLoaded", removeImgesSrc);
-nativeEvents.addEventListener("DOMContentLoaded", addIcons);
+nativeEvents.addEventListener(nativeEvents.DOM, improveSpoilBlock, true);
+nativeEvents.addEventListener(nativeEvents.DOM, improveCodeBlock, true);
+nativeEvents.addEventListener(nativeEvents.DOM, blocksOpenClose, true);
+nativeEvents.addEventListener(nativeEvents.DOM, removeImgesSrc, true);
+nativeEvents.addEventListener(nativeEvents.DOM, addIcons, true);

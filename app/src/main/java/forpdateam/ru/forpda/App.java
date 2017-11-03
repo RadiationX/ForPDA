@@ -29,6 +29,7 @@ import android.support.annotation.RequiresApi;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.content.res.AppCompatResources;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -57,6 +58,7 @@ import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -118,7 +120,6 @@ public class App extends android.app.Application {
     public static int keyboardHeight = 0;
     public static int statusBarHeight = 0;
     public static int navigationBarHeight = 0;
-    //public static SparseArray<Drawable> drawableCache = new SparseArray<>();
     public static HashMap<String, String> templateStringCache = new HashMap<>();
     private static App instance;
     //private final static Object lock = new Object();
@@ -184,10 +185,14 @@ public class App extends android.app.Application {
         return isDarkTheme() ? "dark" : "light";
     }
 
-    boolean webViewNotFound = true;
 
-    public boolean isWebViewNotFound() {
-        return webViewNotFound;
+    public boolean isWebViewFound() {
+        try {
+            WebSettings.getDefaultUserAgent(App.getContext());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /*@Override
@@ -219,32 +224,50 @@ public class App extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        long time = System.currentTimeMillis();
         instance = this;
-
+        long time = System.currentTimeMillis();
+        ACRA.init(this);
+        ACRA.getErrorReporter().putCustomData("USER_NICK", getPreferences().getString("auth.user.nick", "null"));
         RxJavaPlugins.setErrorHandler(throwable -> {
             Log.d("SUKA", "RxJavaPlugins errorHandler " + throwable);
             throwable.printStackTrace();
         });
 
-        /*{
-            Configuration config = getResources().getConfiguration();
-            lang = getPreferences().getString("language", "default");
-            Log.e("SUKA", "LOAD LENG " + lang);
-            if (lang.equals("default")) {
-                lang = config.locale.getLanguage();
-            }
-            locale = new Locale(lang);
-            Locale.setDefault(locale);
-            config.locale = locale;
-            getResources().updateConfiguration(config, null);
-        }*/
-
         setTheme(isDarkTheme() ? R.style.DarkAppTheme : R.style.LightAppTheme);
 
-        ACRA.init(this);
-        Log.d("SUKA", "ACRA initialezd " + ACRA.isInitialised());
-        ACRA.getErrorReporter().putCustomData("USER_NICK", getPreferences().getString("auth.user.nick", "null"));
+        try {
+            String inputHistory = getPreferences().getString("app.versions.history", "");
+            String[] history = TextUtils.split(inputHistory, ";");
+
+            int lastVNum = 0;
+            boolean disorder = false;
+            for (String version : history) {
+                int vNum = Integer.parseInt(version);
+                if (vNum < lastVNum) {
+                    disorder = true;
+                }
+                lastVNum = vNum;
+            }
+            Object vCode = BuildConfig.VERSION_CODE;
+            String sVCode = "" + vCode;
+            int nVCode = Integer.parseInt(sVCode);
+
+            if (lastVNum < nVCode) {
+                List<String> list = new ArrayList<>(Arrays.asList(history));
+                list.add(Integer.toString(nVCode));
+                getPreferences().edit().putString("app.versions.history", TextUtils.join(";", list)).apply();
+            }
+            if (disorder) {
+                throw new Exception("Нарушение порядка версий!");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            ACRA.getErrorReporter().putCustomData("VERSIONS_HISTORY", getPreferences().getString("app.versions.history", ""));
+            ACRA.getErrorReporter().handleException(ex);
+        }
+
+        ACRA.getErrorReporter().putCustomData("VERSIONS_HISTORY", getPreferences().getString("app.versions.history", ""));
+
         density = getResources().getDisplayMetrics().density;
         initImageLoader(this);
 
@@ -264,15 +287,6 @@ public class App extends android.app.Application {
         px56 = getContext().getResources().getDimensionPixelSize(R.dimen.dp56);
         px64 = getContext().getResources().getDimensionPixelSize(R.dimen.dp64);
 
-        //Для более быстрого доступа к drawable при работе программы
-        /*for (Field f : R.drawable.class.getFields()) {
-            try {
-                if (!f.getName().contains("abc_"))
-                    drawableCache.put(f.getInt(f), AppCompatResources.getDrawable(App.getContext(), f.getInt(f)));
-            } catch (Exception ignore) {
-            }
-        }*/
-
         for (Field f : R.string.class.getFields()) {
             try {
                 if (f.getName().contains("res_s_")) {
@@ -285,22 +299,6 @@ public class App extends android.app.Application {
         keyboardHeight = getPreferences().getInt("keyboard_height", getContext().getResources().getDimensionPixelSize(R.dimen.default_keyboard_height));
         savedKeyboardHeight = keyboardHeight;
 
-        try {
-            WebSettings.getDefaultUserAgent(App.getContext());
-            webViewNotFound = false;
-        } catch (Exception e) {
-            webViewNotFound = true;
-        }
-
-        templates.put(TEMPLATE_THEME, findTemplate(TEMPLATE_THEME));
-        templates.put(TEMPLATE_SEARCH, findTemplate(TEMPLATE_SEARCH));
-        templates.put(TEMPLATE_QMS_CHAT, findTemplate(TEMPLATE_QMS_CHAT));
-        templates.put(TEMPLATE_QMS_CHAT_MESS, findTemplate(TEMPLATE_QMS_CHAT_MESS));
-        templates.put(TEMPLATE_NEWS, findTemplate(TEMPLATE_NEWS));
-        templates.put(TEMPLATE_FORUM_RULES, findTemplate(TEMPLATE_FORUM_RULES));
-        templates.put(TEMPLATE_ANNOUNCE, findTemplate(TEMPLATE_ANNOUNCE));
-
-        //init
         Realm.init(this);
         RealmConfiguration configuration = new RealmConfiguration.Builder()
                 .name("forpda.realm")
@@ -336,13 +334,14 @@ public class App extends android.app.Application {
             registerReceiver(receiver, new IntentFilter(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED));
         }
 
+
         IntentFilter wakeUpFilter = new IntentFilter();
         wakeUpFilter.addAction(Intent.ACTION_BOOT_COMPLETED);
         wakeUpFilter.addAction(Intent.ACTION_SCREEN_ON);
         registerReceiver(new WakeUpReceiver(), wakeUpFilter);
 
+
         JobConfig.addLogger((priority, tag, message, t) -> {
-            // log
             Log.e("SUKA", "Job: pr=" + priority + "; t=" + tag + "; m=" + message + "; th=" + t);
         });
         JobConfig.setLogcatEnabled(false);
@@ -356,7 +355,7 @@ public class App extends android.app.Application {
                 .build()
                 .schedule();
         QmsHelper.init();
-        Log.e("SUKAA", "TIME APP " + (System.currentTimeMillis() - time));
+        Log.e("SUKAA", "TIME APP FINAL " + (System.currentTimeMillis() - time));
     }
 
     private NotificationsService mBoundService;
@@ -482,7 +481,14 @@ public class App extends android.app.Application {
 
 
     public MiniTemplator getTemplate(String name) {
-        return templates.get(name);
+        MiniTemplator template = templates.get(name);
+        if (template == null) {
+            template = findTemplate(name);
+            if (template != null) {
+                templates.put(name, template);
+            }
+        }
+        return template;
     }
 
     private MiniTemplator findTemplate(String name) {
@@ -556,7 +562,7 @@ public class App extends android.app.Application {
                     protected HttpURLConnection createConnection(String url, Object extra) throws IOException {
                         HttpURLConnection conn = super.createConnection(url, extra);
                         if (pattern4pda.matcher(url).find()) {
-                            Map<String, Cookie> cookies = Client.get().getCookies();
+                            Map<String, Cookie> cookies = Client.get().getClientCookies();
                             String stringCookies = "";
                             for (Map.Entry<String, Cookie> cookieEntry : cookies.entrySet()) {
                                 stringCookies = stringCookies.concat(cookieEntry.getKey()).concat("=").concat(cookieEntry.getValue().value()).concat(";");
@@ -580,7 +586,7 @@ public class App extends android.app.Application {
 
     public SharedPreferences getPreferences() {
         if (preferences == null)
-            preferences = PreferenceManager.getDefaultSharedPreferences(instance);
+            preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         return preferences;
     }
 
