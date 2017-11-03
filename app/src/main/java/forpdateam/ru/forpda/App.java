@@ -580,7 +580,7 @@ public class App extends android.app.Application {
 
     public SharedPreferences getPreferences() {
         if (preferences == null)
-            preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            preferences = PreferenceManager.getDefaultSharedPreferences(instance);
         return preferences;
     }
 
