@@ -15,11 +15,11 @@ android {
 
     def fileNaming = "apk/ForPDA"
 
-    def versionNumber = 62
+    def versionNumber = 63
 
     def versionMajor = "0"
     def versionMinor = "6"
-    def versionPatch = "4"
+    def versionPatch = "4.1"
 
     def versionBuild = -1
     def versionPropsFile = file('version.properties')
