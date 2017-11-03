@@ -13,4 +13,4 @@ function measurePostHeight() {
 
 }
 
-nativeEvents.addEventListener("DOMContentLoaded", measurePostHeight);
+nativeEvents.addEventListener(nativeEvents.DOM, measurePostHeight, true);

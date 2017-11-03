@@ -1,5 +1,17 @@
 console.log("LOAD JS SOURCE news.js");
 
+function transformImages() {
+    var lightBox = document.querySelectorAll("p > a[data-lightbox] > img, p > img, p > iframe");
+    for (var i = 0; i < lightBox.length; i++) {
+        var p = lightBox[i];
+        while (p.tagName != "P") {
+            p = p.parentElement;
+        }
+        console.log(p);
+        p.classList.add("full_width");
+    }
+}
+
 function transformPoll() {
     var polls = document.querySelectorAll("form");
     for (var i = 0; i < polls.length; i++) {
@@ -14,13 +26,14 @@ function transformPoll() {
             var id = /poll_id=(\d+)/g.exec(form.action)[1]
             var answer = form["answer[]"].value
             var from = form["from"].value;
-            if(answer.length==0){
+            if (answer.length == 0) {
                 return;
             }
-            console.log(id+" : "+answer);
+            console.log(id + " : " + answer);
             INews.sendPoll(id, answer, from);
         });
     }
 }
-
-nativeEvents.addEventListener("DOMContentLoaded", transformPoll);
+//nativeEvents.addEventListener(nativeEvents.DOM, fixImagesSizeWithDensity, true);
+nativeEvents.addEventListener(nativeEvents.DOM, transformImages, true);
+nativeEvents.addEventListener(nativeEvents.DOM, transformPoll, true);

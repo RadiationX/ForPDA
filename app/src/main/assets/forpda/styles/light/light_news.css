@@ -25,6 +25,14 @@ body {
   box-shadow: 0rem 0.0625rem 0.0625rem rgba(0, 0, 0, 0.12), 0rem 0rem 0.0625rem rgba(0, 0, 0, 0.12);
   padding: 1rem;
   margin-top: 0;
+  /*p > a[data-lightbox] {
+        margin: 0 -16/16rem;
+        display: inline-block;
+        > img {
+            margin: 0 -16/16rem;
+            display: inline-block;
+        }
+    }*/
   /*div[id*="poll-ajax-frame"] {
         margin: 0.5em -1em;
         padding: 1em 1em;
@@ -135,9 +143,36 @@ body {
   border: none!important;
   height: auto!important;
 }
-#news > .content > a[data-lightbox] {
+#news > .content p > img {
+  max-width: 100%;
+  width: auto!important;
+  height: auto!important;
+  margin: 0.5em auto;
+}
+#news > .content p.full_width {
   margin: 0 -1rem;
-  display: inline-block;
+}
+#news > .content blockquote {
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  border-left: 0.25rem solid #bfbfbf;
+  margin: 0.5rem 0;
+  padding-right: 0;
+  /*&:before {
+            content: "Цитата";
+            height: 3em;
+            line-height: 3em;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.5em;
+        }
+        p {
+            display: inline;
+        }*/
+}
+#news > .content blockquote > p {
+  margin: 0;
 }
 #news > .content iframe {
   margin: 0.5em auto;
@@ -376,34 +411,6 @@ body {
 #news > .content .mlinks.desc .mlscreenshots {
   background: rgba(0, 0, 0, 0.05);
   padding: 10px;
-}
-#news > .content p img {
-  max-width: 100%;
-  width: auto!important;
-  height: auto!important;
-  margin: 0.5em auto;
-}
-#news > .content blockquote {
-  padding: 0.5rem 1rem;
-  background: none;
-  border: none;
-  border-left: 0.25rem solid #bfbfbf;
-  margin: 0.5rem 0;
-  padding-right: 0;
-  /*&:before {
-            content: "Цитата";
-            height: 3em;
-            line-height: 3em;
-            font-weight: bold;
-            display: block;
-            margin-bottom: 0.5em;
-        }
-        p {
-            display: inline;
-        }*/
-}
-#news > .content blockquote > p {
-  margin: 0;
 }
 #news > .content .review-bottom-informer {
   margin: 0.5em -1em;
