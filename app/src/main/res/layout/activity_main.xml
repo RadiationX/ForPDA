@@ -55,6 +55,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="?attr/divider_line" />
+            <TextView
+                android:id="@+id/forbidden_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dp16"
+                android:textColor="@color/md_red_500"
+                android:text="Уведомления не работают, отключите VPN/Proxy"
+                android:visibility="gone"
+                />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/menu_list"

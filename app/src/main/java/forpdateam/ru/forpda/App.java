@@ -61,9 +61,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Observer;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import biz.source_code.miniTemplator.MiniTemplator;
@@ -122,10 +122,6 @@ public class App extends android.app.Application {
     public static int navigationBarHeight = 0;
     public static HashMap<String, String> templateStringCache = new HashMap<>();
     private static App instance;
-    //private final static Object lock = new Object();
-
-    private Locale locale;
-    private String lang;
     private Map<String, MiniTemplator> templates = new HashMap<>();
     private float density = 1.0f;
     private SharedPreferences preferences;
@@ -139,6 +135,8 @@ public class App extends android.app.Application {
 
     private SimpleObservable favoriteEvents = new SimpleObservable();
     private SimpleObservable qmsEvents = new SimpleObservable();
+    private SimpleObservable networkForbidden = new SimpleObservable();
+    private Boolean webViewFound = null;
 
 
     public App() {
@@ -187,12 +185,15 @@ public class App extends android.app.Application {
 
 
     public boolean isWebViewFound() {
-        try {
-            WebSettings.getDefaultUserAgent(App.getContext());
-            return true;
-        } catch (Exception e) {
-            return false;
+        if (webViewFound == null) {
+            try {
+                WebSettings.getDefaultUserAgent(App.getContext());
+                webViewFound = true;
+            } catch (Exception e) {
+                webViewFound = false;
+            }
         }
+        return webViewFound;
     }
 
     @Override
@@ -329,7 +330,9 @@ public class App extends android.app.Application {
         JobManager.create(this).addJobCreator(new NotificationsJobCreator());
         JobManager.instance().cancelAllForTag(NotificationsJob.TAG);
         mLastJobId = new JobRequest.Builder(NotificationsJob.TAG)
-                .setPeriodic(JobRequest.MIN_INTERVAL)
+                .setPeriodic(TimeUnit.MINUTES.toMillis(16L))
+                //only non periodic
+                //.setBackoffCriteria(JobRequest.DEFAULT_BACKOFF_MS, JobRequest.BackoffPolicy.LINEAR)
                 .setRequiresCharging(false)
                 .setRequiresDeviceIdle(false)
                 .setRequiredNetworkType(JobRequest.NetworkType.ANY)
@@ -410,6 +413,18 @@ public class App extends android.app.Application {
 
     public void notifyQms(TabNotification event) {
         qmsEvents.notifyObservers(event);
+    }
+
+    public void subscribeForbidden(Observer observer) {
+        networkForbidden.addObserver(observer);
+    }
+
+    public void unSubscribeForbidden(Observer observer) {
+        networkForbidden.deleteObserver(observer);
+    }
+
+    public void notifyForbidden(boolean isForbidden) {
+        networkForbidden.notifyObservers(isForbidden);
     }
 
     public void addPreferenceChangeObserver(Observer observer) {

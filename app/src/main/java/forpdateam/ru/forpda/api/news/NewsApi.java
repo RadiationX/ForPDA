@@ -24,7 +24,6 @@ import forpdateam.ru.forpda.api.regex.RegexStorage;
 import forpdateam.ru.forpda.api.regex.parser.Document;
 import forpdateam.ru.forpda.api.regex.parser.Node;
 import forpdateam.ru.forpda.api.regex.parser.Parser;
-import forpdateam.ru.forpda.client.OkHttpResponseException;
 
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_ALL;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_ARTICLES;

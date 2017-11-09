@@ -107,7 +107,7 @@ public class CustomWebViewClient extends WebViewClient {
         return handleUri(request.getUrl());
     }
 
-    private boolean handleUri(Uri uri) {
+    public boolean handleUri(Uri uri) {
         IntentHandler.handle(uri.toString());
         return true;
     }

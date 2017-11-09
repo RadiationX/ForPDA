@@ -59,7 +59,6 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
-import okio.Timeout;
 
 /**
  * Created by radiationx on 31.07.17.
@@ -152,11 +151,14 @@ public class NotificationsService extends Service {
         public void onOpen(WebSocket webSocket, Response response) {
             Log.d(LOG_TAG, "WSListener onOpen: " + response.toString());
             connected = true;
+            webSocket.send("[0,\"sv\"]");
+            webSocket.send("[0, \"ea\", \"u" + ClientHelper.getUserId() + "\"]");
         }
 
         @Override
         public void onMessage(WebSocket webSocket, String text) {
             Log.d(LOG_TAG, "WSListener onMessage: " + text);
+            App.get().notifyForbidden(false);
             if (matcher == null) {
                 matcher = NotificationEvents.webSocketEventPattern.matcher(text);
             } else {
@@ -183,6 +185,14 @@ public class NotificationsService extends Service {
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             Log.d(LOG_TAG, "WSListener onFailure: " + t.getMessage() + " " + response);
+            if (response != null) {
+                Log.d(LOG_TAG, "WSListener onFailure: code=" + response.code());
+                if (response.code() == 403) {
+                    App.get().notifyForbidden(true);
+                }
+            }
+
+
             t.printStackTrace();
             wsHandler.post(() -> stop());
             if (t instanceof SocketTimeoutException || t instanceof TimeoutException) {
@@ -277,12 +287,12 @@ public class NotificationsService extends Service {
     }
 
     private void start(boolean checkEvents) {
+        Log.e(LOG_TAG, "Start: " + ClientHelper.getNetworkState(getApplicationContext()) + " : " + connected + " : " + checkEvents);
         if (ClientHelper.getNetworkState(getApplicationContext())) {
             if (!connected) {
                 webSocket = Client.get().createWebSocketConnection(webSocketListener);
             }
-            webSocket.send("[0,\"sv\"]");
-            webSocket.send("[0, \"ea\", \"u" + ClientHelper.getUserId() + "\"]");
+
             if (checkEvents) {
                 hardHandleEvent(NotificationEvent.Source.THEME);
                 hardHandleEvent(NotificationEvent.Source.QMS);

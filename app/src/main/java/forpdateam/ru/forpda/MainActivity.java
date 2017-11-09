@@ -368,14 +368,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             new AlertDialog.Builder(this)
                     .setMessage(newContext.getString(R.string.lang_changed))
                     .setPositiveButton(newContext.getString(R.string.ok), (dialog, which) -> {
-                        Intent mStartActivity = new Intent(MainActivity.this, MainActivity.class);
-                        int mPendingIntentId = 123456;
-                        PendingIntent mPendingIntent = PendingIntent.getActivity(MainActivity.this, mPendingIntentId, mStartActivity,
-                                PendingIntent.FLAG_CANCEL_CURRENT);
-                        AlarmManager mgr = (AlarmManager) MainActivity.this.getSystemService(Context.ALARM_SERVICE);
-                        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-                        finish();
-                        System.exit(0);
+                        MainActivity.restartApplication(MainActivity.this);
                     })
                     .setNegativeButton(newContext.getString(R.string.cancel), null)
                     .show();
@@ -383,6 +376,17 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         if (currentThemeIsDark != App.get().isDarkTheme()) {
             recreate();
         }
+    }
+
+    public static void restartApplication(Activity activity) {
+        Intent mStartActivity = new Intent(activity, MainActivity.class);
+        int mPendingIntentId = 123456;
+        PendingIntent mPendingIntent = PendingIntent.getActivity(activity, mPendingIntentId, mStartActivity,
+                PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager mgr = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+        activity.finish();
+        System.exit(0);
     }
 
     @Override

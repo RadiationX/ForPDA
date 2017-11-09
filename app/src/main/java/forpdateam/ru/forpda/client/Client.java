@@ -1,8 +1,7 @@
 package forpdateam.ru.forpda.client;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -20,6 +19,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.GoogleCaptchaFragment;
+import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.IWebClient;
 import forpdateam.ru.forpda.api.NetworkRequest;
@@ -67,11 +68,15 @@ public class Client implements IWebClient {
         String pass_hash = App.getPreferences(context).getString("cookie_pass_hash", null);
         String session_id = App.getPreferences(context).getString("cookie_session_id", null);
         String anonymous = App.getPreferences(context).getString("cookie_anonymous", null);
+        String clearance = App.getPreferences(context).getString("cookie_cf_clearance", null);
         ClientHelper.setUserId(App.getPreferences(context).getString("member_id", null));
         //Log.d("FORPDA_LOG", "INIT AUTH DATA " + member_id + " : " + pass_hash + " : " + session_id + " : " + App.get().getPreferences().getString("member_id", null));
 
 
         clientCookies.put("ngx_mb", mobileCookie);
+        if (clearance != null) {
+            clientCookies.put("cf_clearance", parseCookie(clearance));
+        }
         if (member_id != null && pass_hash != null) {
             ClientHelper.setAuthState(ClientHelper.AUTH_STATE_LOGIN);
             //Первичная загрузка кукисов
@@ -127,7 +132,8 @@ public class Client implements IWebClient {
                     boolean isPassHash = cookie.name().equals("pass_hash");
                     boolean isSessionId = cookie.name().equals("session_id");
                     boolean isAnonymous = cookie.name().equals("anonymous");
-                    if (isMemberId || isPassHash || isSessionId || isAnonymous) {
+                    boolean isClearance = cookie.name().equals("cf_clearance");
+                    if (isMemberId || isPassHash || isSessionId || isAnonymous || isClearance) {
                         if (cookie.value().equals("deleted")) {
                             App.get().getPreferences().edit().remove("cookie_".concat(cookie.name())).apply();
                             if (clientCookies.containsKey(cookie.name())) {
@@ -151,6 +157,7 @@ public class Client implements IWebClient {
                     if (cookie.value().equals("deleted")) {
                         clientCookies.remove(cookie.name());
                     } else {
+                        App.get().getPreferences().edit().putString("cookie_".concat(cookie.name()), cookieToPref(url.toString(), cookie)).apply();
                         if (!clientCookies.containsKey(cookie.name())) {
                             clientCookies.remove(cookie.name());
                         }
@@ -275,8 +282,24 @@ public class Client implements IWebClient {
         Response okHttpResponse = null;
         try {
             okHttpResponse = client.newCall(requestBuilder.build()).execute();
-            if (!okHttpResponse.isSuccessful())
+            if (!okHttpResponse.isSuccessful()) {
+                if (okHttpResponse.code() == 403) {
+                    String content = okHttpResponse.body().string();
+                    //forpdateam.ru.forpda.utils.Utils.longLog(content);
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        try {
+                            if (TabManager.get().getTagContainClass(GoogleCaptchaFragment.class) == null) {
+                                Bundle args = new Bundle();
+                                args.putString("content", content);
+                                TabManager.get().add(GoogleCaptchaFragment.class, args);
+                            }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    });
+                }
                 throw new OkHttpResponseException(okHttpResponse.code(), okHttpResponse.message(), request.getUrl());
+            }
 
             response.setCode(okHttpResponse.code());
             response.setMessage(okHttpResponse.message());

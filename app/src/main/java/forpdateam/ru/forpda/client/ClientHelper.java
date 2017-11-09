@@ -7,7 +7,6 @@ import android.util.Log;
 
 import java.util.Observer;
 
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.utils.SimpleObservable;
 
 /**
