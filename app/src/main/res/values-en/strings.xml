@@ -145,6 +145,7 @@
     <string name="fragment_title_reputation">Reputation</string>
     <string name="fragment_title_topics">Forum topics</string>
     <string name="fragment_title_forum_rules">Forum rules</string>
+    <string name="fragment_title_device_search">Device search</string>
     <string name="activity_title_settings">Settings</string>
 
     <string name="fragment_tab_title_article" formatted="false">News \"%s\"</string>

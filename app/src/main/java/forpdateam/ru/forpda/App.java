@@ -348,7 +348,7 @@ public class App extends android.app.Application {
         JobManager.create(this).addJobCreator(new NotificationsJobCreator());
         JobManager.instance().cancelAllForTag(NotificationsJob.TAG);
         mLastJobId = new JobRequest.Builder(NotificationsJob.TAG)
-                .setPeriodic(JobRequest.MIN_INTERVAL, JobRequest.MIN_FLEX)
+                .setPeriodic(JobRequest.MIN_INTERVAL)
                 .setRequiresCharging(false)
                 .setRequiresDeviceIdle(false)
                 .setRequiredNetworkType(JobRequest.NetworkType.ANY)

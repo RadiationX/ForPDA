@@ -40,6 +40,7 @@ import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
 public class MainActivity extends AppCompatActivity implements TabManager.TabListener {
     public final static String LOG_TAG = MainActivity.class.getSimpleName();
     public final static String DEF_TITLE = "ForPDA";
+    public final static String CHECK_WEBVIEW = "CHECK_WEBVIEW";
     private WebViewsProvider webViewsProvider;
     private Drawers drawers;
     private DrawerHeader drawerHeader;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     private final View.OnClickListener removeTabListener = view -> backHandler(true);
     private List<SimpleTooltip> tooltips = new ArrayList<>();
     private boolean currentThemeIsDark = App.get().isDarkTheme();
+    private boolean checkWebView = true;
 
 
     public View.OnClickListener getToggleListener() {
@@ -72,7 +74,11 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             finish();
             return;
         }
-        if (!App.get().isWebViewFound()) {
+        Intent intent = getIntent();
+        if (intent != null) {
+            checkWebView = intent.getBooleanExtra(CHECK_WEBVIEW, checkWebView);
+        }
+        if (checkWebView && !App.get().isWebViewFound()) {
             startActivity(new Intent(this, WebVewNotFoundActivity.class));
             finish();
             return;

@@ -43,4 +43,7 @@ public class DevDbRx {
         return Observable.fromCallable(() -> Api.DevDb().getDevice(devId));
     }
 
+    public Observable<Brand> search(String query) {
+        return Observable.fromCallable(() -> Api.DevDb().search(query));
+    }
 }

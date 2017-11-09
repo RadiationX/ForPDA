@@ -163,6 +163,7 @@
     <string name="fragment_title_reputation">Репутация</string>
     <string name="fragment_title_topics">Темы форума</string>
     <string name="fragment_title_forum_rules">Правила форума</string>
+    <string name="fragment_title_device_search">Поиск устройства</string>
     <string name="activity_title_settings">Настройки</string>
 
     <string name="fragment_tab_title_theme" formatted="false">Тема \"%s\"</string>
