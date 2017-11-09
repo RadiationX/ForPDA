@@ -124,6 +124,7 @@ public class AttachmentsPopup {
             text.append("[/spoiler]");
         messagePanel.insertText(text.toString());
         adapter.unSelectItems();
+        dialog.cancel();
     }
 
     private void onDataChange(int count) {

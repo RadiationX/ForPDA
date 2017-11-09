@@ -117,18 +117,18 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         String key = (String) o;
         switch (key) {
             case Preferences.Theme.SHOW_AVATARS: {
-                updateShowAvatarState(Preferences.Theme.isShowAvatars());
+                updateShowAvatarState(Preferences.Theme.isShowAvatars(getContext()));
                 break;
             }
             case Preferences.Theme.CIRCLE_AVATARS: {
-                updateTypeAvatarState(Preferences.Theme.isCircleAvatars());
+                updateTypeAvatarState(Preferences.Theme.isCircleAvatars(getContext()));
                 break;
             }
             case Preferences.Main.WEBVIEW_FONT_SIZE: {
-                setFontSize(Preferences.Main.getWebViewSize());
+                setFontSize(Preferences.Main.getWebViewSize(getContext()));
             }
             case Preferences.Main.SCROLL_BUTTON_ENABLE: {
-                if (Preferences.Main.isScrollButtonEnable()) {
+                if (Preferences.Main.isScrollButtonEnable(getContext())) {
                     fab.setVisibility(View.VISIBLE);
                 } else {
                     fab.setVisibility(View.GONE);
@@ -247,7 +247,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewsReady();
-        setFontSize(Preferences.Main.getWebViewSize());
+        setFontSize(Preferences.Main.getWebViewSize(getContext()));
 
         notificationButton.setColorFilter(App.getColorFromAttr(getContext(), R.attr.contrast_text_color), PorterDuff.Mode.SRC_ATOP);
         notificationTitle.setText("Новое сообщение");
@@ -305,7 +305,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         });
 
         fab.setSize(FloatingActionButton.SIZE_MINI);
-        if (Preferences.Main.isScrollButtonEnable()) {
+        if (Preferences.Main.isScrollButtonEnable(getContext())) {
             fab.setVisibility(View.VISIBLE);
         } else {
             fab.setVisibility(View.GONE);
@@ -335,7 +335,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             App.get().getPreferences().edit().putBoolean("theme.tooltip.long_click_send", false).apply();
         }
 
-        if (Preferences.Main.isEditorDefaultHidden()) {
+        if (Preferences.Main.isEditorDefaultHidden(getContext())) {
             hideMessagePanel();
         } else {
             showMessagePanel(false);
@@ -810,7 +810,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                     onLoadData(s);
                     messagePanel.clearAttachments();
                     messagePanel.clearMessage();
-                    if (Preferences.Main.isEditorDefaultHidden()) {
+                    if (Preferences.Main.isEditorDefaultHidden(getContext())) {
                         hideMessagePanel();
                     }
                 }

@@ -87,7 +87,7 @@ public class NotificationsService extends Service {
     private WebSocket webSocket;
     private boolean connected = false;
     private long lastHardCheckTime = 0;
-    private long timerPeriod = Preferences.Notifications.Main.getLimit();
+    private long timerPeriod = 10 * 1000;
     private HashMap<NotificationEvent.Source, SparseArray<NotificationEvent>> pendingEvents = new HashMap<>(3);
     private Timer checkTimer;
     private Runnable timerRunnable = () -> {
@@ -120,19 +120,19 @@ public class NotificationsService extends Service {
                 break;
             }
             case Preferences.Notifications.Main.LIMIT: {
-                timerPeriod = Preferences.Notifications.Main.getLimit();
+                timerPeriod = Preferences.Notifications.Main.getLimit(getApplicationContext());
                 Log.d(LOG_TAG, "NEW timer period " + timerPeriod);
                 resetTimer();
                 break;
             }
             case Preferences.Notifications.Favorites.ENABLED: {
-                if (Preferences.Notifications.Favorites.isEnabled()) {
+                if (Preferences.Notifications.Favorites.isEnabled(getApplicationContext())) {
                     hardHandleEvent(NotificationEvent.Source.THEME);
                 }
                 break;
             }
             case Preferences.Notifications.Qms.ENABLED: {
-                if (Preferences.Notifications.Qms.isEnabled()) {
+                if (Preferences.Notifications.Qms.isEnabled(getApplicationContext())) {
                     hardHandleEvent(NotificationEvent.Source.QMS);
                 }
                 break;
@@ -223,8 +223,9 @@ public class NotificationsService extends Service {
     @Override
     public void onCreate() {
         Log.i(LOG_TAG, "onCreate");
-        Client.get().addNetworkObserver(networkObserver);
+        Client.get(getApplicationContext()).addNetworkObserver(networkObserver);
         App.get().addPreferenceChangeObserver(notificationSettingObserver);
+        timerPeriod = Preferences.Notifications.Main.getLimit(getApplicationContext());
     }
 
     @Override
@@ -276,7 +277,7 @@ public class NotificationsService extends Service {
     }
 
     private void start(boolean checkEvents) {
-        if (Client.get().getNetworkState()) {
+        if (ClientHelper.getNetworkState(getApplicationContext())) {
             if (!connected) {
                 webSocket = Client.get().createWebSocketConnection(webSocketListener);
             }
@@ -403,20 +404,20 @@ public class NotificationsService extends Service {
     }
 
     private boolean checkNotify(@Nullable NotificationEvent event, NotificationEvent.Source source) {
-        if (!Preferences.Notifications.Main.isEnabled()) {
+        if (!Preferences.Notifications.Main.isEnabled(getApplicationContext())) {
             return false;
         }
         if (NotificationEvent.fromQms(source)) {
-            if (!Preferences.Notifications.Qms.isEnabled()) {
+            if (!Preferences.Notifications.Qms.isEnabled(getApplicationContext())) {
                 return false;
             }
         } else if (NotificationEvent.fromTheme(source)) {
             if (event != null && event.isMention()) {
-                if (!Preferences.Notifications.Mentions.isEnabled()) {
+                if (!Preferences.Notifications.Mentions.isEnabled(getApplicationContext())) {
                     return false;
                 }
             } else {
-                if (!Preferences.Notifications.Favorites.isEnabled()) {
+                if (!Preferences.Notifications.Favorites.isEnabled(getApplicationContext())) {
                     return false;
                 }
             }
@@ -441,7 +442,7 @@ public class NotificationsService extends Service {
     private void hardHandleEvent(List<NotificationEvent> events, NotificationEvent.Source source) {
         Log.d("SUKA", "hardHandleEvent " + events.size() + " : " + source);
         if (NotificationEvent.fromSite(source)) {
-            if (Preferences.Notifications.Mentions.isEnabled()) {
+            if (Preferences.Notifications.Mentions.isEnabled(getApplicationContext())) {
                 for (NotificationEvent event : events) {
                     sendNotification(event);
                 }
@@ -475,7 +476,7 @@ public class NotificationsService extends Service {
                         notifyTabs(tabNotification);
 
                         sendNotification(newEvent);
-                    } else if (event.isMention() && !Preferences.Notifications.Favorites.isEnabled()) {
+                    } else if (event.isMention() && !Preferences.Notifications.Favorites.isEnabled(getApplicationContext())) {
                         stackedNewEvents.remove(newEvent);
                     }
                 }
@@ -556,7 +557,7 @@ public class NotificationsService extends Service {
             }
         }
 
-        if (NotificationEvent.fromTheme(source) && Preferences.Notifications.Favorites.isOnlyImportant()) {
+        if (NotificationEvent.fromTheme(source) && Preferences.Notifications.Favorites.isOnlyImportant(getApplicationContext())) {
             List<NotificationEvent> toRemove = new ArrayList<>();
             for (NotificationEvent newEvent : newEvents) {
                 boolean remove = false;
@@ -641,13 +642,13 @@ public class NotificationsService extends Service {
         builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         builder.setCategory(NotificationCompat.CATEGORY_SOCIAL);
         int defaults = 0;
-        if (Preferences.Notifications.Main.isSoundEnabled()) {
+        if (Preferences.Notifications.Main.isSoundEnabled(getApplicationContext())) {
             defaults |= NotificationCompat.DEFAULT_SOUND;
         }
-        if (Preferences.Notifications.Main.isVibrationEnabled()) {
+        if (Preferences.Notifications.Main.isVibrationEnabled(getApplicationContext())) {
             defaults |= NotificationCompat.DEFAULT_VIBRATE;
         }
-        if (Preferences.Notifications.Main.isIndicatorEnabled()) {
+        if (Preferences.Notifications.Main.isIndicatorEnabled(getApplicationContext())) {
             defaults |= NotificationCompat.DEFAULT_LIGHTS;
         }
         builder.setDefaults(defaults);
@@ -742,7 +743,7 @@ public class NotificationsService extends Service {
             return;
         }
 
-        if (Preferences.Notifications.Main.isAvatarsEnabled()) {
+        if (Preferences.Notifications.Main.isAvatarsEnabled(getApplicationContext())) {
             Observable.fromCallable(() -> loadAvatar(event))
                     .onErrorReturn(throwable -> ImageLoader.getInstance().loadImageSync("assets://av.png"))
                     .map(bitmap -> {

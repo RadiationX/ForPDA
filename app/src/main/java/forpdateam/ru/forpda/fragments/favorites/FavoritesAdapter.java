@@ -19,7 +19,7 @@ import forpdateam.ru.forpda.views.adapters.BaseSectionedViewHolder;
  */
 
 public class FavoritesAdapter extends BaseSectionedAdapter<IFavItem, BaseSectionedViewHolder> {
-    private boolean showDot = Preferences.Lists.Topic.isShowDot();
+    private boolean showDot = false;
     private int titleColorNew, titleColor;
     private BaseSectionedAdapter.OnItemClickListener<IFavItem> itemClickListener;
 
@@ -38,6 +38,7 @@ public class FavoritesAdapter extends BaseSectionedAdapter<IFavItem, BaseSection
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+        showDot = Preferences.Lists.Topic.isShowDot(recyclerView.getContext());
         titleColor = App.getColorFromAttr(recyclerView.getContext(), R.attr.second_text_color);
         titleColorNew = App.getColorFromAttr(recyclerView.getContext(), R.attr.default_text_color);
     }

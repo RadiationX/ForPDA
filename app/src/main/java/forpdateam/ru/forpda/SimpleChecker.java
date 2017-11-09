@@ -26,7 +26,7 @@ import io.reactivex.schedulers.Schedulers;
 public class SimpleChecker {
     public void checkFromGitHub(Context context) {
         Observable.fromCallable(() -> {
-            NetworkResponse response = Client.get().get(CheckerActivity.JSON_LINK);
+            NetworkResponse response = Client.get(context).get(CheckerActivity.JSON_LINK);
             return response.getBody();
         })
                 .onErrorReturn(throwable -> "")
@@ -99,7 +99,7 @@ public class SimpleChecker {
             /*if (Preferences.Notifications.Main.isSoundEnabled()) {
                 defaults |= NotificationCompat.DEFAULT_SOUND;
             }*/
-            if (Preferences.Notifications.Main.isVibrationEnabled()) {
+            if (Preferences.Notifications.Main.isVibrationEnabled(null)) {
                 defaults |= NotificationCompat.DEFAULT_VIBRATE;
             }
             mBuilder.setDefaults(defaults);

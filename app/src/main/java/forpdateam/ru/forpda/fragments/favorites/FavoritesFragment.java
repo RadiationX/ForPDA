@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.fragments.favorites;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
@@ -67,14 +68,23 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
     private Subscriber<FavData> mainSubscriber = new Subscriber<>(this);
     boolean markedRead = false;
 
-    private boolean unreadTop = Preferences.Lists.Topic.isUnreadTop();
-    private boolean loadAll = Preferences.Lists.Favorites.isLoadAll();
+    private boolean unreadTop = false;
+    private boolean loadAll = false;
+    private PaginationHelper paginationHelper;
+    private int currentSt = 0;
+
+    private BottomSheetDialog dialog;
+    private ViewGroup sortingView;
+    private Spinner keySpinner;
+    private Spinner orderSpinner;
+    private Button sortApply;
+    private Sorting sorting;
     private Observer favoritesPreferenceObserver = (observable, o) -> {
         if (o == null) return;
         String key = (String) o;
         switch (key) {
             case Preferences.Lists.Topic.UNREAD_TOP: {
-                boolean newUnreadTop = Preferences.Lists.Topic.isUnreadTop();
+                boolean newUnreadTop = Preferences.Lists.Topic.isUnreadTop(getContext());
                 if (newUnreadTop != unreadTop) {
                     unreadTop = newUnreadTop;
                     bindView();
@@ -82,7 +92,7 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
                 break;
             }
             case Preferences.Lists.Topic.SHOW_DOT: {
-                boolean newShowDot = Preferences.Lists.Topic.isShowDot();
+                boolean newShowDot = Preferences.Lists.Topic.isShowDot(getContext());
                 if (newShowDot != adapter.isShowDot()) {
                     adapter.setShowDot(newShowDot);
                     adapter.notifyDataSetChanged();
@@ -90,7 +100,7 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
                 break;
             }
             case Preferences.Lists.Favorites.LOAD_ALL: {
-                loadAll = Preferences.Lists.Favorites.isLoadAll();
+                loadAll = Preferences.Lists.Favorites.isLoadAll(getContext());
                 break;
             }
         }
@@ -113,20 +123,19 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        unreadTop = Preferences.Lists.Topic.isUnreadTop(context);
+        loadAll = Preferences.Lists.Favorites.isLoadAll(context);
+        sorting = new Sorting(Preferences.Lists.Favorites.getSortingKey(context), Preferences.Lists.Favorites.getSortingOrder(context));
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         realm = Realm.getDefaultInstance();
     }
 
-    private PaginationHelper paginationHelper;
-    private int currentSt = 0;
-
-    private BottomSheetDialog dialog;
-    private ViewGroup sortingView;
-    private Spinner keySpinner;
-    private Spinner orderSpinner;
-    private Button sortApply;
-    private Sorting sorting = new Sorting(Preferences.Lists.Favorites.getSortingKey(), Preferences.Lists.Favorites.getSortingOrder());
 
     @Nullable
     @Override
@@ -186,8 +195,8 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
                     sorting.setOrder(Sorting.Order.DESC);
                     break;
             }
-            Preferences.Lists.Favorites.setSortingKey(sorting.getKey());
-            Preferences.Lists.Favorites.setSortingOrder(sorting.getOrder());
+            Preferences.Lists.Favorites.setSortingKey(getContext(), sorting.getKey());
+            Preferences.Lists.Favorites.setSortingOrder(getContext(), sorting.getOrder());
             loadData();
             if (dialog != null && dialog.isShowing()) {
                 dialog.dismiss();
@@ -364,13 +373,13 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         }
         adapter.addSection(new Pair<>(getString(R.string.fav_themes), items));
         adapter.notifyDataSetChanged();
-        if (!Client.get().getNetworkState()) {
+        if (!ClientHelper.getNetworkState(getContext())) {
             ClientHelper.get().notifyCountsChanged();
         }
     }
 
     private void handleEvent(TabNotification event) {
-        if (!Preferences.Notifications.Favorites.isLiveTab()) return;
+        if (!Preferences.Notifications.Favorites.isLiveTab(getContext())) return;
         if (event.isWebSocket() && event.getEvent().isNew()) return;
         if (realm.isClosed()) return;
         RealmResults<FavItemBd> results = realm.where(FavItemBd.class).findAll();

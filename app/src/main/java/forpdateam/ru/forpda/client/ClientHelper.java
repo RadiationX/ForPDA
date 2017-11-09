@@ -1,9 +1,13 @@
 package forpdateam.ru.forpda.client;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import java.util.Observer;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.utils.SimpleObservable;
 
 /**
@@ -100,5 +104,14 @@ public class ClientHelper {
 
     public static void setMentionsCount(int mentionsCount) {
         ClientHelper.mentionsCount = mentionsCount;
+    }
+
+    public static boolean getNetworkState(Context context) {
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        assert cm != null;
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 }

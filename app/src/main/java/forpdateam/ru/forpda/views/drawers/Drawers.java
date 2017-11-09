@@ -118,7 +118,7 @@ public class Drawers {
 
         menuListLayoutManager = new LinearLayoutManager(activity);
         tabListLayoutManager = new LinearLayoutManager(activity);
-        tabListLayoutManager.setStackFromEnd(Preferences.Main.isTabsBottom());
+        tabListLayoutManager.setStackFromEnd(Preferences.Main.isTabsBottom(activity));
         menuListView.setLayoutManager(menuListLayoutManager);
         tabListView.setLayoutManager(tabListLayoutManager);
 
@@ -420,6 +420,6 @@ public class Drawers {
     }
 
     private void updateTabGravity() {
-        tabListLayoutManager.setStackFromEnd(Preferences.Main.isTabsBottom());
+        tabListLayoutManager.setStackFromEnd(Preferences.Main.isTabsBottom(activity));
     }
 }

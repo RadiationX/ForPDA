@@ -79,7 +79,7 @@ import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
 public class SearchFragment extends TabFragment implements IPostFunctions, ExtendedWebView.JsLifeCycleListener, SearchAdapter.OnItemClickListener<SearchItem> {
     private final static String LOG_TAG = SearchFragment.class.getSimpleName();
     protected final static String JS_INTERFACE = "ISearch";
-    private boolean scrollButtonEnable = Preferences.Main.isScrollButtonEnable();
+    private boolean scrollButtonEnable = false;
     private ViewGroup searchSettingsView;
     private ViewGroup nickBlock, resourceBlock, resultBlock, sortBlock, sourceBlock;
     private Spinner resourceSpinner, resultSpinner, sortSpinner, sourceSpinner;
@@ -109,18 +109,18 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         String key = (String) o;
         switch (key) {
             case Preferences.Theme.SHOW_AVATARS: {
-                updateShowAvatarState(Preferences.Theme.isShowAvatars());
+                updateShowAvatarState(Preferences.Theme.isShowAvatars(getContext()));
                 break;
             }
             case Preferences.Theme.CIRCLE_AVATARS: {
-                updateTypeAvatarState(Preferences.Theme.isCircleAvatars());
+                updateTypeAvatarState(Preferences.Theme.isCircleAvatars(getContext()));
                 break;
             }
             case Preferences.Main.WEBVIEW_FONT_SIZE: {
-                webView.setRelativeFontSize(Preferences.Main.getWebViewSize());
+                webView.setRelativeFontSize(Preferences.Main.getWebViewSize(getContext()));
             }
             case Preferences.Main.SCROLL_BUTTON_ENABLE: {
-                scrollButtonEnable = Preferences.Main.isScrollButtonEnable();
+                scrollButtonEnable = Preferences.Main.isScrollButtonEnable(getContext());
                 if (scrollButtonEnable) {
                     fab.setVisibility(View.VISIBLE);
                 } else {
@@ -140,6 +140,12 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
     public SearchFragment() {
         configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_search));
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        scrollButtonEnable = Preferences.Main.isScrollButtonEnable(context);
     }
 
     @Override
@@ -238,7 +244,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         webView.addJavascriptInterface(this, ThemeFragmentWeb.JS_INTERFACE);
         webView.addJavascriptInterface(this, JS_INTERFACE);
         webView.addJavascriptInterface(this, JS_POSTS_FUNCTIONS);
-        webView.setRelativeFontSize(Preferences.Main.getWebViewSize());
+        webView.setRelativeFontSize(Preferences.Main.getWebViewSize(getContext()));
 
         fab.setSize(FloatingActionButton.SIZE_MINI);
         if (scrollButtonEnable) {
@@ -676,6 +682,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
     @Override
     public void onPageComplete(final ArrayList<String> actions) {
+        actions.add("window.scrollTo(0, 0);");
     }
 
     @Override

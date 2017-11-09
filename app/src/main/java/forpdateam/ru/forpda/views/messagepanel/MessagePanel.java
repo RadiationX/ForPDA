@@ -46,14 +46,14 @@ public class MessagePanel extends CardView {
     private HeightChangeListener heightChangeListener;
     private boolean fullForm = false;
     private CoordinatorLayout.LayoutParams params;
-    boolean isMonospace = Preferences.Main.isEditorMonospace();
+    boolean isMonospace = true;
 
     protected Observer preferenceObserver = (observable, o) -> {
         if (o == null) return;
         String key = (String) o;
         switch (key) {
             case Preferences.Main.IS_EDITOR_MONOSPACE: {
-                isMonospace = Preferences.Main.isEditorMonospace();
+                isMonospace = Preferences.Main.isEditorMonospace(getContext());
                 messageField.setTypeface(isMonospace ? Typeface.MONOSPACE : Typeface.DEFAULT);
                 break;
             }
@@ -62,6 +62,7 @@ public class MessagePanel extends CardView {
 
     public MessagePanel(Context context, ViewGroup fragmentContainer, ViewGroup targetContainer, boolean fullForm) {
         super(context);
+        isMonospace = Preferences.Main.isEditorMonospace(context);
         this.fragmentContainer = fragmentContainer;
         this.fullForm = fullForm;
         init();
@@ -300,7 +301,7 @@ public class MessagePanel extends CardView {
         return messageField;
     }
 
-    public void showKeyboard(){
+    public void showKeyboard() {
 
     }
 
