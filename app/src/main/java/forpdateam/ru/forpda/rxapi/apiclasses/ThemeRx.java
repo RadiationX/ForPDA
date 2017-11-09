@@ -87,10 +87,10 @@ public class ThemeRx {
             t.setVariableOpt("last_disable", getDisableStr(nextDisabled));
 
             t.setVariableOpt("in_favorite_bool", Boolean.toString(page.isInFavorite()));
-            boolean isEnableAvatars = Preferences.Theme.isShowAvatars();
+            boolean isEnableAvatars = Preferences.Theme.isShowAvatars(null);
             t.setVariableOpt("enable_avatars_bool", Boolean.toString(isEnableAvatars));
             t.setVariableOpt("enable_avatars", isEnableAvatars ? "show_avatar" : "hide_avatar");
-            t.setVariableOpt("avatar_type", Preferences.Theme.isCircleAvatars() ? "circle_avatar" : "square_avatar");
+            t.setVariableOpt("avatar_type", Preferences.Theme.isCircleAvatars(null) ? "circle_avatar" : "square_avatar");
 
 
             int hatPostId = 0;

@@ -88,7 +88,7 @@ public class SettingsFragment extends BasePrefsFragment {
 
                     assert v != null;
                     final SeekBar seekBar = (SeekBar) v.findViewById(R.id.value_seekbar);
-                    seekBar.setProgress(Preferences.Main.getWebViewSize() - 1 - 7);
+                    seekBar.setProgress(Preferences.Main.getWebViewSize(getContext()) - 1 - 7);
                     final TextView textView = (TextView) v.findViewById(R.id.value_textview);
                     textView.setText(Integer.toString(seekBar.getProgress() + 1 + 7));
                     textView.setTextSize(seekBar.getProgress() + 1 + 7);
@@ -112,13 +112,13 @@ public class SettingsFragment extends BasePrefsFragment {
                     AlertDialog dialog = new AlertDialog.Builder(getActivity())
                             .setTitle(R.string.text_size)
                             .setView(v)
-                            .setPositiveButton(R.string.ok, (dialog1, which) -> Preferences.Main.setWebViewSize(seekBar.getProgress() + 1 + 7))
+                            .setPositiveButton(R.string.ok, (dialog1, which) -> Preferences.Main.setWebViewSize(getContext(), seekBar.getProgress() + 1 + 7))
                             .setNegativeButton(R.string.cancel, null)
                             .setNeutralButton(R.string.reset, null)
                             .show();
                     dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(v1 -> {
                         seekBar.setProgress(16 - 1 - 7);
-                        Preferences.Main.setWebViewSize(16);
+                        Preferences.Main.setWebViewSize(getContext(), 16);
                         App.get().getPreferences().edit().putInt(Preferences.Main.WEBVIEW_FONT_SIZE, 16).apply();
                     });
                     return false;

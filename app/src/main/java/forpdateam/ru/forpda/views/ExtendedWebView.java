@@ -108,7 +108,7 @@ public class ExtendedWebView extends NestedGeckoView implements IBase {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
-        setRelativeFontSize(Preferences.Main.getWebViewSize());
+        setRelativeFontSize(Preferences.Main.getWebViewSize(getContext()));
         setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_base));
     }
 

@@ -178,7 +178,7 @@ public class App extends android.app.Application {
     }
 
     public boolean isDarkTheme() {
-        return Preferences.Main.Theme.isDark();
+        return Preferences.Main.Theme.isDark(getContext());
     }
 
     public String getCssStyleType() {
@@ -195,27 +195,8 @@ public class App extends android.app.Application {
         }
     }
 
-    /*@Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        Log.d("KEK", "CHANGE CONFIG " + locale.getLanguage() + " : " + newConfig.locale.getLanguage());
-        Configuration config = getResources().getConfiguration();
-        locale = new Locale(lang);
-        Locale.setDefault(locale);
-        config.locale = locale;
-        getResources().updateConfiguration(config, null);
-    }*/
-
-
     @Override
     protected void attachBaseContext(Context base) {
-        /*String lang = PreferenceManager.getDefaultSharedPreferences(base).getString("language", "default");
-        Log.e("SUKA", "LOAD LENG " + lang);
-        if (lang.equals("default")) {
-            base = LocaleHelper.onAttach(base);
-        } else {
-            base = LocaleHelper.onAttach(base, lang);
-        }*/
         super.attachBaseContext(LocaleHelper.onAttach(base));
     }
 
@@ -306,7 +287,7 @@ public class App extends android.app.Application {
                 .migration(new DbMigration())
                 .build();
         Realm.setDefaultConfiguration(configuration);
-        Client.get();
+        Client.get(getContext());
 
 
         getPreferences().registerOnSharedPreferenceChangeListener(preferenceChangeListener);
@@ -536,7 +517,7 @@ public class App extends android.app.Application {
     private static DisplayImageOptions.Builder options = new DisplayImageOptions.Builder()
             .cacheInMemory(true)
             .resetViewBeforeLoading(true)
-            .cacheOnDisc(true)
+            .cacheOnDisk(true)
             .bitmapConfig(Bitmap.Config.ARGB_8888)
             .handler(new Handler())
             .displayer(new FadeInBitmapDisplayer(500, true, true, false));
@@ -576,7 +557,7 @@ public class App extends android.app.Application {
                 .threadPriority(Thread.MIN_PRIORITY)
                 .denyCacheImageMultipleSizesInMemory()
                 .memoryCache(new UsingFreqLimitedMemoryCache(5 * 1024 * 1024)) // 5 Mb
-                .discCacheFileNameGenerator(new HashCodeFileNameGenerator())
+                .diskCacheFileNameGenerator(new HashCodeFileNameGenerator())
                 .defaultDisplayImageOptions(options.build())
                 .build();
 
@@ -588,6 +569,13 @@ public class App extends android.app.Application {
         if (preferences == null)
             preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         return preferences;
+    }
+
+    public static SharedPreferences getPreferences(Context context) {
+        if (context == null) {
+            return App.get().getPreferences();
+        }
+        return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
 

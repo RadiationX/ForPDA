@@ -312,10 +312,14 @@ public class IntentHandler {
                     return true;
                 case "announce":
                     run("announce");
-                    int id = Integer.parseInt(uri.getQueryParameter("st"));
-                    int forumId = Integer.parseInt(uri.getQueryParameter("f"));
-                    args.putInt(AnnounceFragment.ARG_ANNOUNCE_ID, id);
-                    args.putInt(AnnounceFragment.ARG_FORUM_ID, forumId);
+                    String id = uri.getQueryParameter("st");
+                    if (id != null) {
+                        args.putInt(AnnounceFragment.ARG_ANNOUNCE_ID, Integer.parseInt(id));
+                    }
+                    String forumId = uri.getQueryParameter("f");
+                    if (forumId != null) {
+                        args.putInt(AnnounceFragment.ARG_FORUM_ID, Integer.parseInt(forumId));
+                    }
                     TabManager.get().add(AnnounceFragment.class, args);
                     return true;
                 case "search":
@@ -414,7 +418,7 @@ public class IntentHandler {
                         return;
                     }
                     Activity activity = App.getActivity();
-                    if (!Preferences.Main.isSystemDownloader() || activity == null) {
+                    if (!Preferences.Main.isSystemDownloader(null) || activity == null) {
                         externalDownloader(response.getRedirect());
                     } else {
                         Runnable checkAction = () -> {

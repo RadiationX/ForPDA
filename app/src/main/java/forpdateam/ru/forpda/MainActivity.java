@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         viewDiff.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> measureView(v));
         //viewDiff.post(() -> measureView(viewDiff));
 
-        if (Preferences.Notifications.Update.isEnabled()) {
+        if (Preferences.Notifications.Update.isEnabled(getApplicationContext())) {
             new SimpleChecker().checkFromGitHub(this);
         }
         checkIntent(getIntent());
@@ -294,20 +294,21 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
     }
 
     public void hideKeyboard() {
-        if (MainActivity.this.getCurrentFocus() != null)
-            ((InputMethodManager) MainActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE))
-                    .hideSoftInputFromWindow(MainActivity.this.getCurrentFocus().getWindowToken(), 0);
+        if (getCurrentFocus() != null) {
+            InputMethodManager iim = ((InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE));
+            if (iim != null) {
+                iim.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            }
+        }
     }
 
     public void showKeyboard(View view) {
-        if (MainActivity.this.getCurrentFocus() != null) {
-            InputMethodManager iim = ((InputMethodManager) MainActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE));
+        if (getCurrentFocus() != null) {
+            InputMethodManager iim = ((InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE));
             if (iim != null) {
-                iim.showSoftInput(view, InputMethodManager.SHOW_FORCED);
-
+                iim.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
             }
         }
-
     }
 
     public void backHandler(boolean fromToolbar) {

@@ -45,27 +45,29 @@ import okio.Okio;
 import okio.Sink;
 
 public class Client implements IWebClient {
-    public static final String USER_AGENT = "Mozilla/5.0 (Linux; Android 4.4; Nexus 5 Build/_BuildID_) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36";
-    //    private final static String userAgent = WebSettings.getDefaultUserAgent(App.getContext());
     private final static String LOG_TAG = Client.class.getSimpleName();
+    private static final String USER_AGENT = "Mozilla/5.0 (Linux; Android 4.4; Nexus 5 Build/_BuildID_) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36";
     private final static Pattern countsPattern = Pattern.compile("<a href=\"(?:https?)?\\/\\/4pda\\.ru\\/forum\\/index\\.php\\?act=mentions[^>]*?><i[^>]*?>(\\d+)<\\/i>[\\s\\S]*?act=fav[^>]*?><i[^>]*?>(\\d+)<\\/i>[\\s\\S]*?act=qms[^>]*?data-count=\"(\\d+)\">");
     private final static Pattern errorPattern = Pattern.compile("^[\\s\\S]*?wr va-m text\">([\\s\\S]*?)</div></div></div></div><div class=\"footer\">");
     private static Client INSTANCE = null;
     private Map<String, Cookie> clientCookies = new HashMap<>();
     private SimpleObservable networkObservables = new SimpleObservable();
     private Handler observerHandler = new Handler(Looper.getMainLooper());
-    private String tempGroup;
-    private ArrayList<String> privateHeaders = new ArrayList<>(Arrays.asList("pass_hash", "session_id", "auth_key", "password"));
+    private List<String> privateHeaders = new ArrayList<>(Arrays.asList("pass_hash", "session_id", "auth_key", "password"));
     private final Cookie mobileCookie = Cookie.parse(HttpUrl.parse("https://4pda.ru/"), "ngx_mb=1;");
 
-    //Class
-    public Client() {
+    //Контекст нужен, для чтения настроек
+    //Не необходимо, но вдруг случится шо у App не будет контекста
+    public Client(Context context) {
+        if (context == null) {
+            context = App.getContext();
+        }
         Api.setWebClient(this);
-        String member_id = App.get().getPreferences().getString("cookie_member_id", null);
-        String pass_hash = App.get().getPreferences().getString("cookie_pass_hash", null);
-        String session_id = App.get().getPreferences().getString("cookie_session_id", null);
-        String anonymous = App.get().getPreferences().getString("cookie_anonymous", null);
-        ClientHelper.setUserId(App.get().getPreferences().getString("member_id", null));
+        String member_id = App.getPreferences(context).getString("cookie_member_id", null);
+        String pass_hash = App.getPreferences(context).getString("cookie_pass_hash", null);
+        String session_id = App.getPreferences(context).getString("cookie_session_id", null);
+        String anonymous = App.getPreferences(context).getString("cookie_anonymous", null);
+        ClientHelper.setUserId(App.getPreferences(context).getString("member_id", null));
         //Log.d("FORPDA_LOG", "INIT AUTH DATA " + member_id + " : " + pass_hash + " : " + session_id + " : " + App.get().getPreferences().getString("member_id", null));
 
 
@@ -88,7 +90,11 @@ public class Client implements IWebClient {
     }
 
     public static Client get() {
-        if (INSTANCE == null) INSTANCE = new Client();
+        return get(App.getContext());
+    }
+
+    public static Client get(Context context) {
+        if (INSTANCE == null) INSTANCE = new Client(context);
         return INSTANCE;
     }
 
@@ -309,6 +315,7 @@ public class Client implements IWebClient {
 
         if (countsMatcher.find()) {
             try {
+                String tempGroup;
                 tempGroup = countsMatcher.group(1);
                 ClientHelper.setMentionsCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
 
@@ -338,15 +345,6 @@ public class Client implements IWebClient {
 
     void notifyNetworkObservers(Boolean b) {
         networkObservables.notifyObservers(b);
-    }
-
-    public boolean getNetworkState() {
-        ConnectivityManager cm =
-                (ConnectivityManager) App.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        assert cm != null;
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
     public class ProgressRequestBody extends RequestBody {

@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.fragments;
 
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -86,10 +87,10 @@ public class TabFragment extends Fragment {
     protected Spinner toolbarSpinner;
     protected View view, notifyDot;
     protected FloatingActionButton fab;
-    private boolean showNotifyDot = Preferences.Main.isShowNotifyDot();
-    private boolean notifyDotFav = Preferences.Main.isShowNotifyDotFav();
-    private boolean notifyDotQms = Preferences.Main.isShowNotifyDotQms();
-    private boolean notifyDotMentions = Preferences.Main.isShowNotifyDotMentions();
+    private boolean showNotifyDot = false;
+    private boolean notifyDotFav = false;
+    private boolean notifyDotQms = false;
+    private boolean notifyDotMentions = false;
     private boolean alreadyCallLoad = false;
     protected ContentController contentController;
 
@@ -110,22 +111,22 @@ public class TabFragment extends Fragment {
         String key = (String) o;
         switch (key) {
             case Preferences.Main.SHOW_NOTIFY_DOT: {
-                showNotifyDot = Preferences.Main.isShowNotifyDot();
+                showNotifyDot = Preferences.Main.isShowNotifyDot(getContext());
                 updateNotifyDot();
                 break;
             }
             case Preferences.Main.NOTIFY_DOT_FAV: {
-                notifyDotFav = Preferences.Main.isShowNotifyDotFav();
+                notifyDotFav = Preferences.Main.isShowNotifyDotFav(getContext());
                 updateNotifyDot();
                 break;
             }
             case Preferences.Main.NOTIFY_DOT_QMS: {
-                notifyDotQms = Preferences.Main.isShowNotifyDotQms();
+                notifyDotQms = Preferences.Main.isShowNotifyDotQms(getContext());
                 updateNotifyDot();
                 break;
             }
             case Preferences.Main.NOTIFY_DOT_MENTIONS: {
-                notifyDotMentions = Preferences.Main.isShowNotifyDotMentions();
+                notifyDotMentions = Preferences.Main.isShowNotifyDotMentions(getContext());
                 updateNotifyDot();
                 break;
             }
@@ -225,7 +226,7 @@ public class TabFragment extends Fragment {
     //Загрузка каких-то данных, выполняется только при наличии сети
     @CallSuper
     public boolean loadData() {
-        if (!Client.get().getNetworkState()) {
+        if (!ClientHelper.getNetworkState(getContext())) {
             setRefreshing(false);
             return false;
         }
@@ -242,6 +243,14 @@ public class TabFragment extends Fragment {
         return coordinatorLayout;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        showNotifyDot = Preferences.Main.isShowNotifyDot(context);
+        notifyDotFav = Preferences.Main.isShowNotifyDotFav(context);
+        notifyDotQms = Preferences.Main.isShowNotifyDotQms(context);
+        notifyDotMentions = Preferences.Main.isShowNotifyDotMentions(context);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -314,7 +323,7 @@ public class TabFragment extends Fragment {
             findViewById(R.id.toolbar_shadow_prelp).setVisibility(View.VISIBLE);
         }
 
-        if (!Client.get().getNetworkState()) {
+        if (!ClientHelper.getNetworkState(getContext())) {
             if (!configuration.isUseCache())
                 noNetwork.setVisibility(View.VISIBLE);
             Snackbar.make(getCoordinatorLayout(), "No network connection", Snackbar.LENGTH_LONG).show();
@@ -354,7 +363,7 @@ public class TabFragment extends Fragment {
 
     protected void viewsReady() {
         addBaseToolbarMenu();
-        if (Client.get().getNetworkState() && !configuration.isUseCache()) {
+        if (ClientHelper.getNetworkState(getContext()) && !configuration.isUseCache()) {
             if (!alreadyCallLoad)
                 loadData();
         } else {

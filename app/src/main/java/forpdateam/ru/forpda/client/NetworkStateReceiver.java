@@ -77,7 +77,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
         mConnectionType = newConnectionType;
         Log.d(TAG, "Network connectivity changed, type is: " + mConnectionType);
 
-        Client.get().notifyNetworkObservers(mConnectionType == NetworkInfo.State.CONNECTED);
+        Client.get(context).notifyNetworkObservers(mConnectionType == NetworkInfo.State.CONNECTED);
     }
 
     private static class ConnectivityManagerDelegate {

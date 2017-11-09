@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.settings;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import forpdateam.ru.forpda.App;
@@ -9,8 +10,8 @@ import forpdateam.ru.forpda.App;
  */
 
 public class Preferences {
-    private static SharedPreferences preferences() {
-        return App.get().getPreferences();
+    private static SharedPreferences preferences(Context context) {
+        return App.getPreferences(context);
     }
 
     public final static class Main {
@@ -27,59 +28,59 @@ public class Preferences {
         public final static String IS_EDITOR_DEFAULT_HIDDEN = "message_panel.is_default_hidden";
         public final static String SCROLL_BUTTON_ENABLE = PREFIX + "scroll_button.enable";
 
-        public static boolean isShowNotifyDot() {
-            return preferences().getBoolean(SHOW_NOTIFY_DOT, true);
+        public static boolean isShowNotifyDot(Context context) {
+            return preferences(context).getBoolean(SHOW_NOTIFY_DOT, true);
         }
 
-        public static boolean isShowNotifyDotFav() {
-            return preferences().getBoolean(NOTIFY_DOT_FAV, true);
+        public static boolean isShowNotifyDotFav(Context context) {
+            return preferences(context).getBoolean(NOTIFY_DOT_FAV, true);
         }
 
-        public static boolean isShowNotifyDotQms() {
-            return preferences().getBoolean(NOTIFY_DOT_QMS, true);
+        public static boolean isShowNotifyDotQms(Context context) {
+            return preferences(context).getBoolean(NOTIFY_DOT_QMS, true);
         }
 
-        public static boolean isShowNotifyDotMentions() {
-            return preferences().getBoolean(NOTIFY_DOT_MENTIONS, true);
+        public static boolean isShowNotifyDotMentions(Context context) {
+            return preferences(context).getBoolean(NOTIFY_DOT_MENTIONS, true);
         }
 
-        public static boolean isSystemDownloader() {
-            return preferences().getBoolean(IS_SYSTEM_DOWNLOADER, true);
+        public static boolean isSystemDownloader(Context context) {
+            return preferences(context).getBoolean(IS_SYSTEM_DOWNLOADER, true);
         }
 
-        public static boolean isTabsBottom() {
-            return preferences().getBoolean(IS_TABS_BOTTOM, false);
+        public static boolean isTabsBottom(Context context) {
+            return preferences(context).getBoolean(IS_TABS_BOTTOM, false);
         }
 
-        public static boolean isEditorMonospace() {
-            return preferences().getBoolean(IS_EDITOR_MONOSPACE, true);
+        public static boolean isEditorMonospace(Context context) {
+            return preferences(context).getBoolean(IS_EDITOR_MONOSPACE, true);
         }
 
-        public static boolean isEditorDefaultHidden() {
-            return preferences().getBoolean(IS_EDITOR_DEFAULT_HIDDEN, true);
+        public static boolean isEditorDefaultHidden(Context context) {
+            return preferences(context).getBoolean(IS_EDITOR_DEFAULT_HIDDEN, true);
         }
 
-        public static boolean isScrollButtonEnable() {
-            return preferences().getBoolean(SCROLL_BUTTON_ENABLE, false);
+        public static boolean isScrollButtonEnable(Context context) {
+            return preferences(context).getBoolean(SCROLL_BUTTON_ENABLE, false);
         }
 
-        public static int getWebViewSize() {
-            int size = App.get().getPreferences().getInt(Preferences.Main.WEBVIEW_FONT_SIZE, 16);
+        public static int getWebViewSize(Context context) {
+            int size = preferences(context).getInt(Preferences.Main.WEBVIEW_FONT_SIZE, 16);
             size = Math.max(Math.min(size, 64), 8);
             return size;
         }
 
-        public static void setWebViewSize(int size) {
+        public static void setWebViewSize(Context context, int size) {
             size = Math.max(Math.min(size, 64), 8);
-            preferences().edit().putInt(Preferences.Main.WEBVIEW_FONT_SIZE, size).apply();
+            preferences(context).edit().putInt(Preferences.Main.WEBVIEW_FONT_SIZE, size).apply();
         }
 
         public final static class Theme {
             private final static String PREFIX = Main.PREFIX + "theme.";
             public final static String IS_DARK = PREFIX + "is_dark";
 
-            public static boolean isDark() {
-                return preferences().getBoolean(IS_DARK, false);
+            public static boolean isDark(Context context) {
+                return preferences(context).getBoolean(IS_DARK, false);
             }
         }
     }
@@ -92,12 +93,12 @@ public class Preferences {
             public final static String UNREAD_TOP = PREFIX + "unread_top";
             public final static String SHOW_DOT = PREFIX + "show_dot";
 
-            public static boolean isUnreadTop() {
-                return preferences().getBoolean(UNREAD_TOP, false);
+            public static boolean isUnreadTop(Context context) {
+                return preferences(context).getBoolean(UNREAD_TOP, false);
             }
 
-            public static boolean isShowDot() {
-                return preferences().getBoolean(SHOW_DOT, false);
+            public static boolean isShowDot(Context context) {
+                return preferences(context).getBoolean(SHOW_DOT, false);
             }
         }
 
@@ -107,24 +108,24 @@ public class Preferences {
             public final static String SORTING_KEY = PREFIX + "sorting_key";
             public final static String SORTING_ORDER = PREFIX + "sorting_order";
 
-            public static boolean isLoadAll() {
-                return preferences().getBoolean(LOAD_ALL, false);
+            public static boolean isLoadAll(Context context) {
+                return preferences(context).getBoolean(LOAD_ALL, false);
             }
 
-            public static String getSortingKey() {
-                return preferences().getString(SORTING_KEY, "");
+            public static String getSortingKey(Context context) {
+                return preferences(context).getString(SORTING_KEY, "");
             }
 
-            public static String getSortingOrder() {
-                return preferences().getString(SORTING_ORDER, "");
+            public static String getSortingOrder(Context context) {
+                return preferences(context).getString(SORTING_ORDER, "");
             }
 
-            public static void setSortingKey(String key) {
-                preferences().edit().putString(SORTING_KEY, key).apply();
+            public static void setSortingKey(Context context, String key) {
+                preferences(context).edit().putString(SORTING_KEY, key).apply();
             }
 
-            public static void setSortingOrder(String order) {
-                preferences().edit().putString(SORTING_ORDER, order).apply();
+            public static void setSortingOrder(Context context, String order) {
+                preferences(context).edit().putString(SORTING_ORDER, order).apply();
             }
         }
     }
@@ -134,12 +135,12 @@ public class Preferences {
         public final static String SHOW_AVATARS = PREFIX + "show_avatars";
         public final static String CIRCLE_AVATARS = PREFIX + "circle_avatars";
 
-        public static boolean isShowAvatars() {
-            return preferences().getBoolean(SHOW_AVATARS, true);
+        public static boolean isShowAvatars(Context context) {
+            return preferences(context).getBoolean(SHOW_AVATARS, true);
         }
 
-        public static boolean isCircleAvatars() {
-            return preferences().getBoolean(CIRCLE_AVATARS, true);
+        public static boolean isCircleAvatars(Context context) {
+            return preferences(context).getBoolean(CIRCLE_AVATARS, true);
         }
     }
 
@@ -163,28 +164,28 @@ public class Preferences {
             public final static String AVATARS_ENABLED = PREFIX + "avatars_enabled";
             public final static String LIMIT = PREFIX + "limit_period";
 
-            public static boolean isEnabled() {
-                return preferences().getBoolean(ENABLED, true);
+            public static boolean isEnabled(Context context) {
+                return preferences(context).getBoolean(ENABLED, true);
             }
 
-            public static boolean isSoundEnabled() {
-                return preferences().getBoolean(SOUND_ENABLED, true);
+            public static boolean isSoundEnabled(Context context) {
+                return preferences(context).getBoolean(SOUND_ENABLED, true);
             }
 
-            public static boolean isVibrationEnabled() {
-                return preferences().getBoolean(VIBRATION_ENABLED, true);
+            public static boolean isVibrationEnabled(Context context) {
+                return preferences(context).getBoolean(VIBRATION_ENABLED, true);
             }
 
-            public static boolean isIndicatorEnabled() {
-                return preferences().getBoolean(INDICATOR_ENABLED, true);
+            public static boolean isIndicatorEnabled(Context context) {
+                return preferences(context).getBoolean(INDICATOR_ENABLED, true);
             }
 
-            public static boolean isAvatarsEnabled() {
-                return preferences().getBoolean(AVATARS_ENABLED, true);
+            public static boolean isAvatarsEnabled(Context context) {
+                return preferences(context).getBoolean(AVATARS_ENABLED, true);
             }
 
-            public static long getLimit() {
-                return Integer.parseInt(preferences().getString(LIMIT, "10")) * 1000;
+            public static long getLimit(Context context) {
+                return Integer.parseInt(preferences(context).getString(LIMIT, "10")) * 1000;
             }
         }
 
@@ -194,16 +195,16 @@ public class Preferences {
             public final static String ONLY_IMPORTANT = PREFIX + "only_important";
             public final static String LIVE_TAB = PREFIX + "live_tab";
 
-            public static boolean isEnabled() {
-                return preferences().getBoolean(ENABLED, true);
+            public static boolean isEnabled(Context context) {
+                return preferences(context).getBoolean(ENABLED, true);
             }
 
-            public static boolean isOnlyImportant() {
-                return preferences().getBoolean(ONLY_IMPORTANT, false);
+            public static boolean isOnlyImportant(Context context) {
+                return preferences(context).getBoolean(ONLY_IMPORTANT, false);
             }
 
-            public static boolean isLiveTab() {
-                return preferences().getBoolean(LIVE_TAB, true);
+            public static boolean isLiveTab(Context context) {
+                return preferences(context).getBoolean(LIVE_TAB, true);
             }
         }
 
@@ -211,8 +212,8 @@ public class Preferences {
             private final static String PREFIX = Notifications.PREFIX + "qms.";
             public final static String ENABLED = PREFIX + "enabled";
 
-            public static boolean isEnabled() {
-                return preferences().getBoolean(ENABLED, true);
+            public static boolean isEnabled(Context context) {
+                return preferences(context).getBoolean(ENABLED, true);
             }
         }
 
@@ -220,8 +221,8 @@ public class Preferences {
             private final static String PREFIX = Notifications.PREFIX + "mentions.";
             public final static String ENABLED = PREFIX + "enabled";
 
-            public static boolean isEnabled() {
-                return preferences().getBoolean(ENABLED, true);
+            public static boolean isEnabled(Context context) {
+                return preferences(context).getBoolean(ENABLED, true);
             }
         }
 
@@ -229,8 +230,8 @@ public class Preferences {
             private final static String PREFIX = Notifications.PREFIX + "update.";
             public final static String ENABLED = PREFIX + "enabled";
 
-            public static boolean isEnabled() {
-                return preferences().getBoolean(ENABLED, true);
+            public static boolean isEnabled(Context context) {
+                return preferences(context).getBoolean(ENABLED, true);
             }
         }
     }
