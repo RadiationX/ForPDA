@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Pair;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -90,6 +91,18 @@ public class BrandsFragment extends RecyclerFragment implements BrandsAdapter.On
         });
 
         adapter.setOnItemClickListener(this);
+    }
+
+    @Override
+    protected void addBaseToolbarMenu() {
+        super.addBaseToolbarMenu();
+        getMenu().add(R.string.fragment_title_device_search)
+                .setIcon(R.drawable.ic_toolbar_search)
+                .setOnMenuItemClickListener(item -> {
+                    TabManager.get().add(SearchFragment.class);
+                    return false;
+                })
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
     }
 
     @Override
