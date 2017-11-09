@@ -8,7 +8,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +44,7 @@ public class Drawers {
 
     private NavigationView menuDrawer;
     private RecyclerView menuListView;
+    private TextView forbiddenError;
     private LinearLayoutManager menuListLayoutManager;
     private MenuAdapter menuAdapter;
     private MenuItems allMenuItems = new MenuItems();
@@ -104,6 +107,16 @@ public class Drawers {
     private Observer statusBarSizeObserver = (observable1, o) -> {
         setStatusBarHeight(App.getStatusBarHeight());
     };
+    private Observer forbiddenObserver = (o, arg) -> {
+        if (activity == null)
+            return;
+        activity.runOnUiThread(() -> {
+            if (forbiddenError != null) {
+                boolean isForbidden = (boolean) arg;
+                forbiddenError.setVisibility(isForbidden ? View.VISIBLE : View.GONE);
+            }
+        });
+    };
 
     public Drawers(MainActivity activity, DrawerLayout drawerLayout) {
         this.activity = activity;
@@ -114,6 +127,7 @@ public class Drawers {
         menuListView = (RecyclerView) activity.findViewById(R.id.menu_list);
         tabListView = (RecyclerView) activity.findViewById(R.id.tab_list);
 
+        forbiddenError = (TextView) activity.findViewById(R.id.forbidden_error);
         tabCloseAllButton = (Button) activity.findViewById(R.id.tab_close_all);
 
         menuListLayoutManager = new LinearLayoutManager(activity);
@@ -135,6 +149,7 @@ public class Drawers {
         tabCloseAllButton.setOnClickListener(v -> closeAllTabs());
         App.get().addPreferenceChangeObserver(preferenceObserver);
         App.get().addStatusBarSizeObserver(statusBarSizeObserver);
+        App.get().subscribeForbidden(forbiddenObserver);
     }
 
     public NavigationView getMenuDrawer() {
@@ -198,6 +213,7 @@ public class Drawers {
     public void destroy() {
         App.get().removePreferenceChangeObserver(preferenceObserver);
         App.get().removeStatusBarSizeObserver(statusBarSizeObserver);
+        App.get().subscribeForbidden(forbiddenObserver);
         ClientHelper.get().removeLoginObserver(loginObserver);
         ClientHelper.get().removeCountsObserver(countsObserver);
         //menuAdapter.clear();

@@ -229,7 +229,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
         }
 
 
-        private boolean handleUri(Uri uri) {
+        public boolean handleUri(Uri uri) {
             Log.d(LOG_TAG, "handle " + uri);
             if (checkIsPoll(uri.toString())) return true;
             if (uri.getHost() != null && uri.getHost().matches("4pda.ru")) {
