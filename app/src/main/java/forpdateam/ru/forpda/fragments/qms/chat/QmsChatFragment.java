@@ -65,7 +65,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     public final static String USER_AVATAR_ARG = "USER_AVATAR_ARG";
     public final static String THEME_ID_ARG = "THEME_ID_ARG";
     public final static String THEME_TITLE_ARG = "THEME_TITLE_ARG";
-    private final static Pattern attachmentPattern = Pattern.compile("\\[url=https?:\\/\\/savepic\\.net\\/(\\d+)\\.[^\\]]*?\\]");
+    private final static Pattern attachmentPattern = Pattern.compile("\\[url=(https:\\/\\/.*?\\.ibb\\.co[^\\]]*?)\\]");
 
     private MenuItem blackListMenuItem;
     private MenuItem noteMenuItem;
@@ -155,13 +155,15 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
             }
             attachmentsPopup.onDeleteFiles(selectedFiles);
         });
+
+
         attachmentsPopup.setInsertAttachmentListener(item -> String.format(Locale.getDefault(),
-                "\n[url=http://savepic.net/%d.%s]Файл: %s, Размер: %s, ID: %d[/url]\n",
-                item.getId(),
-                item.getExtension(),
+                "\n[url=%s]Файл: %s, Размер: %s, Thumb: %s[/url]\n",
+                item.getUrl(),
                 item.getName(),
                 item.getWeight(),
-                item.getId()));
+                item.getImageUrl()));
+
         messagePanel.addSendOnClickListener(v -> {
             if (currentChat.getThemeId() == QmsChatModel.NOT_CREATED) {
                 themeCreator.sendNewTheme();
@@ -169,7 +171,6 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
                 sendMessage();
             }
         });
-
 
 
         messagePanel.setHeightChangeListener(newHeight -> {
@@ -193,14 +194,13 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     private void addUnusedAttachments() {
         try {
             Matcher matcher = attachmentPattern.matcher(messagePanel.getMessage());
-            ArrayList<Integer> attachmentsIds = new ArrayList<>();
+            ArrayList<String> attachmentsUrls = new ArrayList<>();
             while (matcher.find()) {
-                int id = Integer.parseInt(matcher.group(1));
-                attachmentsIds.add(id);
+                attachmentsUrls.add(matcher.group(1));
             }
             ArrayList<AttachmentItem> notAttached = new ArrayList<>();
             for (AttachmentItem item : attachmentsPopup.getAttachments()) {
-                if (!attachmentsIds.contains(item.getId())) {
+                if (!attachmentsUrls.contains(item.getUrl())) {
                     notAttached.add(item);
                 }
             }

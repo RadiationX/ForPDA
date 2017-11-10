@@ -15,7 +15,7 @@ var lastMessRequestTS = new Date().getTime();
 
 window.addEventListener("scroll", function (e) {
     var date = new Date();
-    if (window.pageYOffset && (date.getTime() - lastMessRequestTS >= 500)) {
+    if (window.pageYOffset == 0 /*|| window.pageYOffset <= 48*/ && (date.getTime() - lastMessRequestTS >= 500)) {
         lastMessRequestTS = date.getTime();
         IChat.showMoreMess();
     }
@@ -61,26 +61,29 @@ var listElem = document.querySelector(".mess_list");
         unreaded[i].classList.remove("unread");
     }
 }
-const savepicPattern = /https?:\/\/savepic\.net\/(\d+)\.(.*)/g;
+const savepicPattern = /Thumb:\s?([\s\S]*)/g;
 
 function transformQmsAttachments() {
-    var links = document.querySelectorAll("a[href*='savepic.net']");
+    var links = document.querySelectorAll("a[href*='image.ibb.co']");
     for (var i = 0; i < links.length; i++) {
         var link = links[i];
-        var alt = link.textContent;
-        var id = 0;
-        var extension;
-        var match
-        while (match = savepicPattern.exec(link.href)) {
-            id = match[1];
-            extension = match[2];
+        if(link.classList.contains("transformed")){
+            continue;
         }
-        link.innerHTML = "<img src=\"http://savepic.net/" + id + "m." + extension + "\" alt=\"" + alt + "\">";
+        var alt = link.textContent;
+        var match
+        var previewImg;
+        while (match = savepicPattern.exec(link.textContent)) {
+            previewImg = match[1];
+        }
+        link.innerHTML = "<img src=\""+previewImg+"\" alt=\"" + alt + "\" class=\"attach\">";
+        link.classList.add("transformed");
     }
 }
 
 function addedNewMessages() {
     transformQmsAttachments();
+    //fixImagesSizeWithDensity();
     transformSnapbacks();
     transformQuotes();
 
@@ -93,3 +96,4 @@ function addedNewMessages() {
 
 nativeEvents.addEventListener(nativeEvents.DOM, initQms);
 nativeEvents.addEventListener(nativeEvents.PAGE, scrollQms);
+nativeEvents.addEventListener(nativeEvents.PAGE, fixImagesSizeWithDensity, true);

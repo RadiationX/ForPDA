@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.api.qms;
 
+import org.json.JSONObject;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -321,62 +323,52 @@ public class Qms {
         return Api.getWebClient().request(builder.build()).getBody();
     }
 
-    public List<AttachmentItem> uploadFiles(List<RequestFile> files, List<AttachmentItem> pending) throws Exception {
-        String url = "http://savepic.net/index.php";
+    private Pattern imgBbPattern = Pattern.compile("PF\\.obj\\.config\\.json_api=\"([^\"]*?)\"[\\s\\S]*?PF\\.obj\\.config\\.auth_token=\"([^\"]*?)\"");
 
-        NetworkResponse response;
-        Matcher matcher = null;
+    public List<AttachmentItem> uploadFiles(List<RequestFile> files, List<AttachmentItem> pending) throws Exception {
+        String baseUrl = "https://ru.imgbb.com/";
+        String uploadUrl = "https://ru.imgbb.com/json";
+        String authToken = "null";
+
+        NetworkResponse baseResponse = Api.getWebClient().get(baseUrl);
+        Matcher baseMatcher = imgBbPattern.matcher(baseResponse.getBody());
+        if (baseMatcher.find()) {
+            uploadUrl = baseMatcher.group(1);
+            authToken = baseMatcher.group(2);
+        }
+
 
         HashMap<String, String> headers = new HashMap<>();
-        //headers.put("file","");
-        headers.put("note", "");
-        //decor, techno, strong, italic, neutral
-        headers.put("font1", "decor");
-        //14, 16, 18, 20, 22, 24, 26, 28
-        headers.put("font2", "20");
-        //h, v
-        headers.put("orient", "h");
-        //1, 2, 3, 4, x - коэфф уменьшения
-        headers.put("size1", "1");
-        //при size1=x, разрешение
-        headers.put("size2", "1024x768");
-        //90, 270, 180
-        headers.put("rotate", "00");
-        //vr, hr, 0
-        headers.put("flip", "0");
-        //200x150, 300x225, 400x300
-        headers.put("mini", "300x225");
-        //annot - отображать подпись в изображении, gallery - разместить в галлерее
-        headers.put("opt1[]", "");
-        //gray, negat
-        headers.put("opt2[]", "");
-        //zoom - надпись увеличить
-        headers.put("opt3[]", "zoom");
-        headers.put("email", "");
+        headers.put("type", "file");
+        headers.put("action", "upload");
+        headers.put("privacy", "undefined");
+        headers.put("timestamp", Long.toString(System.currentTimeMillis()));
+        headers.put("auth_token", authToken);
+        headers.put("nsfw", "0");
+        //Matcher matcher = null;
         for (int i = 0; i < files.size(); i++) {
             RequestFile file = files.get(i);
             AttachmentItem item = pending.get(i);
 
-            file.setRequestName("file");
+            file.setRequestName("source");
             NetworkRequest.Builder builder = new NetworkRequest.Builder()
-                    .url(url)
+                    .url(uploadUrl)
                     .formHeaders(headers)
                     .file(file);
-            response = Api.getWebClient().request(builder.build(), item.getItemProgressListener());
+            NetworkResponse response = Api.getWebClient().request(builder.build(), item.getItemProgressListener());
 
-
-            if (matcher == null)
-                matcher = loadedAttachment.matcher(response.getBody());
-            else
-                matcher = matcher.reset(response.getBody());
-            if (matcher.find()) {
-                item.setName(file.getFileName());
-                item.setImageUrl("http://savepic.net/".concat(matcher.group(1)));
-                item.setId(Integer.parseInt(matcher.group(2)));
-                item.setExtension(matcher.group(3));
-                item.setWeight(matcher.group(4));
+            JSONObject responseJson = new JSONObject(response.getBody());
+            forpdateam.ru.forpda.utils.Utils.longLog(responseJson.toString(4));
+            if (responseJson.getInt("status_code") == 200) {
+                JSONObject imageJson = responseJson.getJSONObject("image");
+                item.setName(imageJson.getString("filename"));
+                item.setId(0);
+                item.setExtension(imageJson.getString("extension"));
+                item.setWeight(imageJson.getString("size_formatted"));
                 item.setTypeFile(AttachmentItem.TYPE_IMAGE);
                 item.setLoadState(AttachmentItem.STATE_LOADED);
+                item.setImageUrl(imageJson.getJSONObject("medium").getString("url"));
+                item.setUrl(imageJson.getJSONObject("image").getString("url"));
             }
         }
 
