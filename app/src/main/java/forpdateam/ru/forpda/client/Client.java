@@ -29,7 +29,7 @@ import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.common.simple.SimpleObservable;
 import forpdateam.ru.forpda.ui.TabManager;
-import forpdateam.ru.forpda.ui.fragments.GoogleCaptchaFragment;
+import forpdateam.ru.forpda.ui.fragments.other.GoogleCaptchaFragment;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.FormBody;
@@ -46,8 +46,6 @@ import okhttp3.WebSocketListener;
 public class Client implements IWebClient {
     private final static String LOG_TAG = Client.class.getSimpleName();
     private static final String USER_AGENT = "Mozilla/5.0 (Linux; Android 4.4; Nexus 5 Build/_BuildID_) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36";
-    private final static Pattern countsPattern = Pattern.compile("<a href=\"(?:https?)?\\/\\/4pda\\.ru\\/forum\\/index\\.php\\?act=mentions[^>]*?><i[^>]*?>(\\d+)<\\/i>[\\s\\S]*?act=fav[^>]*?><i[^>]*?>(\\d+)<\\/i>[\\s\\S]*?act=qms[^>]*?data-count=\"(\\d+)\">");
-    private final static Pattern errorPattern = Pattern.compile("^[\\s\\S]*?wr va-m text\">([\\s\\S]*?)</div></div></div></div><div class=\"footer\">");
     private static Client INSTANCE = null;
     private Map<String, Cookie> clientCookies = new HashMap<>();
     private SimpleObservable networkObservables = new SimpleObservable();

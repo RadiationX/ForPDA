@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.ui.fragments.forum;
+package forpdateam.ru.forpda.ui.fragments.other;
 
 import android.app.SearchManager;
 import android.content.Context;

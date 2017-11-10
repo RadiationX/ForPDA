@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.ui.fragments.history.adapters;
+package forpdateam.ru.forpda.ui.fragments.history;
 
 import android.view.View;
 import android.view.ViewGroup;

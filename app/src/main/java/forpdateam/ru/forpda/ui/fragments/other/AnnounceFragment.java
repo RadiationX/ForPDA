@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.ui.fragments.forum;
+package forpdateam.ru.forpda.ui.fragments.other;
 
 import android.annotation.SuppressLint;
 import android.app.SearchManager;

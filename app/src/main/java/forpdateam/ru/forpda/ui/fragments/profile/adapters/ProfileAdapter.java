@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.ui.fragments.profile;
+package forpdateam.ru.forpda.ui.fragments.profile.adapters;
 
 import android.support.annotation.LayoutRes;
 import android.support.v7.widget.LinearLayoutManager;

@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.ui.fragments.profile;
+package forpdateam.ru.forpda.ui.fragments.profile.adapters;
 
 import android.support.v4.content.ContextCompat;
 import android.view.View;

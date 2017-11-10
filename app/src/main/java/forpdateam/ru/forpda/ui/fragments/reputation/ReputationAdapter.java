@@ -39,7 +39,7 @@ public class ReputationAdapter extends BaseAdapter<RepItem, ReputationAdapter.Re
         TextView title, lastNick, date, desc;
         ImageView image;
 
-        public ReputationHolder(View v) {
+        ReputationHolder(View v) {
             super(v);
             title = (TextView) v.findViewById(R.id.rep_item_title);
             desc = (TextView) v.findViewById(R.id.rep_item_desc);
