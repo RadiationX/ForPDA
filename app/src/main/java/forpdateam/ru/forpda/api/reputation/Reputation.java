@@ -6,9 +6,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
-import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.reputation.models.RepData;
 import forpdateam.ru.forpda.api.reputation.models.RepItem;
@@ -31,7 +31,7 @@ public class Reputation {
         Matcher matcher = infoPattern.matcher(response.getBody());
         if (matcher.find()) {
             data.setId(Integer.parseInt(matcher.group(1)));
-            data.setNick(Utils.fromHtml(matcher.group(2)));
+            data.setNick(ApiUtils.fromHtml(matcher.group(2)));
             if (matcher.group(3) != null) {
                 data.setPositive(Integer.parseInt(matcher.group(3)));
             }
@@ -47,13 +47,13 @@ public class Reputation {
         while (matcher.find()) {
             RepItem item = new RepItem();
             item.setUserId(Integer.parseInt(matcher.group(1)));
-            item.setUserNick(Utils.fromHtml(matcher.group(2)));
+            item.setUserNick(ApiUtils.fromHtml(matcher.group(2)));
             temp = matcher.group(3);
             if (temp != null) {
                 item.setSourceUrl(temp);
-                item.setSourceTitle(Utils.fromHtml(matcher.group(4)));
+                item.setSourceTitle(ApiUtils.fromHtml(matcher.group(4)));
             }
-            item.setTitle(Utils.fromHtml(matcher.group(5)));
+            item.setTitle(ApiUtils.fromHtml(matcher.group(5)));
             item.setImage(matcher.group(6));
             item.setDate(matcher.group(7));
             data.addItem(item);

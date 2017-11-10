@@ -4,18 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <forpdateam.ru.forpda.imageviewer.PullBackLayout
+    <forpdateam.ru.forpda.ui.activities.imageviewer.PullBackLayout
         android:id="@+id/image_viewer_pullBack"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <forpdateam.ru.forpda.imageviewer.HackyViewPager
+        <forpdateam.ru.forpda.ui.activities.imageviewer.HackyViewPager
             android:id="@+id/img_viewer_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
 
-    </forpdateam.ru.forpda.imageviewer.PullBackLayout>
+    </forpdateam.ru.forpda.ui.activities.imageviewer.PullBackLayout>
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar_layout"

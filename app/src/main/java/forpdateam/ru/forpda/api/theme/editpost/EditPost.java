@@ -16,10 +16,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.RequestFile;
-import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPoll;
 import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
@@ -71,7 +71,7 @@ public class EditPost {
         }
         Matcher matcher = postPattern.matcher(response.getBody());
         if (matcher.find()) {
-            form.setMessage(Utils.fromHtml(Utils.escapeNewLine(matcher.group(1))));
+            form.setMessage(ApiUtils.fromHtml(ApiUtils.escapeNewLine(matcher.group(1))));
             form.setEditReason(matcher.group(2));
         }
         matcher = pollInfoPattern.matcher(response.getBody());
@@ -101,7 +101,7 @@ public class EditPost {
                 poll.setBaseIndexOffset(questionIndex);
             }
             question.setIndex(questionIndex);
-            question.setTitle(Utils.fromHtml(jsonMatcher.group(3)));
+            question.setTitle(ApiUtils.fromHtml(jsonMatcher.group(3)));
             poll.addQuestion(question);
         }
 
@@ -117,7 +117,7 @@ public class EditPost {
                     question.setBaseIndexOffset(choiceIndex);
                 }
                 choice.setIndex(choiceIndex);
-                choice.setTitle(Utils.fromHtml(jsonMatcher.group(3)));
+                choice.setTitle(ApiUtils.fromHtml(jsonMatcher.group(3)));
                 question.addChoice(choice);
             }
         }
@@ -146,7 +146,7 @@ public class EditPost {
 
         poll.setMaxQuestions(Integer.parseInt(matcher.group(6)));
         poll.setMaxChoices(Integer.parseInt(matcher.group(7)));
-        poll.setTitle(Utils.fromHtml(matcher.group(8)));
+        poll.setTitle(ApiUtils.fromHtml(matcher.group(8)));
         return poll;
     }
 

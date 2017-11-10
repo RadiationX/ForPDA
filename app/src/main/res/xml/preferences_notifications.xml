@@ -4,34 +4,34 @@
     <PreferenceCategory
         android:layout="@layout/preference_category_custom"
         android:title="@string/pref_title_main">
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:key="notifications.main.enabled"
             android:layout="@layout/preference_custom"
             android:title="@string/pref_title_notify"/>
 
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.main.sound_enabled"
             android:layout="@layout/preference_custom"
             android:title="@string/pref_title_sound"/>
 
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.main.vibration_enabled"
             android:layout="@layout/preference_custom"
             android:title="@string/pref_title_vibration"/>
 
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.main.indicator_enabled"
             android:layout="@layout/preference_custom"
             android:title="@string/pref_title_indicator"/>
 
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.main.avatars_enabled"
@@ -51,21 +51,21 @@
     <PreferenceCategory
         android:layout="@layout/preference_category_custom"
         android:title="@string/pref_title_favorites">
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.fav.enabled"
             android:layout="@layout/preference_custom"
             android:title="@string/pref_title_notify"/>
 
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="false"
             android:dependency="notifications.fav.enabled"
             android:key="notifications.fav.only_important"
             android:layout="@layout/preference_custom"
             android:title="@string/pref_title_only_important"/>
 
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.fav.enabled"
             android:key="notifications.fav.live_tab"
@@ -78,7 +78,7 @@
     <PreferenceCategory
         android:layout="@layout/preference_category_custom"
         android:title="@string/pref_title_mentions">
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.mentions.enabled"
@@ -90,7 +90,7 @@
     <PreferenceCategory
         android:layout="@layout/preference_category_custom"
         android:title="@string/pref_title_pm_qms">
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.qms.enabled"
@@ -102,7 +102,7 @@
     <PreferenceCategory
         android:layout="@layout/preference_category_custom"
         android:title="@string/pref_title_app_updates">
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:key="notifications.update.enabled"
             android:layout="@layout/preference_custom"

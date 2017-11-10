@@ -5,9 +5,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
-import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.theme.models.Poll;
 import forpdateam.ru.forpda.api.theme.models.PollQuestion;
@@ -70,8 +70,8 @@ public class Theme {
         page.setPagination(Pagination.parseForum(response.getBody()));
         matcher = titlePattern.matcher(response.getBody());
         if (matcher.find()) {
-            page.setTitle(Utils.fromHtml(matcher.group(1)));
-            page.setDesc(Utils.fromHtml(matcher.group(2)));
+            page.setTitle(ApiUtils.fromHtml(matcher.group(1)));
+            page.setDesc(ApiUtils.fromHtml(matcher.group(2)));
         }
         matcher = alreadyInFavPattern.matcher(response.getBody());
         if (matcher.find()) {
@@ -96,7 +96,7 @@ public class Theme {
                 avatar = "https://s.4pda.to/forum/uploads/".concat(avatar);
             }
             item.setAvatar(avatar);
-            item.setNick(Utils.fromHtml(matcher.group(9)));
+            item.setNick(ApiUtils.fromHtml(matcher.group(9)));
             item.setUserId(Integer.parseInt(matcher.group(10)));
             item.setCurator(matcher.group(11) != null);
             item.setGroupColor(matcher.group(12));
@@ -127,21 +127,21 @@ public class Theme {
             Poll poll = new Poll();
             final boolean isResult = matcher.group().contains("<img");
             poll.setIsResult(isResult);
-            poll.setTitle(Utils.fromHtml(matcher.group(1)));
+            poll.setTitle(ApiUtils.fromHtml(matcher.group(1)));
             Matcher matcher1 = pollQuestions.matcher(matcher.group(2));
             while (matcher1.find()) {
                 PollQuestion pollQuestion = new PollQuestion();
-                pollQuestion.setTitle(Utils.fromHtml(matcher1.group(1)));
+                pollQuestion.setTitle(ApiUtils.fromHtml(matcher1.group(1)));
                 Matcher itemsMatcher = pollQuestionItems.matcher(matcher1.group(2));
                 while (itemsMatcher.find()) {
                     PollQuestionItem questionItem = new PollQuestionItem();
                     if (!isResult) {
                         questionItem.setType(itemsMatcher.group(1));
-                        questionItem.setName(Utils.fromHtml(itemsMatcher.group(2)));
+                        questionItem.setName(ApiUtils.fromHtml(itemsMatcher.group(2)));
                         questionItem.setValue(Integer.parseInt(itemsMatcher.group(3)));
-                        questionItem.setTitle(Utils.fromHtml(itemsMatcher.group(4)));
+                        questionItem.setTitle(ApiUtils.fromHtml(itemsMatcher.group(4)));
                     } else {
-                        questionItem.setTitle(Utils.fromHtml(itemsMatcher.group(5)));
+                        questionItem.setTitle(ApiUtils.fromHtml(itemsMatcher.group(5)));
                         questionItem.setVotes(Integer.parseInt(itemsMatcher.group(6)));
                         questionItem.setPercent(Float.parseFloat(itemsMatcher.group(7).replace(",", ".")));
                     }

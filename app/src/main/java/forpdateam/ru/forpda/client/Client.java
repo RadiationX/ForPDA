@@ -8,7 +8,7 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,15 +19,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.net.ssl.SSLContext;
+
 import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.GoogleCaptchaFragment;
-import forpdateam.ru.forpda.TabManager;
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.api.IWebClient;
 import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
-import forpdateam.ru.forpda.api.Utils;
-import forpdateam.ru.forpda.utils.SimpleObservable;
+import forpdateam.ru.forpda.common.simple.SimpleObservable;
+import forpdateam.ru.forpda.ui.TabManager;
+import forpdateam.ru.forpda.ui.fragments.GoogleCaptchaFragment;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.FormBody;
@@ -40,11 +42,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
-import okio.Buffer;
-import okio.BufferedSink;
-import okio.ForwardingSink;
-import okio.Okio;
-import okio.Sink;
 
 public class Client implements IWebClient {
     private final static String LOG_TAG = Client.class.getSimpleName();
@@ -179,6 +176,7 @@ public class Client implements IWebClient {
             .connectTimeout(45, TimeUnit.SECONDS)
             .writeTimeout(45, TimeUnit.SECONDS)
             .readTimeout(45, TimeUnit.SECONDS)
+            .sslSocketFactory(getNewSslContext().getSocketFactory())
             .cookieJar(cookieJar)
             .build();
 
@@ -186,9 +184,22 @@ public class Client implements IWebClient {
             .connectTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
+            .sslSocketFactory(getNewSslContext().getSocketFactory())
             .retryOnConnectionFailure(true)
             .cookieJar(cookieJar)
             .build();
+
+
+    private SSLContext getNewSslContext() {
+        SSLContext sslContext;
+        try {
+            sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, null, null);
+        } catch (GeneralSecurityException e) {
+            throw new AssertionError(); // The system has no TLS. Just give up.
+        }
+        return sslContext;
+    }
 
     //Network
     @Override
@@ -255,13 +266,13 @@ public class Client implements IWebClient {
                     }
                 }
                 if (request.getFile() != null) {
+                    MediaType type = MediaType.parse(request.getFile().getMimeType());
+                    RequestBody requestBody = RequestBodyUtil
+                            .create(type, request.getFile().getFileStream());
                     multipartBuilder.addFormDataPart(
                             request.getFile().getRequestName(),
                             request.getFile().getFileName(),
-                            RequestBodyUtil.create(
-                                    MediaType.parse(request.getFile().getMimeType()),
-                                    request.getFile().getFileStream())
-                    );
+                            requestBody);
                 }
                 MultipartBody multipartBody = multipartBuilder.build();
                 if (uploadProgressListener == null) {
@@ -283,7 +294,7 @@ public class Client implements IWebClient {
             if (!okHttpResponse.isSuccessful()) {
                 if (okHttpResponse.code() == 403) {
                     String content = okHttpResponse.body().string();
-                    //forpdateam.ru.forpda.utils.Utils.longLog(content);
+                    //forpdateam.ru.forpda.utils.ApiUtils.longLog(content);
                     new Handler(Looper.getMainLooper()).post(() -> {
                         try {
                             if (TabManager.get().getTagContainClass(GoogleCaptchaFragment.class) == null) {
@@ -327,7 +338,7 @@ public class Client implements IWebClient {
     private void checkForumErrors(String res) throws Exception {
         Matcher errorMatcher = errorPattern.matcher(res);
         if (errorMatcher.find()) {
-            throw new OnlyShowException(Utils.fromHtml(errorMatcher.group(1)));
+            throw new OnlyShowException(ApiUtils.fromHtml(errorMatcher.group(1)));
         }
     }
 
@@ -364,56 +375,8 @@ public class Client implements IWebClient {
         networkObservables.addObserver(observer);
     }
 
-    void notifyNetworkObservers(Boolean b) {
+    public void notifyNetworkObservers(Boolean b) {
         networkObservables.notifyObservers(b);
     }
 
-    public class ProgressRequestBody extends RequestBody {
-        RequestBody mDelegate;
-        ProgressListener mListener;
-        CountingSink mCountingSink;
-
-        ProgressRequestBody(RequestBody delegate, ProgressListener listener) {
-            mDelegate = delegate;
-            mListener = listener;
-        }
-
-        @Override
-        public MediaType contentType() {
-            return mDelegate.contentType();
-        }
-
-        @Override
-        public long contentLength() {
-            try {
-                return mDelegate.contentLength();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return -1;
-        }
-
-        @Override
-        public void writeTo(@NonNull BufferedSink sink) throws IOException {
-            mCountingSink = new CountingSink(sink);
-            BufferedSink bufferedSink = Okio.buffer(mCountingSink);
-            mDelegate.writeTo(bufferedSink);
-            bufferedSink.flush();
-        }
-
-        protected final class CountingSink extends ForwardingSink {
-            private long bytesWritten = 0;
-
-            CountingSink(Sink delegate) {
-                super(delegate);
-            }
-
-            @Override
-            public void write(@NonNull Buffer source, long byteCount) throws IOException {
-                super.write(source, byteCount);
-                bytesWritten += byteCount;
-                mListener.onProgress((int) (100F * bytesWritten / contentLength()));
-            }
-        }
-    }
 }

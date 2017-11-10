@@ -12,9 +12,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
-import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.news.models.Comment;
 import forpdateam.ru.forpda.api.news.models.DetailsPage;
 import forpdateam.ru.forpda.api.news.models.Material;
@@ -145,23 +145,23 @@ public class NewsApi {
             if (!isReview) {
                 item.setUrl(matcher.group(1));
                 item.setId(Integer.parseInt(matcher.group(2)));
-                item.setTitle(Utils.fromHtml(Utils.fromHtml(matcher.group(3))));
+                item.setTitle(ApiUtils.fromHtml(ApiUtils.fromHtml(matcher.group(3))));
                 item.setImgUrl(matcher.group(4));
                 item.setCommentsCount(Integer.parseInt(matcher.group(5)));
                 item.setDate(matcher.group(6));
                 item.setAuthorId(Integer.parseInt(matcher.group(7)));
-                item.setAuthor(Utils.fromHtml(matcher.group(8)));
-                item.setDescription(Utils.fromHtml(matcher.group(9)));
+                item.setAuthor(ApiUtils.fromHtml(matcher.group(8)));
+                item.setDescription(ApiUtils.fromHtml(matcher.group(9)));
                 parseTags(item.getTags(), matcher.group(10));
             } else {
                 item.setUrl(matcher.group(11));
                 item.setId(Integer.parseInt(matcher.group(12)));
                 item.setImgUrl(matcher.group(13));
-                item.setTitle(Utils.fromHtml(Utils.fromHtml(matcher.group(14))));
+                item.setTitle(ApiUtils.fromHtml(ApiUtils.fromHtml(matcher.group(14))));
                 item.setCommentsCount(Integer.parseInt(matcher.group(15)));
                 item.setDate(matcher.group(17).replace('-', '.'));
-                item.setAuthor(Utils.fromHtml(matcher.group(18)));
-                item.setDescription(Utils.fromHtml(matcher.group(20).trim()));
+                item.setAuthor(ApiUtils.fromHtml(matcher.group(18)));
+                item.setDescription(ApiUtils.fromHtml(matcher.group(20).trim()));
             }
             items.add(item);
         }
@@ -187,10 +187,10 @@ public class NewsApi {
             Log.e("TIME", "Article found: " + (System.currentTimeMillis() - time));
             page.setId(Integer.parseInt(matcher.group(1)));
             page.setImgUrl(matcher.group(3));
-            page.setTitle(Utils.fromHtml(matcher.group(4)));
+            page.setTitle(ApiUtils.fromHtml(matcher.group(4)));
             page.setDate(matcher.group(5));
             page.setAuthorId(Integer.parseInt(matcher.group(6)));
-            page.setAuthor(Utils.fromHtml(matcher.group(7)));
+            page.setAuthor(ApiUtils.fromHtml(matcher.group(7)));
             page.setCommentsCount(Integer.parseInt(matcher.group(8)));
             parseTags(page.getTags(), matcher.group(9));
             page.setHtml(matcher.group(10));
@@ -220,7 +220,7 @@ public class NewsApi {
             Material material = new Material();
             material.setImageUrl(matcher.group(1));
             material.setId(Integer.parseInt(matcher.group(2)));
-            material.setTitle(Utils.fromHtml(matcher.group(3)));
+            material.setTitle(ApiUtils.fromHtml(matcher.group(3)));
             materials.add(material);
         }
     }
@@ -232,7 +232,7 @@ public class NewsApi {
         while (matcher.find()) {
             Tag tag = new Tag();
             tag.setTag(matcher.group(1));
-            tag.setTitle(Utils.fromHtml(matcher.group(2)));
+            tag.setTitle(ApiUtils.fromHtml(matcher.group(2)));
             tags.add(tag);
         }
     }
@@ -314,7 +314,7 @@ public class NewsApi {
                 }
 
                 userNick = Parser.getHtml(nickNode, true);
-                comment.setUserNick(Utils.fromHtml(userNick));
+                comment.setUserNick(ApiUtils.fromHtml(userNick));
 
                 date = Parser.ownText(metaNode).trim();
                 date = date.replace(" |", ",");
@@ -323,7 +323,7 @@ public class NewsApi {
 
             Node contentNode = Parser.findNode(commentNode, "p", "class", "content");
             content = Parser.getHtml(contentNode, true);
-            comment.setContent(Utils.fromHtml(content));
+            comment.setContent(ApiUtils.fromHtml(content));
             comment.setLevel(level);
             comment.setKarma(karmaMap.get(comment.getId()));
 

@@ -10,10 +10,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.api.RequestFile;
-import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
@@ -54,7 +54,7 @@ public class Qms {
             QmsContact contact = new QmsContact();
             contact.setId(Integer.parseInt(matcher.group(1)));
             contact.setAvatar(matcher.group(2));
-            contact.setNick(Utils.fromHtml(matcher.group(3)));
+            contact.setNick(ApiUtils.fromHtml(matcher.group(3)));
             list.add(contact);
         }
         return list;
@@ -88,7 +88,7 @@ public class Qms {
         Matcher matcher = blackListMsgPattern.matcher(response);
         while (matcher.find()) {
             if (!matcher.group(1).contains("success")) {
-                throw new Exception(Utils.fromHtml(matcher.group(2).trim()));
+                throw new Exception(ApiUtils.fromHtml(matcher.group(2).trim()));
             }
         }
     }
@@ -105,7 +105,7 @@ public class Qms {
             temp = matcher.group(2);
             contact.setCount(temp == null || temp.isEmpty() ? 0 : Integer.parseInt(temp));
             contact.setAvatar(matcher.group(3));
-            contact.setNick(Utils.fromHtml(matcher.group(4).trim()));
+            contact.setNick(ApiUtils.fromHtml(matcher.group(4).trim()));
             list.add(contact);
         }
 
@@ -137,7 +137,7 @@ public class Qms {
             QmsTheme thread = new QmsTheme();
             thread.setId(Integer.parseInt(matcher.group(1)));
             thread.setDate(matcher.group(2));
-            thread.setName(Utils.fromHtml(matcher.group(3).trim()));
+            thread.setName(ApiUtils.fromHtml(matcher.group(3).trim()));
             thread.setCountMessages(Integer.parseInt(matcher.group(4)));
             String countNew = matcher.group(5);
             thread.setCountNew(countNew == null || countNew.isEmpty() ? 0 : Integer.parseInt(countNew));
@@ -145,7 +145,7 @@ public class Qms {
         }
         matcher = threadNickPattern.matcher(response);
         if (matcher.find()) {
-            qmsThemes.setNick(Utils.fromHtml(matcher.group(1)));
+            qmsThemes.setNick(ApiUtils.fromHtml(matcher.group(1)));
         }
         qmsThemes.setUserId(id);
         return qmsThemes;
@@ -184,8 +184,8 @@ public class Qms {
         }
         matcher = chatInfoPattern.matcher(response);
         if (matcher.find()) {
-            chat.setNick(Utils.fromHtml(matcher.group(1).trim()));
-            chat.setTitle(Utils.fromHtml(matcher.group(2).trim()));
+            chat.setNick(ApiUtils.fromHtml(matcher.group(1).trim()));
+            chat.setTitle(ApiUtils.fromHtml(matcher.group(2).trim()));
             chat.setUserId(Integer.parseInt(matcher.group(3)));
             chat.setThemeId(Integer.parseInt(matcher.group(4)));
             chat.setAvatarUrl(matcher.group(5));
@@ -201,7 +201,7 @@ public class Qms {
         while (m.find()) {
             ForumUser user = new ForumUser();
             user.setId(Integer.parseInt(m.group(1)));
-            user.setNick(Utils.fromHtml(m.group(2)));
+            user.setNick(ApiUtils.fromHtml(m.group(2)));
             String avatar = m.group(3);
             if (avatar.substring(0, 2).equals("//")) {
                 avatar = "https:".concat(avatar);
@@ -358,7 +358,7 @@ public class Qms {
             NetworkResponse response = Api.getWebClient().request(builder.build(), item.getItemProgressListener());
 
             JSONObject responseJson = new JSONObject(response.getBody());
-            forpdateam.ru.forpda.utils.Utils.longLog(responseJson.toString(4));
+            forpdateam.ru.forpda.common.Utils.longLog(responseJson.toString(4));
             if (responseJson.getInt("status_code") == 200) {
                 JSONObject imageJson = responseJson.getJSONObject("image");
                 item.setName(imageJson.getString("filename"));

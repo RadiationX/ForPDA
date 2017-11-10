@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import forpdateam.ru.forpda.fragments.TabFragment;
+import forpdateam.ru.forpda.ui.fragments.TabFragment;
 
 /**
  * Created by radiationx on 01.02.17.

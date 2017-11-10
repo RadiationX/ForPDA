@@ -6,10 +6,10 @@ import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.api.IWebClient;
 import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
-import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.auth.models.AuthForm;
 import forpdateam.ru.forpda.client.ClientHelper;
 
@@ -58,7 +58,7 @@ public class Auth {
         NetworkResponse response = Api.getWebClient().request(builder.build());
         Matcher matcher = errorPattern.matcher(response.getBody());
         if (matcher.find()) {
-            throw new Exception(Utils.fromHtml(matcher.group(1)).replaceAll("\\.", ".\n").trim());
+            throw new Exception(ApiUtils.fromHtml(matcher.group(1)).replaceAll("\\.", ".\n").trim());
         }
         form.setBody(response.getBody());
         return checkLogin(response.getBody());

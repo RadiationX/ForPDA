@@ -13,7 +13,7 @@
         android:layout_gravity="center"
         android:visibility="gone"/>
 
-    <forpdateam.ru.forpda.views.AspectRatioImageView
+    <forpdateam.ru.forpda.ui.views.AspectRatioImageView
         android:id="@+id/article_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

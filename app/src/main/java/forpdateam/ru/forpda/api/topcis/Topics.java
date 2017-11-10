@@ -4,8 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.api.NetworkResponse;
-import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.topcis.models.TopicItem;
 import forpdateam.ru.forpda.api.topcis.models.TopicsData;
@@ -31,7 +31,7 @@ public class Topics {
         Matcher matcher = titlePattern.matcher(response.getBody());
         if (matcher.find()) {
             data.setId(Integer.parseInt(matcher.group(1)));
-            data.setTitle(Utils.fromHtml(matcher.group(2)));
+            data.setTitle(ApiUtils.fromHtml(matcher.group(2)));
         } else {
             data.setId(id);
         }
@@ -44,7 +44,7 @@ public class Topics {
             TopicItem item = new TopicItem();
             item.setAnnounce(true);
             item.setAnnounceUrl(matcher.group(1));
-            item.setTitle(Utils.fromHtml(matcher.group(2)));
+            item.setTitle(ApiUtils.fromHtml(matcher.group(2)));
             data.addAnnounceItem(item);
         }
 
@@ -58,19 +58,19 @@ public class Topics {
             item.setPoll(tmp.contains("^"));
             item.setClosed(tmp.contains("Х"));
             item.setPinned(matcher.group(3) != null);
-            item.setTitle(Utils.fromHtml(matcher.group(4)));
+            item.setTitle(ApiUtils.fromHtml(matcher.group(4)));
             tmp = matcher.group(5);
             if (tmp != null)
-                item.setDesc(Utils.fromHtml(tmp));
+                item.setDesc(ApiUtils.fromHtml(tmp));
             item.setAuthorId(Integer.parseInt(matcher.group(6)));
-            item.setAuthorNick(Utils.fromHtml(matcher.group(7)));
+            item.setAuthorNick(ApiUtils.fromHtml(matcher.group(7)));
             item.setLastUserId(Integer.parseInt(matcher.group(8)));
-            item.setLastUserNick(Utils.fromHtml(matcher.group(9)));
+            item.setLastUserNick(ApiUtils.fromHtml(matcher.group(9)));
             item.setDate(matcher.group(10));
             tmp = matcher.group(11);
             if (tmp != null) {
                 item.setCuratorId(Integer.parseInt(tmp));
-                item.setCuratorNick(Utils.fromHtml(matcher.group(12)));
+                item.setCuratorNick(ApiUtils.fromHtml(matcher.group(12)));
             }
             if (item.isPinned()) {
                 data.addPinnedItem(item);
@@ -82,7 +82,7 @@ public class Topics {
         while (matcher.find()) {
             TopicItem topicItem = new TopicItem();
             topicItem.setId(Integer.parseInt(matcher.group(1)));
-            topicItem.setTitle(Utils.fromHtml(matcher.group(2)));
+            topicItem.setTitle(ApiUtils.fromHtml(matcher.group(2)));
             topicItem.setForum(true);
             data.addForumItem(topicItem);
         }

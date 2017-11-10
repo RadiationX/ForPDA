@@ -8,8 +8,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.api.NetworkResponse;
-import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.devdb.models.Brand;
 import forpdateam.ru.forpda.api.devdb.models.Brands;
 import forpdateam.ru.forpda.api.devdb.models.Device;
@@ -41,7 +41,7 @@ public class DevDb {
             while (itemsMatcher.find()) {
                 Brands.Item item = new Brands.Item();
                 item.setId(itemsMatcher.group(1));
-                item.setTitle(Utils.fromHtml(itemsMatcher.group(2)));
+                item.setTitle(ApiUtils.fromHtml(itemsMatcher.group(2)));
                 item.setCount(Integer.parseInt(itemsMatcher.group(3)));
                 items.add(item);
             }
@@ -72,7 +72,7 @@ public class DevDb {
             Brand.DeviceItem item = new Brand.DeviceItem();
             item.setImageSrc(matcher.group(1));
             item.setId(matcher.group(2));
-            item.setTitle(Utils.fromHtml(matcher.group(3)));
+            item.setTitle(ApiUtils.fromHtml(matcher.group(3)));
 
             Matcher specsMatcher = SPECS_PATTERN.matcher(matcher.group(4));
             if (specsMatcher.find()) {
@@ -121,7 +121,7 @@ public class DevDb {
 
             matcher1 = Device.SPECS_TITLED_PATTERN.matcher(matcher.group(3));
             while (matcher1.find()) {
-                String title = Utils.fromHtml(matcher1.group(1));
+                String title = ApiUtils.fromHtml(matcher1.group(1));
                 Matcher specsMatcher = SPECS_PATTERN.matcher(matcher1.group(2));
                 ArrayList<Pair<String, String>> specs = new ArrayList<>();
                 while (specsMatcher.find()) {
@@ -157,7 +157,7 @@ public class DevDb {
             comment.setId(Integer.parseInt(matcher.group(1)));
             comment.setRating(Integer.parseInt(matcher.group(3)));
             comment.setUserId(Integer.parseInt(matcher.group(4)));
-            comment.setNick(Utils.fromHtml(matcher.group(5)));
+            comment.setNick(ApiUtils.fromHtml(matcher.group(5)));
             comment.setDate(matcher.group(6));
             String text = matcher.group(9);
             if (text == null) {
@@ -174,10 +174,10 @@ public class DevDb {
             Device.PostItem item = new Device.PostItem();
             item.setId(Integer.parseInt(matcher.group(1)));
             item.setImage(matcher.group(2));
-            item.setTitle(Utils.fromHtml(matcher.group(3)));
+            item.setTitle(ApiUtils.fromHtml(matcher.group(3)));
             item.setDate(matcher.group(4));
             if (matcher.group(5) != null) {
-                item.setDesc(Utils.fromHtml(matcher.group(5)));
+                item.setDesc(ApiUtils.fromHtml(matcher.group(5)));
             }
             data.addNews(item);
         }
@@ -188,10 +188,10 @@ public class DevDb {
             while (matcher1.find()) {
                 Device.PostItem item = new Device.PostItem();
                 item.setId(Integer.parseInt(matcher1.group(1)));
-                item.setTitle(Utils.fromHtml(matcher1.group(2)));
+                item.setTitle(ApiUtils.fromHtml(matcher1.group(2)));
                 item.setDate(matcher1.group(3));
                 if (matcher1.group(4) != null) {
-                    item.setDesc(Utils.fromHtml(matcher1.group(4)));
+                    item.setDesc(ApiUtils.fromHtml(matcher1.group(4)));
                 }
                 data.addDiscussion(item);
             }
@@ -203,10 +203,10 @@ public class DevDb {
             while (matcher1.find()) {
                 Device.PostItem item = new Device.PostItem();
                 item.setId(Integer.parseInt(matcher1.group(1)));
-                item.setTitle(Utils.fromHtml(matcher1.group(2)));
+                item.setTitle(ApiUtils.fromHtml(matcher1.group(2)));
                 item.setDate(matcher1.group(3));
                 if (matcher1.group(4) != null) {
-                    item.setDesc(Utils.fromHtml(matcher1.group(4)));
+                    item.setDesc(ApiUtils.fromHtml(matcher1.group(4)));
                 }
                 data.addFirmware(item);
             }
@@ -227,7 +227,7 @@ public class DevDb {
             DeviceSearch.DeviceItem item = new DeviceSearch.DeviceItem();
             item.setImageSrc(matcher.group(1));
             item.setId(matcher.group(2));
-            item.setTitle(Utils.fromHtml(matcher.group(3)));
+            item.setTitle(ApiUtils.fromHtml(matcher.group(3)));
             searchResult.addDevice(item);
         }
         searchResult.setAll(searchResult.getDevices().size());
