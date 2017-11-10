@@ -41,6 +41,7 @@ import forpdateam.ru.forpda.common.LinkMovementMethod;
 import forpdateam.ru.forpda.common.Utils;
 import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
+import forpdateam.ru.forpda.ui.fragments.profile.adapters.ProfileAdapter;
 import forpdateam.ru.forpda.ui.views.ScrimHelper;
 import io.reactivex.Observable;
 

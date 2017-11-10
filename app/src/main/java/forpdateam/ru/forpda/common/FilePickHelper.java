@@ -40,15 +40,6 @@ public class FilePickHelper {
         return Intent.createChooser(intent, "Select file");
     }
 
-    public static Intent pickFile(String mimeType) {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.setType(mimeType);
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        return Intent.createChooser(intent, "Select file");
-    }
-
     public static List<RequestFile> onActivityResult(Context context, Intent data) {
         List<RequestFile> files = new ArrayList<>();
         RequestFile tempFile;
@@ -67,26 +58,13 @@ public class FilePickHelper {
         return files;
     }
 
-    private final static Pattern extensionPattern = Pattern.compile("[\\s\\S]*\\.([\\s\\S]*)");
-
-    private static String getExtension(String name) {
-        String extension = null;
-        if (name != null) {
-            Matcher matcher = extensionPattern.matcher(name);
-            if (matcher.find()) {
-                extension = matcher.group(1);
-            }
-        }
-        return extension;
-    }
-
     private static RequestFile createFile(Context context, Uri uri) {
         RequestFile requestFile = null;
         Log.d(LOG_TAG, "createFile " + uri);
         try {
             InputStream inputStream = null;
             String name = getFileName(context, uri);
-            String extension = getExtension(name);
+            String extension = MimeTypeUtil.getExtension(name);
             String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
             if (mimeType == null) {
                 mimeType = context.getContentResolver().getType(uri);

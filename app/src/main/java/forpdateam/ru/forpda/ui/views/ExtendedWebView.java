@@ -26,7 +26,7 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.common.Preferences;
 import forpdateam.ru.forpda.common.webview.DialogsHelper;
-import forpdateam.ru.forpda.ui.fragments.jsinterfaces.IBase;
+import forpdateam.ru.forpda.common.webview.jsinterfaces.IBase;
 
 /**
  * Created by radiationx on 01.11.16.

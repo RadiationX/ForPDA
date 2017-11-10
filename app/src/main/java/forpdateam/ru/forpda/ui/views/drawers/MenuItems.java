@@ -11,7 +11,7 @@ import forpdateam.ru.forpda.ui.fragments.auth.AuthFragment;
 import forpdateam.ru.forpda.ui.fragments.devdb.BrandsFragment;
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.ui.fragments.forum.ForumFragment;
-import forpdateam.ru.forpda.ui.fragments.forum.ForumRulesFragment;
+import forpdateam.ru.forpda.ui.fragments.other.ForumRulesFragment;
 import forpdateam.ru.forpda.ui.fragments.history.HistoryFragment;
 import forpdateam.ru.forpda.ui.fragments.mentions.MentionsFragment;
 import forpdateam.ru.forpda.ui.fragments.news.main.NewsMainFragment;

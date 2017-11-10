@@ -58,7 +58,7 @@ import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesHelper;
-import forpdateam.ru.forpda.ui.fragments.jsinterfaces.IPostFunctions;
+import forpdateam.ru.forpda.common.webview.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.ui.fragments.theme.ThemeDialogsHelper;
 import forpdateam.ru.forpda.ui.fragments.theme.ThemeFragmentWeb;
 import forpdateam.ru.forpda.ui.fragments.theme.ThemeHelper;

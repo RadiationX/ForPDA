@@ -17,7 +17,7 @@ import forpdateam.ru.forpda.api.search.models.SearchSettings;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.Utils;
-import forpdateam.ru.forpda.ui.fragments.jsinterfaces.IPostFunctions;
+import forpdateam.ru.forpda.common.webview.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup;
 import forpdateam.ru.forpda.ui.fragments.search.SearchFragment;
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu;
@@ -28,7 +28,6 @@ import io.reactivex.functions.Consumer;
  */
 
 public class ThemeDialogsHelper {
-    private final static String reportWarningText = App.get().getString(R.string.report_warning);
     private static DynamicDialogMenu<IPostFunctions, IBaseForumPost> userMenu, reputationMenu, postMenu;
 
     public static void showUserMenu(Context context, IPostFunctions theme, IBaseForumPost post) {
@@ -156,7 +155,7 @@ public class ThemeDialogsHelper {
         if (App.get().getPreferences().getBoolean("show_report_warning", true)) {
             new AlertDialog.Builder(context)
                     .setTitle(R.string.attention)
-                    .setMessage(reportWarningText)
+                    .setMessage(R.string.report_warning)
                     .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
                         App.get().getPreferences().edit().putBoolean("show_report_warning", false).apply();
                         ThemeDialogsHelper.showReportDialog(context, post);

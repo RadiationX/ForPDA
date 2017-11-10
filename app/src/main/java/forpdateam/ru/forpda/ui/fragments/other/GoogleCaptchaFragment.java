@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.ui.fragments;
+package forpdateam.ru.forpda.ui.fragments.other;
 
 import android.app.Activity;
 import android.net.Uri;
@@ -19,6 +19,7 @@ import forpdateam.ru.forpda.api.NetworkResponse;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient;
 import forpdateam.ru.forpda.ui.activities.MainActivity;
+import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.views.ExtendedWebView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;

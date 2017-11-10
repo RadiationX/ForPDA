@@ -65,7 +65,7 @@ import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.ui.fragments.history.HistoryFragment;
-import forpdateam.ru.forpda.ui.fragments.jsinterfaces.IPostFunctions;
+import forpdateam.ru.forpda.common.webview.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.ui.fragments.theme.editpost.EditPostFragment;
 import forpdateam.ru.forpda.ui.fragments.topics.TopicsFragment;
 import forpdateam.ru.forpda.ui.views.FabOnScroll;
