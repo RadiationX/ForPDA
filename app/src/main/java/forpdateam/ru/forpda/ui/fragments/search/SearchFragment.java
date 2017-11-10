@@ -51,14 +51,13 @@ import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.Preferences;
 import forpdateam.ru.forpda.common.Utils;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.common.webview.CustomWebChromeClient;
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient;
+import forpdateam.ru.forpda.common.webview.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.devdb.BrandFragment;
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesHelper;
-import forpdateam.ru.forpda.common.webview.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.ui.fragments.theme.ThemeDialogsHelper;
 import forpdateam.ru.forpda.ui.fragments.theme.ThemeFragmentWeb;
 import forpdateam.ru.forpda.ui.fragments.theme.ThemeHelper;
@@ -93,7 +92,6 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
 
     private SearchSettings settings = new SearchSettings();
 
-    private Subscriber<SearchResult> mainSubscriber = new Subscriber<>(this);
     private ExtendedWebView webView;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout refreshLayout;
@@ -576,7 +574,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
         }*/
         setRefreshing(true);
         boolean withHtml = settings.getResult().equals(SearchSettings.RESULT_POSTS.first) && settings.getResourceType().equals(SearchSettings.RESOURCE_FORUM.first);
-        mainSubscriber.subscribe(RxApi.Search().getSearch(settings, withHtml), this::onLoadData, new SearchResult(), v -> loadData());
+        subscribe(RxApi.Search().getSearch(settings, withHtml), this::onLoadData, new SearchResult(), v -> loadData());
         return true;
     }
 

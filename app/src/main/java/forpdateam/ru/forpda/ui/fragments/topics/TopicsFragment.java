@@ -21,7 +21,6 @@ import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.Utils;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
@@ -40,7 +39,6 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
     public final static String TOPICS_ID_ARG = "TOPICS_ID_ARG";
     private int id;
     private TopicsAdapter adapter;
-    private Subscriber<TopicsData> mainSubscriber = new Subscriber<>(this);
 
     public TopicsFragment() {
         configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_topics));
@@ -100,7 +98,7 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
             return false;
         }
         setRefreshing(true);
-        mainSubscriber.subscribe(RxApi.Topics().getTopics(id, currentSt), this::onLoadThemes, new TopicsData(), v -> loadData());
+        subscribe(RxApi.Topics().getTopics(id, currentSt), this::onLoadThemes, new TopicsData(), v -> loadData());
         return true;
     }
 

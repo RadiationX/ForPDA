@@ -21,7 +21,6 @@ import forpdateam.ru.forpda.api.devdb.models.Brand;
 import forpdateam.ru.forpda.api.devdb.models.DeviceSearch;
 import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.common.Utils;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.devdb.adapters.BrandAdapter;
@@ -38,7 +37,6 @@ public class SearchFragment extends TabFragment implements BrandAdapter.OnItemCl
     private BrandAdapter adapter;
     private SwipeRefreshLayout refreshLayout;
     private AutoFitRecyclerView recyclerView;
-    private Subscriber<Brand> mainSubscriber = new Subscriber<>(this);
     private SearchView searchView;
     private MenuItem searchMenuItem;
     private String currentQuery = "";
@@ -135,7 +133,7 @@ public class SearchFragment extends TabFragment implements BrandAdapter.OnItemCl
             return false;
         }
         setRefreshing(true);
-        mainSubscriber.subscribe(RxApi.DevDb().search(currentQuery), this::onLoad, new Brand());
+        subscribe(RxApi.DevDb().search(currentQuery), this::onLoad, new Brand());
         return true;
     }
 

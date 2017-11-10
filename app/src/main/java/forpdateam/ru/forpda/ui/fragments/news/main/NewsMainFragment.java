@@ -20,7 +20,6 @@ import forpdateam.ru.forpda.api.news.models.NewsItem;
 import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.Utils;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
@@ -39,7 +38,6 @@ import forpdateam.ru.forpda.ui.views.PauseOnScrollListener;
 public class NewsMainFragment extends RecyclerFragment implements NewsListAdapter.ItemClickListener {
     private NewsListAdapter adapter;
     private String category = Constants.NEWS_CATEGORY_ALL;
-    private Subscriber<List<NewsItem>> mainSubscriber = new Subscriber<>(this);
     private DynamicDialogMenu<NewsMainFragment, NewsItem> dialogMenu;
 
     public NewsMainFragment() {
@@ -141,7 +139,7 @@ public class NewsMainFragment extends RecyclerFragment implements NewsListAdapte
     }
 
     private void loadDataNews(int page, boolean withClear) {
-        mainSubscriber.subscribe(RxApi.NewsList().getNews(category, page), list -> onLoadNews(list, withClear), new ArrayList<>(), v -> loadDataNews(page, withClear));
+        subscribe(RxApi.NewsList().getNews(category, page), list -> onLoadNews(list, withClear), new ArrayList<>(), v -> loadDataNews(page, withClear));
     }
 
     private void onLoadNews(List<NewsItem> list, boolean withClear) {

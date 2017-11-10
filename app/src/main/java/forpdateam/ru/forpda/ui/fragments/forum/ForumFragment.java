@@ -23,7 +23,6 @@ import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
 import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.common.Utils;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.data.realm.forum.ForumItemFlatBd;
 import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
@@ -40,7 +39,6 @@ import io.realm.RealmResults;
 
 public class ForumFragment extends TabFragment {
     public final static String ARG_FORUM_ID = "ARG_FORUM_ID";
-    private Subscriber<ForumItemTree> mainSubscriber = new Subscriber<>(this);
     private NestedScrollView treeContainer;
     private Realm realm;
     private RealmResults<ForumItemFlatBd> results;
@@ -164,7 +162,7 @@ public class ForumFragment extends TabFragment {
                 .setMessage(R.string.loading_data)
                 .setCancelable(false)
                 .show();
-        mainSubscriber.subscribe(RxApi.Forum().getForums(), this::onLoadThemes, new ForumItemTree(), null);
+        subscribe(RxApi.Forum().getForums(), this::onLoadThemes, new ForumItemTree(), null);
         return true;
     }
 

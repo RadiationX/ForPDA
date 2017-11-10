@@ -25,7 +25,6 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.forum.models.ForumRules;
 import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.common.Utils;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.common.webview.CustomWebChromeClient;
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient;
 import forpdateam.ru.forpda.ui.activities.MainActivity;
@@ -39,7 +38,6 @@ import forpdateam.ru.forpda.ui.views.ExtendedWebView;
 public class ForumRulesFragment extends TabFragment {
     public final static String JS_INTERFACE = "IRules";
     private ExtendedWebView webView;
-    private Subscriber<ForumRules> mainSubscriber = new Subscriber<>(this);
     protected int searchViewTag = 0;
 
     public ForumRulesFragment() {
@@ -90,7 +88,7 @@ public class ForumRulesFragment extends TabFragment {
             return false;
         }
         setRefreshing(true);
-        mainSubscriber.subscribe(RxApi.Forum().getRules(true), this::onLoad, new ForumRules(), view1 -> loadData());
+        subscribe(RxApi.Forum().getRules(true), this::onLoad, new ForumRules(), view1 -> loadData());
         return true;
     }
 

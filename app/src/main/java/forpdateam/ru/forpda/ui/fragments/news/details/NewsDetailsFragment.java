@@ -31,7 +31,6 @@ import forpdateam.ru.forpda.api.news.models.DetailsPage;
 import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.Utils;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup;
 import forpdateam.ru.forpda.ui.views.ScrimHelper;
@@ -78,7 +77,6 @@ public class NewsDetailsFragment extends TabFragment {
     private String newsDate;
     private String newsImageUrl;
     private DetailsPage currentArticle;
-    private Subscriber<DetailsPage> mainSubscriber = new Subscriber<>(this);
 
     public NewsDetailsFragment() {
         configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_news));
@@ -228,7 +226,7 @@ public class NewsDetailsFragment extends TabFragment {
         } else {
             observable = RxApi.NewsList().getDetails(newsId);
         }
-        mainSubscriber.subscribe(observable, this::onLoadArticle, new DetailsPage(), v -> loadData());
+        subscribe(observable, this::onLoadArticle, new DetailsPage(), v -> loadData());
         return true;
     }
 

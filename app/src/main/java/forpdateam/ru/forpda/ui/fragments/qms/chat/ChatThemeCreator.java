@@ -16,7 +16,6 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.apirx.RxApi;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher;
 
 /**
@@ -29,7 +28,6 @@ public class ChatThemeCreator {
     private AppCompatAutoCompleteTextView nickField;
     private AppCompatEditText titleField;
     private MenuItem doneItem, editItem;
-    private Subscriber<List<ForumUser>> searchUserSubscriber;
     private TextWatcher textWatcher = new SimpleTextWatcher() {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -45,7 +43,6 @@ public class ChatThemeCreator {
 
     public ChatThemeCreator(QmsChatFragment fragment) {
         this.fragment = fragment;
-        searchUserSubscriber = new Subscriber<>(this.fragment);
         viewStub = (ViewStub) this.fragment.findViewById(R.id.toolbar_content);
         viewStub.setLayoutResource(R.layout.toolbar_qms_new_theme);
         viewStub.inflate();
@@ -58,7 +55,7 @@ public class ChatThemeCreator {
     }
 
     private void searchUser(String nick) {
-        searchUserSubscriber.subscribe(RxApi.Qms().findUser(nick), this::onShowSearchRes, new ArrayList<>());
+        fragment.subscribe(RxApi.Qms().findUser(nick), this::onShowSearchRes, new ArrayList<>());
     }
 
     private void onShowSearchRes(List<ForumUser> res) {

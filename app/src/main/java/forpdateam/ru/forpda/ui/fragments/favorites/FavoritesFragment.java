@@ -36,7 +36,6 @@ import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.Preferences;
 import forpdateam.ru.forpda.common.Utils;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.data.models.TabNotification;
 import forpdateam.ru.forpda.data.realm.favorites.FavItemBd;
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment;
@@ -64,7 +63,6 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
     private DynamicDialogMenu<FavoritesFragment, IFavItem> dialogMenu;
     private Realm realm;
     private FavoritesAdapter adapter;
-    private Subscriber<FavData> mainSubscriber = new Subscriber<>(this);
     boolean markedRead = false;
 
     private boolean unreadTop = false;
@@ -244,7 +242,7 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
             return false;
         }
         setRefreshing(true);
-        mainSubscriber.subscribe(RxApi.Favorites().getFavorites(currentSt, loadAll, sorting), this::onLoadThemes, new FavData(), v -> loadData());
+        subscribe(RxApi.Favorites().getFavorites(currentSt, loadAll, sorting), this::onLoadThemes, new FavData(), v -> loadData());
         return true;
     }
 

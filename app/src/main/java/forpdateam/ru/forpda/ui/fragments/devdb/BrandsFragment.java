@@ -16,7 +16,6 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.devdb.models.Brands;
 import forpdateam.ru.forpda.apirx.RxApi;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.ui.fragments.devdb.adapters.BrandsAdapter;
@@ -33,7 +32,6 @@ public class BrandsFragment extends RecyclerFragment implements BrandsAdapter.On
             App.get().getString(R.string.brands_category_ebook),
             App.get().getString(R.string.brands_category_smartwatch)};
     private final static String[] mansCats = {"phones", "pad", "ebook", "smartwatch"};
-    private Subscriber<Brands> mainSubscriber = new Subscriber<>(this);
     private BrandsAdapter adapter;
     private int selected = 0;
     private Brands currentData;
@@ -111,7 +109,7 @@ public class BrandsFragment extends RecyclerFragment implements BrandsAdapter.On
             return false;
         }
         setRefreshing(true);
-        mainSubscriber.subscribe(RxApi.DevDb().getBrands(mansCats[selected]), this::onLoad, new Brands());
+        subscribe(RxApi.DevDb().getBrands(mansCats[selected]), this::onLoad, new Brands());
         return true;
     }
 

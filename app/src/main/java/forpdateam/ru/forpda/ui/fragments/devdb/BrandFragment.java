@@ -18,7 +18,6 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.devdb.models.Brand;
 import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.common.Utils;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.devdb.adapters.BrandAdapter;
@@ -36,7 +35,6 @@ public class BrandFragment extends TabFragment implements BrandAdapter.OnItemCli
     public final static String ARG_BRAND_ID = "BRAND_ID";
     private SwipeRefreshLayout refreshLayout;
     private AutoFitRecyclerView recyclerView;
-    private Subscriber<Brand> mainSubscriber = new Subscriber<>(this);
     private BrandAdapter adapter;
     private String catId, brandId;
     private Brand currentData;
@@ -108,7 +106,7 @@ public class BrandFragment extends TabFragment implements BrandAdapter.OnItemCli
             return false;
         }
         setRefreshing(true);
-        mainSubscriber.subscribe(RxApi.DevDb().getBrand(catId, brandId), this::onLoad, new Brand());
+        subscribe(RxApi.DevDb().getBrand(catId, brandId), this::onLoad, new Brand());
         return true;
     }
 

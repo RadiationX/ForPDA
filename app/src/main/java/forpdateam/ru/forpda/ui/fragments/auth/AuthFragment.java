@@ -31,7 +31,6 @@ import forpdateam.ru.forpda.api.auth.models.AuthForm;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.client.ClientHelper;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher;
 import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.activities.EmptyActivity;
@@ -55,9 +54,6 @@ public class AuthFragment extends TabFragment {
     private RelativeLayout complete;
     private TextView completeText;
     private CircularProgressView progressView;
-    private Subscriber<AuthForm> mainSubscriber = new Subscriber<>(this);
-    private Subscriber<Boolean> loginSubscriber = new Subscriber<>(this);
-    private Subscriber<ProfileModel> profileSubscriber = new Subscriber<>(this);
 
     public AuthFragment() {
         configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_auth));
@@ -124,7 +120,7 @@ public class AuthFragment extends TabFragment {
         if (!super.loadData()) {
             return false;
         }
-        mainSubscriber.subscribe(RxApi.Auth().getForm(), this::onLoadForm, new AuthForm(), view1 -> loadData());
+        subscribe(RxApi.Auth().getForm(), this::onLoadForm, new AuthForm(), view1 -> loadData());
         return true;
     }
 
@@ -151,7 +147,7 @@ public class AuthFragment extends TabFragment {
         loginProgress.setVisibility(View.VISIBLE);
         sendButton.setVisibility(View.INVISIBLE);
         hidePopupWindows();
-        loginSubscriber.subscribe(RxApi.Auth().login(authForm), this::showLoginResult, false, view1 -> loadData());
+        subscribe(RxApi.Auth().login(authForm), this::showLoginResult, false, view1 -> loadData());
         //showLoginResult(false);
     }
 
@@ -194,7 +190,7 @@ public class AuthFragment extends TabFragment {
         animation1.setDuration(375);
         complete.startAnimation(animation1);
 
-        profileSubscriber.subscribe(RxApi.Profile().getProfile("https://4pda.ru/forum/index.php?showuser=".concat(Integer.toString(ClientHelper.getUserId()))), this::onProfileLoad, new ProfileModel());
+        subscribe(RxApi.Profile().getProfile("https://4pda.ru/forum/index.php?showuser=".concat(Integer.toString(ClientHelper.getUserId()))), this::onProfileLoad, new ProfileModel());
     }
 
     private void onProfileLoad(ProfileModel profile) {
