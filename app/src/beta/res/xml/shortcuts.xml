@@ -10,7 +10,7 @@
             android:action="android.intent.action.MAIN"
             android:data="http://4pda.ru/forum/index.php?act=mentions"
             android:launchMode="singleTask"
-            android:targetClass="forpdateam.ru.forpda.MainActivity"
+            android:targetClass="forpdateam.ru.forpda.ui.activities.MainActivity"
             android:targetPackage="ru.forpdateam.forpda.beta" />
     </shortcut>
 
@@ -24,7 +24,7 @@
             android:action="android.intent.action.MAIN"
             android:data="http://4pda.ru/forum/index.php?act=qms"
             android:launchMode="singleTask"
-            android:targetClass="forpdateam.ru.forpda.MainActivity"
+            android:targetClass="forpdateam.ru.forpda.ui.activities.MainActivity"
             android:targetPackage="ru.forpdateam.forpda.beta" />
     </shortcut>
 
@@ -38,7 +38,7 @@
             android:action="android.intent.action.MAIN"
             android:data="http://4pda.ru/forum/index.php?act=fav"
             android:launchMode="singleInstance"
-            android:targetClass="forpdateam.ru.forpda.MainActivity"
+            android:targetClass="forpdateam.ru.forpda.ui.activities.MainActivity"
             android:targetPackage="ru.forpdateam.forpda.beta" />
     </shortcut>
 
@@ -51,7 +51,7 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:data="https://4pda.ru/"
-            android:targetClass="forpdateam.ru.forpda.MainActivity"
+            android:targetClass="forpdateam.ru.forpda.ui.activities.MainActivity"
             android:targetPackage="ru.forpdateam.forpda.beta" />
     </shortcut>
 </shortcuts>

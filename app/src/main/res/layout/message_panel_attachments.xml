@@ -5,12 +5,12 @@
     android:layout_height="wrap_content"
     android:background="?attr/background_base">
 
-    <forpdateam.ru.forpda.views.messagepanel.AutoFitRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/auto_fit_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/controls"
-        android:padding="@dimen/dp2" />
+    <forpdateam.ru.forpda.ui.views.messagepanel.AutoFitRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                                                                    android:id="@+id/auto_fit_recycler_view"
+                                                                    android:layout_width="match_parent"
+                                                                    android:layout_height="match_parent"
+                                                                    android:layout_below="@+id/controls"
+                                                                    android:padding="@dimen/dp2" />
 
     <RelativeLayout
         android:id="@+id/controls"

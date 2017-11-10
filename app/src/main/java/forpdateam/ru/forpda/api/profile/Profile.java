@@ -4,9 +4,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
-import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 
 /**
@@ -33,7 +33,7 @@ public class Profile {
         if (mainMatcher.find()) {
 
             profile.setAvatar(safe(mainMatcher.group(1)));
-            profile.setNick(Utils.fromHtml(safe(mainMatcher.group(2))));
+            profile.setNick(ApiUtils.fromHtml(safe(mainMatcher.group(2))));
             profile.setStatus(safe(mainMatcher.group(3)));
             profile.setGroup(safe(mainMatcher.group(4)));
 
@@ -43,16 +43,16 @@ public class Profile {
 
                 if (field.contains("Рег")) {
                     profile.addInfo(ProfileModel.InfoType.REG_DATE,
-                            safe(Utils.fromHtml(data.group(2))));
+                            safe(ApiUtils.fromHtml(data.group(2))));
 
                 } else if (field.contains("Последнее")) {
                     profile.addInfo(ProfileModel.InfoType.ONLINE_DATE,
-                            safe(Utils.fromHtml(data.group(2).trim())));
+                            safe(ApiUtils.fromHtml(data.group(2).trim())));
                 }
             }
 
             String signString = safe(mainMatcher.group(6));
-            profile.setSign(signString.equals("Нет подписи") ? null : Utils.coloredFromHtml(signString));
+            profile.setSign(signString.equals("Нет подписи") ? null : ApiUtils.coloredFromHtml(signString));
 
             data = personal.matcher(mainMatcher.group(7));
             while (data.find()) {
@@ -178,12 +178,12 @@ public class Profile {
             }
             data = note.matcher(response.getBody());
             if (data.find()) {
-                profile.setNote(Utils.fromHtml(data.group(1).replaceAll("\n", "<br></br>")));
+                profile.setNote(ApiUtils.fromHtml(data.group(1).replaceAll("\n", "<br></br>")));
             }
 
             data = about.matcher(response.getBody());
             if (data.find()) {
-                profile.setAbout(Utils.coloredFromHtml(safe(data.group(1))));
+                profile.setAbout(ApiUtils.coloredFromHtml(safe(data.group(1))));
             }
             data = warnings.matcher(response.getBody());
             while (data.find()) {
@@ -197,8 +197,8 @@ public class Profile {
                         break;
                 }
                 warning.setDate(data.group(2));
-                warning.setTitle(Utils.fromHtml(data.group(3)));
-                warning.setContent(Utils.spannedFromHtml(data.group(4)));
+                warning.setTitle(ApiUtils.fromHtml(data.group(3)));
+                warning.setContent(ApiUtils.spannedFromHtml(data.group(4)));
                 profile.addWarning(warning);
             }
         }

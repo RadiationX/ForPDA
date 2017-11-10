@@ -6,8 +6,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.api.NetworkResponse;
-import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.events.models.NotificationEvent;
 
 /**
@@ -90,10 +90,10 @@ public class NotificationEvents {
         event.setSource(NotificationEvent.Source.THEME);
         event.setType(NotificationEvent.Type.NEW);
         event.setSourceId(Integer.parseInt(matcher.group(1)));
-        event.setSourceTitle(Utils.fromHtml(matcher.group(2)));
+        event.setSourceTitle(ApiUtils.fromHtml(matcher.group(2)));
         event.setMsgCount(Integer.parseInt(matcher.group(3)));
         event.setUserId(Integer.parseInt(matcher.group(4)));
-        event.setUserNick(Utils.fromHtml(matcher.group(5)));
+        event.setUserNick(ApiUtils.fromHtml(matcher.group(5)));
         event.setTimeStamp(Integer.parseInt(matcher.group(6)));
         event.setLastTimeStamp(Integer.parseInt(matcher.group(7)));
         event.setImportant(matcher.group(8).equals("1"));
@@ -121,9 +121,9 @@ public class NotificationEvents {
         event.setSource(NotificationEvent.Source.QMS);
         event.setType(NotificationEvent.Type.NEW);
         event.setSourceId(Integer.parseInt(matcher.group(1)));
-        event.setSourceTitle(Utils.fromHtml(matcher.group(2)));
+        event.setSourceTitle(ApiUtils.fromHtml(matcher.group(2)));
         event.setUserId(Integer.parseInt(matcher.group(3)));
-        event.setUserNick(Utils.fromHtml(matcher.group(4)));
+        event.setUserNick(ApiUtils.fromHtml(matcher.group(4)));
         event.setTimeStamp(Integer.parseInt(matcher.group(5)));
         event.setMsgCount(Integer.parseInt(matcher.group(6)));
         if (event.getUserNick().isEmpty() && event.getSourceId() == 0) {

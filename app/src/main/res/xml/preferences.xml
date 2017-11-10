@@ -20,7 +20,7 @@
             android:summary="%s"
             android:title="@string/pref_lang_title"/>
 
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:key="main.is_system_downloader"
             android:layout="@layout/preference_custom"
@@ -32,7 +32,7 @@
     <PreferenceCategory
         android:layout="@layout/preference_category_custom"
         android:title="@string/pref_title_appereance">
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="false"
             android:key="main.theme.is_dark"
             android:layout="@layout/preference_custom"
@@ -44,21 +44,21 @@
             android:summary="@string/pref_summary_text_size"
             android:title="@string/pref_title_text_size"/>
 
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:key="message_panel.is_monospace"
             android:layout="@layout/preference_custom"
             android:summary="@string/pref_summary_monospace"
             android:title="@string/pref_title_monospace"/>
 
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:key="message_panel.is_default_hidden"
             android:layout="@layout/preference_custom"
             android:summary="@string/pref_summary_panel_hidden"
             android:title="@string/pref_title_panel_hidden"/>
 
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="false"
             android:key="main.scroll_button.enable"
             android:layout="@layout/preference_custom"
@@ -66,30 +66,30 @@
             android:title="@string/pref_title_scroll_button"/>
 
 
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="false"
             android:key="main.drawers.tab_stack_bottom"
             android:layout="@layout/preference_custom"
             android:title="@string/pref_title_tab_bottom"/>
 
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:key="main.show_notify_dot"
             android:layout="@layout/preference_custom"
             android:title="@string/pref_title_notify_dot"/>
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:dependency="main.show_notify_dot"
             android:key="main.notify_dot_fav"
             android:layout="@layout/preference_custom"
             android:title="@string/pref_title_fav_dot"/>
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:dependency="main.show_notify_dot"
             android:key="main.notify_dot_qms"
             android:layout="@layout/preference_custom"
             android:title="@string/pref_title_qms_dot"/>
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:dependency="main.show_notify_dot"
             android:key="main.notify_dot_mentions"
@@ -102,19 +102,19 @@
     <PreferenceCategory
         android:layout="@layout/preference_category_custom"
         android:title="@string/pref_title_themes">
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:key="theme.show_avatars"
             android:layout="@layout/preference_custom"
             android:title="@string/pref_title_show_avatars"/>
 
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:key="theme.circle_avatars"
             android:layout="@layout/preference_custom"
             android:title="@string/pref_title_circle_avatars"/>
 
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:key="theme.anchor_history"
             android:layout="@layout/preference_custom"
@@ -126,19 +126,19 @@
     <PreferenceCategory
         android:layout="@layout/preference_category_custom"
         android:title="@string/pref_title_lists">
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="false"
             android:key="lists.topic.unread_top"
             android:layout="@layout/preference_custom"
             android:title="@string/pref_title_unread_top"/>
 
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="false"
             android:key="lists.topic.show_dot"
             android:layout="@layout/preference_custom"
             android:title="@string/pref_title_show_dot"/>
 
-        <forpdateam.ru.forpda.settings.SwitchPreference
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="false"
             android:key="lists.favorites.load_all"
             android:layout="@layout/preference_custom"

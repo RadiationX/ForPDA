@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <forpdateam.ru.forpda.views.messagepanel.AutoFitRecyclerView
+    <forpdateam.ru.forpda.ui.views.messagepanel.AutoFitRecyclerView
         android:id="@+id/base_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

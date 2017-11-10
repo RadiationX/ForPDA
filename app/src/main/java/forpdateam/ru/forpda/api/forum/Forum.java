@@ -7,9 +7,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
-import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.forum.interfaces.IForumItemFlat;
 import forpdateam.ru.forpda.api.forum.models.Announce;
 import forpdateam.ru.forpda.api.forum.models.ForumItemFlat;
@@ -44,7 +44,7 @@ public class Forum {
                 ForumItemTree item = new ForumItemTree();
                 item.setId(Integer.parseInt(matcher.group(1)));
                 item.setLevel(matcher.group(2).length() / 2);
-                item.setTitle(Utils.fromHtml(matcher.group(3)));
+                item.setTitle(ApiUtils.fromHtml(matcher.group(3)));
                 if (item.getLevel() <= lastParent.getLevel()) {
                     //Удаление элементов, учитывая случай с резким скачком уровня вложенности
                     for (int i = 0; i < (lastParent.getLevel() - item.getLevel() + 1); i++)

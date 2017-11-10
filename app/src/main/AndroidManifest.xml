@@ -27,7 +27,7 @@
         android:supportsRtl="true"
         android:theme="@style/LightAppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.activities.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:launchMode="singleTask"
             android:theme="@style/LightAppTheme.NoActionBar"
@@ -87,14 +87,14 @@
         </activity>
 
         <activity
-            android:name=".imageviewer.ImageViewerActivity"
+            android:name=".ui.activities.imageviewer.ImageViewerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:launchMode="singleTask"
             android:theme="@style/LightAppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize"/>
 
         <activity
-            android:name=".settings.SettingsActivity"
+            android:name=".ui.activities.SettingsActivity"
             android:exported="true"
             android:label="@string/activity_title_settings"
             android:theme="@style/PreferenceAppThemeLight">
@@ -104,27 +104,22 @@
         </activity>
 
         <activity
-            android:name=".utils.permission.ShadowActivity"
-            android:launchMode="singleTop"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
-
-        <activity
-            android:name=".WebVewNotFoundActivity"
+            android:name=".ui.activities.WebVewNotFoundActivity"
             android:launchMode="singleTop"
             android:theme="@style/LightAppTheme.NoActionBar"/>
 
         <activity
-            android:name=".CheckerActivity"
+            android:name=".ui.activities.updatechecker.UpdateCheckerActivity"
             android:launchMode="singleTop"
             android:theme="@style/LightAppTheme.NoActionBar"/>
 
         <activity
-            android:name=".utils.EmptyActivity"
+            android:name=".ui.activities.EmptyActivity"
             android:launchMode="singleTop"
             android:theme="@style/LightAppTheme.NoActionBar"/>
 
         <activity
-            android:name=".CustomCrashDialog"
+            android:name=".ui.activities.CustomCrashDialog"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
             android:launchMode="singleInstance"
@@ -133,7 +128,7 @@
         <service android:name=".notifications.NotificationsService"/>
 
         <receiver
-            android:name=".WakeUpReceiver"
+            android:name=".common.receivers.WakeUpReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -142,7 +137,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".client.NetworkStateReceiver"
+            android:name=".common.receivers.NetworkStateReceiver"
             android:enabled="false"
             android:exported="false">
             <intent-filter>

@@ -4,8 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.api.NetworkResponse;
-import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
 import forpdateam.ru.forpda.api.search.models.SearchItem;
 import forpdateam.ru.forpda.api.search.models.SearchResult;
@@ -37,8 +37,8 @@ public class Search {
                 item.setImageUrl(matcher.group(2));
                 item.setDate(matcher.group(3));
                 item.setUserId(Integer.parseInt(matcher.group(4)));
-                item.setNick(Utils.fromHtml(matcher.group(5)));
-                item.setTitle(Utils.fromHtml(matcher.group(6)));
+                item.setNick(ApiUtils.fromHtml(matcher.group(5)));
+                item.setTitle(ApiUtils.fromHtml(matcher.group(6)));
                 item.setBody(matcher.group(7));
                 result.addItem(item);
             }
@@ -49,11 +49,11 @@ public class Search {
                     item = new SearchItem();
                     item.setTopicId(Integer.parseInt(matcher.group(1)));
                     //item.setId(Integer.parseInt(matcher.group(1)));
-                    item.setTitle(Utils.fromHtml(matcher.group(4)));
-                    item.setDesc(Utils.fromHtml(matcher.group(5)));
+                    item.setTitle(ApiUtils.fromHtml(matcher.group(4)));
+                    item.setDesc(ApiUtils.fromHtml(matcher.group(5)));
                     item.setForumId(Integer.parseInt(matcher.group(6)));
                     item.setUserId(Integer.parseInt(matcher.group(10)));
-                    item.setNick(Utils.fromHtml(matcher.group(11)));
+                    item.setNick(ApiUtils.fromHtml(matcher.group(11)));
                     item.setDate(matcher.group(12));
                     result.addItem(item);
                 }
@@ -63,7 +63,7 @@ public class Search {
                     item = new SearchItem();
                     item.setTopicId(Integer.parseInt(matcher.group(2)));
                     item.setId(Integer.parseInt(matcher.group(3)));
-                    item.setTitle(Utils.fromHtml(matcher.group(4)));
+                    item.setTitle(ApiUtils.fromHtml(matcher.group(4)));
                     item.setDate(matcher.group(5));
                     //item.setNumber(Integer.parseInt(matcher.group(6)));
                     item.setOnline(matcher.group(7).contains("green"));
@@ -72,7 +72,7 @@ public class Search {
                         avatar = "https://s.4pda.to/forum/uploads/".concat(avatar);
                     }
                     item.setAvatar(avatar);
-                    item.setNick(Utils.fromHtml(matcher.group(9)));
+                    item.setNick(ApiUtils.fromHtml(matcher.group(9)));
                     item.setUserId(Integer.parseInt(matcher.group(10)));
                     item.setCurator(matcher.group(11) != null);
                     item.setGroupColor(matcher.group(12));

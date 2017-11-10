@@ -4,8 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.api.NetworkResponse;
-import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.mentions.models.MentionItem;
 import forpdateam.ru.forpda.api.mentions.models.MentionsData;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
@@ -26,10 +26,10 @@ public class Mentions {
             item.setState(matcher.group(1).equals("read") ? MentionItem.STATE_READ : MentionItem.STATE_UNREAD);
             item.setType(matcher.group(2).equalsIgnoreCase("Форум") ? MentionItem.TYPE_TOPIC : MentionItem.TYPE_NEWS);
             item.setLink(matcher.group(3));
-            item.setTitle(Utils.fromHtml(matcher.group(4)));
-            item.setDesc(Utils.fromHtml(matcher.group(5)));
+            item.setTitle(ApiUtils.fromHtml(matcher.group(4)));
+            item.setDesc(ApiUtils.fromHtml(matcher.group(5)));
             item.setDate(matcher.group(6));
-            item.setNick(Utils.fromHtml(matcher.group(7)));
+            item.setNick(ApiUtils.fromHtml(matcher.group(7)));
             data.addItem(item);
         }
         data.setPagination(Pagination.parseForum(response.getBody()));

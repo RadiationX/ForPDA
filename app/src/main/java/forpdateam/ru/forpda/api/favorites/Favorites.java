@@ -8,9 +8,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.api.Api;
+import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.api.NetworkRequest;
 import forpdateam.ru.forpda.api.NetworkResponse;
-import forpdateam.ru.forpda.api.Utils;
 import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import forpdateam.ru.forpda.api.others.pagination.Pagination;
@@ -71,12 +71,12 @@ public class Favorites {
 
                 item.setTopicId(Integer.parseInt(matcher.group(6)));
             }
-            item.setTopicTitle(Utils.fromHtml(matcher.group(8)));
+            item.setTopicTitle(ApiUtils.fromHtml(matcher.group(8)));
 
             if (isForum) {
                 item.setDate(matcher.group(19));
                 item.setLastUserId(Integer.parseInt(matcher.group(20)));
-                item.setLastUserNick(Utils.fromHtml(matcher.group(21)));
+                item.setLastUserNick(ApiUtils.fromHtml(matcher.group(21)));
                 item.setForum(true);
             } else {
                 if (matcher.group(9) != null) {
@@ -84,14 +84,14 @@ public class Favorites {
                     item.setPages((item.getStParam() / 20) + 1);
                 }
                 if (matcher.group(10) != null)
-                    item.setDesc(Utils.fromHtml(matcher.group(10)));
+                    item.setDesc(ApiUtils.fromHtml(matcher.group(10)));
 
                 item.setForumId(Integer.parseInt(matcher.group(12)));
-                item.setForumTitle(Utils.fromHtml(matcher.group(13)));
+                item.setForumTitle(ApiUtils.fromHtml(matcher.group(13)));
                 item.setAuthorId(Integer.parseInt(matcher.group(14)));
-                item.setAuthorUserNick(Utils.fromHtml(matcher.group(15)));
+                item.setAuthorUserNick(ApiUtils.fromHtml(matcher.group(15)));
                 item.setLastUserId(Integer.parseInt(matcher.group(16)));
-                item.setLastUserNick(Utils.fromHtml(matcher.group(17)));
+                item.setLastUserNick(ApiUtils.fromHtml(matcher.group(17)));
                 item.setDate(matcher.group(18));
             }
 

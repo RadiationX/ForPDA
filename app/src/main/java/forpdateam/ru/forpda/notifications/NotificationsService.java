@@ -39,19 +39,19 @@ import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 
 import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.MainActivity;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.Utils;
+import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.api.events.NotificationEvents;
 import forpdateam.ru.forpda.api.events.models.NotificationEvent;
 import forpdateam.ru.forpda.api.others.user.ForumUser;
+import forpdateam.ru.forpda.apirx.ForumUsersCache;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
+import forpdateam.ru.forpda.common.BitmapUtils;
+import forpdateam.ru.forpda.common.Preferences;
 import forpdateam.ru.forpda.data.models.TabNotification;
-import forpdateam.ru.forpda.rxapi.ForumUsersCache;
-import forpdateam.ru.forpda.settings.Preferences;
-import forpdateam.ru.forpda.utils.BitmapUtils;
+import forpdateam.ru.forpda.ui.activities.MainActivity;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
@@ -955,7 +955,7 @@ public class NotificationsService extends Service {
             content.append("...и еще ").append(events.size() - size);
         }
 
-        return Utils.spannedFromHtml(content.toString());
+        return ApiUtils.spannedFromHtml(content.toString());
     }
 
     private String createStackedSummary(List<NotificationEvent> events) {
