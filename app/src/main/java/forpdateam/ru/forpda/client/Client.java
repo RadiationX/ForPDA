@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.client;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -118,62 +119,59 @@ public class Client implements IWebClient {
     }
 
     private final CookieJar cookieJar = new CookieJar() {
-        private final Pattern authPattern = Pattern.compile("4pda\\.ru\\/forum\\/[\\s\\S]*?(?:act=(?:auth|logout)|#afterauth)");
 
         @Override
         public void saveFromResponse(@NonNull HttpUrl url, @NonNull List<Cookie> cookies) {
             /*for (Cookie cookie : clientCookies) {
                 Log.d("SUKA", "Cookie save: "+cookie.toString());
             }*/
-            Matcher matcher = authPattern.matcher(url.toString());
-            if (matcher.find()) {
-                for (Cookie cookie : cookies) {
-                    boolean isMemberId = cookie.name().equals("member_id");
-                    boolean isPassHash = cookie.name().equals("pass_hash");
-                    boolean isSessionId = cookie.name().equals("session_id");
-                    boolean isAnonymous = cookie.name().equals("anonymous");
-                    boolean isClearance = cookie.name().equals("cf_clearance");
-                    if (isMemberId || isPassHash || isSessionId || isAnonymous || isClearance) {
-                        if (cookie.value().equals("deleted")) {
-                            App.get().getPreferences().edit().remove("cookie_".concat(cookie.name())).apply();
-                            if (clientCookies.containsKey(cookie.name())) {
-                                clientCookies.remove(cookie.name());
-                            }
-                        } else {
-                            //Сохранение кукисов cookie_member_id и cookie_pass_hash
-                            App.get().getPreferences().edit().putString("cookie_".concat(cookie.name()), cookieToPref(url.toString(), cookie)).apply();
-                            if (isMemberId) {
-                                App.get().getPreferences().edit().putString("member_id", cookie.value()).apply();
-                                ClientHelper.setUserId(cookie.value());
-                            }
-                            if (!clientCookies.containsKey(cookie.name())) {
-                                clientCookies.put(cookie.name(), cookie);
-                            }
-                        }
+            for (Cookie cookie : cookies) {
+                Log.e(LOG_TAG, "SAVE COOKIE " + cookie.name() + " : " + cookie.value());
+            }
+            SharedPreferences.Editor editor = App.get().getPreferences().edit();
+
+            for (Cookie cookie : cookies) {
+                if (cookie.value().equals("deleted")) {
+                    editor.remove("cookie_".concat(cookie.name()));
+                    clientCookies.remove(cookie.name());
+                } else {
+                    editor.putString("cookie_".concat(cookie.name()), cookieToPref(url.toString(), cookie));
+                    if (cookie.name().equals("member_id")) {
+                        editor.putString("member_id", cookie.value());
+                        ClientHelper.setUserId(cookie.value());
                     }
-                }
-            } else {
-                for (Cookie cookie : cookies) {
-                    if (cookie.value().equals("deleted")) {
+                    if (!clientCookies.containsKey(cookie.name())) {
                         clientCookies.remove(cookie.name());
-                    } else {
-                        App.get().getPreferences().edit().putString("cookie_".concat(cookie.name()), cookieToPref(url.toString(), cookie)).apply();
-                        if (!clientCookies.containsKey(cookie.name())) {
-                            clientCookies.remove(cookie.name());
-                        }
-                        clientCookies.put(cookie.name(), cookie);
                     }
+                    clientCookies.put(cookie.name(), cookie);
                 }
             }
+            editor.apply();
         }
 
         @Override
         public List<Cookie> loadForRequest(@NonNull HttpUrl url) {
-            if (!url.host().toLowerCase().contains("4pda")) {
-                return new ArrayList<>();
+            boolean external = !url.host().toLowerCase().contains("4pda");
+            if (!external) {
+                clientCookies.put("ngx_mb", mobileCookie);
             }
-            clientCookies.put("ngx_mb", mobileCookie);
-            return new ArrayList<>(clientCookies.values());
+
+            List<Cookie> cookies = new ArrayList<>(clientCookies.values());
+            if (external) {
+                for (String privateName : privateHeaders) {
+                    for (int i = 0; i < cookies.size(); i++) {
+                        if (cookies.get(i).name().equals(privateName)) {
+                            cookies.remove(i);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            for (Cookie cookie : cookies) {
+                Log.e(LOG_TAG, "LOAD COOKIE " + cookie.name() + " : " + cookie.value());
+            }
+            return cookies;
         }
     };
 

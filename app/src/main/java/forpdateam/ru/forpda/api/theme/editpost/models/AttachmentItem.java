@@ -42,6 +42,7 @@ public class AttachmentItem implements Parcelable {
     private String weight;
     private String imageUrl;
     private String md5;
+    private String url;
 
     private IWebClient.ProgressListener itemProgressListener = new IWebClient.ProgressListener() {
         @Override
@@ -52,6 +53,12 @@ public class AttachmentItem implements Parcelable {
     };
     private IWebClient.ProgressListener progressListener;
 
+    public AttachmentItem(String name) {
+        this.name = name;
+    }
+
+    public AttachmentItem() {
+    }
 
     public IWebClient.ProgressListener getItemProgressListener() {
         return itemProgressListener;
@@ -89,12 +96,6 @@ public class AttachmentItem implements Parcelable {
         this.md5 = md5;
     }
 
-    public AttachmentItem(String name) {
-        this.name = name;
-    }
-
-    public AttachmentItem() {
-    }
 
     public boolean isSelected() {
         return selected;
@@ -178,6 +179,14 @@ public class AttachmentItem implements Parcelable {
         this.status = status;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     //PARCELABLE !!!!!!!!AAA!!!!!
     public int describeContents() {
         return 0;
@@ -195,6 +204,7 @@ public class AttachmentItem implements Parcelable {
         writeStringToParcel(parcel, extension);
         writeStringToParcel(parcel, weight);
         writeStringToParcel(parcel, imageUrl);
+        writeStringToParcel(parcel, url);
     }
 
     public static final Parcelable.Creator<AttachmentItem> CREATOR = new Parcelable.Creator<AttachmentItem>() {
@@ -219,6 +229,7 @@ public class AttachmentItem implements Parcelable {
         extension = readStringFromParcel(parcel);
         weight = readStringFromParcel(parcel);
         imageUrl = readStringFromParcel(parcel);
+        url = readStringFromParcel(parcel);
     }
 
     private void writeStringToParcel(Parcel parcel, String string) {

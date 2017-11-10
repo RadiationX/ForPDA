@@ -46,7 +46,7 @@ body {
   word-wrap: break-word;
   position: relative;
 }
-.mess_list > .mess_container .mess .content img {
+.mess_list > .mess_container .mess .content img.attach {
   width: auto;
   height: auto;
   max-width: 100%;

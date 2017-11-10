@@ -318,6 +318,7 @@ function toggleButton(button, bodyClass, name) {
 
 function fixImagesSizeWithDensity() {
     const density = window.devicePixelRatio;
+    //const density = 5;
     console.log("Density: " + density);
     if (density == 1) {
         return;
@@ -330,6 +331,9 @@ function fixImagesSizeWithDensity() {
             break;
         case "news":
             selector = "img";
+            break;
+        case "qms":
+            selector = "img.attach";
             break;
         default:
             selector = "img.attach, img.linked-image";
@@ -352,15 +356,18 @@ function fixImagesSizeWithDensity() {
         }
         var width = Number(img.width);
         var height = Number(img.height);
-        //console.log("WH: " + width + " : " + height);
 
         width /= density;
         height /= density;
+        //console.error("WH: " + width + " : " + height);
         if (width > 16 && height > 16) {
             //console.log(width + " : " + height);
             img.setAttribute("width", "" + width + "px");
             img.setAttribute("height", "" + height + "px");
+            img.style.width = "" + width + "px";
+            img.style.height = "" + height + "px";
             img.classList.add("size_fixed");
         }
+        //console.error("WH_ATTR: " + img.getAttribute("width") + " : " + img.getAttribute("width")+" :__: "+img.width+" : "+img.height);
     }
 }

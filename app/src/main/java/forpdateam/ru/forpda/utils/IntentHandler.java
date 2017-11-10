@@ -129,7 +129,7 @@ public class IntentHandler {
                 handleDownload(fullName, url);
             }
             return true;
-        } else if (Pattern.compile("\\/\\/.*?(4pda\\.to|4pda.ru|ggpht.com|googleusercontent.com|windowsphone.com|mzstatic.com|savepic.net|savepice.ru|savepic.ru)\\/[\\s\\S]*?\\.(png|jpg|jpeg|gif)").matcher(url).find()) {
+        } else if (Pattern.compile("\\/\\/.*?(4pda\\.to|4pda\\.ru|ggpht\\.com|googleusercontent\\.com|windowsphone\\.com|mzstatic\\.com|savepic\\.net|savepice\\.ru|savepic\\.ru|.*?\\.ibb\\.com?)\\/[\\s\\S]*?\\.(png|jpg|jpeg|gif)").matcher(url).find()) {
             ImageViewerActivity.startActivity(App.getContext(), url);
             return true;
             //Toast.makeText(App.getContext(), "Скачивание файлов и открытие изображений временно не поддерживается", Toast.LENGTH_SHORT).show();
@@ -226,10 +226,7 @@ public class IntentHandler {
                     return true;
             }
 
-        } /*else if (Pattern.compile("https?:\\/\\/savepic\\.net\\/(\\d+)\\.(.*)").matcher(url).find()) {
-            ImageViewerActivity.startActivity(App.getContext(), url);
-            return true;
-        }*/
+        }
 
         externalIntent(url);
         return false;
