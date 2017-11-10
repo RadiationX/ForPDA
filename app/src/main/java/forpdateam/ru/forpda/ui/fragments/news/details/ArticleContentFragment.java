@@ -66,17 +66,11 @@ public class ArticleContentFragment extends Fragment {
             int pollId = Integer.parseInt(id);
             int answerId = Integer.parseInt(answer);
             Log.d("SUKA", "NEWS SEND POLL " + pollId + " : " + answerId);
-            Disposable disposable = RxApi.NewsList().sendPoll(from, pollId, answerId)
-                    .subscribeOn(Schedulers.io())
-                    .onErrorReturn(throwable -> new DetailsPage())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(page -> {
-                        article.setHtml(page.getHtml());
-                        loadHtml();
-                    }, throwable -> {
-
-                    });
-            ((NewsDetailsFragment) getParentFragment()).getDisposable().add(disposable);
+            NewsDetailsFragment fragment = ((NewsDetailsFragment) getParentFragment());
+            fragment.subscribe(RxApi.NewsList().sendPoll(from, pollId, answerId), page -> {
+                article.setHtml(page.getHtml());
+                loadHtml();
+            }, new DetailsPage());
         });
     }
 

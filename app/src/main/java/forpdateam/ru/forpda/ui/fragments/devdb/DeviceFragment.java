@@ -40,7 +40,6 @@ import forpdateam.ru.forpda.api.devdb.models.Device;
 import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.Utils;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.ui.activities.imageviewer.ImageViewerActivity;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.devdb.device.comments.CommentsFragment;
@@ -55,7 +54,6 @@ import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup;
 public class DeviceFragment extends TabFragment {
     public final static String ARG_DEVICE_ID = "DEVICE_ID";
     private String deviceId = "";
-    private Subscriber<Device> mainSubscriber = new Subscriber<>(this);
     private PagerBullet imagesPager;
     private TabLayout tabLayout;
     private TextView rating;
@@ -218,7 +216,7 @@ public class DeviceFragment extends TabFragment {
         }
         refreshToolbarMenuItems(false);
         progressBar.setVisibility(View.VISIBLE);
-        mainSubscriber.subscribe(RxApi.DevDb().getDevice(deviceId), this::onLoad, new Device());
+        subscribe(RxApi.DevDb().getDevice(deviceId), this::onLoad, new Device());
         return true;
     }
 

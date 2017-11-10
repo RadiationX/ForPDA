@@ -30,8 +30,8 @@ import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.Utils;
 import forpdateam.ru.forpda.common.webview.CustomWebChromeClient;
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient;
-import forpdateam.ru.forpda.ui.activities.imageviewer.ImageViewerActivity;
 import forpdateam.ru.forpda.common.webview.jsinterfaces.IPostFunctions;
+import forpdateam.ru.forpda.ui.activities.imageviewer.ImageViewerActivity;
 import forpdateam.ru.forpda.ui.views.ExtendedWebView;
 
 /**

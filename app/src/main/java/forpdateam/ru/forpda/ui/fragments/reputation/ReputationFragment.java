@@ -28,7 +28,6 @@ import forpdateam.ru.forpda.apirx.ForumUsersCache;
 import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.common.IntentHandler;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.ui.views.ContentController;
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu;
@@ -45,7 +44,6 @@ import io.reactivex.schedulers.Schedulers;
 
 public class ReputationFragment extends RecyclerFragment implements ReputationAdapter.OnItemClickListener<RepItem> {
     private ReputationAdapter adapter;
-    private Subscriber<RepData> mainSubscriber = new Subscriber<>(this);
     private PaginationHelper paginationHelper;
     private RepData data = new RepData();
     private DynamicDialogMenu<ReputationFragment, RepItem> dialogMenu;
@@ -222,7 +220,7 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
         }
         setRefreshing(true);
         refreshToolbarMenuItems(false);
-        mainSubscriber.subscribe(RxApi.Reputation().getReputation(data), this::onLoadThemes, data, v -> loadData());
+        subscribe(RxApi.Reputation().getReputation(data), this::onLoadThemes, data, v -> loadData());
         return true;
     }
 

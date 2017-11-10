@@ -28,7 +28,6 @@ import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.common.IntentHandler;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.data.models.TabNotification;
 import forpdateam.ru.forpda.data.realm.qms.QmsContactBd;
 import forpdateam.ru.forpda.ui.TabManager;
@@ -49,8 +48,6 @@ import io.realm.RealmResults;
  */
 public class QmsContactsFragment extends RecyclerFragment implements QmsContactsAdapter.OnItemClickListener<IQmsContact> {
     private QmsContactsAdapter adapter;
-    private Subscriber<ArrayList<QmsContact>> mainSubscriber = new Subscriber<>(this);
-    private Subscriber<String> helperSubscriber = new Subscriber<>(this);
     private Realm realm;
     private RealmResults<QmsContactBd> results;
     private DynamicDialogMenu<QmsContactsFragment, IQmsContact> dialogMenu;
@@ -168,7 +165,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
             return false;
         }
         setRefreshing(true);
-        mainSubscriber.subscribe(RxApi.Qms().getContactList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
+        subscribe(RxApi.Qms().getContactList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
         return true;
     }
 
@@ -291,7 +288,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
 
     public void deleteDialog(int mid) {
         setRefreshing(true);
-        helperSubscriber.subscribe(RxApi.Qms().deleteDialog(mid), this::onDeletedDialog, "");
+        subscribe(RxApi.Qms().deleteDialog(mid), this::onDeletedDialog, "");
     }
 
     private void onDeletedDialog(String res) {
@@ -322,7 +319,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
                 IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data.getId());
             });
             dialogMenu.addItem(getString(R.string.add_to_blacklist), (context, data) -> {
-                mainSubscriber.subscribe(RxApi.Qms().blockUser(data.getNick()), qmsContacts -> {
+                subscribe(RxApi.Qms().blockUser(data.getNick()), qmsContacts -> {
                     if (!qmsContacts.isEmpty()) {
                         Toast.makeText(getContext(), R.string.user_added_to_blacklist, Toast.LENGTH_SHORT).show();
                     }

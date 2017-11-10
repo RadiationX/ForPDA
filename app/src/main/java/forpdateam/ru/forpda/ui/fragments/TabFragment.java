@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.support.annotation.CallSuper;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -37,13 +38,19 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
+import forpdateam.ru.forpda.common.ErrorHandler;
 import forpdateam.ru.forpda.common.Preferences;
 import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.activities.MainActivity;
 import forpdateam.ru.forpda.ui.views.ContentController;
 import forpdateam.ru.forpda.ui.views.ExtendedWebView;
 import forpdateam.ru.forpda.ui.views.ScrollAwareFABBehavior;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 import static android.content.Context.ACCESSIBILITY_SERVICE;
 
@@ -209,6 +216,27 @@ public class TabFragment extends Fragment {
 
     public CompositeDisposable getDisposable() {
         return disposable;
+    }
+
+    public <T> void subscribe(@NonNull Observable<T> observable, @NonNull Consumer<T> onNext, @NonNull T onErrorReturn) {
+        subscribe(observable, onNext, onErrorReturn, null);
+    }
+
+    public <T> void subscribe(@NonNull Observable<T> observable, @NonNull Consumer<T> onNext, @NonNull T onErrorReturn, View.OnClickListener onErrorAction) {
+        Disposable disposable = observable
+                .onErrorReturn(throwable -> {
+                    handleErrorRx(throwable, onErrorAction);
+                    return onErrorReturn;
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNext, throwable -> handleErrorRx(throwable, onErrorAction));
+
+        this.disposable.add(disposable);
+    }
+
+    private void handleErrorRx(Throwable throwable, View.OnClickListener listener) {
+        ErrorHandler.handle(this, throwable, listener);
     }
 
     //False - можно закрывать

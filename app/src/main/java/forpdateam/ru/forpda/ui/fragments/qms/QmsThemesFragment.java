@@ -20,12 +20,10 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.events.models.NotificationEvent;
 import forpdateam.ru.forpda.api.qms.interfaces.IQmsTheme;
-import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsTheme;
 import forpdateam.ru.forpda.api.qms.models.QmsThemes;
 import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.common.IntentHandler;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.data.models.TabNotification;
 import forpdateam.ru.forpda.data.realm.qms.QmsThemeBd;
 import forpdateam.ru.forpda.data.realm.qms.QmsThemesBd;
@@ -51,8 +49,6 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
     private QmsThemes currentThemes = new QmsThemes();
     private QmsThemesAdapter adapter;
     private Realm realm;
-    private Subscriber<QmsThemes> mainSubscriber = new Subscriber<>(this);
-    private Subscriber<ArrayList<QmsContact>> contactsSubscriber = new Subscriber<>(this);
     private DynamicDialogMenu<QmsThemesFragment, IQmsTheme> dialogMenu;
 
     private Observer notification = (observable, o) -> {
@@ -131,7 +127,7 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
 
         refreshToolbarMenuItems(false);
 
-        mainSubscriber.subscribe(RxApi.Qms().getThemesList(currentThemes.getUserId()), this::onLoadThemes, currentThemes, v -> loadData());
+       subscribe(RxApi.Qms().getThemesList(currentThemes.getUserId()), this::onLoadThemes, currentThemes, v -> loadData());
         return true;
     }
 
@@ -254,7 +250,7 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
         super.addBaseToolbarMenu();
         blackListMenuItem = getMenu().add(R.string.add_to_blacklist)
                 .setOnMenuItemClickListener(item -> {
-                    contactsSubscriber.subscribe(RxApi.Qms().blockUser(currentThemes.getNick()), qmsContacts -> {
+                   subscribe(RxApi.Qms().blockUser(currentThemes.getNick()), qmsContacts -> {
                         if (!qmsContacts.isEmpty()) {
                             Toast.makeText(getContext(), R.string.user_added_to_blacklist, Toast.LENGTH_SHORT).show();
                         }
@@ -307,7 +303,7 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
         if (dialogMenu == null) {
             dialogMenu = new DynamicDialogMenu<>();
             dialogMenu.addItem(getString(R.string.delete), (context, data) -> {
-                mainSubscriber.subscribe(RxApi.Qms().deleteTheme(currentThemes.getUserId(), data.getId()), this::onLoadThemes, currentThemes, v -> loadData());
+                subscribe(RxApi.Qms().deleteTheme(currentThemes.getUserId(), data.getId()), this::onLoadThemes, currentThemes, v -> loadData());
             });
             dialogMenu.addItem(getString(R.string.create_note), (context1, data) -> {
                 String title = String.format(getString(R.string.dialog_Title_Nick), data.getName(), currentThemes.getNick());

@@ -39,7 +39,6 @@ import forpdateam.ru.forpda.common.BitmapUtils;
 import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.LinkMovementMethod;
 import forpdateam.ru.forpda.common.Utils;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.profile.adapters.ProfileAdapter;
 import forpdateam.ru.forpda.ui.views.ScrimHelper;
@@ -55,10 +54,6 @@ public class ProfileFragment extends TabFragment implements ProfileAdapter.Click
     //private LinearLayout countList, infoBlock, contactList, devicesList;
     //private EditText noteText;
     private CircularProgressView progressView;
-
-    private Subscriber<ProfileModel> mainSubscriber = new Subscriber<>(this);
-    private Subscriber<Boolean> saveNoteSubscriber = new Subscriber<>(this);
-    private Subscriber<Bitmap> blurAvatarSubscriber = new Subscriber<>(this);
 
     private String tab_url = "";
     private ProfileModel currentProfile;
@@ -168,13 +163,13 @@ public class ProfileFragment extends TabFragment implements ProfileAdapter.Click
             return false;
         }
         refreshToolbarMenuItems(false);
-        mainSubscriber.subscribe(RxApi.Profile().getProfile(tab_url), this::onProfileLoad, new ProfileModel(), v -> loadData());
+        subscribe(RxApi.Profile().getProfile(tab_url), this::onProfileLoad, new ProfileModel(), v -> loadData());
         return true;
     }
 
     @Override
     public void onSaveClick(String text) {
-        saveNoteSubscriber.subscribe(RxApi.Profile().saveNote(text), this::onNoteSave, false, v -> onSaveClick(text));
+        subscribe(RxApi.Profile().saveNote(text), this::onNoteSave, false, v -> onSaveClick(text));
     }
 
     private void onNoteSave(boolean b) {
@@ -247,7 +242,7 @@ public class ProfileFragment extends TabFragment implements ProfileAdapter.Click
             BitmapUtils.fastBlur(overlay, radius, true);
             return overlay;
         });
-        blurAvatarSubscriber.subscribe(observable, bitmap -> {
+        subscribe(observable, bitmap -> {
             AlphaAnimation animation1 = new AlphaAnimation(0, 1);
             animation1.setDuration(500);
             animation1.setFillAfter(true);

@@ -58,14 +58,13 @@ import forpdateam.ru.forpda.common.FilePickHelper;
 import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.Preferences;
 import forpdateam.ru.forpda.common.Utils;
-import forpdateam.ru.forpda.common.rx.Subscriber;
+import forpdateam.ru.forpda.common.webview.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.data.models.TabNotification;
 import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesFragment;
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.ui.fragments.history.HistoryFragment;
-import forpdateam.ru.forpda.common.webview.jsinterfaces.IPostFunctions;
 import forpdateam.ru.forpda.ui.fragments.theme.editpost.EditPostFragment;
 import forpdateam.ru.forpda.ui.fragments.topics.TopicsFragment;
 import forpdateam.ru.forpda.ui.views.FabOnScroll;
@@ -95,7 +94,6 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     protected SwipeRefreshLayout refreshLayout;
     protected ThemePage currentPage;
     protected List<ThemePage> history = new ArrayList<>();
-    protected Subscriber<ThemePage> mainSubscriber = new Subscriber<>(this);
     //protected Subscriber<String> helperSubscriber = new Subscriber<>(this);
     private PaginationHelper paginationHelper;
     //Тег для вьюхи поиска. Чтобы создавались кнопки и т.д, только при вызове поиска, а не при каждом создании меню.
@@ -103,7 +101,6 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     //protected final ColorFilter colorFilter = new PorterDuffColorFilter(Color.argb(80, 255, 255, 255), PorterDuff.Mode.DST_IN);
     protected MessagePanel messagePanel;
     protected AttachmentsPopup attachmentsPopup;
-    protected Subscriber<List<AttachmentItem>> attachmentSubscriber = new Subscriber<>(this);
     protected String tab_url = "";
     protected SimpleTooltip tooltip;
     private View notificationView;
@@ -454,7 +451,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             hatOpen = currentPage.isHatOpen();
             pollOpen = currentPage.isPollOpen();
         }
-        mainSubscriber.subscribe(RxApi.Theme().getTheme(tab_url, true, hatOpen, pollOpen), this::onLoadData, new ThemePage(), v -> loadData());
+        subscribe(RxApi.Theme().getTheme(tab_url, true, hatOpen, pollOpen), this::onLoadData, new ThemePage(), v -> loadData());
         return true;
     }
 
@@ -804,7 +801,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
         EditPostForm form = createEditPostForm();
         if (form != null) {
             messagePanel.setProgressState(true);
-            mainSubscriber.subscribe(RxApi.EditPost().sendPost(form), s -> {
+            subscribe(RxApi.EditPost().sendPost(form), s -> {
                 messagePanel.setProgressState(false);
                 if (s != currentPage) {
                     onLoadData(s);
@@ -837,13 +834,13 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
 
     public void uploadFiles(List<RequestFile> files) {
         List<AttachmentItem> pending = attachmentsPopup.preUploadFiles(files);
-        attachmentSubscriber.subscribe(RxApi.EditPost().uploadFiles(0, files, pending), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
+        subscribe(RxApi.EditPost().uploadFiles(0, files, pending), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
     }
 
     public void removeFiles() {
         attachmentsPopup.preDeleteFiles();
         List<AttachmentItem> selectedFiles = attachmentsPopup.getSelected();
-        attachmentSubscriber.subscribe(RxApi.EditPost().deleteFiles(0, selectedFiles), item -> attachmentsPopup.onDeleteFiles(selectedFiles), selectedFiles, null);
+        subscribe(RxApi.EditPost().deleteFiles(0, selectedFiles), item -> attachmentsPopup.onDeleteFiles(selectedFiles), selectedFiles, null);
     }
 
 

@@ -23,7 +23,6 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.forum.models.Announce;
 import forpdateam.ru.forpda.apirx.RxApi;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.common.webview.CustomWebChromeClient;
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient;
 import forpdateam.ru.forpda.ui.activities.MainActivity;
@@ -39,7 +38,6 @@ public class AnnounceFragment extends TabFragment {
     public final static String ARG_FORUM_ID = "ARG_FORUM_ID";
     public final static String JS_INTERFACE = "IAnnounce";
     private ExtendedWebView webView;
-    private Subscriber<Announce> mainSubscriber = new Subscriber<>(this);
     private int searchViewTag = 0;
     private int id = 0;
     private int forumId = 0;
@@ -101,7 +99,7 @@ public class AnnounceFragment extends TabFragment {
             return false;
         }
         setRefreshing(true);
-        mainSubscriber.subscribe(RxApi.Forum().getAnnounce(id, forumId, true), this::onLoad, new Announce(), view1 -> loadData());
+        subscribe(RxApi.Forum().getAnnounce(id, forumId, true), this::onLoad, new Announce(), view1 -> loadData());
         return true;
     }
 

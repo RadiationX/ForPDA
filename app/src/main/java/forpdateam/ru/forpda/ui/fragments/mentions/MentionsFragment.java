@@ -20,7 +20,6 @@ import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.Utils;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesHelper;
@@ -36,7 +35,6 @@ import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper;
 public class MentionsFragment extends RecyclerFragment implements MentionsAdapter.OnItemClickListener<MentionItem> {
     private DynamicDialogMenu<MentionsFragment, MentionItem> dialogMenu;
     private MentionsAdapter adapter;
-    private Subscriber<MentionsData> mainSubscriber = new Subscriber<>(this);
 
     private PaginationHelper paginationHelper;
     private MentionsData data;
@@ -86,7 +84,7 @@ public class MentionsFragment extends RecyclerFragment implements MentionsAdapte
             return false;
         }
         setRefreshing(true);
-        mainSubscriber.subscribe(RxApi.Mentions().getMentions(currentSt), this::onLoadThemes, new MentionsData(), v -> loadData());
+        subscribe(RxApi.Mentions().getMentions(currentSt), this::onLoadThemes, new MentionsData(), v -> loadData());
         return true;
     }
 

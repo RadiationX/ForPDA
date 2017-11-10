@@ -21,7 +21,6 @@ import forpdateam.ru.forpda.api.qms.interfaces.IQmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.common.IntentHandler;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher;
 import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment;
@@ -38,10 +37,8 @@ import forpdateam.ru.forpda.ui.views.FunnyContent;
 public class QmsBlackListFragment extends RecyclerFragment implements QmsContactsAdapter.OnItemClickListener<IQmsContact> {
     private AppCompatAutoCompleteTextView nickField;
     private QmsContactsAdapter adapter;
-    private Subscriber<ArrayList<QmsContact>> mainSubscriber = new Subscriber<>(this);
     private DynamicDialogMenu<QmsBlackListFragment, IQmsContact> dialogMenu;
     private ArrayList<QmsContact> currentData;
-    private Subscriber<List<ForumUser>> searchUserSubscriber = new Subscriber<>(this);
 
     public QmsBlackListFragment() {
         configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_blacklist));
@@ -117,7 +114,7 @@ public class QmsBlackListFragment extends RecyclerFragment implements QmsContact
             return false;
         }
         setRefreshing(true);
-        mainSubscriber.subscribe(RxApi.Qms().getBlackList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
+        subscribe(RxApi.Qms().getBlackList(), this::onLoadContacts, new ArrayList<>(), v -> loadData());
         return true;
     }
 
@@ -142,12 +139,12 @@ public class QmsBlackListFragment extends RecyclerFragment implements QmsContact
 
     private void blockUser(String nick) {
         setRefreshing(true);
-        mainSubscriber.subscribe(RxApi.Qms().blockUser(nick), this::onEditedList, currentData, null);
+        subscribe(RxApi.Qms().blockUser(nick), this::onEditedList, currentData, null);
     }
 
     private void unBlockUser(int[] userIds) {
         setRefreshing(true);
-        mainSubscriber.subscribe(RxApi.Qms().unBlockUsers(userIds), this::onEditedList, currentData, null);
+        subscribe(RxApi.Qms().unBlockUsers(userIds), this::onEditedList, currentData, null);
     }
 
     private void onEditedList(ArrayList<QmsContact> data) {
@@ -159,7 +156,7 @@ public class QmsBlackListFragment extends RecyclerFragment implements QmsContact
     }
 
     private void searchUser(String nick) {
-        searchUserSubscriber.subscribe(RxApi.Qms().findUser(nick), this::onShowSearchRes, new ArrayList<>());
+        subscribe(RxApi.Qms().findUser(nick), this::onShowSearchRes, new ArrayList<>());
     }
 
     private void onShowSearchRes(List<ForumUser> res) {

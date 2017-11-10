@@ -30,7 +30,6 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.api.qms.models.QmsChatModel;
-import forpdateam.ru.forpda.api.qms.models.QmsContact;
 import forpdateam.ru.forpda.api.qms.models.QmsMessage;
 import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
 import forpdateam.ru.forpda.apirx.ForumUsersCache;
@@ -39,7 +38,6 @@ import forpdateam.ru.forpda.apirx.apiclasses.QmsRx;
 import forpdateam.ru.forpda.common.FilePickHelper;
 import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.Preferences;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.common.webview.CustomWebChromeClient;
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient;
 import forpdateam.ru.forpda.data.models.TabNotification;
@@ -78,9 +76,6 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     private MessagePanel messagePanel;
     private AttachmentsPopup attachmentsPopup;
 
-    private Subscriber<QmsChatModel> mainSubscriber = new Subscriber<>(this);
-    private Subscriber<ArrayList<QmsMessage>> messageSubscriber = new Subscriber<>(this);
-    private Subscriber<ArrayList<QmsContact>> contactsSubscriber = new Subscriber<>(this);
 
     private Observer chatPreferenceObserver = (observable, o) -> {
         if (o == null) return;
@@ -215,7 +210,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         super.addBaseToolbarMenu();
         blackListMenuItem = getMenu().add(R.string.add_to_blacklist)
                 .setOnMenuItemClickListener(item -> {
-                    contactsSubscriber.subscribe(RxApi.Qms().blockUser(currentChat.getNick()), qmsContacts -> {
+                    subscribe(RxApi.Qms().blockUser(currentChat.getNick()), qmsContacts -> {
                         if (!qmsContacts.isEmpty()) {
                             Toast.makeText(getContext(), R.string.user_added_to_blacklist, Toast.LENGTH_SHORT).show();
                         }
@@ -260,7 +255,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         addUnusedAttachments();
         refreshToolbarMenuItems(false);
         progressBar.setVisibility(View.VISIBLE);
-        mainSubscriber.subscribe(RxApi.Qms().sendNewTheme(nick, title, message), this::onNewThemeCreate, new QmsChatModel());
+        subscribe(RxApi.Qms().sendNewTheme(nick, title, message), this::onNewThemeCreate, new QmsChatModel());
     }
 
     @Override
@@ -271,7 +266,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         if (currentChat.getUserId() != QmsChatModel.NOT_CREATED && currentChat.getThemeId() != QmsChatModel.NOT_CREATED) {
             refreshToolbarMenuItems(false);
             progressBar.setVisibility(View.VISIBLE);
-            mainSubscriber.subscribe(RxApi.Qms().getChat(currentChat.getUserId(), currentChat.getThemeId()), this::onLoadChat, new QmsChatModel(), v -> loadData());
+            subscribe(RxApi.Qms().getChat(currentChat.getUserId(), currentChat.getThemeId()), this::onLoadChat, new QmsChatModel(), v -> loadData());
         }
         return true;
     }
@@ -352,7 +347,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
         if (!currentChat.getMessages().isEmpty()) {
             lastMessId = currentChat.getMessages().get(currentChat.getMessages().size() - 1).getId();
         }
-        messageSubscriber.subscribe(
+        subscribe(
                 RxApi.Qms().getMessagesFromWs(themeId, messageId, lastMessId),
                 this::onNewMessages,
                 new ArrayList<>());
@@ -366,7 +361,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
             if (!currentChat.getMessages().isEmpty()) {
                 lastMessId = currentChat.getMessages().get(currentChat.getMessages().size() - 1).getId();
             }
-            messageSubscriber.subscribe(
+            subscribe(
                     RxApi.Qms().getMessagesAfter(userId, themeId, lastMessId),
                     this::onNewMessages,
                     new ArrayList<>());
@@ -399,7 +394,7 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
     private void sendMessage() {
         messagePanel.setProgressState(true);
         addUnusedAttachments();
-        messageSubscriber.subscribe(RxApi.Qms().sendMessage(currentChat.getUserId(), currentChat.getThemeId(), messagePanel.getMessage()), qmsMessage -> {
+        subscribe(RxApi.Qms().sendMessage(currentChat.getUserId(), currentChat.getThemeId(), messagePanel.getMessage()), qmsMessage -> {
             messagePanel.setProgressState(false);
             if (!qmsMessage.isEmpty() && qmsMessage.get(0).getContent() != null) {
                 //Empty because result returned from websocket
@@ -460,11 +455,10 @@ public class QmsChatFragment extends TabFragment implements ChatThemeCreator.The
 
     /* ATTACHMENTS LOADER */
 
-    private Subscriber<List<AttachmentItem>> attachmentSubscriber = new Subscriber<>(this);
 
     public void uploadFiles(List<RequestFile> files) {
         List<AttachmentItem> pending = attachmentsPopup.preUploadFiles(files);
-        attachmentSubscriber.subscribe(RxApi.Qms().uploadFiles(files, pending), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
+        subscribe(RxApi.Qms().uploadFiles(files, pending), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
     }
 
     @Override

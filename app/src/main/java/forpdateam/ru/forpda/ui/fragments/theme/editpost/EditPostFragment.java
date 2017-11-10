@@ -22,7 +22,6 @@ import forpdateam.ru.forpda.api.theme.editpost.models.EditPostForm;
 import forpdateam.ru.forpda.api.theme.models.ThemePage;
 import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.common.FilePickHelper;
-import forpdateam.ru.forpda.common.rx.Subscriber;
 import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.theme.ThemeFragment;
@@ -235,9 +234,6 @@ public class EditPostFragment extends TabFragment {
     }
 
     private AttachmentsPopup attachmentsPopup;
-    private Subscriber<ThemePage> sendSubscriber = new Subscriber<>(this);
-    private Subscriber<EditPostForm> formSubscriber = new Subscriber<>(this);
-    private Subscriber<List<AttachmentItem>> attachmentSubscriber = new Subscriber<>(this);
 
     private void sendMessage() {
         messagePanel.setProgressState(true);
@@ -247,7 +243,7 @@ public class EditPostFragment extends TabFragment {
         for (AttachmentItem item : attachments) {
             postForm.addAttachment(item);
         }
-        sendSubscriber.subscribe(RxApi.EditPost().sendPost(postForm), s -> {
+        subscribe(RxApi.EditPost().sendPost(postForm), s -> {
             messagePanel.setProgressState(false);
             if (s.getId() != 0) {
                 TabFragment fragment = TabManager.get().get(getParentTag());
@@ -270,7 +266,7 @@ public class EditPostFragment extends TabFragment {
     private void loadForm() {
         messagePanel.getFormProgress().setVisibility(View.VISIBLE);
         messagePanel.getMessageField().setVisibility(View.GONE);
-        formSubscriber.subscribe(RxApi.EditPost().loadForm(postForm.getPostId()), form -> {
+        subscribe(RxApi.EditPost().loadForm(postForm.getPostId()), form -> {
             messagePanel.getMessageField().setVisibility(View.VISIBLE);
             messagePanel.getFormProgress().setVisibility(View.GONE);
             if (form.getErrorCode() != ERROR_NONE) {
@@ -300,13 +296,13 @@ public class EditPostFragment extends TabFragment {
 
     public void uploadFiles(List<RequestFile> files) {
         List<AttachmentItem> pending = attachmentsPopup.preUploadFiles(files);
-        attachmentSubscriber.subscribe(RxApi.EditPost().uploadFiles(postForm.getPostId(), files, pending), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
+        subscribe(RxApi.EditPost().uploadFiles(postForm.getPostId(), files, pending), items -> attachmentsPopup.onUploadFiles(items), new ArrayList<>(), null);
     }
 
     public void removeFiles() {
         attachmentsPopup.preDeleteFiles();
         List<AttachmentItem> selectedFiles = attachmentsPopup.getSelected();
-        attachmentSubscriber.subscribe(RxApi.EditPost().deleteFiles(postForm.getPostId(), selectedFiles), item -> attachmentsPopup.onDeleteFiles(selectedFiles), selectedFiles, null);
+        subscribe(RxApi.EditPost().deleteFiles(postForm.getPostId(), selectedFiles), item -> attachmentsPopup.onDeleteFiles(selectedFiles), selectedFiles, null);
     }
 
 
