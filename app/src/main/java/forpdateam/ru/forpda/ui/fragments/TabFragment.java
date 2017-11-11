@@ -40,6 +40,9 @@ import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.common.ErrorHandler;
 import forpdateam.ru.forpda.common.Preferences;
+import forpdateam.ru.forpda.common.mvp.BasePresenter;
+import forpdateam.ru.forpda.common.mvp.IBasePresenter;
+import forpdateam.ru.forpda.common.mvp.IBaseView;
 import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.activities.MainActivity;
 import forpdateam.ru.forpda.ui.views.ContentController;
@@ -57,7 +60,7 @@ import static android.content.Context.ACCESSIBILITY_SERVICE;
 /**
  * Created by radiationx on 07.08.16.
  */
-public class TabFragment extends Fragment {
+public class TabFragment extends Fragment implements IBaseView {
     private final static String LOG_TAG = TabFragment.class.getSimpleName();
     public final static String ARG_TITLE = "TAB_TITLE";
     public final static String TAB_SUBTITLE = "TAB_SUBTITLE";
@@ -74,6 +77,7 @@ public class TabFragment extends Fragment {
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private Thread mUiThread;
+    private IBasePresenter<? extends IBaseView> basePresenter;
 
     protected final TabConfiguration configuration = new TabConfiguration();
 
@@ -214,6 +218,10 @@ public class TabFragment extends Fragment {
     }
 
 
+    protected void registerPresenter(IBasePresenter<? extends IBaseView> presenter) {
+        basePresenter = presenter;
+    }
+
     public CompositeDisposable getDisposable() {
         return disposable;
     }
@@ -283,6 +291,9 @@ public class TabFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (basePresenter != null) {
+            basePresenter.onCreate(savedInstanceState);
+        }
         mUiThread = Thread.currentThread();
         Log.d(LOG_TAG, "onDestroy " + this);
         if (savedInstanceState != null) {
@@ -458,6 +469,10 @@ public class TabFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        if (basePresenter != null) {
+            basePresenter.onSaveInstanceState(outState);
+            basePresenter.onDetach();
+        }
         outState.putString(BUNDLE_PREFIX.concat(BUNDLE_TITLE), title);
         outState.putString(BUNDLE_PREFIX.concat(BUNDLE_SUBTITLE), subtitle);
         outState.putString(BUNDLE_PREFIX.concat(BUNDLE_TAB_TITLE), tabTitle);
@@ -477,10 +492,14 @@ public class TabFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "onResume " + this);
+        if (basePresenter != null) {
+            basePresenter.onAttach();
+        }
         if (attachedWebView != null) {
             attachedWebView.onResume();
         }
     }
+
 
     @Override
     public void onPause() {
@@ -493,11 +512,31 @@ public class TabFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        if (basePresenter != null) {
+            basePresenter.onDetach();
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (basePresenter != null) {
+            basePresenter.onDetach();
+            basePresenter.onDestroyView();
+        }
+    }
+
+    @Override
     @CallSuper
     public void onDestroy() {
         super.onDestroy();
         attachedWebView = null;
         Log.d(LOG_TAG, "onDestroy " + this);
+        if (getActivity().isFinishing() || isRemoving()) {
+            basePresenter.onDestroy();
+        }
         if (!disposable.isDisposed())
             disposable.dispose();
         hidePopupWindows();
@@ -541,7 +580,7 @@ public class TabFragment extends Fragment {
         contentController.stopRefreshing();
     }
 
-    protected void setRefreshing(boolean refreshing) {
+    public void setRefreshing(boolean refreshing) {
         if (refreshing)
             startRefreshing();
         else

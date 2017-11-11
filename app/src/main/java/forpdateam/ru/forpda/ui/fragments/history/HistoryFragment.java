@@ -7,6 +7,7 @@ import android.view.View;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import forpdateam.ru.forpda.App;
@@ -28,21 +29,17 @@ import io.realm.Sort;
  * Created by radiationx on 06.09.17.
  */
 
-public class HistoryFragment extends RecyclerFragment implements HistoryAdapter.OnItemClickListener<HistoryItemBd> {
+public class HistoryFragment extends RecyclerFragment implements HistoryContract.View, HistoryAdapter.OnItemClickListener<HistoryItemBd> {
     private final static SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy, HH:mm", Locale.getDefault());
     private HistoryAdapter adapter;
-    private Realm realm;
     private DynamicDialogMenu<HistoryFragment, HistoryItemBd> dialogMenu;
+    private HistoryContract.Presenter presenter;
 
     public HistoryFragment() {
         configuration.setUseCache(true);
         configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_history));
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        realm = Realm.getDefaultInstance();
+        presenter = new HistoryPresenter(this);
+        registerPresenter(presenter);
     }
 
     @Override
@@ -61,7 +58,7 @@ public class HistoryFragment extends RecyclerFragment implements HistoryAdapter.
         super.addBaseToolbarMenu();
         getMenu().add("Удалить историю")
                 .setOnMenuItemClickListener(item -> {
-                    clear();
+                    presenter.clear();
                     return false;
                 });
     }
@@ -69,30 +66,24 @@ public class HistoryFragment extends RecyclerFragment implements HistoryAdapter.
     @Override
     public void loadCacheData() {
         super.loadCacheData();
-        if (!realm.isClosed()) {
-            setRefreshing(true);
-            RealmResults<HistoryItemBd> results = realm.where(HistoryItemBd.class).findAllSorted("unixTime", Sort.DESCENDING);
-            if (results.isEmpty()) {
-                if (!contentController.contains(ContentController.TAG_NO_DATA)) {
-                    FunnyContent funnyContent = new FunnyContent(getContext())
-                            .setImage(R.drawable.ic_history)
-                            .setTitle(R.string.funny_history_nodata_title)
-                            .setDesc(R.string.funny_history_nodata_desc);
-                    contentController.addContent(funnyContent, ContentController.TAG_NO_DATA);
-                }
-                contentController.showContent(ContentController.TAG_NO_DATA);
-            } else {
-                contentController.hideContent(ContentController.TAG_NO_DATA);
-            }
-            adapter.addAll(results);
-        }
-        setRefreshing(false);
+        presenter.getHistory();
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        realm.close();
+    public void showHistory(List<HistoryItemBd> history) {
+        if (history.isEmpty()) {
+            if (!contentController.contains(ContentController.TAG_NO_DATA)) {
+                FunnyContent funnyContent = new FunnyContent(getContext())
+                        .setImage(R.drawable.ic_history)
+                        .setTitle(R.string.funny_history_nodata_title)
+                        .setDesc(R.string.funny_history_nodata_desc);
+                contentController.addContent(funnyContent, ContentController.TAG_NO_DATA);
+            }
+            contentController.showContent(ContentController.TAG_NO_DATA);
+        } else {
+            contentController.hideContent(ContentController.TAG_NO_DATA);
+        }
+        adapter.addAll(history);
     }
 
     @Override
@@ -110,7 +101,7 @@ public class HistoryFragment extends RecyclerFragment implements HistoryAdapter.
                 Utils.copyToClipBoard(data.getUrl());
             });
             dialogMenu.addItem(getString(R.string.delete), (context, data) -> {
-                context.delete(data.getId());
+                presenter.remove(data.getId());
             });
         }
         dialogMenu.disallowAll();
@@ -119,27 +110,8 @@ public class HistoryFragment extends RecyclerFragment implements HistoryAdapter.
         return true;
     }
 
-    private void delete(int id) {
-        if (realm.isClosed())
-            return;
-        realm.executeTransactionAsync(realm1 -> {
-            realm1.where(HistoryItemBd.class)
-                    .equalTo("id", id)
-                    .findAll()
-                    .deleteAllFromRealm();
-        }, this::loadCacheData);
-    }
-
-    private void clear() {
-        if (realm.isClosed())
-            return;
-        realm.executeTransactionAsync(realm1 -> {
-            realm1.delete(HistoryItemBd.class);
-        }, this::loadCacheData);
-    }
-
     public static void addToHistory(int id, String url, String title) {
-        Realm realm = Realm.getDefaultInstance();
+        final Realm realm = Realm.getDefaultInstance();
         realm.executeTransactionAsync(realm1 -> {
             HistoryItemBd item = realm1
                     .where(HistoryItemBd.class)
@@ -162,13 +134,9 @@ public class HistoryFragment extends RecyclerFragment implements HistoryAdapter.
         }, () -> {
             realm.close();
             HistoryFragment historyFragment = (HistoryFragment) TabManager.get().getByClass(HistoryFragment.class);
-            if (historyFragment == null) {
-                return;
+            if (historyFragment != null) {
+                historyFragment.presenter.getHistory();
             }
-            historyFragment.loadCacheData();
         });
-
     }
-
-
 }
