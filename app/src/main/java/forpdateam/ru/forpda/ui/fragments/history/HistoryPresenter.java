@@ -37,9 +37,6 @@ public class HistoryPresenter extends BasePresenter<HistoryContract.View> implem
         RealmResults<HistoryItemBd> results = realm
                 .where(HistoryItemBd.class)
                 .findAllSorted("unixTime", Sort.DESCENDING);
-
-
-
         view.showHistory(results);
         view.setRefreshing(false);
     }

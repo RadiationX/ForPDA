@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Pair;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -92,9 +93,9 @@ public class BrandsFragment extends RecyclerFragment implements BrandsAdapter.On
     }
 
     @Override
-    protected void addBaseToolbarMenu() {
-        super.addBaseToolbarMenu();
-        getMenu().add(R.string.fragment_title_device_search)
+    protected void addBaseToolbarMenu(Menu menu) {
+        super.addBaseToolbarMenu(menu);
+        menu.add(R.string.fragment_title_device_search)
                 .setIcon(R.drawable.ic_toolbar_search)
                 .setOnMenuItemClickListener(item -> {
                     TabManager.get().add(SearchFragment.class);
@@ -118,7 +119,7 @@ public class BrandsFragment extends RecyclerFragment implements BrandsAdapter.On
         setRefreshing(false);
         adapter.clear();
         for (Map.Entry<String, ArrayList<Brands.Item>> entry : brands.getLetterMap().entrySet()) {
-            adapter.addSection(new Pair<>(entry.getKey(), entry.getValue()));
+            adapter.addSection(entry.getKey(), entry.getValue());
         }
         adapter.notifyDataSetChanged();
         setTitle(brands.getCatTitle());

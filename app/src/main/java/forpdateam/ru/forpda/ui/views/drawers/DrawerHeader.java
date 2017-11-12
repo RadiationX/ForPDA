@@ -49,12 +49,12 @@ public class DrawerHeader {
             }
         }
         if (tabFragment == null) {
-            tabFragment = new TabFragment.Builder<>(ProfileFragment.class).build();
-            tabFragment.getConfiguration().setMenu(true);
+            tabFragment = new TabFragment.Builder<>(ProfileFragment.class)
+                    .setIsMenu()
+                    .build();
             TabManager.get().add(tabFragment);
         } else {
             TabManager.get().select(tabFragment);
-            ;
         }
         /*TabFragment fragment = TabManager.get().get(TabManager.get().getTagContainClass(ProfileFragment.class));
         if (fragment == null | (fragment != null && fragment.getConfiguration().isMenu())) {

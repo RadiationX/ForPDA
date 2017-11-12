@@ -15,6 +15,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -129,14 +130,14 @@ public class ProfileFragment extends TabFragment implements ProfileAdapter.Click
     }
 
     @Override
-    protected void addBaseToolbarMenu() {
-        super.addBaseToolbarMenu();
-        copyLinkMenuItem = getMenu().add(R.string.copy_link)
+    protected void addBaseToolbarMenu(Menu menu) {
+        super.addBaseToolbarMenu(menu);
+        copyLinkMenuItem = menu.add(R.string.copy_link)
                 .setOnMenuItemClickListener(menuItem -> {
                     Utils.copyToClipBoard(tab_url);
                     return false;
                 });
-        writeMenuItem = getMenu().add(R.string.write)
+        writeMenuItem = menu.add(R.string.write)
                 .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_profile_toolbar_create))
                 .setOnMenuItemClickListener(item -> {
                     IntentHandler.handle(currentProfile.getContacts().get(0).getUrl());

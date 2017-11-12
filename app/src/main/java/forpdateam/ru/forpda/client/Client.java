@@ -116,14 +116,7 @@ public class Client implements IWebClient {
 
         @Override
         public void saveFromResponse(@NonNull HttpUrl url, @NonNull List<Cookie> cookies) {
-            /*for (Cookie cookie : clientCookies) {
-                Log.d("SUKA", "Cookie save: "+cookie.toString());
-            }*/
-            for (Cookie cookie : cookies) {
-                Log.e(LOG_TAG, "SAVE COOKIE " + cookie.name() + " : " + cookie.value());
-            }
             SharedPreferences.Editor editor = App.get().getPreferences().edit();
-
             for (Cookie cookie : cookies) {
                 if (cookie.value().equals("deleted")) {
                     editor.remove("cookie_".concat(cookie.name()));

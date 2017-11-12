@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -117,12 +118,12 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
     private void refreshList() {
         adapter.clear();
         if (!data.getForumItems().isEmpty())
-            adapter.addSection(new Pair<>(getString(R.string.forum_section), data.getForumItems()));
+            adapter.addSection(getString(R.string.forum_section), data.getForumItems());
         if (!data.getAnnounceItems().isEmpty())
-            adapter.addSection(new Pair<>(getString(R.string.announce_section), data.getAnnounceItems()));
+            adapter.addSection(getString(R.string.announce_section), data.getAnnounceItems());
         if (!data.getPinnedItems().isEmpty())
-            adapter.addSection(new Pair<>(getString(R.string.pinned_section), data.getPinnedItems()));
-        adapter.addSection(new Pair<>(getString(R.string.themes_section), data.getTopicItems()));
+            adapter.addSection(getString(R.string.pinned_section), data.getPinnedItems());
+        adapter.addSection(getString(R.string.themes_section), data.getTopicItems());
         adapter.notifyDataSetChanged();
     }
 
@@ -137,9 +138,9 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
     }
 
     @Override
-    protected void addBaseToolbarMenu() {
-        super.addBaseToolbarMenu();
-        getMenu()
+    protected void addBaseToolbarMenu(Menu menu) {
+        super.addBaseToolbarMenu(menu);
+        menu
                 .add(R.string.open_forum)
                 .setOnMenuItemClickListener(item -> {
                     Bundle args = new Bundle();
@@ -148,7 +149,7 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
                     return true;
                 });
         if (ClientHelper.getAuthState()) {
-            getMenu()
+            menu
                     .add(R.string.mark_read)
                     .setOnMenuItemClickListener(item -> {
                         new AlertDialog.Builder(getContext())
@@ -161,7 +162,7 @@ public class TopicsFragment extends RecyclerFragment implements TopicsAdapter.On
         }
 
 
-        getMenu().add(R.string.fragment_title_search)
+        menu.add(R.string.fragment_title_search)
                 .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_search))
                 .setOnMenuItemClickListener(item -> {
                     String url = "https://4pda.ru/forum/index.php?act=search&source=all&forums%5B%5D=" + id;

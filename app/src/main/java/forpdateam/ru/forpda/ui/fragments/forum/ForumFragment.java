@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -130,14 +131,14 @@ public class ForumFragment extends TabFragment {
     }
 
     @Override
-    protected void addBaseToolbarMenu() {
-        super.addBaseToolbarMenu();
-        getMenu().add(R.string.forum_refresh)
+    protected void addBaseToolbarMenu(Menu menu) {
+        super.addBaseToolbarMenu(menu);
+        menu.add(R.string.forum_refresh)
                 .setOnMenuItemClickListener(item -> {
                     loadData();
                     return false;
                 });
-        getMenu().add(R.string.mark_all_read)
+        menu.add(R.string.mark_all_read)
                 .setOnMenuItemClickListener(item -> {
                     new AlertDialog.Builder(getContext())
                             .setMessage(getString(R.string.mark_all_read) + "?")

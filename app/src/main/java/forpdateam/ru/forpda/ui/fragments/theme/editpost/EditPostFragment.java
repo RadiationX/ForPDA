@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -130,8 +131,8 @@ public class EditPostFragment extends TabFragment {
     }
 
     @Override
-    protected void addBaseToolbarMenu() {
-        super.addBaseToolbarMenu();
+    protected void addBaseToolbarMenu(Menu menu) {
+        super.addBaseToolbarMenu(menu);
         /*getMenu().add("prnt")
                 .setOnMenuItemClickListener(item -> {
                     EditPoll poll = postForm.getPoll();

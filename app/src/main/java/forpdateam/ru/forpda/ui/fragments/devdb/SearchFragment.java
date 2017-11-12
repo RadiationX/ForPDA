@@ -8,6 +8,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,10 +112,10 @@ public class SearchFragment extends TabFragment implements BrandAdapter.OnItemCl
 
 
     @Override
-    protected void addBaseToolbarMenu() {
-        super.addBaseToolbarMenu();
+    protected void addBaseToolbarMenu(Menu menu) {
+        super.addBaseToolbarMenu(menu);
         toolbar.inflateMenu(R.menu.qms_contacts_menu);
-        searchMenuItem = getMenu().findItem(R.id.action_search);
+        searchMenuItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) searchMenuItem.getActionView();
         searchView.setIconifiedByDefault(true);
     }

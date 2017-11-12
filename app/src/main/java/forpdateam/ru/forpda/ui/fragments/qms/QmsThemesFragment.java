@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -246,9 +247,9 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
     }
 
     @Override
-    protected void addBaseToolbarMenu() {
-        super.addBaseToolbarMenu();
-        blackListMenuItem = getMenu().add(R.string.add_to_blacklist)
+    protected void addBaseToolbarMenu(Menu menu) {
+        super.addBaseToolbarMenu(menu);
+        blackListMenuItem = menu.add(R.string.add_to_blacklist)
                 .setOnMenuItemClickListener(item -> {
                    subscribe(RxApi.Qms().blockUser(currentThemes.getNick()), qmsContacts -> {
                         if (!qmsContacts.isEmpty()) {
@@ -257,7 +258,7 @@ public class QmsThemesFragment extends RecyclerFragment implements QmsThemesAdap
                     }, new ArrayList<>());
                     return false;
                 });
-        noteMenuItem = getMenu().add(R.string.create_note)
+        noteMenuItem = menu.add(R.string.create_note)
                 .setOnMenuItemClickListener(item -> {
                     String title = String.format(getString(R.string.dialogs_Nick), currentThemes.getNick());
                     String url = "https://4pda.ru/forum/index.php?act=qms&mid=" + currentThemes.getUserId();

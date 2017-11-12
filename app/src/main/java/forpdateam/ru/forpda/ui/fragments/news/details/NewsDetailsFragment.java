@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
@@ -182,19 +183,19 @@ public class NewsDetailsFragment extends TabFragment {
     }
 
     @Override
-    protected void addBaseToolbarMenu() {
-        super.addBaseToolbarMenu();
-        getMenu().add(R.string.copy_link)
+    protected void addBaseToolbarMenu(Menu menu) {
+        super.addBaseToolbarMenu(menu);
+        menu.add(R.string.copy_link)
                 .setOnMenuItemClickListener(menuItem -> {
                     Utils.copyToClipBoard("https://4pda.ru/index.php?p=" + newsId);
                     return false;
                 });
-        getMenu().add(R.string.share)
+        menu.add(R.string.share)
                 .setOnMenuItemClickListener(menuItem -> {
                     Utils.shareText("https://4pda.ru/index.php?p=" + newsId);
                     return false;
                 });
-        getMenu().add(R.string.create_note)
+        menu.add(R.string.create_note)
                 .setOnMenuItemClickListener(menuItem -> {
                     String title = newsTitle;
                     String url = "https://4pda.ru/index.php?p=" + newsId;

@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.ui.fragments.history;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.Menu;
 import android.view.View;
 
 import java.text.SimpleDateFormat;
@@ -54,9 +55,9 @@ public class HistoryFragment extends RecyclerFragment implements HistoryContract
     }
 
     @Override
-    protected void addBaseToolbarMenu() {
-        super.addBaseToolbarMenu();
-        getMenu().add("Удалить историю")
+    protected void addBaseToolbarMenu(Menu menu) {
+        super.addBaseToolbarMenu(menu);
+        menu.add("Удалить историю")
                 .setOnMenuItemClickListener(item -> {
                     presenter.clear();
                     return false;

@@ -18,6 +18,10 @@ import java.util.List;
 public class BaseSectionedAdapter<E, VH extends BaseSectionedViewHolder> extends SectionedRecyclerViewAdapter<VH> {
     protected List<Pair<String, List<E>>> sections = new ArrayList<>();
 
+    public void addSection(String title, List<E> items) {
+        sections.add(new Pair<>(title, items));
+    }
+
     public void addSection(Pair<String, List<E>> item) {
         sections.add(item);
     }

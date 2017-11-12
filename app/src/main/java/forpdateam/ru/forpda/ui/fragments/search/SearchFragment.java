@@ -21,6 +21,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -362,16 +363,16 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
     private MenuItem settingsMenuItem;
 
     @Override
-    protected void addBaseToolbarMenu() {
-        super.addBaseToolbarMenu();
-        getMenu().add(R.string.copy_link)
+    protected void addBaseToolbarMenu(Menu menu) {
+        super.addBaseToolbarMenu(menu);
+        menu.add(R.string.copy_link)
                 .setOnMenuItemClickListener(menuItem -> {
                     Utils.copyToClipBoard(settings.toUrl());
                     return false;
                 });
         toolbar.inflateMenu(R.menu.qms_contacts_menu);
 
-        settingsMenuItem = getMenu().add(R.string.settings)
+        settingsMenuItem = menu.add(R.string.settings)
                 .setIcon(R.drawable.ic_toolbar_tune).setOnMenuItemClickListener(menuItem -> {
                     hidePopupWindows();
                     if (searchSettingsView != null && searchSettingsView.getParent() != null && searchSettingsView.getParent() instanceof ViewGroup) {
@@ -385,7 +386,7 @@ public class SearchFragment extends TabFragment implements IPostFunctions, Exten
                 });
         settingsMenuItem.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
-        searchItem = getMenu().findItem(R.id.action_search);
+        searchItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) searchItem.getActionView();
         searchView.setIconifiedByDefault(true);
     }

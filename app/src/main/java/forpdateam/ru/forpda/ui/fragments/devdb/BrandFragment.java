@@ -7,6 +7,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -89,9 +90,9 @@ public class BrandFragment extends TabFragment implements BrandAdapter.OnItemCli
     }
 
     @Override
-    protected void addBaseToolbarMenu() {
-        super.addBaseToolbarMenu();
-        getMenu().add(R.string.fragment_title_device_search)
+    protected void addBaseToolbarMenu(Menu menu) {
+        super.addBaseToolbarMenu(menu);
+        menu.add(R.string.fragment_title_device_search)
                 .setIcon(R.drawable.ic_toolbar_search)
                 .setOnMenuItemClickListener(item -> {
                     TabManager.get().add(SearchFragment.class);
