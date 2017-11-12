@@ -1,25 +1,29 @@
 package forpdateam.ru.forpda.common.mvp;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.view.View;
 
+import forpdateam.ru.forpda.common.ErrorHandler;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 05.11.17.
  */
 
-public class BasePresenter<T> implements IBasePresenter<T> {
-    protected T view;
+public class BasePresenter<V> implements IBasePresenter<V> {
+    protected V view;
     private CompositeDisposable disposables = new CompositeDisposable();
 
-    public BasePresenter(T view) {
+    public BasePresenter(V view) {
         this.view = view;
     }
 
-    protected void addDisposable(Disposable disposable) {
-        disposables.add(disposable);
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,5 +55,26 @@ public class BasePresenter<T> implements IBasePresenter<T> {
         if (!disposables.isDisposed())
             disposables.dispose();
         this.view = null;
+    }
+
+    public <T> void subscribe(@NonNull Observable<T> observable, @NonNull Consumer<T> onNext, @NonNull T onErrorReturn) {
+        subscribe(observable, onNext, onErrorReturn, null);
+    }
+
+    public <T> void subscribe(@NonNull Observable<T> observable, @NonNull Consumer<T> onNext, @NonNull T onErrorReturn, View.OnClickListener onErrorAction) {
+        Disposable disposable = observable
+                .onErrorReturn(throwable -> {
+                    handleErrorRx(throwable, onErrorAction);
+                    return onErrorReturn;
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNext, throwable -> handleErrorRx(throwable, onErrorAction));
+
+        disposables.add(disposable);
+    }
+
+    private void handleErrorRx(Throwable throwable, View.OnClickListener listener) {
+        //ErrorHandler.handle(this, throwable, listener);
     }
 }

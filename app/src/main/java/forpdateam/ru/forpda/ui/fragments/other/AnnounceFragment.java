@@ -88,9 +88,9 @@ public class AnnounceFragment extends TabFragment {
     }
 
     @Override
-    protected void addBaseToolbarMenu() {
-        super.addBaseToolbarMenu();
-        addSearchOnPageItem(getMenu());
+    protected void addBaseToolbarMenu(Menu menu) {
+        super.addBaseToolbarMenu(menu);
+        addSearchOnPageItem(menu);
     }
 
     @Override

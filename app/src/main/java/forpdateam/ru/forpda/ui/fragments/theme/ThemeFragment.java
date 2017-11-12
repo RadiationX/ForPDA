@@ -561,9 +561,9 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
     }
 
     @Override
-    protected void addBaseToolbarMenu() {
-        super.addBaseToolbarMenu();
-        toggleMessagePanelItem = getMenu()
+    protected void addBaseToolbarMenu(Menu menu) {
+        super.addBaseToolbarMenu(menu);
+        toggleMessagePanelItem = menu
                 .add(R.string.reply)
                 .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_create))
                 .setOnMenuItemClickListener(menuItem -> {
@@ -572,14 +572,14 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                 })
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
-        refreshMenuItem = getMenu().add(R.string.refresh)
+        refreshMenuItem = menu.add(R.string.refresh)
                 .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_refresh))
                 .setOnMenuItemClickListener(menuItem -> {
                     loadData(REFRESH_ACTION);
                     return false;
                 });
 
-        copyLinkMenuItem = getMenu().add(R.string.copy_link)
+        copyLinkMenuItem = menu.add(R.string.copy_link)
                 .setOnMenuItemClickListener(menuItem -> {
                     String url = tab_url;
                     if (currentPage != null) {
@@ -588,13 +588,13 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                     Utils.copyToClipBoard(url);
                     return false;
                 });
-        addSearchOnPageItem(getMenu());
-        searchInThemeMenuItem = getMenu().add(R.string.search_in_theme)
+        addSearchOnPageItem(menu);
+        searchInThemeMenuItem = menu.add(R.string.search_in_theme)
                 .setOnMenuItemClickListener(menuItem -> {
                     IntentHandler.handle("https://4pda.ru/forum/index.php?forums=" + currentPage.getForumId() + "&topics=" + currentPage.getId() + "&act=search&source=pst&result=posts");
                     return false;
                 });
-        searchPostsMenuItem = getMenu().add(R.string.search_my_posts)
+        searchPostsMenuItem = menu.add(R.string.search_my_posts)
                 .setOnMenuItemClickListener(menuItem -> {
                     String url = "https://4pda.ru/forum/index.php?forums="
                             + currentPage.getForumId()
@@ -611,7 +611,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                     return false;
                 });
 
-        deleteFavoritesMenuItem = getMenu().add(R.string.delete_from_favorites)
+        deleteFavoritesMenuItem = menu.add(R.string.delete_from_favorites)
                 .setOnMenuItemClickListener(menuItem -> {
                     if (currentPage.getFavId() == 0) {
                         Toast.makeText(App.getContext(), R.string.fav_delete_error_id_not_found, Toast.LENGTH_SHORT).show();
@@ -624,7 +624,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                     }, currentPage.getFavId());
                     return false;
                 });
-        addFavoritesMenuItem = getMenu().add(R.string.add_to_favorites)
+        addFavoritesMenuItem = menu.add(R.string.add_to_favorites)
                 .setOnMenuItemClickListener(menuItem -> {
                     FavoritesHelper.addWithDialog(getContext(), aBoolean -> {
                         Toast.makeText(App.getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error), Toast.LENGTH_SHORT).show();
@@ -633,7 +633,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
                     }, currentPage.getId());
                     return false;
                 });
-        openForumMenuItem = getMenu().add(R.string.open_theme_forum)
+        openForumMenuItem = menu.add(R.string.open_theme_forum)
                 .setOnMenuItemClickListener(menuItem -> {
                     IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + currentPage.getForumId());
                     return false;

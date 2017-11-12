@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SearchView;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,10 +104,10 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
     }
 
     @Override
-    protected void addBaseToolbarMenu() {
-        super.addBaseToolbarMenu();
+    protected void addBaseToolbarMenu(Menu menu) {
+        super.addBaseToolbarMenu(menu);
         toolbar.inflateMenu(R.menu.qms_contacts_menu);
-        MenuItem searchItem = getMenu().findItem(R.id.action_search);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
 
         SearchManager searchManager = (SearchManager) getMainActivity().getSystemService(Context.SEARCH_SERVICE);
@@ -139,7 +140,7 @@ public class QmsContactsFragment extends RecyclerFragment implements QmsContacts
             }
         });
         searchView.setQueryHint(getString(R.string.user));
-        getMenu().add(R.string.blacklist)
+        menu.add(R.string.blacklist)
                 .setOnMenuItemClickListener(item -> {
                     TabManager.get().add(QmsBlackListFragment.class);
                     return false;

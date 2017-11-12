@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -61,9 +62,9 @@ public class NewsMainFragment extends RecyclerFragment implements NewsListAdapte
     }
 
     @Override
-    protected void addBaseToolbarMenu() {
-        super.addBaseToolbarMenu();
-        getMenu().add(R.string.fragment_title_search)
+    protected void addBaseToolbarMenu(Menu menu) {
+        super.addBaseToolbarMenu(menu);
+        menu.add(R.string.fragment_title_search)
                 .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_search))
                 .setOnMenuItemClickListener(item -> {
                     String url = "https://4pda.ru/?s=";

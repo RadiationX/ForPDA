@@ -10,6 +10,7 @@ import android.widget.TextView;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
+import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import forpdateam.ru.forpda.common.Preferences;
 import forpdateam.ru.forpda.ui.views.adapters.BaseSectionedAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseSectionedViewHolder;
@@ -18,7 +19,7 @@ import forpdateam.ru.forpda.ui.views.adapters.BaseSectionedViewHolder;
  * Created by radiationx on 22.09.16.
  */
 
-public class FavoritesAdapter extends BaseSectionedAdapter<IFavItem, BaseSectionedViewHolder> {
+public class FavoritesAdapter extends BaseSectionedAdapter<FavItem, BaseSectionedViewHolder> {
     private boolean showDot = false;
     private int titleColorNew, titleColor;
     private BaseSectionedAdapter.OnItemClickListener<IFavItem> itemClickListener;
@@ -61,11 +62,11 @@ public class FavoritesAdapter extends BaseSectionedAdapter<IFavItem, BaseSection
 
     @Override
     public void onBindViewHolder(BaseSectionedViewHolder holder, int section, int relativePosition, int absolutePosition) {
-        IFavItem item = getItem(section, relativePosition);
+        FavItem item = getItem(section, relativePosition);
         ((ItemHolder) holder).bind(item, section, relativePosition, absolutePosition);
     }
 
-    private class HeaderHolder extends BaseSectionedViewHolder<IFavItem> {
+    private class HeaderHolder extends BaseSectionedViewHolder<FavItem> {
         TextView title;
         View topDivider;
 
@@ -84,7 +85,7 @@ public class FavoritesAdapter extends BaseSectionedAdapter<IFavItem, BaseSection
         }
     }
 
-    private class ItemHolder extends BaseSectionedViewHolder<IFavItem> implements View.OnClickListener, View.OnLongClickListener {
+    private class ItemHolder extends BaseSectionedViewHolder<FavItem> implements View.OnClickListener, View.OnLongClickListener {
         TextView title, lastNick, date, desc;
         ImageView forumIcon, lockIcon, pollIcon;
         View dot, topDivider;
@@ -106,7 +107,7 @@ public class FavoritesAdapter extends BaseSectionedAdapter<IFavItem, BaseSection
         }
 
         @Override
-        public void bind(IFavItem item, int section, int relativePosition, int absolutePosition) {
+        public void bind(FavItem item, int section, int relativePosition, int absolutePosition) {
             title.setText(item.getTopicTitle());
 
             title.setTypeface(item.isNew() ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
@@ -133,7 +134,7 @@ public class FavoritesAdapter extends BaseSectionedAdapter<IFavItem, BaseSection
         @Override
         public void onClick(View view) {
             if (itemClickListener != null) {
-                IFavItem item = getItem(getLayoutPosition());
+                FavItem item = getItem(getLayoutPosition());
                 if (item != null) {
                     itemClickListener.onItemClick(item);
                 }
@@ -143,7 +144,7 @@ public class FavoritesAdapter extends BaseSectionedAdapter<IFavItem, BaseSection
         @Override
         public boolean onLongClick(View view) {
             if (itemClickListener != null) {
-                IFavItem item = getItem(getLayoutPosition());
+                FavItem item = getItem(getLayoutPosition());
                 if (item != null) {
                     itemClickListener.onItemLongClick(item);
                     return true;

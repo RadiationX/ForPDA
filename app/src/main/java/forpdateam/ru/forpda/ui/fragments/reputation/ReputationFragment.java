@@ -8,6 +8,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
@@ -123,9 +124,9 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
     private MenuItem downRepMenuItem;
 
     @Override
-    protected void addBaseToolbarMenu() {
-        super.addBaseToolbarMenu();
-        SubMenu subMenu = getMenu().addSubMenu(R.string.sorting_title);
+    protected void addBaseToolbarMenu(Menu menu) {
+        super.addBaseToolbarMenu(menu);
+        SubMenu subMenu = menu.addSubMenu(R.string.sorting_title);
         subMenu.getItem().setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         subMenu.getItem().setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_sort));
         descSortMenuItem = subMenu.add(R.string.sorting_desc).setOnMenuItemClickListener(menuItem -> {
@@ -138,7 +139,7 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
             loadData();
             return false;
         });
-        repModeMenuItem = getMenu().add(getString(data.getMode().equals(Reputation.MODE_FROM) ? R.string.reputation_mode_from : R.string.reputation_mode_to))
+        repModeMenuItem = menu.add(getString(data.getMode().equals(Reputation.MODE_FROM) ? R.string.reputation_mode_from : R.string.reputation_mode_to))
                 .setOnMenuItemClickListener(item -> {
                     if (data.getMode().equals(Reputation.MODE_FROM))
                         data.setMode(Reputation.MODE_TO);
@@ -147,12 +148,12 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
                     loadData();
                     return false;
                 });
-        upRepMenuItem = getMenu().add(R.string.increase)
+        upRepMenuItem = menu.add(R.string.increase)
                 .setOnMenuItemClickListener(item -> {
                     changeReputation(true);
                     return false;
                 });
-        downRepMenuItem = getMenu().add(R.string.decrease)
+        downRepMenuItem = menu.add(R.string.decrease)
                 .setOnMenuItemClickListener(item -> {
                     changeReputation(false);
                     return false;

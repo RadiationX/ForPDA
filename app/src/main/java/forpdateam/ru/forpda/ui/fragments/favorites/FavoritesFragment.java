@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -18,7 +19,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Observer;
@@ -31,7 +31,6 @@ import forpdateam.ru.forpda.api.favorites.Sorting;
 import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
 import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
-import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.Preferences;
@@ -45,6 +44,10 @@ import forpdateam.ru.forpda.ui.views.ContentController;
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu;
 import forpdateam.ru.forpda.ui.views.FunnyContent;
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper;
+import io.reactivex.Observable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.internal.operators.single.SingleJust;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -52,7 +55,7 @@ import io.realm.RealmResults;
  * Created by radiationx on 22.09.16.
  */
 
-public class FavoritesFragment extends RecyclerFragment implements FavoritesAdapter.OnItemClickListener<IFavItem> {
+public class FavoritesFragment extends RecyclerFragment implements FavoritesContract.View, FavoritesAdapter.OnItemClickListener<IFavItem> {
     public final static CharSequence[] SUB_NAMES = {
             App.get().getString(R.string.fav_subscribe_none),
             App.get().getString(R.string.fav_subscribe_delayed),
@@ -61,7 +64,8 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
             App.get().getString(R.string.fav_subscribe_weekly),
             App.get().getString(R.string.fav_subscribe_pinned)};
     private DynamicDialogMenu<FavoritesFragment, IFavItem> dialogMenu;
-    private Realm realm;
+    private FavoritesContract.Presenter presenter;
+    //private Realm realm;
     private FavoritesAdapter adapter;
     boolean markedRead = false;
 
@@ -84,7 +88,7 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
                 boolean newUnreadTop = Preferences.Lists.Topic.isUnreadTop(getContext());
                 if (newUnreadTop != unreadTop) {
                     unreadTop = newUnreadTop;
-                    bindView();
+                    presenter.showFavorites();
                 }
                 break;
             }
@@ -113,6 +117,8 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         configuration.setAlone(true);
         //configuration.setUseCache(true);
         configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_favorite));
+        presenter = new FavoritesPresenter(this);
+        registerPresenter(presenter);
     }
 
     private CharSequence getPinText(boolean b) {
@@ -126,13 +132,6 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         loadAll = Preferences.Lists.Favorites.isLoadAll(context);
         sorting = new Sorting(Preferences.Lists.Favorites.getSortingKey(context), Preferences.Lists.Favorites.getSortingOrder(context));
     }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        realm = Realm.getDefaultInstance();
-    }
-
 
     @Nullable
     @Override
@@ -200,15 +199,15 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
             }
         });
 
-        bindView();
+        presenter.showFavorites();
         App.get().addPreferenceChangeObserver(favoritesPreferenceObserver);
         App.get().subscribeFavorites(notification);
     }
 
     @Override
-    protected void addBaseToolbarMenu() {
-        super.addBaseToolbarMenu();
-        getMenu().add(R.string.mark_all_read)
+    protected void addBaseToolbarMenu(Menu menu) {
+        super.addBaseToolbarMenu(menu);
+        menu.add(R.string.mark_all_read)
                 .setOnMenuItemClickListener(item -> {
                     new AlertDialog.Builder(getContext())
                             .setMessage(App.get().getString(R.string.mark_all_read) + "?")
@@ -222,7 +221,7 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
                     return false;
                 });
 
-        getMenu().add(R.string.sorting_title)
+        menu.add(R.string.sorting_title)
                 .setIcon(R.drawable.ic_toolbar_sort).setOnMenuItemClickListener(menuItem -> {
             hidePopupWindows();
             if (sortingView != null && sortingView.getParent() != null && sortingView.getParent() instanceof ViewGroup) {
@@ -241,48 +240,75 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         if (!super.loadData()) {
             return false;
         }
-        setRefreshing(true);
-        subscribe(RxApi.Favorites().getFavorites(currentSt, loadAll, sorting), this::onLoadThemes, new FavData(), v -> loadData());
+        presenter.getFavorites(currentSt, loadAll, sorting);
         return true;
     }
 
-    private void onLoadThemes(FavData data) {
-        setRefreshing(false);
-
-
+    @Override
+    public void onLoadFavorites(FavData data) {
+        presenter.saveFavorites(data.getItems());
         sorting = data.getSorting();
         selectSpinners(sorting);
-        switch (data.getSorting().getKey()) {
-            case Sorting.Key.LAST_POST:
-                keySpinner.setSelection(0);
-                break;
-            case Sorting.Key.TITLE:
-                keySpinner.setSelection(1);
-                break;
-        }
-        switch (data.getSorting().getOrder()) {
-            case Sorting.Order.ASC:
-                orderSpinner.setSelection(0);
-                break;
-            case Sorting.Order.DESC:
-                orderSpinner.setSelection(1);
-                break;
-        }
-
-        if (realm.isClosed()) return;
-        realm.executeTransactionAsync(r -> {
-            r.delete(FavItemBd.class);
-            List<FavItemBd> bdList = new ArrayList<>();
-            for (FavItem item : data.getItems()) {
-                bdList.add(new FavItemBd(item));
-            }
-            r.copyToRealmOrUpdate(bdList);
-            bdList.clear();
-        }, this::bindView);
         paginationHelper.updatePagination(data.getPagination());
         setSubtitle(paginationHelper.getTitle());
-        //listScrollTop();
+    }
 
+    @Override
+    public void onShowFavorite(List<FavItem> items) {
+        if (items.isEmpty()) {
+            if (!contentController.contains(ContentController.TAG_NO_DATA)) {
+                FunnyContent funnyContent = new FunnyContent(getContext())
+                        .setImage(R.drawable.ic_star)
+                        .setTitle(R.string.funny_favorites_nodata_title)
+                        .setDesc(R.string.funny_favorites_nodata_desc);
+                contentController.addContent(funnyContent, ContentController.TAG_NO_DATA);
+            }
+            contentController.showContent(ContentController.TAG_NO_DATA);
+        } else {
+            contentController.hideContent(ContentController.TAG_NO_DATA);
+        }
+        ArrayList<FavItem> pinnedUnread = new ArrayList<>();
+        ArrayList<FavItem> itemsUnread = new ArrayList<>();
+        ArrayList<FavItem> pinned = new ArrayList<>();
+        ArrayList<FavItem> otherItems = new ArrayList<>();
+        for (FavItem item : items) {
+            if (item.isPin()) {
+                if (unreadTop && item.isNew()) {
+                    pinnedUnread.add(item);
+                } else {
+                    pinned.add(item);
+                }
+            } else {
+                if (unreadTop && item.isNew()) {
+                    itemsUnread.add(item);
+                } else {
+                    otherItems.add(item);
+                }
+            }
+        }
+
+        adapter.clear();
+        if (!pinnedUnread.isEmpty()) {
+            adapter.addSection(getString(R.string.fav_unreaded_pinned), pinnedUnread);
+        }
+        if (!itemsUnread.isEmpty()) {
+            adapter.addSection(getString(R.string.fav_unreaded), itemsUnread);
+        }
+        if (!pinned.isEmpty()) {
+            adapter.addSection(getString(R.string.fav_pinned), pinned);
+        }
+        adapter.addSection(getString(R.string.fav_themes), otherItems);
+        adapter.notifyDataSetChanged();
+        if (!ClientHelper.getNetworkState(getContext())) {
+            ClientHelper.get().notifyCountsChanged();
+        }
+    }
+
+    @Override
+    public void onHandleEvent(int count) {
+        ClientHelper.setFavoritesCount(count);
+        ClientHelper.get().notifyCountsChanged();
+        presenter.showFavorites();
     }
 
     private void selectSpinners(Sorting sorting) {
@@ -309,144 +335,12 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setSelection(selection);
-        //spinner.setOnItemSelectedListener(listener);
     }
 
-    private void bindView() {
-        //setRefreshing(false);
-        if (realm.isClosed()) return;
-        RealmResults<FavItemBd> results = realm.where(FavItemBd.class).findAll();
-
-        if (results.isEmpty()) {
-            if (!contentController.contains(ContentController.TAG_NO_DATA)) {
-                FunnyContent funnyContent = new FunnyContent(getContext())
-                        .setImage(R.drawable.ic_star)
-                        .setTitle(R.string.funny_favorites_nodata_title)
-                        .setDesc(R.string.funny_favorites_nodata_desc);
-                contentController.addContent(funnyContent, ContentController.TAG_NO_DATA);
-            }
-            contentController.showContent(ContentController.TAG_NO_DATA);
-        } else {
-            contentController.hideContent(ContentController.TAG_NO_DATA);
-        }
-
-        ArrayList<IFavItem> nonBdResult = new ArrayList<>();
-        for (FavItemBd itemBd : results) {
-            nonBdResult.add(new FavItem(itemBd));
-        }
-        refreshList(nonBdResult);
-    }
-
-    private void refreshList(Collection<IFavItem> newList) {
-        ArrayList<IFavItem> pinnedUnread = new ArrayList<>();
-        ArrayList<IFavItem> itemsUnread = new ArrayList<>();
-        ArrayList<IFavItem> pinned = new ArrayList<>();
-        ArrayList<IFavItem> items = new ArrayList<>();
-        for (IFavItem item : newList) {
-            if (item.isPin()) {
-                if (unreadTop && item.isNew()) {
-                    pinnedUnread.add(item);
-                } else {
-                    pinned.add(item);
-                }
-            } else {
-                if (unreadTop && item.isNew()) {
-                    itemsUnread.add(item);
-                } else {
-                    items.add(item);
-                }
-            }
-        }
-
-        adapter.clear();
-        if (!pinnedUnread.isEmpty()) {
-            adapter.addSection(new Pair<>(getString(R.string.fav_unreaded_pinned), pinnedUnread));
-        }
-        if (!itemsUnread.isEmpty()) {
-            adapter.addSection(new Pair<>(getString(R.string.fav_unreaded), itemsUnread));
-        }
-        if (!pinned.isEmpty()) {
-            adapter.addSection(new Pair<>(getString(R.string.fav_pinned), pinned));
-        }
-        adapter.addSection(new Pair<>(getString(R.string.fav_themes), items));
-        adapter.notifyDataSetChanged();
-        if (!ClientHelper.getNetworkState(getContext())) {
-            ClientHelper.get().notifyCountsChanged();
-        }
-    }
 
     private void handleEvent(TabNotification event) {
         if (!Preferences.Notifications.Favorites.isLiveTab(getContext())) return;
-        if (event.isWebSocket() && event.getEvent().isNew()) return;
-        if (realm.isClosed()) return;
-        RealmResults<FavItemBd> results = realm.where(FavItemBd.class).findAll();
-        ArrayList<IFavItem> currentItems = new ArrayList<>();
-        for (FavItemBd itemBd : results) {
-            currentItems.add(new FavItem(itemBd));
-        }
-
-        NotificationEvent loadedEvent = event.getEvent();
-        int id = loadedEvent.getSourceId();
-        boolean isRead = loadedEvent.isRead();
-        int count = ClientHelper.getFavoritesCount();
-
-        if (isRead) {
-            count--;
-            for (IFavItem item : currentItems) {
-                if (item.getTopicId() == id) {
-                    item.setNew(false);
-                    break;
-                }
-            }
-        } else {
-            count = event.getLoadedEvents().size();
-            for (IFavItem item : currentItems) {
-                if (item.getTopicId() == id) {
-                    if (item.getLastUserId() != ClientHelper.getUserId())
-                        item.setNew(true);
-                    item.setLastUserNick(loadedEvent.getUserNick());
-                    item.setLastUserId(loadedEvent.getUserId());
-                    item.setPin(loadedEvent.isImportant());
-                    break;
-                }
-            }
-            if (sorting.getKey().equals(Sorting.Key.TITLE)) {
-                Collections.sort(currentItems, (o1, o2) -> {
-                /*if (sorting.getOrder().equals(Sorting.Order.ASC)) {} else */
-                    if (sorting.getOrder().equals(Sorting.Order.ASC))
-                        return o1.getTopicTitle().compareToIgnoreCase(o2.getTopicTitle());
-                    return o2.getTopicTitle().compareToIgnoreCase(o1.getTopicTitle());
-                });
-            }
-
-            if (sorting.getKey().equals(Sorting.Key.LAST_POST)) {
-                for (IFavItem item : currentItems) {
-                    if (item.getTopicId() == id) {
-                        currentItems.remove(item);
-                        int index = 0;
-                        if (sorting.getOrder().equals(Sorting.Order.ASC)) {
-                            index = currentItems.size();
-                        }
-                        currentItems.add(index, item);
-                        break;
-                    }
-                }
-            }
-        }
-        ClientHelper.setFavoritesCount(count);
-        ClientHelper.get().notifyCountsChanged();
-
-        if (realm.isClosed()) return;
-        realm.executeTransaction(r -> {
-            r.delete(FavItemBd.class);
-            List<FavItemBd> bdList = new ArrayList<>();
-            for (IFavItem item : currentItems) {
-                bdList.add(new FavItemBd(item));
-            }
-            r.copyToRealmOrUpdate(bdList);
-            bdList.clear();
-        });
-        bindView();
+        presenter.handleEvent(event, sorting, ClientHelper.getFavoritesCount());
     }
 
     public void changeFav(int action, String type, int favId) {
@@ -454,13 +348,7 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
     }
 
     public void markRead(int topicId) {
-        Log.d("SUKA", "markRead " + topicId);
-        realm.executeTransactionAsync(realm1 -> {
-            IFavItem favItem = realm1.where(FavItemBd.class).equalTo("topicId", topicId).findFirst();
-            if (favItem != null) {
-                favItem.setNew(false);
-            }
-        });
+        presenter.markRead(topicId);
         markedRead = true;
     }
 
@@ -469,7 +357,7 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         super.onResume();
         if (markedRead) {
             markedRead = false;
-            bindView();
+            presenter.showFavorites();
         }
     }
 
@@ -480,7 +368,6 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
         App.get().unSubscribeFavorites(notification);
         if (paginationHelper != null)
             paginationHelper.destroy();
-        realm.close();
     }
 
     private void onChangeFav(boolean v) {
@@ -524,7 +411,8 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesAdap
                         .show();
             });
             dialogMenu.addItem(getPinText(item.isPin()), (context, data) -> context.changeFav(Favorites.ACTION_EDIT_PIN_STATE, data.isPin() ? "unpin" : "pin", data.getFavId()));
-            dialogMenu.addItem(getString(R.string.delete), (context, data) -> context.changeFav(Favorites.ACTION_DELETE, null, data.getFavId()));
+            dialogMenu.addItem(getString(R.string.delete))
+                    .setListener((context, data) -> context.changeFav(Favorites.ACTION_DELETE, null, data.getFavId()));
         }
         dialogMenu.disallowAll();
         dialogMenu.allow(0);

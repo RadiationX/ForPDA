@@ -402,7 +402,7 @@ public class TabFragment extends Fragment implements IBaseView {
 
 
     protected void viewsReady() {
-        addBaseToolbarMenu();
+        addBaseToolbarMenu(getMenu());
         if (ClientHelper.getNetworkState(getContext()) && !configuration.isUseCache()) {
             if (!alreadyCallLoad)
                 loadData();
@@ -413,7 +413,7 @@ public class TabFragment extends Fragment implements IBaseView {
 
 
     @CallSuper
-    protected void addBaseToolbarMenu() {
+    protected void addBaseToolbarMenu(Menu menu) {
 
     }
 
@@ -534,7 +534,7 @@ public class TabFragment extends Fragment implements IBaseView {
         super.onDestroy();
         attachedWebView = null;
         Log.d(LOG_TAG, "onDestroy " + this);
-        if (getActivity().isFinishing() || isRemoving()) {
+        if (basePresenter != null && (getActivity().isFinishing() || isRemoving())) {
             basePresenter.onDestroy();
         }
         if (!disposable.isDisposed())

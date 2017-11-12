@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,9 +76,9 @@ public class QmsBlackListFragment extends RecyclerFragment implements QmsContact
     }
 
     @Override
-    protected void addBaseToolbarMenu() {
-        super.addBaseToolbarMenu();
-        getMenu().add(R.string.add)
+    protected void addBaseToolbarMenu(Menu menu) {
+        super.addBaseToolbarMenu(menu);
+        menu.add(R.string.add)
                 .setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_add))
                 .setOnMenuItemClickListener(item -> {
                     String nick = "";

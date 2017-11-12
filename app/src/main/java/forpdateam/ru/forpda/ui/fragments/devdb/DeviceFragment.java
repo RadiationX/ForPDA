@@ -16,6 +16,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -154,21 +155,21 @@ public class DeviceFragment extends TabFragment {
     }
 
     @Override
-    protected void addBaseToolbarMenu() {
-        super.addBaseToolbarMenu();
-        copyLinkMenuItem = getMenu().add(R.string.copy_link)
+    protected void addBaseToolbarMenu(Menu menu) {
+        super.addBaseToolbarMenu(menu);
+        copyLinkMenuItem = menu.add(R.string.copy_link)
                 .setOnMenuItemClickListener(item -> {
                     Utils.copyToClipBoard("https://4pda.ru/devdb/" + currentData.getId());
                     return true;
                 });
 
-        shareMenuItem = getMenu().add(R.string.share)
+        shareMenuItem = menu.add(R.string.share)
                 .setOnMenuItemClickListener(item -> {
                     Utils.shareText("https://4pda.ru/devdb/" + currentData.getId());
                     return true;
                 });
 
-        noteMenuItem = getMenu().add(R.string.create_note)
+        noteMenuItem = menu.add(R.string.create_note)
                 .setOnMenuItemClickListener(item -> {
                     String title = "DevDb: " + currentData.getBrandTitle() + " " + currentData.getTitle();
                     String url = "https://4pda.ru/devdb/" + currentData.getId();
@@ -176,13 +177,13 @@ public class DeviceFragment extends TabFragment {
                     return true;
                 });
 
-        toBrandMenuItem = getMenu().add(R.string.devices)
+        toBrandMenuItem = menu.add(R.string.devices)
                 .setOnMenuItemClickListener(item -> {
                     IntentHandler.handle("https://4pda.ru/devdb/" + currentData.getCatId() + "/" + currentData.getBrandId());
                     return true;
                 });
 
-        toBrandsMenuItem = getMenu().add(R.string.devices)
+        toBrandsMenuItem = menu.add(R.string.devices)
                 .setOnMenuItemClickListener(item -> {
                     IntentHandler.handle("https://4pda.ru/devdb/" + currentData.getCatId());
                     return true;
