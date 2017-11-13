@@ -25,8 +25,8 @@ public class NewsRx {
         return Observable.fromCallable(() -> Api.NewsApi().likeComment(articleId, commentId));
     }
 
-    public Observable<DetailsPage> sendPoll(String from, int pollId, int answerId) {
-        return Observable.fromCallable(() -> transform(Api.NewsApi().sendPoll(from, pollId, answerId)));
+    public Observable<DetailsPage> sendPoll(String from, int pollId, int[] answersId) {
+        return Observable.fromCallable(() -> transform(Api.NewsApi().sendPoll(from, pollId, answersId)));
     }
 
     public Observable<Comment> replyComment(DetailsPage article, int commentId, String comment) {
