@@ -64,10 +64,13 @@ public class ArticleContentFragment extends Fragment {
             return;
         webView.runInUiThread(() -> {
             int pollId = Integer.parseInt(id);
-            int answerId = Integer.parseInt(answer);
-            Log.d("SUKA", "NEWS SEND POLL " + pollId + " : " + answerId);
+            String[] answers = answer.split(",");
+            int answersId[] = new int[answers.length];
+            for (int i = 0; i < answers.length; i++) {
+                answersId[i] = Integer.parseInt(answers[i]);
+            }
             NewsDetailsFragment fragment = ((NewsDetailsFragment) getParentFragment());
-            fragment.subscribe(RxApi.NewsList().sendPoll(from, pollId, answerId), page -> {
+            fragment.subscribe(RxApi.NewsList().sendPoll(from, pollId, answersId), page -> {
                 article.setHtml(page.getHtml());
                 loadHtml();
             }, new DetailsPage());

@@ -24,8 +24,19 @@ function transformPoll() {
                 form = form.parentElement;
             }
             var id = /poll_id=(\d+)/g.exec(form.action)[1]
-            var answer = form["answer[]"].value
-            var from = form["from"].value;
+            var answer = form.elements["answer[]"].value
+            var from = form.elements["from"].value;
+            if (answer.length == 0) {
+                var formAnswers = form["answer[]"];
+                var answers = []
+                for(var i = 0; i<formAnswers.length;i++){
+                	var answer = formAnswers[i];
+                    if(answer.checked){
+                    	answers.push(answer.value);
+                    }
+                }
+                answer = answers.join(",");
+            }
             if (answer.length == 0) {
                 return;
             }

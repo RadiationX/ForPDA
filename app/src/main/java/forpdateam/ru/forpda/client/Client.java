@@ -82,6 +82,8 @@ public class Client implements IWebClient {
             if (anonymous != null) {
                 clientCookies.put("anonymous", parseCookie(anonymous));
             }
+        }else {
+            ClientHelper.setAuthState(ClientHelper.AUTH_STATE_LOGOUT);
         }
     }
 
@@ -117,6 +119,9 @@ public class Client implements IWebClient {
         @Override
         public void saveFromResponse(@NonNull HttpUrl url, @NonNull List<Cookie> cookies) {
             SharedPreferences.Editor editor = App.get().getPreferences().edit();
+            /*for (Cookie cookie : cookies) {
+                Log.e("SUKA", "save COOK " + cookie.name() + " : " + cookie.value());
+            }*/
             for (Cookie cookie : cookies) {
                 if (cookie.value().equals("deleted")) {
                     editor.remove("cookie_".concat(cookie.name()));
@@ -154,6 +159,9 @@ public class Client implements IWebClient {
                     }
                 }
             }
+            /*for (Cookie cookie : cookies) {
+                Log.e("SUKA", "load COOK " + cookie.name() + " : " + cookie.value());
+            }*/
             return cookies;
         }
     };

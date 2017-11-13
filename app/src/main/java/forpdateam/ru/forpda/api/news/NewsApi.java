@@ -388,16 +388,19 @@ public class NewsApi {
         return newComments;
     }
 
-    public DetailsPage sendPoll(String from, int pollId, int answerId) throws Exception {
+    public DetailsPage sendPoll(String from, int pollId, int[] answersId) throws Exception {
         String url = "https://4pda.ru/pages/poll/?act=vote&poll_id=" + pollId;
-        NetworkRequest request = new NetworkRequest.Builder()
+        NetworkRequest.Builder rBuilder = new NetworkRequest.Builder()
                 .url(url)
-                .xhrHeader()
-                .formHeader("from", from)
-                .formHeader("answer[]", Integer.toString(answerId))
                 .multipart()
-                .build();
-        NetworkResponse response = Api.getWebClient().request(request);
+                .xhrHeader()
+                .formHeader("from", from);
+
+        for (int i = 0; i < answersId.length; i++) {
+            rBuilder.formHeader("answer[]", Integer.toString(answersId[i]));
+        }
+
+        NetworkResponse response = Api.getWebClient().request(rBuilder.build());
         return parseArticle(response.getBody());
     }
 
