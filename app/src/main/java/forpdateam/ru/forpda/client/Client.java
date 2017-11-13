@@ -154,10 +154,6 @@ public class Client implements IWebClient {
                     }
                 }
             }
-
-            for (Cookie cookie : cookies) {
-                Log.e(LOG_TAG, "LOAD COOKIE " + cookie.name() + " : " + cookie.value());
-            }
             return cookies;
         }
     };

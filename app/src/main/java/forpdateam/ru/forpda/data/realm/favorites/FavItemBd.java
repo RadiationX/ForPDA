@@ -11,8 +11,8 @@ import io.realm.annotations.PrimaryKey;
 public class FavItemBd extends RealmObject implements IFavItem {
     @PrimaryKey
     private int favId;
-    private int topicId, forumId, authorId, lastUserId, stParam, pages;
-    private String trackType, infoColor, topicTitle, forumTitle, authorUserNick, lastUserNick, date, desc;
+    private int topicId, forumId, authorId, lastUserId, stParam, pages, curatorId;
+    private String trackType, infoColor, topicTitle, forumTitle, authorUserNick, lastUserNick, date, desc, curatorNick, subType;
     private boolean pin = false, isForum = false;
     private boolean isNew = false, isPoll = false, isClosed = false;
 
@@ -27,6 +27,7 @@ public class FavItemBd extends RealmObject implements IFavItem {
         lastUserId = item.getLastUserId();
         stParam = item.getStParam();
         pages = item.getPages();
+        curatorId = item.getCuratorId();
 
         trackType = item.getTrackType();
         infoColor = item.getInfoColor();
@@ -36,6 +37,8 @@ public class FavItemBd extends RealmObject implements IFavItem {
         lastUserNick = item.getLastUserNick();
         date = item.getDate();
         desc = item.getDesc();
+        curatorNick = item.getCuratorNick();
+        subType = item.getSubType();
 
         pin = item.isPin();
         isForum = item.isForum();
@@ -105,8 +108,18 @@ public class FavItemBd extends RealmObject implements IFavItem {
         return pages;
     }
 
+    @Override
+    public int getCuratorId() {
+        return curatorId;
+    }
+
     public void setPages(int pages) {
         this.pages = pages;
+    }
+
+    @Override
+    public void setCuratorId(int curatorId) {
+        this.curatorId = curatorId;
     }
 
     public String getTrackType() {
@@ -161,8 +174,28 @@ public class FavItemBd extends RealmObject implements IFavItem {
         return date;
     }
 
+    @Override
+    public String getCuratorNick() {
+        return curatorNick;
+    }
+
+    @Override
+    public String getSubType() {
+        return subType;
+    }
+
     public void setDate(String date) {
         this.date = date;
+    }
+
+    @Override
+    public void setCuratorNick(String curatorNick) {
+        this.curatorNick = curatorNick;
+    }
+
+    @Override
+    public void setSubType(String subType) {
+        this.subType = subType;
     }
 
     public boolean isPin() {

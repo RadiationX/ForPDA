@@ -1,10 +1,16 @@
 package forpdateam.ru.forpda.common.mvp;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.view.View;
 
+import org.acra.ACRA;
+
 import forpdateam.ru.forpda.common.ErrorHandler;
+import forpdateam.ru.forpda.ui.TabManager;
+import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -75,6 +81,15 @@ public class BasePresenter<V> implements IBasePresenter<V> {
     }
 
     private void handleErrorRx(Throwable throwable, View.OnClickListener listener) {
-        //ErrorHandler.handle(this, throwable, listener);
+        new Handler(Looper.getMainLooper()).post(() -> {
+            TabFragment tabFragment = TabManager.get().getActive();
+            if (tabFragment == null) {
+                throwable.printStackTrace();
+                ACRA.getErrorReporter().handleException(throwable);
+            } else {
+                ErrorHandler.handle(tabFragment, throwable, listener);
+            }
+        });
+
     }
 }

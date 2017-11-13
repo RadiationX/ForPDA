@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.api.favorites;
 
 import android.net.Uri;
+import android.util.Log;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,7 +21,7 @@ import forpdateam.ru.forpda.api.others.pagination.Pagination;
  */
 
 public class Favorites {
-    private final static Pattern mainPattern = Pattern.compile("<div data-item-fid=\"([^\"]*)\" data-item-track=\"([^\"]*)\" data-item-pin=\"([^\"]*)\">[\\s\\S]*?(?:class=\"(?:modifier|forum_img_with_link)\"[^>]*?>(?:<font color=\"([^\"]*)\">)?([^< ]*)(?:<\\/font>)?<\\/(?:span|a)>)?[^<]*?<a href=\"[^\"]*=(\\d*)[^\"]*?\"[^>]*?>(<strong>)?([^<]*)(?:<\\/strong>)?<\\/a>(?:[^<]*?<a[^>]*?tpg\\(\\d+,(\\d+)\\)[^>]*?>[^<]*?<\\/a>[\\s\\S]*?)?(?:<\\/div><div class=\"topic_body\"><span class=\"topic_desc\">([^<]*|)(<br[^>]*>|)[\\s\\S]*?showforum=([^\"]*?)\">([^<]*)<\\/a><br[^>]*>[\\s\\S]*?showuser=([^\"]*)\">([^<]*)<\\/a>[\\s\\S]*?showuser=([^\"]*)\">([^<]*)<\\/a> ([^<]*?)|[^<]*?<\\/div>[^<]*?<div class=\"board-forum-lastpost[\\s\\S]*?<div class=\"topic_body\">([^<]*?) <a href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?))<");
+    private final static Pattern mainPattern = Pattern.compile("<div data-item-fid=\"([^\"]*)\" data-item-track=\"([^\"]*)\" data-item-pin=\"([^\"]*)\">[\\s\\S]*?(?:class=\"(?:modifier|forum_img_with_link)\"[^>]*?>(?:<font color=\"([^\"]*)\">)?([^< ]*)(?:<\\/font>)?<\\/(?:span|a)>)?[^<]*?<a href=\"[^\"]*=(\\d*)[^\"]*?\"[^>]*?>(<strong>)?([^<]*)(?:<\\/strong>)?<\\/a>(?:[^<]*?<a[^>]*?tpg\\(\\d+,(\\d+)\\)[^>]*?>[^<]*?<\\/a>[\\s\\S]*?)?(?:<\\/div><div class=\"topic_body\"><span class=\"topic_desc\">([^<]*|)(<br[^>]*>|)[\\s\\S]*?showforum=([^\"]*?)\">([^<]*)<\\/a><br[^>]*>[\\s\\S]*?showuser=([^\"]*)\">([^<]*)<\\/a>[\\s\\S]*?showuser=([^\"]*)\">([^<]*)<\\/a> ([^<]*?)|[^<]*?<\\/div>[^<]*?<div class=\"board-forum-lastpost[\\s\\S]*?<div class=\"topic_body\">([^<]*?) <a href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?))<(?:span class=\"forumdesc\"[^\"]*?>[^>]*?<br[^>]*?>[^<]*?<a href=\"[^\"]*?=(\\d+)\"[^>]*?>([\\s\\S]*?)<\\/a><\\/span><)?\\/div>[^<]*?<script[^>]*?>wr_fav_subscribe\\([^\"]*?\"([^\"]*?)\"\\)");
     private final static Pattern checkPattern = Pattern.compile("<div style=\"[^\"]*background:#dff0d8[^\"]*\">[\\s\\S]*<div id=\"navstrip");
     private final static Pattern pagesPattern = Pattern.compile("parseInt\\((\\d*)\\)[\\s\\S]*?parseInt\\(st\\*(\\d*)\\)[\\s\\S]*?pagination\">[\\s\\S]*?<span[^>]*?>([^<]*?)<\\/span>");
     public final static int ACTION_EDIT_SUB_TYPE = 0;
@@ -59,18 +60,20 @@ public class Favorites {
             if (matcher.group(4) != null) {
                 item.setInfoColor(matcher.group(4));
             }
+            String tmp;
             if (matcher.group(5) != null) {
-                String tmp = matcher.group(5);
+                tmp = matcher.group(5);
                 item.setNew(tmp.contains("+"));
                 item.setPoll(tmp.contains("^"));
                 item.setClosed(tmp.contains("Х"));
             }
+            int iId = Integer.parseInt(matcher.group(6));
             if (isForum) {
-                item.setForumId(Integer.parseInt(matcher.group(6)));
+                item.setForumId(iId);
             } else {
-
-                item.setTopicId(Integer.parseInt(matcher.group(6)));
+                item.setTopicId(iId);
             }
+            item.setNew(matcher.group(7) != null);
             item.setTopicTitle(ApiUtils.fromHtml(matcher.group(8)));
 
             if (isForum) {
@@ -93,6 +96,14 @@ public class Favorites {
                 item.setLastUserId(Integer.parseInt(matcher.group(16)));
                 item.setLastUserNick(ApiUtils.fromHtml(matcher.group(17)));
                 item.setDate(matcher.group(18));
+
+                tmp = matcher.group(22);
+                if (tmp != null) {
+                    item.setCuratorId(Integer.parseInt(matcher.group(22)));
+                    item.setCuratorNick(ApiUtils.fromHtml(matcher.group(23)));
+                }
+
+                item.setSubType(matcher.group(24).trim().toLowerCase());
             }
 
             data.addItem(item);
