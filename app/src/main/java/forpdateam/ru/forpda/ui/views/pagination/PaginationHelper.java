@@ -43,6 +43,7 @@ public class PaginationHelper {
             tabLayoutInToolbar.setLayoutParams(params);
         }
     };
+    private int currentPage = 0;
 
     private ArrayList<TabLayout> tabLayouts = new ArrayList<>();
     private Pagination pagination;
@@ -149,13 +150,16 @@ public class PaginationHelper {
         tabLayout.addOnTabSelectedListener(tabSelectedListener);
     }
 
+    public int getCurrentPage() {
+        return currentPage;
+    }
 
     private void selectPage(int pageNumber) {
+        currentPage = pageNumber;
         if (listener != null) {
             listener.onSelectedPage(pageNumber);
         }
     }
-
 
     public void firstPage() {
         if (pagination.getCurrent() <= 1) return;

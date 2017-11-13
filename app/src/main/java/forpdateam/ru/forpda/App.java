@@ -286,7 +286,7 @@ public class App extends android.app.Application {
         Realm.init(this);
         RealmConfiguration configuration = new RealmConfiguration.Builder()
                 .name("forpda.realm")
-                .schemaVersion(3)
+                .schemaVersion(4)
                 .migration(new DbMigration())
                 .build();
         Realm.setDefaultConfiguration(configuration);

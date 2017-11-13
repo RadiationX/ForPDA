@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.ui.fragments.favorites;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
@@ -19,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Observer;
@@ -123,6 +125,10 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesCont
 
     private CharSequence getPinText(boolean b) {
         return getString(b ? R.string.fav_unpin : R.string.fav_pin);
+    }
+
+    private CharSequence getSubText(int subTypeIndex) {
+        return String.format("%s (%s)", getString(R.string.fav_change_subscribe_type), SUB_NAMES[subTypeIndex]);
     }
 
     @Override
@@ -403,10 +409,13 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesCont
             dialogMenu.addItem(getString(R.string.attachments), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=attach&code=showtopic&tid=" + data.getTopicId()));
             dialogMenu.addItem(getString(R.string.open_theme_forum), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getForumId()));
             dialogMenu.addItem(getString(R.string.fav_change_subscribe_type), (context, data) -> {
+                int subTypeIndex = Arrays.asList(Favorites.SUB_TYPES).indexOf(data.getSubType());
+                Log.d("SUKA", "FAVITEMs " + data.getSubType() + " : " + subTypeIndex);
                 new AlertDialog.Builder(getContext())
                         .setTitle(R.string.favorites_subscribe_email)
-                        .setItems(FavoritesFragment.SUB_NAMES, (dialog1, which1) -> {
+                        .setSingleChoiceItems(FavoritesFragment.SUB_NAMES, subTypeIndex, (dialog, which1) -> {
                             context.changeFav(Favorites.ACTION_EDIT_SUB_TYPE, Favorites.SUB_TYPES[which1], data.getFavId());
+                            dialog.dismiss();
                         })
                         .show();
             });
@@ -427,6 +436,9 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesCont
         int index = dialogMenu.containsIndex(getPinText(!item.isPin()));
         if (index != -1)
             dialogMenu.changeTitle(index, getPinText(item.isPin()));
+
+        int subTypeIndex = Arrays.asList(Favorites.SUB_TYPES).indexOf(item.getSubType());
+        dialogMenu.changeTitle(3, getSubText(subTypeIndex));
 
         dialogMenu.show(getContext(), FavoritesFragment.this, item);
         return false;

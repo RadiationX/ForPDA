@@ -32,18 +32,17 @@ import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper;
  * Created by radiationx on 21.01.17.
  */
 
-public class MentionsFragment extends RecyclerFragment implements MentionsAdapter.OnItemClickListener<MentionItem> {
+public class MentionsFragment extends RecyclerFragment implements MentionsContract.View, MentionsAdapter.OnItemClickListener<MentionItem> {
     private DynamicDialogMenu<MentionsFragment, MentionItem> dialogMenu;
+    private MentionsContract.Presenter presenter;
     private MentionsAdapter adapter;
-
     private PaginationHelper paginationHelper;
-    private MentionsData data;
-    private int currentSt = 0;
-
 
     public MentionsFragment() {
         configuration.setAlone(true);
         configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_mentions));
+        presenter = new MentionsPresenter(this);
+        registerPresenter(presenter);
     }
 
     @Nullable
@@ -69,7 +68,6 @@ public class MentionsFragment extends RecyclerFragment implements MentionsAdapte
 
             @Override
             public void onSelectedPage(int pageNumber) {
-                currentSt = pageNumber;
                 loadData();
             }
         });
@@ -83,14 +81,12 @@ public class MentionsFragment extends RecyclerFragment implements MentionsAdapte
         if (!super.loadData()) {
             return false;
         }
-        setRefreshing(true);
-        subscribe(RxApi.Mentions().getMentions(currentSt), this::onLoadThemes, new MentionsData(), v -> loadData());
+        presenter.getMentions(paginationHelper.getCurrentPage());
         return true;
     }
 
-    private void onLoadThemes(MentionsData data) {
-        setRefreshing(false);
-
+    @Override
+    public void showMentions(MentionsData data) {
         if (data.getItems().isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
                 FunnyContent funnyContent = new FunnyContent(getContext())
@@ -104,7 +100,6 @@ public class MentionsFragment extends RecyclerFragment implements MentionsAdapte
             contentController.hideContent(ContentController.TAG_NO_DATA);
         }
 
-        this.data = data;
         adapter.addAll(data.getItems());
         paginationHelper.updatePagination(data.getPagination());
         setSubtitle(paginationHelper.getTitle());

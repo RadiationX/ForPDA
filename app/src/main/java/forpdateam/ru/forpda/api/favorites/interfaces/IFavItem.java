@@ -19,6 +19,8 @@ public interface IFavItem {
 
     int getPages();
 
+    int getCuratorId();
+
     String getDesc();
 
     String getTrackType();
@@ -34,6 +36,10 @@ public interface IFavItem {
     String getLastUserNick();
 
     String getDate();
+
+    String getCuratorNick();
+
+    String getSubType();
 
     boolean isPin();
 
@@ -59,6 +65,8 @@ public interface IFavItem {
 
     void setPages(int pages);
 
+    void setCuratorId(int curatorId);
+
     void setDesc(String desc);
 
     void setTrackType(String trackType);
@@ -75,6 +83,10 @@ public interface IFavItem {
 
     void setDate(String date);
 
+    void setCuratorNick(String curatorNick);
+
+    void setSubType(String subType);
+
     void setPin(boolean pin);
 
     void setForum(boolean isForum);
@@ -84,4 +96,5 @@ public interface IFavItem {
     void setPoll(boolean poll);
 
     void setClosed(boolean closed);
+
 }

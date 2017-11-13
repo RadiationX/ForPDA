@@ -73,5 +73,17 @@ public class DbMigration implements RealmMigration {
 
             oldVersion++;
         }
+
+        if (oldVersion == 3) {
+            RealmObjectSchema favSchema = schema.get("FavItemBd");
+            if (favSchema != null) {
+                favSchema
+                        .addField("curatorId", int.class)
+                        .addField("curatorNick", String.class)
+                        .addField("subType", String.class);
+            }
+
+            oldVersion++;
+        }
     }
 }
