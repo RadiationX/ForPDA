@@ -239,6 +239,7 @@ public class NotificationsService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i(LOG_TAG, "onStartCommand this" + this + " : " + App.get());
         Log.i(LOG_TAG, "onStartCommand args" + flags + " : " + startId + " : " + intent);
         Log.i(LOG_TAG, "onStartCommand websocket" + webSocket);
         if (mNotificationManager == null) {
@@ -290,6 +291,7 @@ public class NotificationsService extends Service {
         if (ClientHelper.getNetworkState(getApplicationContext())) {
             if (!connected) {
                 webSocket = Client.get().createWebSocketConnection(webSocketListener);
+                connected = true;
             }
 
             if (checkEvents) {
