@@ -125,7 +125,9 @@
             android:launchMode="singleInstance"
             android:theme="@style/DarkAppTheme.Dialog"/>
 
-        <service android:name=".notifications.NotificationsService"/>
+        <!-- На нуге почему-то сервис может стартовать с другим процессом, поэтому заранее так -->
+        <service android:name=".notifications.NotificationsService"
+            android:process=":notifier"/>
 
         <receiver
             android:name=".common.receivers.WakeUpReceiver"

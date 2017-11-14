@@ -213,7 +213,7 @@ public class Drawers {
     public void destroy() {
         App.get().removePreferenceChangeObserver(preferenceObserver);
         App.get().removeStatusBarSizeObserver(statusBarSizeObserver);
-        App.get().subscribeForbidden(forbiddenObserver);
+        App.get().unSubscribeForbidden(forbiddenObserver);
         ClientHelper.get().removeLoginObserver(loginObserver);
         ClientHelper.get().removeCountsObserver(countsObserver);
         //menuAdapter.clear();

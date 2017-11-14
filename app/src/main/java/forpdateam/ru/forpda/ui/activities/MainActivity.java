@@ -23,6 +23,7 @@ import com.evernote.android.job.JobManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -39,6 +40,10 @@ import forpdateam.ru.forpda.ui.views.KeyboardUtil;
 import forpdateam.ru.forpda.ui.views.drawers.DrawerHeader;
 import forpdateam.ru.forpda.ui.views.drawers.Drawers;
 import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity implements TabManager.TabListener {
     public final static String LOG_TAG = MainActivity.class.getSimpleName();
@@ -81,11 +86,19 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         if (intent != null) {
             checkWebView = intent.getBooleanExtra(CHECK_WEBVIEW, checkWebView);
         }
-        if (checkWebView && !App.get().isWebViewFound()) {
-            startActivity(new Intent(this, WebVewNotFoundActivity.class));
-            finish();
-            return;
+        if(checkWebView){
+            Observable
+                    .fromCallable(() -> App.get().isWebViewFound(this))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(aBoolean -> {
+                        if(!aBoolean){
+                            startActivity(new Intent(App.getContext(), WebVewNotFoundActivity.class));
+                            finish();
+                        }
+                    });
         }
+
         currentThemeIsDark = App.get().isDarkTheme();
         setTheme(currentThemeIsDark ? R.style.DarkAppTheme_NoActionBar : R.style.LightAppTheme_NoActionBar);
         setContentView(R.layout.activity_main);
@@ -181,8 +194,6 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             new SimpleUpdateChecker().checkFromGitHub(this);
         }
         checkIntent(getIntent());
-        mJobManager = JobManager.instance();
-        //testPeriodic();
     }
 
     private void measureView(View v) {
@@ -200,19 +211,6 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             App.get().getStatusBarSizeObservables().notifyObservers();
         }
     }
-
-    int mLastJobId;
-    private JobManager mJobManager;
-
-    /*private void testPeriodic() {
-        mLastJobId = new JobRequest.Builder(NotificationsJob.TAG)
-                .setPeriodic(JobRequest.MIN_INTERVAL, JobRequest.MIN_FLEX)
-                .setRequiresCharging(false)
-                .setRequiresDeviceIdle(false)
-                .setRequiredNetworkType(JobRequest.NetworkType.ANY)
-                .build()
-                .schedule();
-    }*/
 
     @Override
     protected void onStart() {

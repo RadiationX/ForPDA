@@ -19,6 +19,7 @@ import android.graphics.drawable.VectorDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Messenger;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.AttrRes;
@@ -78,9 +79,13 @@ import forpdateam.ru.forpda.notifications.NotificationsJob;
 import forpdateam.ru.forpda.notifications.NotificationsJobCreator;
 import forpdateam.ru.forpda.notifications.NotificationsService;
 import forpdateam.ru.forpda.ui.activities.CustomCrashDialog;
+import forpdateam.ru.forpda.ui.activities.WebVewNotFoundActivity;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.qms.QmsHelper;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.plugins.RxJavaPlugins;
+import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import okhttp3.Cookie;
@@ -139,6 +144,8 @@ public class App extends android.app.Application {
     private SimpleObservable qmsEvents = new SimpleObservable();
     private SimpleObservable networkForbidden = new SimpleObservable();
     private Boolean webViewFound = null;
+    private Messenger mBoundService = null;
+    private boolean mServiceBound = false;
 
 
     public App() {
@@ -186,10 +193,10 @@ public class App extends android.app.Application {
     }
 
 
-    public boolean isWebViewFound() {
+    public boolean isWebViewFound(Context context) {
         if (webViewFound == null) {
             try {
-                WebSettings.getDefaultUserAgent(App.getContext());
+                WebSettings.getDefaultUserAgent(context);
                 webViewFound = true;
             } catch (Exception e) {
                 webViewFound = false;
@@ -202,8 +209,6 @@ public class App extends android.app.Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(LocaleHelper.onAttach(base));
     }
-
-    int mLastJobId;
 
     @Override
     public void onCreate() {
@@ -325,50 +330,54 @@ public class App extends android.app.Application {
         registerReceiver(new WakeUpReceiver(), wakeUpFilter);
 
 
-        JobConfig.addLogger((priority, tag, message, t) -> {
-            Log.e("SUKA", "Job: pr=" + priority + "; t=" + tag + "; m=" + message + "; th=" + t);
-        });
-        JobConfig.setLogcatEnabled(false);
-        JobManager.create(this).addJobCreator(new NotificationsJobCreator());
-        JobManager.instance().cancelAllForTag(NotificationsJob.TAG);
-        mLastJobId = new JobRequest.Builder(NotificationsJob.TAG)
-                .setPeriodic(TimeUnit.MINUTES.toMillis(16L))
-                //only non periodic
-                //.setBackoffCriteria(JobRequest.DEFAULT_BACKOFF_MS, JobRequest.BackoffPolicy.LINEAR)
-                .setRequiresCharging(false)
-                .setRequiresDeviceIdle(false)
-                .setRequiredNetworkType(JobRequest.NetworkType.ANY)
-                .build()
-                .schedule();
+        Observable
+                .fromCallable(() -> {
+                    JobConfig.addLogger((priority, tag, message, t) -> {
+                        Log.e("SUKA", "Job: pr=" + priority + "; t=" + tag + "; m=" + message + "; th=" + t);
+                    });
+                    JobConfig.setLogcatEnabled(false);
+                    JobManager.create(this).addJobCreator(new NotificationsJobCreator());
+                    JobManager.instance().cancelAllForTag(NotificationsJob.TAG);
+                    new JobRequest.Builder(NotificationsJob.TAG)
+                            .setPeriodic(TimeUnit.MINUTES.toMillis(16L))
+                            //only non periodic
+                            //.setBackoffCriteria(JobRequest.DEFAULT_BACKOFF_MS, JobRequest.BackoffPolicy.LINEAR)
+                            .setRequiresCharging(false)
+                            .setRequiresDeviceIdle(false)
+                            .setRequiredNetworkType(JobRequest.NetworkType.ANY)
+                            .build()
+                            .schedule();
+                    return true;
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+
         QmsHelper.init();
         Log.e("SUKAA", "TIME APP FINAL " + (System.currentTimeMillis() - time));
     }
 
-    private NotificationsService mBoundService;
-    boolean mServiceBound = false;
-
-    public ServiceConnection getmServiceConnection() {
-        return mServiceConnection;
-    }
-
     private ServiceConnection mServiceConnection = new ServiceConnection() {
-
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            mBoundService = null;
             mServiceBound = false;
         }
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            if (service instanceof NotificationsService.MyBinder) {
-                NotificationsService.MyBinder myBinder = (NotificationsService.MyBinder) service;
-                mBoundService = myBinder.getService();
+            String n1 = name.getClassName();
+            String n2 = NotificationsService.class.getName();
+            if (n1.equals(n2)) {
+                mBoundService = new Messenger(service);
                 mServiceBound = true;
-            } else {
-                ACRA.getErrorReporter().handleException(new Throwable("What's wrong, bro? IBinder=" + service));
             }
         }
     };
+
+    public ServiceConnection getServiceConnection() {
+        return mServiceConnection;
+    }
 
     public static HashMap<String, String> getTemplateStringCache() {
         return templateStringCache;

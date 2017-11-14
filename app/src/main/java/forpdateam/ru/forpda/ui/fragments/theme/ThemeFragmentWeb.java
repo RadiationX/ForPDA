@@ -16,6 +16,8 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import org.acra.ACRA;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -188,7 +190,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
 
     @Override
     protected void updateHistoryLastHtml() {
-        Log.d(LOG_TAG, "updateHistoryLastHtml "+currentPage);
+        Log.d(LOG_TAG, "updateHistoryLastHtml " + currentPage);
         webView.evalJs("ITheme.callbackUpdateHistoryHtml('<!DOCTYPE html><html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>')");
         Log.d(LOG_TAG, "save scrollY " + webView.getScrollY());
         webView.evalJs("console.log('JAVASCRIPT save scrollY '+window.scrollY)");
@@ -215,77 +217,71 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
     }
 
     private class ThemeWebViewClient extends CustomWebViewClient {
-
-        @SuppressWarnings("deprecation")
         @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            return handleUri(Uri.parse(url));
-        }
-
-        @TargetApi(Build.VERSION_CODES.N)
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-            return handleUri(request.getUrl());
-        }
-
-
         public boolean handleUri(Uri uri) {
             Log.d(LOG_TAG, "handle " + uri);
-            if (checkIsPoll(uri.toString())) return true;
-            if (uri.getHost() != null && uri.getHost().matches("4pda.ru")) {
-                if (uri.getPathSegments().get(0).equals("forum")) {
-                    String param = uri.getQueryParameter("showtopic");
-                    Log.d(LOG_TAG, "param" + param);
-                    if (param != null && !param.equals(Uri.parse(tab_url).getQueryParameter("showtopic"))) {
-                        load(uri);
-                        return true;
-                    }
-                    param = uri.getQueryParameter("act");
-                    if (param == null)
-                        param = uri.getQueryParameter("view");
-                    Log.d(LOG_TAG, "param" + param);
-                    if (param != null && param.equals("findpost")) {
-                        String postId = uri.getQueryParameter("pid");
-                        if (postId == null)
-                            postId = uri.getQueryParameter("p");
-                        Log.d(LOG_TAG, "param" + postId);
-                        if (postId != null && getPostById(Integer.parseInt(postId.trim())) != null) {
-                            Matcher matcher = Theme.elemToScrollPattern.matcher(uri.toString());
-                            String elem = null;
-                            while (matcher.find()) {
-                                elem = matcher.group(1);
-                            }
-                            Log.d(LOG_TAG, " scroll to " + postId + " : " + elem);
-                            String finalAnchor = (elem == null ? "entry" : "").concat(elem != null ? elem : postId);
-                            if (App.get().getPreferences().getBoolean("theme.anchor_history", true)) {
-                                currentPage.addAnchor(finalAnchor);
-                            }
-                            scrollToAnchor(finalAnchor);
-                            return true;
-                        } else {
+            try {
+                if (checkIsPoll(uri.toString())) return true;
+                if (uri.getHost() != null && uri.getHost().matches("4pda.ru")) {
+                    if (uri.getPathSegments().get(0).equals("forum")) {
+                        String param = uri.getQueryParameter("showtopic");
+                        Log.d(LOG_TAG, "param showtopic: " + param);
+                        if (param != null && !param.equals(Uri.parse(tab_url).getQueryParameter("showtopic"))) {
                             load(uri);
                             return true;
                         }
-                    }
-                }
-            }
-            String url = uri.toString();
-            if (Theme.attachImagesPattern.matcher(url).find()) {
-                for (ThemePost post : currentPage.getPosts()) {
-                    for (Pair<String, String> image : post.getAttachImages()) {
-                        if (image.first.contains(url)) {
-                            ArrayList<String> list = new ArrayList<>();
-                            for (Pair<String, String> attaches : post.getAttachImages()) {
-                                list.add(attaches.first);
+                        param = uri.getQueryParameter("act");
+                        if (param == null)
+                            param = uri.getQueryParameter("view");
+                        Log.d(LOG_TAG, "param act|view: " + param);
+                        if (param != null && param.equals("findpost")) {
+                            String postId = uri.getQueryParameter("pid");
+                            if (postId == null)
+                                postId = uri.getQueryParameter("p");
+                            Log.d(LOG_TAG, "param pid|p: " + postId);
+                            if (postId != null) {
+                                postId = postId.replaceAll("[^\\d][\\s\\S]*", "");
                             }
-                            ImageViewerActivity.startActivity(App.getContext(), list, post.getAttachImages().indexOf(image));
-                            return true;
+                            Log.d(LOG_TAG, "param postId: " + postId);
+                            if (postId != null && getPostById(Integer.parseInt(postId.trim())) != null) {
+                                Matcher matcher = Theme.elemToScrollPattern.matcher(uri.toString());
+                                String elem = null;
+                                while (matcher.find()) {
+                                    elem = matcher.group(1);
+                                }
+                                Log.d(LOG_TAG, " scroll to " + postId + " : " + elem);
+                                String finalAnchor = (elem == null ? "entry" : "").concat(elem != null ? elem : postId);
+                                if (App.get().getPreferences().getBoolean("theme.anchor_history", true)) {
+                                    currentPage.addAnchor(finalAnchor);
+                                }
+                                scrollToAnchor(finalAnchor);
+                                return true;
+                            } else {
+                                load(uri);
+                                return true;
+                            }
                         }
                     }
                 }
+                String url = uri.toString();
+                if (Theme.attachImagesPattern.matcher(url).find()) {
+                    for (ThemePost post : currentPage.getPosts()) {
+                        for (Pair<String, String> image : post.getAttachImages()) {
+                            if (image.first.contains(url)) {
+                                ArrayList<String> list = new ArrayList<>();
+                                for (Pair<String, String> attaches : post.getAttachImages()) {
+                                    list.add(attaches.first);
+                                }
+                                ImageViewerActivity.startActivity(App.getContext(), list, post.getAttachImages().indexOf(image));
+                                return true;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                ACRA.getErrorReporter().handleException(ex);
             }
             IntentHandler.handle(uri.toString());
-
             return true;
         }
 

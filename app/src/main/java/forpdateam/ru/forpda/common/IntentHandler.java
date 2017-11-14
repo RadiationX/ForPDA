@@ -413,20 +413,24 @@ public class IntentHandler {
                         Toast.makeText(App.getContext(), R.string.error_occurred, Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    Activity activity = App.getActivity();
-                    if (!Preferences.Main.isSystemDownloader(null) || activity == null) {
-                        externalDownloader(response.getRedirect());
-                    } else {
-                        Runnable checkAction = () -> {
-                            Toast.makeText(App.getContext(), String.format(App.get().getString(R.string.perform_request_link), fileName), Toast.LENGTH_SHORT).show();
-                            try {
-                                systemDownloader(fileName, response.getRedirect());
-                            } catch (Exception exception) {
-                                Toast.makeText(App.getContext(), R.string.perform_loading_error, Toast.LENGTH_SHORT).show();
-                                externalDownloader(response.getRedirect());
-                            }
-                        };
-                        App.get().checkStoragePermission(checkAction, activity);
+                    try {
+                        Activity activity = App.getActivity();
+                        if (!Preferences.Main.isSystemDownloader(null) || activity == null) {
+                            externalDownloader(response.getRedirect());
+                        } else {
+                            Runnable checkAction = () -> {
+                                Toast.makeText(App.getContext(), String.format(App.get().getString(R.string.perform_request_link), fileName), Toast.LENGTH_SHORT).show();
+                                try {
+                                    systemDownloader(fileName, response.getRedirect());
+                                } catch (Exception exception) {
+                                    Toast.makeText(App.getContext(), R.string.perform_loading_error, Toast.LENGTH_SHORT).show();
+                                    externalDownloader(response.getRedirect());
+                                }
+                            };
+                            App.get().checkStoragePermission(checkAction, activity);
+                        }
+                    } catch (Exception ex) {
+                        ACRA.getErrorReporter().handleException(ex);
                     }
                 });
     }
