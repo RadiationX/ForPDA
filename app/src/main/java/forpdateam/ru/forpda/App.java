@@ -329,11 +329,11 @@ public class App extends android.app.Application {
         wakeUpFilter.addAction(Intent.ACTION_SCREEN_ON);
         registerReceiver(new WakeUpReceiver(), wakeUpFilter);
 
-
+        //На каких-то диких калькуляторах может быть ANR, поэтому в фоновый поток
         Observable
                 .fromCallable(() -> {
                     JobConfig.addLogger((priority, tag, message, t) -> {
-                        Log.e("SUKA", "Job: pr=" + priority + "; t=" + tag + "; m=" + message + "; th=" + t);
+                        Log.e("JobLogger", "Job: pr=" + priority + "; t=" + tag + "; m=" + message + "; th=" + t);
                     });
                     JobConfig.setLogcatEnabled(false);
                     JobManager.create(this).addJobCreator(new NotificationsJobCreator());
@@ -354,7 +354,7 @@ public class App extends android.app.Application {
                 .subscribe();
 
         QmsHelper.init();
-        Log.e("SUKAA", "TIME APP FINAL " + (System.currentTimeMillis() - time));
+        Log.e("APP", "TIME APP FINAL " + (System.currentTimeMillis() - time));
     }
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
