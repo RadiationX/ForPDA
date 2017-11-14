@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.notifications;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -15,6 +16,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.Message;
+import android.os.Messenger;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -22,6 +25,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.util.ArraySet;
 import android.util.Log;
 import android.util.SparseArray;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -79,7 +83,7 @@ public class NotificationsService extends Service {
     public final static String CHECK_LAST_EVENTS = "CHECK_LAST_EVENTS";
     private final static int NOTIFY_STACKED_QMS_ID = -123;
     private final static int NOTIFY_STACKED_FAV_ID = -234;
-    private IBinder mBinder = new MyBinder();
+    private final Messenger myMessenger = new Messenger(new IncomingHandler());
     private Handler wsHandler = new Handler(Looper.getMainLooper());
     private NotificationManagerCompat mNotificationManager;
     private SparseArray<NotificationEvent> eventsHistory = new SparseArray<>();
@@ -145,7 +149,6 @@ public class NotificationsService extends Service {
     };
 
     private WebSocketListener webSocketListener = new WebSocketListener() {
-        Matcher matcher = null;
 
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
@@ -158,14 +161,10 @@ public class NotificationsService extends Service {
         @Override
         public void onMessage(WebSocket webSocket, String text) {
             Log.d(LOG_TAG, "WSListener onMessage: " + text);
-            App.get().notifyForbidden(false);
-            if (matcher == null) {
-                matcher = NotificationEvents.webSocketEventPattern.matcher(text);
-            } else {
-                matcher = matcher.reset(text);
-            }
-            NotificationEvent event = Api.UniversalEvents().parseWebSocketEvent(matcher);
             try {
+                App.get().notifyForbidden(false);
+                NotificationEvent event = Api.UniversalEvents().parseWebSocketEvent(text);
+
                 if (event != null) {
                     if (event.getType() != NotificationEvent.Type.HAT_EDITED) {
                         wsHandler.post(() -> handleWebSocketEvent(event));
@@ -206,7 +205,7 @@ public class NotificationsService extends Service {
         try {
             Intent intent = new Intent(App.getContext(), NotificationsService.class).setAction(NotificationsService.CHECK_LAST_EVENTS);
             App.getContext().startService(intent);
-            App.getContext().bindService(intent, App.get().getmServiceConnection(), Context.BIND_AUTO_CREATE);
+            App.getContext().bindService(intent, App.get().getServiceConnection(), Context.BIND_AUTO_CREATE);
         } catch (Exception ignore) {
         }
     }
@@ -215,7 +214,7 @@ public class NotificationsService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Log.v(LOG_TAG, "onBind");
-        return mBinder;
+        return myMessenger.getBinder();
     }
 
     @Override
@@ -978,9 +977,11 @@ public class NotificationsService extends Service {
         return "";
     }
 
-    public class MyBinder extends Binder {
-        public NotificationsService getService() {
-            return NotificationsService.this;
+    @SuppressLint("HandlerLeak")
+    class IncomingHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            Toast.makeText(getApplicationContext(), "" + msg.getData(), Toast.LENGTH_SHORT).show();
         }
     }
 }
