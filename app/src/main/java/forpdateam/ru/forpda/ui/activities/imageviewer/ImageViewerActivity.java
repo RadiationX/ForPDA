@@ -12,6 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import java.util.ArrayList;
 
 import forpdateam.ru.forpda.App;
@@ -172,12 +174,6 @@ public class ImageViewerActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-       /* if (adapter.views != null) {
-            for (int i = 0; i < adapter.views.size(); i++) {
-                if (adapter.views.get(i) == null) continue;
-                ((ImageView) adapter.views.get(i).findViewById(R.id.photo_view)).setImageBitmap(null);
-            }
-        }*/
         System.gc();
     }
 
