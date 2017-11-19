@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
+import android.view.WindowManager;
 
 import java.util.ArrayList;
 
@@ -93,7 +94,8 @@ public class ImageViewerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setTheme(R.style.ImageViewTheme);
         setContentView(R.layout.activity_img_viewer);
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_IMMERSIVE);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         appBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
@@ -185,23 +187,11 @@ public class ImageViewerActivity extends AppCompatActivity {
 
     private void hide() {
         mVisible = false;
-        //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        /*getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                | View.SYSTEM_UI_FLAG_IMMERSIVE);*/
         getSupportActionBar().hide();
     }
 
     private void show() {
         mVisible = true;
-        //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        /*getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);*/
         getSupportActionBar().show();
     }
 

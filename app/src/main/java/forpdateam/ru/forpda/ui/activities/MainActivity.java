@@ -82,13 +82,13 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
         if (intent != null) {
             checkWebView = intent.getBooleanExtra(CHECK_WEBVIEW, checkWebView);
         }
-        if(checkWebView){
+        if (checkWebView) {
             Observable
                     .fromCallable(() -> App.get().isWebViewFound(this))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(aBoolean -> {
-                        if(!aBoolean){
+                        if (!aBoolean) {
                             startActivity(new Intent(App.getContext(), WebVewNotFoundActivity.class));
                             finish();
                         }
@@ -170,8 +170,10 @@ public class MainActivity extends AppCompatActivity implements TabManager.TabLis
             @Override
             public void onDrawerStateChanged(int newState) {
                 if (newState == DrawerLayout.STATE_DRAGGING) {
-                    if (!TabManager.get().isEmpty())
-                        TabManager.get().getActive().hidePopupWindows();
+                    TabFragment fragment = TabManager.get().getActive();
+                    if (fragment != null) {
+                        fragment.hidePopupWindows();
+                    }
                 }
             }
         });

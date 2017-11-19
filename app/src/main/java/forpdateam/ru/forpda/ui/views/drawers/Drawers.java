@@ -318,6 +318,8 @@ public class Drawers {
                 item.setAttachedTabTag(fragment.getTag());
                 lastActive = item;
                 menuAdapter.notifyDataSetChanged();
+                App.get().getPreferences().edit().putString("menu_drawer_last", item.getTabClass().getSimpleName()).apply();
+                break;
             }
         }
     }
