@@ -135,7 +135,8 @@ public class TabManager {
         TabFragment active = null;
         try {
             active = get(activeIndex);
-        } catch (Exception ignore) {
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
         return active;
     }
@@ -248,6 +249,8 @@ public class TabManager {
         if (tabFragment == null)
             return;
 
+        String tabTag = tabFragment.getTag();
+        int tabIndex = existingFragments.indexOf(tabFragment);
         fragmentManager.beginTransaction().remove(tabFragment).commit();
         fragmentManager.executePendingTransactions();
         updateFragmentList();
@@ -267,8 +270,11 @@ public class TabManager {
                 activeTag = "";
             }
         } else {
-            activeTag = tabFragment.getParentTag();
-            activeIndex = existingFragments.indexOf(parent);
+            Log.e(LOG_TAG, "Compare " + activeTag + " : " +tabTag);
+            if (activeTag.equals(tabTag)) {
+                activeTag = tabFragment.getParentTag();
+                activeIndex = existingFragments.indexOf(parent);
+            }
         }
 
         select(activeTag);
