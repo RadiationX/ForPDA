@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.ui.fragments.favorites;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
@@ -9,7 +8,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -21,13 +19,11 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.events.models.NotificationEvent;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.favorites.Sorting;
 import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
@@ -38,7 +34,6 @@ import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.Preferences;
 import forpdateam.ru.forpda.common.Utils;
 import forpdateam.ru.forpda.data.models.TabNotification;
-import forpdateam.ru.forpda.data.realm.favorites.FavItemBd;
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.forum.ForumHelper;
@@ -46,12 +41,6 @@ import forpdateam.ru.forpda.ui.views.ContentController;
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu;
 import forpdateam.ru.forpda.ui.views.FunnyContent;
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper;
-import io.reactivex.Observable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import io.reactivex.internal.operators.single.SingleJust;
-import io.realm.Realm;
-import io.realm.RealmResults;
 
 /**
  * Created by radiationx on 22.09.16.

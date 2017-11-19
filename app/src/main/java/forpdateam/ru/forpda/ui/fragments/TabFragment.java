@@ -40,7 +40,6 @@ import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.common.ErrorHandler;
 import forpdateam.ru.forpda.common.Preferences;
-import forpdateam.ru.forpda.common.mvp.BasePresenter;
 import forpdateam.ru.forpda.common.mvp.IBasePresenter;
 import forpdateam.ru.forpda.common.mvp.IBaseView;
 import forpdateam.ru.forpda.ui.TabManager;
@@ -334,7 +333,6 @@ public class TabFragment extends Fragment implements IBaseView {
         noNetwork = (LinearLayout) coordinatorLayout.findViewById(R.id.no_network);
         //// TODO: 20.03.17 удалить и юзать только там, где нужно
         fab = (FloatingActionButton) coordinatorLayout.findViewById(R.id.fab);
-
         contentController = new ContentController(contentProgress, additionalContent, fragmentContent);
         return view;
     }

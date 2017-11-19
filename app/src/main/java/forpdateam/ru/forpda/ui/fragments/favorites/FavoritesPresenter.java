@@ -13,7 +13,6 @@ import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.client.ClientHelper;
-import forpdateam.ru.forpda.common.Preferences;
 import forpdateam.ru.forpda.common.mvp.BasePresenter;
 import forpdateam.ru.forpda.data.models.TabNotification;
 import forpdateam.ru.forpda.data.realm.favorites.FavItemBd;

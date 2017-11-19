@@ -69,6 +69,17 @@ public class ExtendedWebView extends NestedWebView implements IBase {
         init();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.e(LOG_TAG, "onPause " + this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.e(LOG_TAG, "onResume " + this);
+    }
 
     public void setOnDirectionListener(OnDirectionListener onDirectionListener) {
         this.onDirectionListener = onDirectionListener;

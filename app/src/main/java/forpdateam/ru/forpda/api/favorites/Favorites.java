@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.api.favorites;
 
 import android.net.Uri;
-import android.util.Log;
 
 import java.util.Collections;
 import java.util.Comparator;

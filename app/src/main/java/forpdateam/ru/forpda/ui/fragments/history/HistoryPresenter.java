@@ -2,11 +2,8 @@ package forpdateam.ru.forpda.ui.fragments.history;
 
 import android.os.Bundle;
 
-import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.common.mvp.BasePresenter;
 import forpdateam.ru.forpda.data.realm.history.HistoryItemBd;
-import forpdateam.ru.forpda.ui.views.ContentController;
-import forpdateam.ru.forpda.ui.views.FunnyContent;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;

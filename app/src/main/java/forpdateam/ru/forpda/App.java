@@ -79,7 +79,6 @@ import forpdateam.ru.forpda.notifications.NotificationsJob;
 import forpdateam.ru.forpda.notifications.NotificationsJobCreator;
 import forpdateam.ru.forpda.notifications.NotificationsService;
 import forpdateam.ru.forpda.ui.activities.CustomCrashDialog;
-import forpdateam.ru.forpda.ui.activities.WebVewNotFoundActivity;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.qms.QmsHelper;
 import io.reactivex.Observable;
