@@ -46,6 +46,7 @@ import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.api.IBaseForumPost;
 import forpdateam.ru.forpda.api.RequestFile;
 import forpdateam.ru.forpda.api.events.models.NotificationEvent;
@@ -919,7 +920,7 @@ public abstract class ThemeFragment extends TabFragment implements IPostFunction
             return;
         }
         String date = Utils.getForumDateTime(Utils.parseForumDateTime(post.getDate()));
-        String insert = String.format(Locale.getDefault(), "[quote name=\"%s\" date=\"%s\" post=%S]%s[/quote]\n", post.getNick(), date, post.getId(), text);
+        String insert = String.format(Locale.getDefault(), "[quote name=\"%s\" date=\"%s\" post=%S]%s[/quote]\n", ApiUtils.escapeQuotes(post.getNick()), date, post.getId(), text);
         messagePanel.insertText(insert);
         showMessagePanel(true);
     }

@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -40,13 +39,11 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeoutException;
-import java.util.regex.Matcher;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.ApiUtils;
-import forpdateam.ru.forpda.api.events.NotificationEvents;
 import forpdateam.ru.forpda.api.events.models.NotificationEvent;
 import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.apirx.ForumUsersCache;
@@ -83,6 +80,7 @@ public class NotificationsService extends Service {
     public final static String CHECK_LAST_EVENTS = "CHECK_LAST_EVENTS";
     private final static int NOTIFY_STACKED_QMS_ID = -123;
     private final static int NOTIFY_STACKED_FAV_ID = -234;
+    private final static int STACKED_MAX = 4;
     private final Messenger myMessenger = new Messenger(new IncomingHandler());
     private Handler wsHandler = new Handler(Looper.getMainLooper());
     private NotificationManagerCompat mNotificationManager;
@@ -782,8 +780,10 @@ public class NotificationsService extends Service {
         if (events.isEmpty()) {
             return;
         }
-        if (events.size() == 1) {
-            sendNotification(events.get(0));
+        if (events.size() <= STACKED_MAX) {
+            for (NotificationEvent event : events) {
+                sendNotification(event);
+            }
             return;
         }
         if (!checkNotify(null, tSource)) {
@@ -933,8 +933,7 @@ public class NotificationsService extends Service {
     private CharSequence createStackedContent(List<NotificationEvent> events) {
         StringBuilder content = new StringBuilder();
 
-        final int maxCount = 4;
-        int size = Math.min(events.size(), maxCount);
+        int size = Math.min(events.size(), STACKED_MAX);
         for (int i = 0; i < size; i++) {
             NotificationEvent event = events.get(i);
             if (event.fromQms()) {

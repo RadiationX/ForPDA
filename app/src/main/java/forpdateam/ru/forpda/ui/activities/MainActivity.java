@@ -19,11 +19,8 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import com.evernote.android.job.JobManager;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -42,7 +39,6 @@ import forpdateam.ru.forpda.ui.views.drawers.Drawers;
 import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity implements TabManager.TabListener {

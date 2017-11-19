@@ -21,6 +21,7 @@ import java.util.Map;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher;
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.ui.views.messagepanel.SimpleInstruction;
@@ -281,31 +282,31 @@ public class CodesPanelItem extends BasePanelItem {
     }
 
     private String[] createBbCode(String tag, List<Pair<String, String>> headers, String body) {
-        String start = null;
+        StringBuilder start = null;
         String end = null;
 
-        start = "[" + tag;
+        start = new StringBuilder("[" + tag);
         if (headers != null) {
             for (Pair<String, String> header : headers) {
                 if (header.first == null && header.second != null) {
-                    start += "=" + header.second;
+                    start.append("=").append(ApiUtils.escapeQuotes(header.second));
                     break;
                 }
             }
             for (Pair<String, String> header : headers) {
                 if (header.first == null || header.second == null) continue;
-                start += " " + header.first + "=" + header.second;
+                start.append(" ").append(header.first).append("=").append(ApiUtils.escapeQuotes(header.second));
             }
         }
-        start += "]";
+        start.append("]");
 
         if (body != null) {
-            start += body;
+            start.append(body);
         }
         end = "[/" + tag + "]";
 
         //Log.d("FORPDA_LOG", "CREATE BB CODE " + start + " : " + end);
-        return new String[]{start, end};
+        return new String[]{start.toString(), end};
     }
 
     private void simpleInsertText(ButtonData item) {

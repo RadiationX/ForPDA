@@ -23,8 +23,6 @@ import forpdateam.ru.forpda.ui.views.ContentController;
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu;
 import forpdateam.ru.forpda.ui.views.FunnyContent;
 import io.realm.Realm;
-import io.realm.RealmResults;
-import io.realm.Sort;
 
 /**
  * Created by radiationx on 06.09.17.

@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.ui.fragments.news.details;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +14,6 @@ import forpdateam.ru.forpda.common.webview.CustomWebChromeClient;
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient;
 import forpdateam.ru.forpda.ui.activities.MainActivity;
 import forpdateam.ru.forpda.ui.views.ExtendedWebView;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 03.09.17.

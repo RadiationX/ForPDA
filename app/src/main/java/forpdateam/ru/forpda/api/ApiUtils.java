@@ -3,6 +3,8 @@ package forpdateam.ru.forpda.api;
 import android.text.Spanned;
 import android.text.TextUtils;
 
+import org.json.JSONObject;
+
 import forpdateam.ru.forpda.common.Html;
 
 /**
@@ -14,10 +16,12 @@ public class ApiUtils {
         if (s == null) return null;
         return Html.fromHtml(s, Html.FROM_HTML_OPTION_USE_CSS_COLORS);
     }
+
     public static Spanned spannedFromHtml(String s) {
         if (s == null) return null;
         return Html.fromHtml(s);
     }
+
     public static String fromHtml(String s) {
         if (s == null) return null;
         return spannedFromHtml(s).toString();
@@ -41,5 +45,11 @@ public class ApiUtils {
             }
         }
         return sb.toString();
+    }
+
+    public static String escapeQuotes(String s) {
+        String escaped = JSONObject.quote(s);
+        escaped = escaped.substring(1, escaped.length() - 1);
+        return escaped;
     }
 }
