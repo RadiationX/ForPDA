@@ -106,6 +106,9 @@ public class ClientHelper {
     }
 
     public static boolean getNetworkState(Context context) {
+        if (context == null)
+            return false;
+
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 

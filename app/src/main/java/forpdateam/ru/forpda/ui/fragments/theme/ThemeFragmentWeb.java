@@ -237,7 +237,7 @@ public class ThemeFragmentWeb extends ThemeFragment implements IPostFunctions, E
                                 postId = uri.getQueryParameter("p");
                             Log.d(LOG_TAG, "param pid|p: " + postId);
                             if (postId != null) {
-                                postId = postId.replaceAll("[^\\d][\\s\\S]*", "");
+                                postId = postId.replaceAll("[^\\d][\\s\\S]*?", "");
                             }
                             Log.d(LOG_TAG, "param postId: " + postId);
                             if (postId != null && getPostById(Integer.parseInt(postId.trim())) != null) {

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<forpdateam.ru.forpda.ui.views.messagepanel.attachments.SquareRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                                             xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                                             android:layout_width="match_parent"
-                                                                             android:layout_height="wrap_content"
-                                                                             android:foreground="?attr/selectableItemBackgroundBorderless">
+<forpdateam.ru.forpda.ui.views.messagepanel.attachments.SquareRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:foreground="?attr/selectableItemBackgroundBorderless">
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/drawer_item_icon"
@@ -12,7 +13,7 @@
         android:layout_margin="@dimen/dp2"
         android:background="?attr/background_for_lists"
         android:clickable="false"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"/>
 
     <View
         android:id="@+id/overlay_and_text"
@@ -20,7 +21,7 @@
         android:layout_height="match_parent"
         android:layout_margin="@dimen/dp2"
         android:background="?attr/attachment_overlay_bg"
-        android:clickable="false" />
+        android:clickable="false"/>
 
     <LinearLayout
         android:id="@+id/file_description"
@@ -42,7 +43,7 @@
             android:gravity="center_horizontal"
             android:maxLines="1"
             android:textColor="?attr/attachment_text"
-            android:textSize="12sp" />
+            android:textSize="12sp"/>
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/file_attributes"
@@ -52,7 +53,7 @@
             android:maxLines="1"
             android:textAllCaps="true"
             android:textColor="?attr/attachment_text"
-            android:textSize="13sp" />
+            android:textSize="13sp"/>
     </LinearLayout>
 
 
@@ -63,8 +64,8 @@
         android:layout_centerInParent="true"
         android:clickable="false"
         android:visibility="gone"
-        app:cpv_color="?attr/colorAccent"
         app:cpv_animAutostart="true"
+        app:cpv_color="?attr/colorAccent"
         app:cpv_indeterminate="true"/>
 
     <android.support.v7.widget.AppCompatImageButton
@@ -74,7 +75,7 @@
         android:layout_centerInParent="true"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:visibility="gone"
-        app:srcCompat="@drawable/ic_toolbar_refresh" />
+        app:srcCompat="@drawable/ic_toolbar_refresh"/>
 
     <android.support.v7.widget.AppCompatRadioButton
         android:id="@+id/radio_button"
@@ -82,5 +83,5 @@
         android:layout_height="@dimen/dp32"
         android:layout_alignParentEnd="true"
         android:background="@android:color/transparent"
-        android:clickable="false" />
+        android:clickable="false"/>
 </forpdateam.ru.forpda.ui.views.messagepanel.attachments.SquareRelativeLayout>
