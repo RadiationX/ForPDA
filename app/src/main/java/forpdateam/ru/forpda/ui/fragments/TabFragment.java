@@ -15,7 +15,6 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -32,6 +31,8 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.arellomobile.mvp.MvpAppCompatFragment;
+
 import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
@@ -40,8 +41,6 @@ import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.common.ErrorHandler;
 import forpdateam.ru.forpda.common.Preferences;
-import forpdateam.ru.forpda.common.mvp.IBasePresenter;
-import forpdateam.ru.forpda.common.mvp.IBaseView;
 import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.activities.MainActivity;
 import forpdateam.ru.forpda.ui.views.ContentController;
@@ -59,7 +58,7 @@ import static android.content.Context.ACCESSIBILITY_SERVICE;
 /**
  * Created by radiationx on 07.08.16.
  */
-public class TabFragment extends Fragment implements IBaseView {
+public class TabFragment extends MvpAppCompatFragment {
     private final static String LOG_TAG = TabFragment.class.getSimpleName();
     public final static String ARG_TITLE = "TAB_TITLE";
     public final static String TAB_SUBTITLE = "TAB_SUBTITLE";
@@ -76,7 +75,6 @@ public class TabFragment extends Fragment implements IBaseView {
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private Thread mUiThread;
-    private IBasePresenter<? extends IBaseView> basePresenter;
 
     protected final TabConfiguration configuration = new TabConfiguration();
 
@@ -216,11 +214,6 @@ public class TabFragment extends Fragment implements IBaseView {
         return toolbar.getMenu();
     }
 
-
-    protected void registerPresenter(IBasePresenter<? extends IBaseView> presenter) {
-        basePresenter = presenter;
-    }
-
     public CompositeDisposable getDisposable() {
         return disposable;
     }
@@ -290,9 +283,6 @@ public class TabFragment extends Fragment implements IBaseView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (basePresenter != null) {
-            basePresenter.onCreate(savedInstanceState);
-        }
         mUiThread = Thread.currentThread();
         Log.d(LOG_TAG, "onDestroy " + this);
         if (savedInstanceState != null) {
@@ -467,10 +457,6 @@ public class TabFragment extends Fragment implements IBaseView {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (basePresenter != null) {
-            basePresenter.onSaveInstanceState(outState);
-            basePresenter.onDetach();
-        }
         outState.putString(BUNDLE_PREFIX.concat(BUNDLE_TITLE), title);
         outState.putString(BUNDLE_PREFIX.concat(BUNDLE_SUBTITLE), subtitle);
         outState.putString(BUNDLE_PREFIX.concat(BUNDLE_TAB_TITLE), tabTitle);
@@ -490,9 +476,6 @@ public class TabFragment extends Fragment implements IBaseView {
     public void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "onResume " + this);
-        if (basePresenter != null) {
-            basePresenter.onAttach();
-        }
         if (attachedWebView != null) {
             attachedWebView.onResume();
         }
@@ -512,18 +495,11 @@ public class TabFragment extends Fragment implements IBaseView {
     @Override
     public void onStop() {
         super.onStop();
-        if (basePresenter != null) {
-            basePresenter.onDetach();
-        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (basePresenter != null) {
-            basePresenter.onDetach();
-            basePresenter.onDestroyView();
-        }
     }
 
     @Override
@@ -532,9 +508,6 @@ public class TabFragment extends Fragment implements IBaseView {
         super.onDestroy();
         attachedWebView = null;
         Log.d(LOG_TAG, "onDestroy " + this);
-        if (basePresenter != null && (getActivity().isFinishing() || isRemoving())) {
-            basePresenter.onDestroy();
-        }
         if (!disposable.isDisposed())
             disposable.dispose();
         hidePopupWindows();

@@ -17,12 +17,16 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.Di;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.favorites.Sorting;
@@ -33,7 +37,9 @@ import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.Preferences;
 import forpdateam.ru.forpda.common.Utils;
-import forpdateam.ru.forpda.data.models.TabNotification;
+import forpdateam.ru.forpda.entity.app.TabNotification;
+import forpdateam.ru.forpda.presentation.favorites.FavoritesPresenter;
+import forpdateam.ru.forpda.presentation.favorites.FavoritesView;
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.forum.ForumHelper;
@@ -46,7 +52,7 @@ import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper;
  * Created by radiationx on 22.09.16.
  */
 
-public class FavoritesFragment extends RecyclerFragment implements FavoritesContract.View, FavoritesAdapter.OnItemClickListener<IFavItem> {
+public class FavoritesFragment extends RecyclerFragment implements FavoritesView, FavoritesAdapter.OnItemClickListener<IFavItem> {
     public final static CharSequence[] SUB_NAMES = {
             App.get().getString(R.string.fav_subscribe_none),
             App.get().getString(R.string.fav_subscribe_delayed),
@@ -54,8 +60,16 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesCont
             App.get().getString(R.string.fav_subscribe_daily),
             App.get().getString(R.string.fav_subscribe_weekly),
             App.get().getString(R.string.fav_subscribe_pinned)};
+
+    @InjectPresenter
+    FavoritesPresenter presenter;
+
+    @ProvidePresenter
+    FavoritesPresenter provideFavoritesPresenter() {
+        return new FavoritesPresenter(Di.get().favoritesRepository);
+    }
+
     private DynamicDialogMenu<FavoritesFragment, IFavItem> dialogMenu;
-    private FavoritesContract.Presenter presenter;
     //private Realm realm;
     private FavoritesAdapter adapter;
     boolean markedRead = false;
@@ -108,8 +122,6 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesCont
         configuration.setAlone(true);
         //configuration.setUseCache(true);
         configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_favorite));
-        presenter = new FavoritesPresenter(this);
-        registerPresenter(presenter);
     }
 
     private CharSequence getPinText(boolean b) {

@@ -9,16 +9,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.Di;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.mentions.models.MentionItem;
 import forpdateam.ru.forpda.api.mentions.models.MentionsData;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.Utils;
+import forpdateam.ru.forpda.presentation.mentions.MentionsPresenter;
+import forpdateam.ru.forpda.presentation.mentions.MentionsView;
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesHelper;
@@ -31,17 +37,23 @@ import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper;
  * Created by radiationx on 21.01.17.
  */
 
-public class MentionsFragment extends RecyclerFragment implements MentionsContract.View, MentionsAdapter.OnItemClickListener<MentionItem> {
+public class MentionsFragment extends RecyclerFragment implements MentionsView, MentionsAdapter.OnItemClickListener<MentionItem> {
+
+    @InjectPresenter
+    MentionsPresenter presenter;
+
+    @ProvidePresenter
+    MentionsPresenter provideMentionsPresenter() {
+        return new MentionsPresenter(Di.get().mentionsRepository);
+    }
+
     private DynamicDialogMenu<MentionsFragment, MentionItem> dialogMenu;
-    private MentionsContract.Presenter presenter;
     private MentionsAdapter adapter;
     private PaginationHelper paginationHelper;
 
     public MentionsFragment() {
         configuration.setAlone(true);
         configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_mentions));
-        presenter = new MentionsPresenter(this);
-        registerPresenter(presenter);
     }
 
     @Nullable

@@ -24,7 +24,7 @@ import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
 import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.common.Utils;
-import forpdateam.ru.forpda.data.realm.forum.ForumItemFlatBd;
+import forpdateam.ru.forpda.entity.db.forum.ForumItemFlatBd;
 import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesHelper;

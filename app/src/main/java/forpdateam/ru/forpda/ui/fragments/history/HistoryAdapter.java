@@ -5,7 +5,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.data.realm.history.HistoryItemBd;
+import forpdateam.ru.forpda.entity.app.history.HistoryItem;
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 
@@ -13,10 +13,10 @@ import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
  * Created by radiationx on 06.09.17.
  */
 
-public class HistoryAdapter extends BaseAdapter<HistoryItemBd, HistoryAdapter.HistoryHolder> {
-    private BaseAdapter.OnItemClickListener<HistoryItemBd> itemClickListener;
+public class HistoryAdapter extends BaseAdapter<HistoryItem, HistoryAdapter.HistoryHolder> {
+    private BaseAdapter.OnItemClickListener<HistoryItem> itemClickListener;
 
-    public void setItemClickListener(BaseAdapter.OnItemClickListener<HistoryItemBd> itemClickListener) {
+    public void setItemClickListener(BaseAdapter.OnItemClickListener<HistoryItem> itemClickListener) {
         this.itemClickListener = itemClickListener;
     }
 
@@ -31,7 +31,7 @@ public class HistoryAdapter extends BaseAdapter<HistoryItemBd, HistoryAdapter.Hi
     }
 
 
-    class HistoryHolder extends BaseViewHolder<HistoryItemBd> {
+    class HistoryHolder extends BaseViewHolder<HistoryItem> {
         public final static int LAYOUT = R.layout.item_history;
         private TextView title;
         private TextView date;
@@ -55,7 +55,7 @@ public class HistoryAdapter extends BaseAdapter<HistoryItemBd, HistoryAdapter.Hi
         }
 
         @Override
-        public void bind(HistoryItemBd item, int position) {
+        public void bind(HistoryItem item, int position) {
             title.setText(item.getTitle());
             date.setText(item.getDate());
         }

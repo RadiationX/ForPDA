@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.data.models.notes.NoteItem;
+import forpdateam.ru.forpda.entity.app.notes.NoteItem;
 
 /**
  * Created by radiationx on 06.09.17.

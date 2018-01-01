@@ -6,10 +6,10 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.api.events.models.NotificationEvent;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.common.simple.SimpleObservable;
-import forpdateam.ru.forpda.data.models.TabNotification;
-import forpdateam.ru.forpda.data.realm.qms.QmsContactBd;
-import forpdateam.ru.forpda.data.realm.qms.QmsThemeBd;
-import forpdateam.ru.forpda.data.realm.qms.QmsThemesBd;
+import forpdateam.ru.forpda.entity.app.TabNotification;
+import forpdateam.ru.forpda.entity.db.qms.QmsContactBd;
+import forpdateam.ru.forpda.entity.db.qms.QmsThemeBd;
+import forpdateam.ru.forpda.entity.db.qms.QmsThemesBd;
 import io.realm.Realm;
 import io.realm.RealmResults;
 

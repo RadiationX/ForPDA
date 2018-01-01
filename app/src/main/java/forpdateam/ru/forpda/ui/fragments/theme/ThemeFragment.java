@@ -60,7 +60,7 @@ import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.Preferences;
 import forpdateam.ru.forpda.common.Utils;
 import forpdateam.ru.forpda.common.webview.jsinterfaces.IPostFunctions;
-import forpdateam.ru.forpda.data.models.TabNotification;
+import forpdateam.ru.forpda.entity.app.TabNotification;
 import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesFragment;

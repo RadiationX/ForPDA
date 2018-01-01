@@ -6,16 +6,23 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.Menu;
 import android.view.View;
 
+import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.Di;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.Utils;
-import forpdateam.ru.forpda.data.realm.history.HistoryItemBd;
+import forpdateam.ru.forpda.entity.app.history.HistoryItem;
+import forpdateam.ru.forpda.entity.db.history.HistoryItemBd;
+import forpdateam.ru.forpda.presentation.history.HistoryPresenter;
+import forpdateam.ru.forpda.presentation.history.HistoryView;
 import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
@@ -28,17 +35,23 @@ import io.realm.Realm;
  * Created by radiationx on 06.09.17.
  */
 
-public class HistoryFragment extends RecyclerFragment implements HistoryContract.View, HistoryAdapter.OnItemClickListener<HistoryItemBd> {
+public class HistoryFragment extends RecyclerFragment implements HistoryView, HistoryAdapter.OnItemClickListener<HistoryItem> {
     private final static SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy, HH:mm", Locale.getDefault());
+
+    @InjectPresenter
+    HistoryPresenter presenter;
+
+    @ProvidePresenter
+    HistoryPresenter provideHistoryPresenter() {
+        return new HistoryPresenter(Di.get().historyRepository);
+    }
+
     private HistoryAdapter adapter;
-    private DynamicDialogMenu<HistoryFragment, HistoryItemBd> dialogMenu;
-    private HistoryContract.Presenter presenter;
+    private DynamicDialogMenu<HistoryFragment, HistoryItem> dialogMenu;
 
     public HistoryFragment() {
         configuration.setUseCache(true);
         configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_history));
-        presenter = new HistoryPresenter(this);
-        registerPresenter(presenter);
     }
 
     @Override
@@ -69,7 +82,7 @@ public class HistoryFragment extends RecyclerFragment implements HistoryContract
     }
 
     @Override
-    public void showHistory(List<HistoryItemBd> history) {
+    public void showHistory(List<HistoryItem> history) {
         if (history.isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
                 FunnyContent funnyContent = new FunnyContent(getContext())
@@ -86,14 +99,14 @@ public class HistoryFragment extends RecyclerFragment implements HistoryContract
     }
 
     @Override
-    public void onItemClick(HistoryItemBd item) {
+    public void onItemClick(HistoryItem item) {
         Bundle args = new Bundle();
         args.putString(TabFragment.ARG_TITLE, item.getTitle());
         IntentHandler.handle(item.getUrl(), args);
     }
 
     @Override
-    public boolean onItemLongClick(HistoryItemBd item) {
+    public boolean onItemLongClick(HistoryItem item) {
         if (dialogMenu == null) {
             dialogMenu = new DynamicDialogMenu<>();
             dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
