@@ -17,25 +17,23 @@ import java.util.Locale;
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.Di;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.common.IntentHandler;
-import forpdateam.ru.forpda.common.Utils;
 import forpdateam.ru.forpda.entity.app.history.HistoryItem;
 import forpdateam.ru.forpda.entity.db.history.HistoryItemBd;
 import forpdateam.ru.forpda.presentation.history.HistoryPresenter;
 import forpdateam.ru.forpda.presentation.history.HistoryView;
 import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment;
-import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.views.ContentController;
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu;
 import forpdateam.ru.forpda.ui.views.FunnyContent;
+import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
 import io.realm.Realm;
 
 /**
  * Created by radiationx on 06.09.17.
  */
 
-public class HistoryFragment extends RecyclerFragment implements HistoryView, HistoryAdapter.OnItemClickListener<HistoryItem> {
+public class HistoryFragment extends RecyclerFragment implements HistoryView {
     private final static SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy, HH:mm", Locale.getDefault());
 
     @InjectPresenter
@@ -57,11 +55,18 @@ public class HistoryFragment extends RecyclerFragment implements HistoryView, Hi
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        refreshLayout.setOnRefreshListener(this::loadCacheData);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        dialogMenu = new DynamicDialogMenu<>();
+        dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> presenter.copyLink(data));
+        dialogMenu.addItem(getString(R.string.delete), (context, data) -> presenter.remove(data.getId()));
+
         adapter = new HistoryAdapter();
-        adapter.setItemClickListener(this);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
+
+        adapter.setItemClickListener(adapterListener);
+        refreshLayout.setOnRefreshListener(this::loadCacheData);
         viewsReady();
     }
 
@@ -99,28 +104,24 @@ public class HistoryFragment extends RecyclerFragment implements HistoryView, Hi
     }
 
     @Override
-    public void onItemClick(HistoryItem item) {
-        Bundle args = new Bundle();
-        args.putString(TabFragment.ARG_TITLE, item.getTitle());
-        IntentHandler.handle(item.getUrl(), args);
-    }
-
-    @Override
-    public boolean onItemLongClick(HistoryItem item) {
-        if (dialogMenu == null) {
-            dialogMenu = new DynamicDialogMenu<>();
-            dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
-                Utils.copyToClipBoard(data.getUrl());
-            });
-            dialogMenu.addItem(getString(R.string.delete), (context, data) -> {
-                presenter.remove(data.getId());
-            });
-        }
+    public void showItemDialogMenu(HistoryItem item) {
         dialogMenu.disallowAll();
         dialogMenu.allowAll();
         dialogMenu.show(getContext(), HistoryFragment.this, item);
-        return true;
     }
+
+    private BaseAdapter.OnItemClickListener<HistoryItem> adapterListener = new BaseAdapter.OnItemClickListener<HistoryItem>() {
+        @Override
+        public void onItemClick(HistoryItem item) {
+            presenter.onItemClick(item);
+        }
+
+        @Override
+        public boolean onItemLongClick(HistoryItem item) {
+            presenter.onItemLongClick(item);
+            return false;
+        }
+    };
 
     public static void addToHistory(int id, String url, String title) {
         final Realm realm = Realm.getDefaultInstance();

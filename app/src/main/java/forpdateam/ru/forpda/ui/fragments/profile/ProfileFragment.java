@@ -25,6 +25,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
@@ -32,6 +34,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.Di;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.apirx.RxApi;
@@ -40,6 +43,8 @@ import forpdateam.ru.forpda.common.BitmapUtils;
 import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.LinkMovementMethod;
 import forpdateam.ru.forpda.common.Utils;
+import forpdateam.ru.forpda.presentation.profile.ProfilePresenter;
+import forpdateam.ru.forpda.presentation.profile.ProfileView;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.profile.adapters.ProfileAdapter;
 import forpdateam.ru.forpda.ui.views.ScrimHelper;
@@ -48,7 +53,16 @@ import io.reactivex.Observable;
 /**
  * Created by radiationx on 03.08.16.
  */
-public class ProfileFragment extends TabFragment implements ProfileAdapter.ClickListener {
+public class ProfileFragment extends TabFragment implements ProfileAdapter.ClickListener, ProfileView {
+
+    @InjectPresenter
+    ProfilePresenter presenter;
+
+    @ProvidePresenter
+    ProfilePresenter provideProfilePresenter() {
+        return new ProfilePresenter(Di.get().profileRepository);
+    }
+
     //private LayoutInflater inflater;
     private TextView nick, group, sign;
     private ImageView avatar;
@@ -160,24 +174,26 @@ public class ProfileFragment extends TabFragment implements ProfileAdapter.Click
 
     @Override
     public boolean loadData() {
-        if(!super.loadData()){
+        if (!super.loadData()) {
             return false;
         }
         refreshToolbarMenuItems(false);
-        subscribe(RxApi.Profile().getProfile(tab_url), this::onProfileLoad, new ProfileModel(), v -> loadData());
+        presenter.loadProfile(tab_url);
         return true;
     }
 
     @Override
     public void onSaveClick(String text) {
-        subscribe(RxApi.Profile().saveNote(text), this::onNoteSave, false, v -> onSaveClick(text));
+        presenter.saveNote(text);
     }
 
-    private void onNoteSave(boolean b) {
-        Toast.makeText(getContext(), getString(b ? R.string.profile_note_saved : R.string.error_occurred), Toast.LENGTH_SHORT).show();
+    @Override
+    public void onSaveNote(boolean success) {
+        Toast.makeText(getContext(), getString(success ? R.string.profile_note_saved : R.string.error_occurred), Toast.LENGTH_SHORT).show();
     }
 
-    private void onProfileLoad(ProfileModel profile) {
+    @Override
+    public void showProfile(ProfileModel profile) {
         currentProfile = profile;
         if (currentProfile.getNick() == null) return;
         adapter.setProfile(currentProfile);

@@ -16,4 +16,10 @@ public interface FavoritesView extends IBaseView {
     void onShowFavorite(List<FavItem> items);
 
     void onHandleEvent(int count);
+
+    void showItemDialogMenu(FavItem item);
+
+    void changeFav(int action, String type, int favId);
+
+    void showSubscribeDialog(FavItem item);
 }

@@ -7,7 +7,6 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -30,29 +29,26 @@ import forpdateam.ru.forpda.Di;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.favorites.Favorites;
 import forpdateam.ru.forpda.api.favorites.Sorting;
-import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
 import forpdateam.ru.forpda.api.favorites.models.FavData;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import forpdateam.ru.forpda.client.ClientHelper;
-import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.Preferences;
-import forpdateam.ru.forpda.common.Utils;
 import forpdateam.ru.forpda.entity.app.TabNotification;
 import forpdateam.ru.forpda.presentation.favorites.FavoritesPresenter;
 import forpdateam.ru.forpda.presentation.favorites.FavoritesView;
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment;
-import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.forum.ForumHelper;
 import forpdateam.ru.forpda.ui.views.ContentController;
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu;
 import forpdateam.ru.forpda.ui.views.FunnyContent;
+import forpdateam.ru.forpda.ui.views.adapters.BaseSectionedAdapter;
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper;
 
 /**
  * Created by radiationx on 22.09.16.
  */
 
-public class FavoritesFragment extends RecyclerFragment implements FavoritesView, FavoritesAdapter.OnItemClickListener<IFavItem> {
+public class FavoritesFragment extends RecyclerFragment implements FavoritesView {
     public final static CharSequence[] SUB_NAMES = {
             App.get().getString(R.string.fav_subscribe_none),
             App.get().getString(R.string.fav_subscribe_delayed),
@@ -69,10 +65,8 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesView
         return new FavoritesPresenter(Di.get().favoritesRepository);
     }
 
-    private DynamicDialogMenu<FavoritesFragment, IFavItem> dialogMenu;
-    //private Realm realm;
+    private DynamicDialogMenu<FavoritesFragment, FavItem> dialogMenu;
     private FavoritesAdapter adapter;
-    boolean markedRead = false;
 
     private boolean unreadTop = false;
     private boolean loadAll = false;
@@ -120,7 +114,6 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesView
 
     public FavoritesFragment() {
         configuration.setAlone(true);
-        //configuration.setUseCache(true);
         configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_favorite));
     }
 
@@ -159,27 +152,25 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesView
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewsReady();
+
+        dialogMenu = new DynamicDialogMenu<>();
+        dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> presenter.copyLink(data));
+        dialogMenu.addItem(getString(R.string.attachments), (context, data) -> presenter.openAttachments(data));
+        dialogMenu.addItem(getString(R.string.open_theme_forum), (context, data) -> presenter.openForum(data));
+        dialogMenu.addItem(getString(R.string.fav_change_subscribe_type), (context, data) -> presenter.showSubscribeDialog(data));
+        dialogMenu.addItem(getPinText(false), (context, data) -> presenter.changeFav(Favorites.ACTION_EDIT_PIN_STATE, data.isPin() ? "unpin" : "pin", data.getFavId()));
+        dialogMenu.addItem(getString(R.string.delete), (context, data) -> presenter.changeFav(Favorites.ACTION_DELETE, null, data.getFavId()));
+
         refreshLayout.setOnRefreshListener(this::loadData);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new FavoritesAdapter();
-        adapter.setOnItemClickListener(this);
+        adapter.setOnItemClickListener(adapterListener);
         recyclerView.setAdapter(adapter);
 
-        paginationHelper.setListener(new PaginationHelper.PaginationListener() {
-            @Override
-            public boolean onTabSelected(TabLayout.Tab tab) {
-                return refreshLayout.isRefreshing();
-            }
+        paginationHelper.setListener(paginationListener);
 
-            @Override
-            public void onSelectedPage(int pageNumber) {
-                currentSt = pageNumber;
-                loadData();
-            }
-        });
-
-        setItems(keySpinner, new String[]{getString(R.string.fav_sort_last_post), getString(R.string.fav_sort_title)}, 0);
-        setItems(orderSpinner, new String[]{getString(R.string.sorting_asc), getString(R.string.sorting_desc)}, 0);
+        initSpinnerItems(keySpinner, new String[]{getString(R.string.fav_sort_last_post), getString(R.string.fav_sort_title)});
+        initSpinnerItems(orderSpinner, new String[]{getString(R.string.sorting_asc), getString(R.string.sorting_desc)});
         selectSpinners(sorting);
         sortApply.setOnClickListener(v -> {
             switch (keySpinner.getSelectedItemPosition()) {
@@ -229,17 +220,18 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesView
                 });
 
         menu.add(R.string.sorting_title)
-                .setIcon(R.drawable.ic_toolbar_sort).setOnMenuItemClickListener(menuItem -> {
-            hidePopupWindows();
-            if (sortingView != null && sortingView.getParent() != null && sortingView.getParent() instanceof ViewGroup) {
-                ((ViewGroup) sortingView.getParent()).removeView(sortingView);
-            }
-            if (sortingView != null) {
-                dialog.setContentView(sortingView);
-                dialog.show();
-            }
-            return false;
-        });
+                .setIcon(R.drawable.ic_toolbar_sort)
+                .setOnMenuItemClickListener(menuItem -> {
+                    hidePopupWindows();
+                    if (sortingView != null && sortingView.getParent() != null && sortingView.getParent() instanceof ViewGroup) {
+                        ((ViewGroup) sortingView.getParent()).removeView(sortingView);
+                    }
+                    if (sortingView != null) {
+                        dialog.setContentView(sortingView);
+                        dialog.show();
+                    }
+                    return false;
+                });
     }
 
     @Override
@@ -337,35 +329,25 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesView
         }
     }
 
-    private void setItems(Spinner spinner, String[] items, int selection) {
+    private void initSpinnerItems(Spinner spinner, String[] items) {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getMainActivity(), android.R.layout.simple_spinner_item, items);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        spinner.setSelection(selection);
+        spinner.setSelection(0);
     }
-
 
     private void handleEvent(TabNotification event) {
         if (!Preferences.Notifications.Favorites.isLiveTab(getContext())) return;
         presenter.handleEvent(event, sorting, ClientHelper.getFavoritesCount());
     }
 
+    @Override
     public void changeFav(int action, String type, int favId) {
         FavoritesHelper.changeFav(this::onChangeFav, action, favId, -1, type);
     }
 
     public void markRead(int topicId) {
         presenter.markRead(topicId);
-        markedRead = true;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (markedRead) {
-            markedRead = false;
-            presenter.showFavorites();
-        }
     }
 
     @Override
@@ -378,52 +360,24 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesView
     }
 
     private void onChangeFav(boolean v) {
-        /*if (!v)
-            Toast.makeText(getContext(), "При выполнении операции произошла ошибка", Toast.LENGTH_SHORT).show();*/
         Toast.makeText(getContext(), R.string.action_complete, Toast.LENGTH_SHORT).show();
         loadData();
     }
 
     @Override
-    public void onItemClick(IFavItem item) {
-        Bundle args = new Bundle();
-        args.putString(TabFragment.ARG_TITLE, item.getTopicTitle());
-        if (item.isForum()) {
-            IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + item.getForumId(), args);
-        } else {
-            IntentHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + item.getTopicId() + "&view=getnewpost", args);
-        }
+    public void showSubscribeDialog(FavItem item) {
+        int subTypeIndex = Arrays.asList(Favorites.SUB_TYPES).indexOf(item.getSubType());
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.favorites_subscribe_email)
+                .setSingleChoiceItems(FavoritesFragment.SUB_NAMES, subTypeIndex, (dialog, which1) -> {
+                    presenter.changeFav(Favorites.ACTION_EDIT_SUB_TYPE, Favorites.SUB_TYPES[which1], item.getFavId());
+                    dialog.dismiss();
+                })
+                .show();
     }
 
     @Override
-    public boolean onItemLongClick(IFavItem item) {
-        if (dialogMenu == null) {
-            dialogMenu = new DynamicDialogMenu<>();
-
-            dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
-                if (data.isForum()) {
-                    Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getForumId())));
-                } else {
-                    Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=".concat(Integer.toString(data.getTopicId())));
-                }
-            });
-            dialogMenu.addItem(getString(R.string.attachments), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?act=attach&code=showtopic&tid=" + data.getTopicId()));
-            dialogMenu.addItem(getString(R.string.open_theme_forum), (context, data) -> IntentHandler.handle("https://4pda.ru/forum/index.php?showforum=" + data.getForumId()));
-            dialogMenu.addItem(getString(R.string.fav_change_subscribe_type), (context, data) -> {
-                int subTypeIndex = Arrays.asList(Favorites.SUB_TYPES).indexOf(data.getSubType());
-                Log.d("SUKA", "FAVITEMs " + data.getSubType() + " : " + subTypeIndex);
-                new AlertDialog.Builder(getContext())
-                        .setTitle(R.string.favorites_subscribe_email)
-                        .setSingleChoiceItems(FavoritesFragment.SUB_NAMES, subTypeIndex, (dialog, which1) -> {
-                            context.changeFav(Favorites.ACTION_EDIT_SUB_TYPE, Favorites.SUB_TYPES[which1], data.getFavId());
-                            dialog.dismiss();
-                        })
-                        .show();
-            });
-            dialogMenu.addItem(getPinText(item.isPin()), (context, data) -> context.changeFav(Favorites.ACTION_EDIT_PIN_STATE, data.isPin() ? "unpin" : "pin", data.getFavId()));
-            dialogMenu.addItem(getString(R.string.delete))
-                    .setListener((context, data) -> context.changeFav(Favorites.ACTION_DELETE, null, data.getFavId()));
-        }
+    public void showItemDialogMenu(FavItem item) {
         dialogMenu.disallowAll();
         dialogMenu.allow(0);
         if (!item.isForum()) {
@@ -442,6 +396,31 @@ public class FavoritesFragment extends RecyclerFragment implements FavoritesView
         dialogMenu.changeTitle(3, getSubText(subTypeIndex));
 
         dialogMenu.show(getContext(), FavoritesFragment.this, item);
-        return false;
     }
+
+    private PaginationHelper.PaginationListener paginationListener = new PaginationHelper.PaginationListener() {
+        @Override
+        public boolean onTabSelected(TabLayout.Tab tab) {
+            return refreshLayout.isRefreshing();
+        }
+
+        @Override
+        public void onSelectedPage(int pageNumber) {
+            currentSt = pageNumber;
+            loadData();
+        }
+    };
+
+    private BaseSectionedAdapter.OnItemClickListener<FavItem> adapterListener = new BaseSectionedAdapter.OnItemClickListener<FavItem>() {
+        @Override
+        public void onItemClick(FavItem item) {
+            presenter.onItemClick(item);
+        }
+
+        @Override
+        public boolean onItemLongClick(FavItem item) {
+            presenter.onItemLongClick(item);
+            return false;
+        }
+    };
 }

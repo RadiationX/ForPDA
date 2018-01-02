@@ -20,11 +20,14 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.Di;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.api.auth.models.AuthForm;
@@ -32,6 +35,8 @@ import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher;
+import forpdateam.ru.forpda.presentation.auth.AuthPresenter;
+import forpdateam.ru.forpda.presentation.auth.AuthView;
 import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.activities.EmptyActivity;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
@@ -41,7 +46,16 @@ import forpdateam.ru.forpda.ui.views.drawers.Drawers;
 /**
  * Created by radiationx on 29.07.16.
  */
-public class AuthFragment extends TabFragment {
+public class AuthFragment extends TabFragment implements AuthView {
+
+    @InjectPresenter
+    AuthPresenter presenter;
+
+    @ProvidePresenter
+    AuthPresenter provideAuthPresenter() {
+        return new AuthPresenter(Di.get().authRepository, Di.get().profileRepository);
+    }
+
     private EditText nick, password, captcha;
     private ImageView captchaImage, avatar;
     private AuthForm authForm;
@@ -101,7 +115,6 @@ public class AuthFragment extends TabFragment {
         appBarLayout.setVisibility(View.GONE);
         notifyDot.setVisibility(View.GONE);
         sendButton.setOnClickListener(v -> tryLogin());
-        LoginTextWatcher loginTextWatcher = new LoginTextWatcher();
         nick.addTextChangedListener(loginTextWatcher);
         password.addTextChangedListener(loginTextWatcher);
         captcha.addTextChangedListener(loginTextWatcher);
@@ -120,11 +133,12 @@ public class AuthFragment extends TabFragment {
         if (!super.loadData()) {
             return false;
         }
-        subscribe(RxApi.Auth().getForm(), this::onLoadForm, new AuthForm(), view1 -> loadData());
+        presenter.loadForm();
         return true;
     }
 
-    private void onLoadForm(AuthForm authForm) {
+    @Override
+    public void showForm(AuthForm authForm) {
         if (authForm.getBody() == null) return;
         this.authForm = authForm;
         captchaProgress.setVisibility(View.VISIBLE);
@@ -147,13 +161,13 @@ public class AuthFragment extends TabFragment {
         loginProgress.setVisibility(View.VISIBLE);
         sendButton.setVisibility(View.INVISIBLE);
         hidePopupWindows();
-        subscribe(RxApi.Auth().login(authForm), this::showLoginResult, false, view1 -> loadData());
-        //showLoginResult(false);
+        presenter.signIn(authForm);
     }
 
-    private void showLoginResult(boolean b) {
-        Log.d(AuthFragment.class.getSimpleName(), "showLoginResult " + b);
-        if (b) {
+    @Override
+    public void showLoginResult(boolean success) {
+        Log.d(AuthFragment.class.getSimpleName(), "showLoginResult " + success);
+        if (success) {
             loadProfile();
         } else {
             loadData();
@@ -189,11 +203,11 @@ public class AuthFragment extends TabFragment {
         AlphaAnimation animation1 = new AlphaAnimation(0.0f, 1.0f);
         animation1.setDuration(375);
         complete.startAnimation(animation1);
-
-        subscribe(RxApi.Profile().getProfile("https://4pda.ru/forum/index.php?showuser=".concat(Integer.toString(ClientHelper.getUserId()))), this::onProfileLoad, new ProfileModel());
+        presenter.loadProfile("https://4pda.ru/forum/index.php?showuser=" + ClientHelper.getUserId());
     }
 
-    private void onProfileLoad(ProfileModel profile) {
+    @Override
+    public void showProfile(ProfileModel profile) {
         if (EmptyActivity.empty(profile.getNick())) {
             loginProgress.setVisibility(View.GONE);
             // Надо записать иначе будет каждый раз просить авторизацию
@@ -238,7 +252,7 @@ public class AuthFragment extends TabFragment {
         }, 2000);
     }
 
-    private class LoginTextWatcher extends SimpleTextWatcher {
+    private SimpleTextWatcher loginTextWatcher = new SimpleTextWatcher() {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             if (!nick.getText().toString().isEmpty() && !password.getText().toString().isEmpty() && captcha.getText().toString().length() == 4) {
@@ -249,5 +263,5 @@ public class AuthFragment extends TabFragment {
                     sendButton.setEnabled(false);
             }
         }
-    }
+    };
 }

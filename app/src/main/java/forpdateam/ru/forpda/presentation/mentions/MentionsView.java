@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.presentation.mentions;
 
+import forpdateam.ru.forpda.api.mentions.models.MentionItem;
 import forpdateam.ru.forpda.api.mentions.models.MentionsData;
 import forpdateam.ru.forpda.common.mvp.IBaseView;
 
@@ -9,4 +10,8 @@ import forpdateam.ru.forpda.common.mvp.IBaseView;
 
 public interface MentionsView extends IBaseView {
     void showMentions(MentionsData data);
+
+    void showItemDialogMenu(MentionItem item);
+
+    void showAddFavoritesDialog(int id);
 }

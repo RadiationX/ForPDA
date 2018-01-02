@@ -353,6 +353,7 @@ public class App extends android.app.Application {
                 .subscribe();
 
         QmsHelper.init();
+        Di.get();
         Log.e("APP", "TIME APP FINAL " + (System.currentTimeMillis() - time));
     }
 

@@ -11,4 +11,6 @@ import forpdateam.ru.forpda.entity.app.history.HistoryItem;
 
 public interface HistoryView extends IBaseView {
     void showHistory(List<HistoryItem> items);
+
+    void showItemDialogMenu(HistoryItem item);
 }

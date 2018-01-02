@@ -12,32 +12,27 @@ import android.widget.Toast;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.Di;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.mentions.models.MentionItem;
 import forpdateam.ru.forpda.api.mentions.models.MentionsData;
 import forpdateam.ru.forpda.client.ClientHelper;
-import forpdateam.ru.forpda.common.IntentHandler;
-import forpdateam.ru.forpda.common.Utils;
 import forpdateam.ru.forpda.presentation.mentions.MentionsPresenter;
 import forpdateam.ru.forpda.presentation.mentions.MentionsView;
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment;
-import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesHelper;
 import forpdateam.ru.forpda.ui.views.ContentController;
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu;
 import forpdateam.ru.forpda.ui.views.FunnyContent;
+import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper;
 
 /**
  * Created by radiationx on 21.01.17.
  */
 
-public class MentionsFragment extends RecyclerFragment implements MentionsView, MentionsAdapter.OnItemClickListener<MentionItem> {
+public class MentionsFragment extends RecyclerFragment implements MentionsView {
 
     @InjectPresenter
     MentionsPresenter presenter;
@@ -69,22 +64,20 @@ public class MentionsFragment extends RecyclerFragment implements MentionsView, 
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewsReady();
-        refreshLayout.setOnRefreshListener(this::loadData);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        paginationHelper.setListener(new PaginationHelper.PaginationListener() {
-            @Override
-            public boolean onTabSelected(TabLayout.Tab tab) {
-                return refreshLayout.isRefreshing();
-            }
 
-            @Override
-            public void onSelectedPage(int pageNumber) {
-                loadData();
-            }
-        });
+        dialogMenu = new DynamicDialogMenu<>();
+        dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> presenter.copyLink(data));
+        dialogMenu.addItem(getString(R.string.add_to_favorites), (context, data) -> presenter.addToFavorites(data));
+
         adapter = new MentionsAdapter();
-        adapter.setOnItemClickListener(this);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
+
+        adapter.setOnItemClickListener(adapterListener);
+        refreshLayout.setOnRefreshListener(this::loadData);
+        paginationHelper.setListener(paginationListener);
+
     }
 
     @Override
@@ -125,37 +118,44 @@ public class MentionsFragment extends RecyclerFragment implements MentionsView, 
     }
 
     @Override
-    public void onItemClick(MentionItem item) {
-        Bundle args = new Bundle();
-        args.putString(TabFragment.ARG_TITLE, item.getTitle());
-        IntentHandler.handle(item.getLink(), args);
-    }
-
-    @Override
-    public boolean onItemLongClick(MentionItem item) {
-        if (dialogMenu == null) {
-            dialogMenu = new DynamicDialogMenu<>();
-
-            dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> {
-                Utils.copyToClipBoard(data.getLink());
-            });
-            dialogMenu.addItem(getString(R.string.add_to_favorites), (context, data) -> {
-                int id = 0;
-                Matcher matcher = Pattern.compile("showtopic=(\\d+)").matcher(data.getLink());
-                if (matcher.find()) {
-                    id = Integer.parseInt(matcher.group(1));
-                }
-                FavoritesHelper.addWithDialog(getContext(), aBoolean -> {
-                    Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
-                }, id);
-            });
-        }
+    public void showItemDialogMenu(MentionItem item) {
         dialogMenu.disallowAll();
         dialogMenu.allow(0);
         if (item.isTopic() && ClientHelper.getAuthState()) {
             dialogMenu.allow(1);
         }
         dialogMenu.show(getContext(), MentionsFragment.this, item);
-        return false;
     }
+
+    @Override
+    public void showAddFavoritesDialog(int id) {
+        FavoritesHelper.addWithDialog(getContext(), aBoolean -> {
+            Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
+        }, id);
+    }
+
+    private PaginationHelper.PaginationListener paginationListener = new PaginationHelper.PaginationListener() {
+        @Override
+        public boolean onTabSelected(TabLayout.Tab tab) {
+            return refreshLayout.isRefreshing();
+        }
+
+        @Override
+        public void onSelectedPage(int pageNumber) {
+            loadData();
+        }
+    };
+
+    private BaseAdapter.OnItemClickListener<MentionItem> adapterListener = new BaseAdapter.OnItemClickListener<MentionItem>() {
+        @Override
+        public void onItemClick(MentionItem item) {
+            presenter.onItemClick(item);
+        }
+
+        @Override
+        public boolean onItemLongClick(MentionItem item) {
+            presenter.onItemLongClick(item);
+            return false;
+        }
+    };
 }
