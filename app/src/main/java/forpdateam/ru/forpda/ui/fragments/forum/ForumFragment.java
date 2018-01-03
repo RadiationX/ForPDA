@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
 
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.Di;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
@@ -25,6 +28,8 @@ import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.common.Utils;
 import forpdateam.ru.forpda.entity.db.forum.ForumItemFlatBd;
+import forpdateam.ru.forpda.presentation.forum.ForumPresenter;
+import forpdateam.ru.forpda.presentation.forum.ForumView;
 import forpdateam.ru.forpda.ui.TabManager;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesHelper;
@@ -38,13 +43,20 @@ import io.realm.RealmResults;
  * Created by radiationx on 15.02.17.
  */
 
-public class ForumFragment extends TabFragment {
+public class ForumFragment extends TabFragment implements ForumView {
     public final static String ARG_FORUM_ID = "ARG_FORUM_ID";
+
+    @InjectPresenter
+    ForumPresenter presenter;
+
+    @ProvidePresenter
+    ForumPresenter provideForumPresenter() {
+        return new ForumPresenter(Di.get().forumRepository);
+    }
+
     private NestedScrollView treeContainer;
-    private Realm realm;
     private RealmResults<ForumItemFlatBd> results;
     private DynamicDialogMenu<ForumFragment, ForumItemTree> dialogMenu;
-    private AlertDialog updateDialog;
     private TreeNode.TreeNodeClickListener nodeClickListener = (node, value) -> {
         ForumItemTree item = (ForumItemTree) value;
         if (item.getForums() == null) {
@@ -55,33 +67,6 @@ public class ForumFragment extends TabFragment {
     };
     private TreeNode.TreeNodeLongClickListener nodeLongClickListener = (node, value) -> {
         ForumItemTree item = (ForumItemTree) value;
-        if (dialogMenu == null) {
-            dialogMenu = new DynamicDialogMenu<>();
-            dialogMenu.addItem(getString(R.string.open_forum), (context, data) -> {
-                Bundle args = new Bundle();
-                args.putInt(TopicsFragment.TOPICS_ID_ARG, data.getId());
-                TabManager.get().add(TopicsFragment.class, args);
-            });
-            dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=".concat(Integer.toString(data.getId()))));
-            dialogMenu.addItem(getString(R.string.mark_read), (context, data) -> {
-                new AlertDialog.Builder(getContext())
-                        .setMessage(getString(R.string.mark_read) + "?")
-                        .setPositiveButton(R.string.ok, (dialog, which) -> ForumHelper.markRead(o -> Toast.makeText(getContext(), R.string.action_complete, Toast.LENGTH_SHORT).show(), data.getId()))
-                        .setNegativeButton(R.string.cancel, null)
-                        .show();
-            });
-            dialogMenu.addItem(getString(R.string.add_to_favorites), (context, data) -> {
-                FavoritesHelper.addForumWithDialog(getContext(), aBoolean -> {
-                    Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
-                }, data.getId());
-            });
-            dialogMenu.addItem(getString(R.string.fragment_title_search), (context, data) -> {
-                String url = "https://4pda.ru/forum/index.php?act=search&source=all&forums%5B%5D=" + data.getId();
-                Bundle args = new Bundle();
-                args.putString(TabFragment.ARG_TAB, url);
-                TabManager.get().add(SearchFragment.class, args);
-            });
-        }
         dialogMenu.disallowAll();
         if (item.getLevel() > 0)
             dialogMenu.allow(0);
@@ -108,7 +93,6 @@ public class ForumFragment extends TabFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        realm = Realm.getDefaultInstance();
         if (getArguments() != null) {
             forumId = getArguments().getInt(ARG_FORUM_ID, -1);
         }
@@ -128,6 +112,23 @@ public class ForumFragment extends TabFragment {
         super.onViewCreated(view, savedInstanceState);
         viewsReady();
         setListsBackground();
+
+        dialogMenu = new DynamicDialogMenu<>();
+        dialogMenu.addItem(getString(R.string.open_forum), (context, data) -> presenter.navigateToForum(data));
+        dialogMenu.addItem(getString(R.string.copy_link), (context, data) -> presenter.copyLink(data));
+        dialogMenu.addItem(getString(R.string.mark_read), (context, data) -> {
+            new AlertDialog.Builder(getContext())
+                    .setMessage(getString(R.string.mark_read) + "?")
+                    .setPositiveButton(R.string.ok, (dialog, which) -> ForumHelper.markRead(o -> Toast.makeText(getContext(), R.string.action_complete, Toast.LENGTH_SHORT).show(), data.getId()))
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
+        });
+        dialogMenu.addItem(getString(R.string.add_to_favorites), (context, data) -> {
+            FavoritesHelper.addForumWithDialog(getContext(), aBoolean -> {
+                Toast.makeText(getContext(), aBoolean ? getString(R.string.favorites_added) : getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
+            }, data.getId());
+        });
+        dialogMenu.addItem(getString(R.string.fragment_title_search), (context, data) -> presenter.navigateToSearch(data));
     }
 
     @Override
@@ -158,81 +159,21 @@ public class ForumFragment extends TabFragment {
         if (!super.loadData()) {
             return false;
         }
-        updateDialog = new AlertDialog.Builder(getContext())
-                .setTitle(R.string.refreshing)
-                .setMessage(R.string.loading_data)
-                .setCancelable(false)
-                .show();
-        subscribe(RxApi.Forum().getForums(), this::onLoadThemes, new ForumItemTree(), null);
+        presenter.loadForums();
         return true;
     }
 
     @Override
     public void loadCacheData() {
         super.loadCacheData();
-        if (realm.isClosed()) return;
-        results = realm.where(ForumItemFlatBd.class).findAll();
-        if (updateDialog != null && updateDialog.isShowing()) {
-            if (!results.isEmpty()) {
-                updateDialog.setMessage(getString(R.string.update_complete));
-            } else {
-                updateDialog.setMessage(getString(R.string.error_occurred));
-            }
-            new Handler().postDelayed(() -> {
-                if (updateDialog != null)
-                    updateDialog.cancel();
-            }, 500);
-        }
-        if (results.isEmpty()) {
-            loadData();
-        } else {
-            bindView();
-        }
+        presenter.getCacheForums();
     }
 
-    private void onLoadThemes(ForumItemTree forumRoot) {
-        updateDialog.setMessage(getString(R.string.update_data_base));
-
-        if (forumRoot.getForums() == null) {
-            updateDialog.setMessage(getString(R.string.error_occurred));
-            new Handler().postDelayed(() -> {
-                if (updateDialog != null)
-                    updateDialog.cancel();
-            }, 500);
-            return;
-        }
-
-
-        if (realm.isClosed()) return;
-        realm.executeTransactionAsync(r -> {
-            r.delete(ForumItemFlatBd.class);
-            List<ForumItemFlatBd> items = new ArrayList<>();
-            transformToList(items, forumRoot);
-            r.copyToRealmOrUpdate(items);
-            items.clear();
-        }, this::loadCacheData);
-        //setSubtitle(data.getAll() <= 1 ? null : "" + data.getCurrent() + "/" + data.getAll());
-
-
-    }
-
-    public void transformToList(List<ForumItemFlatBd> list, ForumItemTree rootForum) {
-        if (rootForum.getForums() == null) return;
-        for (ForumItemTree item : rootForum.getForums()) {
-            list.add(new ForumItemFlatBd(item));
-            transformToList(list, item);
-        }
-    }
-
-    private void bindView() {
-        //adapter.addAll(results);
-        ForumItemTree rootForum = new ForumItemTree();
-
-        Api.Forum().transformToTree(results, rootForum);
-
+    @Override
+    public void showForums(ForumItemTree forumRoot) {
         tView = new AndroidTreeView(getContext());
         root = TreeNode.root();
-        recourse(rootForum, root);
+        recourse(forumRoot, root);
         tView.setRoot(root);
 
         tView.setDefaultContainerStyle(R.style.TreeNodeStyleCustom);
@@ -242,17 +183,11 @@ public class ForumFragment extends TabFragment {
         treeContainer.removeAllViews();
         treeContainer.addView(tView.getView());
 
-        //int id = 427;
-        //int id = 828;
-        //int id = 282;
-        //int id = 269;
         if (forumId != -1) {
             scrollToForum(forumId);
             forumId = -1;
         }
-
     }
-
 
     private void scrollToForum(int id) {
         final TreeNode targetNode = findNodeById(id, root);
@@ -285,17 +220,4 @@ public class ForumFragment extends TabFragment {
         }
     }
 
-
-    public static boolean checkIsLink(int id) {
-        Realm realm = Realm.getDefaultInstance();
-        boolean res = realm.where(ForumItemFlatBd.class).equalTo("parentId", id).findAll().isEmpty();
-        realm.close();
-        return res;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        realm.close();
-    }
 }

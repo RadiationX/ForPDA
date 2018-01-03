@@ -32,7 +32,6 @@ import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.api.auth.models.AuthForm;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
-import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher;
 import forpdateam.ru.forpda.presentation.auth.AuthPresenter;

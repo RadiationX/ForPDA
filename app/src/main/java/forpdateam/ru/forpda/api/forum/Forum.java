@@ -63,7 +63,7 @@ public class Forum {
         return root;
     }
 
-    public void transformToList(List<ForumItemFlat> list, ForumItemTree rootForum) {
+    public void transformToList(List<IForumItemFlat> list, ForumItemTree rootForum) {
         if (rootForum.getForums() == null) return;
         for (ForumItemTree item : rootForum.getForums()) {
             list.add(new ForumItemFlat(item));

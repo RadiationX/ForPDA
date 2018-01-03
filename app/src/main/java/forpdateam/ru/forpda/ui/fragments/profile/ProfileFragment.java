@@ -37,7 +37,6 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.Di;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.profile.models.ProfileModel;
-import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.common.BitmapUtils;
 import forpdateam.ru.forpda.common.IntentHandler;

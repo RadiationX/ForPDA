@@ -45,8 +45,10 @@ public class FavoritesPresenter extends BasePresenter<FavoritesView> {
     }
 
     public void showFavorites() {
-        favoritesRepository.getCache()
+        Disposable disposable
+                = favoritesRepository.getCache()
                 .subscribe(favItems -> getViewState().onShowFavorite(favItems));
+        addToDisposable(disposable);
     }
 
     public void markRead(int topicId) {
@@ -99,7 +101,7 @@ public class FavoritesPresenter extends BasePresenter<FavoritesView> {
         getViewState().changeFav(action, type, favId);
     }
 
-    public void showSubscribeDialog(FavItem item){
+    public void showSubscribeDialog(FavItem item) {
         getViewState().showSubscribeDialog(item);
     }
 }
