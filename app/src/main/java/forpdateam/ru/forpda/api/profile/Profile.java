@@ -19,7 +19,7 @@ public class Profile {
     private static final Pattern contacts = Pattern.compile("<a[^>]*?href=\"([^\"]*?)\"[^>]*?>(?:<strong>)?([\\s\\S]*?)(?:<\\/strong>)?<\\/a>");
     private static final Pattern devices = Pattern.compile("<a[^>]*?href=\"([^\"]*?)\"[^>]*?>([\\s\\S]*?)</a>([\\s\\S]*?)</li>");
     private static final Pattern siteStats = Pattern.compile("<span class=\"title\">([^<]*?)<\\/span>[\\s\\S]*?<div class=\"area\">[\\s\\S]*?(?:<a[^>]*?href=\"([^\"]*?)\"[^>]*?>)?([\\s\\S]*?)(?:<\\/a>)?<\\/div>");
-    private static final Pattern forumStats = Pattern.compile("<span class=\"title\">([^<]*?)<\\/span>[\\s\\S]*?<div class=\"area\">[\\s\\S]*?<a[^>]*?href=\"([^\"]*?)\"[^>]*?>[^<]*?(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?<\\/a>");
+    private static final Pattern forumStats = Pattern.compile("<span class=\"title\">([^<]*?)<\\/span>[\\s\\S]*?<div class=\"area\">[\\s\\S]*?(?:<a[^>]*?href=\"([^\"]*?)\"[^>]*?>)?[^<]*?(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?(?:<\\/a>)?<\\/div>");
     private static final Pattern note = Pattern.compile("<textarea[^>]*?profile-textarea\"[^>]*?>([\\s\\S]*?)</textarea>");
     private static final Pattern about = Pattern.compile("<div[^>]*?div-custom-about[^>]*?>([\\s\\S]*?)</div>");
     private static final Pattern warnings = Pattern.compile("<li class=\"wlog-([^\"]*?)\"[^>]*?>[\\s\\S]*?<span class=\"date\">([^<]*?)<\\/span>[\\s\\S]*?<span style[^>]*?>([^<]*?)<\\/span>[\\s\\S]*?<div class=\"a-content\">([\\s\\S]*?)<div class=\"profile-edit-links");
