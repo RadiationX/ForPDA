@@ -21,6 +21,13 @@ public class ForumItemFlat implements IForumItemFlat {
         level = item.getLevel();
     }
 
+    public ForumItemFlat(IForumItemFlat item) {
+        id = item.getId();
+        parentId = item.getParentId();
+        title = item.getTitle();
+        level = item.getLevel();
+    }
+
     public int getId() {
         return id;
     }

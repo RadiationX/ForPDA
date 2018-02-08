@@ -5,7 +5,7 @@ import java.util.List;
 
 import forpdateam.ru.forpda.api.Api;
 import forpdateam.ru.forpda.api.others.user.ForumUser;
-import forpdateam.ru.forpda.data.realm.ForumUserBd;
+import forpdateam.ru.forpda.entity.db.ForumUserBd;
 import io.realm.Realm;
 
 /**

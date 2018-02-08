@@ -51,7 +51,7 @@ import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.client.ClientHelper;
 import forpdateam.ru.forpda.common.BitmapUtils;
 import forpdateam.ru.forpda.common.Preferences;
-import forpdateam.ru.forpda.data.models.TabNotification;
+import forpdateam.ru.forpda.entity.app.TabNotification;
 import forpdateam.ru.forpda.ui.activities.MainActivity;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;

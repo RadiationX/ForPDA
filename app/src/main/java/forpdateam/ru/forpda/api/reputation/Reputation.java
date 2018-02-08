@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.api.reputation;
 
-import android.net.Uri;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -84,8 +82,6 @@ public class Reputation {
     }
 
     public static RepData fromUrl(RepData data, String url) {
-        Uri uri = Uri.parse(url);
-
         Matcher matcher = Pattern.compile("st=(\\d+)").matcher(url);
         if (matcher.find()) {
             data.getPagination().setSt(Integer.parseInt(matcher.group(1)));

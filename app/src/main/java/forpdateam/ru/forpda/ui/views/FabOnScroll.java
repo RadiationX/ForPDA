@@ -93,7 +93,7 @@ public class FabOnScroll extends FloatingActionButton.Behavior {
                     .start();
             child.setClickable(false);
         };
-        handler.postDelayed(currentRunnable, 1000);
+        handler.postDelayed(currentRunnable, 1700);
     }
 
 }

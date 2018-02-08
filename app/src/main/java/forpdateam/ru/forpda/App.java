@@ -74,7 +74,7 @@ import forpdateam.ru.forpda.common.Preferences;
 import forpdateam.ru.forpda.common.realm.DbMigration;
 import forpdateam.ru.forpda.common.receivers.WakeUpReceiver;
 import forpdateam.ru.forpda.common.simple.SimpleObservable;
-import forpdateam.ru.forpda.data.models.TabNotification;
+import forpdateam.ru.forpda.entity.app.TabNotification;
 import forpdateam.ru.forpda.notifications.NotificationsJob;
 import forpdateam.ru.forpda.notifications.NotificationsJobCreator;
 import forpdateam.ru.forpda.notifications.NotificationsService;
@@ -353,6 +353,7 @@ public class App extends android.app.Application {
                 .subscribe();
 
         QmsHelper.init();
+        Di.get();
         Log.e("APP", "TIME APP FINAL " + (System.currentTimeMillis() - time));
     }
 

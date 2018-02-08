@@ -1,10 +1,12 @@
 package forpdateam.ru.forpda.common.mvp;
 
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.view.View;
+
+import com.arellomobile.mvp.MvpPresenter;
+import com.arellomobile.mvp.MvpView;
 
 import org.acra.ACRA;
 
@@ -22,45 +24,17 @@ import io.reactivex.schedulers.Schedulers;
  * Created by radiationx on 05.11.17.
  */
 
-public class BasePresenter<V> implements IBasePresenter<V> {
-    protected V view;
+public class BasePresenter<V extends MvpView> extends MvpPresenter<V> {
     private CompositeDisposable disposables = new CompositeDisposable();
-
-    public BasePresenter(V view) {
-        this.view = view;
-    }
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-
-    }
-
-    @Override
-    public void onAttach() {
-
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-
-    }
-
-    @Override
-    public void onDetach() {
-
-    }
-
-    @Override
-    public void onDestroyView() {
-
-    }
 
     @Override
     public void onDestroy() {
         if (!disposables.isDisposed())
             disposables.dispose();
-        this.view = null;
+    }
+
+    protected void addToDisposable(Disposable disposable) {
+        disposables.add(disposable);
     }
 
     public <T> void subscribe(@NonNull Observable<T> observable, @NonNull Consumer<T> onNext, @NonNull T onErrorReturn) {
@@ -80,7 +54,11 @@ public class BasePresenter<V> implements IBasePresenter<V> {
         disposables.add(disposable);
     }
 
-    private void handleErrorRx(Throwable throwable, View.OnClickListener listener) {
+    protected void handleErrorRx(Throwable throwable) {
+        handleErrorRx(throwable, null);
+    }
+
+    protected void handleErrorRx(Throwable throwable, View.OnClickListener listener) {
         new Handler(Looper.getMainLooper()).post(() -> {
             TabFragment tabFragment = TabManager.get().getActive();
             if (tabFragment == null) {
@@ -90,6 +68,5 @@ public class BasePresenter<V> implements IBasePresenter<V> {
                 ErrorHandler.handle(tabFragment, throwable, listener);
             }
         });
-
     }
 }

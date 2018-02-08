@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.ui.fragments.reputation;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AlertDialog;
@@ -17,38 +16,54 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import forpdateam.ru.forpda.App;
+import forpdateam.ru.forpda.Di;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.api.others.user.ForumUser;
 import forpdateam.ru.forpda.api.reputation.Reputation;
 import forpdateam.ru.forpda.api.reputation.models.RepData;
 import forpdateam.ru.forpda.api.reputation.models.RepItem;
 import forpdateam.ru.forpda.apirx.ForumUsersCache;
-import forpdateam.ru.forpda.apirx.RxApi;
 import forpdateam.ru.forpda.client.ClientHelper;
-import forpdateam.ru.forpda.common.IntentHandler;
+import forpdateam.ru.forpda.presentation.reputation.ReputationPresenter;
+import forpdateam.ru.forpda.presentation.reputation.ReputationView;
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment;
 import forpdateam.ru.forpda.ui.views.ContentController;
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu;
 import forpdateam.ru.forpda.ui.views.FunnyContent;
+import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by radiationx on 20.03.17.
  */
 
-public class ReputationFragment extends RecyclerFragment implements ReputationAdapter.OnItemClickListener<RepItem> {
+public class ReputationFragment extends RecyclerFragment implements ReputationView {
+
+    @InjectPresenter
+    ReputationPresenter presenter;
+
+    @ProvidePresenter
+    ReputationPresenter provideReputationPresenter() {
+        return new ReputationPresenter(Di.get().reputationRepository);
+    }
+
     private ReputationAdapter adapter;
     private PaginationHelper paginationHelper;
-    private RepData data = new RepData();
     private DynamicDialogMenu<ReputationFragment, RepItem> dialogMenu;
 
+    private MenuItem descSortMenuItem;
+    private MenuItem ascSortMenuItem;
+    private MenuItem repModeMenuItem;
+    private MenuItem upRepMenuItem;
+    private MenuItem downRepMenuItem;
 
     public ReputationFragment() {
         configuration.setDefaultTitle(App.get().getString(R.string.fragment_title_reputation));
@@ -60,11 +75,10 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
         if (getArguments() != null) {
             String url = getArguments().getString(ARG_TAB);
             if (url != null) {
-                data = Reputation.fromUrl(data, url);
+                presenter.setCurrentData(Reputation.fromUrl(url));
             }
         }
     }
-
 
     @Nullable
     @Override
@@ -79,49 +93,26 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewsReady();
-        refreshLayout.setOnRefreshListener(this::loadData);
+
+        dialogMenu = new DynamicDialogMenu<>();
+        dialogMenu.addItem(getString(R.string.profile), (context, data1) -> presenter.navigateToProfile(data1.getUserId()));
+        dialogMenu.addItem(getString(R.string.go_to_message), (context, data1) -> presenter.navigateToMessage(data1));
+
+        refreshLayout.setOnRefreshListener(() -> presenter.loadReputation());
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         adapter = new ReputationAdapter();
         recyclerView.setAdapter(adapter);
-        paginationHelper.setListener(new PaginationHelper.PaginationListener() {
-            @Override
-            public boolean onTabSelected(TabLayout.Tab tab) {
-                return refreshLayout.isRefreshing();
-            }
-
-            @Override
-            public void onSelectedPage(int pageNumber) {
-                data.getPagination().setSt(pageNumber);
-                loadData();
-            }
-        });
-
-        adapter.setOnItemClickListener(this);
+        paginationHelper.setListener(paginationListener);
+        adapter.setOnItemClickListener(adapterListener);
     }
 
-    private void someClick(RepItem item) {
-        if (dialogMenu == null) {
-            dialogMenu = new DynamicDialogMenu<>();
-            dialogMenu.addItem(getString(R.string.profile), (context, data1) -> {
-                IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data1.getUserId());
-            });
-            dialogMenu.addItem(getString(R.string.go_to_message), (context, data1) -> {
-                IntentHandler.handle(data1.getSourceUrl());
-            });
-        }
-        dialogMenu.disallowAll();
-        dialogMenu.allow(0);
-        if (item.getSourceUrl() != null)
-            dialogMenu.allow(1);
-        dialogMenu.show(getContext(), item.getUserNick(), ReputationFragment.this, item);
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (paginationHelper != null)
+            paginationHelper.destroy();
     }
-
-    private MenuItem descSortMenuItem;
-    private MenuItem ascSortMenuItem;
-    private MenuItem repModeMenuItem;
-    private MenuItem upRepMenuItem;
-    private MenuItem downRepMenuItem;
 
     @Override
     protected void addBaseToolbarMenu(Menu menu) {
@@ -130,32 +121,26 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
         subMenu.getItem().setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         subMenu.getItem().setIcon(App.getVecDrawable(getContext(), R.drawable.ic_toolbar_sort));
         descSortMenuItem = subMenu.add(R.string.sorting_desc).setOnMenuItemClickListener(menuItem -> {
-            data.setSort(Reputation.SORT_DESC);
-            loadData();
+            presenter.setSort(Reputation.SORT_DESC);
             return false;
         });
         ascSortMenuItem = subMenu.add(R.string.sorting_asc).setOnMenuItemClickListener(menuItem -> {
-            data.setSort(Reputation.SORT_ASC);
-            loadData();
+            presenter.setSort(Reputation.SORT_ASC);
             return false;
         });
-        repModeMenuItem = menu.add(getString(data.getMode().equals(Reputation.MODE_FROM) ? R.string.reputation_mode_from : R.string.reputation_mode_to))
+        repModeMenuItem = menu.add(getString(presenter.getCurrentData().getMode().equals(Reputation.MODE_FROM) ? R.string.reputation_mode_from : R.string.reputation_mode_to))
                 .setOnMenuItemClickListener(item -> {
-                    if (data.getMode().equals(Reputation.MODE_FROM))
-                        data.setMode(Reputation.MODE_TO);
-                    else
-                        data.setMode(Reputation.MODE_FROM);
-                    loadData();
+                    presenter.changeReputationMode();
                     return false;
                 });
         upRepMenuItem = menu.add(R.string.increase)
                 .setOnMenuItemClickListener(item -> {
-                    changeReputation(true);
+                    showChangeReputationDialog(true);
                     return false;
                 });
         downRepMenuItem = menu.add(R.string.decrease)
                 .setOnMenuItemClickListener(item -> {
-                    changeReputation(false);
+                    showChangeReputationDialog(false);
                     return false;
                 });
         refreshToolbarMenuItems(false);
@@ -168,8 +153,8 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
             descSortMenuItem.setEnabled(true);
             ascSortMenuItem.setEnabled(true);
             repModeMenuItem.setEnabled(true);
-            repModeMenuItem.setTitle(getString(data.getMode().equals(Reputation.MODE_FROM) ? R.string.reputation_mode_from : R.string.reputation_mode_to));
-            if (data.getId() != ClientHelper.getUserId()) {
+            repModeMenuItem.setTitle(getString(presenter.getCurrentData().getMode().equals(Reputation.MODE_FROM) ? R.string.reputation_mode_from : R.string.reputation_mode_to));
+            if (presenter.getCurrentData().getId() != ClientHelper.getUserId()) {
                 upRepMenuItem.setEnabled(true);
                 upRepMenuItem.setVisible(true);
                 downRepMenuItem.setEnabled(true);
@@ -186,32 +171,29 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
         }
     }
 
-    public void changeReputation(boolean type) {
+    public void showChangeReputationDialog(boolean type) {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.reputation_change_layout, null);
+        assert inflater != null;
 
+        View layout = inflater.inflate(R.layout.reputation_change_layout, null);
         assert layout != null;
+
         final TextView text = (TextView) layout.findViewById(R.id.reputation_text);
         final EditText messageField = (EditText) layout.findViewById(R.id.reputation_text_field);
-        text.setText(String.format(getString(R.string.change_reputation_Type_Nick), getString(type ? R.string.increase : R.string.decrease), data.getNick()));
+        text.setText(String.format(getString(R.string.change_reputation_Type_Nick), getString(type ? R.string.increase : R.string.decrease), presenter.getCurrentData().getNick()));
 
         new AlertDialog.Builder(getContext())
                 .setView(layout)
                 .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
-                    changeReputation(s -> {
-                        Toast.makeText(getContext(), s.isEmpty() ? getString(R.string.reputation_changed) : s, Toast.LENGTH_SHORT).show();
-                        loadData();
-                    }, 0, data.getId(), type, messageField.getText().toString());
+                    presenter.changeReputation(type, messageField.getText().toString());
                 })
                 .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
-    public void changeReputation(@NonNull Consumer<String> onNext, int postId, int userId, boolean type, String message) {
-        RxApi.Reputation().editReputation(postId, userId, type, message).onErrorReturn(throwable -> "error")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(onNext);
+    @Override
+    public void onChangeReputation(String result) {
+        Toast.makeText(getContext(), result.isEmpty() ? getString(R.string.reputation_changed) : result, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -219,17 +201,16 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
         if (!super.loadData()) {
             return false;
         }
-        setRefreshing(true);
         refreshToolbarMenuItems(false);
-        subscribe(RxApi.Reputation().getReputation(data), this::onLoadThemes, data, v -> loadData());
+        presenter.loadReputation();
         return true;
     }
 
-    private void tryShowAvatar() {
+    private void tryShowAvatar(RepData repData) {
         toolbarImageView.setContentDescription(getString(R.string.user_avatar));
-        toolbarImageView.setOnClickListener(view1 -> IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + data.getId()));
-        if (data.getNick() != null) {
-            Observable.fromCallable(() -> ForumUsersCache.loadUserByNick(data.getNick()))
+        toolbarImageView.setOnClickListener(view1 -> presenter.navigateToProfile(repData.getId()));
+        if (repData.getNick() != null) {
+            Observable.fromCallable(() -> ForumUsersCache.loadUserByNick(repData.getNick()))
                     .onErrorReturn(throwable -> new ForumUser())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -244,10 +225,9 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
         }
     }
 
-    private void onLoadThemes(RepData data) {
-        setRefreshing(false);
-
-        if (data.getItems().isEmpty()) {
+    @Override
+    public void showReputation(RepData repData) {
+        if (repData.getItems().isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
                 FunnyContent funnyContent = new FunnyContent(getContext())
                         .setImage(R.drawable.ic_history)
@@ -259,35 +239,48 @@ public class ReputationFragment extends RecyclerFragment implements ReputationAd
             contentController.hideContent(ContentController.TAG_NO_DATA);
         }
 
-        this.data = data;
-        tryShowAvatar();
+        tryShowAvatar(repData);
 
-
-        adapter.addAll(data.getItems());
-        paginationHelper.updatePagination(data.getPagination());
+        adapter.addAll(repData.getItems());
+        paginationHelper.updatePagination(repData.getPagination());
         refreshToolbarMenuItems(true);
-        //setSubtitle(paginationHelper.getString());
-        setSubtitle("" + (data.getPositive() - data.getNegative()) + " (+" + data.getPositive() + " / -" + data.getNegative() + ")");
-        setTabTitle("Репутация " + data.getNick() + (data.getMode().equals(Reputation.MODE_FROM) ? ": кому изменял" : ""));
-        setTitle("Репутация " + data.getNick() + (data.getMode().equals(Reputation.MODE_FROM) ? ": кому изменял" : ""));
+        setSubtitle("" + (repData.getPositive() - repData.getNegative()) + " (+" + repData.getPositive() + " / -" + repData.getNegative() + ")");
+        setTabTitle("Репутация " + repData.getNick() + (repData.getMode().equals(Reputation.MODE_FROM) ? ": кому изменял" : ""));
+        setTitle("Репутация " + repData.getNick() + (repData.getMode().equals(Reputation.MODE_FROM) ? ": кому изменял" : ""));
         listScrollTop();
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (paginationHelper != null)
-            paginationHelper.destroy();
+    public void showItemDialogMenu(RepItem item) {
+        dialogMenu.disallowAll();
+        dialogMenu.allow(0);
+        if (item.getSourceUrl() != null)
+            dialogMenu.allow(1);
+        dialogMenu.show(getContext(), item.getUserNick(), ReputationFragment.this, item);
     }
 
-    @Override
-    public void onItemClick(RepItem item) {
-        someClick(item);
-    }
+    private PaginationHelper.PaginationListener paginationListener = new PaginationHelper.PaginationListener() {
+        @Override
+        public boolean onTabSelected(TabLayout.Tab tab) {
+            return refreshLayout.isRefreshing();
+        }
 
-    @Override
-    public boolean onItemLongClick(RepItem item) {
-        someClick(item);
-        return false;
-    }
+        @Override
+        public void onSelectedPage(int pageNumber) {
+            presenter.selectPage(pageNumber);
+        }
+    };
+
+    private BaseAdapter.OnItemClickListener<RepItem> adapterListener = new BaseAdapter.OnItemClickListener<RepItem>() {
+        @Override
+        public void onItemClick(RepItem item) {
+            presenter.onItemClick(item);
+        }
+
+        @Override
+        public boolean onItemLongClick(RepItem item) {
+            presenter.onItemLongClick(item);
+            return false;
+        }
+    };
 }

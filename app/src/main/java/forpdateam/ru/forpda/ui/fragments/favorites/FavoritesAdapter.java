@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
 import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import forpdateam.ru.forpda.common.Preferences;
 import forpdateam.ru.forpda.ui.views.adapters.BaseSectionedAdapter;
@@ -22,7 +21,7 @@ import forpdateam.ru.forpda.ui.views.adapters.BaseSectionedViewHolder;
 public class FavoritesAdapter extends BaseSectionedAdapter<FavItem, BaseSectionedViewHolder> {
     private boolean showDot = false;
     private int titleColorNew, titleColor;
-    private BaseSectionedAdapter.OnItemClickListener<IFavItem> itemClickListener;
+    private BaseSectionedAdapter.OnItemClickListener<FavItem> itemClickListener;
 
     public void setShowDot(boolean showDot) {
         this.showDot = showDot;
@@ -32,7 +31,7 @@ public class FavoritesAdapter extends BaseSectionedAdapter<FavItem, BaseSectione
         return showDot;
     }
 
-    public void setOnItemClickListener(BaseSectionedAdapter.OnItemClickListener<IFavItem> mItemClickListener) {
+    public void setOnItemClickListener(BaseSectionedAdapter.OnItemClickListener<FavItem> mItemClickListener) {
         this.itemClickListener = mItemClickListener;
     }
 
