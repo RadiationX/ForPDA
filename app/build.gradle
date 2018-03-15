@@ -10,16 +10,16 @@ static def getDateTime() {
 }
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.1"
 
     def fileNaming = "apk/ForPDA"
 
-    def versionNumber = 69
+    def versionNumber = 70
 
     def versionMajor = "0"
     def versionMinor = "6"
-    def versionPatch = "7.1"
+    def versionPatch = "7.2"
 
     def versionBuild = -1
     def versionPropsFile = file('version.properties')
@@ -44,7 +44,7 @@ android {
         versionCode versionNumber
         versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})"
         minSdkVersion 19
-        targetSdkVersion 26
+        targetSdkVersion 27
         vectorDrawables.useSupportLibrary = true
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         ndk {
@@ -125,7 +125,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '26.1.0'
+    supportLibVersion = '27.1.0'
     okHttpVersion = '3.9.0'
     rxCoreVersion = '2.1.5'
     rxAndroidVersion = '2.0.1'
@@ -162,7 +162,7 @@ dependencies {
     compile 'com.afollestad:sectioned-recyclerview:0.5.0'
     compile 'com.faendir:acra:4.10.0'
 
-    compile 'com.github.chrisbanes:PhotoView:2.0.0'
+    compile 'com.github.chrisbanes:PhotoView:2.1.3'
     compile 'com.wada811:android-material-design-colors:3.0.0'
     compile 'com.thebluealliance:spectrum:0.7.1'
     compile 'com.github.douglasjunior:android-simple-tooltip:0.2.0'
