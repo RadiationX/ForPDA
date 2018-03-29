@@ -24,6 +24,8 @@ public class Constants {
     /**
      * NewsApi Category Url
      */
+    public static final String NEWS_CATEGORY_ROOT = "root";
+    public static final String NEWS_URL_ROOT = "https://4pda.ru/";
     public static final String NEWS_CATEGORY_ALL = "all_news";
     public static final String NEWS_URL_ALL = "https://4pda.ru/news/";
     public static final String NEWS_CATEGORY_ARTICLES = "articles_news";

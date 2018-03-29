@@ -29,6 +29,7 @@ import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_ALL;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_ARTICLES;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_GAMES;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_REVIEWS;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_ROOT;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_CATEGORY_SOFTWARE;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_SUBCATEGORY_ACCESSORIES_REVIEWS;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_SUBCATEGORY_ACOUSTICS_REVIEWS;
@@ -65,6 +66,7 @@ import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_IOS_GAME;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_IOS_SOFTWARE;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_NOTEBOOKS_REVIEWS;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_REVIEWS;
+import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_ROOT;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_SMARTPHONES_REVIEWS;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_SMART_WATCH_REVIEWS;
 import static forpdateam.ru.forpda.api.news.Constants.NEWS_URL_SOFTWARE;
@@ -83,43 +85,43 @@ public class NewsApi {
     }
 
     /*
-    * 1. id
-    * 2. Дата курильщика (2017-08-24T07:00:00+00:00)
-    * 3. Урл изображения
-    * 4. Заголовок
-    * 5. Дата нормального человека (24.08.17)
-    * 6. Id автора
-    * 7. Ник автора
-    * 8. Кол-во комментов
-    * 9. Сорсы тегов
-    * 10. Вроде как контент
-    * 11. Сорсы материалов по теме, их может не быть (null у group(9))
-    * 12. Магический относительный id новости для навигации вперёд/назад
-    * 13. Строка, по которой можно узнать доступность комментирования, если null или пустая, то низя
-    * 14. Сорсы комментов
-    * 15. Сорсы karma
-    * */
+     * 1. id
+     * 2. Дата курильщика (2017-08-24T07:00:00+00:00)
+     * 3. Урл изображения
+     * 4. Заголовок
+     * 5. Дата нормального человека (24.08.17)
+     * 6. Id автора
+     * 7. Ник автора
+     * 8. Кол-во комментов
+     * 9. Сорсы тегов
+     * 10. Вроде как контент
+     * 11. Сорсы материалов по теме, их может не быть (null у group(9))
+     * 12. Магический относительный id новости для навигации вперёд/назад
+     * 13. Строка, по которой можно узнать доступность комментирования, если null или пустая, то низя
+     * 14. Сорсы комментов
+     * 15. Сорсы karma
+     * */
     private final Pattern detailsPattern = Pattern.compile("<section[^>]*>[^<]*?<article[^>]*?>[^<]*?<div[^>]*?data-ztm=\"\\d+:(\\d+)[^\"]*?\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"photo\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"description\"[^>]*?>[^<]*?<h1[^>]*?>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?<\\/h1>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[^<]*?<span[^>]*?class=\"name\"[^>]*?>[^<]*?<a[^>]*?href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?class=\"more-box\"[^>]*?>[^<]*?<a[^>]*?>(\\d+)<\\/a>[\\s\\S]*?<div[^>]*?class=\"meta\"[^>]*?>([\\s\\S]*?)<\\/div>[\\s\\S]*?<div class=\"content-box\" itemprop=\"articleBody\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?<script[^>]*?>[^<]*?<\\/script>(?:[^<]*?<div class=\"materials-box\"[^>]*?>(?:[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>)?[^<]*?<\\/div>)?[\\s\\S]*?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>[\\s\\S]*?<div class=\"comment-box[^\"]*?\" id=\"comments\"[^>]*?>[^<]*?(?:<div class=\"[^\"]*?close[^\"]*?\"[^>]*?>[\\s\\S]*?<\\/div>[^<]*?<\\/div>[^<]*?<div class=\"[^\"]*?open[^\"]*?\"[^>]*?>)?[\\s\\S]*?<div class=\"heading\"[^>]*?>[^>]*?<h2>[^<]*?<\\/h2>([\\s\\S]*?)<\\/div>([\\s\\S]*?)[^<]*?<br[^>]*?>[^<]*?<\\/div>[^<]*?(?:<\\/div|<ul class=\"page-nav)");
     private final Pattern excludeFormCommentPattern = Pattern.compile("<form[\\s\\S]*");
 
     /*
-    * 1. tag для ссылки
-    * 2. Заголовок
-    * */
+     * 1. tag для ссылки
+     * 2. Заголовок
+     * */
     private final Pattern tagsPattern = Pattern.compile("<a[^>]*?href=\"\\/tag\\/([^\"\\/]*?)\\/\"[^>]*?>([^<]*?)<\\/a>");
 
 
     /*
-    * 1. Ссылка изображения
-    * 2. id новости
-    * 3. Заголовок
-    * */
+     * 1. Ссылка изображения
+     * 2. id новости
+     * 3. Заголовок
+     * */
     private final Pattern materialsPattern = Pattern.compile("<li[^>]*?>[^<]*?<a[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[^<]*?<h3>[^<]*?<a[^>]*?href=\"[^\"]*?\\/(\\d+)\\/[^\"\\/]*?\"[^>]*?>([\\s\\S]*?)<\\/a>[^<]*?<\\/h3>");
 
     /*
-    * 1. Id коммента
-    * 2. Статус: 0 - не лайкнутый, 1 - лайкнутый, -1 - дизлайкнутый, (2 - нельзя лайкнуть) - хз, это с другого проекта значение, сам я такого не видел
-    * */
+     * 1. Id коммента
+     * 2. Статус: 0 - не лайкнутый, 1 - лайкнутый, -1 - дизлайкнутый, (2 - нельзя лайкнуть) - хз, это с другого проекта значение, сам я такого не видел
+     * */
     private final Pattern karmaPattern = Pattern.compile("\\\"(\\d+)\\\":\\[(.+?),(.+?),(.+?),(.+?)\\]");
     private final Pattern karmaSourcePattern = Pattern.compile("ModKarma\\(([\\s\\S]*?)\\)<\\/script>");
 
@@ -287,6 +289,9 @@ public class NewsApi {
             Matcher matcher;
             Node anchorNode = Parser.findNode(commentNode, "div", "id", "comment-");
 
+            if (anchorNode == null) {
+                continue;
+            }
             id = anchorNode.getAttribute("id");
             if (id != null) {
                 matcher = idPattern.matcher(id);
@@ -405,8 +410,10 @@ public class NewsApi {
     }
 
     private static String getUrlCategory(@Nullable String category) {
-        if (category == null) return NEWS_URL_ALL;
+        if (category == null) return NEWS_URL_ROOT;
         switch (category) {
+            case NEWS_CATEGORY_ROOT:
+                return NEWS_URL_ROOT;
             case NEWS_CATEGORY_ALL:
                 return NEWS_URL_ALL;
             case NEWS_CATEGORY_ARTICLES:

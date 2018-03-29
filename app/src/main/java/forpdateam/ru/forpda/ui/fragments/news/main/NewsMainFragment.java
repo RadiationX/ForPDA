@@ -38,7 +38,7 @@ import forpdateam.ru.forpda.ui.views.PauseOnScrollListener;
 
 public class NewsMainFragment extends RecyclerFragment implements NewsListAdapter.ItemClickListener {
     private NewsListAdapter adapter;
-    private String category = Constants.NEWS_CATEGORY_ALL;
+    private String category = Constants.NEWS_CATEGORY_ROOT;
     private DynamicDialogMenu<NewsMainFragment, NewsItem> dialogMenu;
 
     public NewsMainFragment() {
