@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  */
 
 public class Brand {
-    public final static Pattern DEVICES_PATTERN = Pattern.compile("<div class=\"box-holder\">[^<]*?<div class=\"visual\">[^<]*?<a[^>]*?>[^<]*?<span[^>]*?><img src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div class=\"name\"><a href=\"[^\"]*?devdb\\/([^\"]*?)\"[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?<div class=\"specifications-list\">([\\s\\S]*?)<\\/div>(?:<div class=\"price\">[^<]*?<strong>([^<]*?)<\\/strong>)?[\\s\\S]*?<div class=\"rating-col\">(?:[^<]*?<div class=\"rating r(\\d+)\">[^<]*?<div class=\"num\">(\\d+)<\\/div>[^<]*?<div class=\"text\">([\\s\\S]*?)<\\/div>[^<]*?<\\/div>)?");
+    public final static Pattern DEVICES_PATTERN = Pattern.compile("<div class=\"box-holder\">[^<]*?<div[^>]*?>[^<]*?<a[^>]*?>[^<]*?<span[^>]*?><img src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div class=\"name\"><a href=\"[^\"]*?devdb\\/([^\"]*?)\"[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?<div class=\"specifications-list\">([\\s\\S]*?)<\\/div>(?:<div class=\"price\">[^<]*?<strong>([^<]*?)<\\/strong>)?[\\s\\S]*?<div class=\"rating-col\">(?:[^<]*?<div class=\"rating r(\\d+)\">[^<]*?<div class=\"num\">(\\d+)<\\/div>[^<]*?<div class=\"text\">([\\s\\S]*?)<\\/div>[^<]*?<\\/div>)?");
 
     private ArrayList<DeviceItem> devices = new ArrayList<>();
     private String id;
