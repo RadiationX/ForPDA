@@ -9,13 +9,17 @@ static def getDateTime() {
     return df.format(new Date()) + " г.";
 }
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
-    compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 26
+    buildToolsVersion '28.0.3'
 
     def fileNaming = "apk/ForPDA"
 
-    def versionNumber = 76
+    def versionNumber = 206
 
     def versionMajor = "0"
     def versionMinor = "6"
@@ -70,6 +74,15 @@ android {
             versionCode versionNumber
             versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild}) dev_api_21"
             dimension "wtf"
+        }
+    }
+
+    signingConfigs {
+        debug {
+            storeFile rootProject.file(keystoreProperties['DEBUG_STORE_FILE'])
+            storePassword keystoreProperties['DEBUG_STORE_PASSWORD']
+            keyAlias keystoreProperties['DEBUG_KEY_ALIAS']
+            keyPassword keystoreProperties['DEBUG_KEY_PASSWORD']
         }
     }
 
