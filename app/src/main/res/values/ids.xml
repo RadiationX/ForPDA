@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="menu_item_auth" type="id" />
+    <item name="menu_item_article_list" type="id" />
+    <item name="menu_item_favorites" type="id" />
+    <item name="menu_item_qms_contacts" type="id" />
+    <item name="menu_item_mentions" type="id" />
+    <item name="menu_item_dev_db" type="id" />
+    <item name="menu_item_forum" type="id" />
+    <item name="menu_item_search" type="id" />
+    <item name="menu_item_history" type="id" />
+    <item name="menu_item_notes" type="id" />
+    <item name="menu_item_forum_rules" type="id" />
+    <item name="menu_item_settings" type="id" />
+
+    <item name="action_mode_item_copy" type="id" />
+    <item name="action_mode_item_quote" type="id" />
+    <item name="action_mode_item_select_all" type="id" />
+    <item name="action_mode_item_share" type="id" />
+
+</resources>

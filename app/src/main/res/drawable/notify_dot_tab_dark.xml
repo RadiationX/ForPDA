@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#ef5350" />
+    <stroke
+        android:width="2dp"
+        android:color="@color/dark_card_background" />
+    <corners android:radius="10dp" />
+</shape>

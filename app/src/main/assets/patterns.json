@@ -1,0 +1,407 @@
+{
+  "version": 10,
+  "scopes": [
+    {
+      "scope":"global",
+      "patterns":[
+        {
+          "key":"meta_tags",
+          "value":"<meta[^>]*?property=\"([^:]*?):([^\"]*?)\"[^>]*?content=\"([^>]*?)\"[^>]*?>"
+        }
+      ]
+    },
+    {
+      "scope": "auth",
+      "patterns": [
+        {
+          "key": "captcha",
+          "value": "captcha-time\" value=\"([^\"]*?)\"[\\s\\S]*?captcha-sig\" value=\"([^\"]*?)\"[\\s\\S]*?src=\"([^\"]*?)\""
+        },
+        {
+          "key": "check_login",
+          "value": "<i class=\"icon-profile\">[\\s\\S]*?<ul class=\"dropdown-menu\">[\\s\\S]*?showuser=(\\d+)\"[\\s\\S]*?action=logout[^\"]*?k=([a-z0-9]{32})"
+        },
+        {
+          "key": "errors_list",
+          "value": "errors-list\">([\\s\\S]*?)</ul>"
+        }
+      ]
+    },
+    {
+      "scope": "devdb",
+      "patterns": [
+        {
+          "key": "main_root",
+          "value": "<div class=\"breadcrumbs-back\"><ul class=\"breadcrumbs\">([\\s\\S]*?)<\\/ul><\\/div>[^<]*?<div[^>]*?>[\\s\\S]*?<\\/div>[^<]*?<\\/div>(?:[^<]*?<div class=\"rating r\\d\">[^<]*?<div class=\"num\">(\\d+)<\\/div>[^<]*?<div class=\"text\">([\\s\\S]*?)<\\/div>[^<]*?<\\/div>)?[\\s\\S]*?<h1 class=\"product-name\">(?:<a[^>]*?>[^<]*?<\\/a>)? ?([\\s\\S]*?)<\\/h1>(?:<div class=\"version\"><span[^>]*?>[^<]*?<\\/span><a[^>]*?>(\\d+)<\\/a><span[^>]*?>[^<]*?<\\/span>*<a[^>]*?>(\\d+)<\\/a>)?"
+        },
+        {
+          "key": "main_breadcrumb",
+          "value": "<a href=\"[^\"]*?devdb\\/([^\"\\/]+?)(?:\\/([^\"]+?))?\">([^<]*?)<\\/a>"
+        },
+        {
+          "key": "main_specs",
+          "value": "<dl[^>]*?>[^<]*?<dt>([^<]*?)<\\/dt>[^<]*<dd>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>[\\s\\S]*?)?<\\/dd>"
+        },
+        {
+          "key": "main_search",
+          "value": "<li[^>]*?>[^<]*?<div[^>]*?>[^<]*?<a[^>]*?>[^<]*?<img src=\"([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[\\s\\S]*?<div class=\"name\"[^>]*?>[^<]*?<a href=\"[^\"]*?devdb\\/([^\"]*?)\"[^>]*?>([\\s\\S]*?)<\\/a>"
+        },
+        {
+          "key": "brand_devices",
+          "value": "<div class=\"box-holder\">[^<]*?<div[^>]*?>[^<]*?<a[^>]*?>[^<]*?<span[^>]*?><img src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div class=\"name\"><a href=\"[^\"]*?devdb\\/([^\"]*?)\"[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?<div class=\"specifications-list\">([\\s\\S]*?)<\\/div>(?:<div class=\"price\">[^<]*?<strong>([^<]*?)<\\/strong>)?[\\s\\S]*?<div class=\"rating-col\">(?:[^<]*?<div class=\"rating r(\\d+)\">[^<]*?<div class=\"num\">(\\d+)<\\/div>[^<]*?<div class=\"text\">([\\s\\S]*?)<\\/div>[^<]*?<\\/div>)?"
+        },
+        {
+          "key": "brands_letters",
+          "value": "<div class=\"letter\">([^<]*?)<\\/div>[^<]*?<div class=\"frame\">([\\s\\S]*?)<\\/div>"
+        },
+        {
+          "key": "brands_items_in_letter",
+          "value": "<a href=\"[^\"]*?\\/([^\\/\"]*?)(?:\\/all)?\">([\\s\\S]*?) ?\\((\\d+)\\)<\\/a>"
+        },
+        {
+          "key": "device_head",
+          "value": "h1 class=\"product-name\">(?:<a[^>]*?>[^<]*?<\\/a>)? ?([^<]*?)<\\/h1>[\\s\\S]*?div class=\"item-visual\">([\\s\\S]*?)<\\/div>[^<]*?<div class=\"item-info\">[\\s\\S]*?div class=\"item-content[^>]*?>[^<]*?<div class=\"content\">([\\s\\S]*?)<\\/div>[^<]*?<div class=\"aside\">"
+        },
+        {
+          "key": "device_images",
+          "value": "<a[^>]*?href=\"([^\"]*?)\"[^>]*?><img src=\"([^\"]*?)\""
+        },
+        {
+          "key": "device_specs_titled",
+          "value": "<div class=\"specifications-list\"><h3[^>]*?>([^>]*?)<\\/h3>([\\s\\S]*?)<\\/div>(?=<div class=\"specifications-list\">)"
+        },
+        {
+          "key": "device_reviews",
+          "value": "<a href=\"[^\"]*?4pda\\.ru\\/\\d+\\/\\d+\\/\\d+\\/(\\d+)\\/\" class=\"article-img\">[^<]*?<img src=\"([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[^<]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div class=\"upd\">([^<]*?)<\\/div>[^<]*?<div class=\"description\">([^<]+?)?<\\/div>"
+        },
+        {
+          "key": "device_discuss_and_firm",
+          "value": "<a href=\"[^\"]*?showtopic=(\\d+)\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div class=\"upd\">([^<]*?)<\\/div>[^<]*?<div class=\"description\">([^<]+?)?<\\/div>"
+        },
+        {
+          "key": "device_discussions",
+          "value": "<div class=\"tab(?: active)?\" id=\"discussions\">[\\s\\S]*?<ul class=\"article-list\">([\\s\\S]*?)<\\/ul>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?(?=<div class=\"tab(?: active)?\" id=\"reviews\">)"
+        },
+        {
+          "key": "device_firmwares",
+          "value": "<div class=\"tab(?: active)?\" id=\"firmware\">[\\s\\S]*?<ul class=\"article-list\">([\\s\\S]*?)<\\/ul>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?(?=<div class=\"tab(?: active)?\" id=\"prices\">)"
+        },
+        {
+          "key": "device_comments",
+          "value": "<li><a name=\"comment-(\\d+)\"[^>]*?><\\/a>[^<]*?<div class=\"rating r(\\d+)\"><span[^>]*?>(\\d+)<\\/span>[\\s\\S]*?<a href=\"[^\"]*?showuser=(\\d+)\"[^>]*?>([\\s\\S]*?)<\\/a><\\/div>[^<]*?<div class=\"date\">([^<]*?)<\\/div>[^<]*?<\\/div>[^<]*?<div class=\"text-box\">((?:[^<]*?<span class=\"wo-toggle\">([\\s\\S]*?)<\\/span>)?(?:[^<]*?<span class=\"w-toggle\">([\\s\\S]*?)<\\/span>)?[\\s\\S]*?)<\\/div>[\\s\\S]*?<div class=\"profit\"[^>]*?>[^<]*?<span><a href=\"[^\"]*?\\/like\\/[^\"]*?\"[^>]*?>[^<]*?(\\d+)[^<]*?<\\/a>[\\s\\S]*?<a href=\"[^\"]*?\\/dislike\\/[^\"]*?\"[^>]*?>[^<]*?(\\d+)[^<]*?<\\/a>"
+        }
+      ]
+    },
+    {
+      "scope": "editpost",
+      "patterns": [
+        {
+          "key": "form",
+          "value": "[^<]*?<textarea[^>]*>([\\s\\S]*?)<\\/textarea>[\\s\\S]*?<input[^>]*?name=\"post_edit_reason\" value=\"([^\"]*?)\""
+        },
+        {
+          "key": "poll_info",
+          "value": "is_mod\\s*?=\\s*?(\\d+)[\\s\\S]*?poll_questions\\s*?=\\s*?(\\{[\\s\\S]*?\\})\\n,[\\s\\S]*?poll_choices\\s*?=\\s*?(\\{[\\s\\S]*?\\})\\n[\\s\\S]*?poll_votes\\s*?=\\s*?(\\{[\\s\\S]*?\\})\\n[\\s\\S]*?poll_multi\\s*?=\\s*?(\\{[\\s\\S]*?\\})\\n[\\s\\S]*?max_poll_questions\\s*?=\\s*?(\\d+)[\\s\\S]*?max_poll_choices\\s*?=\\s*?(\\d+)[\\s\\S]*?<input[^>]*?name=\"poll_question\"[^>]*?value=\"([^\"]*?)\""
+        },
+        {
+          "key": "poll_fucking_invalid_json",
+          "value": "(?:\\{|\\,)[\\\"\\']?(\\d+)(?:_(\\d+))?[\\\"\\']?\\s*?\\:\\s*?[\\\"\\']([^\\'\\\"]*?)[\\\"\\'](?:\\})?"
+        },
+        {
+          "key": "attachments",
+          "value": "(\\d+)\u0002([^\u0002]*?)\u0002([^\u0002]*?)\u0002(\\/\\/[^\u0002]*?)\u0002(\\d+)\u0002([0-9a-fA-F]+)(?:(?:\u0002(\\/\\/[^\u0002]*?)\u0002(\\d+)\u0002(\\d+))?(?:\u0003\u0004(\\d+)\u0003\u0004([^\u0002]*?)\u0003\u0004([^\u0002]*?)\u0003)?)?"
+        }
+      ]
+    },
+    {
+      "scope": "favorites",
+      "patterns": [
+        {
+          "key": "main",
+          "value": "<div data-item-fid=\"([^\"]*)\" data-item-track=\"([^\"]*)\" data-item-pin=\"([^\"]*)\">[\\s\\S]*?(?:class=\"(?:modifier|forum_img_with_link)\"[^>]*?>(?:<font color=\"([^\"]*)\">)?([^< ]*)(?:<\\/font>)?<\\/(?:span|a)>)?[^<]*?<a href=\"[^\"]*=(\\d*)[^\"]*?\"[^>]*?>(<strong>)?([^<]*)(?:<\\/strong>)?<\\/a>(?:[^<]*?<a[^>]*?tpg\\(\\d+,(\\d+)\\)[^>]*?>[^<]*?<\\/a>[\\s\\S]*?)?(?:<\\/div><div class=\"topic_body\"><span class=\"topic_desc\">([^<]*|)(<br[^>]*>|)[\\s\\S]*?showforum=([^\"]*?)\">([^<]*)<\\/a><br[^>]*>[\\s\\S]*?showuser=([^\"]*)\">([^<]*)<\\/a>[\\s\\S]*?showuser=([^\"]*)\">([^<]*)<\\/a> ([^<]*?)|[^<]*?<\\/div>[^<]*?<div class=\"board-forum-lastpost[\\s\\S]*?<div class=\"topic_body\">([^<]*?) <a href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?))<(?:span class=\"forumdesc\"[^\"]*?>[^>]*?<br[^>]*?>[^<]*?<a href=\"[^\"]*?=(\\d+)\"[^>]*?>([\\s\\S]*?)<\\/a><\\/span><)?\\/div>[^<]*?<script[^>]*?>wr_fav_subscribe\\([^\"]*?\"([^\"]*?)\"\\)"
+        },
+        {
+          "key": "check_action",
+          "value": "<div style=\"[^\"]*background:#dff0d8[^\"]*\">[\\s\\S]*<div id=\"navstrip"
+        }
+      ]
+    },
+    {
+      "scope": "forum",
+      "patterns": [
+        {
+          "key": "rules_headers",
+          "value": "<b>([\\d\\.]+)\\s?([\\s\\S]*?)<\\/b>[^<]*?<[^>]*?br[^>]*?>([\\s\\S]*?<[^>]*?br[^>]*?>)(?=<[^>]*?br[^>]*?>(?:<b>|<[^>]*?br[^>]*?>))"
+        },
+        {
+          "key": "rules_items",
+          "value": "([\\d\\.]+)\\s?([\\s\\S]*?)<[^>]*?br[^>]*?>(?=[\\d\\.]+|$)"
+        },
+        {
+          "key": "announce",
+          "value": "<title>([\\s\\S]*?)(?: - 4PDA)?<\\/title>[\\s\\S]*?<div[^>]*?class=\"[^\"]*?postcolor[^\"]*?\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/td>"
+        },
+        {
+          "key": "forums_from_search",
+          "value": "<select[^>]*?name=[\"']forums(?:\\[\\])?[\"'][^>]*?>([\\s\\S]*?)<\\/select>"
+        },
+        {
+          "key": "forum_item_from_search",
+          "value": "<option[^>]*?value=[\"'](\\d+)['\"][^>]*?>[^-\\s]*?(-*?) ([\\s\\S]*?)<\\/option>"
+        }
+      ]
+    },
+    {
+      "scope": "mentions",
+      "patterns": [
+        {
+          "key": "main",
+          "value": "<div class=\"topic_title_post ?([^\"]*?)\"[^>]*?>([^:]*?):[^<]*?<a[^>]*?href=\"([^\"]*?)\"[^>]*?>(?:([^<]*?)(?:, ([^<]*?)|))<\\/a>[\\s\\S]*?post_date[^\"]*?\"[^>]*?>[^<]*?<a[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?showuser[^>]*>([\\s\\S]*?)<"
+        }
+      ]
+    },
+    {
+      "scope": "articles",
+      "patterns": [
+        {
+          "key": "list",
+          "value": "<article[^>]*?class=\"post[^\"]*?\"[^>]*?>[^<]*?<div[^>]*?>[^<]*?(?:<div[^>]*?>[^<]*?<\\/div>)?[^<]*?<a[^>]*?href=\"([^\"]*\\/(\\d+)\\/?)\"[^>]*?title=\"([^\"]*?)\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\"[\\s\\S]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[\\s\\S]*?<a[^>]*?href=\"[^\"]*?showuser=(\\d+)\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?itemprop=\"description\">([\\s\\S]*?)<\\/div>[\\s\\S]*?<div[^>]*?class=\"meta\">([\\s\\S]*?)<\\/div>[\\s\\S]*?<\\/article>|<li itemscope[^>]*?>[^<]*?<div class=\"photo\">[^<]*?<a[^>]*?href=\"([^\"]*\\/(\\d+)\\/?)\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?title=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<a[^>]*?class=\"v-count\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<meta[^>]*?content=\"((\\d+-\\d+-\\d+)[^\"]*?)\"[^>]*?>[\\s\\S]*?<div class=\"content\" itemprop=\"description\">[\\s\\S]*?<div class=\"summary\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[^<]*?<div itemprop=\"description\">([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<span class=\"bg-shadow\">"
+        },
+        {
+          "key": "detail",
+          "value": "<[^>]*>[^<]*?<[^>]*?>[^<]*?<div[^>]*?data-ztm=\"\\d+:(\\d+)[^\"]*?\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"photo\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"description\"[^>]*?>[^<]*?<h1[^>]*?>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?<\\/h1>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[^<]*?<span[^>]*?class=\"name\"[^>]*?>[^<]*?<a[^>]*?href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?class=\"more-box\"[^>]*?>[^<]*?<a[^>]*?>(\\d+)<\\/a>[\\s\\S]*?<div[^>]*?class=\"meta\"[^>]*?>([\\s\\S]*?)<\\/div>[\\s\\S]*?<div class=\"content-box\" itemprop=\"articleBody\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?<script[^>]*?>[^<]*?<\\/script>(?:[^<]*?<div class=\"materials-box\"[^>]*?>(?:[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>)?[^<]*?<\\/div>)?[\\s\\S]*?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>(?:[\\s\\S]*?<div class=\"comment-box[^\"]*?\" id=\"comments\"[^>]*?>[^<]*?(?:<div class=\"[^\"]*?close[^\"]*?\"[^>]*?>[\\s\\S]*?<\\/div>[^<]*?<\\/div>[^<]*?<div class=\"[^\"]*?open[^\"]*?\"[^>]*?>)?[\\s\\S]*?<div class=\"heading\"[^>]*?>[^>]*?<h2>[^<]*?<\\/h2>([\\s\\S]*?)<\\/div>([\\s\\S]*?)[^<]*?<br[^>]*?>[^<]*?<\\/div>[^<]*?(?:<\\/div|<ul class=\"page-nav))?"
+        },
+        {
+          "key": "detail_v2",
+          "value": "<[^>]*>[^<]*?<[^>]*?>[^<]*?<div[^>]*?data-ztm=\"\\d+:(\\d+)[^\"]*?\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div class=\"[^\"]*?article[^\"]*?\"[^>]*?><div class=\"[^\"]*?article-header[^\"]*?\"[^>]*?>(?:<h1>)?([^<]*?)(?:<\\/h1>)[\\s\\S]*?<time[^>]*?>([^<]*?)<\\/time>[\\s\\S]*?<a[^>]*?href=\"#comments\"[^>]*?>(\\d+)<\\/a>[\\s\\S]*?(<meta property=\"og:description\"[\\s\\S]*?)<div class=\"article-footer[^\"]*?\"[^>]*?>[\\s\\S]*?(?:<div class=\"article-footer-tags[^\"]*?\"[^>]*?>([\\s\\S]*?)<\\/div>)?<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?<script[^>]*?>[^<]*?<\\/script>(?:[^<]*?<div class=\"materials-box\"[^>]*?>(?:[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>)?[^<]*?<\\/div>)?[\\s\\S]*?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>(?:[\\s\\S]*?<div class=\"comment-box[^\"]*?\" id=\"comments\"[^>]*?>[^<]*?(?:<div class=\"[^\"]*?close[^\"]*?\"[^>]*?>[\\s\\S]*?<\\/div>[^<]*?<\\/div>[^<]*?<div class=\"[^\"]*?open[^\"]*?\"[^>]*?>)?[\\s\\S]*?<div class=\"heading\"[^>]*?>[^>]*?<h2>[^<]*?<\\/h2>([\\s\\S]*?)<\\/div>([\\s\\S]*?)[^<]*?<br[^>]*?>[^<]*?<\\/div>[^<]*?(?:<\\/div|<ul class=\"page-nav))?"
+        },
+        {
+          "key": "detail_detector",
+          "value": "(<[^>]*>[^<]*?<[^>]*?>[^<]*?<div[^>]*?data-ztm=\"\\d+:\\d+[^\"]*?\"[^>]*?>[^<]*?<meta[^>]*?content=\"[^\"]*?\"[^>]*?><div[^>]*><div[^>]*?class=\"photo\"[^>]*?>)|(<[^>]*>[^<]*?<[^>]*?>[^<]*?<div[^>]*?data-ztm=\"\\d+:\\d+[^\"]*?\"[^>]*?>[^<]*?<meta[^>]*?content=\"[^\"]*?\"[^>]*?><link[^>]*?><div class=\"[^\"]*?article[^\"]*?\"[^>]*?>)"
+        },
+        {
+          "key": "exclude_form_comment",
+          "value": "<form[\\s\\S]*"
+        },
+        {
+          "key": "tags",
+          "value": "<a[^>]*?href=\"\\/tag\\/([^\"\\/]*?)\\/\"[^>]*?>([^<]*?)<\\/a>"
+        },
+        {
+          "key": "materials",
+          "value": "<li[^>]*?>[^<]*?<a[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[^<]*?<h3>[^<]*?<a[^>]*?href=\"[^\"]*?\\/(\\d+)\\/[^\"\\/]*?\"[^>]*?>([\\s\\S]*?)<\\/a>[^<]*?<\\/h3>"
+        },
+        {
+          "key": "karma",
+          "value": "\\\"(\\d+)\\\":\\[(.+?),(.+?),(.+?),(.+?)\\]"
+        },
+        {
+          "key": "karmaSource",
+          "value": "ModKarma\\((\\{[\\s\\S]*?\\})"
+        },
+        {
+          "key": "comment_id",
+          "value": "comment-(\\d+)"
+        },
+        {
+          "key": "comment_user_id",
+          "value": "showuser=(\\d+)"
+        }
+      ]
+    },
+    {
+      "scope": "profile",
+      "patterns": [
+        {
+          "key": "main",
+          "value": "<div[^>]*?user-box[\\s\\S]*?<img src=\"([^\"]*?)\"[\\s\\S]*?<h1>([^<]*?)<\\/h1>[\\s\\S]*?(?=<span class=\"title\">([^<]*?)<\\/span>| )[\\s\\S]*?<h2>(?:<span style[^>]*?>|)([^\"<]*?)(?:<\\/span>|)<\\/h2>[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?<div class=\"u-note\">([\\s\\S]*?)<\\/div>[^<]*?(?:<\\/li>|<div)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)[\\s\\S]*?(<ul[\\s\\S]*?\\/ul>)"
+        },
+        {
+          "key": "info",
+          "value": "<li[\\s\\S]*?title[^>]*?>([^>]*?)<[\\s\\S]*?div[^>]*>([\\s\\S]*?)</div>"
+        },
+        {
+          "key": "personal",
+          "value": "<li[\\s\\S]*?title[^>]*?>([^>]*?)<[\\s\\S]*?(?=<div[^>]*>([^<]*)[\\s\\S]*?</div>|)<"
+        },
+        {
+          "key": "contacts",
+          "value": "<a[^>]*?href=\"([^\"]*?)\"[^>]*?>(?:<strong>)?([\\s\\S]*?)(?:<\\/strong>)?<\\/a>"
+        },
+        {
+          "key": "devices",
+          "value": "<a[^>]*?href=\"([^\"]*?)\"[^>]*?>([\\s\\S]*?)</a>([\\s\\S]*?)</li>"
+        },
+        {
+          "key": "site_stats",
+          "value": "<span class=\"title\">([^<]*?)<\\/span>[\\s\\S]*?<div class=\"area\">[\\s\\S]*?(?:<a[^>]*?href=\"([^\"]*?)\"[^>]*?>)?([\\s\\S]*?)(?:<\\/a>)?<\\/div>"
+        },
+        {
+          "key": "forum_stats",
+          "value": "<span class=\"title\">([^<]*?)<\\/span>[\\s\\S]*?<div class=\"area\">(?:(\\d+)|[\\s\\S]*?<a[^>]*?href=\"([^\"]*?act=(?:search|rep[^\"]*?view=history)[^\"]*?)\"[^>]*?>(?:<span[^>]*?>)?(-?\\d+)(?:<\\/span>)?<\\/a>)"
+        },
+        {
+          "key": "note",
+          "value": "<textarea[^>]*?profile-textarea\"[^>]*?>([\\s\\S]*?)</textarea>"
+        },
+        {
+          "key": "about",
+          "value": "<div[^>]*?div-custom-about[^>]*?>([\\s\\S]*?)</div>"
+        },
+        {
+          "key": "warnings",
+          "value": "<li class=\"wlog-([^\"]*?)\"[^>]*?>[\\s\\S]*?<span class=\"date\">([^<]*?)<\\/span>[\\s\\S]*?<span style[^>]*?>([^<]*?)<\\/span>[\\s\\S]*?<div class=\"a-content\">([\\s\\S]*?)<div class=\"profile-edit-links"
+        }
+      ]
+    },
+    {
+      "scope": "qms",
+      "patterns": [
+        {
+          "key": "contacts_main",
+          "value": "<a class=\"list-group-item[^>]*?data-member-id=\"([^\"]*?)\" (?=data-unread-count=\"([^\"]*?)\"|)[^>]*?>[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\" title=\"([^\"]*?)\""
+        },
+        {
+          "key": "thread_main",
+          "value": "<a class=\"list-group-item[^>]*?data-thread-id=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div class=\"bage[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?(?:<strong>)?([^<]*?)\\((\\d+)(?: \\/ (\\d+))?\\)"
+        },
+        {
+          "key": "thread_nick",
+          "value": "<div class=\"nav\">[\\s\\S]*?<b>(?:<a[^>]*?>)?([\\s\\S]*?)(?:<\\/a>)?<\\/b>"
+        },
+        {
+          "key": "chat_info",
+          "value": "<div class=\"nav\">[\\s\\S]*?<b>(?:<a[^>]*?>)?([\\s\\S]*?)(?:<\\/a>)?:<\\/b>([\\s\\S]*?)<\\/span>[\\s\\S]*?<input[^>]*?name=\"mid\" value=\"(\\d+)\"[^>]*>[\\s\\S]*?<input[^>]*?name=\"t\" value=\"(\\d+)\"[^>]*>[\\s\\S]*?(?:[\\s\\S]*?list-group-item(?! our-message)[^\"]*?\"[\\s\\S]*?class=\"avatar\"[^>]*?src=\"([^\"]*?)\")?"
+        },
+        {
+          "key": "chat_pattern",
+          "value": "group-item([^\"]*?)\" data-message-id=\"([^\"]*?)\"[^>]*?data-unread-status=\"([^\"]*?)\">[\\s\\S]*?<\\/b> ([^ <]*?) [\\s\\S]*?src=\"([^\"]*?)\"[\\s\\S]*?<div[^>]*?msg-content[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?(?:\\*\\/--><\\/div>|<div (?:class=\"(?=date|list-group-item)|id=\"thread-inside-bottom))|<div class=\"text\">([^<]*?)<\\/div>"
+        },
+        {
+          "key": "blacklist_main",
+          "value": "<a class=\"list-group-item[^>]*?showuser=(\\d+)[^>]*?>[\\s\\S]*?<img class=\"avatar\" src=\"([^\"]*?)\" title=\"([\\s\\S]*?)\" alt[^>]*?>"
+        },
+        {
+          "key": "blacklist_msg",
+          "value": "<div class=\"list-group-item msgbox ([^\"]*?)\"[^>]*?>[^<]*?<a[^>]*?>[^<]*?<\\/a>([\\s\\S]*?)<\\/div>"
+        },
+        {
+          "key": "finduser",
+          "value": "\\[(\\d+),\"([\\s\\S]*?)\",\\d+,(?:\"<span[^>]*?background:url\\(([^\\)]*?)\\))?"
+        },
+        {
+          "key": "send_message_error",
+          "value": "class=\"list-group-item[^\"]*?error\"[\\s\\S]*?<\\/a>([\\s\\S]*?)<\\/div>"
+        },
+        {
+          "key": "message_info",
+          "value": "\"id_to\":(\\d+)"
+        }
+      ]
+    },
+    {
+      "scope": "reputation",
+      "patterns": [
+        {
+          "key": "main",
+          "value": "<tr[^>]*?>[^<]*?<td[^>]*?><strong><a [^>]*?showuser=(\\d+)[^\"]*\">([\\s\\S]*?)<\\/a><\\/strong><\\/td>[^<]*?<td[^>]*?>(?:<strong><a href=\"([^\"]*?)\">([\\s\\S]*?)<\\/a><\\/strong>)?[^<]*?<\\/td>[^<]*?<td[^>]*?>([\\s\\S]*?)<\\/td>[^<]*?<td[^>]*?><img[^>]*?src=\"([^\"]*?)\"[^>]*?><\\/td>[^<]*?<td[^>]*?>([\\s\\S]*?)<\\/td>[^<]*?<"
+        },
+        {
+          "key": "info",
+          "value": "<div class=\"maintitle\">[\\s\\S]*?<a href=\"[^\"]*?showuser=(\\d+)\"[^>]*?>([\\s\\S]*?)<\\/a>[^\\[]*?\\[\\+(\\d+)?\\/\\-(\\d+)?\\]"
+        }
+      ]
+    },
+    {
+      "scope": "search",
+      "patterns": [
+        {
+          "key": "articles",
+          "value": "<li>[^<]*?<div[^>]*?class=\"photo\"[^>]*?>[\\s\\S]*?<a[^\"]*?href=\"[^\"]*?(\\d+)\\/\"[^>]*?>[\\s\\S]*?<img[^>]*?src=\"([\\s\\S]*?)\"[^>]*?>[\\s\\S]*?class=\"date[^>]*>([\\s\\S]*?)<\\/em>[\\s\\S]*?showuser=(\\d+)[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?<h\\d[^>]*>[^<]*?<a[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?<p>[^<]*?<a[^>]*>([\\s\\S]*?)<\\/a>[^<]*?<\\/p>"
+        },
+        {
+          "key": "forum_topics",
+          "value": "<div[^>]*?data-topic=\"(\\d+)\"[^>]*?>[\\s\\S]*?(?:<font color=\"([^\"]*?)\"[^>]*?>([^<]*?)<\\/font>[\\s\\S]*?)?<a[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?<span class=\"topic_desc\">(?:(?!форум)([\\s\\S]*?)<br[^>]*?>)?форум:[^<]*?<a[^>]*?showforum=(\\d+)[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?автор:[^<]*?<a[^>]*?showuser=(\\d+)[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?Послед[\\s\\S]*?<a[^>]*?showuser=(\\d+)[^>]*?>([\\s\\S]*?)<\\/a>(?:\\s*)?([^<]*?)<\\/div>"
+        },
+        {
+          "key": "forum_posts",
+          "value": "(?:<a name=\"entry([^\"]*?)\"[^>]*?><\\/a>|<div[^>]*?class=\"cat_name[^>]*?>[^<]*?<a[^>]*?showtopic=(\\d+)[^>]*?p=(\\d+)[^>]*?>([\\s\\S]*?)<\\/a><\\/div>)[\\s\\S]*?<div class=\"post_header_container\"><div class=\"post_header\"><span class=\"post_date\">([^&]*?)&[^<]*?<a[^>]*?>#?([^<]*?)<\\/a>[^<]*?<\\/span>[\\s\\S]*?<font color=\"([^\"]*?)\">[^<]*?<\\/font>[\\s\\S]*?<a[^>]*?data-av=\"([^\"]*?)\"[^>]*?>([^<]*?)<[\\s\\S]*?<a[^>]*?showuser=([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[\\s\\S]*?<span[^>]*?post_user_info[^>]>(<strong[\\s\\S]*?<\\/strong>(?:<br[^>]*?>))?(?:<span[^<]*?color:([^;']*)[^>]*?>)?([\\s\\S]*?)(?:<\\/span>|)(?:  \\| [^<]*?)?<\\/span>[\\s\\S]*?(<a[^>]*?win_minus[^>]*?>[\\s\\S]*?<\\/a>|) \\([\\s\\S]*?data-member-rep[^>]*?>([^<]*?)<\\/span><\\/a>\\)[^<]*(<a[^>]*?win_add[^>]*?>[\\s\\S]*?<\\/a>|)<br[^>]*?>[^<]*?<span class=\"post_action\">(<a[^>]*?report[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?edit_post[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?delete[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?CODE=02[^>]*?>[^<]*?<\\/a>|)[^<]*[^<]*[\\s\\S]*?<div class=\"post_body[^>]*?>([\\s\\S]*?)<\\/div><\\/div>(?=<div[^>]*?class=\"cat_name|<div><div[^>]*?class=\"pagination|<div><\\/div><br[^>]*?><\\/form>|<div data-post|<!-- TABLE FOOTER -->|<div class=\"topic_foot_nav\">)"
+        }
+      ]
+    },
+    {
+      "scope": "topic",
+      "patterns": [
+        {
+          "key": "posts",
+          "value": "(?:<a name=\"entry([^\"]*?)\"[^>]*?><\\/a>|<div[^>]*?class=\"cat_name[^>]*?>[^<]*?<a[^>]*?showtopic=(\\d+)[^>]*?p=(\\d+)[^>]*?>([\\s\\S]*?)<\\/a><\\/div>)[\\s\\S]*?<div class=\"post_header_container\"><div class=\"post_header\">(?:[^<]*?<label[^>]*?>[\\s\\S]*?<\\/label>)?[^<]*?<span class=\"post_date\">([^&|<]*?)(?: |&nbsp;)\\|[^<]*?<a[^>]*?>#?([^<]*?)<\\/a>[^<]*?<\\/span>[\\s\\S]*?<font color=\"([^\"]*?)\">[^<]*?<\\/font>[\\s\\S]*?<a[^>]*?data-av=\"([^\"]*?)\"[^>]*?>([^<]*?)<[\\s\\S]*?<a[^>]*?showuser=([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[\\s\\S]*?<span[^>]*?post_user_info[^>]>(<strong[\\s\\S]*?<\\/strong>(?:<br[^>]*?>))?(?:<span[^<]*?color:([^;']*)[^>]*?>)?([\\s\\S]*?)(?:<\\/span>|)(?: \\| [^<]*?)?<\\/span>[\\s\\S]*?(<a[^>]*?win_minus[^>]*?>[\\s\\S]*?<\\/a>|) \\([\\s\\S]*?data-member-rep[^>]*?>([^<]*?)<\\/span><\\/a>\\)[^<]*(<a[^>]*?win_add[^>]*?>[\\s\\S]*?<\\/a>|)<br[^>]*?>[^<]*?<span class=\"post_action\">(<a[^>]*?report[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?edit_post[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?delete[^>]*?>[^<]*?<\\/a>|)[^<]*(<a[^>]*?pasteQ[^>]*?>[^<]*?<\\/a>|)[^<]*[^<]*[\\s\\S]*?<div class=\"post_body[^>]*?>([\\s\\S]*?)<\\/div><\\/div>(?=<div[^>]*?class=\"cat_name|<div><div[^>]*?class=\"pagination|<div><\\/div><br[^>]*?><\\/form>|<div data-post|<!-- TABLE FOOTER -->|<div class=\"topic_foot_nav\">|<div class=\"post_header\">)"
+        },
+        {
+          "key": "title",
+          "value": "<div class=\"topic_title_post\">(?:[^<]*?<label[^>]*?>[\\s\\S]*?<\\/label>)?[^<]*?(?:([^<]*?)(?: ?\\| ?([^<]*?)|))<br"
+        },
+        {
+          "key": "already_in_fav",
+          "value": "<a href=\"[^\"]*?act=fav[^\"]*?tact=delete[^\"]*?\"[^>]*?>"
+        },
+        {
+          "key": "fav_id",
+          "value": "href=\"[^\"]*?act=fav[^\"]*?tact=delete[^\"]*?selectedtids=(\\d+)"
+        },
+        {
+          "key": "topic_id",
+          "value": "ipb_input_f:(\\d+),[\\s\\S]*?ipb_input_t:(\\d+),"
+        },
+        {
+          "key": "scroll_anchor",
+          "value": "(?:anchor=|#)([^&\\n\\=\\?\\.\\#]*)"
+        },
+        {
+          "key": "poll_main",
+          "value": "<form[^>]*?addpoll[^>]*?post[^>]*?>[\\s\\S]*?<tr[^>]*?>[^<]*?<th[^>]*?>(?:<[^>]*>)([^>]*?)(?:<[^>]*>)<\\/th>[^<]*?<\\/tr>([\\s\\S]*?)<tr>[^<]*?<td[^>]*?>[^<]*?(?:<b>)Всего голосов: ([\\d]*?)(?:<\\/b>)[\\s\\S]*?<td[^>]*?formbuttonrow[^>]*?>([\\s\\S]*?)<\\/td>[\\s\\S]*?<\\/form>"
+        },
+        {
+          "key": "poll_questions",
+          "value": "<tr><td[^>]*?><div class[\\s\\S]*?<strong>([\\s\\S]*?)<\\/strong>[\\s\\S]*?<table[^>]*?>([\\s\\S]*?)<\\/table>"
+        },
+        {
+          "key": "poll_question_item",
+          "value": "<tr>(?:<td[^>]*?colspan[^>]*?><input type=\"([^\"]*?)\" name=\"([^\"]*?)\" value=\"([^\"]*?)\"[^>]*?>[^<]*?<b>([\\s\\S]*?)<\\/b>[\\s\\S]*?|<td[^>]*?width[^>]*?>([\\s\\S]*?)<\\/td><td[^>]*?>[^<]*?<b>([\\s\\S]*?)<\\/b>[^\\[]*?\\[([^\\%]*?)\\%[\\s\\S]*?)<\\/tr>"
+        },
+        {
+          "key": "poll_buttons",
+          "value": "<input[^>]*?value=\"([^\"]*?)\""
+        },
+        {
+          "key": "attached_images",
+          "value": "(4pda\\.ru\\/forum\\/dl\\/post\\/\\d+\\/[^\"']*?\\.(?:jpe?g|png|gif|bmp))\"?(?:[^>]*?title=\"([^\"']*?\\.(?:jpe?g|png|gif|bmp)) - [^\"']*?\")?"
+        }
+      ]
+    },
+    {
+      "scope": "topics",
+      "patterns": [
+        {
+          "key": "title",
+          "value": "<div[^>]*?navstrip[^>]*?>[\\s\\S]*?showforum=(\\d+)[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/div>"
+        },
+        {
+          "key": "can_new_topic",
+          "value": "<a[^>]*?href=\"[^\"]*?do=new_post[^\"]*?\"[^>]*?>"
+        },
+        {
+          "key": "announce",
+          "value": "<div[^>]*?anonce_body[^>]*?>[\\s\\S]*?<a[^>]*?href=['\"]([^\"']*?)[\"'][^>]*?>([\\s\\S]*?)<\\/a>[^<]*?<\\/div>"
+        },
+        {
+          "key": "forum",
+          "value": "<div[^>]*?board_forum_row[^>]*?>[\\s\\S]*?<a[^>]*?showforum=(\\d+)[^>]*?>([\\s\\S]*?)<\\/a>"
+        },
+        {
+          "key": "topics",
+          "value": "<div[^>]*?data-topic=\"(\\d+)\"[^>]*?>[^<]*?<div[^>]*?class=\"topic_title\"[^>]*?>[^<]*?<span[^>]*?class=\"modifier\"[^>]*?>(?:[^<]*?<font[^>]*?>)?([^<]*?)(?:<\\/font>)?<\\/span>[^<]*?(\\(!\\))?[^<]*?<a[^>]*?href=\"[^\"]*?\"[^>]*?>([\\s\\S]*?)<\\/a>(?: ?&nbsp;[\\s\\S]*?<\\/div>|<\\/div>)[^<]*?<div[^>]*?class=\"topic_body\"[^>]*?>(?:[^<]*?<span[^>]*?class=\"topic_desc\"[^>]*?>(?!автор)([\\s\\S]*?)<br\\s?\\/>[^<]*?<\\/span>)?[^<]*?<span[^>]*?class=\"topic_desc\"[^>]*?>[^<]*?<a[^>]*?showuser=(\\d+)[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/span>[\\s\\S]*?showuser=(\\d+)[^>]*?>([^<]*?)<\\/a>\\s?([^<]*?)(?:<span[\\s\\S]*?showuser=(\\d+)[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/span>)?<\\/div>[^<]*?<\\/div>"
+        }
+      ]
+    }
+  ]
+}
