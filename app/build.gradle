@@ -218,7 +218,7 @@ dependencies {
     implementation("com.github.hotchemi:permissionsdispatcher:3.2.0")
     kapt "com.github.hotchemi:permissionsdispatcher-processor:3.2.0"
 
-    implementation 'com.yandex.android:mobmetricalib:3.2.2'
+    implementation 'com.yandex.android:mobmetricalib:3.13.1'
 
     implementation "com.android.support:multidex:1.0.3"
 
