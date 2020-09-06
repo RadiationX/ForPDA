@@ -3,15 +3,20 @@ package forpdateam.ru.forpda.ui.views;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Rect;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.SoundEffectConstants;
+import android.view.View;
 import android.view.ViewParent;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
@@ -24,7 +29,6 @@ import java.util.Queue;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.common.Preferences;
 import forpdateam.ru.forpda.common.webview.DialogsHelper;
 import forpdateam.ru.forpda.common.webview.jsinterfaces.IBase;
 
@@ -44,14 +48,21 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     boolean isJsReady = false;
 
     private OnDirectionListener onDirectionListener;
+    private OnScrollListener onScrollListener;
     private AudioManager audioManager;
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private Thread mUiThread;
     private Queue<Runnable> actionsForWebView = new LinkedList<>();
     private JsLifeCycleListener jsLifeCycleListener;
 
+    private DialogsHelper dialogsHelper;
+
     public interface OnDirectionListener {
         void onDirectionChanged(int direction);
+    }
+
+    public interface OnScrollListener {
+        void onScrollChange(int scrollX, int scrollY, int oldScrollX, int oldScrollY);
     }
 
     public ExtendedWebView(Context context) {
@@ -85,9 +96,16 @@ public class ExtendedWebView extends NestedWebView implements IBase {
         this.onDirectionListener = onDirectionListener;
     }
 
+    public void setOnScrollListener(OnScrollListener onScrollListener) {
+        this.onScrollListener = onScrollListener;
+    }
+
     @Override
     protected void onScrollChanged(int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
         super.onScrollChanged(scrollX, scrollY, oldScrollX, oldScrollY);
+        if (onScrollListener != null) {
+            onScrollListener.onScrollChange(scrollX, scrollY, oldScrollX, oldScrollY);
+        }
         int newDirection = scrollY > oldScrollY ? DIRECTION_DOWN : DIRECTION_UP;
         if (newDirection != direction) {
             direction = newDirection;
@@ -109,6 +127,8 @@ public class ExtendedWebView extends NestedWebView implements IBase {
         WebSettings settings = getSettings();
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
         settings.setBuiltInZoomControls(false);
+        settings.setMinimumFontSize(1);
+        settings.setMinimumLogicalFontSize(1);
         settings.setDefaultFontSize(16);
         settings.setTextZoom(100);
         settings.setJavaScriptEnabled(true);
@@ -119,8 +139,11 @@ public class ExtendedWebView extends NestedWebView implements IBase {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
-        setRelativeFontSize(Preferences.Main.getWebViewSize(getContext()));
+        setRelativeFontSize(16);
         setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_base));
+        settings.setTextZoom((int) (getResources().getConfiguration().fontScale * 100));
+
+        Log.e("kokosina", "fontscale " + (getResources().getConfiguration().fontScale) + " : " + getResources().getConfiguration().densityDpi + " : " + getResources().getDisplayMetrics().density + " : " + getResources().getDisplayMetrics().densityDpi + " : " + getResources().getDisplayMetrics().scaledDensity + " : " + getResources().getDisplayMetrics().xdpi);
     }
 
     @Override
@@ -150,25 +173,27 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        requestFocus();
+        Log.e("kikosina", "onAttachedToWindow");
+        //requestFocus();
         isJsReady = false;
-        for (Runnable action : actionsForWebView) {
+        /*for (Runnable action : actionsForWebView) {
             mHandler.removeCallbacks(action);
         }
-        actionsForWebView.clear();
+        actionsForWebView.clear();*/
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        Log.e("kikosina", "onDetachedFromWindow");
         isJsReady = false;
-        for (Runnable action : actionsForWebView) {
+        /*for (Runnable action : actionsForWebView) {
             mHandler.removeCallbacks(action);
         }
-        actionsForWebView.clear();
+        actionsForWebView.clear();*/
     }
 
-    @Deprecated
+    //@Deprecated
     @Override
     public void setInitialScale(int scaleInPercent) {
         super.setInitialScale(scaleInPercent);
@@ -180,7 +205,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     //0.0f, 1.0f, 2.3f, etc
     public void setRelativeScale(float scale) {
         try {
-            relativeScale = (int) (scale * (App.get().getDensity() * 100));
+            relativeScale = (int) (scale * (getResources().getDisplayMetrics().density * 100));
             fontScale = scale;
         } catch (Exception ignore) {
             ignore.printStackTrace();
@@ -189,7 +214,10 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     }
 
     public void setRelativeFontSize(int fontSize) {
-        setRelativeScale(fontSize / 16f);
+        //setRelativeScale(fontSize / 16f);
+        getSettings().setDefaultFontSize(fontSize);
+        //fontScale = fontSize / 16f;
+        updatePaddingBottom();
     }
 
     public void updatePaddingBottom() {
@@ -197,8 +225,10 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     }
 
     public void setPaddingBottom(int padding) {
+        Log.e("kokosina", "setPaddingBottom " + padding + " : " + fontScale + " : " + ((paddingBottom / getResources().getDisplayMetrics().density) * (1 / fontScale)));
         paddingBottom = padding;
-        evalJs("setPaddingBottom(" + ((paddingBottom / App.get().getDensity()) * (1 / fontScale)) + ");");
+
+        evalJs("setPaddingBottom(" + ((paddingBottom / getResources().getDisplayMetrics().density) * (1 / fontScale)) + ");");
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -223,8 +253,8 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     }
 
     /*
-    * JS LIFECYCLE
-    * */
+     * JS LIFECYCLE
+     * */
 
 
     @Override
@@ -334,17 +364,33 @@ public class ExtendedWebView extends NestedWebView implements IBase {
 
 
     /*
-    * OVERRIDE CONTEXT MENU
-    * */
+     * OVERRIDE CONTEXT MENU
+     * */
+
+    @JavascriptInterface
+    public void onActionModeComplete() {
+        runInUiThread(() -> {
+            if (currentActionMode != null) {
+                currentActionMode.finish();
+            }
+        });
+    }
 
     private OnStartActionModeListener actionModeListener;
+    private ActionMode currentActionMode = null;
 
     public interface OnStartActionModeListener {
-        void OnStart(ActionMode actionMode, ActionMode.Callback callback, int type);
+        void onCreate(ActionMode actionMode, ActionMode.Callback callback);
+
+        boolean onClick(ActionMode actionMode, MenuItem item);
     }
 
     public void setActionModeListener(OnStartActionModeListener actionModeListener) {
         this.actionModeListener = actionModeListener;
+    }
+
+    public void setDialogsHelper(DialogsHelper dialogsHelper) {
+        this.dialogsHelper = dialogsHelper;
     }
 
     @Override
@@ -362,15 +408,87 @@ public class ExtendedWebView extends NestedWebView implements IBase {
         if (parent == null) {
             return null;
         }
+
+        ActionMode.Callback customCallback = getActionModeCallback(callback);
         ActionMode actionMode;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            actionMode = super.startActionMode(callback, type);
+            actionMode = super.startActionMode(customCallback, type);
         } else {
-            actionMode = super.startActionMode(callback);
+            actionMode = super.startActionMode(customCallback);
         }
-        if (actionModeListener != null)
-            actionModeListener.OnStart(actionMode, callback, type);
+
+        currentActionMode = actionMode;
+        if (actionModeListener != null) {
+            actionModeListener.onCreate(actionMode, customCallback);
+        }
         return actionMode;
+    }
+
+    private ActionMode.Callback getActionModeCallback(ActionMode.Callback callback) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return new ActionMode.Callback2() {
+
+                @Override
+                public void onGetContentRect(ActionMode mode, View view, Rect outRect) {
+                    if (callback instanceof ActionMode.Callback2) {
+                        ((ActionMode.Callback2) callback).onGetContentRect(mode, view, outRect);
+                    } else {
+                        super.onGetContentRect(mode, view, outRect);
+                    }
+                }
+
+                @Override
+                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                    return callback.onCreateActionMode(mode, menu);
+                }
+
+                @Override
+                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                    return callback.onPrepareActionMode(mode, menu);
+                }
+
+                @Override
+                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                    if (actionModeListener != null && actionModeListener.onClick(mode, item)) {
+                        return true;
+                    }
+                    return callback.onActionItemClicked(mode, item);
+                }
+
+                @Override
+                public void onDestroyActionMode(ActionMode mode) {
+                    currentActionMode = null;
+                    callback.onDestroyActionMode(mode);
+                }
+            };
+        } else {
+            return new ActionMode.Callback() {
+
+                @Override
+                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                    return callback.onCreateActionMode(mode, menu);
+                }
+
+                @Override
+                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                    return callback.onPrepareActionMode(mode, menu);
+                }
+
+                @Override
+                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                    if (actionModeListener != null && actionModeListener.onClick(mode, item)) {
+                        return true;
+                    }
+                    return callback.onActionItemClicked(mode, item);
+                }
+
+                @Override
+                public void onDestroyActionMode(ActionMode mode) {
+                    currentActionMode = null;
+                    callback.onDestroyActionMode(mode);
+                }
+            };
+        }
     }
 
     @Override
@@ -378,7 +496,9 @@ public class ExtendedWebView extends NestedWebView implements IBase {
         super.onCreateContextMenu(menu);
         requestFocusNodeHref(new Handler(msg -> {
             HitTestResult result = getHitTestResult();
-            DialogsHelper.handleContextMenu(getContext(), result.getType(), result.getExtra(), (String) msg.getData().get("url"));
+            if (dialogsHelper != null) {
+                dialogsHelper.handleContextMenu(getContext(), result.getType(), result.getExtra(), (String) msg.getData().get("url"));
+            }
             return true;
         }).obtainMessage());
     }

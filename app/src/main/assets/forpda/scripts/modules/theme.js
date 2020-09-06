@@ -143,6 +143,7 @@ function doScroll(tAnchorElem) {
 function selectionToQuote() {
     var selObj = window.getSelection();
     var selectedText = selObj.toString();
+    IBase.onActionModeComplete();
 
 
     var p = selObj.anchorNode.parentNode;
@@ -150,29 +151,31 @@ function selectionToQuote() {
         p = p.parentNode;
     }
     if (typeof p === "undefined" || typeof p.dataset === "undefined") {
-        ITheme.toast("Для этого действия необходимо выбрать текст сообщения");
+        IThemePresenter.toast("Для этого действия необходимо выбрать текст сообщения");
         return;
     }
     var postId = p.dataset.postId;
     if (selectedText != null && postId != null) {
-        ITheme.quotePost(selectedText, "" + postId);
+        IThemePresenter.quotePost(selectedText, "" + postId);
     } else {
-        ITheme.toast("Ошибка создания цитаты: [" + selectedText + ", " + postId + "]");
+        IThemePresenter.toast("Ошибка создания цитаты: [" + selectedText + ", " + postId + "]");
         return;
     }
 }
 
 function copySelectedText() {
     var selectedText = window.getSelection().toString();
+    IBase.onActionModeComplete();
     if (selectedText != null && selectedText) {
-        ITheme.copySelectedText(selectedText);
+        IThemePresenter.copySelectedText(selectedText);
     }
 }
 
 function shareSelectedText() {
     var selectedText = window.getSelection().toString();
+    IBase.onActionModeComplete();
     if (selectedText != null && selectedText) {
-        ITheme.shareSelectedText(selectedText);
+        IThemePresenter.shareSelectedText(selectedText);
     }
 }
 
@@ -184,7 +187,7 @@ function selectAllPostText() {
         p = p.parentNode;
     }
     if (typeof p.classList === "undefined" || !p.classList.contains('post_body')) {
-        ITheme.toast("Для этого действия необходимо выбрать текст сообщения");
+        IThemePresenter.toast("Для этого действия необходимо выбрать текст сообщения");
         return;
     }
     var rng, sel;
@@ -357,7 +360,7 @@ function transformAnchor() {
             while (!t.classList.contains('post_container')) {
                 t = t.parentElement;
             }
-            ITheme.anchorDialog(t.dataset.postId, event.target.name);
+            IThemePresenter.anchorDialog(t.dataset.postId, event.target.name);
         });
     }
 }

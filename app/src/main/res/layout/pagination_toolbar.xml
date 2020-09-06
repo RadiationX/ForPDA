@@ -9,6 +9,7 @@
     android:visibility="gone"
     app:layout_collapseMode="pin"
     app:tabGravity="fill"
+    app:tabIndicatorHeight="0dp"
     app:tabIndicatorColor="@android:color/transparent"
     app:tabMode="fixed"
     app:tabPaddingEnd="0dp"

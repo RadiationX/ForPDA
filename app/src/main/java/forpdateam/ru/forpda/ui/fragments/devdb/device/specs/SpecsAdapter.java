@@ -9,24 +9,25 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.ApiUtils;
+import forpdateam.ru.forpda.model.data.remote.api.ApiUtils;
 
 /**
  * Created by radiationx on 08.08.17.
  */
 
 public class SpecsAdapter extends RecyclerView.Adapter<SpecsAdapter.ViewHolder> {
-    private ArrayList<Pair<String, ArrayList<Pair<String, String>>>> list = new ArrayList<>();
+    private ArrayList<Pair<String, List<Pair<String, String>>>> list = new ArrayList<>();
 
 
-    public void addAll(Collection<Pair<String, ArrayList<Pair<String, String>>>> results) {
+    public void addAll(Collection<Pair<String, List<Pair<String, String>>>> results) {
         addAll(results, true);
     }
 
-    public void addAll(Collection<Pair<String, ArrayList<Pair<String, String>>>> results, boolean clearList) {
+    public void addAll(Collection<Pair<String, List<Pair<String, String>>>> results, boolean clearList) {
         if (clearList)
             clear();
         list.addAll(results);
@@ -45,7 +46,7 @@ public class SpecsAdapter extends RecyclerView.Adapter<SpecsAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(SpecsAdapter.ViewHolder holder, int position) {
-        Pair<String, ArrayList<Pair<String, String>>> item = list.get(position);
+        Pair<String, List<Pair<String, String>>> item = list.get(position);
         holder.title.setText(item.first);
         StringBuilder builder = new StringBuilder();
 
@@ -71,7 +72,7 @@ public class SpecsAdapter extends RecyclerView.Adapter<SpecsAdapter.ViewHolder> 
         return list.size();
     }
 
-    public Pair<String, ArrayList<Pair<String, String>>> getItem(int position) {
+    public Pair<String, List<Pair<String, String>>> getItem(int position) {
         return list.get(position);
     }
 

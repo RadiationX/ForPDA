@@ -4,6 +4,10 @@
         <item name="android:paddingLeft">16dp</item>
     </style>
 
+    <style name="SplashTheme" parent="LightAppTheme.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+    </style>
+
     <!--
         LIGHT THEME
     -->
@@ -38,6 +42,10 @@
         <item name="icon_toolbar_inverse">@color/light_icon_toolbar_inverse</item>
         <item name="count_background">@drawable/count_background_light</item>
         <item name="cards_background">@color/light_card_background</item>
+        <item name="divider_line_bottom_nav">@color/light_divider_line_bottom_nav</item>
+        <item name="notify_dot_tab">@drawable/notify_dot_tab_light</item>
+        <item name="is_use_light_status_bar">true</item>
+        <item name="item_tab_close_color">@color/light_item_tab_close</item>
 
         <!-- Styles settings-->
         <item name="app_bar_overlay">@style/LightAppTheme.AppBarOverlay</item>
@@ -55,6 +63,7 @@
         <item name="actionModeCloseButtonStyle">@style/actionModeCloseButtonStyle</item>
         <item name="actionOverflowButtonStyle">@style/OverFlow</item>
         <item name="alertDialogTheme">@style/LightAppTheme.Dialog</item>
+        <item name="bottomSheetDialogTheme">@style/LightAppTheme.BottomSheetDialog</item>
         <item name="android:windowBackground">@color/light_background_base</item>
         <!-- <item name="android:windowTranslucentStatus">true</item>-->
     </style>
@@ -133,6 +142,10 @@
         <item name="icon_toolbar_inverse">@color/dark_icon_toolbar_inverse</item>
         <item name="count_background">@drawable/count_background_dark</item>
         <item name="cards_background">@color/dark_card_background</item>
+        <item name="divider_line_bottom_nav">@color/dark_divider_line_bottom_nav</item>
+        <item name="notify_dot_tab">@drawable/notify_dot_tab_dark</item>
+        <item name="is_use_light_status_bar">false</item>
+        <item name="item_tab_close_color">@color/dark_item_tab_close</item>
 
 
         <!-- Styles settings-->
@@ -151,6 +164,7 @@
         <item name="actionModeCloseButtonStyle">@style/actionModeCloseButtonStyle</item>
         <item name="actionOverflowButtonStyle">@style/OverFlow</item>
         <item name="alertDialogTheme">@style/DarkAppTheme.Dialog</item>
+        <item name="bottomSheetDialogTheme">@style/DarkAppTheme.BottomSheetDialog</item>
         <item name="android:windowBackground">@color/dark_background_base</item>
     </style>
 

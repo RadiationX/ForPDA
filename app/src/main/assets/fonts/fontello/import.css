@@ -1,284 +1,362 @@
-@font-face {
+@charset "windows-1251";@font-face {
     font-family: 'fontello';
-    src: url('fontello.eot?66808348');
-    src: url('fontello.eot?66808348#iefix') format('embedded-opentype'), url('fontello.woff?66808348') format('woff'), url('fontello.ttf?66808348') format('truetype'), url('fontello.svg?66808348#fontello') format('svg');
+    src: url('fontello.eot?44480705');
+    src: url('fontello.eot?44480705#iefix') format('embedded-opentype'), url('fontello.woff2?44480705') format('woff2'), url('fontello.woff?44480705') format('woff'), url('fontello.ttf?44480705') format('truetype'), url('fontello.svg?44480705#fontello') format('svg');
     font-weight: normal;
-    font-style: normal;
+    font-style: normal
 }
-[class^="icon-"]:before,
-[class*=" icon-"]:before {
+
+[class^="icon-"]:before,[class*=" icon-"]:before,.icon.as-text {
     font-family: "fontello";
     font-style: normal;
     font-weight: normal;
     speak: none;
-    line-height: 1em;
     display: inline-block;
     text-decoration: inherit;
     width: 1em;
+    margin-right: .2em;
     text-align: center;
-    /* opacity: .8; */
-    /* For safety - reset parent styles, that can break glyph codes*/
-    
     font-variant: normal;
     text-transform: none;
+    line-height: 1em;
+    margin-left: .2em
+}
+
+.icon.as-text {
+    text-decoration: none
+}
+
+.fix-icon-link {
+    display: inline-block
+}
+
+.text-rub {
+    font-family: "fontello", Arial, Tahoma, sans-serif;
+    font-size: .9em;
+    font-style: normal;
+    font-weight: normal;
+    display: inline;
+    width: 1em;
+    height: 1em;
+    text-align: center
+}
+
+.icon-glyph:before {
+    top: 0
+}
+
+.icon-4PDA-plain,.icon-4PDA-plain:before {
+    width: 3.7em;
+    text-align: left;
+    margin: 0;
+    transform: translateZ(0)
+}
+
+.icon-cloud:before {
+    content: '\21'
+}
+
+.icon-devstory:before {
+    content: '\22'
 }
 
 .icon-hash:before {
-    content: '\23';
+    content: '\23'
 }
-/* '#' */
+
+.icon-export-alt:before {
+    content: '\24'
+}
+
+.icon-share:before {
+    content: '\25'
+}
+
+.icon-wrench:before {
+    content: '\26'
+}
+
+.icon-trash-empty:before {
+    content: '\27'
+}
 
 .icon-karma-up:before {
-    content: '\2b';
+    content: '\28'
 }
-/* '+' */
+
+.icon-logout:before {
+    content: '\29'
+}
+
+.icon-plus:before {
+    content: '\2b'
+}
 
 .icon-hide-comment:before {
-    content: '\2d';
+    content: '\2d'
 }
-/* '-' */
 
 .icon-4PDA-plain:before {
-    content: '\34';
+    content: '\34'
 }
-/* '4' */
+
+.icon-right-dir-1:before {
+    content: '\3e'
+}
 
 .icon-android:before {
-    content: '\41';
+    content: '\41'
 }
-/* 'A' */
 
 .icon-comment-baloons:before {
-    content: '\43';
+    content: '\43'
 }
-/* 'C' */
 
 .icon-engines:before {
-    content: '\44';
+    content: '\44'
 }
-/* 'D' */
 
 .icon-pencil:before {
-    content: '\45';
+    content: '\45'
 }
-/* 'E' */
 
 .icon-FB:before {
-    content: '\46';
+    content: '\46'
 }
-/* 'F' */
 
 .icon-home:before {
-    content: '\48';
+    content: '\48'
 }
-/* 'H' */
 
 .icon-apple:before {
-    content: '\49';
+    content: '\49'
 }
-/* 'I' */
-
-.icon-rss:before {
-    content: '\52';
-}
-/* 'R' */
-
-.icon-search:before {
-    content: '\53';
-}
-/* 'S' */
-
-.icon-TWITTER:before {
-    content: '\54';
-}
-/* 'T' */
-
-.icon-VK:before {
-    content: '\56';
-}
-/* 'V' */
-
-.icon-windows:before {
-    content: '\57';
-}
-/* 'W' */
-
-.icon-close:hover:before {
-    content: '\58';
-}
-/* 'X' */
-
-.icon-YOUTUBE:before {
-    content: '\59';
-}
-/* 'Y' */
-
-.icon-up-open:before {
-    content: '\5e';
-}
-/* '^' */
-
-.icon-users:before {
-    content: '\75';
-}
-/* 'u' */
-
-.icon-link:before {
-    content: '\bb';
-}
-/* '»' */
-
-.icon-down-dir-1:before {
-    content: '\1d65';
-}
-/* 'ᵥ' */
-
-.icon-up-dir-1:before {
-    content: '\1dba';
-}
-/* 'ᶺ' */
-
-.icon-karma-down:before {
-    content: '\2013';
-}
-/* '–' */
-
-.icon-left-small:before {
-    content: '\2039';
-}
-/* '‹' */
-
-.icon-right-small:before {
-    content: '\203a';
-}
-/* '›' */
-
-.icon-4pda-logo:before {
-    content: '\2163';
-}
-/* 'Ⅳ' */
-
-.icon-up:before {
-    content: '\2191';
-}
-/* '↑' */
-
-.icon-down:before {
-    content: '\2193';
-}
-/* '↓' */
-
-.icon-back-up:before {
-    content: '\21b5';
-}
-/* '↵' */
-
-.icon-up-small:before {
-    content: '\21d1';
-}
-/* '⇑' */
-
-.icon-login:before {
-    content: '\23ce';
-}
-/* '⏎' */
 
 .icon-profile:before {
-    content: '\263a';
+    content: '\50'
 }
-/* '☺' */
 
-.icon-uncheck:before {
-    content: '\2705';
+.icon-rss:before {
+    content: '\52'
 }
-/* '✅' */
 
-.icon-check-single:before {
-    content: '\2713';
+.icon-search:before {
+    content: '\53'
 }
-/* '✓' */
 
-.icon-check:before {
-    content: '\2714';
+.icon-TWITTER:before {
+    content: '\54'
 }
-/* '✔' */
-
-.icon-glyph:before {
-    content: '\272a';
-}
-/* '✪' */
-
-.icon-cog:before {
-    content: '\2731';
-}
-/* '✱' */
-
-.icon-del:before {
-    content: '\274e';
-}
-/* '❎' */
-
-.icon-warning-empty:before {
-    content: '\2755';
-}
-/* '❕' */
-
-.icon-attention:before {
-    content: '\2757';
-}
-/* '❗' */
-
-.icon-chart-bar:before {
-    content: '\2758';
-}
-/* '❘' */
-
-.icon-chart-bar-1:before {
-    content: '\2759';
-}
-/* '❙' */
-
-.icon-glyph-1:before {
-    content: '\275a';
-}
-/* '❚' */
-
-.icon-quote-left:before {
-    content: '\275d';
-}
-/* '❝' */
-
-.icon-heart-1:before {
-    content: '\2764';
-}
-/* '❤' */
-
-.icon-heart:before {
-    content: '\2765';
-}
-/* '❥' */
-
-.icon-close:before {
-    content: '\2a09';
-}
-/* '⨉' */
-
-.icon-mlinks-home:before {
-    content: '\e081';
-}
-/* '' */
-
-.icon-edit:before {
-    content: '\e80b';
-}
-/* '' */
 
 .icon-users-1:before {
-    content: '👥';
+    content: '\55'
 }
-/* '\1f465' */
+
+.icon-VK:before {
+    content: '\56'
+}
+
+.icon-windows:before {
+    content: '\57'
+}
+
+.icon-close:hover:before {
+    content: '\58'
+}
+
+.icon-YOUTUBE:before {
+    content: '\59'
+}
+
+.icon-zoom-in:before {
+    content: '\5a'
+}
+
+.icon-up-open:before {
+    content: '\5e'
+}
+
+.icon-interview:before {
+    content: '\70'
+}
+
+.icon-users:before {
+    content: '\75'
+}
+
+.icon-link:before {
+    content: '\bb'
+}
+
+.icon-yandex-rect:before {
+    content: '\042f'
+}
+
+.icon-rouble:before {
+    content: '\0440'
+}
+
+.icon-down-dir-1:before {
+    content: '\1d65'
+}
+
+.icon-up-dir-1:before {
+    content: '\1dba'
+}
+
+.icon-karma-down:before {
+    content: '\2013'
+}
+
+.icon-left-small:before {
+    content: '\2039'
+}
+
+.icon-right-small:before {
+    content: '\203a'
+}
+
+.icon-4pda-logo:before {
+    content: '\2163'
+}
+
+.icon-up:before {
+    content: '\2191'
+}
+
+.icon-down:before {
+    content: '\2193'
+}
+
+.icon-back-up:before {
+    content: '\21b5'
+}
+
+.icon-up-small:before {
+    content: '\21d1'
+}
+
+.icon-login:before {
+    content: '\23ce'
+}
+
+.icon-uncheck:before {
+    content: '\2705'
+}
+
+.icon-check-single:before {
+    content: '\2713'
+}
+
+.icon-check:before {
+    content: '\2714'
+}
+
+.icon-plus-squared-1:before {
+    content: '\271a'
+}
+
+.icon-glyph:before {
+    content: '\272a'
+}
+
+.icon-cog:before {
+    content: '\2731'
+}
+
+.icon-del:before {
+    content: '\274e'
+}
+
+.icon-warning-empty:before {
+    content: '\2755'
+}
+
+.icon-attention:before {
+    content: '\2757'
+}
+
+.icon-chart-bar:before {
+    content: '\2758'
+}
+
+.icon-chart-bar-1:before {
+    content: '\2759'
+}
+
+.icon-glyph-1:before {
+    content: '\275a'
+}
+
+.icon-quote-left:before {
+    content: '\275d'
+}
+
+.icon-heart-1:before {
+    content: '\2764'
+}
+
+.icon-heart:before {
+    content: '\2765'
+}
+
+.icon-show-comment:before {
+    content: '\2795'
+}
+
+.icon-close:before {
+    content: '\2a09'
+}
+
+.icon-mlinks-home:before {
+    content: '\e081'
+}
+
+.icon-dev-copy-mod:before {
+    content: '\e800'
+}
+
+.icon-paste:before {
+    content: '\e801'
+}
+
+.icon-basket:before {
+    content: '\e802'
+}
+
+.icon-attach:before {
+    content: '\e803'
+}
+
+.icon-edit:before {
+    content: '\e80b'
+}
+
+.icon-INSTAGRAM:before {
+    content: '\f16d'
+}
+
+.icon-telegram:before {
+    content: '\f2c6'
+}
+
+.icon-plus-squared:before {
+    content: '\ff0b'
+}
+
+.icon-minus-squared:before {
+    content: '\ff0d'
+}
+
+.icon-trophy:before {
+    content: '\1f3c6'
+}
+
+.icon-trash:before {
+    content: '\1f5d1'
+}
 
 .icon-emo-happy:before {
-    content: '😌';
+    content: '\1f60c'
 }
-/* '\1f60c' */
+

@@ -21,8 +21,9 @@ import java.util.Map;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.ApiUtils;
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher;
+import forpdateam.ru.forpda.model.data.remote.api.ApiUtils;
+import forpdateam.ru.forpda.model.preferences.OtherPreferencesHolder;
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel;
 import forpdateam.ru.forpda.ui.views.messagepanel.SimpleInstruction;
 import forpdateam.ru.forpda.ui.views.messagepanel.advanced.adapters.ItemDragCallback;
@@ -40,6 +41,7 @@ public class CodesPanelItem extends BasePanelItem {
     private static List<ButtonData> codes = null;
     private static Map<String, String> colors = null;
     private List<String> openedCodes = new ArrayList<>();
+    private OtherPreferencesHolder otherPreferencesHolder = App.get().Di().getOtherPreferencesHolder();
     private PanelItemAdapter.OnItemClickListener clickListener = item -> {
         switch (item.getText()) {
             case "URL": {
@@ -92,16 +94,16 @@ public class CodesPanelItem extends BasePanelItem {
         PanelItemAdapter adapter = new PanelItemAdapter(getCodes(), null, PanelItemAdapter.TYPE_DRAWABLE);
         adapter.setOnItemClickListener(clickListener);
 
-        recyclerView.setColumnWidth(App.get().dpToPx(96));
+        recyclerView.setColumnWidth(App.get().dpToPx(96, recyclerView.getContext()));
         ItemTouchHelper touchHelper = new ItemTouchHelper(new ItemDragCallback(adapter));
         touchHelper.attachToRecyclerView(recyclerView);
         recyclerView.setAdapter(adapter);
 
-        if (App.get().getPreferences().getBoolean("message_panel.tooltip.user_sorting", true)) {
+        if (otherPreferencesHolder.getTooltipMessagePanelSorting()) {
             SimpleInstruction instruction = new SimpleInstruction(getContext());
             instruction.setText(App.get().getString(R.string.code_panel_instruction));
             instruction.setOnCloseClick((v) -> {
-                App.get().getPreferences().edit().putBoolean("message_panel.tooltip.user_sorting", false).apply();
+                otherPreferencesHolder.setTooltipMessagePanelSorting(false);
             });
             addView(instruction);
         }
@@ -289,13 +291,13 @@ public class CodesPanelItem extends BasePanelItem {
         if (headers != null) {
             for (Pair<String, String> header : headers) {
                 if (header.first == null && header.second != null) {
-                    start.append("=").append(ApiUtils.escapeQuotes(header.second));
+                    start.append("=").append(header.second);
                     break;
                 }
             }
             for (Pair<String, String> header : headers) {
                 if (header.first == null || header.second == null) continue;
-                start.append(" ").append(header.first).append("=").append(ApiUtils.escapeQuotes(header.second));
+                start.append(" ").append(header.first).append("=\"").append(header.second).append("\"");
             }
         }
         start.append("]");
@@ -342,11 +344,11 @@ public class CodesPanelItem extends BasePanelItem {
             listCodes.add(item.getText());
         }
         String sorted = TextUtils.join(",", listCodes);
-        App.get().getPreferences().edit().putString("message_panel.bb_codes.sorted", sorted).apply();
+        otherPreferencesHolder.setMessagePanelBbCodes(sorted);
         super.onDetachedFromWindow();
     }
 
-    public static List<ButtonData> getCodes() {
+    private List<ButtonData> getCodes() {
         if (codes != null) return codes;
         codes = new ArrayList<>();
         ArrayList<ButtonData> tempCodes = new ArrayList<>();
@@ -376,11 +378,11 @@ public class CodesPanelItem extends BasePanelItem {
         tempCodes.add(new ButtonData("CUR", R.drawable.ic_code_cur, App.get().getString(R.string.codes_name_curator)));
 
 
-        String sorted = App.get().getPreferences().getString("message_panel.bb_codes.sorted", null);
-        if (sorted != null) {
+        String sorted = otherPreferencesHolder.getMessagePanelBbCodes();
+        if (!sorted.isEmpty()) {
             String[] sortedArr = TextUtils.split(sorted, ",");
             if (sortedArr.length != tempCodes.size()) {
-                App.get().getPreferences().edit().remove("message_panel.bb_codes.sorted").apply();
+                otherPreferencesHolder.deleteMessagePanelBbCodes();
                 codes.addAll(tempCodes);
             } else {
                 for (String code : sortedArr) {

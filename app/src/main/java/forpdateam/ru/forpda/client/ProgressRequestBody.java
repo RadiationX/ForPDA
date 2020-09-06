@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import java.io.IOException;
 
-import forpdateam.ru.forpda.api.IWebClient;
+import forpdateam.ru.forpda.model.data.remote.IWebClient;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okio.Buffer;

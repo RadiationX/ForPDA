@@ -18,6 +18,7 @@
     <attr name="background_for_cards" extension="reference" format="color" />
     <attr name="background_for_lists" extension="reference" format="color" />
     <attr name="divider_line" extension="reference" format="color" />
+    <attr name="divider_line_bottom_nav" extension="reference" format="color" />
     <attr name="attachment_overlay_bg" extension="reference" format="color" />
     <attr name="attachment_description_bg" extension="reference" format="color" />
     <attr name="attachment_text" extension="reference" format="color" />
@@ -30,15 +31,19 @@
     <attr name="icon_toolbar_inverse" extension="reference" format="color" />
     <attr name="count_background" extension="reference" />
     <attr name="cards_background" extension="reference" format="color" />
+    <attr name="notify_dot_tab" extension="reference" />
+    <attr name="item_tab_close_color" extension="reference" format="color" />
 
     <attr name="app_bar_overlay" extension="reference" />
     <attr name="popup_overlay" extension="reference" />
     <attr name="bottom_sheet_dialog_theme" extension="reference" />
 
+    <attr name="is_use_light_status_bar" format="boolean" />
+
     <attr name="ProfileToolbarTextStyle" extension="reference" />
 
     <declare-styleable name="AspectRatio">
-        <attr name="aspectRatio" format="float"/>
+        <attr name="aspectRatio" format="float" />
     </declare-styleable>
 
 </resources>

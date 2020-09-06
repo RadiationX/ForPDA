@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.mentions.models.MentionItem;
+import forpdateam.ru.forpda.entity.remote.mentions.MentionItem;
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 
@@ -64,8 +64,8 @@ class MentionsAdapter extends BaseAdapter<MentionItem, MentionsAdapter.MentionHo
         @Override
         public void bind(MentionItem item, int position) {
             title.setText(item.getTitle());
-            title.setTypeface(item.getState() == MentionItem.STATE_UNREAD ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
-            title.setTextColor(item.getState() == MentionItem.STATE_UNREAD ? titleColorNew : titleColor);
+            title.setTypeface(item.getState() == MentionItem.Companion.getSTATE_UNREAD() ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+            title.setTextColor(item.getState() == MentionItem.Companion.getSTATE_UNREAD() ? titleColorNew : titleColor);
             lastNick.setText(item.getNick());
             date.setText(item.getDate());
             if (desc.getVisibility() == View.VISIBLE) {

@@ -23,7 +23,6 @@
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
         android:background="?attr/img_viewer_toolbar"
-        android:fitsSystemWindows="true"
         android:theme="@style/ImageViewTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
@@ -31,7 +30,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:animateLayoutChanges="true"
-            android:fitsSystemWindows="true"
             android:minHeight="?attr/actionBarSize"
             app:contentInsetEndWithActions="0dp"
             app:contentInsetStart="0dp"

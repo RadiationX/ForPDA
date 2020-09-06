@@ -18,9 +18,17 @@ import android.widget.TextView;
  */
 
 public class LinkMovementMethod extends ScrollingMovementMethod {
+    private final static Object FROM_BELOW = new NoCopySpan.Concrete();
+
     private static final int CLICK = 1;
     private static final int UP = 2;
     private static final int DOWN = 3;
+
+    private final ClickListener listener;
+
+    public LinkMovementMethod(ClickListener listener) {
+        this.listener = listener;
+    }
 
     @Override
     public boolean canSelectArbitrarily() {
@@ -186,8 +194,9 @@ public class LinkMovementMethod extends ScrollingMovementMethod {
             if (link.length != 0) {
                 if (action == MotionEvent.ACTION_UP) {
                     String url = ((URLSpan) link[0]).getURL();
-                    if (!IntentHandler.handle(url))
+                    if (!(listener != null && listener.onClick(url))) {
                         link[0].onClick(widget);
+                    }
                 } else {
                     Selection.setSelection(buffer,
                             buffer.getSpanStart(link[0]),
@@ -218,14 +227,8 @@ public class LinkMovementMethod extends ScrollingMovementMethod {
         }
     }
 
-    public static MovementMethod getInstance() {
-        if (sInstance == null)
-            sInstance = new LinkMovementMethod();
-
-        return sInstance;
+    public interface ClickListener {
+        boolean onClick(String url);
     }
-
-    private static LinkMovementMethod sInstance;
-    private static Object FROM_BELOW = new NoCopySpan.Concrete();
 }
 

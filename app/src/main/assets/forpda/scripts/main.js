@@ -296,11 +296,12 @@ function toggleButton(button, bodyClass, name) {
             //body.removeAttribute("hidden");
         }
         if (name === "poll") {
-            ITheme.setPollOpen("true");
+            IThemePresenter.setPollOpen("true");
         } else if (name === "hat") {
-            ITheme.setHatOpen("true");
+            IThemePresenter.setHatOpen("true");
         }
     } else {
+        parent.classList.add("once-opened");
         parent.classList.remove("open");
         parent.classList.add("close");
         if (body !== undefined) {
@@ -309,9 +310,9 @@ function toggleButton(button, bodyClass, name) {
             //body.setAttribute("hidden", "");
         }
         if (name === "poll") {
-            ITheme.setPollOpen("false");
+            IThemePresenter.setPollOpen("false");
         } else if (name === "hat") {
-            ITheme.setHatOpen("false");
+            IThemePresenter.setHatOpen("false");
         }
     }
 }
@@ -333,10 +334,10 @@ function fixImagesSizeWithDensity() {
             selector = "img";
             break;
         case "qms":
-            selector = "img.attach";
+            selector = "img.emoticon";
             break;
         default:
-            selector = "img.attach, img.linked-image";
+            selector = "img.attach, img.linked-image, img.emoticon";
             break;
     }
     var images = document.querySelectorAll(selector);
@@ -354,20 +355,55 @@ function fixImagesSizeWithDensity() {
         if (img.classList.contains("size_fixed")) {
             return;
         }
-        var width = Number(img.width);
-        var height = Number(img.height);
+        var srcWidth = Number(img.width);
+        var srcHeight = Number(img.height);
+        
+        if (srcWidth == 0 || srcWidth == 0) {
+            return;
+        }
 
-        width /= density;
-        height /= density;
-        //console.error("WH: " + width + " : " + height);
+        var width = srcWidth / density;
+        var height = srcHeight / density;
+        console.error("WH: " + width + " : " + height + "; "+img.src);
         if (width > 16 && height > 16) {
             //console.log(width + " : " + height);
-            img.setAttribute("width", "" + width + "px");
-            img.setAttribute("height", "" + height + "px");
-            img.style.width = "" + width + "px";
-            img.style.height = "" + height + "px";
-            img.classList.add("size_fixed");
+            setEmSize(img, width, height);
+        } else {
+            setEmSize(img, srcWidth, srcHeight);
         }
+        img.classList.add("size_fixed");
+        
         //console.error("WH_ATTR: " + img.getAttribute("width") + " : " + img.getAttribute("width")+" :__: "+img.width+" : "+img.height);
     }
+    
+    function setEmSize(img, width, height){
+        var wStr = "" + (width/16) + "em";
+        var hStr = "" + (height/16) + "em";
+        img.setAttribute("width", wStr);
+        img.setAttribute("height", hStr);
+        img.style.width = wStr;
+        img.style.height = hStr;
+    }
 }
+
+function escapeHtml(unsafe) {
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+ }
+
+ function changeStyleType(type) {
+    console.log("changeStyleType: "+type+", typeof="+(typeof type))
+    if(type !== "light" && type !== "dark"){
+        console.log("Unknown style type: "+type)
+        return
+    }
+    var styleLinks = document.querySelectorAll("link");
+    for (var i = 0; i < styleLinks.length; i++) {
+        var currentHref = styleLinks[i].href
+        styleLinks[i].href = currentHref.replace(/\/(light|dark)\/(light|dark)/, "/" + type + "/" + type)
+    }
+ }

@@ -12,13 +12,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.news.models.Comment;
-import forpdateam.ru.forpda.client.ClientHelper;
+import forpdateam.ru.forpda.entity.common.AuthData;
+import forpdateam.ru.forpda.entity.remote.news.Comment;
+import forpdateam.ru.forpda.model.AuthHolder;
 
 /**
  * Created by radiationx on 03.09.17.
@@ -29,6 +32,11 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
     private ColorFilter likedColorFilter;
     private ColorFilter dislikedColorFilter;
     private ClickListener clickListener;
+    private AuthHolder authHolder;
+
+    public ArticleCommentsAdapter(AuthHolder authHolder) {
+        this.authHolder = authHolder;
+    }
 
     public ClickListener getClickListener() {
         return clickListener;
@@ -38,14 +46,14 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
         this.clickListener = clickListener;
     }
 
-    public void addAll(Collection<Comment> results) {
-        addAll(results, true);
+    public void addAll(@NotNull List<? extends Comment> comments) {
+        addAll(comments, true);
     }
 
-    public void addAll(Collection<Comment> results, boolean clearList) {
+    public void addAll(@NotNull List<? extends Comment> comments, boolean clearList) {
         if (clearList)
             clear();
-        list.addAll(results);
+        list.addAll(comments);
         notifyDataSetChanged();
     }
 
@@ -71,6 +79,7 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
         Comment item = list.get(position);
         Comment.Karma karma = item.getKarma();
         holder.content.setText(item.getContent());
+        AuthData authData = authHolder.get();
         if (item.isDeleted()) {
             holder.itemView.setClickable(false);
             if (holder.likeImage.getVisibility() != View.GONE) {
@@ -86,7 +95,7 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
                 holder.date.setVisibility(View.GONE);
             }
         } else {
-            holder.itemView.setClickable(ClientHelper.getAuthState());
+            holder.itemView.setClickable(authData.isAuth());
             if (holder.likeImage.getVisibility() != View.VISIBLE) {
                 holder.likeImage.setVisibility(View.VISIBLE);
             }
@@ -131,7 +140,7 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
                 case Comment.Karma.NOT_LIKED: {
                     holder.likeImage.setImageDrawable(holder.heart_outline);
                     holder.likeImage.clearColorFilter();
-                    holder.likeImage.setClickable(ClientHelper.getAuthState() && ClientHelper.getUserId() != item.getUserId());
+                    holder.likeImage.setClickable(authData.isAuth() && authData.getUserId() != item.getUserId());
                     break;
                 }
             }

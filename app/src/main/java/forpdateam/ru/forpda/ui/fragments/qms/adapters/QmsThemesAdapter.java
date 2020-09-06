@@ -6,17 +6,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.qms.interfaces.IQmsTheme;
+import forpdateam.ru.forpda.entity.remote.qms.QmsTheme;
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 
 /**
  * Created by radiationx on 25.08.16.
  */
-public class QmsThemesAdapter extends BaseAdapter<IQmsTheme, QmsThemesAdapter.ThemeHolder> {
-    private BaseAdapter.OnItemClickListener<IQmsTheme> itemClickListener;
+public class QmsThemesAdapter extends BaseAdapter<QmsTheme, QmsThemesAdapter.ThemeHolder> {
+    private BaseAdapter.OnItemClickListener<QmsTheme> itemClickListener;
 
-    public void setOnItemClickListener(final BaseAdapter.OnItemClickListener<IQmsTheme> mItemClickListener) {
+    public void setOnItemClickListener(final BaseAdapter.OnItemClickListener<QmsTheme> mItemClickListener) {
         this.itemClickListener = mItemClickListener;
     }
 
@@ -31,7 +31,7 @@ public class QmsThemesAdapter extends BaseAdapter<IQmsTheme, QmsThemesAdapter.Th
         holder.bind(getItem(position), position);
     }
 
-    public class ThemeHolder extends BaseViewHolder<IQmsTheme> implements View.OnClickListener, View.OnLongClickListener {
+    public class ThemeHolder extends BaseViewHolder<QmsTheme> implements View.OnClickListener, View.OnLongClickListener {
         public TextView name;
         public TextView count;
 
@@ -44,7 +44,7 @@ public class QmsThemesAdapter extends BaseAdapter<IQmsTheme, QmsThemesAdapter.Th
         }
 
         @Override
-        public void bind(IQmsTheme item, int position) {
+        public void bind(QmsTheme item, int position) {
             name.setText(item.getName());
             name.setTypeface(item.getCountNew() > 0 ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
             if (item.getCountNew() == 0) {

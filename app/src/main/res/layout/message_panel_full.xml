@@ -63,6 +63,26 @@
             android:contentDescription="@string/codes_and_smiles"
             app:srcCompat="@drawable/ic_attachment" />
 
+        <TextView
+            android:id="@+id/attachment_counter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/button_attachments"
+            android:layout_alignEnd="@id/button_attachments"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/notify_dot_menu"
+            android:gravity="center"
+            android:maxLines="1"
+            android:minWidth="16dp"
+            android:minHeight="16dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:text="1"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            android:visibility="visible" />
+
         <android.support.v7.widget.AppCompatImageButton
             android:id="@+id/button_edt_poll"
             android:layout_width="@dimen/dp48"

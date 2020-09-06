@@ -79,9 +79,9 @@
                 <!-- $BeginBlock poll_vote_button -->
                 <button type="submit" class="btn vote aec" role="button" aria-label="${res_s_poll_vote_btn}"><span>${res_s_poll_vote_btn}</span></button>
                 <!-- $EndBlock poll_vote_button -->
-                <!-- $BeginBlock poll_show_results_button --><a class="btn show_results aec" onclick="ITheme.showPollResults()" role="button" aria-label="${res_s_poll_results_btn}"><span>${res_s_poll_results_btn}</span></a>
+                <!-- $BeginBlock poll_show_results_button --><a class="btn show_results aec" onclick="IThemePresenter.showPollResults()" role="button" aria-label="${res_s_poll_results_btn}"><span>${res_s_poll_results_btn}</span></a>
                 <!-- $EndBlock poll_show_results_button -->
-                <!-- $BeginBlock poll_show_poll_button --><a class="btn show_poll aec" onclick="ITheme.showPoll()" role="button" aria-label="${res_s_poll_show_btn}"><span>${res_s_poll_show_btn}</span></a>
+                <!-- $BeginBlock poll_show_poll_button --><a class="btn show_poll aec" onclick="IThemePresenter.showPoll()" role="button" aria-label="${res_s_poll_show_btn}"><span>${res_s_poll_show_btn}</span></a>
                 <!-- $EndBlock poll_show_poll_button -->
             </div>
             <!-- $EndBlock poll_buttons -->
@@ -101,33 +101,33 @@
                     <div tabindex="-1" class="accessibility_anchor"></div>
                     <div class="header_wrapper">
                         <div class="avatar ${none_avatar} aec">
-                            <b class="letter" onclick="IPostFunctions.showUserMenu('${post_id}')">${nick_letter}</b>
-                            <div class="img" style="background-image:url(${avatar});" onclick="IPostFunctions.showUserMenu('${post_id}')" role="button" aria-label="${res_s_avatar}"></div>
-                            <div class="reputation" onclick="IPostFunctions.showReputationMenu('${post_id}')" role="button" aria-label="${res_s_reputation} ${reputation}"><span>${reputation}</span></div>
+                            <b class="letter" onclick="IThemePresenter.showUserMenu('${post_id}')">${nick_letter}</b>
+                            <div class="img" style="background-image:url(${avatar});" onclick="IThemePresenter.showUserMenu('${post_id}')" role="button" aria-label="${res_s_avatar}"></div>
+                            <div class="reputation" onclick="IThemePresenter.showReputationMenu('${post_id}')" role="button" aria-label="${res_s_reputation} ${reputation}"><span>${reputation}</span></div>
                         </div>
                         <span class="inf nick">
-                    <span class="aec" onclick="IPostFunctions.showUserMenu('${post_id}')"><b>${nick}</b></span>
-                        <span class="group aec" style="color:${group_color};" onclick="ITheme.toast('${res_s_group}: ${group}')" role="button" aria-label="${res_s_group} ${group}"><span>${group}</span></span>
+                    <span class="aec" onclick="IThemePresenter.showUserMenu('${post_id}')"><b>${nick}</b></span>
+                        <span class="group aec" style="color:${group_color};" onclick="IThemePresenter.toast('${res_s_group}: ${group}')" role="button" aria-label="${res_s_group} ${group}"><span>${group}</span></span>
                         </span>
                         <span class="inf date"><span>${date}</span></span>
-                        <a class="btn inf menu aec" onclick="IPostFunctions.showPostMenu('${post_id}')" role="button" aria-label="${res_s_menu}"><span>${res_s_menu}</span></a>
+                        <a class="btn inf menu aec" onclick="IThemePresenter.showPostMenu('${post_id}')" role="button" aria-label="${res_s_menu}"><span>${res_s_menu}</span></a>
                     </div>
                 </div>
                 <div class="post_body emoticons">${body}</div>
                 <div class="post_footer">
                     <!-- $BeginBlock report_block -->
-                    <!--<a class="btn report" onclick="IPostFunctions.reportPost(${post_id})"><span>${res_s_report}</span></a>-->
+                    <!--<a class="btn report" onclick="IThemePresenter.reportPost(${post_id})"><span>${res_s_report}</span></a>-->
                     <!-- $EndBlock report_block -->
-                    <!-- $BeginBlock reply_block --><a class="btn reply aec" onclick="IPostFunctions.reply('${post_id}')" role="button" aria-label="${res_s_reply}"><span>${res_s_reply}</span></a>
+                    <!-- $BeginBlock reply_block --><a class="btn reply aec" onclick="IThemePresenter.reply('${post_id}')" role="button" aria-label="${res_s_reply}"><span>${res_s_reply}</span></a>
                     <!-- $EndBlock reply_block -->
-                    <!-- $BeginBlock vote_block --><a class="btn vote bad aec" onclick="IPostFunctions.votePost('${post_id}', false)" role="button" aria-label="${res_s_vote_bad}"><span>${res_s_vote_bad}</span></a>
-                    <a class="btn vote good aec" onclick="IPostFunctions.votePost('${post_id}', true)" role="button" aria-label="${res_s_vote_good}"><span>${res_s_vote_good}</span></a>
+                    <!-- $BeginBlock vote_block --><a class="btn vote bad aec" onclick="IThemePresenter.votePost('${post_id}', false)" role="button" aria-label="${res_s_vote_bad}"><span>${res_s_vote_bad}</span></a>
+                    <a class="btn vote good aec" onclick="IThemePresenter.votePost('${post_id}', true)" role="button" aria-label="${res_s_vote_good}"><span>${res_s_vote_good}</span></a>
                     <!-- $EndBlock vote_block -->
                     <!-- $BeginBlock delete_block -->
-                    <!--<a class="btn delete" onclick="IPostFunctions.deletePost('${post_id}')"><span>${res_s_delete}</span></a>-->
+                    <!--<a class="btn delete" onclick="IThemePresenter.deletePost('${post_id}')"><span>${res_s_delete}</span></a>-->
                     <!-- $EndBlock delete_block -->
                     <!-- $BeginBlock edit_block -->
-                    <!--<a class="btn edit" onclick="IPostFunctions.editPost('${post_id}')"><span>${res_s_edit}</span></a>-->
+                    <!--<a class="btn edit" onclick="IThemePresenter.editPost('${post_id}')"><span>${res_s_edit}</span></a>-->
                     <!-- $EndBlock edit_block -->
                 </div>
                 <!-- $BeginBlock hat_content_end -->
@@ -137,11 +137,11 @@
         <!-- $EndBlock post -->
     </div>
     <div class="navigation ${navigation_disable}">
-        <span class="button first ${first_disable} hidden" onclick="ITheme.firstPage()" role="button" aria-label="${res_s_first}"><i class="icon"></i></span>
-        <span class="button prev ${prev_disable}" onclick="ITheme.prevPage()" role="button" aria-label="${res_s_prev}"><i class="icon"></i></span>
-        <span class="button page" onclick="ITheme.selectPage()" role="button" aria-label="${res_s_select_desc}"><b>${res_s_select}</b><i class="icon"></i></span>
-        <span class="button next ${next_disable}" onclick="ITheme.nextPage()" role="button" aria-label="${res_s_next}"><i class="icon"></i></span>
-        <span class="button last ${last_disable} hidden" onclick="ITheme.lastPage()" role="button" aria-label="${res_s_last}"><i class="icon"></i></span>
+        <span class="button first ${first_disable}" onclick="IThemePresenter.firstPage()" role="button" aria-label="${res_s_first}"><i class="icon"></i></span>
+        <span class="button prev ${prev_disable}" onclick="IThemePresenter.prevPage()" role="button" aria-label="${res_s_prev}"><i class="icon"></i></span>
+        <span class="button page" onclick="IThemePresenter.selectPage()" role="button" aria-label="${res_s_select_desc}"><b>${res_s_select}</b><i class="icon"></i></span>
+        <span class="button next ${next_disable}" onclick="IThemePresenter.nextPage()" role="button" aria-label="${res_s_next}"><i class="icon"></i></span>
+        <span class="button last ${last_disable}" onclick="IThemePresenter.lastPage()" role="button" aria-label="${res_s_last}"><i class="icon"></i></span>
     </div>
     <div id="padding_for_message_panel" style="padding-bottom: 0em;"></div>
     <script type="text/javascript">

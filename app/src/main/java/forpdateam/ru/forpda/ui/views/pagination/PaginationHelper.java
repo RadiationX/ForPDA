@@ -17,11 +17,13 @@ import android.view.WindowManager;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.others.pagination.Pagination;
+import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination;
+import forpdateam.ru.forpda.ui.DimensionHelper;
+import forpdateam.ru.forpda.ui.DimensionsProvider;
+import io.reactivex.disposables.CompositeDisposable;
 
 /**
  * Created by radiationx on 03.03.17.
@@ -36,13 +38,10 @@ public class PaginationHelper {
     private final static ColorFilter colorFilter = new PorterDuffColorFilter(Color.argb(80, 255, 255, 255), PorterDuff.Mode.DST_IN);
     private Context context;
     private TabLayout tabLayoutInToolbar;
-    private Observer statusBarSizeObserver = (observable1, o) -> {
-        if (tabLayoutInToolbar != null) {
-            CollapsingToolbarLayout.LayoutParams params = (CollapsingToolbarLayout.LayoutParams) tabLayoutInToolbar.getLayoutParams();
-            params.topMargin = App.getToolBarHeight(tabLayoutInToolbar.getContext()) + App.getStatusBarHeight();
-            tabLayoutInToolbar.setLayoutParams(params);
-        }
-    };
+
+    private DimensionsProvider dimensionsProvider = App.get().Di().getDimensionsProvider();
+    private CompositeDisposable disposables = new CompositeDisposable();
+
     private int currentPage = 0;
 
     private ArrayList<TabLayout> tabLayouts = new ArrayList<>();
@@ -88,6 +87,14 @@ public class PaginationHelper {
 
     }
 
+    private void updateDimens(DimensionHelper.Dimensions dimensions) {
+        if (tabLayoutInToolbar != null) {
+            CollapsingToolbarLayout.LayoutParams params = (CollapsingToolbarLayout.LayoutParams) tabLayoutInToolbar.getLayoutParams();
+            params.topMargin = App.getToolBarHeight(tabLayoutInToolbar.getContext()) + dimensions.getStatusBar();
+            tabLayoutInToolbar.setLayoutParams(params);
+        }
+    }
+
     public void setPagination(Pagination pagination) {
         this.pagination = pagination;
     }
@@ -97,7 +104,20 @@ public class PaginationHelper {
         target.addView(tabLayout, target.indexOfChild(target.findViewById(R.id.toolbar)));
         tabLayoutInToolbar = tabLayout;
         if (enablePadding) {
-            App.get().addStatusBarSizeObserver(statusBarSizeObserver);
+            disposables.add(
+                    dimensionsProvider
+                            .observeDimensions()
+                            .subscribe(dimensions -> {
+                                if (tabLayoutInToolbar != null) {
+                                    tabLayoutInToolbar.post(() -> {
+                                        if (tabLayoutInToolbar != null) {
+                                            updateDimens(dimensions);
+                                        }
+                                    });
+                                }
+                                updateDimens(dimensions);
+                            })
+            );
         }
 
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) target.getLayoutParams();
@@ -213,8 +233,6 @@ public class PaginationHelper {
     }
 
     public void selectPageDialog() {
-        if (context == null)
-            context = App.getActivity();
         final int[] pages = new int[pagination.getAll()];
 
         for (int i = 0; i < pagination.getAll(); i++)
@@ -251,7 +269,7 @@ public class PaginationHelper {
     }
 
     public void destroy() {
-        App.get().removeStatusBarSizeObserver(statusBarSizeObserver);
+        disposables.dispose();
     }
 
     public interface PaginationListener {

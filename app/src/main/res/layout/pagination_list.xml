@@ -11,6 +11,7 @@
     android:elevation="1dp"
     android:visibility="gone"
     app:tabGravity="fill"
+    app:tabIndicatorHeight="0dp"
     app:tabIndicatorColor="@android:color/transparent"
     app:tabMode="fixed"
     app:tabPaddingEnd="0dp"

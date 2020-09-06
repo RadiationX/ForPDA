@@ -4,10 +4,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.profile.models.ProfileModel;
-import forpdateam.ru.forpda.apirx.apiclasses.ProfileRx;
-import forpdateam.ru.forpda.common.IntentHandler;
+import forpdateam.ru.forpda.entity.remote.profile.ProfileModel;
+import forpdateam.ru.forpda.model.repository.temp.TempHelper;
+import forpdateam.ru.forpda.presentation.ISystemLinkHandler;
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 
@@ -16,9 +17,16 @@ import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
  */
 
 class StatsAdapter extends BaseAdapter<ProfileModel.Stat, StatsAdapter.StatHolder> {
+
+    private StatHolder.Listener listener;
+
+    public StatsAdapter(StatHolder.Listener listener) {
+        this.listener = listener;
+    }
+
     @Override
     public StatsAdapter.StatHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new StatHolder(inflateLayout(parent, R.layout.profile_sub_item_stat));
+        return new StatHolder(inflateLayout(parent, R.layout.profile_sub_item_stat), listener);
     }
 
     @Override
@@ -26,21 +34,27 @@ class StatsAdapter extends BaseAdapter<ProfileModel.Stat, StatsAdapter.StatHolde
         holder.bind(getItem(position));
     }
 
-    class StatHolder extends BaseViewHolder<ProfileModel.Stat> {
+    static class StatHolder extends BaseViewHolder<ProfileModel.Stat> {
         private TextView title;
         private TextView value;
+        private ProfileModel.Stat currentItem;
 
-        StatHolder(View itemView) {
+        StatHolder(View itemView, Listener listener) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.item_title);
             value = (TextView) itemView.findViewById(R.id.item_value);
-            itemView.setOnClickListener(v -> IntentHandler.handle(getItem(getLayoutPosition()).getUrl()));
+            itemView.setOnClickListener(v -> listener.onClick(currentItem));
         }
 
         @Override
         public void bind(ProfileModel.Stat item) {
-            title.setText(ProfileRx.getTypeString(item.getType()));
+            currentItem = item;
+            title.setText(TempHelper.INSTANCE.getTypeString(item.getType()));
             value.setText(item.getValue());
+        }
+
+        interface Listener {
+            void onClick(ProfileModel.Stat item);
         }
     }
 }

@@ -29,7 +29,7 @@ import forpdateam.ru.forpda.common.Html;
 public class CodeEditor extends AppCompatEditText {
     private static class ForumCodes {
         private static final Pattern ELEMENT = Pattern.compile("(\\[(?:\\/)?((?:attachment|background|nomergetime|mergetime|snapback|numlist|spoiler|offtop|center|color|right|quote|code|font|hide|left|list|size|img|sub|sup|cur|url|b|i|u|s|\\*)))=?\\s?([^\\]\\[]+?)?(\\])", Pattern.CASE_INSENSITIVE);
-        private static final Pattern ATTRIBUTE = Pattern.compile("(name|date|post)?=?([\\s\\S]+?)\\s?(?=(?:name|date|post)=|$)", Pattern.CASE_INSENSITIVE);
+        private static final Pattern ATTRIBUTE = Pattern.compile("(name|date|post)?=?([\\s\\S]+?)\\s?(?=(?:name|date|post)=|\\z)", Pattern.CASE_INSENSITIVE);
     }
 
     private final Handler updateHandler = new Handler();

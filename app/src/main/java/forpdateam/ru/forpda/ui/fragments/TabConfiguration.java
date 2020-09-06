@@ -7,7 +7,6 @@ package forpdateam.ru.forpda.ui.fragments;
 public class TabConfiguration {
     private boolean isAlone = false;
     private boolean isMenu = false;
-    private boolean useCache = false;
     private boolean fitSystemWindow = false;
     private String defaultTitle = "";
 
@@ -25,14 +24,6 @@ public class TabConfiguration {
 
     public void setMenu(boolean menu) {
         isMenu = menu;
-    }
-
-    public boolean isUseCache() {
-        return useCache;
-    }
-
-    public void setUseCache(boolean useCache) {
-        this.useCache = useCache;
     }
 
     public boolean isFitSystemWindow() {
@@ -53,6 +44,6 @@ public class TabConfiguration {
 
     @Override
     public String toString() {
-        return "TabConfiguration{" + isAlone() + ", " + isMenu() + ", " + isUseCache() + ", " + getDefaultTitle() + "}";
+        return "TabConfiguration{" + isAlone() + ", " + isMenu() + ", " + getDefaultTitle() + "}";
     }
 }

@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.ui.fragments.favorites;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -7,11 +8,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.favorites.interfaces.IFavItem;
-import forpdateam.ru.forpda.api.favorites.models.FavItem;
 import forpdateam.ru.forpda.common.Preferences;
+import forpdateam.ru.forpda.entity.remote.favorites.FavItem;
 import forpdateam.ru.forpda.ui.views.adapters.BaseSectionedAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseSectionedViewHolder;
 
@@ -21,27 +28,77 @@ import forpdateam.ru.forpda.ui.views.adapters.BaseSectionedViewHolder;
 
 public class FavoritesAdapter extends BaseSectionedAdapter<FavItem, BaseSectionedViewHolder> {
     private boolean showDot = false;
+    private boolean unreadTop = false;
     private int titleColorNew, titleColor;
-    private BaseSectionedAdapter.OnItemClickListener<IFavItem> itemClickListener;
+    private String titleUnreadPinned, titleUnread, titlePinned, titleTopics;
+    private BaseSectionedAdapter.OnItemClickListener<FavItem> itemClickListener;
+    @Nullable
+    private List<FavItem> currentItems = null;
+
+    public void bindItems(@NotNull List<FavItem> newItems) {
+        currentItems = newItems;
+        ArrayList<FavItem> pinnedUnread = new ArrayList<>();
+        ArrayList<FavItem> itemsUnread = new ArrayList<>();
+        ArrayList<FavItem> pinned = new ArrayList<>();
+        ArrayList<FavItem> otherItems = new ArrayList<>();
+        for (FavItem item : newItems) {
+            if (item.isPin()) {
+                if (unreadTop && item.isNew()) {
+                    pinnedUnread.add(item);
+                } else {
+                    pinned.add(item);
+                }
+            } else {
+                if (unreadTop && item.isNew()) {
+                    itemsUnread.add(item);
+                } else {
+                    otherItems.add(item);
+                }
+            }
+        }
+
+        clear();
+        if (!pinnedUnread.isEmpty()) {
+            addSection(titleUnreadPinned, pinnedUnread);
+        }
+        if (!itemsUnread.isEmpty()) {
+            addSection(titleUnread, itemsUnread);
+        }
+        if (!pinned.isEmpty()) {
+            addSection(titlePinned, pinned);
+        }
+        addSection(titleTopics, otherItems);
+        notifyDataSetChanged();
+    }
 
     public void setShowDot(boolean showDot) {
         this.showDot = showDot;
+        if (currentItems != null) {
+            bindItems(currentItems);
+        }
     }
 
-    public boolean isShowDot() {
-        return showDot;
+    public void setUnreadTop(boolean unreadTop){
+        this.unreadTop = unreadTop;
+        if (currentItems != null) {
+            bindItems(currentItems);
+        }
     }
 
-    public void setOnItemClickListener(BaseSectionedAdapter.OnItemClickListener<IFavItem> mItemClickListener) {
+    public void setOnItemClickListener(BaseSectionedAdapter.OnItemClickListener<FavItem> mItemClickListener) {
         this.itemClickListener = mItemClickListener;
     }
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        showDot = Preferences.Lists.Topic.isShowDot(recyclerView.getContext());
-        titleColor = App.getColorFromAttr(recyclerView.getContext(), R.attr.second_text_color);
-        titleColorNew = App.getColorFromAttr(recyclerView.getContext(), R.attr.default_text_color);
+        Context context = recyclerView.getContext();
+        titleColor = App.getColorFromAttr(context, R.attr.second_text_color);
+        titleColorNew = App.getColorFromAttr(context, R.attr.default_text_color);
+        titleUnreadPinned = context.getString(R.string.fav_unreaded_pinned);
+        titleUnread = context.getString(R.string.fav_unreaded);
+        titlePinned = context.getString(R.string.fav_pinned);
+        titleTopics = context.getString(R.string.fav_themes);
     }
 
     @Override

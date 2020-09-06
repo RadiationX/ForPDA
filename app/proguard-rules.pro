@@ -1,17 +1,65 @@
-# Add project specific ProGuard rules here.
-# By default, the flags in this file are appended to flags specified
-# in /Users/radiationx/Library/Android/sdk/tools/proguard/proguard-android.txt
-# You can edit the include path and order by changing the proguardFiles
-# directive in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+-optimizationpasses 5
+-dontskipnonpubliclibraryclassmembers
+-allowaccessmodification
+-dontpreverify
+-repackageclasses ''
+-adaptclassstrings
 
-# Add any project specific keep options here:
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+-dontnote **
+-dontwarn forpdateam.ru.forpda.**
+
+-keep class ru.forpdateam.forpda.** { *; }
+-keep class forpdateam.ru.forpda.** { *; }
+
+-keepclassmembers class ru.forpdateam.forpda.** { *; }
+-keepclassmembers class forpdateam.ru.forpda.** { *; }
+
+-keepclassmembers enum forpdateam.ru.forpda.** { *; }
+-keepclassmembers enum ru.forpdateam.forpda.** { *; }
+
+-keepattributes SourceFile,LineNumberTable
+
+# okio
+-keep class sun.misc.Unsafe { *; }
+-dontwarn java.nio.file.*
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+-dontwarn okio.**
+-dontnote okio.**
+
+
+# OkHttp
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
+
+-keep public class android.support.customtabs.ICustomTabsService
+
+# -keep сlass com.lapism.searchview.** { *; }
+
+-keep class io.realm.annotations.RealmModule
+-keep @io.realm.annotations.RealmModule class *
+-keep class io.realm.internal.Keep
+-keep @io.realm.internal.Keep class *
+-dontwarn javax.**
+-dontwarn io.realm.**
+
+-keep public class * extends io.realm.RealmObject { *; }
+-keepnames public class * extends io.realm.RealmObject
+
+-keep class **.R
+-keep class **.R$* {
+    <fields>;
+}
+
+-keep public class com.unnamed.b.atv.model.TreeNode
+-keep public class * extends com.unnamed.b.atv.model.TreeNode { *; }
+-keep public class com.unnamed.b.atv.model.TreeNode$BaseNodeViewHolder
+-keep public class * extends com.unnamed.b.atv.model.TreeNode$BaseNodeViewHolder { *; }
+
+# В search fragment юзается с рефлексией, поэтому нужно исключить
+-keep public class android.support.v4.widget.SwipeRefreshLayout { *; }
+
+

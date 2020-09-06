@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory
-        android:layout="@layout/preference_category_custom"
+        android:layout="@layout/preference_category_custom_top"
         android:title="@string/pref_title_notifications">
         <Preference
             android:key="open_notifications"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_notifications"/>
+            android:title="@string/pref_title_notifications"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
     <PreferenceCategory
         android:layout="@layout/preference_category_custom"
@@ -18,14 +20,23 @@
             android:key="Locale.Helper.Selected.Language"
             android:layout="@layout/preference_custom"
             android:summary="%s"
-            android:title="@string/pref_lang_title"/>
+            android:title="@string/pref_lang_title"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="clear_menu_sequence"
+            android:layout="@layout/preference_custom"
+            android:summary="@string/pref_summary_clear_menu_sequence"
+            android:title="@string/pref_title_clear_menu_sequence"
+            app:iconSpaceReserved="false" />
 
         <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:key="main.is_system_downloader"
             android:layout="@layout/preference_custom"
             android:summary="@string/pref_summary_system_downloader"
-            android:title="@string/pref_title_system_downloader"/>
+            android:title="@string/pref_title_system_downloader"
+            app:iconSpaceReserved="false" />
 
     </PreferenceCategory>
 
@@ -36,65 +47,47 @@
             android:defaultValue="false"
             android:key="main.theme.is_dark"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_dark_theme"/>
+            android:title="@string/pref_title_dark_theme"
+            app:iconSpaceReserved="false" />
+
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
+            android:defaultValue="false"
+            android:key="main.show_bottom_arrow"
+            android:layout="@layout/preference_custom"
+            android:title="@string/pref_title_show_bottom_arrow"
+            android:summary="@string/pref_summary_show_bottom_arrow"
+            app:iconSpaceReserved="false" />
 
         <Preference
-            android:key="main.webview.font_size"
+            android:key="main.webview.font_size_v2"
             android:layout="@layout/preference_custom"
             android:summary="@string/pref_summary_text_size"
-            android:title="@string/pref_title_text_size"/>
+            android:title="@string/pref_title_text_size"
+            app:iconSpaceReserved="false" />
 
         <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:key="message_panel.is_monospace"
             android:layout="@layout/preference_custom"
             android:summary="@string/pref_summary_monospace"
-            android:title="@string/pref_title_monospace"/>
+            android:title="@string/pref_title_monospace"
+            app:iconSpaceReserved="false" />
 
         <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:key="message_panel.is_default_hidden"
             android:layout="@layout/preference_custom"
             android:summary="@string/pref_summary_panel_hidden"
-            android:title="@string/pref_title_panel_hidden"/>
+            android:title="@string/pref_title_panel_hidden"
+            app:iconSpaceReserved="false" />
 
         <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="false"
             android:key="main.scroll_button.enable"
             android:layout="@layout/preference_custom"
             android:summary="@string/pref_summary_scroll_button"
-            android:title="@string/pref_title_scroll_button"/>
-
-
-        <forpdateam.ru.forpda.ui.views.SwitchPreference
-            android:defaultValue="false"
-            android:key="main.drawers.tab_stack_bottom"
-            android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_tab_bottom"/>
-
-        <forpdateam.ru.forpda.ui.views.SwitchPreference
-            android:defaultValue="true"
-            android:key="main.show_notify_dot"
-            android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_notify_dot"/>
-        <forpdateam.ru.forpda.ui.views.SwitchPreference
-            android:defaultValue="true"
-            android:dependency="main.show_notify_dot"
-            android:key="main.notify_dot_fav"
-            android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_fav_dot"/>
-        <forpdateam.ru.forpda.ui.views.SwitchPreference
-            android:defaultValue="true"
-            android:dependency="main.show_notify_dot"
-            android:key="main.notify_dot_qms"
-            android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_qms_dot"/>
-        <forpdateam.ru.forpda.ui.views.SwitchPreference
-            android:defaultValue="true"
-            android:dependency="main.show_notify_dot"
-            android:key="main.notify_dot_mentions"
-            android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_mention_dot"/>
+            android:title="@string/pref_title_scroll_button"
+            app:iconSpaceReserved="false" />
 
     </PreferenceCategory>
 
@@ -102,24 +95,36 @@
     <PreferenceCategory
         android:layout="@layout/preference_category_custom"
         android:title="@string/pref_title_themes">
+
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
+            android:defaultValue="false"
+            android:key="theme.hat_opened"
+            android:layout="@layout/preference_custom"
+            android:summary="@string/pref_summary_hat_opened"
+            android:title="@string/pref_title_hat_opened"
+            app:iconSpaceReserved="false" />
+
         <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:key="theme.show_avatars"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_show_avatars"/>
+            android:title="@string/pref_title_show_avatars"
+            app:iconSpaceReserved="false" />
 
         <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:key="theme.circle_avatars"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_circle_avatars"/>
+            android:title="@string/pref_title_circle_avatars"
+            app:iconSpaceReserved="false" />
 
         <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:key="theme.anchor_history"
             android:layout="@layout/preference_custom"
             android:summary="@string/pref_summary_history_snapback"
-            android:title="@string/pref_title_history_snapback"/>
+            android:title="@string/pref_title_history_snapback"
+            app:iconSpaceReserved="false" />
 
     </PreferenceCategory>
 
@@ -130,20 +135,23 @@
             android:defaultValue="false"
             android:key="lists.topic.unread_top"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_unread_top"/>
+            android:title="@string/pref_title_unread_top"
+            app:iconSpaceReserved="false" />
 
         <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="false"
             android:key="lists.topic.show_dot"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_show_dot"/>
+            android:title="@string/pref_title_show_dot"
+            app:iconSpaceReserved="false" />
 
         <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="false"
             android:key="lists.favorites.load_all"
             android:layout="@layout/preference_custom"
             android:summary="@string/pref_summary_load_all"
-            android:title="@string/pref_title_load_all"/>
+            android:title="@string/pref_title_load_all"
+            app:iconSpaceReserved="false" />
 
     </PreferenceCategory>
 
@@ -153,7 +161,8 @@
         <Preference
             android:key="auth.action.logout"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_logout"/>
+            android:title="@string/pref_title_logout"
+            app:iconSpaceReserved="false" />
 
     </PreferenceCategory>
 
@@ -164,22 +173,14 @@
         <Preference
             android:key="about.check_update"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_check_updates"/>
+            android:title="@string/pref_title_check_updates"
+            app:iconSpaceReserved="false" />
 
         <Preference
             android:key="about.application"
             android:layout="@layout/preference_custom"
-            android:title="ForPDA"/>
-
-        <Preference
-            android:key="about.app_faq"
-            android:layout="@layout/preference_custom"
-            android:title="FAQ по программе"/>
-
-        <Preference
-            android:key="about.app_topic"
-            android:layout="@layout/preference_custom"
-            android:title="Обсуждение приложения"/>
+            android:title="ForPDA"
+            app:iconSpaceReserved="false" />
 
     </PreferenceCategory>
 

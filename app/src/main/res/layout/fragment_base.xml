@@ -5,21 +5,23 @@
     android:id="@+id/fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/background_base"
+    android:background="?colorPrimary"
     android:fitsSystemWindows="true">
 
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/coordinator_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:background="?attr/background_for_lists">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
-            android:theme="?attr/app_bar_overlay">
+            android:theme="?attr/app_bar_overlay"
+            app:elevation="0dp">
 
             <android.support.design.widget.CollapsingToolbarLayout
                 android:id="@+id/toolbar_layout"
@@ -54,9 +56,6 @@
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    app:contentInsetEndWithActions="0dp"
-                    app:contentInsetStart="0dp"
-                    app:contentInsetStartWithNavigation="0dp"
                     app:layout_collapseMode="pin"
                     app:popupTheme="?attr/popup_overlay">
 
@@ -128,22 +127,6 @@
                     </LinearLayout>
                 </android.support.v7.widget.Toolbar>
 
-                <FrameLayout
-                    android:id="@+id/notify_dot"
-                    android:layout_width="?attr/actionBarSize"
-                    android:layout_height="?attr/actionBarSize"
-                    android:visibility="gone"
-                    app:layout_collapseMode="pin">
-
-                    <View
-                        android:layout_width="8dp"
-                        android:layout_height="8dp"
-                        android:layout_gravity="center_vertical|end"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginTop="-8dp"
-                        android:background="@drawable/notify_dot"/>
-                </FrameLayout>
-
             </android.support.design.widget.CollapsingToolbarLayout>
 
         </android.support.design.widget.AppBarLayout>
@@ -170,38 +153,10 @@
 
         </FrameLayout>
 
-        <LinearLayout
-            android:id="@+id/no_network"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
-            android:paddingBottom="@dimen/dp4"
-            android:paddingEnd="@dimen/dp8"
-            android:paddingStart="@dimen/dp8"
-            android:paddingTop="@dimen/dp4"
-            android:visibility="gone"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-            <android.support.v7.widget.AppCompatImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="8dp"
-                app:srcCompat="@drawable/ic_cloud_off_white_24dp"/>
-
-            <android.support.v7.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
-                android:gravity="center_vertical"
-                android:text="@string/no_network"
-                android:textColor="#ffffff"
-                android:textStyle="bold"/>
-        </LinearLayout>
-
         <View
             android:id="@+id/toolbar_shadow_prelp"
             android:layout_width="match_parent"
-            android:layout_height="4dp"
+            android:layout_height="2dp"
             android:background="@drawable/toolbar_shadow_prelp"
             android:visibility="gone"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"/>

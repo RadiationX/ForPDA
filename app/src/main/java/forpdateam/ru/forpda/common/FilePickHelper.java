@@ -8,7 +8,7 @@ import android.provider.OpenableColumns;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
-import org.acra.ACRA;
+import com.yandex.metrica.YandexMetrica;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import forpdateam.ru.forpda.api.RequestFile;
+import forpdateam.ru.forpda.model.data.remote.api.RequestFile;
 
 /**
  * Created by radiationx on 13.01.17.
@@ -77,7 +77,8 @@ public class FilePickHelper {
             }
             requestFile = new RequestFile(name, mimeType, inputStream);
         } catch (Exception e) {
-            ACRA.getErrorReporter().handleException(e);
+            YandexMetrica.reportError(e.getMessage(), e);
+            //ACRA.getErrorReporter().handleException(e);
         }
         return requestFile;
     }

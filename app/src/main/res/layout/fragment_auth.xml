@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true"
-            android:fitsSystemWindows="true">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -22,8 +22,7 @@
             android:paddingStart="@dimen/dp32"
             android:visibility="gone">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/auth_avatar"
                 android:layout_width="128dp"
                 android:layout_height="128dp"
@@ -31,7 +30,7 @@
                 android:layout_marginTop="2dp"
                 android:scaleType="centerCrop"
                 app:civ_border_color="#00000000"
-                app:civ_border_width="0dp"/>
+                app:civ_border_width="0dp" />
 
             <com.github.rahatarmanahmed.cpv.CircularProgressView
                 android:id="@+id/auth_progress"
@@ -41,7 +40,7 @@
                 android:scaleType="centerCrop"
                 app:cpv_animAutostart="true"
                 app:cpv_color="#000000"
-                app:cpv_indeterminate="true"/>
+                app:cpv_indeterminate="true" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/auth_complete_text"
@@ -52,7 +51,7 @@
                 android:layout_marginTop="@dimen/dp32"
                 android:textSize="26sp"
                 android:visibility="gone"
-                tools:text="@string/test_auth_nick"/>
+                tools:text="@string/test_auth_nick" />
         </RelativeLayout>
 
 
@@ -80,7 +79,7 @@
                     android:hint="@string/auth_login"
                     android:inputType="textPersonName"
                     android:maxLines="1"
-                    android:scrollHorizontally="true"/>
+                    android:scrollHorizontally="true" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -98,7 +97,7 @@
                     android:hint="@string/auth_password"
                     android:inputType="textPassword"
                     android:maxLines="1"
-                    android:scrollHorizontally="true"/>
+                    android:scrollHorizontally="true" />
             </android.support.design.widget.TextInputLayout>
 
             <RelativeLayout
@@ -111,7 +110,7 @@
                     android:id="@+id/captcha_progress"
                     android:layout_width="@dimen/dp48"
                     android:layout_height="@dimen/dp48"
-                    android:layout_centerInParent="true"/>
+                    android:layout_centerInParent="true" />
 
                 <android.support.v7.widget.AppCompatImageView
                     android:id="@+id/captchaImage"
@@ -120,7 +119,7 @@
                     android:layout_centerHorizontal="true"
                     android:adjustViewBounds="true"
                     android:padding="@dimen/dp8"
-                    android:scaleType="fitCenter"/>
+                    android:scaleType="fitCenter" />
 
             </RelativeLayout>
 
@@ -138,7 +137,7 @@
                     android:inputType="number"
                     android:maxLength="4"
                     android:maxLines="1"
-                    android:scrollHorizontally="true"/>
+                    android:scrollHorizontally="true" />
             </android.support.design.widget.TextInputLayout>
 
 
@@ -153,7 +152,7 @@
                     android:layout_height="48dp"
                     android:text="@string/auth_hidden"
                     android:textAllCaps="true"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
                 <android.support.v7.widget.AppCompatButton
                     android:id="@+id/auth_send"
@@ -162,7 +161,7 @@
                     android:layout_height="@dimen/dp48"
                     android:layout_gravity="end"
                     android:enabled="false"
-                    android:text="@string/auth_btn_login"/>
+                    android:text="@string/auth_btn_login" />
 
                 <ProgressBar
                     android:id="@+id/login_progress"
@@ -170,7 +169,7 @@
                     android:layout_height="@dimen/dp36"
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="@dimen/dp16"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
             </FrameLayout>
 
             <android.support.v7.widget.AppCompatButton
@@ -180,7 +179,7 @@
                 android:layout_height="@dimen/dp48"
                 android:layout_gravity="end"
                 android:layout_marginTop="8dp"
-                android:text="@string/auth_skip"/>
+                android:text="@string/auth_skip" />
         </LinearLayout>
     </RelativeLayout>
 </ScrollView>

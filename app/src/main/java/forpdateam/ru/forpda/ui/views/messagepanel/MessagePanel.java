@@ -12,19 +12,20 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observer;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.theme.editpost.models.AttachmentItem;
-import forpdateam.ru.forpda.common.Preferences;
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher;
+import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem;
+import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder;
 import forpdateam.ru.forpda.ui.views.CodeEditor;
 import forpdateam.ru.forpda.ui.views.messagepanel.advanced.AdvancedPopup;
 import forpdateam.ru.forpda.ui.views.messagepanel.attachments.AttachmentsPopup;
+import io.reactivex.disposables.CompositeDisposable;
 
 /**
  * Created by radiationx on 07.01.17.
@@ -33,6 +34,7 @@ import forpdateam.ru.forpda.ui.views.messagepanel.attachments.AttachmentsPopup;
 @SuppressLint("ViewConstructor")
 public class MessagePanel extends CardView {
     private ImageButton advancedButton, attachmentsButton, sendButton, fullButton, hideButton, editPollButton;
+    private TextView attachmentsCounter;
     private List<View.OnClickListener> advancedListeners = new ArrayList<>(), attachmentsListeners = new ArrayList<>(), sendListeners = new ArrayList<>();
     private CodeEditor messageField;
     private MessagePanelBehavior panelBehavior;
@@ -46,23 +48,13 @@ public class MessagePanel extends CardView {
     private HeightChangeListener heightChangeListener;
     private boolean fullForm = false;
     private CoordinatorLayout.LayoutParams params;
-    boolean isMonospace = true;
-
-    protected Observer preferenceObserver = (observable, o) -> {
-        if (o == null) return;
-        String key = (String) o;
-        switch (key) {
-            case Preferences.Main.IS_EDITOR_MONOSPACE: {
-                isMonospace = Preferences.Main.isEditorMonospace(getContext());
-                messageField.setTypeface(isMonospace ? Typeface.MONOSPACE : Typeface.DEFAULT);
-                break;
-            }
-        }
-    };
+    private boolean isMonospace = true;
+    private MainPreferencesHolder mainPreferencesHolder = App.get().Di().getMainPreferencesHolder();
+    private CompositeDisposable disposables = new CompositeDisposable();
 
     public MessagePanel(Context context, ViewGroup fragmentContainer, ViewGroup targetContainer, boolean fullForm) {
         super(context);
-        isMonospace = Preferences.Main.isEditorMonospace(context);
+        isMonospace = mainPreferencesHolder.getEditorMonospace();
         this.fragmentContainer = fragmentContainer;
         this.fullForm = fullForm;
         init();
@@ -75,6 +67,7 @@ public class MessagePanel extends CardView {
         setClickable(true);
         advancedButton = (ImageButton) findViewById(R.id.button_advanced_input);
         attachmentsButton = (ImageButton) findViewById(R.id.button_attachments);
+        attachmentsCounter = findViewById(R.id.attachment_counter);
         sendButton = (ImageButton) findViewById(R.id.button_send);
         fullButton = (ImageButton) findViewById(R.id.button_full);
         hideButton = (ImageButton) findViewById(R.id.button_hide);
@@ -140,7 +133,14 @@ public class MessagePanel extends CardView {
             }
         });
         messageField.setTypeface(isMonospace ? Typeface.MONOSPACE : Typeface.DEFAULT);
-        App.get().addPreferenceChangeObserver(preferenceObserver);
+        disposables.add(
+                mainPreferencesHolder
+                        .observeEditorMonospace()
+                        .subscribe(value -> {
+                            isMonospace = value;
+                            messageField.setTypeface(isMonospace ? Typeface.MONOSPACE : Typeface.DEFAULT);
+                        })
+        );
     }
 
     public int getLastHeight() {
@@ -234,6 +234,11 @@ public class MessagePanel extends CardView {
     public void deleteSelected() {
         int[] selectionRange = getSelectionRange();
         messageField.getText().delete(selectionRange[0], selectionRange[1]);
+    }
+
+    public void updateAttachmentsCounter(int count) {
+        attachmentsCounter.setText("" + count);
+        attachmentsCounter.setVisibility(count > 0 ? VISIBLE : GONE);
     }
 
     public String getMessage() {
@@ -333,7 +338,9 @@ public class MessagePanel extends CardView {
     public void onDestroy() {
         if (advancedPopup != null)
             advancedPopup.onDestroy();
-        App.get().removePreferenceChangeObserver(preferenceObserver);
+        if (!disposables.isDisposed()) {
+            disposables.dispose();
+        }
     }
 
     public void onPause() {

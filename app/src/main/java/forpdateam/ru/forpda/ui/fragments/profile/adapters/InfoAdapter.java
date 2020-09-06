@@ -5,8 +5,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.profile.models.ProfileModel;
-import forpdateam.ru.forpda.apirx.apiclasses.ProfileRx;
+import forpdateam.ru.forpda.entity.remote.profile.ProfileModel;
+import forpdateam.ru.forpda.model.repository.temp.TempHelper;
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 
@@ -37,7 +37,7 @@ class InfoAdapter extends BaseAdapter<ProfileModel.Info, InfoAdapter.InfoHolder>
 
         @Override
         public void bind(ProfileModel.Info item) {
-            title.setText(ProfileRx.getTypeString(item.getType()));
+            title.setText(TempHelper.INSTANCE.getTypeString(item.getType()));
             value.setText(item.getValue());
         }
     }

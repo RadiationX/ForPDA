@@ -12,12 +12,15 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.profile.models.ProfileModel;
 import forpdateam.ru.forpda.common.LinkMovementMethod;
-import forpdateam.ru.forpda.ui.fragments.devdb.BrandFragment;
+import forpdateam.ru.forpda.entity.remote.profile.ProfileModel;
+import forpdateam.ru.forpda.presentation.ILinkHandler;
+import forpdateam.ru.forpda.presentation.ISystemLinkHandler;
+import forpdateam.ru.forpda.ui.fragments.devdb.brand.DevicesFragment;
 import forpdateam.ru.forpda.ui.views.DividerItemDecoration;
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 
@@ -133,7 +136,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             list = (RecyclerView) itemView.findViewById(R.id.profile_stats_list);
             list.setHasFixedSize(true);
             list.setLayoutManager(new LinearLayoutManager(list.getContext(), LinearLayoutManager.HORIZONTAL, false));
-            adapter = new StatsAdapter();
+            adapter = new StatsAdapter(item -> clickListener.onStatClick(item));
             list.setAdapter(adapter);
             list.setNestedScrollingEnabled(false);
         }
@@ -150,6 +153,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     }
 
     private class AboutHolder extends BaseViewHolder<ProfileModel> {
+        private ILinkHandler linkHandler = App.get().Di().getLinkHandler();
 
         private TextView about;
 
@@ -161,7 +165,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         @Override
         public void bind(ProfileModel item) {
             about.setText(item.getAbout());
-            about.setMovementMethod(LinkMovementMethod.getInstance());
+            about.setMovementMethod(new LinkMovementMethod(url -> linkHandler.handle(url, null)));
         }
     }
 
@@ -177,7 +181,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             list.setHasFixedSize(true);
             list.setLayoutManager(new LinearLayoutManager(list.getContext()));
             list.setNestedScrollingEnabled(false);
-            list.addItemDecoration(new BrandFragment.SpacingItemDecoration(App.px16, true));
+            list.addItemDecoration(new DevicesFragment.SpacingItemDecoration(App.px16, true));
             adapter = new InfoAdapter();
             list.setAdapter(adapter);
             title.setText(R.string.profile_title_information);
@@ -204,7 +208,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             list.setHasFixedSize(true);
             list.setLayoutManager(new LinearLayoutManager(list.getContext()));
             list.setNestedScrollingEnabled(false);
-            adapter = new DevicesAdapter();
+            adapter = new DevicesAdapter(item -> clickListener.onDeviceClick(item));
             list.setAdapter(adapter);
             title.setText(R.string.profile_title_devices);
         }
@@ -226,7 +230,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             list = (RecyclerView) itemView.findViewById(R.id.profile_sub_list);
             list.setHasFixedSize(true);
             list.setLayoutManager(new LinearLayoutManager(list.getContext(), LinearLayoutManager.HORIZONTAL, false));
-            adapter = new ContactsAdapter();
+            adapter = new ContactsAdapter(item -> clickListener.onContactClick(item));
             list.setAdapter(adapter);
             list.setNestedScrollingEnabled(false);
             title.setText(R.string.profile_title_contacts);
@@ -234,7 +238,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
         @Override
         public void bind(ProfileModel item) {
-            ArrayList<ProfileModel.Contact> contacts = item.getContacts();
+            List<ProfileModel.Contact> contacts = item.getContacts();
             if (contacts.get(0).getType() == ProfileModel.ContactType.QMS) {
                 contacts.remove(0);
             }
@@ -290,5 +294,11 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     public interface ClickListener {
         void onSaveClick(String text);
+
+        void onContactClick(ProfileModel.Contact item);
+
+        void onDeviceClick(ProfileModel.Device item);
+
+        void onStatClick(ProfileModel.Stat item);
     }
 }

@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/measure_root_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+        <!--
+            Эта вьюха нужна для различных измерений
+        -->
+        <View
+            android:id="@+id/measure_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.design.widget.CoordinatorLayout>
 
     <!--
         Coordinator, потому-что он уходит под статусбар, а допусть FrameLayout не уходит.
@@ -35,76 +51,147 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <android.support.design.widget.NavigationView
-        android:id="@+id/menu_drawer"
-        android:layout_width="wrap_content"
+    <View
+        android:id="@+id/bottomMenuFade"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="?attr/background_for_lists"
+        android:fitsSystemWindows="true" />
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/bottomMenuContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/dp24"
         android:fitsSystemWindows="true">
 
-        <LinearLayout
-            android:id="@+id/menu_drawer_content"
+        <View
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:fitsSystemWindows="true" />
 
-            <include layout="@layout/drawer_header_layout" />
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/bottomToggleArrow"
+            android:layout_width="@dimen/dp48"
+            android:layout_height="@dimen/dp36"
+            android:layout_gravity="top|center_horizontal"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:scaleType="center"
+            android:visibility="gone"
+            app:layout_anchor="@id/bottom_sheet2"
+            app:layout_anchorGravity="top|center_horizontal"
+            app:srcCompat="@drawable/ic_arrow_up"
+            app:tint="?colorAccent"
+            tools:visibility="visible" />
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/bottom_sheet2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?background_for_cards"
+            app:layout_behavior="forpdateam.ru.forpda.ui.views.BottomSheetBehavior_v27">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/bottomMenuRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="?cards_background"
+                android:overScrollMode="never"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layoutManager="GridLayoutManager"
+                tools:listitem="@layout/item_bottom_tab"
+                tools:spanCount="5" />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/bottomMenuLinkContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp8"
+                android:background="?cards_background"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/bottomMenuRecycler">
+
+                <EditText
+                    android:id="@+id/bottomMenuLinkText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:hint="Введите ссылку"
+                    android:inputType="text|textWebEmailAddress"
+                    android:minHeight="@dimen/dp48"
+                    android:paddingStart="16dp"
+                    android:paddingTop="12dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="12dp"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toStartOf="@id/bottomMenuLinkIcon"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/bottomMenuLinkIcon"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:scaleType="center"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:srcCompat="@drawable/ic_open_in_new" />
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/bottomMenu_view_tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp8"
+                android:background="?cards_background"
+                android:gravity="center_vertical"
+                android:paddingStart="@dimen/dp16"
+                android:paddingTop="@dimen/dp16"
+                android:paddingEnd="@dimen/dp16"
+                android:paddingBottom="@dimen/dp16"
+                android:text="Открытые вкладки"
+                android:textColor="?attr/default_text_color"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/bottomMenuLinkContainer" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/bottomTabsRecycler"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="@dimen/dp56"
+                android:background="?cards_background"
+                android:clipToPadding="true"
+                android:paddingBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_default="wrap"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/bottomMenu_view_tabs"
+                tools:itemCount="1"
+                tools:listitem="@layout/drawer_tab_item" />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/bottomCloseAllTabs"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?cards_background"
+                android:foreground="?selectableItemBackground"
+                android:gravity="end|center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="@dimen/dp16"
+                android:text="@string/close_other_tabs"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="?attr/divider_line" />
-            <TextView
-                android:id="@+id/forbidden_error"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/dp16"
-                android:textColor="@color/md_red_500"
-                android:text="Уведомления не работают, отключите VPN/Proxy"
-                android:visibility="gone"
-                />
+                android:background="?divider_line_bottom_nav"
+                app:layout_constraintTop_toTopOf="@id/bottomMenuRecycler" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/menu_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:paddingTop="@dimen/dp8" />
-        </LinearLayout>
-    </android.support.design.widget.NavigationView>
+        </android.support.constraint.ConstraintLayout>
+    </android.support.design.widget.CoordinatorLayout>
 
-    <android.support.design.widget.NavigationView
-        android:id="@+id/tab_drawer"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="end"
-        android:background="?attr/background_for_lists"
-        android:fitsSystemWindows="true">
-
-        <RelativeLayout
-            android:id="@+id/tab_drawer_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/tab_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_above="@+id/tab_close_all" />
-
-            <android.support.v7.widget.AppCompatButton
-                android:id="@+id/tab_close_all"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:gravity="start|center_vertical"
-                android:text="@string/close_other_tabs" />
-        </RelativeLayout>
-
-    </android.support.design.widget.NavigationView>
-
-
-</android.support.v4.widget.DrawerLayout>
+</RelativeLayout>

@@ -488,6 +488,8 @@ button,
                 transform: rotateX(180deg) translateZ(0);
             }
         }
+    }
+    &.open:not(.once-opened){
         .range {
             -webkit-animation: pollRangeAnimation 0.375s @curveStandard;
             -webkit-animation-fill-mode: forwards;
@@ -1034,17 +1036,19 @@ body {
 .navigation {
     .mainBox();
     display: flex;
+    flex-flow: wrap;
     overflow: hidden;
     &.disabled {
         display: none;
     }
     .button {
         .noselect();
-        height: 36/16rem;
-        margin: 6/16rem 8/16rem;
-        padding: 6/16rem 8/16rem;
+        height: 48/16rem;
+        //margin: 6/16rem 8/16rem;
+        //padding: 6/16rem 8/16rem;
+        line-height: 48/16rem;
         display: block;
-        flex: 1 1 auto;
+        flex: 1 1 0px;
         box-sizing: border-box;
         .bRad(2/16rem);
         position: relative;
@@ -1054,9 +1058,10 @@ body {
         text-transform: uppercase;
         color: @colorAccent;
         font-size: 14/16rem;
+        //outline: 1px solid red;
         >.icon {
-            height: 24/16rem;
-            width: 24/16rem;
+            height: 100%;
+            width: 100%;
             display: block;
             margin: 0 auto;
             background-position: center;
@@ -1064,7 +1069,7 @@ body {
             background-repeat: no-repeat;
         }
         >b {
-            padding: 2/16rem 0;
+            //padding: 2/16rem 0;
             display: inline-block;
         }
         &:not(.disabled):active {
@@ -1207,5 +1212,12 @@ body {
 @media all and (max-width: 11.5rem) {
     .navigation {
         display: block;
+        .button {
+            float: left;
+            width: 50%;
+            &.page {
+                width: 100%;
+            }
+        }
     }
 }

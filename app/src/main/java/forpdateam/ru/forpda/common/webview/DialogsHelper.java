@@ -9,8 +9,10 @@ import android.webkit.WebView;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.common.IntentHandler;
 import forpdateam.ru.forpda.common.Utils;
+import forpdateam.ru.forpda.presentation.ILinkHandler;
+import forpdateam.ru.forpda.presentation.ISystemLinkHandler;
+import forpdateam.ru.forpda.presentation.TabRouter;
 import forpdateam.ru.forpda.ui.activities.imageviewer.ImageViewerActivity;
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu;
 
@@ -21,15 +23,30 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
  */
 
 public class DialogsHelper {
-    private static DynamicDialogMenu<Context, Pair<String, String>> dynamicDialogMenu;
-    private final static String openNewTab = App.get().getString(R.string.wv_open_new_tab);
-    private final static String openBrowser = App.get().getString(R.string.wv_open_in_browser);
-    private final static String copyUrl = App.get().getString(R.string.wv_copy_link);
-    private final static String openImage = App.get().getString(R.string.wv_open_image);
-    private final static String saveImage = App.get().getString(R.string.wv_save_image);
-    private final static String copyImageUrl = App.get().getString(R.string.wv_copy_image_link);
+    private DynamicDialogMenu<Context, Pair<String, String>> dynamicDialogMenu = new DynamicDialogMenu<>();
 
-    public static void handleContextMenu(Context context, int type, String extra, String nodeHref) {
+    public DialogsHelper(
+            Context context,
+            ILinkHandler linkHandler,
+            ISystemLinkHandler systemLinkHandler,
+            TabRouter router
+    ) {
+        String openNewTab = context.getString(R.string.wv_open_new_tab);
+        String openBrowser = context.getString(R.string.wv_open_in_browser);
+        String copyUrl = context.getString(R.string.wv_copy_link);
+        String openImage = context.getString(R.string.wv_open_image);
+        String saveImage = context.getString(R.string.wv_save_image);
+        String copyImageUrl = context.getString(R.string.wv_copy_image_link);
+
+        dynamicDialogMenu.addItem(openNewTab, (context1, data) -> linkHandler.handle(data.second, router));
+        dynamicDialogMenu.addItem(openBrowser, (context1, data) -> systemLinkHandler.handle(data.second));
+        dynamicDialogMenu.addItem(copyUrl, (context1, data) -> Utils.copyToClipBoard(data.second));
+        dynamicDialogMenu.addItem(openImage, (context1, data) -> ImageViewerActivity.startActivity(context1, data.first));
+        dynamicDialogMenu.addItem(saveImage, (context1, data) -> systemLinkHandler.handleDownload(data.second, null));
+        dynamicDialogMenu.addItem(copyImageUrl, (context1, data) -> Utils.copyToClipBoard(data.first));
+    }
+
+    public void handleContextMenu(Context context, int type, String extra, String nodeHref) {
         Log.d("DialogsHelper", "handleContextMenu " + type + " : " + extra + " : " + nodeHref);
         if (type == WebView.HitTestResult.UNKNOWN_TYPE || type == WebView.HitTestResult.EDIT_TEXT_TYPE)
             return;
@@ -56,18 +73,7 @@ public class DialogsHelper {
         if (!anchor && !image)
             return;
 
-        if (dynamicDialogMenu == null) {
-            dynamicDialogMenu = new DynamicDialogMenu<>();
-
-            dynamicDialogMenu.addItem(openNewTab, (context1, data) -> IntentHandler.handle(data.second));
-            dynamicDialogMenu.addItem(openBrowser, (context1, data) -> App.get().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(data.second)).addFlags(FLAG_ACTIVITY_NEW_TASK)));
-            dynamicDialogMenu.addItem(copyUrl, (context1, data) -> Utils.copyToClipBoard(data.second));
-            dynamicDialogMenu.addItem(openImage, (context1, data) -> ImageViewerActivity.startActivity(context1, data.first));
-            dynamicDialogMenu.addItem(saveImage, (context1, data) -> IntentHandler.handleDownload(data.second));
-            dynamicDialogMenu.addItem(copyImageUrl, (context1, data) -> Utils.copyToClipBoard(data.first));
-        }
         dynamicDialogMenu.disallowAll();
-
         if (anchor) {
             dynamicDialogMenu.allow(0);
             dynamicDialogMenu.allow(1);

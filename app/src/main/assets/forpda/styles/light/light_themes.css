@@ -483,7 +483,7 @@ button:active,
   -webkit-transform: rotateX(180deg) translateZ(0);
   transform: rotateX(180deg) translateZ(0);
 }
-.poll.open .range {
+.poll.open:not(.once-opened) .range {
   -webkit-animation: pollRangeAnimation 0.375s cubic-bezier(0.4, 0, 0.2, 1);
   -webkit-animation-fill-mode: forwards;
 }
@@ -987,6 +987,7 @@ body.hide_avatar .post-block.quote > .block-title .avatar .image {
   margin: 0.5em 0;
   box-shadow: 0rem 0.0625rem 0.0625rem rgba(0, 0, 0, 0.12), 0rem 0rem 0.0625rem rgba(0, 0, 0, 0.12);
   display: flex;
+  flex-flow: wrap;
   overflow: hidden;
 }
 .navigation.disabled {
@@ -999,11 +1000,10 @@ body.hide_avatar .post-block.quote > .block-title .avatar .image {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  height: 2.25rem;
-  margin: 0.375rem 0.5rem;
-  padding: 0.375rem 0.5rem;
+  height: 3rem;
+  line-height: 3rem;
   display: block;
-  flex: 1 1 auto;
+  flex: 1 1 0px;
   box-sizing: border-box;
   -webkit-border-radius: 0.125rem;
   border-radius: 0.125rem;
@@ -1016,8 +1016,8 @@ body.hide_avatar .post-block.quote > .block-title .avatar .image {
   font-size: 0.875rem;
 }
 .navigation .button > .icon {
-  height: 1.5rem;
-  width: 1.5rem;
+  height: 100%;
+  width: 100%;
   display: block;
   margin: 0 auto;
   background-position: center;
@@ -1025,7 +1025,6 @@ body.hide_avatar .post-block.quote > .block-title .avatar .image {
   background-repeat: no-repeat;
 }
 .navigation .button > b {
-  padding: 0.125rem 0;
   display: inline-block;
 }
 .navigation .button:not(.disabled):active {
@@ -1140,5 +1139,12 @@ body.hide_avatar .post-block.quote > .block-title .avatar .image {
 @media all and (max-width: 11.5rem) {
   .navigation {
     display: block;
+  }
+  .navigation .button {
+    float: left;
+    width: 50%;
+  }
+  .navigation .button.page {
+    width: 100%;
   }
 }

@@ -10,7 +10,7 @@ import com.unnamed.b.atv.model.TreeNode;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.forum.models.ForumItemTree;
+import forpdateam.ru.forpda.entity.remote.forum.ForumItemTree;
 
 /**
  * Created by radiationx on 28.02.17.

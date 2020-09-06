@@ -6,9 +6,11 @@ import android.widget.ImageView;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.profile.models.ProfileModel;
-import forpdateam.ru.forpda.apirx.apiclasses.ProfileRx;
-import forpdateam.ru.forpda.common.IntentHandler;
+import forpdateam.ru.forpda.entity.remote.devdb.Device;
+import forpdateam.ru.forpda.entity.remote.profile.ProfileModel;
+import forpdateam.ru.forpda.model.repository.temp.TempHelper;
+import forpdateam.ru.forpda.presentation.ISystemLinkHandler;
+import forpdateam.ru.forpda.ui.fragments.devdb.device.comments.CommentsAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 
@@ -17,9 +19,16 @@ import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
  */
 
 class ContactsAdapter extends BaseAdapter<ProfileModel.Contact, ContactsAdapter.InfoHolder> {
+
+    private InfoHolder.Listener listener;
+
+    public ContactsAdapter(InfoHolder.Listener listener) {
+        this.listener = listener;
+    }
+
     @Override
     public InfoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new InfoHolder(inflateLayout(parent, R.layout.profile_sub_item_contact));
+        return new InfoHolder(inflateLayout(parent, R.layout.profile_sub_item_contact), listener);
     }
 
     @Override
@@ -27,19 +36,25 @@ class ContactsAdapter extends BaseAdapter<ProfileModel.Contact, ContactsAdapter.
         holder.bind(getItem(position));
     }
 
-    class InfoHolder extends BaseViewHolder<ProfileModel.Contact> {
+    static class InfoHolder extends BaseViewHolder<ProfileModel.Contact> {
         private ImageView icon;
+        private ProfileModel.Contact currentItem;
 
-        InfoHolder(View itemView) {
+        InfoHolder(View itemView, Listener listener) {
             super(itemView);
             icon = (ImageView) itemView.findViewById(R.id.item_icon);
-            itemView.setOnClickListener(v -> IntentHandler.handle(getItem(getLayoutPosition()).getUrl()));
+            itemView.setOnClickListener(v -> listener.onClick(currentItem));
         }
 
         @Override
         public void bind(ProfileModel.Contact item) {
-            icon.setImageDrawable(App.getVecDrawable(icon.getContext(), ProfileRx.getContactIcon(item.getType())));
+            currentItem = item;
+            icon.setImageDrawable(App.getVecDrawable(icon.getContext(), TempHelper.INSTANCE.getContactIcon(item.getType())));
             icon.setContentDescription(item.getTitle());
+        }
+
+        interface Listener {
+            void onClick(ProfileModel.Contact item);
         }
     }
 }

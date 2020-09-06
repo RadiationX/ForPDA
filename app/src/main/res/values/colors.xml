@@ -10,6 +10,7 @@
     <color name="light_colorPrimaryDark">#aaaaaa</color>
     <color name="light_colorAccent">#000000</color>
     <color name="light_status_bar_color">#33000000</color>
+    <color name="light_navigation_bar_color">@color/light_colorPrimary</color>
 
     <color name="light_link_color">#2177af</color>
     <color name="light_link_color_contrast">#ffffff</color>
@@ -25,6 +26,7 @@
     <color name="light_background_for_lists">#ffffff</color>
 
     <color name="light_divider_line">#e0e0e0</color>
+    <color name="light_divider_line_bottom_nav">#dddddd</color>
 
     <color name="light_attachment_overlay_bg">#21000000</color>
     <color name="light_attachment_description_bg">#44000000</color>
@@ -40,12 +42,15 @@
 
     <color name="light_card_background">#ffffff</color>
 
+    <color name="light_item_tab_close">@color/md_red_400</color>
+
 
     <!-- DARK -->
     <color name="dark_colorPrimary">#212121</color>
     <color name="dark_colorPrimaryDark">#121212</color>
     <color name="dark_colorAccent">#ffffff</color>
     <color name="dark_status_bar_color">#00000000</color>
+    <color name="dark_navigation_bar_color">@color/dark_colorPrimary</color>
 
     <color name="dark_link_color">#2177af</color>
     <color name="dark_link_color_contrast">#ffffff</color>
@@ -61,6 +66,7 @@
     <color name="dark_background_for_lists">@color/dark_background_base</color>
 
     <color name="dark_divider_line">#1fffffff</color>
+    <color name="dark_divider_line_bottom_nav">#333</color>
 
     <color name="dark_attachment_overlay_bg">#21000000</color>
     <color name="dark_attachment_description_bg">#44000000</color>
@@ -75,6 +81,8 @@
     <color name="dark_icon_toolbar_inverse">@color/light_icon_toolbar</color>
 
     <color name="dark_card_background">#212121</color>
+
+    <color name="dark_item_tab_close">#8b2d26</color>
     
 
     <!-- OTHERS -->

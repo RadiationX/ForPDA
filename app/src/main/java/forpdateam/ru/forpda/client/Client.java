@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.client;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -14,21 +13,21 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Observer;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 
 import javax.net.ssl.SSLContext;
 
 import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.api.Api;
-import forpdateam.ru.forpda.api.ApiUtils;
-import forpdateam.ru.forpda.api.IWebClient;
-import forpdateam.ru.forpda.api.NetworkRequest;
-import forpdateam.ru.forpda.api.NetworkResponse;
-import forpdateam.ru.forpda.common.simple.SimpleObservable;
-import forpdateam.ru.forpda.ui.TabManager;
-import forpdateam.ru.forpda.ui.fragments.other.GoogleCaptchaFragment;
+import forpdateam.ru.forpda.entity.common.AuthData;
+import forpdateam.ru.forpda.entity.common.AuthState;
+import forpdateam.ru.forpda.entity.common.MessageCounters;
+import forpdateam.ru.forpda.model.AuthHolder;
+import forpdateam.ru.forpda.model.CountersHolder;
+import forpdateam.ru.forpda.model.data.remote.IWebClient;
+import forpdateam.ru.forpda.model.data.remote.api.ApiUtils;
+import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest;
+import forpdateam.ru.forpda.model.data.remote.api.NetworkResponse;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.FormBody;
@@ -45,35 +44,36 @@ import okhttp3.WebSocketListener;
 public class Client implements IWebClient {
     private final static String LOG_TAG = Client.class.getSimpleName();
     private static final String USER_AGENT = "Mozilla/5.0 (Linux; Android 4.4; Nexus 5 Build/_BuildID_) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36";
-    private static Client INSTANCE = null;
     private Map<String, Cookie> clientCookies = new HashMap<>();
-    private SimpleObservable networkObservables = new SimpleObservable();
     private Handler observerHandler = new Handler(Looper.getMainLooper());
     private List<String> privateHeaders = new ArrayList<>(Arrays.asList("pass_hash", "session_id", "auth_key", "password"));
     private final Cookie mobileCookie = Cookie.parse(HttpUrl.parse("https://4pda.ru/"), "ngx_mb=1;");
+    private AuthHolder authHolder;
+    private CountersHolder countersHolder;
 
     //Контекст нужен, для чтения настроек
     //Не необходимо, но вдруг случится шо у App не будет контекста
-    public Client(Context context) {
-        if (context == null) {
-            context = App.getContext();
-        }
-        Api.setWebClient(this);
-        String member_id = App.getPreferences(context).getString("cookie_member_id", null);
-        String pass_hash = App.getPreferences(context).getString("cookie_pass_hash", null);
-        String session_id = App.getPreferences(context).getString("cookie_session_id", null);
-        String anonymous = App.getPreferences(context).getString("cookie_anonymous", null);
-        String clearance = App.getPreferences(context).getString("cookie_cf_clearance", null);
-        ClientHelper.setUserId(App.getPreferences(context).getString("member_id", null));
-        //Log.d("FORPDA_LOG", "INIT AUTH DATA " + member_id + " : " + pass_hash + " : " + session_id + " : " + App.get().getPreferences().getString("member_id", null));
-
+    public Client(Context context, AuthHolder authHolder, CountersHolder countersHolder) {
+        this.authHolder = authHolder;
+        this.countersHolder = countersHolder;
+        AuthData authData = authHolder.get();
+        SharedPreferences preferences = App.getPreferences(context);
+        String member_id = preferences.getString("cookie_member_id", null);
+        String pass_hash = preferences.getString("cookie_pass_hash", null);
+        String session_id = preferences.getString("cookie_session_id", null);
+        String anonymous = preferences.getString("cookie_anonymous", null);
+        String clearance = preferences.getString("cookie_cf_clearance", null);
 
         clientCookies.put("ngx_mb", mobileCookie);
         if (clearance != null) {
             clientCookies.put("cf_clearance", parseCookie(clearance));
         }
+
         if (member_id != null && pass_hash != null) {
-            ClientHelper.setAuthState(ClientHelper.AUTH_STATE_LOGIN);
+            int userId = Integer.parseInt(preferences.getString("member_id", "0"));
+            authData.setState(AuthState.AUTH);
+            authData.setUserId(userId);
+
             //Первичная загрузка кукисов
             clientCookies.put("member_id", parseCookie(member_id));
             clientCookies.put("pass_hash", parseCookie(pass_hash));
@@ -82,22 +82,15 @@ public class Client implements IWebClient {
             if (anonymous != null) {
                 clientCookies.put("anonymous", parseCookie(anonymous));
             }
-        }else {
-            ClientHelper.setAuthState(ClientHelper.AUTH_STATE_LOGOUT);
+        } else {
+            authData.setState(AuthState.SKIP);
+            authData.setUserId(0);
         }
+        authHolder.set(authData);
     }
 
     public String getAuthKey() {
         return App.get().getPreferences().getString("auth_key", "0");
-    }
-
-    public static Client get() {
-        return get(App.getContext());
-    }
-
-    public static Client get(Context context) {
-        if (INSTANCE == null) INSTANCE = new Client(context);
-        return INSTANCE;
     }
 
     private Cookie parseCookie(String cookieFields) {
@@ -130,7 +123,11 @@ public class Client implements IWebClient {
                     editor.putString("cookie_".concat(cookie.name()), cookieToPref(url.toString(), cookie));
                     if (cookie.name().equals("member_id")) {
                         editor.putString("member_id", cookie.value());
-                        ClientHelper.setUserId(cookie.value());
+                        int userId = Integer.parseInt(cookie.value());
+                        AuthData authData = authHolder.get();
+                        authData.setUserId(userId);
+                        authData.setState(userId == AuthData.NO_ID ? AuthState.NO_AUTH : AuthState.AUTH);
+                        authHolder.set(authData);
                     }
                     if (!clientCookies.containsKey(cookie.name())) {
                         clientCookies.remove(cookie.name());
@@ -288,18 +285,8 @@ public class Client implements IWebClient {
             if (!okHttpResponse.isSuccessful()) {
                 if (okHttpResponse.code() == 403) {
                     String content = okHttpResponse.body().string();
-                    //forpdateam.ru.forpda.utils.ApiUtils.longLog(content);
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                        try {
-                            if (TabManager.get().getTagContainClass(GoogleCaptchaFragment.class) == null) {
-                                Bundle args = new Bundle();
-                                args.putString("content", content);
-                                TabManager.get().add(GoogleCaptchaFragment.class, args);
-                            }
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    });
+                    //todo catch this is errorhandler
+                    throw new GoogleCaptchaException(content);
                 }
                 throw new OkHttpResponseException(okHttpResponse.code(), okHttpResponse.message(), request.getUrl());
             }
@@ -340,37 +327,26 @@ public class Client implements IWebClient {
         Matcher countsMatcher = countsPattern.matcher(res);
 
         if (countsMatcher.find()) {
+            MessageCounters counters = countersHolder.get();
             try {
                 String tempGroup;
                 tempGroup = countsMatcher.group(1);
-                ClientHelper.setMentionsCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
+                counters.setMentions(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
 
                 tempGroup = countsMatcher.group(2);
-                ClientHelper.setFavoritesCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
+                counters.setFavorites(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
 
                 tempGroup = countsMatcher.group(3);
-                ClientHelper.setQmsCount(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
+                counters.setQms(tempGroup == null ? 0 : Integer.parseInt(tempGroup));
             } catch (Exception exception) {
                 Log.d("WATAFUCK", res);
             }
-            observerHandler.post(() -> ClientHelper.get().notifyCountsChanged());
+            countersHolder.set(counters);
         }
     }
 
     public void clearCookies() {
         clientCookies.clear();
-    }
-
-    public void removeNetworkObserver(Observer observer) {
-        networkObservables.deleteObserver(observer);
-    }
-
-    public void addNetworkObserver(Observer observer) {
-        networkObservables.addObserver(observer);
-    }
-
-    public void notifyNetworkObservers(Boolean b) {
-        networkObservables.notifyObservers(b);
     }
 
 }

@@ -14,6 +14,7 @@ import forpdateam.ru.forpda.App;
 public class AutoFitRecyclerView extends RecyclerView {
     private GridLayoutManager manager;
     private int columnWidth = App.px48; //default value
+    private boolean isLinear = false;
 
     public AutoFitRecyclerView(Context context) {
         super(context);
@@ -37,14 +38,27 @@ public class AutoFitRecyclerView extends RecyclerView {
 
     public void setColumnWidth(int columnWidth) {
         this.columnWidth = columnWidth;
+        invalidate();
+    }
+
+    public void setFakeLinear(boolean linear) {
+        isLinear = linear;
+        invalidate();
+    }
+
+    public GridLayoutManager getManager() {
+        return manager;
     }
 
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
         super.onMeasure(widthSpec, heightSpec);
-        if (columnWidth > 0) {
+        if (isLinear || columnWidth <= 0) {
+            manager.setSpanCount(1);
+        } else {
             int spanCount = Math.max(1, getMeasuredWidth() / columnWidth);
             manager.setSpanCount(spanCount);
         }
+
     }
 }

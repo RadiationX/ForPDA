@@ -8,10 +8,10 @@ import android.widget.TextView;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.ApiUtils;
-import forpdateam.ru.forpda.api.devdb.models.Device;
-import forpdateam.ru.forpda.apirx.RxApi;
-import forpdateam.ru.forpda.common.IntentHandler;
+import forpdateam.ru.forpda.entity.remote.devdb.Device;
+import forpdateam.ru.forpda.model.data.remote.api.ApiUtils;
+import forpdateam.ru.forpda.presentation.ISystemLinkHandler;
+import forpdateam.ru.forpda.ui.fragments.devdb.DevDbHelper;
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 
@@ -20,10 +20,17 @@ import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
  */
 
 public class CommentsAdapter extends BaseAdapter<Device.Comment, CommentsAdapter.CommentHolder> {
+
+    private CommentHolder.Listener listener;
+
+    public CommentsAdapter(CommentHolder.Listener listener) {
+        this.listener = listener;
+    }
+
     @Override
     public CommentHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.device_comment_item, parent, false);
-        return new CommentHolder(v);
+        return new CommentHolder(v, listener);
     }
 
     @Override
@@ -31,15 +38,16 @@ public class CommentsAdapter extends BaseAdapter<Device.Comment, CommentsAdapter
         holder.bind(getItem(position), position);
     }
 
-    public class CommentHolder extends BaseViewHolder<Device.Comment> {
-        public TextView title;
-        public TextView date;
-        public TextView desc;
-        public TextView rating;
-        public Button like;
-        public Button dislike;
+    public static class CommentHolder extends BaseViewHolder<Device.Comment> {
+        private TextView title;
+        private TextView date;
+        private TextView desc;
+        private TextView rating;
+        private Button like;
+        private Button dislike;
+        private Device.Comment currentItem;
 
-        public CommentHolder(View v) {
+        public CommentHolder(View v, Listener listener) {
             super(v);
             title = (TextView) v.findViewById(R.id.item_title);
             date = (TextView) v.findViewById(R.id.item_date);
@@ -50,23 +58,24 @@ public class CommentsAdapter extends BaseAdapter<Device.Comment, CommentsAdapter
 
             like.setCompoundDrawablesRelativeWithIntrinsicBounds(App.getVecDrawable(v.getContext(), R.drawable.ic_thumb_up), null, null, null);
             dislike.setCompoundDrawablesRelativeWithIntrinsicBounds(App.getVecDrawable(v.getContext(), R.drawable.ic_thumb_down), null, null, null);
-            title.setOnClickListener(this::onTitleClick);
+            title.setOnClickListener((view) -> listener.onClick(currentItem));
             rating.setBackground(App.getDrawableAttr(rating.getContext(), R.attr.count_background));
         }
 
         @Override
         public void bind(Device.Comment item, int position) {
+            currentItem = item;
             title.setText(item.getNick());
             date.setText(item.getDate());
             desc.setText(ApiUtils.spannedFromHtml(item.getText()));
             rating.setText(Integer.toString(item.getRating()));
             like.setText(Integer.toString(item.getLikes()));
             dislike.setText(Integer.toString(item.getDislikes()));
-            rating.getBackground().setColorFilter(RxApi.DevDb().getColorFilter(item.getRating()));
+            rating.getBackground().setColorFilter(DevDbHelper.INSTANCE.getColorFilter(item.getRating()));
         }
 
-        private void onTitleClick(View v) {
-            IntentHandler.handle("https://4pda.ru/forum/index.php?showuser=" + getItem(getLayoutPosition()).getUserId());
+        interface Listener {
+            void onClick(Device.Comment item);
         }
     }
 }

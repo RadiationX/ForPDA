@@ -8,7 +8,7 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.reputation.models.RepItem;
+import forpdateam.ru.forpda.entity.remote.reputation.RepItem;
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 

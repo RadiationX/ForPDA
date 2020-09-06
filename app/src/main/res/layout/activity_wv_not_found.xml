@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?background_for_lists"
@@ -16,7 +15,7 @@
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/icon_webview"/>
+            android:src="@drawable/icon_webview" />
 
         <TextView
             android:layout_width="match_parent"
@@ -25,7 +24,14 @@
             android:gravity="center"
             android:text="Компонент Android System Webview не найден"
             android:textSize="24sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/nougatplus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp24"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/wv_try_start"
@@ -33,14 +39,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/dp24"
-            android:text="Попробовать запустить"/>
+            android:text="Попробовать запустить" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="или"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
         <ImageView
             android:id="@+id/get_in_gp"
@@ -48,14 +54,14 @@
             android:layout_height="64dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/dp16"
-            android:src="@drawable/icon_get_in_gp"/>
+            android:src="@drawable/icon_get_in_gp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="или"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
         <ImageView
             android:id="@+id/get_in_4pda"
@@ -63,6 +69,6 @@
             android:layout_height="64dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/dp16"
-            android:src="@drawable/icon_4pda"/>
+            android:src="@drawable/icon_4pda" />
     </LinearLayout>
 </ScrollView>

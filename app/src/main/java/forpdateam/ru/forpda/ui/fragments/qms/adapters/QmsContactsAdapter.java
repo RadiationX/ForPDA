@@ -9,17 +9,17 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.qms.interfaces.IQmsContact;
+import forpdateam.ru.forpda.entity.remote.qms.QmsContact;
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 
 /**
  * Created by radiationx on 25.08.16.
  */
-public class QmsContactsAdapter extends BaseAdapter<IQmsContact, QmsContactsAdapter.ContactHolder> {
-    private BaseAdapter.OnItemClickListener<IQmsContact> itemClickListener;
+public class QmsContactsAdapter extends BaseAdapter<QmsContact, QmsContactsAdapter.ContactHolder> {
+    private BaseAdapter.OnItemClickListener<QmsContact> itemClickListener;
 
-    public void setOnItemClickListener(final BaseAdapter.OnItemClickListener<IQmsContact> mItemClickListener) {
+    public void setOnItemClickListener(final BaseAdapter.OnItemClickListener<QmsContact> mItemClickListener) {
         this.itemClickListener = mItemClickListener;
     }
 
@@ -34,7 +34,7 @@ public class QmsContactsAdapter extends BaseAdapter<IQmsContact, QmsContactsAdap
         holder.bind(getItem(position), position);
     }
 
-    public class ContactHolder extends BaseViewHolder<IQmsContact> implements View.OnClickListener, View.OnLongClickListener {
+    public class ContactHolder extends BaseViewHolder<QmsContact> implements View.OnClickListener, View.OnLongClickListener {
         public ImageView avatar;
         public TextView nick;
         public TextView count;
@@ -49,7 +49,7 @@ public class QmsContactsAdapter extends BaseAdapter<IQmsContact, QmsContactsAdap
         }
 
         @Override
-        public void bind(IQmsContact item, int position) {
+        public void bind(QmsContact item, int position) {
             nick.setText(item.getNick());
             ImageLoader.getInstance().displayImage(item.getAvatar(), avatar);
             nick.setTypeface(item.getCount() > 0 ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);

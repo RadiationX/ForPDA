@@ -67,7 +67,7 @@ function transformQuotes() {
         }
         var titleBlock = quote.querySelector(".block-title");
 
-        var titleText = titleBlock.textContent;
+        var titleText = escapeHtml(titleBlock.textContent);
         //console.log(titleText);
         var match;
         while (match = myRegexp.exec(titleText)) {
@@ -424,7 +424,7 @@ function improveSpoilBlock() {
                     var postId = e.target.getAttribute("data-post-id");
                     var spoilerNumber = e.target.getAttribute("data-spoil-number");
                     console.log(postId + " : " + spoilerNumber);
-                    ITheme.copySpoilerLink(postId, spoilerNumber);
+                    IThemePresenter.copySpoilerLink(postId, spoilerNumber);
                 });
             } catch (error) {
                 console.log(error);

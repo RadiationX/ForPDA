@@ -9,13 +9,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -28,7 +29,9 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.graphics.drawable.VectorDrawableCompat;
+import android.support.multidex.MultiDex;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.content.res.AppCompatResources;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -47,17 +50,16 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
+import com.yandex.metrica.YandexMetrica;
+import com.yandex.metrica.YandexMetricaConfig;
+import com.yandex.metrica.profile.Attribute;
+import com.yandex.metrica.profile.GenderAttribute;
+import com.yandex.metrica.profile.UserProfile;
 
-import org.acra.ACRA;
-import org.acra.ReportingInteractionMode;
-import org.acra.annotation.ReportsCrashes;
-
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -67,20 +69,16 @@ import java.util.Observer;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import biz.source_code.miniTemplator.MiniTemplator;
-import forpdateam.ru.forpda.client.Client;
 import forpdateam.ru.forpda.common.LocaleHelper;
-import forpdateam.ru.forpda.common.Preferences;
 import forpdateam.ru.forpda.common.realm.DbMigration;
+import forpdateam.ru.forpda.common.receivers.NetworkStateReceiver;
 import forpdateam.ru.forpda.common.receivers.WakeUpReceiver;
 import forpdateam.ru.forpda.common.simple.SimpleObservable;
-import forpdateam.ru.forpda.data.models.TabNotification;
+import forpdateam.ru.forpda.entity.remote.profile.ProfileModel;
 import forpdateam.ru.forpda.notifications.NotificationsJob;
 import forpdateam.ru.forpda.notifications.NotificationsJobCreator;
 import forpdateam.ru.forpda.notifications.NotificationsService;
-import forpdateam.ru.forpda.ui.activities.CustomCrashDialog;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
-import forpdateam.ru.forpda.ui.fragments.qms.QmsHelper;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.plugins.RxJavaPlugins;
@@ -89,58 +87,16 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import okhttp3.Cookie;
 
-import static org.acra.ReportField.ANDROID_VERSION;
-import static org.acra.ReportField.APP_VERSION_CODE;
-import static org.acra.ReportField.APP_VERSION_NAME;
-import static org.acra.ReportField.CUSTOM_DATA;
-import static org.acra.ReportField.LOGCAT;
-import static org.acra.ReportField.PHONE_MODEL;
-import static org.acra.ReportField.STACK_TRACE;
-import static org.acra.ReportField.USER_APP_START_DATE;
-
 /**
  * Created by radiationx on 28.07.16.
  */
 
-@ReportsCrashes(
-        mailTo = "rxdevlab@gmail.com",
-        customReportContent = {APP_VERSION_CODE, APP_VERSION_NAME, ANDROID_VERSION, PHONE_MODEL, CUSTOM_DATA, STACK_TRACE, LOGCAT, USER_APP_START_DATE},
-        mode = ReportingInteractionMode.DIALOG,
-        resDialogIcon = R.mipmap.ic_launcher,
-        resDialogTitle = R.string.crash_title,
-        resDialogText = R.string.crash_toast_text,
-        resDialogTheme = R.style.DarkAppTheme_Dialog,
-        reportDialogClass = CustomCrashDialog.class
-)
-
 public class App extends android.app.Application {
-    public final static String TEMPLATE_THEME = "theme";
-    public final static String TEMPLATE_SEARCH = "search";
-    public final static String TEMPLATE_QMS_CHAT = "qms_chat";
-    public final static String TEMPLATE_QMS_CHAT_MESS = "qms_chat_mess";
-    public final static String TEMPLATE_NEWS = "news";
-    public final static String TEMPLATE_FORUM_RULES = "forum_rules";
-    public final static String TEMPLATE_ANNOUNCE = "announce";
     public static int px2, px4, px6, px8, px12, px14, px16, px20, px24, px32, px36, px40, px48, px56, px64;
-    private static int savedKeyboardHeight = 0;
-    public static int keyboardHeight = 0;
-    public static int statusBarHeight = 0;
-    public static int navigationBarHeight = 0;
-    public static HashMap<String, String> templateStringCache = new HashMap<>();
     private static App instance;
-    private Map<String, MiniTemplator> templates = new HashMap<>();
     private float density = 1.0f;
     private SharedPreferences preferences;
-    private SimpleObservable preferenceChangeObservables = new SimpleObservable();
-    private OnSharedPreferenceChangeListener preferenceChangeListener = (sharedPreferences, key) -> {
-        Log.d(App.class.getSimpleName(), "Preference changed: " + key);
-        if (key == null) return;
-        preferenceChangeObservables.notifyObservers(key);
-    };
-    private SimpleObservable statusBarSizeObservables = new SimpleObservable();
 
-    private SimpleObservable favoriteEvents = new SimpleObservable();
-    private SimpleObservable qmsEvents = new SimpleObservable();
     private SimpleObservable networkForbidden = new SimpleObservable();
     private Boolean webViewFound = null;
     private Messenger mBoundService = null;
@@ -183,15 +139,6 @@ public class App extends android.app.Application {
         return AppCompatResources.getDrawable(context, getDrawableResAttr(context, attr));
     }
 
-    public boolean isDarkTheme() {
-        return Preferences.Main.Theme.isDark(getContext());
-    }
-
-    public String getCssStyleType() {
-        return isDarkTheme() ? "dark" : "light";
-    }
-
-
     public boolean isWebViewFound(Context context) {
         if (webViewFound == null) {
             try {
@@ -207,6 +154,9 @@ public class App extends android.app.Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(LocaleHelper.onAttach(base));
+        if (BuildConfig.FLAVOR.equals("dev")) {
+            MultiDex.install(this);
+        }
     }
 
     @Override
@@ -214,17 +164,33 @@ public class App extends android.app.Application {
         super.onCreate();
         instance = this;
         long time = System.currentTimeMillis();
-        ACRA.init(this);
-        ACRA.getErrorReporter().putCustomData("USER_NICK", getPreferences().getString("auth.user.nick", "null"));
+        YandexMetricaConfig config = YandexMetricaConfig.newConfigBuilder("a94d9236-cdf3-4a5e-af30-d6dbffaea362").build();
+        YandexMetrica.activate(getApplicationContext(), config);
+        YandexMetrica.enableActivityAutoTracking(this);
+
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        }
+
+        //ACRA.init(this);
+        dependencies = new Dependencies(this);
+        ProfileModel profileModel = dependencies.getUserHolder().getUser();
+        String nick = profileModel == null ? "null" : (profileModel.getNick() == null ? "null" : profileModel.getNick());
+
+        UserProfile.Builder userProfileBuilder = UserProfile.newBuilder()
+                .apply(Attribute.name().withValue(nick));
+
+        //ACRA.getErrorReporter().putCustomData("USER_NICK", profileModel == null ? "null" : profileModel.getNick());
         RxJavaPlugins.setErrorHandler(throwable -> {
             Log.d("SUKA", "RxJavaPlugins errorHandler " + throwable);
             throwable.printStackTrace();
+            YandexMetrica.reportError("Крит " + throwable.getMessage(), throwable);
         });
 
-        setTheme(isDarkTheme() ? R.style.DarkAppTheme : R.style.LightAppTheme);
+        setTheme(dependencies.getMainPreferencesHolder().getThemeIsDark() ? R.style.DarkAppTheme : R.style.LightAppTheme);
 
         try {
-            String inputHistory = getPreferences().getString("app.versions.history", "");
+            String inputHistory = dependencies.getOtherPreferencesHolder().getAppVersionsHistory();
             String[] history = TextUtils.split(inputHistory, ";");
 
             int lastVNum = 0;
@@ -243,49 +209,27 @@ public class App extends android.app.Application {
             if (lastVNum < nVCode) {
                 List<String> list = new ArrayList<>(Arrays.asList(history));
                 list.add(Integer.toString(nVCode));
-                getPreferences().edit().putString("app.versions.history", TextUtils.join(";", list)).apply();
+                dependencies.getOtherPreferencesHolder().setAppVersionsHistory(TextUtils.join(";", list));
             }
             if (disorder) {
                 throw new Exception("Нарушение порядка версий!");
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            ACRA.getErrorReporter().putCustomData("VERSIONS_HISTORY", getPreferences().getString("app.versions.history", ""));
-            ACRA.getErrorReporter().handleException(ex);
+            userProfileBuilder.apply(Attribute.customString("VERSION_HISTORY").withValue(dependencies.getOtherPreferencesHolder().getAppVersionsHistory()));
+            YandexMetrica.reportError("VERSIONS_HISTORY", ex);
+            //ACRA.getErrorReporter().putCustomData("VERSIONS_HISTORY", dependencies.getOtherPreferencesHolder().getAppVersionsHistory());
+            //ACRA.getErrorReporter().handleException(ex);
         }
+        userProfileBuilder.apply(Attribute.customString("VERSION_HISTORY").withValue(dependencies.getOtherPreferencesHolder().getAppVersionsHistory()));
+        //ACRA.getErrorReporter().putCustomData("VERSIONS_HISTORY", dependencies.getOtherPreferencesHolder().getAppVersionsHistory());
 
-        ACRA.getErrorReporter().putCustomData("VERSIONS_HISTORY", getPreferences().getString("app.versions.history", ""));
+        YandexMetrica.setUserProfileID(nick);
+        YandexMetrica.reportUserProfile(userProfileBuilder.build());
 
-        density = getResources().getDisplayMetrics().density;
         initImageLoader(this);
 
-        px2 = getContext().getResources().getDimensionPixelSize(R.dimen.dp2);
-        px4 = getContext().getResources().getDimensionPixelSize(R.dimen.dp4);
-        px6 = getContext().getResources().getDimensionPixelSize(R.dimen.dp6);
-        px8 = getContext().getResources().getDimensionPixelSize(R.dimen.dp8);
-        px12 = getContext().getResources().getDimensionPixelSize(R.dimen.dp12);
-        px14 = getContext().getResources().getDimensionPixelSize(R.dimen.dp14);
-        px16 = getContext().getResources().getDimensionPixelSize(R.dimen.dp16);
-        px20 = getContext().getResources().getDimensionPixelSize(R.dimen.dp20);
-        px24 = getContext().getResources().getDimensionPixelSize(R.dimen.dp24);
-        px32 = getContext().getResources().getDimensionPixelSize(R.dimen.dp32);
-        px36 = getContext().getResources().getDimensionPixelSize(R.dimen.dp36);
-        px40 = getContext().getResources().getDimensionPixelSize(R.dimen.dp40);
-        px48 = getContext().getResources().getDimensionPixelSize(R.dimen.dp48);
-        px56 = getContext().getResources().getDimensionPixelSize(R.dimen.dp56);
-        px64 = getContext().getResources().getDimensionPixelSize(R.dimen.dp64);
-
-        for (Field f : R.string.class.getFields()) {
-            try {
-                if (f.getName().contains("res_s_")) {
-                    templateStringCache.put(f.getName(), getString(f.getInt(f)));
-                }
-            } catch (Exception ignore) {
-            }
-        }
-
-        keyboardHeight = getPreferences().getInt("keyboard_height", getContext().getResources().getDimensionPixelSize(R.dimen.default_keyboard_height));
-        savedKeyboardHeight = keyboardHeight;
+        updateStaticRes();
 
         Realm.init(this);
         RealmConfiguration configuration = new RealmConfiguration.Builder()
@@ -294,10 +238,7 @@ public class App extends android.app.Application {
                 .migration(new DbMigration())
                 .build();
         Realm.setDefaultConfiguration(configuration);
-        Client.get(getContext());
 
-
-        getPreferences().registerOnSharedPreferenceChangeListener(preferenceChangeListener);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -352,8 +293,55 @@ public class App extends android.app.Application {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
 
-        QmsHelper.init();
         Log.e("APP", "TIME APP FINAL " + (System.currentTimeMillis() - time));
+
+        registerReceiver(
+                new NetworkStateReceiver(),
+                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        );
+    }
+
+    private void updateStaticRes() {
+        Log.e("kekosina", "updateStaticRes");
+        px2 = getContext().getResources().getDimensionPixelSize(R.dimen.dp2);
+        px4 = getContext().getResources().getDimensionPixelSize(R.dimen.dp4);
+        px6 = getContext().getResources().getDimensionPixelSize(R.dimen.dp6);
+        px8 = getContext().getResources().getDimensionPixelSize(R.dimen.dp8);
+        px12 = getContext().getResources().getDimensionPixelSize(R.dimen.dp12);
+        px14 = getContext().getResources().getDimensionPixelSize(R.dimen.dp14);
+        px16 = getContext().getResources().getDimensionPixelSize(R.dimen.dp16);
+        px20 = getContext().getResources().getDimensionPixelSize(R.dimen.dp20);
+        px24 = getContext().getResources().getDimensionPixelSize(R.dimen.dp24);
+        px32 = getContext().getResources().getDimensionPixelSize(R.dimen.dp32);
+        px36 = getContext().getResources().getDimensionPixelSize(R.dimen.dp36);
+        px40 = getContext().getResources().getDimensionPixelSize(R.dimen.dp40);
+        px48 = getContext().getResources().getDimensionPixelSize(R.dimen.dp48);
+        px56 = getContext().getResources().getDimensionPixelSize(R.dimen.dp56);
+        px64 = getContext().getResources().getDimensionPixelSize(R.dimen.dp64);
+
+        HashMap<String, String> templateStringCache = new HashMap<>();
+        for (Field f : R.string.class.getFields()) {
+            try {
+                if (f.getName().contains("res_s_")) {
+                    templateStringCache.put(f.getName(), getString(f.getInt(f)));
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        dependencies.getTemplateManager().setStaticStrings(templateStringCache);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        updateStaticRes();
+    }
+
+    private Dependencies dependencies;
+
+    public Dependencies Di() {
+        return dependencies;
     }
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -378,51 +366,12 @@ public class App extends android.app.Application {
         return mServiceConnection;
     }
 
-    public static HashMap<String, String> getTemplateStringCache() {
-        return templateStringCache;
-    }
-
-    public static MiniTemplator setTemplateResStrings(MiniTemplator t) {
-        for (Map.Entry<String, String> entry : t.getVariables().entrySet()) {
-            String cacheValue = App.getTemplateStringCache().get(entry.getKey());
-            if (cacheValue != null) {
-                t.setVariable(entry.getKey(), cacheValue);
-            }
-        }
-        return t;
-    }
-
     public static int getToolBarHeight(Context context) {
         int[] attrs = new int[]{R.attr.actionBarSize};
         TypedArray ta = context.obtainStyledAttributes(attrs);
         int toolBarHeight = ta.getDimensionPixelSize(0, -1);
         ta.recycle();
         return toolBarHeight;
-    }
-
-
-    public void subscribeFavorites(Observer observer) {
-        favoriteEvents.addObserver(observer);
-    }
-
-    public void unSubscribeFavorites(Observer observer) {
-        favoriteEvents.deleteObserver(observer);
-    }
-
-    public void notifyFavorites(TabNotification event) {
-        favoriteEvents.notifyObservers(event);
-    }
-
-    public void subscribeQms(Observer observer) {
-        qmsEvents.addObserver(observer);
-    }
-
-    public void unSubscribeQms(Observer observer) {
-        qmsEvents.deleteObserver(observer);
-    }
-
-    public void notifyQms(TabNotification event) {
-        qmsEvents.notifyObservers(event);
     }
 
     public void subscribeForbidden(Observer observer) {
@@ -437,97 +386,9 @@ public class App extends android.app.Application {
         networkForbidden.notifyObservers(isForbidden);
     }
 
-    public void addPreferenceChangeObserver(Observer observer) {
-        preferenceChangeObservables.addObserver(observer);
-    }
-
-    public void removePreferenceChangeObserver(Observer observer) {
-        preferenceChangeObservables.deleteObserver(observer);
-    }
-
-    public void addStatusBarSizeObserver(Observer observer) {
-        statusBarSizeObservables.addObserver(observer);
-        observer.update(statusBarSizeObservables, null);
-    }
-
-    public void removeStatusBarSizeObserver(Observer observer) {
-        statusBarSizeObservables.deleteObserver(observer);
-    }
-
-    public SimpleObservable getStatusBarSizeObservables() {
-        return statusBarSizeObservables;
-    }
-
-    public static int getStatusBarHeight() {
-        return statusBarHeight;
-    }
-
-    public static void setStatusBarHeight(int statusBarHeight) {
-        App.statusBarHeight = statusBarHeight;
-    }
-
-    public static int getNavigationBarHeight() {
-        return navigationBarHeight;
-    }
-
-    public static void setNavigationBarHeight(int navigationBarHeight) {
-        App.navigationBarHeight = navigationBarHeight;
-    }
-
-    public static int getKeyboardHeight() {
-        return keyboardHeight;
-    }
-
-    public static void setKeyboardHeight(int newKeyboardHeight) {
-        Log.d("FORPDA_LOG", "setKeyboardHeight " + newKeyboardHeight);
-        keyboardHeight = newKeyboardHeight;
-        if (keyboardHeight == savedKeyboardHeight) return;
-        App.get().getPreferences().edit().putInt("keyboard_height", keyboardHeight).apply();
-    }
-
-
-    public MiniTemplator getTemplate(String name) {
-        MiniTemplator template = templates.get(name);
-        if (template == null) {
-            template = findTemplate(name);
-            if (template != null) {
-                templates.put(name, template);
-            }
-        }
-        return template;
-    }
-
-    private MiniTemplator findTemplate(String name) {
-        MiniTemplator template = null;
-        try {
-            InputStream stream = App.get().getAssets().open("template_".concat(name).concat(".html"));
-            try {
-                template = new MiniTemplator.Builder().build(stream, Charset.forName("utf-8"));
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(getContext(), String.format(getString(R.string.template_error), name, e.getMessage()), Toast.LENGTH_LONG).show();
-                //создание пустого шаблона
-                template = new MiniTemplator.Builder().build(new ByteArrayInputStream("Template error!".getBytes(Charset.forName("utf-8"))), Charset.forName("utf-8"));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return template;
-    }
-
-
-    public float getDensity() {
-        return density;
-    }
-
-
-    public int dpToPx(int dp) {
-        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+    public int dpToPx(int dp, Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-    }
-
-    public static Drawable getAppVecDrawable(@DrawableRes int id) {
-        return AppCompatResources.getDrawable(App.getContext(), id);
     }
 
     /*Only vector icon*/
@@ -568,7 +429,7 @@ public class App extends android.app.Application {
                     protected HttpURLConnection createConnection(String url, Object extra) throws IOException {
                         HttpURLConnection conn = super.createConnection(url, extra);
                         if (pattern4pda.matcher(url).find()) {
-                            Map<String, Cookie> cookies = Client.get().getClientCookies();
+                            Map<String, Cookie> cookies = App.get().Di().getWebClient().getClientCookies();
                             String stringCookies = "";
                             for (Map.Entry<String, Cookie> cookieEntry : cookies.entrySet()) {
                                 stringCookies = stringCookies.concat(cookieEntry.getKey()).concat("=").concat(cookieEntry.getValue().value()).concat(";");

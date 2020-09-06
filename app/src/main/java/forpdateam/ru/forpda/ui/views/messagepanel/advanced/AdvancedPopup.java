@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 
@@ -18,7 +17,10 @@ import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
+import forpdateam.ru.forpda.ui.DimensionHelper;
+import forpdateam.ru.forpda.ui.DimensionsProvider;
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel;
+import io.reactivex.disposables.CompositeDisposable;
 
 /**
  * Created by radiationx on 07.01.17.
@@ -29,80 +31,11 @@ public class AdvancedPopup {
     private ViewGroup fragmentContainer;
     private boolean isShowingKeyboard = false;
     private StateListener stateListener;
-    private int newKeyboardHeight = 0;
-    private int lastKeyboardHeight = 0;
     private MessagePanel messagePanel;
     private Context context;
 
-
-    private ViewTreeObserver.OnGlobalLayoutListener globalLayoutListener = () -> {
-
-        if (messagePanel == null || popupWindow == null) {
-            return;
-        }
-        int windowHeight = fragmentContainer.getRootView().getHeight();
-        int fragmentContainerHeight = fragmentContainer.getRootView().findViewById(R.id.view_for_measure).getHeight();
-        int statusBarHeight = App.getStatusBarHeight();
-        int navigationBarHeight = App.getNavigationBarHeight();
-
-        newKeyboardHeight = windowHeight - fragmentContainerHeight - statusBarHeight - navigationBarHeight;
-
-
-        /*if (lastKeyboardHeight == newKeyboardHeight)
-            return;*/
-        lastKeyboardHeight = newKeyboardHeight;
-
-        Log.d("FORPDA_LOG", "TREE OBSERVER " + newKeyboardHeight + " = " + windowHeight + " - " + fragmentContainerHeight + " - " + statusBarHeight + " - " + navigationBarHeight+" : "+isShowingKeyboard+" : "+popupWindow.isShowing());
-        if (newKeyboardHeight > 100) {
-            App.setKeyboardHeight(newKeyboardHeight);
-            popupWindow.setHeight(newKeyboardHeight);
-            popupWindow.update();
-
-
-            if (!isShowingKeyboard && popupWindow.isShowing())
-                hidePopup();
-            isShowingKeyboard = true;
-            //Log.d("FORPDA_LOG", "isShowingKeyboard = TRUE, SetPadding " + newKeyboardHeight);
-        } else if(isShowingKeyboard){
-            if (popupWindow.isShowing()) {
-                hidePopup();
-            }
-            isShowingKeyboard = false;
-            //Log.d("FORPDA_LOG", "isShowingKeyboard = false");
-        }
-        //Log.d("SUKA", "OBSERVER SET PADDING 0");
-        //fragmentContainer.setPadding(0, 0, 0, 0);
-        /*if (newKeyboardHeight > 100) {
-            int last = App.getKeyboardHeight();
-            App.setKeyboardHeight(Math.max(last, newKeyboardHeight));
-            if (App.getKeyboardHeight() != last) {
-                popupWindow.setHeight(App.getKeyboardHeight());
-                popupWindow.update();
-            }
-            if (popupWindow.isShowing() && fragmentContainer.getPaddingBottom() != 0)
-                fragmentContainer.setPadding(0, 0, 0, 0);
-
-            if (!isShowingKeyboard && popupWindow.isShowing())
-                hidePopup();
-
-            isShowingKeyboard = true;
-            Log.d("FORPDA_LOG", "isShowingKeyboard = true");
-            if(newKeyboardHeight>0&&newKeyboardHeight==App.getKeyboardHeight()){
-                fragmentContainer.setPadding(0, 0, 0, newKeyboardHeight);
-            }else if(newKeyboardHeight==0){
-                fragmentContainer.setPadding(0, 0, 0, 0);
-            }
-        } else if (isShowingKeyboard) {
-            if (popupWindow.isShowing())
-                hidePopup();
-
-            isShowingKeyboard = false;
-            Log.d("FORPDA_LOG", "isShowingKeyboard = false");
-        }*/
-
-        messagePanel.setCanScrolling(!(isShowingKeyboard || popupWindow.isShowing()));
-        //Log.d("FORPDA_LOG", "AFTER " + fragmentContainer.getPaddingBottom());
-    };
+    private DimensionsProvider dimensionsProvider = App.get().Di().getDimensionsProvider();
+    private CompositeDisposable disposables = new CompositeDisposable();
 
     public AdvancedPopup(Context context, MessagePanel panel) {
         this.context = context;
@@ -119,10 +52,15 @@ public class AdvancedPopup {
 
         ((TabLayout) popupView.findViewById(R.id.tab_layout)).setupWithViewPager(viewPager);
 
-        popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, App.getKeyboardHeight(), false);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, dimensionsProvider.getDimensions().getSavedKeyboardHeight(), false);
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             popupWindow.setElevation(App.px2);
-        }
+        }*/
+
+        popupWindow.setOnDismissListener(() -> {
+            dimensionsProvider.getDimensions().setFakeKeyboardShow(false);
+            dimensionsProvider.update(dimensionsProvider.getDimensions());
+        });
 
         popupView.findViewById(R.id.delete_button).setOnClickListener(v -> {
             EditText messageField = messagePanel.getMessageField();
@@ -152,23 +90,62 @@ public class AdvancedPopup {
             else
                 showPopup();
         });
+        disposables.add(
+                dimensionsProvider
+                        .observeDimensions()
+                        .subscribe(dimensions -> {
+                            if (messagePanel != null) {
+                                messagePanel.post(() -> {
+                                    if (messagePanel != null) {
+                                        updateDimens(dimensions);
+                                    }
+                                });
+                            }
+                            updateDimens(dimensions);
+                        })
+        );
+    }
+
+    private void updateDimens(DimensionHelper.Dimensions dimensions) {
+        if (popupWindow == null || messagePanel == null) {
+            return;
+        }
+        if (dimensions.isKeyboardShow()) {
+            popupWindow.setHeight(dimensions.getSavedKeyboardHeight());
+            popupWindow.update();
+            if (!isShowingKeyboard && popupWindow.isShowing()) {
+                hidePopup();
+            }
+            isShowingKeyboard = true;
+        } else if (isShowingKeyboard) {
+            if (popupWindow.isShowing()) {
+                hidePopup();
+            }
+            isShowingKeyboard = false;
+        }
+        messagePanel.setCanScrolling(!(isShowingKeyboard || popupWindow.isShowing()));
     }
 
     private void hidePopup() {
+        DimensionHelper.Dimensions localDimensions = dimensionsProvider.getDimensions();
         messagePanel.getAdvancedButton().setImageDrawable(App.getVecDrawable(context, R.drawable.ic_add));
 
-        if (popupWindow.isShowing())
+        if (popupWindow.isShowing()) {
+            if (localDimensions.isFakeKeyboardShow()) {
+                localDimensions.setFakeKeyboardShow(false);
+                dimensionsProvider.update(localDimensions);
+            }
             popupWindow.dismiss();
+        }
 
-        //Log.d("FORPDA_LOG", "hidePopup " + App.getKeyboardHeight() + " : " + lastKeyboardHeight + " : " + newKeyboardHeight);
-        //fragmentContainer.setPadding(0, 0, 0, 0);
-        if (fragmentContainer.getPaddingBottom() != 0){
+        if (fragmentContainer.getPaddingBottom() != 0) {
             Log.d("SUKA", "hidePopup SET PADDING 0");
-            //fragmentContainer.setPadding(0, 0, 0, 0);
-            fragmentContainer.setPadding(fragmentContainer.getPaddingLeft(),
+            fragmentContainer.setPadding(
+                    fragmentContainer.getPaddingLeft(),
                     fragmentContainer.getPaddingTop(),
                     fragmentContainer.getPaddingRight(),
-                    0);
+                    0
+            );
         }
 
         if (stateListener != null)
@@ -178,28 +155,38 @@ public class AdvancedPopup {
     }
 
     private void showPopup() {
+        DimensionHelper.Dimensions localDimensions = dimensionsProvider.getDimensions();
         messagePanel.getAdvancedButton().setImageDrawable(App.getVecDrawable(context, R.drawable.ic_keyboard));
 
-        if (!popupWindow.isShowing())
+        if (!popupWindow.isShowing()) {
+            if(!localDimensions.isFakeKeyboardShow()){
+                localDimensions.setFakeKeyboardShow(true);
+                dimensionsProvider.update(localDimensions);
+            }
             popupWindow.showAtLocation(fragmentContainer, Gravity.BOTTOM, 0, 0);
+        }
 
-        Log.d("FORPDA_LOG", "showPopup " + App.getKeyboardHeight()+" : "+fragmentContainer.getPaddingBottom()+" : "+isShowingKeyboard);
+        Log.d("FORPDA_LOG", "showPopup " + localDimensions.getSavedKeyboardHeight() + " : " + fragmentContainer.getPaddingBottom() + " : " + isShowingKeyboard);
         //fragmentContainer.setPadding(0, 0, 0, App.getKeyboardHeight());
-        if (!isShowingKeyboard){
-            if(fragmentContainer.getPaddingBottom()!=App.getKeyboardHeight()){
-                Log.d("SUKA", "showPopup SET PADDING "+ App.getKeyboardHeight());
-                fragmentContainer.setPadding(fragmentContainer.getPaddingLeft(),
+
+        if (!isShowingKeyboard) {
+            if (fragmentContainer.getPaddingBottom() != localDimensions.getSavedKeyboardHeight()) {
+                Log.d("SUKA", "showPopup SET PADDING " + localDimensions.getSavedKeyboardHeight());
+                fragmentContainer.setPadding(
+                        fragmentContainer.getPaddingLeft(),
                         fragmentContainer.getPaddingTop(),
                         fragmentContainer.getPaddingRight(),
-                        App.getKeyboardHeight());
+                        localDimensions.getSavedKeyboardHeight()
+                );
             }
-        }
-        else {
-            Log.d("SUKA", "showPopup SET PADDING "+ 0);
-            fragmentContainer.setPadding(fragmentContainer.getPaddingLeft(),
+        } else {
+            Log.d("SUKA", "showPopup SET PADDING " + 0);
+            fragmentContainer.setPadding(
+                    fragmentContainer.getPaddingLeft(),
                     fragmentContainer.getPaddingTop(),
                     fragmentContainer.getPaddingRight(),
-                    0);
+                    0
+            );
         }
 
         if (stateListener != null)
@@ -216,18 +203,18 @@ public class AdvancedPopup {
     }
 
     public void onResume() {
-        fragmentContainer.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener);
+        //fragmentContainer.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener);
     }
 
     public void onPause() {
-        fragmentContainer.getViewTreeObserver().removeOnGlobalLayoutListener(globalLayoutListener);
+        //fragmentContainer.getViewTreeObserver().removeOnGlobalLayoutListener(globalLayoutListener);
         hidePopup();
     }
 
     public void onDestroy() {
-        fragmentContainer.getViewTreeObserver().removeOnGlobalLayoutListener(globalLayoutListener);
+        //fragmentContainer.getViewTreeObserver().removeOnGlobalLayoutListener(globalLayoutListener);
+        disposables.dispose();
         hidePopup();
-        popupWindow = null;
     }
 
     public void hidePopupWindows() {

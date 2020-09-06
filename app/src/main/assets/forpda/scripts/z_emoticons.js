@@ -228,7 +228,7 @@
                             function (b, a, c) {
                                 c = b.replace(/^\s+|\s+$/g, "");
                                 a = h[c];
-                                return a || (a = h[l[c]], a) ? ' <img alt="' + c + '" title="' + c + '" src="' + d.basepath + a[0] + '" /> ' : b
+                                return a || (a = h[l[c]], a) ? ' <img alt="' + c + '" title="' + c + '" class="emoticon" src="' + d.basepath + a[0] + '" /> ' : b
                             }), g != d.htmlspecialchars(b.nodeValue) && (m = p.createElement("span"), m.innerHTML = g, e = b.nextSibling, b.parentNode.replaceChild(m, b));
                         b = b.nextSibling || e;
                         e = k

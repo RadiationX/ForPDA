@@ -30,6 +30,7 @@
     <string name="default_s">По умолчанию</string>
     <string name="pref_lang_title">Язык</string>
     <string name="ok">Ок</string>
+    <string name="yes">Да</string>
     <string name="cancel">Отмена</string>
     <string name="no">Нет</string>
     <string name="refresh">Обновить</string>
@@ -90,7 +91,7 @@
     <string name="search_my_posts">Найти мои посты</string>
     <string name="theme_options">Опции темы</string>
     <string name="spoiler_link_copy_ask">Скопировать ссылку на спойлер в буфер обмена?</string>
-    <string name="link_to_anchor">Ссылка на якорь</string>
+    <string name="link_to_anchor">Скопировать ссылку на якорь в буфер обмена?</string>
     <string name="write">Написать</string>
     <string name="add_user">Добавить пользователя</string>
     <string name="user_nick">Ник пользователя</string>
@@ -164,6 +165,7 @@
     <string name="fragment_title_topics">Темы форума</string>
     <string name="fragment_title_forum_rules">Правила форума</string>
     <string name="fragment_title_device_search">Поиск устройства</string>
+    <string name="fragment_title_other_menu">Поиск устройства</string>
     <string name="activity_title_settings">Настройки</string>
 
     <string name="fragment_tab_title_theme" formatted="false">Тема \"%s\"</string>
@@ -213,7 +215,7 @@
     <!-- Tooltips -->
     <string name="tooltip_tabs">Справа находится панель с открытыми вкладками.\nОна позволяет удобно осуществлять навигацию между ними.</string>
     <string name="tooltip_link">Вы можете вручную переходить по ссылкам</string>
-    <string name="tooltip_search_settings">Нажимите сюда, чтобы настроить поисковой запрос</string>
+    <string name="tooltip_search_settings">Нажмите сюда, чтобы настроить поисковой запрос</string>
     <string name="tooltip_full_form">Долгое нажатие откроет полную форму ответа</string>
     <string name="code_panel_instruction">Вы можете настроить расположение элементов, перемещая их!</string>
     <string name="tooltip_msg_panel_useful">Полезное</string>
@@ -223,7 +225,7 @@
     <string name="auth_hello">Привет</string>
     <string name="auth_guest">Гость</string>
     <string name="ask_logout">Вы уверены, что хотите выйти из аккаунта?</string>
-    <string name="auth_login">Логин</string>
+    <string name="auth_login">Логин или email</string>
     <string name="auth_password">Пароль</string>
     <string name="auth_captcha">Введите число</string>
     <string name="auth_hidden">Скрытый</string>
@@ -298,6 +300,7 @@
     <string name="favorite_theme_deleted">Удалено из избранного</string>
     <string name="fav_delete_error_id_not_found">ID не найден, попробуйте перезагрузить страницу</string>
     <string name="fav_ask_delete">Удалить из избранного?</string>
+    <string name="fav_sorting_reset">Сбросить</string>
 
     <!-- Edit post -->
     <string name="editpost_title_answer">Ответ</string>
@@ -431,12 +434,17 @@
 
     <string name="pref_title_main">Общие</string>
 
+    <string name="pref_title_clear_menu_sequence">Восстановить меню</string>
+    <string name="pref_summary_clear_menu_sequence">Восстановить последовательность пунктов меню</string>
     <string name="pref_title_system_downloader">Системный загрузчик</string>
     <string name="pref_summary_system_downloader">Использовать системный загрузчик файлов</string>
 
     <string name="pref_title_appereance">Внешний вид</string>
 
     <string name="pref_title_dark_theme">Тёмная тема</string>
+
+    <string name="pref_title_show_bottom_arrow">Кнопка открытия нижнего меню</string>
+    <string name="pref_summary_show_bottom_arrow">Включить, если в системе есть жесты снизу экрана</string>
 
     <string name="pref_title_text_size">Размер шрифта</string>
     <string name="pref_summary_text_size">Применяется для тем, поиска и чата</string>
@@ -461,6 +469,9 @@
 
     <string name="pref_title_history_snapback">История переходов на странице</string>
     <string name="pref_summary_history_snapback">Сохраняет историю переходов snapback</string>
+
+    <string name="pref_title_hat_opened">Открытая шапка темы</string>
+    <string name="pref_summary_hat_opened">Всегда открытая шапка темы (первое сообщение)</string>
 
     <string name="pref_title_lists">Списки</string>
     <string name="pref_title_unread_top">Непрочитанные сверху</string>
@@ -542,5 +553,16 @@
 
     <!-- New res -->
 
+    <!-- Closeable info -->
+    <string name="closeable_info_other_menu_drag">Вы можете поменять порядок пунктов меню, для этого зажмите пункт меню и перенесите на нужное место</string>
+    
+    <!-- Menu item -->
+    <string name="menu_item_link_forum_author">Автор приложения</string>
+    <string name="menu_item_link_chat_telegram">Чат в Telegram</string>
+    <string name="menu_item_link_forum_topic">Обсуждение приложения</string>
+    <string name="menu_item_link_forum_faq">FAQ по программе</string>
+    <string name="menu_item_link_play_market">Play Маркет</string>
+    <string name="menu_item_link_github">GitHub</string>
+    <string name="menu_item_link_bitbucket">Bitbucket</string>
 
 </resources>

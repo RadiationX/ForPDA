@@ -7,10 +7,11 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.ApiUtils;
-import forpdateam.ru.forpda.api.devdb.models.Device;
-import forpdateam.ru.forpda.common.IntentHandler;
+import forpdateam.ru.forpda.entity.remote.devdb.Device;
+import forpdateam.ru.forpda.model.data.remote.api.ApiUtils;
+import forpdateam.ru.forpda.presentation.ISystemLinkHandler;
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 
@@ -20,6 +21,12 @@ import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 
 public class PostsAdapter extends BaseAdapter<Device.PostItem, PostsAdapter.PostHolder> {
     private int source = 0;
+
+    private PostHolder.Listener listener;
+
+    public PostsAdapter(PostHolder.Listener listener) {
+        this.listener = listener;
+    }
 
     public void setSource(int source) {
         this.source = source;
@@ -34,8 +41,8 @@ public class PostsAdapter extends BaseAdapter<Device.PostItem, PostsAdapter.Post
 
     @Override
     public PostHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = inflateLayout(parent, getLayout());;
-        return new PostHolder(v);
+        View v = inflateLayout(parent, getLayout());
+        return new PostHolder(v, listener);
     }
 
     @Override
@@ -43,23 +50,25 @@ public class PostsAdapter extends BaseAdapter<Device.PostItem, PostsAdapter.Post
         holder.bind(getItem(position), position);
     }
 
-    class PostHolder extends BaseViewHolder<Device.PostItem> implements View.OnClickListener {
-        public TextView title;
-        public TextView date;
-        public TextView desc;
-        public ImageView image;
+    public static class PostHolder extends BaseViewHolder<Device.PostItem> {
+        private TextView title;
+        private TextView date;
+        private TextView desc;
+        private ImageView image;
+        private Device.PostItem currentItem;
 
-        PostHolder(View v) {
+        PostHolder(View v, Listener listener) {
             super(v);
             title = (TextView) v.findViewById(R.id.item_title);
             date = (TextView) v.findViewById(R.id.item_date);
             desc = (TextView) v.findViewById(R.id.item_desc);
             image = (ImageView) v.findViewById(R.id.item_image);
-            v.setOnClickListener(this);
+            v.setOnClickListener((v1 -> listener.onClick(currentItem)));
         }
 
         @Override
         public void bind(Device.PostItem item, int position) {
+            currentItem = item;
             title.setText(item.getTitle());
             date.setText(item.getDate());
             if (desc != null) {
@@ -75,15 +84,8 @@ public class PostsAdapter extends BaseAdapter<Device.PostItem, PostsAdapter.Post
             }
         }
 
-        @Override
-        public void onClick(View v) {
-            String url;
-            if (source == PostsFragment.SRC_NEWS) {
-                url = "https://4pda.ru/index.php?p=" + getItem(getLayoutPosition()).getId();
-            } else {
-                url = "https://4pda.ru/forum/index.php?showtopic=" + getItem(getLayoutPosition()).getId();
-            }
-            IntentHandler.handle(url);
+        interface Listener {
+            void onClick(Device.PostItem item);
         }
     }
 }

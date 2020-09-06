@@ -3,6 +3,8 @@ package forpdateam.ru.forpda.ui.fragments.search;
 import android.support.v7.widget.CardView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -10,7 +12,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.api.search.models.SearchItem;
+import forpdateam.ru.forpda.entity.remote.search.SearchItem;
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 
@@ -42,7 +44,7 @@ class SearchAdapter extends BaseAdapter<SearchItem, BaseViewHolder<SearchItem>> 
             case TOPIC_LAYOUT:
                 return new SearchHolder(inflateLayout(parent, R.layout.search_item));
             case NEWS_LAYOUT:
-                return new FullHolder(inflateLayout(parent, R.layout.news_item));
+                return new FullHolder(inflateLayout(parent, R.layout.item_news));
         }
         return null;
     }
@@ -110,11 +112,12 @@ class SearchAdapter extends BaseAdapter<SearchItem, BaseViewHolder<SearchItem>> 
         private TextView title;
         private TextView description;
         private TextView commentsCount;
+        private ImageView commentsIcon;
         private TextView date;
         private TextView nTitle;
         private LinearLayout nContainer;
-        private CircleImageView cover;
-        private CardView root;
+        private ImageView cover;
+        private ImageView avatar;
 
 
         FullHolder(View itemView) {
@@ -124,13 +127,18 @@ class SearchAdapter extends BaseAdapter<SearchItem, BaseViewHolder<SearchItem>> 
             title = (TextView) itemView.findViewById(R.id.news_full_item_title);
             description = (TextView) itemView.findViewById(R.id.news_full_item_description);
             commentsCount = (TextView) itemView.findViewById(R.id.news_full_item_comments_count);
+            commentsIcon = (ImageView) itemView.findViewById(R.id.news_full_item_comments_icon);
             date = (TextView) itemView.findViewById(R.id.news_full_item_date);
             nTitle = (TextView) itemView.findViewById(R.id.news_full_item_news_title);
             nContainer = (LinearLayout) itemView.findViewById(R.id.news_full_item_new_container);
-            cover = (CircleImageView) itemView.findViewById(R.id.news_full_item_cover);
-            root = (CardView) itemView.findViewById(R.id.news_full_item_root);
+            cover = (ImageView) itemView.findViewById(R.id.news_full_item_cover);
+            avatar = (ImageView) itemView.findViewById(R.id.articleAvatar);
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
+
+            avatar.setVisibility(View.GONE);
+            commentsIcon.setVisibility(View.GONE);
+            commentsCount.setVisibility(View.GONE);
         }
 
         public void bind(SearchItem item, int position) {

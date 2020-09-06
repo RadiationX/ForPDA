@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:id="@+id/drawer_item_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground">
+        android:foreground="?attr/selectableItemBackground">
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/drawer_item_title"
@@ -22,9 +22,9 @@
             android:paddingEnd="0dp"
             android:paddingStart="16dp"
             android:paddingTop="12dp"
-            tools:text="@string/test_drawer_item_name"
             android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="@string/test_drawer_item_name" />
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/drawer_item_close"
