@@ -572,9 +572,7 @@ button:active,
             
             -webkit-filter: blur(1px);
             filter: blur(1px);*/
-  background-color: currentColor;
-  -webkit-mask: url(../../res/file-outline.svg) no-repeat center center;
-  -webkit-mask-size: 1.25em 1.25em;
+  background: url(../../res/file-outline.svg) no-repeat center center;
 }
 @-webkit-keyframes highlight {
   0% {

@@ -33,7 +33,7 @@ class ArticleParser(
                         authorId = matcher.group(7).toInt()
                         author = matcher.group(8).fromHtml()
                         description = matcher.group(9).fromHtml()
-                        matcher.group(9)?.let {
+                        matcher.group(10)?.let {
                             tags.addAll(parseTags(it))
                         }
                     } else {

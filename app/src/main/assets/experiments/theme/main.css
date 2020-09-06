@@ -137,9 +137,7 @@ a {
   position: absolute;
   height: 2.5rem;
   width: 2.5rem;
-  background-color: white;
-  -webkit-mask: url(../../forpda/res/file.svg) no-repeat center center;
-  -webkit-mask-size: 1.25em 1.25em;
+  background: url(../../forpda/res/file.svg) no-repeat center center;
 }
 .attach_block .title {
   text-overflow: ellipsis;

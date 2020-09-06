@@ -225,7 +225,7 @@ class SearchPresenter(
     }
 
     fun copyLink() {
-        Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=${settings.toUrl()}")
+        Utils.copyToClipBoard(settings.toUrl())
     }
 
     fun copyLink(item: IBaseForumPost) {

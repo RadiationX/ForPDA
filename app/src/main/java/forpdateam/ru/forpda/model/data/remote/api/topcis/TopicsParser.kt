@@ -39,7 +39,7 @@ class TopicsParser(
                 .findAll { matcher ->
                     data.addAnnounceItem(TopicItem().apply {
                         isAnnounce = true
-                        announceUrl = matcher.group(1)
+                        announceUrl = "https://4pda.ru" + matcher.group(1).replace("&amp;", "&", false)
                         title = matcher.group(2).fromHtml()
                     })
                 }

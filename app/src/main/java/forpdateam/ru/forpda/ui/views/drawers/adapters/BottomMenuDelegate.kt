@@ -2,7 +2,9 @@ package forpdateam.ru.forpda.ui.views.drawers.adapters
 
 import android.graphics.PorterDuff
 import android.support.v4.content.ContextCompat
+import android.support.v4.widget.TextViewCompat
 import android.support.v7.widget.RecyclerView
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,8 +42,15 @@ class BottomMenuDelegate(private val clickListener: Listener) : AdapterDelegate<
                         colorRes,
                         PorterDuff.Mode.SRC_ATOP
                 )
-                itemBottomMenuCounter.text = item.appItem.count.toString()
-                itemBottomMenuCounter.visibility = if (item.appItem.count > 0) View.VISIBLE else View.GONE
+
+                itemBottomMenuCounter.visibility = if (item.appItem.count > 0) {
+                    // This is done that way because of a bug in the support library related to autosizing when width/height=WRAP_CONTENT
+                    TextViewCompat.setAutoSizeTextTypeWithDefaults(itemBottomMenuCounter, TextViewCompat.AUTO_SIZE_TEXT_TYPE_NONE)
+                    itemBottomMenuCounter.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10.0f)
+                    itemBottomMenuCounter.text = item.appItem.count.toString()
+                    post { TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(itemBottomMenuCounter, 3, 10, 1, TypedValue.COMPLEX_UNIT_SP) }
+                    View.VISIBLE
+                } else View.GONE
             }
         }
     }

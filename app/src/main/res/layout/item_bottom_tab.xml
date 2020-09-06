@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/ic_newspaper" />
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/itemBottomMenuCounter"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

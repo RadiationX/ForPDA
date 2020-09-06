@@ -737,9 +737,7 @@ a.snapback:after {
   top: 0;
   height: 2.5rem;
   width: 2.5rem;
-  background-color: #ffffff;
-  -webkit-mask: url(../../res/file.svg) no-repeat center center;
-  -webkit-mask-size: 1.25em 1.25em;
+  background: url(../../res/file.svg) no-repeat center center;
 }
 .attach_block .title {
   text-overflow: ellipsis;

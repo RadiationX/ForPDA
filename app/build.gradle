@@ -22,11 +22,11 @@ android {
 
     def fileNaming = "apk/ForPDA"
 
-    def versionNumber = 210
+    def versionNumber = 214
 
     def versionMajor = "0"
     def versionMinor = "9"
-    def versionPatch = "0"
+    def versionPatch = "4"
 
     def versionBuild = -1
     def versionPropsFile = file('version.properties')
@@ -38,6 +38,20 @@ android {
         versionProps['DATE_BUILD'] = getDateTime()
         versionProps.store(versionPropsFile.newWriter(), null)
     }
+    signingConfigs {
+        debug {
+            storeFile rootProject.file(keystoreProperties['DEBUG_STORE_FILE'])
+            storePassword keystoreProperties['DEBUG_STORE_PASSWORD']
+            keyAlias keystoreProperties['DEBUG_KEY_ALIAS']
+            keyPassword keystoreProperties['DEBUG_KEY_PASSWORD']
+        }
+        release {
+            storeFile rootProject.file(keystoreProperties['DEBUG_STORE_FILE'])
+            storePassword keystoreProperties['DEBUG_STORE_PASSWORD']
+            keyAlias keystoreProperties['DEBUG_KEY_ALIAS']
+            keyPassword keystoreProperties['DEBUG_KEY_PASSWORD']
+        }
+    }
 
     buildTypes {
         /*debug {
@@ -48,6 +62,7 @@ android {
         release {
             minifyEnabled true
             shrinkResources true
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -59,7 +74,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 28
         vectorDrawables.useSupportLibrary = true
-        //multiDexEnabled true
+        multiDexEnabled true
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         ndk {
             abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
@@ -72,6 +87,7 @@ android {
             dimension "wtf"
         }
         beta {
+            multiDexEnabled true
             applicationId 'ru.forpdateam.forpda.beta'
             versionCode versionNumber
             versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild}) beta"
@@ -85,15 +101,6 @@ android {
             versionCode versionNumber
             versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild}) dev"
             dimension "wtf"
-        }
-    }
-
-    signingConfigs {
-        debug {
-            storeFile rootProject.file(keystoreProperties['DEBUG_STORE_FILE'])
-            storePassword keystoreProperties['DEBUG_STORE_PASSWORD']
-            keyAlias keystoreProperties['DEBUG_KEY_ALIAS']
-            keyPassword keystoreProperties['DEBUG_KEY_PASSWORD']
         }
     }
 
