@@ -25,7 +25,7 @@ public class Preferences {
     public final static class Other {
         public final static String APP_FIRST_START = "main.is_first_start";
         public final static String APP_VERSIONS_HISTORY = "app.versions.history";
-        public final static String SEARCH_SETTINGS = "search_settings";
+        public final static String SEARCH_SETTINGS = "search_settings_v2";
         public final static String MESSAGE_PANEL_BBCODES_SORT = "message_panel.bb_codes.sorted";
 
 
