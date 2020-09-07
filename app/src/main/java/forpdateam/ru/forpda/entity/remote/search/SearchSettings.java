@@ -58,9 +58,9 @@ public class SearchSettings {
 
     public SearchSettings() {
         resourceType = RESOURCE_FORUM.getFirst();
-        result = RESULT_POSTS.getFirst();
+        result = RESULT_TOPICS.getFirst();
         sort = SORT_DD.getFirst();
-        source = SOURCE_ALL.getFirst();
+        source = SOURCE_TITLES.getFirst();
         query = "";
         nick = "";
         subforums = SUB_FORUMS_TRUE;
