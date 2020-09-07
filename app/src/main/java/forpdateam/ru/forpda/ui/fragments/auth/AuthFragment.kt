@@ -33,6 +33,7 @@ import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.presentation.auth.AuthPresenter
 import forpdateam.ru.forpda.presentation.auth.AuthView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
+import kotlinx.android.synthetic.main.fragment_auth.*
 
 /**
  * Created by radiationx on 29.07.16.
@@ -46,6 +47,7 @@ class AuthFragment : TabFragment(), AuthView {
     private lateinit var avatar: ImageView
     private lateinit var sendButton: Button
     private lateinit var skipButton: Button
+    private lateinit var regButton: Button
     private lateinit var loginProgress: ProgressBar
     private lateinit var captchaProgress: ProgressBar
     private lateinit var hiddenAuth: CheckBox
@@ -73,7 +75,8 @@ class AuthFragment : TabFragment(), AuthView {
             App.get().Di().router,
             App.get().Di().schedulers,
             App.get().Di().authHolder,
-            App.get().Di().errorHandler
+            App.get().Di().errorHandler,
+            App.get().Di().systemLinkHandler
     )
 
     init {
@@ -97,6 +100,7 @@ class AuthFragment : TabFragment(), AuthView {
         hiddenAuth = findViewById(R.id.auth_hidden) as CheckBox
         sendButton = findViewById(R.id.auth_send) as Button
         skipButton = findViewById(R.id.auth_skip) as Button
+        regButton = findViewById(R.id.auth_reg) as Button
         return viewFragment
     }
 
@@ -107,6 +111,13 @@ class AuthFragment : TabFragment(), AuthView {
             AlertDialog.Builder(context!!)
                     .setMessage("Без авторизации будут недоступны некоторые функции приложения.")
                     .setPositiveButton(R.string.ok) { dialog, which -> presenter.onClickSkip() }
+                    .setNegativeButton(R.string.cancel, null)
+                    .show()
+        }
+        regButton.setOnClickListener {
+            AlertDialog.Builder(context!!)
+                    .setMessage("Процесс регистрации включает в себя множество шагов, поэтому рекомендуем зарегистрироваться через браузер.")
+                    .setPositiveButton(R.string.ok) { _, _ -> presenter.onRegistrationClick() }
                     .setNegativeButton(R.string.cancel, null)
                     .show()
         }
@@ -165,6 +176,14 @@ class AuthFragment : TabFragment(), AuthView {
             setAnimationListener(object : SimpleAnimationListener() {
                 override fun onAnimationEnd(animation: Animation) {
                     mainForm.visibility = View.GONE
+                }
+            })
+        })
+        auth_top_buttons.startAnimation(AlphaAnimation(1.0f, 0.0f).apply {
+            duration = 225
+            setAnimationListener(object : SimpleAnimationListener() {
+                override fun onAnimationEnd(animation: Animation) {
+                    auth_top_buttons?.visibility = View.GONE
                 }
             })
         })

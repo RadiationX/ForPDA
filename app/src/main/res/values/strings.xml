@@ -231,6 +231,7 @@
     <string name="auth_hidden">Скрытый</string>
     <string name="auth_btn_login">Войти</string>
     <string name="auth_skip">Пропустить</string>
+    <string name="auth_reg">Зарегистрироваться</string>
 
     <!-- Notes -->
     <string name="create_note">Создать закладку</string>

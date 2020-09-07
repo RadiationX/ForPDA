@@ -208,6 +208,7 @@
     <string name="auth_hidden">Hide online</string>
     <string name="auth_btn_login">Sign in</string>
     <string name="auth_skip">Skip</string>
+    <string name="auth_reg">Sign up</string>
     <!-- Notes -->
     <string name="create_note">Take a bookmark</string>
     <string name="note_edit">Bookmark editing</string>

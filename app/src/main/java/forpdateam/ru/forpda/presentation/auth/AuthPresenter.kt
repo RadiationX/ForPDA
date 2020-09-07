@@ -11,6 +11,7 @@ import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.repository.auth.AuthRepository
 import forpdateam.ru.forpda.model.repository.profile.ProfileRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
+import forpdateam.ru.forpda.presentation.ISystemLinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import io.reactivex.Observable
@@ -27,7 +28,8 @@ class AuthPresenter(
         private val router: TabRouter,
         private val schedulers: SchedulersProvider,
         private val authHolder: AuthHolder,
-        private val errorHandler: IErrorHandler
+        private val errorHandler: IErrorHandler,
+        private val systemLinkHandler: ISystemLinkHandler
 ) : BasePresenter<AuthView>() {
 
     private var fieldsFilled = false
@@ -79,6 +81,10 @@ class AuthPresenter(
             }
         })
         router.replaceScreen(Screen.ArticleList())
+    }
+
+    fun onRegistrationClick() {
+        systemLinkHandler.handle("https://4pda.ru/forum/index.php?act=auth#reg")
     }
 
     private fun loadForm() {
