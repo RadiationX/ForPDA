@@ -80,7 +80,7 @@ class AuthPresenter(
                 state = AuthState.SKIP
             }
         })
-        router.replaceScreen(Screen.ArticleList())
+        router.exit()
     }
 
     fun onRegistrationClick() {
@@ -126,7 +126,7 @@ class AuthPresenter(
                 .subscribeOn(schedulers.io())
                 .observeOn(schedulers.ui())
                 .subscribe {
-                    router.replaceScreen(Screen.ArticleList())
+                    router.exit()
                 }
                 .untilDestroy()
     }

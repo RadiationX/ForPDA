@@ -8,12 +8,15 @@ import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
 import android.os.Environment
 import android.support.v7.app.AlertDialog
+import android.util.Log
 import android.widget.Toast
 import com.yandex.metrica.YandexMetrica
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.MimeTypeUtil
 import forpdateam.ru.forpda.common.Utils
+import forpdateam.ru.forpda.entity.common.AuthState
+import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import io.reactivex.Observable
@@ -22,7 +25,9 @@ import io.reactivex.schedulers.Schedulers
 
 class SystemLinkHandler(
         private val context: Context,
-        private val mainPreferencesHolder: MainPreferencesHolder
+        private val mainPreferencesHolder: MainPreferencesHolder,
+        private val router: TabRouter,
+        private val authHolder: AuthHolder
 ) : ISystemLinkHandler {
     override fun handle(url: String) {
         try {
@@ -49,8 +54,24 @@ class SystemLinkHandler(
     }
 
     private fun redirectDownload(fileName: String, url: String) {
+        if (authHolder.get().state != AuthState.AUTH) {
+            App.getActivity()?.also { activity ->
+                AlertDialog.Builder(activity)
+                        .setMessage("Необходимо войти в аккаунт 4pda")
+                        .setPositiveButton("Войти") { _, _ ->
+                            router.navigateTo(Screen.Auth())
+                        }
+                        .setNegativeButton(R.string.cancel, null)
+                        .show()
+            }
+            return
+        }
         Toast.makeText(context, String.format(context.getString(R.string.perform_request_link), fileName), Toast.LENGTH_SHORT).show()
-        val disposable = Observable.fromCallable { App.get().Di().webClient.request(NetworkRequest.Builder().url(url).withoutBody().build()) }
+        val disposable = Observable
+                .fromCallable {
+                    val request = NetworkRequest.Builder().url(url).withoutBody().build()
+                    App.get().Di().webClient.request(request)
+                }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ response ->
@@ -64,7 +85,6 @@ class SystemLinkHandler(
                             externalDownloader(response.redirect)
                         } else {
                             val checkAction = {
-                                Toast.makeText(context, String.format(context.getString(R.string.perform_request_link), fileName), Toast.LENGTH_SHORT).show()
                                 try {
                                     systemDownloader(fileName, response.redirect)
                                 } catch (exception: Exception) {

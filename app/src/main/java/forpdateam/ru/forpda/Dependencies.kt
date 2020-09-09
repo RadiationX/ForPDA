@@ -96,7 +96,7 @@ class Dependencies internal constructor(
     val router: TabRouter by lazy { cicerone.router }
     val navigatorHolder: NavigatorHolder by lazy { cicerone.navigatorHolder }
 
-    val systemLinkHandler: ISystemLinkHandler by lazy { SystemLinkHandler(context, mainPreferencesHolder) }
+    val systemLinkHandler: ISystemLinkHandler by lazy { SystemLinkHandler(context, mainPreferencesHolder, router, authHolder) }
     val linkHandler: ILinkHandler by lazy { LinkHandler(systemLinkHandler) }
 
     val preferences = PreferenceManager.getDefaultSharedPreferences(context)
