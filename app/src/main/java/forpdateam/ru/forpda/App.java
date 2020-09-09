@@ -174,13 +174,8 @@ public class App extends android.app.Application {
 
         //ACRA.init(this);
         dependencies = new Dependencies(this);
-        ProfileModel profileModel = dependencies.getUserHolder().getUser();
-        String nick = profileModel == null ? "null" : (profileModel.getNick() == null ? "null" : profileModel.getNick());
 
-        UserProfile.Builder userProfileBuilder = UserProfile.newBuilder()
-                .apply(Attribute.name().withValue(nick));
 
-        //ACRA.getErrorReporter().putCustomData("USER_NICK", profileModel == null ? "null" : profileModel.getNick());
         RxJavaPlugins.setErrorHandler(throwable -> {
             Log.d("SUKA", "RxJavaPlugins errorHandler " + throwable);
             throwable.printStackTrace();
@@ -216,16 +211,8 @@ public class App extends android.app.Application {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            userProfileBuilder.apply(Attribute.customString("VERSION_HISTORY").withValue(dependencies.getOtherPreferencesHolder().getAppVersionsHistory()));
             YandexMetrica.reportError("VERSIONS_HISTORY", ex);
-            //ACRA.getErrorReporter().putCustomData("VERSIONS_HISTORY", dependencies.getOtherPreferencesHolder().getAppVersionsHistory());
-            //ACRA.getErrorReporter().handleException(ex);
         }
-        userProfileBuilder.apply(Attribute.customString("VERSION_HISTORY").withValue(dependencies.getOtherPreferencesHolder().getAppVersionsHistory()));
-        //ACRA.getErrorReporter().putCustomData("VERSIONS_HISTORY", dependencies.getOtherPreferencesHolder().getAppVersionsHistory());
-
-        YandexMetrica.setUserProfileID(nick);
-        YandexMetrica.reportUserProfile(userProfileBuilder.build());
 
         initImageLoader(this);
 
