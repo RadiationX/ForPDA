@@ -1,8 +1,8 @@
 package forpdateam.ru.forpda.ui.fragments.qms
 
 import android.os.Bundle
-import android.support.v7.widget.AppCompatAutoCompleteTextView
-import android.support.v7.widget.LinearLayoutManager
+import androidx.appcompat.widget.AppCompatAutoCompleteTextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.*
 import android.widget.ArrayAdapter
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -65,7 +65,7 @@ class QmsBlackListFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener
         })
 
         refreshLayout.setOnRefreshListener { presenter.loadContacts() }
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
 
         dialogMenu.apply {
             addItem(getString(R.string.profile)) { _, data ->

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="?attr/background_base">
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,7 +19,7 @@
         android:background="?attr/colorPrimary"
         android:elevation="1dp">
 
-        <android.support.design.widget.TabLayout
+        <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
@@ -34,7 +34,7 @@
             app:tabSelectedTextColor="?attr/colorAccent"
             app:tabTextColor="?attr/second_text_color"/>
 
-        <android.support.v7.widget.AppCompatImageButton
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/delete_button"
             android:layout_width="56dp"
             android:layout_height="@dimen/dp48"

@@ -3,8 +3,8 @@ package forpdateam.ru.forpda.ui.fragments.qms
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.SearchView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.appcompat.widget.SearchView
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -61,7 +61,7 @@ class QmsContactsFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<
         refreshLayoutStyle(refreshLayout)
         setScrollFlagsEnterAlways()
         refreshLayout.setOnRefreshListener { presenter.loadContacts() }
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         val pauseOnScrollListener = PauseOnScrollListener(ImageLoader.getInstance(), true, true)
         recyclerView.addOnScrollListener(pauseOnScrollListener)
 

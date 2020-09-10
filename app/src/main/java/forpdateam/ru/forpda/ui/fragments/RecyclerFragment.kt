@@ -2,9 +2,9 @@ package forpdateam.ru.forpda.ui.fragments
 
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.AppBarLayout
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.RecyclerView
+import com.google.android.material.appbar.AppBarLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,8 +16,8 @@ import forpdateam.ru.forpda.R
  */
 
 abstract class RecyclerFragment : TabFragment(), TabTopScroller {
-    protected lateinit var refreshLayout: SwipeRefreshLayout
-    protected lateinit var recyclerView: RecyclerView
+    protected lateinit var refreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    protected lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
 
     private var listScrollY = 0
     private var appBarOffset = 0
@@ -27,8 +27,8 @@ abstract class RecyclerFragment : TabFragment(), TabTopScroller {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         baseInflateFragment(inflater, R.layout.fragment_base_list)
-        refreshLayout = findViewById(R.id.swipe_refresh_list) as SwipeRefreshLayout
-        recyclerView = findViewById(R.id.base_list) as RecyclerView
+        refreshLayout = findViewById(R.id.swipe_refresh_list) as androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        recyclerView = findViewById(R.id.base_list) as androidx.recyclerview.widget.RecyclerView
         contentController.setMainRefresh(refreshLayout)
         return viewFragment
     }
@@ -38,8 +38,8 @@ abstract class RecyclerFragment : TabFragment(), TabTopScroller {
         setListsBackground()
         recyclerView.setHasFixedSize(true)
         refreshLayoutStyle(refreshLayout)
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+        recyclerView.addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 listScrollY = recyclerView.computeVerticalScrollOffset()
                 updateToolbarShadow()

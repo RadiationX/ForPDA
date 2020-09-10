@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:foreground="?attr/selectableItemBackgroundBorderless">
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/forum_item_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,7 +18,7 @@
         android:textSize="16sp"
         android:textStyle="bold" />
 
-    <android.support.v7.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/forum_item_icon"
         android:layout_width="@dimen/dp24"
         android:layout_height="24dp"

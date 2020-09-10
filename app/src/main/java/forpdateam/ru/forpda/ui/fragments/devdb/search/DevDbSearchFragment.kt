@@ -3,9 +3,9 @@ package forpdateam.ru.forpda.ui.fragments.devdb.search
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.SearchView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.appcompat.widget.SearchView
 import android.view.*
 import android.widget.LinearLayout
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -31,7 +31,7 @@ import forpdateam.ru.forpda.ui.views.messagepanel.AutoFitRecyclerView
 
 class DevDbSearchFragment : TabFragment(), SearchDevicesView, BaseAdapter.OnItemClickListener<Brand.DeviceItem> {
     private lateinit var adapter: DevicesAdapter
-    private lateinit var refreshLayout: SwipeRefreshLayout
+    private lateinit var refreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     private lateinit var recyclerView: AutoFitRecyclerView
     private lateinit var searchView: SearchView
     private lateinit var searchMenuItem: MenuItem
@@ -54,7 +54,7 @@ class DevDbSearchFragment : TabFragment(), SearchDevicesView, BaseAdapter.OnItem
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         baseInflateFragment(inflater, R.layout.fragment_brand)
-        refreshLayout = findViewById(R.id.swipe_refresh_list) as SwipeRefreshLayout
+        refreshLayout = findViewById(R.id.swipe_refresh_list) as androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         recyclerView = findViewById(R.id.base_list) as AutoFitRecyclerView
         contentController.setMainRefresh(refreshLayout)
         return viewFragment
@@ -74,7 +74,7 @@ class DevDbSearchFragment : TabFragment(), SearchDevicesView, BaseAdapter.OnItem
         recyclerView.setColumnWidth(App.get().dpToPx(144, recyclerView.context))
         recyclerView.adapter = adapter
         try {
-            val gridLayoutManager = recyclerView.layoutManager as GridLayoutManager
+            val gridLayoutManager = recyclerView.layoutManager as androidx.recyclerview.widget.GridLayoutManager
             recyclerView.addItemDecoration(DevicesFragment.SpacingItemDecoration(gridLayoutManager, App.px8))
         } catch (ex: Exception) {
             ex.printStackTrace()

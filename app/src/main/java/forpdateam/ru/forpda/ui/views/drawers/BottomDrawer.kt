@@ -3,14 +3,14 @@ package forpdateam.ru.forpda.ui.views.drawers
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.support.constraint.ConstraintLayout
-import android.support.design.widget.BottomSheetBehavior
-import android.support.v4.app.FragmentActivity
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
+import androidx.constraintlayout.widget.ConstraintLayout
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ItemTouchHelper
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -38,7 +38,7 @@ import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlin.math.min
 
 class BottomDrawer(
-        private val activity: FragmentActivity,
+        private val activity: androidx.fragment.app.FragmentActivity,
         private val drawerLayout: ViewGroup,
         private val tabNavigator: TabNavigator,
         private val router: TabRouter,
@@ -124,7 +124,7 @@ class BottomDrawer(
             updateArrowVisible(mainPreferencesHolder.getShowBottomArrow())
 
             bottomMenuRecycler.apply {
-                layoutManager = GridLayoutManager(context, 5)
+                layoutManager = androidx.recyclerview.widget.GridLayoutManager(context, 5)
                 adapter = menuAdapter
                 isNestedScrollingEnabled = false
             }
@@ -138,14 +138,14 @@ class BottomDrawer(
             }
 
             bottomTabsRecycler.apply {
-                layoutManager = LinearLayoutManager(context).apply {
+                layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context).apply {
                     stackFromEnd = true
                 }
                 adapter = tabsAdapter
 
                 val color = App.getColorFromAttr(context, R.attr.item_tab_close_color)
                 val swipeHandler = object : TabSwipeToDeleteCallback(color) {
-                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, p1: Int) {
+                    override fun onSwiped(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder, p1: Int) {
                         val tab = tabsAdapter.getItem(viewHolder.adapterPosition)
                         tabNavigator.close(tab?.tag)
                     }
@@ -227,7 +227,7 @@ class BottomDrawer(
     }
 
     private fun updateMenu() {
-        (drawerLayout.bottomMenuRecycler.layoutManager as? GridLayoutManager)?.spanCount = localItems.size
+        (drawerLayout.bottomMenuRecycler.layoutManager as? androidx.recyclerview.widget.GridLayoutManager)?.spanCount = localItems.size
         menuAdapter.bindItems(localItems)
     }
 
@@ -270,7 +270,7 @@ class BottomDrawer(
 
     fun onStart() {
         drawerLayout.bottomTabsRecycler.apply {
-            layoutManager = LinearLayoutManager(context).apply {
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context).apply {
                 stackFromEnd = true
             }
         }

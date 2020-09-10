@@ -1,9 +1,9 @@
 package forpdateam.ru.forpda.ui.fragments.other
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ItemTouchHelper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -71,14 +71,14 @@ class OtherFragment : TabFragment(), OtherView {
         super.onViewCreated(view, savedInstanceState)
         appBarLayout.visibility = View.GONE
         recyclerView.apply {
-            layoutManager = LinearLayoutManager(this.context)
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this.context)
             adapter = otherAdapter
 
             val touchHelper = ItemTouchHelper(OtherItemDragCallback(otherAdapter, itemDragListener))
             touchHelper.attachToRecyclerView(this)
 
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
                     listScrollY = recyclerView.computeVerticalScrollOffset()
                     updateToolbarShadow()

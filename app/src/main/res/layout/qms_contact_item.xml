@@ -14,7 +14,7 @@
         android:layout_marginTop="8dp"
         android:scaleType="centerCrop" />
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/qms_contact_nick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
         android:textColor="?attr/default_text_color"
         tools:text="@string/test_nick"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/qms_contact_count"
         android:layout_width="wrap_content"
         android:layout_height="24dp"

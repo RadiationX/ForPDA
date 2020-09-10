@@ -1,13 +1,11 @@
 package forpdateam.ru.forpda.common.webview;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.support.v4.util.Pair;
+
+import androidx.core.util.Pair;
 import android.util.Log;
 import android.webkit.WebView;
 
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.common.Utils;
 import forpdateam.ru.forpda.presentation.ILinkHandler;
@@ -15,8 +13,6 @@ import forpdateam.ru.forpda.presentation.ISystemLinkHandler;
 import forpdateam.ru.forpda.presentation.TabRouter;
 import forpdateam.ru.forpda.ui.activities.imageviewer.ImageViewerActivity;
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu;
-
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 /**
  * Created by radiationx on 01.11.16.

@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.ui.views.messagepanel.advanced;
 
-import android.support.annotation.DrawableRes;
+import androidx.annotation.DrawableRes;
 
 /**
  * Created by radiationx on 08.01.17.

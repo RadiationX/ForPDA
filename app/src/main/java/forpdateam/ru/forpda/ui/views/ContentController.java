@@ -1,8 +1,8 @@
 package forpdateam.ru.forpda.ui.views;
 
 import android.content.Context;
-import android.support.annotation.LayoutRes;
-import android.support.v4.widget.SwipeRefreshLayout;
+import androidx.annotation.LayoutRes;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.view.ViewGroup;
 

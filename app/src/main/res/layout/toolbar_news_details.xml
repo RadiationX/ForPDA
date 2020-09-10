@@ -37,7 +37,7 @@
         android:paddingStart="16dp"
         android:paddingTop="@dimen/dp12">
 
-        <android.support.v7.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/article_title"
             style="?ProfileToolbarTextStyle"
             android:layout_width="wrap_content"
@@ -54,7 +54,7 @@
             android:layout_marginTop="@dimen/dp8"
             android:orientation="horizontal">
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/article_nick"
                 style="?ProfileToolbarTextStyle"
                 android:layout_width="wrap_content"
@@ -64,7 +64,7 @@
                 android:textStyle="bold"
                 tools:text="LONG NICK"/>
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/article_comments_count"
                 style="?ProfileToolbarTextStyle"
                 android:layout_width="wrap_content"
@@ -75,7 +75,7 @@
                 android:textStyle="bold"
                 tools:text="2560"/>
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/article_date"
                 style="?ProfileToolbarTextStyle"
                 android:layout_width="wrap_content"

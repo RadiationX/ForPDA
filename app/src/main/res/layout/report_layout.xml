@@ -7,13 +7,13 @@
     android:paddingStart="@dimen/dp24"
     android:paddingTop="@dimen/dp16">
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/report_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/report_text">
 
-        <android.support.v7.widget.AppCompatEditText
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/report_text_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,5 +21,5 @@
             android:inputType="text|textCapSentences|textMultiLine"
             android:scrollHorizontally="true" />
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

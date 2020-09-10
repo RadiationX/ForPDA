@@ -1,30 +1,23 @@
 package forpdateam.ru.forpda.ui.fragments.news.main;
 
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.CardView;
+import androidx.core.view.ViewCompat;
+
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 import java.util.Collection;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.common.RoundedBitmapDisplayerFix;
 import forpdateam.ru.forpda.entity.remote.news.NewsItem;
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;

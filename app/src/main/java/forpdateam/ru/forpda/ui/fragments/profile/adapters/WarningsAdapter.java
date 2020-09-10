@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.ui.fragments.profile.adapters;
 
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;

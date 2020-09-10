@@ -3,7 +3,7 @@ package forpdateam.ru.forpda.ui.fragments.notes
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -56,7 +56,7 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
         adapter = NotesAdapter()
         adapter.setClickListener(this)
         recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         refreshLayout.setOnRefreshListener { presenter.loadNotes() }
         recyclerView.addItemDecoration(DevicesFragment.SpacingItemDecoration(App.px8, false))
 

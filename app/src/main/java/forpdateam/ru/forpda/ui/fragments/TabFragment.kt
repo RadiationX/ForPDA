@@ -4,15 +4,15 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.support.annotation.CallSuper
-import android.support.annotation.IdRes
-import android.support.annotation.LayoutRes
-import android.support.design.widget.AppBarLayout
-import android.support.design.widget.CollapsingToolbarLayout
-import android.support.design.widget.CoordinatorLayout
-import android.support.design.widget.FloatingActionButton
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.Toolbar
+import androidx.annotation.CallSuper
+import androidx.annotation.IdRes
+import androidx.annotation.LayoutRes
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.CollapsingToolbarLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.appcompat.widget.Toolbar
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -54,7 +54,7 @@ open class TabFragment : MvpAppCompatFragment() {
     protected lateinit var additionalContent: ViewGroup
     protected lateinit var contentProgress: ProgressBar
     protected lateinit var titlesWrapper: LinearLayout
-    protected lateinit var coordinatorLayout: CoordinatorLayout
+    protected lateinit var coordinatorLayout: androidx.coordinatorlayout.widget.CoordinatorLayout
     protected lateinit var appBarLayout: AppBarLayout
     protected lateinit var toolbarLayout: CollapsingToolbarLayout
     protected lateinit var toolbar: Toolbar
@@ -285,18 +285,18 @@ open class TabFragment : MvpAppCompatFragment() {
     }
 
     protected open fun initFabBehavior() {
-        val params = fab.layoutParams as CoordinatorLayout.LayoutParams
+        val params = fab.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
         val behavior = ScrollAwareFABBehavior(fab.context, null)
         params.behavior = behavior
         fab.requestLayout()
     }
 
-    protected fun refreshLayoutStyle(refreshLayout: SwipeRefreshLayout) {
+    protected fun refreshLayoutStyle(refreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout) {
         refreshLayout.setProgressBackgroundColorSchemeColor(App.getColorFromAttr(context, R.attr.colorPrimary))
         refreshLayout.setColorSchemeColors(App.getColorFromAttr(context, R.attr.colorAccent))
     }
 
-    protected fun refreshLayoutLongTrigger(refreshLayout: SwipeRefreshLayout) {
+    protected fun refreshLayoutLongTrigger(refreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout) {
         refreshLayout.setDistanceToTriggerSync(App.px48 * 3)
         refreshLayout.setProgressViewEndTarget(false, App.px48 * 3)
     }

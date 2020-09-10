@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.client;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.io.IOException;
 

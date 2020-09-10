@@ -10,14 +10,14 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.support.annotation.CallSuper
-import android.support.design.widget.CoordinatorLayout
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.TabLayout
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.AppCompatImageButton
-import android.support.v7.widget.SearchView
+import androidx.annotation.CallSuper
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.tabs.TabLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatImageButton
+import androidx.appcompat.widget.SearchView
 import android.util.Log
 import android.util.TypedValue
 import android.view.*
@@ -62,7 +62,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
     protected lateinit var addFavoritesMenuItem: MenuItem
     protected lateinit var openForumMenuItem: MenuItem
 
-    protected lateinit var refreshLayout: SwipeRefreshLayout
+    protected lateinit var refreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
     private lateinit var paginationHelper: PaginationHelper
 
@@ -124,7 +124,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
     }
 
     override fun initFabBehavior() {
-        val params = fab.layoutParams as CoordinatorLayout.LayoutParams
+        val params = fab.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
         val behavior = FabOnScroll(fab.context, null)
         params.behavior = behavior
         params.gravity = Gravity.CENTER_VERTICAL or Gravity.END
@@ -140,7 +140,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
         super.onCreateView(inflater, container, savedInstanceState)
         initFabBehavior()
         baseInflateFragment(inflater, R.layout.fragment_theme)
-        refreshLayout = findViewById(R.id.swipe_refresh_list) as SwipeRefreshLayout
+        refreshLayout = findViewById(R.id.swipe_refresh_list) as androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         messagePanel = MessagePanel(context, fragmentContainer, coordinatorLayout, false)
         paginationHelper = PaginationHelper(activity)
         paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow)
@@ -448,7 +448,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
 
         searchView.setOnSearchClickListener { _ ->
             if (searchView.tag == searchViewTag) {
-                val searchClose = searchView.findViewById<View>(android.support.v7.appcompat.R.id.search_close_btn) as ImageView?
+                val searchClose = searchView.findViewById<View>(androidx.appcompat.appcompat.R.id.search_close_btn) as ImageView?
                 if (searchClose != null)
                     (searchClose.parent as ViewGroup).removeView(searchClose)
 

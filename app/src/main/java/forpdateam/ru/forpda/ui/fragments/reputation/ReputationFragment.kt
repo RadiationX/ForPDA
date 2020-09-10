@@ -3,9 +3,9 @@ package forpdateam.ru.forpda.ui.fragments.reputation
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.LinearLayoutManager
+import com.google.android.material.tabs.TabLayout
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.*
 import android.widget.EditText
 import android.widget.TextView
@@ -114,7 +114,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
         }
 
         refreshLayout.setOnRefreshListener { presenter.loadReputation() }
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
 
         adapter = ReputationAdapter()
         recyclerView.adapter = adapter

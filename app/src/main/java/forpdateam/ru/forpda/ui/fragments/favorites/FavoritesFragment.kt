@@ -2,10 +2,10 @@ package forpdateam.ru.forpda.ui.fragments.favorites
 
 import android.app.Dialog
 import android.os.Bundle
-import android.support.design.widget.BottomSheetDialog
-import android.support.design.widget.TabLayout
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.tabs.TabLayout
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -153,7 +153,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
 
         refreshLayout.setOnRefreshListener { presenter.refresh() }
 
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         adapter = FavoritesAdapter()
         adapter.setOnItemClickListener(adapterListener)
         recyclerView.adapter = adapter

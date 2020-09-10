@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.ui.fragments.theme;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import io.reactivex.functions.Consumer;
 

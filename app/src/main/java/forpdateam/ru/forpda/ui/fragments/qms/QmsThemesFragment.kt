@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.ui.fragments.qms
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -70,7 +70,7 @@ class QmsThemesFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<Qm
         setScrollFlagsEnterAlways()
 
         refreshLayout.setOnRefreshListener { presenter.loadThemes() }
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
 
         fab.setImageDrawable(App.getVecDrawable(context, R.drawable.ic_fab_create))
         fab.setOnClickListener { presenter.openChat() }

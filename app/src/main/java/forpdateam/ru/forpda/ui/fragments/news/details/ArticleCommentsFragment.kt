@@ -3,11 +3,11 @@ package forpdateam.ru.forpda.ui.fragments.news.details
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.AppCompatImageButton
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatImageButton
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
@@ -41,8 +41,8 @@ import forpdateam.ru.forpda.ui.views.FunnyContent
  */
 
 class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView, ArticleCommentsAdapter.ClickListener, TabTopScroller {
-    private lateinit var refreshLayout: SwipeRefreshLayout
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var refreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    private lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
     private lateinit var messageField: EditText
     private lateinit var buttonSend: AppCompatImageButton
     private lateinit var progressBarSend: ProgressBar
@@ -67,8 +67,8 @@ class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView, Arti
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.article_comments, container, false)
-        refreshLayout = view.findViewById<View>(R.id.swipe_refresh_list) as SwipeRefreshLayout
-        recyclerView = view.findViewById<View>(R.id.base_list) as RecyclerView
+        refreshLayout = view.findViewById<View>(R.id.swipe_refresh_list) as androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        recyclerView = view.findViewById<View>(R.id.base_list) as androidx.recyclerview.widget.RecyclerView
         writePanel = view.findViewById<View>(R.id.comment_write_panel) as RelativeLayout
         messageField = view.findViewById<View>(R.id.message_field) as EditText
         //val sendContainer = view.findViewById<View>(R.id.send_container) as FrameLayout
@@ -82,7 +82,7 @@ class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView, Arti
         refreshLayout.setOnRefreshListener { presenter.updateComments() }
 
         recyclerView.setBackgroundColor(App.getColorFromAttr(context, R.attr.background_for_lists))
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         recyclerView.setHasFixedSize(true)
         recyclerView.addItemDecoration(DevicesFragment.SpacingItemDecoration(App.px12, false))
         adapter.clickListener = this

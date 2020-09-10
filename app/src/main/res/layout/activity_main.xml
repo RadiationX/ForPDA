@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/measure_root_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,12 +19,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </android.support.design.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <!--
         Coordinator, потому-что он уходит под статусбар, а допусть FrameLayout не уходит.
     -->
-    <android.support.design.widget.CoordinatorLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/fragments_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true" />
-    </android.support.design.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
     <!--
@@ -57,7 +57,7 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true" />
 
-    <android.support.design.widget.CoordinatorLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/bottomMenuContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -69,7 +69,7 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true" />
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/bottomToggleArrow"
             android:layout_width="@dimen/dp48"
             android:layout_height="@dimen/dp36"
@@ -85,14 +85,14 @@
             app:tint="?colorAccent"
             tools:visibility="visible" />
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bottom_sheet2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?background_for_cards"
             app:layout_behavior="forpdateam.ru.forpda.ui.views.BottomSheetBehavior_v27">
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/bottomMenuRecycler"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
@@ -103,7 +103,7 @@
                 tools:listitem="@layout/item_bottom_tab"
                 tools:spanCount="5" />
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/bottomMenuLinkContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -137,9 +137,9 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:srcCompat="@drawable/ic_open_in_new" />
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/bottomMenu_view_tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -156,7 +156,7 @@
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@id/bottomMenuLinkContainer" />
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/bottomTabsRecycler"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -172,7 +172,7 @@
                 tools:itemCount="1"
                 tools:listitem="@layout/drawer_tab_item" />
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/bottomCloseAllTabs"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="match_parent"
@@ -191,7 +191,7 @@
                 android:background="?divider_line_bottom_nav"
                 app:layout_constraintTop_toTopOf="@id/bottomMenuRecycler" />
 
-        </android.support.constraint.ConstraintLayout>
-    </android.support.design.widget.CoordinatorLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </RelativeLayout>

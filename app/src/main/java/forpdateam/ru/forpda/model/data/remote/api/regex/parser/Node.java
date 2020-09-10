@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.model.data.remote.api.regex.parser;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

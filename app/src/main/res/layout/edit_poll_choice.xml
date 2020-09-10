@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/poll_choice_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -12,11 +12,11 @@
         android:layout_toStartOf="@+id/poll_choice_delete"
         android:hint="@string/poll_answer">
 
-        <android.support.v7.widget.AppCompatEditText
+        <androidx.appcompat.widget.AppCompatEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp" />
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <ImageButton
         android:id="@+id/poll_choice_delete"

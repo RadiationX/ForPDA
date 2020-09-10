@@ -46,14 +46,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
 
-        <android.support.v7.widget.AppCompatImageButton
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/button_advanced_input"
             android:layout_width="@dimen/dp48"
             android:layout_height="@dimen/dp48"
             android:background="?attr/selectableItemBackgroundBorderless"
             app:srcCompat="@drawable/ic_add" />
 
-        <android.support.v7.widget.AppCompatImageButton
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/button_attachments"
             android:layout_width="@dimen/dp48"
             android:layout_height="@dimen/dp48"
@@ -83,7 +83,7 @@
             android:textSize="10sp"
             android:visibility="visible" />
 
-        <android.support.v7.widget.AppCompatImageButton
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/button_edt_poll"
             android:layout_width="@dimen/dp48"
             android:layout_height="@dimen/dp48"
@@ -100,7 +100,7 @@
             android:layout_height="@dimen/dp48"
             android:layout_alignParentEnd="true">
 
-            <android.support.v7.widget.AppCompatImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/button_send"
                 android:layout_width="@dimen/dp48"
                 android:layout_height="@dimen/dp48"

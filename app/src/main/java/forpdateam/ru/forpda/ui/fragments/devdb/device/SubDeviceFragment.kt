@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.ui.fragments.devdb.device
 
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 
 import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter

@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.ui.fragments.other
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -24,18 +24,18 @@ class ProfileItemDelegate(
 
     override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ProfileListItem
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, payloads: MutableList<Any>) {
         val item = items[position] as ProfileListItem
         (holder as ViewHolder).bind(item.profileItem)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup): androidx.recyclerview.widget.RecyclerView.ViewHolder = ViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.item_other_profile, parent, false),
             clickListener,
             logoutClickListener
     )
 
-    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder?) {
+    override fun onViewDetachedFromWindow(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder?) {
         super.onViewDetachedFromWindow(holder)
         compositeDisposable.dispose()
     }
@@ -44,7 +44,7 @@ class ProfileItemDelegate(
             val view: View,
             private val clickListener: (ProfileModel?) -> Unit,
             private val logoutClickListener: () -> Unit
-    ) : RecyclerView.ViewHolder(view) {
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
 
         private var item: ProfileModel? = null
 

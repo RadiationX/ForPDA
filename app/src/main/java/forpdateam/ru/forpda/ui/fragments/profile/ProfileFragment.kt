@@ -6,9 +6,9 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import com.google.android.material.appbar.AppBarLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.*
 import android.view.animation.AlphaAnimation
 import android.widget.ImageView
@@ -37,7 +37,7 @@ import io.reactivex.schedulers.Schedulers
  */
 class ProfileFragment : TabFragment(), ProfileAdapter.ClickListener, ProfileView {
 
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
     private lateinit var nick: TextView
     private lateinit var group: TextView
     private lateinit var sign: TextView
@@ -98,7 +98,7 @@ class ProfileFragment : TabFragment(), ProfileAdapter.ClickListener, ProfileView
         group = findViewById(R.id.profile_group) as TextView
         sign = findViewById(R.id.profile_sign) as TextView
         avatar = findViewById(R.id.profile_avatar) as ImageView
-        recyclerView = findViewById(R.id.profile_list) as RecyclerView
+        recyclerView = findViewById(R.id.profile_list) as androidx.recyclerview.widget.RecyclerView
         progressView = findViewById(R.id.profile_progress) as CircularProgressView
 
         val params = toolbarLayout.layoutParams as AppBarLayout.LayoutParams
@@ -110,7 +110,7 @@ class ProfileFragment : TabFragment(), ProfileAdapter.ClickListener, ProfileView
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(recyclerView.context)
         adapter = ProfileAdapter()
         adapter.setClickListener(this)
         recyclerView.adapter = adapter

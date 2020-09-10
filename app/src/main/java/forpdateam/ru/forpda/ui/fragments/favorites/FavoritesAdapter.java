@@ -2,7 +2,7 @@ package forpdateam.ru.forpda.ui.fragments.favorites;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -12,12 +12,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.common.Preferences;
 import forpdateam.ru.forpda.entity.remote.favorites.FavItem;
 import forpdateam.ru.forpda.ui.views.adapters.BaseSectionedAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseSectionedViewHolder;

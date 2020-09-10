@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.ui.fragments.history
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.View
 
@@ -70,7 +70,7 @@ class HistoryFragment : RecyclerFragment(), HistoryView {
 
         adapter = HistoryAdapter()
 
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         recyclerView.adapter = adapter
 
         adapter.setItemClickListener(adapterListener)

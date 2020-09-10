@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.ui.fragments
 
-import android.support.design.widget.AppBarLayout
-import android.support.v7.widget.LinearLayoutManager
+import com.google.android.material.appbar.AppBarLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
 

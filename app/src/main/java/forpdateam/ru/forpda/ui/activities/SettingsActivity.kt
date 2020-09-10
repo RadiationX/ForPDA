@@ -2,8 +2,8 @@ package forpdateam.ru.forpda.ui.activities
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.preference.PreferenceFragmentCompat
+import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceFragmentCompat
 import android.util.Log
 import android.view.MenuItem
 import forpdateam.ru.forpda.App

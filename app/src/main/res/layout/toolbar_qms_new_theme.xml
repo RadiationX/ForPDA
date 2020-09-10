@@ -10,11 +10,11 @@
     android:paddingTop="56dp"
     android:animateLayoutChanges="true">
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.AppCompatAutoCompleteTextView
+        <androidx.appcompat.widget.AppCompatAutoCompleteTextView
             android:id="@+id/qms_theme_nick_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,13 +23,13 @@
             android:maxLines="1"
             android:scrollHorizontally="true" />
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.AppCompatEditText
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/qms_theme_title_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,5 +37,5 @@
             android:inputType="text"
             android:maxLines="1"
             android:scrollHorizontally="true" />
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

@@ -1,9 +1,9 @@
 package forpdateam.ru.forpda.ui.fragments.mentions
 
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.LinearLayoutManager
+import com.google.android.material.tabs.TabLayout
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -100,7 +100,7 @@ class MentionsFragment : RecyclerFragment(), MentionsView {
 
         adapter = MentionsAdapter()
 
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         recyclerView.adapter = adapter
 
         adapter.setOnItemClickListener(adapterListener)
