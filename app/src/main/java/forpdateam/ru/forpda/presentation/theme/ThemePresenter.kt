@@ -532,7 +532,7 @@ class ThemePresenter(
             if (checkIsPoll(url)) {
                 return
             }
-            if (uri.host != null && uri.host.matches("4pda.ru".toRegex())) {
+            if (uri.host != null && uri.host?.matches("4pda.ru".toRegex()) == true) {
                 if (uri.pathSegments[0] == "forum") {
                     var param: String? = uri.getQueryParameter("showtopic")
                     Log.d(LOG_TAG, "param showtopic: $param")

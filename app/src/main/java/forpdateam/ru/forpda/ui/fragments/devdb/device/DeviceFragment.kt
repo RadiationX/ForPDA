@@ -99,7 +99,7 @@ class DeviceFragment : TabFragment(), DeviceView {
         rating = findViewById(R.id.item_rating) as TextView
         fragmentsPager = findViewById(R.id.view_pager) as androidx.viewpager.widget.ViewPager
 
-        tabLayout = TabLayout(context)
+        tabLayout = TabLayout(requireContext())
         val tabParams = CollapsingToolbarLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM)
         tabParams.collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
         tabLayout.layoutParams = tabParams

@@ -303,9 +303,9 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     }
 
     fun hideKeyboard() {
-        if (currentFocus != null) {
+        currentFocus?.let {
             val iim = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
-            iim?.hideSoftInputFromWindow(currentFocus.windowToken, 0)
+            iim?.hideSoftInputFromWindow(it.windowToken, 0)
         }
     }
 
