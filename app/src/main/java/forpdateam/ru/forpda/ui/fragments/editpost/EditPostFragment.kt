@@ -10,8 +10,8 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R

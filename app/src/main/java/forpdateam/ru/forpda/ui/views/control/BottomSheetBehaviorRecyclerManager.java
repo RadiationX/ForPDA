@@ -1,9 +1,11 @@
-package forpdateam.ru.forpda.ui.views;
+package forpdateam.ru.forpda.ui.views.control;
+
+import android.graphics.Rect;
+import android.view.MotionEvent;
+import android.view.View;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.ViewCompat;
-import android.view.MotionEvent;
-import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,16 +14,16 @@ import java.util.List;
  * Created by fedor on 21.03.2017.
  */
 
-public class BottomSheetBehaviorRecyclerManager {
+public class  BottomSheetBehaviorRecyclerManager <T extends View>{
 
     private List<View> mViews;
     private View.OnTouchListener mTouchEventListener;
 
     private CoordinatorLayout mParent;
-    private BottomSheetBehavior_v27 mBehavior;
-    private View mBottomSheetView;
+    private ICustomBottomSheetBehavior<T> mBehavior;
+    private T mBottomSheetView;
 
-    public BottomSheetBehaviorRecyclerManager(CoordinatorLayout mParent, BottomSheetBehavior_v27 mBehavior, View mBottomSheetView) {
+    public BottomSheetBehaviorRecyclerManager(CoordinatorLayout mParent, ICustomBottomSheetBehavior<T> mBehavior, T mBottomSheetView) {
         mViews = new ArrayList<>();
         this.mParent = mParent;
         this.mBehavior = mBehavior;

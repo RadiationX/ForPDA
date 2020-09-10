@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.presentation.devdb.brands
 
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
 import forpdateam.ru.forpda.model.repository.devdb.DevDbRepository

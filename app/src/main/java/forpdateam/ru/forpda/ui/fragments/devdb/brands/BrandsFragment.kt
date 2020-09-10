@@ -8,8 +8,8 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 import java.util.ArrayList
 

@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.presentation.other
 
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.entity.app.other.AppMenuItem

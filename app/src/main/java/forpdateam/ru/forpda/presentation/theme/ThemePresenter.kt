@@ -2,7 +2,7 @@ package forpdateam.ru.forpda.presentation.theme
 
 import android.net.Uri
 import android.util.Log
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import com.yandex.metrica.YandexMetrica
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R

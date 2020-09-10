@@ -12,8 +12,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
 
 import forpdateam.ru.forpda.App

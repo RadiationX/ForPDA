@@ -28,9 +28,9 @@ import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.TabTopScroller
 import forpdateam.ru.forpda.ui.navigation.TabHelper
 import forpdateam.ru.forpda.ui.navigation.TabNavigator
-import forpdateam.ru.forpda.ui.views.BottomSheetBehaviorRecyclerManager
-import forpdateam.ru.forpda.ui.views.BottomSheetBehavior_v27
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
+import forpdateam.ru.forpda.ui.views.control.BottomSheetBehaviorFixed
+import forpdateam.ru.forpda.ui.views.control.BottomSheetBehaviorRecyclerManager
 import forpdateam.ru.forpda.ui.views.drawers.adapters.TabSwipeToDeleteCallback
 import forpdateam.ru.forpda.ui.views.drawers.adapters.TabAdapter
 import io.reactivex.disposables.CompositeDisposable
@@ -66,7 +66,7 @@ class BottomDrawer(
 
     private val compositeDisposable = CompositeDisposable()
 
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior_v27<View>
+    private lateinit var bottomSheetBehavior: BottomSheetBehaviorFixed<View>
 
     private val otherMenuItem = MenuMapper.mapToDrawer(AppMenuItem(MenuRepository.item_other_menu, Screen.OtherMenu()))
     private var localItems = listOf(otherMenuItem)
@@ -74,12 +74,12 @@ class BottomDrawer(
     init {
         drawerLayout.apply {
 
-            bottomSheetBehavior = BottomSheetBehavior_v27.from<View>(bottom_sheet2).apply {
+            bottomSheetBehavior = BottomSheetBehaviorFixed.from<View>(bottom_sheet2).apply {
                 isHideable = false
-                state = BottomSheetBehavior_v27.STATE_COLLAPSED
+                state = BottomSheetBehaviorFixed.STATE_COLLAPSED
                 peekHeight = context.resources.getDimensionPixelSize(R.dimen.dp48)
 
-                setBottomSheetCallback(object : BottomSheetBehavior_v27.BottomSheetCallback() {
+                setBottomSheetCallback(object : BottomSheetBehaviorFixed.BottomSheetCallback() {
                     private val colorDrawable = ColorDrawable(Color.TRANSPARENT)
 
                     init {
@@ -99,7 +99,7 @@ class BottomDrawer(
 
 
                         when (newState) {
-                            BottomSheetBehavior_v27.STATE_EXPANDED -> {
+                            BottomSheetBehaviorFixed.STATE_EXPANDED -> {
                                 colorDrawable.color = getColor(1.0f)
                                 bottomMenuContainer.setOnClickListener {
                                     hide()
@@ -107,7 +107,7 @@ class BottomDrawer(
                                 bottomMenuContainer.isClickable = true
                                 drawerListener?.onShow()
                             }
-                            BottomSheetBehavior_v27.STATE_COLLAPSED -> {
+                            BottomSheetBehaviorFixed.STATE_COLLAPSED -> {
                                 colorDrawable.color = Color.TRANSPARENT
                                 bottomMenuContainer.setOnClickListener(null)
                                 bottomMenuContainer.isClickable = false
@@ -246,11 +246,11 @@ class BottomDrawer(
     fun isShown() = bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED
 
     fun show() {
-        bottomSheetBehavior.state = BottomSheetBehavior_v27.STATE_EXPANDED
+        bottomSheetBehavior.state = BottomSheetBehaviorFixed.STATE_EXPANDED
     }
 
     fun hide() {
-        bottomSheetBehavior.state = BottomSheetBehavior_v27.STATE_COLLAPSED
+        bottomSheetBehavior.state = BottomSheetBehaviorFixed.STATE_COLLAPSED
     }
 
     fun toggle() {

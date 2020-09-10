@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.presentation.editpost
 
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.app.EditPostSyncData
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem

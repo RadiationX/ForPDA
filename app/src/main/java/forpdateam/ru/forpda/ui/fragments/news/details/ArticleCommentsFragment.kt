@@ -18,9 +18,9 @@ import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 
-import com.arellomobile.mvp.MvpAppCompatFragment
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.MvpAppCompatFragment
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R

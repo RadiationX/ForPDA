@@ -14,9 +14,9 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import com.arellomobile.mvp.MvpAppCompatActivity
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.MvpAppCompatActivity
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import com.daasuu.ei.Ease
 import com.daasuu.ei.EasingInterpolator
 import com.yandex.metrica.YandexMetrica
@@ -178,9 +178,9 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         savedInstanceState?.also { tabNavigator.onRestoreInstanceState(it) }
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.also { tabNavigator.onSaveInstanceState(it) }
+        outState.also { tabNavigator.onSaveInstanceState(it) }
     }
 
     override fun changeTheme(isDark: Boolean) {

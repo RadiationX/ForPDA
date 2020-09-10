@@ -18,7 +18,6 @@ keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
     compileSdkVersion 28
-    buildToolsVersion '28.0.3'
 
     def fileNaming = "apk/ForPDA"
 
@@ -167,16 +166,16 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.palette:palette:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'com.google.android.material:material:1.1.0-alpha09'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation 'androidx.preference:preference:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.preference:preference:1.1.0'
 
     //эти трое нужны из-за того, что кто-то где-то тащит какие-то старые зависимости
-    implementation 'androidx.media:media:1.0.0'
+    implementation 'androidx.media:media:1.1.0'
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
-    implementation 'androidx.core:core:1.0.0'
+    implementation 'androidx.core:core:1.1.0'
 
     implementation "com.squareup.okhttp3:okhttp:${okHttpVersion}"
     implementation "com.squareup.okhttp3:okhttp-urlconnection:${okHttpVersion}"
@@ -201,10 +200,10 @@ dependencies {
     //implementation 'com.github.apg-mobile:android-round-textview:v0.0.3'
     implementation 'com.evernote:android-job:1.2.6'
 
-    implementation 'com.arello-mobile:moxy:1.5.5'
-    implementation 'com.arello-mobile:moxy-app-compat:1.5.5'
-    annotationProcessor 'com.arello-mobile:moxy-compiler:1.5.5'
-    kapt 'com.arello-mobile:moxy-compiler:1.5.5'
+    implementation "com.github.moxy-community:moxy:2.1.1"
+    implementation 'com.github.moxy-community:moxy-androidx:2.1.1'
+    annotationProcessor 'com.github.moxy-community:moxy-androidx:2.1.1'
+    kapt 'com.github.moxy-community:moxy-compiler:2.1.1'
 
     implementation "com.jakewharton.rxrelay2:rxrelay:2.1.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

@@ -14,8 +14,8 @@ import android.view.animation.AlphaAnimation
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import com.github.rahatarmanahmed.cpv.CircularProgressView
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R

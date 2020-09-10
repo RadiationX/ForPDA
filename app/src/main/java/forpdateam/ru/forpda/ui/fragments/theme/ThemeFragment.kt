@@ -22,8 +22,8 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.*
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.FilePickHelper
@@ -448,7 +448,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
 
         searchView.setOnSearchClickListener { _ ->
             if (searchView.tag == searchViewTag) {
-                val searchClose = searchView.findViewById<View>(androidx.appcompat.appcompat.R.id.search_close_btn) as ImageView?
+                val searchClose = searchView.findViewById<View>(androidx.appcompat.R.id.search_close_btn) as ImageView?
                 if (searchClose != null)
                     (searchClose.parent as ViewGroup).removeView(searchClose)
 

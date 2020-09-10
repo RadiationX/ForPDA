@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.presentation.qms.contacts
 
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.qms.QmsContact
 import forpdateam.ru.forpda.model.CountersHolder

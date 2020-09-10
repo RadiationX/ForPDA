@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.presentation.topics
 
 import android.util.Log
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.topics.TopicItem
 import forpdateam.ru.forpda.entity.remote.topics.TopicsData

@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.presentation.profile
 
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter

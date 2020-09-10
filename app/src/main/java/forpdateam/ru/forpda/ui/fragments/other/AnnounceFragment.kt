@@ -15,8 +15,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 import java.util.ArrayList
 
@@ -125,7 +125,7 @@ class AnnounceFragment : TabFragment(), AnnounceView, TabTopScroller {
 
         searchView.setOnSearchClickListener { _ ->
             if (searchView.tag == searchViewTag) {
-                val searchClose = searchView.findViewById<View>(androidx.appcompat.appcompat.R.id.search_close_btn) as ImageView?
+                val searchClose = searchView.findViewById<View>(androidx.appcompat.R.id.search_close_btn) as ImageView?
                 if (searchClose != null)
                     (searchClose.parent as ViewGroup).removeView(searchClose)
 
