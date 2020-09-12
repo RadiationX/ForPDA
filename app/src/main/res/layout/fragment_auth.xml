@@ -141,6 +141,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:hint="@string/auth_captcha"
+                        android:imeOptions="actionDone"
                         android:inputType="number"
                         android:maxLength="4"
                         android:maxLines="1"
@@ -157,6 +158,7 @@
                         android:id="@+id/auth_hidden"
                         android:layout_width="wrap_content"
                         android:layout_height="48dp"
+                        android:focusable="false"
                         android:text="@string/auth_hidden"
                         android:textAllCaps="true"
                         android:textStyle="bold" />

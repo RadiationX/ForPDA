@@ -2,12 +2,12 @@ package forpdateam.ru.forpda.ui.fragments.auth
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
@@ -16,13 +16,11 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
-
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import android.widget.TextView.OnEditorActionListener
+import androidx.appcompat.app.AlertDialog
 import com.github.rahatarmanahmed.cpv.CircularProgressView
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
-
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.simple.SimpleAnimationListener
@@ -34,6 +32,8 @@ import forpdateam.ru.forpda.presentation.auth.AuthPresenter
 import forpdateam.ru.forpda.presentation.auth.AuthView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import kotlinx.android.synthetic.main.fragment_auth.*
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 29.07.16.
@@ -128,6 +128,16 @@ class AuthFragment : TabFragment(), AuthView {
         captcha.addTextChangedListener(loginTextWatcher)
         fragmentContainer.fitsSystemWindows = true
         fragmentContent.fitsSystemWindows = true
+
+        captcha.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (sendButton.isEnabled) {
+                    tryLogin()
+                }
+                return@OnEditorActionListener true
+            }
+            false
+        })
     }
 
     override fun setSendEnabled(isEnabled: Boolean) {
