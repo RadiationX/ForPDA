@@ -4,9 +4,11 @@ import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.os.Build;
 import android.util.Base64;
 import android.util.Log;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
@@ -113,5 +115,14 @@ public class CustomWebViewClient extends WebViewClient {
     public boolean handleUri(Uri uri) {
         linkHandler.handle(uri.toString(), null);
         return true;
+    }
+
+    @Override
+    public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            handler.proceed();
+        } else {
+            super.onReceivedSslError(view, handler, error);
+        }
     }
 }

@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import androidx.appcompat.app.AlertDialog
 import android.util.Log
@@ -81,15 +82,22 @@ class SystemLinkHandler(
                     }
                     try {
                         val activity = App.getActivity()
+                        val downloadUrl = response.redirect.run {
+                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                                replace("https", "http")
+                            } else {
+                                this
+                            }
+                        }
                         if (!mainPreferencesHolder.getSystemDownloader() || activity == null) {
-                            externalDownloader(response.redirect)
+                            externalDownloader(downloadUrl)
                         } else {
                             val checkAction = {
                                 try {
-                                    systemDownloader(fileName, response.redirect)
+                                    systemDownloader(fileName, downloadUrl)
                                 } catch (exception: Exception) {
                                     Toast.makeText(context, R.string.perform_loading_error, Toast.LENGTH_SHORT).show()
-                                    externalDownloader(response.redirect)
+                                    externalDownloader(downloadUrl)
                                 }
                             }
                             App.get().checkStoragePermission(checkAction, activity)

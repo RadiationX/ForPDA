@@ -43,7 +43,7 @@ android {
         applicationId "ru.forpdateam.forpda"
         versionCode versionNumber
         versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 29
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
