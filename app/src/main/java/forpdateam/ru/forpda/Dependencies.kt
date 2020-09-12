@@ -3,6 +3,7 @@ package forpdateam.ru.forpda
 import android.content.Context
 import android.preference.PreferenceManager
 import forpdateam.ru.forpda.client.Client
+import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.entity.app.profile.IUserHolder
 import forpdateam.ru.forpda.entity.app.profile.UserHolder
 import forpdateam.ru.forpda.model.*
@@ -92,6 +93,9 @@ class Dependencies internal constructor(
 
     val dimensionsProvider = DimensionsProvider()
 
+    val defaultIsNight = DayNightHelper.isUiModeNight(context.resources.configuration)
+    val dayNightHelper = DayNightHelper(defaultIsNight)
+
     private val cicerone: Cicerone<TabRouter> by lazy { Cicerone.create(TabRouter()) }
     val router: TabRouter by lazy { cicerone.router }
     val navigatorHolder: NavigatorHolder by lazy { cicerone.navigatorHolder }
@@ -113,7 +117,7 @@ class Dependencies internal constructor(
     val userHolder: IUserHolder by lazy { UserHolder(dataStoragePreferences) }
     val closeableInfoHolder: CloseableInfoHolder by lazy { CloseableInfoHolder(preferences, schedulers) }
 
-    val templateManager by lazy { TemplateManager(context, mainPreferencesHolder) }
+    val templateManager by lazy { TemplateManager(context, dayNightHelper) }
     val themeTemplate by lazy { ThemeTemplate(templateManager, authHolder, topicPreferencesHolder) }
     val articleTemplate by lazy { ArticleTemplate(templateManager) }
     val searchTemplate by lazy { SearchTemplate(templateManager, authHolder, topicPreferencesHolder) }

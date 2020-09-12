@@ -4,16 +4,19 @@ import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import android.view.View
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.preference.ListPreference
 import androidx.preference.Preference
 
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.BuildConfig
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.common.Preferences
 import forpdateam.ru.forpda.ui.activities.SettingsActivity
 import forpdateam.ru.forpda.ui.activities.updatechecker.UpdateCheckerActivity

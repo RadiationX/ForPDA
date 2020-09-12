@@ -23,6 +23,7 @@ import android.os.IBinder;
 import android.os.Messenger;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.AttrRes;
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
@@ -33,6 +34,7 @@ import androidx.multidex.MultiDex;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.content.res.AppCompatResources;
+
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -65,7 +67,9 @@ import java.util.Observer;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import forpdateam.ru.forpda.common.DayNightHelper;
 import forpdateam.ru.forpda.common.LocaleHelper;
+import forpdateam.ru.forpda.common.Preferences;
 import forpdateam.ru.forpda.common.realm.DbMigration;
 import forpdateam.ru.forpda.common.receivers.NetworkStateReceiver;
 import forpdateam.ru.forpda.common.receivers.WakeUpReceiver;
@@ -76,6 +80,8 @@ import forpdateam.ru.forpda.notifications.NotificationsService;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
@@ -177,7 +183,14 @@ public class App extends android.app.Application {
             YandexMetrica.reportError("Крит " + throwable.getMessage(), throwable);
         });
 
-        setTheme(dependencies.getMainPreferencesHolder().getThemeIsDark() ? R.style.DarkAppTheme : R.style.LightAppTheme);
+        Disposable disposable = dependencies
+                .getMainPreferencesHolder()
+                .observeThemeMode()
+                .distinctUntilChanged()
+                .subscribe(
+                        DayNightHelper.Companion::applyTheme,
+                        Throwable::printStackTrace
+                );
 
         try {
             String inputHistory = dependencies.getOtherPreferencesHolder().getAppVersionsHistory();

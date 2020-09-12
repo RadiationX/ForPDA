@@ -442,7 +442,10 @@
 
     <string name="pref_title_appereance">Внешний вид</string>
 
-    <string name="pref_title_dark_theme">Тёмная тема</string>
+    <string name="pref_title_theme_mode">Тема приложения</string>
+    <string name="pref_value_theme_mode_light">Светлая</string>
+    <string name="pref_value_theme_mode_dark">Темная</string>
+    <string name="pref_value_theme_mode_system">Системная</string>
 
     <string name="pref_title_show_bottom_arrow">Кнопка открытия нижнего меню</string>
     <string name="pref_summary_show_bottom_arrow">Включить, если в системе есть жесты снизу экрана</string>

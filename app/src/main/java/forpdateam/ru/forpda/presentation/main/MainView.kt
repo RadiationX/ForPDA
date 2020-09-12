@@ -11,7 +11,4 @@ interface MainView : MvpView {
 
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun showFirstStartAnimation()
-
-    @StateStrategyType(AddToEndSingleStrategy::class)
-    fun changeTheme(isDark: Boolean)
 }

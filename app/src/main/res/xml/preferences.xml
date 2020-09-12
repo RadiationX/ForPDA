@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <PreferenceCategory
         android:layout="@layout/preference_category_custom_top"
         android:title="@string/pref_title_notifications">
@@ -43,19 +44,23 @@
     <PreferenceCategory
         android:layout="@layout/preference_category_custom"
         android:title="@string/pref_title_appereance">
-        <forpdateam.ru.forpda.ui.views.SwitchPreference
-            android:defaultValue="false"
-            android:key="main.theme.is_dark"
+        <ListPreference
+            android:dialogTitle="@string/pref_title_theme_mode"
+            android:entries="@array/entries_theme_mode"
+            android:entryValues="@array/entry_values_theme_mode"
+            android:key="main.theme.mode"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_dark_theme"
+            android:summary="%s"
+            android:defaultValue="SYSTEM"
+            android:title="@string/pref_title_theme_mode"
             app:iconSpaceReserved="false" />
 
         <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="false"
             android:key="main.show_bottom_arrow"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_show_bottom_arrow"
             android:summary="@string/pref_summary_show_bottom_arrow"
+            android:title="@string/pref_title_show_bottom_arrow"
             app:iconSpaceReserved="false" />
 
         <Preference

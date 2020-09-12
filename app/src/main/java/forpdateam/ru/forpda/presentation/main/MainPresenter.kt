@@ -29,16 +29,6 @@ class MainPresenter(
     private var isRestored: Boolean = false
     private var startLink: String = ""
 
-
-    init {
-        mainPreferencesHolder
-                .observeThemeIsDark()
-                .subscribe { isDark ->
-                    viewState.changeTheme(isDark)
-                }
-                .untilDestroy()
-    }
-
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         qmsInteractor.subscribeEvents()

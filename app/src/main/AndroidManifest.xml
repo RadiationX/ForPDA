@@ -26,6 +26,7 @@
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
+        android:theme="@style/DayNightAppTheme"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".ui.activities.MainActivity"
@@ -88,7 +89,7 @@
             android:name=".ui.activities.imageviewer.ImageViewerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:launchMode="singleTask"
-            android:theme="@style/LightAppTheme.NoActionBar"
+            android:theme="@style/DayNightAppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
@@ -104,12 +105,12 @@
         <activity
             android:name=".ui.activities.WebVewNotFoundActivity"
             android:launchMode="singleTop"
-            android:theme="@style/LightAppTheme.NoActionBar" />
+            android:theme="@style/DayNightAppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.activities.updatechecker.UpdateCheckerActivity"
             android:launchMode="singleTop"
-            android:theme="@style/LightAppTheme.NoActionBar" />
+            android:theme="@style/DayNightAppTheme.NoActionBar" />
 
         <service android:name=".notifications.NotificationsService" />
 

@@ -5,12 +5,12 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
 
         <item name="android:statusBarColor">#0000</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
-    <style name="PreferenceAppThemeLight" parent="DayNightAppTheme">
-        <item name="android:statusBarColor">@color/light_colorPrimary</item>
-        <item name="android:windowLightStatusBar">true</item>
+    <style name="PreferenceAppThemeDark" parent="DayNightAppTheme">
+        <item name="android:statusBarColor">@color/dark_colorPrimary</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
 </resources>

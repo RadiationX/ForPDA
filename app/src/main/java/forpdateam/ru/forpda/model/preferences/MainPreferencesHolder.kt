@@ -33,8 +33,12 @@ class MainPreferencesHolder(
         rxPreferences.getBoolean(Preferences.Main.SCROLL_BUTTON_ENABLE, false)
     }
 
-    private val themeIsDark by lazy {
-        rxPreferences.getBoolean(Preferences.Main.Theme.IS_DARK, false)
+    private val themeMode by lazy {
+        rxPreferences.getEnum(
+                Preferences.Main.Theme.MODE,
+                Preferences.Main.ThemeMode.SYSTEM,
+                Preferences.Main.ThemeMode::class.java
+        )
     }
 
     private val showBottomArrow by lazy {
@@ -52,7 +56,7 @@ class MainPreferencesHolder(
 
     fun observeScrollButtonEnabled(): Observable<Boolean> = scrollButtonEnabled.asObservable()
 
-    fun observeThemeIsDark(): Observable<Boolean> = themeIsDark.asObservable()
+    fun observeThemeMode(): Observable<Preferences.Main.ThemeMode> = themeMode.asObservable()
 
     fun observeShowBottomArrow(): Observable<Boolean> = showBottomArrow.asObservable()
 
@@ -67,11 +71,13 @@ class MainPreferencesHolder(
 
     fun getScrollButtonEnabled(): Boolean = scrollButtonEnabled.get()
 
-    fun getThemeIsDark(): Boolean = themeIsDark.get()
+    fun getThemeMode(): Preferences.Main.ThemeMode = themeMode.get()
 
     fun getShowBottomArrow(): Boolean = showBottomArrow.get()
 
 
     fun setWebViewFontSize(size: Int): Unit = webViewFontSize.set(max(min(size, 64), 8))
+
+    fun setThemeMode(mode: Preferences.Main.ThemeMode) = themeMode.set(mode)
 
 }

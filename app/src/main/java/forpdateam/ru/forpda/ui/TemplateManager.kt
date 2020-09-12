@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.ui
 
 import android.content.Context
 import biz.source_code.miniTemplator.MiniTemplator
+import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import io.reactivex.Observable
 import java.io.ByteArrayInputStream
@@ -9,7 +10,7 @@ import java.nio.charset.Charset
 
 class TemplateManager(
         private val context: Context,
-        private val mainPreferencesHolder: MainPreferencesHolder
+        private val dayNightHelper: DayNightHelper
 ) {
 
     companion object {
@@ -30,12 +31,12 @@ class TemplateManager(
         staticStrings.putAll(strings)
     }
 
-    fun observeThemeType(): Observable<String> = mainPreferencesHolder
-            .observeThemeIsDark()
+    fun observeThemeType(): Observable<String> = dayNightHelper
+            .observeIsNight()
             .map { if (it) "dark" else "light" }
 
     fun getThemeType(): String {
-        return if (mainPreferencesHolder.getThemeIsDark()) "dark" else "light"
+        return if (dayNightHelper.isNight()) "dark" else "light"
     }
 
     fun fillStaticStrings(template: MiniTemplator): MiniTemplator = template.apply {

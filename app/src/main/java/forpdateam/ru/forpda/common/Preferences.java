@@ -49,7 +49,11 @@ public class Preferences {
 
         public final static class Theme {
             private final static String PREFIX = Main.PREFIX + "theme.";
-            public final static String IS_DARK = PREFIX + "is_dark";
+            public final static String MODE = PREFIX + "mode";
+        }
+
+        public enum ThemeMode {
+            LIGHT, DARK, SYSTEM
         }
     }
 
