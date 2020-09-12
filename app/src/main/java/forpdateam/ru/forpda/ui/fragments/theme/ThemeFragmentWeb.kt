@@ -98,7 +98,7 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
                         .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_content_copy))
                         .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
 
-                if (presenter.canQuote()) {
+                if (!authHolder.get().isAuth() || presenter.canQuote()) {
                     menu.add(0, R.id.action_mode_item_quote, 0, R.string.quote)
                             .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_quote_post))
                             .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)

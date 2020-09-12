@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.ui.fragments.other
 import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.SearchView

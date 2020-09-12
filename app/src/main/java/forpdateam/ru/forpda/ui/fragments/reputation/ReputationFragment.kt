@@ -15,6 +15,7 @@ import moxy.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.entity.remote.reputation.RepData
 import forpdateam.ru.forpda.entity.remote.reputation.RepItem
 import forpdateam.ru.forpda.model.data.remote.api.reputation.ReputationApi
@@ -147,12 +148,20 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
                 }
         upRepMenuItem = menu.add(R.string.increase)
                 .setOnMenuItemClickListener {
-                    showChangeReputationDialog(true)
+                    if (authHolder.get().isAuth()) {
+                        showChangeReputationDialog(true)
+                    } else {
+                        Utils.showNeedAuthDialog(requireContext())
+                    }
                     false
                 }
         downRepMenuItem = menu.add(R.string.decrease)
                 .setOnMenuItemClickListener {
-                    showChangeReputationDialog(false)
+                    if (authHolder.get().isAuth()) {
+                        showChangeReputationDialog(false)
+                    } else {
+                        Utils.showNeedAuthDialog(requireContext())
+                    }
                     false
                 }
         refreshToolbarMenuItems(false)

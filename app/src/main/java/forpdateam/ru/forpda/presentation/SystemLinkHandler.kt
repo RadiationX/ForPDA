@@ -55,15 +55,9 @@ class SystemLinkHandler(
     }
 
     private fun redirectDownload(fileName: String, url: String) {
-        if (authHolder.get().state != AuthState.AUTH) {
+        if (!authHolder.get().isAuth()) {
             App.getActivity()?.also { activity ->
-                AlertDialog.Builder(activity)
-                        .setMessage("Необходимо войти в аккаунт 4pda")
-                        .setPositiveButton("Войти") { _, _ ->
-                            router.navigateTo(Screen.Auth())
-                        }
-                        .setNegativeButton(R.string.cancel, null)
-                        .show()
+                Utils.showNeedAuthDialog(activity)
             }
             return
         }

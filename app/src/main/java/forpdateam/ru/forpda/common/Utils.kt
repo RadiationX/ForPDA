@@ -1,145 +1,139 @@
-package forpdateam.ru.forpda.common;
+package forpdateam.ru.forpda.common
 
-import android.content.ClipData;
-import android.content.ClipDescription;
-import android.content.ClipboardManager;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
-import androidx.annotation.NonNull;
-import android.util.Log;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
-import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.R;
-
-import static android.content.Context.CLIPBOARD_SERVICE;
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import android.content.*
+import android.os.Build
+import android.util.Log
+import androidx.appcompat.app.AlertDialog
+import forpdateam.ru.forpda.App
+import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.presentation.Screen
+import java.io.UnsupportedEncodingException
+import java.net.URLDecoder
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Created by isanechek on 30.07.16.
  */
+object Utils {
+    val isMM: Boolean
+        get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
 
-public class Utils {
-    public static boolean isMM() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
-    }
-
-    public static String getFileNameFromUrl(String url){
-        String fileName = url;
+    fun getFileNameFromUrl(url: String): String {
+        var fileName = url
         try {
-            fileName = URLDecoder.decode(url, "CP1251");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            fileName = URLDecoder.decode(url, "CP1251")
+        } catch (e: UnsupportedEncodingException) {
+            e.printStackTrace()
         }
-        int cut = fileName.lastIndexOf('/');
+        val cut = fileName.lastIndexOf('/')
         if (cut != -1) {
-            fileName = fileName.substring(cut + 1);
+            fileName = fileName.substring(cut + 1)
         }
-        return fileName;
+        return fileName
     }
 
-    public static void copyToClipBoard(String s) {
-        ClipboardManager clipboard = (ClipboardManager) App.getContext().getSystemService(CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("label", s);
-        clipboard.setPrimaryClip(clip);
+    @JvmStatic
+    fun copyToClipBoard(s: String?) {
+        val clipboard = App.getContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("label", s)
+        clipboard.setPrimaryClip(clip)
     }
 
-    public static String readFromClipboard() {
-        ClipboardManager clipboard = (ClipboardManager) App.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+    fun readFromClipboard(): String? {
+        val clipboard = App.getContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         if (clipboard.hasPrimaryClip()) {
-            android.content.ClipDescription description = clipboard.getPrimaryClipDescription();
-            android.content.ClipData data = clipboard.getPrimaryClip();
-            if (data != null && description != null && description.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN))
-                return String.valueOf(data.getItemAt(0).getText());
+            val description = clipboard.primaryClipDescription
+            val data = clipboard.primaryClip
+            if (data != null && description != null && description.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) return data.getItemAt(0).text.toString()
         }
-        return null;
+        return null
     }
 
-    public static void shareText(String text) {
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, text);
-        sendIntent.setType("text/plain");
-        sendIntent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-        App.get().startActivity(Intent.createChooser(sendIntent, App.get().getString(R.string.share)).addFlags(FLAG_ACTIVITY_NEW_TASK));
+    fun shareText(text: String?) {
+        val sendIntent = Intent()
+        sendIntent.action = Intent.ACTION_SEND
+        sendIntent.putExtra(Intent.EXTRA_TEXT, text)
+        sendIntent.type = "text/plain"
+        sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        App.get().startActivity(Intent.createChooser(sendIntent, App.get().getString(R.string.share)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 
-    public static <T> T checkNotNull(T value, String message) {
+    fun <T> checkNotNull(value: T?, message: String?): T {
         if (value == null) {
-            throw new NullPointerException(message);
+            throw NullPointerException(message)
         }
-        return value;
+        return value
     }
 
-    public static <T> T checkNotNull(T value) {
+    fun <T> checkNotNull(value: T?): T {
         if (value == null) {
-            throw new NullPointerException();
+            throw NullPointerException()
         }
-        return value;
+        return value
     }
 
-    public static void longLog(String msg) {
-        int maxLogSize = 1000;
-        for (int i = 0; i <= msg.length() / maxLogSize; i++) {
-            int start = i * maxLogSize;
-            int end = (i + 1) * maxLogSize;
-            end = end > msg.length() ? msg.length() : end;
-            Log.v("LONG_LOG", msg.substring(start, end));
+    fun longLog(msg: String) {
+        val maxLogSize = 1000
+        for (i in 0..msg.length / maxLogSize) {
+            val start = i * maxLogSize
+            var end = (i + 1) * maxLogSize
+            end = if (end > msg.length) msg.length else end
+            Log.v("LONG_LOG", msg.substring(start, end))
         }
     }
 
-    public static void log(@NonNull String msg) {
-        Log.d("TEST", msg);
+    fun log(msg: String) {
+        Log.d("TEST", msg)
     }
 
     //copypast from forpda
-    public static SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-    public static SimpleDateFormat parseDateTimeFormat = new SimpleDateFormat("dd.MM.yyyy, HH:mm");
-
-    public static String getDay() {
-        GregorianCalendar nowCalendar = new GregorianCalendar();
-        return dateFormat.format(nowCalendar.getTime());
-    }
-
-    public static String getYesterday() {
-        GregorianCalendar nowCalendar = new GregorianCalendar();
-        nowCalendar.add(Calendar.DAY_OF_MONTH, -1);
-        return dateFormat.format(nowCalendar.getTime());
-    }
-
-    public static String getForumDateTime(Date date) {
-
-        if (date == null) return "";
-        return parseDateTimeFormat.format(date);
-    }
-
-    public static String getNewsDateTime(Date date) {
-
-        if (date == null) return "";
-        return dateFormat.format(date);
-    }
-
-    public static Date parseForumDateTime(String dateTime) {
-        try {
-            Date res = parseDateTimeFormat.parse(dateTime.replace("Сегодня", getDay()).replace("Вчера", getYesterday()));
-
-            Calendar calendar = new GregorianCalendar();
-            calendar.setTime(res);
-            int year = calendar.get(Calendar.YEAR);
-            if (year < 100)
-                calendar.set(Calendar.YEAR, 2000 + year);
-            return calendar.getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
+    var dateFormat = SimpleDateFormat("dd.MM.yyyy")
+    var parseDateTimeFormat = SimpleDateFormat("dd.MM.yyyy, HH:mm")
+    val day: String
+        get() {
+            val nowCalendar = GregorianCalendar()
+            return dateFormat.format(nowCalendar.time)
         }
-        return null;
+    val yesterday: String
+        get() {
+            val nowCalendar = GregorianCalendar()
+            nowCalendar.add(Calendar.DAY_OF_MONTH, -1)
+            return dateFormat.format(nowCalendar.time)
+        }
+
+    fun getForumDateTime(date: Date?): String {
+        return if (date == null) "" else parseDateTimeFormat.format(date)
+    }
+
+    fun getNewsDateTime(date: Date?): String {
+        return if (date == null) "" else dateFormat.format(date)
+    }
+
+    fun parseForumDateTime(dateTime: String?): Date? {
+        dateTime ?: return null
+        try {
+            val res = parseDateTimeFormat.parse(dateTime.replace("Сегодня", day).replace("Вчера", yesterday))
+            val calendar: Calendar = GregorianCalendar()
+            calendar.time = res
+            val year = calendar[Calendar.YEAR]
+            if (year < 100) calendar[Calendar.YEAR] = 2000 + year
+            return calendar.time
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    fun showNeedAuthDialog(context: Context) {
+        val router = App.get().Di().router
+        AlertDialog.Builder(context)
+                .setMessage("Необходимо войти в аккаунт 4pda")
+                .setPositiveButton("Войти") { _, _ ->
+                    router.navigateTo(Screen.Auth())
+                }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
     }
 }

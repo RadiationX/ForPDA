@@ -24,6 +24,7 @@ import moxy.presenter.ProvidePresenter
 
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
 import forpdateam.ru.forpda.entity.remote.news.Comment
 import forpdateam.ru.forpda.model.AuthHolder
@@ -135,6 +136,10 @@ class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView, Arti
     }
 
     override fun onLikeClick(comment: Comment, position: Int) {
+        if (!authHolder.get().isAuth()) {
+            Utils.showNeedAuthDialog(requireContext())
+            return
+        }
         comment.karma?.apply {
             status = Comment.Karma.LIKED
             count++
@@ -145,6 +150,10 @@ class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView, Arti
     }
 
     override fun onReplyClick(comment: Comment, position: Int) {
+        if (!authHolder.get().isAuth()) {
+            Utils.showNeedAuthDialog(requireContext())
+            return
+        }
         if (messageField.text.isEmpty()) {
             fillMessageField(comment)
         } else {

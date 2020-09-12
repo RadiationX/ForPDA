@@ -27,13 +27,16 @@ import moxy.presenter.ProvidePresenter
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.FilePickHelper
+import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.entity.app.EditPostSyncData
 import forpdateam.ru.forpda.entity.app.TabNotification
+import forpdateam.ru.forpda.entity.common.AuthState
 import forpdateam.ru.forpda.entity.remote.IBaseForumPost
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
+import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.theme.ThemePresenter
 import forpdateam.ru.forpda.presentation.theme.ThemeView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
@@ -78,7 +81,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
     private lateinit var notificationTitle: TextView
     private lateinit var notificationButton: ImageButton
 
-    private val authHolder = App.get().Di().authHolder
+    protected val authHolder = App.get().Di().authHolder
     private val mainPreferencesHolder = App.get().Di().mainPreferencesHolder
     private val otherPreferencesHolder = App.get().Di().otherPreferencesHolder
 
@@ -329,6 +332,10 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
                 .add(R.string.reply)
                 .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_create))
                 .setOnMenuItemClickListener {
+                    if (!authHolder.get().isAuth()) {
+                        Utils.showNeedAuthDialog(requireContext())
+                        return@setOnMenuItemClickListener false
+                    }
                     toggleMessagePanel()
                     false
                 }
@@ -421,7 +428,6 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
             openForumMenuItem.isEnabled = false
         }
         if (!authHolder.get().isAuth()) {
-            toggleMessagePanelItem.isVisible = false
             deleteFavoritesMenuItem.isVisible = false
             addFavoritesMenuItem.isVisible = false
             searchPostsMenuItem.isEnabled = false
@@ -617,6 +623,10 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
 
 
     override fun insertText(text: String) {
+        if (!authHolder.get().isAuth()) {
+            Utils.showNeedAuthDialog(requireContext())
+            return
+        }
         messagePanel.insertText(text)
         showMessagePanel(true)
     }
@@ -660,10 +670,18 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
     }
 
     override fun votePost(post: IBaseForumPost, type: Boolean) {
+        if (!authHolder.get().isAuth()) {
+            Utils.showNeedAuthDialog(requireContext())
+            return
+        }
         dialogsHelper.votePost(presenter, post, type)
     }
 
     override fun showChangeReputation(post: IBaseForumPost, type: Boolean) {
+        if (!authHolder.get().isAuth()) {
+            Utils.showNeedAuthDialog(requireContext())
+            return
+        }
         dialogsHelper.changeReputation(presenter, post, type)
     }
 
