@@ -29,7 +29,7 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".ui.activities.MainActivity"
-            android:configChanges="keyboardHidden|screenSize"
+            android:configChanges="keyboardHidden|screenSize|orientation"
             android:launchMode="singleTask"
             android:theme="@style/SplashTheme"
             android:windowSoftInputMode="adjustResize">
