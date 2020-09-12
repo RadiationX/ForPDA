@@ -23,7 +23,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.PreferenceAppThemeDark)
+        setTheme(R.style.DayNightPreferenceTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 

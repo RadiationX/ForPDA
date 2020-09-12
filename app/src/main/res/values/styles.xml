@@ -5,7 +5,7 @@
     </style>
 
     <style name="SplashTheme" parent="DayNightAppTheme.NoActionBar">
-        <item name="android:windowBackground">@drawable/bg_splash</item>
+        <item name="android:windowBackground">@drawable/bg_splash_light</item>
     </style>
 
     <!--
@@ -93,7 +93,7 @@
         <item name="elevation">0dp</item>
     </style>
 
-    <style name="PreferenceAppThemeLight" parent="DayNightAppTheme">
+    <style name="DayNightPreferenceTheme" parent="DayNightAppTheme">
         <!--<item name="textAppearanceListItem">@style/CodeFont</item>
         <item name="android:textAppearanceListItem">@style/CodeFont</item>
         <item name="textAppearanceListItemSmall">@style/CodeFont</item>

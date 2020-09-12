@@ -12,7 +12,7 @@
         <item name="android:windowLightNavigationBar">true</item>
     </style>
 
-    <style name="PreferenceAppThemeLight" parent="DayNightAppTheme">
+    <style name="DayNightPreferenceTheme" parent="DayNightAppTheme">
         <item name="android:statusBarColor">@color/light_colorPrimary</item>
         <item name="android:windowLightStatusBar">true</item>
 

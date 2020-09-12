@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="SplashTheme" parent="DayNightAppTheme.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg_splash_dark</item>
+    </style>
 
     <!--
         DARK THEME
@@ -88,7 +91,7 @@
         <item name="elevation">0dp</item>
     </style>
 
-    <style name="PreferenceAppThemeDark" parent="DayNightAppTheme">
+    <style name="DayNightPreferenceTheme" parent="DayNightAppTheme">
         <!--<item name="android:listDivider">@color/md_amber_800</item>
         <item name="android:dividerHeight">1dp</item>-->
     </style>
