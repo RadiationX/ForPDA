@@ -1,10 +1,10 @@
 package forpdateam.ru.forpda.ui.fragments.devdb.device
 
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 
-import com.arellomobile.mvp.MvpAppCompatFragment
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.MvpAppCompatFragment
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.entity.remote.devdb.Device

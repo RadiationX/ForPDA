@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:foreground="?attr/selectableItemBackgroundBorderless">
 
-    <android.support.v7.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/drawer_item_icon"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -34,7 +34,7 @@
         android:padding="2dp"
         android:visibility="gone">
 
-        <android.support.v7.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/file_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
             android:textColor="?attr/attachment_text"
             android:textSize="12sp" />
 
-        <android.support.v7.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/file_attributes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -82,7 +82,7 @@
         tools:text="100%"
         tools:visibility="visible" />
 
-    <android.support.v7.widget.AppCompatImageButton
+    <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/reload"
         android:layout_width="48dp"
         android:layout_height="@dimen/dp48"
@@ -91,7 +91,7 @@
         android:visibility="gone"
         app:srcCompat="@drawable/ic_toolbar_refresh" />
 
-    <android.support.v7.widget.AppCompatRadioButton
+    <androidx.appcompat.widget.AppCompatRadioButton
         android:id="@+id/radio_button"
         android:layout_width="@dimen/dp32"
         android:layout_height="@dimen/dp32"

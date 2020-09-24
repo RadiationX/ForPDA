@@ -23,22 +23,23 @@ import android.os.IBinder;
 import android.os.Messenger;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import android.support.annotation.AttrRes;
-import android.support.annotation.ColorInt;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.graphics.drawable.VectorDrawableCompat;
-import android.support.multidex.MultiDex;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.content.res.AppCompatResources;
+
+import androidx.annotation.AttrRes;
+import androidx.annotation.ColorInt;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
+import androidx.multidex.MultiDex;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.content.res.AppCompatResources;
+
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.webkit.WebSettings;
-import android.widget.Toast;
 
 import com.evernote.android.job.JobConfig;
 import com.evernote.android.job.JobManager;
@@ -52,9 +53,6 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.yandex.metrica.YandexMetrica;
 import com.yandex.metrica.YandexMetricaConfig;
-import com.yandex.metrica.profile.Attribute;
-import com.yandex.metrica.profile.GenderAttribute;
-import com.yandex.metrica.profile.UserProfile;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,18 +67,21 @@ import java.util.Observer;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import forpdateam.ru.forpda.common.DayNightHelper;
 import forpdateam.ru.forpda.common.LocaleHelper;
+import forpdateam.ru.forpda.common.Preferences;
 import forpdateam.ru.forpda.common.realm.DbMigration;
 import forpdateam.ru.forpda.common.receivers.NetworkStateReceiver;
 import forpdateam.ru.forpda.common.receivers.WakeUpReceiver;
 import forpdateam.ru.forpda.common.simple.SimpleObservable;
-import forpdateam.ru.forpda.entity.remote.profile.ProfileModel;
 import forpdateam.ru.forpda.notifications.NotificationsJob;
 import forpdateam.ru.forpda.notifications.NotificationsJobCreator;
 import forpdateam.ru.forpda.notifications.NotificationsService;
 import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
@@ -182,7 +183,14 @@ public class App extends android.app.Application {
             YandexMetrica.reportError("Крит " + throwable.getMessage(), throwable);
         });
 
-        setTheme(dependencies.getMainPreferencesHolder().getThemeIsDark() ? R.style.DarkAppTheme : R.style.LightAppTheme);
+        Disposable disposable = dependencies
+                .getMainPreferencesHolder()
+                .observeThemeMode()
+                .distinctUntilChanged()
+                .subscribe(
+                        DayNightHelper.Companion::applyTheme,
+                        Throwable::printStackTrace
+                );
 
         try {
             String inputHistory = dependencies.getOtherPreferencesHolder().getAppVersionsHistory();

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="SplashTheme" parent="DayNightAppTheme.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg_splash_dark</item>
+    </style>
+
+    <!--
+        DARK THEME
+    -->
+    <style name="DayNightAppTheme" parent="Theme.AppCompat.DayNight">
+        <!-- Base color settings-->
+        <item name="colorPrimary">@color/dark_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/dark_colorPrimaryDark</item>
+        <item name="colorAccent">@color/dark_colorAccent</item>
+
+        <!-- Colors attr settings-->
+        <item name="status_bar_color">@color/dark_status_bar_color</item>
+        <item name="link_color">@color/dark_link_color</item>
+        <item name="link_color_contrast">@color/dark_link_color_contrast</item>
+        <item name="default_text_color">@color/dark_default_text_color</item>
+        <item name="contrast_text_color">@color/dark_contrast_text_color</item>
+        <item name="second_text_color">@color/dark_second_text_color</item>
+        <item name="drawer_item_text">@color/dark_drawer_item_text</item>
+        <item name="drawer_item_text_selected">@color/dark_drawer_item_text_selected</item>
+        <item name="background_base">@color/dark_background_base</item>
+        <item name="background_for_cards">@color/dark_background_for_cards</item>
+        <item name="background_for_lists">@color/dark_background_for_lists</item>
+        <item name="divider_line">@color/dark_divider_line</item>
+        <item name="attachment_overlay_bg">@color/dark_attachment_overlay_bg</item>
+        <item name="attachment_description_bg">@color/dark_attachment_description_bg</item>
+        <item name="attachment_text">@color/dark_attachment_text</item>
+        <item name="msg_panel_tooltip_bg">@color/dark_msg_panel_tooltip_bg</item>
+        <item name="profile_overlay_bg">@color/dark_profile_overlay_bg</item>
+        <item name="img_viewer_toolbar">@color/dark_img_viewer_toolbar</item>
+        <item name="icon_base">@color/dark_icon_base</item>
+        <item name="icon_base_inverse">@color/dark_icon_base_inverse</item>
+        <item name="icon_toolbar">@color/dark_icon_toolbar</item>
+        <item name="icon_toolbar_inverse">@color/dark_icon_toolbar_inverse</item>
+        <item name="count_background">@drawable/count_background_dark</item>
+        <item name="cards_background">@color/dark_card_background</item>
+        <item name="divider_line_bottom_nav">@color/dark_divider_line_bottom_nav</item>
+        <item name="notify_dot_tab">@drawable/notify_dot_tab_dark</item>
+        <item name="is_use_light_status_bar">false</item>
+        <item name="item_tab_close_color">@color/dark_item_tab_close</item>
+
+
+        <!-- Styles settings-->
+        <item name="app_bar_overlay">@style/DayNightAppTheme.AppBarOverlay</item>
+        <item name="popup_overlay">@style/DayNightAppTheme.PopupOverlay</item>
+        <item name="bottom_sheet_dialog_theme">@style/DayNightAppTheme.BottomSheetDialog</item>
+
+        <!-- Other settings -->
+        <item name="ProfileToolbarTextStyle">@style/ProfileToolbarTextStyle</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+        <!--<item name="actionModeStyle">@style/ActionModeStyle</item>-->
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+
+        <item name="actionModeBackground">@color/dark_colorPrimary</item>
+        <item name="actionModeCloseButtonStyle">@style/actionModeCloseButtonStyle</item>
+        <item name="actionOverflowButtonStyle">@style/OverFlow</item>
+        <item name="alertDialogTheme">@style/DayNightAppTheme.Dialog</item>
+        <item name="bottomSheetDialogTheme">@style/DayNightAppTheme.BottomSheetDialog</item>
+        <item name="android:windowBackground">@color/dark_background_base</item>
+    </style>
+
+    <style name="DayNightAppTheme.Dialog" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:colorBackground">@color/dark_card_background</item>
+        <item name="colorAccent">@color/dark_colorAccent</item>
+    </style>
+
+    <style name="DayNightAppTheme.BottomSheetDialog" parent="Theme.Design.BottomSheetDialog">
+        <!--<item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:background">@color/dark_card_background</item>-->
+    </style>
+
+
+    <style name="DayNightAppTheme.NoActionBarBase" parent="DayNightAppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="DayNightAppTheme.NoActionBar" parent="DayNightAppTheme.NoActionBarBase" />
+
+    <style name="DayNightAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat">
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="DayNightAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat">
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="DayNightPreferenceTheme" parent="DayNightAppTheme">
+        <!--<item name="android:listDivider">@color/md_amber_800</item>
+        <item name="android:dividerHeight">1dp</item>-->
+    </style>
+
+</resources>

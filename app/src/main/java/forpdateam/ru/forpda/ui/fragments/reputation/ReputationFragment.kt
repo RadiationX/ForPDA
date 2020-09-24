@@ -3,18 +3,19 @@ package forpdateam.ru.forpda.ui.fragments.reputation
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.LinearLayoutManager
+import com.google.android.material.tabs.TabLayout
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.*
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.entity.remote.reputation.RepData
 import forpdateam.ru.forpda.entity.remote.reputation.RepItem
 import forpdateam.ru.forpda.model.data.remote.api.reputation.ReputationApi
@@ -114,7 +115,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
         }
 
         refreshLayout.setOnRefreshListener { presenter.loadReputation() }
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
 
         adapter = ReputationAdapter()
         recyclerView.adapter = adapter
@@ -147,12 +148,20 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
                 }
         upRepMenuItem = menu.add(R.string.increase)
                 .setOnMenuItemClickListener {
-                    showChangeReputationDialog(true)
+                    if (authHolder.get().isAuth()) {
+                        showChangeReputationDialog(true)
+                    } else {
+                        Utils.showNeedAuthDialog(requireContext())
+                    }
                     false
                 }
         downRepMenuItem = menu.add(R.string.decrease)
                 .setOnMenuItemClickListener {
-                    showChangeReputationDialog(false)
+                    if (authHolder.get().isAuth()) {
+                        showChangeReputationDialog(false)
+                    } else {
+                        Utils.showNeedAuthDialog(requireContext())
+                    }
                     false
                 }
         refreshToolbarMenuItems(false)

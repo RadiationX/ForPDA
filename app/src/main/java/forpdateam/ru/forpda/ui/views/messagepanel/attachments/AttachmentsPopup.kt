@@ -1,8 +1,8 @@
 package forpdateam.ru.forpda.ui.views.messagepanel.attachments
 
 import android.content.Context
-import android.support.design.widget.BottomSheetDialog
-import android.support.v7.widget.GridLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import androidx.recyclerview.widget.GridLayoutManager
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -82,7 +82,7 @@ class AttachmentsPopup(context: Context, private val messagePanel: MessagePanel)
         recyclerView.setFakeLinear(isLinear)
         recyclerView.adapter = adapter
 
-        recyclerView.manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+        recyclerView.manager.spanSizeLookup = object : androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(i: Int): Int {
                 return if (isLinear) {
                     1

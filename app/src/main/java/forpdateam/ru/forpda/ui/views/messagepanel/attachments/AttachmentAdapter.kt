@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Handler
 import android.os.Message
-import android.support.design.widget.TabLayout
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
+import com.google.android.material.tabs.TabLayout
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -34,7 +34,7 @@ import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
  * Created by radiationx on 09.01.17.
  */
 
-class AttachmentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class AttachmentAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
     private val items = ArrayList<ListItem>()
     //private val selected = ArrayList<AttachmentItem>()
     private var itemClickListener: AttachmentAdapter.OnItemClickListener? = null
@@ -120,7 +120,7 @@ class AttachmentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         val layoutRes = when (viewType) {
             TYPE_ITEM -> R.layout.message_panel_attachment_item
             TYPE_ITEM_HORIZONTAL -> R.layout.message_panel_attachment_item_horizontal
@@ -135,7 +135,7 @@ class AttachmentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         val item = items[position]
         val viewType = getItemViewType(position)
         when (viewType) {
@@ -178,7 +178,7 @@ class AttachmentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         fun onReverseClick()
     }
 
-    inner class SelectorHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class SelectorHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
         private var tabLayout: TabLayout = view.findViewById(R.id.selectorTabLayout)
         private var reverseBtn = view.findViewById<ImageView>(R.id.selectorReverse)
         private var gridTab: TabLayout.Tab
@@ -214,7 +214,7 @@ class AttachmentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
+    inner class ViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view), View.OnClickListener {
         private var imageView: ImageView
         private var radioButton: RadioButton
         private var overlay: View

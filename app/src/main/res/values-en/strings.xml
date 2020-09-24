@@ -385,7 +385,10 @@
     <string name="pref_title_system_downloader">System downloader</string>
     <string name="pref_summary_system_downloader">Use system downloader</string>
     <string name="pref_title_appereance">Appearance</string>
-    <string name="pref_title_dark_theme">Dark theme</string>
+    <string name="pref_title_theme_mode">App theme</string>
+    <string name="pref_value_theme_mode_light">Light</string>
+    <string name="pref_value_theme_mode_dark">Dark</string>
+    <string name="pref_value_theme_mode_system">System</string>
     <string name="pref_title_show_bottom_arrow">Bottom menu button</string>
     <string name="pref_summary_show_bottom_arrow">Enable if system has gesture at bottom of screen</string>
     <string name="pref_title_text_size">Text size</string>

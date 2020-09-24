@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.common;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -18,9 +19,12 @@ public class LocaleHelper {
 
     private static final String SELECTED_LANGUAGE = "Locale.Helper.Selected.Language";
 
+    //todo починить шоб работало с nightmode
     public static Context onAttach(Context context) {
-        String lang = getPersistedData(context, Locale.getDefault().getLanguage());
-        return setLocale(context, lang);
+        // Ломает nightmode и чот сложно починить
+        /*String lang = getPersistedData(context, Locale.getDefault().getLanguage());
+        Context newContext = setLocale(context, lang);*/
+        return context;
     }
 
     public static Context onAttach(Context context, String defaultLanguage) {

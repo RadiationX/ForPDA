@@ -6,7 +6,7 @@
         android:id="@+id/action_search"
         android:icon="@drawable/ic_toolbar_search"
         android:title="@string/search_in_page"
-        yourapp:actionViewClass="android.support.v7.widget.SearchView"
+        yourapp:actionViewClass="androidx.appcompat.widget.SearchView"
         yourapp:showAsAction="collapseActionView" />
 
 </menu>

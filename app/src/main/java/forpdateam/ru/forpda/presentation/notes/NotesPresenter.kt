@@ -1,9 +1,12 @@
 package forpdateam.ru.forpda.presentation.notes
 
-import com.arellomobile.mvp.InjectViewState
+import android.util.Log
+import moxy.InjectViewState
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
+import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
+import forpdateam.ru.forpda.model.CloseableInfoHolder
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.repository.note.NotesRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
@@ -17,10 +20,18 @@ import forpdateam.ru.forpda.presentation.TabRouter
 @InjectViewState
 class NotesPresenter(
         private val notesRepository: NotesRepository,
+        private val closeableInfoHolder: CloseableInfoHolder,
         private val router: TabRouter,
         private val linkHandler: ILinkHandler,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<NotesView>() {
+
+    private val closeableInfoIds = arrayOf(
+            CloseableInfoHolder.item_notes_sync
+    )
+
+    private val currentItems = mutableListOf<NoteItem>()
+    private val currentInfos = mutableListOf<CloseableInfo>()
 
 
     override fun onFirstViewAttach() {
@@ -28,10 +39,22 @@ class NotesPresenter(
         notesRepository
                 .observeItems()
                 .subscribe({
-                    viewState.showNotes(it)
+                    currentItems.clear()
+                    currentItems.addAll(it)
+                    updateItems()
                 }, {
                     errorHandler.handle(it)
                 })
+                .untilDestroy()
+
+        closeableInfoHolder
+                .observe()
+                .subscribe { info ->
+                    Log.d("kekeke", "closeable $info")
+                    currentInfos.clear()
+                    currentInfos.addAll(info.filter { closeableInfoIds.contains(it.id) && !it.isClosed })
+                    updateItems()
+                }
                 .untilDestroy()
         loadNotes()
     }
@@ -42,7 +65,9 @@ class NotesPresenter(
                 .doOnSubscribe { viewState.setRefreshing(true) }
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({
-                    viewState.showNotes(it)
+                    currentItems.clear()
+                    currentItems.addAll(it)
+                    updateItems()
                 }, {
                     errorHandler.handle(it)
                 })
@@ -106,6 +131,10 @@ class NotesPresenter(
         linkHandler.handle(item.link, router)
     }
 
+    fun onInfoClick(info: CloseableInfo) {
+        closeableInfoHolder.close(info)
+    }
+
     fun copyLink(item: NoteItem) {
         Utils.copyToClipBoard(item.link)
     }
@@ -116,6 +145,11 @@ class NotesPresenter(
 
     fun addNote() {
         viewState.showNotesAddPopup()
+    }
+
+    private fun updateItems() {
+        Log.d("kekeke", "updateItems ${currentItems.size}, ${currentInfos.size}")
+        viewState.showNotes(currentItems, currentInfos)
     }
 
 }

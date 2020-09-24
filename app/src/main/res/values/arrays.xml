@@ -11,6 +11,17 @@
         <item>ru</item>
     </string-array>
 
+    <string-array name="entries_theme_mode">
+        <item>@string/pref_value_theme_mode_light</item>
+        <item>@string/pref_value_theme_mode_dark</item>
+        <item>@string/pref_value_theme_mode_system</item>
+    </string-array>
+    <string-array name="entry_values_theme_mode">
+        <item>LIGHT</item>
+        <item>DARK</item>
+        <item>SYSTEM</item>
+    </string-array>
+
     <string-array name="entries_notify_limit">
         <item>10s</item>
         <item>30s</item>

@@ -3,16 +3,16 @@ package forpdateam.ru.forpda.ui.fragments.notes
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.FilePickHelper
+import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
 import forpdateam.ru.forpda.presentation.notes.NotesPresenter
 import forpdateam.ru.forpda.presentation.notes.NotesView
@@ -40,6 +40,7 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
     @ProvidePresenter
     fun providePresenter(): NotesPresenter = NotesPresenter(
             App.get().Di().notesRepository,
+            App.get().Di().closeableInfoHolder,
             App.get().Di().router,
             App.get().Di().linkHandler,
             App.get().Di().errorHandler
@@ -53,10 +54,9 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
         super.onViewCreated(view, savedInstanceState)
         setCardsBackground()
         setScrollFlagsEnterAlways()
-        adapter = NotesAdapter()
-        adapter.setClickListener(this)
+        adapter = NotesAdapter(this, presenter::onInfoClick)
         recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         refreshLayout.setOnRefreshListener { presenter.loadNotes() }
         recyclerView.addItemDecoration(DevicesFragment.SpacingItemDecoration(App.px8, false))
 
@@ -100,7 +100,7 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
 
     }
 
-    override fun showNotes(items: List<NoteItem>) {
+    override fun showNotes(items: List<NoteItem>, info: List<CloseableInfo>) {
         if (items.isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
                 val funnyContent = FunnyContent(context)
@@ -112,7 +112,7 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
         } else {
             contentController.hideContent(ContentController.TAG_NO_DATA)
         }
-        adapter.addAll(items)
+        adapter.bindItems(items, info)
     }
 
     override fun showNotesEditPopup(item: NoteItem) {

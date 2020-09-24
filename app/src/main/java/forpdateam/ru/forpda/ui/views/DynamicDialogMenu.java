@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.ui.views;
 
 import android.content.Context;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 
 import java.util.ArrayList;
 import java.util.List;

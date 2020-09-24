@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.common.realm;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import java.text.ParseException;

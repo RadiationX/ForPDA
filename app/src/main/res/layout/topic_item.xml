@@ -11,7 +11,7 @@
     android:paddingStart="@dimen/dp16"
     android:paddingTop="@dimen/dp12">
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/topic_item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,21 +29,21 @@
         android:paddingTop="2dp"
         android:orientation="horizontal">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/topic_item_poll_icon"
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_poll" />
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/topic_item_forum_icon"
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_forum" />
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/topic_item_lock_icon"
             android:layout_width="16dp"
             android:layout_height="16dp"
@@ -61,7 +61,7 @@
             android:visibility="gone"/>
     </LinearLayout>
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/topic_item_desc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
         android:textSize="14sp"
         tools:text="@string/test_topic_description"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/topic_item_last_nick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
         tools:text="@string/test_topic_last_nick"
         android:contentDescription="@string/user"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/topic_item_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

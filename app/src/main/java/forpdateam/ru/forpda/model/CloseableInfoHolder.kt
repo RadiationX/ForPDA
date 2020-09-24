@@ -13,9 +13,11 @@ class CloseableInfoHolder(
     companion object {
 
         const val item_other_menu_drag = 10
+        const val item_notes_sync = 11
 
         val ALL_ITEMS = arrayOf(
-                item_other_menu_drag
+                item_other_menu_drag,
+                item_notes_sync
         )
     }
 

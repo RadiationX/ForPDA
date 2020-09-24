@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.client;
 
 import android.os.Build;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.RequiresApi;
 
 /**
  * Created by radiationx on 02.12.16.

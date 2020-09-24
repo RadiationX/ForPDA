@@ -1,17 +1,17 @@
 package forpdateam.ru.forpda.ui.fragments.forum
 
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
-import android.support.v4.widget.NestedScrollView
-import android.support.v7.app.AlertDialog
+import com.google.android.material.appbar.AppBarLayout
+import androidx.core.widget.NestedScrollView
+import androidx.appcompat.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import com.unnamed.b.atv.model.TreeNode
 import com.unnamed.b.atv.view.AndroidTreeView
 

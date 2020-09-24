@@ -7,18 +7,18 @@
     android:paddingStart="@dimen/dp24"
     android:paddingEnd="@dimen/dp24">
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/reputation_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
         android:paddingBottom="@dimen/dp16"/>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.AppCompatEditText
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/reputation_text_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -27,5 +27,5 @@
             android:inputType="text|textCapSentences|textMultiLine"
             android:scrollHorizontally="true"/>
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

@@ -85,12 +85,12 @@ class ArticleParser(
 
                     karmaMap = parseKarma(response)
 
-                    var comments = matcher.group(14)
-                    comments = patternProvider
-                            .getPattern(scope.scope, scope.exclude_form_comment)
-                            .matcher(comments)
-                            .replaceFirst("")
-                    commentsSource = comments
+                    commentsSource = matcher.group(14)?.let { comments ->
+                        patternProvider
+                                .getPattern(scope.scope, scope.exclude_form_comment)
+                                .matcher(comments)
+                                .replaceFirst("")
+                    }
 
                     /*Comment commentTree = parseComments(getKarmaMap(), getCommentsSource());
                     setCommentTree(commentTree);*/
@@ -136,12 +136,12 @@ class ArticleParser(
 
                     karmaMap = parseKarma(response)
 
-                    var comments = matcher.group(11)
-                    comments = patternProvider
-                            .getPattern(scope.scope, scope.exclude_form_comment)
-                            .matcher(comments)
-                            .replaceFirst("")
-                    commentsSource = comments
+                    commentsSource = matcher.group(11)?.let { comments ->
+                        patternProvider
+                                .getPattern(scope.scope, scope.exclude_form_comment)
+                                .matcher(comments)
+                                .replaceFirst("")
+                    }
 
                     /*Comment commentTree = parseComments(getKarmaMap(), getCommentsSource());
                     setCommentTree(commentTree);*/

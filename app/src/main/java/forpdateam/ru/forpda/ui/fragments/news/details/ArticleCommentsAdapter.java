@@ -4,8 +4,8 @@ import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,7 +95,6 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
                 holder.date.setVisibility(View.GONE);
             }
         } else {
-            holder.itemView.setClickable(authData.isAuth());
             if (holder.likeImage.getVisibility() != View.VISIBLE) {
                 holder.likeImage.setVisibility(View.VISIBLE);
             }
@@ -140,7 +139,7 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
                 case Comment.Karma.NOT_LIKED: {
                     holder.likeImage.setImageDrawable(holder.heart_outline);
                     holder.likeImage.clearColorFilter();
-                    holder.likeImage.setClickable(authData.isAuth() && authData.getUserId() != item.getUserId());
+                    holder.likeImage.setClickable(authData.getUserId() != item.getUserId());
                     break;
                 }
             }

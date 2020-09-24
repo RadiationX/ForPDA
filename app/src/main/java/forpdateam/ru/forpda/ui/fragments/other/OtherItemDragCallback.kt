@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.ui.fragments.other
 
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ItemTouchHelper
 import android.util.Log
 import forpdateam.ru.forpda.model.interactors.other.MenuRepository
 
@@ -18,7 +18,7 @@ class OtherItemDragCallback(
         return true
     }
 
-    override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+    override fun getMovementFlags(recyclerView: androidx.recyclerview.widget.RecyclerView, viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder): Int {
         Log.e("lplplp", "getMovementFlags")
         val dragFlags = if (checkViewHolder(viewHolder)) {
             ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
@@ -30,9 +30,9 @@ class OtherItemDragCallback(
     }
 
     override fun onMove(
-            recyclerView: RecyclerView,
-            viewHolder: RecyclerView.ViewHolder,
-            target: RecyclerView.ViewHolder
+            recyclerView: androidx.recyclerview.widget.RecyclerView,
+            viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
+            target: androidx.recyclerview.widget.RecyclerView.ViewHolder
     ): Boolean {
         if (checkViewHolder(viewHolder) && checkViewHolder(target)) {
             listener.onItemMove(viewHolder.adapterPosition, target.adapterPosition)
@@ -42,22 +42,22 @@ class OtherItemDragCallback(
     }
 
 
-    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+    override fun onSwiped(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder, direction: Int) {
     }
 
-    override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+    override fun onSelectedChanged(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder?, actionState: Int) {
         super.onSelectedChanged(viewHolder, actionState)
         if(actionState==ItemTouchHelper.ACTION_STATE_DRAG){
             listener.onDragStart()
         }
     }
 
-    override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+    override fun clearView(recyclerView: androidx.recyclerview.widget.RecyclerView, viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder) {
         super.clearView(recyclerView, viewHolder)
         listener.onDragEnd()
     }
 
-    private fun checkViewHolder(viewHolder: RecyclerView.ViewHolder): Boolean {
+    private fun checkViewHolder(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder): Boolean {
         return viewHolder is MenuItemDelegate.ViewHolder && MenuRepository.GROUP_MAIN.contains(viewHolder.getItem().appItem.id)
     }
 

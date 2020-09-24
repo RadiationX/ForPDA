@@ -1,9 +1,8 @@
 package forpdateam.ru.forpda.ui.fragments.qms.chat;
 
-import android.support.v7.widget.AppCompatAutoCompleteTextView;
-import android.support.v7.widget.AppCompatEditText;
-import android.text.TextWatcher;
-import android.view.MenuItem;
+import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
+import androidx.appcompat.widget.AppCompatEditText;
+
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.ArrayAdapter;
@@ -12,7 +11,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher;
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser;

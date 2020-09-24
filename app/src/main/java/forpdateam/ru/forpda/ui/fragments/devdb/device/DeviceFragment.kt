@@ -4,20 +4,20 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
-import android.support.design.widget.CollapsingToolbarLayout
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.view.PagerAdapter
-import android.support.v4.view.ViewPager
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.google.android.material.tabs.TabLayout
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
 import android.view.*
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.assist.FailReason
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
@@ -45,7 +45,7 @@ class DeviceFragment : TabFragment(), DeviceView {
     private lateinit var imagesPager: PagerBullet
     private lateinit var tabLayout: TabLayout
     private lateinit var rating: TextView
-    private lateinit var fragmentsPager: ViewPager
+    private lateinit var fragmentsPager: androidx.viewpager.widget.ViewPager
     private lateinit var progressBar: ProgressBar
     private var toolbarContent: RelativeLayout? = null
 
@@ -97,9 +97,9 @@ class DeviceFragment : TabFragment(), DeviceView {
         imagesPager = findViewById(R.id.images_pager) as PagerBullet
         progressBar = findViewById(R.id.progress_bar) as ProgressBar
         rating = findViewById(R.id.item_rating) as TextView
-        fragmentsPager = findViewById(R.id.view_pager) as ViewPager
+        fragmentsPager = findViewById(R.id.view_pager) as androidx.viewpager.widget.ViewPager
 
-        tabLayout = TabLayout(context)
+        tabLayout = TabLayout(requireContext())
         val tabParams = CollapsingToolbarLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM)
         tabParams.collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
         tabLayout.layoutParams = tabParams
@@ -264,8 +264,8 @@ class DeviceFragment : TabFragment(), DeviceView {
         disposables.dispose()
     }
 
-    private inner class FragmentPagerAdapter(fm: FragmentManager, private val device: Device) : android.support.v4.app.FragmentPagerAdapter(fm) {
-        private val fragments = ArrayList<Fragment>()
+    private inner class FragmentPagerAdapter(fm: androidx.fragment.app.FragmentManager, private val device: Device) : androidx.fragment.app.FragmentPagerAdapter(fm) {
+        private val fragments = ArrayList<androidx.fragment.app.Fragment>()
         private val titles = ArrayList<String>()
 
         init {
@@ -303,7 +303,7 @@ class DeviceFragment : TabFragment(), DeviceView {
             }
         }
 
-        override fun getItem(position: Int): Fragment {
+        override fun getItem(position: Int): androidx.fragment.app.Fragment {
             return fragments[position]
         }
 
@@ -321,7 +321,7 @@ class DeviceFragment : TabFragment(), DeviceView {
             context: Context,
             private val urls: ArrayList<String>,
             private var fullUrls: ArrayList<String>
-    ) : PagerAdapter() {
+    ) : androidx.viewpager.widget.PagerAdapter() {
         //private SparseArray<View> views = new SparseArray<>();
         private val inflater: LayoutInflater = LayoutInflater.from(context)
 

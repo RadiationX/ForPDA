@@ -7,7 +7,7 @@ package forpdateam.ru.forpda.ui.views;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
-import android.support.v7.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatEditText;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.TextWatcher;

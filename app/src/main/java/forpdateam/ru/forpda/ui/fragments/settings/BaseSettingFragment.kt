@@ -1,8 +1,8 @@
 package forpdateam.ru.forpda.ui.fragments.settings
 
 import android.os.Bundle
-import android.support.v7.preference.PreferenceFragmentCompat
-import android.support.v7.widget.RecyclerView
+import androidx.preference.PreferenceFragmentCompat
+import androidx.recyclerview.widget.RecyclerView
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.ui.activities.SettingsActivity
 
@@ -21,10 +21,10 @@ open class BaseSettingFragment : PreferenceFragmentCompat() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        view?.findViewById<RecyclerView>(android.support.v7.preference.R.id.recycler_view)?.also { list ->
+        view?.findViewById<androidx.recyclerview.widget.RecyclerView>(androidx.preference.R.id.recycler_view)?.also { list ->
             list.setPadding(0, 0, 0, 0)
-            list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            list.addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
                     listScrollY = recyclerView.computeVerticalScrollOffset()
                     updateToolbarShadow()

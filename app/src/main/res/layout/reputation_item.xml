@@ -11,7 +11,7 @@
     android:paddingTop="@dimen/dp12">
 
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/rep_item_title"
         android:textStyle="bold"
         android:layout_width="wrap_content"
@@ -21,13 +21,13 @@
         android:textSize="16sp"
         tools:text="@string/test_topic_title"/>
 
-    <android.support.v7.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/rep_item_image"
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:layout_alignParentEnd="true" />
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/rep_item_desc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
         android:textSize="14sp"
         tools:text="@string/test_topic_description"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/rep_item_last_nick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
         android:textColor="?attr/second_text_color"
         tools:text="@string/test_nick"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/rep_item_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

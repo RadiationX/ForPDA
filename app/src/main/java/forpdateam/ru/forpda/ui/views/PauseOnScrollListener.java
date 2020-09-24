@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.ui.views;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 

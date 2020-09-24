@@ -165,7 +165,7 @@
     <string name="fragment_title_topics">Темы форума</string>
     <string name="fragment_title_forum_rules">Правила форума</string>
     <string name="fragment_title_device_search">Поиск устройства</string>
-    <string name="fragment_title_other_menu">Поиск устройства</string>
+    <string name="fragment_title_other_menu">Полное меню приложения</string>
     <string name="activity_title_settings">Настройки</string>
 
     <string name="fragment_tab_title_theme" formatted="false">Тема \"%s\"</string>
@@ -442,7 +442,10 @@
 
     <string name="pref_title_appereance">Внешний вид</string>
 
-    <string name="pref_title_dark_theme">Тёмная тема</string>
+    <string name="pref_title_theme_mode">Тема приложения</string>
+    <string name="pref_value_theme_mode_light">Светлая</string>
+    <string name="pref_value_theme_mode_dark">Темная</string>
+    <string name="pref_value_theme_mode_system">Системная</string>
 
     <string name="pref_title_show_bottom_arrow">Кнопка открытия нижнего меню</string>
     <string name="pref_summary_show_bottom_arrow">Включить, если в системе есть жесты снизу экрана</string>
@@ -556,7 +559,8 @@
 
     <!-- Closeable info -->
     <string name="closeable_info_other_menu_drag">Вы можете поменять порядок пунктов меню, для этого зажмите пункт меню и перенесите на нужное место</string>
-    
+    <string name="closeable_info_notes_sync" translatable="false">Закладки не сонхринизируются с сервером и хронятся только локально. Чтобы не потерять, экспортируйте их (троеточие в углу экрана).</string>
+
     <!-- Menu item -->
     <string name="menu_item_link_forum_author">Автор приложения</string>
     <string name="menu_item_link_chat_telegram">Чат в Telegram</string>

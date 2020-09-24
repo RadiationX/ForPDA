@@ -3,9 +3,9 @@ package forpdateam.ru.forpda.ui.fragments.other
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.AppCompatImageButton
-import android.support.v7.widget.SearchView
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatImageButton
+import androidx.appcompat.widget.SearchView
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.Menu
@@ -16,8 +16,8 @@ import android.webkit.JavascriptInterface
 import android.widget.ImageView
 import android.widget.LinearLayout
 
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 import java.util.ArrayList
 
@@ -139,7 +139,7 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
 
         searchView.setOnSearchClickListener { _ ->
             if (searchView.tag == searchViewTag) {
-                val searchClose = searchView.findViewById<View>(android.support.v7.appcompat.R.id.search_close_btn) as ImageView?
+                val searchClose = searchView.findViewById<View>(androidx.appcompat.R.id.search_close_btn) as ImageView?
                 if (searchClose != null)
                     (searchClose.parent as ViewGroup).removeView(searchClose)
 

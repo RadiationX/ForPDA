@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.presentation.articles.detail.content
 
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.model.interactors.news.ArticleInteractor
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder

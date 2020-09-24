@@ -6,22 +6,22 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.BottomSheetDialog
-import android.support.design.widget.CoordinatorLayout
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.TabLayout
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AlertDialog
-import android.support.v7.view.menu.ActionMenuItemView
-import android.support.v7.widget.ActionMenuView
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.SearchView
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.tabs.TabLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.view.menu.ActionMenuItemView
+import androidx.appcompat.widget.ActionMenuView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.appcompat.widget.SearchView
 import android.util.Log
 import android.view.*
 import android.widget.*
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
@@ -70,8 +70,8 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
 
 
     private lateinit var webView: ExtendedWebView
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var refreshLayout: SwipeRefreshLayout
+    private lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
+    private lateinit var refreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     private val adapter = SearchAdapter()
     private var webViewClient: CustomWebViewClient? = null
 
@@ -169,7 +169,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
     }
 
     override fun initFabBehavior() {
-        val params = fab.layoutParams as CoordinatorLayout.LayoutParams
+        val params = fab.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
         val behavior = FabOnScroll(fab.context)
         params.behavior = behavior
         params.gravity = Gravity.CENTER_VERTICAL or Gravity.END
@@ -185,7 +185,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         initFabBehavior()
 
         baseInflateFragment(inflater, R.layout.fragment_search)
-        refreshLayout = findViewById(R.id.swipe_refresh_list) as SwipeRefreshLayout
+        refreshLayout = findViewById(R.id.swipe_refresh_list) as androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         searchSettingsView = View.inflate(context, R.layout.search_settings, null) as ViewGroup
 
         nickBlock = searchSettingsView.findViewById<View>(R.id.search_nick_block) as ViewGroup
@@ -212,7 +212,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
                 App.get().Di().router
         ))
         attachWebView(webView)
-        recyclerView = RecyclerView(context!!)
+        recyclerView = androidx.recyclerview.widget.RecyclerView(context!!)
         recyclerView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         webView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         refreshLayout.addView(recyclerView)
@@ -325,11 +325,10 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         searchSrcText.setPadding(0, searchSrcText.paddingTop, 0, searchSrcText.paddingBottom)
 
 
-        searchItem.expandActionView()
         submitButton.setOnClickListener { startSearch() }
         saveSettingsButton.setOnClickListener { presenter.saveSettings() }
         //recyclerView.setHasFixedSize(true);
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         recyclerView.addItemDecoration(DevicesFragment.SpacingItemDecoration(App.px8, true))
         val pauseOnScrollListener = PauseOnScrollListener(ImageLoader.getInstance(), true, true)
         recyclerView.addOnScrollListener(pauseOnScrollListener)
@@ -405,9 +404,19 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         searchView.setIconifiedByDefault(true)
     }
 
+    override fun onResumeOrShow() {
+        super.onResumeOrShow()
+        searchItem.expandActionView()
+    }
+
+    override fun onPauseOrHide() {
+        super.onPauseOrHide()
+        searchItem.collapseActionView()
+    }
+
     override fun onBackPressed(): Boolean {
         tooltip?.also {
-            if(it.isShowing){
+            if (it.isShowing) {
                 it.dismiss()
                 return true
             }
@@ -571,7 +580,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
                 && searchResult.settings?.resourceType == SearchSettings.RESOURCE_FORUM.first
         ) {
             for (i in 0 until refreshLayout.childCount) {
-                if (refreshLayout.getChildAt(i) is RecyclerView) {
+                if (refreshLayout.getChildAt(i) is androidx.recyclerview.widget.RecyclerView) {
                     refreshLayout.removeViewAt(i)
                     fixTargetView()
                     break
@@ -624,7 +633,6 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         }
 
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

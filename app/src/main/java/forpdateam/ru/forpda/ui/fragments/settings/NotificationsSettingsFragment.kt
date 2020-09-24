@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.ui.fragments.settings
 
 import android.os.Bundle
-import android.support.v7.app.ActionBar
+import androidx.appcompat.app.ActionBar
 
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.ui.activities.SettingsActivity

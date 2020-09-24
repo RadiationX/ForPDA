@@ -1,9 +1,9 @@
 package forpdateam.ru.forpda.ui.views.drawers.adapters
 
 import android.graphics.PorterDuff
-import android.support.v4.content.ContextCompat
-import android.support.v4.widget.TextViewCompat
-import android.support.v7.widget.RecyclerView
+import androidx.core.content.ContextCompat
+import androidx.core.widget.TextViewCompat
+import androidx.recyclerview.widget.RecyclerView
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -17,14 +17,14 @@ class BottomMenuDelegate(private val clickListener: Listener) : AdapterDelegate<
 
     override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is BottomTabListItem
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, payloads: MutableList<Any>) {
         val item = items[position] as BottomTabListItem
         (holder as ViewHolder).bind(item.item, item.selected)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_bottom_tab, parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup): androidx.recyclerview.widget.RecyclerView.ViewHolder = ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_bottom_tab, parent, false))
 
-    private inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    private inner class ViewHolder(val view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
 
         private lateinit var currentItem: DrawerMenuItem
 
@@ -35,6 +35,7 @@ class BottomMenuDelegate(private val clickListener: Listener) : AdapterDelegate<
         fun bind(item: DrawerMenuItem, selected: Boolean) {
             this.currentItem = item
             view.apply {
+                contentDescription = context.getString(item.title)
                 itemBottomMenuIcon.setImageDrawable(ContextCompat.getDrawable(context, item.icon))
 
                 val colorRes = if (selected) App.getColorFromAttr(context, R.attr.colorAccent) else App.getColorFromAttr(context, R.attr.icon_base)

@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.ui.views;
 
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 /**
  * Created by radiationx on 26.08.17.

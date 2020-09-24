@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="DayNightAppTheme.NoActionBar" parent="DayNightAppTheme.NoActionBarBase">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+
+        <item name="android:statusBarColor">#0000</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="DayNightPreferenceTheme" parent="DayNightAppTheme">
+        <item name="android:statusBarColor">@color/dark_colorPrimary</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+</resources>

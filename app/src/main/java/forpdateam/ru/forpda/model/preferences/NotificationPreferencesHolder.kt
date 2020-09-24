@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.model.preferences
 
 import android.content.SharedPreferences
-import android.support.v4.util.ArraySet
+import androidx.collection.ArraySet
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import forpdateam.ru.forpda.common.Preferences
 import io.reactivex.Observable

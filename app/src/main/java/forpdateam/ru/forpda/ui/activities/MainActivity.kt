@@ -6,23 +6,21 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import com.arellomobile.mvp.MvpAppCompatActivity
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
 import com.daasuu.ei.Ease
 import com.daasuu.ei.EasingInterpolator
 import com.yandex.metrica.YandexMetrica
-
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.common.LocaleHelper
 import forpdateam.ru.forpda.notifications.NotificationsService
 import forpdateam.ru.forpda.presentation.main.MainPresenter
@@ -36,7 +34,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
-import java.lang.Exception
+import moxy.MvpAppCompatActivity
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import kotlin.math.max
 
 class MainActivity : MvpAppCompatActivity(), MainView {
@@ -55,8 +55,6 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     private val mainPreferencesRepository = App.get().Di().mainPreferencesHolder
     private val checkerRepository = App.get().Di().checkerRepository
     private val updateChecker by lazy { SimpleUpdateChecker(checkerRepository) }
-
-    private var currentThemeIsDark = mainPreferencesRepository.getThemeIsDark()
 
     private var lang: String? = null
 
@@ -77,11 +75,11 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(LocaleHelper.onAttach(base))
+        App.get().Di().dayNightHelper.setIsNight(DayNightHelper.isUiModeNight(resources.configuration))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        currentThemeIsDark = mainPreferencesRepository.getThemeIsDark()
-        setTheme(if (currentThemeIsDark) R.style.DarkAppTheme_NoActionBar else R.style.LightAppTheme_NoActionBar)
+        setTheme(R.style.DayNightAppTheme_NoActionBar)
         super.onCreate(savedInstanceState)
         if (intent != null) {
             checkWebView = intent.getBooleanExtra(ARG_CHECK_WEBVIEW, checkWebView)
@@ -100,6 +98,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         }
 
 
+        Log.d("kekeke", "oncreate UiMode: ${resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK}")
 
         setContentView(R.layout.activity_main)
 
@@ -178,19 +177,9 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         savedInstanceState?.also { tabNavigator.onRestoreInstanceState(it) }
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.also { tabNavigator.onSaveInstanceState(it) }
-    }
-
-    override fun changeTheme(isDark: Boolean) {
-        if (currentThemeIsDark != isDark) {
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
-                Handler().post { recreate() }
-            } else {
-                recreate()
-            }
-        }
+        outState.also { tabNavigator.onSaveInstanceState(it) }
     }
 
     override fun showFirstStartAnimation() {
@@ -248,7 +237,8 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         if (lang == null) {
             lang = LocaleHelper.getLanguage(this)
         }
-        if (LocaleHelper.getLanguage(this) != lang) {
+        // неработающий helper
+        if (false && LocaleHelper.getLanguage(this) != lang) {
             val newContext = LocaleHelper.onAttach(this)
             AlertDialog.Builder(this)
                     .setMessage(newContext.getString(R.string.lang_changed))
@@ -303,9 +293,9 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     }
 
     fun hideKeyboard() {
-        if (currentFocus != null) {
+        currentFocus?.let {
             val iim = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
-            iim?.hideSoftInputFromWindow(currentFocus.windowToken, 0)
+            iim?.hideSoftInputFromWindow(it.windowToken, 0)
         }
     }
 

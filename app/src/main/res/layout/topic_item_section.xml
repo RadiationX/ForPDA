@@ -12,7 +12,7 @@
         android:layout_height="1dp"
         android:background="?attr/divider_line" />
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/topic_item_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

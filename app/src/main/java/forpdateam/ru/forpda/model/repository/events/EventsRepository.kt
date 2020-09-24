@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.model.repository.events
 
 import android.content.Context
-import android.support.v4.util.ArraySet
+import androidx.collection.ArraySet
 import android.util.Log
 import com.jakewharton.rxrelay2.PublishRelay
 import forpdateam.ru.forpda.App
@@ -473,7 +473,7 @@ class EventsRepository(
     }
 
     private fun saveEvents(loadedEvents: List<NotificationEvent>, source: NotificationEvent.Source) {
-        val savedEvents = ArraySet<String>()
+        val savedEvents = androidx.collection.ArraySet<String>()
         for (event in loadedEvents) {
             savedEvents.add(event.sourceEventText)
         }

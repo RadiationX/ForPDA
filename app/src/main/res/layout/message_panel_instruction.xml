@@ -9,7 +9,7 @@
     android:clickable="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:gravity="center"
@@ -19,7 +19,7 @@
         android:textStyle="bold" />
 
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/instruction_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -79,7 +79,7 @@ class ThemeTemplate(
                 letterMatcher = letterMatcher?.reset(post.nick) ?: firstLetter.matcher(post.nick)
                 val letter: String = letterMatcher?.run {
                     if (find()) group(1) else null
-                } ?: post.nick?.substring(0, 1).orEmpty()
+                } ?: post.nick?.takeIf { it.isNotEmpty() }?.substring(0, 1).orEmpty()
 
                 setVariableOpt("nick_letter", letter)
                 setVariableOpt("nick", ApiUtils.htmlEncode(post.nick))
@@ -105,15 +105,15 @@ class ThemeTemplate(
 
                 //Post footer
 
-                if (post.canReport && authorized)
+                if (!authorized || post.canReport)
                     addBlockOpt("report_block")
-                if (page.canQuote && authorized && post.userId != memberId)
+                if (!authorized || (page.canQuote && post.userId != memberId))
                     addBlockOpt("reply_block")
-                if (authorized && post.userId != memberId)
+                if (!authorized || post.userId != memberId)
                     addBlockOpt("vote_block")
-                if (post.canDelete && authorized)
+                if (!authorized || post.canDelete)
                     addBlockOpt("delete_block")
-                if (post.canEdit && authorized)
+                if (!authorized || post.canEdit)
                     addBlockOpt("edit_block")
 
                 addBlockOpt("post")

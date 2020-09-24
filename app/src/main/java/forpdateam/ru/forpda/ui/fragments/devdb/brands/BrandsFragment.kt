@@ -1,15 +1,15 @@
 package forpdateam.ru.forpda.ui.fragments.devdb.brands
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 import java.util.ArrayList
 
@@ -55,7 +55,7 @@ class BrandsFragment : RecyclerFragment(), BrandsView, BaseSectionedAdapter.OnIt
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         refreshLayout.setOnRefreshListener { presenter.loadBrands() }
         titlesWrapper.visibility = View.GONE
         toolbarSpinner.visibility = View.VISIBLE

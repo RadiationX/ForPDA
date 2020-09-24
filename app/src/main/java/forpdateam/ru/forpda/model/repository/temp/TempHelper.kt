@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.model.repository.temp
 
-import android.support.annotation.DrawableRes
-import android.support.annotation.StringRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import org.json.JSONException

@@ -1,8 +1,8 @@
 package forpdateam.ru.forpda.ui.views.messagepanel.inserthelper;
 
 import android.content.Context;
-import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AlertDialog;
+import com.google.android.material.textfield.TextInputLayout;
+import androidx.appcompat.app.AlertDialog;
 import android.text.Editable;
 import android.util.Pair;
 import android.view.LayoutInflater;

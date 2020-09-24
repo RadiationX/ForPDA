@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.ui.fragments.devdb.device.specs;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;

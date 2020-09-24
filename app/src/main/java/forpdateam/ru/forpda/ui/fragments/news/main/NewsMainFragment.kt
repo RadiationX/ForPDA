@@ -1,12 +1,12 @@
 package forpdateam.ru.forpda.ui.fragments.news.main
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
@@ -49,7 +49,7 @@ class NewsMainFragment : RecyclerFragment(), NewsListAdapter.ItemClickListener, 
         super.onViewCreated(view, savedInstanceState)
         setListsBackground()
         refreshLayout.setOnRefreshListener { presenter.refreshArticles() }
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         //recyclerView.addItemDecoration(new DevicesFragment.SpacingItemDecoration(App.px8, true));
         val pauseOnScrollListener = PauseOnScrollListener(ImageLoader.getInstance(), true, true)
         recyclerView.addOnScrollListener(pauseOnScrollListener)

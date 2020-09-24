@@ -2,9 +2,8 @@ package forpdateam.ru.forpda.ui.activities
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.preference.PreferenceFragmentCompat
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceFragmentCompat
 import android.view.MenuItem
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
@@ -18,17 +17,13 @@ import io.reactivex.disposables.CompositeDisposable
  */
 
 class SettingsActivity : AppCompatActivity() {
-    private val preferencesRepository = App.get().Di().mainPreferencesHolder
-    private var currentThemeIsDark = preferencesRepository.getThemeIsDark()
-    private val disposables = CompositeDisposable()
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(LocaleHelper.onAttach(base))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        currentThemeIsDark = preferencesRepository.getThemeIsDark()
-        setTheme(if (currentThemeIsDark) R.style.PreferenceAppThemeDark else R.style.PreferenceAppThemeLight)
+        setTheme(R.style.DayNightPreferenceTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
@@ -48,18 +43,6 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         supportFragmentManager.beginTransaction().replace(R.id.fragment_content, fragment).commit()
-
-        disposables.add(
-                preferencesRepository
-                        .observeThemeIsDark()
-                        .subscribe { isDark ->
-                            if (currentThemeIsDark != isDark) {
-                                currentThemeIsDark = isDark!!
-                                recreate()
-                            }
-                        }
-        )
-
     }
 
 
@@ -77,13 +60,6 @@ class SettingsActivity : AppCompatActivity() {
         if (item.itemId == android.R.id.home)
             finish()
         return true
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (!disposables.isDisposed) {
-            disposables.clear()
-        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

@@ -2,7 +2,9 @@ package forpdateam.ru.forpda.ui.fragments.theme;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.v7.app.AlertDialog;
+
+import androidx.appcompat.app.AlertDialog;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -74,16 +76,12 @@ public class ThemeDialogsHelper_V2 {
 
     public void showReputationMenu(IThemePresenter presenter, IBaseForumPost post) {
         reputationMenu.disallowAll();
-        if (authHolder.get().isAuth()) {
-            if (post.getCanPlusRep()) {
-                reputationMenu.allow(0);
-            }
-            reputationMenu.allow(1);
-            if (post.getCanMinusRep()) {
-                reputationMenu.allow(2);
-            }
-        } else {
-            reputationMenu.allow(1);
+        if (!authHolder.get().isAuth() || post.getCanPlusRep()) {
+            reputationMenu.allow(0);
+        }
+        reputationMenu.allow(1);
+        if (!authHolder.get().isAuth() || post.getCanMinusRep()) {
+            reputationMenu.allow(2);
         }
         String title = App.get().getString(R.string.reputation) + " ".concat(post.getNick());
         reputationMenu.show(context, title, presenter, post);
@@ -91,11 +89,11 @@ public class ThemeDialogsHelper_V2 {
 
     public void showPostMenu(IThemePresenter presenter, IBaseForumPost post) {
         postMenu.disallowAll();
+        if (!authHolder.get().isAuth() || post.getCanQuote()) {
+            postMenu.allow(0);
+            postMenu.allow(1);
+        }
         if (authHolder.get().isAuth()) {
-            if (post.getCanQuote()) {
-                postMenu.allow(0);
-                postMenu.allow(1);
-            }
             if (post.getCanReport())
                 postMenu.allow(2);
             if (post.getCanEdit())

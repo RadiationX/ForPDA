@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.ui.fragments.other
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,12 +19,12 @@ class CloseableInfoDelegate(
 
     override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is CloseableInfoListItem
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, payloads: MutableList<Any>) {
         val item = items[position] as CloseableInfoListItem
         (holder as ViewHolder).bind(item.item)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup): androidx.recyclerview.widget.RecyclerView.ViewHolder = ViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.item_closeable_info, parent, false),
             clickListener
     )
@@ -32,7 +32,7 @@ class CloseableInfoDelegate(
     class ViewHolder(
             val view: View,
             val closeClickListener: (CloseableInfo) -> Unit
-    ) : RecyclerView.ViewHolder(view) {
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
 
         private lateinit var currentItem: CloseableInfo
 
@@ -48,7 +48,8 @@ class CloseableInfoDelegate(
         }
 
         private fun getStringRes(item: CloseableInfo): Int = when (item.id) {
-            CloseableInfoHolder.item_other_menu_drag-> R.string.closeable_info_other_menu_drag
+            CloseableInfoHolder.item_other_menu_drag -> R.string.closeable_info_other_menu_drag
+            CloseableInfoHolder.item_notes_sync -> R.string.closeable_info_notes_sync
             else -> R.string.undefined
         }
     }

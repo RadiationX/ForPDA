@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,7 +9,7 @@
     android:foreground="?attr/selectableItemBackgroundBorderless"
     android:minHeight="@dimen/dp64">
 
-    <android.support.v7.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/drawer_item_icon"
         android:layout_width="64dp"
         android:layout_height="64dp"
@@ -32,7 +32,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.constraint.Group
+    <androidx.constraintlayout.widget.Group
         android:id="@+id/file_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
         app:constraint_referenced_ids="file_name, file_attributes"
         tools:visibility="visible" />
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/file_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Какое-то очень длинное название например в две строки ща посомотрим как будет в три строки" />
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/file_attributes"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -105,7 +105,7 @@
         tools:text="100%"
         tools:visibility="visible" />
 
-    <android.support.v7.widget.AppCompatImageButton
+    <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/reload"
         android:layout_width="48dp"
         android:layout_height="@dimen/dp48"
@@ -118,7 +118,7 @@
         app:srcCompat="@drawable/ic_toolbar_refresh"
         tools:visibility="gone" />
 
-    <android.support.v7.widget.AppCompatRadioButton
+    <androidx.appcompat.widget.AppCompatRadioButton
         android:id="@+id/radio_button"
         android:layout_width="@dimen/dp32"
         android:layout_height="@dimen/dp32"
@@ -126,4 +126,4 @@
         android:clickable="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

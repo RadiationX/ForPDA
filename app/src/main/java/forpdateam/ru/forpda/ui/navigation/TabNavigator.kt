@@ -3,8 +3,8 @@ package forpdateam.ru.forpda.ui.navigation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import android.util.Log
 import android.widget.Toast
 import com.jakewharton.rxrelay2.BehaviorRelay
@@ -23,7 +23,7 @@ import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.commands.*
 
 class TabNavigator(
-        private val activity: FragmentActivity,
+        private val activity: androidx.fragment.app.FragmentActivity,
         private val containerId: Int
 ) : Navigator {
 
@@ -324,7 +324,7 @@ class TabNavigator(
         }
     }
 
-    private fun createFragment(screenKey: String?, data: Any?): Fragment? {
+    private fun createFragment(screenKey: String?, data: Any?): androidx.fragment.app.Fragment? {
         return data?.let { TabHelper.createTab(it as Screen) }
     }
 }

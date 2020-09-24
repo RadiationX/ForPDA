@@ -8,14 +8,14 @@
     android:background="?colorPrimary"
     android:fitsSystemWindows="true">
 
-    <android.support.design.widget.CoordinatorLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinator_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         android:background="?attr/background_for_lists">
 
-        <android.support.design.widget.AppBarLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
             android:theme="?attr/app_bar_overlay"
             app:elevation="0dp">
 
-            <android.support.design.widget.CollapsingToolbarLayout
+            <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:id="@+id/toolbar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -37,7 +37,7 @@
                 Всем вьюхам, которые должны быть ниже статусбара, нужно сделать
                  margintop=24dp(statusbarHeight) и обязательно в джава коде.
                 -->
-                <android.support.v7.widget.AppCompatImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/toolbar_image_background"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -52,7 +52,7 @@
                     android:fitsSystemWindows="true"/>
 
 
-                <android.support.v7.widget.Toolbar
+                <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
@@ -88,7 +88,7 @@
                                 android:layout_weight="1"
                                 android:orientation="vertical">
 
-                                <android.support.v7.widget.AppCompatTextView
+                                <androidx.appcompat.widget.AppCompatTextView
                                     android:id="@+id/toolbar_title"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -98,7 +98,7 @@
                                     android:textSize="18sp"
                                     android:textStyle="bold"/>
 
-                                <android.support.v7.widget.AppCompatTextView
+                                <androidx.appcompat.widget.AppCompatTextView
                                     android:id="@+id/toolbar_subtitle"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -118,18 +118,18 @@
                                 android:visibility="invisible"/>
                         </LinearLayout>
 
-                        <android.support.v7.widget.AppCompatSpinner
+                        <androidx.appcompat.widget.AppCompatSpinner
                             android:id="@+id/toolbar_spinner"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:visibility="gone"/>
 
                     </LinearLayout>
-                </android.support.v7.widget.Toolbar>
+                </androidx.appcompat.widget.Toolbar>
 
-            </android.support.design.widget.CollapsingToolbarLayout>
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-        </android.support.design.widget.AppBarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
 
         <FrameLayout
@@ -161,7 +161,7 @@
             android:visibility="gone"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -171,5 +171,5 @@
             android:visibility="gone"
             app:fabSize="normal"/>
 
-    </android.support.design.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </RelativeLayout>

@@ -4,9 +4,9 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.view.ViewPager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.viewpager.widget.ViewPager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -17,8 +17,8 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 
@@ -44,7 +44,7 @@ import forpdateam.ru.forpda.ui.views.ScrimHelper
 class NewsDetailsFragment : TabFragment(), ArticleDetailView, TabTopScroller {
 
 
-    lateinit var fragmentsPager: ViewPager
+    lateinit var fragmentsPager: androidx.viewpager.widget.ViewPager
         private set
     private lateinit var progressBar: ProgressBar
     private lateinit var imageProgressBar: ProgressBar
@@ -106,7 +106,7 @@ class NewsDetailsFragment : TabFragment(), ArticleDetailView, TabTopScroller {
         val viewStub = findViewById(R.id.toolbar_content) as ViewStub
         viewStub.layoutResource = R.layout.toolbar_news_details
         viewStub.inflate()
-        fragmentsPager = findViewById(R.id.view_pager) as ViewPager
+        fragmentsPager = findViewById(R.id.view_pager) as androidx.viewpager.widget.ViewPager
         progressBar = findViewById(R.id.progress_bar) as ProgressBar
         detailsImage = findViewById(R.id.article_image) as ImageView
         detailsTitle = findViewById(R.id.article_title) as TextView
@@ -265,9 +265,9 @@ class NewsDetailsFragment : TabFragment(), ArticleDetailView, TabTopScroller {
     }
 
     private inner class FragmentPagerAdapter(
-            fm: FragmentManager
-    ) : android.support.v4.app.FragmentPagerAdapter(fm) {
-        private val fragments = ArrayList<Fragment>()
+            fm: androidx.fragment.app.FragmentManager
+    ) : androidx.fragment.app.FragmentPagerAdapter(fm) {
+        private val fragments = ArrayList<androidx.fragment.app.Fragment>()
         private val titles = ArrayList<String>()
 
         init {
@@ -278,7 +278,7 @@ class NewsDetailsFragment : TabFragment(), ArticleDetailView, TabTopScroller {
             titles.add(App.get().getString(R.string.news_page_comments))
         }
 
-        override fun getItem(position: Int): Fragment {
+        override fun getItem(position: Int): androidx.fragment.app.Fragment {
             return fragments[position]
         }
 

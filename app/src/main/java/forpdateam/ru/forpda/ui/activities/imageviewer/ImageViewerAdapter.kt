@@ -2,7 +2,7 @@ package forpdateam.ru.forpda.ui.activities.imageviewer
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.support.v4.view.PagerAdapter
+import androidx.viewpager.widget.PagerAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +21,7 @@ import forpdateam.ru.forpda.R
  * Created by radiationx on 24.05.17.
  */
 
-class ImageViewerAdapter : PagerAdapter() {
+class ImageViewerAdapter : androidx.viewpager.widget.PagerAdapter() {
 
     private val options by lazy {
         App.getDefaultOptionsUIL()
