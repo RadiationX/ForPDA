@@ -79,7 +79,7 @@ class ThemeTemplate(
                 letterMatcher = letterMatcher?.reset(post.nick) ?: firstLetter.matcher(post.nick)
                 val letter: String = letterMatcher?.run {
                     if (find()) group(1) else null
-                } ?: post.nick?.substring(0, 1).orEmpty()
+                } ?: post.nick?.takeIf { it.isNotEmpty() }?.substring(0, 1).orEmpty()
 
                 setVariableOpt("nick_letter", letter)
                 setVariableOpt("nick", ApiUtils.htmlEncode(post.nick))
