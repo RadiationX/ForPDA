@@ -325,7 +325,6 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         searchSrcText.setPadding(0, searchSrcText.paddingTop, 0, searchSrcText.paddingBottom)
 
 
-        searchItem.expandActionView()
         submitButton.setOnClickListener { startSearch() }
         saveSettingsButton.setOnClickListener { presenter.saveSettings() }
         //recyclerView.setHasFixedSize(true);
@@ -405,9 +404,19 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         searchView.setIconifiedByDefault(true)
     }
 
+    override fun onResumeOrShow() {
+        super.onResumeOrShow()
+        searchItem.expandActionView()
+    }
+
+    override fun onPauseOrHide() {
+        super.onPauseOrHide()
+        searchItem.collapseActionView()
+    }
+
     override fun onBackPressed(): Boolean {
         tooltip?.also {
-            if(it.isShowing){
+            if (it.isShowing) {
                 it.dismiss()
                 return true
             }
@@ -624,7 +633,6 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         }
 
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
