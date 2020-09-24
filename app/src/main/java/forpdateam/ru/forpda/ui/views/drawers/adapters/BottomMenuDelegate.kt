@@ -35,6 +35,7 @@ class BottomMenuDelegate(private val clickListener: Listener) : AdapterDelegate<
         fun bind(item: DrawerMenuItem, selected: Boolean) {
             this.currentItem = item
             view.apply {
+                contentDescription = context.getString(item.title)
                 itemBottomMenuIcon.setImageDrawable(ContextCompat.getDrawable(context, item.icon))
 
                 val colorRes = if (selected) App.getColorFromAttr(context, R.attr.colorAccent) else App.getColorFromAttr(context, R.attr.icon_base)

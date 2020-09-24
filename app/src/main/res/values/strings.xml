@@ -165,7 +165,7 @@
     <string name="fragment_title_topics">Темы форума</string>
     <string name="fragment_title_forum_rules">Правила форума</string>
     <string name="fragment_title_device_search">Поиск устройства</string>
-    <string name="fragment_title_other_menu">Поиск устройства</string>
+    <string name="fragment_title_other_menu">Полное меню приложения</string>
     <string name="activity_title_settings">Настройки</string>
 
     <string name="fragment_tab_title_theme" formatted="false">Тема \"%s\"</string>
