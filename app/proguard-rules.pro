@@ -35,7 +35,7 @@
 -keep interface okhttp3.** { *; }
 -dontwarn okhttp3.**
 
--keep public class android.support.customtabs.ICustomTabsService
+-keep public class androidx.browser.customtabs.CustomTabsService
 
 # -keep сlass com.lapism.searchview.** { *; }
 
@@ -56,10 +56,10 @@
 
 -keep public class com.unnamed.b.atv.model.TreeNode
 -keep public class * extends com.unnamed.b.atv.model.TreeNode { *; }
--keep public class com.unnamed.b.atv.model.TreeNode$BaseNodeViewHolder
--keep public class * extends com.unnamed.b.atv.model.TreeNode$BaseNodeViewHolder { *; }
+-keep public class com.unnamed.b.atv.model.TreeNode.BaseNodeViewHolder
+-keep public class * extends com.unnamed.b.atv.model.TreeNode.BaseNodeViewHolder { *; }
 
 # В search fragment юзается с рефлексией, поэтому нужно исключить
--keep public class android.support.v4.widget.SwipeRefreshLayout { *; }
+-keep public class androidx.swiperefreshlayout.widget.SwipeRefreshLayout { *; }
 
 
