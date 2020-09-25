@@ -20,11 +20,11 @@ android {
 
     def fileNaming = "apk/ForPDA"
 
-    def versionNumber = 220
+    def versionNumber = 221
 
     def versionMajor = "0"
     def versionMinor = "9"
-    def versionPatch = "7"
+    def versionPatch = "8"
 
     def versionBuild = -1
     def versionPropsFile = file('version.properties')
@@ -199,7 +199,7 @@ dependencies {
 
     implementation "com.github.moxy-community:moxy:2.1.1"
     implementation 'com.github.moxy-community:moxy-androidx:2.1.1'
-    annotationProcessor 'com.github.moxy-community:moxy-androidx:2.1.1'
+    annotationProcessor 'com.github.moxy-community:moxy-compiler:2.1.1'
     kapt 'com.github.moxy-community:moxy-compiler:2.1.1'
 
     implementation "com.jakewharton.rxrelay2:rxrelay:2.1.0"
