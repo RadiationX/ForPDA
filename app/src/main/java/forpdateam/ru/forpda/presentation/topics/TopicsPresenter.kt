@@ -134,7 +134,7 @@ class TopicsPresenter(
             linkHandler.handle("https://4pda.ru/forum/index.php?showforum=${item.id}", router)
             return
         }
-        linkHandler.handle("https://4pda.ru/forum/index.php?showtopic=${item.id}&view=getnewpost", router, mapOf(
+        linkHandler.handle("https://4pda.ru/forum/index.php?showtopic=${item.id}", router, mapOf(
                 Screen.ARG_TITLE to item.title
         ))
     }
