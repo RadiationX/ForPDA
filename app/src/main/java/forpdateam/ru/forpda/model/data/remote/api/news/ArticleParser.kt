@@ -85,7 +85,7 @@ class ArticleParser(
 
                     karmaMap = parseKarma(response)
 
-                    commentsSource = matcher.group(14)?.let { comments ->
+                    commentsSource = matcher.group(13)?.let { comments ->
                         patternProvider
                                 .getPattern(scope.scope, scope.exclude_form_comment)
                                 .matcher(comments)
@@ -136,7 +136,7 @@ class ArticleParser(
 
                     karmaMap = parseKarma(response)
 
-                    commentsSource = matcher.group(11)?.let { comments ->
+                    commentsSource = matcher.group(10)?.let { comments ->
                         patternProvider
                                 .getPattern(scope.scope, scope.exclude_form_comment)
                                 .matcher(comments)

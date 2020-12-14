@@ -1,5 +1,5 @@
 {
-  "version": 19,
+  "version": 21,
   "scopes": [
     {
       "scope":"global",
@@ -109,7 +109,7 @@
         },
         {
           "key": "attachments",
-          "value": "(\\d+)\u0002([^\u0002]*?)\u0002([^\u0002]*?)\u0002(\\/\\/[^\u0002]*?)\u0002(\\d+)\u0002([0-9a-fA-F]+)(?:(?:\u0002(\\/\\/[^\u0002]*?)\u0002(\\d+)\u0002(\\d+))?(?:\u0003\u0004(\\d+)\u0003\u0004([^\u0002]*?)\u0003\u0004([^\u0002]*?)\u0003)?)?"
+          "value": "(\\d+)\u0002([^\u0002]*?)\u0002([^\u0002]*?)\u0002(?:https?:)?(\\/\\/[^\u0002]*?)\u0002(\\d+)\u0002([0-9a-fA-F]+)(?:(?:\u0002(?:https?:)?(\\/\\/[^\u0002]*?)\u0002(\\d+)\u0002(\\d+))?(?:\u0003\u0004(\\d+)\u0003\u0004([^\u0002]*?)\u0003\u0004([^\u0002]*?)\u0003)?)?"
         }
       ]
     },
@@ -169,11 +169,11 @@
         },
         {
           "key": "detail",
-          "value": "<[^>]*>[^<]*?<[^>]*?>[^<]*?<div[^>]*?data-ztm=\"\\d+:(\\d+)[^\"]*?\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"photo\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"description\"[^>]*?>[^<]*?<h1[^>]*?>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?<\\/h1>[\\s\\S]*?<div class=\"meta\">([\\s\\S]*?)<\\/div>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[^<]*?<span[^>]*?class=\"name\"[^>]*?>[^<]*?<a[^>]*?href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/span>[^<]*?<span class=\"number\">[^<]*?<a[^>]*?>(\\d+)<\\/a>[^<]*?<\\/span>[\\s\\S]*?<div class=\"content-box\" itemprop=\"articleBody\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?<script[^>]*?>[^<]*?<\\/script>(?:[^<]*?<div class=\"materials-box\"[^>]*?>(?:[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>)?[^<]*?<\\/div>)?[\\s\\S]*?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>(?:[\\s\\S]*?<div class=\"comment-box[^\"]*?\" id=\"comments\"[^>]*?>[^<]*?(?:<div class=\"[^\"]*?close[^\"]*?\"[^>]*?>[\\s\\S]*?<\\/div>[^<]*?<\\/div>[^<]*?<div class=\"[^\"]*?open[^\"]*?\"[^>]*?>)?[\\s\\S]*?<div class=\"heading\"[^>]*?>[^>]*?<h2>[^<]*?<\\/h2>([\\s\\S]*?)<\\/div>([\\s\\S]*?)[^<]*?<br[^>]*?>[^<]*?<\\/div>[^<]*?(?:<\\/div|<ul class=\"page-nav))?"
+          "value": "<[^>]*>[^<]*?<[^>]*?>[^<]*?<div[^>]*?data-ztm=\"\\d+:(\\d+)[^\"]*?\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"photo\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"description\"[^>]*?>[^<]*?<h1[^>]*?>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?<\\/h1>[\\s\\S]*?<div class=\"meta\">([\\s\\S]*?)<\\/div>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[^<]*?<span[^>]*?class=\"name\"[^>]*?>[^<]*?<a[^>]*?href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/span>[^<]*?<span class=\"number\">[^<]*?<a[^>]*?>(\\d+)<\\/a>[^<]*?<\\/span>[\\s\\S]*?<div class=\"content-box\" itemprop=\"articleBody\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?<script[^>]*?>[^<]*?<\\/script>(?:[^<]*?<div class=\"materials-box\"[^>]*?>(?:[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>)?[^<]*?<\\/div>)?[\\s\\S]*?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>(?:[\\s\\S]*?<div class=\"comment-box[^\"]*?\" id=\"comments\"[^>]*?>[\\s\\S]*?(<ul class=\"comment-list[\\s\\S]*?<\\/ul>)(?:<form|<\\/div><\\/div><article))"
         },
         {
           "key": "detail_v2",
-          "value": "<[^>]*>[^<]*?<[^>]*?>[^<]*?<div[^>]*?data-ztm=\"\\d+:(\\d+)[^\"]*?\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div class=\"[^\"]*?article[^\"]*?\"[^>]*?><div class=\"[^\"]*?article-header[^\"]*?\"[^>]*?>(?:<h1>)?([^<]*?)(?:<\\/h1>)[\\s\\S]*?<time[^>]*?>([^<]*?)<\\/time>[\\s\\S]*?<a[^>]*?href=\"#comments\"[^>]*?>(\\d+)<\\/a>[\\s\\S]*?(<meta property=\"og:description\"[\\s\\S]*?)<div class=\"article-footer[^\"]*?\"[^>]*?>[\\s\\S]*?(?:<div class=\"article-footer-tags[^\"]*?\"[^>]*?>([\\s\\S]*?)<\\/div>)?<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?<script[^>]*?>[^<]*?<\\/script>(?:[^<]*?<div class=\"materials-box\"[^>]*?>(?:[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>)?[^<]*?<\\/div>)?[\\s\\S]*?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>(?:[\\s\\S]*?<div class=\"comment-box[^\"]*?\" id=\"comments\"[^>]*?>[^<]*?(?:<div class=\"[^\"]*?close[^\"]*?\"[^>]*?>[\\s\\S]*?<\\/div>[^<]*?<\\/div>[^<]*?<div class=\"[^\"]*?open[^\"]*?\"[^>]*?>)?[\\s\\S]*?<div class=\"heading\"[^>]*?>[^>]*?<h2>[^<]*?<\\/h2>([\\s\\S]*?)<\\/div>([\\s\\S]*?)[^<]*?<br[^>]*?>[^<]*?<\\/div>[^<]*?(?:<\\/div|<ul class=\"page-nav))?"
+          "value": "<[^>]*>[^<]*?<[^>]*?>[^<]*?<div[^>]*?data-ztm=\"\\d+:(\\d+)[^\"]*?\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div class=\"[^\"]*?article[^\"]*?\"[^>]*?><div class=\"[^\"]*?article-header[^\"]*?\"[^>]*?>(?:<h1>)?([^<]*?)(?:<\\/h1>)[\\s\\S]*?<time[^>]*?>([^<]*?)<\\/time>[\\s\\S]*?<a[^>]*?href=\"#comments\"[^>]*?>(\\d+)<\\/a>[\\s\\S]*?(<meta property=\"og:description\"[\\s\\S]*?)<div class=\"article-footer[^\"]*?\"[^>]*?>[\\s\\S]*?(?:<div class=\"article-footer-tags[^\"]*?\"[^>]*?>([\\s\\S]*?)<\\/div>)?<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?<script[^>]*?>[^<]*?<\\/script>(?:[^<]*?<div class=\"materials-box\"[^>]*?>(?:[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>)?[^<]*?<\\/div>)?[\\s\\S]*?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>(?:[\\s\\S]*?<div class=\"comment-box[^\"]*?\" id=\"comments\"[^>]*?>[\\s\\S]*?(<ul class=\"comment-list[\\s\\S]*?<\\/ul>)(?:<form|<\\/div><\\/div><article))"
         },
         {
           "key": "detail_detector",
