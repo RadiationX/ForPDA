@@ -239,10 +239,12 @@ class ArticleParser(
             comment.isDeleted = isDeleted
 
             if (!isDeleted) {
+                val avatarNode = Parser.findNode(commentNode, "a", "class", "comment-avatar")
                 val nickNode = Parser.findNode(commentNode, "a", "class", "nickname")
-                val metaNode = Parser.findNode(commentNode, "span", "class", "h-meta")
+                        ?: Parser.findNode(commentNode, "span", "class", "nickname")
+                val metaNode = Parser.findNode(commentNode, "a", "class", "date")
 
-                userId = nickNode!!.getAttribute("href")
+                userId = avatarNode!!.getAttribute("href")
                 if (userId != null) {
                     matcher = patternProvider
                             .getPattern(scope.scope, scope.comment_user_id)
@@ -256,8 +258,7 @@ class ArticleParser(
                 userNick = Parser.getHtml(nickNode, true)
                 comment.userNick = ApiUtils.fromHtml(userNick)
 
-                date = Parser.ownText(metaNode!!).trim()
-                date = date.replace(" |", ",")
+                date = metaNode?.let { Parser.ownText(metaNode).trim() }
                 comment.date = date
             }
 
