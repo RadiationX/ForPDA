@@ -70,13 +70,13 @@ class ArticleParser(
                     id = matcher.group(1).toInt()
                     imgUrl = matcher.group(3)
                     title = matcher.group(4).fromHtml()
-                    date = matcher.group(5)
-                    authorId = matcher.group(6).toInt()
-                    author = matcher.group(7).fromHtml()
-                    commentsCount = matcher.group(8).toInt()
-                    matcher.group(9)?.let {
+                    matcher.group(5)?.let {
                         tags.addAll(parseTags(it))
                     }
+                    date = matcher.group(6)
+                    authorId = matcher.group(7).toInt()
+                    author = matcher.group(8).fromHtml()
+                    commentsCount = matcher.group(9).toInt()
                     html = matcher.group(10)
                     matcher.group(11)?.also {
                         materials.addAll(parseMaterials(it))
@@ -85,7 +85,7 @@ class ArticleParser(
 
                     karmaMap = parseKarma(response)
 
-                    commentsSource = matcher.group(14)?.let { comments ->
+                    commentsSource = matcher.group(13)?.let { comments ->
                         patternProvider
                                 .getPattern(scope.scope, scope.exclude_form_comment)
                                 .matcher(comments)
@@ -136,7 +136,7 @@ class ArticleParser(
 
                     karmaMap = parseKarma(response)
 
-                    commentsSource = matcher.group(11)?.let { comments ->
+                    commentsSource = matcher.group(10)?.let { comments ->
                         patternProvider
                                 .getPattern(scope.scope, scope.exclude_form_comment)
                                 .matcher(comments)
@@ -239,10 +239,12 @@ class ArticleParser(
             comment.isDeleted = isDeleted
 
             if (!isDeleted) {
+                val avatarNode = Parser.findNode(commentNode, "a", "class", "comment-avatar")
                 val nickNode = Parser.findNode(commentNode, "a", "class", "nickname")
-                val metaNode = Parser.findNode(commentNode, "span", "class", "h-meta")
+                        ?: Parser.findNode(commentNode, "span", "class", "nickname")
+                val metaNode = Parser.findNode(commentNode, "a", "class", "date")
 
-                userId = nickNode!!.getAttribute("href")
+                userId = avatarNode!!.getAttribute("href")
                 if (userId != null) {
                     matcher = patternProvider
                             .getPattern(scope.scope, scope.comment_user_id)
@@ -256,8 +258,7 @@ class ArticleParser(
                 userNick = Parser.getHtml(nickNode, true)
                 comment.userNick = ApiUtils.fromHtml(userNick)
 
-                date = Parser.ownText(metaNode!!).trim()
-                date = date.replace(" |", ",")
+                date = metaNode?.let { Parser.ownText(metaNode).trim() }
                 comment.date = date
             }
 
