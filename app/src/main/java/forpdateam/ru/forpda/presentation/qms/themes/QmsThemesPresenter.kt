@@ -84,7 +84,7 @@ class QmsThemesPresenter(
     }
 
     fun openProfile(userId: Int) {
-        linkHandler.handle("https://4pda.ru/forum/index.php?showuser=$userId", router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showuser=$userId", router)
     }
 
     fun openChat() {
@@ -100,14 +100,14 @@ class QmsThemesPresenter(
 
     fun createNote() {
         currentData?.let {
-            val url = "https://4pda.ru/forum/index.php?act=qms&mid=${it.userId}"
+            val url = "https://4pda.to/forum/index.php?act=qms&mid=${it.userId}"
             viewState.showCreateNote(it.nick.orEmpty(), url)
         }
     }
 
     fun createThemeNote(item: QmsTheme) {
         currentData?.let {
-            val url = "https://4pda.ru/forum/index.php?act=qms&mid=${it.userId}&t=${item.userId}"
+            val url = "https://4pda.to/forum/index.php?act=qms&mid=${it.userId}&t=${item.userId}"
             viewState.showCreateNote(item.name.orEmpty(), it.nick.orEmpty(), url)
         }
     }

@@ -15,27 +15,27 @@ class ForumApi(
 ) {
 
     fun getForums(): ForumItemTree {
-        val response = webClient.get("https://4pda.ru/forum/index.php?act=search")
+        val response = webClient.get("https://4pda.to/forum/index.php?act=search")
         return forumParser.parseForums(response.body)
     }
 
     fun getRules(): ForumRules {
-        val response = webClient.get("https://4pda.ru/forum/index.php?act=boardrules")
+        val response = webClient.get("https://4pda.to/forum/index.php?act=boardrules")
         return forumParser.parseRules(response.body)
     }
 
     fun getAnnounce(id: Int, forumId: Int): Announce {
-        val response = webClient.get("https://4pda.ru/forum/index.php?act=announce&f=$forumId&st=$id")
+        val response = webClient.get("https://4pda.to/forum/index.php?act=announce&f=$forumId&st=$id")
         return forumParser.parseAnnounce(response.body)
     }
 
     fun markAllRead(): Any {
-        webClient.request(NetworkRequest.Builder().url("https://4pda.ru/forum/index.php?act=auth&action=markboard").withoutBody().build())
+        webClient.request(NetworkRequest.Builder().url("https://4pda.to/forum/index.php?act=auth&action=markboard").withoutBody().build())
         return Any()
     }
 
     fun markRead(id: Int): Any {
-        webClient.request(NetworkRequest.Builder().url("https://4pda.ru/forum/index.php?act=auth&action=markforum&f=$id&fromforum=$id").withoutBody().build())
+        webClient.request(NetworkRequest.Builder().url("https://4pda.to/forum/index.php?act=auth&action=markforum&f=$id&fromforum=$id").withoutBody().build())
         return Any()
     }
 

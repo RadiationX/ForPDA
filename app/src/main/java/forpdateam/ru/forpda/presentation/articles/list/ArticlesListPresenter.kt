@@ -124,25 +124,25 @@ class ArticlesListPresenter(
     }
 
     fun copyLink(item: NewsItem) {
-        Utils.copyToClipBoard("https://4pda.ru/index.php?p=${item.id}")
+        Utils.copyToClipBoard("https://4pda.to/index.php?p=${item.id}")
     }
 
     fun shareLink(item: NewsItem) {
-        Utils.shareText("https://4pda.ru/index.php?p=${item.id}")
+        Utils.shareText("https://4pda.to/index.php?p=${item.id}")
     }
 
     fun openProfile(item: NewsItem) {
-        linkHandler.handle("https://4pda.ru/forum/index.php?showuser=${item.authorId}", router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.authorId}", router)
     }
 
     fun createNote(item: NewsItem) {
-        val url = "https://4pda.ru/index.php?p=${item.id}"
+        val url = "https://4pda.to/index.php?p=${item.id}"
         viewState.showCreateNote(item.title.orEmpty(), url)
     }
 
     fun openSearch() {
         router.navigateTo(Screen.Search().apply {
-            searchUrl = "https://4pda.ru/?s="
+            searchUrl = "https://4pda.to/?s="
         })
     }
 }

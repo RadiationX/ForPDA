@@ -270,7 +270,7 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface, E
     //Chat
     private fun loadBaseWebContainer() {
         val html = qmsChatTemplate.generateHtmlBase()
-        webView.loadDataWithBaseURL("https://4pda.ru/forum/", html, "text/html", "utf-8", null)
+        webView.loadDataWithBaseURL("https://4pda.to/forum/", html, "text/html", "utf-8", null)
     }
 
 

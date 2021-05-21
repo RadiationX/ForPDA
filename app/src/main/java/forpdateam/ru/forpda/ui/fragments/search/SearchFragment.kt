@@ -596,7 +596,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
                 webView.webChromeClient = CustomWebChromeClient()
             }
             Log.d("SUKA", "SEARCH SHOW WEBVIEW")
-            webView.loadDataWithBaseURL("https://4pda.ru/forum/", searchResult.html, "text/html", "utf-8", null)
+            webView.loadDataWithBaseURL("https://4pda.to/forum/", searchResult.html, "text/html", "utf-8", null)
         } else {
             for (i in 0 until refreshLayout.childCount) {
                 if (refreshLayout.getChildAt(i) is ExtendedWebView) {

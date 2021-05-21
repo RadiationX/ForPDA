@@ -97,7 +97,7 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
                 val url: String = if (data1.isAnnounce) {
                     data1.announceUrl
                 } else {
-                    "https://4pda.ru/forum/index.php?showtopic=" + data1.id
+                    "https://4pda.to/forum/index.php?showtopic=" + data1.id
                 }
                 Utils.copyToClipBoard(url)
             }

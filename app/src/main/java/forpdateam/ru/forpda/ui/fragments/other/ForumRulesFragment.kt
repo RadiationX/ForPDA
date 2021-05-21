@@ -102,7 +102,7 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
     }
 
     override fun showData(data: ForumRules) {
-        webView.loadDataWithBaseURL("https://4pda.ru/forum/", data.html, "text/html", "utf-8", null)
+        webView.loadDataWithBaseURL("https://4pda.to/forum/", data.html, "text/html", "utf-8", null)
     }
 
     override fun setStyleType(type: String) {

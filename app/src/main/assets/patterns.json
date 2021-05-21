@@ -1,5 +1,5 @@
 {
-  "version": 23,
+  "version": 24,
   "scopes": [
     {
       "scope":"global",
@@ -72,7 +72,7 @@
         },
         {
           "key": "device_reviews",
-          "value": "<a href=\"[^\"]*?4pda\\.ru\\/\\d+\\/\\d+\\/\\d+\\/(\\d+)\\/\" class=\"article-img\">[^<]*?<img src=\"([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[^<]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div class=\"upd\">([^<]*?)<\\/div>[^<]*?<div class=\"description\">([^<]+?)?<\\/div>"
+          "value": "<a href=\"[^\"]*?4pda\\.(?:ru|to)\\/\\d+\\/\\d+\\/\\d+\\/(\\d+)\\/\" class=\"article-img\">[^<]*?<img src=\"([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[^<]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div class=\"upd\">([^<]*?)<\\/div>[^<]*?<div class=\"description\">([^<]+?)?<\\/div>"
         },
         {
           "key": "device_discuss_and_firm",
@@ -374,7 +374,7 @@
         },
         {
           "key": "attached_images",
-          "value": "(4pda\\.ru\\/forum\\/dl\\/post\\/\\d+\\/[^\"']*?\\.(?:jpe?g|png|gif|bmp))\"?(?:[^>]*?title=\"([^\"']*?\\.(?:jpe?g|png|gif|bmp)) - [^\"']*?\")?"
+          "value": "(4pda\\.(?:ru|to)\\/forum\\/dl\\/post\\/\\d+\\/[^\"']*?\\.(?:jpe?g|png|gif|bmp))\"?(?:[^>]*?title=\"([^\"']*?\\.(?:jpe?g|png|gif|bmp)) - [^\"']*?\")?"
         }
       ]
     },

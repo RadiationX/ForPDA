@@ -210,9 +210,9 @@ class SearchPresenter(
     fun onItemClick(item: SearchItem) {
         var url = ""
         if (settings.resourceType.equals(SearchSettings.RESOURCE_NEWS.first)) {
-            url = "https://4pda.ru/index.php?p=${item.id}"
+            url = "https://4pda.to/index.php?p=${item.id}"
         } else {
-            url = "https://4pda.ru/forum/index.php?showtopic=${item.topicId}"
+            url = "https://4pda.to/forum/index.php?showtopic=${item.topicId}"
             if (item.id != 0) {
                 url += "&view=findpost&p=${item.id}"
             }
@@ -231,9 +231,9 @@ class SearchPresenter(
     fun copyLink(item: IBaseForumPost) {
         var url = ""
         if (settings.resourceType.equals(SearchSettings.RESOURCE_NEWS.first)) {
-            url = "https://4pda.ru/index.php?p=${item.id}"
+            url = "https://4pda.to/index.php?p=${item.id}"
         } else {
-            url = "https://4pda.ru/forum/index.php?showtopic=${item.topicId}"
+            url = "https://4pda.to/forum/index.php?showtopic=${item.topicId}"
             if (item.id != 0) {
                 url += "&view=findpost&p=${item.id}"
             }
@@ -242,19 +242,19 @@ class SearchPresenter(
     }
 
     fun openTopicBegin(item: IBaseForumPost) {
-        linkHandler.handle("https://4pda.ru/forum/index.php?showtopic=${item.topicId}", router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showtopic=${item.topicId}", router)
     }
 
     fun openTopicNew(item: IBaseForumPost) {
-        linkHandler.handle("https://4pda.ru/forum/index.php?showtopic=${item.topicId}&view=getnewpost", router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showtopic=${item.topicId}&view=getnewpost", router)
     }
 
     fun openTopicLast(item: IBaseForumPost) {
-        linkHandler.handle("https://4pda.ru/forum/index.php?showtopic=${item.topicId}&view=getlastpost", router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showtopic=${item.topicId}&view=getlastpost", router)
     }
 
     fun openForum(item: IBaseForumPost) {
-        linkHandler.handle("https://4pda.ru/forum/index.php?showforum=${item.forumId}", router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showforum=${item.forumId}", router)
     }
 
     fun onClickAddInFav(item: IBaseForumPost) {
@@ -366,13 +366,13 @@ class SearchPresenter(
 
     override fun openProfile(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle("https://4pda.ru/forum/index.php?showuser=${it.userId}", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.userId}", router)
         }
     }
 
     override fun openQms(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle("https://4pda.ru/forum/index.php?act=qms&amp;mid=${it.userId}", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?act=qms&amp;mid=${it.userId}", router)
         }
     }
 
@@ -442,7 +442,7 @@ class SearchPresenter(
 
     override fun openReputationHistory(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle("https://4pda.ru/forum/index.php?act=rep&view=history&amp;mid=${it.userId}", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?act=rep&view=history&amp;mid=${it.userId}", router)
         }
     }
 
@@ -486,7 +486,7 @@ class SearchPresenter(
                 "пост из поиска_"
             }
             val title = String.format(App.get().getString(R.string.post_Topic_Nick_Number), topicTitle, it.nick, it.id)
-            val url = "https://4pda.ru/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
+            val url = "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
             viewState.showNoteCreate(title, url)
         }
     }
@@ -510,28 +510,28 @@ class SearchPresenter(
 
     override fun copyPostLink(postId: Int) {
         getPostById(postId)?.let {
-            val url = "https://4pda.ru/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
+            val url = "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
             copyText(url)
         }
     }
 
     override fun sharePostLink(postId: Int) {
         getPostById(postId)?.let {
-            val url = "https://4pda.ru/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
+            val url = "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
             shareText(url)
         }
     }
 
     override fun copyAnchorLink(postId: Int, name: String) {
         getPostById(postId)?.let {
-            val url = "https://4pda.ru/forum/index.php?act=findpost&pid=${it.id}&anchor=$name"
+            val url = "https://4pda.to/forum/index.php?act=findpost&pid=${it.id}&anchor=$name"
             copyText(url)
         }
     }
 
     override fun copySpoilerLink(postId: Int, spoilNumber: String) {
         getPostById(postId)?.let {
-            val url = "https://4pda.ru/forum/index.php?act=findpost&pid=${it.id}&anchor=Spoil-${it.id}-$spoilNumber"
+            val url = "https://4pda.to/forum/index.php?act=findpost&pid=${it.id}&anchor=Spoil-${it.id}-$spoilNumber"
             copyText(url)
         }
     }

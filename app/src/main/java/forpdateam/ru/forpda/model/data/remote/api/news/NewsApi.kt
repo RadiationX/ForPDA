@@ -25,7 +25,7 @@ class NewsApi(
     }
 
     fun getDetails(id: Int): DetailsPage {
-        val response = webClient.get("https://4pda.ru/index.php?p=$id")
+        val response = webClient.get("https://4pda.to/index.php?p=$id")
         return articleParser.parseArticle(response.body)
     }
 
@@ -35,7 +35,7 @@ class NewsApi(
     }
 
     fun sendPoll(from: String, pollId: Int, answersId: IntArray): DetailsPage {
-        val url = "https://4pda.ru/pages/poll/?act=vote&poll_id=$pollId"
+        val url = "https://4pda.to/pages/poll/?act=vote&poll_id=$pollId"
         val rBuilder = NetworkRequest.Builder()
                 .url(url)
                 .multipart()
@@ -52,7 +52,7 @@ class NewsApi(
     }
 
     fun likeComment(articleId: Int, commentId: Int): Boolean {
-        val url = "https://4pda.ru/pages/karma?p=$articleId&c=$commentId&v=1"
+        val url = "https://4pda.to/pages/karma?p=$articleId&c=$commentId&v=1"
         webClient.request(NetworkRequest.Builder().url(url).xhrHeader().build())
         return true
     }
@@ -70,7 +70,7 @@ class NewsApi(
         }
 
         val builder = NetworkRequest.Builder()
-                .url("https://4pda.ru/wp-comments-post.php")
+                .url("https://4pda.to/wp-comments-post.php")
                 .formHeader("comment_post_ID", articleId.toString())
                 .formHeader("comment_reply_ID", commentId.toString())
                 .formHeader("comment_reply_dp", if (commentId == 0) "0" else "1")

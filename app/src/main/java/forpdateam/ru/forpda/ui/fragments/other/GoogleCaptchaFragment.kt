@@ -60,13 +60,13 @@ class GoogleCaptchaFragment : TabFragment() {
         super.onViewCreated(view, savedInstanceState)
         setSubtitle("Это из-за VPN/Proxy и т.д.")
         webView.webViewClient = CaptchaWebViewClient()
-        webView.loadDataWithBaseURL("https://4pda.ru/forum/", content, "text/html", "utf-8", null)
+        webView.loadDataWithBaseURL("https://4pda.to/forum/", content, "text/html", "utf-8", null)
     }
 
     internal inner class CaptchaWebViewClient : CustomWebViewClient() {
         override fun handleUri(uri: Uri): Boolean {
             Log.e("SUKA", uri.toString())
-            if (Pattern.compile("https://4pda.ru/cdn-cgi/l/chk_captcha").matcher(uri.toString()).find()) {
+            if (Pattern.compile("https://4pda.to/cdn-cgi/l/chk_captcha").matcher(uri.toString()).find()) {
                 val nr = NetworkRequest.Builder().url(uri.toString()).withoutBody().build()
                 val disposable = Observable.fromCallable { App.get().Di().webClient.request(nr) }
                         .onErrorReturn { NetworkResponse(null) }

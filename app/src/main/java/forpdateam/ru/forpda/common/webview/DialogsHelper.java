@@ -65,7 +65,7 @@ public class DialogsHelper {
         }
 
         if (image)
-            image = !extra.contains("4pda.ru/forum/style_images");
+            image = !extra.contains("4pda.to/forum/style_images");
         if (!anchor && !image)
             return;
 

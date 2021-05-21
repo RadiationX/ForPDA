@@ -13,7 +13,7 @@ class TopicsApi(
 ) {
 
     fun getTopics(id: Int, st: Int): TopicsData {
-        val response = webClient.get("https://4pda.ru/forum/index.php?showforum=$id&st=$st")
+        val response = webClient.get("https://4pda.to/forum/index.php?showforum=$id&st=$st")
         return topicsParser.parse(response.body, id)
     }
 }

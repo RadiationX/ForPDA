@@ -27,20 +27,20 @@ class QmsApi(
 
     fun getBlackList(): List<QmsContact> {
         val builder = NetworkRequest.Builder()
-                .url("https://4pda.ru/forum/index.php?act=qms&settings=blacklist")
+                .url("https://4pda.to/forum/index.php?act=qms&settings=blacklist")
                 .formHeader("xhr", "body")
         val response = webClient.request(builder.build())
         return qmsParser.parseBlackList(response.body)
     }
 
     fun getContactList(): List<QmsContact> {
-        val response = webClient.request(NetworkRequest.Builder().url("https://4pda.ru/forum/index.php?&act=qms-xhr&action=userlist").build())
+        val response = webClient.request(NetworkRequest.Builder().url("https://4pda.to/forum/index.php?&act=qms-xhr&action=userlist").build())
         return qmsParser.parseContacts(response.body)
     }
 
     fun unBlockUsers(id: Int): List<QmsContact> {
         val builder = NetworkRequest.Builder()
-                .url("https://4pda.ru/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1")
+                .url("https://4pda.to/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1")
                 .formHeader("action", "delete-users")
         val strId = Integer.toString(id)
         builder.formHeader("user-id[$strId]", strId)
@@ -50,7 +50,7 @@ class QmsApi(
 
     fun blockUser(nick: String): List<QmsContact> {
         val builder = NetworkRequest.Builder()
-                .url("https://4pda.ru/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1")
+                .url("https://4pda.to/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1")
                 .formHeader("action", "add-user")
                 .formHeader("username", nick)
         val response = webClient.request(builder.build())
@@ -59,7 +59,7 @@ class QmsApi(
 
     fun getThemesList(id: Int): QmsThemes {
         val builder = NetworkRequest.Builder()
-                .url("https://4pda.ru/forum/index.php?act=qms&mid=$id")
+                .url("https://4pda.to/forum/index.php?act=qms&mid=$id")
                 .formHeader("xhr", "body")
         val response = webClient.request(builder.build())
         return qmsParser.parseThemes(response.body, id)
@@ -67,7 +67,7 @@ class QmsApi(
 
     fun deleteTheme(id: Int, themeId: Int): QmsThemes {
         val builder = NetworkRequest.Builder()
-                .url("https://4pda.ru/forum/index.php?act=qms&mid=$id&xhr=body&do=1")
+                .url("https://4pda.to/forum/index.php?act=qms&mid=$id&xhr=body&do=1")
                 .formHeader("xhr", "body")
                 .formHeader("action", "delete-threads")
                 .formHeader("thread-id[$themeId]", themeId.toString())
@@ -77,7 +77,7 @@ class QmsApi(
 
     fun getChat(userId: Int, themeId: Int): QmsChatModel {
         val builder = NetworkRequest.Builder()
-                .url("https://4pda.ru/forum/index.php?act=qms&mid=$userId&t=$themeId")
+                .url("https://4pda.to/forum/index.php?act=qms&mid=$userId&t=$themeId")
                 .formHeader("xhr", "body")
         val response = webClient.request(builder.build())
         return qmsParser.parseChat(response.body)
@@ -86,7 +86,7 @@ class QmsApi(
     fun findUser(nick: String): List<ForumUser> {
         val encodedNick = URLEncoder.encode(nick, "UTF-8")
         val builder = NetworkRequest.Builder()
-                .url("https://4pda.ru/forum/index.php?act=qms-xhr&action=autocomplete-username&q=$encodedNick")
+                .url("https://4pda.to/forum/index.php?act=qms-xhr&action=autocomplete-username&q=$encodedNick")
                 .xhrHeader()
         val response = webClient.request(builder.build())
         return qmsParser.parseSearch(response.body)
@@ -94,7 +94,7 @@ class QmsApi(
 
     fun sendNewTheme(nick: String, title: String, mess: String, files: List<AttachmentItem>): QmsChatModel {
         val builder = NetworkRequest.Builder()
-                .url("https://4pda.ru/forum/index.php?act=qms&action=create-thread&xhr=body&do=1")
+                .url("https://4pda.to/forum/index.php?act=qms&action=create-thread&xhr=body&do=1")
                 .formHeader("username", nick)
                 .formHeader("title", title)
                 .formHeader("message", mess)
@@ -105,7 +105,7 @@ class QmsApi(
 
     fun sendMessage(userId: Int, themeId: Int, text: String, files: List<AttachmentItem>): List<QmsMessage> {
         val builder = NetworkRequest.Builder()
-                .url("https://4pda.ru/forum/index.php")
+                .url("https://4pda.to/forum/index.php")
                 .formHeader("act", "qms-xhr")
                 .formHeader("action", "send-message")
                 .formHeader("message", text)
@@ -118,7 +118,7 @@ class QmsApi(
 
     fun getMessagesFromWs(themeId: Int, messageId: Int, afterMessageId: Int): List<QmsMessage> {
         val messInfoBuilder = NetworkRequest.Builder()
-                .url("https://4pda.ru/forum/index.php?act=qms-xhr&")
+                .url("https://4pda.to/forum/index.php?act=qms-xhr&")
                 .formHeader("action", "message-info")
                 .formHeader("t", Integer.toString(themeId))
                 .formHeader("msg-id", Integer.toString(messageId))
@@ -129,7 +129,7 @@ class QmsApi(
 
     fun getMessagesAfter(userId: Int, themeId: Int, afterMessageId: Int): List<QmsMessage> {
         val threadMessagesBuilder = NetworkRequest.Builder()
-                .url("https://4pda.ru/forum/index.php?act=qms-xhr&")
+                .url("https://4pda.to/forum/index.php?act=qms-xhr&")
                 .xhrHeader()
                 .formHeader("action", "get-thread-messages")
                 .formHeader("mid", Integer.toString(userId))
@@ -141,7 +141,7 @@ class QmsApi(
 
     fun deleteDialog(mid: Int): String {
         val builder = NetworkRequest.Builder()
-                .url("https://4pda.ru/forum/index.php")
+                .url("https://4pda.to/forum/index.php")
                 .formHeader("act", "qms-xhr")
                 .formHeader("action", "del-member")
                 .formHeader("del-mid", Integer.toString(mid))

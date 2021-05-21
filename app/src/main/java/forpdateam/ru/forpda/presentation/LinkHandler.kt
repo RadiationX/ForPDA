@@ -18,15 +18,15 @@ class LinkHandler(
         const val LOG_TAG = "LinkHandler"
     }
 
-    private val forumMediaPattern by lazy { Pattern.compile("https?:\\/\\/4pda\\.ru\\/forum\\/dl\\/post\\/\\d+\\/([\\s\\S]*\\.([\\s\\S]*))") }
+    private val forumMediaPattern by lazy { Pattern.compile("https?:\\/\\/4pda\\.(?:ru|to)\\/forum\\/dl\\/post\\/\\d+\\/([\\s\\S]*\\.([\\s\\S]*))") }
 
-    private val supportImagePattern by lazy { Pattern.compile("\\/\\/.*?(4pda\\.to|4pda\\.ru|ggpht\\.com|googleusercontent\\.com|windowsphone\\.com|mzstatic\\.com|savepic\\.net|savepice\\.ru|savepic\\.ru|.*?\\.ibb\\.com?)\\/[\\s\\S]*?\\.(png|jpg|jpeg|gif)") }
+    private val supportImagePattern by lazy { Pattern.compile("\\/\\/.*?(4pda\\.to|4pda\\.(?:ru|to)|ggpht\\.com|googleusercontent\\.com|windowsphone\\.com|mzstatic\\.com|savepic\\.net|savepice\\.ru|savepic\\.ru|.*?\\.ibb\\.com?)\\/[\\s\\S]*?\\.(png|jpg|jpeg|gif)") }
 
     private val forumLofiPattern by lazy { Pattern.compile("(?:http?s?:)?\\/\\/[\\s\\S]*?4pda\\.(?:ru|to)\\/forum\\/lofiversion\\/[^\\?]*?\\?(t|f)(\\d+)(?:-(\\d+))?") }
 
     private val baseFourPdaPattern by lazy { Pattern.compile("(?:http?s?:)?\\/\\/[\\s\\S]*?4pda\\.(?:ru|to)[\\s\\S]*") }
 
-    private val sitePattern by lazy { Pattern.compile("https?:\\/\\/4pda\\.ru\\/(?:.+?p=|\\d+\\/\\d+\\/\\d+\\/|[\\w\\/]*?\\/?(newer|older)\\/)(\\d+)(?:\\/#comment(\\d+))?") }
+    private val sitePattern by lazy { Pattern.compile("https?:\\/\\/4pda\\.(?:ru|to)\\/(?:.+?p=|\\d+\\/\\d+\\/\\d+\\/|[\\w\\/]*?\\/?(newer|older)\\/)(\\d+)(?:\\/#comment(\\d+))?") }
 
 
     private fun handleDownload(url: String, name: String? = null) {
@@ -57,7 +57,7 @@ class LinkHandler(
         if (url.substring(0, 2) == "//") {
             url = "https:$url"
         } else if (url.substring(0, 1) == "/") {
-            url = "https://4pda.ru$url"
+            url = "https://4pda.to$url"
         }
         url = url.replace("&amp;", "&").replace("\"", "").trim()
         Log.d(LOG_TAG, "Corrected url $url")
@@ -300,7 +300,7 @@ class LinkHandler(
     private fun normalizeForumUrl(inputUrl: String): String {
         val matcher = forumLofiPattern.matcher(inputUrl)
         if (matcher.find()) {
-            var url = "https://4pda.ru/forum/index.php?"
+            var url = "https://4pda.to/forum/index.php?"
 
             url += when (matcher.group(1)) {
                 "t" -> "showtopic="

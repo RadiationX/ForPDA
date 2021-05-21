@@ -53,7 +53,7 @@ class AuthApi(
     }
 
     fun logout(): Boolean {
-        val response = webClient.get("https://4pda.ru/forum/index.php?act=logout&CODE=03&k=" + webClient.authKey)
+        val response = webClient.get("https://4pda.to/forum/index.php?act=logout&CODE=03&k=" + webClient.authKey)
 
         val matcher = Pattern.compile("wr va-m text").matcher(response.body)
         if (matcher.find())
@@ -75,7 +75,7 @@ class AuthApi(
     }
 
     companion object {
-        val AUTH_BASE_URL = "https://4pda.ru/forum/index.php?act=auth"
+        val AUTH_BASE_URL = "https://4pda.to/forum/index.php?act=auth"
         private val errorPattern = Pattern.compile("errors-list\">([\\s\\S]*?)</ul>")
     }
 

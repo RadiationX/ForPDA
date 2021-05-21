@@ -27,7 +27,7 @@ class EditPostApi(
 ) {
 
     fun loadForm(postId: Int): EditPostForm {
-        val url = "https://4pda.ru/forum/index.php?act=post&do=edit_post&p=" + Integer.toString(postId)
+        val url = "https://4pda.to/forum/index.php?act=post&do=edit_post&p=" + Integer.toString(postId)
         var response = webClient.get(url)
         if (response.body == "nopermission") {
             return EditPostForm().apply {
@@ -38,7 +38,7 @@ class EditPostApi(
         val form = editPostParser.parseForm(response.body)
         form.poll = editPostParser.parsePoll(response.body)
 
-        response = webClient.get("https://4pda.ru/forum/index.php?act=attach&index=1&relId=$postId&maxSize=134217728&allowExt=&code=init&unlinked=")
+        response = webClient.get("https://4pda.to/forum/index.php?act=attach&index=1&relId=$postId&maxSize=134217728&allowExt=&code=init&unlinked=")
         val attachments = attachmentsParser.parseAttachments(response.body)
         form.attachments.addAll(attachments)
 
@@ -46,7 +46,7 @@ class EditPostApi(
     }
 
     fun sendPost(form: EditPostForm): ThemePage {
-        val url = "https://4pda.ru/forum/index.php"
+        val url = "https://4pda.to/forum/index.php"
         val headers = HashMap<String, String>()
 
         val builder = NetworkRequest.Builder()

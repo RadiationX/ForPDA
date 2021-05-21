@@ -47,7 +47,7 @@ public class Client implements IWebClient {
     private Map<String, Cookie> clientCookies = new HashMap<>();
     private Handler observerHandler = new Handler(Looper.getMainLooper());
     private List<String> privateHeaders = new ArrayList<>(Arrays.asList("pass_hash", "session_id", "auth_key", "password"));
-    private final Cookie mobileCookie = Cookie.parse(HttpUrl.parse("https://4pda.ru/"), "ngx_mb=1;");
+    private final Cookie mobileCookie = Cookie.parse(HttpUrl.parse("https://4pda.to/"), "ngx_mb=1;");
     private AuthHolder authHolder;
     private CountersHolder countersHolder;
 
@@ -311,7 +311,7 @@ public class Client implements IWebClient {
 
     public WebSocket createWebSocketConnection(WebSocketListener webSocketListener) {
         Request request = new Request.Builder()
-                .url("ws://app.4pda.ru/ws/")
+                .url("ws://app.4pda.to/ws/")
                 .build();
         return webSocketClient.newWebSocket(request, webSocketListener);
     }

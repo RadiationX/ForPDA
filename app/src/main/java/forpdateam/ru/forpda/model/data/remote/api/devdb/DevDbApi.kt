@@ -16,17 +16,17 @@ class DevDbApi(
 ) {
 
     fun getBrands(catId: String): Brands {
-        val response = webClient.get("https://4pda.ru/devdb/$catId/all")
+        val response = webClient.get("https://4pda.to/devdb/$catId/all")
         return devDbParser.parseBrands(response.body)
     }
 
     fun getBrand(catId: String, brandId: String): Brand {
-        val response = webClient.get("https://4pda.ru/devdb/$catId/$brandId/all")
+        val response = webClient.get("https://4pda.to/devdb/$catId/$brandId/all")
         return devDbParser.parseBrand(response.body)
     }
 
     fun getDevice(devId: String): Device {
-        val response = webClient.get("https://4pda.ru/devdb/$devId")
+        val response = webClient.get("https://4pda.to/devdb/$devId")
         return devDbParser.parseDevice(response.body, devId)
     }
 
@@ -38,7 +38,7 @@ class DevDbApi(
                 it
             }
         }
-        val response = webClient.get("http://4pda.ru/devdb/search?s=$reqQuery")
+        val response = webClient.get("http://4pda.to/devdb/search?s=$reqQuery")
         return devDbParser.parseSearch(response.body)
     }
 

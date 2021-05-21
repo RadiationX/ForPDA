@@ -169,9 +169,9 @@ class FavoritesPresenter(
                 Screen.ARG_TITLE to item.topicTitle.orEmpty()
         )
         if (item.isForum) {
-            linkHandler.handle("https://4pda.ru/forum/index.php?showforum=" + item.forumId, router, args)
+            linkHandler.handle("https://4pda.to/forum/index.php?showforum=" + item.forumId, router, args)
         } else {
-            linkHandler.handle("https://4pda.ru/forum/index.php?showtopic=" + item.topicId + "&view=getnewpost", router, args)
+            linkHandler.handle("https://4pda.to/forum/index.php?showtopic=" + item.topicId + "&view=getnewpost", router, args)
         }
     }
 
@@ -181,18 +181,18 @@ class FavoritesPresenter(
 
     fun copyLink(item: FavItem) {
         if (item.isForum) {
-            Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=" + Integer.toString(item.forumId))
+            Utils.copyToClipBoard("https://4pda.to/forum/index.php?showforum=" + Integer.toString(item.forumId))
         } else {
-            Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=" + Integer.toString(item.topicId))
+            Utils.copyToClipBoard("https://4pda.to/forum/index.php?showtopic=" + Integer.toString(item.topicId))
         }
     }
 
     fun openAttachments(item: FavItem) {
-        linkHandler.handle("https://4pda.ru/forum/index.php?act=attach&code=showtopic&tid=" + item.topicId, router)
+        linkHandler.handle("https://4pda.to/forum/index.php?act=attach&code=showtopic&tid=" + item.topicId, router)
     }
 
     fun openForum(item: FavItem) {
-        linkHandler.handle("https://4pda.ru/forum/index.php?showforum=" + item.forumId, router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showforum=" + item.forumId, router)
     }
 
     fun changeFav(action: Int, type: String?, favId: Int) {

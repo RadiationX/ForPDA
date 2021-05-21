@@ -83,7 +83,7 @@ class ProfileFragment : TabFragment(), ProfileAdapter.ClickListener, ProfileView
             profileUrl = getString(TabFragment.ARG_TAB)
         }
         if (profileUrl.isNullOrEmpty()) {
-            profileUrl = "https://4pda.ru/forum/index.php?showuser=${authHolder.get().userId}"
+            profileUrl = "https://4pda.to/forum/index.php?showuser=${authHolder.get().userId}"
         }
         presenter.profileUrl = profileUrl
     }

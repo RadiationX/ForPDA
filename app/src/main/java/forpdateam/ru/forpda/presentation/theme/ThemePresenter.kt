@@ -330,13 +330,13 @@ class ThemePresenter(
 
     fun loadNewPosts() {
         currentPage?.let {
-            loadUrl("https://4pda.ru/forum/index.php?showtopic=${it.id}&view=getnewpost")
+            loadUrl("https://4pda.to/forum/index.php?showtopic=${it.id}&view=getnewpost")
         }
     }
 
     fun loadPage(page: Int) {
         currentPage?.let {
-            var url = "https://4pda.ru/forum/index.php?showtopic=${it.id}"
+            var url = "https://4pda.to/forum/index.php?showtopic=${it.id}"
             if (page != 0) {
                 url = "$url&st=$page"
             }
@@ -401,19 +401,19 @@ class ThemePresenter(
 
     fun copyLink() {
         currentPage?.let {
-            Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showtopic=${it.id}")
+            Utils.copyToClipBoard("https://4pda.to/forum/index.php?showtopic=${it.id}")
         }
     }
 
     fun openSearch() {
         currentPage?.let {
-            linkHandler.handle("https://4pda.ru/forum/index.php?forums=${it.forumId}&topics=${it.id}&act=search&source=pst&result=posts", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?forums=${it.forumId}&topics=${it.id}&act=search&source=pst&result=posts", router)
         }
     }
 
     fun openSearchMyPosts() {
         currentPage?.let {
-            var url = ("https://4pda.ru/forum/index.php?forums=${it.forumId}&topics=${it.id}&act=search&source=pst&result=posts&username=")
+            var url = ("https://4pda.to/forum/index.php?forums=${it.forumId}&topics=${it.id}&act=search&source=pst&result=posts&username=")
 
             try {
                 url += URLEncoder.encode(userHolder.user?.nick.orEmpty(), "windows-1251")
@@ -427,7 +427,7 @@ class ThemePresenter(
 
     fun openForum() {
         currentPage?.let {
-            linkHandler.handle("https://4pda.ru/forum/index.php?showforum=${it.forumId}", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?showforum=${it.forumId}", router)
         }
     }
 
@@ -532,7 +532,7 @@ class ThemePresenter(
             if (checkIsPoll(url)) {
                 return
             }
-            if (uri.host != null && uri.host?.matches("4pda.ru".toRegex()) == true) {
+            if (uri.host != null && uri.host?.matches("4pda.to".toRegex()) == true) {
                 if (uri.pathSegments[0] == "forum") {
                     var param: String? = uri.getQueryParameter("showtopic")
                     Log.d(LOG_TAG, "param showtopic: $param")
@@ -602,7 +602,7 @@ class ThemePresenter(
 
     private fun checkIsPoll(url: String): Boolean {
         currentPage?.let {
-            val m = Pattern.compile("4pda.ru.*?addpoll=1").matcher(url)
+            val m = Pattern.compile("4pda.to.*?addpoll=1").matcher(url)
             if (m.find()) {
                 var uri = Uri.parse(url)
                 uri = uri.buildUpon()
@@ -645,13 +645,13 @@ class ThemePresenter(
 
     override fun openProfile(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle("https://4pda.ru/forum/index.php?showuser=${it.userId}", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.userId}", router)
         }
     }
 
     override fun openQms(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle("https://4pda.ru/forum/index.php?act=qms&amp;mid=${it.userId}", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?act=qms&amp;mid=${it.userId}", router)
         }
     }
 
@@ -721,7 +721,7 @@ class ThemePresenter(
 
     override fun openReputationHistory(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle("https://4pda.ru/forum/index.php?act=rep&view=history&amp;mid=${it.userId}", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?act=rep&view=history&amp;mid=${it.userId}", router)
         }
     }
 
@@ -769,35 +769,35 @@ class ThemePresenter(
         getPostById(postId)?.let {
             val themeTitle: String = currentPage?.title.orEmpty()
             val title = String.format(App.get().getString(R.string.post_Topic_Nick_Number), themeTitle, it.nick, it.id)
-            val url = "https://4pda.ru/forum/index.php?s=&showtopic=" + it.topicId + "&view=findpost&p=" + it.id
+            val url = "https://4pda.to/forum/index.php?s=&showtopic=" + it.topicId + "&view=findpost&p=" + it.id
             viewState.showNoteCreate(title, url)
         }
     }
 
     override fun copyPostLink(postId: Int) {
         getPostById(postId)?.let {
-            val url = "https://4pda.ru/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
+            val url = "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
             copyText(url)
         }
     }
 
     override fun sharePostLink(postId: Int) {
         getPostById(postId)?.let {
-            val url = "https://4pda.ru/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
+            val url = "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
             shareText(url)
         }
     }
 
     override fun copyAnchorLink(postId: Int, name: String) {
         getPostById(postId)?.let {
-            val url = "https://4pda.ru/forum/index.php?act=findpost&pid=${it.id}&anchor=$name"
+            val url = "https://4pda.to/forum/index.php?act=findpost&pid=${it.id}&anchor=$name"
             copyText(url)
         }
     }
 
     override fun copySpoilerLink(postId: Int, spoilNumber: String) {
         getPostById(postId)?.let {
-            val url = "https://4pda.ru/forum/index.php?act=findpost&pid=${it.id}&anchor=Spoil-${it.id}-$spoilNumber"
+            val url = "https://4pda.to/forum/index.php?act=findpost&pid=${it.id}&anchor=Spoil-${it.id}-$spoilNumber"
             copyText(url)
         }
     }

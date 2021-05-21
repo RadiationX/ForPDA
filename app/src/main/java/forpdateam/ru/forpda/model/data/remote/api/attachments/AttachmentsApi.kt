@@ -37,7 +37,7 @@ class AttachmentsApi(
     ): List<AttachmentItem> {
 
         val builder = NetworkRequest.Builder()
-                .url("https://4pda.ru/forum/index.php?act=attach")
+                .url("https://4pda.to/forum/index.php?act=attach")
                 .xhrHeader()
                 .formHeader("index", "1")
                 .formHeader("maxSize", "134217728")
@@ -70,7 +70,7 @@ class AttachmentsApi(
             var response = webClient.request(builder.build())
             if (response.body == "0") {
                 val uploadRequest = NetworkRequest.Builder()
-                        .url("https://4pda.ru/forum/index.php?act=attach")
+                        .url("https://4pda.to/forum/index.php?act=attach")
                         .xhrHeader()
                         .formHeader("index", "1")
                         .formHeader("maxSize", "134217728")
@@ -102,7 +102,7 @@ class AttachmentsApi(
         var response: NetworkResponse
         for (item in items) {
             val builder = NetworkRequest.Builder()
-                    .url("https://4pda.ru/forum/index.php?act=attach")
+                    .url("https://4pda.to/forum/index.php?act=attach")
                     .xhrHeader()
                     .formHeader("index", "1")
                     .formHeader("maxSize", "134217728")

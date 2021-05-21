@@ -67,7 +67,7 @@ class ArticleContentFragment : MvpAppCompatFragment(), ArticleContentView, TabTo
     override fun setRefreshing(isRefreshing: Boolean) {}
 
     override fun showData(article: DetailsPage) {
-        webView.loadDataWithBaseURL("https://4pda.ru/forum/", article.html, "text/html", "utf-8", null)
+        webView.loadDataWithBaseURL("https://4pda.to/forum/", article.html, "text/html", "utf-8", null)
     }
 
     override fun setStyleType(type: String) {

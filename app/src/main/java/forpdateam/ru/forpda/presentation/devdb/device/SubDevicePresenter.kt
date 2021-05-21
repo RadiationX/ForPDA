@@ -22,14 +22,14 @@ class SubDevicePresenter(
 ) : BasePresenter<SubDeviceView>() {
 
     fun onCommentClick(item: Device.Comment) {
-        linkHandler.handle("https://4pda.ru/forum/index.php?showuser=${item.userId}", router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.userId}", router)
     }
 
     fun onPostClick(item: Device.PostItem, source: Int) {
         val url = if (source == PostsFragment.SRC_NEWS) {
-            "https://4pda.ru/index.php?p=${item.id}"
+            "https://4pda.to/index.php?p=${item.id}"
         } else {
-            "https://4pda.ru/forum/index.php?showtopic=${item.id}"
+            "https://4pda.to/forum/index.php?showtopic=${item.id}"
         }
         linkHandler.handle(url, router)
     }

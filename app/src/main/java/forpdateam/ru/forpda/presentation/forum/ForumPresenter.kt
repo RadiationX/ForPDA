@@ -118,7 +118,7 @@ class ForumPresenter(
     }
 
     fun copyLink(item: ForumItemTree) {
-        Utils.copyToClipBoard("https://4pda.ru/forum/index.php?showforum=${item.id}")
+        Utils.copyToClipBoard("https://4pda.to/forum/index.php?showforum=${item.id}")
     }
 
     fun navigateToForum(item: ForumItemTree) {
@@ -129,7 +129,7 @@ class ForumPresenter(
 
     fun navigateToSearch(item: ForumItemTree) {
         router.navigateTo(Screen.Search().apply {
-            searchUrl = "https://4pda.ru/forum/index.php?act=search&source=all&forums%5B%5D=${item.id}"
+            searchUrl = "https://4pda.to/forum/index.php?act=search&source=all&forums%5B%5D=${item.id}"
         })
     }
 }
