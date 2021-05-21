@@ -72,7 +72,6 @@ class ThemeTemplate(
                 setVariableOpt("user_id", post.userId)
 
                 //Post header
-                //t.setVariableOpt("avatar", post.getAvatar().isEmpty() ? "file:///android_asset/av.png" : "https://s.4pda.to/forum/uploads/".concat(post.getAvatar()));
                 setVariableOpt("avatar", post.avatar)
                 setVariableOpt("none_avatar", if (post.avatar.isNullOrEmpty()) "none_avatar" else "")
 
