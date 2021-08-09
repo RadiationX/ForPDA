@@ -102,12 +102,12 @@ class QmsContactsPresenter(
     }
 
     fun createNote(item: QmsContact) {
-        val url = "https://4pda.ru/forum/index.php?act=qms&mid=${item.id}"
+        val url = "https://4pda.to/forum/index.php?act=qms&mid=${item.id}"
         viewState.showCreateNote(item.nick.orEmpty(), url)
     }
 
     fun openProfile(item: QmsContact) {
-        linkHandler.handle("https://4pda.ru/forum/index.php?showuser=${item.id}", router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.id}", router)
     }
 
     fun openBlackList() {

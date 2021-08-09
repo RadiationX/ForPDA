@@ -113,13 +113,13 @@ class TopicsPresenter(
 
     fun openSearch() {
         router.navigateTo(Screen.Search().apply {
-            searchUrl = "https://4pda.ru/forum/index.php?act=search&source=all&forums%5B%5D=$id"
+            searchUrl = "https://4pda.to/forum/index.php?act=search&source=all&forums%5B%5D=$id"
         })
     }
 
     fun openTopicForum() {
         currentData?.let {
-            linkHandler.handle("https://4pda.ru/forum/index.php?showforum=${it.id}", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?showforum=${it.id}", router)
         }
     }
 
@@ -131,10 +131,10 @@ class TopicsPresenter(
             return
         }
         if (item.isForum) {
-            linkHandler.handle("https://4pda.ru/forum/index.php?showforum=${item.id}", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?showforum=${item.id}", router)
             return
         }
-        linkHandler.handle("https://4pda.ru/forum/index.php?showtopic=${item.id}", router, mapOf(
+        linkHandler.handle("https://4pda.to/forum/index.php?showtopic=${item.id}", router, mapOf(
                 Screen.ARG_TITLE to item.title
         ))
     }

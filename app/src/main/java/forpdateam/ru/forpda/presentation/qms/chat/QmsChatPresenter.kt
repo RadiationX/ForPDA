@@ -275,14 +275,14 @@ class QmsChatPresenter(
 
     fun createThemeNote() {
         currentData?.let {
-            val url = "https://4pda.ru/forum/index.php?act=qms&mid=${it.userId}&t=${it.themeId}"
+            val url = "https://4pda.to/forum/index.php?act=qms&mid=${it.userId}&t=${it.themeId}"
             viewState.showCreateNote(it.title.orEmpty(), it.nick.orEmpty(), url)
         }
     }
 
     fun openProfile() {
         currentData?.let {
-            linkHandler.handle("https://4pda.ru/forum/index.php?showuser=${it.userId}", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.userId}", router)
         }
     }
 

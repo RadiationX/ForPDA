@@ -52,7 +52,7 @@ class WebVewNotFoundActivity : AppCompatActivity() {
         }
 
         getIn4pda.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://4pda.ru/forum/index.php?showtopic=705513")).addFlags(FLAG_ACTIVITY_NEW_TASK)
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://4pda.to/forum/index.php?showtopic=705513")).addFlags(FLAG_ACTIVITY_NEW_TASK)
             startActivity(Intent.createChooser(intent, "Открыть в").addFlags(FLAG_ACTIVITY_NEW_TASK))
         }
 

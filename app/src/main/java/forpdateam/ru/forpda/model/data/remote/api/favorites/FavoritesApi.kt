@@ -24,7 +24,7 @@ class FavoritesApi(
     fun getFavorites(st: Int, all: Boolean, sorting: Sorting): FavData {
         val uriBuilder = Uri.Builder()
                 .scheme("https")
-                .authority("4pda.ru")
+                .authority("4pda.to")
                 .appendPath("forum")
                 .appendQueryParameter("act", "fav")
                 .appendQueryParameter("type", "all")
@@ -64,14 +64,14 @@ class FavoritesApi(
 
     fun editSubscribeType(type: String?, favId: Int): Boolean {
         checkNotNull(type)
-        val response = webClient.get("https://4pda.ru/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0&tact=$type&selectedtids=$favId")
+        val response = webClient.get("https://4pda.to/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0&tact=$type&selectedtids=$favId")
         return favoritesParser.checkIsComplete(response.body)
     }
 
     fun editPinState(type: String?, favId: Int): Boolean {
         checkNotNull(type)
         val builder = NetworkRequest.Builder()
-                .url("https://4pda.ru/forum/index.php?act=fav")
+                .url("https://4pda.to/forum/index.php?act=fav")
                 .formHeader("selectedtids", favId.toString())
                 .formHeader("tact", type)
         val response = webClient.request(builder.build())
@@ -80,7 +80,7 @@ class FavoritesApi(
 
     fun delete(favId: Int): Boolean {
         val builder = NetworkRequest.Builder()
-                .url("https://4pda.ru/forum/index.php?act=fav")
+                .url("https://4pda.to/forum/index.php?act=fav")
                 .xhrHeader()
                 .formHeader("selectedtids", favId.toString())
                 .formHeader("tact", "delete")
@@ -90,7 +90,7 @@ class FavoritesApi(
 
     fun add(id: Int, action: Int, type: String?): Boolean {
         checkNotNull(type)
-        var url = "https://4pda.ru/forum/index.php?act=fav&type=add&track_type=$type"
+        var url = "https://4pda.to/forum/index.php?act=fav&type=add&track_type=$type"
         if (action == ACTION_ADD_FORUM) {
             url += "&f="
         } else if (action == ACTION_ADD) {

@@ -51,25 +51,25 @@ class ArticleDetailPresenter(
 
     fun openAuthorProfile() {
         currentData?.let {
-            linkHandler.handle("https://4pda.ru/forum/index.php?showuser=${it.authorId}", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.authorId}", router)
         }
     }
 
     fun copyLink() {
         currentData?.let {
-            Utils.copyToClipBoard("https://4pda.ru/index.php?p=${it.id}")
+            Utils.copyToClipBoard("https://4pda.to/index.php?p=${it.id}")
         }
     }
 
     fun shareLink() {
         currentData?.let {
-            Utils.shareText("https://4pda.ru/index.php?p=${it.id}")
+            Utils.shareText("https://4pda.to/index.php?p=${it.id}")
         }
     }
 
     fun createNote() {
         currentData?.let {
-            val url = "https://4pda.ru/index.php?p=${it.id}"
+            val url = "https://4pda.to/index.php?p=${it.id}"
             viewState.showCreateNote(it.title.orEmpty(), url)
         }
     }

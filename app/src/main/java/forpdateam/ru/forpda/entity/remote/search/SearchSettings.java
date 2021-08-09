@@ -226,7 +226,7 @@ public class SearchSettings {
     public static String toUrl(SearchSettings settings) {
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("https")
-                .authority("4pda.ru");
+                .authority("4pda.to");
         if (settings.getResourceType().equals(RESOURCE_NEWS.getFirst())) {
             builder.appendPath("page");
             builder.appendPath(Integer.toString(settings.getSt()));

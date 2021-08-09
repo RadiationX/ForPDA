@@ -167,7 +167,7 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
 
     override fun updateView(page: ThemePage) {
         super.updateView(page)
-        webView.loadDataWithBaseURL("https://4pda.ru/forum/", page.html, "text/html", "utf-8", null)
+        webView.loadDataWithBaseURL("https://4pda.to/forum/", page.html, "text/html", "utf-8", null)
         webView.updatePaddingBottom()
     }
 

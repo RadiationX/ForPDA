@@ -23,7 +23,7 @@ class QmsParser(
                     avatar = matcher.group(3)?.let {
                         when {
                             it.substring(0, 2) == "//" -> "https:$it"
-                            it.substring(0, 1) == "/" -> "https://4pda.ru$it"
+                            it.substring(0, 1) == "/" -> "https://4pda.to$it"
                             else -> it
                         }
                     }

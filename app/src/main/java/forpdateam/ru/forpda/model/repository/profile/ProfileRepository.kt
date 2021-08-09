@@ -29,7 +29,7 @@ class ProfileRepository(
             .observeCurrentUser()
             .runInIoToUi()
 
-    fun loadSelf() = loadProfile("https://4pda.ru/forum/index.php?showuser=" + authHolder.get().userId)
+    fun loadSelf() = loadProfile("https://4pda.to/forum/index.php?showuser=" + authHolder.get().userId)
 
     fun loadProfile(url: String): Single<ProfileModel> = Single
             .fromCallable { profileApi.getProfile(url) }

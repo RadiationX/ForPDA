@@ -81,6 +81,7 @@ class ArticleParser(
                     matcher.group(11)?.also {
                         materials.addAll(parseMaterials(it))
                     }
+                    //todo ignore group 12 after 22 PatternVersion
                     navId = matcher.group(12)
 
                     karmaMap = parseKarma(response)
@@ -132,6 +133,7 @@ class ArticleParser(
                     matcher.group(8)?.also {
                         materials.addAll(parseMaterials(it))
                     }
+                    //todo ignore group 9 after 22 PatternVersion
                     navId = matcher.group(9)
 
                     karmaMap = parseKarma(response)

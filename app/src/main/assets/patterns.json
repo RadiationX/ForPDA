@@ -1,5 +1,5 @@
 {
-  "version": 21,
+  "version": 25,
   "scopes": [
     {
       "scope":"global",
@@ -72,7 +72,7 @@
         },
         {
           "key": "device_reviews",
-          "value": "<a href=\"[^\"]*?4pda\\.ru\\/\\d+\\/\\d+\\/\\d+\\/(\\d+)\\/\" class=\"article-img\">[^<]*?<img src=\"([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[^<]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div class=\"upd\">([^<]*?)<\\/div>[^<]*?<div class=\"description\">([^<]+?)?<\\/div>"
+          "value": "<a href=\"[^\"]*?4pda\\.(?:ru|to)\\/\\d+\\/\\d+\\/\\d+\\/(\\d+)\\/\" class=\"article-img\">[^<]*?<img src=\"([^\"]*?)\"[^>]*?>[^<]*?<\\/a>[^<]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div class=\"upd\">([^<]*?)<\\/div>[^<]*?<div class=\"description\">([^<]+?)?<\\/div>"
         },
         {
           "key": "device_discuss_and_firm",
@@ -165,15 +165,15 @@
       "patterns": [
         {
           "key": "list",
-          "value": "<article[^>]*?class=\"post[^\"]*?\"[^>]*?>[^<]*?<div[^>]*?>[^<]*?(?:<div[^>]*?>[^<]*?<\\/div>)?[^<]*?<a[^>]*?href=\"([^\"]*\\/(\\d+)\\/?)\"[^>]*?title=\"([^\"]*?)\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\"[\\s\\S]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[\\s\\S]*?<a[^>]*?href=\"[^\"]*?showuser=(\\d+)\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?itemprop=\"description\">([\\s\\S]*?)<\\/div>[\\s\\S]*?(?:<div[^>]*?class=\"meta\">([\\s\\S]*?)<\\/div>[\\s\\S])*?<\\/article>|<li itemscope[^>]*?>[^<]*?<div class=\"photo\">[^<]*?<a[^>]*?href=\"([^\"]*\\/(\\d+)\\/?)\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?title=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<a[^>]*?class=\"v-count\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<meta[^>]*?content=\"((\\d+-\\d+-\\d+)[^\"]*?)\"[^>]*?>[\\s\\S]*?<div class=\"content\" itemprop=\"description\">[\\s\\S]*?<div class=\"summary\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[^<]*?<div itemprop=\"description\">([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<span class=\"bg-shadow\">"
+          "value": "<article[^>]*?class=\"post[^\"]*?\"[^>]*?>[^<]*?<div[^>]*?>[^<]*?(?:<div[^>]*?>[^<]*?<\\/div>)?[^<]*?<a[^>]*?href=\"([^\"]*\\/(\\d+)\\/?(?:[^\"]*?\\/?))\"[^>]*?title=\"([^\"]*?)\"[\\s\\S]*?<img[^>]*?src=\"([^\"]*?)\"[\\s\\S]*?<a[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[\\s\\S]*?<a[^>]*?href=\"[^\"]*?showuser=(\\d+)\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<div[^>]*?itemprop=\"description\">([\\s\\S]*?)<\\/div>[\\s\\S]*?(?:<div[^>]*?class=\"meta\">([\\s\\S]*?)<\\/div>[\\s\\S])*?<\\/article>|<li itemscope[^>]*?>[^<]*?<div class=\"photo\">[^<]*?<a[^>]*?href=\"([^\"]*\\/(\\d+)\\/?)\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?title=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<a[^>]*?class=\"v-count\"[^>]*?>([^<]*?)<\\/a>[\\s\\S]*?<meta[^>]*?content=\"((\\d+-\\d+-\\d+)[^\"]*?)\"[^>]*?>[\\s\\S]*?<div class=\"content\" itemprop=\"description\">[\\s\\S]*?<div class=\"summary\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[^<]*?<div itemprop=\"description\">([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<span class=\"bg-shadow\">"
         },
         {
           "key": "detail",
-          "value": "<[^>]*>[^<]*?<[^>]*?>[^<]*?<div[^>]*?data-ztm=\"\\d+:(\\d+)[^\"]*?\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"photo\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"description\"[^>]*?>[^<]*?<h1[^>]*?>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?<\\/h1>[\\s\\S]*?<div class=\"meta\">([\\s\\S]*?)<\\/div>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[^<]*?<span[^>]*?class=\"name\"[^>]*?>[^<]*?<a[^>]*?href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/span>[^<]*?<span class=\"number\">[^<]*?<a[^>]*?>(\\d+)<\\/a>[^<]*?<\\/span>[\\s\\S]*?<div class=\"content-box\" itemprop=\"articleBody\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?<script[^>]*?>[^<]*?<\\/script>(?:[^<]*?<div class=\"materials-box\"[^>]*?>(?:[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>)?[^<]*?<\\/div>)?[\\s\\S]*?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>(?:[\\s\\S]*?<div class=\"comment-box[^\"]*?\" id=\"comments\"[^>]*?>[\\s\\S]*?(<ul class=\"comment-list[\\s\\S]*?<\\/ul>)(?:<form|<\\/div><\\/div><article))"
+          "value": "<[^>]*>[^<]*?<[^>]*?>[^<]*?<div[^>]*?data-ztm=\"\\d+:(\\d+)[^\"]*?\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"photo\"[^>]*?>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div[^>]*?class=\"description\"[^>]*?>[^<]*?<h1[^>]*?>(?:<span[^>]*?>)?([^<]*?)(?:<\\/span>)?<\\/h1>[\\s\\S]*?<div class=\"meta\">([\\s\\S]*?)<\\/div>[\\s\\S]*?<em[^>]*?class=\"date\"[^>]*?>([^<]*?)<\\/em>[^<]*?<span[^>]*?class=\"name\"[^>]*?>[^<]*?<a[^>]*?href=\"[^\"]*?(\\d+)\"[^>]*?>([^<]*?)<\\/a>[^<]*?<\\/span>[^<]*?<span class=\"number\">[^<]*?<a[^>]*?>(\\d+)<\\/a>[^<]*?<\\/span>[\\s\\S]*?<div class=\"content-box\" itemprop=\"articleBody\"[^>]*?>([\\s\\S]*?)<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?<\\/\\w+>[\\s\\S]*?<script[^>]*?>[^<]*?<\\/script>(?:[^<]*?<div class=\"materials-box\"[^>]*?>(?:[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>)?[^<]*?<\\/div>)?([\\s\\S]*?)(?:[\\s\\S]*?<div class=\"comment-box[^\"]*?\" id=\"comments\"[^>]*?>[\\s\\S]*?(<ul class=\"comment-list[\\s\\S]*?<\\/ul>)(?:<form|<\\/div><\\/div><article))"
         },
         {
           "key": "detail_v2",
-          "value": "<[^>]*>[^<]*?<[^>]*?>[^<]*?<div[^>]*?data-ztm=\"\\d+:(\\d+)[^\"]*?\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div class=\"[^\"]*?article[^\"]*?\"[^>]*?><div class=\"[^\"]*?article-header[^\"]*?\"[^>]*?>(?:<h1>)?([^<]*?)(?:<\\/h1>)[\\s\\S]*?<time[^>]*?>([^<]*?)<\\/time>[\\s\\S]*?<a[^>]*?href=\"#comments\"[^>]*?>(\\d+)<\\/a>[\\s\\S]*?(<meta property=\"og:description\"[\\s\\S]*?)<div class=\"article-footer[^\"]*?\"[^>]*?>[\\s\\S]*?(?:<div class=\"article-footer-tags[^\"]*?\"[^>]*?>([\\s\\S]*?)<\\/div>)?<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?<script[^>]*?>[^<]*?<\\/script>(?:[^<]*?<div class=\"materials-box\"[^>]*?>(?:[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>)?[^<]*?<\\/div>)?[\\s\\S]*?[^<]*?<ul class=\"page-nav[^\"]*?\">[\\s\\S]*?<a href=\"[^\"]*?\\/(\\d+)\\/\"[\\s\\S]*?<\\/ul>(?:[\\s\\S]*?<div class=\"comment-box[^\"]*?\" id=\"comments\"[^>]*?>[\\s\\S]*?(<ul class=\"comment-list[\\s\\S]*?<\\/ul>)(?:<form|<\\/div><\\/div><article))"
+          "value": "<[^>]*>[^<]*?<[^>]*?>[^<]*?<div[^>]*?data-ztm=\"\\d+:(\\d+)[^\"]*?\"[^>]*?>[^<]*?<meta[^>]*?content=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<div class=\"[^\"]*?article[^\"]*?\"[^>]*?><div class=\"[^\"]*?article-header[^\"]*?\"[^>]*?>(?:<h1>)?([^<]*?)(?:<\\/h1>)[\\s\\S]*?<time[^>]*?>([^<]*?)<\\/time>[\\s\\S]*?<a[^>]*?href=\"#comments\"[^>]*?>(\\d+)<\\/a>[\\s\\S]*?(<meta property=\"og:description\"[\\s\\S]*?)<div class=\"article-footer[^\"]*?\"[^>]*?>[\\s\\S]*?(?:<div class=\"article-footer-tags[^\"]*?\"[^>]*?>([\\s\\S]*?)<\\/div>)?<\\/div>[^<]*?<\\/div>[^<]*?<\\/div>[^<]*?<\\/\\w+>[\\s\\S]*?(?:[^<]*?<div class=\"materials-box\"[^>]*?>(?:[\\s\\S]*?<ul class=\"materials-slider\"[^>]*?>([\\s\\S]*?)<\\/ul>)?[^<]*?<\\/div>)?([\\s\\S]*?)(?:[\\s\\S]*?<div class=\"comment-box[^\"]*?\" id=\"comments\"[^>]*?>[\\s\\S]*?(<ul class=\"comment-list[\\s\\S]*?<\\/ul>)(?:<form|<\\/div><\\/div><article))"
         },
         {
           "key": "detail_detector",
@@ -374,7 +374,7 @@
         },
         {
           "key": "attached_images",
-          "value": "(4pda\\.ru\\/forum\\/dl\\/post\\/\\d+\\/[^\"']*?\\.(?:jpe?g|png|gif|bmp))\"?(?:[^>]*?title=\"([^\"']*?\\.(?:jpe?g|png|gif|bmp)) - [^\"']*?\")?"
+          "value": "(4pda\\.(?:ru|to)\\/forum\\/dl\\/post\\/\\d+\\/[^\"']*?\\.(?:jpe?g|png|gif|bmp))\"?(?:[^>]*?title=\"([^\"']*?\\.(?:jpe?g|png|gif|bmp)) - [^\"']*?\")?"
         }
       ]
     },

@@ -51,33 +51,33 @@ class DevicePresenter(
 
     fun copyLink() {
         currentData?.let {
-            Utils.copyToClipBoard("https://4pda.ru/index.php?p=${it.id}")
+            Utils.copyToClipBoard("https://4pda.to/index.php?p=${it.id}")
         }
     }
 
     fun shareLink() {
         currentData?.let {
-            Utils.shareText("https://4pda.ru/devdb/${it.id}")
+            Utils.shareText("https://4pda.to/devdb/${it.id}")
         }
     }
 
     fun createNote() {
         currentData?.let {
             val title = "DevDb: ${it.brandTitle} ${it.title}"
-            val url = "https://4pda.ru/devdb/${it.id}"
+            val url = "https://4pda.to/devdb/${it.id}"
             viewState.showCreateNote(title, url)
         }
     }
 
     fun openDevices() {
         currentData?.let {
-            linkHandler.handle("https://4pda.ru/devdb/${it.catId}/${it.brandId}", router)
+            linkHandler.handle("https://4pda.to/devdb/${it.catId}/${it.brandId}", router)
         }
     }
 
     fun openBrands() {
         currentData?.let {
-            linkHandler.handle("https://4pda.ru/devdb/${it.catId}", router)
+            linkHandler.handle("https://4pda.to/devdb/${it.catId}", router)
         }
     }
 }

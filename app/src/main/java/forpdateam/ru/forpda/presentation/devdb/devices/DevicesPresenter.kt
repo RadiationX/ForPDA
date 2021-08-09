@@ -57,20 +57,20 @@ class DevicesPresenter(
 
     fun copyLink(item: Brand.DeviceItem) {
         currentData?.let {
-            Utils.copyToClipBoard("https://4pda.ru/devdb/${item.id}")
+            Utils.copyToClipBoard("https://4pda.to/devdb/${item.id}")
         }
     }
 
     fun shareLink(item: Brand.DeviceItem) {
         currentData?.let {
-            Utils.shareText("https://4pda.ru/devdb/${item.id}")
+            Utils.shareText("https://4pda.to/devdb/${item.id}")
         }
     }
 
     fun createNote(item: Brand.DeviceItem) {
         currentData?.let {
             val title = "DevDb: ${it.title} ${item.title}"
-            val url = "https://4pda.ru/devdb/" + item.id
+            val url = "https://4pda.to/devdb/" + item.id
             viewState.showCreateNote(title, url)
         }
     }

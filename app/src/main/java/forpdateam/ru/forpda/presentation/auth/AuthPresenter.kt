@@ -62,7 +62,7 @@ class AuthPresenter(
                     .doAfterTerminate { viewState.setSendRefreshing(false) }
                     .subscribe({
                         viewState.onSuccessAuth()
-                        loadProfile("https://4pda.ru/forum/index.php?showuser=${authHolder.get().userId}")
+                        loadProfile("https://4pda.to/forum/index.php?showuser=${authHolder.get().userId}")
                     }, {
                         authForm.captcha = null
                         viewState.onFormLoaded(authForm)
@@ -84,7 +84,7 @@ class AuthPresenter(
     }
 
     fun onRegistrationClick() {
-        systemLinkHandler.handle("https://4pda.ru/forum/index.php?act=auth#reg")
+        systemLinkHandler.handle("https://4pda.to/forum/index.php?act=auth#reg")
     }
 
     private fun loadForm() {

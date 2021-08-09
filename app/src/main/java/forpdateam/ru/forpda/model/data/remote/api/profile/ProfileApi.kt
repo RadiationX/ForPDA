@@ -19,7 +19,7 @@ class ProfileApi(
 
     fun saveNote(note: String): Boolean {
         val builder = NetworkRequest.Builder()
-                .url("https://4pda.ru/forum/index.php?act=profile-xhr&action=save-note")
+                .url("https://4pda.to/forum/index.php?act=profile-xhr&action=save-note")
                 .formHeader("note", note)
         val response = webClient.request(builder.build())
         return response.body == "1"

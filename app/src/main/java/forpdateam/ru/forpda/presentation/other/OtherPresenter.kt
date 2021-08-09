@@ -112,13 +112,13 @@ class OtherPresenter(
         } else {
             when (item.id) {
                 MenuRepository.item_link_forum_author -> {
-                    linkHandler.handle("https://4pda.ru/forum/index.php?showuser=2556269", router)
+                    linkHandler.handle("https://4pda.to/forum/index.php?showuser=2556269", router)
                 }
                 MenuRepository.item_link_forum_topic -> {
-                    linkHandler.handle("https://4pda.ru/forum/index.php?showtopic=820313", router)
+                    linkHandler.handle("https://4pda.to/forum/index.php?showtopic=820313", router)
                 }
                 MenuRepository.item_link_forum_faq -> {
-                    linkHandler.handle("http://4pda.ru/forum/index.php?s=&showtopic=820313&view=findpost&p=64077514", router)
+                    linkHandler.handle("http://4pda.to/forum/index.php?s=&showtopic=820313&view=findpost&p=64077514", router)
                 }
                 MenuRepository.item_link_chat_telegram -> {
                     systemLinkHandler.handle("https://t.me/forpda_app")
