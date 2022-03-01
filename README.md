@@ -9,7 +9,7 @@
 <a href="http://4pda.ru/forum/index.php?showtopic=820313" target="_blank"><img src="https://raw.githubusercontent.com/RadiationX/ForPDA/master/gh_res/icon_4pda.png" height="48px" alt="Тема на форуме 4PDA" /></a>
 
 ##
-**Скриншоты:**
+**Скриншотыssss:**
 
 ![](https://raw.githubusercontent.com/RadiationX/ForPDA/master/gh_res/screen1.png)![](https://raw.githubusercontent.com/RadiationX/ForPDA/master/gh_res/screen2.png)![](https://raw.githubusercontent.com/RadiationX/ForPDA/master/gh_res/screen3.png)
 ##
