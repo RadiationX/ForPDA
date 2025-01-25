@@ -27,16 +27,16 @@ class DefaultForumHolder(context: Context?) : BaseNodeViewHolder<ForumItemTree>(
         icon = view.findViewById(R.id.forum_item_icon)
 
         currentValue = value
-        title!!.setText(value.title)
+        title!!.setText(value.item.title)
 
         icon!!.setImageDrawable(
             getVecDrawable(
                 context,
-                if (value.forums == null) R.drawable.ic_forum_go_to_topics else (if (node.isExpanded) R.drawable.ic_expand_less_black_24dp else R.drawable.ic_expand_more_black_24dp)
+                if (value.forums.isEmpty()) R.drawable.ic_forum_go_to_topics else (if (node.isExpanded) R.drawable.ic_expand_less_black_24dp else R.drawable.ic_expand_more_black_24dp)
             )
         )
 
-        if (value.forums == null) {
+        if (value.forums.isEmpty()) {
             val bg = getDrawableResAttr(context, R.attr.count_background)
             icon!!.setBackgroundResource(bg)
         } else {
@@ -47,7 +47,7 @@ class DefaultForumHolder(context: Context?) : BaseNodeViewHolder<ForumItemTree>(
     }
 
     override fun toggle(active: Boolean) {
-        if (currentValue!!.forums != null) {
+        if (currentValue!!.forums.isEmpty()) {
             icon!!.rotationY = if (active) 1f else 0f
             icon!!.setImageDrawable(
                 getVecDrawable(

@@ -13,30 +13,36 @@ class ForumUsersCache(
     private val userSource: UserSource
 ) {
 
-    private val requestsInSession = mutableSetOf<String>()
-
     fun saveUser(forumUser: ForumUser) = saveUsers(listOf(forumUser))
 
     fun saveUsers(forumUsers: List<ForumUser>) = Realm.getDefaultInstance().use {
         it.executeTransaction { realm ->
-            realm.insertOrUpdate(forumUsers.map {
-                Log.e("kekosina", "saveUser  ${it.id}, ${it.nick}")
-                ForumUserBd(it)
+            realm.insertOrUpdate(forumUsers.map { user ->
+                Log.e("kekosina", "saveUser  ${user.id}, ${user.nick}")
+                user.toDb()
             })
         }
     }
 
 
     fun getUserById(id: Int): ForumUser? = Realm.getDefaultInstance().use {
-        it.where(ForumUserBd::class.java).equalTo("id", id).findFirst()?.let { ForumUser(it) }
+        it.where(ForumUserBd::class.java).equalTo("id", id).findFirst()?.toDomain()
     }
 
     fun getUserByNick(nick: String): ForumUser? = Realm.getDefaultInstance().use {
         it.where(ForumUserBd::class.java).equalTo("nick", nick).findFirst()
-            ?.let { ForumUser(it) }
-            ?: userSource.getUsers(nick).getOrNull(0)?.also {
-                saveUser(it)
+            ?.toDomain()
+            ?: userSource.getUsers(nick).getOrNull(0)?.also { user ->
+                saveUser(user)
             }
     }
 
+}
+
+fun ForumUserBd.toDomain(): ForumUser {
+    return ForumUser(id, nick, avatar)
+}
+
+fun ForumUser.toDb(): ForumUserBd {
+    return ForumUserBd(id, nick, avatar)
 }

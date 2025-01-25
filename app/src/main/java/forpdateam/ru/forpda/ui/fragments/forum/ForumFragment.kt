@@ -51,7 +51,7 @@ class ForumFragment : TabFragment(), ForumView {
         val item = value as ForumItemTree
         dialogMenu.apply {
             disallowAll()
-            if (item.level > 0)
+            if (item.item.level > 0)
                 allow(0)
             allow(1)
             if (authHolder.get().isAuth()) {
@@ -127,7 +127,7 @@ class ForumFragment : TabFragment(), ForumView {
                 openMarkReadDialog(data)
             }
             addItem(getString(R.string.add_to_favorites)) { _, data ->
-                openAddToFavoriteDialog(data.id)
+                openAddToFavoriteDialog(data.item.id)
             }
             addItem(getString(R.string.fragment_title_search)) { _, data ->
                 presenter.navigateToSearch(data)
@@ -181,7 +181,7 @@ class ForumFragment : TabFragment(), ForumView {
         AlertDialog.Builder(requireContext())
             .setMessage(getString(R.string.mark_read) + "?")
             .setPositiveButton(R.string.ok) { _, _ ->
-                presenter.markRead(item.id)
+                presenter.markRead(item.item.id)
             }
             .setNegativeButton(R.string.cancel, null)
             .show()
@@ -226,7 +226,7 @@ class ForumFragment : TabFragment(), ForumView {
     }
 
     private fun findNodeById(id: Int, root: TreeNode): TreeNode? {
-        if (root.value != null && (root.value as ForumItemTree).id == id) return root
+        if (root.value != null && (root.value as ForumItemTree).item.id == id) return root
         if (root.children == null && root.children.isEmpty()) return null
         for (item in root.children) {
             val node = findNodeById(id, item)

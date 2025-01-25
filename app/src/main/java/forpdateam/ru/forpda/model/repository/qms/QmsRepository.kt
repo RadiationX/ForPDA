@@ -129,11 +129,11 @@ class QmsRepository(
 
     private fun saveUsers(contacts: List<QmsContact>) {
         val forumUsers = contacts.map { contact ->
-            ForumUser().apply {
-                id = contact.id
-                nick = contact.nick
+            ForumUser(
+                id = contact.id,
+                nick = contact.nick,
                 avatar = contact.avatar
-            }
+            )
         }
         forumUsersCache.saveUsers(forumUsers)
     }
@@ -189,28 +189,33 @@ class QmsRepository(
                 "kokoso",
                 "${event.isWebSocket}, ${event.type}, ${event.source}, ${event.event.msgCount}"
             )
-            if (event.isWebSocket) {
-                if (NotificationEvent.isRead(event.type)) {
-                    targetTheme.countNew = 0
-                } else if (NotificationEvent.isNew(event.type)) {
-                    targetTheme.countNew++
+
+            val newThemeCount = when {
+                NotificationEvent.isRead(event.type) -> 0
+                NotificationEvent.isNew(event.type) -> if (event.isWebSocket) {
+                    targetTheme.countNew + 1
+                } else {
+                    event.event.msgCount
                 }
-            } else {
-                if (NotificationEvent.isRead(event.type)) {
-                    targetTheme.countNew = 0
-                } else if (NotificationEvent.isNew(event.type)) {
-                    targetTheme.countNew = event.event.msgCount
-                }
+
+                else -> targetTheme.countNew
             }
 
+            val updatedThemes = targetDialog.themes.map {
+                if (it == targetTheme) {
+                    it.copy(countNew = newThemeCount)
+                } else {
+                    it
+                }
+            }
+            val updatedDialog = targetDialog.copy(themes = updatedThemes)
+            qmsCache.saveThemes(updatedDialog)
 
-            qmsCache.saveThemes(targetDialog)
             allContacts.firstOrNull { it.id == targetDialog.userId }?.let { contact ->
-                val newCount = targetDialog.themes.sumOf { it.countNew }
-                Log.d("kokoso", "upd contact cound ${contact.count} to $newCount")
-                contact.count = newCount
-
-                qmsCache.updateContact(contact)
+                val newContactCount = targetDialog.themes.sumOf { it.countNew }
+                Log.d("kokoso", "upd contact cound ${contact.count} to $newContactCount")
+                val newContact = contact.copy(count = newContactCount)
+                qmsCache.updateContact(newContact)
             }
         }
 
@@ -222,6 +227,4 @@ class QmsRepository(
             }
         })
     }
-
-
 }

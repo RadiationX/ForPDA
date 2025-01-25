@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.model.repository.forum
 
-import forpdateam.ru.forpda.entity.db.forum.ForumItemFlatBd
 import forpdateam.ru.forpda.entity.remote.forum.Announce
+import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemTree
 import forpdateam.ru.forpda.entity.remote.forum.ForumRules
 import forpdateam.ru.forpda.model.SchedulersProvider
@@ -22,14 +22,12 @@ class ForumRepository(
 ) : BaseRepository(schedulers) {
 
     fun getForums(): Single<ForumItemTree> = Single
-        .fromCallable { forumApi.getForums() }
+        .fromCallable { transformToTree(forumApi.getForums()) }
         .runInIoToUi()
 
     fun getCache(): Single<ForumItemTree> = Single
         .fromCallable {
-            ForumItemTree().apply {
-                forumApi.transformToTree(forumCache.getItems(), this)
-            }
+            transformToTree(forumCache.getItems())
         }
         .runInIoToUi()
 
@@ -51,7 +49,7 @@ class ForumRepository(
 
     fun saveCache(rootForum: ForumItemTree): Completable = Completable
         .fromRunnable {
-            val items = mutableListOf<ForumItemFlatBd>().apply {
+            val items = mutableListOf<ForumItemFlat>().apply {
                 transformToList(this, rootForum)
             }
             forumCache.saveItems(items)
@@ -59,11 +57,48 @@ class ForumRepository(
         .runInIoToUi()
 
 
-    private fun transformToList(list: MutableList<ForumItemFlatBd>, rootForum: ForumItemTree) {
-        rootForum.forums?.forEach {
-            list.add(ForumItemFlatBd(it))
+    private fun transformToList(
+        list: MutableList<ForumItemFlat>,
+        rootForum: ForumItemTree
+    ) {
+        rootForum.forums.forEach {
+            list.add(it.item)
             transformToList(list, it)
         }
     }
 
+    private fun transformToTree(list: List<ForumItemFlat>): ForumItemTree {
+        val builders = list.map { ForumItemTreeBuilder(it) }
+        val parents = LinkedHashMap<Int, ForumItemTreeBuilder>()
+        val root = ForumItemTreeBuilder.createRoot()
+        parents[root.item.id] = root
+        builders.forEach {
+            parents[it.item.id] = it
+        }
+        builders.forEach {
+            if (it.item.id != it.item.parentId) {
+                parents[it.item.parentId]?.addForum(it)
+            }
+        }
+        return root.build()
+    }
+
+    private class ForumItemTreeBuilder(
+        val item: ForumItemFlat,
+        val forums: MutableList<ForumItemTreeBuilder> = mutableListOf()
+    ) {
+        companion object {
+            fun createRoot(): ForumItemTreeBuilder {
+                return ForumItemTreeBuilder(ForumItemFlat(-1, -1, -1, null))
+            }
+        }
+
+        fun addForum(item: ForumItemTreeBuilder) {
+            forums.add(item)
+        }
+
+        fun build(): ForumItemTree {
+            return ForumItemTree(item, forums.map { it.build() })
+        }
+    }
 }

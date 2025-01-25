@@ -46,11 +46,11 @@ class PostEditorRepository(
 
     private fun saveUsers(page: ThemePage) {
         val forumUsers = page.posts.map { post ->
-            ForumUser().apply {
-                id = post.userId
-                nick = post.nick
+            ForumUser(
+                id = post.userId,
+                nick = post.nick,
                 avatar = post.avatar
-            }
+            )
         }
         forumUsersCache.saveUsers(forumUsers)
     }

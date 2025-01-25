@@ -67,14 +67,12 @@ class NotesAddPopup(context: Context, item: NoteItem?) {
                 return@setOnClickListener
             }
 
-            var result = item
-            if (result == null) {
-                result = NoteItem()
-                result.id = System.currentTimeMillis()
-            }
-            result.title = title
-            result.link = link
-            result.content = content
+            val result = NoteItem(
+                id = item?.id ?: System.currentTimeMillis(),
+                title = title,
+                link = link,
+                content = content
+            )
             if (editingMode) {
                 val disposable = notesRepository
                     .updateNote(result)

@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.model.data.remote.api.forum
 
 import forpdateam.ru.forpda.entity.remote.forum.Announce
-import forpdateam.ru.forpda.entity.remote.forum.ForumItemTree
+import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
 import forpdateam.ru.forpda.entity.remote.forum.ForumRules
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
@@ -14,38 +14,43 @@ class ForumParser(
 
     private val scope = ParserPatterns.Forum
 
-    fun parseForums(response: String): ForumItemTree = ForumItemTree().also { root ->
-        patternProvider
+    private class Parent(
+        val id: Int,
+        val level: Int,
+    )
+
+    fun parseForums(response: String): List<ForumItemFlat> {
+        return patternProvider
             .getPattern(scope.scope, scope.forums_from_search)
             .matcher(response)
-            .findOnce { rootMatcher ->
-                val parentsList = ArrayList<ForumItemTree>()
-                var lastParent = root
+            .mapOnce { rootMatcher ->
+                val parentsList = ArrayList<Parent>()
+                var lastParent = Parent(-1, -1)
                 parentsList.add(lastParent)
                 patternProvider
                     .getPattern(scope.scope, scope.forum_item_from_search)
                     .matcher(rootMatcher.group(1))
-                    .findAll { matcher ->
-                        ForumItemTree().apply {
-                            id = matcher.group(1).toInt()
-                            level = matcher.group(2).length / 2
-                            title = matcher.group(3).fromHtml()
-                            if (level <= lastParent.level) {
-                                //Удаление элементов, учитывая случай с резким скачком уровня вложенности
-                                for (i in 0 until lastParent.level - level + 1)
-                                    parentsList.removeAt(parentsList.size - 1)
-                                lastParent = parentsList[parentsList.size - 1]
-                            }
-                            parentId = lastParent.id
-                            lastParent.addForum(this)
-                            if (level > lastParent.level) {
-                                lastParent = this
-                                parentsList.add(lastParent)
-                            }
+                    .map { matcher ->
+                        val level = matcher.group(2).length / 2
+                        if (level <= lastParent.level) {
+                            //Удаление элементов, учитывая случай с резким скачком уровня вложенности
+                            for (i in 0 until lastParent.level - level + 1)
+                                parentsList.removeAt(parentsList.size - 1)
+                            lastParent = parentsList[parentsList.size - 1]
                         }
+                        val item = ForumItemFlat(
+                            id = matcher.group(1).toInt(),
+                            parentId = lastParent.id,
+                            level = level,
+                            title = matcher.group(3).fromHtml(),
+                        )
+                        if (level > lastParent.level) {
+                            lastParent = Parent(item.id, level)
+                            parentsList.add(lastParent)
+                        }
+                        item
                     }
-                parentsList.clear()
-            }
+            } ?: emptyList()
     }
 
     fun parseRules(response: String): ForumRules = ForumRules().also { rules ->

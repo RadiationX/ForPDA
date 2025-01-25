@@ -52,7 +52,7 @@ class ForumPresenter(
             .doOnSubscribe { viewState.setRefreshing(true) }
             .doAfterTerminate { viewState.setRefreshing(false) }
             .subscribe({ it ->
-                if (it.forums == null) {
+                if (it.forums.isEmpty()) {
                     loadForums()
                 } else {
                     viewState.showForums(it)
@@ -118,19 +118,19 @@ class ForumPresenter(
     }
 
     fun copyLink(item: ForumItemTree) {
-        Utils.copyToClipBoard("https://4pda.to/forum/index.php?showforum=${item.id}")
+        Utils.copyToClipBoard("https://4pda.to/forum/index.php?showforum=${item.item.id}")
     }
 
     fun navigateToForum(item: ForumItemTree) {
         router.navigateTo(Screen.Topics().apply {
-            forumId = item.id
+            forumId = item.item.id
         })
     }
 
     fun navigateToSearch(item: ForumItemTree) {
         router.navigateTo(Screen.Search().apply {
             searchUrl =
-                "https://4pda.to/forum/index.php?act=search&source=all&forums%5B%5D=${item.id}"
+                "https://4pda.to/forum/index.php?act=search&source=all&forums%5B%5D=${item.item.id}"
         })
     }
 }

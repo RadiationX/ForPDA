@@ -21,9 +21,9 @@ class QmsParser(
         .getPattern(scope.scope, scope.finduser)
         .matcher(response)
         .map { matcher ->
-            ForumUser().apply {
-                id = matcher.group(1).toInt()
-                nick = matcher.group(2).fromHtml().orEmpty()
+            ForumUser(
+                id = matcher.group(1).toInt(),
+                nick = matcher.group(2).fromHtml().orEmpty(),
                 avatar = matcher.group(3)?.let {
                     when {
                         it.substring(0, 2) == "//" -> "https:$it"
@@ -31,7 +31,7 @@ class QmsParser(
                         else -> it
                     }
                 }
-            }
+            )
         }
 
     fun parseBlackList(response: String): List<QmsContact> = response
@@ -41,11 +41,12 @@ class QmsParser(
                 .getPattern(scope.scope, scope.blacklist_main)
                 .matcher(it)
                 .map { matcher ->
-                    QmsContact().apply {
-                        id = matcher.group(1).toInt()
-                        avatar = matcher.group(2)
-                        nick = matcher.group(3).fromHtml()
-                    }
+                    QmsContact(
+                        id = matcher.group(1).toInt(),
+                        avatar = matcher.group(2),
+                        nick = matcher.group(3).fromHtml(),
+                        count = 0
+                    )
                 }
         }
 
@@ -62,39 +63,41 @@ class QmsParser(
         .getPattern(scope.scope, scope.contacts_main)
         .matcher(response)
         .map { matcher ->
-            QmsContact().apply {
-                id = matcher.group(1).toInt()
-                matcher.group(2).let {
-                    count = if (it.isNullOrEmpty()) 0 else it.toInt()
-                }
-                avatar = matcher.group(3)
-                nick = ApiUtils.fromHtml(matcher.group(4).trim())
+            QmsContact(
+                id = matcher.group(1).toInt(),
+                avatar = matcher.group(3),
+                nick = ApiUtils.fromHtml(matcher.group(4).trim()),
+                count = matcher.group(2).asCount()
+            ).apply {
+
+
             }
         }
 
-    fun parseThemes(response: String, argId: Int): QmsThemes = QmsThemes().also { data ->
-        data.userId = argId
-        patternProvider
+    fun parseThemes(response: String, argId: Int): QmsThemes {
+        val nick = patternProvider
             .getPattern(scope.scope, scope.thread_nick)
             .matcher(response)
-            .findOnce { matcher ->
-                data.nick = matcher.group(1).fromHtml()
+            .mapOnce { matcher ->
+                matcher.group(1).fromHtml()
             }
-        val list = patternProvider
+
+        val themes = patternProvider
             .getPattern(scope.scope, scope.thread_main)
             .matcher(response)
             .map { matcher ->
-                QmsTheme().apply {
-                    id = matcher.group(1).toInt()
-                    date = matcher.group(2)
-                    name = matcher.group(3).trim().fromHtml()
-                    countMessages = matcher.group(4).toInt()
-                    matcher.group(5).also {
-                        countNew = if (it.isNullOrEmpty()) 0 else it.toInt()
-                    }
-                }
+                QmsTheme(
+                    id = matcher.group(1).toInt(),
+                    date = matcher.group(2),
+                    name = matcher.group(3).trim().fromHtml(),
+                    countMessages = matcher.group(4).toInt(),
+                    countNew = matcher.group(5).asCount(),
+                    userId = argId,
+                    nick = nick
+                )
             }
-        data.themes.addAll(list)
+
+        return QmsThemes(argId, nick, themes)
     }
 
     fun parseChat(response: String): QmsChatModel = QmsChatModel().also { data ->
@@ -156,4 +159,7 @@ class QmsParser(
             }
         }
 
+    private fun String?.asCount(): Int {
+        return this?.takeIf { it.isNotEmpty() }?.toInt() ?: 0
+    }
 }

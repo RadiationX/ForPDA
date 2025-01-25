@@ -7,14 +7,21 @@ import io.realm.Realm
 class ForumCache {
 
     fun getItems() = Realm.getDefaultInstance().use {
-        it.where(ForumItemFlatBd::class.java).findAll().map { ForumItemFlat(it) }
+        it.where(ForumItemFlatBd::class.java).findAll().map { it.toDomain() }
     }
 
-    fun saveItems(items: List<ForumItemFlatBd>) = Realm.getDefaultInstance().use {
+    fun saveItems(items: List<ForumItemFlat>) = Realm.getDefaultInstance().use {
         it.executeTransaction { realmTr ->
             realmTr.delete(ForumItemFlatBd::class.java)
-            realmTr.copyToRealmOrUpdate(items)
+            realmTr.copyToRealmOrUpdate(items.map { it.toDb() })
         }
     }
+}
 
+fun ForumItemFlatBd.toDomain(): ForumItemFlat {
+    return ForumItemFlat(id, parentId, level, title)
+}
+
+fun ForumItemFlat.toDb(): ForumItemFlatBd {
+    return ForumItemFlatBd(id, parentId, level, title)
 }

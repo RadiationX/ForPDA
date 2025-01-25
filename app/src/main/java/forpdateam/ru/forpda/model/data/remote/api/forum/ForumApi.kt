@@ -4,7 +4,6 @@ import forpdateam.ru.forpda.entity.remote.forum.Announce
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemTree
 import forpdateam.ru.forpda.entity.remote.forum.ForumRules
-import forpdateam.ru.forpda.entity.remote.forum.IForumItemFlat
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 
@@ -17,7 +16,7 @@ class ForumApi(
     private val forumParser: ForumParser
 ) {
 
-    fun getForums(): ForumItemTree {
+    fun getForums(): List<ForumItemFlat> {
         val response = webClient.get("https://4pda.to/forum/index.php?act=search")
         return forumParser.parseForums(response.body)
     }
@@ -49,34 +48,5 @@ class ForumApi(
                 .withoutBody().build()
         )
         return Any()
-    }
-
-
-    fun transformToList(list: MutableList<IForumItemFlat>, rootForum: ForumItemTree) {
-        rootForum.forums?.forEach {
-            list.add(ForumItemFlat(it))
-            transformToList(list, it)
-        }
-    }
-
-    fun transformToTree(list: Collection<IForumItemFlat>, rootForum: ForumItemTree) {
-        val parentsList = ArrayList<ForumItemTree>()
-        var lastParent = rootForum
-        parentsList.add(lastParent)
-        for (item in list) {
-            val newItem = ForumItemTree(item)
-            if (item.level <= lastParent.level) {
-                //Удаление элементов, учитывая случай с резким скачком уровня вложенности
-                for (i in 0 until lastParent.level - item.level + 1)
-                    parentsList.removeAt(parentsList.size - 1)
-                lastParent = parentsList[parentsList.size - 1]
-            }
-            lastParent.addForum(newItem)
-            if (item.level > lastParent.level) {
-                lastParent = newItem
-                parentsList.add(lastParent)
-            }
-        }
-        parentsList.clear()
     }
 }

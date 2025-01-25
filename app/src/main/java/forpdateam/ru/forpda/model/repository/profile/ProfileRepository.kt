@@ -37,11 +37,13 @@ class ProfileRepository(
             if (it.id == authHolder.get().userId) {
                 userHolder.user = it
             }
-            forumUsersCache.saveUser(ForumUser().apply {
-                id = it.id
-                nick = it.nick
-                avatar = it.avatar
-            })
+            forumUsersCache.saveUser(
+                ForumUser(
+                    id = it.id,
+                    nick = it.nick,
+                    avatar = it.avatar
+                )
+            )
         }
         .runInIoToUi()
 

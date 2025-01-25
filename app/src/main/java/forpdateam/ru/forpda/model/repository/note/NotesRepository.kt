@@ -65,12 +65,14 @@ class NotesRepository(
             for (i in 0 until jsonBody.length()) {
                 try {
                     val jsonItem = jsonBody.getJSONObject(i)
-                    noteItems.add(NoteItem().apply {
-                        id = jsonItem.getLong("id")
-                        title = jsonItem.getString("title")
-                        link = jsonItem.getString("link")
-                        content = jsonItem.getString("content")
-                    })
+                    noteItems.add(
+                        NoteItem(
+                            id = jsonItem.getLong("id"),
+                            title = jsonItem.getString("title"),
+                            link = jsonItem.getString("link"),
+                            content = jsonItem.getString("content"),
+                        )
+                    )
                 } catch (e: JSONException) {
                     e.printStackTrace()
                 }

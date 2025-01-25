@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.entity.db.favorites
 import forpdateam.ru.forpda.entity.remote.favorites.IFavItem
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
+import io.realm.annotations.RealmField
 
 /**
  * Created by radiationx on 25.03.17.
@@ -27,6 +28,7 @@ open class FavItemBd : RealmObject, IFavItem {
     override var desc: String? = null
     override var curatorNick: String? = null
     override var subType: String? = null
+    @RealmField(name = "pin")
     override var isPin: Boolean = false
     override var isForum: Boolean = false
     override var isNew: Boolean = false

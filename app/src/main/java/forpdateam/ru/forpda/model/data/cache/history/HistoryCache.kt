@@ -20,7 +20,7 @@ class HistoryCache {
 
     fun getHistory(): List<HistoryItem> = Realm.getDefaultInstance().use { realm ->
         realm.where(HistoryItemBd::class.java).findAll().sort("unixTime", Sort.DESCENDING)
-            .map { HistoryItem(it) }
+            .map { it.toDomain() }
     }.also {
         if (!dataRelay.hasValue()) {
             dataRelay.accept(it)
@@ -71,4 +71,12 @@ class HistoryCache {
         }
         dataRelay.accept(emptyList())
     }
+}
+
+fun HistoryItemBd.toDomain(): HistoryItem {
+    return HistoryItem(id, url, title, unixTime, date)
+}
+
+fun HistoryItem.toDb(): HistoryItemBd {
+    return HistoryItemBd(id, url, date, title, unixTime)
 }

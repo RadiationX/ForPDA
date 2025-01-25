@@ -3,18 +3,9 @@ package forpdateam.ru.forpda.entity.remote.qms
 /**
  * Created by radiationx on 03.08.16.
  */
-class QmsContact : IQmsContact {
-    override var nick: String? = null
-    override var avatar: String? = null
-    override var id: Int = 0
-    override var count: Int = 0
-
-    constructor()
-
-    constructor(contact: IQmsContact) {
-        nick = contact.nick
-        avatar = contact.avatar
-        id = contact.id
-        count = contact.count
-    }
-}
+data class QmsContact(
+    val id: Int = 0,
+    val nick: String?,
+    val avatar: String?,
+    val count: Int,
+)

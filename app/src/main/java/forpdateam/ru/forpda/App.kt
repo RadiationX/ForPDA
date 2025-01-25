@@ -181,7 +181,7 @@ class App : Application() {
                         Pattern.compile("(?:http?s?:)?\\/\\/.*?4pda\\.(?:ru|to)")
 
                     @Throws(IOException::class)
-                    override fun getStream(imageUri: String, extra: Any): InputStream {
+                    override fun getStream(imageUri: String, extra: Any?): InputStream {
                         var imageUri = imageUri
                         if (imageUri.startsWith("//")) imageUri = "http:$imageUri"
                         Log.d(
@@ -192,7 +192,7 @@ class App : Application() {
                     }
 
                     @Throws(IOException::class)
-                    override fun createConnection(url: String, extra: Any): HttpURLConnection {
+                    override fun createConnection(url: String, extra: Any?): HttpURLConnection {
                         val conn = super.createConnection(url, extra)
                         if (pattern4pda.matcher(url).find()) {
                             val cookies = get().Di().webClient.getClientCookies()

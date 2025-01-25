@@ -15,7 +15,7 @@ class NotesCache {
 
     fun getItems(): List<NoteItem> = Realm.getDefaultInstance().use { realm ->
         realm.where(NoteItemBd::class.java).findAll().sort("id", Sort.DESCENDING)
-            .map { NoteItem(it) }
+            .map { it.toDomain() }
     }.also {
         if (!dataRelay.hasValue()) {
             dataRelay.accept(it)
@@ -28,7 +28,7 @@ class NotesCache {
                 title = item.title
                 link = item.link
                 content = item.content
-            } ?: NoteItemBd(item)
+            } ?: item.toDb()
             realmTr.insertOrUpdate(itemBd)
         }
         if (dataRelay.hasValue()) {
@@ -39,7 +39,7 @@ class NotesCache {
                     if (index == -1) {
                         dataRelay.accept(getItems())
                     } else {
-                        currentItems[index] = NoteItem(newItem)
+                        currentItems[index] = newItem.toDomain()
                         dataRelay.accept(currentItems)
                     }
                 }
@@ -64,14 +64,14 @@ class NotesCache {
 
     fun add(item: NoteItem) = Realm.getDefaultInstance().use { realm ->
         realm.executeTransaction { realmTr ->
-            realmTr.insertOrUpdate(NoteItemBd(item))
+            realmTr.insertOrUpdate(item.toDb())
         }
         dataRelay.accept(getItems())
     }
 
     fun add(items: List<NoteItem>) = Realm.getDefaultInstance().use { realm ->
         realm.executeTransaction { realmTr ->
-            realmTr.insertOrUpdate(items.map { NoteItemBd(it) })
+            realmTr.insertOrUpdate(items.map { it.toDb() })
         }
 
         dataRelay.accept(getItems())
@@ -81,4 +81,12 @@ class NotesCache {
         .equalTo("id", id)
         .findFirst()
 
+}
+
+fun NoteItemBd.toDomain(): NoteItem {
+    return NoteItem(id, title, link, content)
+}
+
+fun NoteItem.toDb(): NoteItemBd {
+    return NoteItemBd(id, title, link, content)
 }
