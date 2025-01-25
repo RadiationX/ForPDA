@@ -71,7 +71,7 @@ class EditPostFragment : TabFragment(), EditPostView {
         savedInstanceState: Bundle?
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        messagePanel = MessagePanel(context, fragmentContainer, fragmentContent, true)
+        messagePanel = MessagePanel(requireContext(), fragmentContainer, fragmentContent, true)
         attachmentsPopup = messagePanel.attachmentsPopup
         return viewFragment
     }
@@ -149,19 +149,19 @@ class EditPostFragment : TabFragment(), EditPostView {
                 //Display an error
                 return
             }
-            uploadFiles(FilePickHelper.onActivityResult(context, data))
+            uploadFiles(FilePickHelper.onActivityResult(requireContext(), data))
         }
     }
 
     override fun showForm(form: EditPostForm) {
         if (form.errorCode != EditPostForm.ERROR_NONE) {
-            Toast.makeText(context, R.string.editpost_error_edit, Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.editpost_error_edit, Toast.LENGTH_SHORT).show()
             presenter.exit()
             return
         }
 
         if (form.poll != null) {
-            pollPopup = EditPollPopup(context)
+            pollPopup = EditPollPopup(requireContext())
             pollPopup?.setPoll(form.poll)
             messagePanel.editPollButton.visibility = View.VISIBLE
         } else {
@@ -214,7 +214,7 @@ class EditPostFragment : TabFragment(), EditPostView {
 
 
     override fun showReasonDialog(form: EditPostForm) {
-        val view = View.inflate(context, R.layout.edit_post_reason, null)
+        val view = View.inflate(requireContext(), R.layout.edit_post_reason, null)
         val editText = view.findViewById<View>(R.id.edit_post_reason_field) as EditText
         editText.setText(form.editReason)
 

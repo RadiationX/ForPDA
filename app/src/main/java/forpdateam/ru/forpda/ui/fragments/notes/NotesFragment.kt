@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.FilePickHelper
@@ -55,7 +56,7 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
         setScrollFlagsEnterAlways()
         adapter = NotesAdapter(this, presenter::onInfoClick)
         recyclerView.adapter = adapter
-        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         refreshLayout.setOnRefreshListener { presenter.loadNotes() }
         recyclerView.addItemDecoration(DevicesFragment.SpacingItemDecoration(App.px8, false))
 
@@ -105,7 +106,7 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
     override fun showNotes(items: List<NoteItem>, info: List<CloseableInfo>) {
         if (items.isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
-                val funnyContent = FunnyContent(context)
+                val funnyContent = FunnyContent(requireContext())
                     .setImage(R.drawable.ic_bookmark)
                     .setTitle(R.string.funny_notes_nodata_title)
                 contentController.addContent(funnyContent, ContentController.TAG_NO_DATA)
@@ -118,19 +119,19 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
     }
 
     override fun showNotesEditPopup(item: NoteItem) {
-        NotesAddPopup(context, item)
+        NotesAddPopup(requireContext(), item)
     }
 
     override fun showNotesAddPopup() {
-        NotesAddPopup(context, null)
+        NotesAddPopup(requireContext(), null)
     }
 
     override fun onImportNotes() {
-        Toast.makeText(context, "Заметки успешно импортированы", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "Заметки успешно импортированы", Toast.LENGTH_SHORT).show()
     }
 
     override fun onExportNotes(path: String) {
-        Toast.makeText(context, "Заметки успешно экспортированы в $path", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "Заметки успешно экспортированы в $path", Toast.LENGTH_SHORT).show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -141,7 +142,7 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
                 return
             }
             if (requestCode == REQUEST_PICK_FILE) {
-                val files = FilePickHelper.onActivityResult(context, data)
+                val files = FilePickHelper.onActivityResult(requireContext(), data)
                 val file = files[0]
                 presenter.importNotes(file)
             } else if (requestCode == REQUEST_SAVE_FILE) {
@@ -158,7 +159,7 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
         dialogMenu.apply {
             disallowAll()
             allowAll()
-            show(context, this@NotesFragment, item)
+            show(requireContext(), this@NotesFragment, item)
         }
         return true
     }

@@ -181,7 +181,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
             presenter.initSearchSettings(getString(ARG_TAB))
 
         }
-        dialogsHelper = ThemeDialogsHelper_V2(context, authHolder, otherPreferencesHolder)
+        dialogsHelper = ThemeDialogsHelper_V2(requireContext(), authHolder, otherPreferencesHolder)
     }
 
     override fun initFabBehavior() {
@@ -206,7 +206,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         baseInflateFragment(inflater, R.layout.fragment_search)
         refreshLayout =
             findViewById(R.id.swipe_refresh_list) as SwipeRefreshLayout
-        searchSettingsView = View.inflate(context, R.layout.search_settings, null) as ViewGroup
+        searchSettingsView = View.inflate(requireContext(), R.layout.search_settings, null) as ViewGroup
 
         nickBlock = searchSettingsView.findViewById<View>(R.id.search_nick_block) as ViewGroup
         resourceBlock =
@@ -227,7 +227,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         saveSettingsButton =
             searchSettingsView.findViewById<View>(R.id.search_save_settings) as Button
 
-        webView = ExtendedWebView(context)
+        webView = ExtendedWebView(requireContext())
         webView.setDialogsHelper(
             DialogsHelper(
                 webView.context,
@@ -359,7 +359,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         submitButton.setOnClickListener { startSearch() }
         saveSettingsButton.setOnClickListener { presenter.saveSettings() }
         //recyclerView.setHasFixedSize(true);
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.addItemDecoration(DevicesFragment.SpacingItemDecoration(App.px8, true))
         val pauseOnScrollListener = PauseOnScrollListener(ImageLoader.getInstance(), true, true)
         recyclerView.addOnScrollListener(pauseOnScrollListener)
@@ -380,7 +380,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
                                 childView.getChildAt(menuChildIndex) as ActionMenuItemView
                             @SuppressLint("RestrictedApi")
                             if (settingsMenuItem === itemView.itemData) {
-                                tooltip = SimpleTooltip.Builder(context)
+                                tooltip = SimpleTooltip.Builder(requireContext())
                                     .anchorView(itemView)
                                     .text(R.string.tooltip_search_settings)
                                     .gravity(Gravity.BOTTOM)
@@ -473,7 +473,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
 
     override fun onAddToFavorite(result: Boolean) {
         Toast.makeText(
-            context,
+            requireContext(),
             if (result) getString(R.string.favorites_added) else getString(R.string.error_occurred),
             Toast.LENGTH_SHORT
         ).show()
@@ -609,7 +609,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         Log.d("SUKA", "SEARCH SIZE " + searchResult.items.size)
         if (searchResult.items.isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
-                val funnyContent = FunnyContent(context)
+                val funnyContent = FunnyContent(requireContext())
                     .setImage(R.drawable.ic_search)
                     .setTitle(R.string.funny_search_nodata_title)
                     .setDesc(R.string.funny_search_nodata_desc)
@@ -720,7 +720,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
             } else {
                 allowAll()
             }
-            show(context, this@SearchFragment, item)
+            show(requireContext(), this@SearchFragment, item)
         }
     }
 
@@ -728,7 +728,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
     /* JS PRESENTER */
 
     override fun showNoteCreate(title: String, url: String) {
-        NotesAddPopup.showAddNoteDialog(context, title, url)
+        NotesAddPopup.showAddNoteDialog(requireContext(), title, url)
     }
 
     override fun deletePostUi(post: IBaseForumPost) {
@@ -765,7 +765,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
 
 
     override fun toast(text: String) {
-        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), text, Toast.LENGTH_SHORT).show()
     }
 
     override fun log(text: String) {

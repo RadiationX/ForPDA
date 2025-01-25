@@ -122,7 +122,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
         }
 
         refreshLayout.setOnRefreshListener { presenter.loadReputation() }
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         adapter = ReputationAdapter()
         recyclerView.adapter = adapter
@@ -202,7 +202,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
 
     @SuppressLint("InflateParams")
     fun showChangeReputationDialog(type: Boolean) {
-        val inflater = context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val inflater = requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
         val layout = inflater.inflate(R.layout.reputation_change_layout, null)
 
@@ -224,7 +224,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
     }
 
     override fun onChangeReputation(result: Boolean) {
-        Toast.makeText(context, getString(R.string.reputation_changed), Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), getString(R.string.reputation_changed), Toast.LENGTH_SHORT).show()
     }
 
     override fun setRefreshing(isRefreshing: Boolean) {
@@ -241,7 +241,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
     override fun showReputation(repData: RepData) {
         if (repData.items.isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
-                val funnyContent = FunnyContent(context)
+                val funnyContent = FunnyContent(requireContext())
                     .setImage(R.drawable.ic_history)
                     .setTitle(R.string.funny_reputation_nodata_title)
                 contentController.addContent(funnyContent, ContentController.TAG_NO_DATA)
@@ -266,6 +266,6 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
         dialogMenu.allow(0)
         if (item.sourceUrl != null)
             dialogMenu.allow(1)
-        dialogMenu.show(context, item.userNick, this@ReputationFragment, item)
+        dialogMenu.show(requireContext(), item.userNick, this@ReputationFragment, item)
     }
 }

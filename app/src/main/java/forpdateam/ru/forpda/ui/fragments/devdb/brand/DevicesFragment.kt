@@ -165,7 +165,7 @@ class DevicesFragment : TabFragment(), DevicesView,
     }
 
     override fun showCreateNote(title: String, url: String) {
-        NotesAddPopup.showAddNoteDialog(context, title, url)
+        NotesAddPopup.showAddNoteDialog(requireContext(), title, url)
     }
 
     override fun onItemClick(item: Brand.DeviceItem) {
@@ -176,7 +176,7 @@ class DevicesFragment : TabFragment(), DevicesView,
         dialogMenu.apply {
             disallowAll()
             allowAll()
-            show(context, this@DevicesFragment, item)
+            show(requireContext(), this@DevicesFragment, item)
         }
         return false
     }

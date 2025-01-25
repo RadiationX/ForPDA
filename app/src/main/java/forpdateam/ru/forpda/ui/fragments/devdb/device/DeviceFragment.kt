@@ -140,13 +140,13 @@ class DeviceFragment : TabFragment(), DeviceView {
             App.px2.toFloat(),
             0f,
             0f,
-            App.getColorFromAttr(context, R.attr.colorPrimary)
+            App.getColorFromAttr(requireContext(), R.attr.colorPrimary)
         )
         toolbarSubtitleView.setShadowLayer(
             App.px2.toFloat(),
             0f,
             0f,
-            App.getColorFromAttr(context, R.attr.colorPrimary)
+            App.getColorFromAttr(requireContext(), R.attr.colorPrimary)
         )
 
         toolbarLayout.setExpandedTitleColor(Color.TRANSPARENT)
@@ -158,9 +158,9 @@ class DeviceFragment : TabFragment(), DeviceView {
 
         imagesPager.setIndicatorTintColorScheme(
             App.getColorFromAttr(
-                context,
+                requireContext(),
                 R.attr.default_text_color
-            ), App.getColorFromAttr(context, R.attr.second_text_color)
+            ), App.getColorFromAttr(requireContext(), R.attr.second_text_color)
         )
 
         appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, offset ->
@@ -286,7 +286,7 @@ class DeviceFragment : TabFragment(), DeviceView {
     }
 
     override fun showCreateNote(title: String, url: String) {
-        NotesAddPopup.showAddNoteDialog(context, title, url)
+        NotesAddPopup.showAddNoteDialog(requireContext(), title, url)
     }
 
     override fun onDestroy() {

@@ -66,7 +66,7 @@ class QmsContactsFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<
         refreshLayoutStyle(refreshLayout)
         setScrollFlagsEnterAlways()
         refreshLayout.setOnRefreshListener { presenter.loadContacts() }
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         val pauseOnScrollListener = PauseOnScrollListener(ImageLoader.getInstance(), true, true)
         recyclerView.addOnScrollListener(pauseOnScrollListener)
 
@@ -141,20 +141,20 @@ class QmsContactsFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<
 
     override fun onBlockUser(res: Boolean) {
         if (res) {
-            Toast.makeText(context, R.string.user_added_to_blacklist, Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.user_added_to_blacklist, Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun showCreateNote(nick: String, url: String) {
         val title = String.format(getString(R.string.dialogs_Nick), nick)
-        NotesAddPopup.showAddNoteDialog(context, title, url)
+        NotesAddPopup.showAddNoteDialog(requireContext(), title, url)
     }
 
     override fun showItemDialogMenu(item: QmsContact) {
         dialogMenu.apply {
             disallowAll()
             allowAll()
-            show(context, this@QmsContactsFragment, item)
+            show(requireContext(), this@QmsContactsFragment, item)
         }
     }
 

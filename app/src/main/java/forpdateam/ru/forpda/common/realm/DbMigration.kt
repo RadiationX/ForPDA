@@ -1,90 +1,86 @@
-package forpdateam.ru.forpda.common.realm;
+package forpdateam.ru.forpda.common.realm
 
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
-import io.realm.DynamicRealm;
-import io.realm.RealmMigration;
-import io.realm.RealmObjectSchema;
-import io.realm.RealmSchema;
+import android.util.Log
+import io.realm.DynamicRealm
+import io.realm.DynamicRealmObject
+import io.realm.RealmMigration
+import io.realm.RealmObjectSchema
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * Created by isanechek on 29.08.16.
- * <p>
+ *
+ *
  * Это хрень нужна для того чтобы мигрировать с одной версии обьекта на другой.
  * Ну вдруг там поля поменялись или еще чего.
  */
-
-public class DbMigration implements RealmMigration {
-
-    @Override
-    public void migrate(@NonNull DynamicRealm realm, long oldVersion, long newVersion) {
-        RealmSchema schema = realm.getSchema();
+class DbMigration : RealmMigration {
+    override fun migrate(realm: DynamicRealm, oldVersion: Long, newVersion: Long) {
+        var updVersion = oldVersion
+        val schema = realm.schema
 
         /*
             for oldest versions
             */
-        RealmObjectSchema oldFavSchema = schema.get("FavItemBd");
+        val oldFavSchema = schema["FavItemBd"]
         if (oldFavSchema != null && !oldFavSchema.hasField("isForum")) {
-            oldFavSchema.addField("isForum", boolean.class);
+            oldFavSchema.addField("isForum", Boolean::class.javaPrimitiveType!!)
         }
-        RealmObjectSchema oldHistorySchema = schema.get("HistoryItemBd");
+        val oldHistorySchema = schema["HistoryItemBd"]
         if (oldHistorySchema != null && !oldHistorySchema.hasField("url")) {
-            oldHistorySchema.addField("url", String.class);
+            oldHistorySchema.addField("url", String::class.java)
         }
 
-        if (oldVersion == 1) {
-            RealmObjectSchema favSchema = schema.get("FavItemBd");
-            if (favSchema != null) {
-                favSchema
-                        .removeField("isNewMessages")
-                        .removeField("info")
-                        .addField("isNew", boolean.class)
-                        .addField("isPoll", boolean.class)
-                        .addField("isClosed", boolean.class);
-            }
+        if (updVersion == 1L) {
+            val favSchema = schema["FavItemBd"]
+            favSchema?.removeField("isNewMessages")?.removeField("info")
+                ?.addField("isNew", Boolean::class.javaPrimitiveType!!)?.addField(
+                    "isPoll",
+                    Boolean::class.javaPrimitiveType!!
+                )?.addField(
+                    "isClosed",
+                    Boolean::class.javaPrimitiveType!!
+                )
 
-            oldVersion++;
+            updVersion++
         }
 
-        if (oldVersion == 2) {
-            RealmObjectSchema historySchema = schema.get("HistoryItemBd");
+        if (updVersion == 2L) {
+            val historySchema = schema["HistoryItemBd"]
             if (historySchema != null) {
-                SimpleDateFormat oldDateFormat = new SimpleDateFormat("MM.dd.yy, HH:mm", Locale.getDefault());
-                SimpleDateFormat newDateFormat = new SimpleDateFormat("dd.MM.yy, HH:mm", Locale.getDefault());
+                val oldDateFormat = SimpleDateFormat("MM.dd.yy, HH:mm", Locale.getDefault())
+                val newDateFormat = SimpleDateFormat("dd.MM.yy, HH:mm", Locale.getDefault())
                 historySchema
-                        .transform(dynamicRealmObject -> {
-                            String dateString = dynamicRealmObject.getString("date");
-                            Date date = new Date();
-                            try {
-                                date = oldDateFormat.parse(dateString);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                            Log.d("SUKA", "DATES " + dateString + " : " + newDateFormat.format(date));
-                            dynamicRealmObject.setString("date", newDateFormat.format(date));
-                        });
+                    .transform(RealmObjectSchema.Function { dynamicRealmObject: DynamicRealmObject ->
+                        val dateString = dynamicRealmObject.getString("date")
+                        var date = Date()
+                        try {
+                            date = requireNotNull(oldDateFormat.parse(dateString))
+                        } catch (e: ParseException) {
+                            e.printStackTrace()
+                        }
+                        Log.d("SUKA", "DATES " + dateString + " : " + newDateFormat.format(date))
+                        dynamicRealmObject.setString("date", newDateFormat.format(date))
+                    })
             }
 
-            oldVersion++;
+            updVersion++
         }
 
-        if (oldVersion == 3) {
-            RealmObjectSchema favSchema = schema.get("FavItemBd");
-            if (favSchema != null) {
-                favSchema
-                        .addField("curatorId", int.class)
-                        .addField("curatorNick", String.class)
-                        .addField("subType", String.class);
-            }
+        if (updVersion == 3L) {
+            val favSchema = schema["FavItemBd"]
+            favSchema?.addField("curatorId", Int::class.javaPrimitiveType!!)?.addField(
+                "curatorNick",
+                String::class.java
+            )?.addField(
+                "subType",
+                String::class.java
+            )
 
-            oldVersion++;
+            updVersion++
         }
     }
 }

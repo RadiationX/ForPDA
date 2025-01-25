@@ -150,7 +150,7 @@ class DevDbSearchFragment : TabFragment(), SearchDevicesView,
     }
 
     override fun showCreateNote(title: String, url: String) {
-        NotesAddPopup.showAddNoteDialog(context, title, url)
+        NotesAddPopup.showAddNoteDialog(requireContext(), title, url)
     }
 
     override fun onItemClick(item: Brand.DeviceItem) {
@@ -161,7 +161,7 @@ class DevDbSearchFragment : TabFragment(), SearchDevicesView,
         dialogMenu.apply {
             disallowAll()
             allowAll()
-            show(context, this@DevDbSearchFragment, item)
+            show(requireContext(), this@DevDbSearchFragment, item)
         }
         return false
     }

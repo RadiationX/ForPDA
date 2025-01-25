@@ -44,7 +44,7 @@ class ArticleContentFragment : MvpAppCompatFragment(), ArticleContentView, TabTo
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        webView = ExtendedWebView(context)
+        webView = ExtendedWebView(requireContext())
         (parentFragment as? NewsDetailsFragment)?.attachWebView(webView)
         topScroller =
             WebViewTopScroller(webView, (parentFragment as NewsDetailsFragment).getAppBar())

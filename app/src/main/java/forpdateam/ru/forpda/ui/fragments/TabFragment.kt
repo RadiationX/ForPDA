@@ -263,12 +263,12 @@ open class TabFragment : MvpAppCompatFragment() {
 
     @JvmOverloads
     protected fun setListsBackground(view: View = coordinatorLayout) {
-        view.setBackgroundColor(App.getColorFromAttr(context, R.attr.background_for_lists))
+        view.setBackgroundColor(App.getColorFromAttr(requireContext(), R.attr.background_for_lists))
     }
 
     @JvmOverloads
     protected fun setCardsBackground(view: View = coordinatorLayout) {
-        view.setBackgroundColor(App.getColorFromAttr(context, R.attr.background_for_cards))
+        view.setBackgroundColor(App.getColorFromAttr(requireContext(), R.attr.background_for_cards))
     }
 
     protected fun updateToolbarShadow() {
@@ -297,11 +297,11 @@ open class TabFragment : MvpAppCompatFragment() {
     protected fun refreshLayoutStyle(refreshLayout: SwipeRefreshLayout) {
         refreshLayout.setProgressBackgroundColorSchemeColor(
             App.getColorFromAttr(
-                context,
+                requireContext(),
                 R.attr.colorPrimary
             )
         )
-        refreshLayout.setColorSchemeColors(App.getColorFromAttr(context, R.attr.colorAccent))
+        refreshLayout.setColorSchemeColors(App.getColorFromAttr(requireContext(), R.attr.colorAccent))
     }
 
     protected fun refreshLayoutLongTrigger(refreshLayout: SwipeRefreshLayout) {

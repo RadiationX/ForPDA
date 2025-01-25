@@ -60,7 +60,7 @@ class ForumFragment : TabFragment(), ForumView {
             }
             allow(4)
 
-            show(context, this@ForumFragment, item)
+            show(requireContext(), this@ForumFragment, item)
         }
 
         false
@@ -155,7 +155,7 @@ class ForumFragment : TabFragment(), ForumView {
     }
 
     override fun showForums(forumRoot: ForumItemTree) {
-        treeView = AndroidTreeView(context)
+        treeView = AndroidTreeView(requireContext())
         root = TreeNode.root()
         recourse(forumRoot, root)
         treeView.setRoot(root)
@@ -198,16 +198,16 @@ class ForumFragment : TabFragment(), ForumView {
     }
 
     override fun onMarkRead() {
-        Toast.makeText(context, R.string.action_complete, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), R.string.action_complete, Toast.LENGTH_SHORT).show()
     }
 
     override fun onMarkAllRead() {
-        Toast.makeText(context, R.string.action_complete, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), R.string.action_complete, Toast.LENGTH_SHORT).show()
     }
 
     override fun onAddToFavorite(result: Boolean) {
         Toast.makeText(
-            context,
+            requireContext(),
             if (result) getString(R.string.favorites_added) else getString(R.string.error_occurred),
             Toast.LENGTH_SHORT
         ).show()

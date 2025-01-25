@@ -115,7 +115,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
         savedInstanceState: Bundle?
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        sortingView = View.inflate(context, R.layout.favorite_sorting, null) as ViewGroup
+        sortingView = View.inflate(requireContext(), R.layout.favorite_sorting, null) as ViewGroup
         keySpinner = sortingView.findViewById<View>(R.id.sorting_key) as Spinner
         orderSpinner = sortingView.findViewById<View>(R.id.sorting_order) as Spinner
         sortApply = sortingView.findViewById<View>(R.id.sorting_apply) as Button
@@ -162,7 +162,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
 
         refreshLayout.setOnRefreshListener { presenter.refresh() }
 
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = FavoritesAdapter()
         adapter.setOnItemClickListener(adapterListener)
         recyclerView.adapter = adapter
@@ -220,7 +220,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
     }
 
     override fun onMarkAllRead() {
-        Toast.makeText(context, R.string.action_complete, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), R.string.action_complete, Toast.LENGTH_SHORT).show()
     }
 
     override fun onLoadFavorites(data: FavData) {
@@ -242,7 +242,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
         Log.e("kjkjkj", "onShowFavorite")
         if (items.isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
-                val funnyContent = FunnyContent(context)
+                val funnyContent = FunnyContent(requireContext())
                     .setImage(R.drawable.ic_star)
                     .setTitle(R.string.funny_favorites_nodata_title)
                     .setDesc(R.string.funny_favorites_nodata_desc)
@@ -283,7 +283,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
     }
 
     override fun onChangeFav(result: Boolean) {
-        Toast.makeText(context, R.string.action_complete, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), R.string.action_complete, Toast.LENGTH_SHORT).show()
     }
 
     override fun showSubscribeDialog(item: FavItem) {
@@ -320,7 +320,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
             val subTypeIndex = Arrays.asList(*FavoritesApi.SUB_TYPES).indexOf(item.subType)
             changeTitle(3, getSubText(subTypeIndex))
 
-            show(context, this@FavoritesFragment, item)
+            show(requireContext(), this@FavoritesFragment, item)
         }
     }
 

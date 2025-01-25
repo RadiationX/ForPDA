@@ -73,7 +73,7 @@ class QmsThemesFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<Qm
         setScrollFlagsEnterAlways()
 
         refreshLayout.setOnRefreshListener { presenter.loadThemes() }
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         fab.setImageDrawable(App.getVecDrawable(requireContext(), R.drawable.ic_fab_create))
         fab.setOnClickListener { presenter.openChat() }
@@ -146,23 +146,23 @@ class QmsThemesFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<Qm
 
     override fun showCreateNote(nick: String, url: String) {
         val title = String.format(getString(R.string.dialogs_Nick), nick)
-        NotesAddPopup.showAddNoteDialog(context, title, url)
+        NotesAddPopup.showAddNoteDialog(requireContext(), title, url)
     }
 
     override fun showCreateNote(name: String, nick: String, url: String) {
         val title = String.format(getString(R.string.dialog_Title_Nick), name, nick)
-        NotesAddPopup.showAddNoteDialog(context, title, url)
+        NotesAddPopup.showAddNoteDialog(requireContext(), title, url)
     }
 
     override fun onBlockUser(res: Boolean) {
-        Toast.makeText(context, R.string.user_added_to_blacklist, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), R.string.user_added_to_blacklist, Toast.LENGTH_SHORT).show()
     }
 
     override fun showItemDialogMenu(item: QmsTheme) {
         dialogMenu.apply {
             disallowAll()
             allowAll()
-            show(context, this@QmsThemesFragment, item)
+            show(requireContext(), this@QmsThemesFragment, item)
         }
     }
 

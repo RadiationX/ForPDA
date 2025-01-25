@@ -101,7 +101,7 @@ class MentionsFragment : RecyclerFragment(), MentionsView {
 
         adapter = MentionsAdapter()
 
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 
         adapter.setOnItemClickListener(adapterListener)
@@ -112,7 +112,7 @@ class MentionsFragment : RecyclerFragment(), MentionsView {
     override fun showMentions(data: MentionsData) {
         if (data.items.isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
-                val funnyContent = FunnyContent(context)
+                val funnyContent = FunnyContent(requireContext())
                     .setImage(R.drawable.ic_notifications)
                     .setTitle(R.string.funny_mentions_nodata_title)
                     .setDesc(R.string.funny_mentions_nodata_desc)
@@ -141,7 +141,7 @@ class MentionsFragment : RecyclerFragment(), MentionsView {
             if (item.isTopic && authHolder.get().isAuth()) {
                 allow(1)
             }
-            show(context, this@MentionsFragment, item)
+            show(requireContext(), this@MentionsFragment, item)
         }
     }
 
@@ -156,7 +156,7 @@ class MentionsFragment : RecyclerFragment(), MentionsView {
 
     override fun onAddToFavorite(result: Boolean) {
         Toast.makeText(
-            context,
+            requireContext(),
             if (result) getString(R.string.favorites_added) else getString(R.string.error_occurred),
             Toast.LENGTH_SHORT
         ).show()

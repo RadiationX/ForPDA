@@ -254,7 +254,7 @@ class NewsDetailsFragment : TabFragment(), ArticleDetailView, TabTopScroller {
     }
 
     override fun showCreateNote(title: String, url: String) {
-        NotesAddPopup.showAddNoteDialog(context, title, url)
+        NotesAddPopup.showAddNoteDialog(requireContext(), title, url)
     }
 
     override fun showArticleImage(imageUrl: String) {

@@ -82,15 +82,15 @@ class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView,
 
         refreshLayout.setProgressBackgroundColorSchemeColor(
             App.getColorFromAttr(
-                context,
+                requireContext(),
                 R.attr.colorPrimary
             )
         )
-        refreshLayout.setColorSchemeColors(App.getColorFromAttr(context, R.attr.colorAccent))
+        refreshLayout.setColorSchemeColors(App.getColorFromAttr(requireContext(), R.attr.colorAccent))
         refreshLayout.setOnRefreshListener { presenter.updateComments() }
 
-        recyclerView.setBackgroundColor(App.getColorFromAttr(context, R.attr.background_for_lists))
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.setBackgroundColor(App.getColorFromAttr(requireContext(), R.attr.background_for_lists))
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.setHasFixedSize(true)
         recyclerView.addItemDecoration(DevicesFragment.SpacingItemDecoration(App.px12, false))
         adapter.clickListener = this
@@ -119,7 +119,7 @@ class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView,
     private fun createFunny(comments: List<Comment>) {
         if (comments.isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
-                val funnyContent = FunnyContent(context)
+                val funnyContent = FunnyContent(requireContext())
                     .setImage(R.drawable.ic_comment)
                     .setTitle(R.string.funny_article_comments_nodata_title)
                 contentController.addContent(funnyContent, ContentController.TAG_NO_DATA)

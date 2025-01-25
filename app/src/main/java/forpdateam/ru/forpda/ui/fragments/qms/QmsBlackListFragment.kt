@@ -75,7 +75,7 @@ class QmsBlackListFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener
         })
 
         refreshLayout.setOnRefreshListener { presenter.loadContacts() }
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         dialogMenu.apply {
             addItem(getString(R.string.profile)) { _, data ->
@@ -112,7 +112,7 @@ class QmsBlackListFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener
         setRefreshing(false)
         if (items.isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
-                val funnyContent = FunnyContent(context)
+                val funnyContent = FunnyContent(requireContext())
                     .setImage(R.drawable.ic_contacts)
                     .setTitle(R.string.funny_blacklist_nodata_title)
                     .setDesc(R.string.funny_blacklist_nodata_desc)
@@ -145,7 +145,7 @@ class QmsBlackListFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener
         dialogMenu.apply {
             disallowAll()
             allowAll()
-            show(context, this@QmsBlackListFragment, item)
+            show(requireContext(), this@QmsBlackListFragment, item)
         }
     }
 

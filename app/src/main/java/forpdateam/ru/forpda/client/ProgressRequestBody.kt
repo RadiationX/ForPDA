@@ -1,65 +1,52 @@
-package forpdateam.ru.forpda.client;
+package forpdateam.ru.forpda.client
 
-import androidx.annotation.NonNull;
-
-import java.io.IOException;
-
-import forpdateam.ru.forpda.model.data.remote.IWebClient;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
-import okio.Buffer;
-import okio.BufferedSink;
-import okio.ForwardingSink;
-import okio.Okio;
-import okio.Sink;
+import forpdateam.ru.forpda.model.data.remote.IWebClient
+import okhttp3.MediaType
+import okhttp3.RequestBody
+import okio.Buffer
+import okio.BufferedSink
+import okio.ForwardingSink
+import okio.Okio
+import okio.Sink
+import java.io.IOException
 
 /**
  * Created by radiationx on 10.11.17.
  */
-public class ProgressRequestBody extends RequestBody {
-    private final RequestBody mDelegate;
-    private final IWebClient.ProgressListener mListener;
-
-    ProgressRequestBody(RequestBody delegate, IWebClient.ProgressListener listener) {
-        mDelegate = delegate;
-        mListener = listener;
+class ProgressRequestBody internal constructor(
+    private val mDelegate: RequestBody,
+    private val mListener: IWebClient.ProgressListener
+) :
+    RequestBody() {
+    override fun contentType(): MediaType? {
+        return mDelegate.contentType()
     }
 
-    @Override
-    public MediaType contentType() {
-        return mDelegate.contentType();
-    }
-
-    @Override
-    public long contentLength() {
+    override fun contentLength(): Long {
         try {
-            return mDelegate.contentLength();
-        } catch (IOException e) {
-            e.printStackTrace();
+            return mDelegate.contentLength()
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
-        return -1;
+        return -1
     }
 
-    @Override
-    public void writeTo(@NonNull BufferedSink sink) throws IOException {
-        CountingSink mCountingSink = new CountingSink(sink);
-        BufferedSink bufferedSink = Okio.buffer(mCountingSink);
-        mDelegate.writeTo(bufferedSink);
-        bufferedSink.flush();
+    @Throws(IOException::class)
+    override fun writeTo(sink: BufferedSink) {
+        val mCountingSink: CountingSink = CountingSink(sink)
+        val bufferedSink = Okio.buffer(mCountingSink)
+        mDelegate.writeTo(bufferedSink)
+        bufferedSink.flush()
     }
 
-    private final class CountingSink extends ForwardingSink {
-        private long bytesWritten = 0;
+    private inner class CountingSink(delegate: Sink) : ForwardingSink(delegate) {
+        private var bytesWritten: Long = 0
 
-        CountingSink(Sink delegate) {
-            super(delegate);
-        }
-
-        @Override
-        public void write(@NonNull Buffer source, long byteCount) throws IOException {
-            super.write(source, byteCount);
-            bytesWritten += byteCount;
-            mListener.onProgress((int) (100F * bytesWritten / contentLength()));
+        @Throws(IOException::class)
+        override fun write(source: Buffer, byteCount: Long) {
+            super.write(source, byteCount)
+            bytesWritten += byteCount
+            mListener.onProgress((100f * bytesWritten / contentLength()).toInt())
         }
     }
 }

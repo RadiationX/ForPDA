@@ -102,8 +102,8 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface,
         baseInflateFragment(inflater, R.layout.fragment_qms_chat)
         chatContainer = findViewById(R.id.qms_chat_container) as FrameLayout
         progressBar = findViewById(R.id.progress_bar) as ProgressBar
-        messagePanel = MessagePanel(context, fragmentContainer, coordinatorLayout, false)
-        webView = ExtendedWebView(context)
+        messagePanel = MessagePanel(requireContext(), fragmentContainer, coordinatorLayout, false)
+        webView = ExtendedWebView(requireContext())
         webView.setDialogsHelper(
             DialogsHelper(
                 webView.context,
@@ -319,13 +319,13 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface,
 
     override fun onBlockUser(res: Boolean) {
         if (res) {
-            Toast.makeText(context, R.string.user_added_to_blacklist, Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.user_added_to_blacklist, Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun showCreateNote(name: String, nick: String, url: String) {
         val title = String.format(getString(R.string.dialog_Title_Nick), name, nick)
-        NotesAddPopup.showAddNoteDialog(context, title, url)
+        NotesAddPopup.showAddNoteDialog(requireContext(), title, url)
     }
 
     override fun showMoreMessages(items: List<QmsMessage>, startIndex: Int, endIndex: Int) {
@@ -360,7 +360,7 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface,
                 //Display an error
                 return
             }
-            uploadFiles(FilePickHelper.onActivityResult(context, data))
+            uploadFiles(FilePickHelper.onActivityResult(requireContext(), data))
         }
     }
 

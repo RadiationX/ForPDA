@@ -226,7 +226,7 @@ class ProfileFragment : TabFragment(), ProfileAdapter.ClickListener, ProfileView
 
     override fun onSaveNote(success: Boolean) {
         Toast.makeText(
-            context,
+            requireContext(),
             getString(if (success) R.string.profile_note_saved else R.string.error_occurred),
             Toast.LENGTH_SHORT
         ).show()

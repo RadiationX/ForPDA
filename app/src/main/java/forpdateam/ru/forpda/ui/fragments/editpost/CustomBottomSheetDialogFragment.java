@@ -51,7 +51,7 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment {
     @Override
     public void setupDialog(Dialog dialog, int style) {
         //super.setupDialog(dialog, style);
-        View contentView = View.inflate(getContext(), R.layout.edit_post_reason, null);
+        View contentView = View.inflate(requireContext(), R.layout.edit_post_reason, null);
         dialog.setContentView(contentView);
         CoordinatorLayout.LayoutParams layoutParams =
                 (CoordinatorLayout.LayoutParams) ((View) contentView.getParent()).getLayoutParams();

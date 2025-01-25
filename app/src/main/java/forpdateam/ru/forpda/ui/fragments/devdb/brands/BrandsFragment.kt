@@ -51,7 +51,7 @@ class BrandsFragment : RecyclerFragment(), BrandsView,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         refreshLayout.setOnRefreshListener { presenter.loadBrands() }
         titlesWrapper.visibility = View.GONE
         toolbarSpinner.visibility = View.VISIBLE

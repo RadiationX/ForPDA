@@ -51,7 +51,7 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
         webViewClient = ThemeWebViewClient()
         chromeClient = ThemeChromeClient()
 
-        webView = ExtendedWebView(context)
+        webView = ExtendedWebView(requireContext())
         webView.setDialogsHelper(
             DialogsHelper(
                 webView.context,

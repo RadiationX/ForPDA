@@ -1,9 +1,16 @@
-package forpdateam.ru.forpda.common;
+package forpdateam.ru.forpda.common
+
+import android.content.Context
+import android.graphics.Paint
+import android.graphics.Typeface
+import android.text.TextPaint
+import android.text.style.MetricAffectingSpan
+import android.util.LruCache
+import forpdateam.ru.forpda.App.Companion.getContext
 
 /**
  * Created by radiationx on 19.07.17.
  */
-
 /*
  * Copyright 2013 Simple Finance Corporation. All rights reserved.
  *
@@ -20,56 +27,50 @@ package forpdateam.ru.forpda.common;
  * limitations under the License.
  */
 
-import android.content.Context;
-import android.graphics.Paint;
-import android.graphics.Typeface;
-import android.text.Spannable;
-import android.text.TextPaint;
-import android.text.style.MetricAffectingSpan;
-import android.util.LruCache;
-
-import forpdateam.ru.forpda.App;
-
 /**
- * Style a {@link Spannable} with a custom {@link Typeface}.
+ * Style a [Spannable] with a custom [Typeface].
  *
  * @author Tristan Waddington
  */
-public class AssetsTypefaceSpan extends MetricAffectingSpan {
-    /**
-     * An <code>LruCache</code> for previously loaded typefaces.
-     */
-    private static final LruCache<String, Typeface> sTypefaceCache = new LruCache<>(12);
-
-    private Typeface mTypeface;
+class AssetsTypefaceSpan(context: Context?, typefaceName: String) :
+    MetricAffectingSpan() {
+    private var mTypeface: Typeface?
 
     /**
-     * Load the {@link Typeface} and apply to a {@link Spannable}.
+     * Load the [Typeface] and apply to a [Spannable].
      */
-    public AssetsTypefaceSpan(Context context, String typefaceName) {
-        mTypeface = sTypefaceCache.get(typefaceName);
+    init {
+        mTypeface = sTypefaceCache[typefaceName]
 
         if (mTypeface == null) {
-            mTypeface = Typeface.createFromAsset(App.getContext().getAssets(), String.format("fonts/%s", typefaceName));
+            mTypeface = Typeface.createFromAsset(
+                getContext().assets,
+                String.format("fonts/%s", typefaceName)
+            )
 
             // Cache the loaded Typeface
-            sTypefaceCache.put(typefaceName, mTypeface);
+            sTypefaceCache.put(typefaceName, mTypeface)
         }
     }
 
-    @Override
-    public void updateMeasureState(TextPaint p) {
-        p.setTypeface(mTypeface);
+    override fun updateMeasureState(p: TextPaint) {
+        p.setTypeface(mTypeface)
 
         // Note: This flag is required for proper typeface rendering
-        p.setFlags(p.getFlags() | Paint.SUBPIXEL_TEXT_FLAG);
+        p.flags = p.flags or Paint.SUBPIXEL_TEXT_FLAG
     }
 
-    @Override
-    public void updateDrawState(TextPaint tp) {
-        tp.setTypeface(mTypeface);
+    override fun updateDrawState(tp: TextPaint) {
+        tp.setTypeface(mTypeface)
 
         // Note: This flag is required for proper typeface rendering
-        tp.setFlags(tp.getFlags() | Paint.SUBPIXEL_TEXT_FLAG);
+        tp.flags = tp.flags or Paint.SUBPIXEL_TEXT_FLAG
+    }
+
+    companion object {
+        /**
+         * An `LruCache` for previously loaded typefaces.
+         */
+        private val sTypefaceCache = LruCache<String, Typeface?>(12)
     }
 }

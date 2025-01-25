@@ -1,32 +1,25 @@
-package forpdateam.ru.forpda.client;
+package forpdateam.ru.forpda.client
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
+import android.os.Build
+import androidx.annotation.RequiresApi
 
 /**
  * Created by radiationx on 02.12.16.
  */
+class OnlyShowException : Exception {
+    constructor() : super()
 
-public class OnlyShowException extends Exception {
-    public OnlyShowException() {
-        super();
-    }
+    constructor(message: String?) : super(message)
 
-    public OnlyShowException(String message) {
-        super(message);
-    }
+    constructor(message: String?, cause: Throwable?) : super(message, cause)
 
-    public OnlyShowException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public OnlyShowException(Throwable cause) {
-        super(cause);
-    }
+    constructor(cause: Throwable?) : super(cause)
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    protected OnlyShowException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
+    protected constructor(
+        message: String?,
+        cause: Throwable?,
+        enableSuppression: Boolean,
+        writableStackTrace: Boolean
+    ) : super(message, cause, enableSuppression, writableStackTrace)
 }

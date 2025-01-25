@@ -49,7 +49,7 @@ class NewsMainFragment : RecyclerFragment(), NewsListAdapter.ItemClickListener, 
         super.onViewCreated(view, savedInstanceState)
         setListsBackground()
         refreshLayout.setOnRefreshListener { presenter.refreshArticles() }
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         //recyclerView.addItemDecoration(new DevicesFragment.SpacingItemDecoration(App.px8, true));
         val pauseOnScrollListener = PauseOnScrollListener(ImageLoader.getInstance(), true, true)
         recyclerView.addOnScrollListener(pauseOnScrollListener)
@@ -103,14 +103,14 @@ class NewsMainFragment : RecyclerFragment(), NewsListAdapter.ItemClickListener, 
     }
 
     override fun showCreateNote(title: String, url: String) {
-        NotesAddPopup.showAddNoteDialog(context, title, url)
+        NotesAddPopup.showAddNoteDialog(requireContext(), title, url)
     }
 
     override fun showItemDialogMenu(item: NewsItem) {
         dialogMenu.apply {
             disallowAll()
             allowAll()
-            show(context, this@NewsMainFragment, item)
+            show(requireContext(), this@NewsMainFragment, item)
         }
     }
 

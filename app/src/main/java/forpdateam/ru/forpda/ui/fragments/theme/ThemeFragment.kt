@@ -128,7 +128,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
         arguments?.apply {
             presenter.themeUrl = getString(ARG_TAB, "")
         }
-        dialogsHelper = ThemeDialogsHelper_V2(context, authHolder, otherPreferencesHolder)
+        dialogsHelper = ThemeDialogsHelper_V2(requireContext(), authHolder, otherPreferencesHolder)
     }
 
     override fun initFabBehavior() {
@@ -153,7 +153,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
         baseInflateFragment(inflater, R.layout.fragment_theme)
         refreshLayout =
             findViewById(R.id.swipe_refresh_list) as SwipeRefreshLayout
-        messagePanel = MessagePanel(context, fragmentContainer, coordinatorLayout, false)
+        messagePanel = MessagePanel(requireContext(), fragmentContainer, coordinatorLayout, false)
         paginationHelper = PaginationHelper(activity)
         paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow)
 
@@ -175,7 +175,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
         setFontSize(mainPreferencesHolder.getWebViewFontSize())
 
         notificationButton.setColorFilter(
-            App.getColorFromAttr(context, R.attr.contrast_text_color),
+            App.getColorFromAttr(requireContext(), R.attr.contrast_text_color),
             PorterDuff.Mode.SRC_ATOP
         )
         notificationTitle.text = "Новое сообщение"
@@ -482,7 +482,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
 
                 val navButtonsParams = ViewGroup.LayoutParams(App.px48, App.px48)
                 val outValue = TypedValue()
-                context?.theme?.resolveAttribute(
+                requireContext().theme?.resolveAttribute(
                     android.R.attr.actionBarItemBackground,
                     outValue,
                     true
@@ -559,7 +559,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
 
     override fun onAddToFavorite(result: Boolean) {
         Toast.makeText(
-            context,
+            requireContext(),
             if (result) getString(R.string.favorites_added) else getString(R.string.error_occurred),
             Toast.LENGTH_SHORT
         ).show()
@@ -621,7 +621,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
                 //Display an error
                 return
             }
-            uploadFiles(FilePickHelper.onActivityResult(context, data))
+            uploadFiles(FilePickHelper.onActivityResult(requireContext(), data))
         }
     }
 
@@ -651,7 +651,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
      * */
 
     override fun showNoteCreate(title: String, url: String) {
-        NotesAddPopup.showAddNoteDialog(context, title, url)
+        NotesAddPopup.showAddNoteDialog(requireContext(), title, url)
     }
 
     override fun firstPage() {
@@ -689,7 +689,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
     }
 
     override fun toast(text: String) {
-        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), text, Toast.LENGTH_SHORT).show()
     }
 
     override fun log(text: String) {

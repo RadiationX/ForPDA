@@ -79,11 +79,11 @@ public class ChatThemeCreator {
 
     void sendNewTheme() {
         if (userNick == null || userNick.isEmpty()) {
-            Toast.makeText(fragment.getContext(), R.string.chat_creator_enter_nick, Toast.LENGTH_SHORT).show();
+            Toast.makeText(fragment.requireContext(), R.string.chat_creator_enter_nick, Toast.LENGTH_SHORT).show();
         } else if (titleField.getText().toString().isEmpty()) {
-            Toast.makeText(fragment.getContext(), R.string.chat_creator_enter_title, Toast.LENGTH_SHORT).show();
+            Toast.makeText(fragment.requireContext(), R.string.chat_creator_enter_title, Toast.LENGTH_SHORT).show();
         } else if (fragment.getMessagePanel().getMessage().isEmpty()) {
-            Toast.makeText(fragment.getContext(), R.string.chat_creator_enter_message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(fragment.requireContext(), R.string.chat_creator_enter_message, Toast.LENGTH_SHORT).show();
         } else {
             this.fragment.onCreateNewTheme(userNick, titleField.getText().toString(), fragment.getMessagePanel().getMessage());
         }

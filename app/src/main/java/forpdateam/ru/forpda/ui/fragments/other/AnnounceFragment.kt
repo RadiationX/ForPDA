@@ -68,7 +68,7 @@ class AnnounceFragment : TabFragment(), AnnounceView, TabTopScroller {
         savedInstanceState: Bundle?
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        webView = ExtendedWebView(context)
+        webView = ExtendedWebView(requireContext())
         webView.setDialogsHelper(
             DialogsHelper(
                 webView.context,
@@ -134,7 +134,7 @@ class AnnounceFragment : TabFragment(), AnnounceView, TabTopScroller {
 
                 val navButtonsParams = ViewGroup.LayoutParams(App.px48, App.px48)
                 val outValue = TypedValue()
-                context?.theme?.resolveAttribute(
+                requireContext().theme?.resolveAttribute(
                     android.R.attr.actionBarItemBackground,
                     outValue,
                     true

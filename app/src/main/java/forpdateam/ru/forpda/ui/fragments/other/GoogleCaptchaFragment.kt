@@ -46,7 +46,7 @@ class GoogleCaptchaFragment : TabFragment() {
         savedInstanceState: Bundle?
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        webView = ExtendedWebView(context)
+        webView = ExtendedWebView(requireContext())
         webView.setDialogsHelper(
             DialogsHelper(
                 webView.context,

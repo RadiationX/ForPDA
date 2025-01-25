@@ -1,113 +1,104 @@
-package forpdateam.ru.forpda.common;
+package forpdateam.ru.forpda.common
 
-import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.OpenableColumns;
-import android.util.Log;
-import android.webkit.MimeTypeMap;
-
-import com.yandex.metrica.YandexMetrica;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import forpdateam.ru.forpda.model.data.remote.api.RequestFile;
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.OpenableColumns
+import android.util.Log
+import android.webkit.MimeTypeMap
+import com.yandex.metrica.YandexMetrica
+import forpdateam.ru.forpda.model.data.remote.api.RequestFile
+import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
 
 /**
  * Created by radiationx on 13.01.17.
  */
+object FilePickHelper {
+    private val LOG_TAG = FilePickHelper::class.java.simpleName
 
-public class FilePickHelper {
-    private final static String LOG_TAG = FilePickHelper.class.getSimpleName();
-
-    public static Intent pickFile(boolean onlyImages) {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+    fun pickFile(onlyImages: Boolean): Intent {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         if (onlyImages) {
-            intent.setType("image/*");
+            intent.setType("image/*")
         } else {
-            intent.setType("*/*");
+            intent.setType("*/*")
         }
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        return Intent.createChooser(intent, "Select file");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+        intent.setAction(Intent.ACTION_GET_CONTENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        return Intent.createChooser(intent, "Select file")
     }
 
-    public static List<RequestFile> onActivityResult(Context context, Intent data) {
-        List<RequestFile> files = new ArrayList<>();
-        RequestFile tempFile;
-        Log.d(LOG_TAG, "onActivityResult " + data);
-        if (data.getData() == null) {
-            if (data.getClipData() != null) {
-                for (int i = 0; i < data.getClipData().getItemCount(); i++) {
-                    tempFile = createFile(context, data.getClipData().getItemAt(i).getUri());
-                    if (tempFile != null) files.add(tempFile);
+    fun onActivityResult(context: Context, data: Intent): List<RequestFile> {
+        val files: MutableList<RequestFile> = ArrayList()
+        var tempFile: RequestFile?
+        Log.d(LOG_TAG, "onActivityResult $data")
+        if (data.data == null) {
+            if (data.clipData != null) {
+                for (i in 0 until data.clipData!!.itemCount) {
+                    tempFile = createFile(context, data.clipData!!.getItemAt(i).uri)
+                    if (tempFile != null) files.add(tempFile)
                 }
             }
         } else {
-            tempFile = createFile(context, data.getData());
-            if (tempFile != null) files.add(tempFile);
+            tempFile = createFile(context, data.data!!)
+            if (tempFile != null) files.add(tempFile)
         }
-        return files;
+        return files
     }
 
-    private static RequestFile createFile(Context context, Uri uri) {
-        RequestFile requestFile = null;
-        Log.d(LOG_TAG, "createFile " + uri);
+    private fun createFile(context: Context, uri: Uri): RequestFile? {
+        var requestFile: RequestFile? = null
+        Log.d(LOG_TAG, "createFile $uri")
         try {
-            InputStream inputStream = null;
-            String name = getFileName(context, uri);
-            String extension = MimeTypeUtil.getExtension(name);
-            String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+            var inputStream: InputStream? = null
+            val name = getFileName(context, uri)
+            val extension = MimeTypeUtil.getExtension(name)
+            var mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
             if (mimeType == null) {
-                mimeType = context.getContentResolver().getType(uri);
+                mimeType = context.contentResolver.getType(uri)
             }
             if (mimeType == null) {
-                mimeType = MimeTypeUtil.getType(extension);
+                mimeType = MimeTypeUtil.getType(extension)
             }
-            if (uri.getScheme().equals("content")) {
-                inputStream = context.getContentResolver().openInputStream(uri);
-            } else if (uri.getScheme().equals("file")) {
-                inputStream = new FileInputStream(new File(uri.getPath()));
+            if (uri.scheme == "content") {
+                inputStream = context.contentResolver.openInputStream(uri)
+            } else if (uri.scheme == "file") {
+                inputStream = FileInputStream(File(uri.path))
             }
-            requestFile = new RequestFile(name, mimeType, inputStream);
-        } catch (Exception e) {
-            YandexMetrica.reportError(e.getMessage(), e);
+            requestFile = RequestFile(name, mimeType, inputStream)
+        } catch (e: Exception) {
+            YandexMetrica.reportError(e.message!!, e)
         }
-        return requestFile;
+        return requestFile
     }
 
-    private static String getFileName(Context context, Uri uri) {
-        Log.d(LOG_TAG, "getFileName " + uri.getScheme() + " : " + context.getContentResolver().getType(uri));
-        String result = null;
-        if (uri.getScheme().equals("content")) {
-            Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+    private fun getFileName(context: Context, uri: Uri): String {
+        Log.d(LOG_TAG, "getFileName " + uri.scheme + " : " + context.contentResolver.getType(uri))
+        var result: String? = null
+        if (uri.scheme == "content") {
+            val cursor = context.contentResolver.query(uri, null, null, null, null)
             try {
                 if (cursor != null && cursor.moveToFirst()) {
-                    int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    val index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
                     if (index >= 0) {
-                        result = cursor.getString(index);
+                        result = cursor.getString(index)
                     }
                 }
             } finally {
-                if (cursor != null) {
-                    cursor.close();
-                }
+                cursor?.close()
             }
         }
         if (result == null) {
-            Log.d(LOG_TAG, "res " + uri.getPath());
-            result = uri.getPath();
-            int cut = result.lastIndexOf('/');
+            Log.d(LOG_TAG, "res " + uri.path)
+            result = uri.path
+            val cut = result!!.lastIndexOf('/')
             if (cut != -1) {
-                result = result.substring(cut + 1);
+                result = result.substring(cut + 1)
             }
         }
-        return result;
+        return result!!
     }
 }

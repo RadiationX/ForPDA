@@ -1,123 +1,119 @@
-package forpdateam.ru.forpda.common;
+package forpdateam.ru.forpda.common
 
 /**
  * Created by radiationx on 28.05.17.
  */
+class Preferences {
+    object Auth {
+        const val USER_ID: String = "member_id"
+        const val AUTH_KEY: String = "auth_key"
 
-public class Preferences {
-
-    public final static class Auth {
-        public final static String USER_ID = "member_id";
-        public final static String AUTH_KEY = "auth_key";
-
-        public final static String COOKIE_MEMBER_ID = "cookie_member_id";
-        public final static String COOKIE_PASS_HASH = "cookie_pass_hash";
-        public final static String COOKIE_SESSION_ID = "cookie_session_id";
-        public final static String COOKIE_ANONYMOUS = "cookie_anonymous";
-        public final static String COOKIE_CF_CLEARANCE = "cookie_cf_clearance";
+        const val COOKIE_MEMBER_ID: String = "cookie_member_id"
+        const val COOKIE_PASS_HASH: String = "cookie_pass_hash"
+        const val COOKIE_SESSION_ID: String = "cookie_session_id"
+        const val COOKIE_ANONYMOUS: String = "cookie_anonymous"
+        const val COOKIE_CF_CLEARANCE: String = "cookie_cf_clearance"
     }
 
-    public final static class Other {
-        public final static String APP_FIRST_START = "main.is_first_start";
-        public final static String APP_VERSIONS_HISTORY = "app.versions.history";
-        public final static String SEARCH_SETTINGS = "search_settings_v2";
-        public final static String MESSAGE_PANEL_BBCODES_SORT = "message_panel.bb_codes.sorted";
+    object Other {
+        const val APP_FIRST_START: String = "main.is_first_start"
+        const val APP_VERSIONS_HISTORY: String = "app.versions.history"
+        const val SEARCH_SETTINGS: String = "search_settings_v2"
+        const val MESSAGE_PANEL_BBCODES_SORT: String = "message_panel.bb_codes.sorted"
 
 
-        public final static String SHOW_REPORT_WARNING = "show_report_warning";
+        const val SHOW_REPORT_WARNING: String = "show_report_warning"
 
-        public final static String TOOLTIP_SEARCH_SETTINGS = "search.tooltip.settings";
-        public final static String TOOLTIP_THEME_LONG_CLICK_SEND = "theme.tooltip.long_click_send";
-        public final static String TOOLTIP_MESSAGE_PANEL_SORTING = "message_panel.tooltip.user_sorting";
-
+        const val TOOLTIP_SEARCH_SETTINGS: String = "search.tooltip.settings"
+        const val TOOLTIP_THEME_LONG_CLICK_SEND: String = "theme.tooltip.long_click_send"
+        const val TOOLTIP_MESSAGE_PANEL_SORTING: String = "message_panel.tooltip.user_sorting"
     }
 
-    public final static class Main {
-        private final static String PREFIX = "main.";
+    object Main {
+        private const val PREFIX = "main."
 
-        public final static String WEBVIEW_FONT_SIZE = PREFIX + "webview.font_size_v2";
-        public final static String IS_SYSTEM_DOWNLOADER = PREFIX + "is_system_downloader";
-        public final static String IS_EDITOR_MONOSPACE = "message_panel.is_monospace";
-        public final static String IS_EDITOR_DEFAULT_HIDDEN = "message_panel.is_default_hidden";
-        public final static String SCROLL_BUTTON_ENABLE = PREFIX + "scroll_button.enable";
-        public final static String SHOW_BOTTOM_ARROW = PREFIX + "show_bottom_arrow";
+        const val WEBVIEW_FONT_SIZE: String = PREFIX + "webview.font_size_v2"
+        const val IS_SYSTEM_DOWNLOADER: String = PREFIX + "is_system_downloader"
+        const val IS_EDITOR_MONOSPACE: String = "message_panel.is_monospace"
+        const val IS_EDITOR_DEFAULT_HIDDEN: String = "message_panel.is_default_hidden"
+        const val SCROLL_BUTTON_ENABLE: String = PREFIX + "scroll_button.enable"
+        const val SHOW_BOTTOM_ARROW: String = PREFIX + "show_bottom_arrow"
 
-        public final static class Theme {
-            private final static String PREFIX = Main.PREFIX + "theme.";
-            public final static String MODE = PREFIX + "mode";
+        object Theme {
+            private const val PREFIX = Main.PREFIX + "theme."
+            const val MODE: String = PREFIX + "mode"
         }
 
-        public enum ThemeMode {
+        enum class ThemeMode {
             LIGHT, DARK, SYSTEM
         }
     }
 
-    public final static class Lists {
-        private final static String PREFIX = "lists.";
+    object Lists {
+        private const val PREFIX = "lists."
 
-        public final static class Topic {
-            private final static String PREFIX = Lists.PREFIX + "topic.";
-            public final static String UNREAD_TOP = PREFIX + "unread_top";
-            public final static String SHOW_DOT = PREFIX + "show_dot";
+        object Topic {
+            private const val PREFIX = Lists.PREFIX + "topic."
+            const val UNREAD_TOP: String = PREFIX + "unread_top"
+            const val SHOW_DOT: String = PREFIX + "show_dot"
         }
 
-        public final static class Favorites {
-            private final static String PREFIX = Lists.PREFIX + "favorites.";
-            public final static String LOAD_ALL = PREFIX + "load_all";
-            public final static String SORTING_KEY = PREFIX + "sorting_key";
-            public final static String SORTING_ORDER = PREFIX + "sorting_order";
+        object Favorites {
+            private const val PREFIX = Lists.PREFIX + "favorites."
+            const val LOAD_ALL: String = PREFIX + "load_all"
+            const val SORTING_KEY: String = PREFIX + "sorting_key"
+            const val SORTING_ORDER: String = PREFIX + "sorting_order"
         }
     }
 
-    public final static class Theme {
-        private final static String PREFIX = "theme.";
-        public final static String SHOW_AVATARS = PREFIX + "show_avatars";
-        public final static String CIRCLE_AVATARS = PREFIX + "circle_avatars";
-        public final static String ANCHOR_HISTORY = PREFIX + "anchor_history";
-        public final static String HAT_OPENED = PREFIX + "hat_opened";
+    object Theme {
+        private const val PREFIX = "theme."
+        const val SHOW_AVATARS: String = PREFIX + "show_avatars"
+        const val CIRCLE_AVATARS: String = PREFIX + "circle_avatars"
+        const val ANCHOR_HISTORY: String = PREFIX + "anchor_history"
+        const val HAT_OPENED: String = PREFIX + "hat_opened"
     }
 
-    public static final class Notifications {
-        private final static String PREFIX = "notifications.";
+    object Notifications {
+        private const val PREFIX = "notifications."
 
 
-        public static final class Data {
-            private final static String PREFIX = Notifications.PREFIX + "data.";
-            public final static String QMS_EVENTS = PREFIX + "qms_events";
-            public final static String FAVORITES_EVENTS = PREFIX + "favorites_events";
-
+        object Data {
+            private const val PREFIX = Notifications.PREFIX + "data."
+            const val QMS_EVENTS: String = PREFIX + "qms_events"
+            const val FAVORITES_EVENTS: String = PREFIX + "favorites_events"
         }
 
-        public static final class Main {
-            private final static String PREFIX = Notifications.PREFIX + "main.";
-            public final static String ENABLED = PREFIX + "enabled";
-            public final static String SOUND_ENABLED = PREFIX + "sound_enabled";
-            public final static String VIBRATION_ENABLED = PREFIX + "vibration_enabled";
-            public final static String INDICATOR_ENABLED = PREFIX + "indicator_enabled";
-            public final static String AVATARS_ENABLED = PREFIX + "avatars_enabled";
-            public final static String LIMIT = PREFIX + "limit_period";
+        object Main {
+            private const val PREFIX = Notifications.PREFIX + "main."
+            const val ENABLED: String = PREFIX + "enabled"
+            const val SOUND_ENABLED: String = PREFIX + "sound_enabled"
+            const val VIBRATION_ENABLED: String = PREFIX + "vibration_enabled"
+            const val INDICATOR_ENABLED: String = PREFIX + "indicator_enabled"
+            const val AVATARS_ENABLED: String = PREFIX + "avatars_enabled"
+            const val LIMIT: String = PREFIX + "limit_period"
         }
 
-        public static final class Favorites {
-            private final static String PREFIX = Notifications.PREFIX + "fav.";
-            public final static String ENABLED = PREFIX + "enabled";
-            public final static String ONLY_IMPORTANT = PREFIX + "only_important";
-            public final static String LIVE_TAB = PREFIX + "live_tab";
+        object Favorites {
+            private const val PREFIX = Notifications.PREFIX + "fav."
+            const val ENABLED: String = PREFIX + "enabled"
+            const val ONLY_IMPORTANT: String = PREFIX + "only_important"
+            const val LIVE_TAB: String = PREFIX + "live_tab"
         }
 
-        public static final class Qms {
-            private final static String PREFIX = Notifications.PREFIX + "qms.";
-            public final static String ENABLED = PREFIX + "enabled";
+        object Qms {
+            private const val PREFIX = Notifications.PREFIX + "qms."
+            const val ENABLED: String = PREFIX + "enabled"
         }
 
-        public static final class Mentions {
-            private final static String PREFIX = Notifications.PREFIX + "mentions.";
-            public final static String ENABLED = PREFIX + "enabled";
+        object Mentions {
+            private const val PREFIX = Notifications.PREFIX + "mentions."
+            const val ENABLED: String = PREFIX + "enabled"
         }
 
-        public static final class Update {
-            private final static String PREFIX = Notifications.PREFIX + "update.";
-            public final static String ENABLED = PREFIX + "enabled";
+        object Update {
+            private const val PREFIX = Notifications.PREFIX + "update."
+            const val ENABLED: String = PREFIX + "enabled"
         }
     }
 }

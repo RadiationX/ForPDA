@@ -68,7 +68,7 @@ class HistoryFragment : RecyclerFragment(), HistoryView {
 
         adapter = HistoryAdapter()
 
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 
         adapter.setItemClickListener(adapterListener)
@@ -87,7 +87,7 @@ class HistoryFragment : RecyclerFragment(), HistoryView {
     override fun showHistory(items: List<HistoryItem>) {
         if (items.isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
-                val funnyContent = FunnyContent(context)
+                val funnyContent = FunnyContent(requireContext())
                     .setImage(R.drawable.ic_history)
                     .setTitle(R.string.funny_history_nodata_title)
                     .setDesc(R.string.funny_history_nodata_desc)
@@ -104,7 +104,7 @@ class HistoryFragment : RecyclerFragment(), HistoryView {
         dialogMenu.apply {
             disallowAll()
             allowAll()
-            show(context, this@HistoryFragment, item)
+            show(requireContext(), this@HistoryFragment, item)
         }
     }
 

@@ -122,7 +122,7 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
         }
 
         refreshLayout.setOnRefreshListener { presenter.loadTopics() }
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         adapter = TopicsAdapter()
         recyclerView.adapter = adapter
@@ -209,12 +209,12 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
     }
 
     override fun onMarkRead() {
-        Toast.makeText(context, R.string.action_complete, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), R.string.action_complete, Toast.LENGTH_SHORT).show()
     }
 
     override fun onAddToFavorite(result: Boolean) {
         Toast.makeText(
-            context,
+            requireContext(),
             if (result) getString(R.string.favorites_added) else getString(R.string.error_occurred),
             Toast.LENGTH_SHORT
         ).show()
@@ -235,7 +235,7 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
                     allow(2)
                 }
             }
-            show(context, this@TopicsFragment, item)
+            show(requireContext(), this@TopicsFragment, item)
         }
     }
 
