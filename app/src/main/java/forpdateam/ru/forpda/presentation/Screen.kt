@@ -2,7 +2,7 @@ package forpdateam.ru.forpda.presentation
 
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
 
-sealed class Screen {
+sealed class Screen : com.github.terrakok.cicerone.Screen {
     companion object {
         const val ARG_TITLE = "arg_title"
         const val ARG_SUBTITLE = "arg_subtitle"
@@ -144,8 +144,8 @@ sealed class Screen {
 
     class Theme : Screen() {
         companion object {
-            const val CODE_RESULT_SYNC = 10
-            const val CODE_RESULT_PAGE = 11
+            const val CODE_RESULT_SYNC = "10"
+            const val CODE_RESULT_PAGE = "11"
         }
 
         var themeUrl: String? = null

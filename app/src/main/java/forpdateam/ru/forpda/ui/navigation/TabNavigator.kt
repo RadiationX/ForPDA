@@ -3,10 +3,16 @@ package forpdateam.ru.forpda.ui.navigation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import android.util.Log
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import com.github.terrakok.cicerone.Back
+import com.github.terrakok.cicerone.BackTo
+import com.github.terrakok.cicerone.Command
+import com.github.terrakok.cicerone.Forward
+import com.github.terrakok.cicerone.Navigator
+import com.github.terrakok.cicerone.Replace
 import com.jakewharton.rxrelay2.BehaviorRelay
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.presentation.Screen
@@ -19,12 +25,10 @@ import forpdateam.ru.forpda.ui.fragments.TabFragment
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import org.json.JSONObject
-import ru.terrakok.cicerone.Navigator
-import ru.terrakok.cicerone.commands.*
 
 class TabNavigator(
-        private val activity: androidx.fragment.app.FragmentActivity,
-        private val containerId: Int
+    private val activity: FragmentActivity,
+    private val containerId: Int
 ) : Navigator {
 
     companion object {
@@ -75,8 +79,8 @@ class TabNavigator(
     }
 
     fun observeSubscribers(): Observable<List<TabFragment>> = subscribersRelay
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
 
     fun getCurrentFragment(): TabFragment? {
         return tabController.getCurrent()?.let {
@@ -106,9 +110,9 @@ class TabNavigator(
             exit()
         } else {
             fragmentManager
-                    .beginTransaction()
-                    .remove(fragment!!)
-                    .commit()
+                .beginTransaction()
+                .remove(fragment!!)
+                .commit()
             tabController.remove(tabTag)
             updateFragmentsState()
         }
@@ -116,7 +120,8 @@ class TabNavigator(
 
     fun closeOthers() {
         val transaction = fragmentManager.beginTransaction()
-        val itemTags = tabController.getList().map { it.tag }.filter { it != tabController.getCurrent()?.tag }
+        val itemTags =
+            tabController.getList().map { it.tag }.filter { it != tabController.getCurrent()?.tag }
         Log.e("TabNavigator", "closeOthers")
         itemTags.forEach { itemTag ->
             getByTag(itemTag)?.also { fragment ->
@@ -159,7 +164,10 @@ class TabNavigator(
 
     private fun getByTag(tag: String): TabFragment? {
         val result = fragmentManager.findFragmentByTag(tag) as TabFragment?
-        Log.e("TabNavigator", "getByTag tag=$tag, tab=${tabController.getCurrent()?.tag}, fr=$result")
+        Log.e(
+            "TabNavigator",
+            "getByTag tag=$tag, tab=${tabController.getCurrent()?.tag}, fr=$result"
+        )
         return result
     }
 
@@ -183,30 +191,28 @@ class TabNavigator(
     }
 
     private fun forward(command: Forward) {
-        createActivityIntent(activity, command.screenKey, command.transitionData)?.also {
-            checkAndStartActivity(command.screenKey, it)
+        val newScreen = command.screen as Screen
+        createActivityIntent(activity, newScreen)?.also {
+            checkAndStartActivity(it)
             return
         }
 
-        val newScreen = command.transitionData as Screen
         tabController.findAlone(newScreen)?.also {
             tabController.setCurrent(it.tag)
             updateFragmentsState()
             return
         }
 
-        val newFragment = createFragment(command.screenKey, command.transitionData)
-        if (newFragment != null) {
-            val tag = genTag()
+        val newFragment = createFragment(newScreen)
+        val tag = genTag()
 
-            Log.e("TabNavigator", "forward f=$newFragment")
-            fragmentManager
-                    .beginTransaction()
-                    .add(containerId, newFragment, tag)
-                    .commit()
-            tabController.addNew(tag, command.transitionData as Screen)
-            updateFragmentsState()
-        }
+        Log.e("TabNavigator", "forward f=$newFragment")
+        fragmentManager
+            .beginTransaction()
+            .add(containerId, newFragment, tag)
+            .commit()
+        tabController.addNew(tag, newScreen)
+        updateFragmentsState()
     }
 
     private fun back() {
@@ -218,9 +224,9 @@ class TabNavigator(
 
                 Log.e("TabNavigator", "back f=$fragment")
                 fragmentManager
-                        .beginTransaction()
-                        .remove(fragment!!)
-                        .commit()
+                    .beginTransaction()
+                    .remove(fragment!!)
+                    .commit()
                 tabController.remove(tab.tag)
                 updateFragmentsState()
             }
@@ -228,21 +234,22 @@ class TabNavigator(
     }
 
     private fun replace(command: Replace) {
-        createActivityIntent(activity, command.screenKey, command.transitionData)?.also {
-            checkAndStartActivity(command.screenKey, it)
+        val newScreen = command.screen as Screen
+        createActivityIntent(activity, newScreen)?.also {
+            checkAndStartActivity(it)
             activity.finish()
             return
         }
 
-        val newScreen = command.transitionData as Screen
+
         tabController.findAlone(newScreen)?.also {
             val currentTag = tabController.getCurrent()?.tag.orEmpty()
             if (it.tag != currentTag) {
                 val fragment = getByTag(currentTag)
                 fragmentManager
-                        .beginTransaction()
-                        .remove(fragment!!)
-                        .commit()
+                    .beginTransaction()
+                    .remove(fragment!!)
+                    .commit()
                 tabController.remove(currentTag)
                 tabController.setCurrent(it.tag)
                 updateFragmentsState()
@@ -250,23 +257,24 @@ class TabNavigator(
             }
         }
 
-        val newFragment = createFragment(command.screenKey, command.transitionData)
-        if (newFragment != null) {
-            val tag = genTag()
-            val fragment = getByTag(tabController.getCurrent()?.tag.orEmpty())
-            Log.e("TabNavigator", "replace nf=$newFragment, of=$fragment")
-            fragmentManager
-                    .beginTransaction()
-                    .remove(fragment!!)
-                    .add(containerId, newFragment, tag)
-                    .commit()
-            tabController.replace(tag, command.transitionData as Screen)
-            updateFragmentsState()
-        }
+        val newFragment = createFragment(newScreen)
+        val tag = genTag()
+        val fragment = getByTag(tabController.getCurrent()?.tag.orEmpty())
+        Log.e("TabNavigator", "replace nf=$newFragment, of=$fragment")
+        fragmentManager
+            .beginTransaction()
+            .remove(fragment!!)
+            .add(containerId, newFragment, tag)
+            .commit()
+        tabController.replace(tag, newScreen)
+        updateFragmentsState()
     }
 
     private fun backTo(command: BackTo) {
-        val tagsRemove = tabController.backTo(command.screenKey)
+        val screen = requireNotNull(command.screen) {
+            "TabNavigator does no support backTo null"
+        }
+        val tagsRemove = tabController.backTo(screen.screenKey)
         val transaction = fragmentManager.beginTransaction()
         Log.e("TabNavigator", "backTo tags=${tagsRemove.size}")
         tagsRemove.forEach {
@@ -287,20 +295,22 @@ class TabNavigator(
         Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun createActivityIntent(context: Context?, screenKey: String?, data: Any?): Intent? {
-        val screen = data as Screen
+    private fun createActivityIntent(context: Context, screen: Screen): Intent? {
         when (screen) {
             is Screen.Main -> {
                 return Intent(context, MainActivity::class.java).apply {
                     putExtra(MainActivity.ARG_CHECK_WEBVIEW, screen.checkWebView)
                 }
             }
+
             is Screen.UpdateChecker -> {
                 return Intent(context, UpdateCheckerActivity::class.java)
             }
+
             is Screen.WebViewNotFound -> {
                 return Intent(context, WebVewNotFoundActivity::class.java)
             }
+
             is Screen.ImageViewer -> {
                 return Intent(context, ImageViewerActivity::class.java).apply {
                     putExtra(ImageViewerActivity.IMAGE_URLS_KEY, ArrayList<String>(screen.urls))
@@ -309,22 +319,27 @@ class TabNavigator(
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
             }
+
             is Screen.Settings -> {
                 return Intent(context, SettingsActivity::class.java).apply {
                     putExtra(SettingsActivity.ARG_NEW_PREFERENCE_SCREEN, screen.fragment)
                 }
             }
+
+            else -> {
+                // do nothing
+            }
         }
         return null
     }
 
-    private fun checkAndStartActivity(screenKey: String, activityIntent: Intent) {
+    private fun checkAndStartActivity(activityIntent: Intent) {
         if (activityIntent.resolveActivity(activity.packageManager) != null) {
             activity.startActivity(activityIntent)
         }
     }
 
-    private fun createFragment(screenKey: String?, data: Any?): androidx.fragment.app.Fragment? {
-        return data?.let { TabHelper.createTab(it as Screen) }
+    private fun createFragment(screen: Screen): Fragment {
+        return TabHelper.createTab(screen)
     }
 }

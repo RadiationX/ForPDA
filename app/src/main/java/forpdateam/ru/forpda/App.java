@@ -30,7 +30,6 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
-import androidx.multidex.MultiDex;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -155,9 +154,6 @@ public class App extends android.app.Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(LocaleHelper.onAttach(base));
-        if (BuildConfig.FLAVOR.equals("dev")) {
-            MultiDex.install(this);
-        }
     }
 
     @Override

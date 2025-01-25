@@ -2,6 +2,8 @@ package forpdateam.ru.forpda
 
 import android.content.Context
 import android.preference.PreferenceManager
+import com.github.terrakok.cicerone.Cicerone
+import com.github.terrakok.cicerone.NavigatorHolder
 import forpdateam.ru.forpda.client.Client
 import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.entity.app.profile.IUserHolder
@@ -17,10 +19,10 @@ import forpdateam.ru.forpda.model.data.providers.UserSourceProvider
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.attachments.AttachmentsApi
 import forpdateam.ru.forpda.model.data.remote.api.attachments.AttachmentsParser
-import forpdateam.ru.forpda.model.data.remote.api.checker.CheckerApi
-import forpdateam.ru.forpda.model.data.remote.api.checker.CheckerParser
 import forpdateam.ru.forpda.model.data.remote.api.auth.AuthApi
 import forpdateam.ru.forpda.model.data.remote.api.auth.AuthParser
+import forpdateam.ru.forpda.model.data.remote.api.checker.CheckerApi
+import forpdateam.ru.forpda.model.data.remote.api.checker.CheckerParser
 import forpdateam.ru.forpda.model.data.remote.api.devdb.DevDbApi
 import forpdateam.ru.forpda.model.data.remote.api.devdb.DevDbParser
 import forpdateam.ru.forpda.model.data.remote.api.editpost.EditPostApi
@@ -52,9 +54,9 @@ import forpdateam.ru.forpda.model.interactors.CrossScreenInteractor
 import forpdateam.ru.forpda.model.interactors.other.MenuRepository
 import forpdateam.ru.forpda.model.interactors.qms.QmsInteractor
 import forpdateam.ru.forpda.model.preferences.*
-import forpdateam.ru.forpda.model.repository.checker.CheckerRepository
 import forpdateam.ru.forpda.model.repository.auth.AuthRepository
 import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository
+import forpdateam.ru.forpda.model.repository.checker.CheckerRepository
 import forpdateam.ru.forpda.model.repository.devdb.DevDbRepository
 import forpdateam.ru.forpda.model.repository.events.EventsRepository
 import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
@@ -80,15 +82,13 @@ import forpdateam.ru.forpda.presentation.search.SearchTemplate
 import forpdateam.ru.forpda.presentation.theme.ThemeTemplate
 import forpdateam.ru.forpda.ui.DimensionsProvider
 import forpdateam.ru.forpda.ui.TemplateManager
-import ru.terrakok.cicerone.Cicerone
-import ru.terrakok.cicerone.NavigatorHolder
 
 /**
  * Created by radiationx on 01.01.18.
  */
 
 class Dependencies internal constructor(
-        context: Context
+    context: Context
 ) {
 
     val dimensionsProvider = DimensionsProvider()
@@ -98,13 +98,21 @@ class Dependencies internal constructor(
 
     private val cicerone: Cicerone<TabRouter> by lazy { Cicerone.create(TabRouter()) }
     val router: TabRouter by lazy { cicerone.router }
-    val navigatorHolder: NavigatorHolder by lazy { cicerone.navigatorHolder }
+    val navigatorHolder: NavigatorHolder by lazy { cicerone.getNavigatorHolder() }
 
-    val systemLinkHandler: ISystemLinkHandler by lazy { SystemLinkHandler(context, mainPreferencesHolder, router, authHolder) }
+    val systemLinkHandler: ISystemLinkHandler by lazy {
+        SystemLinkHandler(
+            context,
+            mainPreferencesHolder,
+            router,
+            authHolder
+        )
+    }
     val linkHandler: ILinkHandler by lazy { LinkHandler(systemLinkHandler) }
 
     val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-    val dataStoragePreferences = context.getSharedPreferences("${context.packageName}_data_storage", Context.MODE_PRIVATE)
+    val dataStoragePreferences =
+        context.getSharedPreferences("${context.packageName}_data_storage", Context.MODE_PRIVATE)
 
     val errorHandler: IErrorHandler by lazy { ErrorHandler(router) }
     val networkState: NetworkStateProvider by lazy { AppNetworkState(context) }
@@ -115,19 +123,35 @@ class Dependencies internal constructor(
     val authHolder: AuthHolder by lazy { AuthHolder(preferences, schedulers) }
     val countersHolder: CountersHolder by lazy { CountersHolder(preferences, schedulers) }
     val userHolder: IUserHolder by lazy { UserHolder(dataStoragePreferences) }
-    val closeableInfoHolder: CloseableInfoHolder by lazy { CloseableInfoHolder(preferences, schedulers) }
+    val closeableInfoHolder: CloseableInfoHolder by lazy {
+        CloseableInfoHolder(
+            preferences,
+            schedulers
+        )
+    }
 
     val templateManager by lazy { TemplateManager(context, dayNightHelper) }
     val themeTemplate by lazy { ThemeTemplate(templateManager, authHolder, topicPreferencesHolder) }
     val articleTemplate by lazy { ArticleTemplate(templateManager) }
-    val searchTemplate by lazy { SearchTemplate(templateManager, authHolder, topicPreferencesHolder) }
+    val searchTemplate by lazy {
+        SearchTemplate(
+            templateManager,
+            authHolder,
+            topicPreferencesHolder
+        )
+    }
     val forumRulesTemplate by lazy { ForumRulesTemplate(templateManager) }
     val announceTemplate by lazy { AnnounceTemplate(templateManager) }
     val qmsChatTemplate by lazy { QmsChatTemplate(templateManager) }
 
     val webClient: IWebClient by lazy { Client(context, authHolder, countersHolder) }
 
-    val patternProvider: IPatternProvider by lazy { PatternProvider(context, dataStoragePreferences) }
+    val patternProvider: IPatternProvider by lazy {
+        PatternProvider(
+            context,
+            dataStoragePreferences
+        )
+    }
 
     val authParser by lazy { AuthParser(patternProvider) }
     val devDbParser by lazy { DevDbParser(patternProvider) }
@@ -148,7 +172,15 @@ class Dependencies internal constructor(
     val authApi by lazy { AuthApi(webClient, authParser) }
     val devDbApi by lazy { DevDbApi(webClient, devDbParser) }
     val themeApi by lazy { ThemeApi(webClient, themeParser) }
-    val editPostApi by lazy { EditPostApi(webClient, themeApi, editPostParser, attachmentsParser, themeParser) }
+    val editPostApi by lazy {
+        EditPostApi(
+            webClient,
+            themeApi,
+            editPostParser,
+            attachmentsParser,
+            themeParser
+        )
+    }
     val eventsApi by lazy { NotificationEventsApi(webClient) }
     val favoritesApi by lazy { FavoritesApi(webClient, favoritesParser) }
     val forumApi by lazy { ForumApi(webClient, forumParser) }
@@ -171,22 +203,81 @@ class Dependencies internal constructor(
     val notesCache by lazy { NotesCache() }
 
     val avatarRepository by lazy { AvatarRepository(forumUsersCache, schedulers) }
-    val favoritesRepository by lazy { FavoritesRepository(schedulers, favoritesApi, favoritesCache, authHolder, countersHolder, listsPreferencesHolder, notificationPreferencesHolder) }
+    val favoritesRepository by lazy {
+        FavoritesRepository(
+            schedulers,
+            favoritesApi,
+            favoritesCache,
+            authHolder,
+            countersHolder,
+            listsPreferencesHolder,
+            notificationPreferencesHolder
+        )
+    }
     val historyRepository by lazy { HistoryRepository(schedulers, historyCache) }
     val mentionsRepository by lazy { MentionsRepository(schedulers, mentionsApi) }
-    val authRepository by lazy { AuthRepository(schedulers, authApi, authHolder, countersHolder, userHolder) }
-    val profileRepository by lazy { ProfileRepository(schedulers, profileApi, userHolder, authHolder, forumUsersCache) }
+    val authRepository by lazy {
+        AuthRepository(
+            schedulers,
+            authApi,
+            authHolder,
+            countersHolder,
+            userHolder
+        )
+    }
+    val profileRepository by lazy {
+        ProfileRepository(
+            schedulers,
+            profileApi,
+            userHolder,
+            authHolder,
+            forumUsersCache
+        )
+    }
     val reputationRepository by lazy { ReputationRepository(schedulers, reputationApi) }
     val forumRepository by lazy { ForumRepository(schedulers, forumApi, forumCache) }
     val topicsRepository by lazy { TopicsRepository(schedulers, topicsApi) }
-    val themeRepository by lazy { ThemeRepository(schedulers, themeApi, historyCache, forumUsersCache) }
-    val qmsRepository by lazy { QmsRepository(schedulers, qmsApi, attachmentsApi, qmsCache, forumUsersCache, countersHolder) }
+    val themeRepository by lazy {
+        ThemeRepository(
+            schedulers,
+            themeApi,
+            historyCache,
+            forumUsersCache
+        )
+    }
+    val qmsRepository by lazy {
+        QmsRepository(
+            schedulers,
+            qmsApi,
+            attachmentsApi,
+            qmsCache,
+            forumUsersCache,
+            countersHolder
+        )
+    }
     val searchRepository by lazy { SearchRepository(schedulers, searchApi, forumUsersCache) }
     val newsRepository by lazy { NewsRepository(schedulers, newsApi, forumUsersCache) }
     val devDbRepository by lazy { DevDbRepository(schedulers, devDbApi) }
-    val editPostRepository by lazy { PostEditorRepository(schedulers, editPostApi, attachmentsApi, forumUsersCache) }
+    val editPostRepository by lazy {
+        PostEditorRepository(
+            schedulers,
+            editPostApi,
+            attachmentsApi,
+            forumUsersCache
+        )
+    }
     val notesRepository by lazy { NotesRepository(schedulers, notesCache, externalStorage) }
-    val eventsRepository by lazy { EventsRepository(context, webClient, eventsApi, schedulers, networkState, authHolder, notificationPreferencesHolder) }
+    val eventsRepository by lazy {
+        EventsRepository(
+            context,
+            webClient,
+            eventsApi,
+            schedulers,
+            networkState,
+            authHolder,
+            notificationPreferencesHolder
+        )
+    }
     val menuRepository by lazy { MenuRepository(preferences, authHolder, countersHolder) }
     val checkerRepository by lazy { CheckerRepository(schedulers, checkerApi, patternProvider) }
 

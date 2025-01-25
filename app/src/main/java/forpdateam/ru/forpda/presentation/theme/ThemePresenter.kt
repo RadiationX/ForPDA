@@ -118,12 +118,6 @@ class ThemePresenter(
         loadUrl(themeUrl)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        router.removeResultListener(Screen.Theme.CODE_RESULT_SYNC)
-        router.removeResultListener(Screen.Theme.CODE_RESULT_PAGE)
-    }
-
     fun exit() {
         router.exit()
     }
@@ -245,7 +239,6 @@ class ThemePresenter(
                     themeName = page.title
                 })
                 router.setResultListener(Screen.Theme.CODE_RESULT_SYNC, {
-                    router.removeResultListener(Screen.Theme.CODE_RESULT_SYNC)
                     (it as? EditPostSyncData?)?.let {
                         if (it.topicId == page.id) {
                             viewState.syncEditPost(it)
@@ -253,7 +246,6 @@ class ThemePresenter(
                     }
                 })
                 router.setResultListener(Screen.Theme.CODE_RESULT_PAGE, {
-                    router.removeResultListener(Screen.Theme.CODE_RESULT_PAGE)
                     (it as? ThemePage?)?.let {
                         viewState.onMessageSent()
                         onLoadData(it)
@@ -273,7 +265,6 @@ class ThemePresenter(
                 themeName = it.title
             })
             router.setResultListener(Screen.Theme.CODE_RESULT_PAGE, {
-                router.removeResultListener(Screen.Theme.CODE_RESULT_PAGE)
                 (it as? ThemePage?)?.let { onLoadData(it) }
             })
         }
