@@ -375,8 +375,10 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
                 if (childView is ActionMenuView) {
                     for (menuChildIndex in 0 until childView.childCount) {
                         try {
+                            @SuppressLint("RestrictedApi")
                             val itemView =
                                 childView.getChildAt(menuChildIndex) as ActionMenuItemView
+                            @SuppressLint("RestrictedApi")
                             if (settingsMenuItem === itemView.itemData) {
                                 tooltip = SimpleTooltip.Builder(context)
                                     .anchorView(itemView)

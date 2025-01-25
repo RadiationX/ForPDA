@@ -125,10 +125,6 @@ android {
         }
     }
     namespace 'forpdateam.ru.forpda'
-    lint {
-        checkReleaseBuilds false
-        //disable 'RestrictedApi'
-    }
     buildFeatures {
         buildConfig true
     }

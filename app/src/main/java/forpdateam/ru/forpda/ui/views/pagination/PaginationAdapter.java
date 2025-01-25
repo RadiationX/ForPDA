@@ -55,7 +55,7 @@ public class PaginationAdapter extends BaseAdapter {
         }
 
 
-        holder.text.setText(String.format(Locale.getDefault(), page, getItem(position)));
+        holder.text.setText(String.format(Locale.getDefault(), page, data[position]));
         return convertView;
     }
 

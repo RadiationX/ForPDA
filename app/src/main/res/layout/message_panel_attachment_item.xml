@@ -41,7 +41,7 @@
             android:layout_marginBottom="2dp"
             android:ellipsize="marquee"
             android:gravity="center_horizontal"
-            android:maxLines="1"
+            android:singleLine="true"
             android:textColor="?attr/attachment_text"
             android:textSize="12sp" />
 

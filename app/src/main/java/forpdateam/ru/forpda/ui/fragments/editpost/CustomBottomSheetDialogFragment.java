@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.ui.fragments.editpost;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -46,6 +47,7 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment {
         }
     };
 
+    @SuppressLint("RestrictedApi")
     @Override
     public void setupDialog(Dialog dialog, int style) {
         //super.setupDialog(dialog, style);

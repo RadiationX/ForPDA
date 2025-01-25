@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.ui.fragments.forum
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -104,6 +105,7 @@ class ForumFragment : TabFragment(), ForumView {
         setScrollFlagsEnterAlways()
 
         treeContainer.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { nestedScrollView, _, _, _, _ ->
+            @SuppressLint("RestrictedApi")
             listScrollY = nestedScrollView.computeVerticalScrollOffset()
             updateToolbarShadow()
         })

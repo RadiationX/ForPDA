@@ -144,6 +144,7 @@
     <string name="fragment_title_topics">Forum topics</string>
     <string name="fragment_title_forum_rules">Forum rules</string>
     <string name="fragment_title_device_search">Device search</string>
+    <string name="fragment_title_other_menu">Full app menu</string>
     <string name="activity_title_settings">Settings</string>
 
     <string name="fragment_tab_title_article" formatted="false">News \"%s\"</string>
@@ -459,6 +460,7 @@
     <string name="closeable_info_other_menu_drag">You can change the order of the menu items, to do this, hold down the menu item and drag it to the right place</string>
 
     <!-- Menu item -->
+    <string name="closeable_info_notes_sync">Bookmarks are not saved to the server and are stored only locally. To avoid losing them, export them (ellipsis in the corner of the screen).</string>
     <string name="menu_item_link_forum_author">App author</string>
     <string name="menu_item_link_chat_telegram">Chat Telegram (Rus)</string>
     <string name="menu_item_link_forum_topic">App forum topic</string>
