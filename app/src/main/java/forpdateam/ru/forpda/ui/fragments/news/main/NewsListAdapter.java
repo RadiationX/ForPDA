@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.ui.fragments.news.main;
 
-import androidx.core.view.ViewCompat;
-
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +8,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.core.view.ViewCompat;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -58,9 +58,9 @@ public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder> {
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
         if (COMPAT_LAYOUT == getItemViewType(position)) {
-            ((CompatHolder) holder).bind(getItem(position), position);
+            holder.bind(getItem(position), position);
         } else if (FULL_LAYOUT == getItemViewType(position)) {
-            ((FullHolder) holder).bind(getItem(position), position);
+            holder.bind(getItem(position), position);
         } else if (LOAD_MORE_LAYOUT == getItemViewType(position)) {
             holder.bind(position);
         }
@@ -96,29 +96,29 @@ public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder> {
     }
 
     private class CompatHolder extends BaseViewHolder<NewsItem> {
-        private LinearLayout clickContainer;
-        private TextView title;
-        private TextView description;
-        private ImageView cover;
-        private CircleImageView avatar;
-        private TextView username;
-        private TextView date;
-        private ImageButton save;
-        private ImageButton share;
+        private final LinearLayout clickContainer;
+        private final TextView title;
+        private final TextView description;
+        private final ImageView cover;
+        private final CircleImageView avatar;
+        private final TextView username;
+        private final TextView date;
+        private final ImageButton save;
+        private final ImageButton share;
 
         CompatHolder(View itemView) {
             super(itemView);
-            clickContainer = (LinearLayout) itemView.findViewById(R.id.news_list_item_click_container);
-            title = (TextView) itemView.findViewById(R.id.news_list_item_title);
-            description = (TextView) itemView.findViewById(R.id.news_list_item_description);
-            cover = (ImageView) itemView.findViewById(R.id.news_list_item_cover);
-            avatar = (CircleImageView) itemView.findViewById(R.id.news_list_item_user_avatar);
-            username = (TextView) itemView.findViewById(R.id.news_list_item_username);
-            date = (TextView) itemView.findViewById(R.id.news_list_item_date);
-            save = (ImageButton) itemView.findViewById(R.id.news_list_item_save);
-            share = (ImageButton) itemView.findViewById(R.id.news_list_item_share);
+            clickContainer = itemView.findViewById(R.id.news_list_item_click_container);
+            title = itemView.findViewById(R.id.news_list_item_title);
+            description = itemView.findViewById(R.id.news_list_item_description);
+            cover = itemView.findViewById(R.id.news_list_item_cover);
+            avatar = itemView.findViewById(R.id.news_list_item_user_avatar);
+            username = itemView.findViewById(R.id.news_list_item_username);
+            date = itemView.findViewById(R.id.news_list_item_date);
+            save = itemView.findViewById(R.id.news_list_item_save);
+            share = itemView.findViewById(R.id.news_list_item_share);
             clickContainer.setOnClickListener(v -> {
-                ViewCompat.setTransitionName(cover, String.valueOf(getLayoutPosition()) + "_image");
+                ViewCompat.setTransitionName(cover, getLayoutPosition() + "_image");
                 mItemClickListener.onItemClick(cover, getItem(getLayoutPosition()), getLayoutPosition());
             });
         }
@@ -134,26 +134,26 @@ public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder> {
     }
 
     private class FullHolder extends BaseViewHolder<NewsItem> {
-        private TextView username;
-        private TextView category;
-        private TextView title;
-        private TextView description;
-        private TextView commentsCount;
-        private TextView date;
-        private ImageView cover;
-        private ImageView avatar;
+        private final TextView username;
+        private final TextView category;
+        private final TextView title;
+        private final TextView description;
+        private final TextView commentsCount;
+        private final TextView date;
+        private final ImageView cover;
+        private final ImageView avatar;
 
 
         FullHolder(View itemView) {
             super(itemView);
-            username = (TextView) itemView.findViewById(R.id.news_full_item_username);
-            category = (TextView) itemView.findViewById(R.id.news_full_item_category);
-            title = (TextView) itemView.findViewById(R.id.news_full_item_title);
-            description = (TextView) itemView.findViewById(R.id.news_full_item_description);
-            commentsCount = (TextView) itemView.findViewById(R.id.news_full_item_comments_count);
-            date = (TextView) itemView.findViewById(R.id.news_full_item_date);
-            cover = (ImageView) itemView.findViewById(R.id.news_full_item_cover);
-            avatar = (ImageView) itemView.findViewById(R.id.articleAvatar);
+            username = itemView.findViewById(R.id.news_full_item_username);
+            category = itemView.findViewById(R.id.news_full_item_category);
+            title = itemView.findViewById(R.id.news_full_item_title);
+            description = itemView.findViewById(R.id.news_full_item_description);
+            commentsCount = itemView.findViewById(R.id.news_full_item_comments_count);
+            date = itemView.findViewById(R.id.news_full_item_date);
+            cover = itemView.findViewById(R.id.news_full_item_cover);
+            avatar = itemView.findViewById(R.id.articleAvatar);
             itemView.setOnClickListener(v -> mItemClickListener.onItemClick(cover, getItem(getLayoutPosition()), getLayoutPosition()));
             itemView.setOnLongClickListener(v -> mItemClickListener.onLongItemClick(v, getItem(getLayoutPosition()), getLayoutPosition()));
             username.setOnClickListener(v -> mItemClickListener.onNickClick(username, getItem(getLayoutPosition()), getLayoutPosition()));
@@ -180,13 +180,13 @@ public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder> {
     }
 
     private class LoadMoreHolder extends BaseViewHolder {
-        private LinearLayout container;
-        private Button btn;
+        private final LinearLayout container;
+        private final Button btn;
 
         LoadMoreHolder(View itemView) {
             super(itemView);
-            container = (LinearLayout) itemView.findViewById(R.id.nl_lm_container);
-            btn = (Button) itemView.findViewById(R.id.nl_lm_btn);
+            container = itemView.findViewById(R.id.nl_lm_container);
+            btn = itemView.findViewById(R.id.nl_lm_btn);
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

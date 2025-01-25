@@ -33,13 +33,13 @@ public class HistoryAdapter extends BaseAdapter<HistoryItem, HistoryAdapter.Hist
 
     class HistoryHolder extends BaseViewHolder<HistoryItem> {
         public final static int LAYOUT = R.layout.item_history;
-        private TextView title;
-        private TextView date;
+        private final TextView title;
+        private final TextView date;
 
         public HistoryHolder(View itemView) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.item_title);
-            date = (TextView) itemView.findViewById(R.id.item_date);
+            title = itemView.findViewById(R.id.item_title);
+            date = itemView.findViewById(R.id.item_date);
             itemView.setOnClickListener(v -> {
                 if (itemClickListener != null) {
                     itemClickListener.onItemClick(getItem(getLayoutPosition()));

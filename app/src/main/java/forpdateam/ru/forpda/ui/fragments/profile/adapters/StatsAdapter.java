@@ -4,11 +4,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel;
 import forpdateam.ru.forpda.model.repository.temp.TempHelper;
-import forpdateam.ru.forpda.presentation.ISystemLinkHandler;
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 
@@ -18,7 +16,7 @@ import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 
 class StatsAdapter extends BaseAdapter<ProfileModel.Stat, StatsAdapter.StatHolder> {
 
-    private StatHolder.Listener listener;
+    private final StatHolder.Listener listener;
 
     public StatsAdapter(StatHolder.Listener listener) {
         this.listener = listener;
@@ -35,14 +33,14 @@ class StatsAdapter extends BaseAdapter<ProfileModel.Stat, StatsAdapter.StatHolde
     }
 
     static class StatHolder extends BaseViewHolder<ProfileModel.Stat> {
-        private TextView title;
-        private TextView value;
+        private final TextView title;
+        private final TextView value;
         private ProfileModel.Stat currentItem;
 
         StatHolder(View itemView, Listener listener) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.item_title);
-            value = (TextView) itemView.findViewById(R.id.item_value);
+            title = itemView.findViewById(R.id.item_title);
+            value = itemView.findViewById(R.id.item_value);
             itemView.setOnClickListener(v -> listener.onClick(currentItem));
         }
 

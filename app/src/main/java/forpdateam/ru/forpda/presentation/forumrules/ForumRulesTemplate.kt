@@ -4,7 +4,7 @@ import forpdateam.ru.forpda.entity.remote.forum.ForumRules
 import forpdateam.ru.forpda.ui.TemplateManager
 
 class ForumRulesTemplate(
-        private val templateManager: TemplateManager
+    private val templateManager: TemplateManager
 ) {
 
     fun mapEntity(rules: ForumRules): ForumRules = rules.apply { html = mapString(rules) }

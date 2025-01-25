@@ -54,7 +54,8 @@ public class SearchSettings {
     private String resourceType, result, sort, source, query, nick, subforums;
     private int excludeTrash;
     private int st = 0;
-    private List<String> forums, topics;
+    private final List<String> forums;
+    private final List<String> topics;
 
     public SearchSettings() {
         resourceType = RESOURCE_FORUM.getFirst();

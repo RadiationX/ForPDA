@@ -2,15 +2,14 @@ package forpdateam.ru.forpda.ui.activities
 
 import android.content.Context
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
-import android.view.MenuItem
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.LocaleHelper
 import forpdateam.ru.forpda.ui.fragments.settings.NotificationsSettingsFragment
 import forpdateam.ru.forpda.ui.fragments.settings.SettingsFragment
-import io.reactivex.disposables.CompositeDisposable
 
 /**
  * Created by radiationx on 25.12.16.
@@ -36,11 +35,12 @@ class SettingsActivity : AppCompatActivity() {
         }
 
 
-        val fragment: PreferenceFragmentCompat = if (intent?.getStringExtra(ARG_NEW_PREFERENCE_SCREEN) == NotificationsSettingsFragment.PREFERENCE_SCREEN_NAME) {
-            NotificationsSettingsFragment()
-        } else {
-            SettingsFragment()
-        }
+        val fragment: PreferenceFragmentCompat =
+            if (intent?.getStringExtra(ARG_NEW_PREFERENCE_SCREEN) == NotificationsSettingsFragment.PREFERENCE_SCREEN_NAME) {
+                NotificationsSettingsFragment()
+            } else {
+                SettingsFragment()
+            }
 
         supportFragmentManager.beginTransaction().replace(R.id.fragment_content, fragment).commit()
     }
@@ -62,7 +62,11 @@ class SettingsActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         App.get().onRequestPermissionsResult(requestCode, permissions, grantResults)
     }

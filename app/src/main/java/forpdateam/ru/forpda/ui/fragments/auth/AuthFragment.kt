@@ -31,7 +31,7 @@ import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.presentation.auth.AuthPresenter
 import forpdateam.ru.forpda.presentation.auth.AuthView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
-import kotlinx.android.synthetic.main.fragment_auth.*
+import kotlinx.android.synthetic.main.fragment_auth.auth_top_buttons
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 
@@ -60,7 +60,8 @@ class AuthFragment : TabFragment(), AuthView {
 
     private val loginTextWatcher = object : SimpleTextWatcher() {
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-            val filled = !nick.text.toString().isEmpty() && !password.text.toString().isEmpty() && captcha.text.toString().length == 4
+            val filled = !nick.text.toString().isEmpty() && !password.text.toString()
+                .isEmpty() && captcha.text.toString().length == 4
             presenter.setFieldsFilled(filled)
         }
     }
@@ -70,20 +71,24 @@ class AuthFragment : TabFragment(), AuthView {
 
     @ProvidePresenter
     internal fun providePresenter(): AuthPresenter = AuthPresenter(
-            App.get().Di().authRepository,
-            App.get().Di().profileRepository,
-            App.get().Di().router,
-            App.get().Di().schedulers,
-            App.get().Di().authHolder,
-            App.get().Di().errorHandler,
-            App.get().Di().systemLinkHandler
+        App.get().Di().authRepository,
+        App.get().Di().profileRepository,
+        App.get().Di().router,
+        App.get().Di().schedulers,
+        App.get().Di().authHolder,
+        App.get().Di().errorHandler,
+        App.get().Di().systemLinkHandler
     )
 
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_auth)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         baseInflateFragment(inflater, R.layout.fragment_auth)
         nick = findViewById(R.id.auth_login) as EditText
@@ -109,17 +114,17 @@ class AuthFragment : TabFragment(), AuthView {
         setListsBackground()
         skipButton.setOnClickListener { v ->
             AlertDialog.Builder(context!!)
-                    .setMessage("Без авторизации будут недоступны некоторые функции приложения.")
-                    .setPositiveButton(R.string.ok) { dialog, which -> presenter.onClickSkip() }
-                    .setNegativeButton(R.string.cancel, null)
-                    .show()
+                .setMessage("Без авторизации будут недоступны некоторые функции приложения.")
+                .setPositiveButton(R.string.ok) { dialog, which -> presenter.onClickSkip() }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
         }
         regButton.setOnClickListener {
             AlertDialog.Builder(context!!)
-                    .setMessage("Процесс регистрации включает в себя множество шагов, поэтому рекомендуем зарегистрироваться через браузер.")
-                    .setPositiveButton(R.string.ok) { _, _ -> presenter.onRegistrationClick() }
-                    .setNegativeButton(R.string.cancel, null)
-                    .show()
+                .setMessage("Процесс регистрации включает в себя множество шагов, поэтому рекомендуем зарегистрироваться через браузер.")
+                .setPositiveButton(R.string.ok) { _, _ -> presenter.onRegistrationClick() }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
         }
         appBarLayout.visibility = View.GONE
         sendButton.setOnClickListener { v -> tryLogin() }
@@ -162,21 +167,28 @@ class AuthFragment : TabFragment(), AuthView {
 
         captchaImage.visibility = View.GONE
         captchaProgress.visibility = View.VISIBLE
-        ImageLoader.getInstance().displayImage(authForm.captchaImageUrl, captchaImage, object : SimpleImageLoadingListener() {
-            override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap?) {
-                captchaImage.visibility = View.VISIBLE
-                captchaProgress.visibility = View.GONE
-            }
-        })
+        ImageLoader.getInstance().displayImage(
+            authForm.captchaImageUrl,
+            captchaImage,
+            object : SimpleImageLoadingListener() {
+                override fun onLoadingComplete(
+                    imageUri: String?,
+                    view: View?,
+                    loadedImage: Bitmap?
+                ) {
+                    captchaImage.visibility = View.VISIBLE
+                    captchaProgress.visibility = View.GONE
+                }
+            })
     }
 
     private fun tryLogin() {
         hideKeyboard()
         presenter.signIn(
-                nick.text.toString(),
-                password.text.toString(),
-                captcha.text.toString(),
-                hiddenAuth.isChecked
+            nick.text.toString(),
+            password.text.toString(),
+            captcha.text.toString(),
+            hiddenAuth.isChecked
         )
     }
 
@@ -205,7 +217,13 @@ class AuthFragment : TabFragment(), AuthView {
 
     override fun showProfile(profile: ProfileModel) {
         ImageLoader.getInstance().displayImage(profile.avatar, avatar)
-        completeText.text = ApiUtils.spannedFromHtml(String.format("%s, <b>%s</b>!", getString(R.string.auth_hello), profile.nick))
+        completeText.text = ApiUtils.spannedFromHtml(
+            String.format(
+                "%s, <b>%s</b>!",
+                getString(R.string.auth_hello),
+                profile.nick
+            )
+        )
         completeText.visibility = View.VISIBLE
 
         completeText.startAnimation(AlphaAnimation(0.0f, 1.0f).apply {

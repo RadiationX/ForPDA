@@ -1,9 +1,10 @@
 package forpdateam.ru.forpda.ui.fragments.profile.adapters;
 
-import androidx.core.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel;
@@ -26,15 +27,15 @@ class WarningsAdapter extends BaseAdapter<ProfileModel.Warning, WarningsAdapter.
     }
 
     class WarningHolder extends BaseViewHolder<ProfileModel.Warning> {
-        private TextView title;
-        private TextView date;
-        private TextView content;
+        private final TextView title;
+        private final TextView date;
+        private final TextView content;
 
         WarningHolder(View itemView) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.item_title);
-            date = (TextView) itemView.findViewById(R.id.item_date);
-            content = (TextView) itemView.findViewById(R.id.item_content);
+            title = itemView.findViewById(R.id.item_title);
+            date = itemView.findViewById(R.id.item_date);
+            content = itemView.findViewById(R.id.item_content);
         }
 
         @Override

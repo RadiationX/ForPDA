@@ -1,12 +1,15 @@
 package forpdateam.ru.forpda.ui.fragments.qms
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewStub
+import android.widget.ArrayAdapter
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import androidx.recyclerview.widget.LinearLayoutManager
-import android.view.*
-import android.widget.ArrayAdapter
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
@@ -20,12 +23,15 @@ import forpdateam.ru.forpda.ui.views.ContentController
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.FunnyContent
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 22.03.17.
  */
 
-class QmsBlackListFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<QmsContact>, QmsBlackListView {
+class QmsBlackListFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<QmsContact>,
+    QmsBlackListView {
 
     private lateinit var nickField: AppCompatAutoCompleteTextView
     private lateinit var adapter: QmsContactsAdapter
@@ -36,17 +42,21 @@ class QmsBlackListFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener
 
     @ProvidePresenter
     fun providePresenter(): QmsBlackListPresenter = QmsBlackListPresenter(
-            App.get().Di().qmsInteractor,
-            App.get().Di().router,
-            App.get().Di().linkHandler,
-            App.get().Di().errorHandler
+        App.get().Di().qmsInteractor,
+        App.get().Di().router,
+        App.get().Di().linkHandler,
+        App.get().Di().errorHandler
     )
 
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_blacklist)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         val viewStub = findViewById(R.id.toolbar_content) as ViewStub
         viewStub.layoutResource = R.layout.toolbar_qms_black_list
@@ -65,7 +75,7 @@ class QmsBlackListFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener
         })
 
         refreshLayout.setOnRefreshListener { presenter.loadContacts() }
-        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(context)
 
         dialogMenu.apply {
             addItem(getString(R.string.profile)) { _, data ->
@@ -87,15 +97,15 @@ class QmsBlackListFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener
     override fun addBaseToolbarMenu(menu: Menu) {
         super.addBaseToolbarMenu(menu)
         menu.add(R.string.add)
-                .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_add))
-                .setOnMenuItemClickListener {
-                    var nick = ""
-                    if (nickField.text != null)
-                        nick = nickField.text.toString()
-                    presenter.blockUser(nick)
-                    false
-                }
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_add))
+            .setOnMenuItemClickListener {
+                var nick = ""
+                if (nickField.text != null)
+                    nick = nickField.text.toString()
+                presenter.blockUser(nick)
+                false
+            }
+            .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
     }
 
     override fun showContacts(items: List<QmsContact>) {
@@ -103,9 +113,9 @@ class QmsBlackListFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener
         if (items.isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
                 val funnyContent = FunnyContent(context)
-                        .setImage(R.drawable.ic_contacts)
-                        .setTitle(R.string.funny_blacklist_nodata_title)
-                        .setDesc(R.string.funny_blacklist_nodata_desc)
+                    .setImage(R.drawable.ic_contacts)
+                    .setTitle(R.string.funny_blacklist_nodata_title)
+                    .setDesc(R.string.funny_blacklist_nodata_desc)
                 contentController.addContent(funnyContent, ContentController.TAG_NO_DATA)
             }
             contentController.showContent(ContentController.TAG_NO_DATA)
@@ -122,7 +132,13 @@ class QmsBlackListFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener
 
     override fun showFoundUsers(items: List<ForumUser>) {
         val nicks = items.map { it.nick.orEmpty() }
-        nickField.setAdapter(ArrayAdapter(context!!, android.R.layout.simple_dropdown_item_1line, nicks))
+        nickField.setAdapter(
+            ArrayAdapter(
+                context!!,
+                android.R.layout.simple_dropdown_item_1line,
+                nicks
+            )
+        )
     }
 
     override fun showItemDialogMenu(item: QmsContact) {

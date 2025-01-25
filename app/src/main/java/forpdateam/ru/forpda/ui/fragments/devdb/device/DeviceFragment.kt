@@ -4,20 +4,24 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
-import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.appbar.CollapsingToolbarLayout
-import com.google.android.material.tabs.TabLayout
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.viewpager.widget.PagerAdapter
-import androidx.viewpager.widget.ViewPager
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewStub
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.google.android.material.tabs.TabLayout
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.assist.FailReason
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
@@ -35,7 +39,9 @@ import forpdateam.ru.forpda.ui.fragments.devdb.device.comments.CommentsFragment
 import forpdateam.ru.forpda.ui.fragments.devdb.device.posts.PostsFragment
 import forpdateam.ru.forpda.ui.fragments.devdb.device.specs.SpecsFragment
 import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup
-import java.util.*
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
+import java.util.Locale
 
 /**
  * Created by radiationx on 08.08.17.
@@ -45,7 +51,7 @@ class DeviceFragment : TabFragment(), DeviceView {
     private lateinit var imagesPager: PagerBullet
     private lateinit var tabLayout: TabLayout
     private lateinit var rating: TextView
-    private lateinit var fragmentsPager: androidx.viewpager.widget.ViewPager
+    private lateinit var fragmentsPager: ViewPager
     private lateinit var progressBar: ProgressBar
     private var toolbarContent: RelativeLayout? = null
 
@@ -64,10 +70,10 @@ class DeviceFragment : TabFragment(), DeviceView {
 
     @ProvidePresenter
     fun providePresenter(): DevicePresenter = DevicePresenter(
-            App.get().Di().devDbRepository,
-            App.get().Di().router,
-            App.get().Di().linkHandler,
-            App.get().Di().errorHandler
+        App.get().Di().devDbRepository,
+        App.get().Di().router,
+        App.get().Di().linkHandler,
+        App.get().Di().errorHandler
     )
 
     init {
@@ -88,7 +94,11 @@ class DeviceFragment : TabFragment(), DeviceView {
         childFragmentManager.executePendingTransactions()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         baseInflateFragment(inflater, R.layout.fragment_device)
         val viewStub = findViewById(R.id.toolbar_content) as ViewStub
@@ -97,16 +107,21 @@ class DeviceFragment : TabFragment(), DeviceView {
         imagesPager = findViewById(R.id.images_pager) as PagerBullet
         progressBar = findViewById(R.id.progress_bar) as ProgressBar
         rating = findViewById(R.id.item_rating) as TextView
-        fragmentsPager = findViewById(R.id.view_pager) as androidx.viewpager.widget.ViewPager
+        fragmentsPager = findViewById(R.id.view_pager) as ViewPager
 
         tabLayout = TabLayout(requireContext())
-        val tabParams = CollapsingToolbarLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM)
+        val tabParams = CollapsingToolbarLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            Gravity.BOTTOM
+        )
         tabParams.collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
         tabLayout.layoutParams = tabParams
         toolbarLayout.addView(tabLayout)
 
         val params = toolbarLayout.layoutParams as AppBarLayout.LayoutParams
-        params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+        params.scrollFlags =
+            AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
         toolbarLayout.layoutParams = params
 
         val newParams = toolbar.layoutParams as CollapsingToolbarLayout.LayoutParams
@@ -121,8 +136,18 @@ class DeviceFragment : TabFragment(), DeviceView {
         super.onViewCreated(view, savedInstanceState)
 
         setCardsBackground()
-        toolbarTitleView.setShadowLayer(App.px2.toFloat(), 0f, 0f, App.getColorFromAttr(context, R.attr.colorPrimary))
-        toolbarSubtitleView.setShadowLayer(App.px2.toFloat(), 0f, 0f, App.getColorFromAttr(context, R.attr.colorPrimary))
+        toolbarTitleView.setShadowLayer(
+            App.px2.toFloat(),
+            0f,
+            0f,
+            App.getColorFromAttr(context, R.attr.colorPrimary)
+        )
+        toolbarSubtitleView.setShadowLayer(
+            App.px2.toFloat(),
+            0f,
+            0f,
+            App.getColorFromAttr(context, R.attr.colorPrimary)
+        )
 
         toolbarLayout.setExpandedTitleColor(Color.TRANSPARENT)
         toolbarLayout.setCollapsedTitleTextColor(Color.TRANSPARENT)
@@ -131,7 +156,12 @@ class DeviceFragment : TabFragment(), DeviceView {
         tabLayout.tabMode = TabLayout.MODE_SCROLLABLE
         tabLayout.setupWithViewPager(fragmentsPager)
 
-        imagesPager.setIndicatorTintColorScheme(App.getColorFromAttr(context, R.attr.default_text_color), App.getColorFromAttr(context, R.attr.second_text_color))
+        imagesPager.setIndicatorTintColorScheme(
+            App.getColorFromAttr(
+                context,
+                R.attr.default_text_color
+            ), App.getColorFromAttr(context, R.attr.second_text_color)
+        )
 
         appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, offset ->
             appBarOffset = offset
@@ -140,16 +170,16 @@ class DeviceFragment : TabFragment(), DeviceView {
 
         if (configuration.isFitSystemWindow) {
             disposables.add(
-                    dimensionsProvider
-                            .observeDimensions()
-                            .subscribe { dimensions ->
-                                toolbarContent?.post {
-                                    if (toolbarContent != null) {
-                                        updateDimens(dimensions)
-                                    }
-                                }
+                dimensionsProvider
+                    .observeDimensions()
+                    .subscribe { dimensions ->
+                        toolbarContent?.post {
+                            if (toolbarContent != null) {
                                 updateDimens(dimensions)
                             }
+                        }
+                        updateDimens(dimensions)
+                    }
             )
         }
     }
@@ -169,34 +199,34 @@ class DeviceFragment : TabFragment(), DeviceView {
     override fun addBaseToolbarMenu(menu: Menu) {
         super.addBaseToolbarMenu(menu)
         copyLinkMenuItem = menu.add(R.string.copy_link)
-                .setOnMenuItemClickListener {
-                    presenter.copyLink()
-                    true
-                }
+            .setOnMenuItemClickListener {
+                presenter.copyLink()
+                true
+            }
 
         shareMenuItem = menu.add(R.string.share)
-                .setOnMenuItemClickListener {
-                    presenter.shareLink()
-                    true
-                }
+            .setOnMenuItemClickListener {
+                presenter.shareLink()
+                true
+            }
 
         noteMenuItem = menu.add(R.string.create_note)
-                .setOnMenuItemClickListener {
-                    presenter.createNote()
-                    true
-                }
+            .setOnMenuItemClickListener {
+                presenter.createNote()
+                true
+            }
 
         toBrandMenuItem = menu.add(R.string.devices)
-                .setOnMenuItemClickListener {
-                    presenter.openDevices()
-                    true
-                }
+            .setOnMenuItemClickListener {
+                presenter.openDevices()
+                true
+            }
 
         toBrandsMenuItem = menu.add(R.string.devices)
-                .setOnMenuItemClickListener {
-                    presenter.openBrands()
-                    true
-                }
+            .setOnMenuItemClickListener {
+                presenter.openBrands()
+                true
+            }
 
         refreshToolbarMenuItems(false)
     }
@@ -264,8 +294,11 @@ class DeviceFragment : TabFragment(), DeviceView {
         disposables.dispose()
     }
 
-    private inner class FragmentPagerAdapter(fm: androidx.fragment.app.FragmentManager, private val device: Device) : androidx.fragment.app.FragmentPagerAdapter(fm) {
-        private val fragments = ArrayList<androidx.fragment.app.Fragment>()
+    private inner class FragmentPagerAdapter(
+        fm: FragmentManager,
+        private val device: Device
+    ) : androidx.fragment.app.FragmentPagerAdapter(fm) {
+        private val fragments = ArrayList<Fragment>()
         private val titles = ArrayList<String>()
 
         init {
@@ -275,35 +308,49 @@ class DeviceFragment : TabFragment(), DeviceView {
             }
             if (!this.device.comments.isEmpty()) {
                 fragments.add(CommentsFragment().setDevice(this.device))
-                val title = String.format(Locale.getDefault(),
-                        App.get().getString(R.string.device_page_comments),
-                        this.device.comments.size)
+                val title = String.format(
+                    Locale.getDefault(),
+                    App.get().getString(R.string.device_page_comments),
+                    this.device.comments.size
+                )
                 titles.add(title)
             }
             if (!this.device.discussions.isEmpty()) {
-                fragments.add(PostsFragment().setSource(PostsFragment.SRC_DISCUSSIONS).setDevice(this.device))
-                val title = String.format(Locale.getDefault(),
-                        App.get().getString(R.string.device_page_discussions),
-                        this.device.discussions.size)
+                fragments.add(
+                    PostsFragment().setSource(PostsFragment.SRC_DISCUSSIONS).setDevice(this.device)
+                )
+                val title = String.format(
+                    Locale.getDefault(),
+                    App.get().getString(R.string.device_page_discussions),
+                    this.device.discussions.size
+                )
                 titles.add(title)
             }
             if (!this.device.news.isEmpty()) {
-                fragments.add(PostsFragment().setSource(PostsFragment.SRC_NEWS).setDevice(this.device))
-                val title = String.format(Locale.getDefault(),
-                        App.get().getString(R.string.device_page_news),
-                        this.device.news.size)
+                fragments.add(
+                    PostsFragment().setSource(PostsFragment.SRC_NEWS).setDevice(this.device)
+                )
+                val title = String.format(
+                    Locale.getDefault(),
+                    App.get().getString(R.string.device_page_news),
+                    this.device.news.size
+                )
                 titles.add(title)
             }
             if (!this.device.firmwares.isEmpty()) {
-                fragments.add(PostsFragment().setSource(PostsFragment.SRC_FIRMWARES).setDevice(this.device))
-                val title = String.format(Locale.getDefault(),
-                        App.get().getString(R.string.device_page_firmwares),
-                        this.device.firmwares.size)
+                fragments.add(
+                    PostsFragment().setSource(PostsFragment.SRC_FIRMWARES).setDevice(this.device)
+                )
+                val title = String.format(
+                    Locale.getDefault(),
+                    App.get().getString(R.string.device_page_firmwares),
+                    this.device.firmwares.size
+                )
                 titles.add(title)
             }
         }
 
-        override fun getItem(position: Int): androidx.fragment.app.Fragment {
+        override fun getItem(position: Int): Fragment {
             return fragments[position]
         }
 
@@ -311,17 +358,17 @@ class DeviceFragment : TabFragment(), DeviceView {
             return fragments.size
         }
 
-        override fun getPageTitle(position: Int): CharSequence? {
+        override fun getPageTitle(position: Int): CharSequence {
             return titles[position]
         }
     }
 
 
     inner class ImagesAdapter(
-            context: Context,
-            private val urls: ArrayList<String>,
-            private var fullUrls: ArrayList<String>
-    ) : androidx.viewpager.widget.PagerAdapter() {
+        context: Context,
+        private val urls: ArrayList<String>,
+        private var fullUrls: ArrayList<String>
+    ) : PagerAdapter() {
         //private SparseArray<View> views = new SparseArray<>();
         private val inflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -351,23 +398,32 @@ class DeviceFragment : TabFragment(), DeviceView {
         private fun loadImage(imageLayout: View, position: Int) {
             val imageView = imageLayout.findViewById<View>(R.id.image_view) as ImageView
             val progressBar = imageLayout.findViewById<View>(R.id.progress_bar) as ProgressBar
-            ImageLoader.getInstance().displayImage(urls[position], imageView, object : SimpleImageLoadingListener() {
-                override fun onLoadingStarted(imageUri: String?, view: View?) {
-                    progressBar.visibility = View.VISIBLE
-                }
+            ImageLoader.getInstance()
+                .displayImage(urls[position], imageView, object : SimpleImageLoadingListener() {
+                    override fun onLoadingStarted(imageUri: String?, view: View?) {
+                        progressBar.visibility = View.VISIBLE
+                    }
 
-                override fun onLoadingCancelled(imageUri: String?, view: View?) {
-                    progressBar.visibility = View.GONE
-                }
+                    override fun onLoadingCancelled(imageUri: String?, view: View?) {
+                        progressBar.visibility = View.GONE
+                    }
 
-                override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap?) {
-                    progressBar.visibility = View.GONE
-                }
+                    override fun onLoadingComplete(
+                        imageUri: String?,
+                        view: View?,
+                        loadedImage: Bitmap?
+                    ) {
+                        progressBar.visibility = View.GONE
+                    }
 
-                override fun onLoadingFailed(imageUri: String?, view: View?, failReason: FailReason?) {
-                    progressBar.visibility = View.GONE
-                }
-            })
+                    override fun onLoadingFailed(
+                        imageUri: String?,
+                        view: View?,
+                        failReason: FailReason?
+                    ) {
+                        progressBar.visibility = View.GONE
+                    }
+                })
 
         }
     }

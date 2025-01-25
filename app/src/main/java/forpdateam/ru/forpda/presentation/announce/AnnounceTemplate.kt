@@ -4,7 +4,7 @@ import forpdateam.ru.forpda.entity.remote.forum.Announce
 import forpdateam.ru.forpda.ui.TemplateManager
 
 class AnnounceTemplate(
-        private val templateManager: TemplateManager
+    private val templateManager: TemplateManager
 ) {
 
     fun mapEntity(announce: Announce): Announce = announce.apply { html = mapString(announce) }

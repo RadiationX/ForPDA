@@ -2,7 +2,10 @@ package forpdateam.ru.forpda.model.system
 
 import android.os.Environment
 import forpdateam.ru.forpda.model.data.storage.ExternalStorageProvider
-import java.io.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.io.OutputStreamWriter
 
 class ExternalStorage : ExternalStorageProvider {
 
@@ -28,7 +31,8 @@ class ExternalStorage : ExternalStorageProvider {
     }
 
     override fun saveTextDefault(text: String, fileName: String): String {
-        val root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()
+        val root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+            .toString()
         return saveText(text, fileName, root)
     }
 }

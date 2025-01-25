@@ -1,13 +1,14 @@
 package forpdateam.ru.forpda.ui.fragments.notes;
 
 import android.content.Context;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -21,13 +22,15 @@ import io.reactivex.disposables.Disposable;
  */
 
 public class NotesAddPopup {
-    private BottomSheetDialog dialog;
-    private TextView title;
-    private ImageButton addButton;
-    private EditText titleField, linkField, contentField;
+    private final BottomSheetDialog dialog;
+    private final TextView title;
+    private final ImageButton addButton;
+    private final EditText titleField;
+    private final EditText linkField;
+    private final EditText contentField;
     private boolean editingMode = false;
-    private NotesRepository notesRepository = App.get().Di().getNotesRepository();
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private final NotesRepository notesRepository = App.get().Di().getNotesRepository();
+    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public NotesAddPopup(Context context, NoteItem item) {
         dialog = new BottomSheetDialog(context);
@@ -36,11 +39,11 @@ public class NotesAddPopup {
         });
         dialog.setOnDismissListener(dialog -> compositeDisposable.dispose());
         View view = View.inflate(context, R.layout.notes_popup, null);
-        title = (TextView) view.findViewById(R.id.popup_title);
-        addButton = (ImageButton) view.findViewById(R.id.add_button);
-        titleField = (EditText) view.findViewById(R.id.title_field);
-        linkField = (EditText) view.findViewById(R.id.link_field);
-        contentField = (EditText) view.findViewById(R.id.content_field);
+        title = view.findViewById(R.id.popup_title);
+        addButton = view.findViewById(R.id.add_button);
+        titleField = view.findViewById(R.id.title_field);
+        linkField = view.findViewById(R.id.link_field);
+        contentField = view.findViewById(R.id.content_field);
         editingMode = item != null;
 
         if (editingMode) {

@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.presentation.main
 
-import moxy.InjectViewState
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.common.AuthState
 import forpdateam.ru.forpda.model.AuthHolder
@@ -13,17 +11,18 @@ import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import moxy.InjectViewState
 
 @InjectViewState
 class MainPresenter(
-        private val router: TabRouter,
-        private val authHolder: AuthHolder,
-        private val linkHandler: ILinkHandler,
-        private val menuRepository: MenuRepository,
-        private val qmsInteractor: QmsInteractor,
-        private val otherPreferencesHolder: OtherPreferencesHolder,
-        private val mainPreferencesHolder: MainPreferencesHolder,
-        private val errorHandler: IErrorHandler
+    private val router: TabRouter,
+    private val authHolder: AuthHolder,
+    private val linkHandler: ILinkHandler,
+    private val menuRepository: MenuRepository,
+    private val qmsInteractor: QmsInteractor,
+    private val otherPreferencesHolder: OtherPreferencesHolder,
+    private val mainPreferencesHolder: MainPreferencesHolder,
+    private val errorHandler: IErrorHandler
 ) : BasePresenter<MainView>() {
 
     private var isRestored: Boolean = false
@@ -32,7 +31,6 @@ class MainPresenter(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         qmsInteractor.subscribeEvents()
-
 
 
         val firstAppStart = otherPreferencesHolder.getAppFirstStart()

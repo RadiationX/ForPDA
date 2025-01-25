@@ -7,11 +7,11 @@ import android.view.View
  * Created by radiationx on 30.12.17.
  */
 class DimensionHelper(
-        measurer: View,
-        private val container: View,
-        private val listener: DimensionsListener,
-        private val defaultStatusBarHeight: Int = 0,
-        private val defaultKeyboardHeight: Int = 0
+    measurer: View,
+    private val container: View,
+    private val listener: DimensionsListener,
+    private val defaultStatusBarHeight: Int = 0,
+    private val defaultKeyboardHeight: Int = 0
 ) {
 
     private val dimension = Dimensions()
@@ -28,7 +28,10 @@ class DimensionHelper(
             listener.onDimensionsChange(it)
         }
         measurer.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-            Log.e("S_DEF_LOG", "OnLayoutChange $left $top $right $bottom ||| $oldLeft $oldTop $oldRight $oldBottom")
+            Log.e(
+                "S_DEF_LOG",
+                "OnLayoutChange $left $top $right $bottom ||| $oldLeft $oldTop $oldRight $oldBottom"
+            )
             var anyChanges = false
             if (dimension.contentHeight == 0) {
                 dimension.statusBar = v.top
@@ -36,7 +39,8 @@ class DimensionHelper(
             }
 
             dimension.contentHeight = v.height
-            dimension.keyboardHeight = container.height - dimension.contentHeight - dimension.statusBar - dimension.navigationBar
+            dimension.keyboardHeight =
+                container.height - dimension.contentHeight - dimension.statusBar - dimension.navigationBar
 
             if (dimension.isKeyboardShow()) {
                 dimension.savedKeyboardHeight = dimension.keyboardHeight
@@ -44,9 +48,10 @@ class DimensionHelper(
 
             dimension.also {
                 if (it.statusBar != lastSb
-                        || it.navigationBar != lastNb
-                        || it.contentHeight != lastCh
-                        || it.keyboardHeight != lastKh) {
+                    || it.navigationBar != lastNb
+                    || it.contentHeight != lastCh
+                    || it.keyboardHeight != lastKh
+                ) {
 
                     lastSb = it.statusBar
                     lastNb = it.navigationBar

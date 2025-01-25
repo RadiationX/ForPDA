@@ -1,15 +1,13 @@
 package forpdateam.ru.forpda.ui.fragments.other
 
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.ItemTouchHelper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.app.CloseableInfo
@@ -19,7 +17,9 @@ import forpdateam.ru.forpda.presentation.other.OtherPresenter
 import forpdateam.ru.forpda.presentation.other.OtherView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.views.drawers.adapters.DrawerMenuItem
-import kotlinx.android.synthetic.main.fragment_other.*
+import kotlinx.android.synthetic.main.fragment_other.recyclerView
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 
 /**
@@ -29,11 +29,11 @@ class OtherFragment : TabFragment(), OtherView {
 
     private val otherAdapter by lazy {
         OtherAdapter(
-                profileClickListener,
-                logoutClickListener,
-                menuClickListener,
-                menuSequenceListener,
-                infoCloseClickListener
+            profileClickListener,
+            logoutClickListener,
+            menuClickListener,
+            menuSequenceListener,
+            infoCloseClickListener
         )
     }
 
@@ -45,15 +45,15 @@ class OtherFragment : TabFragment(), OtherView {
     @ProvidePresenter
     fun provideOtherPresenter(): OtherPresenter {
         return OtherPresenter(
-                App.get().Di().router,
-                App.get().Di().authRepository,
-                App.get().Di().profileRepository,
-                App.get().Di().authHolder,
-                App.get().Di().errorHandler,
-                App.get().Di().menuRepository,
-                App.get().Di().closeableInfoHolder,
-                App.get().Di().linkHandler,
-                App.get().Di().systemLinkHandler
+            App.get().Di().router,
+            App.get().Di().authRepository,
+            App.get().Di().profileRepository,
+            App.get().Di().authHolder,
+            App.get().Di().errorHandler,
+            App.get().Di().menuRepository,
+            App.get().Di().closeableInfoHolder,
+            App.get().Di().linkHandler,
+            App.get().Di().systemLinkHandler
         )
     }
 
@@ -61,7 +61,11 @@ class OtherFragment : TabFragment(), OtherView {
         configuration.defaultTitle = "Полное меню приложения"
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         baseInflateFragment(inflater, R.layout.fragment_other)
         return viewFragment
@@ -71,14 +75,19 @@ class OtherFragment : TabFragment(), OtherView {
         super.onViewCreated(view, savedInstanceState)
         appBarLayout.visibility = View.GONE
         recyclerView.apply {
-            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this.context)
+            layoutManager = LinearLayoutManager(this.context)
             adapter = otherAdapter
 
             val touchHelper = ItemTouchHelper(OtherItemDragCallback(otherAdapter, itemDragListener))
             touchHelper.attachToRecyclerView(this)
 
-            addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
+            addOnScrollListener(object :
+                RecyclerView.OnScrollListener() {
+                override fun onScrolled(
+                    recyclerView: RecyclerView,
+                    dx: Int,
+                    dy: Int
+                ) {
                     super.onScrolled(recyclerView, dx, dy)
                     listScrollY = recyclerView.computeVerticalScrollOffset()
                     updateToolbarShadow()
@@ -91,7 +100,11 @@ class OtherFragment : TabFragment(), OtherView {
         return listScrollY != 0
     }
 
-    override fun showItems(profileItem: ProfileModel?, infoList: List<CloseableInfo>, menu: List<List<AppMenuItem>>) {
+    override fun showItems(
+        profileItem: ProfileModel?,
+        infoList: List<CloseableInfo>,
+        menu: List<List<AppMenuItem>>
+    ) {
         otherAdapter.bindItems(profileItem, infoList, menu)
     }
 

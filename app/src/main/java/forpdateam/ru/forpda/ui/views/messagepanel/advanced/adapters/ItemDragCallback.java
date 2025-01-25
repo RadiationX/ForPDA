@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.ui.views.messagepanel.advanced.adapters;
 
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by radiationx on 26.05.17.

@@ -6,37 +6,40 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.PorterDuff
-import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.util.Log
+import android.util.TypedValue
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.CallSuper
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.tabs.TabLayout
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.SearchView
-import android.util.Log
-import android.util.TypedValue
-import android.view.*
-import android.widget.*
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.tabs.TabLayout
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.FilePickHelper
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.entity.app.EditPostSyncData
 import forpdateam.ru.forpda.entity.app.TabNotification
-import forpdateam.ru.forpda.entity.common.AuthState
 import forpdateam.ru.forpda.entity.remote.IBaseForumPost
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
-import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.theme.ThemePresenter
 import forpdateam.ru.forpda.presentation.theme.ThemeView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
@@ -46,6 +49,8 @@ import forpdateam.ru.forpda.ui.views.FabOnScroll
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
 import forpdateam.ru.forpda.ui.views.messagepanel.attachments.AttachmentsPopup
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 20.10.16.
@@ -65,7 +70,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
     protected lateinit var addFavoritesMenuItem: MenuItem
     protected lateinit var openForumMenuItem: MenuItem
 
-    protected lateinit var refreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    protected lateinit var refreshLayout: SwipeRefreshLayout
 
     private lateinit var paginationHelper: PaginationHelper
 
@@ -90,22 +95,22 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
 
     @ProvidePresenter
     fun providePresenter(): ThemePresenter = ThemePresenter(
-            App.get().Di().themeRepository,
-            App.get().Di().reputationRepository,
-            App.get().Di().editPostRepository,
-            App.get().Di().favoritesRepository,
-            App.get().Di().eventsRepository,
-            App.get().Di().userHolder,
-            App.get().Di().authHolder,
-            App.get().Di().topicPreferencesHolder,
-            App.get().Di().mainPreferencesHolder,
-            App.get().Di().otherPreferencesHolder,
-            App.get().Di().crossScreenInteractor,
-            App.get().Di().themeTemplate,
-            App.get().Di().templateManager,
-            App.get().Di().router,
-            App.get().Di().linkHandler,
-            App.get().Di().errorHandler
+        App.get().Di().themeRepository,
+        App.get().Di().reputationRepository,
+        App.get().Di().editPostRepository,
+        App.get().Di().favoritesRepository,
+        App.get().Di().eventsRepository,
+        App.get().Di().userHolder,
+        App.get().Di().authHolder,
+        App.get().Di().topicPreferencesHolder,
+        App.get().Di().mainPreferencesHolder,
+        App.get().Di().otherPreferencesHolder,
+        App.get().Di().crossScreenInteractor,
+        App.get().Di().themeTemplate,
+        App.get().Di().templateManager,
+        App.get().Di().router,
+        App.get().Di().linkHandler,
+        App.get().Di().errorHandler
     )
 
     override fun onEventNew(event: TabNotification) {
@@ -121,13 +126,14 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.apply {
-            presenter.themeUrl = getString(TabFragment.ARG_TAB, "")
+            presenter.themeUrl = getString(ARG_TAB, "")
         }
         dialogsHelper = ThemeDialogsHelper_V2(context, authHolder, otherPreferencesHolder)
     }
 
     override fun initFabBehavior() {
-        val params = fab.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
+        val params =
+            fab.layoutParams as CoordinatorLayout.LayoutParams
         val behavior = FabOnScroll(fab.context, null)
         params.behavior = behavior
         params.gravity = Gravity.CENTER_VERTICAL or Gravity.END
@@ -137,11 +143,16 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
 
 
     @SuppressLint("InflateParams")
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         initFabBehavior()
         baseInflateFragment(inflater, R.layout.fragment_theme)
-        refreshLayout = findViewById(R.id.swipe_refresh_list) as androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        refreshLayout =
+            findViewById(R.id.swipe_refresh_list) as SwipeRefreshLayout
         messagePanel = MessagePanel(context, fragmentContainer, coordinatorLayout, false)
         paginationHelper = PaginationHelper(activity)
         paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow)
@@ -150,7 +161,10 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
         notificationTitle = notificationView.findViewById<View>(R.id.title) as TextView
         notificationButton = notificationView.findViewById<View>(R.id.icon) as ImageButton
         fragmentContent.addView(notificationView)
-        notificationView.layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        notificationView.layoutParams = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
 
         contentController.setMainRefresh(refreshLayout)
         return viewFragment
@@ -160,16 +174,19 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
         super.onViewCreated(view, savedInstanceState)
         setFontSize(mainPreferencesHolder.getWebViewFontSize())
 
-        notificationButton.setColorFilter(App.getColorFromAttr(context, R.attr.contrast_text_color), PorterDuff.Mode.SRC_ATOP)
+        notificationButton.setColorFilter(
+            App.getColorFromAttr(context, R.attr.contrast_text_color),
+            PorterDuff.Mode.SRC_ATOP
+        )
         notificationTitle.text = "Новое сообщение"
         notificationView.visibility = View.GONE
         notificationButton.setOnClickListener { notificationView.visibility = View.GONE }
         notificationView
-                .findViewById<View>(R.id.new_message_card)
-                .setOnClickListener {
-                    presenter.loadNewPosts()
-                    notificationView.visibility = View.GONE
-                }
+            .findViewById<View>(R.id.new_message_card)
+            .setOnClickListener {
+                presenter.loadNewPosts()
+                notificationView.visibility = View.GONE
+            }
 
         messagePanel.enableBehavior()
         messagePanel.addSendOnClickListener { sendMessage() }
@@ -178,7 +195,12 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
             true
         }
         messagePanel.fullButton.visibility = View.VISIBLE
-        messagePanel.fullButton.setOnClickListener { presenter.openEditPostForm(messagePanel.message, messagePanel.attachments) }
+        messagePanel.fullButton.setOnClickListener {
+            presenter.openEditPostForm(
+                messagePanel.message,
+                messagePanel.attachments
+            )
+        }
         messagePanel.hideButton.visibility = View.VISIBLE
         messagePanel.hideButton.setOnClickListener { hideMessagePanel() }
         attachmentsPopup = messagePanel.attachmentsPopup
@@ -256,12 +278,12 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
 
         if (messagePanel.message != null && !messagePanel.message.isEmpty() || !messagePanel.attachments.isEmpty()) {
             AlertDialog.Builder(context!!)
-                    .setMessage(R.string.editpost_lose_changes)
-                    .setPositiveButton(R.string.ok) { _, _ ->
-                        presenter.exit()
-                    }
-                    .setNegativeButton(R.string.no, null)
-                    .show()
+                .setMessage(R.string.editpost_lose_changes)
+                .setPositiveButton(R.string.ok) { _, _ ->
+                    presenter.exit()
+                }
+                .setNegativeButton(R.string.no, null)
+                .show()
             return true
         }
 
@@ -307,7 +329,8 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
                 messagePanel.show()
             }
             messagePanel.heightChangeListener.onChangedHeight(messagePanel.lastHeight)
-            toggleMessagePanelItem.icon = App.getVecDrawable(context, R.drawable.ic_toolbar_transcribe_close)
+            toggleMessagePanelItem.icon =
+                App.getVecDrawable(context, R.drawable.ic_toolbar_transcribe_close)
         }
         if (showKeyboard) {
             //messagePanel.getMessageField().setSelection(messagePanel.getMessageField().length());
@@ -327,64 +350,64 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
     override fun addBaseToolbarMenu(menu: Menu) {
         super.addBaseToolbarMenu(menu)
         toggleMessagePanelItem = menu
-                .add(R.string.reply)
-                .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_create))
-                .setOnMenuItemClickListener {
-                    if (!authHolder.get().isAuth()) {
-                        Utils.showNeedAuthDialog(requireContext())
-                        return@setOnMenuItemClickListener false
-                    }
-                    toggleMessagePanel()
-                    false
+            .add(R.string.reply)
+            .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_create))
+            .setOnMenuItemClickListener {
+                if (!authHolder.get().isAuth()) {
+                    Utils.showNeedAuthDialog(requireContext())
+                    return@setOnMenuItemClickListener false
                 }
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                toggleMessagePanel()
+                false
+            }
+            .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
 
         refreshMenuItem = menu
-                .add(R.string.refresh)
-                .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_refresh))
-                .setOnMenuItemClickListener {
-                    presenter.reload()
-                    false
-                }
+            .add(R.string.refresh)
+            .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_refresh))
+            .setOnMenuItemClickListener {
+                presenter.reload()
+                false
+            }
 
         copyLinkMenuItem = menu
-                .add(R.string.copy_link)
-                .setOnMenuItemClickListener {
-                    presenter.copyLink()
-                    false
-                }
+            .add(R.string.copy_link)
+            .setOnMenuItemClickListener {
+                presenter.copyLink()
+                false
+            }
         addSearchOnPageItem(menu)
         searchInThemeMenuItem = menu
-                .add(R.string.search_in_theme)
-                .setOnMenuItemClickListener {
-                    presenter.openSearch()
-                    false
-                }
+            .add(R.string.search_in_theme)
+            .setOnMenuItemClickListener {
+                presenter.openSearch()
+                false
+            }
         searchPostsMenuItem = menu
-                .add(R.string.search_my_posts)
-                .setOnMenuItemClickListener {
-                    presenter.openSearchMyPosts()
-                    false
-                }
+            .add(R.string.search_my_posts)
+            .setOnMenuItemClickListener {
+                presenter.openSearchMyPosts()
+                false
+            }
 
         deleteFavoritesMenuItem = menu
-                .add(R.string.delete_from_favorites)
-                .setOnMenuItemClickListener {
-                    presenter.onClickDeleteInFav()
-                    false
-                }
+            .add(R.string.delete_from_favorites)
+            .setOnMenuItemClickListener {
+                presenter.onClickDeleteInFav()
+                false
+            }
         addFavoritesMenuItem = menu
-                .add(R.string.add_to_favorites)
-                .setOnMenuItemClickListener {
-                    presenter.onClickAddInFav()
-                    false
-                }
+            .add(R.string.add_to_favorites)
+            .setOnMenuItemClickListener {
+                presenter.onClickAddInFav()
+                false
+            }
         openForumMenuItem = menu
-                .add(R.string.open_theme_forum)
-                .setOnMenuItemClickListener {
-                    presenter.openForum()
-                    false
-                }
+            .add(R.string.open_theme_forum)
+            .setOnMenuItemClickListener {
+                presenter.openForum()
+                false
+            }
 
         refreshToolbarMenuItems(false)
     }
@@ -452,20 +475,35 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
 
         searchView.setOnSearchClickListener { _ ->
             if (searchView.tag == searchViewTag) {
-                val searchClose = searchView.findViewById<View>(androidx.appcompat.R.id.search_close_btn) as ImageView?
+                val searchClose =
+                    searchView.findViewById<View>(androidx.appcompat.R.id.search_close_btn) as ImageView?
                 if (searchClose != null)
                     (searchClose.parent as ViewGroup).removeView(searchClose)
 
                 val navButtonsParams = ViewGroup.LayoutParams(App.px48, App.px48)
                 val outValue = TypedValue()
-                context?.theme?.resolveAttribute(android.R.attr.actionBarItemBackground, outValue, true)
+                context?.theme?.resolveAttribute(
+                    android.R.attr.actionBarItemBackground,
+                    outValue,
+                    true
+                )
 
                 val btnNext = AppCompatImageButton(searchView.context)
-                btnNext.setImageDrawable(App.getVecDrawable(context, R.drawable.ic_toolbar_search_next))
+                btnNext.setImageDrawable(
+                    App.getVecDrawable(
+                        context,
+                        R.drawable.ic_toolbar_search_next
+                    )
+                )
                 btnNext.setBackgroundResource(outValue.resourceId)
 
                 val btnPrev = AppCompatImageButton(searchView.context)
-                btnPrev.setImageDrawable(App.getVecDrawable(context, R.drawable.ic_toolbar_search_prev))
+                btnPrev.setImageDrawable(
+                    App.getVecDrawable(
+                        context,
+                        R.drawable.ic_toolbar_search_prev
+                    )
+                )
                 btnPrev.setBackgroundResource(outValue.resourceId)
 
                 (searchView.getChildAt(0) as LinearLayout).addView(btnPrev, navButtonsParams)
@@ -495,33 +533,45 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
 
     override fun showAddInFavDialog(page: ThemePage) {
         AlertDialog.Builder(context!!)
-                .setTitle(R.string.favorites_subscribe_email)
-                .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
-                    presenter.addTopicToFavorite(page.id, FavoritesApi.SUB_TYPES[which])
-                }
-                .show()
+            .setTitle(R.string.favorites_subscribe_email)
+            .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
+                presenter.addTopicToFavorite(page.id, FavoritesApi.SUB_TYPES[which])
+            }
+            .show()
     }
 
     override fun showDeleteInFavDialog(page: ThemePage) {
         if (page.favId == 0) {
-            Toast.makeText(App.getContext(), R.string.fav_delete_error_id_not_found, Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                App.getContext(),
+                R.string.fav_delete_error_id_not_found,
+                Toast.LENGTH_SHORT
+            ).show()
         }
         AlertDialog.Builder(context!!)
-                .setMessage(R.string.fav_ask_delete)
-                .setPositiveButton(R.string.ok) { _, _ ->
-                    presenter.deleteTopicFromFavorite(page.favId)
-                }
-                .setNegativeButton(R.string.cancel, null)
-                .show()
+            .setMessage(R.string.fav_ask_delete)
+            .setPositiveButton(R.string.ok) { _, _ ->
+                presenter.deleteTopicFromFavorite(page.favId)
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 
     override fun onAddToFavorite(result: Boolean) {
-        Toast.makeText(context, if (result) getString(R.string.favorites_added) else getString(R.string.error_occurred), Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            context,
+            if (result) getString(R.string.favorites_added) else getString(R.string.error_occurred),
+            Toast.LENGTH_SHORT
+        ).show()
         refreshToolbarMenuItems(true)
     }
 
     override fun onDeleteFromFavorite(result: Boolean) {
-        Toast.makeText(App.getContext(), getString(if (result) R.string.favorite_theme_deleted else R.string.error), Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            App.getContext(),
+            getString(if (result) R.string.favorite_theme_deleted else R.string.error),
+            Toast.LENGTH_SHORT
+        ).show()
         refreshToolbarMenuItems(true)
     }
 
@@ -556,12 +606,17 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
     }
 
     private fun tryPickFile() {
-        App.get().checkStoragePermission({ startActivityForResult(FilePickHelper.pickFile(false), TabFragment.REQUEST_PICK_FILE) }, App.getActivity())
+        App.get().checkStoragePermission({
+            startActivityForResult(
+                FilePickHelper.pickFile(false),
+                REQUEST_PICK_FILE
+            )
+        }, App.getActivity())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == TabFragment.REQUEST_PICK_FILE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_PICK_FILE && resultCode == Activity.RESULT_OK) {
             if (data == null) {
                 //Display an error
                 return

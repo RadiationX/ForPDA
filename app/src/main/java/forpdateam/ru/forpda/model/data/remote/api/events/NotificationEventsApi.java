@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.model.data.remote.api.events;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -21,7 +19,7 @@ public class NotificationEventsApi {
     public final static Pattern inspectorQmsPattern = Pattern.compile("(\\d+) \"([\\s\\S]*?)\" (\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) (\\d+)");
     public final static Pattern webSocketEventPattern = Pattern.compile("\\[(\\d+),(\\d+),\"([\\s\\S])(\\d+)\",(\\d+),(\\d+)\\]");
 
-    private IWebClient webClient;
+    private final IWebClient webClient;
 
     public NotificationEventsApi(IWebClient webClient) {
         this.webClient = webClient;

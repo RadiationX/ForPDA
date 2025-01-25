@@ -6,15 +6,17 @@ import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.google.android.material.tabs.TabLayout;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ListView;
+
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 
@@ -36,18 +38,18 @@ public class PaginationHelper {
     private final static int TAG_NEXT = 3;
     private final static int TAG_LAST = 4;
     private final static ColorFilter colorFilter = new PorterDuffColorFilter(Color.argb(80, 255, 255, 255), PorterDuff.Mode.DST_IN);
-    private Context context;
+    private final Context context;
     private TabLayout tabLayoutInToolbar;
 
-    private DimensionsProvider dimensionsProvider = App.get().Di().getDimensionsProvider();
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final DimensionsProvider dimensionsProvider = App.get().Di().getDimensionsProvider();
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     private int currentPage = 0;
 
-    private ArrayList<TabLayout> tabLayouts = new ArrayList<>();
+    private final ArrayList<TabLayout> tabLayouts = new ArrayList<>();
     private Pagination pagination;
     private PaginationListener listener;
-    private TabLayout.OnTabSelectedListener tabSelectedListener = new TabLayout.OnTabSelectedListener() {
+    private final TabLayout.OnTabSelectedListener tabSelectedListener = new TabLayout.OnTabSelectedListener() {
         @Override
         public void onTabSelected(TabLayout.Tab tab) {
             if (listener.onTabSelected(tab) || tab.getTag() == null) return;

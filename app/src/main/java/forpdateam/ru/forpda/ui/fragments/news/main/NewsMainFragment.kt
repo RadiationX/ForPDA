@@ -1,12 +1,10 @@
 package forpdateam.ru.forpda.ui.fragments.news.main
 
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
@@ -17,6 +15,8 @@ import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
 import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.PauseOnScrollListener
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 /**
  * Created by isanechek on 8/8/17.
@@ -32,13 +32,13 @@ class NewsMainFragment : RecyclerFragment(), NewsListAdapter.ItemClickListener, 
 
     @ProvidePresenter
     fun providePresenter(): ArticlesListPresenter = ArticlesListPresenter(
-            App.get().Di().newsRepository,
-            App.get().Di().avatarRepository,
-            App.get().Di().authHolder,
-            App.get().Di().router,
-            App.get().Di().linkHandler,
-            App.get().Di().errorHandler,
-            App.get().Di().schedulers
+        App.get().Di().newsRepository,
+        App.get().Di().avatarRepository,
+        App.get().Di().authHolder,
+        App.get().Di().router,
+        App.get().Di().linkHandler,
+        App.get().Di().errorHandler,
+        App.get().Di().schedulers
     )
 
     init {
@@ -49,7 +49,7 @@ class NewsMainFragment : RecyclerFragment(), NewsListAdapter.ItemClickListener, 
         super.onViewCreated(view, savedInstanceState)
         setListsBackground()
         refreshLayout.setOnRefreshListener { presenter.refreshArticles() }
-        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(context)
         //recyclerView.addItemDecoration(new DevicesFragment.SpacingItemDecoration(App.px8, true));
         val pauseOnScrollListener = PauseOnScrollListener(ImageLoader.getInstance(), true, true)
         recyclerView.addOnScrollListener(pauseOnScrollListener)
@@ -76,12 +76,12 @@ class NewsMainFragment : RecyclerFragment(), NewsListAdapter.ItemClickListener, 
     override fun addBaseToolbarMenu(menu: Menu) {
         super.addBaseToolbarMenu(menu)
         menu.add(R.string.fragment_title_search)
-                .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_search))
-                .setOnMenuItemClickListener {
-                    presenter.openSearch()
-                    true
-                }
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_search))
+            .setOnMenuItemClickListener {
+                presenter.openSearch()
+                true
+            }
+            .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
     }
 
     override fun onLoadMoreClick() {

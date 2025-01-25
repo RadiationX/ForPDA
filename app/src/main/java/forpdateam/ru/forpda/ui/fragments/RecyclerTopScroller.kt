@@ -1,13 +1,12 @@
 package forpdateam.ru.forpda.ui.fragments
 
-import com.google.android.material.appbar.AppBarLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import java.util.*
+import com.google.android.material.appbar.AppBarLayout
 
 class RecyclerTopScroller(
-        private val recyclerView: androidx.recyclerview.widget.RecyclerView,
-        private val appBarLayout: AppBarLayout
+    private val recyclerView: RecyclerView,
+    private val appBarLayout: AppBarLayout
 ) : TabTopScroller {
 
     private var lastItemOffset = 0
@@ -15,8 +14,13 @@ class RecyclerTopScroller(
     private var scrolledToTop = false
 
     init {
-        recyclerView.addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
+        recyclerView.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
+            override fun onScrolled(
+                recyclerView: RecyclerView,
+                dx: Int,
+                dy: Int
+            ) {
                 super.onScrolled(recyclerView, dx, dy)
                 val listScrollY = recyclerView.computeVerticalScrollOffset()
                 if (scrolledToTop && listScrollY > 0) {
@@ -29,7 +33,8 @@ class RecyclerTopScroller(
     }
 
     override fun toggleScrollTop() {
-        val layoutManager = recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager
+        val layoutManager =
+            recyclerView.layoutManager as LinearLayoutManager
         if (lastItemOffset > 0 || lastItemPosition > 0) {
             //appBarLayout.setExpanded(false, true);
             val position = lastItemPosition

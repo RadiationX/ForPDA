@@ -5,24 +5,24 @@ package forpdateam.ru.forpda.entity.remote.events
  */
 
 data class NotificationEvent @JvmOverloads constructor(
-        var type: Type,
-        var source: Source,
+    var type: Type,
+    var source: Source,
 
-        var messageId: Int = 0,
+    var messageId: Int = 0,
 
-        var sourceId: Int = 0,
-        var userId: Int = 0,
+    var sourceId: Int = 0,
+    var userId: Int = 0,
 
-        var timeStamp: Long = 0,
-        var lastTimeStamp: Long = 0,
+    var timeStamp: Long = 0,
+    var lastTimeStamp: Long = 0,
 
-        var msgCount: Int = 0,
-        var isImportant: Boolean = false,
+    var msgCount: Int = 0,
+    var isImportant: Boolean = false,
 
-        var sourceTitle: String = "",
-        var userNick: String = "",
+    var sourceTitle: String = "",
+    var userNick: String = "",
 
-        var sourceEventText: String? = null
+    var sourceEventText: String? = null
 ) {
 
 
@@ -31,13 +31,13 @@ data class NotificationEvent @JvmOverloads constructor(
     * */
 
     val isNew: Boolean
-        get() = NotificationEvent.isNew(type)
+        get() = isNew(type)
 
     val isRead: Boolean
-        get() = NotificationEvent.isRead(type)
+        get() = isRead(type)
 
     val isMention: Boolean
-        get() = NotificationEvent.isMention(type)
+        get() = isMention(type)
 
 
     enum class Type(val value: Int) {
@@ -54,15 +54,15 @@ data class NotificationEvent @JvmOverloads constructor(
     }
 
     fun fromTheme(): Boolean {
-        return NotificationEvent.fromTheme(source)
+        return fromTheme(source)
     }
 
     fun fromSite(): Boolean {
-        return NotificationEvent.fromSite(source)
+        return fromSite(source)
     }
 
     fun fromQms(): Boolean {
-        return NotificationEvent.fromQms(source)
+        return fromQms(source)
     }
 
     @JvmOverloads

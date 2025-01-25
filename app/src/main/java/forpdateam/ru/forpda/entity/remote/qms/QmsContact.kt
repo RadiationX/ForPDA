@@ -9,7 +9,7 @@ class QmsContact : IQmsContact {
     override var id: Int = 0
     override var count: Int = 0
 
-    constructor() {}
+    constructor()
 
     constructor(contact: IQmsContact) {
         nick = contact.nick

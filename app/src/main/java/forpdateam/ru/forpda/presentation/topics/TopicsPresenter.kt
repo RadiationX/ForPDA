@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.presentation.topics
 
-import android.util.Log
-import moxy.InjectViewState
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.topics.TopicItem
 import forpdateam.ru.forpda.entity.remote.topics.TopicsData
@@ -14,6 +12,7 @@ import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import moxy.InjectViewState
 
 /**
  * Created by radiationx on 03.01.18.
@@ -21,13 +20,13 @@ import forpdateam.ru.forpda.presentation.TabRouter
 
 @InjectViewState
 class TopicsPresenter(
-        private val topicsRepository: TopicsRepository,
-        private val forumRepository: ForumRepository,
-        private val favoritesRepository: FavoritesRepository,
-        private val crossScreenInteractor: CrossScreenInteractor,
-        private val router: TabRouter,
-        private val linkHandler: ILinkHandler,
-        private val errorHandler: IErrorHandler
+    private val topicsRepository: TopicsRepository,
+    private val forumRepository: ForumRepository,
+    private val favoritesRepository: FavoritesRepository,
+    private val crossScreenInteractor: CrossScreenInteractor,
+    private val router: TabRouter,
+    private val linkHandler: ILinkHandler,
+    private val errorHandler: IErrorHandler
 ) : BasePresenter<TopicsView>() {
 
     var id = 0
@@ -37,26 +36,26 @@ class TopicsPresenter(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         crossScreenInteractor
-                .observeTopic()
-                .subscribe {
-                    markRead(it)
-                }
-                .untilDestroy()
+            .observeTopic()
+            .subscribe {
+                markRead(it)
+            }
+            .untilDestroy()
         loadTopics()
     }
 
     fun loadTopics() {
         topicsRepository
-                .getTopics(id, currentSt)
-                .doOnSubscribe { viewState.setRefreshing(true) }
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({
-                    currentData = it
-                    viewState.showTopics(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .getTopics(id, currentSt)
+            .doOnSubscribe { viewState.setRefreshing(true) }
+            .doAfterTerminate { viewState.setRefreshing(false) }
+            .subscribe({
+                currentData = it
+                viewState.showTopics(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun loadPage(st: Int) {
@@ -66,35 +65,35 @@ class TopicsPresenter(
 
     fun addForumToFavorite(forumId: Int, subType: String) {
         favoritesRepository
-                .editFavorites(FavoritesApi.ACTION_ADD_FORUM, -1, forumId, subType)
-                .subscribe({
-                    viewState.onAddToFavorite(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .editFavorites(FavoritesApi.ACTION_ADD_FORUM, -1, forumId, subType)
+            .subscribe({
+                viewState.onAddToFavorite(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun addTopicToFavorite(topicId: Int, subType: String) {
         favoritesRepository
-                .editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
-                .subscribe({
-                    viewState.onAddToFavorite(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
+            .subscribe({
+                viewState.onAddToFavorite(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun markRead() {
         forumRepository
-                .markRead(id)
-                .subscribe({
-                    viewState.onMarkRead()
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .markRead(id)
+            .subscribe({
+                viewState.onMarkRead()
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     private fun markRead(id: Int) {
@@ -125,18 +124,22 @@ class TopicsPresenter(
 
     fun onItemClick(item: TopicItem) {
         if (item.isAnnounce) {
-            linkHandler.handle(item.announceUrl, router, mapOf(
+            linkHandler.handle(
+                item.announceUrl, router, mapOf(
                     Screen.ARG_TITLE to item.title
-            ))
+                )
+            )
             return
         }
         if (item.isForum) {
             linkHandler.handle("https://4pda.to/forum/index.php?showforum=${item.id}", router)
             return
         }
-        linkHandler.handle("https://4pda.to/forum/index.php?showtopic=${item.id}", router, mapOf(
+        linkHandler.handle(
+            "https://4pda.to/forum/index.php?showtopic=${item.id}", router, mapOf(
                 Screen.ARG_TITLE to item.title
-        ))
+            )
+        )
     }
 
     fun onItemLongClick(item: TopicItem) {

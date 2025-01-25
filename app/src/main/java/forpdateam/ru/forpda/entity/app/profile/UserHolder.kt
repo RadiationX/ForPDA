@@ -12,7 +12,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 class UserHolder(
-        private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences
 ) : IUserHolder {
 
     private val currentUserRelay = BehaviorRelay.createDefault(EntityWrapper(user))
@@ -20,75 +20,78 @@ class UserHolder(
     override var user: ProfileModel?
         get() {
             return sharedPreferences
-                    .getString("current_user", null)
-                    ?.let {
-                        val jsonProfile = JSONObject(it)
-                        ProfileModel().apply {
-                            id = jsonProfile.getInt("id")
-                            sign = ApiUtils.coloredFromHtml(jsonProfile.nullString("sign"))
-                            about = ApiUtils.spannedFromHtml(jsonProfile.nullString("about"))
-                            avatar = jsonProfile.nullString("avatar")
-                            nick = jsonProfile.nullString("nick")
-                            status = jsonProfile.nullString("status")
-                            group = jsonProfile.nullString("group")
-                            note = jsonProfile.nullString("note")
+                .getString("current_user", null)
+                ?.let {
+                    val jsonProfile = JSONObject(it)
+                    ProfileModel().apply {
+                        id = jsonProfile.getInt("id")
+                        sign = ApiUtils.coloredFromHtml(jsonProfile.nullString("sign"))
+                        about = ApiUtils.spannedFromHtml(jsonProfile.nullString("about"))
+                        avatar = jsonProfile.nullString("avatar")
+                        nick = jsonProfile.nullString("nick")
+                        status = jsonProfile.nullString("status")
+                        group = jsonProfile.nullString("group")
+                        note = jsonProfile.nullString("note")
 
-                            jsonProfile.getJSONArray("contacts")?.also {
-                                for (i in 0 until it.length()) {
-                                    val jsonContact = it.getJSONObject(i)
-                                    contacts.add(ProfileModel.Contact().apply {
-                                        type = ProfileModel.ContactType.valueOf(jsonContact.getString("type"))
-                                        url = jsonContact.nullString("url")
-                                        title = jsonContact.nullString("title")
-                                    })
-                                }
+                        jsonProfile.getJSONArray("contacts").also {
+                            for (i in 0 until it.length()) {
+                                val jsonContact = it.getJSONObject(i)
+                                contacts.add(ProfileModel.Contact().apply {
+                                    type =
+                                        ProfileModel.ContactType.valueOf(jsonContact.getString("type"))
+                                    url = jsonContact.nullString("url")
+                                    title = jsonContact.nullString("title")
+                                })
                             }
+                        }
 
-                            jsonProfile.getJSONArray("info")?.also {
-                                for (i in 0 until it.length()) {
-                                    val jsonInfo = it.getJSONObject(i)
-                                    info.add(ProfileModel.Info().apply {
-                                        type = ProfileModel.InfoType.valueOf(jsonInfo.getString("type"))
-                                        value = jsonInfo.nullString("value")
-                                    })
-                                }
+                        jsonProfile.getJSONArray("info").also {
+                            for (i in 0 until it.length()) {
+                                val jsonInfo = it.getJSONObject(i)
+                                info.add(ProfileModel.Info().apply {
+                                    type = ProfileModel.InfoType.valueOf(jsonInfo.getString("type"))
+                                    value = jsonInfo.nullString("value")
+                                })
                             }
+                        }
 
-                            jsonProfile.getJSONArray("stats")?.also {
-                                for (i in 0 until it.length()) {
-                                    val jsonStat = it.getJSONObject(i)
-                                    stats.add(ProfileModel.Stat().apply {
-                                        type = ProfileModel.StatType.valueOf(jsonStat.getString("type"))
-                                        url = jsonStat.nullString("url")
-                                        value = jsonStat.nullString("value")
-                                    })
-                                }
+                        jsonProfile.getJSONArray("stats").also {
+                            for (i in 0 until it.length()) {
+                                val jsonStat = it.getJSONObject(i)
+                                stats.add(ProfileModel.Stat().apply {
+                                    type = ProfileModel.StatType.valueOf(jsonStat.getString("type"))
+                                    url = jsonStat.nullString("url")
+                                    value = jsonStat.nullString("value")
+                                })
                             }
+                        }
 
-                            jsonProfile.getJSONArray("devices")?.also {
-                                for (i in 0 until it.length()) {
-                                    val jsonDevice = it.getJSONObject(i)
-                                    devices.add(ProfileModel.Device().apply {
-                                        url = jsonDevice.nullString("url")
-                                        name = jsonDevice.nullString("name")
-                                        accessory = jsonDevice.nullString("accessory")
-                                    })
-                                }
+                        jsonProfile.getJSONArray("devices").also {
+                            for (i in 0 until it.length()) {
+                                val jsonDevice = it.getJSONObject(i)
+                                devices.add(ProfileModel.Device().apply {
+                                    url = jsonDevice.nullString("url")
+                                    name = jsonDevice.nullString("name")
+                                    accessory = jsonDevice.nullString("accessory")
+                                })
                             }
+                        }
 
-                            jsonProfile.getJSONArray("warnings")?.also {
-                                for (i in 0 until it.length()) {
-                                    val jsonContact = it.getJSONObject(i)
-                                    warnings.add(ProfileModel.Warning().apply {
-                                        type = ProfileModel.WarningType.valueOf(jsonContact.getString("type"))
-                                        date = jsonContact.nullString("date")
-                                        title = jsonContact.nullString("title")
-                                        content = ApiUtils.spannedFromHtml(jsonContact.nullString("content"))
-                                    })
-                                }
+                        jsonProfile.getJSONArray("warnings").also {
+                            for (i in 0 until it.length()) {
+                                val jsonContact = it.getJSONObject(i)
+                                warnings.add(ProfileModel.Warning().apply {
+                                    type =
+                                        ProfileModel.WarningType.valueOf(jsonContact.getString("type"))
+                                    date = jsonContact.nullString("date")
+                                    title = jsonContact.nullString("title")
+                                    content =
+                                        ApiUtils.spannedFromHtml(jsonContact.nullString("content"))
+                                })
                             }
                         }
                     }
+                }
         }
         set(value) {
             currentUserRelay.accept(EntityWrapper(value))

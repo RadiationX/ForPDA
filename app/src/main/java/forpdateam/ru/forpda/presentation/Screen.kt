@@ -155,7 +155,7 @@ sealed class Screen : com.github.terrakok.cicerone.Screen {
         var forumId: Int = NO_ID
     }
 
-    class OtherMenu() : Screen() {
+    class OtherMenu : Screen() {
         override var fromMenu = true
         override var isAlone = true
     }

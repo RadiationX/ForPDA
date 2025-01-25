@@ -29,8 +29,8 @@ public class DefaultForumHolder extends TreeNode.BaseNodeViewHolder<ForumItemTre
     public View createNodeView(TreeNode node, ForumItemTree value) {
         final LayoutInflater inflater = LayoutInflater.from(context);
         final View view = inflater.inflate(R.layout.forum_item_default, null, false);
-        title = (TextView) view.findViewById(R.id.forum_item_title);
-        icon = (ImageView) view.findViewById(R.id.forum_item_icon);
+        title = view.findViewById(R.id.forum_item_title);
+        icon = view.findViewById(R.id.forum_item_icon);
 
         currentValue = value;
         title.setText(value.getTitle());

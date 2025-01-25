@@ -11,8 +11,8 @@ import java.net.URLDecoder
  */
 
 class DevDbApi(
-        private val webClient: IWebClient,
-        private val devDbParser: DevDbParser
+    private val webClient: IWebClient,
+    private val devDbParser: DevDbParser
 ) {
 
     fun getBrands(catId: String): Brands {

@@ -41,11 +41,11 @@ public class ReputationAdapter extends BaseAdapter<RepItem, ReputationAdapter.Re
 
         ReputationHolder(View v) {
             super(v);
-            title = (TextView) v.findViewById(R.id.rep_item_title);
-            desc = (TextView) v.findViewById(R.id.rep_item_desc);
-            lastNick = (TextView) v.findViewById(R.id.rep_item_last_nick);
-            date = (TextView) v.findViewById(R.id.rep_item_date);
-            image = (ImageView) v.findViewById(R.id.rep_item_image);
+            title = v.findViewById(R.id.rep_item_title);
+            desc = v.findViewById(R.id.rep_item_desc);
+            lastNick = v.findViewById(R.id.rep_item_last_nick);
+            date = v.findViewById(R.id.rep_item_date);
+            image = v.findViewById(R.id.rep_item_image);
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
         }

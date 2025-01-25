@@ -1,18 +1,14 @@
 package forpdateam.ru.forpda.ui.fragments.qms
 
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.nostra13.universalimageloader.core.ImageLoader
-
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
@@ -24,11 +20,14 @@ import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup
 import forpdateam.ru.forpda.ui.fragments.qms.adapters.QmsThemesAdapter
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 25.08.16.
  */
-class QmsThemesFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<QmsTheme>, QmsThemesView {
+class QmsThemesFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<QmsTheme>,
+    QmsThemesView {
 
     private lateinit var blackListMenuItem: MenuItem
     private lateinit var noteMenuItem: MenuItem
@@ -40,10 +39,10 @@ class QmsThemesFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<Qm
 
     @ProvidePresenter
     fun providePresenter(): QmsThemesPresenter = QmsThemesPresenter(
-            App.get().Di().qmsInteractor,
-            App.get().Di().router,
-            App.get().Di().linkHandler,
-            App.get().Di().errorHandler
+        App.get().Di().qmsInteractor,
+        App.get().Di().router,
+        App.get().Di().linkHandler,
+        App.get().Di().errorHandler
     )
 
     init {
@@ -58,7 +57,11 @@ class QmsThemesFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<Qm
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         contentController.setFirstLoad(false)
         return viewFragment
@@ -70,7 +73,7 @@ class QmsThemesFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<Qm
         setScrollFlagsEnterAlways()
 
         refreshLayout.setOnRefreshListener { presenter.loadThemes() }
-        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(context)
 
         fab.setImageDrawable(App.getVecDrawable(context, R.drawable.ic_fab_create))
         fab.setOnClickListener { presenter.openChat() }
@@ -94,17 +97,17 @@ class QmsThemesFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<Qm
     override fun addBaseToolbarMenu(menu: Menu) {
         super.addBaseToolbarMenu(menu)
         blackListMenuItem = menu
-                .add(R.string.add_to_blacklist)
-                .setOnMenuItemClickListener {
-                    presenter.blockUser()
-                    false
-                }
+            .add(R.string.add_to_blacklist)
+            .setOnMenuItemClickListener {
+                presenter.blockUser()
+                false
+            }
         noteMenuItem = menu
-                .add(R.string.create_note)
-                .setOnMenuItemClickListener {
-                    presenter.createNote()
-                    true
-                }
+            .add(R.string.create_note)
+            .setOnMenuItemClickListener {
+                presenter.createNote()
+                true
+            }
         refreshToolbarMenuItems(false)
     }
 

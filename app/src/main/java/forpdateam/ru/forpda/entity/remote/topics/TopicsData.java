@@ -13,10 +13,10 @@ public class TopicsData {
     private boolean canCreateTopic = false;
     private int id;
     private String title;
-    private List<TopicItem> topicItems = new ArrayList<>();
-    private List<TopicItem> pinnedItems = new ArrayList<>();
-    private List<TopicItem> announceItems = new ArrayList<>();
-    private List<TopicItem> forumItems = new ArrayList<>();
+    private final List<TopicItem> topicItems = new ArrayList<>();
+    private final List<TopicItem> pinnedItems = new ArrayList<>();
+    private final List<TopicItem> announceItems = new ArrayList<>();
+    private final List<TopicItem> forumItems = new ArrayList<>();
     private Pagination pagination = new Pagination();
 
     public boolean canCreateTopic() {

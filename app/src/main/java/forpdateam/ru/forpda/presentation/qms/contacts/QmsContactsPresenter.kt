@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.presentation.qms.contacts
 
-import moxy.InjectViewState
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.qms.QmsContact
 import forpdateam.ru.forpda.model.CountersHolder
@@ -9,6 +8,8 @@ import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import moxy.InjectViewState
+import java.util.Locale
 
 /**
  * Created by radiationx on 11.11.17.
@@ -16,11 +17,11 @@ import forpdateam.ru.forpda.presentation.TabRouter
 
 @InjectViewState
 class QmsContactsPresenter(
-        private val qmsInteractor: QmsInteractor,
-        private val router: TabRouter,
-        private val linkHandler: ILinkHandler,
-        private val countersHolder: CountersHolder,
-        private val errorHandler: IErrorHandler
+    private val qmsInteractor: QmsInteractor,
+    private val router: TabRouter,
+    private val linkHandler: ILinkHandler,
+    private val countersHolder: CountersHolder,
+    private val errorHandler: IErrorHandler
 ) : BasePresenter<QmsContactsView>() {
 
     private val localItems = mutableListOf<QmsContact>()
@@ -29,22 +30,25 @@ class QmsContactsPresenter(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         qmsInteractor
-                .observeContacts()
-                .subscribe {
-                    localItems.clear()
-                    localItems.addAll(it)
-                    viewState.showContacts(it)
-                    countersHolder.set(countersHolder.get().apply {
-                        qms = it.sumBy { it.count }
-                    })
-                }
-                .untilDestroy()
+            .observeContacts()
+            .subscribe {
+                localItems.clear()
+                localItems.addAll(it)
+                viewState.showContacts(it)
+                countersHolder.set(countersHolder.get().apply {
+                    qms = it.sumOf { it.count }
+                })
+            }
+            .untilDestroy()
     }
 
     fun searchLocal(nick: String) {
         searchContacts.clear()
         if (!nick.isEmpty()) {
-            searchContacts.filter { it.nick?.toLowerCase()?.contains(nick.toLowerCase()) ?: false }
+            searchContacts.filter {
+                it.nick?.lowercase(Locale.getDefault())
+                    ?.contains(nick.lowercase(Locale.getDefault())) ?: false
+            }
             viewState.showContacts(searchContacts)
         } else {
             viewState.showContacts(localItems)
@@ -53,40 +57,40 @@ class QmsContactsPresenter(
 
     fun loadContacts() {
         qmsInteractor
-                .getContactList()
-                .doOnSubscribe { viewState.setRefreshing(true) }
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({
+            .getContactList()
+            .doOnSubscribe { viewState.setRefreshing(true) }
+            .doAfterTerminate { viewState.setRefreshing(false) }
+            .subscribe({
 
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun deleteDialog(id: Int) {
         qmsInteractor
-                .deleteDialog(id)
-                .doOnSubscribe { viewState.setRefreshing(true) }
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({
-                    loadContacts()
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .deleteDialog(id)
+            .doOnSubscribe { viewState.setRefreshing(true) }
+            .doAfterTerminate { viewState.setRefreshing(false) }
+            .subscribe({
+                loadContacts()
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun blockUser(item: QmsContact) {
         qmsInteractor
-                .blockUser(item.nick.orEmpty())
-                .map { it.firstOrNull { it.nick == item.nick } != null }
-                .subscribe({
-                    viewState.onBlockUser(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .blockUser(item.nick.orEmpty())
+            .map { it.firstOrNull { it.nick == item.nick } != null }
+            .subscribe({
+                viewState.onBlockUser(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun onItemClick(item: QmsContact) {

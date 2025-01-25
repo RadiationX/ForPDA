@@ -8,7 +8,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 class MainPreferencesHolder(
-        private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences
 ) {
 
     private val rxPreferences = RxSharedPreferences.create(sharedPreferences)
@@ -35,9 +35,9 @@ class MainPreferencesHolder(
 
     private val themeMode by lazy {
         rxPreferences.getEnum(
-                Preferences.Main.Theme.MODE,
-                Preferences.Main.ThemeMode.SYSTEM,
-                Preferences.Main.ThemeMode::class.java
+            Preferences.Main.Theme.MODE,
+            Preferences.Main.ThemeMode.SYSTEM,
+            Preferences.Main.ThemeMode::class.java
         )
     }
 
@@ -46,7 +46,7 @@ class MainPreferencesHolder(
     }
 
     fun observeWebViewFontSize(): Observable<Int> = webViewFontSize.asObservable()
-            .map { max(min(it, 64), 8) }
+        .map { max(min(it, 64), 8) }
 
     fun observeSystemDownloader(): Observable<Boolean> = systemDownloader.asObservable()
 

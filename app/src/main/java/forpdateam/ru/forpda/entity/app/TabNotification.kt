@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.entity.app
 
-import java.util.ArrayList
-
 import forpdateam.ru.forpda.entity.remote.events.NotificationEvent
 
 /**
@@ -9,10 +7,10 @@ import forpdateam.ru.forpda.entity.remote.events.NotificationEvent
  */
 
 data class TabNotification(
-        val source: NotificationEvent.Source,
-        val type: NotificationEvent.Type,
-        val event: NotificationEvent,
-        val isWebSocket: Boolean,
-        val loadedEvents: List<NotificationEvent> = emptyList(),
-        val newEvents: List<NotificationEvent> = emptyList()
+    val source: NotificationEvent.Source,
+    val type: NotificationEvent.Type,
+    val event: NotificationEvent,
+    val isWebSocket: Boolean,
+    val loadedEvents: List<NotificationEvent> = emptyList(),
+    val newEvents: List<NotificationEvent> = emptyList()
 )

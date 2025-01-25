@@ -4,8 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
-import androidx.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -44,12 +45,12 @@ import okhttp3.WebSocketListener;
 public class Client implements IWebClient {
     private final static String LOG_TAG = Client.class.getSimpleName();
     private static final String USER_AGENT = "Mozilla/5.0 (Linux; Android 4.4; Nexus 5 Build/_BuildID_) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36";
-    private Map<String, Cookie> clientCookies = new HashMap<>();
-    private Handler observerHandler = new Handler(Looper.getMainLooper());
-    private List<String> privateHeaders = new ArrayList<>(Arrays.asList("pass_hash", "session_id", "auth_key", "password"));
+    private final Map<String, Cookie> clientCookies = new HashMap<>();
+    private final Handler observerHandler = new Handler(Looper.getMainLooper());
+    private final List<String> privateHeaders = new ArrayList<>(Arrays.asList("pass_hash", "session_id", "auth_key", "password"));
     private final Cookie mobileCookie = Cookie.parse(HttpUrl.parse("https://4pda.to/"), "ngx_mb=1;");
-    private AuthHolder authHolder;
-    private CountersHolder countersHolder;
+    private final AuthHolder authHolder;
+    private final CountersHolder countersHolder;
 
     //Контекст нужен, для чтения настроек
     //Не необходимо, но вдруг случится шо у App не будет контекста
@@ -210,7 +211,7 @@ public class Client implements IWebClient {
 
     private Request.Builder prepareRequest(NetworkRequest request, ProgressListener uploadProgressListener) {
         String url = request.getUrl();
-        if (request.getUrl().substring(0, 2).equals("//")) {
+        if (request.getUrl().startsWith("//")) {
             url = "https:".concat(request.getUrl());
         }
         Log.d(LOG_TAG, "Request url " + request.getUrl());
@@ -301,7 +302,7 @@ public class Client implements IWebClient {
                 checkForumErrors(response.getBody());
             }
 
-            Log.d(LOG_TAG, "Response: " + response.toString());
+            Log.d(LOG_TAG, "Response: " + response);
         } finally {
             if (okHttpResponse != null)
                 okHttpResponse.close();

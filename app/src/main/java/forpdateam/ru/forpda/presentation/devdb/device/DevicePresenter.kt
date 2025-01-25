@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.presentation.devdb.device
 
-import moxy.InjectViewState
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.devdb.Device
@@ -9,6 +8,7 @@ import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import moxy.InjectViewState
 
 /**
  * Created by radiationx on 11.11.17.
@@ -16,10 +16,10 @@ import forpdateam.ru.forpda.presentation.TabRouter
 
 @InjectViewState
 class DevicePresenter(
-        private val devDbRepository: DevDbRepository,
-        private val router: TabRouter,
-        private val linkHandler: ILinkHandler,
-        private val errorHandler: IErrorHandler
+    private val devDbRepository: DevDbRepository,
+    private val router: TabRouter,
+    private val linkHandler: ILinkHandler,
+    private val errorHandler: IErrorHandler
 ) : BasePresenter<DeviceView>() {
 
     var deviceId: String? = null
@@ -32,16 +32,16 @@ class DevicePresenter(
 
     fun loadBrand() {
         devDbRepository
-                .getDevice(deviceId.orEmpty())
-                .doOnSubscribe { viewState.setRefreshing(true) }
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({
-                    currentData = it
-                    viewState.showData(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .getDevice(deviceId.orEmpty())
+            .doOnSubscribe { viewState.setRefreshing(true) }
+            .doAfterTerminate { viewState.setRefreshing(false) }
+            .subscribe({
+                currentData = it
+                viewState.showData(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
 

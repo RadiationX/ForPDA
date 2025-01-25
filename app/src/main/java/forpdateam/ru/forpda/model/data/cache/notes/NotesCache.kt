@@ -14,7 +14,8 @@ class NotesCache {
     fun observeItems(): Observable<List<NoteItem>> = dataRelay.hide()
 
     fun getItems(): List<NoteItem> = Realm.getDefaultInstance().use { realm ->
-        realm.where(NoteItemBd::class.java).findAll().sort("id", Sort.DESCENDING).map { NoteItem(it) }
+        realm.where(NoteItemBd::class.java).findAll().sort("id", Sort.DESCENDING)
+            .map { NoteItem(it) }
     }.also {
         if (!dataRelay.hasValue()) {
             dataRelay.accept(it)
@@ -32,16 +33,16 @@ class NotesCache {
         }
         if (dataRelay.hasValue()) {
             getItemById(item.id, realm)
-                    ?.also { newItem ->
-                        val currentItems = dataRelay.value!!.toMutableList()
-                        val index = currentItems.indexOfFirst { newItem.id == it.id }
-                        if (index == -1) {
-                            dataRelay.accept(getItems())
-                        } else {
-                            currentItems[index] = NoteItem(newItem)
-                            dataRelay.accept(currentItems)
-                        }
+                ?.also { newItem ->
+                    val currentItems = dataRelay.value!!.toMutableList()
+                    val index = currentItems.indexOfFirst { newItem.id == it.id }
+                    if (index == -1) {
+                        dataRelay.accept(getItems())
+                    } else {
+                        currentItems[index] = NoteItem(newItem)
+                        dataRelay.accept(currentItems)
                     }
+                }
         }
     }
 
@@ -77,7 +78,7 @@ class NotesCache {
     }
 
     private fun getItemById(id: Long, realm: Realm) = realm.where(NoteItemBd::class.java)
-            .equalTo("id", id)
-            .findFirst()
+        .equalTo("id", id)
+        .findFirst()
 
 }

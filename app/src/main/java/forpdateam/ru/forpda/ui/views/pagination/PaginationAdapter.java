@@ -48,14 +48,14 @@ public class PaginationAdapter extends BaseAdapter {
             convertView = inflater.inflate(android.R.layout.simple_list_item_single_choice, parent, false);
             holder = new ViewHolder();
             assert convertView != null;
-            holder.text = (TextView) convertView.findViewById(android.R.id.text1);
+            holder.text = convertView.findViewById(android.R.id.text1);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
 
-        holder.text.setText(String.format(Locale.getDefault(), page, (int) getItem(position)));
+        holder.text.setText(String.format(Locale.getDefault(), page, getItem(position)));
         return convertView;
     }
 

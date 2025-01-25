@@ -4,9 +4,10 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.view.View;
+
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
 
 /**
  * Created by radiationx on 22.09.16.
@@ -16,7 +17,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
     private static final int[] ATTRS = new int[]{android.R.attr.listDivider};
 
-    private Drawable mDivider;
+    private final Drawable mDivider;
 
     /**
      * Default divider will be used

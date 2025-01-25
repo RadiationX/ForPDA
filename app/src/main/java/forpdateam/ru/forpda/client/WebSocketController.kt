@@ -1,21 +1,15 @@
 package forpdateam.ru.forpda.client
 
 import android.util.Log
-import forpdateam.ru.forpda.App
-import forpdateam.ru.forpda.entity.remote.events.NotificationEvent
 import forpdateam.ru.forpda.model.data.remote.IWebClient
-import forpdateam.ru.forpda.model.repository.events.EventsRepository
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
-import java.lang.Exception
-import java.net.SocketTimeoutException
-import java.util.*
-import java.util.concurrent.TimeoutException
+import java.util.Random
 
 class WebSocketController(
-        private val webClient: IWebClient,
-        private val listener: Listener
+    private val webClient: IWebClient,
+    private val listener: Listener
 ) {
 
     private val webSockets = mutableListOf<WebSocketState>()
@@ -36,7 +30,10 @@ class WebSocketController(
         override fun onMessage(webSocket: WebSocket, text: String?) {
             val eventWebSocket = getByWebSocket(webSocket)
             val currentWebSocket = getById(currentId)
-            Log.d(LOG_TAG, "WSListener onMessage: $text; ${eventWebSocket?.id}, ${currentWebSocket?.id}")
+            Log.d(
+                LOG_TAG,
+                "WSListener onMessage: $text; ${eventWebSocket?.id}, ${currentWebSocket?.id}"
+            )
             eventWebSocket?.connected = true
             if (currentWebSocket == eventWebSocket) {
                 listener.onMessage(text)
@@ -48,7 +45,10 @@ class WebSocketController(
         override fun onFailure(webSocket: WebSocket, throwable: Throwable, response: Response?) {
             val eventWebSocket = getByWebSocket(webSocket)
             val currentWebSocket = getById(currentId)
-            Log.d(LOG_TAG, "WSListener onFailure: ${throwable.message} $response; ${eventWebSocket?.id}, ${currentWebSocket?.id}")
+            Log.d(
+                LOG_TAG,
+                "WSListener onFailure: ${throwable.message} $response; ${eventWebSocket?.id}, ${currentWebSocket?.id}"
+            )
             eventWebSocket?.connected = false
             eventWebSocket?.also {
                 try {
@@ -93,7 +93,8 @@ class WebSocketController(
 
     private fun getById(id: Int): WebSocketState? = webSockets.firstOrNull { it.id == id }
 
-    private fun getByWebSocket(webSocket: WebSocket): WebSocketState? = webSockets.firstOrNull { it.webSocket == webSocket }
+    private fun getByWebSocket(webSocket: WebSocket): WebSocketState? =
+        webSockets.firstOrNull { it.webSocket == webSocket }
 
     private fun IntRange.random() = Random().nextInt((endInclusive + 1) - start) + start
 
@@ -109,9 +110,9 @@ class WebSocketController(
     }
 
     private class WebSocketState(
-            var id: Int,
-            var webSocket: WebSocket,
-            var connected: Boolean = false
+        var id: Int,
+        var webSocket: WebSocket,
+        var connected: Boolean = false
     ) {
         override fun toString(): String {
             return "WebSocketState[$id, $connected]"

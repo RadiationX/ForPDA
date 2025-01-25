@@ -3,15 +3,17 @@ package forpdateam.ru.forpda.ui.fragments.reputation
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import com.google.android.material.tabs.TabLayout
-import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.LinearLayoutManager
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.tabs.TabLayout
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
@@ -22,12 +24,13 @@ import forpdateam.ru.forpda.model.data.remote.api.reputation.ReputationApi
 import forpdateam.ru.forpda.presentation.reputation.ReputationPresenter
 import forpdateam.ru.forpda.presentation.reputation.ReputationView
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
-import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.views.ContentController
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.FunnyContent
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 20.03.17.
@@ -73,11 +76,11 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
 
     @ProvidePresenter
     fun providePresenter(): ReputationPresenter = ReputationPresenter(
-            App.get().Di().reputationRepository,
-            App.get().Di().avatarRepository,
-            App.get().Di().router,
-            App.get().Di().linkHandler,
-            App.get().Di().errorHandler
+        App.get().Di().reputationRepository,
+        App.get().Di().avatarRepository,
+        App.get().Di().router,
+        App.get().Di().linkHandler,
+        App.get().Di().errorHandler
     )
 
     init {
@@ -87,13 +90,17 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.apply {
-            getString(TabFragment.ARG_TAB)?.also {
+            getString(ARG_TAB)?.also {
                 presenter.currentData = ReputationApi.fromUrl(it)
             }
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         paginationHelper = PaginationHelper(activity)
         paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow)
@@ -115,7 +122,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
         }
 
         refreshLayout.setOnRefreshListener { presenter.loadReputation() }
-        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(context)
 
         adapter = ReputationAdapter()
         recyclerView.adapter = adapter
@@ -141,29 +148,30 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
             presenter.setSort(ReputationApi.SORT_ASC)
             false
         }
-        repModeMenuItem = menu.add(getString(if (presenter.currentData.mode == ReputationApi.MODE_FROM) R.string.reputation_mode_from else R.string.reputation_mode_to))
+        repModeMenuItem =
+            menu.add(getString(if (presenter.currentData.mode == ReputationApi.MODE_FROM) R.string.reputation_mode_from else R.string.reputation_mode_to))
                 .setOnMenuItemClickListener {
                     presenter.changeReputationMode()
                     false
                 }
         upRepMenuItem = menu.add(R.string.increase)
-                .setOnMenuItemClickListener {
-                    if (authHolder.get().isAuth()) {
-                        showChangeReputationDialog(true)
-                    } else {
-                        Utils.showNeedAuthDialog(requireContext())
-                    }
-                    false
+            .setOnMenuItemClickListener {
+                if (authHolder.get().isAuth()) {
+                    showChangeReputationDialog(true)
+                } else {
+                    Utils.showNeedAuthDialog(requireContext())
                 }
+                false
+            }
         downRepMenuItem = menu.add(R.string.decrease)
-                .setOnMenuItemClickListener {
-                    if (authHolder.get().isAuth()) {
-                        showChangeReputationDialog(false)
-                    } else {
-                        Utils.showNeedAuthDialog(requireContext())
-                    }
-                    false
+            .setOnMenuItemClickListener {
+                if (authHolder.get().isAuth()) {
+                    showChangeReputationDialog(false)
+                } else {
+                    Utils.showNeedAuthDialog(requireContext())
                 }
+                false
+            }
         refreshToolbarMenuItems(false)
     }
 
@@ -173,7 +181,8 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
             descSortMenuItem.isEnabled = true
             ascSortMenuItem.isEnabled = true
             repModeMenuItem.isEnabled = true
-            repModeMenuItem.title = getString(if (presenter.currentData.mode == ReputationApi.MODE_FROM) R.string.reputation_mode_from else R.string.reputation_mode_to)
+            repModeMenuItem.title =
+                getString(if (presenter.currentData.mode == ReputationApi.MODE_FROM) R.string.reputation_mode_from else R.string.reputation_mode_to)
             if (presenter.currentData.id != authHolder.get().userId) {
                 upRepMenuItem.isEnabled = true
                 upRepMenuItem.isVisible = true
@@ -199,15 +208,19 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
 
         val text = layout.findViewById<View>(R.id.reputation_text) as TextView
         val messageField = layout.findViewById<View>(R.id.reputation_text_field) as EditText
-        text.text = String.format(getString(R.string.change_reputation_Type_Nick), getString(if (type) R.string.increase else R.string.decrease), presenter.currentData.nick)
+        text.text = String.format(
+            getString(R.string.change_reputation_Type_Nick),
+            getString(if (type) R.string.increase else R.string.decrease),
+            presenter.currentData.nick
+        )
 
         AlertDialog.Builder(context!!)
-                .setView(layout)
-                .setPositiveButton(R.string.ok) { _, _ ->
-                    presenter.changeReputation(type, messageField.text.toString())
-                }
-                .setNegativeButton(R.string.cancel, null)
-                .show()
+            .setView(layout)
+            .setPositiveButton(R.string.ok) { _, _ ->
+                presenter.changeReputation(type, messageField.text.toString())
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 
     override fun onChangeReputation(result: Boolean) {
@@ -229,8 +242,8 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
         if (repData.items.isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
                 val funnyContent = FunnyContent(context)
-                        .setImage(R.drawable.ic_history)
-                        .setTitle(R.string.funny_reputation_nodata_title)
+                    .setImage(R.drawable.ic_history)
+                    .setTitle(R.string.funny_reputation_nodata_title)
                 contentController.addContent(funnyContent, ContentController.TAG_NO_DATA)
             }
             contentController.showContent(ContentController.TAG_NO_DATA)

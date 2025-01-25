@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.presentation.editpost
 
-import moxy.InjectViewState
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.app.EditPostSyncData
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
@@ -12,6 +11,7 @@ import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.presentation.theme.ThemeTemplate
+import moxy.InjectViewState
 
 /**
  * Created by radiationx on 11.11.17.
@@ -19,10 +19,10 @@ import forpdateam.ru.forpda.presentation.theme.ThemeTemplate
 
 @InjectViewState
 class EditPostPresenter(
-        private val editorRepository: PostEditorRepository,
-        private val themeTemplate: ThemeTemplate,
-        private val router: TabRouter,
-        private val errorHandler: IErrorHandler
+    private val editorRepository: PostEditorRepository,
+    private val themeTemplate: ThemeTemplate,
+    private val router: TabRouter,
+    private val errorHandler: IErrorHandler
 ) : BasePresenter<EditPostView>() {
 
     private val postForm = EditPostForm()
@@ -55,53 +55,53 @@ class EditPostPresenter(
             postForm.addAttachment(item)
         }
         editorRepository
-                .sendPost(postForm)
-                .map { themeTemplate.mapEntity(it) }
-                .subscribe({
-                    viewState.onPostSend(it, postForm)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .sendPost(postForm)
+            .map { themeTemplate.mapEntity(it) }
+            .subscribe({
+                viewState.onPostSend(it, postForm)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun loadForm() {
         editorRepository
-                .loadForm(postForm.postId)
-                .subscribe({
-                    postForm.message = it.message
-                    postForm.editReason = it.editReason
-                    postForm.attachments.addAll(it.attachments)
-                    it.poll?.let {
-                        postForm.poll = it
-                    }
-                    viewState.showForm(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .loadForm(postForm.postId)
+            .subscribe({
+                postForm.message = it.message
+                postForm.editReason = it.editReason
+                postForm.attachments.addAll(it.attachments)
+                it.poll?.let {
+                    postForm.poll = it
+                }
+                viewState.showForm(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun uploadFiles(files: List<RequestFile>, pending: List<AttachmentItem>) {
         editorRepository
-                .uploadFiles(postForm.postId, files, pending)
-                .subscribe({
-                    viewState.onUploadFiles(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .uploadFiles(postForm.postId, files, pending)
+            .subscribe({
+                viewState.onUploadFiles(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun deleteFiles(items: List<AttachmentItem>) {
         editorRepository
-                .deleteFiles(postForm.postId, items)
-                .subscribe({
-                    viewState.onDeleteFiles(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .deleteFiles(postForm.postId, items)
+            .subscribe({
+                viewState.onDeleteFiles(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun onSendClick() {

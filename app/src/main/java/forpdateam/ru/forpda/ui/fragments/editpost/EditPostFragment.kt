@@ -3,16 +3,12 @@ package forpdateam.ru.forpda.ui.fragments.editpost
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
-
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
-
+import androidx.appcompat.app.AlertDialog
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.FilePickHelper
@@ -25,6 +21,8 @@ import forpdateam.ru.forpda.presentation.editpost.EditPostView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
 import forpdateam.ru.forpda.ui.views.messagepanel.attachments.AttachmentsPopup
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 14.01.17.
@@ -43,10 +41,10 @@ class EditPostFragment : TabFragment(), EditPostView {
 
     @ProvidePresenter
     fun providePresenter(): EditPostPresenter = EditPostPresenter(
-            App.get().Di().editPostRepository,
-            App.get().Di().themeTemplate,
-            App.get().Di().router,
-            App.get().Di().errorHandler
+        App.get().Di().editPostRepository,
+        App.get().Di().themeTemplate,
+        App.get().Di().router,
+        App.get().Di().errorHandler
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +65,11 @@ class EditPostFragment : TabFragment(), EditPostView {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         messagePanel = MessagePanel(context, fragmentContainer, fragmentContent, true)
         attachmentsPopup = messagePanel.attachmentsPopup
@@ -81,7 +83,12 @@ class EditPostFragment : TabFragment(), EditPostView {
         attachmentsPopup.setDeleteOnClickListener { removeFiles() }
         arguments?.apply {
             val title = getString(ARG_THEME_NAME, "")
-            setTitle("${App.get().getString(if (formType == EditPostForm.TYPE_NEW_POST) R.string.editpost_title_answer else R.string.editpost_title_edit)} $title")
+            setTitle(
+                "${
+                    App.get()
+                        .getString(if (formType == EditPostForm.TYPE_NEW_POST) R.string.editpost_title_answer else R.string.editpost_title_edit)
+                } $title"
+            )
         }
 
         messagePanel.editPollButton.setOnClickListener {
@@ -127,12 +134,17 @@ class EditPostFragment : TabFragment(), EditPostView {
     }
 
     private fun tryPickFile() {
-        App.get().checkStoragePermission({ startActivityForResult(FilePickHelper.pickFile(false), TabFragment.REQUEST_PICK_FILE) }, App.getActivity())
+        App.get().checkStoragePermission({
+            startActivityForResult(
+                FilePickHelper.pickFile(false),
+                REQUEST_PICK_FILE
+            )
+        }, App.getActivity())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == TabFragment.REQUEST_PICK_FILE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_PICK_FILE && resultCode == Activity.RESULT_OK) {
             if (data == null) {
                 //Display an error
                 return
@@ -207,24 +219,24 @@ class EditPostFragment : TabFragment(), EditPostView {
         editText.setText(form.editReason)
 
         AlertDialog.Builder(context!!)
-                .setTitle(R.string.editpost_reason)
-                .setView(view)
-                .setPositiveButton(R.string.send) { _, _ ->
-                    presenter.onReasonEdit(editText.text.toString())
-                }
-                .setNegativeButton(R.string.cancel, null)
-                .show()
+            .setTitle(R.string.editpost_reason)
+            .setView(view)
+            .setPositiveButton(R.string.send) { _, _ ->
+                presenter.onReasonEdit(editText.text.toString())
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 
     private fun showExitDialog(): Boolean {
         if (formType == EditPostForm.TYPE_EDIT_POST) {
             AlertDialog.Builder(context!!)
-                    .setMessage(R.string.editpost_lose_changes)
-                    .setPositiveButton(R.string.yes) { _, _ ->
-                        presenter.exit()
-                    }
-                    .setNegativeButton(R.string.no, null)
-                    .show()
+                .setMessage(R.string.editpost_lose_changes)
+                .setPositiveButton(R.string.yes) { _, _ ->
+                    presenter.exit()
+                }
+                .setNegativeButton(R.string.no, null)
+                .show()
             return true
         }
         return false
@@ -232,21 +244,21 @@ class EditPostFragment : TabFragment(), EditPostView {
 
     private fun showSyncDialog() {
         AlertDialog.Builder(context!!)
-                .setMessage(R.string.editpost_sync)
-                .setPositiveButton(R.string.ok) { _, _ ->
-                    val selectionRange = messagePanel.selectionRange
-                    presenter.exitWithSync(
-                            messagePanel.message,
-                            selectionRange,
-                            messagePanel.attachments
-                    )
+            .setMessage(R.string.editpost_sync)
+            .setPositiveButton(R.string.ok) { _, _ ->
+                val selectionRange = messagePanel.selectionRange
+                presenter.exitWithSync(
+                    messagePanel.message,
+                    selectionRange,
+                    messagePanel.attachments
+                )
+            }
+            .setNegativeButton(R.string.no) { _, _ ->
+                if (!showExitDialog()) {
+                    presenter.exit()
                 }
-                .setNegativeButton(R.string.no) { _, _ ->
-                    if (!showExitDialog()) {
-                        presenter.exit()
-                    }
-                }
-                .show()
+            }
+            .show()
     }
 
     companion object {
@@ -258,7 +270,14 @@ class EditPostFragment : TabFragment(), EditPostView {
         const val ARG_POST_ID = "postId"
         const val ARG_ST = "st"
 
-        fun fillArguments(args: Bundle, postId: Int, topicId: Int, forumId: Int, st: Int, themeName: String?): Bundle {
+        fun fillArguments(
+            args: Bundle,
+            postId: Int,
+            topicId: Int,
+            forumId: Int,
+            st: Int,
+            themeName: String?
+        ): Bundle {
             if (themeName != null)
                 args.putString(ARG_THEME_NAME, themeName)
             args.putInt(EditPostForm.ARG_TYPE, EditPostForm.TYPE_EDIT_POST)

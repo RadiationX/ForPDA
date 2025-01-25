@@ -1,14 +1,14 @@
 package forpdateam.ru.forpda.presentation.theme
 
-import moxy.viewstate.strategy.AddToEndSingleStrategy
-import moxy.viewstate.strategy.SkipStrategy
-import moxy.viewstate.strategy.StateStrategyType
 import forpdateam.ru.forpda.common.mvp.IBaseView
 import forpdateam.ru.forpda.entity.app.EditPostSyncData
 import forpdateam.ru.forpda.entity.app.TabNotification
 import forpdateam.ru.forpda.entity.remote.IBaseForumPost
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
+import moxy.viewstate.strategy.AddToEndSingleStrategy
+import moxy.viewstate.strategy.SkipStrategy
+import moxy.viewstate.strategy.StateStrategyType
 
 /**
  * Created by radiationx on 15.03.18.

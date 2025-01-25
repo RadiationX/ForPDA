@@ -23,7 +23,6 @@ import forpdateam.ru.forpda.presentation.theme.ThemePresenter
 import forpdateam.ru.forpda.ui.fragments.TabTopScroller
 import forpdateam.ru.forpda.ui.fragments.WebViewTopScroller
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
-import java.util.*
 import java.util.regex.Pattern
 
 /**
@@ -53,12 +52,14 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
         chromeClient = ThemeChromeClient()
 
         webView = ExtendedWebView(context)
-        webView.setDialogsHelper(DialogsHelper(
+        webView.setDialogsHelper(
+            DialogsHelper(
                 webView.context,
                 App.get().Di().linkHandler,
                 App.get().Di().systemLinkHandler,
                 App.get().Di().router
-        ))
+            )
+        )
         attachWebView(webView)
         webView.setJsLifeCycleListener(this)
         refreshLayout.addView(webView)
@@ -95,29 +96,33 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
                 menu.clear()
 
                 menu.add(0, R.id.action_mode_item_copy, 0, R.string.copy)
-                        .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_content_copy))
-                        .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                    .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_content_copy))
+                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
 
                 if (!authHolder.get().isAuth() || presenter.canQuote()) {
                     menu.add(0, R.id.action_mode_item_quote, 0, R.string.quote)
-                            .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_quote_post))
-                            .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                        .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_quote_post))
+                        .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
                 }
 
                 menu.add(0, R.id.action_mode_item_select_all, 0, R.string.all_text)
-                        .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_select_all))
-                        .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                    .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_select_all))
+                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
 
                 menu.add(0, R.id.action_mode_item_share, 0, R.string.share)
-                        .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_share))
-                        .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                    .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_share))
+                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
 
                 for (item in items) {
-                    Log.e("ExtendedWebView", "fillItem " + item.itemId + " : " + item.title + " : " + item.titleCondensed + " : " + item.intent + " : " + item.menuInfo)
+                    Log.e(
+                        "ExtendedWebView",
+                        "fillItem " + item.itemId + " : " + item.title + " : " + item.titleCondensed + " : " + item.intent + " : " + item.menuInfo
+                    )
                     if (item.intent != null) {
                         menu.add(item.groupId, item.itemId, item.order, item.title)
-                                .setIntent(item.intent)
-                                .setNumericShortcut(item.numericShortcut).alphabeticShortcut = item.alphabeticShortcut
+                            .setIntent(item.intent)
+                            .setNumericShortcut(item.numericShortcut).alphabeticShortcut =
+                            item.alphabeticShortcut
                     }
                 }
             }
@@ -130,14 +135,17 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
                         webView.evalJs("copySelectedText()")
                         result = true
                     }
+
                     R.id.action_mode_item_quote -> {
                         webView.evalJs("selectionToQuote()")
                         result = true
                     }
+
                     R.id.action_mode_item_select_all -> {
                         webView.evalJs("selectAllPostText()")
                         result = true
                     }
+
                     R.id.action_mode_item_share -> {
                         webView.evalJs("shareSelectedText()")
                         result = true
@@ -249,7 +257,10 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
         override fun onLoadResource(view: WebView, url: String) {
             super.onLoadResource(view, url)
             if (presenter.loadAction === ThemePresenter.ActionState.NORMAL) {
-                if (!url.contains("forum/uploads") && !url.contains("android_asset") && !url.contains("style_images") && m.reset(url).find()) {
+                if (!url.contains("forum/uploads") && !url.contains("android_asset") && !url.contains(
+                        "style_images"
+                    ) && m.reset(url).find()
+                ) {
                     webView.evalJs("onProgressChanged()")
                 }
             }

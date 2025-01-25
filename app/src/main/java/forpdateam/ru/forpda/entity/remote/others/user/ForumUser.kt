@@ -9,7 +9,7 @@ class ForumUser : IForumUser {
     override var nick: String? = null
     override var avatar: String? = null
 
-    constructor() {}
+    constructor()
 
     constructor(forumUser: IForumUser) {
         this.id = forumUser.id

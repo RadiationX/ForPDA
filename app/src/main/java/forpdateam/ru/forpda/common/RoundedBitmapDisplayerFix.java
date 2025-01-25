@@ -1,16 +1,6 @@
 package forpdateam.ru.forpda.common;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.PixelFormat;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.Shader;
-import android.graphics.drawable.Drawable;
 
 import com.makeramen.roundedimageview.RoundedDrawable;
 import com.nostra13.universalimageloader.core.assist.LoadedFrom;
@@ -36,27 +26,27 @@ import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
  */
 public class RoundedBitmapDisplayerFix implements BitmapDisplayer {
 
-	protected final int cornerRadius;
-	protected final int margin;
+    protected final int cornerRadius;
+    protected final int margin;
 
-	public RoundedBitmapDisplayerFix(int cornerRadiusPixels) {
-		this(cornerRadiusPixels, 0);
-	}
+    public RoundedBitmapDisplayerFix(int cornerRadiusPixels) {
+        this(cornerRadiusPixels, 0);
+    }
 
-	public RoundedBitmapDisplayerFix(int cornerRadiusPixels, int marginPixels) {
-		this.cornerRadius = cornerRadiusPixels;
-		this.margin = marginPixels;
-	}
+    public RoundedBitmapDisplayerFix(int cornerRadiusPixels, int marginPixels) {
+        this.cornerRadius = cornerRadiusPixels;
+        this.margin = marginPixels;
+    }
 
-	@Override
-	public void display(Bitmap bitmap, ImageAware imageAware, LoadedFrom loadedFrom) {
-		if (!(imageAware instanceof ImageViewAware)) {
-			throw new IllegalArgumentException("ImageAware should wrap ImageView. ImageViewAware is expected.");
-		}
+    @Override
+    public void display(Bitmap bitmap, ImageAware imageAware, LoadedFrom loadedFrom) {
+        if (!(imageAware instanceof ImageViewAware)) {
+            throw new IllegalArgumentException("ImageAware should wrap ImageView. ImageViewAware is expected.");
+        }
 
-		RoundedDrawable drawable = RoundedDrawable.fromBitmap(bitmap);
-		drawable.setCornerRadius(cornerRadius);
-		imageAware.setImageDrawable(drawable);
-	}
+        RoundedDrawable drawable = RoundedDrawable.fromBitmap(bitmap);
+        drawable.setCornerRadius(cornerRadius);
+        imageAware.setImageDrawable(drawable);
+    }
 
 }

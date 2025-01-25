@@ -1,12 +1,12 @@
 package forpdateam.ru.forpda.presentation.devdb.brands
 
-import moxy.InjectViewState
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
 import forpdateam.ru.forpda.model.repository.devdb.DevDbRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import moxy.InjectViewState
 
 /**
  * Created by radiationx on 11.11.17.
@@ -14,9 +14,9 @@ import forpdateam.ru.forpda.presentation.TabRouter
 
 @InjectViewState
 class BrandsPresenter(
-        private val devDbRepository: DevDbRepository,
-        private val router: TabRouter,
-        private val errorHandler: IErrorHandler
+    private val devDbRepository: DevDbRepository,
+    private val router: TabRouter,
+    private val errorHandler: IErrorHandler
 ) : BasePresenter<BrandsView>() {
 
     companion object {
@@ -27,10 +27,10 @@ class BrandsPresenter(
     }
 
     private val categories = arrayOf(
-            CATEGORY_PHONES,
-            CATEGORY_PAD,
-            CATEGORY_EBOOK,
-            CATEGORY_SMARTWATCH
+        CATEGORY_PHONES,
+        CATEGORY_PAD,
+        CATEGORY_EBOOK,
+        CATEGORY_SMARTWATCH
     )
     private var currentCategory = categories[0]
     private var currentData: Brands? = null
@@ -53,16 +53,16 @@ class BrandsPresenter(
 
     fun loadBrands() {
         devDbRepository
-                .getBrands(currentCategory)
-                .doOnSubscribe { viewState.setRefreshing(true) }
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({
-                    currentData = it
-                    viewState.showData(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .getBrands(currentCategory)
+            .doOnSubscribe { viewState.setRefreshing(true) }
+            .doAfterTerminate { viewState.setRefreshing(false) }
+            .subscribe({
+                currentData = it
+                viewState.showData(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun openBrand(item: Brands.Item) {

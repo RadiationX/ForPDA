@@ -20,21 +20,21 @@ public class Parser {
     private final static int ATTRS = 6;
     private final static int TEXT = 7;
     /*
-    * GROUPS
-    *
-    * script/style/textarea/etc:
-    * 1. Tag name
-    * 2. Attributes
-    * 3. Inner text
-    *
-    * basic:
-    * 4. Close tag symbol "/"
-    * 5. Tag name
-    * 6. Attributes
-    * 7. Text
-    *
-    * if no groups - comment
-    * */
+     * GROUPS
+     *
+     * script/style/textarea/etc:
+     * 1. Tag name
+     * 2. Attributes
+     * 3. Inner text
+     *
+     * basic:
+     * 4. Close tag symbol "/"
+     * 5. Tag name
+     * 6. Attributes
+     * 7. Text
+     *
+     * if no groups - comment
+     * */
 
     //private final static Pattern NON_CLOSING_TAGS = Pattern.compile("!DOCTYPE|colgroup|command|keygen|source|embed|input|param|track|area|link|meta|col|img|wbr|br|hr", Pattern.CASE_INSENSITIVE);
 
@@ -43,19 +43,19 @@ public class Parser {
     private static String[] uTags;
 
     public static Pattern getMainPattern() {
-        if(mainPattern==null)
+        if (mainPattern == null)
             mainPattern = Pattern.compile("\\<(?:(?:(script|style|textarea)(?:([^\\>]+))?\\>)([\\s\\S]*?)(?:\\<\\/\\1)|([\\/])?(!?[\\w]*)(?:([^\\>]+))?\\/?)\\>(?:([^<]+))?", Pattern.CASE_INSENSITIVE);
         return mainPattern;
     }
 
     public static Pattern getAttributePattern() {
-        if(attributePattern==null)
+        if (attributePattern == null)
             attributePattern = Pattern.compile("([^ \"']*?)\\s*?=\\s*?([\"'])([\\s\\S]*?)\\2", Pattern.CASE_INSENSITIVE);
         return attributePattern;
     }
 
     public static String[] getuTags() {
-        if(uTags==null)
+        if (uTags == null)
             uTags = new String[]{"!doctype", "area", "br", "col", "colgroup", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"};
         return uTags;
     }

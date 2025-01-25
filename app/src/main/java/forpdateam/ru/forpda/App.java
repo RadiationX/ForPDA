@@ -23,22 +23,20 @@ import android.os.IBinder;
 import android.os.Messenger;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.util.TypedValue;
+import android.webkit.WebSettings;
 
 import androidx.annotation.AttrRes;
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
-import androidx.core.app.ActivityCompat;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.content.res.AppCompatResources;
-
-import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.TypedValue;
-import android.webkit.WebSettings;
+import androidx.core.app.ActivityCompat;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
 import com.evernote.android.job.JobConfig;
 import com.evernote.android.job.JobManager;
@@ -68,7 +66,6 @@ import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.common.DayNightHelper;
 import forpdateam.ru.forpda.common.LocaleHelper;
-import forpdateam.ru.forpda.common.Preferences;
 import forpdateam.ru.forpda.common.realm.DbMigration;
 import forpdateam.ru.forpda.common.receivers.NetworkStateReceiver;
 import forpdateam.ru.forpda.common.receivers.WakeUpReceiver;
@@ -80,7 +77,6 @@ import forpdateam.ru.forpda.ui.fragments.TabFragment;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
@@ -94,10 +90,10 @@ import okhttp3.Cookie;
 public class App extends android.app.Application {
     public static int px2, px4, px6, px8, px12, px14, px16, px20, px24, px32, px36, px40, px48, px56, px64;
     private static App instance;
-    private float density = 1.0f;
+    private final float density = 1.0f;
     private SharedPreferences preferences;
 
-    private SimpleObservable networkForbidden = new SimpleObservable();
+    private final SimpleObservable networkForbidden = new SimpleObservable();
     private Boolean webViewFound = null;
     private Messenger mBoundService = null;
     private boolean mServiceBound = false;
@@ -330,7 +326,7 @@ public class App extends android.app.Application {
         return dependencies;
     }
 
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             mBoundService = null;
@@ -386,7 +382,7 @@ public class App extends android.app.Application {
         return drawable;
     }
 
-    private static DisplayImageOptions.Builder options = new DisplayImageOptions.Builder()
+    private static final DisplayImageOptions.Builder options = new DisplayImageOptions.Builder()
             .cacheInMemory(true)
             .resetViewBeforeLoading(true)
             .cacheOnDisk(true)
@@ -405,7 +401,7 @@ public class App extends android.app.Application {
 
                     @Override
                     public InputStream getStream(String imageUri, Object extra) throws IOException {
-                        if (imageUri.substring(0, 2).equals("//"))
+                        if (imageUri.startsWith("//"))
                             imageUri = "http:".concat(imageUri);
                         Log.d(App.class.getSimpleName(), "ImageLoader getStream " + imageUri);
                         return super.getStream(imageUri, extra);
@@ -480,7 +476,7 @@ public class App extends android.app.Application {
         return null;
     }
 
-    private List<Runnable> permissionCallbacks = new ArrayList<>();
+    private final List<Runnable> permissionCallbacks = new ArrayList<>();
 
     public void checkStoragePermission(Runnable runnable, Activity activity) {
         if (runnable == null || activity == null)

@@ -1,11 +1,12 @@
 package forpdateam.ru.forpda.ui.fragments.devdb.device.specs;
 
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,7 +21,7 @@ import forpdateam.ru.forpda.model.data.remote.api.ApiUtils;
  */
 
 public class SpecsAdapter extends RecyclerView.Adapter<SpecsAdapter.ViewHolder> {
-    private ArrayList<Pair<String, List<Pair<String, String>>>> list = new ArrayList<>();
+    private final ArrayList<Pair<String, List<Pair<String, String>>>> list = new ArrayList<>();
 
 
     public void addAll(Collection<Pair<String, List<Pair<String, String>>>> results) {
@@ -82,8 +83,8 @@ public class SpecsAdapter extends RecyclerView.Adapter<SpecsAdapter.ViewHolder> 
 
         public ViewHolder(View v) {
             super(v);
-            title = (TextView) v.findViewById(R.id.item_title);
-            desc = (TextView) v.findViewById(R.id.item_desc);
+            title = v.findViewById(R.id.item_title);
+            desc = v.findViewById(R.id.item_desc);
         }
 
     }

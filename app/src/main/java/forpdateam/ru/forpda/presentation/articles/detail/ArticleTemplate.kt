@@ -5,7 +5,7 @@ import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.ui.TemplateManager
 
 class ArticleTemplate(
-        private val templateManager: TemplateManager
+    private val templateManager: TemplateManager
 ) {
 
     fun mapEntity(page: DetailsPage): DetailsPage = page.apply { html = mapString(page) }

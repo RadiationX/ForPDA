@@ -12,6 +12,7 @@ class TabScreen(var key: String) {
             isAlone = screen.isAlone
         }
     }
+
     var screenTitle: String? = null
     var screenSubTitle: String? = null
     var fromMenu: Boolean = false

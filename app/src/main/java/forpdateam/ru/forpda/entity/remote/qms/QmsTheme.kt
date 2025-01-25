@@ -12,7 +12,7 @@ class QmsTheme : IQmsTheme {
     override var date: String? = null
     var nick: String? = null
 
-    constructor() {}
+    constructor()
 
     constructor(qmsTheme: IQmsTheme) {
         id = qmsTheme.id

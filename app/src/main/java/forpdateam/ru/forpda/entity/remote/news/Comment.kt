@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.entity.remote.news
 
-import java.util.ArrayList
-
 /**
  * Created by radiationx on 02.09.17.
  */
@@ -19,7 +17,7 @@ class Comment {
     var level: Int = 0
     var karma: Karma? = null
 
-    constructor() {}
+    constructor()
 
     constructor(comment: Comment) {
         this.id = comment.id

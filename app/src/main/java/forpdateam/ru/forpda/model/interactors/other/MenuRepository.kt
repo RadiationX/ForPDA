@@ -4,9 +4,7 @@ import android.content.SharedPreferences
 import android.util.Log
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.jakewharton.rxrelay2.BehaviorRelay
-import forpdateam.ru.forpda.common.Preferences
 import forpdateam.ru.forpda.entity.app.other.AppMenuItem
-import forpdateam.ru.forpda.entity.common.AuthState
 import forpdateam.ru.forpda.entity.common.MessageCounters
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.CountersHolder
@@ -14,9 +12,9 @@ import forpdateam.ru.forpda.presentation.Screen
 import io.reactivex.Observable
 
 class MenuRepository(
-        private val preferences: SharedPreferences,
-        private val authHolder: AuthHolder,
-        private val countersHolder: CountersHolder
+    private val preferences: SharedPreferences,
+    private val authHolder: AuthHolder,
+    private val countersHolder: CountersHolder
 ) {
 
     companion object {
@@ -49,54 +47,54 @@ class MenuRepository(
         const val item_link_bitbucket = 300
 
         val GROUP_MAIN = arrayOf(
-                item_auth,
-                item_article_list,
-                item_favorites,
-                item_qms_contacts,
-                item_search,
-                item_mentions,
-                item_forum,
-                item_dev_db,
-                item_history,
-                item_notes,
-                item_forum_rules
+            item_auth,
+            item_article_list,
+            item_favorites,
+            item_qms_contacts,
+            item_search,
+            item_mentions,
+            item_forum,
+            item_dev_db,
+            item_history,
+            item_notes,
+            item_forum_rules
         )
 
         val GROUP_SYSTEM = arrayOf(
-                item_settings
+            item_settings
         )
 
         val GROUP_LINK = arrayOf<Int>(
-                item_link_forum_author,
-                item_link_forum_topic,
-                item_link_forum_faq,
-                item_link_chat_telegram,
-                item_link_play_market,
-                item_link_github,
-                item_link_bitbucket
+            item_link_forum_author,
+            item_link_forum_topic,
+            item_link_forum_faq,
+            item_link_chat_telegram,
+            item_link_play_market,
+            item_link_github,
+            item_link_bitbucket
         )
     }
 
     private val allItems = listOf(
-            //AppMenuItem(item_auth, Screen.Auth()),
-            AppMenuItem(item_article_list, Screen.ArticleList()),
-            AppMenuItem(item_favorites, Screen.Favorites()),
-            AppMenuItem(item_qms_contacts, Screen.QmsContacts()),
-            AppMenuItem(item_mentions, Screen.Mentions()),
-            AppMenuItem(item_dev_db, Screen.DevDbBrands()),
-            AppMenuItem(item_forum, Screen.Forum()),
-            AppMenuItem(item_search, Screen.Search()),
-            AppMenuItem(item_history, Screen.History()),
-            AppMenuItem(item_notes, Screen.Notes()),
-            AppMenuItem(item_forum_rules, Screen.ForumRules()),
-            AppMenuItem(item_settings, Screen.Settings()),
-            AppMenuItem(item_link_forum_author),
-            AppMenuItem(item_link_chat_telegram),
-            AppMenuItem(item_link_forum_topic),
-            AppMenuItem(item_link_forum_faq),
-            AppMenuItem(item_link_play_market),
-            AppMenuItem(item_link_github),
-            AppMenuItem(item_link_bitbucket)
+        //AppMenuItem(item_auth, Screen.Auth()),
+        AppMenuItem(item_article_list, Screen.ArticleList()),
+        AppMenuItem(item_favorites, Screen.Favorites()),
+        AppMenuItem(item_qms_contacts, Screen.QmsContacts()),
+        AppMenuItem(item_mentions, Screen.Mentions()),
+        AppMenuItem(item_dev_db, Screen.DevDbBrands()),
+        AppMenuItem(item_forum, Screen.Forum()),
+        AppMenuItem(item_search, Screen.Search()),
+        AppMenuItem(item_history, Screen.History()),
+        AppMenuItem(item_notes, Screen.Notes()),
+        AppMenuItem(item_forum_rules, Screen.ForumRules()),
+        AppMenuItem(item_settings, Screen.Settings()),
+        AppMenuItem(item_link_forum_author),
+        AppMenuItem(item_link_chat_telegram),
+        AppMenuItem(item_link_forum_topic),
+        AppMenuItem(item_link_forum_faq),
+        AppMenuItem(item_link_play_market),
+        AppMenuItem(item_link_github),
+        AppMenuItem(item_link_bitbucket)
     )
 
     private val mainGroupSequence = mutableListOf<Int>()
@@ -104,13 +102,13 @@ class MenuRepository(
     private val blockedMenu = mutableListOf<Int>()
 
     private val blockUnAuth = listOf(
-            item_favorites,
-            item_qms_contacts,
-            item_mentions
+        item_favorites,
+        item_qms_contacts,
+        item_mentions
     )
 
     private val blockAuth = listOf(
-            item_auth
+        item_auth
     )
 
     private val mainMenu = mutableListOf<AppMenuItem>()
@@ -132,27 +130,27 @@ class MenuRepository(
 
         loadMainMenuGroup()
         menuSequence
-                .asObservable()
-                .subscribe {
-                    Log.e("kulolo", "menuSequence pref change")
-                    loadMainMenuGroup()
-                    updateMenuItems()
-                }
+            .asObservable()
+            .subscribe {
+                Log.e("kulolo", "menuSequence pref change")
+                loadMainMenuGroup()
+                updateMenuItems()
+            }
 
         authHolder
-                .observe()
-                .subscribe {
-                    loadMainMenuGroup()
-                    Log.e("lplplp", "MenuRepository observe auth ${it.state.toString()}")
-                    updateMenuItems()
-                }
+            .observe()
+            .subscribe {
+                loadMainMenuGroup()
+                Log.e("lplplp", "MenuRepository observe auth ${it.state}")
+                updateMenuItems()
+            }
 
         countersHolder
-                .observe()
-                .subscribe { counters ->
-                    localCounters = counters
-                    updateMenuItems()
-                }
+            .observe()
+            .subscribe { counters ->
+                localCounters = counters
+                updateMenuItems()
+            }
         updateMenuItems()
     }
 
@@ -161,11 +159,15 @@ class MenuRepository(
         mainGroupSequence.addAll(GROUP_MAIN)
 
         menuSequence.get().also { savedArray ->
-            if(savedArray.isNotEmpty()){
-                val array = savedArray.split(',').map { it.toInt() }.filter { GROUP_MAIN.contains(it) }
+            if (savedArray.isNotEmpty()) {
+                val array =
+                    savedArray.split(',').map { it.toInt() }.filter { GROUP_MAIN.contains(it) }
                 val newItems = GROUP_MAIN.filterNot { array.contains(it) }
                 val finalArray = newItems.plus(array)
-                Log.e("lplplp", "MainRepository init saved ${newItems.size}=${newItems.joinToString { it.toString() }}")
+                Log.e(
+                    "lplplp",
+                    "MainRepository init saved ${newItems.size}=${newItems.joinToString { it.toString() }}"
+                )
                 mainGroupSequence.clear()
                 mainGroupSequence.addAll(finalArray)
             }
@@ -235,11 +237,13 @@ class MenuRepository(
             }
         }
 
-        menuRelay.accept(mapOf(
+        menuRelay.accept(
+            mapOf(
                 group_main to mainMenu,
                 group_system to systemMenu,
                 group_link to linkMenu
-        ))
+            )
+        )
     }
 
 }

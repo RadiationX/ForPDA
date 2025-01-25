@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.entity.remote.favorites
 
-import java.util.ArrayList
-
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.model.data.remote.api.favorites.Sorting
 

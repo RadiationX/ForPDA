@@ -29,7 +29,7 @@ class FavItem : IFavItem {
     override var isPoll: Boolean = false
     override var isClosed: Boolean = false
 
-    constructor() {}
+    constructor()
 
     constructor(item: IFavItem) {
         favId = item.favId

@@ -7,7 +7,6 @@ package forpdateam.ru.forpda.ui.views;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
-import androidx.appcompat.widget.AppCompatEditText;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.TextWatcher;
@@ -18,14 +17,16 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ScrollView;
 
+import androidx.appcompat.widget.AppCompatEditText;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import forpdateam.ru.forpda.common.Html;
 
 /*
-* ORIGINAL: https://github.com/markusfisch/CodeEditor/blob/master/app/src/main/java/de/markusfisch/android/CodeEditor/widget/CodeEditor.java
-* */
+ * ORIGINAL: https://github.com/markusfisch/CodeEditor/blob/master/app/src/main/java/de/markusfisch/android/CodeEditor/widget/CodeEditor.java
+ * */
 public class CodeEditor extends AppCompatEditText {
     private static class ForumCodes {
         private static final Pattern ELEMENT = Pattern.compile("(\\[(?:\\/)?((?:attachment|background|nomergetime|mergetime|snapback|numlist|spoiler|offtop|center|color|right|quote|code|font|hide|left|list|size|img|sub|sup|cur|url|b|i|u|s|\\*)))=?\\s?([^\\]\\[]+?)?(\\])", Pattern.CASE_INSENSITIVE);
@@ -47,7 +48,7 @@ public class CodeEditor extends AppCompatEditText {
 
     private Runnable scrollerTask;
     private int initialPosition;
-    private int newCheck = 100;
+    private final int newCheck = 100;
 
     public void attachToScrollView(ScrollView sv) {
         scrollView = sv;
@@ -270,7 +271,7 @@ public class CodeEditor extends AppCompatEditText {
     private static void clearSpans(Editable e) {
         // remove foreground color spans
         {
-            ForegroundColorSpan spans[] = e.getSpans(
+            ForegroundColorSpan[] spans = e.getSpans(
                     0,
                     e.length(),
                     ForegroundColorSpan.class);
@@ -282,7 +283,7 @@ public class CodeEditor extends AppCompatEditText {
 
         // remove background color spans
         {
-            BackgroundColorSpan spans[] = e.getSpans(
+            BackgroundColorSpan[] spans = e.getSpans(
                     0,
                     e.length(),
                     BackgroundColorSpan.class);

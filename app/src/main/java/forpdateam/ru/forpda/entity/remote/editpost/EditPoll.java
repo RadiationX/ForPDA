@@ -13,7 +13,7 @@ public class EditPoll {
     private int maxChoices = 0;
     private int baseIndexOffset = 0;
     private int indexOffset = 0;
-    private List<Question> questions = new ArrayList<>();
+    private final List<Question> questions = new ArrayList<>();
 
     public String getTitle() {
         return title;
@@ -95,7 +95,7 @@ public class EditPoll {
         private int index = 0;
         private int baseIndexOffset = 0;
         private int indexOffset = 0;
-        private List<Choice> choices = new ArrayList<>();
+        private final List<Choice> choices = new ArrayList<>();
 
         public String getTitle() {
             return title;

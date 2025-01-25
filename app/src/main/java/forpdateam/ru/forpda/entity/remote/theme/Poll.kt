@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.entity.remote.theme
 
-import java.util.ArrayList
-
 /**
  * Created by radiationx on 12.11.16.
  */
@@ -9,6 +7,7 @@ import java.util.ArrayList
 class Poll {
     var title: String? = null
     var votesCount: Int = 0
+
     //true - result poll
     var isResult: Boolean = false
     var voteButton = false

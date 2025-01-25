@@ -7,10 +7,11 @@ import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.ui.TemplateManager
 
 class QmsChatTemplate(
-        private val templateManager: TemplateManager
+    private val templateManager: TemplateManager
 ) {
 
-    fun mapEntity(chatModel: QmsChatModel): QmsChatModel = chatModel.apply { html = mapString(chatModel) }
+    fun mapEntity(chatModel: QmsChatModel): QmsChatModel =
+        chatModel.apply { html = mapString(chatModel) }
 
     fun mapString(chatModel: QmsChatModel): String {
         val template = templateManager.getTemplate(TemplateManager.TEMPLATE_QMS_CHAT)
@@ -69,7 +70,12 @@ class QmsChatTemplate(
         return result
     }
 
-    private fun generateMessages(template: MiniTemplator, messages: List<QmsMessage>, start: Int, end: Int): MiniTemplator {
+    private fun generateMessages(
+        template: MiniTemplator,
+        messages: List<QmsMessage>,
+        start: Int,
+        end: Int
+    ): MiniTemplator {
         for (i in start until end) {
             generateMessage(template, messages[i])
         }

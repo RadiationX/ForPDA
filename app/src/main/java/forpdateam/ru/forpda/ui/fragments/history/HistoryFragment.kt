@@ -1,13 +1,9 @@
 package forpdateam.ru.forpda.ui.fragments.history
 
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.View
-
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
-
+import androidx.recyclerview.widget.LinearLayoutManager
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.app.history.HistoryItem
@@ -18,6 +14,8 @@ import forpdateam.ru.forpda.ui.views.ContentController
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.FunnyContent
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 06.09.17.
@@ -44,10 +42,10 @@ class HistoryFragment : RecyclerFragment(), HistoryView {
 
     @ProvidePresenter
     internal fun providePresenter(): HistoryPresenter = HistoryPresenter(
-            App.get().Di().historyRepository,
-            App.get().Di().router,
-            App.get().Di().linkHandler,
-            App.get().Di().errorHandler
+        App.get().Di().historyRepository,
+        App.get().Di().router,
+        App.get().Di().linkHandler,
+        App.get().Di().errorHandler
     )
 
     init {
@@ -70,7 +68,7 @@ class HistoryFragment : RecyclerFragment(), HistoryView {
 
         adapter = HistoryAdapter()
 
-        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
 
         adapter.setItemClickListener(adapterListener)
@@ -80,19 +78,19 @@ class HistoryFragment : RecyclerFragment(), HistoryView {
     override fun addBaseToolbarMenu(menu: Menu) {
         super.addBaseToolbarMenu(menu)
         menu.add("Удалить историю")
-                .setOnMenuItemClickListener {
-                    presenter.clear()
-                    false
-                }
+            .setOnMenuItemClickListener {
+                presenter.clear()
+                false
+            }
     }
 
     override fun showHistory(items: List<HistoryItem>) {
         if (items.isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
                 val funnyContent = FunnyContent(context)
-                        .setImage(R.drawable.ic_history)
-                        .setTitle(R.string.funny_history_nodata_title)
-                        .setDesc(R.string.funny_history_nodata_desc)
+                    .setImage(R.drawable.ic_history)
+                    .setTitle(R.string.funny_history_nodata_title)
+                    .setDesc(R.string.funny_history_nodata_desc)
                 contentController.addContent(funnyContent, ContentController.TAG_NO_DATA)
             }
             contentController.showContent(ContentController.TAG_NO_DATA)

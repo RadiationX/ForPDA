@@ -1,15 +1,17 @@
 package forpdateam.ru.forpda.ui.fragments.editpost;
 
 import android.content.Context;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher;
@@ -20,13 +22,13 @@ import forpdateam.ru.forpda.entity.remote.editpost.EditPoll;
  */
 
 public class EditPollPopup {
-    private BottomSheetDialog dialog;
-    private View bottomSheet;
+    private final BottomSheetDialog dialog;
+    private final View bottomSheet;
 
-    private TextView pollTitle;
-    private EditText pollTitleField;
-    private ImageButton addPoll;
-    private RecyclerView questionsView;
+    private final TextView pollTitle;
+    private final EditText pollTitleField;
+    private final ImageButton addPoll;
+    private final RecyclerView questionsView;
 
     private PollQuestionsAdapter questionsAdapter;
     private EditPoll poll;
@@ -40,10 +42,10 @@ public class EditPollPopup {
 
         bottomSheet = View.inflate(context, R.layout.edit_poll, null);
 
-        pollTitle = (TextView) bottomSheet.findViewById(R.id.poll_title);
-        pollTitleField = (EditText) bottomSheet.findViewById(R.id.poll_title_field);
-        addPoll = (ImageButton) bottomSheet.findViewById(R.id.add_poll);
-        questionsView = (RecyclerView) bottomSheet.findViewById(R.id.poll_questions);
+        pollTitle = bottomSheet.findViewById(R.id.poll_title);
+        pollTitleField = bottomSheet.findViewById(R.id.poll_title_field);
+        addPoll = bottomSheet.findViewById(R.id.add_poll);
+        questionsView = bottomSheet.findViewById(R.id.poll_questions);
 
         questionsView.setLayoutManager(new LinearLayoutManager(questionsView.getContext()));
 

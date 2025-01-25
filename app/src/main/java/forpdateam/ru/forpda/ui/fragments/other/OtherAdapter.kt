@@ -6,20 +6,25 @@ import forpdateam.ru.forpda.entity.app.other.AppMenuItem
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.model.MenuMapper
 import forpdateam.ru.forpda.model.interactors.other.MenuRepository
-import forpdateam.ru.forpda.ui.views.drawers.adapters.*
-import java.util.*
+import forpdateam.ru.forpda.ui.views.drawers.adapters.CloseableInfoListItem
+import forpdateam.ru.forpda.ui.views.drawers.adapters.DividerShadowListItem
+import forpdateam.ru.forpda.ui.views.drawers.adapters.DrawerMenuItem
+import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
+import forpdateam.ru.forpda.ui.views.drawers.adapters.MenuListItem
+import forpdateam.ru.forpda.ui.views.drawers.adapters.ProfileListItem
+import java.util.Collections
 
 class OtherAdapter(
-        private val profileClickListener: (ProfileModel?) -> Unit,
-        private val logoutClickListener: () -> Unit,
-        private val menuClickListener: (DrawerMenuItem) -> Unit,
-        private val menuSequenceListener: (List<AppMenuItem>) -> Unit,
-        private val infoClickListener: (CloseableInfo) -> Unit
+    private val profileClickListener: (ProfileModel?) -> Unit,
+    private val logoutClickListener: () -> Unit,
+    private val menuClickListener: (DrawerMenuItem) -> Unit,
+    private val menuSequenceListener: (List<AppMenuItem>) -> Unit,
+    private val infoClickListener: (CloseableInfo) -> Unit
 ) : ListDelegationAdapter<MutableList<ListItem>>() {
 
     private val infoCloseClickListener = { item: CloseableInfo ->
         val infoIndex = items.indexOfFirst { it is CloseableInfoListItem && it.item.id == item.id }
-        val closeableInfoCount = items.filterIsInstance(CloseableInfoListItem::class.java).size
+        val closeableInfoCount = items.filterIsInstance<CloseableInfoListItem>().size
         if (infoIndex >= 0) {
             items.removeAt(infoIndex)
             if (closeableInfoCount > 1) {
@@ -43,7 +48,11 @@ class OtherAdapter(
     }
 
 
-    fun bindItems(profileItem: ProfileModel?, infoList: List<CloseableInfo>, newItems: List<List<AppMenuItem>>) {
+    fun bindItems(
+        profileItem: ProfileModel?,
+        infoList: List<CloseableInfo>,
+        newItems: List<List<AppMenuItem>>
+    ) {
         items.clear()
 
         items.add(ProfileListItem(profileItem))
@@ -52,7 +61,7 @@ class OtherAdapter(
         infoList.forEach {
             items.add(CloseableInfoListItem(it))
         }
-        if(infoList.isNotEmpty()){
+        if (infoList.isNotEmpty()) {
             items.add(DividerShadowListItem())
         }
 
@@ -68,9 +77,9 @@ class OtherAdapter(
     }
 
     private fun getMenu(): List<AppMenuItem> = items
-            .filterIsInstance(MenuListItem::class.java)
-            .filter { MenuRepository.GROUP_MAIN.contains(it.menuItem.appItem.id) }
-            .map { it.menuItem.appItem }
+        .filterIsInstance<MenuListItem>()
+        .filter { MenuRepository.GROUP_MAIN.contains(it.menuItem.appItem.id) }
+        .map { it.menuItem.appItem }
 
     fun onItemMove(fromPosition: Int, toPosition: Int) {
         if (fromPosition < toPosition) {

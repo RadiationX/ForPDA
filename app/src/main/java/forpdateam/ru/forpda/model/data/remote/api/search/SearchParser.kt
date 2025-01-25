@@ -9,16 +9,17 @@ import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
 
 class SearchParser(
-        private val patternProvider: IPatternProvider
+    private val patternProvider: IPatternProvider
 ) : BaseParser() {
 
     private val scope = ParserPatterns.Search
 
-    fun parse(response: String, settings: SearchSettings): SearchResult = SearchResult().also { result ->
-        val isNews = settings.resourceType == SearchSettings.RESOURCE_NEWS.first
-        val resultTopics = settings.result == SearchSettings.RESULT_TOPICS.first
-        if (isNews) {
-            patternProvider
+    fun parse(response: String, settings: SearchSettings): SearchResult =
+        SearchResult().also { result ->
+            val isNews = settings.resourceType == SearchSettings.RESOURCE_NEWS.first
+            val resultTopics = settings.result == SearchSettings.RESULT_TOPICS.first
+            if (isNews) {
+                patternProvider
                     .getPattern(scope.scope, scope.articles)
                     .matcher(response)
                     .findAll { matcher ->
@@ -32,9 +33,9 @@ class SearchParser(
                             body = matcher.group(7)
                         })
                     }
-        } else {
-            if (resultTopics) {
-                patternProvider
+            } else {
+                if (resultTopics) {
+                    patternProvider
                         .getPattern(scope.scope, scope.forum_topics)
                         .matcher(response)
                         .findAll { matcher ->
@@ -49,8 +50,8 @@ class SearchParser(
                                 date = matcher.group(12)
                             })
                         }
-            } else {
-                patternProvider
+                } else {
+                    patternProvider
                         .getPattern(scope.scope, scope.forum_posts)
                         .matcher(response)
                         .findAll { matcher ->
@@ -81,15 +82,15 @@ class SearchParser(
                                 body = matcher.group(21)
                             })
                         }
+                }
             }
-        }
 
-        if (isNews) {
-            result.pagination = Pagination.parseNews(response)
-        } else {
-            result.pagination = Pagination.parseForum(response)
+            if (isNews) {
+                result.pagination = Pagination.parseNews(response)
+            } else {
+                result.pagination = Pagination.parseForum(response)
+            }
+            result.settings = settings
+            return result
         }
-        result.settings = settings
-        return result
-    }
 }

@@ -1,9 +1,11 @@
 package forpdateam.ru.forpda.ui.views.messagepanel;
 
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.cardview.widget.CardView;
 import android.view.View;
+
+import androidx.cardview.widget.CardView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import com.google.android.material.appbar.AppBarLayout;
 
 import forpdateam.ru.forpda.App;
 

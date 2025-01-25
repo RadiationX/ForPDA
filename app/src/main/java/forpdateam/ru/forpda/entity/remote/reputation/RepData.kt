@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.entity.remote.reputation
 
-import java.util.ArrayList
-
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.model.data.remote.api.reputation.ReputationApi
 

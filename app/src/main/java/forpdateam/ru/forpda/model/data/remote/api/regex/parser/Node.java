@@ -14,9 +14,9 @@ public class Node {
     public final static String NODE_TEXT = "#text";
     public final static String NODE_COMMENT = "#comment";
 
-    private ArrayList<Node> nodes = new ArrayList<>();
-    private ArrayList<Node> elements = new ArrayList<>();
-    private LinkedHashMap<String, String> attributes = new LinkedHashMap<>();
+    private final ArrayList<Node> nodes = new ArrayList<>();
+    private final ArrayList<Node> elements = new ArrayList<>();
+    private final LinkedHashMap<String, String> attributes = new LinkedHashMap<>();
     private String name = null;
     private String text = null;
 
@@ -61,7 +61,7 @@ public class Node {
 
     @Override
     public String toString() {
-        return "" + name;
+        return name;
     }
 
 
@@ -72,8 +72,9 @@ public class Node {
     public void putAttribute(String name, String value) {
         this.attributes.put(name, value);
     }
+
     @Nullable
-    public String getAttribute(String attr){
+    public String getAttribute(String attr) {
         return attributes.get(attr);
     }
 }

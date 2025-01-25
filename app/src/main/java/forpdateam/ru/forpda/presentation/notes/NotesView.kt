@@ -1,11 +1,11 @@
 package forpdateam.ru.forpda.presentation.notes
 
-import moxy.viewstate.strategy.AddToEndSingleStrategy
-import moxy.viewstate.strategy.SkipStrategy
-import moxy.viewstate.strategy.StateStrategyType
 import forpdateam.ru.forpda.common.mvp.IBaseView
 import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
+import moxy.viewstate.strategy.AddToEndSingleStrategy
+import moxy.viewstate.strategy.SkipStrategy
+import moxy.viewstate.strategy.StateStrategyType
 
 /**
  * Created by radiationx on 01.01.18.

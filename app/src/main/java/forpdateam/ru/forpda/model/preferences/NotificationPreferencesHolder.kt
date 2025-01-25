@@ -1,13 +1,12 @@
 package forpdateam.ru.forpda.model.preferences
 
 import android.content.SharedPreferences
-import androidx.collection.ArraySet
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import forpdateam.ru.forpda.common.Preferences
 import io.reactivex.Observable
 
 class NotificationPreferencesHolder(
-        private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences
 ) {
 
     private val rxPreferences = RxSharedPreferences.create(sharedPreferences)
@@ -80,7 +79,7 @@ class NotificationPreferencesHolder(
     fun observeMainAvatarsEnabled(): Observable<Boolean> = mainAvatarsEnabled.asObservable()
 
     fun observeMainLimit(): Observable<Long> = mainLimit.asObservable()
-            .map { it.toLong() * 1000 }
+        .map { it.toLong() * 1000 }
 
     fun observeFavEnabled(): Observable<Boolean> = favEnabled.asObservable()
 

@@ -2,20 +2,16 @@ package forpdateam.ru.forpda.ui.fragments.devdb.brand
 
 import android.graphics.Rect
 import android.os.Bundle
-import com.google.android.material.appbar.AppBarLayout
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.appbar.AppBarLayout
 import com.nostra13.universalimageloader.core.ImageLoader
-
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.devdb.Brand
@@ -29,14 +25,17 @@ import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.PauseOnScrollListener
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.messagepanel.AutoFitRecyclerView
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 08.08.17.
  */
 
-class DevicesFragment : TabFragment(), DevicesView, BaseAdapter.OnItemClickListener<Brand.DeviceItem>, TabTopScroller {
+class DevicesFragment : TabFragment(), DevicesView,
+    BaseAdapter.OnItemClickListener<Brand.DeviceItem>, TabTopScroller {
 
-    private lateinit var refreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    private lateinit var refreshLayout: SwipeRefreshLayout
     private lateinit var recyclerView: AutoFitRecyclerView
     private lateinit var adapter: DevicesAdapter
     private val dialogMenu = DynamicDialogMenu<DevicesFragment, Brand.DeviceItem>()
@@ -52,9 +51,9 @@ class DevicesFragment : TabFragment(), DevicesView, BaseAdapter.OnItemClickListe
 
     @ProvidePresenter
     fun providePresenter(): DevicesPresenter = DevicesPresenter(
-            App.get().Di().devDbRepository,
-            App.get().Di().router,
-            App.get().Di().errorHandler
+        App.get().Di().devDbRepository,
+        App.get().Di().router,
+        App.get().Di().errorHandler
     )
 
     init {
@@ -69,10 +68,15 @@ class DevicesFragment : TabFragment(), DevicesView, BaseAdapter.OnItemClickListe
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         baseInflateFragment(inflater, R.layout.fragment_brand)
-        refreshLayout = findViewById(R.id.swipe_refresh_list) as androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        refreshLayout =
+            findViewById(R.id.swipe_refresh_list) as SwipeRefreshLayout
         recyclerView = findViewById(R.id.base_list) as AutoFitRecyclerView
         contentController.setMainRefresh(refreshLayout)
         setScrollFlagsEnterAlways()
@@ -93,7 +97,8 @@ class DevicesFragment : TabFragment(), DevicesView, BaseAdapter.OnItemClickListe
         recyclerView.setColumnWidth(App.get().dpToPx(144, recyclerView.context))
         recyclerView.adapter = adapter
         try {
-            val gridLayoutManager = recyclerView.layoutManager as androidx.recyclerview.widget.GridLayoutManager
+            val gridLayoutManager =
+                recyclerView.layoutManager as GridLayoutManager
             recyclerView.addItemDecoration(SpacingItemDecoration(gridLayoutManager, App.px8))
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -111,8 +116,13 @@ class DevicesFragment : TabFragment(), DevicesView, BaseAdapter.OnItemClickListe
             }
         }
 
-        recyclerView.addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
+        recyclerView.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
+            override fun onScrolled(
+                recyclerView: RecyclerView,
+                dx: Int,
+                dy: Int
+            ) {
                 super.onScrolled(recyclerView, dx, dy)
                 listScrollY = recyclerView.computeVerticalScrollOffset()
                 updateToolbarShadow()
@@ -139,12 +149,12 @@ class DevicesFragment : TabFragment(), DevicesView, BaseAdapter.OnItemClickListe
     override fun addBaseToolbarMenu(menu: Menu) {
         super.addBaseToolbarMenu(menu)
         menu.add(R.string.fragment_title_device_search)
-                .setIcon(R.drawable.ic_toolbar_search)
-                .setOnMenuItemClickListener {
-                    presenter.openSearch()
-                    false
-                }
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            .setIcon(R.drawable.ic_toolbar_search)
+            .setOnMenuItemClickListener {
+                presenter.openSearch()
+                false
+            }
+            .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
     }
 
     override fun showData(data: Brand) {
@@ -171,14 +181,14 @@ class DevicesFragment : TabFragment(), DevicesView, BaseAdapter.OnItemClickListe
         return false
     }
 
-    class SpacingItemDecoration : androidx.recyclerview.widget.RecyclerView.ItemDecoration {
+    class SpacingItemDecoration : RecyclerView.ItemDecoration {
         private var spanCount = 1
         private var fullWidth = false
         private val includeEdge = true
         private var spacing: Int = 0
-        private var manager: androidx.recyclerview.widget.GridLayoutManager? = null
+        private var manager: GridLayoutManager? = null
 
-        constructor(manager: androidx.recyclerview.widget.GridLayoutManager, spacing: Int) {
+        constructor(manager: GridLayoutManager, spacing: Int) {
             this.spacing = spacing
             this.manager = manager
         }
@@ -193,7 +203,12 @@ class DevicesFragment : TabFragment(), DevicesView, BaseAdapter.OnItemClickListe
         }
 
 
-        override fun getItemOffsets(outRect: Rect, view: View, parent: androidx.recyclerview.widget.RecyclerView, state: androidx.recyclerview.widget.RecyclerView.State) {
+        override fun getItemOffsets(
+            outRect: Rect,
+            view: View,
+            parent: RecyclerView,
+            state: RecyclerView.State
+        ) {
             manager?.also {
                 spanCount = it.spanCount
             }
@@ -203,8 +218,10 @@ class DevicesFragment : TabFragment(), DevicesView, BaseAdapter.OnItemClickListe
 
             if (includeEdge) {
                 if (!fullWidth) {
-                    outRect.left = spacing - column * spacing / spanCount // spacing - column * ((1f / spanCount) * spacing)
-                    outRect.right = (column + 1) * spacing / spanCount // (column + 1) * ((1f / spanCount) * spacing)
+                    outRect.left =
+                        spacing - column * spacing / spanCount // spacing - column * ((1f / spanCount) * spacing)
+                    outRect.right =
+                        (column + 1) * spacing / spanCount // (column + 1) * ((1f / spanCount) * spacing)
                 }
                 if (position < spanCount) { // top edge
                     outRect.top = spacing
@@ -212,8 +229,10 @@ class DevicesFragment : TabFragment(), DevicesView, BaseAdapter.OnItemClickListe
                 outRect.bottom = spacing // item bottom
             } else {
                 if (!fullWidth) {
-                    outRect.left = column * spacing / spanCount // column * ((1f / spanCount) * spacing)
-                    outRect.right = spacing - (column + 1) * spacing / spanCount // spacing - (column + 1) * ((1f /    spanCount) * spacing)
+                    outRect.left =
+                        column * spacing / spanCount // column * ((1f / spanCount) * spacing)
+                    outRect.right =
+                        spacing - (column + 1) * spacing / spanCount // spacing - (column + 1) * ((1f /    spanCount) * spacing)
                 }
                 if (position >= spanCount) {
                     outRect.top = spacing // item top

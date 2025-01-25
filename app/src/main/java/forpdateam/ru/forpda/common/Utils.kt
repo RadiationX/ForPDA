@@ -1,6 +1,10 @@
 package forpdateam.ru.forpda.common
 
-import android.content.*
+import android.content.ClipData
+import android.content.ClipDescription
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
@@ -11,7 +15,9 @@ import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.GregorianCalendar
 
 /**
  * Created by isanechek on 30.07.16.
@@ -36,17 +42,21 @@ object Utils {
 
     @JvmStatic
     fun copyToClipBoard(s: String?) {
-        val clipboard = App.getContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipboard =
+            App.getContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("label", s)
         clipboard.setPrimaryClip(clip)
     }
 
     fun readFromClipboard(): String? {
-        val clipboard = App.getContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipboard =
+            App.getContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         if (clipboard.hasPrimaryClip()) {
             val description = clipboard.primaryClipDescription
             val data = clipboard.primaryClip
-            if (data != null && description != null && description.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) return data.getItemAt(0).text.toString()
+            if (data != null && description != null && description.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) return data.getItemAt(
+                0
+            ).text.toString()
         }
         return null
     }
@@ -57,7 +67,10 @@ object Utils {
         sendIntent.putExtra(Intent.EXTRA_TEXT, text)
         sendIntent.type = "text/plain"
         sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        App.get().startActivity(Intent.createChooser(sendIntent, App.get().getString(R.string.share)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        App.get().startActivity(
+            Intent.createChooser(sendIntent, App.get().getString(R.string.share))
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        )
     }
 
     fun <T> checkNotNull(value: T?, message: String?): T {
@@ -114,7 +127,9 @@ object Utils {
     fun parseForumDateTime(dateTime: String?): Date? {
         dateTime ?: return null
         try {
-            val res = parseDateTimeFormat.parse(dateTime.replace("Сегодня", day).replace("Вчера", yesterday))
+            val res = parseDateTimeFormat.parse(
+                dateTime.replace("Сегодня", day).replace("Вчера", yesterday)
+            )
             val calendar: Calendar = GregorianCalendar()
             calendar.time = res
             val year = calendar[Calendar.YEAR]
@@ -129,11 +144,11 @@ object Utils {
     fun showNeedAuthDialog(context: Context) {
         val router = App.get().Di().router
         AlertDialog.Builder(context)
-                .setMessage("Необходимо войти в аккаунт 4pda")
-                .setPositiveButton("Войти") { _, _ ->
-                    router.navigateTo(Screen.Auth())
-                }
-                .setNegativeButton(R.string.cancel, null)
-                .show()
+            .setMessage("Необходимо войти в аккаунт 4pda")
+            .setPositiveButton("Войти") { _, _ ->
+                router.navigateTo(Screen.Auth())
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 }

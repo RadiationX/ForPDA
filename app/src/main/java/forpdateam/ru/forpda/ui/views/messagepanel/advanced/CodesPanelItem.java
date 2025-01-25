@@ -3,15 +3,17 @@ package forpdateam.ru.forpda.ui.views.messagepanel.advanced;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.ItemTouchHelper;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,9 +41,9 @@ import forpdateam.ru.forpda.ui.views.messagepanel.inserthelper.InsertHelper;
 public class CodesPanelItem extends BasePanelItem {
     private static List<ButtonData> codes = null;
     private static Map<String, String> colors = null;
-    private List<String> openedCodes = new ArrayList<>();
-    private OtherPreferencesHolder otherPreferencesHolder = App.get().Di().getOtherPreferencesHolder();
-    private PanelItemAdapter.OnItemClickListener clickListener = item -> {
+    private final List<String> openedCodes = new ArrayList<>();
+    private final OtherPreferencesHolder otherPreferencesHolder = App.get().Di().getOtherPreferencesHolder();
+    private final PanelItemAdapter.OnItemClickListener clickListener = item -> {
         switch (item.getText()) {
             case "URL": {
                 urlInsert(item);
@@ -132,8 +134,8 @@ public class CodesPanelItem extends BasePanelItem {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.report_layout, null);
         assert layout != null;
-        final EditText messageField = (EditText) layout.findViewById(R.id.report_text_field);
-        final TextInputLayout inputLayout = (TextInputLayout) layout.findViewById(R.id.report_input_layout);
+        final EditText messageField = layout.findViewById(R.id.report_text_field);
+        final TextInputLayout inputLayout = layout.findViewById(R.id.report_input_layout);
         final int[] i = {listLines.size() + 1};
         inputLayout.setHint(String.format(App.get().getString(R.string.codes_list_item_Pos), i[0]));
         AlertDialog alertDialog = new AlertDialog.Builder(getContext())

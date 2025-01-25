@@ -34,13 +34,13 @@ public class BrandsAdapter extends BaseSectionedAdapter<Brands.Item, BaseSection
 
     @Override
     public void onBindHeaderViewHolder(BaseSectionedViewHolder holder, int section, boolean expanded) {
-        ((HeaderHolder) holder).bind(section);
+        holder.bind(section);
     }
 
     @Override
     public void onBindViewHolder(BaseSectionedViewHolder holder, int section, int relativePosition, int absolutePosition) {
         Brands.Item item = getItem(section, relativePosition);
-        ((ItemHolder) holder).bind(item);
+        holder.bind(item);
     }
 
     private class HeaderHolder extends BaseSectionedViewHolder<TopicItem> {
@@ -50,7 +50,7 @@ public class BrandsAdapter extends BaseSectionedAdapter<Brands.Item, BaseSection
         HeaderHolder(View v) {
             super(v);
             topDivider = v.findViewById(R.id.item_top_divider);
-            title = (TextView) v.findViewById(R.id.item_title);
+            title = v.findViewById(R.id.item_title);
         }
 
         @Override
@@ -69,8 +69,8 @@ public class BrandsAdapter extends BaseSectionedAdapter<Brands.Item, BaseSection
         ItemHolder(View v) {
             super(v);
             topDivider = v.findViewById(R.id.item_top_divider);
-            title = (TextView) v.findViewById(R.id.item_title);
-            count = (TextView) v.findViewById(R.id.item_count);
+            title = v.findViewById(R.id.item_title);
+            count = v.findViewById(R.id.item_count);
 
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);

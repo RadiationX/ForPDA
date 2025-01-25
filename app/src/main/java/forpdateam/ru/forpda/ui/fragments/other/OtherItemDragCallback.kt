@@ -1,8 +1,8 @@
 package forpdateam.ru.forpda.ui.fragments.other
 
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.ItemTouchHelper
 import android.util.Log
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import forpdateam.ru.forpda.model.interactors.other.MenuRepository
 
 /**
@@ -10,15 +10,18 @@ import forpdateam.ru.forpda.model.interactors.other.MenuRepository
  */
 
 class OtherItemDragCallback(
-        private val otherAdapter: OtherAdapter,
-        private val listener: ItemTouchHelperListener
+    private val otherAdapter: OtherAdapter,
+    private val listener: ItemTouchHelperListener
 ) : ItemTouchHelper.Callback() {
 
     override fun isLongPressDragEnabled(): Boolean {
         return true
     }
 
-    override fun getMovementFlags(recyclerView: androidx.recyclerview.widget.RecyclerView, viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder): Int {
+    override fun getMovementFlags(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder
+    ): Int {
         Log.e("lplplp", "getMovementFlags")
         val dragFlags = if (checkViewHolder(viewHolder)) {
             ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
@@ -26,13 +29,13 @@ class OtherItemDragCallback(
             ItemTouchHelper.ACTION_STATE_IDLE
         }
         val swipeFlags = ItemTouchHelper.ACTION_STATE_IDLE
-        return ItemTouchHelper.Callback.makeMovementFlags(dragFlags, swipeFlags)
+        return makeMovementFlags(dragFlags, swipeFlags)
     }
 
     override fun onMove(
-            recyclerView: androidx.recyclerview.widget.RecyclerView,
-            viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
-            target: androidx.recyclerview.widget.RecyclerView.ViewHolder
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        target: RecyclerView.ViewHolder
     ): Boolean {
         if (checkViewHolder(viewHolder) && checkViewHolder(target)) {
             listener.onItemMove(viewHolder.adapterPosition, target.adapterPosition)
@@ -42,23 +45,34 @@ class OtherItemDragCallback(
     }
 
 
-    override fun onSwiped(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder, direction: Int) {
+    override fun onSwiped(
+        viewHolder: RecyclerView.ViewHolder,
+        direction: Int
+    ) {
     }
 
-    override fun onSelectedChanged(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder?, actionState: Int) {
+    override fun onSelectedChanged(
+        viewHolder: RecyclerView.ViewHolder?,
+        actionState: Int
+    ) {
         super.onSelectedChanged(viewHolder, actionState)
-        if(actionState==ItemTouchHelper.ACTION_STATE_DRAG){
+        if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
             listener.onDragStart()
         }
     }
 
-    override fun clearView(recyclerView: androidx.recyclerview.widget.RecyclerView, viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder) {
+    override fun clearView(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder
+    ) {
         super.clearView(recyclerView, viewHolder)
         listener.onDragEnd()
     }
 
-    private fun checkViewHolder(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder): Boolean {
-        return viewHolder is MenuItemDelegate.ViewHolder && MenuRepository.GROUP_MAIN.contains(viewHolder.getItem().appItem.id)
+    private fun checkViewHolder(viewHolder: RecyclerView.ViewHolder): Boolean {
+        return viewHolder is MenuItemDelegate.ViewHolder && MenuRepository.GROUP_MAIN.contains(
+            viewHolder.getItem().appItem.id
+        )
     }
 
     interface ItemTouchHelperListener {

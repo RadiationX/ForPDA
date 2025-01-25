@@ -10,7 +10,7 @@ class ForumItemFlat : IForumItemFlat {
     override var level = -1
     override var title: String? = null
 
-    constructor() {}
+    constructor()
 
     constructor(item: ForumItemTree) {
         id = item.id

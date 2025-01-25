@@ -3,13 +3,15 @@ package forpdateam.ru.forpda.ui.fragments.devdb.search
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.appcompat.widget.SearchView
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import androidx.appcompat.widget.SearchView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
@@ -24,14 +26,17 @@ import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.PauseOnScrollListener
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.messagepanel.AutoFitRecyclerView
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 09.11.17.
  */
 
-class DevDbSearchFragment : TabFragment(), SearchDevicesView, BaseAdapter.OnItemClickListener<Brand.DeviceItem> {
+class DevDbSearchFragment : TabFragment(), SearchDevicesView,
+    BaseAdapter.OnItemClickListener<Brand.DeviceItem> {
     private lateinit var adapter: DevicesAdapter
-    private lateinit var refreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    private lateinit var refreshLayout: SwipeRefreshLayout
     private lateinit var recyclerView: AutoFitRecyclerView
     private lateinit var searchView: SearchView
     private lateinit var searchMenuItem: MenuItem
@@ -42,19 +47,24 @@ class DevDbSearchFragment : TabFragment(), SearchDevicesView, BaseAdapter.OnItem
 
     @ProvidePresenter
     fun providePresenter(): SearchDevicesPresenter = SearchDevicesPresenter(
-            App.get().Di().devDbRepository,
-            App.get().Di().router,
-            App.get().Di().errorHandler
+        App.get().Di().devDbRepository,
+        App.get().Di().router,
+        App.get().Di().errorHandler
     )
 
     init {
         configuration.defaultTitle = "Поиск устройств"
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         baseInflateFragment(inflater, R.layout.fragment_brand)
-        refreshLayout = findViewById(R.id.swipe_refresh_list) as androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        refreshLayout =
+            findViewById(R.id.swipe_refresh_list) as SwipeRefreshLayout
         recyclerView = findViewById(R.id.base_list) as AutoFitRecyclerView
         contentController.setMainRefresh(refreshLayout)
         return viewFragment
@@ -74,8 +84,14 @@ class DevDbSearchFragment : TabFragment(), SearchDevicesView, BaseAdapter.OnItem
         recyclerView.setColumnWidth(App.get().dpToPx(144, recyclerView.context))
         recyclerView.adapter = adapter
         try {
-            val gridLayoutManager = recyclerView.layoutManager as androidx.recyclerview.widget.GridLayoutManager
-            recyclerView.addItemDecoration(DevicesFragment.SpacingItemDecoration(gridLayoutManager, App.px8))
+            val gridLayoutManager =
+                recyclerView.layoutManager as GridLayoutManager
+            recyclerView.addItemDecoration(
+                DevicesFragment.SpacingItemDecoration(
+                    gridLayoutManager,
+                    App.px8
+                )
+            )
         } catch (ex: Exception) {
             ex.printStackTrace()
         }

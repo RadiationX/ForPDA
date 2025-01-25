@@ -4,7 +4,6 @@ import forpdateam.ru.forpda.entity.remote.topics.TopicsData
 import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.data.remote.api.topcis.TopicsApi
 import forpdateam.ru.forpda.model.repository.BaseRepository
-import io.reactivex.Observable
 import io.reactivex.Single
 
 /**
@@ -12,12 +11,12 @@ import io.reactivex.Single
  */
 
 class TopicsRepository(
-        private val schedulers: SchedulersProvider,
-        private val topicsApi: TopicsApi
+    private val schedulers: SchedulersProvider,
+    private val topicsApi: TopicsApi
 ) : BaseRepository(schedulers) {
 
     fun getTopics(id: Int, st: Int): Single<TopicsData> = Single
-            .fromCallable { topicsApi.getTopics(id, st) }
-            .runInIoToUi()
+        .fromCallable { topicsApi.getTopics(id, st) }
+        .runInIoToUi()
 
 }

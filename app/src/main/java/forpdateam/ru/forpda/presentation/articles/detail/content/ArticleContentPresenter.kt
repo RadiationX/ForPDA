@@ -1,11 +1,11 @@
 package forpdateam.ru.forpda.presentation.articles.detail.content
 
-import moxy.InjectViewState
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.model.interactors.news.ArticleInteractor
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.ui.TemplateManager
+import moxy.InjectViewState
 
 /**
  * Created by radiationx on 11.11.17.
@@ -13,43 +13,43 @@ import forpdateam.ru.forpda.ui.TemplateManager
 
 @InjectViewState
 class ArticleContentPresenter(
-        private val articleInteractor: ArticleInteractor,
-        private val mainPreferencesHolder: MainPreferencesHolder,
-        private val templateManager: TemplateManager,
-        private val errorHandler: IErrorHandler
+    private val articleInteractor: ArticleInteractor,
+    private val mainPreferencesHolder: MainPreferencesHolder,
+    private val templateManager: TemplateManager,
+    private val errorHandler: IErrorHandler
 ) : BasePresenter<ArticleContentView>() {
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         templateManager
-                .observeThemeType()
-                .subscribe {
-                    viewState.setStyleType(it)
-                }
-                .untilDestroy()
+            .observeThemeType()
+            .subscribe {
+                viewState.setStyleType(it)
+            }
+            .untilDestroy()
         mainPreferencesHolder
-                .observeWebViewFontSize()
-                .subscribe {
-                    viewState.setFontSize(it)
-                }
-                .untilDestroy()
+            .observeWebViewFontSize()
+            .subscribe {
+                viewState.setFontSize(it)
+            }
+            .untilDestroy()
         articleInteractor
-                .observeData()
-                .subscribe({
-                    viewState.showData(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .observeData()
+            .subscribe({
+                viewState.showData(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun sendPoll(from: String, pollId: Int, answersId: IntArray) {
         articleInteractor
-                .sendPoll(from, pollId, answersId)
-                .subscribe({}, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .sendPoll(from, pollId, answersId)
+            .subscribe({}, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
 }

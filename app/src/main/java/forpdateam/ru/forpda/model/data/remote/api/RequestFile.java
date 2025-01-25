@@ -8,7 +8,9 @@ import java.io.InputStream;
 
 public class RequestFile {
     private InputStream fileStream;
-    private String fileName, mimeType, requestName;
+    private final String fileName;
+    private final String mimeType;
+    private String requestName;
 
     public RequestFile(String fileName, String mimeType, InputStream fileStream) {
         this.fileStream = fileStream;

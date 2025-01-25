@@ -1,11 +1,5 @@
 package forpdateam.ru.forpda.ui.fragments.editpost;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.appcompat.widget.AppCompatEditText;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +7,13 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +31,7 @@ import forpdateam.ru.forpda.entity.remote.editpost.EditPoll;
 public class PollQuestionsAdapter extends RecyclerView.Adapter<PollQuestionsAdapter.ViewHolder> {
     private List<EditPoll.Question> questions = new ArrayList<>();
     private EditPoll poll;
-    private HashMap<EditPoll.Question, PollChoicesAdapter> choiceAdapters = new HashMap<>();
+    private final HashMap<EditPoll.Question, PollChoicesAdapter> choiceAdapters = new HashMap<>();
 
     public PollQuestionsAdapter(List<EditPoll.Question> questions, EditPoll poll) {
         this.questions = questions;
@@ -107,12 +108,12 @@ public class PollQuestionsAdapter extends RecyclerView.Adapter<PollQuestionsAdap
 
         public ViewHolder(View v, CustomTextWatcher customTextWatcher, CustomCheckedChangeListener checkedChangeListener) {
             super(v);
-            title = (AppCompatTextView) v.findViewById(R.id.poll_question_title);
-            titleField = (AppCompatEditText) v.findViewById(R.id.poll_question_title_field);
-            multi = (AppCompatCheckBox) v.findViewById(R.id.poll_question_multi);
-            choices = (RecyclerView) v.findViewById(R.id.poll_question_choices);
-            addChoice = (Button) v.findViewById(R.id.poll_add_choice);
-            delete = (ImageButton) v.findViewById(R.id.poll_question_delete);
+            title = v.findViewById(R.id.poll_question_title);
+            titleField = v.findViewById(R.id.poll_question_title_field);
+            multi = v.findViewById(R.id.poll_question_multi);
+            choices = v.findViewById(R.id.poll_question_choices);
+            addChoice = v.findViewById(R.id.poll_add_choice);
+            delete = v.findViewById(R.id.poll_question_delete);
 
             this.customTextWatcher = customTextWatcher;
             this.titleField.addTextChangedListener(customTextWatcher);

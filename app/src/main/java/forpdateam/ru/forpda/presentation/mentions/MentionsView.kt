@@ -1,11 +1,11 @@
 package forpdateam.ru.forpda.presentation.mentions
 
-import moxy.viewstate.strategy.AddToEndSingleStrategy
-import moxy.viewstate.strategy.SkipStrategy
-import moxy.viewstate.strategy.StateStrategyType
 import forpdateam.ru.forpda.common.mvp.IBaseView
 import forpdateam.ru.forpda.entity.remote.mentions.MentionItem
 import forpdateam.ru.forpda.entity.remote.mentions.MentionsData
+import moxy.viewstate.strategy.AddToEndSingleStrategy
+import moxy.viewstate.strategy.SkipStrategy
+import moxy.viewstate.strategy.StateStrategyType
 
 /**
  * Created by radiationx on 01.01.18.

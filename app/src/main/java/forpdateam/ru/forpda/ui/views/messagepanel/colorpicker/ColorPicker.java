@@ -1,16 +1,17 @@
 package forpdateam.ru.forpda.ui.views.messagepanel.colorpicker;
 
 import android.content.Context;
-import com.google.android.material.tabs.TabLayout;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.tabs.TabLayout;
 import com.thebluealliance.spectrum.SpectrumPalette;
 
 import java.util.ArrayList;
@@ -23,14 +24,14 @@ import forpdateam.ru.forpda.R;
  */
 
 public class ColorPicker {
-    private String[] titles = new String[]{"Material", "Forum"};
+    private final String[] titles = new String[]{"Material", "Forum"};
 
     public ColorPicker(Context context, SpectrumPalette.OnColorSelectedListener listener) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout layoutContainer = (LinearLayout) inflater.inflate(R.layout.color_picker_layout, null);
 
 
-        ViewPager viewPager = (ViewPager) layoutContainer.findViewById(R.id.color_picker_pager);
+        ViewPager viewPager = layoutContainer.findViewById(R.id.color_picker_pager);
 
         List<ScrollView> viewList = new ArrayList<>();
         ScrollView scrollView = new ScrollView(context);

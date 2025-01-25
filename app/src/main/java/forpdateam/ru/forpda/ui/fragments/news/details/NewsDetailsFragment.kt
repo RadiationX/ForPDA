@@ -4,9 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.viewpager.widget.ViewPager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -16,14 +13,11 @@ import android.view.ViewStub
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.viewpager.widget.ViewPager
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
-
-import java.util.ArrayList
-
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.news.DetailsPage
@@ -36,6 +30,8 @@ import forpdateam.ru.forpda.ui.fragments.TabTopScroller
 import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
 import forpdateam.ru.forpda.ui.views.ScrimHelper
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 /**
  * Created by isanechek on 8/19/17.
@@ -44,7 +40,7 @@ import forpdateam.ru.forpda.ui.views.ScrimHelper
 class NewsDetailsFragment : TabFragment(), ArticleDetailView, TabTopScroller {
 
 
-    lateinit var fragmentsPager: androidx.viewpager.widget.ViewPager
+    lateinit var fragmentsPager: ViewPager
         private set
     private lateinit var progressBar: ProgressBar
     private lateinit var imageProgressBar: ProgressBar
@@ -59,9 +55,9 @@ class NewsDetailsFragment : TabFragment(), ArticleDetailView, TabTopScroller {
     private var isScrim = false
 
     private val interactor = ArticleInteractor(
-            ArticleInteractor.InitData(),
-            App.get().Di().newsRepository,
-            App.get().Di().articleTemplate
+        ArticleInteractor.InitData(),
+        App.get().Di().newsRepository,
+        App.get().Di().articleTemplate
     )
 
     @InjectPresenter
@@ -79,10 +75,10 @@ class NewsDetailsFragment : TabFragment(), ArticleDetailView, TabTopScroller {
 
     @ProvidePresenter
     fun providePresenter(): ArticleDetailPresenter = ArticleDetailPresenter(
-            interactor,
-            App.get().Di().router,
-            App.get().Di().linkHandler,
-            App.get().Di().errorHandler
+        interactor,
+        App.get().Di().router,
+        App.get().Di().linkHandler,
+        App.get().Di().errorHandler
     )
 
     init {
@@ -100,13 +96,17 @@ class NewsDetailsFragment : TabFragment(), ArticleDetailView, TabTopScroller {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         baseInflateFragment(inflater, R.layout.fragment_article)
         val viewStub = findViewById(R.id.toolbar_content) as ViewStub
         viewStub.layoutResource = R.layout.toolbar_news_details
         viewStub.inflate()
-        fragmentsPager = findViewById(R.id.view_pager) as androidx.viewpager.widget.ViewPager
+        fragmentsPager = findViewById(R.id.view_pager) as ViewPager
         progressBar = findViewById(R.id.progress_bar) as ProgressBar
         detailsImage = findViewById(R.id.article_image) as ImageView
         detailsTitle = findViewById(R.id.article_title) as TextView
@@ -149,7 +149,12 @@ class NewsDetailsFragment : TabFragment(), ArticleDetailView, TabTopScroller {
             val newsCount = getInt(ARG_NEWS_COMMENTS_COUNT, -1)
             if (newsTitle != null) {
                 setTitle(newsTitle)
-                setTabTitle(String.format(getString(R.string.fragment_tab_title_article), newsTitle))
+                setTabTitle(
+                    String.format(
+                        getString(R.string.fragment_tab_title_article),
+                        newsTitle
+                    )
+                )
                 detailsTitle.text = newsTitle
             }
             if (newsNick != null) {
@@ -179,20 +184,20 @@ class NewsDetailsFragment : TabFragment(), ArticleDetailView, TabTopScroller {
     override fun addBaseToolbarMenu(menu: Menu) {
         super.addBaseToolbarMenu(menu)
         menu.add(R.string.copy_link)
-                .setOnMenuItemClickListener {
-                    presenter.copyLink()
-                    false
-                }
+            .setOnMenuItemClickListener {
+                presenter.copyLink()
+                false
+            }
         menu.add(R.string.share)
-                .setOnMenuItemClickListener {
-                    presenter.shareLink()
-                    false
-                }
+            .setOnMenuItemClickListener {
+                presenter.shareLink()
+                false
+            }
         menu.add(R.string.create_note)
-                .setOnMenuItemClickListener {
-                    presenter.createNote()
-                    false
-                }
+            .setOnMenuItemClickListener {
+                presenter.createNote()
+                false
+            }
     }
 
     override fun onBackPressed(): Boolean {
@@ -253,21 +258,26 @@ class NewsDetailsFragment : TabFragment(), ArticleDetailView, TabTopScroller {
     }
 
     override fun showArticleImage(imageUrl: String) {
-        ImageLoader.getInstance().displayImage(imageUrl, detailsImage, object : SimpleImageLoadingListener() {
-            override fun onLoadingStarted(imageUri: String?, view: View?) {
-                imageProgressBar.visibility = View.VISIBLE
-            }
+        ImageLoader.getInstance()
+            .displayImage(imageUrl, detailsImage, object : SimpleImageLoadingListener() {
+                override fun onLoadingStarted(imageUri: String?, view: View?) {
+                    imageProgressBar.visibility = View.VISIBLE
+                }
 
-            override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap?) {
-                imageProgressBar.visibility = View.GONE
-            }
-        })
+                override fun onLoadingComplete(
+                    imageUri: String?,
+                    view: View?,
+                    loadedImage: Bitmap?
+                ) {
+                    imageProgressBar.visibility = View.GONE
+                }
+            })
     }
 
     private inner class FragmentPagerAdapter(
-            fm: androidx.fragment.app.FragmentManager
+        fm: FragmentManager
     ) : androidx.fragment.app.FragmentPagerAdapter(fm) {
-        private val fragments = ArrayList<androidx.fragment.app.Fragment>()
+        private val fragments = ArrayList<Fragment>()
         private val titles = ArrayList<String>()
 
         init {
@@ -278,7 +288,7 @@ class NewsDetailsFragment : TabFragment(), ArticleDetailView, TabTopScroller {
             titles.add(App.get().getString(R.string.news_page_comments))
         }
 
-        override fun getItem(position: Int): androidx.fragment.app.Fragment {
+        override fun getItem(position: Int): Fragment {
             return fragments[position]
         }
 
@@ -286,7 +296,7 @@ class NewsDetailsFragment : TabFragment(), ArticleDetailView, TabTopScroller {
             return fragments.size
         }
 
-        override fun getPageTitle(position: Int): CharSequence? {
+        override fun getPageTitle(position: Int): CharSequence {
             return titles[position]
         }
     }
@@ -297,6 +307,7 @@ class NewsDetailsFragment : TabFragment(), ArticleDetailView, TabTopScroller {
         const val ARG_NEWS_COMMENT_ID = "ARG_NEWS_COMMENT_ID"
         const val ARG_NEWS_TITLE = "ARG_NEWS_TITLE"
         const val ARG_NEWS_AUTHOR_NICK = "ARG_NEWS_AUTHOR_NICK"
+
         //const val ARG_NEWS_AUTHOR_ID = "ARG_NEWS_AUTHOR_ID"
         const val ARG_NEWS_COMMENTS_COUNT = "ARG_NEWS_COMMENTS_COUNT"
         const val ARG_NEWS_DATE = "ARG_NEWS_DATE"

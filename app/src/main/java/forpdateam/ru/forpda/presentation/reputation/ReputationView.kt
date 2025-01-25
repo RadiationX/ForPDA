@@ -1,11 +1,11 @@
 package forpdateam.ru.forpda.presentation.reputation
 
-import moxy.viewstate.strategy.AddToEndSingleStrategy
-import moxy.viewstate.strategy.SkipStrategy
-import moxy.viewstate.strategy.StateStrategyType
 import forpdateam.ru.forpda.common.mvp.IBaseView
 import forpdateam.ru.forpda.entity.remote.reputation.RepData
 import forpdateam.ru.forpda.entity.remote.reputation.RepItem
+import moxy.viewstate.strategy.AddToEndSingleStrategy
+import moxy.viewstate.strategy.SkipStrategy
+import moxy.viewstate.strategy.StateStrategyType
 
 /**
  * Created by radiationx on 03.01.18.

@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.presentation.qms.themes
 
 import android.util.Log
-import moxy.InjectViewState
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
@@ -10,6 +9,7 @@ import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import moxy.InjectViewState
 
 /**
  * Created by radiationx on 11.11.17.
@@ -17,10 +17,10 @@ import forpdateam.ru.forpda.presentation.TabRouter
 
 @InjectViewState
 class QmsThemesPresenter(
-        private val qmsInteractor: QmsInteractor,
-        private val router: TabRouter,
-        private val linkHandler: ILinkHandler,
-        private val errorHandler: IErrorHandler
+    private val qmsInteractor: QmsInteractor,
+    private val router: TabRouter,
+    private val linkHandler: ILinkHandler,
+    private val errorHandler: IErrorHandler
 ) : BasePresenter<QmsThemesView>() {
 
     var themesId: Int = 0
@@ -30,56 +30,56 @@ class QmsThemesPresenter(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         qmsInteractor
-                .observeThemes(themesId)
-                .subscribe {
-                    currentData = it
-                    viewState.showThemes(it)
-                }
-                .untilDestroy()
+            .observeThemes(themesId)
+            .subscribe {
+                currentData = it
+                viewState.showThemes(it)
+            }
+            .untilDestroy()
         avatarUrl?.let { viewState.showAvatar(it) }
     }
 
     fun loadThemes() {
         qmsInteractor
-                .getThemesList(themesId)
-                .doOnSubscribe { viewState.setRefreshing(true) }
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({
-                    currentData = it
-                    if (it.themes.isEmpty() && it.nick != null) {
-                        openChat()
-                    }
-                    //viewState.showThemes(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .getThemesList(themesId)
+            .doOnSubscribe { viewState.setRefreshing(true) }
+            .doAfterTerminate { viewState.setRefreshing(false) }
+            .subscribe({
+                currentData = it
+                if (it.themes.isEmpty() && it.nick != null) {
+                    openChat()
+                }
+                //viewState.showThemes(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun blockUser() {
         currentData?.nick?.let { nick ->
             qmsInteractor
-                    .blockUser(nick)
-                    .map { it.firstOrNull { it.nick == nick } != null }
-                    .subscribe({
-                        viewState.onBlockUser(it)
-                    }, {
-                        errorHandler.handle(it)
-                    })
-                    .untilDestroy()
+                .blockUser(nick)
+                .map { it.firstOrNull { it.nick == nick } != null }
+                .subscribe({
+                    viewState.onBlockUser(it)
+                }, {
+                    errorHandler.handle(it)
+                })
+                .untilDestroy()
         }
     }
 
     fun deleteTheme(themeId: Int) {
         currentData?.let {
             qmsInteractor
-                    .deleteTheme(it.userId, themeId)
-                    .subscribe({
-                        //viewState.showThemes(it)
-                    }, {
-                        errorHandler.handle(it)
-                    })
-                    .untilDestroy()
+                .deleteTheme(it.userId, themeId)
+                .subscribe({
+                    //viewState.showThemes(it)
+                }, {
+                    errorHandler.handle(it)
+                })
+                .untilDestroy()
         }
     }
 

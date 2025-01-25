@@ -6,17 +6,21 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
-import com.google.android.material.appbar.AppBarLayout
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewStub
+import android.view.ViewTreeObserver
 import android.view.animation.AlphaAnimation
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.rahatarmanahmed.cpv.CircularProgressView
+import com.google.android.material.appbar.AppBarLayout
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.BitmapUtils
@@ -31,13 +35,15 @@ import forpdateam.ru.forpda.ui.views.ScrimHelper
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 03.08.16.
  */
 class ProfileFragment : TabFragment(), ProfileAdapter.ClickListener, ProfileView {
 
-    private lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
+    private lateinit var recyclerView: RecyclerView
     private lateinit var nick: TextView
     private lateinit var group: TextView
     private lateinit var sign: TextView
@@ -65,11 +71,11 @@ class ProfileFragment : TabFragment(), ProfileAdapter.ClickListener, ProfileView
 
     @ProvidePresenter
     fun providePresenter(): ProfilePresenter = ProfilePresenter(
-            App.get().Di().profileRepository,
-            App.get().Di().router,
-            App.get().Di().linkHandler,
-            App.get().Di().errorHandler,
-            App.get().Di().schedulers
+        App.get().Di().profileRepository,
+        App.get().Di().router,
+        App.get().Di().linkHandler,
+        App.get().Di().errorHandler,
+        App.get().Di().schedulers
     )
 
     init {
@@ -80,7 +86,7 @@ class ProfileFragment : TabFragment(), ProfileAdapter.ClickListener, ProfileView
         super.onCreate(savedInstanceState)
         var profileUrl: String? = null
         arguments?.apply {
-            profileUrl = getString(TabFragment.ARG_TAB)
+            profileUrl = getString(ARG_TAB)
         }
         if (profileUrl.isNullOrEmpty()) {
             profileUrl = "https://4pda.to/forum/index.php?showuser=${authHolder.get().userId}"
@@ -88,7 +94,11 @@ class ProfileFragment : TabFragment(), ProfileAdapter.ClickListener, ProfileView
         presenter.profileUrl = profileUrl
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         baseInflateFragment(inflater, R.layout.fragment_profile)
         val viewStub = findViewById(R.id.toolbar_content) as ViewStub
@@ -98,11 +108,12 @@ class ProfileFragment : TabFragment(), ProfileAdapter.ClickListener, ProfileView
         group = findViewById(R.id.profile_group) as TextView
         sign = findViewById(R.id.profile_sign) as TextView
         avatar = findViewById(R.id.profile_avatar) as ImageView
-        recyclerView = findViewById(R.id.profile_list) as androidx.recyclerview.widget.RecyclerView
+        recyclerView = findViewById(R.id.profile_list) as RecyclerView
         progressView = findViewById(R.id.profile_progress) as CircularProgressView
 
         val params = toolbarLayout.layoutParams as AppBarLayout.LayoutParams
-        params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED
+        params.scrollFlags =
+            AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED
         toolbarLayout.layoutParams = params
         return viewFragment
     }
@@ -110,7 +121,8 @@ class ProfileFragment : TabFragment(), ProfileAdapter.ClickListener, ProfileView
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(recyclerView.context)
+        recyclerView.layoutManager =
+            LinearLayoutManager(recyclerView.context)
         adapter = ProfileAdapter()
         adapter.setClickListener(this)
         recyclerView.adapter = adapter
@@ -144,17 +156,17 @@ class ProfileFragment : TabFragment(), ProfileAdapter.ClickListener, ProfileView
     override fun addBaseToolbarMenu(menu: Menu) {
         super.addBaseToolbarMenu(menu)
         copyLinkMenuItem = menu.add(R.string.copy_link)
-                .setOnMenuItemClickListener {
-                    presenter.copyUrl()
-                    true
-                }
+            .setOnMenuItemClickListener {
+                presenter.copyUrl()
+                true
+            }
         writeMenuItem = menu.add(R.string.write)
-                .setIcon(App.getVecDrawable(context, R.drawable.ic_profile_toolbar_create))
-                .setOnMenuItemClickListener {
-                    presenter.navigateToQms()
-                    true
-                }
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            .setIcon(App.getVecDrawable(context, R.drawable.ic_profile_toolbar_create))
+            .setOnMenuItemClickListener {
+                presenter.navigateToQms()
+                true
+            }
+            .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         refreshToolbarMenuItems(false)
     }
 
@@ -213,7 +225,11 @@ class ProfileFragment : TabFragment(), ProfileAdapter.ClickListener, ProfileView
     }
 
     override fun onSaveNote(success: Boolean) {
-        Toast.makeText(context, getString(if (success) R.string.profile_note_saved else R.string.error_occurred), Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            context,
+            getString(if (success) R.string.profile_note_saved else R.string.error_occurred),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     override fun showProfile(data: ProfileModel) {
@@ -270,23 +286,24 @@ class ProfileFragment : TabFragment(), ProfileAdapter.ClickListener, ProfileView
         lastBlurWidth = blurWidth
         lastBlurHeight = blurHeight
         val disposable = Single
-                .fromCallable {
-                    val overlay = BitmapUtils.centerCrop(bkg, lastBlurWidth, lastBlurHeight, scaleFactor)
-                    BitmapUtils.fastBlur(overlay, radius, true)
-                    overlay
-                }
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ bitmap ->
-                    toolbarBackground.startAnimation(AlphaAnimation(0f, 1f).apply {
-                        duration = 500
-                        fillAfter = true
-                    })
-                    toolbarBackground.setImageBitmap(bitmap)
-                }, { throwable ->
-                    throwable.printStackTrace()
-                    Toast.makeText(App.getContext(), throwable.message, Toast.LENGTH_SHORT).show()
+            .fromCallable {
+                val overlay =
+                    BitmapUtils.centerCrop(bkg, lastBlurWidth, lastBlurHeight, scaleFactor)
+                BitmapUtils.fastBlur(overlay, radius, true)
+                overlay
+            }
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ bitmap ->
+                toolbarBackground.startAnimation(AlphaAnimation(0f, 1f).apply {
+                    duration = 500
+                    fillAfter = true
                 })
+                toolbarBackground.setImageBitmap(bitmap)
+            }, { throwable ->
+                throwable.printStackTrace()
+                Toast.makeText(App.getContext(), throwable.message, Toast.LENGTH_SHORT).show()
+            })
         addToDisposable(disposable)
     }
 

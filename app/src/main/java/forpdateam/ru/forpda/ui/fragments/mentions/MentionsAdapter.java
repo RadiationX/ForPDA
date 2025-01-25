@@ -1,11 +1,12 @@
 package forpdateam.ru.forpda.ui.fragments.mentions;
 
 import android.graphics.Typeface;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -49,13 +50,13 @@ class MentionsAdapter extends BaseAdapter<MentionItem, MentionsAdapter.MentionHo
 
         MentionHolder(View v) {
             super(v);
-            title = (TextView) v.findViewById(R.id.topic_item_title);
-            desc = (TextView) v.findViewById(R.id.topic_item_desc);
-            lastNick = (TextView) v.findViewById(R.id.topic_item_last_nick);
-            date = (TextView) v.findViewById(R.id.topic_item_date);
-            forumIcon = (ImageView) v.findViewById(R.id.topic_item_forum_icon);
-            lockIcon = (ImageView) v.findViewById(R.id.topic_item_lock_icon);
-            pollIcon = (ImageView) v.findViewById(R.id.topic_item_poll_icon);
+            title = v.findViewById(R.id.topic_item_title);
+            desc = v.findViewById(R.id.topic_item_desc);
+            lastNick = v.findViewById(R.id.topic_item_last_nick);
+            date = v.findViewById(R.id.topic_item_date);
+            forumIcon = v.findViewById(R.id.topic_item_forum_icon);
+            lockIcon = v.findViewById(R.id.topic_item_lock_icon);
+            pollIcon = v.findViewById(R.id.topic_item_poll_icon);
 
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);

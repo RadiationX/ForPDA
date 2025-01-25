@@ -9,7 +9,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
  */
 
 public class PauseOnScrollListener extends RecyclerView.OnScrollListener {
-    private ImageLoader imageLoader;
+    private final ImageLoader imageLoader;
     private final boolean pauseOnScroll;
     private final boolean pauseOnSettling;
 

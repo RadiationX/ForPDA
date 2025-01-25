@@ -8,8 +8,8 @@ import forpdateam.ru.forpda.model.data.remote.IWebClient
  */
 
 class TopicsApi(
-        private val webClient: IWebClient,
-        private val topicsParser: TopicsParser
+    private val webClient: IWebClient,
+    private val topicsParser: TopicsParser
 ) {
 
     fun getTopics(id: Int, st: Int): TopicsData {

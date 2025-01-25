@@ -7,11 +7,9 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.entity.remote.devdb.Device;
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils;
-import forpdateam.ru.forpda.presentation.ISystemLinkHandler;
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 
@@ -22,7 +20,7 @@ import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 public class PostsAdapter extends BaseAdapter<Device.PostItem, PostsAdapter.PostHolder> {
     private int source = 0;
 
-    private PostHolder.Listener listener;
+    private final PostHolder.Listener listener;
 
     public PostsAdapter(PostHolder.Listener listener) {
         this.listener = listener;
@@ -51,18 +49,18 @@ public class PostsAdapter extends BaseAdapter<Device.PostItem, PostsAdapter.Post
     }
 
     public static class PostHolder extends BaseViewHolder<Device.PostItem> {
-        private TextView title;
-        private TextView date;
-        private TextView desc;
-        private ImageView image;
+        private final TextView title;
+        private final TextView date;
+        private final TextView desc;
+        private final ImageView image;
         private Device.PostItem currentItem;
 
         PostHolder(View v, Listener listener) {
             super(v);
-            title = (TextView) v.findViewById(R.id.item_title);
-            date = (TextView) v.findViewById(R.id.item_date);
-            desc = (TextView) v.findViewById(R.id.item_desc);
-            image = (ImageView) v.findViewById(R.id.item_image);
+            title = v.findViewById(R.id.item_title);
+            date = v.findViewById(R.id.item_date);
+            desc = v.findViewById(R.id.item_desc);
+            image = v.findViewById(R.id.item_image);
             v.setOnClickListener((v1 -> listener.onClick(currentItem)));
         }
 

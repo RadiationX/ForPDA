@@ -1,13 +1,13 @@
 package forpdateam.ru.forpda.presentation.search
 
-import moxy.viewstate.strategy.AddToEndSingleStrategy
-import moxy.viewstate.strategy.SkipStrategy
-import moxy.viewstate.strategy.StateStrategyType
 import forpdateam.ru.forpda.common.mvp.IBaseView
 import forpdateam.ru.forpda.entity.remote.IBaseForumPost
 import forpdateam.ru.forpda.entity.remote.search.SearchItem
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
+import moxy.viewstate.strategy.AddToEndSingleStrategy
+import moxy.viewstate.strategy.SkipStrategy
+import moxy.viewstate.strategy.StateStrategyType
 
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface SearchSiteView : IBaseView {
@@ -22,6 +22,7 @@ interface SearchSiteView : IBaseView {
     fun showData(searchResult: SearchResult)
     fun fillSettingsData(settings: SearchSettings, fields: Map<String, List<String>>)
     fun onStartSearch(settings: SearchSettings)
+
     @StateStrategyType(SkipStrategy::class)
     fun showItemDialogMenu(item: SearchItem, settings: SearchSettings)
     fun setNewsMode()

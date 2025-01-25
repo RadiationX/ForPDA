@@ -15,7 +15,7 @@ public class QmsThemesBd extends RealmObject implements IQmsThemes {
     @PrimaryKey
     private int userId;
     private String nick;
-    private RealmList<QmsThemeBd> themes = new RealmList<>();
+    private final RealmList<QmsThemeBd> themes = new RealmList<>();
 
     public QmsThemesBd() {
     }

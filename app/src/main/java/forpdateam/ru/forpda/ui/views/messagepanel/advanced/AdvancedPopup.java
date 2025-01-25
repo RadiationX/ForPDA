@@ -1,16 +1,17 @@
 package forpdateam.ru.forpda.ui.views.messagepanel.advanced;
 
 import android.content.Context;
-
-import com.google.android.material.tabs.TabLayout;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.PopupWindow;
+
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,15 +28,15 @@ import io.reactivex.disposables.CompositeDisposable;
  */
 
 public class AdvancedPopup {
-    private PopupWindow popupWindow;
-    private ViewGroup fragmentContainer;
+    private final PopupWindow popupWindow;
+    private final ViewGroup fragmentContainer;
     private boolean isShowingKeyboard = false;
     private StateListener stateListener;
-    private MessagePanel messagePanel;
-    private Context context;
+    private final MessagePanel messagePanel;
+    private final Context context;
 
-    private DimensionsProvider dimensionsProvider = App.get().Di().getDimensionsProvider();
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final DimensionsProvider dimensionsProvider = App.get().Di().getDimensionsProvider();
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     public AdvancedPopup(Context context, MessagePanel panel) {
         this.context = context;
@@ -43,7 +44,7 @@ public class AdvancedPopup {
         messagePanel = panel;
 
         View popupView = View.inflate(context, R.layout.message_panel_advanced, null);
-        ViewPager viewPager = (ViewPager) popupView.findViewById(R.id.pager);
+        ViewPager viewPager = popupView.findViewById(R.id.pager);
 
         List<BasePanelItem> viewList = new ArrayList<>();
         viewList.add(new CodesPanelItem(context, messagePanel));
@@ -156,7 +157,7 @@ public class AdvancedPopup {
         messagePanel.getAdvancedButton().setImageDrawable(App.getVecDrawable(context, R.drawable.ic_keyboard));
 
         if (!popupWindow.isShowing()) {
-            if(!localDimensions.isFakeKeyboardShow()){
+            if (!localDimensions.isFakeKeyboardShow()) {
                 localDimensions.setFakeKeyboardShow(true);
                 dimensionsProvider.update(localDimensions);
             }

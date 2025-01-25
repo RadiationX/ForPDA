@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.notifications;
 
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -16,11 +15,12 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.util.Log;
+import android.widget.Toast;
+
 import androidx.annotation.DrawableRes;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -32,9 +32,9 @@ import forpdateam.ru.forpda.common.BitmapUtils;
 import forpdateam.ru.forpda.entity.remote.events.NotificationEvent;
 import forpdateam.ru.forpda.model.SchedulersProvider;
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils;
+import forpdateam.ru.forpda.model.preferences.NotificationPreferencesHolder;
 import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository;
 import forpdateam.ru.forpda.model.repository.events.EventsRepository;
-import forpdateam.ru.forpda.model.preferences.NotificationPreferencesHolder;
 import forpdateam.ru.forpda.ui.activities.MainActivity;
 import io.reactivex.Single;
 import io.reactivex.SingleSource;
@@ -66,9 +66,9 @@ public class NotificationsService extends Service {
     private NotificationManagerCompat mNotificationManager;
     private long lastHardCheckTime = 0;
 
-    private AvatarRepository avatarRepository = App.get().Di().getAvatarRepository();
-    private EventsRepository eventsRepository = App.get().Di().getEventsRepository();
-    private NotificationPreferencesHolder notificationPreferencesHolder = App.get().Di().getNotificationPreferencesHolder();
+    private final AvatarRepository avatarRepository = App.get().Di().getAvatarRepository();
+    private final EventsRepository eventsRepository = App.get().Di().getEventsRepository();
+    private final NotificationPreferencesHolder notificationPreferencesHolder = App.get().Di().getNotificationPreferencesHolder();
 
     protected CompositeDisposable disposables = new CompositeDisposable();
 

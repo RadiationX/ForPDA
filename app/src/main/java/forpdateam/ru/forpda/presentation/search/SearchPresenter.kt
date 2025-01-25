@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.presentation.search
 
-import android.util.Log
-import moxy.InjectViewState
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
@@ -11,10 +9,10 @@ import forpdateam.ru.forpda.entity.remote.search.SearchItem
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
-import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.model.preferences.OtherPreferencesHolder
 import forpdateam.ru.forpda.model.preferences.TopicPreferencesHolder
+import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
 import forpdateam.ru.forpda.model.repository.reputation.ReputationRepository
 import forpdateam.ru.forpda.model.repository.search.SearchRepository
 import forpdateam.ru.forpda.model.repository.theme.ThemeRepository
@@ -24,21 +22,22 @@ import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.presentation.theme.IThemePresenter
 import forpdateam.ru.forpda.ui.TemplateManager
+import moxy.InjectViewState
 
 @InjectViewState
 class SearchPresenter(
-        private val searchRepository: SearchRepository,
-        private val favoritesRepository: FavoritesRepository,
-        private val themeRepository: ThemeRepository,
-        private val reputationRepository: ReputationRepository,
-        private val topicPreferencesHolder: TopicPreferencesHolder,
-        private val mainPreferencesHolder: MainPreferencesHolder,
-        private val otherPreferencesHolder: OtherPreferencesHolder,
-        private val searchTemplate: SearchTemplate,
-        private val templateManager: TemplateManager,
-        private val router: TabRouter,
-        private val linkHandler: ILinkHandler,
-        private val errorHandler: IErrorHandler
+    private val searchRepository: SearchRepository,
+    private val favoritesRepository: FavoritesRepository,
+    private val themeRepository: ThemeRepository,
+    private val reputationRepository: ReputationRepository,
+    private val topicPreferencesHolder: TopicPreferencesHolder,
+    private val mainPreferencesHolder: MainPreferencesHolder,
+    private val otherPreferencesHolder: OtherPreferencesHolder,
+    private val searchTemplate: SearchTemplate,
+    private val templateManager: TemplateManager,
+    private val router: TabRouter,
+    private val linkHandler: ILinkHandler,
+    private val errorHandler: IErrorHandler
 ) : BasePresenter<SearchSiteView>(), IThemePresenter {
 
     companion object {
@@ -48,16 +47,26 @@ class SearchPresenter(
         const val FIELD_SOURCE = "source"
     }
 
-    private val resourceItems = listOf<String>(SearchSettings.RESOURCE_FORUM.second, SearchSettings.RESOURCE_NEWS.second)
-    private val resultItems = listOf<String>(SearchSettings.RESULT_TOPICS.second, SearchSettings.RESULT_POSTS.second)
-    private val sortItems = listOf<String>(SearchSettings.SORT_DA.second, SearchSettings.SORT_DD.second, SearchSettings.SORT_REL.second)
-    private val sourceItems = listOf<String>(SearchSettings.SOURCE_ALL.second, SearchSettings.SOURCE_TITLES.second, SearchSettings.SOURCE_CONTENT.second)
+    private val resourceItems =
+        listOf<String>(SearchSettings.RESOURCE_FORUM.second, SearchSettings.RESOURCE_NEWS.second)
+    private val resultItems =
+        listOf<String>(SearchSettings.RESULT_TOPICS.second, SearchSettings.RESULT_POSTS.second)
+    private val sortItems = listOf<String>(
+        SearchSettings.SORT_DA.second,
+        SearchSettings.SORT_DD.second,
+        SearchSettings.SORT_REL.second
+    )
+    private val sourceItems = listOf<String>(
+        SearchSettings.SOURCE_ALL.second,
+        SearchSettings.SOURCE_TITLES.second,
+        SearchSettings.SOURCE_CONTENT.second
+    )
 
     private val fields = mapOf(
-            FIELD_RESOURCE to resourceItems,
-            FIELD_RESULT to resultItems,
-            FIELD_SORT to sortItems,
-            FIELD_SOURCE to sourceItems
+        FIELD_RESOURCE to resourceItems,
+        FIELD_RESULT to resultItems,
+        FIELD_SORT to sortItems,
+        FIELD_SOURCE to sourceItems
     )
 
     private var settings = SearchSettings()
@@ -78,39 +87,39 @@ class SearchPresenter(
         super.onFirstViewAttach()
 
         topicPreferencesHolder
-                .observeShowAvatars()
-                .subscribe {
-                    viewState.updateShowAvatarState(it)
-                }
-                .untilDestroy()
+            .observeShowAvatars()
+            .subscribe {
+                viewState.updateShowAvatarState(it)
+            }
+            .untilDestroy()
 
         topicPreferencesHolder
-                .observeCircleAvatars()
-                .subscribe {
-                    viewState.updateTypeAvatarState(it)
-                }
-                .untilDestroy()
+            .observeCircleAvatars()
+            .subscribe {
+                viewState.updateTypeAvatarState(it)
+            }
+            .untilDestroy()
 
         mainPreferencesHolder
-                .observeScrollButtonEnabled()
-                .subscribe {
-                    viewState.updateScrollButtonState(it)
-                }
-                .untilDestroy()
+            .observeScrollButtonEnabled()
+            .subscribe {
+                viewState.updateScrollButtonState(it)
+            }
+            .untilDestroy()
 
         mainPreferencesHolder
-                .observeWebViewFontSize()
-                .subscribe {
-                    viewState.setFontSize(it)
-                }
-                .untilDestroy()
+            .observeWebViewFontSize()
+            .subscribe {
+                viewState.setFontSize(it)
+            }
+            .untilDestroy()
 
         templateManager
-                .observeThemeType()
-                .subscribe {
-                    viewState.setStyleType(it)
-                }
-                .untilDestroy()
+            .observeThemeType()
+            .subscribe {
+                viewState.setStyleType(it)
+            }
+            .untilDestroy()
         viewState.fillSettingsData(settings, fields)
         refreshData()
     }
@@ -119,24 +128,27 @@ class SearchPresenter(
         if (settings.query.isEmpty() && settings.nick.isEmpty()) {
             return
         }
-        val withHtml = settings.result == SearchSettings.RESULT_POSTS.first && settings.resourceType.equals(SearchSettings.RESOURCE_FORUM.first)
+        val withHtml =
+            settings.result == SearchSettings.RESULT_POSTS.first && settings.resourceType.equals(
+                SearchSettings.RESOURCE_FORUM.first
+            )
         searchRepository
-                .getSearch(settings)
-                .map {
-                    if (withHtml) searchTemplate.mapEntity(it) else it
-                }
-                .doOnSubscribe {
-                    viewState.setRefreshing(true)
-                    viewState.onStartSearch(settings)
-                }
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({
-                    currentData = it
-                    viewState.showData(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .getSearch(settings)
+            .map {
+                if (withHtml) searchTemplate.mapEntity(it) else it
+            }
+            .doOnSubscribe {
+                viewState.setRefreshing(true)
+                viewState.onStartSearch(settings)
+            }
+            .doAfterTerminate { viewState.setRefreshing(false) }
+            .subscribe({
+                currentData = it
+                viewState.showData(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun search(query: String, nick: String) {
@@ -160,33 +172,50 @@ class SearchPresenter(
                         settings.resourceType = SearchSettings.RESOURCE_NEWS.first
                         viewState.setNewsMode()
                     }
+
                     checkName(name, SearchSettings.RESOURCE_FORUM) -> {
                         settings.resourceType = SearchSettings.RESOURCE_FORUM.first
                         viewState.setForumMode()
                     }
                 }
             }
+
             FIELD_RESULT -> {
                 val name = resultItems[position]
                 when {
-                    checkName(name, SearchSettings.RESULT_TOPICS) -> settings.result = SearchSettings.RESULT_TOPICS.first
-                    checkName(name, SearchSettings.RESULT_POSTS) -> settings.result = SearchSettings.RESULT_POSTS.first
+                    checkName(name, SearchSettings.RESULT_TOPICS) -> settings.result =
+                        SearchSettings.RESULT_TOPICS.first
+
+                    checkName(name, SearchSettings.RESULT_POSTS) -> settings.result =
+                        SearchSettings.RESULT_POSTS.first
                 }
             }
+
             FIELD_SORT -> {
                 val name = sortItems[position]
                 when {
-                    checkName(name, SearchSettings.SORT_DA) -> settings.sort = SearchSettings.SORT_DA.first
-                    checkName(name, SearchSettings.SORT_DD) -> settings.sort = SearchSettings.SORT_DD.first
-                    checkName(name, SearchSettings.SORT_REL) -> settings.sort = SearchSettings.SORT_REL.first
+                    checkName(name, SearchSettings.SORT_DA) -> settings.sort =
+                        SearchSettings.SORT_DA.first
+
+                    checkName(name, SearchSettings.SORT_DD) -> settings.sort =
+                        SearchSettings.SORT_DD.first
+
+                    checkName(name, SearchSettings.SORT_REL) -> settings.sort =
+                        SearchSettings.SORT_REL.first
                 }
             }
+
             FIELD_SOURCE -> {
                 val name = sourceItems[position]
                 when {
-                    checkName(name, SearchSettings.SOURCE_ALL) -> settings.source = SearchSettings.SOURCE_ALL.first
-                    checkName(name, SearchSettings.SOURCE_TITLES) -> settings.source = SearchSettings.SOURCE_TITLES.first
-                    checkName(name, SearchSettings.SOURCE_CONTENT) -> settings.source = SearchSettings.SOURCE_CONTENT.first
+                    checkName(name, SearchSettings.SOURCE_ALL) -> settings.source =
+                        SearchSettings.SOURCE_ALL.first
+
+                    checkName(name, SearchSettings.SOURCE_TITLES) -> settings.source =
+                        SearchSettings.SOURCE_TITLES.first
+
+                    checkName(name, SearchSettings.SOURCE_CONTENT) -> settings.source =
+                        SearchSettings.SOURCE_CONTENT.first
                 }
             }
         }
@@ -246,11 +275,17 @@ class SearchPresenter(
     }
 
     fun openTopicNew(item: IBaseForumPost) {
-        linkHandler.handle("https://4pda.to/forum/index.php?showtopic=${item.topicId}&view=getnewpost", router)
+        linkHandler.handle(
+            "https://4pda.to/forum/index.php?showtopic=${item.topicId}&view=getnewpost",
+            router
+        )
     }
 
     fun openTopicLast(item: IBaseForumPost) {
-        linkHandler.handle("https://4pda.to/forum/index.php?showtopic=${item.topicId}&view=getlastpost", router)
+        linkHandler.handle(
+            "https://4pda.to/forum/index.php?showtopic=${item.topicId}&view=getlastpost",
+            router
+        )
     }
 
     fun openForum(item: IBaseForumPost) {
@@ -263,13 +298,13 @@ class SearchPresenter(
 
     fun addTopicToFavorite(topicId: Int, subType: String) {
         favoritesRepository
-                .editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
-                .subscribe({
-                    viewState.onAddToFavorite(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
+            .subscribe({
+                viewState.onAddToFavorite(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     /* ITHEME PReSNETER*/
@@ -299,10 +334,10 @@ class SearchPresenter(
     }
 
     private fun getPostById(postId: Int): IBaseForumPost? = currentData
-            ?.items
-            ?.firstOrNull {
-                it.id == postId
-            }
+        ?.items
+        ?.firstOrNull {
+            it.id == postId
+        }
 
     override fun onFirstPageClick() = viewState.firstPage()
 
@@ -372,7 +407,10 @@ class SearchPresenter(
 
     override fun openQms(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle("https://4pda.to/forum/index.php?act=qms&amp;mid=${it.userId}", router)
+            linkHandler.handle(
+                "https://4pda.to/forum/index.php?act=qms&amp;mid=${it.userId}",
+                router
+            )
         }
     }
 
@@ -417,32 +455,35 @@ class SearchPresenter(
     override fun changeReputation(postId: Int, type: Boolean, message: String) {
         getPostById(postId)?.let {
             reputationRepository
-                    .changeReputation(it.id, it.userId, type, message)
-                    .subscribe({
-                        router.showSystemMessage(App.get().getString(R.string.reputation_changed))
-                    }, {
-                        errorHandler.handle(it)
-                    })
-                    .untilDestroy()
+                .changeReputation(it.id, it.userId, type, message)
+                .subscribe({
+                    router.showSystemMessage(App.get().getString(R.string.reputation_changed))
+                }, {
+                    errorHandler.handle(it)
+                })
+                .untilDestroy()
         }
     }
 
     override fun votePost(postId: Int, type: Boolean) {
         getPostById(postId)?.let {
             themeRepository
-                    .votePost(it.id, type)
-                    .subscribe({
-                        router.showSystemMessage(it)
-                    }, {
-                        errorHandler.handle(it)
-                    })
-                    .untilDestroy()
+                .votePost(it.id, type)
+                .subscribe({
+                    router.showSystemMessage(it)
+                }, {
+                    errorHandler.handle(it)
+                })
+                .untilDestroy()
         }
     }
 
     override fun openReputationHistory(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle("https://4pda.to/forum/index.php?act=rep&view=history&amp;mid=${it.userId}", router)
+            linkHandler.handle(
+                "https://4pda.to/forum/index.php?act=rep&view=history&amp;mid=${it.userId}",
+                router
+            )
         }
     }
 
@@ -451,13 +492,13 @@ class SearchPresenter(
         getPostById(postId)?.let { post ->
             currentData?.let {
                 themeRepository
-                        .reportPost(post.topicId, post.id, message)
-                        .subscribe({
-                            router.showSystemMessage("Жалоба отправлена")
-                        }, {
-                            errorHandler.handle(it)
-                        })
-                        .untilDestroy()
+                    .reportPost(post.topicId, post.id, message)
+                    .subscribe({
+                        router.showSystemMessage("Жалоба отправлена")
+                    }, {
+                        errorHandler.handle(it)
+                    })
+                    .untilDestroy()
             }
         }
     }
@@ -465,16 +506,16 @@ class SearchPresenter(
     override fun deletePost(postId: Int) {
         getPostById(postId)?.let { post ->
             themeRepository
-                    .deletePost(post.id)
-                    .subscribe({
-                        if (it) {
-                            viewState.deletePostUi(post)
-                        }
-                        router.showSystemMessage(App.get().getString(R.string.message_deleted))
-                    }, {
-                        errorHandler.handle(it)
-                    })
-                    .untilDestroy()
+                .deletePost(post.id)
+                .subscribe({
+                    if (it) {
+                        viewState.deletePostUi(post)
+                    }
+                    router.showSystemMessage(App.get().getString(R.string.message_deleted))
+                }, {
+                    errorHandler.handle(it)
+                })
+                .untilDestroy()
         }
     }
 
@@ -485,8 +526,14 @@ class SearchPresenter(
             } else {
                 "пост из поиска_"
             }
-            val title = String.format(App.get().getString(R.string.post_Topic_Nick_Number), topicTitle, it.nick, it.id)
-            val url = "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
+            val title = String.format(
+                App.get().getString(R.string.post_Topic_Nick_Number),
+                topicTitle,
+                it.nick,
+                it.id
+            )
+            val url =
+                "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
             viewState.showNoteCreate(title, url)
         }
     }
@@ -494,9 +541,9 @@ class SearchPresenter(
     fun openEditPostForm(postId: Int) {
         getPostById(postId)?.let {
             val title: String = if (it is SearchItem) {
-                it.title.orEmpty();
+                it.title.orEmpty()
             } else {
-                "пост из поиска_";
+                "пост из поиска_"
             }
             router.navigateTo(Screen.EditPost().apply {
                 this.postId = postId
@@ -510,14 +557,16 @@ class SearchPresenter(
 
     override fun copyPostLink(postId: Int) {
         getPostById(postId)?.let {
-            val url = "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
+            val url =
+                "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
             copyText(url)
         }
     }
 
     override fun sharePostLink(postId: Int) {
         getPostById(postId)?.let {
-            val url = "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
+            val url =
+                "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
             shareText(url)
         }
     }
@@ -531,7 +580,8 @@ class SearchPresenter(
 
     override fun copySpoilerLink(postId: Int, spoilNumber: String) {
         getPostById(postId)?.let {
-            val url = "https://4pda.to/forum/index.php?act=findpost&pid=${it.id}&anchor=Spoil-${it.id}-$spoilNumber"
+            val url =
+                "https://4pda.to/forum/index.php?act=findpost&pid=${it.id}&anchor=Spoil-${it.id}-$spoilNumber"
             copyText(url)
         }
     }

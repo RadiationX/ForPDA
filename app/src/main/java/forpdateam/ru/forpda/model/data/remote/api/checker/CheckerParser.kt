@@ -6,7 +6,7 @@ import org.json.JSONObject
 /**
  * Created by radiationx on 27.01.18.
  */
-class CheckerParser() {
+class CheckerParser {
 
     fun parse(httpResponse: String): UpdateData {
         val resData = UpdateData()
@@ -18,19 +18,21 @@ class CheckerParser() {
         resData.name = jsonUpdate.optString("version_name")
         resData.date = jsonUpdate.optString("build_date")
 
-        jsonUpdate.getJSONArray("links")?.let {
+        jsonUpdate.getJSONArray("links").let {
             for (i in 0 until it.length()) {
                 it.optJSONObject(i)?.let { linkJson ->
-                    resData.links.add(UpdateData.UpdateLink(
+                    resData.links.add(
+                        UpdateData.UpdateLink(
                             linkJson.optString("name", "Unknown"),
                             linkJson.optString("url", ""),
                             linkJson.optString("type", "site")
-                    ))
+                        )
+                    )
                 }
             }
         }
 
-        jsonUpdate.getJSONArray("important")?.let { importantJson ->
+        jsonUpdate.getJSONArray("important").let { importantJson ->
             for (i in 0 until importantJson.length()) {
                 importantJson.optString(i, null)?.let {
                     resData.important.add(it)
@@ -38,7 +40,7 @@ class CheckerParser() {
             }
         }
 
-        jsonUpdate.getJSONArray("added")?.let { addedJson ->
+        jsonUpdate.getJSONArray("added").let { addedJson ->
             for (i in 0 until addedJson.length()) {
                 addedJson.optString(i, null)?.let {
                     resData.added.add(it)
@@ -46,7 +48,7 @@ class CheckerParser() {
             }
         }
 
-        jsonUpdate.getJSONArray("fixed")?.let { fixedJson ->
+        jsonUpdate.getJSONArray("fixed").let { fixedJson ->
             for (i in 0 until fixedJson.length()) {
                 fixedJson.optString(i, null)?.let {
                     resData.fixed.add(it)
@@ -54,7 +56,7 @@ class CheckerParser() {
             }
         }
 
-        jsonUpdate.getJSONArray("changed")?.let { changedJson ->
+        jsonUpdate.getJSONArray("changed").let { changedJson ->
             for (i in 0 until changedJson.length()) {
                 changedJson.optString(i, null)?.let {
                     resData.changed.add(it)

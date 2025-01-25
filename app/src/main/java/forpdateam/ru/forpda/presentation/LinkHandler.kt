@@ -5,13 +5,14 @@ import android.util.Log
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.common.MimeTypeUtil
 import java.net.URLDecoder
+import java.util.Locale
 import java.util.regex.Pattern
 
 /**
  * Created by radiationx on 03.02.18.
  */
 class LinkHandler(
-        private val systemLinkHandler: ISystemLinkHandler
+    private val systemLinkHandler: ISystemLinkHandler
 ) : ILinkHandler {
 
     companion object {
@@ -72,7 +73,7 @@ class LinkHandler(
         url = normalizeForumUrl(url)
 
         if (baseFourPdaPattern.matcher(url).matches()) {
-            val uri = Uri.parse(url.toLowerCase())
+            val uri = Uri.parse(url.lowercase(Locale.getDefault()))
             Log.d(LOG_TAG, "Compare uri/url " + uri.toString() + " : " + url)
 
             if (!uri.pathSegments.isEmpty()) {
@@ -80,12 +81,15 @@ class LinkHandler(
                     "pages" -> if (handlePages(uri, someRouter, args)) {
                         return true
                     }
+
                     "forum" -> if (handleForum(uri, someRouter, args)) {
                         return true
                     }
+
                     "devdb" -> if (handleDevDb(uri, someRouter, args)) {
                         return true
                     }
+
                     else -> if (handleSite(uri, someRouter, args)) {
                         return true
                     }
@@ -133,6 +137,7 @@ class LinkHandler(
                 "idx" -> {
                     navigateTo(Screen.Forum(), router, args)
                 }
+
                 "qms" -> {
                     val qmsUserId = uri.getQueryParameter("mid")
                     val qmsThemeId = uri.getQueryParameter("t")
@@ -153,10 +158,12 @@ class LinkHandler(
                     }
                     return true
                 }
+
                 "boardrules" -> {
                     navigateTo(Screen.ForumRules(), router, args)
                     return true
                 }
+
                 "announce" -> {
                     navigateTo(Screen.Announce().apply {
                         uri.getQueryParameter("st")?.also {
@@ -168,28 +175,33 @@ class LinkHandler(
                     }, router, args)
                     return true
                 }
+
                 "search" -> {
                     navigateTo(Screen.Search().apply {
                         searchUrl = uri.toString()
                     }, router, args)
                     return true
                 }
+
                 "rep" -> {
                     navigateTo(Screen.Reputation().apply {
                         reputationUrl = uri.toString()
                     }, router, args)
                     return true
                 }
+
                 "findpost" -> {
                     navigateTo(Screen.Theme().apply {
                         themeUrl = uri.toString()
                     }, router, args)
                     return true
                 }
+
                 "fav" -> {
                     navigateTo(Screen.Favorites(), router, args)
                     return true
                 }
+
                 "mentions" -> {
                     navigateTo(Screen.Mentions(), router, args)
                     return true

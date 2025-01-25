@@ -2,14 +2,16 @@ package forpdateam.ru.forpda.ui.views;
 
 import android.content.Context;
 import android.os.Handler;
-import androidx.annotation.NonNull;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
+
+import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.view.ViewCompat;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -19,9 +21,9 @@ import forpdateam.ru.forpda.R;
  */
 
 public class FabOnScroll extends FloatingActionButton.Behavior {
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private Runnable currentRunnable;
-    private Interpolator interpolator = new AccelerateDecelerateInterpolator();
+    private final Interpolator interpolator = new AccelerateDecelerateInterpolator();
 
     public FabOnScroll(Context context) {
         super(context, null);

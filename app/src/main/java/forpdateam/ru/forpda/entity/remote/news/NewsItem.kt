@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.entity.remote.news
 
-import java.util.ArrayList
-
 /**
  * Created by radiationx on 28.08.17.
  */

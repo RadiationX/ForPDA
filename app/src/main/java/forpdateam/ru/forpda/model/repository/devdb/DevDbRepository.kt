@@ -13,24 +13,24 @@ import io.reactivex.Single
  */
 
 class DevDbRepository(
-        private val schedulers: SchedulersProvider,
-        private val devDbApi: DevDbApi
+    private val schedulers: SchedulersProvider,
+    private val devDbApi: DevDbApi
 ) : BaseRepository(schedulers) {
 
     fun getBrands(catId: String): Single<Brands> = Single
-            .fromCallable { devDbApi.getBrands(catId) }
-            .runInIoToUi()
+        .fromCallable { devDbApi.getBrands(catId) }
+        .runInIoToUi()
 
     fun getBrand(catId: String, brandId: String): Single<Brand> = Single
-            .fromCallable { devDbApi.getBrand(catId, brandId) }
-            .runInIoToUi()
+        .fromCallable { devDbApi.getBrand(catId, brandId) }
+        .runInIoToUi()
 
     fun getDevice(devId: String): Single<Device> = Single
-            .fromCallable { devDbApi.getDevice(devId) }
-            .runInIoToUi()
+        .fromCallable { devDbApi.getDevice(devId) }
+        .runInIoToUi()
 
     fun search(query: String): Single<Brand> = Single
-            .fromCallable { devDbApi.search(query) }
-            .runInIoToUi()
+        .fromCallable { devDbApi.search(query) }
+        .runInIoToUi()
 
 }

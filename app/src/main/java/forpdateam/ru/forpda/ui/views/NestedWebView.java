@@ -5,19 +5,20 @@ package forpdateam.ru.forpda.ui.views;
  */
 
 import android.content.Context;
-import androidx.core.view.MotionEventCompat;
-import androidx.core.view.NestedScrollingChild;
-import androidx.core.view.NestedScrollingChildHelper;
-import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.webkit.WebView;
 
+import androidx.core.view.MotionEventCompat;
+import androidx.core.view.NestedScrollingChild;
+import androidx.core.view.NestedScrollingChildHelper;
+import androidx.core.view.ViewCompat;
+
 
 /*
-* Обработка событий аккуратно слизана с RecyclerView с некоторыми доработками.
-* */
+ * Обработка событий аккуратно слизана с RecyclerView с некоторыми доработками.
+ * */
 public class NestedWebView extends WebView implements NestedScrollingChild {
     private static final String LOG_TAG = NestedWebView.class.getSimpleName();
 
@@ -33,7 +34,7 @@ public class NestedWebView extends WebView implements NestedScrollingChild {
     private final int[] mScrollConsumed = new int[2];
     private final int[] mNestedOffsets = new int[2];
 
-    private NestedScrollingChildHelper mChildHelper;
+    private final NestedScrollingChildHelper mChildHelper;
 
     public NestedWebView(Context context) {
         this(context, null);
@@ -43,7 +44,7 @@ public class NestedWebView extends WebView implements NestedScrollingChild {
         this(context, attrs, android.R.attr.webViewStyle);
     }
 
-    private int mTouchSlop;
+    private final int mTouchSlop;
 
     public NestedWebView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -53,7 +54,7 @@ public class NestedWebView extends WebView implements NestedScrollingChild {
         mTouchSlop = vc.getScaledTouchSlop();
     }
 
-    private OnLongClickListener longClickListener = v -> true;
+    private final OnLongClickListener longClickListener = v -> true;
 
     private void changeLongClickable(boolean enable) {
         //Log.d("SUKA", "CHANGE LONG " + enable);

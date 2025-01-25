@@ -3,17 +3,16 @@ package forpdateam.ru.forpda.ui.views.drawers
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import androidx.constraintlayout.widget.ConstraintLayout
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import androidx.fragment.app.FragmentActivity
-import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.ItemTouchHelper
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.app.other.AppMenuItem
@@ -22,8 +21,6 @@ import forpdateam.ru.forpda.model.interactors.other.MenuRepository
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
-import forpdateam.ru.forpda.ui.views.drawers.adapters.DrawerMenuItem
-import forpdateam.ru.forpda.ui.views.drawers.adapters.BottomMenuAdapter
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.TabTopScroller
 import forpdateam.ru.forpda.ui.navigation.TabHelper
@@ -31,19 +28,27 @@ import forpdateam.ru.forpda.ui.navigation.TabNavigator
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.control.BottomSheetBehaviorFixed
 import forpdateam.ru.forpda.ui.views.control.BottomSheetBehaviorRecyclerManager
-import forpdateam.ru.forpda.ui.views.drawers.adapters.TabSwipeToDeleteCallback
+import forpdateam.ru.forpda.ui.views.drawers.adapters.BottomMenuAdapter
+import forpdateam.ru.forpda.ui.views.drawers.adapters.DrawerMenuItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.TabAdapter
+import forpdateam.ru.forpda.ui.views.drawers.adapters.TabSwipeToDeleteCallback
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_main.view.*
+import kotlinx.android.synthetic.main.activity_main.view.bottomCloseAllTabs
+import kotlinx.android.synthetic.main.activity_main.view.bottomMenuContainer
+import kotlinx.android.synthetic.main.activity_main.view.bottomMenuFade
+import kotlinx.android.synthetic.main.activity_main.view.bottomMenuRecycler
+import kotlinx.android.synthetic.main.activity_main.view.bottomTabsRecycler
+import kotlinx.android.synthetic.main.activity_main.view.bottomToggleArrow
+import kotlinx.android.synthetic.main.activity_main.view.bottom_sheet2
 import kotlin.math.min
 
 class BottomDrawer(
-        private val activity: androidx.fragment.app.FragmentActivity,
-        private val drawerLayout: ViewGroup,
-        private val tabNavigator: TabNavigator,
-        private val router: TabRouter,
-        private val menuRepository: MenuRepository,
-        private val mainPreferencesHolder: MainPreferencesHolder
+    private val activity: FragmentActivity,
+    private val drawerLayout: ViewGroup,
+    private val tabNavigator: TabNavigator,
+    private val router: TabRouter,
+    private val menuRepository: MenuRepository,
+    private val mainPreferencesHolder: MainPreferencesHolder
 ) {
     private val menuAdapter = BottomMenuAdapter(object : BottomMenuAdapter.Listener {
         override fun onTabClick(menu: DrawerMenuItem) {
@@ -68,7 +73,8 @@ class BottomDrawer(
 
     private lateinit var bottomSheetBehavior: BottomSheetBehaviorFixed<View>
 
-    private val otherMenuItem = MenuMapper.mapToDrawer(AppMenuItem(MenuRepository.item_other_menu, Screen.OtherMenu()))
+    private val otherMenuItem =
+        MenuMapper.mapToDrawer(AppMenuItem(MenuRepository.item_other_menu, Screen.OtherMenu()))
     private var localItems = listOf(otherMenuItem)
 
     init {
@@ -107,6 +113,7 @@ class BottomDrawer(
                                 bottomMenuContainer.isClickable = true
                                 drawerListener?.onShow()
                             }
+
                             BottomSheetBehaviorFixed.STATE_COLLAPSED -> {
                                 colorDrawable.color = Color.TRANSPARENT
                                 bottomMenuContainer.setOnClickListener(null)
@@ -124,12 +131,16 @@ class BottomDrawer(
             updateArrowVisible(mainPreferencesHolder.getShowBottomArrow())
 
             bottomMenuRecycler.apply {
-                layoutManager = androidx.recyclerview.widget.GridLayoutManager(context, 5)
+                layoutManager = GridLayoutManager(context, 5)
                 adapter = menuAdapter
                 isNestedScrollingEnabled = false
             }
 
-            val manager = BottomSheetBehaviorRecyclerManager(bottomMenuContainer, bottomSheetBehavior, bottom_sheet2)
+            val manager = BottomSheetBehaviorRecyclerManager(
+                bottomMenuContainer,
+                bottomSheetBehavior,
+                bottom_sheet2
+            )
             manager.addControl(bottomTabsRecycler)
             manager.create()
 
@@ -138,14 +149,17 @@ class BottomDrawer(
             }
 
             bottomTabsRecycler.apply {
-                layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context).apply {
+                layoutManager = LinearLayoutManager(context).apply {
                     stackFromEnd = true
                 }
                 adapter = tabsAdapter
 
                 val color = App.getColorFromAttr(context, R.attr.item_tab_close_color)
                 val swipeHandler = object : TabSwipeToDeleteCallback(color) {
-                    override fun onSwiped(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder, p1: Int) {
+                    override fun onSwiped(
+                        viewHolder: RecyclerView.ViewHolder,
+                        p1: Int
+                    ) {
                         val tab = tabsAdapter.getItem(viewHolder.adapterPosition)
                         tabNavigator.close(tab?.tag)
                     }
@@ -165,7 +179,8 @@ class BottomDrawer(
                 }
             })
 
-            tabsAdapter.setCloseClickListener(object : BaseAdapter.OnItemClickListener<TabFragment> {
+            tabsAdapter.setCloseClickListener(object :
+                BaseAdapter.OnItemClickListener<TabFragment> {
                 override fun onItemClick(item: TabFragment) {
                     tabNavigator.close(item.tag)
                 }
@@ -176,58 +191,59 @@ class BottomDrawer(
             })
 
             compositeDisposable.add(
-                    mainPreferencesHolder
-                            .observeShowBottomArrow()
-                            .subscribe {
-                                updateArrowVisible(it)
-                            }
+                mainPreferencesHolder
+                    .observeShowBottomArrow()
+                    .subscribe {
+                        updateArrowVisible(it)
+                    }
             )
 
             compositeDisposable.add(
-                    menuRepository
-                            .observerMenu()
-                            .subscribe {
-                                it[MenuRepository.group_main]?.let { newItems ->
-                                    val mainItems = newItems
-                                            .filter { it.id != MenuRepository.item_auth }
-                                            .take(min(newItems.size, 4))
-                                            .map { MenuMapper.mapToDrawer(it) }
-                                    val notExistMainCounters = newItems
-                                            .filterNot { newItem ->
-                                                mainItems.indexOfFirst { newItem.id == it.appItem.id } >= 0
-                                            }
-                                            .filter { it.count > 0 }
-                                    otherMenuItem.appItem.count = notExistMainCounters.sumBy { it.count }
-                                    localItems = mainItems.plusElement(otherMenuItem)
+                menuRepository
+                    .observerMenu()
+                    .subscribe {
+                        it[MenuRepository.group_main]?.let { newItems ->
+                            val mainItems = newItems
+                                .filter { it.id != MenuRepository.item_auth }
+                                .take(min(newItems.size, 4))
+                                .map { MenuMapper.mapToDrawer(it) }
+                            val notExistMainCounters = newItems
+                                .filterNot { newItem ->
+                                    mainItems.indexOfFirst { newItem.id == it.appItem.id } >= 0
                                 }
-                                updateMenu()
-                            }
+                                .filter { it.count > 0 }
+                            otherMenuItem.appItem.count = notExistMainCounters.sumOf { it.count }
+                            localItems = mainItems.plusElement(otherMenuItem)
+                        }
+                        updateMenu()
+                    }
             )
 
             compositeDisposable.add(
-                    tabNavigator
-                            .observeSubscribers()
-                            .subscribe({
-                                Log.e("lalala", "Menu subscribe")
-                                tabsAdapter.setCurrentFragmentTag(tabNavigator.getCurrentFragment()?.tag)
-                                tabsAdapter.addAll(it)
-                                it.firstOrNull { tabNavigator.tabController.isCurrent(it.tag) }?.also {
-                                    Log.e("lalala", "Menu activetab: $it")
-                                    val screen = TabHelper.findScreenByFragment(it)
-                                    Log.e("lalala", "Menu activescreen: $screen")
-                                    findMenuItem(screen)?.also {
-                                        selectMenuItem(it)
-                                    }
-                                }
-                            }, {
-                                Log.d("lalala", "menu error: ${it.message}")
-                            })
+                tabNavigator
+                    .observeSubscribers()
+                    .subscribe({
+                        Log.e("lalala", "Menu subscribe")
+                        tabsAdapter.setCurrentFragmentTag(tabNavigator.getCurrentFragment()?.tag)
+                        tabsAdapter.addAll(it)
+                        it.firstOrNull { tabNavigator.tabController.isCurrent(it.tag) }?.also {
+                            Log.e("lalala", "Menu activetab: $it")
+                            val screen = TabHelper.findScreenByFragment(it)
+                            Log.e("lalala", "Menu activescreen: $screen")
+                            findMenuItem(screen)?.also {
+                                selectMenuItem(it)
+                            }
+                        }
+                    }, {
+                        Log.d("lalala", "menu error: ${it.message}")
+                    })
             )
         }
     }
 
     private fun updateMenu() {
-        (drawerLayout.bottomMenuRecycler.layoutManager as? androidx.recyclerview.widget.GridLayoutManager)?.spanCount = localItems.size
+        (drawerLayout.bottomMenuRecycler.layoutManager as? GridLayoutManager)?.spanCount =
+            localItems.size
         menuAdapter.bindItems(localItems)
     }
 
@@ -270,7 +286,7 @@ class BottomDrawer(
 
     fun onStart() {
         drawerLayout.bottomTabsRecycler.apply {
-            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context).apply {
+            layoutManager = LinearLayoutManager(context).apply {
                 stackFromEnd = true
             }
         }
@@ -303,13 +319,13 @@ class BottomDrawer(
 
     private fun removeAllTabs() {
         AlertDialog.Builder(activity)
-                .setMessage(R.string.ask_close_other_tabs)
-                .setPositiveButton(R.string.ok) { dialog, which ->
-                    tabNavigator.closeOthers()
-                    hide()
-                }
-                .setNegativeButton(R.string.no, null)
-                .show()
+            .setMessage(R.string.ask_close_other_tabs)
+            .setPositiveButton(R.string.ok) { dialog, which ->
+                tabNavigator.closeOthers()
+                hide()
+            }
+            .setNegativeButton(R.string.no, null)
+            .show()
     }
 
     interface DrawerListener {

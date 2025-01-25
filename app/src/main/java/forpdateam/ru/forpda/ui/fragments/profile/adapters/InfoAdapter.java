@@ -26,13 +26,13 @@ class InfoAdapter extends BaseAdapter<ProfileModel.Info, InfoAdapter.InfoHolder>
     }
 
     class InfoHolder extends BaseViewHolder<ProfileModel.Info> {
-        private TextView title;
-        private TextView value;
+        private final TextView title;
+        private final TextView value;
 
         InfoHolder(View itemView) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.item_title);
-            value = (TextView) itemView.findViewById(R.id.item_value);
+            title = itemView.findViewById(R.id.item_title);
+            value = itemView.findViewById(R.id.item_value);
         }
 
         @Override

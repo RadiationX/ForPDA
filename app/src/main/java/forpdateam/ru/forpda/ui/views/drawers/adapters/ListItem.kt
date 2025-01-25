@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.ui.views.drawers.adapters
 
 import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
-import forpdateam.ru.forpda.entity.app.other.AppMenuItem
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 

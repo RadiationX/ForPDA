@@ -1,17 +1,20 @@
 package forpdateam.ru.forpda.model.data.remote.api.forum
 
-import forpdateam.ru.forpda.entity.remote.forum.*
+import forpdateam.ru.forpda.entity.remote.forum.Announce
+import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
+import forpdateam.ru.forpda.entity.remote.forum.ForumItemTree
+import forpdateam.ru.forpda.entity.remote.forum.ForumRules
+import forpdateam.ru.forpda.entity.remote.forum.IForumItemFlat
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
-import java.util.*
 
 /**
  * Created by radiationx on 15.02.17.
  */
 
 class ForumApi(
-        private val webClient: IWebClient,
-        private val forumParser: ForumParser
+    private val webClient: IWebClient,
+    private val forumParser: ForumParser
 ) {
 
     fun getForums(): ForumItemTree {
@@ -25,17 +28,26 @@ class ForumApi(
     }
 
     fun getAnnounce(id: Int, forumId: Int): Announce {
-        val response = webClient.get("https://4pda.to/forum/index.php?act=announce&f=$forumId&st=$id")
+        val response =
+            webClient.get("https://4pda.to/forum/index.php?act=announce&f=$forumId&st=$id")
         return forumParser.parseAnnounce(response.body)
     }
 
     fun markAllRead(): Any {
-        webClient.request(NetworkRequest.Builder().url("https://4pda.to/forum/index.php?act=auth&action=markboard").withoutBody().build())
+        webClient.request(
+            NetworkRequest.Builder()
+                .url("https://4pda.to/forum/index.php?act=auth&action=markboard").withoutBody()
+                .build()
+        )
         return Any()
     }
 
     fun markRead(id: Int): Any {
-        webClient.request(NetworkRequest.Builder().url("https://4pda.to/forum/index.php?act=auth&action=markforum&f=$id&fromforum=$id").withoutBody().build())
+        webClient.request(
+            NetworkRequest.Builder()
+                .url("https://4pda.to/forum/index.php?act=auth&action=markforum&f=$id&fromforum=$id")
+                .withoutBody().build()
+        )
         return Any()
     }
 

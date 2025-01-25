@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.ui.views;
 
 import android.content.Context;
+
 import androidx.appcompat.app.AlertDialog;
 
 import java.util.ArrayList;
@@ -11,8 +12,8 @@ import java.util.List;
  */
 
 public class DynamicDialogMenu<T, E> {
-    private List<MenuItem> allItems = new ArrayList<>();
-    private List<MenuItem> allowedItems = new ArrayList<>();
+    private final List<MenuItem> allItems = new ArrayList<>();
+    private final List<MenuItem> allowedItems = new ArrayList<>();
 
     public MenuItem addItem(CharSequence title, OnClickListener<T, E> listener) {
         MenuItem item = new MenuItem(title, listener);

@@ -1,10 +1,10 @@
 package forpdateam.ru.forpda.presentation.forum
 
+import forpdateam.ru.forpda.common.mvp.IBaseView
+import forpdateam.ru.forpda.entity.remote.forum.ForumItemTree
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
-import forpdateam.ru.forpda.common.mvp.IBaseView
-import forpdateam.ru.forpda.entity.remote.forum.ForumItemTree
 
 /**
  * Created by radiationx on 03.01.18.

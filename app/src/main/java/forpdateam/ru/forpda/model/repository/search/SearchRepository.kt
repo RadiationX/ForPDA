@@ -7,7 +7,6 @@ import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.data.cache.forumuser.ForumUsersCache
 import forpdateam.ru.forpda.model.data.remote.api.search.SearchApi
 import forpdateam.ru.forpda.model.repository.BaseRepository
-import io.reactivex.Observable
 import io.reactivex.Single
 
 /**
@@ -15,15 +14,15 @@ import io.reactivex.Single
  */
 
 class SearchRepository(
-        private val schedulers: SchedulersProvider,
-        private val searchApi: SearchApi,
-        private val forumUsersCache: ForumUsersCache
+    private val schedulers: SchedulersProvider,
+    private val searchApi: SearchApi,
+    private val forumUsersCache: ForumUsersCache
 ) : BaseRepository(schedulers) {
 
     fun getSearch(settings: SearchSettings): Single<SearchResult> = Single
-            .fromCallable { searchApi.getSearch(settings) }
-            .doOnSuccess { saveUsers(it) }
-            .runInIoToUi()
+        .fromCallable { searchApi.getSearch(settings) }
+        .doOnSuccess { saveUsers(it) }
+        .runInIoToUi()
 
     private fun saveUsers(page: SearchResult) {
         val forumUsers = page.items.map { post ->

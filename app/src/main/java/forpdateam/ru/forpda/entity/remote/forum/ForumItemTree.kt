@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.entity.remote.forum
 
-import java.util.ArrayList
-
 /**
  * Created by radiationx on 15.02.17.
  */
@@ -13,7 +11,7 @@ class ForumItemTree {
     var title: String? = null
     var forums: MutableList<ForumItemTree>? = null
 
-    constructor() {}
+    constructor()
 
     constructor(item: IForumItemFlat) {
         id = item.id

@@ -10,9 +10,9 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 class SearchTemplate(
-        private val templateManager: TemplateManager,
-        private val authHolder: AuthHolder,
-        private val topicPreferencesHolder: TopicPreferencesHolder
+    private val templateManager: TemplateManager,
+    private val authHolder: AuthHolder,
+    private val topicPreferencesHolder: TopicPreferencesHolder
 ) {
 
     private val firstLetter = Pattern.compile("([a-zA-Zа-яА-Я])")
@@ -38,7 +38,10 @@ class SearchTemplate(
 
 
             setVariableOpt("body_type", "search")
-            setVariableOpt("navigation_disable", TempHelper.getDisableStr(prevDisabled && nextDisabled))
+            setVariableOpt(
+                "navigation_disable",
+                TempHelper.getDisableStr(prevDisabled && nextDisabled)
+            )
             setVariableOpt("first_disable", TempHelper.getDisableStr(prevDisabled))
             setVariableOpt("prev_disable", TempHelper.getDisableStr(prevDisabled))
             setVariableOpt("next_disable", TempHelper.getDisableStr(nextDisabled))
@@ -47,7 +50,10 @@ class SearchTemplate(
             val isEnableAvatars = topicPreferencesHolder.getShowAvatars()
             setVariableOpt("enable_avatars_bool", java.lang.Boolean.toString(isEnableAvatars))
             setVariableOpt("enable_avatars", if (isEnableAvatars) "show_avatar" else "hide_avatar")
-            setVariableOpt("avatar_type", if (topicPreferencesHolder.getCircleAvatars()) "circle_avatar" else "square_avatar")
+            setVariableOpt(
+                "avatar_type",
+                if (topicPreferencesHolder.getCircleAvatars()) "circle_avatar" else "square_avatar"
+            )
 
 
             var letterMatcher: Matcher? = null
@@ -61,7 +67,10 @@ class SearchTemplate(
 
                 //Post header
                 setVariableOpt("avatar", post.avatar)
-                setVariableOpt("none_avatar", if (post.avatar.isNullOrEmpty()) "none_avatar" else "")
+                setVariableOpt(
+                    "none_avatar",
+                    if (post.avatar.isNullOrEmpty()) "none_avatar" else ""
+                )
 
                 letterMatcher = letterMatcher?.reset(post.nick) ?: firstLetter.matcher(post.nick)
                 val letter: String = letterMatcher?.run {

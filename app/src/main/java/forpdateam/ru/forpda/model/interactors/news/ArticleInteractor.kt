@@ -9,9 +9,9 @@ import io.reactivex.Observable
 import io.reactivex.Single
 
 class ArticleInteractor(
-        val initData: InitData,
-        private val newsRepository: NewsRepository,
-        private val articleTemplate: ArticleTemplate
+    val initData: InitData,
+    private val newsRepository: NewsRepository,
+    private val articleTemplate: ArticleTemplate
 ) {
 
     private val dataRelay = BehaviorRelay.create<DetailsPage>()
@@ -21,27 +21,27 @@ class ArticleInteractor(
     fun observeComments(): Observable<Comment> = commentsRelay
 
     fun loadArticle(): Single<DetailsPage> = Single
-            .defer {
-                if (initData.newsId > 0) {
-                    newsRepository.getDetails(initData.newsId)
-                } else {
-                    newsRepository.getDetails(initData.newsUrl.orEmpty())
-                }
+        .defer {
+            if (initData.newsId > 0) {
+                newsRepository.getDetails(initData.newsId)
+            } else {
+                newsRepository.getDetails(initData.newsUrl.orEmpty())
             }
-            .map { articleTemplate.mapEntity(it) }
-            .doOnSuccess { updateData(it) }
+        }
+        .map { articleTemplate.mapEntity(it) }
+        .doOnSuccess { updateData(it) }
 
 
     fun likeComment(commentId: Int) = newsRepository
-            .likeComment(initData.newsId, commentId)
+        .likeComment(initData.newsId, commentId)
 
     fun sendPoll(from: String, pollId: Int, answersId: IntArray) = newsRepository
-            .sendPoll(from, pollId, answersId)
+        .sendPoll(from, pollId, answersId)
 
     fun replyComment(commentId: Int, comment: String): Single<DetailsPage> = newsRepository
-            .replyComment(initData.newsId, commentId, comment)
-            .map { articleTemplate.mapEntity(it) }
-            .doOnSuccess { updateData(it) }
+        .replyComment(initData.newsId, commentId, comment)
+        .map { articleTemplate.mapEntity(it) }
+        .doOnSuccess { updateData(it) }
 
     private fun updateData(article: DetailsPage) {
         initData.newsId = article.id
@@ -52,22 +52,21 @@ class ArticleInteractor(
 
     private fun parseComments(article: DetailsPage) {
         newsRepository
-                .getComments(article)
-                .subscribe({
-                    if (dataRelay.hasValue()) {
-                        dataRelay.value?.commentTree = it
-                    }
-                    commentsRelay.accept(it)
-                }, {
-                    it.printStackTrace()
-                })
+            .getComments(article)
+            .subscribe({
+                if (dataRelay.hasValue()) {
+                    dataRelay.value?.commentTree = it
+                }
+                commentsRelay.accept(it)
+            }, {
+                it.printStackTrace()
+            })
     }
 
 
-
     data class InitData(
-            var newsUrl: String? = null,
-            var newsId: Int = -1,
-            var commentId: Int = -1
+        var newsUrl: String? = null,
+        var newsId: Int = -1,
+        var commentId: Int = -1
     )
 }

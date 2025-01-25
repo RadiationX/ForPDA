@@ -10,7 +10,7 @@ import io.realm.Realm
  */
 
 class ForumUsersCache(
-        private val userSource: UserSource
+    private val userSource: UserSource
 ) {
 
     private val requestsInSession = mutableSetOf<String>()
@@ -33,10 +33,10 @@ class ForumUsersCache(
 
     fun getUserByNick(nick: String): ForumUser? = Realm.getDefaultInstance().use {
         it.where(ForumUserBd::class.java).equalTo("nick", nick).findFirst()
-                ?.let { ForumUser(it) }
-                ?: userSource.getUsers(nick).getOrNull(0)?.also {
-                    saveUser(it)
-                }
+            ?.let { ForumUser(it) }
+            ?: userSource.getUsers(nick).getOrNull(0)?.also {
+                saveUser(it)
+            }
     }
 
 }

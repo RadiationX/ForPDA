@@ -23,70 +23,80 @@ import io.reactivex.Single
  */
 
 class FavoritesRepository(
-        private val schedulers: SchedulersProvider,
-        private val favoritesApi: FavoritesApi,
-        private val favoritesCache: FavoritesCache,
-        private val authHolder: AuthHolder,
-        private val countersHolder: CountersHolder,
-        private val listsPreferencesHolder: ListsPreferencesHolder,
-        private val notificationPreferencesHolder: NotificationPreferencesHolder
+    private val schedulers: SchedulersProvider,
+    private val favoritesApi: FavoritesApi,
+    private val favoritesCache: FavoritesCache,
+    private val authHolder: AuthHolder,
+    private val countersHolder: CountersHolder,
+    private val listsPreferencesHolder: ListsPreferencesHolder,
+    private val notificationPreferencesHolder: NotificationPreferencesHolder
 ) : BaseRepository(schedulers) {
 
 
     fun observeItems(): Observable<List<FavItem>> = favoritesCache
-            .observeItems()
-            .runInIoToUi()
+        .observeItems()
+        .runInIoToUi()
 
     fun loadCache(): Single<List<FavItem>> = Single
-            .fromCallable { favoritesCache.getItems() }
-            .runInIoToUi()
+        .fromCallable { favoritesCache.getItems() }
+        .runInIoToUi()
 
     fun loadFavorites(st: Int, all: Boolean, sorting: Sorting): Single<FavData> = Single
-            .fromCallable { favoritesApi.getFavorites(st, all, sorting) }
-            .doOnSuccess { favData -> favoritesCache.saveFavorites(favData.items) }
-            .runInIoToUi()
+        .fromCallable { favoritesApi.getFavorites(st, all, sorting) }
+        .doOnSuccess { favData -> favoritesCache.saveFavorites(favData.items) }
+        .runInIoToUi()
 
     fun editFavorites(act: Int, favId: Int, id: Int, type: String?): Single<Boolean> = Single
-            .fromCallable {
-                when (act) {
-                    FavoritesApi.ACTION_EDIT_SUB_TYPE -> favoritesApi.editSubscribeType(type, favId)
-                    FavoritesApi.ACTION_EDIT_PIN_STATE -> favoritesApi.editPinState(type, favId)
-                    FavoritesApi.ACTION_DELETE -> favoritesApi.delete(favId)
-                    FavoritesApi.ACTION_ADD, FavoritesApi.ACTION_ADD_FORUM -> favoritesApi.add(id, act, type)
-                    else -> false
-                }
+        .fromCallable {
+            when (act) {
+                FavoritesApi.ACTION_EDIT_SUB_TYPE -> favoritesApi.editSubscribeType(type, favId)
+                FavoritesApi.ACTION_EDIT_PIN_STATE -> favoritesApi.editPinState(type, favId)
+                FavoritesApi.ACTION_DELETE -> favoritesApi.delete(favId)
+                FavoritesApi.ACTION_ADD, FavoritesApi.ACTION_ADD_FORUM -> favoritesApi.add(
+                    id,
+                    act,
+                    type
+                )
+
+                else -> false
             }
-            .runInIoToUi()
+        }
+        .runInIoToUi()
 
     fun markRead(topicId: Int): Completable = Completable
-            .fromRunnable {
-                val favItem = favoritesCache.getItemByTopicId(topicId)
-                if (favItem != null) {
-                    favItem.isNew = false
-                    favoritesCache.updateItem(favItem)
-                }
+        .fromRunnable {
+            val favItem = favoritesCache.getItemByTopicId(topicId)
+            if (favItem != null) {
+                favItem.isNew = false
+                favoritesCache.updateItem(favItem)
             }
-            .runInIoToUi()
+        }
+        .runInIoToUi()
 
 
     fun handleEvent(event: TabNotification): Single<Int> = Single
-            .fromCallable {
-                val favItems = favoritesCache.getItems()
-                val sorting = Sorting(
-                        listsPreferencesHolder.getSortingKey(),
-                        listsPreferencesHolder.getSortingOrder()
-                )
-                val count = countersHolder.get().favorites
-                handleEventTransaction(favItems, event, sorting, count).also {
-                    countersHolder.set(countersHolder.get().apply {
-                        favorites = it
-                    })
-                }
+        .fromCallable {
+            val favItems = favoritesCache.getItems()
+            val sorting = Sorting(
+                listsPreferencesHolder.getSortingKey(),
+                listsPreferencesHolder.getSortingOrder()
+            )
+            val count = countersHolder.get().favorites
+            handleEventTransaction(favItems, event, sorting, count).also {
+                countersHolder.set(countersHolder.get().apply {
+                    favorites = it
+                })
             }
-            .runInIoToUi()
+        }
+        .runInIoToUi()
 
 
-    private fun handleEventTransaction(favItems: List<FavItem>, event: TabNotification, sorting: Sorting, count: Int): Int {
+    private fun handleEventTransaction(
+        favItems: List<FavItem>,
+        event: TabNotification,
+        sorting: Sorting,
+        count: Int
+    ): Int {
         if (!NotificationEvent.fromTheme(event.source)) return count
         if (!notificationPreferencesHolder.getFavLiveTab()) return count
         if (event.isWebSocket && event.event.isNew) return count
@@ -97,7 +107,10 @@ class FavoritesRepository(
         val topicId = loadedEvent.sourceId
         val isRead = loadedEvent.isRead
 
-        Log.e("testtabnotify", "handleEventTransaction $newCount, $topicId, $isRead, ${loadedEvent.userNick}")
+        Log.e(
+            "testtabnotify",
+            "handleEventTransaction $newCount, $topicId, $isRead, ${loadedEvent.userNick}"
+        )
 
         if (isRead) {
             newFavItems.find { it.topicId == topicId }?.also {

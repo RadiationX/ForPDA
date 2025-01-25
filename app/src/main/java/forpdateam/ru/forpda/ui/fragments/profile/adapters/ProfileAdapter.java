@@ -1,14 +1,15 @@
 package forpdateam.ru.forpda.ui.fragments.profile.adapters;
 
-import androidx.annotation.LayoutRes;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.annotation.LayoutRes;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,7 +36,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private final static int CONTACTS_VIEW_TYPE = 5;
     private final static int NOTE_VIEW_TYPE = 6;
     private final static int WARNING_VIEW_TYPE = 7;
-    private ArrayList<Integer> items = new ArrayList<>();
+    private final ArrayList<Integer> items = new ArrayList<>();
     private ProfileModel profileModel;
     private ClickListener clickListener;
 
@@ -94,25 +95,25 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     public void onBindViewHolder(BaseViewHolder holder, int position) {
         switch (getItemViewType(position)) {
             case STATS_VIEW_TYPE:
-                ((StatsHolder) holder).bind(profileModel);
+                holder.bind(profileModel);
                 break;
             case ABOUT_VIEW_TYPE:
-                ((AboutHolder) holder).bind(profileModel);
+                holder.bind(profileModel);
                 break;
             case INFO_VIEW_TYPE:
-                ((InfosHolder) holder).bind(profileModel);
+                holder.bind(profileModel);
                 break;
             case DEVICES_VIEW_TYPE:
-                ((DevicesHolder) holder).bind(profileModel);
+                holder.bind(profileModel);
                 break;
             case CONTACTS_VIEW_TYPE:
-                ((ContactsHolder) holder).bind(profileModel);
+                holder.bind(profileModel);
                 break;
             case NOTE_VIEW_TYPE:
-                ((NoteHolder) holder).bind(profileModel);
+                holder.bind(profileModel);
                 break;
             case WARNING_VIEW_TYPE:
-                ((WarningsHolder) holder).bind(profileModel);
+                holder.bind(profileModel);
                 break;
         }
     }
@@ -127,12 +128,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     }
 
     private class StatsHolder extends BaseViewHolder<ProfileModel> {
-        private RecyclerView list;
-        private StatsAdapter adapter;
+        private final RecyclerView list;
+        private final StatsAdapter adapter;
 
         StatsHolder(View itemView) {
             super(itemView);
-            list = (RecyclerView) itemView.findViewById(R.id.profile_stats_list);
+            list = itemView.findViewById(R.id.profile_stats_list);
             list.setHasFixedSize(true);
             list.setLayoutManager(new LinearLayoutManager(list.getContext(), LinearLayoutManager.HORIZONTAL, false));
             adapter = new StatsAdapter(item -> clickListener.onStatClick(item));
@@ -152,13 +153,13 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     }
 
     private class AboutHolder extends BaseViewHolder<ProfileModel> {
-        private ILinkHandler linkHandler = App.get().Di().getLinkHandler();
+        private final ILinkHandler linkHandler = App.get().Di().getLinkHandler();
 
-        private TextView about;
+        private final TextView about;
 
         AboutHolder(View itemView) {
             super(itemView);
-            about = (TextView) itemView.findViewById(R.id.profile_about_text);
+            about = itemView.findViewById(R.id.profile_about_text);
         }
 
         @Override
@@ -169,14 +170,14 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     }
 
     private class InfosHolder extends BaseViewHolder<ProfileModel> {
-        private TextView title;
-        private RecyclerView list;
-        private InfoAdapter adapter;
+        private final TextView title;
+        private final RecyclerView list;
+        private final InfoAdapter adapter;
 
         InfosHolder(View itemView) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.profile_sub_title);
-            list = (RecyclerView) itemView.findViewById(R.id.profile_sub_list);
+            title = itemView.findViewById(R.id.profile_sub_title);
+            list = itemView.findViewById(R.id.profile_sub_list);
             list.setHasFixedSize(true);
             list.setLayoutManager(new LinearLayoutManager(list.getContext()));
             list.setNestedScrollingEnabled(false);
@@ -196,14 +197,14 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     }
 
     private class DevicesHolder extends BaseViewHolder<ProfileModel> {
-        private TextView title;
-        private RecyclerView list;
-        private DevicesAdapter adapter;
+        private final TextView title;
+        private final RecyclerView list;
+        private final DevicesAdapter adapter;
 
         DevicesHolder(View itemView) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.profile_sub_title);
-            list = (RecyclerView) itemView.findViewById(R.id.profile_sub_list);
+            title = itemView.findViewById(R.id.profile_sub_title);
+            list = itemView.findViewById(R.id.profile_sub_list);
             list.setHasFixedSize(true);
             list.setLayoutManager(new LinearLayoutManager(list.getContext()));
             list.setNestedScrollingEnabled(false);
@@ -219,14 +220,14 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     }
 
     private class ContactsHolder extends BaseViewHolder<ProfileModel> {
-        private TextView title;
-        private RecyclerView list;
-        private ContactsAdapter adapter;
+        private final TextView title;
+        private final RecyclerView list;
+        private final ContactsAdapter adapter;
 
         ContactsHolder(View itemView) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.profile_sub_title);
-            list = (RecyclerView) itemView.findViewById(R.id.profile_sub_list);
+            title = itemView.findViewById(R.id.profile_sub_title);
+            list = itemView.findViewById(R.id.profile_sub_list);
             list.setHasFixedSize(true);
             list.setLayoutManager(new LinearLayoutManager(list.getContext(), LinearLayoutManager.HORIZONTAL, false));
             adapter = new ContactsAdapter(item -> clickListener.onContactClick(item));
@@ -246,14 +247,14 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     }
 
     private class WarningsHolder extends BaseViewHolder<ProfileModel> {
-        private TextView title;
-        private RecyclerView list;
-        private WarningsAdapter adapter;
+        private final TextView title;
+        private final RecyclerView list;
+        private final WarningsAdapter adapter;
 
         WarningsHolder(View itemView) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.profile_sub_title);
-            list = (RecyclerView) itemView.findViewById(R.id.profile_sub_list);
+            title = itemView.findViewById(R.id.profile_sub_title);
+            list = itemView.findViewById(R.id.profile_sub_list);
             list.setHasFixedSize(true);
             list.setLayoutManager(new LinearLayoutManager(list.getContext()));
             list.setNestedScrollingEnabled(false);
@@ -271,13 +272,13 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     private class NoteHolder extends BaseViewHolder<ProfileModel> {
 
-        private EditText note;
-        private Button save;
+        private final EditText note;
+        private final Button save;
 
         NoteHolder(View itemView) {
             super(itemView);
-            note = (EditText) itemView.findViewById(R.id.profile_note_text);
-            save = (Button) itemView.findViewById(R.id.profile_save_note);
+            note = itemView.findViewById(R.id.profile_note_text);
+            save = itemView.findViewById(R.id.profile_save_note);
             save.setOnClickListener(v -> {
                 if (clickListener != null) {
                     clickListener.onSaveClick(note.getText().toString());

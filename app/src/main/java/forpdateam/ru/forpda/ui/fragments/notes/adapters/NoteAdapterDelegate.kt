@@ -8,33 +8,37 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
-import forpdateam.ru.forpda.ui.fragments.other.CloseableInfoDelegate
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
-import forpdateam.ru.forpda.ui.views.drawers.adapters.CloseableInfoListItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.NoteListItem
 
 class NoteAdapterDelegate(
-        private val clickListener: BaseAdapter.OnItemClickListener<NoteItem>
+    private val clickListener: BaseAdapter.OnItemClickListener<NoteItem>
 ) : AdapterDelegate<MutableList<ListItem>>() {
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is NoteListItem
+    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean =
+        items[position] is NoteListItem
 
     override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
         return NoteHolder(
-                LayoutInflater.from(parent.context).inflate(NoteHolder.LAYOUT, parent, false),
-                clickListener
+            LayoutInflater.from(parent.context).inflate(NoteHolder.LAYOUT, parent, false),
+            clickListener
         )
     }
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(
+        items: MutableList<ListItem>,
+        position: Int,
+        holder: RecyclerView.ViewHolder,
+        payloads: MutableList<Any>
+    ) {
         val item = items[position] as NoteListItem
         (holder as NoteHolder).bind(item.item)
     }
 
     class NoteHolder(
-            itemView: View,
-            private val clickListener: BaseAdapter.OnItemClickListener<NoteItem>
+        itemView: View,
+        private val clickListener: BaseAdapter.OnItemClickListener<NoteItem>
     ) : BaseViewHolder<NoteItem>(itemView) {
 
         companion object {

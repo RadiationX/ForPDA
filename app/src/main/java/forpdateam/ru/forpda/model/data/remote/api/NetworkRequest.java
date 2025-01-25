@@ -11,8 +11,9 @@ import java.util.Set;
 
 public class NetworkRequest {
     private String url = "";
-    private LinkedHashMap<String, String> headers, formHeaders;
-    private Set<String> encodedFormHeaders;
+    private final LinkedHashMap<String, String> headers;
+    private final LinkedHashMap<String, String> formHeaders;
+    private final Set<String> encodedFormHeaders;
     private boolean isMultipartForm = false;
     private RequestFile file = null;
     //true - get, false - post

@@ -37,8 +37,8 @@ public class QmsThemesAdapter extends BaseAdapter<QmsTheme, QmsThemesAdapter.The
 
         public ThemeHolder(View v) {
             super(v);
-            name = (TextView) v.findViewById(R.id.qms_theme_name);
-            count = (TextView) v.findViewById(R.id.qms_theme_count);
+            name = v.findViewById(R.id.qms_theme_name);
+            count = v.findViewById(R.id.qms_theme_count);
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
         }

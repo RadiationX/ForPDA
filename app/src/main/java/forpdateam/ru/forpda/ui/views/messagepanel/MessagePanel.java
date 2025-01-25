@@ -3,8 +3,6 @@ package forpdateam.ru.forpda.ui.views.messagepanel;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.cardview.widget.CardView;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +11,9 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import androidx.cardview.widget.CardView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,12 +36,14 @@ import io.reactivex.disposables.CompositeDisposable;
 public class MessagePanel extends CardView {
     private ImageButton advancedButton, attachmentsButton, sendButton, fullButton, hideButton, editPollButton;
     private TextView attachmentsCounter;
-    private List<View.OnClickListener> advancedListeners = new ArrayList<>(), attachmentsListeners = new ArrayList<>(), sendListeners = new ArrayList<>();
+    private final List<View.OnClickListener> advancedListeners = new ArrayList<>();
+    private final List<View.OnClickListener> attachmentsListeners = new ArrayList<>();
+    private final List<View.OnClickListener> sendListeners = new ArrayList<>();
     private CodeEditor messageField;
     private MessagePanelBehavior panelBehavior;
     private AdvancedPopup advancedPopup;
     private AttachmentsPopup attachmentsPopup;
-    private ViewGroup fragmentContainer;
+    private final ViewGroup fragmentContainer;
     private ProgressBar sendProgress;
     private ProgressBar formProgress;
     private ScrollView messageWrapper;
@@ -49,8 +52,8 @@ public class MessagePanel extends CardView {
     private boolean fullForm = false;
     private CoordinatorLayout.LayoutParams params;
     private boolean isMonospace = true;
-    private MainPreferencesHolder mainPreferencesHolder = App.get().Di().getMainPreferencesHolder();
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final MainPreferencesHolder mainPreferencesHolder = App.get().Di().getMainPreferencesHolder();
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     public MessagePanel(Context context, ViewGroup fragmentContainer, ViewGroup targetContainer, boolean fullForm) {
         super(context);
@@ -65,17 +68,17 @@ public class MessagePanel extends CardView {
     private void init() {
         inflate(getContext(), fullForm ? R.layout.message_panel_full : R.layout.message_panel_quick, this);
         setClickable(true);
-        advancedButton = (ImageButton) findViewById(R.id.button_advanced_input);
-        attachmentsButton = (ImageButton) findViewById(R.id.button_attachments);
+        advancedButton = findViewById(R.id.button_advanced_input);
+        attachmentsButton = findViewById(R.id.button_attachments);
         attachmentsCounter = findViewById(R.id.attachment_counter);
-        sendButton = (ImageButton) findViewById(R.id.button_send);
-        fullButton = (ImageButton) findViewById(R.id.button_full);
-        hideButton = (ImageButton) findViewById(R.id.button_hide);
-        editPollButton = (ImageButton) findViewById(R.id.button_edt_poll);
-        messageField = (CodeEditor) findViewById(R.id.message_field);
-        sendProgress = (ProgressBar) findViewById(R.id.send_progress);
-        formProgress = (ProgressBar) findViewById(R.id.form_load_progress);
-        messageWrapper = (ScrollView) findViewById(R.id.message_wrapper);
+        sendButton = findViewById(R.id.button_send);
+        fullButton = findViewById(R.id.button_full);
+        hideButton = findViewById(R.id.button_hide);
+        editPollButton = findViewById(R.id.button_edt_poll);
+        messageField = findViewById(R.id.message_field);
+        sendProgress = findViewById(R.id.send_progress);
+        formProgress = findViewById(R.id.form_load_progress);
+        messageWrapper = findViewById(R.id.message_wrapper);
 
         messageField.attachToScrollView(messageWrapper);
         messageWrapper.setEnabled(true);

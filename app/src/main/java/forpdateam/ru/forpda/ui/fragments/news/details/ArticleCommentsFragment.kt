@@ -3,32 +3,24 @@ package forpdateam.ru.forpda.ui.fragments.news.details
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.AppCompatImageButton
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
-
-import moxy.MvpAppCompatFragment
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
-
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatImageButton
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
 import forpdateam.ru.forpda.entity.remote.news.Comment
-import forpdateam.ru.forpda.model.AuthHolder
-import forpdateam.ru.forpda.model.interactors.news.ArticleInteractor
 import forpdateam.ru.forpda.presentation.articles.detail.comments.ArticleCommentPresenter
 import forpdateam.ru.forpda.presentation.articles.detail.comments.ArticleCommentView
 import forpdateam.ru.forpda.ui.fragments.RecyclerTopScroller
@@ -36,14 +28,18 @@ import forpdateam.ru.forpda.ui.fragments.TabTopScroller
 import forpdateam.ru.forpda.ui.fragments.devdb.brand.DevicesFragment
 import forpdateam.ru.forpda.ui.views.ContentController
 import forpdateam.ru.forpda.ui.views.FunnyContent
+import moxy.MvpAppCompatFragment
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 03.09.17.
  */
 
-class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView, ArticleCommentsAdapter.ClickListener, TabTopScroller {
-    private lateinit var refreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-    private lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
+class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView,
+    ArticleCommentsAdapter.ClickListener, TabTopScroller {
+    private lateinit var refreshLayout: SwipeRefreshLayout
+    private lateinit var recyclerView: RecyclerView
     private lateinit var messageField: EditText
     private lateinit var buttonSend: AppCompatImageButton
     private lateinit var progressBarSend: ProgressBar
@@ -59,17 +55,23 @@ class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView, Arti
 
     @ProvidePresenter
     fun providePresenter(): ArticleCommentPresenter = ArticleCommentPresenter(
-            (parentFragment as NewsDetailsFragment).provideChildInteractor(),
-            App.get().Di().router,
-            App.get().Di().linkHandler,
-            App.get().Di().authHolder,
-            App.get().Di().errorHandler
+        (parentFragment as NewsDetailsFragment).provideChildInteractor(),
+        App.get().Di().router,
+        App.get().Di().linkHandler,
+        App.get().Di().authHolder,
+        App.get().Di().errorHandler
     )
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.article_comments, container, false)
-        refreshLayout = view.findViewById<View>(R.id.swipe_refresh_list) as androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        recyclerView = view.findViewById<View>(R.id.base_list) as androidx.recyclerview.widget.RecyclerView
+        refreshLayout =
+            view.findViewById<View>(R.id.swipe_refresh_list) as SwipeRefreshLayout
+        recyclerView =
+            view.findViewById<View>(R.id.base_list) as RecyclerView
         writePanel = view.findViewById<View>(R.id.comment_write_panel) as RelativeLayout
         messageField = view.findViewById<View>(R.id.message_field) as EditText
         //val sendContainer = view.findViewById<View>(R.id.send_container) as FrameLayout
@@ -78,18 +80,24 @@ class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView, Arti
         val additionalContent = view.findViewById<View>(R.id.additional_content) as ViewGroup
         contentController = ContentController(null, additionalContent, refreshLayout)
 
-        refreshLayout.setProgressBackgroundColorSchemeColor(App.getColorFromAttr(context, R.attr.colorPrimary))
+        refreshLayout.setProgressBackgroundColorSchemeColor(
+            App.getColorFromAttr(
+                context,
+                R.attr.colorPrimary
+            )
+        )
         refreshLayout.setColorSchemeColors(App.getColorFromAttr(context, R.attr.colorAccent))
         refreshLayout.setOnRefreshListener { presenter.updateComments() }
 
         recyclerView.setBackgroundColor(App.getColorFromAttr(context, R.attr.background_for_lists))
-        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.setHasFixedSize(true)
         recyclerView.addItemDecoration(DevicesFragment.SpacingItemDecoration(App.px12, false))
         adapter.clickListener = this
         recyclerView.adapter = adapter
 
-        topScroller = RecyclerTopScroller(recyclerView, (parentFragment as NewsDetailsFragment).getAppBar())
+        topScroller =
+            RecyclerTopScroller(recyclerView, (parentFragment as NewsDetailsFragment).getAppBar())
 
         messageField.addTextChangedListener(object : SimpleTextWatcher() {
             override fun afterTextChanged(s: Editable) {
@@ -112,8 +120,8 @@ class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView, Arti
         if (comments.isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
                 val funnyContent = FunnyContent(context)
-                        .setImage(R.drawable.ic_comment)
-                        .setTitle(R.string.funny_article_comments_nodata_title)
+                    .setImage(R.drawable.ic_comment)
+                    .setTitle(R.string.funny_article_comments_nodata_title)
                 contentController.addContent(funnyContent, ContentController.TAG_NO_DATA)
             }
             contentController.showContent(ContentController.TAG_NO_DATA)
@@ -158,12 +166,12 @@ class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView, Arti
             fillMessageField(comment)
         } else {
             AlertDialog.Builder(context!!)
-                    .setMessage(R.string.comment_reply_warning)
-                    .setPositiveButton(getString(R.string.ok)) { _, _ ->
-                        fillMessageField(comment)
-                    }
-                    .setNegativeButton(getString(R.string.cancel), null)
-                    .show()
+                .setMessage(R.string.comment_reply_warning)
+                .setPositiveButton(getString(R.string.ok)) { _, _ ->
+                    fillMessageField(comment)
+                }
+                .setNegativeButton(getString(R.string.cancel), null)
+                .show()
         }
 
     }

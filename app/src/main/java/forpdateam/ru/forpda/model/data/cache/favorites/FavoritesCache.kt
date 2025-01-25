@@ -48,18 +48,18 @@ class FavoritesCache {
         }
         if (dataRelay.hasValue()) {
             realm.where(FavItemBd::class.java)
-                    .equalTo("favId", item.favId)
-                    .findFirst()
-                    ?.also { newItem ->
-                        val currentItems = dataRelay.value!!.toMutableList()
-                        val index = currentItems.indexOfFirst { newItem.favId == it.favId }
-                        if (index == -1) {
-                            dataRelay.accept(getItems())
-                        } else {
-                            currentItems[index] = FavItem(newItem)
-                            dataRelay.accept(currentItems)
-                        }
+                .equalTo("favId", item.favId)
+                .findFirst()
+                ?.also { newItem ->
+                    val currentItems = dataRelay.value!!.toMutableList()
+                    val index = currentItems.indexOfFirst { newItem.favId == it.favId }
+                    if (index == -1) {
+                        dataRelay.accept(getItems())
+                    } else {
+                        currentItems[index] = FavItem(newItem)
+                        dataRelay.accept(currentItems)
                     }
+                }
         }
     }
 

@@ -8,7 +8,6 @@ import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
 import io.reactivex.Observable
 import io.realm.Realm
-import java.lang.Exception
 
 class QmsCache {
 
@@ -34,39 +33,40 @@ class QmsCache {
         contactsRelay.accept(getContacts())
     }
 
-    fun updateContact(item:QmsContact) = Realm.getDefaultInstance().use { realm->
-        realm.executeTransaction {realmTr->
+    fun updateContact(item: QmsContact) = Realm.getDefaultInstance().use { realm ->
+        realm.executeTransaction { realmTr ->
             realmTr.copyToRealmOrUpdate(QmsContactBd(item))
         }
         if (contactsRelay.hasValue()) {
             realm.where(QmsContactBd::class.java)
-                    .equalTo("id", item.id)
-                    .findFirst()
-                    ?.also { newItem ->
-                        val currentItems = contactsRelay.value!!.toMutableList()
-                        val index = currentItems.indexOfFirst { newItem.id == it.id }
-                        if (index == -1) {
-                            contactsRelay.accept(getContacts())
-                        } else {
-                            currentItems[index] = QmsContact(newItem)
-                            contactsRelay.accept(currentItems)
-                        }
+                .equalTo("id", item.id)
+                .findFirst()
+                ?.also { newItem ->
+                    val currentItems = contactsRelay.value!!.toMutableList()
+                    val index = currentItems.indexOfFirst { newItem.id == it.id }
+                    if (index == -1) {
+                        contactsRelay.accept(getContacts())
+                    } else {
+                        currentItems[index] = QmsContact(newItem)
+                        contactsRelay.accept(currentItems)
                     }
+                }
         }
     }
 
 
     fun getThemes(userId: Int): QmsThemes = Realm.getDefaultInstance().use { realm ->
-        realm.where(QmsThemesBd::class.java).equalTo("userId", userId).findAll().last()?.let { result ->
-            QmsThemes(result).also { themes ->
-                themes.themes.addAll(result.themes.map {
-                    QmsTheme(it).also { theme ->
-                        theme.nick = themes.nick
-                        theme.userId = themes.userId
-                    }
-                })
-            }
-        } ?: throw Exception("Not found by userId=$userId")
+        realm.where(QmsThemesBd::class.java).equalTo("userId", userId).findAll().last()
+            ?.let { result ->
+                QmsThemes(result).also { themes ->
+                    themes.themes.addAll(result.themes.map {
+                        QmsTheme(it).also { theme ->
+                            theme.nick = themes.nick
+                            theme.userId = themes.userId
+                        }
+                    })
+                }
+            } ?: throw Exception("Not found by userId=$userId")
     }.also { themes ->
         getOrCreateThemesRelay(userId).also {
             if (!it.hasValue()) {
@@ -98,16 +98,17 @@ class QmsCache {
 
     fun saveThemes(data: QmsThemes) = Realm.getDefaultInstance().use { realm ->
         realm.executeTransaction { realmTr ->
-            realmTr.where(QmsThemesBd::class.java).equalTo("userId", data.userId).findAll().deleteAllFromRealm()
+            realmTr.where(QmsThemesBd::class.java).equalTo("userId", data.userId).findAll()
+                .deleteAllFromRealm()
             realmTr.copyToRealmOrUpdate(QmsThemesBd(data))
         }
         getOrCreateThemesRelay(data.userId).accept(getThemes(data.userId))
     }
 
     private fun getOrCreateThemesRelay(userId: Int): BehaviorRelay<QmsThemes> = themesRelays[userId]
-            ?: BehaviorRelay.create<QmsThemes>().also {
-                themesRelays[userId] = it
-            }
+        ?: BehaviorRelay.create<QmsThemes>().also {
+            themesRelays[userId] = it
+        }
 
 
 }

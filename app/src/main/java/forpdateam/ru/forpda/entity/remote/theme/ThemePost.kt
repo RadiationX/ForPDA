@@ -1,9 +1,6 @@
 package forpdateam.ru.forpda.entity.remote.theme
 
 import android.util.Pair
-
-import java.util.ArrayList
-
 import forpdateam.ru.forpda.entity.remote.BaseForumPost
 
 /**

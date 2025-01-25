@@ -2,8 +2,6 @@ package forpdateam.ru.forpda.entity.remote.devdb
 
 import android.util.Pair
 
-import java.util.ArrayList
-
 /**
  * Created by radiationx on 06.08.17.
  */

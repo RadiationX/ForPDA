@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.presentation.mentions
 
-import moxy.InjectViewState
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.mentions.MentionItem
@@ -11,6 +10,7 @@ import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import moxy.InjectViewState
 import java.util.regex.Pattern
 
 /**
@@ -19,11 +19,11 @@ import java.util.regex.Pattern
 
 @InjectViewState
 class MentionsPresenter(
-        private val mentionsRepository: MentionsRepository,
-        private val favoritesRepository: FavoritesRepository,
-        private val router: TabRouter,
-        private val linkHandler: ILinkHandler,
-        private val errorHandler: IErrorHandler
+    private val mentionsRepository: MentionsRepository,
+    private val favoritesRepository: FavoritesRepository,
+    private val router: TabRouter,
+    private val linkHandler: ILinkHandler,
+    private val errorHandler: IErrorHandler
 ) : BasePresenter<MentionsView>() {
 
     var currentSt: Int = 0
@@ -35,32 +35,34 @@ class MentionsPresenter(
 
     fun getMentions() {
         mentionsRepository
-                .getMentions(currentSt)
-                .doOnSubscribe { viewState.setRefreshing(true) }
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({
-                    viewState.showMentions(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .getMentions(currentSt)
+            .doOnSubscribe { viewState.setRefreshing(true) }
+            .doAfterTerminate { viewState.setRefreshing(false) }
+            .subscribe({
+                viewState.showMentions(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun addTopicToFavorite(topicId: Int, subType: String) {
         favoritesRepository
-                .editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
-                .subscribe({
-                    viewState.onAddToFavorite(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
+            .subscribe({
+                viewState.onAddToFavorite(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun onItemClick(item: MentionItem) {
-        linkHandler.handle(item.link, router, mapOf(
+        linkHandler.handle(
+            item.link, router, mapOf(
                 Screen.ARG_TITLE to item.title.orEmpty()
-        ))
+            )
+        )
     }
 
     fun onItemLongClick(item: MentionItem) {

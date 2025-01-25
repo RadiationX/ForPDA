@@ -1,7 +1,8 @@
 package forpdateam.ru.forpda.ui.views.adapters;
 
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by radiationx on 14.09.17.

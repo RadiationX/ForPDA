@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.presentation.qms.blacklist
 
-import moxy.InjectViewState
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.qms.QmsContact
 import forpdateam.ru.forpda.model.interactors.qms.QmsInteractor
@@ -8,6 +7,7 @@ import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import moxy.InjectViewState
 
 /**
  * Created by radiationx on 11.11.17.
@@ -15,10 +15,10 @@ import forpdateam.ru.forpda.presentation.TabRouter
 
 @InjectViewState
 class QmsBlackListPresenter(
-        private val qmsInteractor: QmsInteractor,
-        private val router: TabRouter,
-        private val linkHandler: ILinkHandler,
-        private val errorHandler: IErrorHandler
+    private val qmsInteractor: QmsInteractor,
+    private val router: TabRouter,
+    private val linkHandler: ILinkHandler,
+    private val errorHandler: IErrorHandler
 ) : BasePresenter<QmsBlackListView>() {
 
 
@@ -30,50 +30,50 @@ class QmsBlackListPresenter(
 
     fun loadContacts() {
         qmsInteractor
-                .getBlackList()
-                .doOnSubscribe { viewState.setRefreshing(true) }
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({
-                    viewState.showContacts(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .getBlackList()
+            .doOnSubscribe { viewState.setRefreshing(true) }
+            .doAfterTerminate { viewState.setRefreshing(false) }
+            .subscribe({
+                viewState.showContacts(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun blockUser(nick: String) {
         qmsInteractor
-                .blockUser(nick)
-                .subscribe({
-                    viewState.showContacts(it)
-                    viewState.clearNickField()
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .blockUser(nick)
+            .subscribe({
+                viewState.showContacts(it)
+                viewState.clearNickField()
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun unBlockUser(id: Int) {
         qmsInteractor
-                .unBlockUsers(id)
-                .subscribe({
-                    viewState.showContacts(it)
-                    viewState.clearNickField()
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .unBlockUsers(id)
+            .subscribe({
+                viewState.showContacts(it)
+                viewState.clearNickField()
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun searchUser(nick: String) {
         qmsInteractor
-                .findUser(nick)
-                .subscribe({
-                    viewState.showFoundUsers(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .findUser(nick)
+            .subscribe({
+                viewState.showFoundUsers(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun onItemLongClick(item: QmsContact) {

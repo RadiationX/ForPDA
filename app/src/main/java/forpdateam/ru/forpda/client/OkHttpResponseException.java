@@ -4,9 +4,9 @@ package forpdateam.ru.forpda.client;
  * Created by RadiationX on 14.08.2016.
  */
 public class OkHttpResponseException extends Exception {
-    private int code;
-    private String name;
-    private String url;
+    private final int code;
+    private final String name;
+    private final String url;
 
     public OkHttpResponseException(int code, String name, String url) {
         this.code = code;

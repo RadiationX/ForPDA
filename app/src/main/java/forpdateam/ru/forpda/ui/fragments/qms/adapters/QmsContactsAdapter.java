@@ -41,9 +41,9 @@ public class QmsContactsAdapter extends BaseAdapter<QmsContact, QmsContactsAdapt
 
         public ContactHolder(View v) {
             super(v);
-            avatar = (ImageView) v.findViewById(R.id.qms_contact_avatar);
-            nick = (TextView) v.findViewById(R.id.qms_contact_nick);
-            count = (TextView) v.findViewById(R.id.qms_contact_count);
+            avatar = v.findViewById(R.id.qms_contact_avatar);
+            nick = v.findViewById(R.id.qms_contact_nick);
+            count = v.findViewById(R.id.qms_contact_count);
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
         }

@@ -2,13 +2,12 @@ package forpdateam.ru.forpda.ui.fragments.theme;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-
-import androidx.appcompat.app.AlertDialog;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -29,9 +28,9 @@ public class ThemeDialogsHelper_V2 {
     private final DynamicDialogMenu<IThemePresenter, IBaseForumPost> userMenu = new DynamicDialogMenu<>();
     private final DynamicDialogMenu<IThemePresenter, IBaseForumPost> reputationMenu = new DynamicDialogMenu<>();
     private final DynamicDialogMenu<IThemePresenter, IBaseForumPost> postMenu = new DynamicDialogMenu<>();
-    private Context context;
-    private AuthHolder authHolder;
-    private OtherPreferencesHolder otherPreferencesHolder;
+    private final Context context;
+    private final AuthHolder authHolder;
+    private final OtherPreferencesHolder otherPreferencesHolder;
 
     public ThemeDialogsHelper_V2(Context context, AuthHolder authHolder, OtherPreferencesHolder otherPreferencesHolder) {
         this.context = context;
@@ -128,7 +127,7 @@ public class ThemeDialogsHelper_V2 {
         View layout = inflater.inflate(R.layout.report_layout, null);
 
         assert layout != null;
-        final EditText messageField = (EditText) layout.findViewById(R.id.report_text_field);
+        final EditText messageField = layout.findViewById(R.id.report_text_field);
 
         new AlertDialog.Builder(context)
                 .setTitle(String.format(App.get().getString(R.string.report_to_post_Nick), post.getNick()))
@@ -152,8 +151,8 @@ public class ThemeDialogsHelper_V2 {
         View layout = inflater.inflate(R.layout.reputation_change_layout, null);
 
         assert layout != null;
-        final TextView text = (TextView) layout.findViewById(R.id.reputation_text);
-        final EditText messageField = (EditText) layout.findViewById(R.id.reputation_text_field);
+        final TextView text = layout.findViewById(R.id.reputation_text);
+        final EditText messageField = layout.findViewById(R.id.reputation_text_field);
         text.setText(String.format(context.getString(R.string.change_reputation_Type_Nick), context.getString(type ? R.string.increase : R.string.decrease), post.getNick()));
 
         new AlertDialog.Builder(context)

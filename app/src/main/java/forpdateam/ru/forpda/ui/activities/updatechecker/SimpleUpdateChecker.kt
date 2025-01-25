@@ -21,20 +21,20 @@ import io.reactivex.disposables.CompositeDisposable
  */
 
 class SimpleUpdateChecker(
-        private val checkerRepository: CheckerRepository
+    private val checkerRepository: CheckerRepository
 ) {
 
     private val compositeDisposable = CompositeDisposable()
 
     fun checkUpdate() {
         compositeDisposable.add(
-                checkerRepository
-                        .checkUpdate(true)
-                        .subscribe({
-                            showUpdateData(it)
-                        }, {
-                            it.printStackTrace()
-                        })
+            checkerRepository
+                .checkUpdate(true)
+                .subscribe({
+                    showUpdateData(it)
+                }, {
+                    it.printStackTrace()
+                })
         )
     }
 
@@ -52,7 +52,11 @@ class SimpleUpdateChecker(
             val channelName = context.getString(R.string.updater_notification_title)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT)
+                val channel = NotificationChannel(
+                    channelId,
+                    channelName,
+                    NotificationManager.IMPORTANCE_DEFAULT
+                )
                 val manager = context.getSystemService(NotificationManager::class.java)
                 manager?.createNotificationChannel(channel)
             }
@@ -64,7 +68,12 @@ class SimpleUpdateChecker(
             mBuilder.setSmallIcon(R.drawable.ic_notify_mention)
 
             mBuilder.setContentTitle(context.getString(R.string.updater_notification_title))
-            mBuilder.setContentText(String.format(context.getString(R.string.updater_notification_content_VerName), update.name))
+            mBuilder.setContentText(
+                String.format(
+                    context.getString(R.string.updater_notification_content_VerName),
+                    update.name
+                )
+            )
 
             mBuilder.setChannelId(channelId)
 

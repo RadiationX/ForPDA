@@ -1,8 +1,6 @@
 package forpdateam.ru.forpda.ui.views.messagepanel.attachments;
 
 import android.content.Context;
-import android.os.Build;
-import androidx.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 

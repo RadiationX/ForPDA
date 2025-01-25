@@ -6,20 +6,22 @@ import android.util.Log
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
 import org.json.JSONArray
 import org.json.JSONObject
-import java.util.*
+import java.util.Collections
 import java.util.regex.Pattern
 
 class PatternProvider(
-        private val context: Context,
-        private val sharedPreferences: SharedPreferences
+    private val context: Context,
+    private val sharedPreferences: SharedPreferences
 ) : IPatternProvider {
 
     companion object {
         private const val KEY_PATTERNS = "regex_patterns"
     }
 
-    private val patternSources = Collections.synchronizedMap(mutableMapOf<String, MutableMap<String, String>>())
-    private val patterns = Collections.synchronizedMap(mutableMapOf<String, MutableMap<String, Pattern>>())
+    private val patternSources =
+        Collections.synchronizedMap(mutableMapOf<String, MutableMap<String, String>>())
+    private val patterns =
+        Collections.synchronizedMap(mutableMapOf<String, MutableMap<String, Pattern>>())
 
     private var currentVersion = -1
 
@@ -33,18 +35,18 @@ class PatternProvider(
 
     @Synchronized
     override fun getPattern(scope: String, key: String): Pattern = patternSources
-            .also {
-                if (it.isEmpty()) {
-                    init()
-                }
-            }[scope]
-            ?.get(key)
-            ?.let { source ->
-                patterns[scope]?.get(key) ?: Pattern.compile(source).also {
-                    patterns[scope]?.put(key, it)
-                }
+        .also {
+            if (it.isEmpty()) {
+                init()
             }
-            ?: throw Exception("Not found pattern by: s=$scope, k=$key")
+        }[scope]
+        ?.get(key)
+        ?.let { source ->
+            patterns[scope]?.get(key) ?: Pattern.compile(source).also {
+                patterns[scope]?.put(key, it)
+            }
+        }
+        ?: throw Exception("Not found pattern by: s=$scope, k=$key")
 
     @Synchronized
     override fun update(jsonString: String) {
@@ -71,10 +73,13 @@ class PatternProvider(
 
         Log.e("PatternProvider", "versions: assets=${assetsData.first}, saved=${savedData.first}")
 
-        arrayOf(assetsData, savedData).maxBy { it.first }?.let {
+        arrayOf(assetsData, savedData).maxBy { it.first }.let {
             update(it.first, it.second)
         }
-        Log.e("PatternProvider", "update time: ${System.currentTimeMillis() - time}, ${Thread.currentThread()}")
+        Log.e(
+            "PatternProvider",
+            "update time: ${System.currentTimeMillis() - time}, ${Thread.currentThread()}"
+        )
     }
 
     private fun parse(jsonString: String): Pair<Int, Map<String, MutableMap<String, String>>> {
@@ -124,12 +129,12 @@ class PatternProvider(
     }
 
     private fun getAssetsPatterns(): String = context
-            .assets
-            .open("patterns.json")
-            .bufferedReader()
-            .use {
-                it.readText()
-            }
+        .assets
+        .open("patterns.json")
+        .bufferedReader()
+        .use {
+            it.readText()
+        }
 
     private fun save(version: Int, source: Map<String, MutableMap<String, String>>) {
         val patternsJson = JSONObject()

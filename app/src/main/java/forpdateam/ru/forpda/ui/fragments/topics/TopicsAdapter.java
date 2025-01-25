@@ -1,11 +1,12 @@
 package forpdateam.ru.forpda.ui.fragments.topics;
 
 import android.graphics.Typeface;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -64,9 +65,9 @@ public class TopicsAdapter extends BaseSectionedAdapter<TopicItem, BaseSectioned
         TopicItem item = getItem(section, relativePosition);
         int viewType = getItemViewType(section, relativePosition, absolutePosition);
         if (viewType == VIEW_TYPE_ANNOUNCE) {
-            ((AnnounceHolder) holder).bind(item);
+            holder.bind(item);
         } else {
-            ((ItemHolder) holder).bind(item);
+            holder.bind(item);
         }
     }
 
@@ -77,7 +78,7 @@ public class TopicsAdapter extends BaseSectionedAdapter<TopicItem, BaseSectioned
         HeaderHolder(View v) {
             super(v);
             topDivider = v.findViewById(R.id.topic_item_top_divider);
-            title = (TextView) v.findViewById(R.id.topic_item_title);
+            title = v.findViewById(R.id.topic_item_title);
         }
 
         @Override
@@ -94,7 +95,7 @@ public class TopicsAdapter extends BaseSectionedAdapter<TopicItem, BaseSectioned
 
         AnnounceHolder(View v) {
             super(v);
-            title = (TextView) v.findViewById(R.id.topic_item_title);
+            title = v.findViewById(R.id.topic_item_title);
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
         }
@@ -135,13 +136,13 @@ public class TopicsAdapter extends BaseSectionedAdapter<TopicItem, BaseSectioned
         ItemHolder(View v) {
             super(v);
             topDivider = v.findViewById(R.id.topic_item_top_divider);
-            title = (TextView) v.findViewById(R.id.topic_item_title);
-            desc = (TextView) v.findViewById(R.id.topic_item_desc);
-            lastNick = (TextView) v.findViewById(R.id.topic_item_last_nick);
-            date = (TextView) v.findViewById(R.id.topic_item_date);
-            forumIcon = (ImageView) v.findViewById(R.id.topic_item_forum_icon);
-            lockIcon = (ImageView) v.findViewById(R.id.topic_item_lock_icon);
-            pollIcon = (ImageView) v.findViewById(R.id.topic_item_poll_icon);
+            title = v.findViewById(R.id.topic_item_title);
+            desc = v.findViewById(R.id.topic_item_desc);
+            lastNick = v.findViewById(R.id.topic_item_last_nick);
+            date = v.findViewById(R.id.topic_item_date);
+            forumIcon = v.findViewById(R.id.topic_item_forum_icon);
+            lockIcon = v.findViewById(R.id.topic_item_lock_icon);
+            pollIcon = v.findViewById(R.id.topic_item_poll_icon);
 
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
@@ -152,7 +153,7 @@ public class TopicsAdapter extends BaseSectionedAdapter<TopicItem, BaseSectioned
             title.setText(item.getTitle());
             title.setTypeface(item.isNew() ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
             title.setTextColor(item.isNew() ? titleColorNew : titleColor);
-            if (false && item.getDesc() != null) {
+            if (false) {
                 desc.setVisibility(View.VISIBLE);
                 desc.setText(item.getDesc());
             } else {

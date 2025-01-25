@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.ui
 
-import androidx.annotation.Dimension
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 

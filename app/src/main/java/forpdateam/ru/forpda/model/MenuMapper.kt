@@ -8,9 +8,9 @@ import forpdateam.ru.forpda.ui.views.drawers.adapters.DrawerMenuItem
 object MenuMapper {
 
     fun mapToDrawer(item: AppMenuItem): DrawerMenuItem = DrawerMenuItem(
-            getTitle(item),
-            getIcon(item),
-            item
+        getTitle(item),
+        getIcon(item),
+        item
     )
 
     fun getTitle(item: AppMenuItem): Int = when (item.id) {

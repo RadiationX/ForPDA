@@ -5,7 +5,7 @@ import forpdateam.ru.forpda.model.data.cache.forumuser.UserSource
 import forpdateam.ru.forpda.model.data.remote.api.qms.QmsApi
 
 class UserSourceProvider(
-        private val qmsApi: QmsApi
+    private val qmsApi: QmsApi
 ) : UserSource {
     override fun getUsers(nick: String): List<ForumUser> = qmsApi.findUser(nick)
 }

@@ -10,8 +10,8 @@ import java.util.regex.Pattern
  * Created by radiationx on 04.08.16.
  */
 class ThemeApi(
-        private val webClient: IWebClient,
-        private val themeParser: ThemeParser
+    private val webClient: IWebClient,
+    private val themeParser: ThemeParser
 ) {
 
     fun getTheme(url: String, hatOpen: Boolean, pollOpen: Boolean): ThemePage {
@@ -22,14 +22,16 @@ class ThemeApi(
 
     fun reportPost(topicId: Int, postId: Int, message: String): Boolean {
         val request = NetworkRequest.Builder()
-                .url("https://4pda.to/forum/index.php?act=report&send=1&t=$topicId&p=$postId")
-                .formHeader("message", URLEncoder.encode(message, "windows-1251"), true)
-                .build()
+            .url("https://4pda.to/forum/index.php?act=report&send=1&t=$topicId&p=$postId")
+            .formHeader("message", URLEncoder.encode(message, "windows-1251"), true)
+            .build()
         val response = webClient.request(request)
-        val p = Pattern.compile("<div class=\"errorwrap\">\n" +
-                "\\s*<h4>Причина:</h4>\n" +
-                "\\s*\n" +
-                "\\s*<p>(.*)</p>", Pattern.MULTILINE)
+        val p = Pattern.compile(
+            "<div class=\"errorwrap\">\n" +
+                    "\\s*<h4>Причина:</h4>\n" +
+                    "\\s*\n" +
+                    "\\s*<p>(.*)</p>", Pattern.MULTILINE
+        )
         val m = p.matcher(response.body)
         if (m.find()) {
             throw Exception("Ошибка отправки жалобы: " + m.group(1))
@@ -38,7 +40,8 @@ class ThemeApi(
     }
 
     fun deletePost(postId: Int): Boolean {
-        val url = "https://4pda.to/forum/index.php?act=zmod&auth_key=${webClient.authKey}&code=postchoice&tact=delete&selectedpids=$postId"
+        val url =
+            "https://4pda.to/forum/index.php?act=zmod&auth_key=${webClient.authKey}&code=postchoice&tact=delete&selectedpids=$postId"
         val response = webClient.request(NetworkRequest.Builder().url(url).xhrHeader().build())
         val body = response.body
         if (body != "ok") {
@@ -48,7 +51,8 @@ class ThemeApi(
     }
 
     fun votePost(postId: Int, type: Boolean): String {
-        val response = webClient.get("https://4pda.to/forum/zka.php?i=$postId&v=${if (type) "1" else "-1"}")
+        val response =
+            webClient.get("https://4pda.to/forum/zka.php?i=$postId&v=${if (type) "1" else "-1"}")
         var result: String? = null
 
         val alreadyVote = "Ошибка: Вы уже голосовали за это сообщение"
@@ -73,6 +77,7 @@ class ThemeApi(
 
     companion object {
         val elemToScrollPattern = Pattern.compile("(?:anchor=|#)([^&\\n\\=\\?\\.\\#]*)")
-        val attachImagesPattern = Pattern.compile("(4pda\\.(?:ru|to)\\/forum\\/dl\\/post\\/\\d+\\/[^\"']*?\\.(?:jpe?g|png|gif|bmp))\"?(?:[^>]*?title=\"([^\"']*?\\.(?:jpe?g|png|gif|bmp)) - [^\"']*?\")?")
+        val attachImagesPattern =
+            Pattern.compile("(4pda\\.(?:ru|to)\\/forum\\/dl\\/post\\/\\d+\\/[^\"']*?\\.(?:jpe?g|png|gif|bmp))\"?(?:[^>]*?title=\"([^\"']*?\\.(?:jpe?g|png|gif|bmp)) - [^\"']*?\")?")
     }
 }

@@ -10,7 +10,6 @@ import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.entity.remote.devdb.Device;
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils;
-import forpdateam.ru.forpda.presentation.ISystemLinkHandler;
 import forpdateam.ru.forpda.ui.fragments.devdb.DevDbHelper;
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
@@ -21,7 +20,7 @@ import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 
 public class CommentsAdapter extends BaseAdapter<Device.Comment, CommentsAdapter.CommentHolder> {
 
-    private CommentHolder.Listener listener;
+    private final CommentHolder.Listener listener;
 
     public CommentsAdapter(CommentHolder.Listener listener) {
         this.listener = listener;
@@ -39,22 +38,22 @@ public class CommentsAdapter extends BaseAdapter<Device.Comment, CommentsAdapter
     }
 
     public static class CommentHolder extends BaseViewHolder<Device.Comment> {
-        private TextView title;
-        private TextView date;
-        private TextView desc;
-        private TextView rating;
-        private Button like;
-        private Button dislike;
+        private final TextView title;
+        private final TextView date;
+        private final TextView desc;
+        private final TextView rating;
+        private final Button like;
+        private final Button dislike;
         private Device.Comment currentItem;
 
         public CommentHolder(View v, Listener listener) {
             super(v);
-            title = (TextView) v.findViewById(R.id.item_title);
-            date = (TextView) v.findViewById(R.id.item_date);
-            desc = (TextView) v.findViewById(R.id.item_desc);
-            rating = (TextView) v.findViewById(R.id.item_rating);
-            like = (Button) v.findViewById(R.id.item_like_btn);
-            dislike = (Button) v.findViewById(R.id.item_dislike_btn);
+            title = v.findViewById(R.id.item_title);
+            date = v.findViewById(R.id.item_date);
+            desc = v.findViewById(R.id.item_desc);
+            rating = v.findViewById(R.id.item_rating);
+            like = v.findViewById(R.id.item_like_btn);
+            dislike = v.findViewById(R.id.item_dislike_btn);
 
             like.setCompoundDrawablesRelativeWithIntrinsicBounds(App.getVecDrawable(v.getContext(), R.drawable.ic_thumb_up), null, null, null);
             dislike.setCompoundDrawablesRelativeWithIntrinsicBounds(App.getVecDrawable(v.getContext(), R.drawable.ic_thumb_down), null, null, null);

@@ -13,7 +13,7 @@ import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel;
 
 @SuppressLint("ViewConstructor")
 public class BasePanelItem extends FrameLayout {
-    private String title;
+    private final String title;
     protected MessagePanel messagePanel;
     protected AutoFitRecyclerView recyclerView;
 

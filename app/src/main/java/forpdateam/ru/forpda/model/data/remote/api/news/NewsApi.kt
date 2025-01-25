@@ -6,7 +6,54 @@ import forpdateam.ru.forpda.entity.remote.news.DetailsPage
 import forpdateam.ru.forpda.entity.remote.news.NewsItem
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.*
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_CATEGORY_ALL
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_CATEGORY_ARTICLES
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_CATEGORY_GAMES
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_CATEGORY_REVIEWS
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_CATEGORY_ROOT
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_CATEGORY_SOFTWARE
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_ACCESSORIES_REVIEWS
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_ACOUSTICS_REVIEWS
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_ANDROID_GAME
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_ANDROID_SOFTWARE
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_DEVSTORY_GAMES
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_DEVSTORY_SOFTWARE
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_HOW_TO_ANDROID
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_HOW_TO_INTERVIEW
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_HOW_TO_IOS
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_HOW_TO_WP
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_IOS_GAME
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_IOS_SOFTWARE
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_NOTEBOOKS_REVIEWS
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_SMARTPHONES_REVIEWS
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_SMART_WATCH_REVIEWS
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_TABLETS_REVIEWS
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_WP7_GAME
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_WP7_SOFTWARE
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_ACCESSORIES_REVIEWS
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_ACOUSTICS_REVIEWS
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_ALL
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_ANDROID_GAME
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_ANDROID_SOFTWARE
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_ARTICLES
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_DEVSTORY_GAMES
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_DEVSTORY_SOFTWARE
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_GAMES
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_HOW_TO_ANDROID
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_HOW_TO_INTERVIEW
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_HOW_TO_IOS
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_HOW_TO_WP
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_IOS_GAME
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_IOS_SOFTWARE
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_NOTEBOOKS_REVIEWS
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_REVIEWS
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_ROOT
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_SMARTPHONES_REVIEWS
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_SMART_WATCH_REVIEWS
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_SOFTWARE
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_TABLETS_REVIEWS
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_WP7_GAME
+import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_WP7_SOFTWARE
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 
@@ -14,8 +61,8 @@ import java.net.URLEncoder
  * Created by radiationx on 31.07.16.
  */
 class NewsApi(
-        private val webClient: IWebClient,
-        private val articleParser: ArticleParser
+    private val webClient: IWebClient,
+    private val articleParser: ArticleParser
 ) {
 
     fun getNews(category: String, pageNumber: Int): List<NewsItem> {
@@ -37,15 +84,15 @@ class NewsApi(
     fun sendPoll(from: String, pollId: Int, answersId: IntArray): DetailsPage {
         val url = "https://4pda.to/pages/poll/?act=vote&poll_id=$pollId"
         val rBuilder = NetworkRequest.Builder()
-                .url(url)
-                .multipart()
-                .xhrHeader()
-                .formHeader("from", from)
-                .apply {
-                    answersId.forEach {
-                        formHeader("answer[]", it.toString())
-                    }
+            .url(url)
+            .multipart()
+            .xhrHeader()
+            .formHeader("from", from)
+            .apply {
+                answersId.forEach {
+                    formHeader("answer[]", it.toString())
                 }
+            }
 
         val response = webClient.request(rBuilder.build())
         return articleParser.parseArticle(response.body)
@@ -70,11 +117,11 @@ class NewsApi(
         }
 
         val builder = NetworkRequest.Builder()
-                .url("https://4pda.to/wp-comments-post.php")
-                .formHeader("comment_post_ID", articleId.toString())
-                .formHeader("comment_reply_ID", commentId.toString())
-                .formHeader("comment_reply_dp", if (commentId == 0) "0" else "1")
-                .formHeader("comment", comment, true)
+            .url("https://4pda.to/wp-comments-post.php")
+            .formHeader("comment_post_ID", articleId.toString())
+            .formHeader("comment_reply_ID", commentId.toString())
+            .formHeader("comment_reply_dp", if (commentId == 0) "0" else "1")
+            .formHeader("comment", comment, true)
         val response = webClient.request(builder.build())
         return articleParser.parseArticle(response.body)
     }

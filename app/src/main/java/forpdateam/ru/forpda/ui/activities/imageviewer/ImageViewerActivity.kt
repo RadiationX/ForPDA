@@ -1,24 +1,23 @@
 package forpdateam.ru.forpda.ui.activities.imageviewer
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.graphics.Color
 import android.graphics.PorterDuff
-import android.os.Build
 import android.os.Bundle
-import androidx.core.content.ContextCompat
-import androidx.viewpager.widget.ViewPager
-import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.viewpager.widget.ViewPager
 import com.github.chrisbanes.photoview.OnPhotoTapListener
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.LocaleHelper
 import forpdateam.ru.forpda.common.Utils
-import kotlinx.android.synthetic.main.activity_img_viewer.*
-import java.util.*
+import kotlinx.android.synthetic.main.activity_img_viewer.image_viewer_pullBack
+import kotlinx.android.synthetic.main.activity_img_viewer.img_viewer_pager
+import kotlinx.android.synthetic.main.activity_img_viewer.toolbar
 
 /**
  * Created by radiationx on 24.05.17.
@@ -39,15 +38,17 @@ class ImageViewerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setTheme(R.style.ImageViewTheme)
         setContentView(R.layout.activity_img_viewer)
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_IMMERSIVE
+        window.decorView.systemUiVisibility =
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_IMMERSIVE
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
 
         image_viewer_pullBack.setCallback(pullBackCallback)
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener { finish() }
-        toolbar.navigationIcon = ContextCompat.getDrawable(toolbar.context, R.drawable.ic_arrow_back_white_24dp)?.apply {
-            setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
-        }
+        toolbar.navigationIcon =
+            ContextCompat.getDrawable(toolbar.context, R.drawable.ic_arrow_back_white_24dp)?.apply {
+                setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+            }
 
 
         val extUrls = mutableListOf<String>()
@@ -62,7 +63,10 @@ class ImageViewerActivity : AppCompatActivity() {
 
         if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_INDEX_KEY)) {
             currentIndex = savedInstanceState.getInt(SELECTED_INDEX_KEY, 0)
-        } else if (intent != null && intent.extras != null && intent.extras!!.containsKey(SELECTED_INDEX_KEY)) {
+        } else if (intent != null && intent.extras != null && intent.extras!!.containsKey(
+                SELECTED_INDEX_KEY
+            )
+        ) {
             currentIndex = intent.extras!!.getInt(SELECTED_INDEX_KEY, 0)
         }
         if (currentIndex < 0) {
@@ -70,7 +74,8 @@ class ImageViewerActivity : AppCompatActivity() {
         }
 
 
-        img_viewer_pager.addOnPageChangeListener(object : androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener() {
+        img_viewer_pager.addOnPageChangeListener(object :
+            ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 updateTitle(position)
             }
@@ -86,7 +91,11 @@ class ImageViewerActivity : AppCompatActivity() {
     private fun updateTitle(selectedPageIndex: Int) {
         currentIndex = selectedPageIndex
         toolbar.title = names[selectedPageIndex]
-        toolbar.subtitle = String.format(getString(R.string.image_viewer_subtitle_Cur_All), selectedPageIndex + 1, currentImages.size)
+        toolbar.subtitle = String.format(
+            getString(R.string.image_viewer_subtitle_Cur_All),
+            selectedPageIndex + 1,
+            currentImages.size
+        )
     }
 
     private fun toggle() {

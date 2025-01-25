@@ -1,50 +1,59 @@
 package forpdateam.ru.forpda.ui.fragments.other
 
-import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.R
-import forpdateam.ru.forpda.entity.common.AuthState
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ProfileListItem
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.item_other_profile.view.*
+import kotlinx.android.synthetic.main.item_other_profile.view.profileAvatar
+import kotlinx.android.synthetic.main.item_other_profile.view.profileDesc
+import kotlinx.android.synthetic.main.item_other_profile.view.profileLogout
+import kotlinx.android.synthetic.main.item_other_profile.view.profileNick
 
 class ProfileItemDelegate(
-        private val clickListener: (ProfileModel?) -> Unit,
-        private val logoutClickListener: () -> Unit
+    private val clickListener: (ProfileModel?) -> Unit,
+    private val logoutClickListener: () -> Unit
 ) : AdapterDelegate<MutableList<ListItem>>() {
     //private val dimensionsProvider = App.injections.dimensionsProvider
     private var compositeDisposable = CompositeDisposable()
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ProfileListItem
+    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean =
+        items[position] is ProfileListItem
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(
+        items: MutableList<ListItem>,
+        position: Int,
+        holder: RecyclerView.ViewHolder,
+        payloads: MutableList<Any>
+    ) {
         val item = items[position] as ProfileListItem
         (holder as ViewHolder).bind(item.profileItem)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup): androidx.recyclerview.widget.RecyclerView.ViewHolder = ViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder =
+        ViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.item_other_profile, parent, false),
             clickListener,
             logoutClickListener
-    )
+        )
 
-    override fun onViewDetachedFromWindow(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder?) {
+    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder?) {
         super.onViewDetachedFromWindow(holder)
         compositeDisposable.dispose()
     }
 
     inner class ViewHolder(
-            val view: View,
-            private val clickListener: (ProfileModel?) -> Unit,
-            private val logoutClickListener: () -> Unit
-    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+        val view: View,
+        private val clickListener: (ProfileModel?) -> Unit,
+        private val logoutClickListener: () -> Unit
+    ) : RecyclerView.ViewHolder(view) {
 
         private var item: ProfileModel? = null
 

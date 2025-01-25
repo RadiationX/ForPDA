@@ -95,8 +95,8 @@ object TempHelper {
             ProfileModel.ContactType.INSTAGRAM -> return R.drawable.contact_instagram
             ProfileModel.ContactType.MAIL_RU -> return R.drawable.contact_mail_ru
             ProfileModel.ContactType.TELEGRAM -> return R.drawable.contact_telegram
-        /*case WINDOWS_LIVE:
-                return R.drawable.contact_site;*/
+            /*case WINDOWS_LIVE:
+                    return R.drawable.contact_site;*/
             else -> return R.drawable.contact_site
         }
     }

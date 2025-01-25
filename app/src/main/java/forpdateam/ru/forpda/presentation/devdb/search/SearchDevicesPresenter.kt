@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.presentation.devdb.search
 
-import moxy.InjectViewState
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.devdb.Brand
@@ -8,6 +7,7 @@ import forpdateam.ru.forpda.model.repository.devdb.DevDbRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import moxy.InjectViewState
 
 /**
  * Created by radiationx on 11.11.17.
@@ -15,18 +15,14 @@ import forpdateam.ru.forpda.presentation.TabRouter
 
 @InjectViewState
 class SearchDevicesPresenter(
-        private val devDbRepository: DevDbRepository,
-        private val router: TabRouter,
-        private val errorHandler: IErrorHandler
+    private val devDbRepository: DevDbRepository,
+    private val router: TabRouter,
+    private val errorHandler: IErrorHandler
 ) : BasePresenter<SearchDevicesView>() {
 
     var searchQuery: String? = null
 
     var currentData: Brand? = null
-
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
-    }
 
     fun refresh() = search(searchQuery)
 
@@ -36,16 +32,16 @@ class SearchDevicesPresenter(
             return
         }
         devDbRepository
-                .search(searchQuery.orEmpty())
-                .doOnSubscribe { viewState.setRefreshing(true) }
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({
-                    currentData = it
-                    viewState.showData(it, searchQuery.orEmpty())
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .search(searchQuery.orEmpty())
+            .doOnSubscribe { viewState.setRefreshing(true) }
+            .doAfterTerminate { viewState.setRefreshing(false) }
+            .subscribe({
+                currentData = it
+                viewState.showData(it, searchQuery.orEmpty())
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun openDevice(item: Brand.DeviceItem) {

@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.presentation.forum
 
-import moxy.InjectViewState
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemTree
@@ -10,6 +9,7 @@ import forpdateam.ru.forpda.model.repository.forum.ForumRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import moxy.InjectViewState
 
 /**
  * Created by radiationx on 03.01.18.
@@ -17,13 +17,13 @@ import forpdateam.ru.forpda.presentation.TabRouter
 
 @InjectViewState
 class ForumPresenter(
-        private val forumRepository: ForumRepository,
-        private val favoritesRepository: FavoritesRepository,
-        private val router: TabRouter,
-        private val errorHandler: IErrorHandler
+    private val forumRepository: ForumRepository,
+    private val favoritesRepository: FavoritesRepository,
+    private val router: TabRouter,
+    private val errorHandler: IErrorHandler
 ) : BasePresenter<ForumView>() {
 
-    var targetForumId = -1;
+    var targetForumId = -1
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -33,35 +33,35 @@ class ForumPresenter(
 
     fun loadForums() {
         forumRepository
-                .getForums()
-                .doOnSubscribe { viewState.setRefreshing(true) }
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({
-                    viewState.showForums(it)
-                    scrollToTarget()
-                    saveCacheForums(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .getForums()
+            .doOnSubscribe { viewState.setRefreshing(true) }
+            .doAfterTerminate { viewState.setRefreshing(false) }
+            .subscribe({
+                viewState.showForums(it)
+                scrollToTarget()
+                saveCacheForums(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     private fun getCacheForums() {
         forumRepository
-                .getCache()
-                .doOnSubscribe { viewState.setRefreshing(true) }
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({ it ->
-                    if (it.forums == null) {
-                        loadForums()
-                    } else {
-                        viewState.showForums(it)
-                        scrollToTarget()
-                    }
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .getCache()
+            .doOnSubscribe { viewState.setRefreshing(true) }
+            .doAfterTerminate { viewState.setRefreshing(false) }
+            .subscribe({ it ->
+                if (it.forums == null) {
+                    loadForums()
+                } else {
+                    viewState.showForums(it)
+                    scrollToTarget()
+                }
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     private fun scrollToTarget() {
@@ -73,48 +73,48 @@ class ForumPresenter(
 
     private fun saveCacheForums(rootForum: ForumItemTree) {
         forumRepository
-                .saveCache(rootForum)
-                .doOnTerminate { viewState.setRefreshing(true) }
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({
+            .saveCache(rootForum)
+            .doOnTerminate { viewState.setRefreshing(true) }
+            .doAfterTerminate { viewState.setRefreshing(false) }
+            .subscribe({
 
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun markRead(id: Int) {
         forumRepository
-                .markRead(id)
-                .subscribe({
-                    viewState.onMarkRead()
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .markRead(id)
+            .subscribe({
+                viewState.onMarkRead()
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun markAllRead() {
         forumRepository
-                .markAllRead()
-                .subscribe({
-                    viewState.onMarkAllRead()
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .markAllRead()
+            .subscribe({
+                viewState.onMarkAllRead()
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun addToFavorite(forumId: Int, subType: String) {
         favoritesRepository
-                .editFavorites(FavoritesApi.ACTION_ADD_FORUM, -1, forumId, subType)
-                .subscribe({
-                    viewState.onAddToFavorite(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .editFavorites(FavoritesApi.ACTION_ADD_FORUM, -1, forumId, subType)
+            .subscribe({
+                viewState.onAddToFavorite(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun copyLink(item: ForumItemTree) {
@@ -129,7 +129,8 @@ class ForumPresenter(
 
     fun navigateToSearch(item: ForumItemTree) {
         router.navigateTo(Screen.Search().apply {
-            searchUrl = "https://4pda.to/forum/index.php?act=search&source=all&forums%5B%5D=${item.id}"
+            searchUrl =
+                "https://4pda.to/forum/index.php?act=search&source=all&forums%5B%5D=${item.id}"
         })
     }
 }

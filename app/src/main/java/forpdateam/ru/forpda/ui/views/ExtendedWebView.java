@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.ui.views;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Rect;
 import android.media.AudioManager;
@@ -49,9 +48,9 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     private OnDirectionListener onDirectionListener;
     private OnScrollListener onScrollListener;
     private AudioManager audioManager;
-    private Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
     private Thread mUiThread;
-    private Queue<Runnable> actionsForWebView = new LinkedList<>();
+    private final Queue<Runnable> actionsForWebView = new LinkedList<>();
     private JsLifeCycleListener jsLifeCycleListener;
 
     private DialogsHelper dialogsHelper;

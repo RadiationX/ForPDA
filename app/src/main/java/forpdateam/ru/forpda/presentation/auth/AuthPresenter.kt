@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.presentation.auth
 
-import moxy.InjectViewState
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.common.AuthData
 import forpdateam.ru.forpda.entity.common.AuthState
@@ -12,9 +11,9 @@ import forpdateam.ru.forpda.model.repository.auth.AuthRepository
 import forpdateam.ru.forpda.model.repository.profile.ProfileRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ISystemLinkHandler
-import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import io.reactivex.Observable
+import moxy.InjectViewState
 import java.util.concurrent.TimeUnit
 
 /**
@@ -23,13 +22,13 @@ import java.util.concurrent.TimeUnit
 
 @InjectViewState
 class AuthPresenter(
-        private val authRepository: AuthRepository,
-        private val profileRepository: ProfileRepository,
-        private val router: TabRouter,
-        private val schedulers: SchedulersProvider,
-        private val authHolder: AuthHolder,
-        private val errorHandler: IErrorHandler,
-        private val systemLinkHandler: ISystemLinkHandler
+    private val authRepository: AuthRepository,
+    private val profileRepository: ProfileRepository,
+    private val router: TabRouter,
+    private val schedulers: SchedulersProvider,
+    private val authHolder: AuthHolder,
+    private val errorHandler: IErrorHandler,
+    private val systemLinkHandler: ISystemLinkHandler
 ) : BasePresenter<AuthView>() {
 
     private var fieldsFilled = false
@@ -46,10 +45,10 @@ class AuthPresenter(
     }
 
     fun signIn(
-            nick: String,
-            password: String,
-            captcha: String,
-            isHidden: Boolean
+        nick: String,
+        password: String,
+        captcha: String,
+        isHidden: Boolean
     ) {
         authForm?.also { authForm ->
             authForm.nick = nick
@@ -57,19 +56,19 @@ class AuthPresenter(
             authForm.captcha = captcha
             authForm.isHidden = isHidden
             authRepository
-                    .signIn(authForm)
-                    .doOnSubscribe { viewState.setSendRefreshing(true) }
-                    .doAfterTerminate { viewState.setSendRefreshing(false) }
-                    .subscribe({
-                        viewState.onSuccessAuth()
-                        loadProfile("https://4pda.to/forum/index.php?showuser=${authHolder.get().userId}")
-                    }, {
-                        authForm.captcha = null
-                        viewState.onFormLoaded(authForm)
-                        loadForm()
-                        errorHandler.handle(it)
-                    })
-                    .untilDestroy()
+                .signIn(authForm)
+                .doOnSubscribe { viewState.setSendRefreshing(true) }
+                .doAfterTerminate { viewState.setSendRefreshing(false) }
+                .subscribe({
+                    viewState.onSuccessAuth()
+                    loadProfile("https://4pda.to/forum/index.php?showuser=${authHolder.get().userId}")
+                }, {
+                    authForm.captcha = null
+                    viewState.onFormLoaded(authForm)
+                    loadForm()
+                    errorHandler.handle(it)
+                })
+                .untilDestroy()
         }
     }
 
@@ -89,45 +88,45 @@ class AuthPresenter(
 
     private fun loadForm() {
         authRepository
-                .loadForm()
-                .doOnSubscribe { viewState.setSendEnabled(false) }
-                .doAfterTerminate { viewState.setSendEnabled(fieldsFilled) }
-                .subscribe({
-                    it.apply {
-                        nick = authForm?.nick
-                        password = authForm?.password
-                    }
-                    authForm = it
-                    viewState.onFormLoaded(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .loadForm()
+            .doOnSubscribe { viewState.setSendEnabled(false) }
+            .doAfterTerminate { viewState.setSendEnabled(fieldsFilled) }
+            .subscribe({
+                it.apply {
+                    nick = authForm?.nick
+                    password = authForm?.password
+                }
+                authForm = it
+                viewState.onFormLoaded(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     private fun loadProfile(url: String) {
         profileRepository
-                .loadProfile(url)
-                /*.doOnTerminate { viewState.setRefreshing(true) }
-                .doAfterTerminate { viewState.setRefreshing(false) }*/
-                .subscribe({
-                    viewState.showProfile(it)
-                    delayedExit(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .loadProfile(url)
+            /*.doOnTerminate { viewState.setRefreshing(true) }
+            .doAfterTerminate { viewState.setRefreshing(false) }*/
+            .subscribe({
+                viewState.showProfile(it)
+                delayedExit(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     private fun delayedExit(profile: ProfileModel) {
         Observable
-                .just(false)
-                .delay(2000L, TimeUnit.MILLISECONDS)
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe {
-                    router.exit()
-                }
-                .untilDestroy()
+            .just(false)
+            .delay(2000L, TimeUnit.MILLISECONDS)
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe {
+                router.exit()
+            }
+            .untilDestroy()
     }
 }

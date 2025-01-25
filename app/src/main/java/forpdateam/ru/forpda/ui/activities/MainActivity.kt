@@ -14,7 +14,6 @@ import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatDelegate
 import com.daasuu.ei.Ease
 import com.daasuu.ei.EasingInterpolator
 import com.yandex.metrica.YandexMetrica
@@ -33,7 +32,12 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.bottomMenuRecycler
+import kotlinx.android.synthetic.main.activity_main.bottom_sheet2
+import kotlinx.android.synthetic.main.activity_main.drawer_layout
+import kotlinx.android.synthetic.main.activity_main.fragments_container
+import kotlinx.android.synthetic.main.activity_main.measure_root_content
+import kotlinx.android.synthetic.main.activity_main.measure_view
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -63,19 +67,20 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     @ProvidePresenter
     fun providePresenter(): MainPresenter = MainPresenter(
-            App.get().Di().router,
-            App.get().Di().authHolder,
-            App.get().Di().linkHandler,
-            App.get().Di().menuRepository,
-            App.get().Di().qmsInteractor,
-            App.get().Di().otherPreferencesHolder,
-            App.get().Di().mainPreferencesHolder,
-            App.get().Di().errorHandler
+        App.get().Di().router,
+        App.get().Di().authHolder,
+        App.get().Di().linkHandler,
+        App.get().Di().menuRepository,
+        App.get().Di().qmsInteractor,
+        App.get().Di().otherPreferencesHolder,
+        App.get().Di().mainPreferencesHolder,
+        App.get().Di().errorHandler
     )
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(LocaleHelper.onAttach(base))
-        App.get().Di().dayNightHelper.setIsNight(DayNightHelper.isUiModeNight(resources.configuration))
+        App.get()
+            .Di().dayNightHelper.setIsNight(DayNightHelper.isUiModeNight(resources.configuration))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,19 +91,27 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         }
         if (checkWebView) {
             disposables.add(Single
-                    .fromCallable { App.get().isWebViewFound(this) }
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { aBoolean ->
-                        if (!aBoolean) {
-                            startActivity(Intent(App.getContext(), WebVewNotFoundActivity::class.java))
-                            finish()
-                        }
-                    })
+                .fromCallable { App.get().isWebViewFound(this) }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { aBoolean ->
+                    if (!aBoolean) {
+                        startActivity(
+                            Intent(
+                                App.getContext(),
+                                WebVewNotFoundActivity::class.java
+                            )
+                        )
+                        finish()
+                    }
+                })
         }
 
 
-        Log.d("kekeke", "oncreate UiMode: ${resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK}")
+        Log.d(
+            "kekeke",
+            "oncreate UiMode: ${resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK}"
+        )
 
         setContentView(R.layout.activity_main)
 
@@ -108,12 +121,12 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         }
 
         bottomDrawer = BottomDrawer(
-                this,
-                drawer_layout,
-                tabNavigator,
-                App.get().Di().router,
-                App.get().Di().menuRepository,
-                App.get().Di().mainPreferencesHolder
+            this,
+            drawer_layout,
+            tabNavigator,
+            App.get().Di().router,
+            App.get().Di().menuRepository,
+            App.get().Di().mainPreferencesHolder
         )
         bottomDrawer.setListener(object : BottomDrawer.DrawerListener {
             override fun onHide() {
@@ -130,7 +143,8 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
             override fun onSlide(slideOffset: Float) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && window.navigationBarDividerColor == 0) {
-                    window.navigationBarDividerColor = App.getColorFromAttr(this@MainActivity, R.attr.divider_line_bottom_nav)
+                    window.navigationBarDividerColor =
+                        App.getColorFromAttr(this@MainActivity, R.attr.divider_line_bottom_nav)
                 }
                 val container = findViewById<View>(R.id.fragments_container)
                 val translate = -slideOffset * 0.1f * container.height
@@ -139,32 +153,34 @@ class MainActivity : MvpAppCompatActivity(), MainView {
             }
         })
 
-        val defaultStatusBarHeight = resources.getDimensionPixelSize(R.dimen.default_statusbar_height)
+        val defaultStatusBarHeight =
+            resources.getDimensionPixelSize(R.dimen.default_statusbar_height)
         val defaultKeyboardHeight = resources.getDimensionPixelSize(R.dimen.default_keyboard_height)
 
-        drawer_layout.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        drawer_layout.systemUiVisibility =
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 
         DimensionHelper(
-                measure_view,
-                measure_root_content,
-                object : DimensionHelper.DimensionsListener {
-                    override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
-                        Log.e("lalala", "Dim: $dimensions, bmr=${bottomMenuRecycler.height}")
-                        dimensionsProvider.update(dimensions)
-                    }
-                },
-                defaultStatusBarHeight,
-                defaultKeyboardHeight
+            measure_view,
+            measure_root_content,
+            object : DimensionHelper.DimensionsListener {
+                override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
+                    Log.e("lalala", "Dim: $dimensions, bmr=${bottomMenuRecycler.height}")
+                    dimensionsProvider.update(dimensions)
+                }
+            },
+            defaultStatusBarHeight,
+            defaultKeyboardHeight
         )
 
         disposables.add(
-                dimensionsProvider
-                        .observeDimensions()
-                        .subscribe { dimensions ->
-                            bottomMenuRecycler?.post {
-                                fragments_container?.also { updateDimens(dimensions) }
-                            }
-                        }
+            dimensionsProvider
+                .observeDimensions()
+                .subscribe { dimensions ->
+                    bottomMenuRecycler?.post {
+                        fragments_container?.also { updateDimens(dimensions) }
+                    }
+                }
         )
 
         if (notificationPreferencesRepository.getUpdateEnabled()) {
@@ -184,13 +200,14 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     override fun showFirstStartAnimation() {
         val height = resources.getDimensionPixelSize(R.dimen.dp48)
-        firstStartAnimator = ObjectAnimator.ofFloat(bottom_sheet2, "translationY", 0f, -height.toFloat(), 0f).apply {
-            interpolator = EasingInterpolator(Ease.BOUNCE_IN_OUT)
-            startDelay = 500
-            duration = 1500
-            repeatCount = 2
-            start()
-        }
+        firstStartAnimator =
+            ObjectAnimator.ofFloat(bottom_sheet2, "translationY", 0f, -height.toFloat(), 0f).apply {
+                interpolator = EasingInterpolator(Ease.BOUNCE_IN_OUT)
+                startDelay = 500
+                duration = 1500
+                repeatCount = 2
+                start()
+            }
     }
 
     private fun cancelStartAnimation() {
@@ -200,13 +217,14 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     private fun updateDimens(dimensions: DimensionHelper.Dimensions) {
         fragments_container?.apply {
-            val pb = dimensions.keyboardHeight + if (dimensions.isKeyboardShow() || dimensions.isFakeKeyboardShow) 0 else bottomMenuRecycler.height
+            val pb =
+                dimensions.keyboardHeight + if (dimensions.isKeyboardShow() || dimensions.isFakeKeyboardShow) 0 else bottomMenuRecycler.height
             Log.e("lalala", "Post Dim: $dimensions, bmr=${bottomMenuRecycler.height}, pb=$pb")
             setPadding(
-                    paddingLeft,
-                    paddingTop,
-                    paddingRight,
-                    max(pb, 0)
+                paddingLeft,
+                paddingTop,
+                paddingRight,
+                max(pb, 0)
             )
         }
     }
@@ -241,10 +259,14 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         if (false && LocaleHelper.getLanguage(this) != lang) {
             val newContext = LocaleHelper.onAttach(this)
             AlertDialog.Builder(this)
-                    .setMessage(newContext.getString(R.string.lang_changed))
-                    .setPositiveButton(newContext.getString(R.string.ok)) { dialog, which -> MainActivity.restartApplication(this@MainActivity) }
-                    .setNegativeButton(newContext.getString(R.string.cancel), null)
-                    .show()
+                .setMessage(newContext.getString(R.string.lang_changed))
+                .setPositiveButton(newContext.getString(R.string.ok)) { dialog, which ->
+                    restartApplication(
+                        this@MainActivity
+                    )
+                }
+                .setNegativeButton(newContext.getString(R.string.cancel), null)
+                .show()
         }
     }
 
@@ -268,7 +290,11 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         updateChecker.destroy()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         App.get().onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
@@ -327,8 +353,10 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         fun restartApplication(activity: Activity) {
             val mStartActivity = Intent(activity, MainActivity::class.java)
             val mPendingIntentId = 123456
-            val mPendingIntent = PendingIntent.getActivity(activity, mPendingIntentId, mStartActivity,
-                    PendingIntent.FLAG_CANCEL_CURRENT)
+            val mPendingIntent = PendingIntent.getActivity(
+                activity, mPendingIntentId, mStartActivity,
+                PendingIntent.FLAG_CANCEL_CURRENT
+            )
             val mgr = activity.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent)
             activity.finish()
@@ -350,7 +378,12 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
         fun getDefaultLightStatusBar(context: Activity): Boolean {
             val typedValue = TypedValue()
-            return if (context.theme.resolveAttribute(R.attr.is_use_light_status_bar, typedValue, true)) {
+            return if (context.theme.resolveAttribute(
+                    R.attr.is_use_light_status_bar,
+                    typedValue,
+                    true
+                )
+            ) {
                 if (typedValue.type == TypedValue.TYPE_INT_BOOLEAN) {
                     // Какого-то хрена boolean тут это -1=true, 0=false. Ну ОК гугл. ОК...
                     typedValue.data != 0

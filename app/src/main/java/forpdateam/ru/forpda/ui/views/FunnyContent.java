@@ -1,11 +1,12 @@
 package forpdateam.ru.forpda.ui.views;
 
 import android.content.Context;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.StringRes;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.StringRes;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
@@ -15,15 +16,16 @@ import forpdateam.ru.forpda.R;
  */
 
 public class FunnyContent extends RelativeLayout {
-    private ImageView image;
-    private TextView title, desc;
+    private final ImageView image;
+    private final TextView title;
+    private final TextView desc;
 
     public FunnyContent(Context context) {
         super(context);
         inflate(context, R.layout.funny_content, this);
-        image = (ImageView) findViewById(R.id.funny_image);
-        title = (TextView) findViewById(R.id.funny_title);
-        desc = (TextView) findViewById(R.id.funny_desc);
+        image = findViewById(R.id.funny_image);
+        title = findViewById(R.id.funny_title);
+        desc = findViewById(R.id.funny_desc);
     }
 
     public FunnyContent setImage(@DrawableRes int resId) {

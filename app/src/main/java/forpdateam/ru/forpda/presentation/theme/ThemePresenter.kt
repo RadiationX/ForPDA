@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.presentation.theme
 
 import android.net.Uri
 import android.util.Log
-import moxy.InjectViewState
 import com.yandex.metrica.YandexMetrica
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
@@ -11,7 +10,6 @@ import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.app.EditPostSyncData
 import forpdateam.ru.forpda.entity.app.TabNotification
 import forpdateam.ru.forpda.entity.app.profile.IUserHolder
-import forpdateam.ru.forpda.entity.app.profile.UserHolder
 import forpdateam.ru.forpda.entity.remote.IBaseForumPost
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
@@ -23,12 +21,12 @@ import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeApi
 import forpdateam.ru.forpda.model.interactors.CrossScreenInteractor
-import forpdateam.ru.forpda.model.repository.events.EventsRepository
-import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
-import forpdateam.ru.forpda.model.repository.posteditor.PostEditorRepository
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.model.preferences.OtherPreferencesHolder
 import forpdateam.ru.forpda.model.preferences.TopicPreferencesHolder
+import forpdateam.ru.forpda.model.repository.events.EventsRepository
+import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
+import forpdateam.ru.forpda.model.repository.posteditor.PostEditorRepository
 import forpdateam.ru.forpda.model.repository.reputation.ReputationRepository
 import forpdateam.ru.forpda.model.repository.theme.ThemeRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
@@ -38,9 +36,9 @@ import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.ui.TemplateManager
 import forpdateam.ru.forpda.ui.activities.imageviewer.ImageViewerActivity
 import forpdateam.ru.forpda.ui.fragments.theme.ThemeFragmentWeb
+import moxy.InjectViewState
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
-import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
@@ -49,22 +47,22 @@ import java.util.regex.Pattern
  */
 @InjectViewState
 class ThemePresenter(
-        private val themeRepository: ThemeRepository,
-        private val reputationRepository: ReputationRepository,
-        private val editorRepository: PostEditorRepository,
-        private val favoritesRepository: FavoritesRepository,
-        private val eventsRepository: EventsRepository,
-        private val userHolder: IUserHolder,
-        private val authHolder: AuthHolder,
-        private val topicPreferencesHolder: TopicPreferencesHolder,
-        private val mainPreferencesHolder: MainPreferencesHolder,
-        private val otherPreferencesHolder: OtherPreferencesHolder,
-        private val crossScreenInteractor: CrossScreenInteractor,
-        private val themeTemplate: ThemeTemplate,
-        private val templateManager: TemplateManager,
-        private val router: TabRouter,
-        private val linkHandler: ILinkHandler,
-        private val errorHandler: IErrorHandler
+    private val themeRepository: ThemeRepository,
+    private val reputationRepository: ReputationRepository,
+    private val editorRepository: PostEditorRepository,
+    private val favoritesRepository: FavoritesRepository,
+    private val eventsRepository: EventsRepository,
+    private val userHolder: IUserHolder,
+    private val authHolder: AuthHolder,
+    private val topicPreferencesHolder: TopicPreferencesHolder,
+    private val mainPreferencesHolder: MainPreferencesHolder,
+    private val otherPreferencesHolder: OtherPreferencesHolder,
+    private val crossScreenInteractor: CrossScreenInteractor,
+    private val themeTemplate: ThemeTemplate,
+    private val templateManager: TemplateManager,
+    private val router: TabRouter,
+    private val linkHandler: ILinkHandler,
+    private val errorHandler: IErrorHandler
 ) : BasePresenter<ThemeView>(), IThemePresenter {
 
     var loadAction = ActionState.NORMAL
@@ -75,46 +73,46 @@ class ThemePresenter(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         topicPreferencesHolder
-                .observeShowAvatars()
-                .subscribe {
-                    viewState.updateShowAvatarState(it)
-                }
-                .untilDestroy()
+            .observeShowAvatars()
+            .subscribe {
+                viewState.updateShowAvatarState(it)
+            }
+            .untilDestroy()
 
         topicPreferencesHolder
-                .observeCircleAvatars()
-                .subscribe {
-                    viewState.updateTypeAvatarState(it)
-                }
-                .untilDestroy()
+            .observeCircleAvatars()
+            .subscribe {
+                viewState.updateTypeAvatarState(it)
+            }
+            .untilDestroy()
 
         mainPreferencesHolder
-                .observeScrollButtonEnabled()
-                .subscribe {
-                    viewState.updateScrollButtonState(it)
-                }
-                .untilDestroy()
+            .observeScrollButtonEnabled()
+            .subscribe {
+                viewState.updateScrollButtonState(it)
+            }
+            .untilDestroy()
 
         mainPreferencesHolder
-                .observeWebViewFontSize()
-                .subscribe {
-                    viewState.setFontSize(it)
-                }
-                .untilDestroy()
+            .observeWebViewFontSize()
+            .subscribe {
+                viewState.setFontSize(it)
+            }
+            .untilDestroy()
 
         templateManager
-                .observeThemeType()
-                .subscribe {
-                    viewState.setStyleType(it)
-                }
-                .untilDestroy()
+            .observeThemeType()
+            .subscribe {
+                viewState.setStyleType(it)
+            }
+            .untilDestroy()
         eventsRepository
-                .observeEventsTab()
-                .debounce(2L, TimeUnit.SECONDS)
-                .subscribe {
-                    handleEvent(it)
-                }
-                .untilDestroy()
+            .observeEventsTab()
+            .debounce(2L, TimeUnit.SECONDS)
+            .subscribe {
+                handleEvent(it)
+            }
+            .untilDestroy()
         loadUrl(themeUrl)
     }
 
@@ -123,7 +121,10 @@ class ThemePresenter(
     }
 
     private fun handleEvent(event: TabNotification) {
-        Log.e("SUKAT", "handleEvent " + event.isWebSocket + " : " + event.source + " : " + event.type)
+        Log.e(
+            "SUKAT",
+            "handleEvent " + event.isWebSocket + " : " + event.source + " : " + event.type
+        )
         if (!event.isWebSocket)
             return
         if (!isPageLoaded())
@@ -140,6 +141,7 @@ class ThemePresenter(
                 NotificationEvent.Type.READ -> viewState.onEventRead(event)
                 NotificationEvent.Type.MENTION -> {
                 }
+
                 else -> {
                 }
             }
@@ -167,16 +169,16 @@ class ThemePresenter(
         loadAction = action
         viewState.updateHistoryLastHtml()
         themeRepository
-                .getTheme(url, true, hatOpen, pollOpen)
-                .map { themeTemplate.mapEntity(it) }
-                .doOnSubscribe { viewState.setRefreshing(true) }
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({
-                    onLoadData(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .getTheme(url, true, hatOpen, pollOpen)
+            .map { themeTemplate.mapEntity(it) }
+            .doOnSubscribe { viewState.setRefreshing(true) }
+            .doAfterTerminate { viewState.setRefreshing(false) }
+            .subscribe({
+                onLoadData(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     private fun onLoadData(page: ThemePage) {
@@ -195,33 +197,36 @@ class ThemePresenter(
 
     fun addTopicToFavorite(topicId: Int, subType: String) {
         favoritesRepository
-                .editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
-                .subscribe({
-                    if (it) {
-                        currentPage?.isInFavorite = true
-                    }
-                    viewState.onAddToFavorite(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
+            .subscribe({
+                if (it) {
+                    currentPage?.isInFavorite = true
+                }
+                viewState.onAddToFavorite(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun deleteTopicFromFavorite(favId: Int) {
         favoritesRepository
-                .editFavorites(FavoritesApi.ACTION_DELETE, favId, -1, null)
-                .subscribe({
-                    if (it) {
-                        currentPage?.isInFavorite = false
-                    }
-                    viewState.onDeleteFromFavorite(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .editFavorites(FavoritesApi.ACTION_DELETE, favId, -1, null)
+            .subscribe({
+                if (it) {
+                    currentPage?.isInFavorite = false
+                }
+                viewState.onDeleteFromFavorite(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
-    private fun createEditPostForm(message: String, attachments: MutableList<AttachmentItem>): EditPostForm? = currentPage?.let {
+    private fun createEditPostForm(
+        message: String,
+        attachments: MutableList<AttachmentItem>
+    ): EditPostForm? = currentPage?.let {
         val form = EditPostForm()
         form.forumId = it.forumId
         form.topicId = it.id
@@ -275,40 +280,40 @@ class ThemePresenter(
         createEditPostForm(message, attachments)?.let {
             viewState.setMessageRefreshing(true)
             editorRepository
-                    .sendPost(it)
-                    .map { themeTemplate.mapEntity(it) }
-                    .doOnSubscribe { viewState.setMessageRefreshing(true) }
-                    .doAfterTerminate { viewState.setMessageRefreshing(false) }
-                    .subscribe({
-                        onLoadData(it)
-                        viewState.onMessageSent()
-                    }, {
-                        errorHandler.handle(it)
-                    })
-                    .untilDestroy()
+                .sendPost(it)
+                .map { themeTemplate.mapEntity(it) }
+                .doOnSubscribe { viewState.setMessageRefreshing(true) }
+                .doAfterTerminate { viewState.setMessageRefreshing(false) }
+                .subscribe({
+                    onLoadData(it)
+                    viewState.onMessageSent()
+                }, {
+                    errorHandler.handle(it)
+                })
+                .untilDestroy()
         }
     }
 
     fun uploadFiles(files: List<RequestFile>, pending: List<AttachmentItem>) {
         editorRepository
-                .uploadFiles(0, files, pending)
-                .subscribe({
-                    viewState.onUploadFiles(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .uploadFiles(0, files, pending)
+            .subscribe({
+                viewState.onUploadFiles(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun deleteFiles(items: List<AttachmentItem>) {
         editorRepository
-                .deleteFiles(0, items)
-                .subscribe({
-                    viewState.onDeleteFiles(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .deleteFiles(0, items)
+            .subscribe({
+                viewState.onDeleteFiles(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun loadUrl(url: String) {
@@ -349,17 +354,17 @@ class ThemePresenter(
 
     override fun onPollResultsClick() {
         val url = themeUrl
-                .replaceFirst("#[^&]*", "")
-                .replace("&mode=show", "")
-                .replace("&poll_open=true", "") + "&mode=show&poll_open=true"
+            .replaceFirst("#[^&]*", "")
+            .replace("&mode=show", "")
+            .replace("&poll_open=true", "") + "&mode=show&poll_open=true"
         loadUrl(url)
     }
 
     override fun onPollClick() {
         val url = themeUrl
-                .replaceFirst("#[^&]*", "")
-                .replace("&mode=show", "")
-                .replace("&poll_open=true", "") + "&poll_open=true"
+            .replaceFirst("#[^&]*", "")
+            .replace("&mode=show", "")
+            .replace("&poll_open=true", "") + "&poll_open=true"
         loadUrl(url)
     }
 
@@ -398,13 +403,17 @@ class ThemePresenter(
 
     fun openSearch() {
         currentPage?.let {
-            linkHandler.handle("https://4pda.to/forum/index.php?forums=${it.forumId}&topics=${it.id}&act=search&source=pst&result=posts", router)
+            linkHandler.handle(
+                "https://4pda.to/forum/index.php?forums=${it.forumId}&topics=${it.id}&act=search&source=pst&result=posts",
+                router
+            )
         }
     }
 
     fun openSearchMyPosts() {
         currentPage?.let {
-            var url = ("https://4pda.to/forum/index.php?forums=${it.forumId}&topics=${it.id}&act=search&source=pst&result=posts&username=")
+            var url =
+                ("https://4pda.to/forum/index.php?forums=${it.forumId}&topics=${it.id}&act=search&source=pst&result=posts&username=")
 
             try {
                 url += URLEncoder.encode(userHolder.user?.nick.orEmpty(), "windows-1251")
@@ -424,10 +433,10 @@ class ThemePresenter(
 
 
     private fun getPostById(postId: Int): IBaseForumPost? = currentPage
-            ?.posts
-            ?.firstOrNull {
-                it.id == postId
-            }
+        ?.posts
+        ?.firstOrNull {
+            it.id == postId
+        }
 
     override fun onFirstPageClick() = viewState.firstPage()
 
@@ -527,7 +536,9 @@ class ThemePresenter(
                 if (uri.pathSegments[0] == "forum") {
                     var param: String? = uri.getQueryParameter("showtopic")
                     Log.d(LOG_TAG, "param showtopic: $param")
-                    if (param != null && param != Uri.parse(themeUrl).getQueryParameter("showtopic")) {
+                    if (param != null && param != Uri.parse(themeUrl)
+                            .getQueryParameter("showtopic")
+                    ) {
                         loadUrl(url)
                         return
                     }
@@ -551,7 +562,8 @@ class ThemePresenter(
                                 elem = matcher.group(1)
                             }
                             Log.d(LOG_TAG, " scroll to $postId : $elem")
-                            val finalAnchor = (if (elem == null) "entry" else "") + if (elem != null) elem else postId
+                            val finalAnchor =
+                                (if (elem == null) "entry" else "") + if (elem != null) elem else postId
                             currentPage?.let {
                                 if (topicPreferencesHolder.getAnchorHistory()) {
                                     it.addAnchor(finalAnchor)
@@ -577,7 +589,11 @@ class ThemePresenter(
                                 for (attaches in post.attachImages) {
                                     list.add(attaches.first)
                                 }
-                                ImageViewerActivity.startActivity(App.getContext(), list, post.attachImages.indexOf(image))
+                                ImageViewerActivity.startActivity(
+                                    App.getContext(),
+                                    list,
+                                    post.attachImages.indexOf(image)
+                                )
                                 return
                             }
                         }
@@ -596,9 +612,9 @@ class ThemePresenter(
             if (m.find()) {
                 var uri = Uri.parse(url)
                 uri = uri.buildUpon()
-                        .appendQueryParameter("showtopic", Integer.toString(it.id))
-                        .appendQueryParameter("st", "" + it.pagination.current * it.pagination.perPage)
-                        .build()
+                    .appendQueryParameter("showtopic", Integer.toString(it.id))
+                    .appendQueryParameter("st", "" + it.pagination.current * it.pagination.perPage)
+                    .build()
                 loadUrl(uri.toString())
                 return true
             }
@@ -641,7 +657,10 @@ class ThemePresenter(
 
     override fun openQms(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle("https://4pda.to/forum/index.php?act=qms&amp;mid=${it.userId}", router)
+            linkHandler.handle(
+                "https://4pda.to/forum/index.php?act=qms&amp;mid=${it.userId}",
+                router
+            )
         }
     }
 
@@ -686,32 +705,35 @@ class ThemePresenter(
     override fun changeReputation(postId: Int, type: Boolean, message: String) {
         getPostById(postId)?.let {
             reputationRepository
-                    .changeReputation(it.id, it.userId, type, message)
-                    .subscribe({
-                        router.showSystemMessage(App.get().getString(R.string.reputation_changed))
-                    }, {
-                        errorHandler.handle(it)
-                    })
-                    .untilDestroy()
+                .changeReputation(it.id, it.userId, type, message)
+                .subscribe({
+                    router.showSystemMessage(App.get().getString(R.string.reputation_changed))
+                }, {
+                    errorHandler.handle(it)
+                })
+                .untilDestroy()
         }
     }
 
     override fun votePost(postId: Int, type: Boolean) {
         getPostById(postId)?.let {
             themeRepository
-                    .votePost(it.id, type)
-                    .subscribe({
-                        router.showSystemMessage(it)
-                    }, {
-                        errorHandler.handle(it)
-                    })
-                    .untilDestroy()
+                .votePost(it.id, type)
+                .subscribe({
+                    router.showSystemMessage(it)
+                }, {
+                    errorHandler.handle(it)
+                })
+                .untilDestroy()
         }
     }
 
     override fun openReputationHistory(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle("https://4pda.to/forum/index.php?act=rep&view=history&amp;mid=${it.userId}", router)
+            linkHandler.handle(
+                "https://4pda.to/forum/index.php?act=rep&view=history&amp;mid=${it.userId}",
+                router
+            )
         }
     }
 
@@ -728,13 +750,13 @@ class ThemePresenter(
         getPostById(postId)?.let { post ->
             currentPage?.let {
                 themeRepository
-                        .reportPost(it.id, post.id, message)
-                        .subscribe({
-                            router.showSystemMessage("Жалоба отправлена")
-                        }, {
-                            errorHandler.handle(it)
-                        })
-                        .untilDestroy()
+                    .reportPost(it.id, post.id, message)
+                    .subscribe({
+                        router.showSystemMessage("Жалоба отправлена")
+                    }, {
+                        errorHandler.handle(it)
+                    })
+                    .untilDestroy()
             }
         }
     }
@@ -742,38 +764,46 @@ class ThemePresenter(
     override fun deletePost(postId: Int) {
         getPostById(postId)?.let { post ->
             themeRepository
-                    .deletePost(post.id)
-                    .subscribe({
-                        if (it) {
-                            viewState.deletePostUi(post)
-                        }
-                        router.showSystemMessage(App.get().getString(R.string.message_deleted))
-                    }, {
-                        errorHandler.handle(it)
-                    })
-                    .untilDestroy()
+                .deletePost(post.id)
+                .subscribe({
+                    if (it) {
+                        viewState.deletePostUi(post)
+                    }
+                    router.showSystemMessage(App.get().getString(R.string.message_deleted))
+                }, {
+                    errorHandler.handle(it)
+                })
+                .untilDestroy()
         }
     }
 
     override fun createNote(postId: Int) {
         getPostById(postId)?.let {
             val themeTitle: String = currentPage?.title.orEmpty()
-            val title = String.format(App.get().getString(R.string.post_Topic_Nick_Number), themeTitle, it.nick, it.id)
-            val url = "https://4pda.to/forum/index.php?s=&showtopic=" + it.topicId + "&view=findpost&p=" + it.id
+            val title = String.format(
+                App.get().getString(R.string.post_Topic_Nick_Number),
+                themeTitle,
+                it.nick,
+                it.id
+            )
+            val url =
+                "https://4pda.to/forum/index.php?s=&showtopic=" + it.topicId + "&view=findpost&p=" + it.id
             viewState.showNoteCreate(title, url)
         }
     }
 
     override fun copyPostLink(postId: Int) {
         getPostById(postId)?.let {
-            val url = "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
+            val url =
+                "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
             copyText(url)
         }
     }
 
     override fun sharePostLink(postId: Int) {
         getPostById(postId)?.let {
-            val url = "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
+            val url =
+                "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
             shareText(url)
         }
     }
@@ -787,7 +817,8 @@ class ThemePresenter(
 
     override fun copySpoilerLink(postId: Int, spoilNumber: String) {
         getPostById(postId)?.let {
-            val url = "https://4pda.to/forum/index.php?act=findpost&pid=${it.id}&anchor=Spoil-${it.id}-$spoilNumber"
+            val url =
+                "https://4pda.to/forum/index.php?act=findpost&pid=${it.id}&anchor=Spoil-${it.id}-$spoilNumber"
             copyText(url)
         }
     }

@@ -17,7 +17,7 @@ import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
  */
 
 public class TabAdapter extends BaseAdapter<TabFragment, TabAdapter.TabHolder> {
-    private int color = Color.argb(24, 128, 128, 128);
+    private final int color = Color.argb(24, 128, 128, 128);
 
     private BaseAdapter.OnItemClickListener<TabFragment> itemClickListener;
     private BaseAdapter.OnItemClickListener<TabFragment> closeClickListener;
@@ -60,8 +60,8 @@ public class TabAdapter extends BaseAdapter<TabFragment, TabAdapter.TabHolder> {
 
         TabHolder(View v) {
             super(v);
-            text = (TextView) v.findViewById(R.id.drawer_item_title);
-            close = (ImageView) v.findViewById(R.id.drawer_item_close);
+            text = v.findViewById(R.id.drawer_item_title);
+            close = v.findViewById(R.id.drawer_item_close);
             wrapper = v.findViewById(R.id.drawer_item_wrapper);
 
             v.setOnClickListener(this);

@@ -4,10 +4,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel;
-import forpdateam.ru.forpda.presentation.ISystemLinkHandler;
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 
@@ -17,7 +15,7 @@ import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 
 class DevicesAdapter extends BaseAdapter<ProfileModel.Device, DevicesAdapter.InfoHolder> {
 
-    private InfoHolder.Listener listener;
+    private final InfoHolder.Listener listener;
 
     public DevicesAdapter(InfoHolder.Listener listener) {
         this.listener = listener;
@@ -34,12 +32,12 @@ class DevicesAdapter extends BaseAdapter<ProfileModel.Device, DevicesAdapter.Inf
     }
 
     static class InfoHolder extends BaseViewHolder<ProfileModel.Device> {
-        private TextView title;
+        private final TextView title;
         private ProfileModel.Device currentItem;
 
         InfoHolder(View itemView, Listener listener) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.item_title);
+            title = itemView.findViewById(R.id.item_title);
             itemView.setOnClickListener(v -> listener.onClick(currentItem));
         }
 

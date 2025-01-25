@@ -1,8 +1,6 @@
 package forpdateam.ru.forpda.ui.views.messagepanel.inserthelper;
 
 import android.content.Context;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.appcompat.app.AlertDialog;
 import android.text.Editable;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -11,6 +9,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 
@@ -21,22 +23,22 @@ import forpdateam.ru.forpda.R;
  */
 
 public class InsertHelper {
-    private ArrayList<Pair<String, String>> headers = new ArrayList<>();
-    private ArrayList<EditText> headersLayout = new ArrayList<>();
+    private final ArrayList<Pair<String, String>> headers = new ArrayList<>();
+    private final ArrayList<EditText> headersLayout = new ArrayList<>();
     private EditText bodyLayout;
     private Pair<String, String> body;
     private String title;
-    private Context context;
-    private LayoutInflater inflater;
-    private ScrollView layoutContainer;
-    private LinearLayout itemsContainer;
+    private final Context context;
+    private final LayoutInflater inflater;
+    private final ScrollView layoutContainer;
+    private final LinearLayout itemsContainer;
     private InsertListener insertListener;
 
     public InsertHelper(Context context) {
         this.context = context;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         layoutContainer = (ScrollView) inflater.inflate(R.layout.insert_helper_body, null);
-        itemsContainer = (LinearLayout) layoutContainer.findViewById(R.id.insert_helper_items_container);
+        itemsContainer = layoutContainer.findViewById(R.id.insert_helper_items_container);
     }
 
     public void addHeader(String title, String code) {
@@ -52,7 +54,7 @@ public class InsertHelper {
             this.body = new Pair<>(title, value);
             TextInputLayout inputLayout = (TextInputLayout) inflater.inflate(R.layout.insert_helper_item, null);
             inputLayout.setHint(title);
-            TextView textView = (TextView) inputLayout.findViewById(R.id.insert_helper_item_text);
+            TextView textView = inputLayout.findViewById(R.id.insert_helper_item_text);
             textView.setText(value);
             bodyLayout = inputLayout.getEditText();
             itemsContainer.addView(inputLayout);

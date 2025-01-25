@@ -9,7 +9,7 @@ import java.util.HashMap;
  */
 
 public class MimeTypeUtil {
-    private static HashMap<String, String> types = new HashMap<>();
+    private static final HashMap<String, String> types = new HashMap<>();
 
     private static void init() {
         types.put("323", "text/h323");

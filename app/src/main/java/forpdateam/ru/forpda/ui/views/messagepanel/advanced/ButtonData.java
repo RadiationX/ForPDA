@@ -7,7 +7,9 @@ import androidx.annotation.DrawableRes;
  */
 
 public class ButtonData {
-    private String text, icon, title;
+    private final String text;
+    private String icon;
+    private String title;
     private int iconRes;
     private ClickListener listener;
 

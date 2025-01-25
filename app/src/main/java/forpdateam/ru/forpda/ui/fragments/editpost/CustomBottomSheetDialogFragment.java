@@ -3,12 +3,14 @@ package forpdateam.ru.forpda.ui.fragments.editpost;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import android.view.View;
 
 import forpdateam.ru.forpda.R;
 
@@ -30,7 +32,7 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment {
         super.onCreate(savedInstanceState);
     }
 
-    private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
+    private final BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
 
         @Override
         public void onStateChanged(@NonNull View bottomSheet, int newState) {

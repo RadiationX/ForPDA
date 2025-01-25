@@ -4,23 +4,29 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import moxy.MvpAppCompatActivity
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import androidx.appcompat.app.AlertDialog
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.BuildConfig
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.checker.UpdateData
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
-import kotlinx.android.synthetic.main.activity_updater.*
 import forpdateam.ru.forpda.presentation.checker.CheckerPresenter
 import forpdateam.ru.forpda.presentation.checker.CheckerView
 import forpdateam.ru.forpda.ui.activities.MainActivity
+import kotlinx.android.synthetic.main.activity_updater.currentInfo
+import kotlinx.android.synthetic.main.activity_updater.divider
+import kotlinx.android.synthetic.main.activity_updater.progressBar
+import kotlinx.android.synthetic.main.activity_updater.toolbar
+import kotlinx.android.synthetic.main.activity_updater.updateButton
+import kotlinx.android.synthetic.main.activity_updater.updateContent
+import kotlinx.android.synthetic.main.activity_updater.updateInfo
+import moxy.MvpAppCompatActivity
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
 
@@ -42,8 +48,8 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
 
     @ProvidePresenter
     fun provideCheckerPresenter() = CheckerPresenter(
-            App.get().Di().checkerRepository,
-            App.get().Di().errorHandler
+        App.get().Di().checkerRepository,
+        App.get().Di().errorHandler
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,12 +102,12 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
         }
         val titles = update.links.map { it.name }.toTypedArray()
         AlertDialog.Builder(this)
-                .setTitle("Источник")
-                .setItems(titles) { _, which ->
-                    //Utils.externalLink(update.links[titles[which]].orEmpty())
-                    decideDownload(update.links[which])
-                }
-                .show()
+            .setTitle("Источник")
+            .setItems(titles) { _, which ->
+                //Utils.externalLink(update.links[titles[which]].orEmpty())
+                decideDownload(update.links[which])
+            }
+            .show()
     }
 
     private fun decideDownload(link: UpdateData.UpdateLink) {
@@ -118,7 +124,11 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
     }
 
     @SuppressLint("NeedOnRequestPermissionsResult")
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         onRequestPermissionsResult(requestCode, grantResults)
     }
@@ -169,7 +179,13 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
         //sectionText.setTextColor(ContextCompat.getColor(this, R.color.textDefault))
         root.addView(sectionText)
 
-        updateContent.addView(root, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        updateContent.addView(
+            root,
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        )
     }
 
     private fun generateCurrentInfo(name: String?, date: String?): String {

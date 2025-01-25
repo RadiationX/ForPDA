@@ -1,15 +1,15 @@
 package forpdateam.ru.forpda.ui.activities.imageviewer
 
 import android.content.Context
-import androidx.viewpager.widget.ViewPager
 import android.util.AttributeSet
 import android.view.MotionEvent
+import androidx.viewpager.widget.ViewPager
 
 /**
  * Created by radiationx on 24.05.17.
  */
 
-class HackyViewPager : androidx.viewpager.widget.ViewPager {
+class HackyViewPager : ViewPager {
 
     var isLocked: Boolean = false
 

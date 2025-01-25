@@ -7,8 +7,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.FilePickHelper
@@ -17,13 +15,14 @@ import forpdateam.ru.forpda.entity.app.notes.NoteItem
 import forpdateam.ru.forpda.presentation.notes.NotesPresenter
 import forpdateam.ru.forpda.presentation.notes.NotesView
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
-import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.devdb.brand.DevicesFragment
 import forpdateam.ru.forpda.ui.fragments.notes.adapters.NotesAdapter
 import forpdateam.ru.forpda.ui.views.ContentController
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.FunnyContent
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 06.09.17.
@@ -39,11 +38,11 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
 
     @ProvidePresenter
     fun providePresenter(): NotesPresenter = NotesPresenter(
-            App.get().Di().notesRepository,
-            App.get().Di().closeableInfoHolder,
-            App.get().Di().router,
-            App.get().Di().linkHandler,
-            App.get().Di().errorHandler
+        App.get().Di().notesRepository,
+        App.get().Di().closeableInfoHolder,
+        App.get().Di().router,
+        App.get().Di().linkHandler,
+        App.get().Di().errorHandler
     )
 
     init {
@@ -76,27 +75,30 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
     override fun addBaseToolbarMenu(menu: Menu) {
         super.addBaseToolbarMenu(menu)
         menu
-                .add(R.string.add)
-                .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_add))
-                .setOnMenuItemClickListener {
-                    presenter.addNote()
-                    true
-                }
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            .add(R.string.add)
+            .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_add))
+            .setOnMenuItemClickListener {
+                presenter.addNote()
+                true
+            }
+            .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         menu
-                .add(R.string.import_s)
-                .setOnMenuItemClickListener {
-                    App.get().checkStoragePermission({
-                        startActivityForResult(FilePickHelper.pickFile(false), TabFragment.REQUEST_PICK_FILE)
-                    }, App.getActivity())
-                    true
-                }
+            .add(R.string.import_s)
+            .setOnMenuItemClickListener {
+                App.get().checkStoragePermission({
+                    startActivityForResult(
+                        FilePickHelper.pickFile(false),
+                        REQUEST_PICK_FILE
+                    )
+                }, App.getActivity())
+                true
+            }
         menu
-                .add(R.string.export_s)
-                .setOnMenuItemClickListener {
-                    App.get().checkStoragePermission({ presenter.exportNotes() }, App.getActivity())
-                    true
-                }
+            .add(R.string.export_s)
+            .setOnMenuItemClickListener {
+                App.get().checkStoragePermission({ presenter.exportNotes() }, App.getActivity())
+                true
+            }
 
     }
 
@@ -104,8 +106,8 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
         if (items.isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
                 val funnyContent = FunnyContent(context)
-                        .setImage(R.drawable.ic_bookmark)
-                        .setTitle(R.string.funny_notes_nodata_title)
+                    .setImage(R.drawable.ic_bookmark)
+                    .setTitle(R.string.funny_notes_nodata_title)
                 contentController.addContent(funnyContent, ContentController.TAG_NO_DATA)
             }
             contentController.showContent(ContentController.TAG_NO_DATA)
@@ -138,11 +140,11 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
                 //Display an error
                 return
             }
-            if (requestCode == TabFragment.REQUEST_PICK_FILE) {
+            if (requestCode == REQUEST_PICK_FILE) {
                 val files = FilePickHelper.onActivityResult(context, data)
                 val file = files[0]
                 presenter.importNotes(file)
-            } else if (requestCode == TabFragment.REQUEST_SAVE_FILE) {
+            } else if (requestCode == REQUEST_SAVE_FILE) {
 
             }
         }

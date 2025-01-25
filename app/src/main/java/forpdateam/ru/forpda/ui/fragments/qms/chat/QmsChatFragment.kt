@@ -5,12 +5,14 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.Toast
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
@@ -33,13 +35,15 @@ import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
 import forpdateam.ru.forpda.ui.views.messagepanel.attachments.AttachmentsPopup
-import java.util.*
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import java.util.regex.Pattern
 
 /**
  * Created by radiationx on 25.08.16.
  */
-class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface, ExtendedWebView.JsLifeCycleListener, QmsChatView, TabTopScroller {
+class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface,
+    ExtendedWebView.JsLifeCycleListener, QmsChatView, TabTopScroller {
 
     private lateinit var blackListMenuItem: MenuItem
     private lateinit var noteMenuItem: MenuItem
@@ -62,15 +66,15 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface, E
 
     @ProvidePresenter
     fun providePresenter(): QmsChatPresenter = QmsChatPresenter(
-            App.get().Di().qmsInteractor,
-            App.get().Di().qmsChatTemplate,
-            App.get().Di().avatarRepository,
-            App.get().Di().eventsRepository,
-            App.get().Di().mainPreferencesHolder,
-            App.get().Di().templateManager,
-            App.get().Di().router,
-            App.get().Di().linkHandler,
-            App.get().Di().errorHandler
+        App.get().Di().qmsInteractor,
+        App.get().Di().qmsChatTemplate,
+        App.get().Di().avatarRepository,
+        App.get().Di().eventsRepository,
+        App.get().Di().mainPreferencesHolder,
+        App.get().Di().templateManager,
+        App.get().Di().router,
+        App.get().Di().linkHandler,
+        App.get().Di().errorHandler
     )
 
     init {
@@ -89,19 +93,25 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface, E
     }
 
     @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         baseInflateFragment(inflater, R.layout.fragment_qms_chat)
         chatContainer = findViewById(R.id.qms_chat_container) as FrameLayout
         progressBar = findViewById(R.id.progress_bar) as ProgressBar
         messagePanel = MessagePanel(context, fragmentContainer, coordinatorLayout, false)
         webView = ExtendedWebView(context)
-        webView.setDialogsHelper(DialogsHelper(
+        webView.setDialogsHelper(
+            DialogsHelper(
                 webView.context,
                 App.get().Di().linkHandler,
                 App.get().Di().systemLinkHandler,
                 App.get().Di().router
-        ))
+            )
+        )
         attachWebView(webView)
         chatContainer.addView(webView, 0)
         attachmentsPopup = messagePanel.attachmentsPopup
@@ -178,23 +188,23 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface, E
     override fun addBaseToolbarMenu(menu: Menu) {
         super.addBaseToolbarMenu(menu)
         blackListMenuItem = menu
-                .add(R.string.add_to_blacklist)
-                .setOnMenuItemClickListener {
-                    presenter.blockUser()
-                    false
-                }
+            .add(R.string.add_to_blacklist)
+            .setOnMenuItemClickListener {
+                presenter.blockUser()
+                false
+            }
         noteMenuItem = menu
-                .add(R.string.create_note)
-                .setOnMenuItemClickListener {
-                    presenter.createThemeNote()
-                    true
-                }
+            .add(R.string.create_note)
+            .setOnMenuItemClickListener {
+                presenter.createThemeNote()
+                true
+            }
         toDialogsMenuItem = menu
-                .add(R.string.to_dialogs)
-                .setOnMenuItemClickListener {
-                    presenter.openDialogs()
-                    true
-                }
+            .add(R.string.to_dialogs)
+            .setOnMenuItemClickListener {
+                presenter.openDialogs()
+                true
+            }
         refreshToolbarMenuItems(false)
     }
 
@@ -345,7 +355,7 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface, E
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == TabFragment.REQUEST_PICK_FILE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_PICK_FILE && resultCode == Activity.RESULT_OK) {
             if (data == null) {
                 //Display an error
                 return
@@ -355,7 +365,12 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface, E
     }
 
     private fun tryPickFile() {
-        App.get().checkStoragePermission({ startActivityForResult(FilePickHelper.pickFile(false), TabFragment.REQUEST_PICK_FILE) }, App.getActivity())
+        App.get().checkStoragePermission({
+            startActivityForResult(
+                FilePickHelper.pickFile(false),
+                REQUEST_PICK_FILE
+            )
+        }, App.getActivity())
     }
 
     override fun onBackPressed(): Boolean {
@@ -396,6 +411,7 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface, E
         const val USER_AVATAR_ARG = "USER_AVATAR_ARG"
         const val THEME_ID_ARG = "THEME_ID_ARG"
         const val THEME_TITLE_ARG = "THEME_TITLE_ARG"
-        private val attachmentPattern = Pattern.compile("\\[url=(https:\\/\\/.*?\\.ibb\\.co[^\\]]*?)\\]")
+        private val attachmentPattern =
+            Pattern.compile("\\[url=(https:\\/\\/.*?\\.ibb\\.co[^\\]]*?)\\]")
     }
 }

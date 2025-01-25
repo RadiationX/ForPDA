@@ -1,12 +1,11 @@
 package forpdateam.ru.forpda.ui.fragments.devdb.device.specs
 
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.ui.fragments.devdb.brand.DevicesFragment
@@ -17,10 +16,16 @@ import forpdateam.ru.forpda.ui.fragments.devdb.device.SubDeviceFragment
  */
 
 class SpecsFragment : SubDeviceFragment() {
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.device_fragment_specs, container, false)
-        val recyclerView = view.findViewById<View>(R.id.base_list) as androidx.recyclerview.widget.RecyclerView
-        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(recyclerView.context)
+        val recyclerView =
+            view.findViewById<View>(R.id.base_list) as RecyclerView
+        recyclerView.layoutManager =
+            LinearLayoutManager(recyclerView.context)
         val adapter = SpecsAdapter()
         adapter.addAll(device.specs)
         recyclerView.adapter = adapter

@@ -6,7 +6,7 @@ import forpdateam.ru.forpda.common.Preferences
 import io.reactivex.Observable
 
 class TopicPreferencesHolder(
-        private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences
 ) {
 
     private val rxPreferences = RxSharedPreferences.create(sharedPreferences)

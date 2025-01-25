@@ -1,10 +1,5 @@
 package forpdateam.ru.forpda.common;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
-import forpdateam.ru.forpda.App;
-
 /**
  * Created by radiationx on 28.05.17.
  */

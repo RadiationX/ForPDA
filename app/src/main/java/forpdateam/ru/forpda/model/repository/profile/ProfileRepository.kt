@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.model.repository.profile
 
-import com.jakewharton.rxrelay2.BehaviorRelay
 import forpdateam.ru.forpda.entity.EntityWrapper
 import forpdateam.ru.forpda.entity.app.profile.IUserHolder
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
@@ -18,34 +17,35 @@ import io.reactivex.Single
  */
 
 class ProfileRepository(
-        private val schedulers: SchedulersProvider,
-        private val profileApi: ProfileApi,
-        private val userHolder: IUserHolder,
-        private val authHolder: AuthHolder,
-        private val forumUsersCache: ForumUsersCache
+    private val schedulers: SchedulersProvider,
+    private val profileApi: ProfileApi,
+    private val userHolder: IUserHolder,
+    private val authHolder: AuthHolder,
+    private val forumUsersCache: ForumUsersCache
 ) : BaseRepository(schedulers) {
 
     fun observeCurrentUser(): Observable<EntityWrapper<ProfileModel?>> = userHolder
-            .observeCurrentUser()
-            .runInIoToUi()
+        .observeCurrentUser()
+        .runInIoToUi()
 
-    fun loadSelf() = loadProfile("https://4pda.to/forum/index.php?showuser=" + authHolder.get().userId)
+    fun loadSelf() =
+        loadProfile("https://4pda.to/forum/index.php?showuser=" + authHolder.get().userId)
 
     fun loadProfile(url: String): Single<ProfileModel> = Single
-            .fromCallable { profileApi.getProfile(url) }
-            .doOnSuccess {
-                if (it.id == authHolder.get().userId) {
-                    userHolder.user = it
-                }
-                forumUsersCache.saveUser(ForumUser().apply {
-                    id = it.id
-                    nick = it.nick
-                    avatar = it.avatar
-                })
+        .fromCallable { profileApi.getProfile(url) }
+        .doOnSuccess {
+            if (it.id == authHolder.get().userId) {
+                userHolder.user = it
             }
-            .runInIoToUi()
+            forumUsersCache.saveUser(ForumUser().apply {
+                id = it.id
+                nick = it.nick
+                avatar = it.avatar
+            })
+        }
+        .runInIoToUi()
 
     fun saveNote(note: String): Single<Boolean> = Single
-            .fromCallable { profileApi.saveNote(note) }
-            .runInIoToUi()
+        .fromCallable { profileApi.saveNote(note) }
+        .runInIoToUi()
 }

@@ -8,26 +8,26 @@ import java.text.DecimalFormat
 import java.util.regex.Matcher
 
 class AttachmentsParser(
-        private val patternProvider: IPatternProvider
+    private val patternProvider: IPatternProvider
 ) : BaseParser() {
 
     private val scope = ParserPatterns.EditPost
 
     fun parseAttachments(response: String): List<AttachmentItem> = patternProvider
-            .getPattern(scope.scope, scope.attachments)
-            .matcher(response)
-            .map {
-                fillAttachment(AttachmentItem(), it)
-            }
+        .getPattern(scope.scope, scope.attachments)
+        .matcher(response)
+        .map {
+            fillAttachment(AttachmentItem(), it)
+        }
 
     fun parseAttachment(response: String, item: AttachmentItem?): AttachmentItem {
         val result = item ?: AttachmentItem()
         patternProvider
-                .getPattern(scope.scope, scope.attachments)
-                .matcher(response)
-                .findOnce {
-                    fillAttachment(result, it)
-                }
+            .getPattern(scope.scope, scope.attachments)
+            .matcher(response)
+            .findOnce {
+                fillAttachment(result, it)
+            }
         return result
     }
 
@@ -59,6 +59,11 @@ class AttachmentsParser(
         if (size <= 0) return "0"
         val units = arrayOf("B", "KB", "MB", "GB", "TB")
         val digitGroups = (Math.log10(size.toDouble()) / Math.log10(1024.0)).toInt()
-        return DecimalFormat("#,##0.##").format(size / Math.pow(1024.0, digitGroups.toDouble())) + " " + units[digitGroups]
+        return DecimalFormat("#,##0.##").format(
+            size / Math.pow(
+                1024.0,
+                digitGroups.toDouble()
+            )
+        ) + " " + units[digitGroups]
     }
 }

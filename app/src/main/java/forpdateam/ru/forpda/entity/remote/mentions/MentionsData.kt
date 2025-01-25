@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.entity.remote.mentions
 
-import java.util.ArrayList
-
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 
 /**

@@ -1,10 +1,11 @@
 package forpdateam.ru.forpda.ui.views.adapters;
 
-import androidx.annotation.LayoutRes;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.LayoutRes;
 
 import com.afollestad.sectionedrecyclerview.SectionedRecyclerViewAdapter;
 
@@ -33,7 +34,7 @@ public class BaseSectionedAdapter<E, VH extends BaseSectionedViewHolder> extends
     }
 
     public int[] getItemPosition(int layPos) {
-        int result[] = new int[]{-1, -1};
+        int[] result = new int[]{-1, -1};
         int sumPrevSections = 0;
         for (int i = 0; i < getSectionCount(); i++) {
             result[0] = i;
@@ -49,7 +50,7 @@ public class BaseSectionedAdapter<E, VH extends BaseSectionedViewHolder> extends
     }
 
     public E getItem(int layPos) {
-        int position[] = getItemPosition(layPos);
+        int[] position = getItemPosition(layPos);
         if (position[0] == -1) {
             return null;
         }

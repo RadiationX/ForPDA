@@ -35,10 +35,10 @@ public class CustomWebViewClient extends WebViewClient {
     private final static String TYPE_NICK = "nick";
     private final static String TYPE_URL = "url";
 
-    private Pattern cachePattern = Pattern.compile("app_cache:avatars\\?(url|nick)=([\\s\\S]*)");
+    private final Pattern cachePattern = Pattern.compile("app_cache:avatars\\?(url|nick)=([\\s\\S]*)");
 
-    private AvatarRepository avatarRepository = App.get().Di().getAvatarRepository();
-    private ILinkHandler linkHandler = App.get().Di().getLinkHandler();
+    private final AvatarRepository avatarRepository = App.get().Di().getAvatarRepository();
+    private final ILinkHandler linkHandler = App.get().Di().getLinkHandler();
 
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {

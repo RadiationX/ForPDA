@@ -5,23 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.JavascriptInterface
-
-import moxy.MvpAppCompatFragment
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
-
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.common.webview.CustomWebChromeClient
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient
 import forpdateam.ru.forpda.common.webview.DialogsHelper
 import forpdateam.ru.forpda.entity.remote.news.DetailsPage
-import forpdateam.ru.forpda.model.interactors.news.ArticleInteractor
 import forpdateam.ru.forpda.presentation.articles.detail.content.ArticleContentPresenter
 import forpdateam.ru.forpda.presentation.articles.detail.content.ArticleContentView
-import forpdateam.ru.forpda.ui.activities.MainActivity
 import forpdateam.ru.forpda.ui.fragments.TabTopScroller
 import forpdateam.ru.forpda.ui.fragments.WebViewTopScroller
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
+import moxy.MvpAppCompatFragment
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 03.09.17.
@@ -37,22 +33,29 @@ class ArticleContentFragment : MvpAppCompatFragment(), ArticleContentView, TabTo
 
     @ProvidePresenter
     fun providePresenter(): ArticleContentPresenter = ArticleContentPresenter(
-            (parentFragment as NewsDetailsFragment).provideChildInteractor(),
-            App.get().Di().mainPreferencesHolder,
-            App.get().Di().templateManager,
-            App.get().Di().errorHandler
+        (parentFragment as NewsDetailsFragment).provideChildInteractor(),
+        App.get().Di().mainPreferencesHolder,
+        App.get().Di().templateManager,
+        App.get().Di().errorHandler
     )
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         webView = ExtendedWebView(context)
         (parentFragment as? NewsDetailsFragment)?.attachWebView(webView)
-        topScroller = WebViewTopScroller(webView, (parentFragment as NewsDetailsFragment).getAppBar())
-        webView.setDialogsHelper(DialogsHelper(
+        topScroller =
+            WebViewTopScroller(webView, (parentFragment as NewsDetailsFragment).getAppBar())
+        webView.setDialogsHelper(
+            DialogsHelper(
                 webView.context,
                 App.get().Di().linkHandler,
                 App.get().Di().systemLinkHandler,
                 App.get().Di().router
-        ))
+            )
+        )
         registerForContextMenu(webView)
         webView.webViewClient = CustomWebViewClient()
         webView.webChromeClient = CustomWebChromeClient()
@@ -67,7 +70,13 @@ class ArticleContentFragment : MvpAppCompatFragment(), ArticleContentView, TabTo
     override fun setRefreshing(isRefreshing: Boolean) {}
 
     override fun showData(article: DetailsPage) {
-        webView.loadDataWithBaseURL("https://4pda.to/forum/", article.html, "text/html", "utf-8", null)
+        webView.loadDataWithBaseURL(
+            "https://4pda.to/forum/",
+            article.html,
+            "text/html",
+            "utf-8",
+            null
+        )
     }
 
     override fun setStyleType(type: String) {
@@ -82,7 +91,9 @@ class ArticleContentFragment : MvpAppCompatFragment(), ArticleContentView, TabTo
     fun toComments() {
         if (context == null)
             return
-        webView.runInUiThread { (parentFragment as NewsDetailsFragment).fragmentsPager.currentItem = 1 }
+        webView.runInUiThread {
+            (parentFragment as NewsDetailsFragment).fragmentsPager.currentItem = 1
+        }
     }
 
     @JavascriptInterface

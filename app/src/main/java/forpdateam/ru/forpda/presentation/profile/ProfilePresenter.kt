@@ -18,11 +18,11 @@ import io.reactivex.Single
 
 @InjectViewState
 class ProfilePresenter(
-        private val profileRepository: ProfileRepository,
-        private val router: TabRouter,
-        private val linkHandler: ILinkHandler,
-        private val errorHandler: IErrorHandler,
-        private val schedulers: SchedulersProvider
+    private val profileRepository: ProfileRepository,
+    private val router: TabRouter,
+    private val linkHandler: ILinkHandler,
+    private val errorHandler: IErrorHandler,
+    private val schedulers: SchedulersProvider
 ) : BasePresenter<ProfileView>() {
 
     var profileUrl: String? = null
@@ -36,29 +36,29 @@ class ProfilePresenter(
     private fun loadProfile() {
         profileUrl?.let {
             profileRepository
-                    .loadProfile(it)
-                    .doOnSubscribe { viewState.setRefreshing(true) }
-                    .doAfterTerminate { viewState.setRefreshing(false) }
-                    .subscribe({ profileModel ->
-                        currentData = profileModel
-                        loadAvatar(profileModel)
-                        viewState.showProfile(profileModel)
-                    }, {
-                        errorHandler.handle(it)
-                    })
-                    .untilDestroy()
+                .loadProfile(it)
+                .doOnSubscribe { viewState.setRefreshing(true) }
+                .doAfterTerminate { viewState.setRefreshing(false) }
+                .subscribe({ profileModel ->
+                    currentData = profileModel
+                    loadAvatar(profileModel)
+                    viewState.showProfile(profileModel)
+                }, {
+                    errorHandler.handle(it)
+                })
+                .untilDestroy()
         }
     }
 
     fun saveNote(note: String) {
         profileRepository
-                .saveNote(note)
-                .subscribe({
-                    viewState.onSaveNote(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .saveNote(note)
+            .subscribe({
+                viewState.onSaveNote(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun onContactClick(item: ProfileModel.Contact) {
@@ -85,17 +85,17 @@ class ProfilePresenter(
 
     private fun loadAvatar(profile: ProfileModel) {
         Single
-                .fromCallable {
-                    ImageLoader.getInstance().loadImageSync(profile.avatar)
-                }
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe({
-                    viewState.showAvatar(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .fromCallable {
+                ImageLoader.getInstance().loadImageSync(profile.avatar)
+            }
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe({
+                viewState.showAvatar(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
 }

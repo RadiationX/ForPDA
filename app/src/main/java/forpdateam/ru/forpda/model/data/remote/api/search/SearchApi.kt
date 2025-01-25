@@ -9,8 +9,8 @@ import forpdateam.ru.forpda.model.data.remote.IWebClient
  */
 
 class SearchApi(
-        private val webClient: IWebClient,
-        private val searchParser: SearchParser
+    private val webClient: IWebClient,
+    private val searchParser: SearchParser
 ) {
 
     fun getSearch(settings: SearchSettings): SearchResult {

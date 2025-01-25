@@ -1,10 +1,11 @@
 package forpdateam.ru.forpda.ui.views;
 
 import android.content.Context;
-import androidx.annotation.LayoutRes;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.LayoutRes;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.HashMap;
 
@@ -12,17 +13,17 @@ import java.util.HashMap;
  * Created by radiationx on 05.10.17.
  */
 /*
-* Для управления и дополнительными вьюхами, когда нет данных и т.д.
-* */
+ * Для управления и дополнительными вьюхами, когда нет данных и т.д.
+ * */
 public class ContentController {
     public final static String TAG_NO_DATA = "NO_DATA";
     private View additionalRefresh;
-    private ViewGroup additionalContent;
+    private final ViewGroup additionalContent;
     private View mainRefresh;
     private ViewGroup mainContent;
     private boolean firstLoad = true;
 
-    private HashMap<Object, View> contents = new HashMap<>();
+    private final HashMap<Object, View> contents = new HashMap<>();
 
     public ContentController(View additionalRefresh, ViewGroup additionalContent, ViewGroup mainContent) {
         this.additionalRefresh = additionalRefresh;

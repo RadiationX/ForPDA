@@ -9,6 +9,6 @@ import java.util.ArrayList;
  */
 
 public class InsertItem {
-    private ArrayList<Pair<String, String>> headers = new ArrayList<>();
+    private final ArrayList<Pair<String, String>> headers = new ArrayList<>();
     private Pair<String, String> body;
 }

@@ -1,13 +1,15 @@
 package forpdateam.ru.forpda.ui.fragments.topics
 
 import android.os.Bundle
-import com.google.android.material.tabs.TabLayout
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
-import android.view.*
-import android.widget.Toast
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import com.google.android.material.tabs.TabLayout
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
@@ -21,6 +23,8 @@ import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesFragment
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.adapters.BaseSectionedAdapter
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 01.03.17.
@@ -60,13 +64,13 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
 
     @ProvidePresenter
     fun providePresenter(): TopicsPresenter = TopicsPresenter(
-            App.get().Di().topicsRepository,
-            App.get().Di().forumRepository,
-            App.get().Di().favoritesRepository,
-            App.get().Di().crossScreenInteractor,
-            App.get().Di().router,
-            App.get().Di().linkHandler,
-            App.get().Di().errorHandler
+        App.get().Di().topicsRepository,
+        App.get().Di().forumRepository,
+        App.get().Di().favoritesRepository,
+        App.get().Di().crossScreenInteractor,
+        App.get().Di().router,
+        App.get().Di().linkHandler,
+        App.get().Di().errorHandler
     )
 
     init {
@@ -80,7 +84,11 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         paginationHelper = PaginationHelper(activity)
         paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow)
@@ -114,7 +122,7 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
         }
 
         refreshLayout.setOnRefreshListener { presenter.loadTopics() }
-        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(context)
 
         adapter = TopicsAdapter()
         recyclerView.adapter = adapter
@@ -149,55 +157,55 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
     override fun addBaseToolbarMenu(menu: Menu) {
         super.addBaseToolbarMenu(menu)
         menu
-                .add(R.string.open_forum)
-                .setOnMenuItemClickListener {
-                    presenter.openForum()
-                    true
-                }
+            .add(R.string.open_forum)
+            .setOnMenuItemClickListener {
+                presenter.openForum()
+                true
+            }
         if (authHolder.get().isAuth()) {
             menu
-                    .add(R.string.mark_read)
-                    .setOnMenuItemClickListener {
-                        openMarkReadDialog()
-                        true
-                    }
+                .add(R.string.mark_read)
+                .setOnMenuItemClickListener {
+                    openMarkReadDialog()
+                    true
+                }
         }
 
         menu.add(R.string.fragment_title_search)
-                .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_search))
-                .setOnMenuItemClickListener {
-                    presenter.openSearch()
-                    true
-                }
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_search))
+            .setOnMenuItemClickListener {
+                presenter.openSearch()
+                true
+            }
+            .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
     }
 
     private fun openAddForumToFavoriteDialog(forumId: Int) {
         AlertDialog.Builder(context!!)
-                .setTitle(R.string.favorites_subscribe_email)
-                .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
-                    presenter.addForumToFavorite(forumId, FavoritesApi.SUB_TYPES[which])
-                }
-                .show()
+            .setTitle(R.string.favorites_subscribe_email)
+            .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
+                presenter.addForumToFavorite(forumId, FavoritesApi.SUB_TYPES[which])
+            }
+            .show()
     }
 
     private fun openAddTopicToFavoriteDialog(topicId: Int) {
         AlertDialog.Builder(context!!)
-                .setTitle(R.string.favorites_subscribe_email)
-                .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
-                    presenter.addTopicToFavorite(topicId, FavoritesApi.SUB_TYPES[which])
-                }
-                .show()
+            .setTitle(R.string.favorites_subscribe_email)
+            .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
+                presenter.addTopicToFavorite(topicId, FavoritesApi.SUB_TYPES[which])
+            }
+            .show()
     }
 
     private fun openMarkReadDialog() {
         AlertDialog.Builder(context!!)
-                .setMessage(getString(R.string.mark_read) + "?")
-                .setPositiveButton(R.string.ok) { _, _ ->
-                    presenter.markRead()
-                }
-                .setNegativeButton(R.string.cancel, null)
-                .show()
+            .setMessage(getString(R.string.mark_read) + "?")
+            .setPositiveButton(R.string.ok) { _, _ ->
+                presenter.markRead()
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 
     override fun onMarkRead() {
@@ -205,7 +213,11 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
     }
 
     override fun onAddToFavorite(result: Boolean) {
-        Toast.makeText(context, if (result) getString(R.string.favorites_added) else getString(R.string.error_occurred), Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            context,
+            if (result) getString(R.string.favorites_added) else getString(R.string.error_occurred),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     override fun onDestroy() {

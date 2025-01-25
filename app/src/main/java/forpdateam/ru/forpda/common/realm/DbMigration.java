@@ -1,7 +1,8 @@
 package forpdateam.ru.forpda.common.realm;
 
-import androidx.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

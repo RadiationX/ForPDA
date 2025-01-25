@@ -3,14 +3,13 @@ package forpdateam.ru.forpda.ui
 import android.content.Context
 import biz.source_code.miniTemplator.MiniTemplator
 import forpdateam.ru.forpda.common.DayNightHelper
-import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import io.reactivex.Observable
 import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
 
 class TemplateManager(
-        private val context: Context,
-        private val dayNightHelper: DayNightHelper
+    private val context: Context,
+    private val dayNightHelper: DayNightHelper
 ) {
 
     companion object {
@@ -32,8 +31,8 @@ class TemplateManager(
     }
 
     fun observeThemeType(): Observable<String> = dayNightHelper
-            .observeIsNight()
-            .map { if (it) "dark" else "light" }
+        .observeIsNight()
+        .map { if (it) "dark" else "light" }
 
     fun getThemeType(): String {
         return if (dayNightHelper.isNight()) "dark" else "light"
@@ -48,14 +47,17 @@ class TemplateManager(
     }
 
     fun getTemplate(name: String): MiniTemplator = templates[name]
-            ?: findTemplate(name).apply { templates[name] = this }
+        ?: findTemplate(name).apply { templates[name] = this }
 
     private fun findTemplate(name: String): MiniTemplator = try {
         val stream = context.assets.open("template_$name.html")
         MiniTemplator.Builder().build(stream, Charset.forName("utf-8"))
     } catch (ex: Exception) {
         ex.printStackTrace()
-        MiniTemplator.Builder().build(ByteArrayInputStream("Template error!".toByteArray(Charset.forName("utf-8"))), Charset.forName("utf-8"))
+        MiniTemplator.Builder().build(
+            ByteArrayInputStream("Template error!".toByteArray(Charset.forName("utf-8"))),
+            Charset.forName("utf-8")
+        )
     }
 
 }

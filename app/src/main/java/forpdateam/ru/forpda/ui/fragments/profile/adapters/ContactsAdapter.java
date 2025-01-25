@@ -6,11 +6,8 @@ import android.widget.ImageView;
 
 import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.entity.remote.devdb.Device;
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel;
 import forpdateam.ru.forpda.model.repository.temp.TempHelper;
-import forpdateam.ru.forpda.presentation.ISystemLinkHandler;
-import forpdateam.ru.forpda.ui.fragments.devdb.device.comments.CommentsAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 
@@ -20,7 +17,7 @@ import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
 
 class ContactsAdapter extends BaseAdapter<ProfileModel.Contact, ContactsAdapter.InfoHolder> {
 
-    private InfoHolder.Listener listener;
+    private final InfoHolder.Listener listener;
 
     public ContactsAdapter(InfoHolder.Listener listener) {
         this.listener = listener;
@@ -37,12 +34,12 @@ class ContactsAdapter extends BaseAdapter<ProfileModel.Contact, ContactsAdapter.
     }
 
     static class InfoHolder extends BaseViewHolder<ProfileModel.Contact> {
-        private ImageView icon;
+        private final ImageView icon;
         private ProfileModel.Contact currentItem;
 
         InfoHolder(View itemView, Listener listener) {
             super(itemView);
-            icon = (ImageView) itemView.findViewById(R.id.item_icon);
+            icon = itemView.findViewById(R.id.item_icon);
             itemView.setOnClickListener(v -> listener.onClick(currentItem));
         }
 

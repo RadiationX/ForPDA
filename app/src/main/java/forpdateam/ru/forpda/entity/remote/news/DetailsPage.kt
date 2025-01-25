@@ -2,8 +2,6 @@ package forpdateam.ru.forpda.entity.remote.news
 
 import android.util.SparseArray
 
-import java.util.ArrayList
-
 /**
  * Created by isanechek on 7/20/17.
  */

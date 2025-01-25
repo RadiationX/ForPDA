@@ -1,20 +1,16 @@
 package forpdateam.ru.forpda.ui.fragments.forum
 
 import android.os.Bundle
-import com.google.android.material.appbar.AppBarLayout
-import androidx.core.widget.NestedScrollView
-import androidx.appcompat.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import androidx.appcompat.app.AlertDialog
+import androidx.core.widget.NestedScrollView
+import com.google.android.material.appbar.AppBarLayout
 import com.unnamed.b.atv.model.TreeNode
 import com.unnamed.b.atv.view.AndroidTreeView
-
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemTree
@@ -24,6 +20,8 @@ import forpdateam.ru.forpda.presentation.forum.ForumView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesFragment
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 15.02.17.
@@ -72,10 +70,10 @@ class ForumFragment : TabFragment(), ForumView {
 
     @ProvidePresenter
     fun providePresenter(): ForumPresenter = ForumPresenter(
-            App.get().Di().forumRepository,
-            App.get().Di().favoritesRepository,
-            App.get().Di().router,
-            App.get().Di().errorHandler
+        App.get().Di().forumRepository,
+        App.get().Di().favoritesRepository,
+        App.get().Di().router,
+        App.get().Di().errorHandler
     )
 
     init {
@@ -89,7 +87,11 @@ class ForumFragment : TabFragment(), ForumView {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         baseInflateFragment(inflater, R.layout.fragment_forum)
         treeContainer = findViewById(R.id.nested_scroll_view) as NestedScrollView
@@ -139,15 +141,15 @@ class ForumFragment : TabFragment(), ForumView {
     override fun addBaseToolbarMenu(menu: Menu) {
         super.addBaseToolbarMenu(menu)
         menu.add(R.string.forum_refresh)
-                .setOnMenuItemClickListener {
-                    presenter.loadForums()
-                    false
-                }
+            .setOnMenuItemClickListener {
+                presenter.loadForums()
+                false
+            }
         menu.add(R.string.mark_all_read)
-                .setOnMenuItemClickListener {
-                    openMarkAllReadDialog()
-                    false
-                }
+            .setOnMenuItemClickListener {
+                openMarkAllReadDialog()
+                false
+            }
     }
 
     override fun showForums(forumRoot: ForumItemTree) {
@@ -166,31 +168,31 @@ class ForumFragment : TabFragment(), ForumView {
 
     private fun openAddToFavoriteDialog(forumId: Int) {
         AlertDialog.Builder(context!!)
-                .setTitle(R.string.favorites_subscribe_email)
-                .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
-                    presenter.addToFavorite(forumId, FavoritesApi.SUB_TYPES[which])
-                }
-                .show()
+            .setTitle(R.string.favorites_subscribe_email)
+            .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
+                presenter.addToFavorite(forumId, FavoritesApi.SUB_TYPES[which])
+            }
+            .show()
     }
 
     private fun openMarkReadDialog(item: ForumItemTree) {
         AlertDialog.Builder(context!!)
-                .setMessage(getString(R.string.mark_read) + "?")
-                .setPositiveButton(R.string.ok) { _, _ ->
-                    presenter.markRead(item.id)
-                }
-                .setNegativeButton(R.string.cancel, null)
-                .show()
+            .setMessage(getString(R.string.mark_read) + "?")
+            .setPositiveButton(R.string.ok) { _, _ ->
+                presenter.markRead(item.id)
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 
     private fun openMarkAllReadDialog() {
         AlertDialog.Builder(context!!)
-                .setMessage(getString(R.string.mark_all_read) + "?")
-                .setPositiveButton(R.string.ok) { _, _ ->
-                    presenter.markAllRead()
-                }
-                .setNegativeButton(R.string.no, null)
-                .show()
+            .setMessage(getString(R.string.mark_all_read) + "?")
+            .setPositiveButton(R.string.ok) { _, _ ->
+                presenter.markAllRead()
+            }
+            .setNegativeButton(R.string.no, null)
+            .show()
     }
 
     override fun onMarkRead() {
@@ -202,7 +204,11 @@ class ForumFragment : TabFragment(), ForumView {
     }
 
     override fun onAddToFavorite(result: Boolean) {
-        Toast.makeText(context, if (result) getString(R.string.favorites_added) else getString(R.string.error_occurred), Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            context,
+            if (result) getString(R.string.favorites_added) else getString(R.string.error_occurred),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     override fun scrollToForum(id: Int) {

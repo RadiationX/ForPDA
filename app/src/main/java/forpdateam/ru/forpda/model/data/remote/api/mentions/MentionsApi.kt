@@ -8,8 +8,8 @@ import forpdateam.ru.forpda.model.data.remote.IWebClient
  */
 
 class MentionsApi(
-        private val webClient: IWebClient,
-        private val mentionsParser: MentionsParser
+    private val webClient: IWebClient,
+    private val mentionsParser: MentionsParser
 ) {
     fun getMentions(st: Int): MentionsData {
         val response = webClient.get("https://4pda.to/forum/index.php?act=mentions&st=$st")

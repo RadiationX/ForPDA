@@ -6,7 +6,7 @@ import forpdateam.ru.forpda.common.Preferences
 import io.reactivex.Observable
 
 class OtherPreferencesHolder(
-        private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences
 ) {
 
     private val rxPreferences = RxSharedPreferences.create(sharedPreferences)
@@ -51,7 +51,8 @@ class OtherPreferencesHolder(
 
     fun observeTooltipSearchSettings(): Observable<Boolean> = tooltipSearchSettings.asObservable()
 
-    fun observeTooltipMessagePanelSorting(): Observable<Boolean> = tooltipMessagePanelSorting.asObservable()
+    fun observeTooltipMessagePanelSorting(): Observable<Boolean> =
+        tooltipMessagePanelSorting.asObservable()
 
 
     fun setAppFirstStart(value: Boolean) = appFirstStart.set(value)

@@ -2,10 +2,6 @@ package forpdateam.ru.forpda.ui.fragments.favorites
 
 import android.app.Dialog
 import android.os.Bundle
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.tabs.TabLayout
-import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -17,12 +13,10 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.Toast
-
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
-
-import java.util.Arrays
-
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.tabs.TabLayout
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.favorites.FavData
@@ -37,6 +31,9 @@ import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.FunnyContent
 import forpdateam.ru.forpda.ui.views.adapters.BaseSectionedAdapter
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
+import java.util.Arrays
 
 /**
  * Created by radiationx on 22.09.16.
@@ -83,16 +80,16 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
     @ProvidePresenter
     internal fun providePresenter(): FavoritesPresenter {
         return FavoritesPresenter(
-                App.get().Di().favoritesRepository,
-                App.get().Di().forumRepository,
-                App.get().Di().eventsRepository,
-                App.get().Di().listsPreferencesHolder,
-                App.get().Di().notificationPreferencesHolder,
-                App.get().Di().crossScreenInteractor,
-                App.get().Di().router,
-                App.get().Di().linkHandler,
-                App.get().Di().countersHolder,
-                App.get().Di().errorHandler
+            App.get().Di().favoritesRepository,
+            App.get().Di().forumRepository,
+            App.get().Di().eventsRepository,
+            App.get().Di().listsPreferencesHolder,
+            App.get().Di().notificationPreferencesHolder,
+            App.get().Di().crossScreenInteractor,
+            App.get().Di().router,
+            App.get().Di().linkHandler,
+            App.get().Di().countersHolder,
+            App.get().Di().errorHandler
         )
     }
 
@@ -105,10 +102,18 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
     }
 
     private fun getSubText(subTypeIndex: Int): CharSequence {
-        return String.format("%s (%s)", getString(R.string.fav_change_subscribe_type), SUB_NAMES[subTypeIndex])
+        return String.format(
+            "%s (%s)",
+            getString(R.string.fav_change_subscribe_type),
+            SUB_NAMES[subTypeIndex]
+        )
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         sortingView = View.inflate(context, R.layout.favorite_sorting, null) as ViewGroup
         keySpinner = sortingView.findViewById<View>(R.id.sorting_key) as Spinner
@@ -143,7 +148,11 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
                 presenter.showSubscribeDialog(data)
             }
             addItem(getPinText(false)) { _, data ->
-                presenter.changeFav(FavoritesApi.ACTION_EDIT_PIN_STATE, if (data.isPin) "unpin" else "pin", data.favId)
+                presenter.changeFav(
+                    FavoritesApi.ACTION_EDIT_PIN_STATE,
+                    if (data.isPin) "unpin" else "pin",
+                    data.favId
+                )
             }
             addItem(getString(R.string.delete)) { _, data ->
                 presenter.changeFav(FavoritesApi.ACTION_DELETE, null, data.favId)
@@ -153,15 +162,21 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
 
         refreshLayout.setOnRefreshListener { presenter.refresh() }
 
-        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(context)
         adapter = FavoritesAdapter()
         adapter.setOnItemClickListener(adapterListener)
         recyclerView.adapter = adapter
 
         paginationHelper.setListener(paginationListener)
 
-        initSpinnerItems(keySpinner, arrayOf(getString(R.string.fav_sort_last_post), getString(R.string.fav_sort_title)))
-        initSpinnerItems(orderSpinner, arrayOf(getString(R.string.sorting_asc), getString(R.string.sorting_desc)))
+        initSpinnerItems(
+            keySpinner,
+            arrayOf(getString(R.string.fav_sort_last_post), getString(R.string.fav_sort_title))
+        )
+        initSpinnerItems(
+            orderSpinner,
+            arrayOf(getString(R.string.sorting_asc), getString(R.string.sorting_desc))
+        )
         sortApply.setOnClickListener {
             val key = when (keySpinner.selectedItemPosition) {
                 0 -> Sorting.Key.LAST_POST
@@ -191,17 +206,17 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
     override fun addBaseToolbarMenu(menu: Menu) {
         super.addBaseToolbarMenu(menu)
         menu.add(R.string.sorting_title)
-                .setIcon(R.drawable.ic_toolbar_sort)
-                .setOnMenuItemClickListener {
-                    hideKeyboard()
-                    if (sortingView.parent != null && sortingView.parent is ViewGroup) {
-                        (sortingView.parent as ViewGroup).removeView(sortingView)
-                    }
-                    dialog.setContentView(sortingView)
-                    dialog.show()
-                    false
+            .setIcon(R.drawable.ic_toolbar_sort)
+            .setOnMenuItemClickListener {
+                hideKeyboard()
+                if (sortingView.parent != null && sortingView.parent is ViewGroup) {
+                    (sortingView.parent as ViewGroup).removeView(sortingView)
                 }
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                dialog.setContentView(sortingView)
+                dialog.show()
+                false
+            }
+            .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
     }
 
     override fun onMarkAllRead() {
@@ -228,9 +243,9 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
         if (items.isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
                 val funnyContent = FunnyContent(context)
-                        .setImage(R.drawable.ic_star)
-                        .setTitle(R.string.funny_favorites_nodata_title)
-                        .setDesc(R.string.funny_favorites_nodata_desc)
+                    .setImage(R.drawable.ic_star)
+                    .setTitle(R.string.funny_favorites_nodata_title)
+                    .setDesc(R.string.funny_favorites_nodata_desc)
                 contentController.addContent(funnyContent, ContentController.TAG_NO_DATA)
             }
             contentController.showContent(ContentController.TAG_NO_DATA)
@@ -274,12 +289,16 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
     override fun showSubscribeDialog(item: FavItem) {
         val subTypeIndex = Arrays.asList(*FavoritesApi.SUB_TYPES).indexOf(item.subType)
         AlertDialog.Builder(context!!)
-                .setTitle(R.string.favorites_subscribe_email)
-                .setSingleChoiceItems(FavoritesFragment.SUB_NAMES, subTypeIndex) { dialog, which ->
-                    presenter.changeFav(FavoritesApi.ACTION_EDIT_SUB_TYPE, FavoritesApi.SUB_TYPES[which], item.favId)
-                    dialog.dismiss()
-                }
-                .show()
+            .setTitle(R.string.favorites_subscribe_email)
+            .setSingleChoiceItems(SUB_NAMES, subTypeIndex) { dialog, which ->
+                presenter.changeFav(
+                    FavoritesApi.ACTION_EDIT_SUB_TYPE,
+                    FavoritesApi.SUB_TYPES[which],
+                    item.favId
+                )
+                dialog.dismiss()
+            }
+            .show()
     }
 
     override fun showItemDialogMenu(item: FavItem) {
@@ -308,12 +327,12 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
     companion object {
         @JvmField
         var SUB_NAMES = arrayOf<CharSequence>(
-                App.get().getString(R.string.fav_subscribe_none),
-                App.get().getString(R.string.fav_subscribe_delayed),
-                App.get().getString(R.string.fav_subscribe_immediate),
-                App.get().getString(R.string.fav_subscribe_daily),
-                App.get().getString(R.string.fav_subscribe_weekly),
-                App.get().getString(R.string.fav_subscribe_pinned)
+            App.get().getString(R.string.fav_subscribe_none),
+            App.get().getString(R.string.fav_subscribe_delayed),
+            App.get().getString(R.string.fav_subscribe_immediate),
+            App.get().getString(R.string.fav_subscribe_daily),
+            App.get().getString(R.string.fav_subscribe_weekly),
+            App.get().getString(R.string.fav_subscribe_pinned)
         )
     }
 }

@@ -39,7 +39,7 @@ class TabController {
 
             newTabItem.tag = jsonTabItem.getString("tag")
 
-            jsonTabItem.getJSONObject("screen")?.also { jsonScreen ->
+            jsonTabItem.getJSONObject("screen").also { jsonScreen ->
                 newTabItem.screen = TabScreen(jsonScreen.getString("key")).apply {
                     screenTitle = jsonScreen.nullString("screenTitle")
                     screenSubTitle = jsonScreen.nullString("screenSubTitle")
@@ -83,7 +83,7 @@ class TabController {
     fun getCurrent() = findTabItem(currentTag)
     fun setCurrent(tag: String) {
         val item = findTabItem(tag)
-                ?: throw Exception("You want to do the impossible. You want set current tag: \"$tag\", but this tag does not exist!")
+            ?: throw Exception("You want to do the impossible. You want set current tag: \"$tag\", but this tag does not exist!")
         currentTag = item.tag
     }
 

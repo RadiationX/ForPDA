@@ -2,11 +2,12 @@ package forpdateam.ru.forpda.ui.fragments.favorites;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -76,7 +77,7 @@ public class FavoritesAdapter extends BaseSectionedAdapter<FavItem, BaseSectione
         }
     }
 
-    public void setUnreadTop(boolean unreadTop){
+    public void setUnreadTop(boolean unreadTop) {
         this.unreadTop = unreadTop;
         if (currentItems != null) {
             bindItems(currentItems);
@@ -118,7 +119,7 @@ public class FavoritesAdapter extends BaseSectionedAdapter<FavItem, BaseSectione
     @Override
     public void onBindViewHolder(BaseSectionedViewHolder holder, int section, int relativePosition, int absolutePosition) {
         FavItem item = getItem(section, relativePosition);
-        ((ItemHolder) holder).bind(item, section, relativePosition, absolutePosition);
+        holder.bind(item, section, relativePosition, absolutePosition);
     }
 
     private class HeaderHolder extends BaseSectionedViewHolder<FavItem> {
@@ -128,7 +129,7 @@ public class FavoritesAdapter extends BaseSectionedAdapter<FavItem, BaseSectione
         HeaderHolder(View v) {
             super(v);
             topDivider = v.findViewById(R.id.topic_item_top_divider);
-            title = (TextView) v.findViewById(R.id.topic_item_title);
+            title = v.findViewById(R.id.topic_item_title);
         }
 
         @Override
@@ -149,13 +150,13 @@ public class FavoritesAdapter extends BaseSectionedAdapter<FavItem, BaseSectione
             super(v);
             dot = v.findViewById(R.id.topic_item_dot);
             topDivider = v.findViewById(R.id.topic_item_top_divider);
-            title = (TextView) v.findViewById(R.id.topic_item_title);
-            desc = (TextView) v.findViewById(R.id.topic_item_desc);
-            lastNick = (TextView) v.findViewById(R.id.topic_item_last_nick);
-            date = (TextView) v.findViewById(R.id.topic_item_date);
-            forumIcon = (ImageView) v.findViewById(R.id.topic_item_forum_icon);
-            lockIcon = (ImageView) v.findViewById(R.id.topic_item_lock_icon);
-            pollIcon = (ImageView) v.findViewById(R.id.topic_item_poll_icon);
+            title = v.findViewById(R.id.topic_item_title);
+            desc = v.findViewById(R.id.topic_item_desc);
+            lastNick = v.findViewById(R.id.topic_item_last_nick);
+            date = v.findViewById(R.id.topic_item_date);
+            forumIcon = v.findViewById(R.id.topic_item_forum_icon);
+            lockIcon = v.findViewById(R.id.topic_item_lock_icon);
+            pollIcon = v.findViewById(R.id.topic_item_poll_icon);
 
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);

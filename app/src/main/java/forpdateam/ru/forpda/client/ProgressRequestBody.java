@@ -17,8 +17,8 @@ import okio.Sink;
  * Created by radiationx on 10.11.17.
  */
 public class ProgressRequestBody extends RequestBody {
-    private RequestBody mDelegate;
-    private IWebClient.ProgressListener mListener;
+    private final RequestBody mDelegate;
+    private final IWebClient.ProgressListener mListener;
 
     ProgressRequestBody(RequestBody delegate, IWebClient.ProgressListener listener) {
         mDelegate = delegate;

@@ -4,24 +4,33 @@ import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Context
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.tabs.TabLayout
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.menu.ActionMenuItemView
 import androidx.appcompat.widget.ActionMenuView
+import androidx.appcompat.widget.SearchView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.widget.SearchView
-import android.util.Log
-import android.view.*
-import android.widget.*
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.tabs.TabLayout
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
@@ -42,17 +51,24 @@ import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesFragment
 import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup
 import forpdateam.ru.forpda.ui.fragments.theme.ThemeDialogsHelper_V2
 import forpdateam.ru.forpda.ui.fragments.theme.ThemeFragmentWeb
-import forpdateam.ru.forpda.ui.views.*
+import forpdateam.ru.forpda.ui.views.ContentController
+import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
+import forpdateam.ru.forpda.ui.views.ExtendedWebView
+import forpdateam.ru.forpda.ui.views.FabOnScroll
+import forpdateam.ru.forpda.ui.views.FunnyContent
+import forpdateam.ru.forpda.ui.views.PauseOnScrollListener
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
 import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip
-import java.util.*
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 29.01.17.
  */
 
-class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycleListener, BaseAdapter.OnItemClickListener<SearchItem> {
+class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycleListener,
+    BaseAdapter.OnItemClickListener<SearchItem> {
 
     private lateinit var searchSettingsView: ViewGroup
     private lateinit var nickBlock: ViewGroup
@@ -70,8 +86,8 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
 
 
     private lateinit var webView: ExtendedWebView
-    private lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
-    private lateinit var refreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var refreshLayout: SwipeRefreshLayout
     private val adapter = SearchAdapter()
     private var webViewClient: CustomWebViewClient? = null
 
@@ -120,18 +136,18 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
 
     @ProvidePresenter
     internal fun providePresenter(): SearchPresenter = SearchPresenter(
-            App.get().Di().searchRepository,
-            App.get().Di().favoritesRepository,
-            App.get().Di().themeRepository,
-            App.get().Di().reputationRepository,
-            App.get().Di().topicPreferencesHolder,
-            App.get().Di().mainPreferencesHolder,
-            App.get().Di().otherPreferencesHolder,
-            App.get().Di().searchTemplate,
-            App.get().Di().templateManager,
-            App.get().Di().router,
-            App.get().Di().linkHandler,
-            App.get().Di().errorHandler
+        App.get().Di().searchRepository,
+        App.get().Di().favoritesRepository,
+        App.get().Di().themeRepository,
+        App.get().Di().reputationRepository,
+        App.get().Di().topicPreferencesHolder,
+        App.get().Di().mainPreferencesHolder,
+        App.get().Di().otherPreferencesHolder,
+        App.get().Di().searchTemplate,
+        App.get().Di().templateManager,
+        App.get().Di().router,
+        App.get().Di().linkHandler,
+        App.get().Di().errorHandler
     )
 
     init {
@@ -162,14 +178,15 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.apply {
-            presenter.initSearchSettings(getString(TabFragment.ARG_TAB))
+            presenter.initSearchSettings(getString(ARG_TAB))
 
         }
         dialogsHelper = ThemeDialogsHelper_V2(context, authHolder, otherPreferencesHolder)
     }
 
     override fun initFabBehavior() {
-        val params = fab.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
+        val params =
+            fab.layoutParams as CoordinatorLayout.LayoutParams
         val behavior = FabOnScroll(fab.context)
         params.behavior = behavior
         params.gravity = Gravity.CENTER_VERTICAL or Gravity.END
@@ -178,21 +195,28 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
     }
 
     @SuppressLint("JavascriptInterface")
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         initFabBehavior()
 
         baseInflateFragment(inflater, R.layout.fragment_search)
-        refreshLayout = findViewById(R.id.swipe_refresh_list) as androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        refreshLayout =
+            findViewById(R.id.swipe_refresh_list) as SwipeRefreshLayout
         searchSettingsView = View.inflate(context, R.layout.search_settings, null) as ViewGroup
 
         nickBlock = searchSettingsView.findViewById<View>(R.id.search_nick_block) as ViewGroup
-        resourceBlock = searchSettingsView.findViewById<View>(R.id.search_resource_block) as ViewGroup
+        resourceBlock =
+            searchSettingsView.findViewById<View>(R.id.search_resource_block) as ViewGroup
         resultBlock = searchSettingsView.findViewById<View>(R.id.search_result_block) as ViewGroup
         sortBlock = searchSettingsView.findViewById<View>(R.id.search_sort_block) as ViewGroup
         sourceBlock = searchSettingsView.findViewById<View>(R.id.search_source_block) as ViewGroup
 
-        resourceSpinner = searchSettingsView.findViewById<View>(R.id.search_resource_spinner) as Spinner
+        resourceSpinner =
+            searchSettingsView.findViewById<View>(R.id.search_resource_spinner) as Spinner
         resultSpinner = searchSettingsView.findViewById<View>(R.id.search_result_spinner) as Spinner
         sortSpinner = searchSettingsView.findViewById<View>(R.id.search_sort_spinner) as Spinner
         sourceSpinner = searchSettingsView.findViewById<View>(R.id.search_source_spinner) as Spinner
@@ -200,19 +224,28 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         nickField = searchSettingsView.findViewById<View>(R.id.search_nick_field) as TextView
 
         submitButton = searchSettingsView.findViewById<View>(R.id.search_submit) as Button
-        saveSettingsButton = searchSettingsView.findViewById<View>(R.id.search_save_settings) as Button
+        saveSettingsButton =
+            searchSettingsView.findViewById<View>(R.id.search_save_settings) as Button
 
         webView = ExtendedWebView(context)
-        webView.setDialogsHelper(DialogsHelper(
+        webView.setDialogsHelper(
+            DialogsHelper(
                 webView.context,
                 App.get().Di().linkHandler,
                 App.get().Di().systemLinkHandler,
                 App.get().Di().router
-        ))
+            )
+        )
         attachWebView(webView)
-        recyclerView = androidx.recyclerview.widget.RecyclerView(context!!)
-        recyclerView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        webView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        recyclerView = RecyclerView(context!!)
+        recyclerView.layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        webView.layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
         refreshLayout.addView(recyclerView)
 
         paginationHelper = PaginationHelper(activity)
@@ -326,7 +359,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         submitButton.setOnClickListener { startSearch() }
         saveSettingsButton.setOnClickListener { presenter.saveSettings() }
         //recyclerView.setHasFixedSize(true);
-        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.addItemDecoration(DevicesFragment.SpacingItemDecoration(App.px8, true))
         val pauseOnScrollListener = PauseOnScrollListener(ImageLoader.getInstance(), true, true)
         recyclerView.addOnScrollListener(pauseOnScrollListener)
@@ -342,22 +375,23 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
                 if (childView is ActionMenuView) {
                     for (menuChildIndex in 0 until childView.childCount) {
                         try {
-                            val itemView = childView.getChildAt(menuChildIndex) as ActionMenuItemView
+                            val itemView =
+                                childView.getChildAt(menuChildIndex) as ActionMenuItemView
                             if (settingsMenuItem === itemView.itemData) {
                                 tooltip = SimpleTooltip.Builder(context)
-                                        .anchorView(itemView)
-                                        .text(R.string.tooltip_search_settings)
-                                        .gravity(Gravity.BOTTOM)
-                                        .animated(false)
-                                        .modal(true)
-                                        .transparentOverlay(false)
-                                        .backgroundColor(Color.BLACK)
-                                        .textColor(Color.WHITE)
-                                        .padding(App.px16.toFloat())
-                                        .build()
-                                        .apply {
-                                            show()
-                                        }
+                                    .anchorView(itemView)
+                                    .text(R.string.tooltip_search_settings)
+                                    .gravity(Gravity.BOTTOM)
+                                    .animated(false)
+                                    .modal(true)
+                                    .transparentOverlay(false)
+                                    .backgroundColor(Color.BLACK)
+                                    .textColor(Color.WHITE)
+                                    .padding(App.px16.toFloat())
+                                    .build()
+                                    .apply {
+                                        show()
+                                    }
                                 break
                             }
                         } catch (ignore: ClassCastException) {
@@ -378,24 +412,24 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
     override fun addBaseToolbarMenu(menu: Menu) {
         super.addBaseToolbarMenu(menu)
         menu.add(R.string.copy_link)
-                .setOnMenuItemClickListener {
-                    presenter.copyLink()
-                    false
-                }
+            .setOnMenuItemClickListener {
+                presenter.copyLink()
+                false
+            }
         toolbar.inflateMenu(R.menu.qms_contacts_menu)
 
         settingsMenuItem = menu.add(R.string.settings)
-                .setIcon(R.drawable.ic_toolbar_tune)
-                .setOnMenuItemClickListener {
-                    hideKeyboard()
-                    if (searchSettingsView.parent != null && searchSettingsView.parent is ViewGroup) {
-                        (searchSettingsView.parent as ViewGroup).removeView(searchSettingsView)
-                    }
-                    dialog.setContentView(searchSettingsView)
-                    dialog.show()
-                    false
+            .setIcon(R.drawable.ic_toolbar_tune)
+            .setOnMenuItemClickListener {
+                hideKeyboard()
+                if (searchSettingsView.parent != null && searchSettingsView.parent is ViewGroup) {
+                    (searchSettingsView.parent as ViewGroup).removeView(searchSettingsView)
                 }
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                dialog.setContentView(searchSettingsView)
+                dialog.show()
+                false
+            }
+            .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
 
         searchItem = menu.findItem(R.id.action_search)
         searchView = searchItem.actionView as SearchView
@@ -428,15 +462,19 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
 
     override fun showAddInFavDialog(item: IBaseForumPost) {
         AlertDialog.Builder(context!!)
-                .setTitle(R.string.favorites_subscribe_email)
-                .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
-                    presenter.addTopicToFavorite(item.topicId, FavoritesApi.SUB_TYPES[which])
-                }
-                .show()
+            .setTitle(R.string.favorites_subscribe_email)
+            .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
+                presenter.addTopicToFavorite(item.topicId, FavoritesApi.SUB_TYPES[which])
+            }
+            .show()
     }
 
     override fun onAddToFavorite(result: Boolean) {
-        Toast.makeText(context, if (result) getString(R.string.favorites_added) else getString(R.string.error_occurred), Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            context,
+            if (result) getString(R.string.favorites_added) else getString(R.string.error_occurred),
+            Toast.LENGTH_SHORT
+        ).show()
         refreshToolbarMenuItems(true)
     }
 
@@ -475,6 +513,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
             checkArg(settings.resourceType, SearchSettings.RESOURCE_NEWS) -> {
                 setSelection(resourceSpinner, resourceItems, SearchSettings.RESOURCE_NEWS)
             }
+
             checkArg(settings.resourceType, SearchSettings.RESOURCE_FORUM) -> {
                 setSelection(resourceSpinner, resourceItems, SearchSettings.RESOURCE_FORUM)
             }
@@ -484,6 +523,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
             checkArg(settings.result, SearchSettings.RESULT_TOPICS) -> {
                 setSelection(resultSpinner, resultItems, SearchSettings.RESULT_TOPICS)
             }
+
             checkArg(settings.result, SearchSettings.RESULT_POSTS) -> {
                 setSelection(resultSpinner, resultItems, SearchSettings.RESULT_POSTS)
             }
@@ -493,9 +533,11 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
             checkArg(settings.sort, SearchSettings.SORT_DA) -> {
                 setSelection(sortSpinner, sortItems, SearchSettings.SORT_DA)
             }
+
             checkArg(settings.sort, SearchSettings.SORT_DD) -> {
                 setSelection(sortSpinner, sortItems, SearchSettings.SORT_DD)
             }
+
             checkArg(settings.sort, SearchSettings.SORT_REL) -> {
                 setSelection(sortSpinner, sortItems, SearchSettings.SORT_REL)
             }
@@ -505,9 +547,11 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
             checkArg(settings.source, SearchSettings.SOURCE_ALL) -> {
                 setSelection(sourceSpinner, sourceItems, SearchSettings.SOURCE_ALL)
             }
+
             checkArg(settings.source, SearchSettings.SOURCE_TITLES) -> {
                 setSelection(sourceSpinner, sourceItems, SearchSettings.SOURCE_TITLES)
             }
+
             checkArg(settings.source, SearchSettings.SOURCE_CONTENT) -> {
                 setSelection(sourceSpinner, sourceItems, SearchSettings.SOURCE_CONTENT)
             }
@@ -564,9 +608,9 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         if (searchResult.items.isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
                 val funnyContent = FunnyContent(context)
-                        .setImage(R.drawable.ic_search)
-                        .setTitle(R.string.funny_search_nodata_title)
-                        .setDesc(R.string.funny_search_nodata_desc)
+                    .setImage(R.drawable.ic_search)
+                    .setTitle(R.string.funny_search_nodata_title)
+                    .setDesc(R.string.funny_search_nodata_desc)
                 contentController.addContent(funnyContent, ContentController.TAG_NO_DATA)
             }
             contentController.showContent(ContentController.TAG_NO_DATA)
@@ -574,11 +618,11 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
             contentController.hideContent(ContentController.TAG_NO_DATA)
         }
         if (
-                searchResult.settings?.result == SearchSettings.RESULT_POSTS.first
-                && searchResult.settings?.resourceType == SearchSettings.RESOURCE_FORUM.first
+            searchResult.settings?.result == SearchSettings.RESULT_POSTS.first
+            && searchResult.settings?.resourceType == SearchSettings.RESOURCE_FORUM.first
         ) {
             for (i in 0 until refreshLayout.childCount) {
-                if (refreshLayout.getChildAt(i) is androidx.recyclerview.widget.RecyclerView) {
+                if (refreshLayout.getChildAt(i) is RecyclerView) {
                     refreshLayout.removeViewAt(i)
                     fixTargetView()
                     break
@@ -594,7 +638,13 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
                 webView.webChromeClient = CustomWebChromeClient()
             }
             Log.d("SUKA", "SEARCH SHOW WEBVIEW")
-            webView.loadDataWithBaseURL("https://4pda.to/forum/", searchResult.html, "text/html", "utf-8", null)
+            webView.loadDataWithBaseURL(
+                "https://4pda.to/forum/",
+                searchResult.html,
+                "text/html",
+                "utf-8",
+                null
+            )
         } else {
             for (i in 0 until refreshLayout.childCount) {
                 if (refreshLayout.getChildAt(i) is ExtendedWebView) {

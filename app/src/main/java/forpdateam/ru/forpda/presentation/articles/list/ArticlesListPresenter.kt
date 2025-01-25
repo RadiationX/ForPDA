@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.presentation.articles.list
 
 import android.util.Log
-import moxy.InjectViewState
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.news.NewsItem
@@ -15,6 +14,7 @@ import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import io.reactivex.Observable
+import moxy.InjectViewState
 
 /**
  * Created by radiationx on 11.11.17.
@@ -22,13 +22,13 @@ import io.reactivex.Observable
 
 @InjectViewState
 class ArticlesListPresenter(
-        private val newsRepository: NewsRepository,
-        private val avatarRepository: AvatarRepository,
-        private val authHolder: AuthHolder,
-        private val router: TabRouter,
-        private val linkHandler: ILinkHandler,
-        private val errorHandler: IErrorHandler,
-        private val schedulers: SchedulersProvider
+    private val newsRepository: NewsRepository,
+    private val avatarRepository: AvatarRepository,
+    private val authHolder: AuthHolder,
+    private val router: TabRouter,
+    private val linkHandler: ILinkHandler,
+    private val errorHandler: IErrorHandler,
+    private val schedulers: SchedulersProvider
 ) : BasePresenter<ArticlesListView>() {
     private val category = Constants.NEWS_CATEGORY_ROOT
     private var currentPage = 1
@@ -44,20 +44,20 @@ class ArticlesListPresenter(
     private fun loadArticles(page: Int, withClear: Boolean) {
         currentPage = page
         newsRepository
-                .getNews(category, currentPage)
-                .doOnSubscribe { viewState.setRefreshing(true) }
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({
-                    if (withClear) {
-                        currentItems.clear()
-                    }
-                    currentItems.addAll(it)
-                    viewState.showNews(it, withClear)
-                    loadAvatars(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .getNews(category, currentPage)
+            .doOnSubscribe { viewState.setRefreshing(true) }
+            .doAfterTerminate { viewState.setRefreshing(false) }
+            .subscribe({
+                if (withClear) {
+                    currentItems.clear()
+                }
+                currentItems.addAll(it)
+                viewState.showNews(it, withClear)
+                loadAvatars(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     private fun loadAvatars(items: List<NewsItem>) {
@@ -77,26 +77,26 @@ class ArticlesListPresenter(
             Log.e("kekosina", "newAvatarsData ${it.first} ${it.second}")
         }
         Observable
-                .fromIterable(newAvatarsData)
-                .flatMapSingle { avatarData ->
-                    avatarRepository
-                            .getAvatar(avatarData.second)
-                            .map { Pair(avatarData, it as String?) }
-                            .onErrorReturnItem(Pair(avatarData, null as String?))
+            .fromIterable(newAvatarsData)
+            .flatMapSingle { avatarData ->
+                avatarRepository
+                    .getAvatar(avatarData.second)
+                    .map { Pair(avatarData, it as String?) }
+                    .onErrorReturnItem(Pair(avatarData, null as String?))
+            }
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe({ loaded ->
+                val updItems = currentItems
+                    .filter { it.authorId == loaded.first.first && it.avatar != loaded.second }
+                updItems.forEach {
+                    it.avatar = loaded.second
                 }
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe({ loaded ->
-                    val updItems = currentItems
-                            .filter { it.authorId == loaded.first.first && it.avatar != loaded.second }
-                    updItems.forEach {
-                        it.avatar = loaded.second
-                    }
-                    viewState.updateItems(updItems)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+                viewState.updateItems(updItems)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
 
     }
 

@@ -1,12 +1,12 @@
 package forpdateam.ru.forpda.ui.fragments.qms.chat;
 
-import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
-import androidx.appcompat.widget.AppCompatEditText;
-
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
+
+import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
+import androidx.appcompat.widget.AppCompatEditText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +21,11 @@ import forpdateam.ru.forpda.presentation.qms.chat.QmsChatPresenter;
  */
 
 public class ChatThemeCreator {
-    private QmsChatFragment fragment;
-    private QmsChatPresenter presenter;
-    private ViewStub viewStub;
-    private AppCompatAutoCompleteTextView nickField;
-    private AppCompatEditText titleField;
+    private final QmsChatFragment fragment;
+    private final QmsChatPresenter presenter;
+    private final ViewStub viewStub;
+    private final AppCompatAutoCompleteTextView nickField;
+    private final AppCompatEditText titleField;
 
     private String userNick, themeTitle;
 

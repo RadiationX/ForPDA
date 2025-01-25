@@ -6,8 +6,8 @@ import forpdateam.ru.forpda.entity.app.CloseableInfo
 import io.reactivex.Observable
 
 class CloseableInfoHolder(
-        private val preferences: SharedPreferences,
-        private val schedulers: SchedulersProvider
+    private val preferences: SharedPreferences,
+    private val schedulers: SchedulersProvider
 ) {
 
     companion object {
@@ -16,25 +16,26 @@ class CloseableInfoHolder(
         const val item_notes_sync = 11
 
         val ALL_ITEMS = arrayOf(
-                item_other_menu_drag,
-                item_notes_sync
+            item_other_menu_drag,
+            item_notes_sync
         )
     }
 
     private val relay = BehaviorRelay.create<List<CloseableInfo>>()
 
     init {
-        val closedIds: List<Int> = preferences.getString("closeable_info_closed_ids", null)?.let { savedIds ->
-            savedIds.split(',').map { it.toInt() }
-        } ?: emptyList()
+        val closedIds: List<Int> =
+            preferences.getString("closeable_info_closed_ids", null)?.let { savedIds ->
+                savedIds.split(',').map { it.toInt() }
+            } ?: emptyList()
 
         val allItems = ALL_ITEMS.map { CloseableInfo(it, closedIds.contains(it)) }
         relay.accept(allItems)
     }
 
     fun observe(): Observable<List<CloseableInfo>> = relay
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui());
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
 
     fun get(): List<CloseableInfo> = relay.value!!
 
@@ -42,7 +43,9 @@ class CloseableInfoHolder(
         val currentItems = get()
         currentItems.firstOrNull { it.id == item.id }?.isClosed = true
         val closedItems = currentItems.filter { it.isClosed }
-        preferences.edit().putString("closeable_info_closed_ids", closedItems.joinToString(",") { it.id.toString() }).apply()
+        preferences.edit().putString(
+            "closeable_info_closed_ids",
+            closedItems.joinToString(",") { it.id.toString() }).apply()
         relay.accept(currentItems)
     }
 

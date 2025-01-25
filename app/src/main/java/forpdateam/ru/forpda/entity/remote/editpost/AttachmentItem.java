@@ -46,7 +46,7 @@ public class AttachmentItem implements Parcelable {
 
     private int progress = -1;
 
-    private IWebClient.ProgressListener itemProgressListener = new IWebClient.ProgressListener() {
+    private final IWebClient.ProgressListener itemProgressListener = new IWebClient.ProgressListener() {
         @Override
         public void onProgress(int percent) {
             AttachmentItem.this.progress = progress;

@@ -11,7 +11,7 @@ import io.reactivex.Observable
  */
 
 class AppNetworkState(
-        private val context: Context
+    private val context: Context
 ) : NetworkStateProvider {
     private val stateRelay: BehaviorRelay<Boolean>
 

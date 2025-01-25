@@ -1,28 +1,29 @@
 package forpdateam.ru.forpda.ui.fragments
 
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import androidx.annotation.CallSuper
-import androidx.annotation.IdRes
-import androidx.annotation.LayoutRes
-import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.appbar.CollapsingToolbarLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.appcompat.widget.Toolbar
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-
-import moxy.MvpAppCompatFragment
-
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.RelativeLayout
+import android.widget.Spinner
+import android.widget.TextView
+import androidx.annotation.CallSuper
+import androidx.annotation.IdRes
+import androidx.annotation.LayoutRes
+import androidx.appcompat.widget.Toolbar
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.ui.DimensionHelper
@@ -32,7 +33,8 @@ import forpdateam.ru.forpda.ui.views.ExtendedWebView
 import forpdateam.ru.forpda.ui.views.ScrollAwareFABBehavior
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.fragment_base.view.*
+import kotlinx.android.synthetic.main.fragment_base.view.toolbar
+import moxy.MvpAppCompatFragment
 
 /**
  * Created by radiationx on 07.08.16.
@@ -54,7 +56,7 @@ open class TabFragment : MvpAppCompatFragment() {
     protected lateinit var additionalContent: ViewGroup
     protected lateinit var contentProgress: ProgressBar
     protected lateinit var titlesWrapper: LinearLayout
-    protected lateinit var coordinatorLayout: androidx.coordinatorlayout.widget.CoordinatorLayout
+    protected lateinit var coordinatorLayout: CoordinatorLayout
     protected lateinit var appBarLayout: AppBarLayout
     protected lateinit var toolbarLayout: CollapsingToolbarLayout
     protected lateinit var toolbar: Toolbar
@@ -159,7 +161,11 @@ open class TabFragment : MvpAppCompatFragment() {
     }
 
     @CallSuper
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         viewFragment = inflater.inflate(R.layout.fragment_base, container, false)
         //Осторожно! Чувствительно к структуре разметки! (по идеи так должно работать чуть быстрее)
         fragmentContainer = findViewById(R.id.fragment_container) as RelativeLayout
@@ -221,28 +227,28 @@ open class TabFragment : MvpAppCompatFragment() {
         addBaseToolbarMenu(toolbar.menu)
 
         disposables.add(
-                dimensionsProvider
-                        .observeDimensions()
-                        .subscribe { dimensions ->
+            dimensionsProvider
+                .observeDimensions()
+                .subscribe { dimensions ->
+                    if (viewFragment.toolbar != null) {
+                        toolbar.post {
                             if (viewFragment.toolbar != null) {
-                                toolbar.post {
-                                    if (viewFragment.toolbar != null) {
-                                        updateDimens(dimensions)
-                                    }
-                                }
+                                updateDimens(dimensions)
                             }
-                            updateDimens(dimensions)
                         }
+                    }
+                    updateDimens(dimensions)
+                }
         )
     }
 
     private fun updateDimens(dimensions: DimensionHelper.Dimensions) {
         if (!configuration.isFitSystemWindow) {
             fragmentContainer.setPadding(
-                    fragmentContainer.paddingLeft,
-                    dimensions.statusBar,
-                    fragmentContainer.paddingRight,
-                    fragmentContainer.paddingBottom
+                fragmentContainer.paddingLeft,
+                dimensions.statusBar,
+                fragmentContainer.paddingRight,
+                fragmentContainer.paddingBottom
             )
             return
         }
@@ -281,18 +287,24 @@ open class TabFragment : MvpAppCompatFragment() {
     }
 
     protected open fun initFabBehavior() {
-        val params = fab.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
+        val params =
+            fab.layoutParams as CoordinatorLayout.LayoutParams
         val behavior = ScrollAwareFABBehavior(fab.context, null)
         params.behavior = behavior
         fab.requestLayout()
     }
 
-    protected fun refreshLayoutStyle(refreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout) {
-        refreshLayout.setProgressBackgroundColorSchemeColor(App.getColorFromAttr(context, R.attr.colorPrimary))
+    protected fun refreshLayoutStyle(refreshLayout: SwipeRefreshLayout) {
+        refreshLayout.setProgressBackgroundColorSchemeColor(
+            App.getColorFromAttr(
+                context,
+                R.attr.colorPrimary
+            )
+        )
         refreshLayout.setColorSchemeColors(App.getColorFromAttr(context, R.attr.colorAccent))
     }
 
-    protected fun refreshLayoutLongTrigger(refreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout) {
+    protected fun refreshLayoutLongTrigger(refreshLayout: SwipeRefreshLayout) {
         refreshLayout.setDistanceToTriggerSync(App.px48 * 3)
         refreshLayout.setProgressViewEndTarget(false, App.px48 * 3)
     }
@@ -385,7 +397,7 @@ open class TabFragment : MvpAppCompatFragment() {
         contentController.destroy()
     }
 
-    open protected fun attachWebView(webView: ExtendedWebView) {
+    protected open fun attachWebView(webView: ExtendedWebView) {
         this.attachedWebView = webView
     }
 

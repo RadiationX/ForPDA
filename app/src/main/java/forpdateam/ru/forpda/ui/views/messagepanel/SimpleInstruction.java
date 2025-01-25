@@ -12,16 +12,16 @@ import forpdateam.ru.forpda.R;
  */
 
 public class SimpleInstruction extends ScrollView {
-    private TextView messageView;
-    private Button closeButton;
+    private final TextView messageView;
+    private final Button closeButton;
     private OnClickListener listener;
 
     public SimpleInstruction(Context context) {
         super(context);
         addView(inflate(context, R.layout.message_panel_instruction, null));
         setFillViewport(true);
-        messageView = (TextView) findViewById(R.id.instruction_message);
-        closeButton = (Button) findViewById(R.id.instruction_close_button);
+        messageView = findViewById(R.id.instruction_message);
+        closeButton = findViewById(R.id.instruction_close_button);
         closeButton.setOnClickListener((v) -> {
             this.setVisibility(GONE);
             if (listener != null) {

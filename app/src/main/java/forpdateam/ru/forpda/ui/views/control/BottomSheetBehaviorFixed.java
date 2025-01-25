@@ -22,8 +22,6 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-import com.google.android.material.R;
-
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.annotation.SuppressLint;
@@ -35,13 +33,6 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
-import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat;
-import androidx.core.view.accessibility.AccessibilityViewCommand;
-
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -63,9 +54,15 @@ import androidx.annotation.VisibleForTesting;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams;
 import androidx.core.math.MathUtils;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat;
+import androidx.core.view.accessibility.AccessibilityViewCommand;
 import androidx.customview.view.AbsSavedState;
 import androidx.customview.widget.ViewDragHelper;
 
+import com.google.android.material.R;
 import com.google.android.material.internal.ViewUtils;
 import com.google.android.material.internal.ViewUtils.RelativePadding;
 import com.google.android.material.resources.MaterialResources;
@@ -1419,7 +1416,7 @@ public class BottomSheetBehaviorFixed<V extends View> extends CoordinatorLayout.
                 settleRunnable = new SettleRunnable(child, state);
             }
             // If the SettleRunnable has not been posted, post it with the correct state.
-            if (settleRunnable.isPosted == false) {
+            if (!settleRunnable.isPosted) {
                 settleRunnable.targetState = state;
                 ViewCompat.postOnAnimation(child, settleRunnable);
                 settleRunnable.isPosted = true;

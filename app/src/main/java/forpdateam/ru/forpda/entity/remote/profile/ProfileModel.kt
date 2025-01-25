@@ -2,8 +2,6 @@ package forpdateam.ru.forpda.entity.remote.profile
 
 import android.text.Spanned
 
-import java.util.ArrayList
-
 /**
  * Created by radiationx on 03.08.16.
  */

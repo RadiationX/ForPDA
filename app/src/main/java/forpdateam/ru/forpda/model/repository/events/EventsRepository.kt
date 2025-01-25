@@ -1,43 +1,39 @@
 package forpdateam.ru.forpda.model.repository.events
 
 import android.content.Context
-import androidx.collection.ArraySet
 import android.util.Log
+import androidx.collection.ArraySet
 import com.jakewharton.rxrelay2.PublishRelay
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.client.WebSocketController
-import forpdateam.ru.forpda.common.Preferences
 import forpdateam.ru.forpda.entity.app.TabNotification
-import forpdateam.ru.forpda.entity.common.AuthState
 import forpdateam.ru.forpda.entity.remote.events.NotificationEvent
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.NetworkStateProvider
 import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.events.NotificationEventsApi
-import forpdateam.ru.forpda.model.repository.BaseRepository
 import forpdateam.ru.forpda.model.preferences.NotificationPreferencesHolder
+import forpdateam.ru.forpda.model.repository.BaseRepository
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.Response
-import okhttp3.WebSocket
-import okhttp3.WebSocketListener
-import java.net.SocketException
 import java.net.SocketTimeoutException
-import java.util.*
+import java.util.Timer
+import java.util.TimerTask
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 class EventsRepository(
-        private val context: Context,
-        private val webClient: IWebClient,
-        private val eventsApi: NotificationEventsApi,
-        private val schedulers: SchedulersProvider,
-        private val networkStateProvider: NetworkStateProvider,
-        private val authHolder: AuthHolder,
-        private val notificationPreferencesHolder: NotificationPreferencesHolder
+    private val context: Context,
+    private val webClient: IWebClient,
+    private val eventsApi: NotificationEventsApi,
+    private val schedulers: SchedulersProvider,
+    private val networkStateProvider: NetworkStateProvider,
+    private val authHolder: AuthHolder,
+    private val notificationPreferencesHolder: NotificationPreferencesHolder
 ) : BaseRepository(schedulers) {
     companion object {
         private const val LOG_TAG = "EventsRepository"
@@ -47,9 +43,9 @@ class EventsRepository(
     private var timerPeriod = (10 * 1000).toLong()
 
     private val pendingEvents = mapOf<NotificationEvent.Source, MutableMap<Int, NotificationEvent>>(
-            NotificationEvent.Source.QMS to mutableMapOf(),
-            NotificationEvent.Source.THEME to mutableMapOf(),
-            NotificationEvent.Source.SITE to mutableMapOf()
+        NotificationEvent.Source.QMS to mutableMapOf(),
+        NotificationEvent.Source.THEME to mutableMapOf(),
+        NotificationEvent.Source.SITE to mutableMapOf()
     )
 
     private var checkTimer: Timer? = null
@@ -69,103 +65,116 @@ class EventsRepository(
     private val cancelRelay = PublishRelay.create<NotificationEvent>()
     private val notifyTabRelay = PublishRelay.create<TabNotification>()
 
-    private val controllerListener: WebSocketController.Listener = object : WebSocketController.Listener() {
-        override fun onConnected() {
-            Log.d(LOG_TAG, "WSContr onConnected ${webSocketController.getCurrentId()},  ${webSocketController.isConnected()}")
-            webSocketController.send("""[${webSocketController.getCurrentId()}, "sv"]""")
-            webSocketController.send("""[0, "ea", "u${authHolder.get().userId}"]""")
-        }
+    private val controllerListener: WebSocketController.Listener =
+        object : WebSocketController.Listener() {
+            override fun onConnected() {
+                Log.d(
+                    LOG_TAG,
+                    "WSContr onConnected ${webSocketController.getCurrentId()},  ${webSocketController.isConnected()}"
+                )
+                webSocketController.send("""[${webSocketController.getCurrentId()}, "sv"]""")
+                webSocketController.send("""[0, "ea", "u${authHolder.get().userId}"]""")
+            }
 
-        override fun onMessage(text: String?) {
-            Log.d(LOG_TAG, "WSContr onMessage ${webSocketController.getCurrentId()}, ${webSocketController.isConnected()}, $text")
-            try {
-                eventsApi.parseWebSocketEvent(text)?.also {
-                    if (it.type != NotificationEvent.Type.HAT_EDITED) {
-                        handleWebSocketEvent(it)
+            override fun onMessage(text: String?) {
+                Log.d(
+                    LOG_TAG,
+                    "WSContr onMessage ${webSocketController.getCurrentId()}, ${webSocketController.isConnected()}, $text"
+                )
+                try {
+                    eventsApi.parseWebSocketEvent(text)?.also {
+                        if (it.type != NotificationEvent.Type.HAT_EDITED) {
+                            handleWebSocketEvent(it)
+                        }
+                    }
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
+            }
+
+            override fun onDisconnected(throwable: Throwable, response: Response?) {
+                Log.d(
+                    LOG_TAG,
+                    "WSContr onDisconnected ${webSocketController.getCurrentId()}, ${webSocketController.isConnected()}, ${throwable.message}, $response"
+                )
+                if (response != null) {
+                    Log.d(LOG_TAG, "WSContr onDisconnected: code=${response.code()}")
+                    if (response.code() == 403) {
+                        App.get().notifyForbidden(true)
                     }
                 }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
 
-        override fun onDisconnected(throwable: Throwable, response: Response?) {
-            Log.d(LOG_TAG, "WSContr onDisconnected ${webSocketController.getCurrentId()}, ${webSocketController.isConnected()}, ${throwable.message}, $response")
-            if (response != null) {
-                Log.d(LOG_TAG, "WSContr onDisconnected: code=${response.code()}")
-                if (response.code() == 403) {
-                    App.get().notifyForbidden(true)
+                throwable.printStackTrace()
+                if (throwable is SocketTimeoutException || throwable is TimeoutException) {
+                    Log.d(LOG_TAG, "start onFailure")
+                    start(true)
                 }
             }
-
-            throwable.printStackTrace()
-            if (throwable is SocketTimeoutException || throwable is TimeoutException) {
-                Log.d(LOG_TAG, "start onFailure")
-                start(true)
-            }
         }
-    }
 
     private val webSocketController = WebSocketController(webClient, controllerListener)
 
     init {
         val networkDisposable = networkStateProvider
-                .observeState()
-                .filter { lastNetworkState != it }
-                .subscribe {
-                    lastNetworkState = it
-                    if (it) {
-                        Log.d(LOG_TAG, "start networkStateProvider.observeState")
-                        start(true)
-                    }
+            .observeState()
+            .filter { lastNetworkState != it }
+            .subscribe {
+                lastNetworkState = it
+                if (it) {
+                    Log.d(LOG_TAG, "start networkStateProvider.observeState")
+                    start(true)
                 }
+            }
 
         val authDisposable = authHolder
-                .observe()
-                .filter { it.isAuth() != lastAuthState }
-                .subscribe {
-                    Log.e("kulolo", "events rep observe authHolder ${it.state}")
-                    lastAuthState = it.isAuth()
-                    if (it.isAuth()) {
-                        if (webSocketController.isConnected()) {
-                            stop()
-                        }
-                        Log.d(LOG_TAG, "start authHolder.observe")
-                        start(true)
-                    } else {
+            .observe()
+            .filter { it.isAuth() != lastAuthState }
+            .subscribe {
+                Log.e("kulolo", "events rep observe authHolder ${it.state}")
+                lastAuthState = it.isAuth()
+                if (it.isAuth()) {
+                    if (webSocketController.isConnected()) {
                         stop()
                     }
+                    Log.d(LOG_TAG, "start authHolder.observe")
+                    start(true)
+                } else {
+                    stop()
                 }
+            }
 
         var lastTimerStamp = System.currentTimeMillis()
 
         val timerDisposable = Observable
-                .interval(1, TimeUnit.MINUTES)
-                //.subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe {
-                    Log.d(LOG_TAG, "start timer $it (${(System.currentTimeMillis() - lastTimerStamp) / 1000}), ${webSocketController.isConnected()}")
-                    lastTimerStamp = System.currentTimeMillis()
-                    if (!webSocketController.isConnected()) {
-                        stop()
-                        start(false)
-                    }
+            .interval(1, TimeUnit.MINUTES)
+            //.subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe {
+                Log.d(
+                    LOG_TAG,
+                    "start timer $it (${(System.currentTimeMillis() - lastTimerStamp) / 1000}), ${webSocketController.isConnected()}"
+                )
+                lastTimerStamp = System.currentTimeMillis()
+                if (!webSocketController.isConnected()) {
+                    stop()
+                    start(false)
                 }
+            }
 
         timerPeriod = notificationPreferencesHolder.getMainLimit()
     }
 
     fun observeEvents(): Observable<NotificationEvent> = notifyRelay
-            .observeOn(schedulers.ui())
+        .observeOn(schedulers.ui())
 
     fun observeEventsStack(): Observable<List<NotificationEvent>> = notifyStackRelay
-            .observeOn(schedulers.ui())
+        .observeOn(schedulers.ui())
 
     fun observeCancel(): Observable<NotificationEvent> = cancelRelay
-            .observeOn(schedulers.ui())
+        .observeOn(schedulers.ui())
 
     fun observeEventsTab(): Observable<TabNotification> = notifyTabRelay
-            .observeOn(schedulers.ui())
+        .observeOn(schedulers.ui())
 
     fun setTimerPeriod(period: Long) {
         timerPeriod = period
@@ -182,7 +191,10 @@ class EventsRepository(
     }
 
     private fun start(checkEvents: Boolean) {
-        Log.e(LOG_TAG, "Start: ${networkStateProvider.getState()} : ${webSocketController.isConnected()} : $checkEvents : ${webSocketController.getCurrentId()}")
+        Log.e(
+            LOG_TAG,
+            "Start: ${networkStateProvider.getState()} : ${webSocketController.isConnected()} : $checkEvents : ${webSocketController.getCurrentId()}"
+        )
         if (networkStateProvider.getState() && authHolder.get().isAuth()) {
             if (!webSocketController.isConnected()) {
                 webSocketController.connect()
@@ -223,7 +235,10 @@ class EventsRepository(
     }
 
     private fun sendNotification(event: NotificationEvent) {
-        Log.e("events_lalala", "send notification rep " + event.sourceEventText + " : " + event.source + " : " + event.sourceTitle + " : " + event.userNick)
+        Log.e(
+            "events_lalala",
+            "send notification rep " + event.sourceEventText + " : " + event.source + " : " + event.sourceTitle + " : " + event.userNick
+        )
         if (event.userId == authHolder.get().userId) {
             return
         }
@@ -234,7 +249,10 @@ class EventsRepository(
         notifyRelay.accept(event)
     }
 
-    private fun sendNotifications(events: List<NotificationEvent>, tSource: NotificationEvent.Source) {
+    private fun sendNotifications(
+        events: List<NotificationEvent>,
+        tSource: NotificationEvent.Source
+    ) {
         if (events.isEmpty()) {
             return
         }
@@ -306,19 +324,24 @@ class EventsRepository(
         }
 
         if (delete || oldEvent == null) {
-            notifyTabs(TabNotification(
+            notifyTabs(
+                TabNotification(
                     event.source,
                     event.type,
                     event,
                     true
-            ))
+                )
+            )
         }
         if (delete) {
             eventsHistory.remove(event.notifyId(NotificationEvent.Type.NEW))
         }
     }
 
-    private fun checkOldEvents(loadedEvents: List<NotificationEvent>, source: NotificationEvent.Source) {
+    private fun checkOldEvents(
+        loadedEvents: List<NotificationEvent>,
+        source: NotificationEvent.Source
+    ) {
         val oldEvents = eventsHistory.filter { it.value.source == source }.map { it.value }
 
         for (oldEvent in oldEvents) {
@@ -332,12 +355,14 @@ class EventsRepository(
             if (!exist) {
                 cancelRelay.accept(oldEvent)
                 eventsHistory.remove(oldEvent.notifyId(NotificationEvent.Type.NEW))
-                notifyTabs(TabNotification(
+                notifyTabs(
+                    TabNotification(
                         oldEvent.source,
                         NotificationEvent.Type.READ,
                         oldEvent,
                         true
-                ))
+                    )
+                )
             }
         }
     }
@@ -348,12 +373,14 @@ class EventsRepository(
             return
         }
         eventsHistory[event.notifyId()] = event
-        notifyTabs(TabNotification(
+        notifyTabs(
+            TabNotification(
                 event.source,
                 event.type,
                 event,
                 true
-        ))
+            )
+        )
         handleEvent(listOf(event), event.source)
     }
 
@@ -391,53 +418,55 @@ class EventsRepository(
 
         if (observable != null) {
             observable
-                    .onErrorReturnItem(emptyList())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ loadedEvents ->
+                .onErrorReturnItem(emptyList())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ loadedEvents ->
 
-                        val savedEvents = getSavedEvents(source)
-                        savedEvents.forEach { event ->
-                            //Log.e("events_lalala", "check saved events " + event.sourceEventText + " : " + event.source + " : " + event.sourceTitle + " : " + event.userNick)
-                        }
-                        //savedEvents = mutableListOf();
-                        saveEvents(loadedEvents, source)
-                        val newEvents = compareEvents(savedEvents, loadedEvents, events, source)
-                        newEvents.forEach { event ->
-                            //Log.e("events_lalala", "check new events " + event.sourceEventText + " : " + event.source + " : " + event.sourceTitle + " : " + event.userNick)
-                        }
-                        val stackedNewEvents = newEvents.toMutableList()
+                    val savedEvents = getSavedEvents(source)
+                    savedEvents.forEach { event ->
+                        //Log.e("events_lalala", "check saved events " + event.sourceEventText + " : " + event.source + " : " + event.sourceTitle + " : " + event.userNick)
+                    }
+                    //savedEvents = mutableListOf();
+                    saveEvents(loadedEvents, source)
+                    val newEvents = compareEvents(savedEvents, loadedEvents, events, source)
+                    newEvents.forEach { event ->
+                        //Log.e("events_lalala", "check new events " + event.sourceEventText + " : " + event.source + " : " + event.sourceTitle + " : " + event.userNick)
+                    }
+                    val stackedNewEvents = newEvents.toMutableList()
 
-                        checkOldEvents(loadedEvents, source)
+                    checkOldEvents(loadedEvents, source)
 
-                        //Удаляем из общего уведомления текущие уведомление
-                        for (event in events) {
-                            for (newEvent in newEvents) {
-                                if (newEvent.sourceId == event.sourceId) {
-                                    stackedNewEvents.remove(newEvent)
-                                    newEvent.type = event.type
-                                    newEvent.messageId = event.messageId
+                    //Удаляем из общего уведомления текущие уведомление
+                    for (event in events) {
+                        for (newEvent in newEvents) {
+                            if (newEvent.sourceId == event.sourceId) {
+                                stackedNewEvents.remove(newEvent)
+                                newEvent.type = event.type
+                                newEvent.messageId = event.messageId
 
-                                    notifyTabs(TabNotification(
-                                            newEvent.source,
-                                            newEvent.type,
-                                            newEvent,
-                                            false,
-                                            loadedEvents.toList(),
-                                            newEvents.toList()
-                                    ))
+                                notifyTabs(
+                                    TabNotification(
+                                        newEvent.source,
+                                        newEvent.type,
+                                        newEvent,
+                                        false,
+                                        loadedEvents.toList(),
+                                        newEvents.toList()
+                                    )
+                                )
 
-                                    sendNotification(newEvent)
-                                } else if (event.isMention && !notificationPreferencesHolder.getFavEnabled()) {
-                                    stackedNewEvents.remove(newEvent)
-                                }
+                                sendNotification(newEvent)
+                            } else if (event.isMention && !notificationPreferencesHolder.getFavEnabled()) {
+                                stackedNewEvents.remove(newEvent)
                             }
                         }
+                    }
 
-                        sendNotifications(stackedNewEvents, source)
-                    }, {
-                        it.printStackTrace()
-                    })
+                    sendNotifications(stackedNewEvents, source)
+                }, {
+                    it.printStackTrace()
+                })
         }
     }
 
@@ -472,8 +501,11 @@ class EventsRepository(
         return emptyList()
     }
 
-    private fun saveEvents(loadedEvents: List<NotificationEvent>, source: NotificationEvent.Source) {
-        val savedEvents = androidx.collection.ArraySet<String>()
+    private fun saveEvents(
+        loadedEvents: List<NotificationEvent>,
+        source: NotificationEvent.Source
+    ) {
+        val savedEvents = ArraySet<String>()
         for (event in loadedEvents) {
             savedEvents.add(event.sourceEventText)
         }
@@ -485,10 +517,10 @@ class EventsRepository(
     }
 
     private fun compareEvents(
-            savedEvents: List<NotificationEvent>,
-            loadedEvents: List<NotificationEvent>,
-            events: List<NotificationEvent>,
-            source: NotificationEvent.Source
+        savedEvents: List<NotificationEvent>,
+        loadedEvents: List<NotificationEvent>,
+        events: List<NotificationEvent>,
+        source: NotificationEvent.Source
     ): List<NotificationEvent> {
         val newEvents = mutableListOf<NotificationEvent>()
 

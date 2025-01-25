@@ -1,10 +1,10 @@
 package forpdateam.ru.forpda.common.webview;
 
 import android.content.Context;
-
-import androidx.core.util.Pair;
 import android.util.Log;
 import android.webkit.WebView;
+
+import androidx.core.util.Pair;
 
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.common.Utils;
@@ -19,7 +19,7 @@ import forpdateam.ru.forpda.ui.views.DynamicDialogMenu;
  */
 
 public class DialogsHelper {
-    private DynamicDialogMenu<Context, Pair<String, String>> dynamicDialogMenu = new DynamicDialogMenu<>();
+    private final DynamicDialogMenu<Context, Pair<String, String>> dynamicDialogMenu = new DynamicDialogMenu<>();
 
     public DialogsHelper(
             Context context,

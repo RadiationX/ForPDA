@@ -18,8 +18,8 @@ class UpdateData {
     var patternsVersion = 0
 
     class UpdateLink(
-            val name: String,
-            val url: String,
-            val type: String
+        val name: String,
+        val url: String,
+        val type: String
     )
 }

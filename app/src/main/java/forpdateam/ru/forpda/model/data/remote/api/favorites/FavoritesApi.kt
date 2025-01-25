@@ -6,31 +6,26 @@ import forpdateam.ru.forpda.entity.remote.favorites.FavItem
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import java.util.Collections
-import kotlin.Boolean
-import kotlin.Comparator
-import kotlin.Int
-import kotlin.String
-import kotlin.arrayOf
 
 /**
  * Created by radiationx on 22.09.16.
  */
 
 class FavoritesApi(
-        private val webClient: IWebClient,
-        private val favoritesParser: FavoritesParser
+    private val webClient: IWebClient,
+    private val favoritesParser: FavoritesParser
 ) {
 
     fun getFavorites(st: Int, all: Boolean, sorting: Sorting): FavData {
         val uriBuilder = Uri.Builder()
-                .scheme("https")
-                .authority("4pda.to")
-                .appendPath("forum")
-                .appendQueryParameter("act", "fav")
-                .appendQueryParameter("type", "all")
-                .appendQueryParameter("st", st.toString())
-                .appendQueryParameter(Sorting.Key.HEADER, sorting.key)
-                .appendQueryParameter(Sorting.Order.HEADER, sorting.order)
+            .scheme("https")
+            .authority("4pda.to")
+            .appendPath("forum")
+            .appendQueryParameter("act", "fav")
+            .appendQueryParameter("type", "all")
+            .appendQueryParameter("st", st.toString())
+            .appendQueryParameter(Sorting.Key.HEADER, sorting.key)
+            .appendQueryParameter(Sorting.Order.HEADER, sorting.order)
 
         val response = webClient.get(uriBuilder.build().toString())
 
@@ -41,7 +36,8 @@ class FavoritesApi(
                 if (data.pagination.current >= data.pagination.all) {
                     break
                 }
-                val favData = getFavorites(data.pagination.getPage(data.pagination.current), false, sorting)
+                val favData =
+                    getFavorites(data.pagination.getPage(data.pagination.current), false, sorting)
                 data.pagination = favData.pagination
                 if (favData.items.isEmpty()) {
                     break
@@ -64,26 +60,27 @@ class FavoritesApi(
 
     fun editSubscribeType(type: String?, favId: Int): Boolean {
         checkNotNull(type)
-        val response = webClient.get("https://4pda.to/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0&tact=$type&selectedtids=$favId")
+        val response =
+            webClient.get("https://4pda.to/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0&tact=$type&selectedtids=$favId")
         return favoritesParser.checkIsComplete(response.body)
     }
 
     fun editPinState(type: String?, favId: Int): Boolean {
         checkNotNull(type)
         val builder = NetworkRequest.Builder()
-                .url("https://4pda.to/forum/index.php?act=fav")
-                .formHeader("selectedtids", favId.toString())
-                .formHeader("tact", type)
+            .url("https://4pda.to/forum/index.php?act=fav")
+            .formHeader("selectedtids", favId.toString())
+            .formHeader("tact", type)
         val response = webClient.request(builder.build())
         return favoritesParser.checkIsComplete(response.body)
     }
 
     fun delete(favId: Int): Boolean {
         val builder = NetworkRequest.Builder()
-                .url("https://4pda.to/forum/index.php?act=fav")
-                .xhrHeader()
-                .formHeader("selectedtids", favId.toString())
-                .formHeader("tact", "delete")
+            .url("https://4pda.to/forum/index.php?act=fav")
+            .xhrHeader()
+            .formHeader("selectedtids", favId.toString())
+            .formHeader("tact", "delete")
         val response = webClient.request(builder.build())
         return favoritesParser.checkIsComplete(response.body)
     }

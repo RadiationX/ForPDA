@@ -1,33 +1,28 @@
 package forpdateam.ru.forpda.model.data.remote.api.editpost
 
-import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
-import forpdateam.ru.forpda.model.data.remote.api.NetworkResponse
-import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.attachments.AttachmentsParser
 import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeApi
 import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeParser
-import java.io.ByteArrayInputStream
-import java.security.MessageDigest
-import java.util.*
 
 /**
  * Created by radiationx on 10.01.17.
  */
 
 class EditPostApi(
-        private val webClient: IWebClient,
-        private val themeApi: ThemeApi,
-        private val editPostParser: EditPostParser,
-        private val attachmentsParser: AttachmentsParser,
-        private val themeParser: ThemeParser
+    private val webClient: IWebClient,
+    private val themeApi: ThemeApi,
+    private val editPostParser: EditPostParser,
+    private val attachmentsParser: AttachmentsParser,
+    private val themeParser: ThemeParser
 ) {
 
     fun loadForm(postId: Int): EditPostForm {
-        val url = "https://4pda.to/forum/index.php?act=post&do=edit_post&p=" + Integer.toString(postId)
+        val url =
+            "https://4pda.to/forum/index.php?act=post&do=edit_post&p=" + Integer.toString(postId)
         var response = webClient.get(url)
         if (response.body == "nopermission") {
             return EditPostForm().apply {
@@ -38,7 +33,8 @@ class EditPostApi(
         val form = editPostParser.parseForm(response.body)
         form.poll = editPostParser.parsePoll(response.body)
 
-        response = webClient.get("https://4pda.to/forum/index.php?act=attach&index=1&relId=$postId&maxSize=134217728&allowExt=&code=init&unlinked=")
+        response =
+            webClient.get("https://4pda.to/forum/index.php?act=attach&index=1&relId=$postId&maxSize=134217728&allowExt=&code=init&unlinked=")
         val attachments = attachmentsParser.parseAttachments(response.body)
         form.attachments.addAll(attachments)
 
@@ -50,25 +46,25 @@ class EditPostApi(
         val headers = HashMap<String, String>()
 
         val builder = NetworkRequest.Builder()
-                .url(url)
-                .formHeaders(headers)
-                .multipart()
-                .formHeader("act", "Post")
-                .formHeader("CODE", if (form.type == EditPostForm.TYPE_NEW_POST) "03" else "9")
-                .formHeader("f", form.forumId.toString())
-                .formHeader("t", form.topicId.toString())
-                .formHeader("auth_key", webClient.authKey)
-                .formHeader("Post", form.message)
-                .formHeader("enablesig", "yes")
-                .formHeader("enableemo", "yes")
-                .formHeader("st", form.st.toString())
-                .formHeader("removeattachid", "0")
-                .formHeader("MAX_FILE_SIZE", "0")
-                .formHeader("parent_id", "0")
-                .formHeader("ed-0_wysiwyg_used", "0")
-                .formHeader("editor_ids[]", "ed-0")
-                .formHeader("iconid", "0")
-                .formHeader("_upload_single_file", "1")
+            .url(url)
+            .formHeaders(headers)
+            .multipart()
+            .formHeader("act", "Post")
+            .formHeader("CODE", if (form.type == EditPostForm.TYPE_NEW_POST) "03" else "9")
+            .formHeader("f", form.forumId.toString())
+            .formHeader("t", form.topicId.toString())
+            .formHeader("auth_key", webClient.authKey)
+            .formHeader("Post", form.message)
+            .formHeader("enablesig", "yes")
+            .formHeader("enableemo", "yes")
+            .formHeader("st", form.st.toString())
+            .formHeader("removeattachid", "0")
+            .formHeader("MAX_FILE_SIZE", "0")
+            .formHeader("parent_id", "0")
+            .formHeader("ed-0_wysiwyg_used", "0")
+            .formHeader("editor_ids[]", "ed-0")
+            .formHeader("iconid", "0")
+            .formHeader("_upload_single_file", "1")
 
         val poll = form.poll
         if (poll != null) {
@@ -76,12 +72,18 @@ class EditPostApi(
             for (i in 0 until poll.questions.size) {
                 val question = poll.getQuestion(i)
                 val q_index = i + 1
-                builder.formHeader("question[$q_index]", question.title.replace("\n".toRegex(), " "))
+                builder.formHeader(
+                    "question[$q_index]",
+                    question.title.replace("\n".toRegex(), " ")
+                )
                 builder.formHeader("multi[$q_index]", if (question.isMulti) "1" else "0")
                 for (j in 0 until question.choices.size) {
                     val choice = question.getChoice(j)
                     val c_index = j + 1
-                    builder.formHeader("choice[$q_index${'_'}$c_index]", choice.title.replace("\n".toRegex(), " "))
+                    builder.formHeader(
+                        "choice[$q_index${'_'}$c_index]",
+                        choice.title.replace("\n".toRegex(), " ")
+                    )
                 }
             }
         }

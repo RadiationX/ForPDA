@@ -1,22 +1,17 @@
 package forpdateam.ru.forpda.ui.fragments.mentions
 
 import android.os.Bundle
-import com.google.android.material.tabs.TabLayout
-import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
-
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.tabs.TabLayout
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.mentions.MentionItem
 import forpdateam.ru.forpda.entity.remote.mentions.MentionsData
-import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.presentation.mentions.MentionsPresenter
 import forpdateam.ru.forpda.presentation.mentions.MentionsView
@@ -27,6 +22,8 @@ import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.FunnyContent
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 21.01.17.
@@ -66,18 +63,22 @@ class MentionsFragment : RecyclerFragment(), MentionsView {
 
     @ProvidePresenter
     fun providePresenter(): MentionsPresenter = MentionsPresenter(
-            App.get().Di().mentionsRepository,
-            App.get().Di().favoritesRepository,
-            App.get().Di().router,
-            App.get().Di().linkHandler,
-            App.get().Di().errorHandler
+        App.get().Di().mentionsRepository,
+        App.get().Di().favoritesRepository,
+        App.get().Di().router,
+        App.get().Di().linkHandler,
+        App.get().Di().errorHandler
     )
 
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_mentions)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         paginationHelper = PaginationHelper(activity)
         paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow)
@@ -100,7 +101,7 @@ class MentionsFragment : RecyclerFragment(), MentionsView {
 
         adapter = MentionsAdapter()
 
-        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
 
         adapter.setOnItemClickListener(adapterListener)
@@ -112,9 +113,9 @@ class MentionsFragment : RecyclerFragment(), MentionsView {
         if (data.items.isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
                 val funnyContent = FunnyContent(context)
-                        .setImage(R.drawable.ic_notifications)
-                        .setTitle(R.string.funny_mentions_nodata_title)
-                        .setDesc(R.string.funny_mentions_nodata_desc)
+                    .setImage(R.drawable.ic_notifications)
+                    .setTitle(R.string.funny_mentions_nodata_title)
+                    .setDesc(R.string.funny_mentions_nodata_desc)
                 contentController.addContent(funnyContent, ContentController.TAG_NO_DATA)
             }
             contentController.showContent(ContentController.TAG_NO_DATA)
@@ -146,14 +147,18 @@ class MentionsFragment : RecyclerFragment(), MentionsView {
 
     override fun showAddFavoritesDialog(id: Int) {
         AlertDialog.Builder(context!!)
-                .setTitle(R.string.favorites_subscribe_email)
-                .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
-                    presenter.addTopicToFavorite(id, FavoritesApi.SUB_TYPES[which])
-                }
-                .show()
+            .setTitle(R.string.favorites_subscribe_email)
+            .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
+                presenter.addTopicToFavorite(id, FavoritesApi.SUB_TYPES[which])
+            }
+            .show()
     }
 
     override fun onAddToFavorite(result: Boolean) {
-        Toast.makeText(context, if (result) getString(R.string.favorites_added) else getString(R.string.error_occurred), Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            context,
+            if (result) getString(R.string.favorites_added) else getString(R.string.error_occurred),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 }

@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.presentation.qms.chat
 
-import moxy.InjectViewState
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.app.TabNotification
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
@@ -9,14 +8,15 @@ import forpdateam.ru.forpda.entity.remote.qms.QmsChatModel
 import forpdateam.ru.forpda.entity.remote.qms.QmsMessage
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.interactors.qms.QmsInteractor
+import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository
 import forpdateam.ru.forpda.model.repository.events.EventsRepository
-import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.ui.TemplateManager
+import moxy.InjectViewState
 
 /**
  * Created by radiationx on 11.11.17.
@@ -24,15 +24,15 @@ import forpdateam.ru.forpda.ui.TemplateManager
 
 @InjectViewState
 class QmsChatPresenter(
-        private val qmsInteractor: QmsInteractor,
-        private val qmsChatTemplate: QmsChatTemplate,
-        private val avatarRepository: AvatarRepository,
-        private val eventsRepository: EventsRepository,
-        private val mainPreferencesHolder: MainPreferencesHolder,
-        private val templateManager: TemplateManager,
-        private val router: TabRouter,
-        private val linkHandler: ILinkHandler,
-        private val errorHandler: IErrorHandler
+    private val qmsInteractor: QmsInteractor,
+    private val qmsChatTemplate: QmsChatTemplate,
+    private val avatarRepository: AvatarRepository,
+    private val eventsRepository: EventsRepository,
+    private val mainPreferencesHolder: MainPreferencesHolder,
+    private val templateManager: TemplateManager,
+    private val router: TabRouter,
+    private val linkHandler: ILinkHandler,
+    private val errorHandler: IErrorHandler
 ) : BasePresenter<QmsChatView>(), IQmsChatPresenter {
 
     companion object {
@@ -54,24 +54,24 @@ class QmsChatPresenter(
         super.onFirstViewAttach()
 
         mainPreferencesHolder
-                .observeWebViewFontSize()
-                .subscribe {
-                    viewState.setFontSize(it)
-                }
-                .untilDestroy()
+            .observeWebViewFontSize()
+            .subscribe {
+                viewState.setFontSize(it)
+            }
+            .untilDestroy()
 
         templateManager
-                .observeThemeType()
-                .subscribe {
-                    viewState.setStyleType(it)
-                }
-                .untilDestroy()
+            .observeThemeType()
+            .subscribe {
+                viewState.setStyleType(it)
+            }
+            .untilDestroy()
         eventsRepository
-                .observeEventsTab()
-                .subscribe {
-                    handleEvent(it)
-                }
-                .untilDestroy()
+            .observeEventsTab()
+            .subscribe {
+                handleEvent(it)
+            }
+            .untilDestroy()
         nick?.let { nick -> title?.let { title -> viewState.setTitles(title, nick) } }
 
         updateMode()
@@ -82,11 +82,12 @@ class QmsChatPresenter(
     }
 
     private fun updateMode() {
-        currentMode = if (themeId == QmsChatModel.NOT_CREATED || userId == QmsChatModel.NOT_CREATED) {
-            MODE_CREATING
-        } else {
-            MODE_CHAT
-        }
+        currentMode =
+            if (themeId == QmsChatModel.NOT_CREATED || userId == QmsChatModel.NOT_CREATED) {
+                MODE_CREATING
+            } else {
+                MODE_CHAT
+            }
         viewState.setChatMode(currentMode)
     }
 
@@ -102,74 +103,74 @@ class QmsChatPresenter(
 
     fun findUser(nick: String) {
         qmsInteractor
-                .findUser(nick)
-                .subscribe({
-                    viewState.onShowSearchRes(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .findUser(nick)
+            .subscribe({
+                viewState.onShowSearchRes(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     private fun loadChat() {
         qmsInteractor
-                .getChat(userId, themeId)
-                //.map { qmsChatTemplate.mapEntity(it) }
-                .doOnSubscribe { viewState.setRefreshing(true) }
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({
-                    updateCurrentData(it)
-                    viewState.showChat(it)
-                    initOnNewMessages(it)
-                    tryShowAvatar()
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .getChat(userId, themeId)
+            //.map { qmsChatTemplate.mapEntity(it) }
+            .doOnSubscribe { viewState.setRefreshing(true) }
+            .doAfterTerminate { viewState.setRefreshing(false) }
+            .subscribe({
+                updateCurrentData(it)
+                viewState.showChat(it)
+                initOnNewMessages(it)
+                tryShowAvatar()
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun sendNewTheme(nick: String, title: String, message: String, files: List<AttachmentItem>) {
         qmsInteractor
-                .sendNewTheme(nick, title, message, files)
-                //.map { qmsChatTemplate.mapEntity(it) }
-                .doOnSubscribe { viewState.setRefreshing(true) }
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({
-                    updateCurrentData(it)
-                    viewState.showChat(it)
-                    viewState.onNewThemeCreate(it)
-                    initOnNewMessages(it)
-                    tryShowAvatar()
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .sendNewTheme(nick, title, message, files)
+            //.map { qmsChatTemplate.mapEntity(it) }
+            .doOnSubscribe { viewState.setRefreshing(true) }
+            .doAfterTerminate { viewState.setRefreshing(false) }
+            .subscribe({
+                updateCurrentData(it)
+                viewState.showChat(it)
+                viewState.onNewThemeCreate(it)
+                initOnNewMessages(it)
+                tryShowAvatar()
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun sendMessage(message: String, files: List<AttachmentItem>) {
         qmsInteractor
-                .sendMessage(userId, themeId, message, files)
-                .doOnSubscribe { viewState.setMessageRefreshing(true) }
-                .doAfterTerminate { viewState.setMessageRefreshing(false) }
-                .subscribe({
-                    viewState.onSentMessage(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .sendMessage(userId, themeId, message, files)
+            .doOnSubscribe { viewState.setMessageRefreshing(true) }
+            .doAfterTerminate { viewState.setMessageRefreshing(false) }
+            .subscribe({
+                viewState.onSentMessage(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun blockUser() {
         currentData?.nick?.let { nick ->
             qmsInteractor
-                    .blockUser(nick)
-                    .map { it.firstOrNull { it.nick == nick } != null }
-                    .subscribe({
-                        viewState.onBlockUser(it)
-                    }, {
-                        errorHandler.handle(it)
-                    })
-                    .untilDestroy()
+                .blockUser(nick)
+                .map { it.firstOrNull { it.nick == nick } != null }
+                .subscribe({
+                    viewState.onBlockUser(it)
+                }, {
+                    errorHandler.handle(it)
+                })
+                .untilDestroy()
         }
     }
 
@@ -180,13 +181,13 @@ class QmsChatPresenter(
         } else {
             currentData?.let {
                 avatarRepository
-                        .getAvatar(it.nick.orEmpty())
-                        .subscribe({
-                            viewState.showAvatar(it)
-                        }, {
-                            errorHandler.handle(it)
-                        })
-                        .untilDestroy()
+                    .getAvatar(it.nick.orEmpty())
+                    .subscribe({
+                        viewState.showAvatar(it)
+                    }, {
+                        errorHandler.handle(it)
+                    })
+                    .untilDestroy()
             }
         }
     }
@@ -194,13 +195,13 @@ class QmsChatPresenter(
 
     fun uploadFiles(files: List<RequestFile>, pending: List<AttachmentItem>) {
         qmsInteractor
-                .uploadFiles(files, pending)
-                .subscribe({
-                    viewState.onUploadFiles(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .uploadFiles(files, pending)
+            .subscribe({
+                viewState.onUploadFiles(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun handleEvent(event: TabNotification) {
@@ -212,13 +213,17 @@ class QmsChatPresenter(
                     NotificationEvent.Type.NEW -> {
                         onNewWsMessage(themeId, messageId)
                     }
+
                     NotificationEvent.Type.READ -> {
                         viewState.makeAllRead()
                     }
+
                     NotificationEvent.Type.MENTION -> {
                     }
+
                     NotificationEvent.Type.HAT_EDITED -> {
                     }
+
                     null -> {
                     }
                 }
@@ -231,13 +236,13 @@ class QmsChatPresenter(
         currentData?.let {
             val lastMessId = it.messages.lastOrNull()?.id ?: 0
             qmsInteractor
-                    .getMessagesFromWs(themeId, messageId, lastMessId)
-                    .subscribe({
-                        onNewMessages(it)
-                    }, {
-                        errorHandler.handle(it)
-                    })
-                    .untilDestroy()
+                .getMessagesFromWs(themeId, messageId, lastMessId)
+                .subscribe({
+                    onNewMessages(it)
+                }, {
+                    errorHandler.handle(it)
+                })
+                .untilDestroy()
         }
     }
 
@@ -245,13 +250,13 @@ class QmsChatPresenter(
         currentData?.let {
             val lastMessId = it.messages.lastOrNull()?.id ?: 0
             qmsInteractor
-                    .getMessagesAfter(themeId, it.themeId, lastMessId)
-                    .subscribe({
-                        onNewMessages(it)
-                    }, {
-                        errorHandler.handle(it)
-                    })
-                    .untilDestroy()
+                .getMessagesAfter(themeId, it.themeId, lastMessId)
+                .subscribe({
+                    onNewMessages(it)
+                }, {
+                    errorHandler.handle(it)
+                })
+                .untilDestroy()
         }
     }
 

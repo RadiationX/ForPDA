@@ -13,24 +13,24 @@ import io.reactivex.Single
  */
 
 class HistoryRepository(
-        private val schedulers: SchedulersProvider,
-        private val historyCache: HistoryCache
+    private val schedulers: SchedulersProvider,
+    private val historyCache: HistoryCache
 ) : BaseRepository(schedulers) {
 
     fun observeItems(): Observable<List<HistoryItem>> = historyCache
-            .observeItems()
-            .runInIoToUi()
+        .observeItems()
+        .runInIoToUi()
 
     fun getHistory(): Single<List<HistoryItem>> = Single
-            .fromCallable { historyCache.getHistory() }
-            .runInIoToUi()
+        .fromCallable { historyCache.getHistory() }
+        .runInIoToUi()
 
     fun remove(id: Int): Completable = Completable
-            .fromRunnable { historyCache.remove(id) }
-            .runInIoToUi()
+        .fromRunnable { historyCache.remove(id) }
+        .runInIoToUi()
 
     fun clear(): Completable = Completable
-            .fromRunnable { historyCache.clear() }
-            .runInIoToUi()
+        .fromRunnable { historyCache.clear() }
+        .runInIoToUi()
 
 }

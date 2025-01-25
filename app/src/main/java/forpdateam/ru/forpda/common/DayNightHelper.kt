@@ -8,7 +8,7 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 
 class DayNightHelper(
-        private val defaultMode: Boolean
+    private val defaultMode: Boolean
 ) {
 
     companion object {

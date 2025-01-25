@@ -75,7 +75,7 @@ public class Html {
     /**
      * Retrieves images for HTML &lt;img&gt; tags.
      */
-    public static interface ImageGetter {
+    public interface ImageGetter {
         /**
          * This method is called when the HTML parser encounters an
          * &lt;img&gt; tag.  The <code>source</code> argument is the
@@ -85,20 +85,20 @@ public class Html {
          * setBounds() on your Drawable if it doesn't already have
          * its bounds set.
          */
-        public Drawable getDrawable(String source);
+        Drawable getDrawable(String source);
     }
 
     /**
      * Is notified when HTML tags are encountered that the parser does
      * not know how to interpret.
      */
-    public static interface TagHandler {
+    public interface TagHandler {
         /**
          * This method will be called whenn the HTML parser encounters
          * a tag that it does not know how to interpret.
          */
-        public void handleTag(boolean opening, String tag,
-                              Editable output, XMLReader xmlReader);
+        void handleTag(boolean opening, String tag,
+                       Editable output, XMLReader xmlReader);
     }
 
     /**
@@ -632,6 +632,7 @@ public class Html {
             }
         }
     }
+
     /**
      * Name-value mapping of HTML/CSS colors which have different values in {@link Color}.
      */
@@ -799,12 +800,12 @@ class HtmlToSpannedConverter implements ContentHandler {
     private static final float[] HEADING_SIZES = {
             1.5f, 1.4f, 1.3f, 1.2f, 1.1f, 1f,
     };
-    private String mSource;
-    private XMLReader mReader;
-    private Editable mSpannableStringBuilder;
-    private Html.ImageGetter mImageGetter;
-    private Html.TagHandler mTagHandler;
-    private int mFlags;
+    private final String mSource;
+    private final XMLReader mReader;
+    private final Editable mSpannableStringBuilder;
+    private final Html.ImageGetter mImageGetter;
+    private final Html.TagHandler mTagHandler;
+    private final int mFlags;
     private static Pattern sTextAlignPattern;
     private static Pattern sForegroundColorPattern;
     private static Pattern sBackgroundColorPattern;
@@ -1340,7 +1341,7 @@ class HtmlToSpannedConverter implements ContentHandler {
         handleEndTag(localName);
     }
 
-    public void characters(char ch[], int start, int length) throws SAXException {
+    public void characters(char[] ch, int start, int length) throws SAXException {
         StringBuilder sb = new StringBuilder();
         /*
          * Ignore whitespace that immediately follows other whitespace;
@@ -1371,7 +1372,7 @@ class HtmlToSpannedConverter implements ContentHandler {
         mSpannableStringBuilder.append(sb);
     }
 
-    public void ignorableWhitespace(char ch[], int start, int length) throws SAXException {
+    public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
     }
 
     public void processingInstruction(String target, String data) throws SAXException {
@@ -1430,7 +1431,7 @@ class HtmlToSpannedConverter implements ContentHandler {
     }
 
     private static class Foreground {
-        private int mForegroundColor;
+        private final int mForegroundColor;
 
         public Foreground(int foregroundColor) {
             mForegroundColor = foregroundColor;
@@ -1438,7 +1439,7 @@ class HtmlToSpannedConverter implements ContentHandler {
     }
 
     private static class Background {
-        private int mBackgroundColor;
+        private final int mBackgroundColor;
 
         public Background(int backgroundColor) {
             mBackgroundColor = backgroundColor;
@@ -1446,7 +1447,7 @@ class HtmlToSpannedConverter implements ContentHandler {
     }
 
     private static class Heading {
-        private int mLevel;
+        private final int mLevel;
 
         public Heading(int level) {
             mLevel = level;
@@ -1454,7 +1455,7 @@ class HtmlToSpannedConverter implements ContentHandler {
     }
 
     private static class Newline {
-        private int mNumNewlines;
+        private final int mNumNewlines;
 
         public Newline(int numNewlines) {
             mNumNewlines = numNewlines;
@@ -1462,7 +1463,7 @@ class HtmlToSpannedConverter implements ContentHandler {
     }
 
     private static class Alignment {
-        private Layout.Alignment mAlignment;
+        private final Layout.Alignment mAlignment;
 
         public Alignment(Layout.Alignment alignment) {
             mAlignment = alignment;

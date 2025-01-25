@@ -6,8 +6,8 @@ import forpdateam.ru.forpda.entity.common.MessageCounters
 import io.reactivex.Observable
 
 class CountersHolder(
-        private val preferences: SharedPreferences,
-        private val schedulers: SchedulersProvider
+    private val preferences: SharedPreferences,
+    private val schedulers: SchedulersProvider
 ) {
     private val relay = BehaviorRelay.create<MessageCounters>()
 
@@ -20,18 +20,18 @@ class CountersHolder(
     }
 
     fun observe(): Observable<MessageCounters> = relay
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui());
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
 
     fun get(): MessageCounters = relay.value!!
 
     fun set(value: MessageCounters) {
         preferences
-                .edit()
-                .putInt("counter_qms", value.qms)
-                .putInt("counter_favorites", value.favorites)
-                .putInt("counter_mentions", value.mentions)
-                .apply()
+            .edit()
+            .putInt("counter_qms", value.qms)
+            .putInt("counter_favorites", value.favorites)
+            .putInt("counter_mentions", value.mentions)
+            .apply()
         relay.accept(value)
     }
 }

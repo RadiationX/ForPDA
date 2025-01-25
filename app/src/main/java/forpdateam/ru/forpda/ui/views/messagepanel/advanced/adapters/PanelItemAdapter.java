@@ -1,12 +1,13 @@
 package forpdateam.ru.forpda.ui.views.messagepanel.advanced.adapters;
 
 import android.graphics.Bitmap;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
@@ -25,8 +26,8 @@ import forpdateam.ru.forpda.ui.views.messagepanel.advanced.ButtonData;
 public class PanelItemAdapter extends RecyclerView.Adapter<PanelItemAdapter.ViewHolder> implements ItemDragCallback.ItemTouchHelperAdapter {
     public final static int TYPE_ASSET = 0;
     public final static int TYPE_DRAWABLE = 1;
-    private List<ButtonData> items;
-    private List<String> urlsToAssets;
+    private final List<ButtonData> items;
+    private final List<String> urlsToAssets;
     private int type = -1;
 
     public PanelItemAdapter(List<ButtonData> items, List<String> urlsToAssets, int type) {
@@ -87,8 +88,8 @@ public class PanelItemAdapter extends RecyclerView.Adapter<PanelItemAdapter.View
         public ViewHolder(View view) {
             super(view);
             view.setOnClickListener(this);
-            button = (ImageButton) view.findViewById(R.id.item_icon);
-            title = (TextView) view.findViewById(R.id.item_title);
+            button = view.findViewById(R.id.item_icon);
+            title = view.findViewById(R.id.item_title);
         }
 
         @Override

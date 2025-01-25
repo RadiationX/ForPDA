@@ -56,10 +56,10 @@ class SearchAdapter extends BaseAdapter<SearchItem, BaseViewHolder<SearchItem>> 
 
         SearchHolder(View v) {
             super(v);
-            title = (TextView) v.findViewById(R.id.search_item_title);
-            nick = (TextView) v.findViewById(R.id.search_item_last_nick);
-            date = (TextView) v.findViewById(R.id.search_item_date);
-            content = (TextView) v.findViewById(R.id.search_item_content);
+            title = v.findViewById(R.id.search_item_title);
+            nick = v.findViewById(R.id.search_item_last_nick);
+            date = v.findViewById(R.id.search_item_date);
+            content = v.findViewById(R.id.search_item_content);
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
         }
@@ -104,32 +104,32 @@ class SearchAdapter extends BaseAdapter<SearchItem, BaseViewHolder<SearchItem>> 
     }
 
     private class FullHolder extends BaseViewHolder<SearchItem> implements View.OnClickListener, View.OnLongClickListener {
-        private TextView username;
-        private TextView category;
-        private TextView title;
-        private TextView description;
-        private TextView commentsCount;
-        private ImageView commentsIcon;
-        private TextView date;
-        private TextView nTitle;
-        private LinearLayout nContainer;
-        private ImageView cover;
-        private ImageView avatar;
+        private final TextView username;
+        private final TextView category;
+        private final TextView title;
+        private final TextView description;
+        private final TextView commentsCount;
+        private final ImageView commentsIcon;
+        private final TextView date;
+        private final TextView nTitle;
+        private final LinearLayout nContainer;
+        private final ImageView cover;
+        private final ImageView avatar;
 
 
         FullHolder(View itemView) {
             super(itemView);
-            username = (TextView) itemView.findViewById(R.id.news_full_item_username);
-            category = (TextView) itemView.findViewById(R.id.news_full_item_category);
-            title = (TextView) itemView.findViewById(R.id.news_full_item_title);
-            description = (TextView) itemView.findViewById(R.id.news_full_item_description);
-            commentsCount = (TextView) itemView.findViewById(R.id.news_full_item_comments_count);
-            commentsIcon = (ImageView) itemView.findViewById(R.id.news_full_item_comments_icon);
-            date = (TextView) itemView.findViewById(R.id.news_full_item_date);
-            nTitle = (TextView) itemView.findViewById(R.id.news_full_item_news_title);
-            nContainer = (LinearLayout) itemView.findViewById(R.id.news_full_item_new_container);
-            cover = (ImageView) itemView.findViewById(R.id.news_full_item_cover);
-            avatar = (ImageView) itemView.findViewById(R.id.articleAvatar);
+            username = itemView.findViewById(R.id.news_full_item_username);
+            category = itemView.findViewById(R.id.news_full_item_category);
+            title = itemView.findViewById(R.id.news_full_item_title);
+            description = itemView.findViewById(R.id.news_full_item_description);
+            commentsCount = itemView.findViewById(R.id.news_full_item_comments_count);
+            commentsIcon = itemView.findViewById(R.id.news_full_item_comments_icon);
+            date = itemView.findViewById(R.id.news_full_item_date);
+            nTitle = itemView.findViewById(R.id.news_full_item_news_title);
+            nContainer = itemView.findViewById(R.id.news_full_item_new_container);
+            cover = itemView.findViewById(R.id.news_full_item_cover);
+            avatar = itemView.findViewById(R.id.articleAvatar);
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
 

@@ -12,9 +12,9 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 class ThemeTemplate(
-        private val templateManager: TemplateManager,
-        private val authHolder: AuthHolder,
-        private val topicPreferencesHolder: TopicPreferencesHolder
+    private val templateManager: TemplateManager,
+    private val authHolder: AuthHolder,
+    private val topicPreferencesHolder: TopicPreferencesHolder
 ) {
 
     private val firstLetter = Pattern.compile("([a-zA-Zа-яА-Я])")
@@ -48,7 +48,10 @@ class ThemeTemplate(
             setVariableOpt("elem_to_scroll", page.anchor)
             setVariableOpt("body_type", "topic")
 
-            setVariableOpt("navigation_disable", TempHelper.getDisableStr(prevDisabled && nextDisabled))
+            setVariableOpt(
+                "navigation_disable",
+                TempHelper.getDisableStr(prevDisabled && nextDisabled)
+            )
             setVariableOpt("first_disable", TempHelper.getDisableStr(prevDisabled))
             setVariableOpt("prev_disable", TempHelper.getDisableStr(prevDisabled))
             setVariableOpt("next_disable", TempHelper.getDisableStr(nextDisabled))
@@ -58,7 +61,10 @@ class ThemeTemplate(
             val isEnableAvatars = topicPreferencesHolder.getShowAvatars()
             setVariableOpt("enable_avatars_bool", java.lang.Boolean.toString(isEnableAvatars))
             setVariableOpt("enable_avatars", if (isEnableAvatars) "show_avatar" else "hide_avatar")
-            setVariableOpt("avatar_type", if (topicPreferencesHolder.getCircleAvatars()) "circle_avatar" else "square_avatar")
+            setVariableOpt(
+                "avatar_type",
+                if (topicPreferencesHolder.getCircleAvatars()) "circle_avatar" else "square_avatar"
+            )
 
 
             var hatPostId = 0
@@ -73,7 +79,10 @@ class ThemeTemplate(
 
                 //Post header
                 setVariableOpt("avatar", post.avatar)
-                setVariableOpt("none_avatar", if (post.avatar.isNullOrEmpty()) "none_avatar" else "")
+                setVariableOpt(
+                    "none_avatar",
+                    if (post.avatar.isNullOrEmpty()) "none_avatar" else ""
+                )
 
                 letterMatcher = letterMatcher?.reset(post.nick) ?: firstLetter.matcher(post.nick)
                 val letter: String = letterMatcher?.run {
@@ -91,7 +100,8 @@ class ThemeTemplate(
 
                 //Post body
                 if (page.posts.size > 1 && hatPostId == post.id) {
-                    val hatOpened = topicPreferencesHolder.getHatOpened() || prevDisabled || page.isHatOpen
+                    val hatOpened =
+                        topicPreferencesHolder.getHatOpened() || prevDisabled || page.isHatOpen
                     setVariableOpt("hat_state_class", if (hatOpened) "open" else "close")
                     //t.setVariableOpt("hat_body_state", prevDisabled || page.isHatOpen() ? "" : "hidden");
                     addBlockOpt("hat_button")
@@ -123,7 +133,11 @@ class ThemeTemplate(
                 setVariableOpt("poll_state_class", if (page.isPollOpen) "open" else "close")
                 val isResult = poll.isResult
                 setVariableOpt("poll_type", if (isResult) "result" else "default")
-                setVariableOpt("poll_title", if (poll.title.isNullOrEmpty() || poll.title == "-") App.get().getString(R.string.poll) else poll.title)
+                setVariableOpt(
+                    "poll_title",
+                    if (poll.title.isNullOrEmpty() || poll.title == "-") App.get()
+                        .getString(R.string.poll) else poll.title
+                )
 
                 for (question in poll.questions) {
                     setVariableOpt("question_title", question.title)
@@ -133,7 +147,10 @@ class ThemeTemplate(
 
                         if (isResult) {
                             setVariableOpt("question_item_votes", questionItem.votes)
-                            setVariableOpt("question_item_percent", java.lang.Float.toString(questionItem.percent))
+                            setVariableOpt(
+                                "question_item_percent",
+                                java.lang.Float.toString(questionItem.percent)
+                            )
                             addBlockOpt("poll_result_item")
                         } else {
                             setVariableOpt("question_item_type", questionItem.type)

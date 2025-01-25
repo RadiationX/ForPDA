@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.entity.remote.qms
 
-import java.util.ArrayList
-
 /**
  * Created by radiationx on 20.09.16.
  */

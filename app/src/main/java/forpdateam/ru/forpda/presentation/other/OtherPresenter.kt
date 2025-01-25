@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.presentation.other
 
-import moxy.InjectViewState
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.entity.app.other.AppMenuItem
@@ -10,23 +9,28 @@ import forpdateam.ru.forpda.model.CloseableInfoHolder
 import forpdateam.ru.forpda.model.interactors.other.MenuRepository
 import forpdateam.ru.forpda.model.repository.auth.AuthRepository
 import forpdateam.ru.forpda.model.repository.profile.ProfileRepository
-import forpdateam.ru.forpda.presentation.*
+import forpdateam.ru.forpda.presentation.IErrorHandler
+import forpdateam.ru.forpda.presentation.ILinkHandler
+import forpdateam.ru.forpda.presentation.ISystemLinkHandler
+import forpdateam.ru.forpda.presentation.Screen
+import forpdateam.ru.forpda.presentation.TabRouter
+import moxy.InjectViewState
 
 @InjectViewState
 class OtherPresenter(
-        private val router: TabRouter,
-        private val authRepository: AuthRepository,
-        private val profileRepository: ProfileRepository,
-        private val authHolder: AuthHolder,
-        private val errorHandler: IErrorHandler,
-        private val menuRepository: MenuRepository,
-        private val closeableInfoHolder: CloseableInfoHolder,
-        private val linkHandler: ILinkHandler,
-        private val systemLinkHandler: ISystemLinkHandler
+    private val router: TabRouter,
+    private val authRepository: AuthRepository,
+    private val profileRepository: ProfileRepository,
+    private val authHolder: AuthHolder,
+    private val errorHandler: IErrorHandler,
+    private val menuRepository: MenuRepository,
+    private val closeableInfoHolder: CloseableInfoHolder,
+    private val linkHandler: ILinkHandler,
+    private val systemLinkHandler: ISystemLinkHandler
 ) : BasePresenter<OtherView>() {
 
     private val closeableInfoIds = arrayOf(
-            CloseableInfoHolder.item_other_menu_drag
+        CloseableInfoHolder.item_other_menu_drag
     )
 
     private var localMenu = mapOf<Int, List<AppMenuItem>>()
@@ -40,31 +44,31 @@ class OtherPresenter(
         super.onFirstViewAttach()
         subscribeUser()
         authHolder
-                .observe()
-                .subscribe {
-                    if (!authHolder.get().isAuth()) {
-                        profileItem = null
-                    }
-                    updateMenuItems()
+            .observe()
+            .subscribe {
+                if (!authHolder.get().isAuth()) {
+                    profileItem = null
                 }
-                .untilDestroy()
+                updateMenuItems()
+            }
+            .untilDestroy()
 
         menuRepository
-                .observerMenu()
-                .subscribe {
-                    localMenu = it
-                    updateMenuItems()
-                }
-                .untilDestroy()
+            .observerMenu()
+            .subscribe {
+                localMenu = it
+                updateMenuItems()
+            }
+            .untilDestroy()
 
         closeableInfoHolder
-                .observe()
-                .subscribe { info ->
-                    localCloseableInfo.clear()
-                    localCloseableInfo.addAll(info.filter { closeableInfoIds.contains(it.id) && !it.isClosed })
-                    updateMenuItems()
-                }
-                .untilDestroy()
+            .observe()
+            .subscribe { info ->
+                localCloseableInfo.clear()
+                localCloseableInfo.addAll(info.filter { closeableInfoIds.contains(it.id) && !it.isClosed })
+                updateMenuItems()
+            }
+            .untilDestroy()
     }
 
     fun onMenuDragModeChange(isDragMode: Boolean) {
@@ -80,27 +84,27 @@ class OtherPresenter(
 
     private fun subscribeUser() {
         profileRepository
-                .loadSelf()
-                .subscribe({}, {})
-                .untilDestroy()
+            .loadSelf()
+            .subscribe({}, {})
+            .untilDestroy()
         profileRepository
-                .observeCurrentUser()
-                .subscribe {
-                    profileItem = it.value
-                    updateMenuItems()
-                }
-                .untilDestroy()
+            .observeCurrentUser()
+            .subscribe {
+                profileItem = it.value
+                updateMenuItems()
+            }
+            .untilDestroy()
     }
 
     fun signOut() {
         authRepository
-                .signOut()
-                .subscribe({
-                    router.showSystemMessage("Данные авторизации удалены")
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .signOut()
+            .subscribe({
+                router.showSystemMessage("Данные авторизации удалены")
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
     fun onMenuClick(item: AppMenuItem) {
@@ -114,21 +118,30 @@ class OtherPresenter(
                 MenuRepository.item_link_forum_author -> {
                     linkHandler.handle("https://4pda.to/forum/index.php?showuser=2556269", router)
                 }
+
                 MenuRepository.item_link_forum_topic -> {
                     linkHandler.handle("https://4pda.to/forum/index.php?showtopic=820313", router)
                 }
+
                 MenuRepository.item_link_forum_faq -> {
-                    linkHandler.handle("http://4pda.to/forum/index.php?s=&showtopic=820313&view=findpost&p=64077514", router)
+                    linkHandler.handle(
+                        "http://4pda.to/forum/index.php?s=&showtopic=820313&view=findpost&p=64077514",
+                        router
+                    )
                 }
+
                 MenuRepository.item_link_chat_telegram -> {
                     systemLinkHandler.handle("https://t.me/forpda_app")
                 }
+
                 MenuRepository.item_link_play_market -> {
                     systemLinkHandler.handle("https://play.google.com/store/apps/details?id=ru.forpdateam.forpda")
                 }
+
                 MenuRepository.item_link_github -> {
                     systemLinkHandler.handle("https://github.com/RadiationX/ForPDA")
                 }
+
                 MenuRepository.item_link_bitbucket -> {
                     systemLinkHandler.handle("https://bitbucket.org/RadiationX/forpda/")
                 }

@@ -3,9 +3,6 @@ package forpdateam.ru.forpda.ui.fragments.other
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.AppCompatImageButton
-import androidx.appcompat.widget.SearchView
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.Menu
@@ -15,12 +12,9 @@ import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.widget.ImageView
 import android.widget.LinearLayout
-
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
-
-import java.util.ArrayList
-
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatImageButton
+import androidx.appcompat.widget.SearchView
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
@@ -34,6 +28,8 @@ import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.TabTopScroller
 import forpdateam.ru.forpda.ui.fragments.WebViewTopScroller
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 16.10.17.
@@ -50,26 +46,32 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
 
     @ProvidePresenter
     internal fun providePresenter(): ForumRulesPresenter = ForumRulesPresenter(
-            App.get().Di().forumRepository,
-            App.get().Di().mainPreferencesHolder,
-            App.get().Di().forumRulesTemplate,
-            App.get().Di().templateManager,
-            App.get().Di().errorHandler
+        App.get().Di().forumRepository,
+        App.get().Di().mainPreferencesHolder,
+        App.get().Di().forumRulesTemplate,
+        App.get().Di().templateManager,
+        App.get().Di().errorHandler
     )
 
     init {
         configuration.defaultTitle = "Правила форума"
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         webView = ExtendedWebView(context)
-        webView.setDialogsHelper(DialogsHelper(
+        webView.setDialogsHelper(
+            DialogsHelper(
                 webView.context,
                 App.get().Di().linkHandler,
                 App.get().Di().systemLinkHandler,
                 App.get().Di().router
-        ))
+            )
+        )
         attachWebView(webView)
         fragmentContent.addView(webView)
         return viewFragment
@@ -121,12 +123,12 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
             if (context == null)
                 return@Runnable
             AlertDialog.Builder(context!!)
-                    .setMessage("Скопировать правило в буфер обмена?")
-                    .setPositiveButton(R.string.ok) { _, _ ->
-                        Utils.copyToClipBoard(text)
-                    }
-                    .setNegativeButton(R.string.cancel, null)
-                    .show()
+                .setMessage("Скопировать правило в буфер обмена?")
+                .setPositiveButton(R.string.ok) { _, _ ->
+                    Utils.copyToClipBoard(text)
+                }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
         })
     }
 
@@ -139,20 +141,35 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
 
         searchView.setOnSearchClickListener { _ ->
             if (searchView.tag == searchViewTag) {
-                val searchClose = searchView.findViewById<View>(androidx.appcompat.R.id.search_close_btn) as ImageView?
+                val searchClose =
+                    searchView.findViewById<View>(androidx.appcompat.R.id.search_close_btn) as ImageView?
                 if (searchClose != null)
                     (searchClose.parent as ViewGroup).removeView(searchClose)
 
                 val navButtonsParams = ViewGroup.LayoutParams(App.px48, App.px48)
                 val outValue = TypedValue()
-                context?.theme?.resolveAttribute(android.R.attr.actionBarItemBackground, outValue, true)
+                context?.theme?.resolveAttribute(
+                    android.R.attr.actionBarItemBackground,
+                    outValue,
+                    true
+                )
 
                 val btnNext = AppCompatImageButton(searchView.context)
-                btnNext.setImageDrawable(App.getVecDrawable(context, R.drawable.ic_toolbar_search_next))
+                btnNext.setImageDrawable(
+                    App.getVecDrawable(
+                        context,
+                        R.drawable.ic_toolbar_search_next
+                    )
+                )
                 btnNext.setBackgroundResource(outValue.resourceId)
 
                 val btnPrev = AppCompatImageButton(searchView.context)
-                btnPrev.setImageDrawable(App.getVecDrawable(context, R.drawable.ic_toolbar_search_prev))
+                btnPrev.setImageDrawable(
+                    App.getVecDrawable(
+                        context,
+                        R.drawable.ic_toolbar_search_prev
+                    )
+                )
                 btnPrev.setBackgroundResource(outValue.resourceId)
 
                 (searchView.getChildAt(0) as LinearLayout).addView(btnPrev, navButtonsParams)

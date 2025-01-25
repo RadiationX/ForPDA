@@ -4,13 +4,14 @@ import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,11 +29,11 @@ import forpdateam.ru.forpda.model.AuthHolder;
  */
 
 public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleCommentsAdapter.ViewHolder> {
-    private ArrayList<Comment> list = new ArrayList<>();
+    private final ArrayList<Comment> list = new ArrayList<>();
     private ColorFilter likedColorFilter;
     private ColorFilter dislikedColorFilter;
     private ClickListener clickListener;
-    private AuthHolder authHolder;
+    private final AuthHolder authHolder;
 
     public ArticleCommentsAdapter(AuthHolder authHolder) {
         this.authHolder = authHolder;
@@ -164,16 +165,16 @@ public class ArticleCommentsAdapter extends RecyclerView.Adapter<ArticleComments
         public TextView date;
         public TextView likeCount;
         public ImageView likeImage;
-        private Drawable heart;
-        private Drawable heart_outline;
+        private final Drawable heart;
+        private final Drawable heart_outline;
 
         public ViewHolder(View v) {
             super(v);
-            content = (TextView) v.findViewById(R.id.comment_content);
-            nick = (TextView) v.findViewById(R.id.comment_nick);
-            date = (TextView) v.findViewById(R.id.comment_date);
-            likeCount = (TextView) v.findViewById(R.id.comment_like_count);
-            likeImage = (ImageView) v.findViewById(R.id.comment_like_image);
+            content = v.findViewById(R.id.comment_content);
+            nick = v.findViewById(R.id.comment_nick);
+            date = v.findViewById(R.id.comment_date);
+            likeCount = v.findViewById(R.id.comment_like_count);
+            likeImage = v.findViewById(R.id.comment_like_image);
             heart = App.getVecDrawable(v.getContext(), R.drawable.ic_heart);
             heart_outline = App.getVecDrawable(v.getContext(), R.drawable.ic_heart_outline);
             nick.setOnClickListener(v1 -> {

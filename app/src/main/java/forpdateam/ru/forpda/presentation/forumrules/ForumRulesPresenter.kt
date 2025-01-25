@@ -1,11 +1,11 @@
 package forpdateam.ru.forpda.presentation.forumrules
 
-import moxy.InjectViewState
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.model.repository.forum.ForumRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.ui.TemplateManager
+import moxy.InjectViewState
 
 /**
  * Created by radiationx on 02.01.18.
@@ -13,44 +13,44 @@ import forpdateam.ru.forpda.ui.TemplateManager
 
 @InjectViewState
 class ForumRulesPresenter(
-        private val forumRepository: ForumRepository,
-        private val mainPreferencesHolder: MainPreferencesHolder,
-        private val forumRulesTemplate: ForumRulesTemplate,
-        private val templateManager: TemplateManager,
-        private val errorHandler: IErrorHandler
+    private val forumRepository: ForumRepository,
+    private val mainPreferencesHolder: MainPreferencesHolder,
+    private val forumRulesTemplate: ForumRulesTemplate,
+    private val templateManager: TemplateManager,
+    private val errorHandler: IErrorHandler
 ) : BasePresenter<ForumRulesView>() {
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         templateManager
-                .observeThemeType()
-                .subscribe {
-                    viewState.setStyleType(it)
-                }
-                .untilDestroy()
+            .observeThemeType()
+            .subscribe {
+                viewState.setStyleType(it)
+            }
+            .untilDestroy()
 
         mainPreferencesHolder
-                .observeWebViewFontSize()
-                .subscribe {
-                    viewState.setFontSize(it)
-                }
-                .untilDestroy()
+            .observeWebViewFontSize()
+            .subscribe {
+                viewState.setFontSize(it)
+            }
+            .untilDestroy()
 
         loadData()
     }
 
     private fun loadData() {
         forumRepository
-                .getRules()
-                .map { forumRulesTemplate.mapEntity(it) }
-                .doOnSubscribe { viewState.setRefreshing(true) }
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({
-                    viewState.showData(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+            .getRules()
+            .map { forumRulesTemplate.mapEntity(it) }
+            .doOnSubscribe { viewState.setRefreshing(true) }
+            .doAfterTerminate { viewState.setRefreshing(false) }
+            .subscribe({
+                viewState.showData(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .untilDestroy()
     }
 
 

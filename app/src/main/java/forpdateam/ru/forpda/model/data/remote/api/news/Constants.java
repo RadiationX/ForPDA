@@ -55,8 +55,8 @@ public class Constants {
     public static final String NEWS_SUBCATEGORY_WP7_SOFTWARE = "software_wp7-news";
     public static final String NEWS_URL_WP7_SOFTWARE = "https://4pda.to/software/tag/programs-for-windows-phone-7/";
     public static final String NEWS_SUBCATEGORY_IOS_SOFTWARE = "software_ios_news";
-    public static final String NEWS_URL_IOS_SOFTWARE= "https://4pda.to/software/tag/programs-for-ios/";
-    public static final String NEWS_SUBCATEGORY_ANDROID_SOFTWARE= "software_android_news";
+    public static final String NEWS_URL_IOS_SOFTWARE = "https://4pda.to/software/tag/programs-for-ios/";
+    public static final String NEWS_SUBCATEGORY_ANDROID_SOFTWARE = "software_android_news";
     public static final String NEWS_URL_ANDROID_SOFTWARE = "https://4pda.to/software/tag/programs-for-android/";
     /*REVIEWS*/
     public static final String NEWS_SUBCATEGORY_SMARTPHONES_REVIEWS = "s_r_news";
@@ -90,14 +90,11 @@ public class Constants {
     public static final String TAB_GAMES = "games";
 
 
-
-
     public static final String NEWS_LOAD_DATA_TASK = "news.load.data";
     public static final String NEWS_UPDATE_BACKGROUND_TASK = "update.background";
     public static final String COUNT_NEW_NEWS_ITEMS = "count.items";
     public static final String DETAILS_COVER = "count.items";
     public static final String NEWS_ERROR_LOAD_OR_UPDATE_TASK = "news.load.update.errro";
-
 
 
     // to details fragment args

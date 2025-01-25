@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.entity.remote.editpost
 
-import java.util.ArrayList
-
 /**
  * Created by radiationx on 10.01.17.
  */

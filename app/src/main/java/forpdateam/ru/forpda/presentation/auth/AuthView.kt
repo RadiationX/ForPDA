@@ -1,11 +1,10 @@
 package forpdateam.ru.forpda.presentation.auth
 
+import forpdateam.ru.forpda.entity.remote.auth.AuthForm
+import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
-import forpdateam.ru.forpda.common.mvp.IBaseView
-import forpdateam.ru.forpda.entity.remote.auth.AuthForm
-import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 
 /**
  * Created by radiationx on 02.01.18.

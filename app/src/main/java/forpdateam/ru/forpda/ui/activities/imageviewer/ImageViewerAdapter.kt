@@ -1,13 +1,10 @@
 package forpdateam.ru.forpda.ui.activities.imageviewer
 
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
-import androidx.viewpager.widget.PagerAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.Toast
+import androidx.viewpager.widget.PagerAdapter
 import com.github.chrisbanes.photoview.OnPhotoTapListener
 import com.github.chrisbanes.photoview.PhotoView
 import com.github.rahatarmanahmed.cpv.CircularProgressView
@@ -21,13 +18,13 @@ import forpdateam.ru.forpda.R
  * Created by radiationx on 24.05.17.
  */
 
-class ImageViewerAdapter : androidx.viewpager.widget.PagerAdapter() {
+class ImageViewerAdapter : PagerAdapter() {
 
     private val options by lazy {
         App.getDefaultOptionsUIL()
-                .bitmapConfig(Bitmap.Config.ARGB_8888)
-                .considerExifParams(true)
-                .build()
+            .bitmapConfig(Bitmap.Config.ARGB_8888)
+            .considerExifParams(true)
+            .build()
     }
 
     private var tapListener: OnPhotoTapListener? = null
@@ -50,8 +47,8 @@ class ImageViewerAdapter : androidx.viewpager.widget.PagerAdapter() {
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val imageLayout = LayoutInflater
-                .from(container.context)
-                .inflate(R.layout.img_view_page, container, false);
+            .from(container.context)
+            .inflate(R.layout.img_view_page, container, false)
         container.addView(imageLayout, 0)
         loadImage(imageLayout, position)
         return imageLayout
@@ -67,33 +64,42 @@ class ImageViewerAdapter : androidx.viewpager.widget.PagerAdapter() {
 
     private fun loadImage(imageLayout: View, position: Int) {
         val progressBar = imageLayout.findViewById<CircularProgressView>(R.id.progress_bar)
-        val photoView = imageLayout.findViewById(R.id.photo_view) as PhotoView
+        val photoView: PhotoView = imageLayout.findViewById(R.id.photo_view)
         progressBar.visibility = View.VISIBLE
         val item = items[position]
 
 
-        ImageLoader.getInstance().displayImage(item, photoView, options, object : SimpleImageLoadingListener() {
-            override fun onLoadingFailed(imageUri: String?, view: View?, failReason: FailReason?) {
-                progressBar.visibility = View.GONE
-            }
-
-            override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap?) {
-                progressBar.visibility = View.GONE
-                //delayedHide(1000);
-            }
-
-            override fun onLoadingCancelled(imageUri: String?, view: View?) {
-                progressBar.visibility = View.GONE
-            }
-
-            override fun onLoadingStarted(imageUri: String?, view: View?) {
-                progressBar.visibility = View.VISIBLE
-                if (progressBar.isIndeterminate) {
-                    progressBar.isIndeterminate = false
-                    progressBar.stopAnimation()
+        ImageLoader.getInstance()
+            .displayImage(item, photoView, options, object : SimpleImageLoadingListener() {
+                override fun onLoadingFailed(
+                    imageUri: String?,
+                    view: View?,
+                    failReason: FailReason?
+                ) {
+                    progressBar.visibility = View.GONE
                 }
-            }
-        }) { s, view, i, i1 -> progressBar.progress = (100f * i / i1).toInt().toFloat() }
+
+                override fun onLoadingComplete(
+                    imageUri: String?,
+                    view: View?,
+                    loadedImage: Bitmap?
+                ) {
+                    progressBar.visibility = View.GONE
+                    //delayedHide(1000);
+                }
+
+                override fun onLoadingCancelled(imageUri: String?, view: View?) {
+                    progressBar.visibility = View.GONE
+                }
+
+                override fun onLoadingStarted(imageUri: String?, view: View?) {
+                    progressBar.visibility = View.VISIBLE
+                    if (progressBar.isIndeterminate) {
+                        progressBar.isIndeterminate = false
+                        progressBar.stopAnimation()
+                    }
+                }
+            }) { s, view, i, i1 -> progressBar.progress = (100f * i / i1).toInt().toFloat() }
 
         photoView.setOnPhotoTapListener(tapListener)
     }

@@ -15,21 +15,9 @@ package forpdateam.ru.forpda.ui.views.control;
  * limitations under the License.
  */
 
-import com.google.android.material.R;
-
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.StyleRes;
-import androidx.core.view.AccessibilityDelegateCompat;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
-import androidx.appcompat.app.AppCompatDialog;
-
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,7 +26,16 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.StyleRes;
+import androidx.appcompat.app.AppCompatDialog;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.view.AccessibilityDelegateCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
+
+import com.google.android.material.R;
 
 /**
  * Base class for {@link android.app.Dialog}s styled as a bottom sheet.
@@ -137,11 +134,11 @@ public class BottomSheetDialog extends AppCompatDialog {
     private View wrapInBottomSheet(int layoutResId, View view, ViewGroup.LayoutParams params) {
         ViewGroup container =
                 (ViewGroup) View.inflate(getContext(), forpdateam.ru.forpda.R.layout.design_bottom_sheet_fixed, null);
-        CoordinatorLayout coordinator = (CoordinatorLayout) container.findViewById(R.id.coordinator);
+        CoordinatorLayout coordinator = container.findViewById(R.id.coordinator);
         if (layoutResId != 0 && view == null) {
             view = getLayoutInflater().inflate(layoutResId, coordinator, false);
         }
-        bottomSheetView = (FrameLayout) coordinator.findViewById(R.id.design_bottom_sheet);
+        bottomSheetView = coordinator.findViewById(R.id.design_bottom_sheet);
         behavior = BottomSheetBehaviorFixed.from(bottomSheetView);
         behavior.setBottomSheetCallback(bottomSheetCallback);
         behavior.setHideable(cancelable);
@@ -224,7 +221,7 @@ public class BottomSheetDialog extends AppCompatDialog {
         return themeId;
     }
 
-    private BottomSheetBehaviorFixed.BottomSheetCallback bottomSheetCallback =
+    private final BottomSheetBehaviorFixed.BottomSheetCallback bottomSheetCallback =
             new BottomSheetBehaviorFixed.BottomSheetCallback() {
                 @Override
                 public void onStateChanged(

@@ -4,7 +4,6 @@ import forpdateam.ru.forpda.entity.remote.mentions.MentionsData
 import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.data.remote.api.mentions.MentionsApi
 import forpdateam.ru.forpda.model.repository.BaseRepository
-import io.reactivex.Observable
 import io.reactivex.Single
 
 /**
@@ -12,12 +11,12 @@ import io.reactivex.Single
  */
 
 class MentionsRepository(
-        private val schedulers: SchedulersProvider,
-        private val mentionsApi: MentionsApi
+    private val schedulers: SchedulersProvider,
+    private val mentionsApi: MentionsApi
 ) : BaseRepository(schedulers) {
 
     fun getMentions(page: Int): Single<MentionsData> = Single
-            .fromCallable { mentionsApi.getMentions(page) }
-            .runInIoToUi()
+        .fromCallable { mentionsApi.getMentions(page) }
+        .runInIoToUi()
 
 }

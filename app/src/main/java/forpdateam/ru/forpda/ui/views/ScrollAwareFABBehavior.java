@@ -2,13 +2,15 @@ package forpdateam.ru.forpda.ui.views;
 
 import android.content.Context;
 import android.os.Handler;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
+
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.view.ViewCompat;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /**
  * Created by radiationx on 20.08.16.
@@ -18,9 +20,9 @@ public class ScrollAwareFABBehavior extends CoordinatorLayout.Behavior<FloatingA
         super();
     }
 
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private Runnable currentRunnable;
-    private Interpolator interpolator = new AccelerateDecelerateInterpolator();
+    private final Interpolator interpolator = new AccelerateDecelerateInterpolator();
 
 
     @Override

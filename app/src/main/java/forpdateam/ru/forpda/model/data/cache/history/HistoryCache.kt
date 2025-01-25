@@ -7,7 +7,8 @@ import io.reactivex.Observable
 import io.realm.Realm
 import io.realm.Sort
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 class HistoryCache {
 
@@ -18,7 +19,8 @@ class HistoryCache {
     fun observeItems(): Observable<List<HistoryItem>> = dataRelay.hide()
 
     fun getHistory(): List<HistoryItem> = Realm.getDefaultInstance().use { realm ->
-        realm.where(HistoryItemBd::class.java).findAll().sort("unixTime", Sort.DESCENDING).map { HistoryItem(it) }
+        realm.where(HistoryItemBd::class.java).findAll().sort("unixTime", Sort.DESCENDING)
+            .map { HistoryItem(it) }
     }.also {
         if (!dataRelay.hasValue()) {
             dataRelay.accept(it)
@@ -39,7 +41,7 @@ class HistoryCache {
             } else {
                 item.url = url
                 item.unixTime = System.currentTimeMillis()
-                item.date = dateFormat.format(Date(item.getUnixTime()))
+                item.date = dateFormat.format(Date(item.unixTime))
                 realmTr.insertOrUpdate(item)
             }
         }
@@ -48,7 +50,8 @@ class HistoryCache {
 
     fun remove(id: Int) = Realm.getDefaultInstance().use { realm ->
         realm.executeTransaction { realmTr ->
-            realmTr.where(HistoryItemBd::class.java).equalTo("id", id).findAll().deleteAllFromRealm()
+            realmTr.where(HistoryItemBd::class.java).equalTo("id", id).findAll()
+                .deleteAllFromRealm()
         }
         if (dataRelay.hasValue()) {
             val currentItems = dataRelay.value!!.toMutableList()

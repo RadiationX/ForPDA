@@ -1,38 +1,46 @@
 package forpdateam.ru.forpda.ui.fragments.other
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.model.CloseableInfoHolder
 import forpdateam.ru.forpda.ui.views.drawers.adapters.CloseableInfoListItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
-import forpdateam.ru.forpda.ui.views.drawers.adapters.MenuListItem
-import kotlinx.android.synthetic.main.item_closeable_info.view.*
+import kotlinx.android.synthetic.main.item_closeable_info.view.infoItemClose
+import kotlinx.android.synthetic.main.item_closeable_info.view.infoItemTitle
 
 class CloseableInfoDelegate(
-        private val clickListener: (CloseableInfo) -> Unit
+    private val clickListener: (CloseableInfo) -> Unit
 ) : AdapterDelegate<MutableList<ListItem>>() {
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is CloseableInfoListItem
+    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean =
+        items[position] is CloseableInfoListItem
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(
+        items: MutableList<ListItem>,
+        position: Int,
+        holder: RecyclerView.ViewHolder,
+        payloads: MutableList<Any>
+    ) {
         val item = items[position] as CloseableInfoListItem
         (holder as ViewHolder).bind(item.item)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup): androidx.recyclerview.widget.RecyclerView.ViewHolder = ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_closeable_info, parent, false),
+    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder =
+        ViewHolder(
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_closeable_info, parent, false),
             clickListener
-    )
+        )
 
     class ViewHolder(
-            val view: View,
-            val closeClickListener: (CloseableInfo) -> Unit
-    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+        val view: View,
+        val closeClickListener: (CloseableInfo) -> Unit
+    ) : RecyclerView.ViewHolder(view) {
 
         private lateinit var currentItem: CloseableInfo
 

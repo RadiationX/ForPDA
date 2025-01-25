@@ -48,10 +48,10 @@ public class DevicesAdapter extends BaseAdapter<Brand.DeviceItem, DevicesAdapter
 
         DeviceItemHolder(View v) {
             super(v);
-            title = (TextView) v.findViewById(R.id.item_title);
-            rating = (TextView) v.findViewById(R.id.item_rating);
-            image = (ImageView) v.findViewById(R.id.item_image);
-            progressBar = (ProgressBar) v.findViewById(R.id.progress_bar);
+            title = v.findViewById(R.id.item_title);
+            rating = v.findViewById(R.id.item_rating);
+            image = v.findViewById(R.id.item_image);
+            progressBar = v.findViewById(R.id.progress_bar);
             image.setTag(progressBar);
             rating.setBackground(App.getDrawableAttr(rating.getContext(), R.attr.count_background));
             v.setOnClickListener(this);
