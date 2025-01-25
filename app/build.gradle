@@ -17,7 +17,7 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    def fileNaming = "apk/ForPDA"
+    def fileNaming = "ForPDA"
 
     def versionNumber = 223
 
@@ -100,18 +100,8 @@ android {
         }
     }
 
-    /*applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            def fileNaming = "apk/ForPDA"
-            def outputFile = output.outputFile
-            if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                output.outputFile = new File(getProject().getRootDir(), "${fileNaming}-${versionMajor}.${versionMinor}.${versionPatch}-${outputFile.name}")
-            }
-        }
-    }*/
-
-    android.applicationVariants.all { variant ->
-        variant.outputs.all {
+    applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach {
             outputFileName = "${fileNaming}-${versionMajor}.${versionMinor}.${versionPatch}.apk"
         }
     }
@@ -138,6 +128,9 @@ android {
     lint {
         checkReleaseBuilds false
         //disable 'RestrictedApi'
+    }
+    buildFeatures {
+        buildConfig true
     }
 }
 
