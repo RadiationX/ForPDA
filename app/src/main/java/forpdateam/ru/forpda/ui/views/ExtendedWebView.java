@@ -8,7 +8,6 @@ import android.media.AudioManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ActionMode;
@@ -136,9 +135,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
         settings.setAllowContentAccess(true);
         settings.setAllowFileAccessFromFileURLs(true);
         settings.setAllowUniversalAccessFromFileURLs(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-        }
+        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         setRelativeFontSize(16);
         setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_base));
         settings.setTextZoom((int) (getResources().getConfiguration().fontScale * 100));
@@ -231,23 +228,16 @@ public class ExtendedWebView extends NestedWebView implements IBase {
         evalJs("setPaddingBottom(" + ((paddingBottom / getResources().getDisplayMetrics().density) * (1 / fontScale)) + ");");
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     public void evalJs(String script) {
         //Log.d("EWV", "evalJs: " + script);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            try {
-                evalJs(script, null);
-            } catch (Exception error) {
-                error.printStackTrace();
-                loadUrl("javascript:" + script);
-            }
-        } else {
+        try {
+            evalJs(script, null);
+        } catch (Exception error) {
+            Log.e("ExtendedWebView", "evalJs", error);
             loadUrl("javascript:" + script);
         }
-
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     public void evalJs(String script, ValueCallback<String> resultCallback) {
         syncWithJs(() -> evaluateJavascript(script, resultCallback));
     }

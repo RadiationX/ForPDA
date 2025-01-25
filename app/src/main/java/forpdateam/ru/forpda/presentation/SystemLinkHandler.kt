@@ -36,7 +36,6 @@ class SystemLinkHandler(
             context.startActivity(Intent.createChooser(intent, context.getString(R.string.open_with)).addFlags(FLAG_ACTIVITY_NEW_TASK))
         } catch (e: ActivityNotFoundException) {
             YandexMetrica.reportError(e.message.orEmpty(), e)
-            //ACRA.getErrorReporter().handleException(e)
         }
     }
 
@@ -98,7 +97,6 @@ class SystemLinkHandler(
                         }
                     } catch (ex: Exception) {
                         YandexMetrica.reportError(ex.message.orEmpty(), ex)
-                        //ACRA.getErrorReporter().handleException(ex)
                     }
                 }, {
                     it.printStackTrace()
@@ -122,7 +120,6 @@ class SystemLinkHandler(
             context.startActivity(Intent.createChooser(intent, context.getString(R.string.load_with)).addFlags(FLAG_ACTIVITY_NEW_TASK))
         } catch (e: ActivityNotFoundException) {
             YandexMetrica.reportError(e.message.orEmpty(), e)
-            //ACRA.getErrorReporter().handleException(e)
         }
 
     }

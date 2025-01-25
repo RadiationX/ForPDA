@@ -3,9 +3,6 @@
 <resources>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <!-- ACRA Crash dialog-->
-    <string name="crash_toast_text">Something has gone wrong, so wrong. Help us by sending a crash report, we don\'t want to live in fear anymore…</string>
-    <string name="crash_title">A bug in the program</string>
     <!-- Shortcuts -->
     <string name="shortcut_news">News</string>
     <string name="shortcut_favorites">Favorites</string>

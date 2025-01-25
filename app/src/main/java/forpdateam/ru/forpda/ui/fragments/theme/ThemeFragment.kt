@@ -131,9 +131,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
         val behavior = FabOnScroll(fab.context, null)
         params.behavior = behavior
         params.gravity = Gravity.CENTER_VERTICAL or Gravity.END
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
-            params.setMargins(App.px16, App.px16, App.px16, App.px16)
-        }
+        params.setMargins(App.px16, App.px16, App.px16, App.px16)
         fab.requestLayout()
     }
 

@@ -53,9 +53,6 @@ public class AdvancedPopup {
         ((TabLayout) popupView.findViewById(R.id.tab_layout)).setupWithViewPager(viewPager);
 
         popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, dimensionsProvider.getDimensions().getSavedKeyboardHeight(), false);
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            popupWindow.setElevation(App.px2);
-        }*/
 
         popupWindow.setOnDismissListener(() -> {
             dimensionsProvider.getDimensions().setFakeKeyboardShow(false);

@@ -3,10 +3,6 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <!-- ACRA Crash dialog-->
-    <string name="crash_toast_text">Произошло нечто очень страшное. Помогите нам – отправьте отчет об ошибке, мы не хотим больше жить в страхе…</string>
-    <string name="crash_title">Ошибка в работе программы</string>
-
     <!-- Shortcuts -->
     <string name="shortcut_news">Новости</string>
     <string name="shortcut_favorites">Избранное</string>

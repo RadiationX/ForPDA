@@ -78,7 +78,6 @@ public class FilePickHelper {
             requestFile = new RequestFile(name, mimeType, inputStream);
         } catch (Exception e) {
             YandexMetrica.reportError(e.getMessage(), e);
-            //ACRA.getErrorReporter().handleException(e);
         }
         return requestFile;
     }

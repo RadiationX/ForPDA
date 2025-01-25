@@ -185,16 +185,6 @@ public class NotificationsService extends Service {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         Log.i(LOG_TAG, "onTaskRemoved");
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-            Intent restartIntent = new Intent(this, getClass());
-
-            AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-            if (am != null) {
-                PendingIntent pi = PendingIntent.getService(this, 1, restartIntent, PendingIntent.FLAG_ONE_SHOT);
-                restartIntent.putExtra("RESTART", "RESTART_CHEBUREK");
-                am.setExact(AlarmManager.RTC, System.currentTimeMillis() + 3000, pi);
-            }
-        }
     }
 
     private NotificationManagerCompat getNotificationManager() {
@@ -227,10 +217,9 @@ public class NotificationsService extends Service {
                             Resources res = App.getContext().getResources();
                             int height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
                             int width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
-                            boolean isCircle = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
 
                             bitmap = BitmapUtils.centerCrop(bitmap, width, height, 1.0f);
-                            bitmap = BitmapUtils.createAvatar(bitmap, width, height, isCircle);
+                            bitmap = BitmapUtils.createAvatar(bitmap, width, height, true);
                         }
                         return bitmap;
                     })

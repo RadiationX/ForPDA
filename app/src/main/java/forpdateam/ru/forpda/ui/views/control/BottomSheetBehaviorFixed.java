@@ -366,9 +366,7 @@ public class BottomSheetBehaviorFixed<V extends View> extends CoordinatorLayout.
         }
         createShapeValueAnimator();
 
-        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            this.elevation = a.getDimension(R.styleable.BottomSheetBehavior_Layout_android_elevation, -1);
-        }
+        this.elevation = a.getDimension(R.styleable.BottomSheetBehavior_Layout_android_elevation, -1);
 
         TypedValue value = a.peekValue(R.styleable.BottomSheetBehavior_Layout_behavior_peekHeight);
         if (value != null && value.data == PEEK_HEIGHT_AUTO) {

@@ -40,7 +40,6 @@ public class CustomWebViewClient extends WebViewClient {
     private AvatarRepository avatarRepository = App.get().Di().getAvatarRepository();
     private ILinkHandler linkHandler = App.get().Di().getLinkHandler();
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
         return super.shouldInterceptRequest(view, request);

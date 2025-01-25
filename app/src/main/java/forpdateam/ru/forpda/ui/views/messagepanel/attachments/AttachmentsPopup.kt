@@ -1,8 +1,6 @@
 package forpdateam.ru.forpda.ui.views.messagepanel.attachments
 
 import android.content.Context
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import androidx.recyclerview.widget.GridLayoutManager
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +10,7 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.RelativeLayout
 import android.widget.TextView
-
-import java.util.ArrayList
-
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
@@ -66,7 +62,8 @@ class AttachmentsPopup(context: Context, private val messagePanel: MessagePanel)
         //dialog.getWindow().getDecorView().setFitsSystemWindows(true);
 
         bottomSheet = View.inflate(context, R.layout.message_panel_attachments, null)
-        recyclerView = bottomSheet!!.findViewById<View>(R.id.auto_fit_recycler_view) as AutoFitRecyclerView
+        recyclerView =
+            bottomSheet!!.findViewById<View>(R.id.auto_fit_recycler_view) as AutoFitRecyclerView
         progressOverlay = bottomSheet.findViewById<View>(R.id.progress_overlay) as FrameLayout
 
         noAttachments = bottomSheet.findViewById<View>(R.id.no_attachments_text) as TextView
@@ -82,17 +79,18 @@ class AttachmentsPopup(context: Context, private val messagePanel: MessagePanel)
         recyclerView.setFakeLinear(isLinear)
         recyclerView.adapter = adapter
 
-        recyclerView.manager.spanSizeLookup = object : androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(i: Int): Int {
-                return if (isLinear) {
-                    1
-                } else if (i == 0) {
-                    recyclerView.manager.spanCount
-                } else {
-                    1
+        recyclerView.manager.spanSizeLookup =
+            object : androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(i: Int): Int {
+                    return if (isLinear) {
+                        1
+                    } else if (i == 0) {
+                        recyclerView.manager.spanCount
+                    } else {
+                        1
+                    }
                 }
             }
-        }
 
         /*addFile.setItemClickListener(v -> {
             uploadFiles();
@@ -144,16 +142,6 @@ class AttachmentsPopup(context: Context, private val messagePanel: MessagePanel)
             dialog.setContentView(bottomSheet)
             dialog.show()
         }
-
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Window window = dialog.getWindow();
-            if (window != null) {
-                window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                }
-            }
-        }*/
     }
 
     fun setEnabledTextControls(enabled: Boolean) {
@@ -168,7 +156,8 @@ class AttachmentsPopup(context: Context, private val messagePanel: MessagePanel)
             if (insertAttachmentListener != null) {
                 text.append(insertAttachmentListener!!.onInsert(item))
             } else {
-                text.append("[attachment=").append(item.id).append(":").append(item.name).append("]")
+                text.append("[attachment=").append(item.id).append(":").append(item.name)
+                    .append("]")
             }
         }
         if (toSpoiler)
@@ -211,7 +200,8 @@ class AttachmentsPopup(context: Context, private val messagePanel: MessagePanel)
     private fun onDataChange(count: Int) {
         messagePanel.updateAttachmentsCounter(count)
         if (count > 0) {
-            noAttachments.text = String.format(App.get().getString(R.string.attachments_count), count)
+            noAttachments.text =
+                String.format(App.get().getString(R.string.attachments_count), count)
             //dialog.setPeekHeight(App.getKeyboardHeight());
         } else {
             noAttachments.setText(R.string.no_attachments)
@@ -328,7 +318,12 @@ class AttachmentsPopup(context: Context, private val messagePanel: MessagePanel)
         Log.d(LOG_TAG, "onDeleteFiles $deletedItems")
         for (item in deletedItems) {
             Log.d(LOG_TAG, "Delete file $item")
-            messagePanel.setText(messagePanel.message.replace(("\\[attachment=['\"]?" + item.id + ":[^\\]]*?]").toRegex(), ""))
+            messagePanel.setText(
+                messagePanel.message.replace(
+                    ("\\[attachment=['\"]?" + item.id + ":[^\\]]*?]").toRegex(),
+                    ""
+                )
+            )
         }
         progressOverlay.visibility = View.GONE
         deleteSelected()

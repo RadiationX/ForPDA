@@ -23,7 +23,6 @@ public class SquareRelativeLayout extends RelativeLayout {
         super(context, attrs, defStyleAttr);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public SquareRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }

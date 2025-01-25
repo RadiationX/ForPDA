@@ -165,11 +165,6 @@ public class App extends android.app.Application {
         YandexMetrica.activate(getApplicationContext(), config);
         YandexMetrica.enableActivityAutoTracking(this);
 
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-        }
-
-        //ACRA.init(this);
         dependencies = new Dependencies(this);
 
 

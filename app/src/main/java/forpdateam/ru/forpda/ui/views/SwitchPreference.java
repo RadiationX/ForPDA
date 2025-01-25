@@ -15,7 +15,6 @@ import android.util.AttributeSet;
 * Пи*дец, да.
 * */
 public class SwitchPreference extends SwitchPreferenceCompat {
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public SwitchPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }

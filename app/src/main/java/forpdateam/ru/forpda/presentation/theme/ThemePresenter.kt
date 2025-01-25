@@ -586,7 +586,6 @@ class ThemePresenter(
             }
         } catch (ex: Exception) {
             YandexMetrica.reportError("${ex.message ?: ex.toString()}; uri $uri", ex)
-            //ACRA.getErrorReporter().handleException(ex)
         }
         linkHandler.handle(url, router)
     }

@@ -267,11 +267,7 @@ open class TabFragment : MvpAppCompatFragment() {
 
     protected fun updateToolbarShadow() {
         val isVisible = isShadowVisible()
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            preLpShadow.visibility = if (isVisible) View.VISIBLE else View.GONE
-        } else {
-            preLpShadow.visibility = if (isVisible) View.VISIBLE else View.GONE
-        }
+        preLpShadow.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 
     @CallSuper
