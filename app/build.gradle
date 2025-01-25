@@ -80,23 +80,23 @@ android {
         }
     }
 
-    flavorDimensions "wtf"
+    flavorDimensions = ["type"]
     productFlavors {
         stable {
-            dimension "wtf"
+            dimension "type"
         }
         beta {
             applicationId 'ru.forpdateam.forpda.beta'
             versionCode versionNumber
             versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild}) beta"
-            dimension "wtf"
+            dimension "type"
         }
 
         dev {
             applicationId 'ru.forpdateam.forpda.debug'
             versionCode versionNumber
             versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild}) dev"
-            dimension "wtf"
+            dimension "type"
         }
     }
 
@@ -177,7 +177,6 @@ dependencies {
 
     implementation "com.github.moxy-community:moxy:2.2.2"
     implementation 'com.github.moxy-community:moxy-androidx:2.2.2'
-    annotationProcessor 'com.github.moxy-community:moxy-compiler:2.2.2'
     kapt 'com.github.moxy-community:moxy-compiler:2.2.2'
 
     implementation "com.jakewharton.rxrelay2:rxrelay:2.1.0"
@@ -189,8 +188,8 @@ dependencies {
     implementation 'com.f2prateek.rx.preferences2:rx-preferences:2.0.0'
 
 
-    implementation("com.github.hotchemi:permissionsdispatcher:3.2.0")
-    kapt "com.github.hotchemi:permissionsdispatcher-processor:3.2.0"
+    implementation("com.github.permissions-dispatcher:permissionsdispatcher:4.9.2")
+    kapt "com.github.permissions-dispatcher:permissionsdispatcher-processor:4.9.2"
 
     implementation 'com.yandex.android:mobmetricalib:3.13.1'
 
