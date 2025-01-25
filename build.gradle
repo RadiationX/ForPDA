@@ -1,14 +1,15 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.4.0'
+    ext.kotlin_version = '1.7.0'
     repositories {
         jcenter()
         google()
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.1'
-        classpath 'io.realm:realm-gradle-plugin:6.1.0'
+        classpath 'com.android.tools.build:gradle:8.7.3'
+        classpath 'io.realm:realm-gradle-plugin:10.19.0'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -20,13 +21,14 @@ allprojects {
     repositories {
         google()
         jcenter()
+        mavenCentral()
         maven {
             url 'https://maven.google.com'
         }
         maven { url 'https://dl.bintray.com/patrickfav/maven/' }
         maven { url "https://jitpack.io" }
         maven {
-            url "http://github.com/wada811/Android-Material-Design-Colors/raw/master/repository/"
+            url "https://github.com/wada811/Android-Material-Design-Colors/raw/master/repository/"
         }
     }
 }

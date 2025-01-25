@@ -17,7 +17,6 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-
     def fileNaming = "apk/ForPDA"
 
     def versionNumber = 223
@@ -46,7 +45,6 @@ android {
         minSdkVersion 21
         targetSdkVersion 29
         vectorDrawables.useSupportLibrary = true
-        multiDexEnabled true
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         ndk {
             abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
@@ -88,7 +86,6 @@ android {
             dimension "wtf"
         }
         beta {
-            multiDexEnabled true
             applicationId 'ru.forpdateam.forpda.beta'
             versionCode versionNumber
             versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild}) beta"
@@ -96,8 +93,6 @@ android {
         }
 
         dev {
-            //minSdkVersion 21
-            multiDexEnabled true
             applicationId 'ru.forpdateam.forpda.debug'
             versionCode versionNumber
             versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild}) dev"
@@ -121,26 +116,15 @@ android {
         }
     }
 
-
-    dexOptions {
-        dexInProcess = true
-        preDexLibraries = true
-    }
     compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8
     }
     packagingOptions {
-        pickFirst 'META-INF/rxjava.properties'
-        exclude 'META-INF/DEPENDENCIES.txt'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/notice.txt'
-        exclude 'META-INF/license.txt'
-        exclude 'META-INF/dependencies.txt'
+        resources {
+            excludes += ['META-INF/DEPENDENCIES.txt', 'META-INF/LICENSE.txt', 'META-INF/NOTICE.txt', 'META-INF/NOTICE', 'META-INF/LICENSE', 'META-INF/DEPENDENCIES', 'META-INF/notice.txt', 'META-INF/license.txt', 'META-INF/dependencies.txt']
+            pickFirsts += ['META-INF/rxjava.properties']
+        }
     }
     splits {
         abi {
@@ -150,9 +134,10 @@ android {
             universalApk false
         }
     }
-    lintOptions {
-        disable 'RestrictedApi'
+    namespace 'forpdateam.ru.forpda'
+    lint {
         checkReleaseBuilds false
+        //disable 'RestrictedApi'
     }
 }
 
@@ -193,21 +178,21 @@ dependencies {
     implementation 'com.wada811:android-material-design-colors:3.0.0'
     implementation 'com.thebluealliance:spectrum:0.7.1'
     implementation 'com.github.douglasjunior:android-simple-tooltip:0.2.0'
-    implementation 'com.robohorse.pagerbullet:pagerbullet:1.0.8'
+    implementation 'com.github.robohorse:PagerBullet:1.2.0'
     //implementation 'com.github.apg-mobile:android-round-textview:v0.0.3'
     implementation 'com.evernote:android-job:1.2.6'
 
-    implementation "com.github.moxy-community:moxy:2.1.1"
-    implementation 'com.github.moxy-community:moxy-androidx:2.1.1'
-    annotationProcessor 'com.github.moxy-community:moxy-compiler:2.1.1'
-    kapt 'com.github.moxy-community:moxy-compiler:2.1.1'
+    implementation "com.github.moxy-community:moxy:2.2.2"
+    implementation 'com.github.moxy-community:moxy-androidx:2.2.2'
+    annotationProcessor 'com.github.moxy-community:moxy-compiler:2.2.2'
+    kapt 'com.github.moxy-community:moxy-compiler:2.2.2'
 
     implementation "com.jakewharton.rxrelay2:rxrelay:2.1.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    implementation 'ru.terrakok.cicerone:cicerone:3.0.0'
+    implementation 'com.github.terrakok:cicerone:7.1'
     implementation 'com.hannesdorfmann:adapterdelegates3:3.0.1'
-    implementation 'com.daasuu:EasingInterpolator:1.0.0'
+    implementation 'com.github.MasayukiSuda:EasingInterpolator:v1.3.2'
     implementation 'com.f2prateek.rx.preferences2:rx-preferences:2.0.0'
 
 
@@ -215,8 +200,6 @@ dependencies {
     kapt "com.github.hotchemi:permissionsdispatcher-processor:3.2.0"
 
     implementation 'com.yandex.android:mobmetricalib:3.13.1'
-
-    implementation 'androidx.multidex:multidex:2.0.0'
 
     implementation 'com.makeramen:roundedimageview:2.3.0'
 }
