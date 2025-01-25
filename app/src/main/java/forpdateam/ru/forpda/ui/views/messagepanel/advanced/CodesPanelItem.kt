@@ -1,323 +1,358 @@
-package forpdateam.ru.forpda.ui.views.messagepanel.advanced;
+package forpdateam.ru.forpda.ui.views.messagepanel.advanced
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.text.TextUtils;
-import android.util.Pair;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.ItemTouchHelper;
-
-import com.google.android.material.textfield.TextInputLayout;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.common.simple.SimpleTextWatcher;
-import forpdateam.ru.forpda.model.preferences.OtherPreferencesHolder;
-import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel;
-import forpdateam.ru.forpda.ui.views.messagepanel.SimpleInstruction;
-import forpdateam.ru.forpda.ui.views.messagepanel.advanced.adapters.ItemDragCallback;
-import forpdateam.ru.forpda.ui.views.messagepanel.advanced.adapters.PanelItemAdapter;
-import forpdateam.ru.forpda.ui.views.messagepanel.colorpicker.ColorPicker;
-import forpdateam.ru.forpda.ui.views.messagepanel.inserthelper.InsertHelper;
-
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.DialogInterface
+import android.text.TextUtils
+import android.util.Pair
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.ItemTouchHelper
+import com.google.android.material.textfield.TextInputLayout
+import forpdateam.ru.forpda.App.Companion.get
+import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
+import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
+import forpdateam.ru.forpda.ui.views.messagepanel.SimpleInstruction
+import forpdateam.ru.forpda.ui.views.messagepanel.advanced.adapters.ItemDragCallback
+import forpdateam.ru.forpda.ui.views.messagepanel.advanced.adapters.PanelItemAdapter
+import forpdateam.ru.forpda.ui.views.messagepanel.colorpicker.ColorPicker
+import forpdateam.ru.forpda.ui.views.messagepanel.inserthelper.InsertHelper
+import java.util.Collections
+import java.util.Locale
 
 /**
  * Created by radiationx on 08.01.17.
  */
-
 @SuppressLint("ViewConstructor")
-public class CodesPanelItem extends BasePanelItem {
-    private static List<ButtonData> codes = null;
-    private static Map<String, String> colors = null;
-    private final List<String> openedCodes = new ArrayList<>();
-    private final OtherPreferencesHolder otherPreferencesHolder = App.get().Di().getOtherPreferencesHolder();
-    private final PanelItemAdapter.OnItemClickListener clickListener = item -> {
-        switch (item.getText()) {
-            case "URL": {
-                urlInsert(item);
-                break;
+class CodesPanelItem(context: Context, panel: MessagePanel) :
+    BasePanelItem(context, panel, get().getString(R.string.codes_title)) {
+    private val openedCodes: List<String> = ArrayList()
+    private val otherPreferencesHolder = get().Di().otherPreferencesHolder
+    private val clickListener =
+        PanelItemAdapter.OnItemClickListener { item: ButtonData ->
+            when (item.text) {
+                "URL" -> {
+                    urlInsert(item)
+                }
+
+                "QUOTE" -> {
+                    quoteInsert(item)
+                }
+
+                "CODE" -> {
+                    codeInsert(item)
+                }
+
+                "SPOILER" -> {
+                    spoilerInsert(item)
+                }
+
+                "LIST" -> {
+                    listInsert(item, false)
+                }
+
+                "NUMLIST" -> {
+                    listInsert(item, true)
+                }
+
+                "COLOR" -> {
+                    colorInsert(item)
+                }
+
+                "BACKGROUND" -> {
+                    colorInsert(item)
+                }
+
+                "SIZE" -> {
+                    sizeInsert(item)
+                }
+
+                "FONT" -> {
+                    fontInsert(item)
+                }
+
+                else -> simpleInsertText(item)
             }
-            case "QUOTE": {
-                quoteInsert(item);
-                break;
-            }
-            case "CODE": {
-                codeInsert(item);
-                break;
-            }
-            case "SPOILER": {
-                spoilerInsert(item);
-                break;
-            }
-            case "LIST": {
-                listInsert(item, false);
-                break;
-            }
-            case "NUMLIST": {
-                listInsert(item, true);
-                break;
-            }
-            case "COLOR": {
-                colorInsert(item);
-                break;
-            }
-            case "BACKGROUND": {
-                colorInsert(item);
-                break;
-            }
-            case "SIZE": {
-                sizeInsert(item);
-                break;
-            }
-            case "FONT": {
-                fontInsert(item);
-                break;
-            }
-            default:
-                simpleInsertText(item);
         }
-    };
 
-    public CodesPanelItem(Context context, MessagePanel panel) {
-        super(context, panel, App.get().getString(R.string.codes_title));
-        PanelItemAdapter adapter = new PanelItemAdapter(getCodes(), null, PanelItemAdapter.TYPE_DRAWABLE);
-        adapter.setOnItemClickListener(clickListener);
+    init {
+        val adapter = PanelItemAdapter(codes, null, PanelItemAdapter.TYPE_DRAWABLE)
+        adapter.setOnItemClickListener(clickListener)
 
-        recyclerView.setColumnWidth(App.get().dpToPx(96, recyclerView.getContext()));
-        ItemTouchHelper touchHelper = new ItemTouchHelper(new ItemDragCallback(adapter));
-        touchHelper.attachToRecyclerView(recyclerView);
-        recyclerView.setAdapter(adapter);
+        recyclerView.setColumnWidth(get().dpToPx(96, recyclerView.context))
+        val touchHelper = ItemTouchHelper(ItemDragCallback(adapter))
+        touchHelper.attachToRecyclerView(recyclerView)
+        recyclerView.adapter = adapter
 
         if (otherPreferencesHolder.getTooltipMessagePanelSorting()) {
-            SimpleInstruction instruction = new SimpleInstruction(getContext());
-            instruction.setText(App.get().getString(R.string.code_panel_instruction));
-            instruction.setOnCloseClick((v) -> {
-                otherPreferencesHolder.setTooltipMessagePanelSorting(false);
-            });
-            addView(instruction);
+            val instruction = SimpleInstruction(getContext())
+            instruction.setText(get().getString(R.string.code_panel_instruction))
+            instruction.setOnCloseClick { v: View? ->
+                otherPreferencesHolder.setTooltipMessagePanelSorting(false)
+            }
+            addView(instruction)
         }
     }
 
-    private void listInsert(ButtonData item, boolean num) {
-        String selected = messagePanel.getSelectedText();
-        List<String> listLines = new ArrayList<>();
-        String tag = "LIST";
-        if (selected.length() > 0) {
-            new AlertDialog.Builder(getContext())
-                    .setMessage(R.string.transform_string_to_list)
-                    .setPositiveButton(R.string.ok, (dialog, which) -> {
-                        String[] lines = TextUtils.split(selected, "\n");
-                        Collections.addAll(listLines, lines);
-                        messagePanel.deleteSelected();
-                    })
-                    .setNegativeButton(R.string.no, null)
-                    .setOnDismissListener(dialog -> listInsert(tag, num, listLines))
-                    .show();
+    private fun listInsert(item: ButtonData, num: Boolean) {
+        val selected = messagePanel.selectedText
+        val listLines: MutableList<String> = ArrayList()
+        val tag = "LIST"
+        if (selected.length > 0) {
+            AlertDialog.Builder(context)
+                .setMessage(R.string.transform_string_to_list)
+                .setPositiveButton(R.string.ok) { dialog: DialogInterface?, which: Int ->
+                    val lines = TextUtils.split(selected, "\n")
+                    Collections.addAll(listLines, *lines)
+                    messagePanel.deleteSelected()
+                }
+                .setNegativeButton(R.string.no, null)
+                .setOnDismissListener { dialog: DialogInterface? ->
+                    listInsert(
+                        tag,
+                        num,
+                        listLines
+                    )
+                }
+                .show()
         } else {
-            listInsert(tag, num, listLines);
+            listInsert(tag, num, listLines)
         }
     }
 
-    private void listInsert(String tag, boolean num, List<String> listLines) {
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.report_layout, null);
-        assert layout != null;
-        final EditText messageField = layout.findViewById(R.id.report_text_field);
-        final TextInputLayout inputLayout = layout.findViewById(R.id.report_input_layout);
-        final int[] i = {listLines.size() + 1};
-        inputLayout.setHint(String.format(App.get().getString(R.string.codes_list_item_Pos), i[0]));
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                .setView(layout)
-                .setPositiveButton(R.string.add, null)
-                .setNegativeButton(R.string.close, (dialog, which) -> {
-                    StringBuilder body = new StringBuilder();
-                    for (String line : listLines) {
-                        body.append("[*]").append(line).append('\n');
-                    }
-                    List<Pair<String, String>> resultHeaders = new ArrayList<>();
-                    if (num) {
-                        resultHeaders.add(new Pair<>(null, "1"));
-                    }
-                    String[] bbcodes = createBbCode(tag, resultHeaders, body.toString());
-                    messagePanel.insertText(bbcodes[0], bbcodes[1], false);
-                })
-                .show();
-        Button positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        positiveButton.setEnabled(false);
-        positiveButton.setOnClickListener(v -> {
-            i[0]++;
-            listLines.add(messageField.getText().toString());
-            messageField.setText("");
-            inputLayout.setHint(String.format(App.get().getString(R.string.codes_list_item_Pos), i[0]));
-        });
-        messageField.addTextChangedListener(new SimpleTextWatcher() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                positiveButton.setEnabled(s.length() > 0);
+    private fun listInsert(tag: String, num: Boolean, listLines: MutableList<String>) {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val layout = checkNotNull(inflater.inflate(R.layout.report_layout, null))
+        val messageField = layout.findViewById<EditText>(R.id.report_text_field)
+        val inputLayout = layout.findViewById<TextInputLayout>(R.id.report_input_layout)
+        val i = intArrayOf(listLines.size + 1)
+        inputLayout.hint = String.format(
+            get().getString(R.string.codes_list_item_Pos),
+            i[0]
+        )
+        val alertDialog = AlertDialog.Builder(
+            context
+        )
+            .setView(layout)
+            .setPositiveButton(R.string.add, null)
+            .setNegativeButton(R.string.close) { dialog: DialogInterface?, which: Int ->
+                val body = StringBuilder()
+                for (line in listLines) {
+                    body.append("[*]").append(line).append('\n')
+                }
+                val resultHeaders: MutableList<Pair<String?, String?>> =
+                    ArrayList()
+                if (num) {
+                    resultHeaders.add(Pair(null, "1"))
+                }
+                val bbcodes = createBbCode(tag, resultHeaders, body.toString())
+                messagePanel.insertText(bbcodes[0], bbcodes[1], false)
             }
-        });
-    }
-
-    private void colorInsert(ButtonData item) {
-        new ColorPicker(getContext(), i -> {
-            String color = Integer.toHexString(i).toUpperCase();
-            if (color.length() > 6) {
-                color = color.substring(2);
-            }
-            color = "#".concat(color);
-            color = getHtmlColor(color);
-
-            List<Pair<String, String>> resultHeaders = new ArrayList<>();
-            resultHeaders.add(new Pair<>(null, color));
-            String[] bbcodes = createBbCode(item.getText(), resultHeaders, null);
-            messagePanel.insertText(bbcodes[0], bbcodes[1]);
-        });
-    }
-
-    private void sizeInsert(ButtonData item) {
-        CharSequence[] items = {
-                "1 (8pt)",
-                "2 (10pt)",
-                "3 (12pt)",
-                "4 (14pt)",
-                "5 (18pt)",
-                "6 (24pt)",
-                "7 (36pt)"
-        };
-        for (int i = 0; i < items.length; i++) {
-            items[i] = String.format(App.get().getString(R.string.codes_text_size_item_Size), items[i]);
+            .show()
+        val positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+        positiveButton.isEnabled = false
+        positiveButton.setOnClickListener { v: View? ->
+            i[0]++
+            listLines.add(messageField.text.toString())
+            messageField.setText("")
+            inputLayout.hint = String.format(
+                get().getString(R.string.codes_list_item_Pos), i[0]
+            )
         }
-        new AlertDialog.Builder(getContext())
-                .setTitle(R.string.codes_text_size)
-                .setItems(items, (dialog, which) -> {
-                    List<Pair<String, String>> resultHeaders = new ArrayList<>();
-                    resultHeaders.add(new Pair<>(null, Integer.toString(which + 1)));
-                    String[] bbcodes = createBbCode(item.getText(), resultHeaders, null);
-                    messagePanel.insertText(bbcodes[0], bbcodes[1]);
-                    dialog.dismiss();
-                })
-                .setNegativeButton(R.string.cancel, null)
-                .show();
+        messageField.addTextChangedListener(object : SimpleTextWatcher() {
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                positiveButton.isEnabled = s.length > 0
+            }
+        })
     }
 
-    private void fontInsert(ButtonData item) {
-        String selected = messagePanel.getSelectedText();
-        int[] range = messagePanel.getSelectionRange();
-        InsertHelper insertHelper = new InsertHelper(getContext());
-        insertHelper.addHeader(App.get().getString(R.string.codes_font), null);
-        if (selected.length() == 0)
-            insertHelper.setBody(App.get().getString(R.string.codes_font_text), null);
-        insertHelper.setInsertListener((resultHeaders, bodyResult) -> {
-            String[] bbcodes = createBbCode(item.getText(), resultHeaders, bodyResult);
-            messagePanel.insertText(bbcodes[0], bbcodes[1], range[0], range[1]);
-        });
-        insertHelper.show();
+    private fun colorInsert(item: ButtonData) {
+        ColorPicker(context) { i: Int ->
+            var color =
+                Integer.toHexString(i).uppercase(Locale.getDefault())
+            if (color.length > 6) {
+                color = color.substring(2)
+            }
+            color = "#$color"
+            color = getHtmlColor(color)
+
+            val resultHeaders: MutableList<Pair<String?, String?>> =
+                ArrayList()
+            resultHeaders.add(Pair(null, color))
+            val bbcodes = createBbCode(item.text, resultHeaders, null)
+            messagePanel.insertText(bbcodes[0], bbcodes[1])
+        }
     }
 
-    private void urlInsert(ButtonData item) {
-        String selected = messagePanel.getSelectedText();
-        int[] range = messagePanel.getSelectionRange();
-        InsertHelper insertHelper = new InsertHelper(getContext());
-        insertHelper.addHeader(App.get().getString(R.string.codes_link), null);
-        if (selected.length() == 0)
-            insertHelper.setBody(App.get().getString(R.string.codes_link_text), null);
-        insertHelper.setInsertListener((resultHeaders, bodyResult) -> {
-            String[] bbcodes = createBbCode(item.getText(), resultHeaders, bodyResult);
-            messagePanel.insertText(bbcodes[0], bbcodes[1], range[0], range[1]);
-        });
-        insertHelper.show();
+    private fun sizeInsert(item: ButtonData) {
+        val items = arrayOf<CharSequence>(
+            "1 (8pt)",
+            "2 (10pt)",
+            "3 (12pt)",
+            "4 (14pt)",
+            "5 (18pt)",
+            "6 (24pt)",
+            "7 (36pt)"
+        )
+        for (i in items.indices) {
+            items[i] = String.format(
+                get().getString(R.string.codes_text_size_item_Size),
+                items[i]
+            )
+        }
+        AlertDialog.Builder(context)
+            .setTitle(R.string.codes_text_size)
+            .setItems(items) { dialog: DialogInterface, which: Int ->
+                val resultHeaders: MutableList<Pair<String?, String?>> =
+                    ArrayList()
+                resultHeaders.add(
+                    Pair(
+                        null,
+                        (which + 1).toString()
+                    )
+                )
+                val bbcodes = createBbCode(item.text, resultHeaders, null)
+                messagePanel.insertText(bbcodes[0], bbcodes[1])
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 
-    private void spoilerInsert(ButtonData item) {
-        String selected = messagePanel.getSelectedText();
-        int[] range = messagePanel.getSelectionRange();
-        InsertHelper insertHelper = new InsertHelper(getContext());
-        insertHelper.addHeader(App.get().getString(R.string.codes_block_title), null);
-        if (selected.length() == 0)
-            insertHelper.setBody(App.get().getString(R.string.codes_spoiler_text), null);
-        insertHelper.setInsertListener((resultHeaders, bodyResult) -> {
-            String[] bbcodes = createBbCode(item.getText(), resultHeaders, bodyResult);
-            messagePanel.insertText(bbcodes[0], bbcodes[1], range[0], range[1]);
-        });
-        insertHelper.show();
+    private fun fontInsert(item: ButtonData) {
+        val selected = messagePanel.selectedText
+        val range = messagePanel.selectionRange
+        val insertHelper = InsertHelper(
+            context
+        )
+        insertHelper.addHeader(get().getString(R.string.codes_font), null)
+        if (selected.length == 0) insertHelper.setBody(
+            get().getString(R.string.codes_font_text),
+            null
+        )
+        insertHelper.setInsertListener { resultHeaders: ArrayList<Pair<String?, String?>>?, bodyResult: String? ->
+            val bbcodes = createBbCode(item.text, resultHeaders, bodyResult)
+            messagePanel.insertText(bbcodes[0], bbcodes[1], range[0], range[1])
+        }
+        insertHelper.show()
     }
 
-    private void codeInsert(ButtonData item) {
-        String selected = messagePanel.getSelectedText();
-        int[] range = messagePanel.getSelectionRange();
-        InsertHelper insertHelper = new InsertHelper(getContext());
-        insertHelper.addHeader(App.get().getString(R.string.codes_block_title), null);
-        if (selected.length() == 0)
-            insertHelper.setBody(App.get().getString(R.string.codes_code_text), null);
-        insertHelper.setInsertListener((resultHeaders, bodyResult) -> {
-            String[] bbcodes = createBbCode(item.getText(), resultHeaders, bodyResult);
-            messagePanel.insertText(bbcodes[0], bbcodes[1], range[0], range[1]);
-        });
-        insertHelper.show();
+    private fun urlInsert(item: ButtonData) {
+        val selected = messagePanel.selectedText
+        val range = messagePanel.selectionRange
+        val insertHelper = InsertHelper(
+            context
+        )
+        insertHelper.addHeader(get().getString(R.string.codes_link), null)
+        if (selected.length == 0) insertHelper.setBody(
+            get().getString(R.string.codes_link_text),
+            null
+        )
+        insertHelper.setInsertListener { resultHeaders: ArrayList<Pair<String?, String?>>?, bodyResult: String? ->
+            val bbcodes = createBbCode(item.text, resultHeaders, bodyResult)
+            messagePanel.insertText(bbcodes[0], bbcodes[1], range[0], range[1])
+        }
+        insertHelper.show()
     }
 
-    private void quoteInsert(ButtonData item) {
-        String selected = messagePanel.getSelectedText();
-        int[] range = messagePanel.getSelectionRange();
-        InsertHelper insertHelper = new InsertHelper(getContext());
-        insertHelper.addHeader(App.get().getString(R.string.codes_block_title), "name");
+    private fun spoilerInsert(item: ButtonData) {
+        val selected = messagePanel.selectedText
+        val range = messagePanel.selectionRange
+        val insertHelper = InsertHelper(
+            context
+        )
+        insertHelper.addHeader(get().getString(R.string.codes_block_title), null)
+        if (selected.length == 0) insertHelper.setBody(
+            get().getString(R.string.codes_spoiler_text),
+            null
+        )
+        insertHelper.setInsertListener { resultHeaders: ArrayList<Pair<String?, String?>>?, bodyResult: String? ->
+            val bbcodes = createBbCode(item.text, resultHeaders, bodyResult)
+            messagePanel.insertText(bbcodes[0], bbcodes[1], range[0], range[1])
+        }
+        insertHelper.show()
+    }
+
+    private fun codeInsert(item: ButtonData) {
+        val selected = messagePanel.selectedText
+        val range = messagePanel.selectionRange
+        val insertHelper = InsertHelper(
+            context
+        )
+        insertHelper.addHeader(get().getString(R.string.codes_block_title), null)
+        if (selected.length == 0) insertHelper.setBody(
+            get().getString(R.string.codes_code_text),
+            null
+        )
+        insertHelper.setInsertListener { resultHeaders: ArrayList<Pair<String?, String?>>?, bodyResult: String? ->
+            val bbcodes = createBbCode(item.text, resultHeaders, bodyResult)
+            messagePanel.insertText(bbcodes[0], bbcodes[1], range[0], range[1])
+        }
+        insertHelper.show()
+    }
+
+    private fun quoteInsert(item: ButtonData) {
+        val selected = messagePanel.selectedText
+        val range = messagePanel.selectionRange
+        val insertHelper = InsertHelper(
+            context
+        )
+        insertHelper.addHeader(get().getString(R.string.codes_block_title), "name")
         /*insertHelper.addHeader("Дата", "date");
         insertHelper.addHeader("ID поста", "post");*/
-        if (selected.length() == 0)
-            insertHelper.setBody(App.get().getString(R.string.codes_quote_text), null);
-        insertHelper.setInsertListener((resultHeaders, bodyResult) -> {
-            String[] bbcodes = createBbCode(item.getText(), resultHeaders, bodyResult);
-            messagePanel.insertText(bbcodes[0], bbcodes[1], range[0], range[1]);
-        });
-        insertHelper.show();
+        if (selected.length == 0) insertHelper.setBody(
+            get().getString(R.string.codes_quote_text),
+            null
+        )
+        insertHelper.setInsertListener { resultHeaders: ArrayList<Pair<String?, String?>>?, bodyResult: String? ->
+            val bbcodes = createBbCode(item.text, resultHeaders, bodyResult)
+            messagePanel.insertText(bbcodes[0], bbcodes[1], range[0], range[1])
+        }
+        insertHelper.show()
     }
 
-    private String[] createBbCode(String tag, List<Pair<String, String>> headers, String body) {
-        StringBuilder start = null;
-        String end = null;
+    private fun createBbCode(
+        tag: String,
+        headers: List<Pair<String?, String?>>?,
+        body: String?
+    ): Array<String> {
+        var start: StringBuilder? = null
+        var end: String? = null
 
-        start = new StringBuilder("[" + tag);
+        start = StringBuilder("[$tag")
         if (headers != null) {
-            for (Pair<String, String> header : headers) {
+            for (header in headers) {
                 if (header.first == null && header.second != null) {
-                    start.append("=").append(header.second);
-                    break;
+                    start.append("=").append(header.second)
+                    break
                 }
             }
-            for (Pair<String, String> header : headers) {
-                if (header.first == null || header.second == null) continue;
-                start.append(" ").append(header.first).append("=\"").append(header.second).append("\"");
+            for (header in headers) {
+                if (header.first == null || header.second == null) continue
+                start.append(" ").append(header.first).append("=\"").append(header.second)
+                    .append("\"")
             }
         }
-        start.append("]");
+        start.append("]")
 
         if (body != null) {
-            start.append(body);
+            start.append(body)
         }
-        end = "[/" + tag + "]";
+        end = "[/$tag]"
 
         //Log.d("FORPDA_LOG", "CREATE BB CODE " + start + " : " + end);
-        return new String[]{start.toString(), end};
+        return arrayOf(start.toString(), end)
     }
 
-    private void simpleInsertText(ButtonData item) {
-        String[] bbcodes = createBbCode(item.getText(), null, null);
-        messagePanel.insertText(bbcodes[0], bbcodes[1]);
+    private fun simpleInsertText(item: ButtonData) {
+        val bbcodes = createBbCode(item.text, null, null)
+        messagePanel.insertText(bbcodes[0], bbcodes[1])
     }
 
-   /* private void defaultInsertText(ButtonData item) {
+    /* private void defaultInsertText(ButtonData item) {
         String tag = item.getText();
         String startText = null;
         String endText = null;
@@ -337,106 +372,243 @@ public class CodesPanelItem extends BasePanelItem {
         }
     }
 */
-
-    @Override
-    protected void onDetachedFromWindow() {
-        List<String> listCodes = new ArrayList<>();
-        for (ButtonData item : codes) {
-            listCodes.add(item.getText());
+    override fun onDetachedFromWindow() {
+        val listCodes: MutableList<String?> = ArrayList()
+        for (item in codes) {
+            listCodes.add(item.text)
         }
-        String sorted = TextUtils.join(",", listCodes);
-        otherPreferencesHolder.setMessagePanelBbCodes(sorted);
-        super.onDetachedFromWindow();
+        val sorted = TextUtils.join(",", listCodes)
+        otherPreferencesHolder.setMessagePanelBbCodes(sorted)
+        super.onDetachedFromWindow()
     }
 
-    private List<ButtonData> getCodes() {
-        if (codes != null) return codes;
-        codes = new ArrayList<>();
-        ArrayList<ButtonData> tempCodes = new ArrayList<>();
-        tempCodes.add(new ButtonData("B", R.drawable.ic_code_bold, App.get().getString(R.string.codes_name_bold)));
-        tempCodes.add(new ButtonData("I", R.drawable.ic_code_italic, App.get().getString(R.string.codes_name_italic)));
-        tempCodes.add(new ButtonData("U", R.drawable.ic_code_underline, App.get().getString(R.string.codes_name_underline)));
-        tempCodes.add(new ButtonData("S", R.drawable.ic_code_s, App.get().getString(R.string.codes_name_s)));
-        tempCodes.add(new ButtonData("URL", R.drawable.ic_code_url, App.get().getString(R.string.codes_name_link)));
-        tempCodes.add(new ButtonData("SPOILER", R.drawable.ic_code_spoiler, App.get().getString(R.string.codes_name_spoiler)));
-        tempCodes.add(new ButtonData("OFFTOP", R.drawable.ic_code_offtop, App.get().getString(R.string.codes_name_offtop)));
-        tempCodes.add(new ButtonData("QUOTE", R.drawable.ic_code_quote, App.get().getString(R.string.codes_name_quote)));
-        tempCodes.add(new ButtonData("CODE", R.drawable.ic_code_code, App.get().getString(R.string.codes_name_code)));
-        tempCodes.add(new ButtonData("COLOR", R.drawable.ic_code_color, App.get().getString(R.string.codes_name_text_color)));
-        tempCodes.add(new ButtonData("SIZE", R.drawable.ic_code_size, App.get().getString(R.string.codes_name_text_size)));
-        tempCodes.add(new ButtonData("FONT", R.drawable.ic_code_font, App.get().getString(R.string.codes_name_font)));
+    private val codes: List<ButtonData>
+        get() {
+            if (Companion.codes != null) return Companion.codes!!
+            val codes = ArrayList<ButtonData>()
+            Companion.codes = codes
+            val tempCodes = ArrayList<ButtonData>()
+            tempCodes.add(
+                ButtonData(
+                    "B",
+                    R.drawable.ic_code_bold,
+                    get().getString(R.string.codes_name_bold)
+                )
+            )
+            tempCodes.add(
+                ButtonData(
+                    "I",
+                    R.drawable.ic_code_italic,
+                    get().getString(R.string.codes_name_italic)
+                )
+            )
+            tempCodes.add(
+                ButtonData(
+                    "U",
+                    R.drawable.ic_code_underline,
+                    get().getString(R.string.codes_name_underline)
+                )
+            )
+            tempCodes.add(
+                ButtonData(
+                    "S",
+                    R.drawable.ic_code_s,
+                    get().getString(R.string.codes_name_s)
+                )
+            )
+            tempCodes.add(
+                ButtonData(
+                    "URL",
+                    R.drawable.ic_code_url,
+                    get().getString(R.string.codes_name_link)
+                )
+            )
+            tempCodes.add(
+                ButtonData(
+                    "SPOILER",
+                    R.drawable.ic_code_spoiler,
+                    get().getString(R.string.codes_name_spoiler)
+                )
+            )
+            tempCodes.add(
+                ButtonData(
+                    "OFFTOP",
+                    R.drawable.ic_code_offtop,
+                    get().getString(R.string.codes_name_offtop)
+                )
+            )
+            tempCodes.add(
+                ButtonData(
+                    "QUOTE",
+                    R.drawable.ic_code_quote,
+                    get().getString(R.string.codes_name_quote)
+                )
+            )
+            tempCodes.add(
+                ButtonData(
+                    "CODE",
+                    R.drawable.ic_code_code,
+                    get().getString(R.string.codes_name_code)
+                )
+            )
+            tempCodes.add(
+                ButtonData(
+                    "COLOR",
+                    R.drawable.ic_code_color,
+                    get().getString(R.string.codes_name_text_color)
+                )
+            )
+            tempCodes.add(
+                ButtonData(
+                    "SIZE",
+                    R.drawable.ic_code_size,
+                    get().getString(R.string.codes_name_text_size)
+                )
+            )
+            tempCodes.add(
+                ButtonData(
+                    "FONT",
+                    R.drawable.ic_code_font,
+                    get().getString(R.string.codes_name_font)
+                )
+            )
 
-        tempCodes.add(new ButtonData("HIDE", R.drawable.ic_code_hide, App.get().getString(R.string.codes_name_hide)));
-        tempCodes.add(new ButtonData("BACKGROUND", R.drawable.ic_code_background, App.get().getString(R.string.codes_name_bg_color)));
-        tempCodes.add(new ButtonData("LIST", R.drawable.ic_code_list, App.get().getString(R.string.codes_name_list)));
-        tempCodes.add(new ButtonData("NUMLIST", R.drawable.ic_code_numlist, App.get().getString(R.string.codes_name_numlist)));
+            tempCodes.add(
+                ButtonData(
+                    "HIDE",
+                    R.drawable.ic_code_hide,
+                    get().getString(R.string.codes_name_hide)
+                )
+            )
+            tempCodes.add(
+                ButtonData(
+                    "BACKGROUND",
+                    R.drawable.ic_code_background,
+                    get().getString(R.string.codes_name_bg_color)
+                )
+            )
+            tempCodes.add(
+                ButtonData(
+                    "LIST",
+                    R.drawable.ic_code_list,
+                    get().getString(R.string.codes_name_list)
+                )
+            )
+            tempCodes.add(
+                ButtonData(
+                    "NUMLIST",
+                    R.drawable.ic_code_numlist,
+                    get().getString(R.string.codes_name_numlist)
+                )
+            )
 
-        tempCodes.add(new ButtonData("LEFT", R.drawable.ic_code_left, App.get().getString(R.string.codes_name_left)));
-        tempCodes.add(new ButtonData("CENTER", R.drawable.ic_code_center, App.get().getString(R.string.codes_name_center)));
-        tempCodes.add(new ButtonData("RIGHT", R.drawable.ic_code_right, App.get().getString(R.string.codes_name_right)));
-        tempCodes.add(new ButtonData("SUB", R.drawable.ic_code_sub, App.get().getString(R.string.codes_name_sub)));
-        tempCodes.add(new ButtonData("SUP", R.drawable.ic_code_sup, App.get().getString(R.string.codes_name_sup)));
-        tempCodes.add(new ButtonData("CUR", R.drawable.ic_code_cur, App.get().getString(R.string.codes_name_curator)));
+            tempCodes.add(
+                ButtonData(
+                    "LEFT",
+                    R.drawable.ic_code_left,
+                    get().getString(R.string.codes_name_left)
+                )
+            )
+            tempCodes.add(
+                ButtonData(
+                    "CENTER",
+                    R.drawable.ic_code_center,
+                    get().getString(R.string.codes_name_center)
+                )
+            )
+            tempCodes.add(
+                ButtonData(
+                    "RIGHT",
+                    R.drawable.ic_code_right,
+                    get().getString(R.string.codes_name_right)
+                )
+            )
+            tempCodes.add(
+                ButtonData(
+                    "SUB",
+                    R.drawable.ic_code_sub,
+                    get().getString(R.string.codes_name_sub)
+                )
+            )
+            tempCodes.add(
+                ButtonData(
+                    "SUP",
+                    R.drawable.ic_code_sup,
+                    get().getString(R.string.codes_name_sup)
+                )
+            )
+            tempCodes.add(
+                ButtonData(
+                    "CUR",
+                    R.drawable.ic_code_cur,
+                    get().getString(R.string.codes_name_curator)
+                )
+            )
 
 
-        String sorted = otherPreferencesHolder.getMessagePanelBbCodes();
-        if (!sorted.isEmpty()) {
-            String[] sortedArr = TextUtils.split(sorted, ",");
-            if (sortedArr.length != tempCodes.size()) {
-                otherPreferencesHolder.deleteMessagePanelBbCodes();
-                codes.addAll(tempCodes);
-            } else {
-                for (String code : sortedArr) {
-                    for (ButtonData item : tempCodes) {
-                        if (item.getText().equals(code)) {
-                            codes.add(item);
-                            break;
+            val sorted = otherPreferencesHolder.getMessagePanelBbCodes()
+            if (!sorted.isEmpty()) {
+                val sortedArr =
+                    TextUtils.split(sorted, ",")
+                if (sortedArr.size != tempCodes.size) {
+                    otherPreferencesHolder.deleteMessagePanelBbCodes()
+                    codes.addAll(tempCodes)
+                } else {
+                    for (code in sortedArr) {
+                        for (item in tempCodes) {
+                            if (item.text == code) {
+                                codes.add(item)
+                                break
+                            }
                         }
                     }
                 }
+            } else {
+                codes.addAll(tempCodes)
             }
-        } else {
-            codes.addAll(tempCodes);
-        }
-        tempCodes.clear();
+            tempCodes.clear()
 
-        return codes;
+            return codes
+        }
+
+
+    private fun getHtmlColor(hexColor: String): String {
+        if (colors == null) {
+            val colors = HashMap<String, String>()
+            Companion.colors = colors
+            colors["#000000"] = "black"
+            colors["#FFFFFF"] = "white"
+            colors["#82CEE8"] = "skyblue"
+            colors["#426AE6"] = "royalblue"
+            colors["#0000FF"] = "blue"
+            colors["#07008C"] = "darkblue"
+            colors["#FDA500"] = "orange"
+            colors["#FF4300"] = "orangered"
+            colors["#E1133A"] = "crimson"
+            colors["#FF0000"] = "red"
+            colors["#8C0000"] = "darkred"
+            colors["#008000"] = "green"
+            colors["#41A317"] = "limegreen"
+            colors["#4E8975"] = "seagreen"
+            colors["#F52887"] = "deeppink"
+            colors["#FF6245"] = "tomato"
+            colors["#F76541"] = "coral"
+            colors["#800080"] = "purple"
+            colors["#440087"] = "indigo"
+            colors["#E3B382"] = "burlywood"
+            colors["#EE9A4D"] = "sandybrown"
+            colors["#C35817"] = "sienna"
+            colors["#C85A17"] = "chocolate"
+            colors["#037F81"] = "teal"
+            colors["#C0C0C0"] = "silver"
+            colors["#808080"] = "gray"
+        }
+        val res = colors!![hexColor] ?: return hexColor
+        return res
     }
 
-
-    private String getHtmlColor(String hexColor) {
-        if (colors == null) {
-            colors = new HashMap<>();
-            colors.put("#000000", "black");
-            colors.put("#FFFFFF", "white");
-            colors.put("#82CEE8", "skyblue");
-            colors.put("#426AE6", "royalblue");
-            colors.put("#0000FF", "blue");
-            colors.put("#07008C", "darkblue");
-            colors.put("#FDA500", "orange");
-            colors.put("#FF4300", "orangered");
-            colors.put("#E1133A", "crimson");
-            colors.put("#FF0000", "red");
-            colors.put("#8C0000", "darkred");
-            colors.put("#008000", "green");
-            colors.put("#41A317", "limegreen");
-            colors.put("#4E8975", "seagreen");
-            colors.put("#F52887", "deeppink");
-            colors.put("#FF6245", "tomato");
-            colors.put("#F76541", "coral");
-            colors.put("#800080", "purple");
-            colors.put("#440087", "indigo");
-            colors.put("#E3B382", "burlywood");
-            colors.put("#EE9A4D", "sandybrown");
-            colors.put("#C35817", "sienna");
-            colors.put("#C85A17", "chocolate");
-            colors.put("#037F81", "teal");
-            colors.put("#C0C0C0", "silver");
-            colors.put("#808080", "gray");
-        }
-        String res = colors.get(hexColor);
-        if (res == null)
-            return hexColor;
-        return res;
+    companion object {
+        private var codes: MutableList<ButtonData>? = null
+        private var colors: MutableMap<String, String>? = null
     }
 }

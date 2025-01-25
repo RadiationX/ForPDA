@@ -1,32 +1,31 @@
-package forpdateam.ru.forpda.ui.views;
+package forpdateam.ru.forpda.ui.views
 
-import android.content.Context;
-import android.util.AttributeSet;
-
-import androidx.preference.SwitchPreferenceCompat;
+import android.content.Context
+import android.util.AttributeSet
+import androidx.preference.SwitchPreferenceCompat
 
 /**
  * Created by radiationx on 26.07.17.
  */
-
 /*
  * Исправляет самопроизвольные переключения настроек в киткате.
  * Пи*дец, да.
  * */
-public class SwitchPreference extends SwitchPreferenceCompat {
-    public SwitchPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
+class SwitchPreference : SwitchPreferenceCompat {
+    constructor(
+        context: Context,
+        attrs: AttributeSet?,
+        defStyleAttr: Int,
+        defStyleRes: Int
+    ) : super(context, attrs, defStyleAttr, defStyleRes)
 
-    public SwitchPreference(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
 
-    public SwitchPreference(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
-    public SwitchPreference(Context context) {
-        super(context);
-    }
+    constructor(context: Context) : super(context)
 }

@@ -1,80 +1,73 @@
-package forpdateam.ru.forpda.ui.fragments.qms.adapters;
+package forpdateam.ru.forpda.ui.fragments.qms.adapters
 
-import android.graphics.Typeface;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.nostra13.universalimageloader.core.ImageLoader;
-
-import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.entity.remote.qms.QmsContact;
-import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
-import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
+import android.graphics.Typeface
+import android.view.View
+import android.view.View.OnLongClickListener
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import com.nostra13.universalimageloader.core.ImageLoader
+import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.entity.remote.qms.QmsContact
+import forpdateam.ru.forpda.ui.fragments.qms.adapters.QmsContactsAdapter.ContactHolder
+import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
+import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
 
 /**
  * Created by radiationx on 25.08.16.
  */
-public class QmsContactsAdapter extends BaseAdapter<QmsContact, QmsContactsAdapter.ContactHolder> {
-    private BaseAdapter.OnItemClickListener<QmsContact> itemClickListener;
+class QmsContactsAdapter : BaseAdapter<QmsContact, ContactHolder>() {
+    private var itemClickListener: OnItemClickListener<QmsContact>? = null
 
-    public void setOnItemClickListener(final BaseAdapter.OnItemClickListener<QmsContact> mItemClickListener) {
-        this.itemClickListener = mItemClickListener;
+    fun setOnItemClickListener(mItemClickListener: OnItemClickListener<QmsContact>?) {
+        this.itemClickListener = mItemClickListener
     }
 
-    @Override
-    public ContactHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = inflateLayout(parent, R.layout.qms_contact_item);
-        return new ContactHolder(v);
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactHolder {
+        val v = inflateLayout(parent, R.layout.qms_contact_item)
+        return ContactHolder(v)
     }
 
-    @Override
-    public void onBindViewHolder(ContactHolder holder, int position) {
-        holder.bind(getItem(position), position);
+    override fun onBindViewHolder(holder: ContactHolder, position: Int) {
+        holder.bind(getItem(position), position)
     }
 
-    public class ContactHolder extends BaseViewHolder<QmsContact> implements View.OnClickListener, View.OnLongClickListener {
-        public ImageView avatar;
-        public TextView nick;
-        public TextView count;
+    inner class ContactHolder(v: View) : BaseViewHolder<QmsContact>(v), View.OnClickListener,
+        OnLongClickListener {
+        var avatar: ImageView =
+            v.findViewById(R.id.qms_contact_avatar)
+        var nick: TextView = v.findViewById(R.id.qms_contact_nick)
+        var count: TextView = v.findViewById(R.id.qms_contact_count)
 
-        public ContactHolder(View v) {
-            super(v);
-            avatar = v.findViewById(R.id.qms_contact_avatar);
-            nick = v.findViewById(R.id.qms_contact_nick);
-            count = v.findViewById(R.id.qms_contact_count);
-            v.setOnClickListener(this);
-            v.setOnLongClickListener(this);
+        init {
+            v.setOnClickListener(this)
+            v.setOnLongClickListener(this)
         }
 
-        @Override
-        public void bind(QmsContact item, int position) {
-            nick.setText(item.getNick());
-            ImageLoader.getInstance().displayImage(item.getAvatar(), avatar);
-            nick.setTypeface(item.getCount() > 0 ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
-            if (item.getCount() == 0) {
-                count.setVisibility(View.GONE);
+        override fun bind(item: QmsContact, position: Int) {
+            nick.text = item.nick
+            ImageLoader.getInstance().displayImage(item.avatar, avatar)
+            nick.typeface = if (item.count > 0) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
+            if (item.count == 0) {
+                count.visibility = View.GONE
             } else {
-                count.setText(Integer.toString(item.getCount()));
-                count.setVisibility(View.VISIBLE);
+                count.text = item.count.toString()
+                count.visibility = View.VISIBLE
             }
         }
 
-        @Override
-        public void onClick(View view) {
+        override fun onClick(view: View) {
             if (itemClickListener != null) {
-                itemClickListener.onItemClick(getItem(getLayoutPosition()));
+                itemClickListener!!.onItemClick(getItem(layoutPosition))
             }
         }
 
-        @Override
-        public boolean onLongClick(View view) {
+        override fun onLongClick(view: View): Boolean {
             if (itemClickListener != null) {
-                itemClickListener.onItemLongClick(getItem(getLayoutPosition()));
-                return true;
+                itemClickListener!!.onItemLongClick(getItem(layoutPosition))
+                return true
             }
-            return false;
+            return false
         }
     }
 }

@@ -1,89 +1,56 @@
-package forpdateam.ru.forpda.entity.remote.others.pagination;
+package forpdateam.ru.forpda.entity.remote.others.pagination
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.Pattern
+import kotlin.math.ceil
 
 /**
  * Created by radiationx on 03.03.17.
  */
+class Pagination {
+    var perPage: Int = 20
+    var all: Int = 1
+    var current: Int = 1
+    var st: Int = 0
+    var isForum: Boolean = true
 
-public class Pagination {
-    private final static Pattern forumPaginationPattern = Pattern.compile("parseInt\\((\\d*)\\)[\\s\\S]*?parseInt\\(st\\*(\\d*)\\)[\\s\\S]*?pagination\">[\\s\\S]*?<span[^>]*?>([^<]*?)<\\/span>");
-    private final static Pattern newsPaginationPattern = Pattern.compile("class=\"s-count[\\s\\S]*?<strong>(\\d+)<\\/strong>[\\s\\S]*?<ul class=\"page-nav[^>]*?>[\\s\\S]*?<li class=\"active\"><a[^>]*?>(\\d+)");
-    private int perPage = 20, all = 1, current = 1, st = 0;
-    private boolean isForum = true;
-
-    public boolean isForum() {
-        return isForum;
+    fun getPage(page: Int): Int {
+        if (!isForum) return page
+        return page * perPage
     }
 
-    public void setForum(boolean forum) {
-        isForum = forum;
-    }
+    companion object {
+        private val forumPaginationPattern: Pattern =
+            Pattern.compile("parseInt\\((\\d*)\\)[\\s\\S]*?parseInt\\(st\\*(\\d*)\\)[\\s\\S]*?pagination\">[\\s\\S]*?<span[^>]*?>([^<]*?)<\\/span>")
+        private val newsPaginationPattern: Pattern =
+            Pattern.compile("class=\"s-count[\\s\\S]*?<strong>(\\d+)<\\/strong>[\\s\\S]*?<ul class=\"page-nav[^>]*?>[\\s\\S]*?<li class=\"active\"><a[^>]*?>(\\d+)")
 
-    public int getPerPage() {
-        return perPage;
-    }
-
-    public void setPerPage(int perPage) {
-        this.perPage = perPage;
-    }
-
-    public int getAll() {
-        return all;
-    }
-
-    public void setAll(int all) {
-        this.all = all;
-    }
-
-    public int getCurrent() {
-        return current;
-    }
-
-    public void setCurrent(int current) {
-        this.current = current;
-    }
-
-    public int getPage(int page) {
-        if (!isForum) return page;
-        return page * perPage;
-    }
-
-    public static Pagination parseNews(String page) {
-        return parseNews(new Pagination(), page);
-    }
-
-    public static Pagination parseNews(Pagination pagination, String page) {
-        pagination.setForum(false);
-        Matcher matcher = newsPaginationPattern.matcher(page);
-        if (matcher.find()) {
-            pagination.setPerPage(30);
-            pagination.setAll((int) Math.ceil(Integer.parseInt(matcher.group(1)) / 30d));
-            pagination.setCurrent(Integer.parseInt(matcher.group(2)));
+        fun parseNews(page: String): Pagination {
+            return parseNews(Pagination(), page)
         }
-        return pagination;
-    }
 
-    public static Pagination parseForum(String page) {
-        return parseForum(new Pagination(), page);
-    }
-
-    public static Pagination parseForum(Pagination pagination, String page) {
-        Matcher matcher = forumPaginationPattern.matcher(page);
-        if (matcher.find()) {
-            pagination.setAll(Integer.parseInt(matcher.group(1)) + 1);
-            pagination.setPerPage(Integer.parseInt(matcher.group(2)));
-            pagination.setCurrent(Integer.parseInt(matcher.group(3)));
+        fun parseNews(pagination: Pagination, page: String): Pagination {
+            pagination.isForum = false
+            val matcher = newsPaginationPattern.matcher(page)
+            if (matcher.find()) {
+                pagination.perPage = 30
+                pagination.all = ceil(matcher.group(1).toInt() / 30.0) as Int
+                pagination.current = matcher.group(2).toInt()
+            }
+            return pagination
         }
-        return pagination;
-    }
 
-    public int getSt() {
-        return st;
-    }
+        fun parseForum(page: String): Pagination {
+            return parseForum(Pagination(), page)
+        }
 
-    public void setSt(int st) {
-        this.st = st;
+        fun parseForum(pagination: Pagination, page: String): Pagination {
+            val matcher = forumPaginationPattern.matcher(page)
+            if (matcher.find()) {
+                pagination.all = matcher.group(1).toInt() + 1
+                pagination.perPage = matcher.group(2).toInt()
+                pagination.current = matcher.group(3).toInt()
+            }
+            return pagination
+        }
     }
 }

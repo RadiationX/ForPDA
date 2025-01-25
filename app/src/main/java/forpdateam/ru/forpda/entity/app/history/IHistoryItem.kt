@@ -1,27 +1,16 @@
-package forpdateam.ru.forpda.entity.app.history;
+package forpdateam.ru.forpda.entity.app.history
 
 /**
  * Created by radiationx on 01.01.18.
  */
+interface IHistoryItem {
+    var id: Int
 
-public interface IHistoryItem {
-    int getId();
+    var url: String?
 
-    String getUrl();
+    var date: String?
 
-    String getDate();
+    var title: String?
 
-    String getTitle();
-
-    long getUnixTime();
-
-    void setId(int id);
-
-    void setUrl(String url);
-
-    void setDate(String date);
-
-    void setTitle(String title);
-
-    void setUnixTime(long unixTime);
+    var unixTime: Long
 }

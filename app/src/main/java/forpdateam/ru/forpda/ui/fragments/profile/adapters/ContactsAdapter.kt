@@ -1,57 +1,51 @@
-package forpdateam.ru.forpda.ui.fragments.profile.adapters;
+package forpdateam.ru.forpda.ui.fragments.profile.adapters
 
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-
-import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.entity.remote.profile.ProfileModel;
-import forpdateam.ru.forpda.model.repository.temp.TempHelper;
-import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
-import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import forpdateam.ru.forpda.App.Companion.getVecDrawable
+import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.entity.remote.profile.ProfileModel.Contact
+import forpdateam.ru.forpda.model.repository.temp.TempHelper.getContactIcon
+import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
+import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
 
 /**
  * Created by radiationx on 15.09.17.
  */
-
-class ContactsAdapter extends BaseAdapter<ProfileModel.Contact, ContactsAdapter.InfoHolder> {
-
-    private final InfoHolder.Listener listener;
-
-    public ContactsAdapter(InfoHolder.Listener listener) {
-        this.listener = listener;
+internal class ContactsAdapter(
+    private val listener: InfoHolder.Listener
+) : BaseAdapter<Contact, ContactsAdapter.InfoHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InfoHolder {
+        return InfoHolder(
+            inflateLayout(parent, R.layout.profile_sub_item_contact),
+            listener
+        )
     }
 
-    @Override
-    public InfoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new InfoHolder(inflateLayout(parent, R.layout.profile_sub_item_contact), listener);
+    override fun onBindViewHolder(holder: InfoHolder, position: Int) {
+        holder.bind(getItem(position))
     }
 
-    @Override
-    public void onBindViewHolder(InfoHolder holder, int position) {
-        holder.bind(getItem(position));
-    }
+    internal class InfoHolder(
+        itemView: View,
+        listener: Listener
+    ) : BaseViewHolder<Contact>(itemView) {
+        private val icon: ImageView = itemView.findViewById(R.id.item_icon)
+        private var currentItem: Contact? = null
 
-    static class InfoHolder extends BaseViewHolder<ProfileModel.Contact> {
-        private final ImageView icon;
-        private ProfileModel.Contact currentItem;
-
-        InfoHolder(View itemView, Listener listener) {
-            super(itemView);
-            icon = itemView.findViewById(R.id.item_icon);
-            itemView.setOnClickListener(v -> listener.onClick(currentItem));
+        init {
+            itemView.setOnClickListener { v: View? -> listener.onClick(currentItem) }
         }
 
-        @Override
-        public void bind(ProfileModel.Contact item) {
-            currentItem = item;
-            icon.setImageDrawable(App.getVecDrawable(icon.getContext(), TempHelper.INSTANCE.getContactIcon(item.getType())));
-            icon.setContentDescription(item.getTitle());
+        override fun bind(item: Contact) {
+            currentItem = item
+            icon.setImageDrawable(getVecDrawable(icon.context, getContactIcon(item.type)))
+            icon.contentDescription = item.title
         }
 
-        interface Listener {
-            void onClick(ProfileModel.Contact item);
+        internal interface Listener {
+            fun onClick(item: Contact?)
         }
     }
 }

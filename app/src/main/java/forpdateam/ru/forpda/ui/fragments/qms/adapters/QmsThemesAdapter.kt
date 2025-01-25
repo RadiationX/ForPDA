@@ -1,74 +1,68 @@
-package forpdateam.ru.forpda.ui.fragments.qms.adapters;
+package forpdateam.ru.forpda.ui.fragments.qms.adapters
 
-import android.graphics.Typeface;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.entity.remote.qms.QmsTheme;
-import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
-import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
+import android.graphics.Typeface
+import android.view.View
+import android.view.View.OnLongClickListener
+import android.view.ViewGroup
+import android.widget.TextView
+import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
+import forpdateam.ru.forpda.ui.fragments.qms.adapters.QmsThemesAdapter.ThemeHolder
+import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
+import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
 
 /**
  * Created by radiationx on 25.08.16.
  */
-public class QmsThemesAdapter extends BaseAdapter<QmsTheme, QmsThemesAdapter.ThemeHolder> {
-    private BaseAdapter.OnItemClickListener<QmsTheme> itemClickListener;
+class QmsThemesAdapter : BaseAdapter<QmsTheme, ThemeHolder>() {
+    private var itemClickListener: OnItemClickListener<QmsTheme>? = null
 
-    public void setOnItemClickListener(final BaseAdapter.OnItemClickListener<QmsTheme> mItemClickListener) {
-        this.itemClickListener = mItemClickListener;
+    fun setOnItemClickListener(mItemClickListener: OnItemClickListener<QmsTheme>?) {
+        this.itemClickListener = mItemClickListener
     }
 
-    @Override
-    public ThemeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = inflateLayout(parent, R.layout.qms_theme_item);
-        return new ThemeHolder(v);
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ThemeHolder {
+        val v = inflateLayout(parent, R.layout.qms_theme_item)
+        return ThemeHolder(v)
     }
 
-    @Override
-    public void onBindViewHolder(ThemeHolder holder, int position) {
-        holder.bind(getItem(position), position);
+    override fun onBindViewHolder(holder: ThemeHolder, position: Int) {
+        holder.bind(getItem(position), position)
     }
 
-    public class ThemeHolder extends BaseViewHolder<QmsTheme> implements View.OnClickListener, View.OnLongClickListener {
-        public TextView name;
-        public TextView count;
+    inner class ThemeHolder(v: View) : BaseViewHolder<QmsTheme>(v), View.OnClickListener,
+        OnLongClickListener {
+        var name: TextView = v.findViewById(R.id.qms_theme_name)
+        var count: TextView = v.findViewById(R.id.qms_theme_count)
 
-        public ThemeHolder(View v) {
-            super(v);
-            name = v.findViewById(R.id.qms_theme_name);
-            count = v.findViewById(R.id.qms_theme_count);
-            v.setOnClickListener(this);
-            v.setOnLongClickListener(this);
+        init {
+            v.setOnClickListener(this)
+            v.setOnLongClickListener(this)
         }
 
-        @Override
-        public void bind(QmsTheme item, int position) {
-            name.setText(item.getName());
-            name.setTypeface(item.getCountNew() > 0 ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
-            if (item.getCountNew() == 0) {
-                count.setVisibility(View.GONE);
+        override fun bind(item: QmsTheme, position: Int) {
+            name.text = item.name
+            name.typeface = if (item.countNew > 0) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
+            if (item.countNew == 0) {
+                count.visibility = View.GONE
             } else {
-                count.setText(Integer.toString(item.getCountNew()));
-                count.setVisibility(View.VISIBLE);
+                count.text = item.countNew.toString()
+                count.visibility = View.VISIBLE
             }
         }
 
-        @Override
-        public void onClick(View view) {
+        override fun onClick(view: View) {
             if (itemClickListener != null) {
-                itemClickListener.onItemClick(getItem(getLayoutPosition()));
+                itemClickListener!!.onItemClick(getItem(layoutPosition))
             }
         }
 
-        @Override
-        public boolean onLongClick(View view) {
+        override fun onLongClick(view: View): Boolean {
             if (itemClickListener != null) {
-                itemClickListener.onItemLongClick(getItem(getLayoutPosition()));
-                return true;
+                itemClickListener!!.onItemLongClick(getItem(layoutPosition))
+                return true
             }
-            return false;
+            return false
         }
     }
 }

@@ -16,8 +16,8 @@ import java.io.IOException
 class ProgressRequestBody internal constructor(
     private val mDelegate: RequestBody,
     private val mListener: IWebClient.ProgressListener
-) :
-    RequestBody() {
+) : RequestBody() {
+
     override fun contentType(): MediaType? {
         return mDelegate.contentType()
     }

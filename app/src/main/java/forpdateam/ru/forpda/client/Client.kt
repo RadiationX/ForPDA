@@ -33,16 +33,15 @@ class Client(
     context: Context?,
     private val authHolder: AuthHolder,
     private val countersHolder: CountersHolder
-) :
-    IWebClient {
+) : IWebClient {
     private val clientCookies: MutableMap<String, Cookie> = HashMap()
     private val observerHandler = Handler(Looper.getMainLooper())
     private val privateHeaders: List<String> =
         ArrayList(mutableListOf("pass_hash", "session_id", "auth_key", "password"))
     private val mobileCookie = Cookie.parse(HttpUrl.parse("https://4pda.to/"), "ngx_mb=1;")
 
-    override fun getAuthKey(): String? {
-        return get().preferences.getString("auth_key", "0")
+    override fun getAuthKey(): String {
+        return get().preferences.getString("auth_key", null) ?: ""
     }
 
     private fun parseCookie(cookieFields: String): Cookie? {
@@ -196,9 +195,9 @@ class Client(
     @Throws(Exception::class)
     override fun request(
         request: NetworkRequest,
-        uploadProgressListener: IWebClient.ProgressListener
+        progressListener: IWebClient.ProgressListener
     ): NetworkResponse {
-        return request(request, this.client, uploadProgressListener)
+        return request(request, this.client, progressListener)
     }
 
     private fun prepareRequest(

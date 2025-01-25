@@ -1,67 +1,27 @@
-package forpdateam.ru.forpda.entity.db.qms;
+package forpdateam.ru.forpda.entity.db.qms
 
-import forpdateam.ru.forpda.entity.remote.qms.IQmsTheme;
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import forpdateam.ru.forpda.entity.remote.qms.IQmsTheme
+import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
 
 /**
  * Created by radiationx on 25.03.17.
  */
-
-public class QmsThemeBd extends RealmObject implements IQmsTheme {
+class QmsThemeBd : RealmObject, IQmsTheme {
     @PrimaryKey
-    private int id;
-    private int countMessages, countNew;
-    private String name, date;
+    override var id: Int = 0
+    override var countMessages: Int = 0
+    override var countNew: Int = 0
+    override var name: String? = null
+    override var date: String? = null
 
-    public QmsThemeBd() {
-    }
+    constructor()
 
-    public QmsThemeBd(IQmsTheme qmsTheme) {
-        id = qmsTheme.getId();
-        countMessages = qmsTheme.getCountMessages();
-        countNew = qmsTheme.getCountNew();
-        name = qmsTheme.getName();
-        date = qmsTheme.getDate();
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public int getCountMessages() {
-        return countMessages;
-    }
-
-    public int getCountNew() {
-        return countNew;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public void setCountMessages(int countMessages) {
-        this.countMessages = countMessages;
-    }
-
-    public void setCountNew(int countNew) {
-        this.countNew = countNew;
+    constructor(qmsTheme: IQmsTheme) {
+        id = qmsTheme.id
+        countMessages = qmsTheme.countMessages
+        countNew = qmsTheme.countNew
+        name = qmsTheme.name
+        date = qmsTheme.date
     }
 }

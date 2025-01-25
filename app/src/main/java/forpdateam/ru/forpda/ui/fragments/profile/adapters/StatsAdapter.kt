@@ -1,58 +1,52 @@
-package forpdateam.ru.forpda.ui.fragments.profile.adapters;
+package forpdateam.ru.forpda.ui.fragments.profile.adapters
 
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.entity.remote.profile.ProfileModel;
-import forpdateam.ru.forpda.model.repository.temp.TempHelper;
-import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
-import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.entity.remote.profile.ProfileModel.Stat
+import forpdateam.ru.forpda.model.repository.temp.TempHelper.getTypeString
+import forpdateam.ru.forpda.ui.fragments.profile.adapters.StatsAdapter.StatHolder
+import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
+import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
 
 /**
  * Created by radiationx on 14.09.17.
  */
-
-class StatsAdapter extends BaseAdapter<ProfileModel.Stat, StatsAdapter.StatHolder> {
-
-    private final StatHolder.Listener listener;
-
-    public StatsAdapter(StatHolder.Listener listener) {
-        this.listener = listener;
+internal class StatsAdapter(
+    private val listener: StatHolder.Listener
+) : BaseAdapter<Stat, StatHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StatHolder {
+        return StatHolder(
+            inflateLayout(parent, R.layout.profile_sub_item_stat),
+            listener
+        )
     }
 
-    @Override
-    public StatsAdapter.StatHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new StatHolder(inflateLayout(parent, R.layout.profile_sub_item_stat), listener);
+    override fun onBindViewHolder(holder: StatHolder, position: Int) {
+        holder.bind(getItem(position))
     }
 
-    @Override
-    public void onBindViewHolder(StatsAdapter.StatHolder holder, int position) {
-        holder.bind(getItem(position));
-    }
+    internal class StatHolder(
+        itemView: View,
+        listener: Listener
+    ) : BaseViewHolder<Stat>(itemView) {
+        private val title: TextView = itemView.findViewById(R.id.item_title)
+        private val value: TextView = itemView.findViewById(R.id.item_value)
+        private var currentItem: Stat? = null
 
-    static class StatHolder extends BaseViewHolder<ProfileModel.Stat> {
-        private final TextView title;
-        private final TextView value;
-        private ProfileModel.Stat currentItem;
-
-        StatHolder(View itemView, Listener listener) {
-            super(itemView);
-            title = itemView.findViewById(R.id.item_title);
-            value = itemView.findViewById(R.id.item_value);
-            itemView.setOnClickListener(v -> listener.onClick(currentItem));
+        init {
+            itemView.setOnClickListener { v: View? -> listener.onClick(requireNotNull(currentItem)) }
         }
 
-        @Override
-        public void bind(ProfileModel.Stat item) {
-            currentItem = item;
-            title.setText(TempHelper.INSTANCE.getTypeString(item.getType()));
-            value.setText(item.getValue());
+        override fun bind(item: Stat) {
+            currentItem = item
+            title.setText(getTypeString(item.type!!))
+            value.text = item.value
         }
 
-        interface Listener {
-            void onClick(ProfileModel.Stat item);
+        internal interface Listener {
+            fun onClick(item: Stat)
         }
     }
 }

@@ -1,52 +1,23 @@
-package forpdateam.ru.forpda.entity.db;
+package forpdateam.ru.forpda.entity.db
 
-import forpdateam.ru.forpda.entity.remote.others.user.IForumUser;
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import forpdateam.ru.forpda.entity.remote.others.user.IForumUser
+import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
 
 /**
  * Created by radiationx on 08.07.17.
  */
-
-public class ForumUserBd extends RealmObject implements IForumUser {
+class ForumUserBd : RealmObject, IForumUser {
     @PrimaryKey
-    private int id = 0;
-    private String nick = "";
-    private String avatar = "";
+    override var id: Int = 0
+    override var nick: String? = ""
+    override var avatar: String? = ""
 
-    public ForumUserBd() {
-    }
+    constructor()
 
-    public ForumUserBd(IForumUser forumUser) {
-        this.id = forumUser.getId();
-        this.nick = forumUser.getNick();
-        this.avatar = forumUser.getAvatar();
-    }
-
-    @Override
-    public int getId() {
-        return id;
-    }
-
-    @Override
-    public String getNick() {
-        return nick;
-    }
-
-    @Override
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setNick(String nick) {
-        this.nick = nick;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
+    constructor(forumUser: IForumUser) {
+        this.id = forumUser.id
+        this.nick = forumUser.nick
+        this.avatar = forumUser.avatar
     }
 }

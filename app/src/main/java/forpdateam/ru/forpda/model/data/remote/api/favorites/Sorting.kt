@@ -1,75 +1,54 @@
-package forpdateam.ru.forpda.model.data.remote.api.favorites;
+package forpdateam.ru.forpda.model.data.remote.api.favorites
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.Pattern
 
 /**
  * Created by radiationx on 12.08.17.
  */
-
-public class Sorting {
-    private final static Pattern pattern = Pattern.compile("<div class=\"forum_sort\"[^>]*?>[\\s\\S]*?<select name=\"sort_key\">[\\s\\S]*?<option value=\"([^\"]*?)\" selected(?:=\"selected\")?[^>]*?>[\\s\\S]*?<select name=\"sort_by\">[\\s\\S]*?<option value=\"([^\"]*?)\" selected(?:=\"selected\")?[^>]*?>");
-
-    public final static class Key {
-        public final static String HEADER = "sort_key";
-        public final static String LAST_POST = "last_post";
-        public final static String TITLE = "title";
+class Sorting {
+    object Key {
+        const val HEADER: String = "sort_key"
+        const val LAST_POST: String = "last_post"
+        const val TITLE: String = "title"
     }
 
-    public final static class Order {
-        public final static String HEADER = "sort_by";
-        public final static String DESC = "Z-A";
-        public final static String ASC = "A-Z";
+    object Order {
+        const val HEADER: String = "sort_by"
+        const val DESC: String = "Z-A"
+        const val ASC: String = "A-Z"
     }
 
-    public Sorting() {
+    constructor()
+
+    constructor(key: String, order: String) {
+        this.key = key
+        this.order = order
     }
 
-    public Sorting(String key, String order) {
-        this.key = key;
-        this.order = order;
-    }
+    var key: String = ""
+    var order: String = ""
 
-    private String key = "";
-    private String order = "";
+    companion object {
+        private val pattern: Pattern =
+            Pattern.compile("<div class=\"forum_sort\"[^>]*?>[\\s\\S]*?<select name=\"sort_key\">[\\s\\S]*?<option value=\"([^\"]*?)\" selected(?:=\"selected\")?[^>]*?>[\\s\\S]*?<select name=\"sort_by\">[\\s\\S]*?<option value=\"([^\"]*?)\" selected(?:=\"selected\")?[^>]*?>")
 
-    public String getKey() {
-        return key;
-    }
+        fun parse(body: String): Sorting {
+            val sorting = Sorting()
+            val matcher = pattern.matcher(body)
+            if (matcher.find()) {
+                when (matcher.group(1)) {
+                    Key.LAST_POST -> sorting.key =
+                        Key.LAST_POST
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public String getOrder() {
-        return order;
-    }
-
-    public void setOrder(String order) {
-        this.order = order;
-    }
-
-    public static Sorting parse(String body) {
-        Sorting sorting = new Sorting();
-        Matcher matcher = pattern.matcher(body);
-        if (matcher.find()) {
-            switch (matcher.group(1)) {
-                case Key.LAST_POST:
-                    sorting.setKey(Key.LAST_POST);
-                    break;
-                case Key.TITLE:
-                    sorting.setKey(Key.TITLE);
-                    break;
+                    Key.TITLE -> sorting.key =
+                        Key.TITLE
+                }
+                when (matcher.group(2)) {
+                    Order.DESC -> sorting.order = Order.DESC
+                    Order.ASC -> sorting.order = Order.ASC
+                }
             }
-            switch (matcher.group(2)) {
-                case Order.DESC:
-                    sorting.setOrder(Order.DESC);
-                    break;
-                case Order.ASC:
-                    sorting.setOrder(Order.ASC);
-                    break;
-            }
+            return sorting
         }
-        return sorting;
     }
 }

@@ -1,99 +1,86 @@
-package forpdateam.ru.forpda.ui.views.messagepanel.colorpicker;
+package forpdateam.ru.forpda.ui.views.messagepanel.colorpicker
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-
-import com.google.android.material.tabs.TabLayout;
-import com.thebluealliance.spectrum.SpectrumPalette;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import forpdateam.ru.forpda.R;
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.ScrollView
+import androidx.appcompat.app.AlertDialog
+import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
+import com.thebluealliance.spectrum.SpectrumPalette
+import forpdateam.ru.forpda.R
 
 /**
  * Created by radiationx on 27.05.17.
  */
+class ColorPicker(context: Context, listener: SpectrumPalette.OnColorSelectedListener?) {
+    private val titles = arrayOf("Material", "Forum")
 
-public class ColorPicker {
-    private final String[] titles = new String[]{"Material", "Forum"};
-
-    public ColorPicker(Context context, SpectrumPalette.OnColorSelectedListener listener) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LinearLayout layoutContainer = (LinearLayout) inflater.inflate(R.layout.color_picker_layout, null);
+    init {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val layoutContainer = inflater.inflate(R.layout.color_picker_layout, null) as LinearLayout
 
 
-        ViewPager viewPager = layoutContainer.findViewById(R.id.color_picker_pager);
+        val viewPager = layoutContainer.findViewById<ViewPager>(R.id.color_picker_pager)
 
-        List<ScrollView> viewList = new ArrayList<>();
-        ScrollView scrollView = new ScrollView(context);
-        ScrollView scrollView1 = new ScrollView(context);
-        SpectrumPalette materialColors = new SpectrumPalette(context);
-        materialColors.setColors(context.getResources().getIntArray(R.array.md_colors));
-        SpectrumPalette forumColors = new SpectrumPalette(context);
-        forumColors.setColors(context.getResources().getIntArray(R.array.forum_colors));
-        scrollView.addView(materialColors);
-        scrollView1.addView(forumColors);
-        viewList.add(scrollView);
-        viewList.add(scrollView1);
+        val viewList: MutableList<ScrollView> = ArrayList()
+        val scrollView = ScrollView(context)
+        val scrollView1 = ScrollView(context)
+        val materialColors = SpectrumPalette(context)
+        materialColors.setColors(context.resources.getIntArray(R.array.md_colors))
+        val forumColors = SpectrumPalette(context)
+        forumColors.setColors(context.resources.getIntArray(R.array.forum_colors))
+        scrollView.addView(materialColors)
+        scrollView1.addView(forumColors)
+        viewList.add(scrollView)
+        viewList.add(scrollView1)
 
-        viewPager.setAdapter(new MyPagerAdapter(viewList));
-        ((TabLayout) layoutContainer.findViewById(R.id.color_picker_tab_layout)).setupWithViewPager(viewPager);
-        AlertDialog dialog = new AlertDialog.Builder(context)
-                .setView(layoutContainer)
-                .show();
-        SpectrumPalette.OnColorSelectedListener mainListener = i -> {
-            if (listener != null) {
-                listener.onColorSelected(i);
-            }
-            dialog.dismiss();
-        };
-        materialColors.setOnColorSelectedListener(mainListener);
-        forumColors.setOnColorSelectedListener(mainListener);
-
+        viewPager.adapter =
+            MyPagerAdapter(
+                viewList
+            )
+        (layoutContainer.findViewById<View>(R.id.color_picker_tab_layout) as TabLayout).setupWithViewPager(
+            viewPager
+        )
+        val dialog = AlertDialog.Builder(context)
+            .setView(layoutContainer)
+            .show()
+        val mainListener = SpectrumPalette.OnColorSelectedListener { i: Int ->
+            listener?.onColorSelected(i)
+            dialog.dismiss()
+        }
+        materialColors.setOnColorSelectedListener(mainListener)
+        forumColors.setOnColorSelectedListener(mainListener)
     }
 
 
-    private class MyPagerAdapter extends PagerAdapter {
-        List<ScrollView> pages = null;
+    private inner class MyPagerAdapter(
+        private val pages: List<ScrollView>
+    ) : PagerAdapter() {
 
-        MyPagerAdapter(List<ScrollView> pages) {
-            this.pages = pages;
+        override fun instantiateItem(container: ViewGroup, position: Int): Any {
+            val v: ViewGroup = pages[position]
+            container.addView(v, 0)
+            return v
         }
 
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            ViewGroup v = pages.get(position);
-            container.addView(v, 0);
-            return v;
+        override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+            container.removeView(`object` as View)
         }
 
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((View) object);
+        override fun getCount(): Int {
+            return pages.size
         }
 
-        @Override
-        public int getCount() {
-            return pages.size();
+        override fun isViewFromObject(view: View, `object`: Any): Boolean {
+            return view == `object`
         }
 
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view.equals(object);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return titles[position];
+        override fun getPageTitle(position: Int): CharSequence {
+            return titles[position]
         }
     }
 }

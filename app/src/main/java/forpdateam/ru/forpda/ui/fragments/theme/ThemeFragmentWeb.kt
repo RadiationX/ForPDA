@@ -44,7 +44,7 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
     @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         jsInterface = ThemeJsInterface(presenter)
-        messagePanel.setHeightChangeListener { newHeight ->
+        messagePanel.heightChangeListener = { newHeight ->
             webView.paddingBottom = newHeight
         }
 

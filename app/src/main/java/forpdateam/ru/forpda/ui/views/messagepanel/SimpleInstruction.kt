@@ -1,40 +1,39 @@
-package forpdateam.ru.forpda.ui.views.messagepanel;
+package forpdateam.ru.forpda.ui.views.messagepanel
 
-import android.content.Context;
-import android.widget.Button;
-import android.widget.ScrollView;
-import android.widget.TextView;
-
-import forpdateam.ru.forpda.R;
+import android.content.Context
+import android.view.View
+import android.widget.Button
+import android.widget.ScrollView
+import android.widget.TextView
+import forpdateam.ru.forpda.R
 
 /**
  * Created by radiationx on 26.05.17.
  */
+class SimpleInstruction(context: Context?) : ScrollView(context) {
+    private val messageView: TextView
+    private val closeButton: Button
+    private var listener: OnClickListener? = null
 
-public class SimpleInstruction extends ScrollView {
-    private final TextView messageView;
-    private final Button closeButton;
-    private OnClickListener listener;
-
-    public SimpleInstruction(Context context) {
-        super(context);
-        addView(inflate(context, R.layout.message_panel_instruction, null));
-        setFillViewport(true);
-        messageView = findViewById(R.id.instruction_message);
-        closeButton = findViewById(R.id.instruction_close_button);
-        closeButton.setOnClickListener((v) -> {
-            this.setVisibility(GONE);
+    init {
+        addView(inflate(context, R.layout.message_panel_instruction, null))
+        isFillViewport = true
+        messageView = findViewById(R.id.instruction_message)
+        closeButton = findViewById(R.id.instruction_close_button)
+        closeButton.setOnClickListener { v: View? ->
+            this.visibility =
+                GONE
             if (listener != null) {
-                listener.onClick(v);
+                listener!!.onClick(v)
             }
-        });
+        }
     }
 
-    public void setText(String text) {
-        messageView.setText(text);
+    fun setText(text: String?) {
+        messageView.text = text
     }
 
-    public void setOnCloseClick(OnClickListener listener) {
-        this.listener = listener;
+    fun setOnCloseClick(listener: OnClickListener?) {
+        this.listener = listener
     }
 }

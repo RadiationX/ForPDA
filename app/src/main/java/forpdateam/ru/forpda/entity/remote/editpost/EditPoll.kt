@@ -1,186 +1,102 @@
-package forpdateam.ru.forpda.entity.remote.editpost;
-
-import java.util.ArrayList;
-import java.util.List;
+package forpdateam.ru.forpda.entity.remote.editpost
 
 /**
  * Created by radiationx on 28.07.17.
  */
+class EditPoll {
+    @JvmField
+    var title: String = ""
+    @JvmField
+    var maxQuestions: Int = 0
+    @JvmField
+    var maxChoices: Int = 0
+    @JvmField
+    var baseIndexOffset: Int = 0
+    var indexOffset: Int = 0
+        private set
+    private val questions: MutableList<Question> = ArrayList()
 
-public class EditPoll {
-    private String title = "";
-    private int maxQuestions = 0;
-    private int maxChoices = 0;
-    private int baseIndexOffset = 0;
-    private int indexOffset = 0;
-    private final List<Question> questions = new ArrayList<>();
-
-    public String getTitle() {
-        return title;
+    fun getQuestions(): List<Question> {
+        return questions
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    fun getQuestion(index: Int): Question {
+        return questions[index]
     }
 
-    public int getMaxQuestions() {
-        return maxQuestions;
+    fun addQuestion(question: Question) {
+        questions.add(question)
     }
 
-    public void setMaxQuestions(int maxQuestions) {
-        this.maxQuestions = maxQuestions;
+    fun increaseIndexOffset() {
+        indexOffset++
     }
 
-    public int getMaxChoices() {
-        return maxChoices;
+    fun reduceIndexOffset() {
+        indexOffset--
     }
 
-    public void setMaxChoices(int maxChoices) {
-        this.maxChoices = maxChoices;
+    class Question {
+        @JvmField
+        var title: String = ""
+        @JvmField
+        var isMulti: Boolean = false
+        @JvmField
+        var index: Int = 0
+        @JvmField
+        var baseIndexOffset: Int = 0
+        var indexOffset: Int = 0
+            private set
+        private val choices: ArrayList<Choice> = ArrayList()
+
+        fun getChoices(): ArrayList<Choice> {
+            return choices
+        }
+
+        fun getChoice(index: Int): Choice {
+            return choices[index]
+        }
+
+        fun addChoice(choice: Choice) {
+            choices.add(choice)
+        }
+
+        fun increaseIndexOffset() {
+            indexOffset++
+        }
+
+        fun reduceIndexOffset() {
+            indexOffset--
+        }
     }
 
-    public List<Question> getQuestions() {
-        return questions;
+    class Choice {
+        @JvmField
+        var title: String = ""
+        var votes: Int = 0
+        @JvmField
+        var index: Int = 0
     }
 
-    public Question getQuestion(int index) {
-        return questions.get(index);
-    }
-
-    public void addQuestion(Question question) {
-        this.questions.add(question);
-    }
-
-    public int getBaseIndexOffset() {
-        return baseIndexOffset;
-    }
-
-    public void setBaseIndexOffset(int baseIndexOffset) {
-        this.baseIndexOffset = baseIndexOffset;
-    }
-
-    public int getIndexOffset() {
-        return indexOffset;
-    }
-
-    public void increaseIndexOffset() {
-        this.indexOffset++;
-    }
-
-    public void reduceIndexOffset() {
-        this.indexOffset--;
-    }
-
-    public static Question findQuestionByIndex(EditPoll poll, int index) {
-        for (Question q : poll.getQuestions()) {
-            if (index == q.getIndex()) {
-                return q;
+    companion object {
+        @JvmStatic
+        fun findQuestionByIndex(poll: EditPoll, index: Int): Question? {
+            for (q in poll.getQuestions()) {
+                if (index == q.index) {
+                    return q
+                }
             }
+            return null
         }
-        return null;
-    }
 
-    public static Choice findChoiceByIndex(Question question, int index) {
-        for (Choice q : question.getChoices()) {
-            if (index == q.getIndex()) {
-                return q;
+        @JvmStatic
+        fun findChoiceByIndex(question: Question, index: Int): Choice? {
+            for (q in question.getChoices()) {
+                if (index == q.index) {
+                    return q
+                }
             }
-        }
-        return null;
-    }
-
-    public static class Question {
-        private String title = "";
-        private boolean isMulti = false;
-        private int index = 0;
-        private int baseIndexOffset = 0;
-        private int indexOffset = 0;
-        private final List<Choice> choices = new ArrayList<>();
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public boolean isMulti() {
-            return isMulti;
-        }
-
-        public void setMulti(boolean multi) {
-            isMulti = multi;
-        }
-
-        public List<Choice> getChoices() {
-            return choices;
-        }
-
-        public Choice getChoice(int index) {
-            return choices.get(index);
-        }
-
-        public void addChoice(Choice choice) {
-            this.choices.add(choice);
-        }
-
-        public int getIndex() {
-            return index;
-        }
-
-        public void setIndex(int index) {
-            this.index = index;
-        }
-
-        public int getBaseIndexOffset() {
-            return baseIndexOffset;
-        }
-
-        public void setBaseIndexOffset(int baseIndexOffset) {
-            this.baseIndexOffset = baseIndexOffset;
-        }
-
-        public int getIndexOffset() {
-            return indexOffset;
-        }
-
-        public void increaseIndexOffset() {
-            this.indexOffset++;
-        }
-
-        public void reduceIndexOffset() {
-            this.indexOffset--;
-        }
-    }
-
-    public static class Choice {
-        private String title = "";
-        private int votes = 0;
-        private int index = 0;
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public int getVotes() {
-            return votes;
-        }
-
-        public void setVotes(int votes) {
-            this.votes = votes;
-        }
-
-        public int getIndex() {
-            return index;
-        }
-
-        public void setIndex(int index) {
-            this.index = index;
+            return null
         }
     }
 }

@@ -24,8 +24,7 @@ open class BaseSettingFragment : PreferenceFragmentCompat() {
         view?.findViewById<RecyclerView>(androidx.preference.R.id.recycler_view)
             ?.also { list ->
                 list.setPadding(0, 0, 0, 0)
-                list.addOnScrollListener(object :
-                    RecyclerView.OnScrollListener() {
+                list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                     override fun onScrolled(
                         recyclerView: RecyclerView,
                         dx: Int,

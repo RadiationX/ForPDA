@@ -1,121 +1,124 @@
-package forpdateam.ru.forpda.ui.fragments.notes;
+package forpdateam.ru.forpda.ui.fragments.notes
 
-import android.content.Context;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-
-import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.entity.app.notes.NoteItem;
-import forpdateam.ru.forpda.model.repository.note.NotesRepository;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
+import android.content.Context
+import android.content.DialogInterface
+import android.view.View
+import android.view.WindowManager
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.TextView
+import android.widget.Toast
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import forpdateam.ru.forpda.App.Companion.get
+import forpdateam.ru.forpda.App.Companion.getVecDrawable
+import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.entity.app.notes.NoteItem
+import io.reactivex.disposables.CompositeDisposable
 
 /**
  * Created by radiationx on 06.09.17.
  */
+class NotesAddPopup(context: Context, item: NoteItem?) {
+    private val dialog = BottomSheetDialog(context)
+    private val title: TextView
+    private val addButton: ImageButton
+    private val titleField: EditText
+    private val linkField: EditText
+    private val contentField: EditText
+    private var editingMode = false
+    private val notesRepository = get().Di().notesRepository
+    private val compositeDisposable = CompositeDisposable()
 
-public class NotesAddPopup {
-    private final BottomSheetDialog dialog;
-    private final TextView title;
-    private final ImageButton addButton;
-    private final EditText titleField;
-    private final EditText linkField;
-    private final EditText contentField;
-    private boolean editingMode = false;
-    private final NotesRepository notesRepository = App.get().Di().getNotesRepository();
-    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
-
-    public NotesAddPopup(Context context, NoteItem item) {
-        dialog = new BottomSheetDialog(context);
-        dialog.setOnShowListener(dialog1 -> {
-            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        });
-        dialog.setOnDismissListener(dialog -> compositeDisposable.dispose());
-        View view = View.inflate(context, R.layout.notes_popup, null);
-        title = view.findViewById(R.id.popup_title);
-        addButton = view.findViewById(R.id.add_button);
-        titleField = view.findViewById(R.id.title_field);
-        linkField = view.findViewById(R.id.link_field);
-        contentField = view.findViewById(R.id.content_field);
-        editingMode = item != null;
+    init {
+        dialog.setOnShowListener { dialog1: DialogInterface? ->
+            dialog.window!!
+                .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        }
+        dialog.setOnDismissListener { dialog: DialogInterface? -> compositeDisposable.dispose() }
+        val view = View.inflate(context, R.layout.notes_popup, null)
+        title = view.findViewById(R.id.popup_title)
+        addButton = view.findViewById(R.id.add_button)
+        titleField = view.findViewById(R.id.title_field)
+        linkField = view.findViewById(R.id.link_field)
+        contentField = view.findViewById(R.id.content_field)
+        editingMode = item != null
 
         if (editingMode) {
-            title.setText(R.string.note_edit);
-            titleField.setText(item.getTitle());
-            linkField.setText(item.getLink());
-            contentField.setText(item.getContent());
-            addButton.setImageDrawable(App.getVecDrawable(context, R.drawable.ic_toolbar_done));
+            title.setText(R.string.note_edit)
+            titleField.setText(item!!.title)
+            linkField.setText(item.link)
+            contentField.setText(item.content)
+            addButton.setImageDrawable(getVecDrawable(context, R.drawable.ic_toolbar_done))
         } else {
-            title.setText(R.string.note_create);
+            title.setText(R.string.note_create)
         }
 
-        addButton.setOnClickListener(v -> {
-            String title = titleField.getText().toString().trim();
-            String link = linkField.getText().toString().trim();
-            String content = contentField.getText().toString().trim();
+        addButton.setOnClickListener { v: View? ->
+            val title = titleField.text.toString().trim { it <= ' ' }
+            val link = linkField.text.toString().trim { it <= ' ' }
+            val content = contentField.text.toString().trim { it <= ' ' }
 
-            if (title.length() == 0) {
-                Toast.makeText(context, R.string.note_enter_title, Toast.LENGTH_SHORT).show();
-                return;
+            if (title.isEmpty()) {
+                Toast.makeText(
+                    context,
+                    R.string.note_enter_title,
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
             }
 
-            NoteItem result = item;
+            var result = item
             if (result == null) {
-                result = new NoteItem();
-                result.setId(System.currentTimeMillis());
+                result = NoteItem()
+                result.id = System.currentTimeMillis()
             }
-            result.setTitle(title);
-            result.setLink(link);
-            result.setContent(content);
+            result.title = title
+            result.link = link
+            result.content = content
             if (editingMode) {
-                Disposable disposable = notesRepository
-                        .updateNote(result)
-                        .subscribe(() -> dialog.dismiss());
-                compositeDisposable.add(disposable);
+                val disposable = notesRepository
+                    .updateNote(result)
+                    .subscribe { dialog.dismiss() }
+                compositeDisposable.add(disposable)
             } else {
-                Disposable disposable = notesRepository
-                        .addNote(result)
-                        .subscribe(() -> dialog.dismiss());
-                compositeDisposable.add(disposable);
+                val disposable = notesRepository
+                    .addNote(result)
+                    .subscribe { dialog.dismiss() }
+                compositeDisposable.add(disposable)
             }
-        });
+        }
 
-        dialog.setContentView(view);
-        dialog.show();
+        dialog.setContentView(view)
+        dialog.show()
     }
 
-    public NotesAddPopup setTitle(String title) {
-        titleField.setText(title);
-        return this;
+    fun setTitle(title: String?): NotesAddPopup {
+        titleField.setText(title)
+        return this
     }
 
-    public NotesAddPopup setLink(String link) {
-        linkField.setText(link);
-        return this;
+    fun setLink(link: String?): NotesAddPopup {
+        linkField.setText(link)
+        return this
     }
 
-    public NotesAddPopup setContent(String content) {
-        contentField.setText(content);
-        return this;
+    fun setContent(content: String?): NotesAddPopup {
+        contentField.setText(content)
+        return this
     }
 
-    public static void showAddNoteDialog(Context context, String title, String link) {
-        new NotesAddPopup(context, null)
-                .setTitle(title)
-                .setLink(link);
-    }
-
-    public static void showAddNoteDialog(Context context, String title, String link, String content) {
-        new NotesAddPopup(context, null)
+    companion object {
+        fun showAddNoteDialog(context: Context, title: String?, link: String?) {
+            NotesAddPopup(context, null)
                 .setTitle(title)
                 .setLink(link)
-                .setContent(content);
+        }
+
+        fun showAddNoteDialog(context: Context, title: String?, link: String?, content: String?) {
+            NotesAddPopup(context, null)
+                .setTitle(title)
+                .setLink(link)
+                .setContent(content)
+        }
     }
 }

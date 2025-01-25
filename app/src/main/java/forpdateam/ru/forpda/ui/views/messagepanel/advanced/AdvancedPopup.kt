@@ -1,266 +1,250 @@
-package forpdateam.ru.forpda.ui.views.messagepanel.advanced;
+package forpdateam.ru.forpda.ui.views.messagepanel.advanced
 
-import android.content.Context;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.PopupWindow;
-
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-
-import com.google.android.material.tabs.TabLayout;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.ui.DimensionHelper;
-import forpdateam.ru.forpda.ui.DimensionsProvider;
-import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel;
-import io.reactivex.disposables.CompositeDisposable;
+import android.content.Context
+import android.util.Log
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import android.widget.PopupWindow
+import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
+import forpdateam.ru.forpda.App.Companion.get
+import forpdateam.ru.forpda.App.Companion.getVecDrawable
+import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.ui.DimensionHelper.Dimensions
+import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
+import io.reactivex.disposables.CompositeDisposable
 
 /**
  * Created by radiationx on 07.01.17.
  */
+class AdvancedPopup(private val context: Context, private val messagePanel: MessagePanel) {
+    private val popupWindow: PopupWindow
+    private val fragmentContainer = messagePanel.fragmentContainer
+    private var isShowingKeyboard = false
+    private var stateListener: StateListener? = null
 
-public class AdvancedPopup {
-    private final PopupWindow popupWindow;
-    private final ViewGroup fragmentContainer;
-    private boolean isShowingKeyboard = false;
-    private StateListener stateListener;
-    private final MessagePanel messagePanel;
-    private final Context context;
+    private val dimensionsProvider = get().Di().dimensionsProvider
+    private val disposables = CompositeDisposable()
 
-    private final DimensionsProvider dimensionsProvider = App.get().Di().getDimensionsProvider();
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    init {
+        val popupView = View.inflate(context, R.layout.message_panel_advanced, null)
+        val viewPager = popupView.findViewById<ViewPager>(R.id.pager)
 
-    public AdvancedPopup(Context context, MessagePanel panel) {
-        this.context = context;
-        fragmentContainer = panel.getFragmentContainer();
-        messagePanel = panel;
+        val viewList: MutableList<BasePanelItem> = ArrayList()
+        viewList.add(CodesPanelItem(context, messagePanel))
+        viewList.add(SmilesPanelItem(context, messagePanel))
+        viewPager.adapter = MyPagerAdapter(viewList)
 
-        View popupView = View.inflate(context, R.layout.message_panel_advanced, null);
-        ViewPager viewPager = popupView.findViewById(R.id.pager);
+        (popupView.findViewById<View>(R.id.tab_layout) as TabLayout).setupWithViewPager(viewPager)
 
-        List<BasePanelItem> viewList = new ArrayList<>();
-        viewList.add(new CodesPanelItem(context, messagePanel));
-        viewList.add(new SmilesPanelItem(context, messagePanel));
-        viewPager.setAdapter(new MyPagerAdapter(viewList));
+        popupWindow = PopupWindow(
+            popupView,
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            dimensionsProvider.getDimensions().savedKeyboardHeight,
+            false
+        )
 
-        ((TabLayout) popupView.findViewById(R.id.tab_layout)).setupWithViewPager(viewPager);
+        popupWindow.setOnDismissListener {
+            dimensionsProvider.getDimensions().isFakeKeyboardShow = false
+            dimensionsProvider.update(dimensionsProvider.getDimensions())
+        }
 
-        popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, dimensionsProvider.getDimensions().getSavedKeyboardHeight(), false);
-
-        popupWindow.setOnDismissListener(() -> {
-            dimensionsProvider.getDimensions().setFakeKeyboardShow(false);
-            dimensionsProvider.update(dimensionsProvider.getDimensions());
-        });
-
-        popupView.findViewById(R.id.delete_button).setOnClickListener(v -> {
-            EditText messageField = messagePanel.getMessageField();
-            int selectionStart = messageField.getSelectionStart();
-            int selectionEnd = messageField.getSelectionEnd();
+        popupView.findViewById<View>(R.id.delete_button).setOnClickListener { v: View? ->
+            val messageField = messagePanel.getMessageField()
+            var selectionStart = messageField!!.selectionStart
+            var selectionEnd = messageField.selectionEnd
             if (selectionEnd < selectionStart && selectionEnd != -1) {
-                int c = selectionStart;
-                selectionStart = selectionEnd;
-                selectionEnd = c;
+                val c = selectionStart
+                selectionStart = selectionEnd
+                selectionEnd = c
             }
             if (selectionStart != -1 && selectionStart != selectionEnd) {
-                messageField.getText().delete(selectionStart, selectionEnd);
-                return;
+                messageField.text.delete(selectionStart, selectionEnd)
+                return@setOnClickListener
             }
             if (selectionStart > 0) {
-                messageField.getText().delete(selectionStart - 1, selectionStart);
+                messageField.text.delete(selectionStart - 1, selectionStart)
             }
-            /*int length = messagePanel.getMessageField().getText().length();
-            if (length > 0) {
-                messagePanel.getMessageField().getText().delete(length - 1, length);
-            }*/
-        });
+        }
 
-        messagePanel.addAdvancedOnClickListener(v -> {
-            if (popupWindow.isShowing())
-                hidePopup();
-            else
-                showPopup();
-        });
+        messagePanel.addAdvancedOnClickListener { v: View? ->
+            if (popupWindow.isShowing) hidePopup()
+            else showPopup()
+        }
         disposables.add(
-                dimensionsProvider
-                        .observeDimensions()
-                        .subscribe(dimensions -> {
+            dimensionsProvider
+                .observeDimensions()
+                .subscribe { dimensions: Dimensions ->
+                    if (messagePanel != null) {
+                        messagePanel.post {
                             if (messagePanel != null) {
-                                messagePanel.post(() -> {
-                                    if (messagePanel != null) {
-                                        updateDimens(dimensions);
-                                    }
-                                });
+                                updateDimens(dimensions)
                             }
-                            updateDimens(dimensions);
-                        })
-        );
+                        }
+                    }
+                    updateDimens(dimensions)
+                }
+        )
     }
 
-    private void updateDimens(DimensionHelper.Dimensions dimensions) {
+    private fun updateDimens(dimensions: Dimensions) {
         if (popupWindow == null || messagePanel == null) {
-            return;
+            return
         }
         if (dimensions.isKeyboardShow()) {
-            popupWindow.setHeight(dimensions.getSavedKeyboardHeight());
-            popupWindow.update();
-            if (!isShowingKeyboard && popupWindow.isShowing()) {
-                hidePopup();
+            popupWindow.height = dimensions.savedKeyboardHeight
+            popupWindow.update()
+            if (!isShowingKeyboard && popupWindow.isShowing) {
+                hidePopup()
             }
-            isShowingKeyboard = true;
+            isShowingKeyboard = true
         } else if (isShowingKeyboard) {
-            if (popupWindow.isShowing()) {
-                hidePopup();
+            if (popupWindow.isShowing) {
+                hidePopup()
             }
-            isShowingKeyboard = false;
+            isShowingKeyboard = false
         }
-        messagePanel.setCanScrolling(!(isShowingKeyboard || popupWindow.isShowing()));
+        messagePanel.setCanScrolling(!(isShowingKeyboard || popupWindow.isShowing))
     }
 
-    private void hidePopup() {
-        DimensionHelper.Dimensions localDimensions = dimensionsProvider.getDimensions();
-        messagePanel.getAdvancedButton().setImageDrawable(App.getVecDrawable(context, R.drawable.ic_add));
+    private fun hidePopup() {
+        val localDimensions = dimensionsProvider.getDimensions()
+        messagePanel.advancedButton!!.setImageDrawable(getVecDrawable(context, R.drawable.ic_add))
 
-        if (popupWindow.isShowing()) {
-            if (localDimensions.isFakeKeyboardShow()) {
-                localDimensions.setFakeKeyboardShow(false);
-                dimensionsProvider.update(localDimensions);
+        if (popupWindow.isShowing) {
+            if (localDimensions.isFakeKeyboardShow) {
+                localDimensions.isFakeKeyboardShow = false
+                dimensionsProvider.update(localDimensions)
             }
-            popupWindow.dismiss();
+            popupWindow.dismiss()
         }
 
-        if (fragmentContainer.getPaddingBottom() != 0) {
-            Log.d("SUKA", "hidePopup SET PADDING 0");
+        if (fragmentContainer.paddingBottom != 0) {
+            Log.d("SUKA", "hidePopup SET PADDING 0")
             fragmentContainer.setPadding(
-                    fragmentContainer.getPaddingLeft(),
-                    fragmentContainer.getPaddingTop(),
-                    fragmentContainer.getPaddingRight(),
-                    0
-            );
+                fragmentContainer.paddingLeft,
+                fragmentContainer.paddingTop,
+                fragmentContainer.paddingRight,
+                0
+            )
         }
 
-        if (stateListener != null)
-            stateListener.onHide();
+        if (stateListener != null) stateListener!!.onHide()
 
-        messagePanel.setCanScrolling(true);
+        messagePanel.setCanScrolling(true)
     }
 
-    private void showPopup() {
-        DimensionHelper.Dimensions localDimensions = dimensionsProvider.getDimensions();
-        messagePanel.getAdvancedButton().setImageDrawable(App.getVecDrawable(context, R.drawable.ic_keyboard));
+    private fun showPopup() {
+        val localDimensions = dimensionsProvider.getDimensions()
+        messagePanel.advancedButton!!.setImageDrawable(
+            getVecDrawable(
+                context,
+                R.drawable.ic_keyboard
+            )
+        )
 
-        if (!popupWindow.isShowing()) {
-            if (!localDimensions.isFakeKeyboardShow()) {
-                localDimensions.setFakeKeyboardShow(true);
-                dimensionsProvider.update(localDimensions);
+        if (!popupWindow.isShowing) {
+            if (!localDimensions.isFakeKeyboardShow) {
+                localDimensions.isFakeKeyboardShow = true
+                dimensionsProvider.update(localDimensions)
             }
-            popupWindow.showAtLocation(fragmentContainer, Gravity.BOTTOM, 0, 0);
+            popupWindow.showAtLocation(fragmentContainer, Gravity.BOTTOM, 0, 0)
         }
 
-        Log.d("FORPDA_LOG", "showPopup " + localDimensions.getSavedKeyboardHeight() + " : " + fragmentContainer.getPaddingBottom() + " : " + isShowingKeyboard);
-        //fragmentContainer.setPadding(0, 0, 0, App.getKeyboardHeight());
+        Log.d(
+            "FORPDA_LOG",
+            "showPopup " + localDimensions.savedKeyboardHeight + " : " + fragmentContainer.paddingBottom + " : " + isShowingKeyboard
+        )
 
+        //fragmentContainer.setPadding(0, 0, 0, App.getKeyboardHeight());
         if (!isShowingKeyboard) {
-            if (fragmentContainer.getPaddingBottom() != localDimensions.getSavedKeyboardHeight()) {
-                Log.d("SUKA", "showPopup SET PADDING " + localDimensions.getSavedKeyboardHeight());
+            if (fragmentContainer.paddingBottom != localDimensions.savedKeyboardHeight) {
+                Log.d("SUKA", "showPopup SET PADDING " + localDimensions.savedKeyboardHeight)
                 fragmentContainer.setPadding(
-                        fragmentContainer.getPaddingLeft(),
-                        fragmentContainer.getPaddingTop(),
-                        fragmentContainer.getPaddingRight(),
-                        localDimensions.getSavedKeyboardHeight()
-                );
+                    fragmentContainer.paddingLeft,
+                    fragmentContainer.paddingTop,
+                    fragmentContainer.paddingRight,
+                    localDimensions.savedKeyboardHeight
+                )
             }
         } else {
-            Log.d("SUKA", "showPopup SET PADDING " + 0);
+            Log.d("SUKA", "showPopup SET PADDING " + 0)
             fragmentContainer.setPadding(
-                    fragmentContainer.getPaddingLeft(),
-                    fragmentContainer.getPaddingTop(),
-                    fragmentContainer.getPaddingRight(),
-                    0
-            );
+                fragmentContainer.paddingLeft,
+                fragmentContainer.paddingTop,
+                fragmentContainer.paddingRight,
+                0
+            )
         }
 
-        if (stateListener != null)
-            stateListener.onShow();
+        if (stateListener != null) stateListener!!.onShow()
 
-        messagePanel.setCanScrolling(false);
+        messagePanel.setCanScrolling(false)
     }
 
 
-    public boolean onBackPressed() {
-        if (!popupWindow.isShowing()) return false;
-        hidePopup();
-        return true;
+    fun onBackPressed(): Boolean {
+        if (!popupWindow.isShowing) return false
+        hidePopup()
+        return true
     }
 
-    public void onResume() {
+    fun onResume() {
         //fragmentContainer.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener);
     }
 
-    public void onPause() {
+    fun onPause() {
         //fragmentContainer.getViewTreeObserver().removeOnGlobalLayoutListener(globalLayoutListener);
-        hidePopup();
+        hidePopup()
     }
 
-    public void onDestroy() {
+    fun onDestroy() {
         //fragmentContainer.getViewTreeObserver().removeOnGlobalLayoutListener(globalLayoutListener);
-        disposables.dispose();
-        hidePopup();
+        disposables.dispose()
+        hidePopup()
     }
 
-    public void hidePopupWindows() {
-        hidePopup();
+    fun hidePopupWindows() {
+        hidePopup()
     }
 
-    public void setStateListener(StateListener stateListener) {
-        this.stateListener = stateListener;
+    fun setStateListener(stateListener: StateListener?) {
+        this.stateListener = stateListener
     }
 
-    public interface StateListener {
-        void onShow();
+    interface StateListener {
+        fun onShow()
 
-        void onHide();
+        fun onHide()
     }
 
-    private class MyPagerAdapter extends PagerAdapter {
-        List<BasePanelItem> pages = null;
+    private inner class MyPagerAdapter(
+        val pages: List<BasePanelItem>
+    ) : PagerAdapter() {
 
-        MyPagerAdapter(List<BasePanelItem> pages) {
-            this.pages = pages;
+
+        override fun instantiateItem(container: ViewGroup, position: Int): Any {
+            val v: View = pages!![position]
+            container.addView(v, 0)
+            return v
         }
 
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            View v = pages.get(position);
-            container.addView(v, 0);
-            return v;
+        override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+            container.removeView(`object` as View)
         }
 
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((View) object);
+        override fun getCount(): Int {
+            return pages.size
         }
 
-        @Override
-        public int getCount() {
-            return pages.size();
+        override fun isViewFromObject(view: View, `object`: Any): Boolean {
+            return view == `object`
         }
 
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view.equals(object);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return pages.get(position).getTitle();
+        override fun getPageTitle(position: Int): CharSequence? {
+            return pages[position].title
         }
     }
 }

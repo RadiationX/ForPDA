@@ -5,8 +5,9 @@ import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 /**
  * Created by radiationx on 25.02.18.
  */
-class BottomMenuAdapter(private val listener: BottomMenuDelegate.Listener) :
-    ListDelegationAdapter<MutableList<ListItem>>() {
+class BottomMenuAdapter(
+    private val listener: BottomMenuDelegate.Listener
+) : ListDelegationAdapter<MutableList<ListItem>>() {
 
     private var currentScreenKey: String? = null
 

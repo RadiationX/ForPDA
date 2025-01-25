@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.common
 
-import android.content.Context
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.text.TextPaint
@@ -32,8 +31,8 @@ import forpdateam.ru.forpda.App.Companion.getContext
  *
  * @author Tristan Waddington
  */
-class AssetsTypefaceSpan(context: Context?, typefaceName: String) :
-    MetricAffectingSpan() {
+class AssetsTypefaceSpan(typefaceName: String) : MetricAffectingSpan() {
+
     private var mTypeface: Typeface?
 
     /**

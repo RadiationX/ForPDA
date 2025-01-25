@@ -81,8 +81,7 @@ class OtherFragment : TabFragment(), OtherView {
             val touchHelper = ItemTouchHelper(OtherItemDragCallback(otherAdapter, itemDragListener))
             touchHelper.attachToRecyclerView(this)
 
-            addOnScrollListener(object :
-                RecyclerView.OnScrollListener() {
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(
                     recyclerView: RecyclerView,
                     dx: Int,

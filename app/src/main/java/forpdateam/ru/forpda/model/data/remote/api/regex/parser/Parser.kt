@@ -1,24 +1,21 @@
-package forpdateam.ru.forpda.model.data.remote.api.regex.parser;
+package forpdateam.ru.forpda.model.data.remote.api.regex.parser
 
-import android.util.Log;
-
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import android.util.Log
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 /**
  * Created by radiationx on 13.08.17.
  */
+object Parser {
+    private const val S_TAG = 1
+    private const val S_ATTRS = 2
+    private const val S_TEXT = 3
+    private const val CLOSING = 4
+    private const val TAG = 5
+    private const val ATTRS = 6
+    private const val TEXT = 7
 
-public class Parser {
-    private final static int S_TAG = 1;
-    private final static int S_ATTRS = 2;
-    private final static int S_TEXT = 3;
-    private final static int CLOSING = 4;
-    private final static int TAG = 5;
-    private final static int ATTRS = 6;
-    private final static int TEXT = 7;
     /*
      * GROUPS
      *
@@ -35,271 +32,265 @@ public class Parser {
      *
      * if no groups - comment
      * */
-
     //private final static Pattern NON_CLOSING_TAGS = Pattern.compile("!DOCTYPE|colgroup|command|keygen|source|embed|input|param|track|area|link|meta|col|img|wbr|br|hr", Pattern.CASE_INSENSITIVE);
-
-    private static Pattern mainPattern = null;
-    private static Pattern attributePattern;
-    private static String[] uTags;
-
-    public static Pattern getMainPattern() {
-        if (mainPattern == null)
-            mainPattern = Pattern.compile("\\<(?:(?:(script|style|textarea)(?:([^\\>]+))?\\>)([\\s\\S]*?)(?:\\<\\/\\1)|([\\/])?(!?[\\w]*)(?:([^\\>]+))?\\/?)\\>(?:([^<]+))?", Pattern.CASE_INSENSITIVE);
-        return mainPattern;
+    private val mainPattern by lazy {
+        Pattern.compile(
+            "\\<(?:(?:(script|style|textarea)(?:([^\\>]+))?\\>)([\\s\\S]*?)(?:\\<\\/\\1)|([\\/])?(!?[\\w]*)(?:([^\\>]+))?\\/?)\\>(?:([^<]+))?",
+            Pattern.CASE_INSENSITIVE
+        )
     }
 
-    public static Pattern getAttributePattern() {
-        if (attributePattern == null)
-            attributePattern = Pattern.compile("([^ \"']*?)\\s*?=\\s*?([\"'])([\\s\\S]*?)\\2", Pattern.CASE_INSENSITIVE);
-        return attributePattern;
+    private val attributePattern by lazy {
+        Pattern.compile(
+            "([^ \"']*?)\\s*?=\\s*?([\"'])([\\s\\S]*?)\\2",
+            Pattern.CASE_INSENSITIVE
+        )
     }
 
-    public static String[] getuTags() {
-        if (uTags == null)
-            uTags = new String[]{"!doctype", "area", "br", "col", "colgroup", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"};
-        return uTags;
+    private val uTags: Array<String> = arrayOf(
+        "!doctype",
+        "area",
+        "br",
+        "col",
+        "colgroup",
+        "command",
+        "embed",
+        "hr",
+        "img",
+        "input",
+        "keygen",
+        "link",
+        "meta",
+        "param",
+        "source",
+        "track",
+        "wbr"
+    )
+
+    private fun containsInUTag(tag: String?): Boolean {
+        for (uTag in uTags) if (uTag.equals(tag, ignoreCase = true)) return true
+        return false
     }
 
-    private static boolean containsInUTag(String tag) {
-        for (String uTag : getuTags())
-            if (uTag.equalsIgnoreCase(tag)) return true;
-        return false;
+    private fun getMatcher(m: Matcher?, p: Pattern, s: String): Matcher {
+        return if (m == null) p.matcher(s) else m.reset(s)
     }
 
-    public static Matcher getMatcher(Matcher m, Pattern p, String s) {
-        return m == null ? p.matcher(s) : m.reset(s);
-    }
+    fun parse(html: String): Document {
+        val openedNodes = ArrayList<Node?>()
+        val root = Document()
 
-    public static Document parse(String html) {
-        final ArrayList<Node> openedNodes = new ArrayList<>();
-        final Document root = new Document();
+        openedNodes.add(root)
+        var lastOpened: Node?
 
-        openedNodes.add(root);
-        Node lastOpened = null;
-
-        final Matcher matcher = getMainPattern().matcher(html);
-        Matcher ncMatcher = null;
-        Matcher attrMatcher = null;
-        int nodesAdd = 0, nodesClose = 0;
+        val matcher = mainPattern!!.matcher(html)
+        var attrMatcher: Matcher? = null
+        var nodesAdd = 0
+        var nodesClose = 0
         while (matcher.find()) {
-            lastOpened = openedNodes.get(openedNodes.size() - 1);
-            final Node node = new Node();
+            lastOpened = openedNodes[openedNodes.size - 1]
+            val node = Node()
 
 
-            boolean special = false;
-            String tagName = matcher.group(TAG);
+            var special = false
+            var tagName = matcher.group(TAG)
             if (tagName == null) {
-                special = true;
+                special = true
             }
 
 
-            boolean openAction = matcher.group(CLOSING) == null;
+            val openAction = matcher.group(CLOSING) == null
 
 
             if (openAction) {
                 if (special) {
-                    tagName = matcher.group(S_TAG);
-                    special = tagName != null;
+                    tagName = matcher.group(S_TAG)
+                    special = tagName != null
                 }
-                String attrs = matcher.group(special ? S_ATTRS : ATTRS);
-                String text = matcher.group(special ? S_TEXT : TEXT);
+                val attrs = matcher.group(if (special) S_ATTRS else ATTRS)
+                val text = matcher.group(if (special) S_TEXT else TEXT)
                 // Log.d("PARSER", "Open last= " + lastOpened + "; new= " + tagName + "; text= '" + text + "'");
-                boolean addToOpened = true;
+                var addToOpened = true
                 if (tagName == null) {
                     if (text == null) {
-                        node.setName(Node.NODE_COMMENT);
-                        node.setText(matcher.group());
+                        node.name = Node.NODE_COMMENT
+                        node.text = matcher.group()
                     }
-                    addToOpened = false;
+                    addToOpened = false
                 } else {
-                    node.setName(tagName);
+                    node.name = tagName
 
                     if (attrs != null) {
-                        attrMatcher = getMatcher(attrMatcher, getAttributePattern(), attrs);
+                        attrMatcher = getMatcher(
+                            attrMatcher,
+                            attributePattern!!, attrs
+                        )
                         while (attrMatcher.find()) {
-                            node.putAttribute(attrMatcher.group(1), attrMatcher.group(3));
+                            node.putAttribute(attrMatcher.group(1), attrMatcher.group(3))
                         }
                     }
 
                     //ncMatcher = getMatcher(ncMatcher, NON_CLOSING_TAGS, tagName);
                     if (containsInUTag(tagName)) {
-                        if (tagName.equalsIgnoreCase(Document.DOCTYPE_TAG)) {
-                            root.setDocType(attrs);
+                        if (tagName.equals(Document.DOCTYPE_TAG, ignoreCase = true)) {
+                            root.docType = attrs!!
                         }
-                        addToOpened = false;
+                        addToOpened = false
                     }
                     if (text != null) {
                         if (special) {
-                            addToOpened = false;
+                            addToOpened = false
                         }
-                        Node textNode = new Node(Node.NODE_TEXT);
-                        textNode.setText(text);
-                        node.addNode(textNode);
-                        nodesAdd++;
+                        val textNode = Node(Node.NODE_TEXT)
+                        textNode.text = text
+                        node.addNode(textNode)
+                        nodesAdd++
                     }
-
                 }
 
-                lastOpened.addNode(node);
+                lastOpened!!.addNode(node)
                 //Log.d("PARSER", "ADD? = " + addToOpened);
-                nodesAdd++;
+                nodesAdd++
                 if (addToOpened) {
-                    openedNodes.add(node);
+                    openedNodes.add(node)
                 }
             } else {
                 //Log.e("PARSER", "Close last = " + lastOpened);
-                openedNodes.remove(lastOpened);
-                nodesClose++;
+                openedNodes.remove(lastOpened)
+                nodesClose++
             }
-
         }
-        openedNodes.remove(root);
+        openedNodes.remove(root)
 
-        Log.d("SUKA", "FINAL OPENED " + openedNodes.size() + " : " + nodesAdd + " : " + nodesClose);
+        Log.d("SUKA", "FINAL OPENED " + openedNodes.size + " : " + nodesAdd + " : " + nodesClose)
 
-        return root;
+        return root
     }
 
-    public static boolean isNotElement(Node node) {
-        return node.getName() == null || node.getName().equals(Node.NODE_TEXT) || node.getName().equals(Node.NODE_COMMENT);
+    private fun isNotElement(node: Node): Boolean {
+        return node.name == null || node.name == Node.NODE_TEXT || node.name == Node.NODE_COMMENT
     }
 
-    public static boolean isTextNode(Node node) {
-        return node.getName().equals(Node.NODE_TEXT);
+    private fun isTextNode(node: Node): Boolean {
+        return node.name == Node.NODE_TEXT
     }
 
-    public static String getHtml(Document document, Node node, Matcher matcher) {
-        StringBuilder resultHtml = new StringBuilder();
-        boolean onlyText = isNotElement(node);
+    private fun getHtml(document: Document, node: Node, matcher: Matcher?): String {
+        val resultHtml = StringBuilder()
+        val onlyText = isNotElement(node)
 
         if (onlyText) {
-            resultHtml.append(node.getText());
+            resultHtml.append(node.text)
         } else {
-            resultHtml.append("<").append(node.getName());
-            if (node.getAttributes() != null) {
-                for (Map.Entry<String, String> attr : node.getAttributes().entrySet()) {
-                    resultHtml.append(" ").append(attr.getKey()).append("=\"").append(attr.getValue()).append("\"");
-                }
-            } else {
-                if (node.getName().equalsIgnoreCase(Document.DOCTYPE_TAG)) {
-                    resultHtml.append(" ").append(document.getDocType());
-                }
+            resultHtml.append("<").append(node.name)
+            for ((key, value) in node.attributes) {
+                resultHtml.append(" ").append(key).append("=\"").append(value).append("\"")
             }
-            resultHtml.append(">");
+            resultHtml.append(">")
         }
 
         if (!onlyText) {
-            if (node.getNodes() != null) {
-                for (Node child : node.getNodes()) {
-                    String s = getHtml(document, child, matcher);
-                    resultHtml.append(s);
-                }
+            for (child in node.nodes) {
+                val s = getHtml(document, child, matcher)
+                resultHtml.append(s)
             }
         }
 
 
         if (!onlyText) {
-            if (!containsInUTag(node.getName())) {
-                resultHtml.append("</").append(node.getName()).append(">");
+            if (!containsInUTag(node.name)) {
+                resultHtml.append("</").append(node.name).append(">")
             }
         }
 
 
-        return resultHtml.toString();
+        return resultHtml.toString()
     }
 
-    public static String getHtml(Node node, boolean onlyInner) {
+    fun getHtml(node: Node, onlyInner: Boolean): String? {
         if (isNotElement(node)) {
-            return node.getText();
+            return node.text
         }
-        StringBuilder resultHtml = new StringBuilder();
+        val resultHtml = StringBuilder()
 
         if (!onlyInner) {
-            resultHtml.append("<").append(node.getName());
-            if (node.getAttributes() != null) {
-                for (Map.Entry<String, String> attr : node.getAttributes().entrySet()) {
-                    resultHtml.append(" ").append(attr.getKey()).append("=\"").append(attr.getValue()).append("\"");
-                }
+            resultHtml.append("<").append(node.name)
+            for ((key, value) in node.attributes) {
+                resultHtml.append(" ").append(key).append("=\"").append(value).append("\"")
             }
-            resultHtml.append(">");
+            resultHtml.append(">")
         }
 
 
-        if (node.getNodes() != null) {
-            for (Node child : node.getNodes()) {
-                String s = getHtml(child, false);
-                resultHtml.append(s);
-            }
+        for (child in node.nodes) {
+            val s = getHtml(child, false)
+            resultHtml.append(s)
         }
 
 
         if (!onlyInner) {
-            if (!containsInUTag(node.getName())) {
-                resultHtml.append("</").append(node.getName()).append(">");
+            if (!containsInUTag(node.name)) {
+                resultHtml.append("</").append(node.name).append(">")
             }
         }
 
 
-        return resultHtml.toString();
+        return resultHtml.toString()
     }
 
 
-    public static Node findNode(Node node, String tag, String attr, String value) {
+    fun findNode(node: Node, tag: String?, attr: String?, value: String): Node? {
         if (isNotElement(node)) {
-            return null;
+            return null
         }
-        if (node.getName().equalsIgnoreCase(tag)) {
+        if (node.name.equals(tag, ignoreCase = true)) {
             if (attr == null) {
-                return node;
+                return node
             }
-            String attrValue = node.getAttributes().get(attr);
+            val attrValue = node.attributes[attr]
             if (attrValue != null && attrValue.contains(value)) {
-                return node;
+                return node
             }
         }
-        Node result = null;
-        for (Node child : node.getNodes()) {
-            result = findNode(child, tag, attr, value);
-            if (result != null)
-                break;
+        var result: Node? = null
+        for (child in node.nodes) {
+            result = findNode(child, tag, attr, value)
+            if (result != null) break
         }
-        return result;
+        return result
     }
 
-    public static ArrayList<Node> findChildNodes(Node node, String tag, String attr, String value) {
-        ArrayList<Node> result = new ArrayList<>();
+    fun findChildNodes(node: Node, tag: String?, attr: String?, value: String): ArrayList<Node> {
+        val result = ArrayList<Node>()
         if (isNotElement(node)) {
-            return result;
+            return result
         }
 
-        for (Node child : node.getNodes()) {
-            if (isNotElement(child))
-                continue;
-            if (child.getName().equalsIgnoreCase(tag)) {
+        for (child in node.nodes) {
+            if (isNotElement(child)) continue
+            if (child.name.equals(tag, ignoreCase = true)) {
                 if (attr == null) {
-                    result.add(child);
-                    continue;
+                    result.add(child)
+                    continue
                 }
-                String attrValue = child.getAttributes().get(attr);
+                val attrValue = child.attributes[attr]
                 if (attrValue != null && attrValue.contains(value)) {
-                    result.add(child);
+                    result.add(child)
                 }
             }
         }
-        return result;
+        return result
     }
 
-    public static String ownText(Node node) {
-        StringBuilder stringBuilder = new StringBuilder();
+    fun ownText(node: Node): String {
+        val stringBuilder = StringBuilder()
 
-        for (Node child : node.getNodes()) {
+        for (child in node.nodes) {
             if (isTextNode(child)) {
-                stringBuilder.append(child.getText());
+                stringBuilder.append(child.text)
             }
-
         }
-        return stringBuilder.toString();
+        return stringBuilder.toString()
     }
-
 }
 

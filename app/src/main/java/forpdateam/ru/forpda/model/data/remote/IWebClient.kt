@@ -1,38 +1,42 @@
-package forpdateam.ru.forpda.model.data.remote;
+package forpdateam.ru.forpda.model.data.remote
 
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest;
-import forpdateam.ru.forpda.model.data.remote.api.NetworkResponse;
-import okhttp3.Cookie;
-import okhttp3.WebSocket;
-import okhttp3.WebSocketListener;
+import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
+import forpdateam.ru.forpda.model.data.remote.api.NetworkResponse
+import okhttp3.Cookie
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
+import java.util.regex.Pattern
 
 /**
  * Created by radiationx on 26.03.17.
  */
+interface IWebClient {
+    @Throws(Exception::class)
+    fun get(url: String): NetworkResponse
 
-public interface IWebClient {
-    Pattern countsPattern = Pattern.compile("<a href=\"(?:https?)?\\/\\/4pda\\.(?:ru|to)\\/forum\\/index\\.php\\?act=mentions\" (?:data-count=\"(\\d+)\")?[^>]*?[\\s\\S]*?act=fav&amp;code=no\" (?:data-count=\"(\\d+)\")?[^>]*?[\\s\\S]*?span id=\"events-count\"[\\s\\S]*?(?:data-count=\"(\\d+)\")");
-    Pattern errorPattern = Pattern.compile("^[\\s\\S]*?wr va-m text\">([\\s\\S]*?)</div></div></div></div><div class=\"footer\">");
-    String MINIMAL_PAGE = "https://4pda.to/forum/index.php?showforum=200#afterauth";
+    @Throws(Exception::class)
+    fun request(request: NetworkRequest): NetworkResponse
 
-    NetworkResponse get(String url) throws Exception;
+    @Throws(Exception::class)
+    fun request(request: NetworkRequest, progressListener: ProgressListener): NetworkResponse
 
-    NetworkResponse request(NetworkRequest request) throws Exception;
+    fun getAuthKey(): String
 
-    NetworkResponse request(NetworkRequest request, ProgressListener progressListener) throws Exception;
+    fun getClientCookies(): Map<String, Cookie>
 
-    String getAuthKey();
+    fun clearCookies()
 
-    Map<String, Cookie> getClientCookies();
+    fun createWebSocketConnection(webSocketListener: WebSocketListener): WebSocket
 
-    void clearCookies();
+    fun interface ProgressListener {
+        fun onProgress(percent: Int)
+    }
 
-    WebSocket createWebSocketConnection(WebSocketListener webSocketListener);
-
-    interface ProgressListener {
-        void onProgress(int percent);
+    companion object {
+        val countsPattern: Pattern =
+            Pattern.compile("<a href=\"(?:https?)?\\/\\/4pda\\.(?:ru|to)\\/forum\\/index\\.php\\?act=mentions\" (?:data-count=\"(\\d+)\")?[^>]*?[\\s\\S]*?act=fav&amp;code=no\" (?:data-count=\"(\\d+)\")?[^>]*?[\\s\\S]*?span id=\"events-count\"[\\s\\S]*?(?:data-count=\"(\\d+)\")")
+        val errorPattern: Pattern =
+            Pattern.compile("^[\\s\\S]*?wr va-m text\">([\\s\\S]*?)</div></div></div></div><div class=\"footer\">")
+        const val MINIMAL_PAGE: String = "https://4pda.to/forum/index.php?showforum=200#afterauth"
     }
 }

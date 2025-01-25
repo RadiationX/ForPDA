@@ -14,8 +14,7 @@ class RecyclerTopScroller(
     private var scrolledToTop = false
 
     init {
-        recyclerView.addOnScrollListener(object :
-            RecyclerView.OnScrollListener() {
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(
                 recyclerView: RecyclerView,
                 dx: Int,

@@ -1,58 +1,52 @@
-package forpdateam.ru.forpda.ui.views.adapters;
+package forpdateam.ru.forpda.ui.views.adapters
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import androidx.annotation.LayoutRes;
-import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.ArrayList;
-import java.util.Collection;
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.annotation.LayoutRes
+import androidx.recyclerview.widget.RecyclerView
 
 /**
  * Created by radiationx on 14.09.17.
  */
+abstract class BaseAdapter<E, VH : BaseViewHolder<E>> : RecyclerView.Adapter<VH>() {
+    @JvmField
+    protected var items: ArrayList<E> = ArrayList()
 
-public abstract class BaseAdapter<E, VH extends BaseViewHolder> extends RecyclerView.Adapter<VH> {
-    protected ArrayList<E> items = new ArrayList<>();
-
-    public void setItems(ArrayList<E> items) {
-        clear();
-        this.items = items;
+    fun setItems(items: ArrayList<E>) {
+        clear()
+        this.items = items
     }
 
-    public void addAll(Collection<? extends E> items) {
-        addAll(items, true);
+    fun addAll(items: Collection<E>) {
+        addAll(items, true)
     }
 
-    public void addAll(Collection<? extends E> items, boolean clearList) {
-        if (clearList)
-            clear();
-        this.items.addAll(items);
-        notifyDataSetChanged();
+    open fun addAll(items: Collection<E>, clearList: Boolean) {
+        if (clearList) clear()
+        this.items.addAll(items)
+        notifyDataSetChanged()
     }
 
-    public void clear() {
-        items.clear();
+    fun clear() {
+        items.clear()
     }
 
-    @Override
-    public int getItemCount() {
-        return items.size();
+    override fun getItemCount(): Int {
+        return items.size
     }
 
-    public E getItem(int position) {
-        return items.get(position);
+    fun getItem(position: Int): E {
+        return items[position]
     }
 
-    protected View inflateLayout(ViewGroup parent, @LayoutRes int id) {
-        return LayoutInflater.from(parent.getContext()).inflate(id, parent, false);
+    protected fun inflateLayout(parent: ViewGroup, @LayoutRes id: Int): View {
+        return LayoutInflater.from(parent.context).inflate(id, parent, false)
     }
 
-    public interface OnItemClickListener<T> {
-        void onItemClick(T item);
+    interface OnItemClickListener<T> {
+        fun onItemClick(item: T)
 
-        boolean onItemLongClick(T item);
+        fun onItemLongClick(item: T): Boolean
     }
 }

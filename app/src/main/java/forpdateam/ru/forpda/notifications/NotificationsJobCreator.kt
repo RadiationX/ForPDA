@@ -1,28 +1,21 @@
-package forpdateam.ru.forpda.notifications;
+package forpdateam.ru.forpda.notifications
 
-import android.content.Context;
+import android.content.Context
+import com.evernote.android.job.Job
+import com.evernote.android.job.JobCreator
+import com.evernote.android.job.JobCreator.AddJobCreatorReceiver
+import com.evernote.android.job.JobManager
 
-import androidx.annotation.NonNull;
-
-import com.evernote.android.job.Job;
-import com.evernote.android.job.JobCreator;
-import com.evernote.android.job.JobManager;
-
-public class NotificationsJobCreator implements JobCreator {
-
-    @Override
-    public Job create(@NonNull String tag) {
-        switch (tag) {
-            case NotificationsJob.TAG:
-                return new NotificationsJob();
-            default:
-                return null;
+class NotificationsJobCreator : JobCreator {
+    override fun create(tag: String): Job? {
+        return when (tag) {
+            NotificationsJob.TAG -> NotificationsJob()
+            else -> null
         }
     }
 
-    public static final class AddReceiver extends AddJobCreatorReceiver {
-        @Override
-        protected void addJobCreator(@NonNull Context context, @NonNull JobManager manager) {
+    class AddReceiver : AddJobCreatorReceiver() {
+        override fun addJobCreator(context: Context, manager: JobManager) {
             // manager.addJobCreator(new NotificationsJobCreator());
         }
     }

@@ -1,94 +1,90 @@
-package forpdateam.ru.forpda.ui.fragments.mentions;
+package forpdateam.ru.forpda.ui.fragments.mentions
 
-import android.graphics.Typeface;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import androidx.recyclerview.widget.RecyclerView;
-
-import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.entity.remote.mentions.MentionItem;
-import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
-import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
+import android.graphics.Typeface
+import android.view.View
+import android.view.View.OnLongClickListener
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import forpdateam.ru.forpda.App.Companion.getColorFromAttr
+import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.entity.remote.mentions.MentionItem
+import forpdateam.ru.forpda.entity.remote.mentions.MentionItem.Companion.STATE_UNREAD
+import forpdateam.ru.forpda.ui.fragments.mentions.MentionsAdapter.MentionHolder
+import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
+import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
 
 /**
  * Created by radiationx on 21.01.17.
  */
+internal class MentionsAdapter : BaseAdapter<MentionItem, MentionHolder>() {
+    private var titleColorNew = 0
+    private var titleColor = 0
+    private var itemClickListener: OnItemClickListener<MentionItem>? = null
 
-class MentionsAdapter extends BaseAdapter<MentionItem, MentionsAdapter.MentionHolder> {
-    private int titleColorNew, titleColor;
-    private BaseAdapter.OnItemClickListener<MentionItem> itemClickListener;
-
-    public void setOnItemClickListener(BaseAdapter.OnItemClickListener<MentionItem> mItemClickListener) {
-        this.itemClickListener = mItemClickListener;
+    fun setOnItemClickListener(mItemClickListener: OnItemClickListener<MentionItem>?) {
+        this.itemClickListener = mItemClickListener
     }
 
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-        titleColor = App.getColorFromAttr(recyclerView.getContext(), R.attr.second_text_color);
-        titleColorNew = App.getColorFromAttr(recyclerView.getContext(), R.attr.default_text_color);
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        titleColor = getColorFromAttr(recyclerView.context, R.attr.second_text_color)
+        titleColorNew = getColorFromAttr(recyclerView.context, R.attr.default_text_color)
     }
 
-    @Override
-    public MentionHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = inflateLayout(parent, R.layout.topic_item);
-        return new MentionHolder(v);
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MentionHolder {
+        val v = inflateLayout(parent, R.layout.topic_item)
+        return MentionHolder(v)
     }
 
-    @Override
-    public void onBindViewHolder(MentionHolder holder, int position) {
-        holder.bind(getItem(position), position);
+    override fun onBindViewHolder(holder: MentionHolder, position: Int) {
+        holder.bind(getItem(position), position)
     }
 
-    class MentionHolder extends BaseViewHolder<MentionItem> implements View.OnClickListener, View.OnLongClickListener {
-        TextView title, lastNick, date, desc;
-        ImageView forumIcon, lockIcon, pollIcon;
+    internal inner class MentionHolder(v: View) : BaseViewHolder<MentionItem>(v),
+        View.OnClickListener, OnLongClickListener {
+        var title: TextView = v.findViewById(R.id.topic_item_title)
+        var lastNick: TextView =
+            v.findViewById(R.id.topic_item_last_nick)
+        var date: TextView = v.findViewById(R.id.topic_item_date)
+        var desc: TextView = v.findViewById(R.id.topic_item_desc)
+        var forumIcon: ImageView =
+            v.findViewById(R.id.topic_item_forum_icon)
+        var lockIcon: ImageView =
+            v.findViewById(R.id.topic_item_lock_icon)
+        var pollIcon: ImageView =
+            v.findViewById(R.id.topic_item_poll_icon)
 
-        MentionHolder(View v) {
-            super(v);
-            title = v.findViewById(R.id.topic_item_title);
-            desc = v.findViewById(R.id.topic_item_desc);
-            lastNick = v.findViewById(R.id.topic_item_last_nick);
-            date = v.findViewById(R.id.topic_item_date);
-            forumIcon = v.findViewById(R.id.topic_item_forum_icon);
-            lockIcon = v.findViewById(R.id.topic_item_lock_icon);
-            pollIcon = v.findViewById(R.id.topic_item_poll_icon);
-
-            v.setOnClickListener(this);
-            v.setOnLongClickListener(this);
+        init {
+            v.setOnClickListener(this)
+            v.setOnLongClickListener(this)
         }
 
-        @Override
-        public void bind(MentionItem item, int position) {
-            title.setText(item.getTitle());
-            title.setTypeface(item.getState() == MentionItem.Companion.getSTATE_UNREAD() ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
-            title.setTextColor(item.getState() == MentionItem.Companion.getSTATE_UNREAD() ? titleColorNew : titleColor);
-            lastNick.setText(item.getNick());
-            date.setText(item.getDate());
-            if (desc.getVisibility() == View.VISIBLE) {
-                desc.setVisibility(View.GONE);
+        override fun bind(item: MentionItem, position: Int) {
+            title.text = item.title
+            title.typeface =
+                if (item.state == STATE_UNREAD) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
+            title.setTextColor(if (item.state == STATE_UNREAD) titleColorNew else titleColor)
+            lastNick.text = item.nick
+            date.text = item.date
+            if (desc.visibility == View.VISIBLE) {
+                desc.visibility = View.GONE
             }
         }
 
-        @Override
-        public void onClick(View view) {
+        override fun onClick(view: View) {
             if (itemClickListener != null) {
-                itemClickListener.onItemClick(getItem(getLayoutPosition()));
+                itemClickListener!!.onItemClick(getItem(layoutPosition))
             }
         }
 
-        @Override
-        public boolean onLongClick(View view) {
+        override fun onLongClick(view: View): Boolean {
             if (itemClickListener != null) {
-                itemClickListener.onItemLongClick(getItem(getLayoutPosition()));
-                return true;
+                itemClickListener!!.onItemLongClick(getItem(layoutPosition))
+                return true
             }
-            return false;
+            return false
         }
     }
-
 }

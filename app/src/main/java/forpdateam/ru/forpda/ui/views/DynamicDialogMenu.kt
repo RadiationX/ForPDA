@@ -1,122 +1,117 @@
-package forpdateam.ru.forpda.ui.views;
+package forpdateam.ru.forpda.ui.views
 
-import android.content.Context;
-
-import androidx.appcompat.app.AlertDialog;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.content.Context
+import android.content.DialogInterface
+import androidx.appcompat.app.AlertDialog
 
 /**
  * Created by radiationx on 27.10.16.
  */
+class DynamicDialogMenu<T, E> {
+    private val allItems: MutableList<MenuItem> = ArrayList<MenuItem>()
+    private val allowedItems: MutableList<MenuItem> = ArrayList<MenuItem>()
 
-public class DynamicDialogMenu<T, E> {
-    private final List<MenuItem> allItems = new ArrayList<>();
-    private final List<MenuItem> allowedItems = new ArrayList<>();
-
-    public MenuItem addItem(CharSequence title, OnClickListener<T, E> listener) {
-        MenuItem item = new MenuItem(title, listener);
-        allItems.add(item);
-        return item;
+    fun addItem(title: CharSequence, listener: OnClickListener<T, E>?): MenuItem {
+        val item: MenuItem = MenuItem(title, listener)
+        allItems.add(item)
+        return item
     }
 
-    public MenuItem addItem(CharSequence title) {
-        MenuItem item = new MenuItem(title);
-        allItems.add(item);
-        return item;
+    fun addItem(title: CharSequence): MenuItem {
+        val item: MenuItem = MenuItem(title)
+        allItems.add(item)
+        return item
     }
 
-    public void allow(int index) {
-        allow(get(index));
+    fun allow(index: Int) {
+        allow(get(index))
     }
 
-    public void allow(MenuItem item) {
-        allowedItems.add(item);
+    fun allow(item: MenuItem) {
+        allowedItems.add(item)
     }
 
-    public void allowAll() {
-        this.allowedItems.addAll(allItems);
+    fun allowAll() {
+        allowedItems.addAll(allItems)
     }
 
-    public void disallowAll() {
-        allowedItems.clear();
+    fun disallowAll() {
+        allowedItems.clear()
     }
 
-    public List<MenuItem> getAllItems() {
-        return allItems;
+    fun getAllItems(): List<MenuItem> {
+        return allItems
     }
 
-    public MenuItem get(int index) {
-        return allItems.get(index);
+    fun get(index: Int): MenuItem {
+        return allItems[index]
     }
 
-    public int containsIndex(CharSequence title) {
-        for (int i = 0; i < allItems.size(); i++)
-            if (allItems.get(i).title.equals(title))
-                return i;
-        return -1;
+    fun containsIndex(title: CharSequence): Int {
+        for (i in allItems.indices) if (allItems[i].title == title) return i
+        return -1
     }
 
-    public void changeTitle(int i, CharSequence title) {
-        allItems.get(i).setTitle(title);
+    fun changeTitle(i: Int, title: CharSequence) {
+        allItems[i].setTitle(title)
     }
 
-    public CharSequence[] getTitles() {
-        CharSequence[] result = new CharSequence[allowedItems.size()];
-        for (int i = 0; i < allowedItems.size(); i++)
-            result[i] = allowedItems.get(i).title;
-        return result;
+    val titles: Array<CharSequence?>
+        get() {
+            val result =
+                arrayOfNulls<CharSequence>(allowedItems.size)
+            for (i in allowedItems.indices) result[i] = allowedItems[i].title
+            return result
+        }
+
+    fun show(uiContext: Context, context: T, data: E) {
+        show(uiContext, null, context, data)
     }
 
-    public void show(Context uiContext, T context, E data) {
-        show(uiContext, null, context, data);
-    }
-
-    public void show(Context uiContext, String title, T context, E data) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(uiContext);
+    fun show(uiContext: Context, title: String?, context: T, data: E) {
+        val builder = AlertDialog.Builder(uiContext)
         if (title != null) {
-            builder.setTitle(title);
+            builder.setTitle(title)
         }
-        builder.setItems(getTitles(), (dialog, which) -> onClick(which, context, data));
-        builder.show();
+        builder.setItems(
+            titles
+        ) { dialog: DialogInterface?, which: Int -> onClick(which, context, data) }
+        builder.show()
     }
 
-    public void onClick(int i, T context, E data) {
-        allowedItems.get(i).onClick(context, data);
+    fun onClick(i: Int, context: T, data: E) {
+        allowedItems[i].onClick(context, data)
     }
 
-    public class MenuItem implements OnClickListener<T, E> {
-        private OnClickListener<T, E> listener;
-        private CharSequence title;
+    inner class MenuItem : OnClickListener<T, E> {
+        var listener: OnClickListener<T, E>? = null
+        var title: CharSequence
 
-        public MenuItem(CharSequence title, OnClickListener<T, E> listener) {
-            this.title = title;
-            this.listener = listener;
+        constructor(title: CharSequence, listener: OnClickListener<T, E>?) {
+            this.title = title
+            this.listener = listener
         }
 
-        public MenuItem(CharSequence title) {
-            this.title = title;
+        constructor(title: CharSequence) {
+            this.title = title
         }
 
-        public MenuItem setTitle(CharSequence title) {
-            this.title = title;
-            return this;
+        fun setTitle(title: CharSequence): MenuItem {
+            this.title = title
+            return this
         }
 
-        public MenuItem setListener(OnClickListener<T, E> listener) {
-            this.listener = listener;
-            return this;
+        fun setListener(listener: OnClickListener<T, E>?): MenuItem {
+            this.listener = listener
+            return this
         }
 
-        @Override
-        public void onClick(T context, E data) {
-            if (listener != null)
-                listener.onClick(context, data);
+        override fun onClick(context: T, data: E) {
+            if (listener != null) listener!!.onClick(context, data)
         }
     }
 
-    public interface OnClickListener<T, E> {
-        void onClick(T context, E data);
+    interface OnClickListener<T, E> {
+        fun onClick(context: T, data: E)
     }
 }

@@ -1,132 +1,125 @@
-package forpdateam.ru.forpda.ui.fragments.editpost;
+package forpdateam.ru.forpda.ui.fragments.editpost
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.textfield.TextInputLayout;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.common.simple.SimpleTextWatcher;
-import forpdateam.ru.forpda.entity.remote.editpost.EditPoll;
+import android.content.DialogInterface
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textfield.TextInputLayout
+import forpdateam.ru.forpda.App.Companion.get
+import forpdateam.ru.forpda.App.Companion.getContext
+import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
+import forpdateam.ru.forpda.entity.remote.editpost.EditPoll
+import forpdateam.ru.forpda.entity.remote.editpost.EditPoll.Companion.findChoiceByIndex
+import forpdateam.ru.forpda.entity.remote.editpost.EditPoll.Question
 
 /**
  * Created by radiationx on 28.07.17.
  */
+class PollChoicesAdapter : RecyclerView.Adapter<PollChoicesAdapter.ViewHolder> {
+    private var choices:ArrayList<EditPoll.Choice> = ArrayList<EditPoll.Choice>()
+    private var poll: EditPoll? = null
+    private var question: Question? = null
 
-
-public class PollChoicesAdapter extends RecyclerView.Adapter<PollChoicesAdapter.ViewHolder> {
-    private List<EditPoll.Choice> choices = new ArrayList<>();
-    private EditPoll poll;
-    private EditPoll.Question question;
-
-    public PollChoicesAdapter(EditPoll.Question question, EditPoll poll) {
-        this.choices = question.getChoices();
-        this.poll = poll;
-        this.question = question;
+    constructor(question: Question, poll: EditPoll?) {
+        this.choices = question.getChoices()
+        this.poll = poll
+        this.question = question
     }
 
-    public PollChoicesAdapter() {
-    }
+    constructor()
 
-    public void add(EditPoll.Choice choice) {
-        if (this.choices.size() < poll.getMaxChoices()) {
-            question.increaseIndexOffset();
-            choice.setIndex(question.getIndexOffset() + question.getBaseIndexOffset());
-            this.choices.add(choice);
+    fun add(choice: EditPoll.Choice) {
+        if (choices.size < poll!!.maxChoices) {
+            question!!.increaseIndexOffset()
+            choice.index = question!!.indexOffset + question!!.baseIndexOffset
+            choices.add(choice)
             //notifyItemInserted(choices.indexOf(choice));
-            notifyDataSetChanged();
+            notifyDataSetChanged()
         } else {
-            Toast.makeText(App.getContext(), String.format(App.get().getString(R.string.poll_answers_Max), poll.getMaxChoices()), Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                getContext(),
+                String.format(get().getString(R.string.poll_answers_Max), poll!!.maxChoices),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
-    public EditPoll.Choice getItem(int position) {
-        return choices.get(position);
+    fun getItem(position: Int): EditPoll.Choice {
+        return choices[position]
     }
 
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.edit_poll_choice, parent, false);
-        return new ViewHolder(v, new MyCustomEditTextListener());
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val v =
+            LayoutInflater.from(parent.context).inflate(R.layout.edit_poll_choice, parent, false)
+        return ViewHolder(v, MyCustomEditTextListener())
     }
 
-    @Override
-    public int getItemCount() {
-        return choices.size();
+    override fun getItemCount(): Int {
+        return choices.size
     }
 
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        EditPoll.Choice item = getItem(holder.getAdapterPosition());
-        assert item != null;
-
-        holder.myCustomEditTextListener.updatePosition(holder.getAdapterPosition());
-        holder.title.getEditText().setText(item.getTitle());
-        holder.title.setHint(String.format(App.get().getString(R.string.poll_answer_Pos), holder.getAdapterPosition() + 1));
-
-
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = checkNotNull(getItem(holder.adapterPosition))
+        holder.myCustomEditTextListener.updatePosition(holder.adapterPosition)
+        holder.title.editText!!.setText(item.title)
+        holder.title.hint = String.format(
+            get().getString(R.string.poll_answer_Pos),
+            holder.adapterPosition + 1
+        )
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextInputLayout title;
-        public ImageButton delete;
-        public MyCustomEditTextListener myCustomEditTextListener;
+    inner class ViewHolder(
+        v: View,
+        var myCustomEditTextListener: MyCustomEditTextListener
+    ) : RecyclerView.ViewHolder(v) {
+        var title: TextInputLayout = v.findViewById(R.id.poll_choice_title)
+        var delete: ImageButton = v.findViewById(R.id.poll_choice_delete)
 
-        public ViewHolder(View v, MyCustomEditTextListener myCustomEditTextListener) {
-            super(v);
-            title = v.findViewById(R.id.poll_choice_title);
-            delete = v.findViewById(R.id.poll_choice_delete);
-
-            this.myCustomEditTextListener = myCustomEditTextListener;
-            this.title.getEditText().addTextChangedListener(myCustomEditTextListener);
-            delete.setOnClickListener(v1 -> {
-                new AlertDialog.Builder(v.getContext())
-                        .setMessage(R.string.ask_delete_answer)
-                        .setPositiveButton(R.string.ok, (dialog, which) -> {
-                            EditPoll.Choice choice = choices.get(getLayoutPosition());
-                            //notifyItemRemoved(getLayoutPosition());
-                            if (choice.getIndex() > question.getBaseIndexOffset()) {
-                                int start = choice.getIndex();
-                                int end = question.getBaseIndexOffset() + question.getIndexOffset();
-                                for (int i = start; i <= end; i++) {
-                                    EditPoll.Choice c = EditPoll.findChoiceByIndex(question, i);
-                                    if (c != null) {
-                                        c.setIndex(c.getIndex() - 1);
-                                    }
+        init {
+            title.editText!!.addTextChangedListener(myCustomEditTextListener)
+            delete.setOnClickListener { v1: View? ->
+                AlertDialog.Builder(v.context)
+                    .setMessage(R.string.ask_delete_answer)
+                    .setPositiveButton(R.string.ok) { dialog: DialogInterface?, which: Int ->
+                        val choice = choices[layoutPosition]
+                        //notifyItemRemoved(getLayoutPosition());
+                        if (choice.index > question!!.baseIndexOffset) {
+                            val start = choice.index
+                            val end = question!!.baseIndexOffset + question!!.indexOffset
+                            for (i in start..end) {
+                                val c = findChoiceByIndex(
+                                    question!!, i
+                                )
+                                if (c != null) {
+                                    c.index = c.index - 1
                                 }
-                                question.reduceIndexOffset();
                             }
-                            choices.remove(getLayoutPosition());
-                            notifyDataSetChanged();
-                        })
-                        .setNegativeButton(R.string.no, null)
-                        .show();
-
-            });
+                            question!!.reduceIndexOffset()
+                        }
+                        choices.removeAt(layoutPosition)
+                        notifyDataSetChanged()
+                    }
+                    .setNegativeButton(R.string.no, null)
+                    .show()
+            }
         }
     }
 
-    private class MyCustomEditTextListener extends SimpleTextWatcher {
-        private int position;
+    inner class MyCustomEditTextListener : SimpleTextWatcher() {
+        private var position = 0
 
-        public void updatePosition(int position) {
-            this.position = position;
+        fun updatePosition(position: Int) {
+            this.position = position
         }
 
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            choices.get(position).setTitle(charSequence.toString());
+        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+            choices[position].title = s.toString()
         }
     }
 }

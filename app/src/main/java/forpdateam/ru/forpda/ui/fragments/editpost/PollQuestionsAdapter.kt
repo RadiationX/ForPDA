@@ -1,184 +1,170 @@
-package forpdateam.ru.forpda.ui.fragments.editpost;
+package forpdateam.ru.forpda.ui.fragments.editpost
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.ImageButton;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.appcompat.widget.AppCompatEditText;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.common.simple.SimpleTextWatcher;
-import forpdateam.ru.forpda.entity.remote.editpost.EditPoll;
+import android.content.DialogInterface
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.CompoundButton
+import android.widget.ImageButton
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatCheckBox
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import forpdateam.ru.forpda.App.Companion.get
+import forpdateam.ru.forpda.App.Companion.getContext
+import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
+import forpdateam.ru.forpda.entity.remote.editpost.EditPoll
+import forpdateam.ru.forpda.entity.remote.editpost.EditPoll.Companion.findQuestionByIndex
+import forpdateam.ru.forpda.entity.remote.editpost.EditPoll.Question
 
 /**
  * Created by radiationx on 28.07.17.
  */
+class PollQuestionsAdapter : RecyclerView.Adapter<PollQuestionsAdapter.ViewHolder> {
+    private var questions: MutableList<Question> = ArrayList()
+    private var poll: EditPoll? = null
+    private val choiceAdapters = HashMap<Question, PollChoicesAdapter>()
 
-public class PollQuestionsAdapter extends RecyclerView.Adapter<PollQuestionsAdapter.ViewHolder> {
-    private List<EditPoll.Question> questions = new ArrayList<>();
-    private EditPoll poll;
-    private final HashMap<EditPoll.Question, PollChoicesAdapter> choiceAdapters = new HashMap<>();
-
-    public PollQuestionsAdapter(List<EditPoll.Question> questions, EditPoll poll) {
-        this.questions = questions;
-        this.poll = poll;
+    constructor(questions: MutableList<Question>, poll: EditPoll?) {
+        this.questions = questions
+        this.poll = poll
     }
 
-    public PollQuestionsAdapter() {
-    }
+    constructor()
 
-    public void add(EditPoll.Question question) {
-        if (questions.size() < poll.getMaxQuestions()) {
-            poll.increaseIndexOffset();
-            question.setIndex(poll.getIndexOffset() + poll.getBaseIndexOffset());
-            this.questions.add(question);
+    fun add(question: Question) {
+        if (questions.size < poll!!.maxQuestions) {
+            poll!!.increaseIndexOffset()
+            question.index = poll!!.indexOffset + poll!!.baseIndexOffset
+            questions.add(question)
             //notifyItemInserted(questions.indexOf(question));
-            notifyDataSetChanged();
+            notifyDataSetChanged()
         } else {
-            Toast.makeText(App.getContext(), String.format(App.get().getString(R.string.poll_questions_Max), poll.getMaxQuestions()), Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                getContext(),
+                String.format(get().getString(R.string.poll_questions_Max), poll!!.maxQuestions),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
-    public EditPoll.Question getItem(int position) {
-        return questions.get(position);
+    fun getItem(position: Int): Question {
+        return questions[position]
     }
 
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.edit_poll_question, parent, false);
-        return new ViewHolder(v, new CustomTextWatcher(), new CustomCheckedChangeListener());
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val v =
+            LayoutInflater.from(parent.context).inflate(R.layout.edit_poll_question, parent, false)
+        return ViewHolder(v, CustomTextWatcher(), CustomCheckedChangeListener())
     }
 
-    @Override
-    public int getItemCount() {
-        return questions.size();
+    override fun getItemCount(): Int {
+        return questions.size
     }
 
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        EditPoll.Question item = getItem(holder.getAdapterPosition());
-        assert item != null;
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = checkNotNull(getItem(holder.adapterPosition))
+        val qstr =
+            String.format(get().getString(R.string.poll_question_Pos), (holder.adapterPosition + 1))
+        holder.customTextWatcher.updatePosition(holder.adapterPosition)
+        holder.checkedChangeListener.updatePosition(holder.adapterPosition)
 
-        String qstr = String.format(App.get().getString(R.string.poll_question_Pos), (holder.getAdapterPosition() + 1));
-        holder.customTextWatcher.updatePosition(holder.getAdapterPosition());
-        holder.checkedChangeListener.updatePosition(holder.getAdapterPosition());
+        holder.title.text = qstr
+        holder.titleField.setText(item.title)
+        holder.titleField.hint = qstr
 
-        holder.title.setText(qstr);
-        holder.titleField.setText(item.getTitle());
-        holder.titleField.setHint(qstr);
+        holder.multi.isChecked = item.isMulti
 
-        holder.multi.setChecked(item.isMulti());
-
-        PollChoicesAdapter choicesAdapter = choiceAdapters.get(item);
+        var choicesAdapter = choiceAdapters[item]
 
         if (choicesAdapter == null) {
-            choicesAdapter = new PollChoicesAdapter(item, poll);
-            choiceAdapters.put(item, choicesAdapter);
+            choicesAdapter = PollChoicesAdapter(item, poll)
+            choiceAdapters[item] = choicesAdapter
         }
 
 
-        holder.choices.setAdapter(choicesAdapter);
-
-
+        holder.choices.adapter = choicesAdapter
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public AppCompatTextView title;
-        public AppCompatEditText titleField;
-        public AppCompatCheckBox multi;
-        public RecyclerView choices;
-        public Button addChoice;
-        public ImageButton delete;
-        public CustomTextWatcher customTextWatcher;
-        public CustomCheckedChangeListener checkedChangeListener;
+    inner class ViewHolder(
+        v: View,
+        var customTextWatcher: CustomTextWatcher,
+        checkedChangeListener: CustomCheckedChangeListener
+    ) : RecyclerView.ViewHolder(v) {
+        var title: AppCompatTextView = v.findViewById(R.id.poll_question_title)
+        var titleField: AppCompatEditText = v.findViewById(R.id.poll_question_title_field)
+        var multi: AppCompatCheckBox = v.findViewById(R.id.poll_question_multi)
+        var choices: RecyclerView = v.findViewById(R.id.poll_question_choices)
+        var addChoice: Button = v.findViewById(R.id.poll_add_choice)
+        var delete: ImageButton = v.findViewById(R.id.poll_question_delete)
+        var checkedChangeListener: CustomCheckedChangeListener
 
-        public ViewHolder(View v, CustomTextWatcher customTextWatcher, CustomCheckedChangeListener checkedChangeListener) {
-            super(v);
-            title = v.findViewById(R.id.poll_question_title);
-            titleField = v.findViewById(R.id.poll_question_title_field);
-            multi = v.findViewById(R.id.poll_question_multi);
-            choices = v.findViewById(R.id.poll_question_choices);
-            addChoice = v.findViewById(R.id.poll_add_choice);
-            delete = v.findViewById(R.id.poll_question_delete);
+        init {
+            titleField.addTextChangedListener(customTextWatcher)
 
-            this.customTextWatcher = customTextWatcher;
-            this.titleField.addTextChangedListener(customTextWatcher);
+            this.checkedChangeListener = checkedChangeListener
+            multi.setOnCheckedChangeListener(checkedChangeListener)
 
-            this.checkedChangeListener = checkedChangeListener;
-            this.multi.setOnCheckedChangeListener(checkedChangeListener);
+            choices.layoutManager = LinearLayoutManager(choices.context)
 
-            choices.setLayoutManager(new LinearLayoutManager(choices.getContext()));
+            addChoice.setOnClickListener { v1: View? ->
+                val choicesAdapter = choiceAdapters[questions[layoutPosition]]
+                choicesAdapter!!.add(EditPoll.Choice())
+            }
 
-            addChoice.setOnClickListener(v1 -> {
-                PollChoicesAdapter choicesAdapter = choiceAdapters.get(questions.get(getLayoutPosition()));
-                choicesAdapter.add(new EditPoll.Choice());
-            });
-
-            delete.setOnClickListener(v1 -> {
-                new AlertDialog.Builder(v.getContext())
-                        .setMessage(R.string.ask_delete_question)
-                        .setPositiveButton(R.string.ok, (dialog, which) -> {
-                            EditPoll.Question question = questions.get(getLayoutPosition());
-
-                            if (question.getIndex() > poll.getBaseIndexOffset()) {
-                                int start = question.getIndex();
-                                int end = poll.getBaseIndexOffset() + poll.getIndexOffset();
-                                for (int i = start; i <= end; i++) {
-                                    EditPoll.Question q = EditPoll.findQuestionByIndex(poll, i);
-                                    if (q != null) {
-                                        q.setIndex(q.getIndex() - 1);
-                                    }
+            delete.setOnClickListener { v1: View? ->
+                AlertDialog.Builder(v.context)
+                    .setMessage(R.string.ask_delete_question)
+                    .setPositiveButton(R.string.ok) { dialog: DialogInterface?, which: Int ->
+                        val question = questions[layoutPosition]
+                        if (question.index > poll!!.baseIndexOffset) {
+                            val start = question.index
+                            val end = poll!!.baseIndexOffset + poll!!.indexOffset
+                            for (i in start..end) {
+                                val q = findQuestionByIndex(poll!!, i)
+                                if (q != null) {
+                                    q.index = q.index - 1
                                 }
-                                poll.reduceIndexOffset();
                             }
-                            questions.remove(question);
-                            choiceAdapters.remove(question);
-                            //notifyItemRemoved(getLayoutPosition());
-                            notifyDataSetChanged();
-                        })
-                        .setNegativeButton(R.string.no, null)
-                        .show();
-            });
+                            poll!!.reduceIndexOffset()
+                        }
+                        questions.remove(question)
+                        choiceAdapters.remove(question)
+                        //notifyItemRemoved(getLayoutPosition());
+                        notifyDataSetChanged()
+                    }
+                    .setNegativeButton(R.string.no, null)
+                    .show()
+            }
         }
     }
 
-    private class CustomTextWatcher extends SimpleTextWatcher {
-        private int position;
+    inner class CustomTextWatcher : SimpleTextWatcher() {
+        private var position = 0
 
-        public void updatePosition(int position) {
-            this.position = position;
+        fun updatePosition(position: Int) {
+            this.position = position
         }
 
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            questions.get(position).setTitle(charSequence.toString());
+        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+            questions[position].title = s.toString()
         }
     }
 
-    private class CustomCheckedChangeListener implements CompoundButton.OnCheckedChangeListener {
-        private int position;
+    inner class CustomCheckedChangeListener : CompoundButton.OnCheckedChangeListener {
+        private var position = 0
 
-        public void updatePosition(int position) {
-            this.position = position;
+        fun updatePosition(position: Int) {
+            this.position = position
         }
 
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            questions.get(position).setMulti(isChecked);
+        override fun onCheckedChanged(buttonView: CompoundButton, isChecked: Boolean) {
+            questions[position].isMulti = isChecked
         }
     }
 }

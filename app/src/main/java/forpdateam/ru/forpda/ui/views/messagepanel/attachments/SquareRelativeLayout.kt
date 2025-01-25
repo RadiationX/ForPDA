@@ -1,32 +1,31 @@
-package forpdateam.ru.forpda.ui.views.messagepanel.attachments;
+package forpdateam.ru.forpda.ui.views.messagepanel.attachments
 
-import android.content.Context;
-import android.util.AttributeSet;
-import android.widget.RelativeLayout;
+import android.content.Context
+import android.util.AttributeSet
+import android.widget.RelativeLayout
 
 /**
  * Created by radiationx on 09.01.17.
  */
+class SquareRelativeLayout : RelativeLayout {
+    constructor(context: Context?) : super(context)
 
-public class SquareRelativeLayout extends RelativeLayout {
-    public SquareRelativeLayout(Context context) {
-        super(context);
-    }
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
 
-    public SquareRelativeLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
 
-    public SquareRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
+    constructor(
+        context: Context?,
+        attrs: AttributeSet?,
+        defStyleAttr: Int,
+        defStyleRes: Int
+    ) : super(context, attrs, defStyleAttr, defStyleRes)
 
-    public SquareRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, widthMeasureSpec);
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, widthMeasureSpec)
     }
 }

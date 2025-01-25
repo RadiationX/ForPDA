@@ -1,64 +1,22 @@
-package forpdateam.ru.forpda.entity.app.history;
+package forpdateam.ru.forpda.entity.app.history
 
 /**
  * Created by radiationx on 01.01.18.
  */
+class HistoryItem : IHistoryItem {
+    override var id: Int = 0
+    override var url: String? = null
+    override var date: String? = null
+    override var title: String? = null
+    override var unixTime: Long = 0
 
-public class HistoryItem implements IHistoryItem {
-    private int id;
-    private String url;
-    private String date;
-    private String title;
-    private long unixTime;
+    constructor()
 
-    public HistoryItem() {
-    }
-
-    public HistoryItem(IHistoryItem item) {
-        this.id = item.getId();
-        this.url = item.getUrl();
-        this.date = item.getDate();
-        this.title = item.getTitle();
-        this.unixTime = item.getUnixTime();
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public long getUnixTime() {
-        return unixTime;
-    }
-
-    public void setUnixTime(long unixTime) {
-        this.unixTime = unixTime;
+    constructor(item: IHistoryItem) {
+        this.id = item.id
+        this.url = item.url
+        this.date = item.date
+        this.title = item.title
+        this.unixTime = item.unixTime
     }
 }

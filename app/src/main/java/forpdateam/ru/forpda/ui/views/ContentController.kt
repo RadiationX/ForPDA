@@ -1,13 +1,10 @@
-package forpdateam.ru.forpda.ui.views;
+package forpdateam.ru.forpda.ui.views
 
-import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
-
-import androidx.annotation.LayoutRes;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import java.util.HashMap;
+import android.content.Context
+import android.view.View
+import android.view.ViewGroup
+import androidx.annotation.LayoutRes
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
 /**
  * Created by radiationx on 05.10.17.
@@ -15,100 +12,98 @@ import java.util.HashMap;
 /*
  * Для управления и дополнительными вьюхами, когда нет данных и т.д.
  * */
-public class ContentController {
-    public final static String TAG_NO_DATA = "NO_DATA";
-    private View additionalRefresh;
-    private final ViewGroup additionalContent;
-    private View mainRefresh;
-    private ViewGroup mainContent;
-    private boolean firstLoad = true;
+class ContentController(
+    private var additionalRefresh: View?,
+    private val additionalContent: ViewGroup,
+    private var mainContent: ViewGroup?
+) {
+    private var mainRefresh: View? = null
+    private var firstLoad = true
 
-    private final HashMap<Object, View> contents = new HashMap<>();
+    private val contents = HashMap<Any, View?>()
 
-    public ContentController(View additionalRefresh, ViewGroup additionalContent, ViewGroup mainContent) {
-        this.additionalRefresh = additionalRefresh;
-        this.additionalContent = additionalContent;
-        this.mainContent = mainContent;
+
+    fun setMainRefresh(mainRefresh: View?) {
+        this.mainRefresh = mainRefresh
     }
 
-
-    public void setMainRefresh(View mainRefresh) {
-        this.mainRefresh = mainRefresh;
+    fun contains(tag: Any): Boolean {
+        return contents[tag] != null
     }
 
-    public boolean contains(Object tag) {
-        return contents.get(tag) != null;
-    }
-
-    public View addContent(View content, Object tag) {
-        View view = contents.get(tag);
+    fun addContent(content: View?, tag: Any): View {
+        var view = contents[tag]
         if (view == null) {
-            view = content;
-            view.setVisibility(View.GONE);
-            contents.put(tag, view);
-            additionalContent.addView(view, 0);
+            view = content
+            view!!.visibility = View.GONE
+            contents[tag] = view
+            additionalContent.addView(view, 0)
         }
-        return view;
+        return view
     }
 
-    public View addContent(Context context, @LayoutRes int id, Object tag) {
-        View view = contents.get(tag);
+    fun addContent(context: Context?, @LayoutRes id: Int, tag: Any): View {
+        var view = contents[tag]
         if (view == null) {
-            view = View.inflate(context, id, null);
-            view.setVisibility(View.GONE);
-            contents.put(tag, view);
-            additionalContent.addView(view, 0);
+            view = View.inflate(context, id, null)
+            view.setVisibility(View.GONE)
+            contents[tag] = view
+            additionalContent.addView(view, 0)
         }
-        return view;
+        return view!!
     }
 
-    public void showContent(Object tag) {
-        View view = contents.get(tag);
+    fun showContent(tag: Any) {
+        val view = contents[tag]
         if (view != null) {
-            view.setVisibility(View.VISIBLE);
+            view.visibility = View.VISIBLE
             //mainContent.setVisibility(View.GONE);
         }
     }
 
-    public void hideContent(Object tag) {
-        View view = contents.get(tag);
+    fun hideContent(tag: Any) {
+        val view = contents[tag]
         if (view != null) {
-            view.setVisibility(View.GONE);
+            view.visibility = View.GONE
             //mainContent.setVisibility(View.VISIBLE);
         }
     }
 
-    public void startRefreshing() {
+    fun startRefreshing() {
         if (firstLoad) {
-            mainContent.setVisibility(View.INVISIBLE);
-            additionalRefresh.setVisibility(View.VISIBLE);
+            mainContent!!.visibility = View.INVISIBLE
+            additionalRefresh!!.visibility = View.VISIBLE
         } else if (mainRefresh != null) {
-            if (mainRefresh instanceof SwipeRefreshLayout) {
-                ((SwipeRefreshLayout) mainRefresh).setRefreshing(true);
+            if (mainRefresh is SwipeRefreshLayout) {
+                (mainRefresh as SwipeRefreshLayout).isRefreshing = true
             }
         }
     }
 
-    public void stopRefreshing() {
+    fun stopRefreshing() {
         if (firstLoad) {
-            mainContent.setVisibility(View.VISIBLE);
-            additionalRefresh.setVisibility(View.GONE);
-            firstLoad = false;
+            mainContent!!.visibility = View.VISIBLE
+            additionalRefresh!!.visibility = View.GONE
+            firstLoad = false
         } else if (mainRefresh != null) {
-            if (mainRefresh instanceof SwipeRefreshLayout) {
-                ((SwipeRefreshLayout) mainRefresh).setRefreshing(false);
+            if (mainRefresh is SwipeRefreshLayout) {
+                (mainRefresh as SwipeRefreshLayout).isRefreshing = false
             }
         }
     }
 
-    public void setFirstLoad(boolean b) {
-        firstLoad = b;
+    fun setFirstLoad(b: Boolean) {
+        firstLoad = b
     }
 
-    public void destroy() {
-        additionalRefresh = null;
-        mainContent = null;
-        mainRefresh = null;
-        contents.clear();
+    fun destroy() {
+        additionalRefresh = null
+        mainContent = null
+        mainRefresh = null
+        contents.clear()
+    }
+
+    companion object {
+        const val TAG_NO_DATA: String = "NO_DATA"
     }
 }

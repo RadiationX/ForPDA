@@ -1,38 +1,37 @@
-package forpdateam.ru.forpda.ui.views;
+package forpdateam.ru.forpda.ui.views
 
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.CollapsingToolbarLayout
 
 /**
  * Created by radiationx on 26.08.17.
  */
+class ScrimHelper(appBarLayout: AppBarLayout, toolbarLayout: CollapsingToolbarLayout) {
+    private var scrimListener: ScrimListener? = null
+    private var scrim = false
 
-public class ScrimHelper {
-    private ScrimListener scrimListener;
-    private boolean scrim = false;
-
-    public ScrimHelper(AppBarLayout appBarLayout, CollapsingToolbarLayout toolbarLayout) {
-        appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
-            if (scrimListener == null) return;
-            if (appBarLayout1.getHeight() + verticalOffset <= toolbarLayout.getScrimVisibleHeightTrigger()) {
+    init {
+        appBarLayout.addOnOffsetChangedListener { appBarLayout1: AppBarLayout, verticalOffset: Int ->
+            if (scrimListener == null) return@addOnOffsetChangedListener
+            if (appBarLayout1.height + verticalOffset <= toolbarLayout.scrimVisibleHeightTrigger) {
                 if (!scrim) {
-                    scrim = true;
-                    scrimListener.onScrimChanged(true);
+                    scrim = true
+                    scrimListener!!.onScrimChanged(true)
                 }
             } else {
                 if (scrim) {
-                    scrim = false;
-                    scrimListener.onScrimChanged(false);
+                    scrim = false
+                    scrimListener!!.onScrimChanged(false)
                 }
             }
-        });
+        }
     }
 
-    public void setScrimListener(ScrimListener scrimListener) {
-        this.scrimListener = scrimListener;
+    fun setScrimListener(scrimListener: ScrimListener?) {
+        this.scrimListener = scrimListener
     }
 
-    public interface ScrimListener {
-        void onScrimChanged(boolean scrim);
+    interface ScrimListener {
+        fun onScrimChanged(scrim: Boolean)
     }
 }

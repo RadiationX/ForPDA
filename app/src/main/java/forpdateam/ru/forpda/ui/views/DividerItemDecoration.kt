@@ -1,56 +1,54 @@
-package forpdateam.ru.forpda.ui.views;
+package forpdateam.ru.forpda.ui.views
 
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
-import android.view.View;
-
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
+import android.R
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.drawable.Drawable
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 
 /**
  * Created by radiationx on 22.09.16.
  */
-
-public class DividerItemDecoration extends RecyclerView.ItemDecoration {
-
-    private static final int[] ATTRS = new int[]{android.R.attr.listDivider};
-
-    private final Drawable mDivider;
+class DividerItemDecoration : ItemDecoration {
+    private val mDivider: Drawable?
 
     /**
      * Default divider will be used
      */
-    public DividerItemDecoration(Context context) {
-        final TypedArray styledAttributes = context.obtainStyledAttributes(ATTRS);
-        mDivider = styledAttributes.getDrawable(0);
-        styledAttributes.recycle();
+    constructor(context: Context) {
+        val styledAttributes = context.obtainStyledAttributes(ATTRS)
+        mDivider = styledAttributes.getDrawable(0)
+        styledAttributes.recycle()
     }
 
     /**
      * Custom divider will be used
      */
-    public DividerItemDecoration(Context context, int resId) {
-        mDivider = ContextCompat.getDrawable(context, resId);
+    constructor(context: Context, resId: Int) {
+        mDivider = ContextCompat.getDrawable(context, resId)
     }
 
-    @Override
-    public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
-        int left = parent.getPaddingLeft();
-        int right = parent.getWidth() - parent.getPaddingRight();
+    override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
+        val left = parent.paddingLeft
+        val right = parent.width - parent.paddingRight
 
-        int childCount = parent.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            View child = parent.getChildAt(i);
+        val childCount = parent.childCount
+        for (i in 0 until childCount) {
+            val child = parent.getChildAt(i)
 
-            RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
+            val params = child.layoutParams as RecyclerView.LayoutParams
 
-            int top = child.getBottom() + params.bottomMargin;
-            int bottom = top + mDivider.getIntrinsicHeight();
+            val top = child.bottom + params.bottomMargin
+            val bottom = top + mDivider!!.intrinsicHeight
 
-            mDivider.setBounds(left, top, right, bottom);
-            mDivider.draw(c);
+            mDivider.setBounds(left, top, right, bottom)
+            mDivider.draw(c)
         }
+    }
+
+    companion object {
+        private val ATTRS = intArrayOf(R.attr.listDivider)
     }
 }

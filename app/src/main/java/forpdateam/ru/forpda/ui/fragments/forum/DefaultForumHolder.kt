@@ -1,57 +1,60 @@
-package forpdateam.ru.forpda.ui.fragments.forum;
+package forpdateam.ru.forpda.ui.fragments.forum
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.unnamed.b.atv.model.TreeNode;
-
-import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.entity.remote.forum.ForumItemTree;
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
+import com.unnamed.b.atv.model.TreeNode
+import com.unnamed.b.atv.model.TreeNode.BaseNodeViewHolder
+import forpdateam.ru.forpda.App.Companion.getDrawableResAttr
+import forpdateam.ru.forpda.App.Companion.getVecDrawable
+import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.entity.remote.forum.ForumItemTree
 
 /**
  * Created by radiationx on 28.02.17.
  */
+class DefaultForumHolder(context: Context?) : BaseNodeViewHolder<ForumItemTree>(context) {
+    var title: TextView? = null
+    var icon: ImageView? = null
+    var currentValue: ForumItemTree? = null
 
-public class DefaultForumHolder extends TreeNode.BaseNodeViewHolder<ForumItemTree> {
-    TextView title;
-    ImageView icon;
-    ForumItemTree currentValue;
+    override fun createNodeView(node: TreeNode, value: ForumItemTree): View {
+        val inflater = LayoutInflater.from(context)
+        val view = inflater.inflate(R.layout.forum_item_default, null, false)
+        title = view.findViewById(R.id.forum_item_title)
+        icon = view.findViewById(R.id.forum_item_icon)
 
-    public DefaultForumHolder(Context context) {
-        super(context);
-    }
+        currentValue = value
+        title!!.setText(value.title)
 
-    @Override
-    public View createNodeView(TreeNode node, ForumItemTree value) {
-        final LayoutInflater inflater = LayoutInflater.from(context);
-        final View view = inflater.inflate(R.layout.forum_item_default, null, false);
-        title = view.findViewById(R.id.forum_item_title);
-        icon = view.findViewById(R.id.forum_item_icon);
+        icon!!.setImageDrawable(
+            getVecDrawable(
+                context,
+                if (value.forums == null) R.drawable.ic_forum_go_to_topics else (if (node.isExpanded) R.drawable.ic_expand_less_black_24dp else R.drawable.ic_expand_more_black_24dp)
+            )
+        )
 
-        currentValue = value;
-        title.setText(value.getTitle());
-
-        icon.setImageDrawable(App.getVecDrawable(context, value.getForums() == null ? R.drawable.ic_forum_go_to_topics : (node.isExpanded() ? R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_more_black_24dp)));
-
-        if (value.getForums() == null) {
-            int bg = App.getDrawableResAttr(context, R.attr.count_background);
-            icon.setBackgroundResource(bg);
+        if (value.forums == null) {
+            val bg = getDrawableResAttr(context, R.attr.count_background)
+            icon!!.setBackgroundResource(bg)
         } else {
-            icon.setBackground(null);
+            icon!!.setBackground(null)
         }
 
-        return view;
+        return view
     }
 
-    @Override
-    public void toggle(boolean active) {
-        if (currentValue.getForums() != null) {
-            icon.setRotationY(active ? 1f : 0f);
-            icon.setImageDrawable(App.getVecDrawable(context, active ? R.drawable.ic_expand_less_black_24dp : R.drawable.ic_expand_more_black_24dp));
+    override fun toggle(active: Boolean) {
+        if (currentValue!!.forums != null) {
+            icon!!.rotationY = if (active) 1f else 0f
+            icon!!.setImageDrawable(
+                getVecDrawable(
+                    context,
+                    if (active) R.drawable.ic_expand_less_black_24dp else R.drawable.ic_expand_more_black_24dp
+                )
+            )
         }
     }
 }

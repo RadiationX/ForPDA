@@ -1,47 +1,43 @@
-package forpdateam.ru.forpda.ui.views.messagepanel.advanced.adapters;
+package forpdateam.ru.forpda.ui.views.messagepanel.advanced.adapters
 
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 
 /**
  * Created by radiationx on 26.05.17.
  */
-
-public class ItemDragCallback extends ItemTouchHelper.Callback {
-
-    private final ItemTouchHelperAdapter mAdapter;
-
-    public ItemDragCallback(ItemTouchHelperAdapter adapter) {
-        mAdapter = adapter;
+class ItemDragCallback(
+    private val mAdapter: ItemTouchHelperAdapter
+) : ItemTouchHelper.Callback() {
+    override fun isLongPressDragEnabled(): Boolean {
+        return true
     }
 
-    @Override
-    public boolean isLongPressDragEnabled() {
-        return true;
+    override fun getMovementFlags(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder
+    ): Int {
+        val dragFlags =
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        val swipeFlags = ItemTouchHelper.ACTION_STATE_IDLE
+        return makeMovementFlags(dragFlags, swipeFlags)
     }
 
-    @Override
-    public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-        int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
-        int swipeFlags = ItemTouchHelper.ACTION_STATE_IDLE;
-        return makeMovementFlags(dragFlags, swipeFlags);
+    override fun onMove(
+        recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
+        target: RecyclerView.ViewHolder
+    ): Boolean {
+        mAdapter.onItemMove(viewHolder.adapterPosition, target.adapterPosition)
+        return true
     }
 
-    @Override
-    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
-                          RecyclerView.ViewHolder target) {
-        mAdapter.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-        return true;
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        mAdapter.onItemDismiss(viewHolder.adapterPosition)
     }
 
-    @Override
-    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-        mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
-    }
+    interface ItemTouchHelperAdapter {
+        fun onItemMove(fromPosition: Int, toPosition: Int)
 
-    public interface ItemTouchHelperAdapter {
-        void onItemMove(int fromPosition, int toPosition);
-
-        void onItemDismiss(int position);
+        fun onItemDismiss(position: Int)
     }
 }

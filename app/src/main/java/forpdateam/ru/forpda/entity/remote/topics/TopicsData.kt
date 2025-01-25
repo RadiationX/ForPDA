@@ -1,85 +1,57 @@
-package forpdateam.ru.forpda.entity.remote.topics;
+package forpdateam.ru.forpda.entity.remote.topics
 
-import java.util.ArrayList;
-import java.util.List;
-
-import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination;
+import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 
 /**
  * Created by radiationx on 01.03.17.
  */
+class TopicsData {
+    private var canCreateTopic = false
+    var id: Int = 0
+    var title: String? = null
+    private val topicItems: MutableList<TopicItem> = ArrayList()
+    private val pinnedItems: MutableList<TopicItem> = ArrayList()
+    private val announceItems: MutableList<TopicItem> = ArrayList()
+    private val forumItems: MutableList<TopicItem> = ArrayList()
+    var pagination: Pagination = Pagination()
 
-public class TopicsData {
-    private boolean canCreateTopic = false;
-    private int id;
-    private String title;
-    private final List<TopicItem> topicItems = new ArrayList<>();
-    private final List<TopicItem> pinnedItems = new ArrayList<>();
-    private final List<TopicItem> announceItems = new ArrayList<>();
-    private final List<TopicItem> forumItems = new ArrayList<>();
-    private Pagination pagination = new Pagination();
-
-    public boolean canCreateTopic() {
-        return canCreateTopic;
+    fun canCreateTopic(): Boolean {
+        return canCreateTopic
     }
 
-    public void setCanCreateTopic(boolean canCreateTopic) {
-        this.canCreateTopic = canCreateTopic;
+    fun setCanCreateTopic(canCreateTopic: Boolean) {
+        this.canCreateTopic = canCreateTopic
     }
 
-    public int getId() {
-        return id;
+    fun getTopicItems(): List<TopicItem> {
+        return topicItems
     }
 
-    public void setId(int id) {
-        this.id = id;
+    fun addTopicItem(topicItem: TopicItem) {
+        topicItems.add(topicItem)
     }
 
-    public String getTitle() {
-        return title;
+    fun getAnnounceItems(): List<TopicItem> {
+        return announceItems
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    fun addAnnounceItem(announceItem: TopicItem) {
+        announceItems.add(announceItem)
     }
 
-    public List<TopicItem> getTopicItems() {
-        return topicItems;
+    fun getPinnedItems(): List<TopicItem> {
+        return pinnedItems
     }
 
-    public void addTopicItem(TopicItem topicItem) {
-        this.topicItems.add(topicItem);
+    fun addPinnedItem(pinnedItem: TopicItem) {
+        pinnedItems.add(pinnedItem)
     }
 
-    public List<TopicItem> getAnnounceItems() {
-        return announceItems;
+    fun getForumItems(): List<TopicItem> {
+        return forumItems
     }
 
-    public void addAnnounceItem(TopicItem announceItem) {
-        this.announceItems.add(announceItem);
-    }
-
-    public List<TopicItem> getPinnedItems() {
-        return pinnedItems;
-    }
-
-    public void addPinnedItem(TopicItem pinnedItem) {
-        this.pinnedItems.add(pinnedItem);
-    }
-
-    public List<TopicItem> getForumItems() {
-        return forumItems;
-    }
-
-    public void addForumItem(TopicItem forumItem) {
-        this.forumItems.add(forumItem);
-    }
-
-    public Pagination getPagination() {
-        return pagination;
-    }
-
-    public void setPagination(Pagination pagination) {
-        this.pagination = pagination;
+    fun addForumItem(forumItem: TopicItem) {
+        forumItems.add(forumItem)
     }
 }

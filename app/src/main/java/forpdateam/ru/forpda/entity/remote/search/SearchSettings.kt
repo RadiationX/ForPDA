@@ -1,290 +1,236 @@
-package forpdateam.ru.forpda.entity.remote.search;
+package forpdateam.ru.forpda.entity.remote.search
 
-import android.net.Uri;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import kotlin.Pair;
+import android.net.Uri
+import java.io.UnsupportedEncodingException
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.util.Locale
+import java.util.regex.Pattern
 
 /**
  * Created by radiationx on 01.02.17.
  */
+class SearchSettings {
+    var resourceType: String
+    var result: String?
+    var sort: String?
+    var source: String?
+    private var query = ""
+    private var nick = ""
+    var subforums: String?
+    var excludeTrash: Int = 0
+    var st: Int = 0
+    private val forums: MutableList<String?>
+    private val topics: MutableList<String?>
 
-public class SearchSettings {
-    private final static Pattern argsPattern = Pattern.compile("(?:\\?|\\&)([^=]*?)=([\\s\\S]*?)(?=&| |$)");
-    public final static Pair<String, String> RESOURCE_NEWS = new Pair<>("news", "Новости");
-    public final static Pair<String, String> RESOURCE_FORUM = new Pair<>("forum", "Форум");
-
-    public final static String ARG_RESULT = "result";
-    public final static String ARG_SORT = "sort";
-    public final static String ARG_SOURCE = "source";
-    public final static String ARG_QUERY_FORUM = "query";
-    public final static String ARG_QUERY_NEWS = "s";
-    public final static String ARG_NICK = "username";
-    public final static String ARG_FORUMS_SIMPLE = "forums";
-    public final static String ARG_TOPICS_SIMPLE = "topics";
-    public final static String ARG_FORUMS = "forums%5b%5d";
-    public final static String ARG_TOPICS = "topics%5b%5d";
-    public final static String ARG_SUB_FORUMS = "subforums";
-    public final static String ARG_NO_FORM = "noform";
-    public final static String ARG_ST = "st";
-    public final static String ARG_USER_ID = "username-id";
-    public final static String ARG_EXCLUDE_TRASH = "exclude_trash";
-
-    public final static Pair<String, String> RESULT_TOPICS = new Pair<>("topics", "Темы");
-    public final static Pair<String, String> RESULT_POSTS = new Pair<>("posts", "Сообщения");
-
-    public final static Pair<String, String> SORT_DA = new Pair<>("da", "Возрастание даты");
-    public final static Pair<String, String> SORT_DD = new Pair<>("dd", "Убывание даты");
-    public final static Pair<String, String> SORT_REL = new Pair<>("rel", "Соответствие");
-
-    public final static Pair<String, String> SOURCE_ALL = new Pair<>("all", "Везде");
-    public final static Pair<String, String> SOURCE_TITLES = new Pair<>("top", "Заголовки");
-    public final static Pair<String, String> SOURCE_CONTENT = new Pair<>("pst", "Содержание");
-
-    public final static String SUB_FORUMS_TRUE = "1";
-    public final static String SUB_FORUMS_FALSE = "0";
-
-    private String resourceType, result, sort, source, query, nick, subforums;
-    private int excludeTrash;
-    private int st = 0;
-    private final List<String> forums;
-    private final List<String> topics;
-
-    public SearchSettings() {
-        resourceType = RESOURCE_FORUM.getFirst();
-        result = RESULT_TOPICS.getFirst();
-        sort = SORT_DD.getFirst();
-        source = SOURCE_TITLES.getFirst();
-        query = "";
-        nick = "";
-        subforums = SUB_FORUMS_TRUE;
-        forums = new ArrayList<>();
-        topics = new ArrayList<>();
+    init {
+        resourceType = RESOURCE_FORUM.first
+        result = RESULT_TOPICS.first
+        sort = SORT_DD.first
+        source = SOURCE_TITLES.first
+        subforums = SUB_FORUMS_TRUE
+        forums = ArrayList()
+        topics = ArrayList()
     }
 
 
-    public String getResourceType() {
-        return resourceType;
+    fun getQuery(): String? {
+        return query
     }
 
-    public void setResourceType(String resourceType) {
-        this.resourceType = resourceType;
+    fun setQuery(query: String) {
+        this.query = query
     }
 
-    public String getResult() {
-        return result;
+    fun getNick(): String? {
+        return nick
     }
 
-    public void setResult(String result) {
-        this.result = result;
+    fun setNick(nick: String) {
+        this.nick = nick
     }
 
-    public String getSort() {
-        return sort;
+    fun getForums(): List<String?> {
+        return forums
     }
 
-    public void setSort(String sort) {
-        this.sort = sort;
+    fun addForum(forum: String?) {
+        forums.add(forum)
     }
 
-    public String getSource() {
-        return source;
+    fun getTopics(): List<String?> {
+        return topics
     }
 
-    public void setSource(String source) {
-        this.source = source;
+    fun addTopic(topic: String?) {
+        topics.add(topic)
     }
 
-    public String getQuery() {
-        return query;
+    fun toUrl(): String {
+        return Companion.toUrl(this)
     }
 
-    public void setQuery(String query) {
-        this.query = query;
-    }
+    companion object {
+        private val argsPattern: Pattern =
+            Pattern.compile("(?:\\?|\\&)([^=]*?)=([\\s\\S]*?)(?=&| |$)")
+        val RESOURCE_NEWS: Pair<String, String> = Pair("news", "Новости")
+        val RESOURCE_FORUM: Pair<String, String> = Pair("forum", "Форум")
 
-    public String getNick() {
-        return nick;
-    }
+        const val ARG_RESULT: String = "result"
+        const val ARG_SORT: String = "sort"
+        const val ARG_SOURCE: String = "source"
+        const val ARG_QUERY_FORUM: String = "query"
+        const val ARG_QUERY_NEWS: String = "s"
+        const val ARG_NICK: String = "username"
+        const val ARG_FORUMS_SIMPLE: String = "forums"
+        const val ARG_TOPICS_SIMPLE: String = "topics"
+        const val ARG_FORUMS: String = "forums%5b%5d"
+        const val ARG_TOPICS: String = "topics%5b%5d"
+        const val ARG_SUB_FORUMS: String = "subforums"
+        const val ARG_NO_FORM: String = "noform"
+        const val ARG_ST: String = "st"
+        const val ARG_USER_ID: String = "username-id"
+        const val ARG_EXCLUDE_TRASH: String = "exclude_trash"
 
-    public void setNick(String nick) {
-        this.nick = nick;
-    }
+        val RESULT_TOPICS: Pair<String, String> = Pair("topics", "Темы")
+        val RESULT_POSTS: Pair<String, String> = Pair("posts", "Сообщения")
 
-    public List<String> getForums() {
-        return forums;
-    }
+        val SORT_DA: Pair<String, String> = Pair("da", "Возрастание даты")
+        val SORT_DD: Pair<String, String> = Pair("dd", "Убывание даты")
+        val SORT_REL: Pair<String, String> = Pair("rel", "Соответствие")
 
-    public void addForum(String forum) {
-        forums.add(forum);
-    }
+        val SOURCE_ALL: Pair<String, String> = Pair("all", "Везде")
+        val SOURCE_TITLES: Pair<String, String> = Pair("top", "Заголовки")
+        val SOURCE_CONTENT: Pair<String, String> = Pair("pst", "Содержание")
 
-    public List<String> getTopics() {
-        return topics;
-    }
+        const val SUB_FORUMS_TRUE: String = "1"
+        const val SUB_FORUMS_FALSE: String = "0"
 
-    public void addTopic(String topic) {
-        topics.add(topic);
-    }
-
-    public String getSubforums() {
-        return subforums;
-    }
-
-    public void setSubforums(String subforums) {
-        this.subforums = subforums;
-    }
-
-    public int getExcludeTrash() {
-        return excludeTrash;
-    }
-
-    public void setExcludeTrash(int excludeTrash) {
-        this.excludeTrash = excludeTrash;
-    }
-
-    public static SearchSettings parseSettings(String url) {
-        return parseSettings(new SearchSettings(), url);
-    }
-
-    public static SearchSettings parseSettings(SearchSettings settings, String url) {
-        Matcher matcher = argsPattern.matcher(url);
-        String name, value;
-        while (matcher.find()) {
-            name = matcher.group(1).toLowerCase();
-            value = matcher.group(2);
-            switch (name) {
-                case SearchSettings.ARG_ST:
-                    settings.setSt(Integer.parseInt(value));
-                    break;
-                case SearchSettings.ARG_RESULT:
-                    settings.setResult(value);
-                    break;
-                case SearchSettings.ARG_SORT:
-                    settings.setSort(value);
-                    break;
-                case SearchSettings.ARG_SOURCE:
-                    settings.setSource(value);
-                    break;
-                case SearchSettings.ARG_QUERY_FORUM:
-                    settings.setResourceType(SearchSettings.RESOURCE_FORUM.getFirst());
-                    try {
-                        settings.setQuery(URLDecoder.decode(value, "windows-1251"));
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case SearchSettings.ARG_QUERY_NEWS:
-                    settings.setResourceType(SearchSettings.RESOURCE_NEWS.getFirst());
-                    try {
-                        settings.setQuery(URLDecoder.decode(value, "windows-1251"));
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case SearchSettings.ARG_NICK:
-                    try {
-                        settings.setNick(URLDecoder.decode(value, "windows-1251"));
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case SearchSettings.ARG_SUB_FORUMS:
-                    settings.setSubforums(value);
-                    break;
-                case SearchSettings.ARG_EXCLUDE_TRASH:
-                    settings.setExcludeTrash(Integer.parseInt(value));
-                    break;
-            }
-
-            if (name.equals(SearchSettings.ARG_FORUMS) || name.equals(SearchSettings.ARG_FORUMS_SIMPLE)) {
-                try {
-                    settings.addForum(value);
-                } catch (NumberFormatException ignore) {
-                }
-            }
-            if (name.equals(SearchSettings.ARG_TOPICS) || name.equals(SearchSettings.ARG_TOPICS_SIMPLE)) {
-                try {
-                    settings.addTopic(value);
-                } catch (NumberFormatException ignore) {
-                }
-            }
+        fun parseSettings(url: String): SearchSettings {
+            return parseSettings(SearchSettings(), url)
         }
-        return settings;
-    }
 
-    public String toUrl() {
-        return toUrl(this);
-    }
+        fun parseSettings(settings: SearchSettings, url: String): SearchSettings {
+            val matcher = argsPattern.matcher(url)
+            var name: String
+            var value: String?
+            while (matcher.find()) {
+                name = matcher.group(1).lowercase(Locale.getDefault())
+                value = matcher.group(2)
+                when (name) {
+                    ARG_ST -> settings.st = value.toInt()
+                    ARG_RESULT -> settings.result = value
+                    ARG_SORT -> settings.sort = value
+                    ARG_SOURCE -> settings.source = value
+                    ARG_QUERY_FORUM -> {
+                        settings.resourceType = RESOURCE_FORUM.first
+                        try {
+                            settings.setQuery(URLDecoder.decode(value, "windows-1251"))
+                        } catch (e: UnsupportedEncodingException) {
+                            e.printStackTrace()
+                        }
+                    }
 
-    public static String toUrl(SearchSettings settings) {
-        Uri.Builder builder = new Uri.Builder();
-        builder.scheme("https")
-                .authority("4pda.to");
-        if (settings.getResourceType().equals(RESOURCE_NEWS.getFirst())) {
-            builder.appendPath("page");
-            builder.appendPath(Integer.toString(settings.getSt()));
+                    ARG_QUERY_NEWS -> {
+                        settings.resourceType = RESOURCE_NEWS.first
+                        try {
+                            settings.setQuery(URLDecoder.decode(value, "windows-1251"))
+                        } catch (e: UnsupportedEncodingException) {
+                            e.printStackTrace()
+                        }
+                    }
+
+                    ARG_NICK -> try {
+                        settings.setNick(URLDecoder.decode(value, "windows-1251"))
+                    } catch (e: UnsupportedEncodingException) {
+                        e.printStackTrace()
+                    }
+
+                    ARG_SUB_FORUMS -> settings.subforums = value
+                    ARG_EXCLUDE_TRASH -> settings.excludeTrash =
+                        value.toInt()
+                }
+
+                if (name == ARG_FORUMS || name == ARG_FORUMS_SIMPLE) {
+                    try {
+                        settings.addForum(value)
+                    } catch (ignore: NumberFormatException) {
+                    }
+                }
+                if (name == ARG_TOPICS || name == ARG_TOPICS_SIMPLE) {
+                    try {
+                        settings.addTopic(value)
+                    } catch (ignore: NumberFormatException) {
+                    }
+                }
+            }
+            return settings
+        }
+
+        fun toUrl(settings: SearchSettings): String {
+            val builder = Uri.Builder()
+            builder.scheme("https")
+                .authority("4pda.to")
+            if (settings.resourceType == RESOURCE_NEWS.first) {
+                builder.appendPath("page")
+                builder.appendPath(settings.st.toString())
+                try {
+                    builder.appendQueryParameter(
+                        ARG_QUERY_NEWS,
+                        URLEncoder.encode(settings.getQuery(), "windows-1251")
+                    )
+                } catch (e: UnsupportedEncodingException) {
+                    e.printStackTrace()
+                }
+            } else {
+                builder.appendPath("forum")
+                builder.appendQueryParameter("act", "search")
+                builder.appendQueryParameter(ARG_RESULT, settings.result)
+                builder.appendQueryParameter(ARG_SORT, settings.sort)
+                builder.appendQueryParameter(ARG_SOURCE, settings.source)
+                if (settings.getQuery() != null && !settings.getQuery()!!.isEmpty()) {
+                    try {
+                        builder.appendQueryParameter(
+                            ARG_QUERY_FORUM,
+                            URLEncoder.encode(settings.getQuery(), "windows-1251")
+                        )
+                    } catch (e: UnsupportedEncodingException) {
+                        e.printStackTrace()
+                    }
+                }
+                if (settings.getNick() != null && !settings.getNick()!!.isEmpty()) {
+                    try {
+                        builder.appendQueryParameter(
+                            ARG_NICK,
+                            URLEncoder.encode(settings.getNick(), "windows-1251")
+                        )
+                    } catch (e: UnsupportedEncodingException) {
+                        e.printStackTrace()
+                    }
+                }
+
+                for (forum in settings.getForums()) builder.appendQueryParameter(ARG_FORUMS, forum)
+
+                for (topic in settings.getTopics()) builder.appendQueryParameter(ARG_TOPICS, topic)
+
+                if (settings.subforums != null) {
+                    builder.appendQueryParameter(
+                        ARG_SUB_FORUMS,
+                        settings.subforums
+                    )
+                }
+                builder.appendQueryParameter(ARG_NO_FORM, "1")
+                builder.appendQueryParameter(ARG_ST, settings.st.toString())
+                builder.appendQueryParameter(ARG_EXCLUDE_TRASH, settings.excludeTrash.toString())
+            }
+
+            val url = builder.build().toString()
             try {
-                builder.appendQueryParameter(ARG_QUERY_NEWS, URLEncoder.encode(settings.getQuery(), "windows-1251"));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                return URLDecoder.decode(url, "UTF-8")
+            } catch (e: UnsupportedEncodingException) {
+                e.printStackTrace()
             }
-        } else {
-            builder.appendPath("forum");
-            builder.appendQueryParameter("act", "search");
-            builder.appendQueryParameter(ARG_RESULT, settings.getResult());
-            builder.appendQueryParameter(ARG_SORT, settings.getSort());
-            builder.appendQueryParameter(ARG_SOURCE, settings.getSource());
-            if (settings.getQuery() != null && !settings.getQuery().isEmpty()) {
-                try {
-                    builder.appendQueryParameter(ARG_QUERY_FORUM, URLEncoder.encode(settings.getQuery(), "windows-1251"));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (settings.getNick() != null && !settings.getNick().isEmpty()) {
-                try {
-                    builder.appendQueryParameter(ARG_NICK, URLEncoder.encode(settings.getNick(), "windows-1251"));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            for (String forum : settings.getForums())
-                builder.appendQueryParameter(ARG_FORUMS, forum);
-
-            for (String topic : settings.getTopics())
-                builder.appendQueryParameter(ARG_TOPICS, topic);
-
-            if (settings.getSubforums() != null) {
-                builder.appendQueryParameter(ARG_SUB_FORUMS, settings.getSubforums());
-            }
-            builder.appendQueryParameter(ARG_NO_FORM, "1");
-            builder.appendQueryParameter(ARG_ST, Integer.toString(settings.getSt()));
-            builder.appendQueryParameter(ARG_EXCLUDE_TRASH, Integer.toString(settings.getExcludeTrash()));
+            return url
         }
-
-        String url = builder.build().toString();
-        try {
-            return URLDecoder.decode(url, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return url;
-    }
-
-    public int getSt() {
-        return st;
-    }
-
-    public void setSt(int st) {
-        this.st = st;
     }
 }

@@ -116,8 +116,7 @@ class DevicesFragment : TabFragment(), DevicesView,
             }
         }
 
-        recyclerView.addOnScrollListener(object :
-            RecyclerView.OnScrollListener() {
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(
                 recyclerView: RecyclerView,
                 dx: Int,

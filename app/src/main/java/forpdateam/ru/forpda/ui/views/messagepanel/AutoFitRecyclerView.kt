@@ -1,65 +1,60 @@
-package forpdateam.ru.forpda.ui.views.messagepanel;
+package forpdateam.ru.forpda.ui.views.messagepanel
 
-import android.content.Context;
-import android.util.AttributeSet;
-
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import forpdateam.ru.forpda.App;
+import android.content.Context
+import android.util.AttributeSet
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import forpdateam.ru.forpda.App
+import kotlin.math.max
 
 /**
  * Created by radiationx on 08.01.17.
  */
+class AutoFitRecyclerView : RecyclerView {
+    var manager: GridLayoutManager? = null
+        private set
+    private var columnWidth = App.px48 //default value
+    private var isLinear = false
 
-public class AutoFitRecyclerView extends RecyclerView {
-    private GridLayoutManager manager;
-    private int columnWidth = App.px48; //default value
-    private boolean isLinear = false;
-
-    public AutoFitRecyclerView(Context context) {
-        super(context);
-        init();
+    constructor(context: Context) : super(context) {
+        init()
     }
 
-    public AutoFitRecyclerView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        init()
     }
 
-    public AutoFitRecyclerView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init();
+    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(
+        context,
+        attrs,
+        defStyle
+    ) {
+        init()
     }
 
-    private void init() {
-        manager = new GridLayoutManager(getContext(), 1);
-        setLayoutManager(manager);
+    private fun init() {
+        manager = GridLayoutManager(context, 1)
+        layoutManager = manager
     }
 
-    public void setColumnWidth(int columnWidth) {
-        this.columnWidth = columnWidth;
-        invalidate();
+    fun setColumnWidth(columnWidth: Int) {
+        this.columnWidth = columnWidth
+        invalidate()
     }
 
-    public void setFakeLinear(boolean linear) {
-        isLinear = linear;
-        invalidate();
+    fun setFakeLinear(linear: Boolean) {
+        isLinear = linear
+        invalidate()
     }
 
-    public GridLayoutManager getManager() {
-        return manager;
-    }
-
-    @Override
-    protected void onMeasure(int widthSpec, int heightSpec) {
-        super.onMeasure(widthSpec, heightSpec);
+    override fun onMeasure(widthSpec: Int, heightSpec: Int) {
+        super.onMeasure(widthSpec, heightSpec)
         if (isLinear || columnWidth <= 0) {
-            manager.setSpanCount(1);
+            manager!!.spanCount = 1
         } else {
-            int spanCount = Math.max(1, getMeasuredWidth() / columnWidth);
-            manager.setSpanCount(spanCount);
+            val spanCount =
+                max(1.0, (measuredWidth / columnWidth).toDouble()).toInt()
+            manager!!.spanCount = spanCount
         }
-
     }
 }

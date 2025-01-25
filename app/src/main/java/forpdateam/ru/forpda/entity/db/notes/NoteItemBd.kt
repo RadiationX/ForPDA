@@ -1,68 +1,25 @@
-package forpdateam.ru.forpda.entity.db.notes;
+package forpdateam.ru.forpda.entity.db.notes
 
-import forpdateam.ru.forpda.entity.app.notes.INoteItem;
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import forpdateam.ru.forpda.entity.app.notes.INoteItem
+import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
 
 /**
  * Created by radiationx on 06.09.17.
  */
-
-public class NoteItemBd extends RealmObject implements INoteItem {
-
+class NoteItemBd : RealmObject, INoteItem {
     @PrimaryKey
-    private long id;
-    private String title;
-    private String link;
-    private String content;
+    override var id: Long = 0
+    override var title: String? = null
+    override var link: String? = null
+    override var content: String? = null
 
-    public NoteItemBd() {
-    }
+    constructor()
 
-    public NoteItemBd(INoteItem item) {
-        id = item.getId();
-        title = item.getTitle();
-        link = item.getLink();
-        content = item.getContent();
-    }
-
-    @Override
-    public long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    @Override
-    public String getTitle() {
-        return title;
-    }
-
-    @Override
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    @Override
-    public String getLink() {
-        return link;
-    }
-
-    @Override
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-    @Override
-    public String getContent() {
-        return content;
-    }
-
-    @Override
-    public void setContent(String content) {
-        this.content = content;
+    constructor(item: INoteItem) {
+        id = item.id
+        title = item.title
+        link = item.link
+        content = item.content
     }
 }

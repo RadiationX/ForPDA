@@ -1,25 +1,14 @@
-package forpdateam.ru.forpda.entity.app.notes;
+package forpdateam.ru.forpda.entity.app.notes
 
 /**
  * Created by radiationx on 06.09.17.
  */
+interface INoteItem {
+    var id: Long
 
-public interface INoteItem {
+    var title: String?
 
-    long getId();
+    var link: String?
 
-    String getTitle();
-
-    String getLink();
-
-    String getContent();
-
-    void setId(long id);
-
-    void setTitle(String title);
-
-    void setLink(String link);
-
-    void setContent(String content);
-
+    var content: String?
 }

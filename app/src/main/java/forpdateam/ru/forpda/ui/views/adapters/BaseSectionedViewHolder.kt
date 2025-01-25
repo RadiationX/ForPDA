@@ -1,31 +1,24 @@
-package forpdateam.ru.forpda.ui.views.adapters;
+package forpdateam.ru.forpda.ui.views.adapters
 
-import android.view.View;
-
-import com.afollestad.sectionedrecyclerview.SectionedViewHolder;
+import android.view.View
+import com.afollestad.sectionedrecyclerview.SectionedViewHolder
 
 /**
  * Created by radiationx on 14.09.17.
  */
-
-public class BaseSectionedViewHolder<T> extends SectionedViewHolder {
-    public BaseSectionedViewHolder(View itemView) {
-        super(itemView);
+open class BaseSectionedViewHolder<T>(itemView: View) : SectionedViewHolder(itemView) {
+    open fun bind(item: T, section: Int, relativePosition: Int, absolutePosition: Int) {
     }
 
-
-    public void bind(T item, int section, int relativePosition, int absolutePosition) {
+    fun bind(item: T, section: Int) {
     }
 
-    public void bind(T item, int section) {
+    open fun bind(item: T) {
     }
 
-    public void bind(T item) {
+    open fun bind(section: Int) {
     }
 
-    public void bind(int section) {
-    }
-
-    public void bind() {
+    fun bind() {
     }
 }

@@ -263,7 +263,7 @@ class AttachmentsPopup(context: Context, private val messagePanel: MessagePanel)
         val loadingItems = ArrayList<AttachmentItem>()
         for (file in files) {
             val item = AttachmentItem(file.fileName)
-            item.setProgressListener { percent ->
+            item.progressListener = { percent ->
 
             }
             Log.d(LOG_TAG, "Add loading item $item")

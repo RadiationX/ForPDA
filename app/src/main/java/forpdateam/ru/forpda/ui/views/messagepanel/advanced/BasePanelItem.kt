@@ -1,31 +1,24 @@
-package forpdateam.ru.forpda.ui.views.messagepanel.advanced;
+package forpdateam.ru.forpda.ui.views.messagepanel.advanced
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.widget.FrameLayout;
-
-import forpdateam.ru.forpda.ui.views.messagepanel.AutoFitRecyclerView;
-import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel;
+import android.annotation.SuppressLint
+import android.content.Context
+import android.widget.FrameLayout
+import forpdateam.ru.forpda.ui.views.messagepanel.AutoFitRecyclerView
+import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
 
 /**
  * Created by radiationx on 08.01.17.
  */
-
 @SuppressLint("ViewConstructor")
-public class BasePanelItem extends FrameLayout {
-    private final String title;
-    protected MessagePanel messagePanel;
-    protected AutoFitRecyclerView recyclerView;
+open class BasePanelItem(
+    context: Context,
+    @JvmField protected var messagePanel: MessagePanel,
+    val title: String
+) : FrameLayout(context) {
+    @JvmField
+    protected var recyclerView: AutoFitRecyclerView = AutoFitRecyclerView(context)
 
-    public BasePanelItem(Context context, MessagePanel messagePanel, String title) {
-        super(context);
-        this.messagePanel = messagePanel;
-        this.title = title;
-        recyclerView = new AutoFitRecyclerView(context);
-        addView(recyclerView);
-    }
-
-    public String getTitle() {
-        return title;
+    init {
+        addView(recyclerView)
     }
 }

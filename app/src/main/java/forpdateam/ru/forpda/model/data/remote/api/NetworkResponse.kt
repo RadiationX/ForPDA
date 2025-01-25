@@ -1,62 +1,21 @@
-package forpdateam.ru.forpda.model.data.remote.api;
+package forpdateam.ru.forpda.model.data.remote.api
 
 /**
  * Created by radiationx on 07.07.17.
  */
+class NetworkResponse(url: String) {
+    var code: Int = 0
+    var message: String = ""
+    var url: String = ""
+    var redirect: String = url
+    @JvmField
+    var body: String = ""
 
-public class NetworkResponse {
-    private int code = 0;
-    private String message = "";
-    private String url = "";
-    private String redirect = url;
-    private String body = "";
-
-    public NetworkResponse(String url) {
-        this.url = url;
+    init {
+        this.url = url
     }
 
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getRedirect() {
-        return redirect;
-    }
-
-    public void setRedirect(String redirect) {
-        this.redirect = redirect;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    @Override
-    public String toString() {
-        return "NetworkResponse{" + code + ", " + message + ", " + url + ", " + redirect + ", " + body.length() + "}";
+    override fun toString(): String {
+        return "NetworkResponse{" + code + ", " + message + ", " + url + ", " + redirect + ", " + body.length + "}"
     }
 }

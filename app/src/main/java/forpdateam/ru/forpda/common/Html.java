@@ -1216,7 +1216,7 @@ class HtmlToSpannedConverter implements ContentHandler {
         Font font = getLast(text, Font.class);
         if (font != null) {
             if (font.mFace.equalsIgnoreCase("fontello")) {
-                setSpanFromMark(text, font, new AssetsTypefaceSpan(App.getContext(), "fontello/fontello.ttf"));
+                setSpanFromMark(text, font, new AssetsTypefaceSpan("fontello/fontello.ttf"));
             }
         }
         Strikethrough s = getLast(text, Strikethrough.class);

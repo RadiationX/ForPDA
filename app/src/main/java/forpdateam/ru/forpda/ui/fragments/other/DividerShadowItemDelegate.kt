@@ -27,6 +27,5 @@ class DividerShadowItemDelegate : AdapterDelegate<MutableList<ListItem>>() {
                 .inflate(R.layout.item_other_divider_shadow, parent, false)
         )
 
-    private class ViewHolder(view: View) :
-        RecyclerView.ViewHolder(view)
+    private class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 }

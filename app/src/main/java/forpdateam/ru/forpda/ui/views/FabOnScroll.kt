@@ -1,101 +1,133 @@
-package forpdateam.ru.forpda.ui.views;
+package forpdateam.ru.forpda.ui.views
 
-import android.content.Context;
-import android.os.Handler;
-import android.util.AttributeSet;
-import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Interpolator;
-
-import androidx.annotation.NonNull;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.view.ViewCompat;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.R;
+import android.content.Context
+import android.os.Handler
+import android.util.AttributeSet
+import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.Interpolator
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import forpdateam.ru.forpda.App
+import forpdateam.ru.forpda.App.Companion.getVecDrawable
+import forpdateam.ru.forpda.R
+import kotlin.math.abs
 
 /**
  * Created by radiationx on 26.07.17.
  */
+class FabOnScroll : FloatingActionButton.Behavior {
+    private val handler = Handler()
+    private var currentRunnable: Runnable? = null
+    private val interpolator: Interpolator = AccelerateDecelerateInterpolator()
 
-public class FabOnScroll extends FloatingActionButton.Behavior {
-    private final Handler handler = new Handler();
-    private Runnable currentRunnable;
-    private final Interpolator interpolator = new AccelerateDecelerateInterpolator();
+    constructor(context: Context) : super(context, null)
 
-    public FabOnScroll(Context context) {
-        super(context, null);
-    }
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
-    public FabOnScroll(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    @Override
-    public boolean onStartNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View directTargetChild, View target, int nestedScrollAxes) {
+    override fun onStartNestedScroll(
+        coordinatorLayout: CoordinatorLayout,
+        child: FloatingActionButton,
+        directTargetChild: View,
+        target: View,
+        nestedScrollAxes: Int
+    ): Boolean {
         //Log.d("SUKA", "FabOnScroll onStartNestedScroll " + nestedScrollAxes);
-        return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL;
+        return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL
     }
 
-    @Override
-    public void onNestedPreScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View target, int dx, int dy, int[] consumed) {
-        super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed);
+    override fun onNestedPreScroll(
+        coordinatorLayout: CoordinatorLayout,
+        child: FloatingActionButton,
+        target: View,
+        dx: Int,
+        dy: Int,
+        consumed: IntArray
+    ) {
+        super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed)
         //Log.d("SUKA", "FabOnScroll onNestedPreScroll" + consumed[1] + " : " + dy);
-        if (child.getAlpha() == 0.0f && Math.abs(dy) > App.px24) {
-            child.setImageDrawable(App.getVecDrawable(child.getContext(), dy > 0 ? R.drawable.ic_arrow_down : R.drawable.ic_arrow_up));
-            child.clearAnimation();
+        if (child.alpha == 0.0f && abs(dy.toDouble()) > App.px24) {
+            child.setImageDrawable(
+                getVecDrawable(
+                    child.context,
+                    if (dy > 0) R.drawable.ic_arrow_down else R.drawable.ic_arrow_up
+                )
+            )
+            child.clearAnimation()
             child.animate()
-                    .scaleX(1.0f)
-                    .scaleY(1.0f)
-                    .alpha(1.0f)
-                    .setInterpolator(interpolator)
-                    .start();
-            child.setClickable(true);
+                .scaleX(1.0f)
+                .scaleY(1.0f)
+                .alpha(1.0f)
+                .setInterpolator(interpolator)
+                .start()
+            child.isClickable = true
         }
     }
 
-    @Override
-    public boolean onNestedFling(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View target, float velocityX, float velocityY, boolean consumed) {
+    override fun onNestedFling(
+        coordinatorLayout: CoordinatorLayout,
+        child: FloatingActionButton,
+        target: View,
+        velocityX: Float,
+        velocityY: Float,
+        consumed: Boolean
+    ): Boolean {
         //Log.d("SUKA", "FabOnScroll onNestedFling" + velocityY + " : " + consumed);
-        return super.onNestedFling(coordinatorLayout, child, target, velocityX, velocityY, consumed);
+        return super.onNestedFling(coordinatorLayout, child, target, velocityX, velocityY, consumed)
     }
 
-    @Override
-    public void onNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+    override fun onNestedScroll(
+        coordinatorLayout: CoordinatorLayout,
+        child: FloatingActionButton,
+        target: View,
+        dxConsumed: Int,
+        dyConsumed: Int,
+        dxUnconsumed: Int,
+        dyUnconsumed: Int
+    ) {
+        super.onNestedScroll(
+            coordinatorLayout,
+            child,
+            target,
+            dxConsumed,
+            dyConsumed,
+            dxUnconsumed,
+            dyUnconsumed
+        )
         //Log.d("SUKA", "FabOnScroll onNestedScroll " + dyConsumed + " : " + dyUnconsumed + " : " + App.px24);
-        if (child.getAlpha() == 0.0f && Math.abs(dyUnconsumed) > App.px24) {
-            child.clearAnimation();
+        if (child.alpha == 0.0f && abs(dyUnconsumed.toDouble()) > App.px24) {
+            child.clearAnimation()
             child.animate()
-                    .scaleX(1.0f)
-                    .scaleY(1.0f)
-                    .alpha(1.0f)
-                    .setInterpolator(interpolator)
-                    .start();
-            child.setClickable(true);
+                .scaleX(1.0f)
+                .scaleY(1.0f)
+                .alpha(1.0f)
+                .setInterpolator(interpolator)
+                .start()
+            child.isClickable = true
         }
     }
 
 
-    @Override
-    public void onStopNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull FloatingActionButton child, @NonNull View target) {
-        super.onStopNestedScroll(coordinatorLayout, child, target);
+    override fun onStopNestedScroll(
+        coordinatorLayout: CoordinatorLayout,
+        child: FloatingActionButton,
+        target: View
+    ) {
+        super.onStopNestedScroll(coordinatorLayout, child, target)
         if (currentRunnable != null) {
-            handler.removeCallbacks(currentRunnable);
+            handler.removeCallbacks(currentRunnable)
         }
-        currentRunnable = () -> {
-            child.clearAnimation();
+        currentRunnable = Runnable {
+            child.clearAnimation()
             child.animate()
-                    .scaleX(0.0f)
-                    .scaleY(0.0f)
-                    .alpha(0.0f)
-                    .setInterpolator(interpolator)
-                    .start();
-            child.setClickable(false);
-        };
-        handler.postDelayed(currentRunnable, 1000);
+                .scaleX(0.0f)
+                .scaleY(0.0f)
+                .alpha(0.0f)
+                .setInterpolator(interpolator)
+                .start()
+            child.isClickable = false
+        }
+        handler.postDelayed(currentRunnable, 1000)
     }
-
 }

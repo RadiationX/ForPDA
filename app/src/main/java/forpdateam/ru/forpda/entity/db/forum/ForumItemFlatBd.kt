@@ -1,57 +1,24 @@
-package forpdateam.ru.forpda.entity.db.forum;
+package forpdateam.ru.forpda.entity.db.forum
 
-import forpdateam.ru.forpda.entity.remote.forum.ForumItemTree;
-import forpdateam.ru.forpda.entity.remote.forum.IForumItemFlat;
-import io.realm.RealmObject;
+import forpdateam.ru.forpda.entity.remote.forum.ForumItemTree
+import forpdateam.ru.forpda.entity.remote.forum.IForumItemFlat
+import io.realm.RealmObject
 
 /**
  * Created by radiationx on 25.03.17.
  */
+class ForumItemFlatBd : RealmObject, IForumItemFlat {
+    override var id: Int = -1
+    override var parentId: Int = -1
+    override var level: Int = -1
+    override var title: String? = null
 
-public class ForumItemFlatBd extends RealmObject implements IForumItemFlat {
-    private int id = -1;
-    private int parentId = -1, level = -1;
-    private String title;
+    constructor()
 
-    public ForumItemFlatBd() {
-    }
-
-    public ForumItemFlatBd(ForumItemTree item) {
-        id = item.getId();
-        parentId = item.getParentId();
-        title = item.getTitle();
-        level = item.getLevel();
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(int parentId) {
-        this.parentId = parentId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
+    constructor(item: ForumItemTree) {
+        id = item.id
+        parentId = item.parentId
+        title = item.title
+        level = item.level
     }
 }

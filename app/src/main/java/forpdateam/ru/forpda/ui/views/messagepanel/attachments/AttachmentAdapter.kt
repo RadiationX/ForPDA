@@ -29,8 +29,8 @@ import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
  * Created by radiationx on 09.01.17.
  */
 
-class AttachmentAdapter :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class AttachmentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
     private val items = ArrayList<ListItem>()
 
     //private val selected = ArrayList<AttachmentItem>()
@@ -182,8 +182,7 @@ class AttachmentAdapter :
         fun onReverseClick()
     }
 
-    inner class SelectorHolder(view: View) :
-        RecyclerView.ViewHolder(view) {
+    inner class SelectorHolder(view: View) : RecyclerView.ViewHolder(view) {
         private var tabLayout: TabLayout = view.findViewById(R.id.selectorTabLayout)
         private var reverseBtn = view.findViewById<ImageView>(R.id.selectorReverse)
         private var gridTab: TabLayout.Tab

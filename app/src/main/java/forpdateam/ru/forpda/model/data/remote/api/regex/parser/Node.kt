@@ -1,80 +1,49 @@
-package forpdateam.ru.forpda.model.data.remote.api.regex.parser;
-
-import androidx.annotation.Nullable;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+package forpdateam.ru.forpda.model.data.remote.api.regex.parser
 
 /**
  * Created by radiationx on 13.08.17.
  */
+open class Node {
+    @JvmField
+    val nodes: ArrayList<Node> = ArrayList()
+    val elements: ArrayList<Node> = ArrayList()
+    @JvmField
+    val attributes: LinkedHashMap<String, String> = LinkedHashMap()
+    @JvmField
+    var name: String? = null
+    @JvmField
+    var text: String? = null
 
-public class Node {
-    public final static String NODE_DOCUMENT = "#document";
-    public final static String NODE_TEXT = "#text";
-    public final static String NODE_COMMENT = "#comment";
+    constructor()
 
-    private final ArrayList<Node> nodes = new ArrayList<>();
-    private final ArrayList<Node> elements = new ArrayList<>();
-    private final LinkedHashMap<String, String> attributes = new LinkedHashMap<>();
-    private String name = null;
-    private String text = null;
-
-    public Node() {
+    constructor(name: String?) {
+        this.name = name
     }
 
-    public Node(String name) {
-        this.name = name;
+    fun addNode(node: Node) {
+        nodes.add(node)
     }
 
-    public String getName() {
-        return name;
+    fun addElement(node: Node) {
+        elements.add(node)
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public ArrayList<Node> getNodes() {
-        return nodes;
-    }
-
-    public void addNode(Node node) {
-        this.nodes.add(node);
-    }
-
-    public ArrayList<Node> getElements() {
-        return elements;
-    }
-
-    public void addElement(Node node) {
-        this.elements.add(node);
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    @Override
-    public String toString() {
-        return name;
+    override fun toString(): String {
+        return name!!
     }
 
 
-    public LinkedHashMap<String, String> getAttributes() {
-        return attributes;
+    fun putAttribute(name: String, value: String) {
+        attributes[name] = value
     }
 
-    public void putAttribute(String name, String value) {
-        this.attributes.put(name, value);
+    fun getAttribute(attr: String): String? {
+        return attributes[attr]
     }
 
-    @Nullable
-    public String getAttribute(String attr) {
-        return attributes.get(attr);
+    companion object {
+        const val NODE_DOCUMENT: String = "#document"
+        const val NODE_TEXT: String = "#text"
+        const val NODE_COMMENT: String = "#comment"
     }
 }

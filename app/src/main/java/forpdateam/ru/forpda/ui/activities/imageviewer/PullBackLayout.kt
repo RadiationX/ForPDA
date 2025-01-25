@@ -1,235 +1,211 @@
-package forpdateam.ru.forpda.ui.activities.imageviewer;
+package forpdateam.ru.forpda.ui.activities.imageviewer
 
-import android.content.Context;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewConfiguration;
-import android.widget.FrameLayout;
-
-import androidx.annotation.IntDef;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.view.ViewCompat;
-import androidx.customview.widget.ViewDragHelper;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import android.content.Context
+import android.util.AttributeSet
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewConfiguration
+import android.widget.FrameLayout
+import androidx.annotation.IntDef
+import androidx.core.view.ViewCompat
+import androidx.customview.widget.ViewDragHelper
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * Created by radiationx on 24.05.17.
  */
+class PullBackLayout @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : FrameLayout(context, attrs, defStyleAttr) {
 
-public class PullBackLayout extends FrameLayout {
+    private val dragger: ViewDragHelper
 
-    /**
-     * Flag indicated pulling up is allowed
-     *
-     * @see #setDirection(int)
-     */
-    public static final int DIRECTION_UP = 1;
-
-    /**
-     * Flag indicated pulling down is allowed
-     *
-     * @see #setDirection(int)
-     */
-    public static final int DIRECTION_DOWN = 1 << 1;
-
-    private final ViewDragHelper dragger;
-
-    private final int minimumFlingVelocity;
-
-    @Direction
-    private int direction = DIRECTION_UP | DIRECTION_DOWN;
-
-    @Nullable
-    private Callback callback;
-
-    public PullBackLayout(Context context) {
-        this(context, null);
-    }
-
-    public PullBackLayout(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public PullBackLayout(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        dragger = ViewDragHelper.create(this, 1f / 8f, new ViewDragCallback());
-        minimumFlingVelocity = ViewConfiguration.get(context).getScaledMinimumFlingVelocity();
-    }
+    private val minimumFlingVelocity: Int
 
     /**
      * @return Allowed pulling direction
      */
-    @Direction
-    public int getDirection() {
-        return direction;
-    }
-
     /**
      * Sets pulling directions allowed
      *
      * @param direction Directions allowed
-     * @see #DIRECTION_UP
-     * @see #DIRECTION_DOWN
+     * @see .DIRECTION_UP
+     *
+     * @see .DIRECTION_DOWN
      */
-    public void setDirection(@Direction int direction) {
-        this.direction = direction;
+    @get:Direction
+    @Direction
+    var direction: Int = DIRECTION_UP or DIRECTION_DOWN
+
+    private var callback: Callback? = null
+
+    init {
+        dragger = ViewDragHelper.create(this, 1f / 8f, ViewDragCallback())
+        minimumFlingVelocity = ViewConfiguration.get(context).scaledMinimumFlingVelocity
     }
 
-    public void setCallback(@Nullable Callback callback) {
-        this.callback = callback;
+    fun setCallback(callback: Callback?) {
+        this.callback = callback
     }
 
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        try {
-            return dragger.shouldInterceptTouchEvent(ev);
-        } catch (Exception e) {
-            return false;
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        return try {
+            dragger.shouldInterceptTouchEvent(ev)
+        } catch (e: Exception) {
+            false
         }
     }
 
-    @Override
-    public boolean onTouchEvent(@NonNull MotionEvent event) {
+    override fun onTouchEvent(event: MotionEvent): Boolean {
         try {
-            dragger.processTouchEvent(event);
-            return true;
-        } catch (Exception e) {
-            return false;
+            dragger.processTouchEvent(event)
+            return true
+        } catch (e: Exception) {
+            return false
         }
     }
 
-    @Override
-    public void computeScroll() {
+    override fun computeScroll() {
         if (dragger.continueSettling(true)) {
-            ViewCompat.postInvalidateOnAnimation(this);
+            ViewCompat.postInvalidateOnAnimation(this)
         }
     }
 
-    private void onPullStart() {
+    private fun onPullStart() {
         if (callback != null) {
-            callback.onPullStart();
+            callback!!.onPullStart()
         }
     }
 
-    private void onPull(@Direction int direction, float progress) {
+    private fun onPull(@Direction direction: Int, progress: Float) {
         if (callback != null) {
-            callback.onPull(direction, progress);
+            callback!!.onPull(direction, progress)
         }
     }
 
-    private void onPullCancel(@Direction int direction) {
+    private fun onPullCancel(@Direction direction: Int) {
         if (callback != null) {
-            callback.onPullCancel(direction);
+            callback!!.onPullCancel(direction)
         }
     }
 
-    private void onPullComplete(@Direction int direction) {
+    private fun onPullComplete(@Direction direction: Int) {
         if (callback != null) {
-            callback.onPullComplete(direction);
+            callback!!.onPullComplete(direction)
         }
     }
 
-    private void reset() {
-        dragger.settleCapturedViewAt(0, 0);
-        invalidate();
+    private fun reset() {
+        dragger.settleCapturedViewAt(0, 0)
+        invalidate()
     }
 
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef(value = {DIRECTION_UP, DIRECTION_DOWN}, flag = true)
-    public @interface Direction {
+    @Retention(AnnotationRetention.SOURCE)
+    @IntDef(value = [DIRECTION_UP, DIRECTION_DOWN], flag = true)
+    annotation class Direction
+
+    interface Callback {
+        fun onPullStart()
+
+        fun onPull(@Direction direction: Int, progress: Float)
+
+        fun onPullCancel(@Direction direction: Int)
+
+        fun onPullComplete(@Direction direction: Int)
     }
 
-    public interface Callback {
-
-        void onPullStart();
-
-        void onPull(@Direction int direction, float progress);
-
-        void onPullCancel(@Direction int direction);
-
-        void onPullComplete(@Direction int direction);
-
-    }
-
-    private class ViewDragCallback extends ViewDragHelper.Callback {
-
-        @Override
-        public boolean tryCaptureView(View child, int pointerId) {
-            return true;
+    private inner class ViewDragCallback : ViewDragHelper.Callback() {
+        override fun tryCaptureView(child: View, pointerId: Int): Boolean {
+            return true
         }
 
-        @Override
-        public int clampViewPositionHorizontal(View child, int left, int dx) {
-            return 0;
+        override fun clampViewPositionHorizontal(child: View, left: Int, dx: Int): Int {
+            return 0
         }
 
-        @Override
-        public int clampViewPositionVertical(View child, int top, int dy) {
-            if ((direction & (DIRECTION_UP | DIRECTION_DOWN)) != 0) {
-                return top;
-            } else if ((direction & DIRECTION_UP) != 0) {
-                return Math.min(0, top);
-            } else if ((direction & DIRECTION_DOWN) != 0) {
-                return Math.max(0, top);
+        override fun clampViewPositionVertical(child: View, top: Int, dy: Int): Int {
+            return if ((direction and (DIRECTION_UP or DIRECTION_DOWN)) != 0) {
+                top
+            } else if ((direction and DIRECTION_UP) != 0) {
+                min(0.0, top.toDouble()).toInt()
+            } else if ((direction and DIRECTION_DOWN) != 0) {
+                max(0.0, top.toDouble()).toInt()
             } else {
-                return 0;
+                0
             }
         }
 
-        @Override
-        public int getViewHorizontalDragRange(View child) {
-            return 0;
+        override fun getViewHorizontalDragRange(child: View): Int {
+            return 0
         }
 
-        @Override
-        public int getViewVerticalDragRange(View child) {
-            if (direction == 0) {
-                return 0;
-            } else if ((direction & (DIRECTION_UP | DIRECTION_DOWN)) != 0) {
-                return getHeight() * 2;
+        override fun getViewVerticalDragRange(child: View): Int {
+            return if (direction == 0) {
+                0
+            } else if ((direction and (DIRECTION_UP or DIRECTION_DOWN)) != 0) {
+                height * 2
             } else {
-                return getHeight();
+                height
             }
         }
 
-        @Override
-        public void onViewCaptured(View capturedChild, int activePointerId) {
-            onPullStart();
+        override fun onViewCaptured(capturedChild: View, activePointerId: Int) {
+            onPullStart()
         }
 
-        @Override
-        public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
+        override fun onViewPositionChanged(
+            changedView: View,
+            left: Int,
+            top: Int,
+            dx: Int,
+            dy: Int
+        ) {
             if (top > 0) {
-                onPull(DIRECTION_DOWN, (float) top / (float) getHeight());
+                onPull(DIRECTION_DOWN, top.toFloat() / height.toFloat())
             } else if (top < 0) {
-                onPull(DIRECTION_UP, (float) -top / (float) getHeight());
+                onPull(DIRECTION_UP, -top.toFloat() / height.toFloat())
             }
         }
 
-        @Override
-        public void onViewReleased(View releasedChild, float xvel, float yvel) {
-            int top = releasedChild.getTop();
-            int slop = Math.abs(yvel) > minimumFlingVelocity ? getHeight() / 6 : getHeight() / 3;
+        override fun onViewReleased(releasedChild: View, xvel: Float, yvel: Float) {
+            val top = releasedChild.top
+            val slop = if (abs(yvel.toDouble()) > minimumFlingVelocity) height / 6 else height / 3
 
             if (top > 0) {
                 if (top > slop) {
-                    onPullComplete(DIRECTION_DOWN);
+                    onPullComplete(DIRECTION_DOWN)
                 } else {
-                    onPullCancel(DIRECTION_DOWN);
-                    reset();
+                    onPullCancel(DIRECTION_DOWN)
+                    reset()
                 }
             } else if (top < 0) {
                 if (top < -slop) {
-                    onPullComplete(DIRECTION_UP);
+                    onPullComplete(DIRECTION_UP)
                 } else {
-                    onPullCancel(DIRECTION_UP);
-                    reset();
+                    onPullCancel(DIRECTION_UP)
+                    reset()
                 }
             }
         }
+    }
+
+    companion object {
+        /**
+         * Flag indicated pulling up is allowed
+         *
+         * @see .setDirection
+         */
+        const val DIRECTION_UP: Int = 1
+
+        /**
+         * Flag indicated pulling down is allowed
+         *
+         * @see .setDirection
+         */
+        const val DIRECTION_DOWN: Int = 1 shl 1
     }
 }

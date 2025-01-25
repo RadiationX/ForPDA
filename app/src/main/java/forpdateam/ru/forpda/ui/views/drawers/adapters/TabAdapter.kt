@@ -1,95 +1,87 @@
-package forpdateam.ru.forpda.ui.views.drawers.adapters;
+package forpdateam.ru.forpda.ui.views.drawers.adapters
 
-import android.graphics.Color;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.ui.fragments.TabFragment;
-import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
-import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
+import android.graphics.Color
+import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.ui.fragments.TabFragment
+import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
+import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
+import forpdateam.ru.forpda.ui.views.drawers.adapters.TabAdapter.TabHolder
 
 /**
  * Created by radiationx on 02.05.17.
  */
+class TabAdapter : BaseAdapter<TabFragment, TabHolder>() {
+    private val color = Color.argb(24, 128, 128, 128)
 
-public class TabAdapter extends BaseAdapter<TabFragment, TabAdapter.TabHolder> {
-    private final int color = Color.argb(24, 128, 128, 128);
+    private var itemClickListener: OnItemClickListener<TabFragment>? = null
+    private var closeClickListener: OnItemClickListener<TabFragment>? = null
 
-    private BaseAdapter.OnItemClickListener<TabFragment> itemClickListener;
-    private BaseAdapter.OnItemClickListener<TabFragment> closeClickListener;
+    private var currentFragmentTag: String? = null
 
-    private String currentFragmentTag = null;
-
-    public void setItemClickListener(BaseAdapter.OnItemClickListener<TabFragment> itemClickListener) {
-        this.itemClickListener = itemClickListener;
+    fun setItemClickListener(itemClickListener: OnItemClickListener<TabFragment>?) {
+        this.itemClickListener = itemClickListener
     }
 
-    public void setCloseClickListener(BaseAdapter.OnItemClickListener<TabFragment> closeClickListener) {
-        this.closeClickListener = closeClickListener;
+    fun setCloseClickListener(closeClickListener: OnItemClickListener<TabFragment>?) {
+        this.closeClickListener = closeClickListener
     }
 
-    public void setCurrentFragmentTag(String tag) {
-        currentFragmentTag = tag;
+    fun setCurrentFragmentTag(tag: String?) {
+        currentFragmentTag = tag
     }
 
-    public void removeAt(int index) {
-        items.remove(index);
-        notifyItemRemoved(index);
+    fun removeAt(index: Int) {
+        items.removeAt(index)
+        notifyItemRemoved(index)
     }
 
-    @Override
-    public TabHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = inflateLayout(parent, R.layout.drawer_tab_item);
-        return new TabHolder(v);
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TabHolder {
+        val v = inflateLayout(parent, R.layout.drawer_tab_item)
+        return TabHolder(v)
     }
 
-    @Override
-    public void onBindViewHolder(TabHolder holder, int position) {
-        holder.bind(getItem(position), position);
+    override fun onBindViewHolder(holder: TabHolder, position: Int) {
+        holder.bind(getItem(position), position)
     }
 
-    class TabHolder extends BaseViewHolder<TabFragment> implements View.OnClickListener {
-        public TextView text;
-        public ImageView close;
-        public ViewGroup wrapper;
-        private TabFragment currentItem;
+    inner class TabHolder(v: View) : BaseViewHolder<TabFragment>(v), View.OnClickListener {
+        var text: TextView
+        var close: ImageView
+        var wrapper: ViewGroup
+        private var currentItem: TabFragment? = null
 
-        TabHolder(View v) {
-            super(v);
-            text = v.findViewById(R.id.drawer_item_title);
-            close = v.findViewById(R.id.drawer_item_close);
-            wrapper = v.findViewById(R.id.drawer_item_wrapper);
+        init {
+            text = v.findViewById(R.id.drawer_item_title)
+            close = v.findViewById(R.id.drawer_item_close)
+            wrapper = v.findViewById(R.id.drawer_item_wrapper)
 
-            v.setOnClickListener(this);
-            close.setOnClickListener(v1 -> {
+            v.setOnClickListener(this)
+            close.setOnClickListener { v1: View? ->
                 if (closeClickListener != null) {
-                    closeClickListener.onItemClick(currentItem);
+                    closeClickListener!!.onItemClick(requireNotNull(currentItem))
                 }
-            });
+            }
         }
 
-        @Override
-        public void bind(TabFragment item, int position) {
-            currentItem = item;
-            boolean isActive = item.getTag() != null && item.getTag().equals(currentFragmentTag);
-            Log.d("lalala", "TabAdapter bind " + item + " : " + isActive + " : " + position);
+        override fun bind(item: TabFragment, position: Int) {
+            currentItem = item
+            val isActive = item.tag != null && item.tag == currentFragmentTag
+            Log.d("lalala", "TabAdapter bind $item : $isActive : $position")
 
-            if (isActive)
-                wrapper.setBackgroundColor(color);
-            else
-                wrapper.setBackgroundColor(Color.TRANSPARENT);
+            if (isActive) wrapper.setBackgroundColor(color)
+            else wrapper.setBackgroundColor(Color.TRANSPARENT)
 
-            text.setText(item.getTabTitle());
+            text.text = item.getTabTitle()
         }
 
-        @Override
-        public void onClick(View view) {
+        override fun onClick(view: View) {
             if (itemClickListener != null) {
-                itemClickListener.onItemClick(currentItem);
+                itemClickListener!!.onItemClick(requireNotNull(currentItem))
             }
         }
     }

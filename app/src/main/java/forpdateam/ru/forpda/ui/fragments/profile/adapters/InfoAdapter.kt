@@ -1,44 +1,35 @@
-package forpdateam.ru.forpda.ui.fragments.profile.adapters;
+package forpdateam.ru.forpda.ui.fragments.profile.adapters
 
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.entity.remote.profile.ProfileModel;
-import forpdateam.ru.forpda.model.repository.temp.TempHelper;
-import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
-import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
+import forpdateam.ru.forpda.model.repository.temp.TempHelper.getTypeString
+import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
+import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
 
 /**
  * Created by radiationx on 14.09.17.
  */
-
-class InfoAdapter extends BaseAdapter<ProfileModel.Info, InfoAdapter.InfoHolder> {
-    @Override
-    public InfoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new InfoHolder(inflateLayout(parent, R.layout.profile_sub_item_info));
+internal class InfoAdapter : BaseAdapter<ProfileModel.Info, InfoAdapter.InfoHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InfoHolder {
+        return InfoHolder(inflateLayout(parent, R.layout.profile_sub_item_info))
     }
 
-    @Override
-    public void onBindViewHolder(InfoHolder holder, int position) {
-        holder.bind(getItem(position));
+    override fun onBindViewHolder(holder: InfoHolder, position: Int) {
+        holder.bind(getItem(position))
     }
 
-    class InfoHolder extends BaseViewHolder<ProfileModel.Info> {
-        private final TextView title;
-        private final TextView value;
+    internal inner class InfoHolder(itemView: View) : BaseViewHolder<ProfileModel.Info>(itemView) {
+        private val title: TextView =
+            itemView.findViewById(R.id.item_title)
+        private val value: TextView =
+            itemView.findViewById(R.id.item_value)
 
-        InfoHolder(View itemView) {
-            super(itemView);
-            title = itemView.findViewById(R.id.item_title);
-            value = itemView.findViewById(R.id.item_value);
-        }
-
-        @Override
-        public void bind(ProfileModel.Info item) {
-            title.setText(TempHelper.INSTANCE.getTypeString(item.getType()));
-            value.setText(item.getValue());
+        override fun bind(item: ProfileModel.Info) {
+            title.setText(getTypeString(item.type!!))
+            value.text = item.value
         }
     }
 }

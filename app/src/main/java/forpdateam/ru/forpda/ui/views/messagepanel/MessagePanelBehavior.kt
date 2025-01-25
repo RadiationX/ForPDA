@@ -1,50 +1,48 @@
-package forpdateam.ru.forpda.ui.views.messagepanel;
+package forpdateam.ru.forpda.ui.views.messagepanel
 
-import android.view.View;
-
-import androidx.cardview.widget.CardView;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
-import com.google.android.material.appbar.AppBarLayout;
-
-import forpdateam.ru.forpda.App;
+import android.view.View
+import androidx.cardview.widget.CardView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.google.android.material.appbar.AppBarLayout
+import forpdateam.ru.forpda.App
 
 /**
  * Created by radiationx on 07.01.17.
  */
+class MessagePanelBehavior : CoordinatorLayout.Behavior<CardView>() {
+    private var canScrolling = true
 
-public class MessagePanelBehavior extends CoordinatorLayout.Behavior<CardView> {
-    private boolean canScrolling = true;
-
-    public MessagePanelBehavior() {
-        super();
-    }
-
-    @Override
-    public boolean onStartNestedScroll(final CoordinatorLayout coordinatorLayout, final CardView child,
-                                       final View directTargetChild, final View target, final int nestedScrollAxes) {
-        if (!canScrolling)
-            child.setTranslationY(0);
-        return canScrolling;
+    override fun onStartNestedScroll(
+        coordinatorLayout: CoordinatorLayout, child: CardView,
+        directTargetChild: View, target: View, nestedScrollAxes: Int
+    ): Boolean {
+        if (!canScrolling) child.translationY = 0f
+        return canScrolling
     }
 
 
-    public void setCanScrolling(boolean canScrolling) {
-        this.canScrolling = canScrolling;
+    fun setCanScrolling(canScrolling: Boolean) {
+        this.canScrolling = canScrolling
     }
 
 
-    @Override
-    public boolean layoutDependsOn(CoordinatorLayout parent, CardView child, View dependency) {
-        return dependency instanceof AppBarLayout;
+    override fun layoutDependsOn(
+        parent: CoordinatorLayout,
+        child: CardView,
+        dependency: View
+    ): Boolean {
+        return dependency is AppBarLayout
     }
 
-    @Override
-    public boolean onDependentViewChanged(CoordinatorLayout parent, CardView child, View dependency) {
-        if (!canScrolling) return false;
-        float percent = 1.0f - ((float) -dependency.getTop() / (float) dependency.getMeasuredHeight());
-        int scrolled = (int) ((child.getMeasuredHeight() + (2 * App.px8)) * percent);
-        child.setTranslationY(scrolled);
-        return true;
+    override fun onDependentViewChanged(
+        parent: CoordinatorLayout,
+        child: CardView,
+        dependency: View
+    ): Boolean {
+        if (!canScrolling) return false
+        val percent = 1.0f - (-dependency.top.toFloat() / dependency.measuredHeight.toFloat())
+        val scrolled = ((child.measuredHeight + (2 * App.px8)) * percent).toInt()
+        child.translationY = scrolled.toFloat()
+        return true
     }
 }

@@ -152,7 +152,7 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface,
         messagePanel.addSendOnClickListener { presenter.onSendClick() }
 
 
-        messagePanel.setHeightChangeListener { newHeight -> webView.paddingBottom = newHeight }
+        messagePanel.heightChangeListener = { newHeight -> webView.paddingBottom = newHeight }
 
         topScroller = WebViewTopScroller(webView, appBarLayout)
     }

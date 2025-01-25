@@ -74,8 +74,7 @@ class ImageViewerActivity : AppCompatActivity() {
         }
 
 
-        img_viewer_pager.addOnPageChangeListener(object :
-            ViewPager.SimpleOnPageChangeListener() {
+        img_viewer_pager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 updateTitle(position)
             }

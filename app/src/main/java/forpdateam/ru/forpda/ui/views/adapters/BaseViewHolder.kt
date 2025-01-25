@@ -1,28 +1,21 @@
-package forpdateam.ru.forpda.ui.views.adapters;
+package forpdateam.ru.forpda.ui.views.adapters
 
-import android.view.View;
-
-import androidx.recyclerview.widget.RecyclerView;
+import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 
 /**
  * Created by radiationx on 14.09.17.
  */
-
-public class BaseViewHolder<T> extends RecyclerView.ViewHolder {
-
-    public BaseViewHolder(View itemView) {
-        super(itemView);
+open class BaseViewHolder<T>(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    open fun bind(item: T, section: Int) {
     }
 
-    public void bind(T item, int section) {
+    open fun bind(item: T) {
     }
 
-    public void bind(T item) {
+    open fun bind(position: Int) {
     }
 
-    public void bind(int position) {
-    }
-
-    public void bind() {
+    fun bind() {
     }
 }

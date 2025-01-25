@@ -1,83 +1,77 @@
-package forpdateam.ru.forpda.ui.fragments.reputation;
+package forpdateam.ru.forpda.ui.fragments.reputation
 
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.nostra13.universalimageloader.core.ImageLoader;
-
-import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.entity.remote.reputation.RepItem;
-import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter;
-import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
+import android.view.View
+import android.view.View.OnLongClickListener
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import com.nostra13.universalimageloader.core.ImageLoader
+import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.entity.remote.reputation.RepItem
+import forpdateam.ru.forpda.ui.fragments.reputation.ReputationAdapter.ReputationHolder
+import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
+import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
 
 /**
  * Created by radiationx on 20.03.17.
  */
+class ReputationAdapter :
+    BaseAdapter<RepItem, ReputationHolder>() {
+    private var itemClickListener: OnItemClickListener<RepItem>? = null
 
-
-public class ReputationAdapter extends BaseAdapter<RepItem, ReputationAdapter.ReputationHolder> {
-    private BaseAdapter.OnItemClickListener<RepItem> itemClickListener;
-
-    public void setOnItemClickListener(final BaseAdapter.OnItemClickListener<RepItem> mItemClickListener) {
-        this.itemClickListener = mItemClickListener;
+    fun setOnItemClickListener(mItemClickListener: OnItemClickListener<RepItem>?) {
+        this.itemClickListener = mItemClickListener
     }
 
-    @Override
-    public ReputationHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = inflateLayout(parent, R.layout.reputation_item);
-        return new ReputationHolder(v);
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReputationHolder {
+        val v = inflateLayout(parent, R.layout.reputation_item)
+        return ReputationHolder(v)
     }
 
-    @Override
-    public void onBindViewHolder(ReputationHolder holder, int position) {
-        holder.bind(getItem(position), position);
+    override fun onBindViewHolder(holder: ReputationHolder, position: Int) {
+        holder.bind(getItem(position), position)
     }
 
-    public class ReputationHolder extends BaseViewHolder<RepItem> implements View.OnClickListener, View.OnLongClickListener {
-        TextView title, lastNick, date, desc;
-        ImageView image;
+    inner class ReputationHolder(v: View) : BaseViewHolder<RepItem>(v), View.OnClickListener,
+        OnLongClickListener {
+        var title: TextView = v.findViewById(R.id.rep_item_title)
+        var lastNick: TextView =
+            v.findViewById(R.id.rep_item_last_nick)
+        var date: TextView = v.findViewById(R.id.rep_item_date)
+        var desc: TextView = v.findViewById(R.id.rep_item_desc)
+        var image: ImageView =
+            v.findViewById(R.id.rep_item_image)
 
-        ReputationHolder(View v) {
-            super(v);
-            title = v.findViewById(R.id.rep_item_title);
-            desc = v.findViewById(R.id.rep_item_desc);
-            lastNick = v.findViewById(R.id.rep_item_last_nick);
-            date = v.findViewById(R.id.rep_item_date);
-            image = v.findViewById(R.id.rep_item_image);
-            v.setOnClickListener(this);
-            v.setOnLongClickListener(this);
+        init {
+            v.setOnClickListener(this)
+            v.setOnLongClickListener(this)
         }
 
-        @Override
-        public void bind(RepItem item, int position) {
-            title.setText(item.getTitle());
-            lastNick.setText(item.getUserNick());
-            date.setText(item.getDate());
-            if (item.getSourceUrl() == null) {
-                desc.setVisibility(View.GONE);
+        override fun bind(item: RepItem, position: Int) {
+            title.text = item.title
+            lastNick.text = item.userNick
+            date.text = item.date
+            if (item.sourceUrl == null) {
+                desc.visibility = View.GONE
             } else {
-                desc.setVisibility(View.VISIBLE);
-                desc.setText(item.getSourceTitle());
+                desc.visibility = View.VISIBLE
+                desc.text = item.sourceTitle
             }
-            ImageLoader.getInstance().displayImage(item.getImage(), image);
+            ImageLoader.getInstance().displayImage(item.image, image)
         }
 
-        @Override
-        public void onClick(View view) {
+        override fun onClick(view: View) {
             if (itemClickListener != null) {
-                itemClickListener.onItemClick(getItem(getLayoutPosition()));
+                itemClickListener!!.onItemClick(getItem(layoutPosition))
             }
         }
 
-        @Override
-        public boolean onLongClick(View view) {
+        override fun onLongClick(view: View): Boolean {
             if (itemClickListener != null) {
-                itemClickListener.onItemLongClick(getItem(getLayoutPosition()));
-                return true;
+                itemClickListener!!.onItemLongClick(getItem(layoutPosition))
+                return true
             }
-            return false;
+            return false
         }
     }
 }
