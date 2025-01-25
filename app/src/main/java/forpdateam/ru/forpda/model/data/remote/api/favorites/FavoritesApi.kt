@@ -29,20 +29,22 @@ class FavoritesApi(
 
         val response = webClient.get(uriBuilder.build().toString())
 
-        val data = favoritesParser.parseFavorites(response.body)
+        var data = favoritesParser.parseFavorites(response.body)
 
         if (all) {
             while (true) {
                 if (data.pagination.current >= data.pagination.all) {
                     break
                 }
-                val favData =
-                    getFavorites(data.pagination.getPage(data.pagination.current), false, sorting)
-                data.pagination = favData.pagination
+                val page = data.pagination.getPage(data.pagination.current)
+                val favData = getFavorites(page, false, sorting)
+                data = data.copy(
+                    pagination = favData.pagination,
+                    items = data.items + favData.items
+                )
                 if (favData.items.isEmpty()) {
                     break
                 }
-                data.items.addAll(favData.items)
             }
             data.pagination.all = 1
 

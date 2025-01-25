@@ -5,6 +5,7 @@ import forpdateam.ru.forpda.entity.app.TabNotification
 import forpdateam.ru.forpda.entity.remote.events.NotificationEvent
 import forpdateam.ru.forpda.entity.remote.favorites.FavData
 import forpdateam.ru.forpda.entity.remote.favorites.FavItem
+import forpdateam.ru.forpda.extensions.replace
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.CountersHolder
 import forpdateam.ru.forpda.model.SchedulersProvider
@@ -67,8 +68,8 @@ class FavoritesRepository(
         .fromRunnable {
             val favItem = favoritesCache.getItemByTopicId(topicId)
             if (favItem != null) {
-                favItem.isNew = false
-                favoritesCache.updateItem(favItem)
+                val newItem = favItem.copy(isNew = false)
+                favoritesCache.updateItem(newItem)
             }
         }
         .runInIoToUi()
@@ -113,24 +114,30 @@ class FavoritesRepository(
         )
 
         if (isRead) {
-            newFavItems.find { it.topicId == topicId }?.also {
-                if (it.isNew) {
-                    newCount--
-                    it.isNew = false
+            newFavItems.replace(
+                condition = { it.topicId == topicId },
+                map = {
+                    if (it.isNew) {
+                        newCount--
+                    }
+                    Log.e("testtabnotify", "found item ${it.isNew}, $newCount")
+                    it.copy(isNew = false)
                 }
-                Log.e("testtabnotify", "found item ${it.isNew}, $newCount")
-            }
+            )
         } else {
             newCount = event.loadedEvents.size
             Log.e("testtabnotify", "lalala $newCount")
-            newFavItems.find { it.topicId == topicId }?.also {
-                if (it.lastUserId != authHolder.get().userId) {
-                    it.isNew = true
+            newFavItems.replace(
+                condition = { it.topicId == topicId },
+                map = {
+                    it.copy(
+                        isNew = it.lastUserId != authHolder.get().userId,
+                        lastUserNick = loadedEvent.userNick,
+                        lastUserId = loadedEvent.userId,
+                        isPin = loadedEvent.isImportant
+                    )
                 }
-                it.lastUserNick = loadedEvent.userNick
-                it.lastUserId = loadedEvent.userId
-                it.isPin = loadedEvent.isImportant
-            }
+            )
             if (sorting.key == Sorting.Key.TITLE) {
                 if (sorting.order == Sorting.Order.ASC) {
                     newFavItems.sortWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.topicTitle.orEmpty() })

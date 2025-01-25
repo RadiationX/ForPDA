@@ -7,8 +7,8 @@ import forpdateam.ru.forpda.model.data.remote.api.favorites.Sorting
  * Created by radiationx on 22.09.16.
  */
 
-class FavData {
-    val items = mutableListOf<FavItem>()
-    var pagination = Pagination()
-    var sorting = Sorting()
-}
+data class FavData(
+    val items: List<FavItem>,
+    val pagination: Pagination,
+    val sorting: Sorting
+)
