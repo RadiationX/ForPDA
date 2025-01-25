@@ -120,7 +120,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
         orderSpinner = sortingView.findViewById<View>(R.id.sorting_order) as Spinner
         sortApply = sortingView.findViewById<View>(R.id.sorting_apply) as Button
         sortReset = sortingView.findViewById(R.id.sorting_reset)
-        dialog = BottomSheetDialog(context!!)
+        dialog = BottomSheetDialog(requireContext())
         dialog.setOnShowListener { dialog1 ->
             (dialog1 as Dialog).window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         }
@@ -271,7 +271,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
     }
 
     private fun initSpinnerItems(spinner: Spinner, items: Array<String>) {
-        val adapter = ArrayAdapter(activity!!, android.R.layout.simple_spinner_item, items)
+        val adapter = ArrayAdapter(requireActivity(), android.R.layout.simple_spinner_item, items)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
         spinner.setSelection(0)
@@ -288,7 +288,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
 
     override fun showSubscribeDialog(item: FavItem) {
         val subTypeIndex = Arrays.asList(*FavoritesApi.SUB_TYPES).indexOf(item.subType)
-        AlertDialog.Builder(context!!)
+        AlertDialog.Builder(requireContext())
             .setTitle(R.string.favorites_subscribe_email)
             .setSingleChoiceItems(SUB_NAMES, subTypeIndex) { dialog, which ->
                 presenter.changeFav(

@@ -113,14 +113,14 @@ class AuthFragment : TabFragment(), AuthView {
         super.onViewCreated(view, savedInstanceState)
         setListsBackground()
         skipButton.setOnClickListener { v ->
-            AlertDialog.Builder(context!!)
+            AlertDialog.Builder(requireContext())
                 .setMessage("Без авторизации будут недоступны некоторые функции приложения.")
                 .setPositiveButton(R.string.ok) { dialog, which -> presenter.onClickSkip() }
                 .setNegativeButton(R.string.cancel, null)
                 .show()
         }
         regButton.setOnClickListener {
-            AlertDialog.Builder(context!!)
+            AlertDialog.Builder(requireContext())
                 .setMessage("Процесс регистрации включает в себя множество шагов, поэтому рекомендуем зарегистрироваться через браузер.")
                 .setPositiveButton(R.string.ok) { _, _ -> presenter.onRegistrationClick() }
                 .setNegativeButton(R.string.cancel, null)

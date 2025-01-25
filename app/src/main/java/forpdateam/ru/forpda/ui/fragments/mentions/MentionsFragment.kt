@@ -146,7 +146,7 @@ class MentionsFragment : RecyclerFragment(), MentionsView {
     }
 
     override fun showAddFavoritesDialog(id: Int) {
-        AlertDialog.Builder(context!!)
+        AlertDialog.Builder(requireContext())
             .setTitle(R.string.favorites_subscribe_email)
             .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
                 presenter.addTopicToFavorite(id, FavoritesApi.SUB_TYPES[which])

@@ -165,7 +165,7 @@ class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView,
         if (messageField.text.isEmpty()) {
             fillMessageField(comment)
         } else {
-            AlertDialog.Builder(context!!)
+            AlertDialog.Builder(requireContext())
                 .setMessage(R.string.comment_reply_warning)
                 .setPositiveButton(getString(R.string.ok)) { _, _ ->
                     fillMessageField(comment)
@@ -182,7 +182,7 @@ class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView,
         messageField.setText("${currentReplyComment?.userNick},\n")
         messageField.setSelection(messageField.text.length)
         messageField.requestFocus()
-        val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(messageField, InputMethodManager.SHOW_IMPLICIT)
     }
 

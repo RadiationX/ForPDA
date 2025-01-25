@@ -214,7 +214,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
             presenter.currentData.nick
         )
 
-        AlertDialog.Builder(context!!)
+        AlertDialog.Builder(requireContext())
             .setView(layout)
             .setPositiveButton(R.string.ok) { _, _ ->
                 presenter.changeReputation(type, messageField.text.toString())

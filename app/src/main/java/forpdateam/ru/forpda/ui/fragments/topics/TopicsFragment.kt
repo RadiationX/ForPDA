@@ -181,7 +181,7 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
     }
 
     private fun openAddForumToFavoriteDialog(forumId: Int) {
-        AlertDialog.Builder(context!!)
+        AlertDialog.Builder(requireContext())
             .setTitle(R.string.favorites_subscribe_email)
             .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
                 presenter.addForumToFavorite(forumId, FavoritesApi.SUB_TYPES[which])
@@ -190,7 +190,7 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
     }
 
     private fun openAddTopicToFavoriteDialog(topicId: Int) {
-        AlertDialog.Builder(context!!)
+        AlertDialog.Builder(requireContext())
             .setTitle(R.string.favorites_subscribe_email)
             .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
                 presenter.addTopicToFavorite(topicId, FavoritesApi.SUB_TYPES[which])
@@ -199,7 +199,7 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
     }
 
     private fun openMarkReadDialog() {
-        AlertDialog.Builder(context!!)
+        AlertDialog.Builder(requireContext())
             .setMessage(getString(R.string.mark_read) + "?")
             .setPositiveButton(R.string.ok) { _, _ ->
                 presenter.markRead()

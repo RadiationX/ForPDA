@@ -237,7 +237,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
             )
         )
         attachWebView(webView)
-        recyclerView = RecyclerView(context!!)
+        recyclerView = RecyclerView(requireContext())
         recyclerView.layoutParams = ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
@@ -325,7 +325,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         })
 
         //searchSettingsView.setVisibility(View.GONE);
-        dialog = BottomSheetDialog(context!!)
+        dialog = BottomSheetDialog(requireContext())
         dialog.setOnShowListener {
             dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         }
@@ -461,7 +461,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
     }
 
     override fun showAddInFavDialog(item: IBaseForumPost) {
-        AlertDialog.Builder(context!!)
+        AlertDialog.Builder(requireContext())
             .setTitle(R.string.favorites_subscribe_email)
             .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
                 presenter.addTopicToFavorite(item.topicId, FavoritesApi.SUB_TYPES[which])
@@ -487,7 +487,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
     }
 
     private fun setItems(spinner: Spinner, items: List<String>, selection: Int) {
-        val adapter = ArrayAdapter(activity!!, android.R.layout.simple_spinner_item, items)
+        val adapter = ArrayAdapter(requireActivity(), android.R.layout.simple_spinner_item, items)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
         spinner.setSelection(selection)

@@ -221,11 +221,11 @@ class NewsDetailsFragment : TabFragment(), ArticleDetailView, TabTopScroller {
     }
 
     private fun updateStatusBar() {
-        val defaultSb = MainActivity.getDefaultLightStatusBar(activity!!)
+        val defaultSb = MainActivity.getDefaultLightStatusBar(requireActivity())
         if (isResume) {
-            MainActivity.setLightStatusBar(activity!!, isScrim && defaultSb)
+            MainActivity.setLightStatusBar(requireActivity(), isScrim && defaultSb)
         } else {
-            MainActivity.setLightStatusBar(activity!!, defaultSb)
+            MainActivity.setLightStatusBar(requireActivity(), defaultSb)
         }
     }
 

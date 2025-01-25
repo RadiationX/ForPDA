@@ -264,7 +264,7 @@ class DeviceFragment : TabFragment(), DeviceView {
             urls.add(pair.first)
             fullUrls.add(pair.second)
         }
-        val imagesAdapter = ImagesAdapter(context!!, urls, fullUrls)
+        val imagesAdapter = ImagesAdapter(requireContext(), urls, fullUrls)
         imagesPager.setAdapter(imagesAdapter)
 
         val pagerAdapter = FragmentPagerAdapter(childFragmentManager, data)
@@ -380,7 +380,7 @@ class DeviceFragment : TabFragment(), DeviceView {
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val imageLayout = inflater.inflate(R.layout.device_image_page, container, false)
             imageLayout.setOnClickListener {
-                ImageViewerActivity.startActivity(this@DeviceFragment.context!!, fullUrls, position)
+                ImageViewerActivity.startActivity(this@DeviceFragment.requireContext(), fullUrls, position)
             }
             container.addView(imageLayout, 0)
             loadImage(imageLayout, position)

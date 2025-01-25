@@ -97,7 +97,7 @@ class BrandsFragment : RecyclerFragment(), BrandsView,
     override fun initCategories(categories: Array<String>, position: Int) {
         val spinnerTitles = categories.map { getCategoryTitle(it) }
         val spinnerAdapter =
-            ArrayAdapter(context!!, android.R.layout.simple_spinner_item, spinnerTitles)
+            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, spinnerTitles)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         toolbarSpinner.adapter = spinnerAdapter
         toolbarSpinner.setSelection(position)

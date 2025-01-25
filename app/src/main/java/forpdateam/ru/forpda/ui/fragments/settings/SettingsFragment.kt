@@ -35,7 +35,7 @@ class SettingsFragment : BaseSettingFragment() {
         if (authHolder.get().isAuth()) {
             findPreference<Preference>("auth.action.logout")?.apply {
                 setOnPreferenceClickListener {
-                    AlertDialog.Builder(activity!!)
+                    AlertDialog.Builder(requireActivity())
                         .setMessage(R.string.ask_logout)
                         .setPositiveButton(R.string.ok) { _, _ ->
                             logoutRequest()
@@ -53,7 +53,7 @@ class SettingsFragment : BaseSettingFragment() {
 
         findPreference<Preference>("clear_menu_sequence")?.apply {
             setOnPreferenceClickListener {
-                AlertDialog.Builder(activity!!)
+                AlertDialog.Builder(requireActivity())
                     .setMessage("Подтвердите действие")
                     .setPositiveButton(R.string.ok) { _, _ ->
                         App.get().Di().preferences.edit().remove("menu_items_sequence").apply()
@@ -79,7 +79,7 @@ class SettingsFragment : BaseSettingFragment() {
             setOnPreferenceClickListener { _ ->
 
                 val dialogView =
-                    activity!!.layoutInflater.inflate(R.layout.dialog_font_size, null)!!
+                    requireActivity().layoutInflater.inflate(R.layout.dialog_font_size, null)!!
                 val seekBar = dialogView.findViewById<View>(R.id.value_seekbar) as SeekBar
                 val textView = dialogView.findViewById<View>(R.id.value_textview) as TextView
 
@@ -97,7 +97,7 @@ class SettingsFragment : BaseSettingFragment() {
                     override fun onStartTrackingTouch(seekBar: SeekBar) {}
                     override fun onStopTrackingTouch(seekBar: SeekBar) {}
                 })
-                AlertDialog.Builder(activity!!)
+                AlertDialog.Builder(requireActivity())
                     .setTitle(R.string.text_size)
                     .setView(dialogView)
                     .setPositiveButton(R.string.ok) { _, _ ->

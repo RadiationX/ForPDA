@@ -134,7 +134,7 @@ class QmsBlackListFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener
         val nicks = items.map { it.nick.orEmpty() }
         nickField.setAdapter(
             ArrayAdapter(
-                context!!,
+                requireContext(),
                 android.R.layout.simple_dropdown_item_1line,
                 nicks
             )

@@ -218,7 +218,7 @@ class EditPostFragment : TabFragment(), EditPostView {
         val editText = view.findViewById<View>(R.id.edit_post_reason_field) as EditText
         editText.setText(form.editReason)
 
-        AlertDialog.Builder(context!!)
+        AlertDialog.Builder(requireContext())
             .setTitle(R.string.editpost_reason)
             .setView(view)
             .setPositiveButton(R.string.send) { _, _ ->
@@ -230,7 +230,7 @@ class EditPostFragment : TabFragment(), EditPostView {
 
     private fun showExitDialog(): Boolean {
         if (formType == EditPostForm.TYPE_EDIT_POST) {
-            AlertDialog.Builder(context!!)
+            AlertDialog.Builder(requireContext())
                 .setMessage(R.string.editpost_lose_changes)
                 .setPositiveButton(R.string.yes) { _, _ ->
                     presenter.exit()
@@ -243,7 +243,7 @@ class EditPostFragment : TabFragment(), EditPostView {
     }
 
     private fun showSyncDialog() {
-        AlertDialog.Builder(context!!)
+        AlertDialog.Builder(requireContext())
             .setMessage(R.string.editpost_sync)
             .setPositiveButton(R.string.ok) { _, _ ->
                 val selectionRange = messagePanel.selectionRange

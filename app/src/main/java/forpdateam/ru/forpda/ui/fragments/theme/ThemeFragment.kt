@@ -277,7 +277,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
         }
 
         if (messagePanel.message != null && !messagePanel.message.isEmpty() || !messagePanel.attachments.isEmpty()) {
-            AlertDialog.Builder(context!!)
+            AlertDialog.Builder(requireContext())
                 .setMessage(R.string.editpost_lose_changes)
                 .setPositiveButton(R.string.ok) { _, _ ->
                     presenter.exit()
@@ -532,7 +532,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
     }
 
     override fun showAddInFavDialog(page: ThemePage) {
-        AlertDialog.Builder(context!!)
+        AlertDialog.Builder(requireContext())
             .setTitle(R.string.favorites_subscribe_email)
             .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
                 presenter.addTopicToFavorite(page.id, FavoritesApi.SUB_TYPES[which])
@@ -548,7 +548,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
                 Toast.LENGTH_SHORT
             ).show()
         }
-        AlertDialog.Builder(context!!)
+        AlertDialog.Builder(requireContext())
             .setMessage(R.string.fav_ask_delete)
             .setPositiveButton(R.string.ok) { _, _ ->
                 presenter.deleteTopicFromFavorite(page.favId)

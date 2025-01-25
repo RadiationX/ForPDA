@@ -17,6 +17,7 @@
      Preference is able to place a specific widget for its particular
      type in the "widget_frame" layout. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:activatedBackgroundIndicator"
@@ -30,7 +31,7 @@
     android:paddingEnd="16dp">
 
     <LinearLayout
-        android:id="@+android:id/icon_frame"
+        android:id="@android:id/icon_frame"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="-4dp"
@@ -40,7 +41,8 @@
         android:paddingTop="4dp"
         android:paddingEnd="12dp"
         android:paddingBottom="4dp"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:ignore="NewApi">
 
         <androidx.preference.internal.PreferenceImageView
             android:id="@android:id/icon"

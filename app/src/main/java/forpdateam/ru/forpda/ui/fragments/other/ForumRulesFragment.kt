@@ -122,7 +122,7 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
         runInUiThread(Runnable {
             if (context == null)
                 return@Runnable
-            AlertDialog.Builder(context!!)
+            AlertDialog.Builder(requireContext())
                 .setMessage("Скопировать правило в буфер обмена?")
                 .setPositiveButton(R.string.ok) { _, _ ->
                     Utils.copyToClipBoard(text)
