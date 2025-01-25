@@ -15,8 +15,8 @@ class SearchSettings {
     var result: String?
     var sort: String?
     var source: String?
-    private var query = ""
-    private var nick = ""
+     var query = ""
+     var nick:String? = ""
     var subforums: String?
     var excludeTrash: Int = 0
     var st: Int = 0
@@ -34,33 +34,12 @@ class SearchSettings {
     }
 
 
-    fun getQuery(): String? {
-        return query
-    }
 
-    fun setQuery(query: String) {
-        this.query = query
-    }
-
-    fun getNick(): String? {
-        return nick
-    }
-
-    fun setNick(nick: String) {
-        this.nick = nick
-    }
-
-    fun getForums(): List<String?> {
-        return forums
-    }
 
     fun addForum(forum: String?) {
         forums.add(forum)
     }
 
-    fun getTopics(): List<String?> {
-        return topics
-    }
 
     fun addTopic(topic: String?) {
         topics.add(topic)
@@ -125,7 +104,7 @@ class SearchSettings {
                     ARG_QUERY_FORUM -> {
                         settings.resourceType = RESOURCE_FORUM.first
                         try {
-                            settings.setQuery(URLDecoder.decode(value, "windows-1251"))
+                            settings.query = URLDecoder.decode(value, "windows-1251")
                         } catch (e: UnsupportedEncodingException) {
                             e.printStackTrace()
                         }
@@ -134,14 +113,14 @@ class SearchSettings {
                     ARG_QUERY_NEWS -> {
                         settings.resourceType = RESOURCE_NEWS.first
                         try {
-                            settings.setQuery(URLDecoder.decode(value, "windows-1251"))
+                            settings.query = URLDecoder.decode(value, "windows-1251")
                         } catch (e: UnsupportedEncodingException) {
                             e.printStackTrace()
                         }
                     }
 
                     ARG_NICK -> try {
-                        settings.setNick(URLDecoder.decode(value, "windows-1251"))
+                        settings.nick = URLDecoder.decode(value, "windows-1251")
                     } catch (e: UnsupportedEncodingException) {
                         e.printStackTrace()
                     }
@@ -177,7 +156,7 @@ class SearchSettings {
                 try {
                     builder.appendQueryParameter(
                         ARG_QUERY_NEWS,
-                        URLEncoder.encode(settings.getQuery(), "windows-1251")
+                        URLEncoder.encode(settings.query, "windows-1251")
                     )
                 } catch (e: UnsupportedEncodingException) {
                     e.printStackTrace()
@@ -188,30 +167,30 @@ class SearchSettings {
                 builder.appendQueryParameter(ARG_RESULT, settings.result)
                 builder.appendQueryParameter(ARG_SORT, settings.sort)
                 builder.appendQueryParameter(ARG_SOURCE, settings.source)
-                if (settings.getQuery() != null && !settings.getQuery()!!.isEmpty()) {
+                if (settings.query != null && !settings.query!!.isEmpty()) {
                     try {
                         builder.appendQueryParameter(
                             ARG_QUERY_FORUM,
-                            URLEncoder.encode(settings.getQuery(), "windows-1251")
+                            URLEncoder.encode(settings.query, "windows-1251")
                         )
                     } catch (e: UnsupportedEncodingException) {
                         e.printStackTrace()
                     }
                 }
-                if (settings.getNick() != null && !settings.getNick()!!.isEmpty()) {
+                if (settings.nick != null && !settings.nick!!.isEmpty()) {
                     try {
                         builder.appendQueryParameter(
                             ARG_NICK,
-                            URLEncoder.encode(settings.getNick(), "windows-1251")
+                            URLEncoder.encode(settings.nick, "windows-1251")
                         )
                     } catch (e: UnsupportedEncodingException) {
                         e.printStackTrace()
                     }
                 }
 
-                for (forum in settings.getForums()) builder.appendQueryParameter(ARG_FORUMS, forum)
+                for (forum in settings.forums) builder.appendQueryParameter(ARG_FORUMS, forum)
 
-                for (topic in settings.getTopics()) builder.appendQueryParameter(ARG_TOPICS, topic)
+                for (topic in settings.topics) builder.appendQueryParameter(ARG_TOPICS, topic)
 
                 if (settings.subforums != null) {
                     builder.appendQueryParameter(

@@ -19,8 +19,8 @@ import java.util.Collections
  * Created by radiationx on 08.01.17.
  */
 class PanelItemAdapter(
-    private val items: MutableList<ButtonData?>,
-    private val urlsToAssets: List<String>,
+    private val items: MutableList<ButtonData>,
+    private val urlsToAssets: List<String>?,
     private val type: Int
 ) : RecyclerView.Adapter<PanelItemAdapter.ViewHolder>(), ItemTouchHelperAdapter {
 
@@ -34,7 +34,7 @@ class PanelItemAdapter(
         val item = items[position]
         if (type == TYPE_ASSET) {
             ImageLoader.getInstance()
-                .loadImage(urlsToAssets[position], object : SimpleImageLoadingListener() {
+                .loadImage(urlsToAssets!![position], object : SimpleImageLoadingListener() {
                     override fun onLoadingComplete(
                         imageUri: String,
                         view: View,
@@ -59,8 +59,8 @@ class PanelItemAdapter(
 
     private var itemClickListener: OnItemClickListener? = null
 
-    interface OnItemClickListener {
-        fun onItemClick(item: ButtonData?)
+    fun interface OnItemClickListener {
+        fun onItemClick(item: ButtonData)
     }
 
     fun setOnItemClickListener(mItemClickListener: OnItemClickListener?) {

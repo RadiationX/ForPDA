@@ -39,7 +39,7 @@ class SmilesPanelItem(context: Context, panel: MessagePanel) :
             }
             private set
 
-        fun getSmiles(): List<ButtonData> {
+        fun getSmiles(): MutableList<ButtonData> {
             if (smiles != null) return smiles!!
             val smiles = ArrayList<ButtonData>()
             this.smiles = smiles

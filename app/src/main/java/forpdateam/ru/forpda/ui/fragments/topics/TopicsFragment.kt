@@ -90,7 +90,7 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
         savedInstanceState: Bundle?
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        paginationHelper = PaginationHelper(activity)
+        paginationHelper = PaginationHelper(requireActivity())
         paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow)
         return viewFragment
     }
@@ -103,7 +103,7 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
         dialogMenu.apply {
             addItem(getString(R.string.copy_link)) { _, data1 ->
                 val url: String = if (data1.isAnnounce) {
-                    data1.announceUrl
+                    data1.announceUrl!!
                 } else {
                     "https://4pda.to/forum/index.php?showtopic=" + data1.id
                 }

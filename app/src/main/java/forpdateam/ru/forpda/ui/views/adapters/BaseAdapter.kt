@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 /**
  * Created by radiationx on 14.09.17.
  */
-abstract class BaseAdapter<E, VH : BaseViewHolder<E>> : RecyclerView.Adapter<VH>() {
+abstract class BaseAdapter<E, VH : BaseViewHolder<*>> : RecyclerView.Adapter<VH>() {
     @JvmField
     protected var items: ArrayList<E> = ArrayList()
 

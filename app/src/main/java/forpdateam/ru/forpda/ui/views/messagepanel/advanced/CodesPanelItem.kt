@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.text.TextUtils
-import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
@@ -233,7 +232,7 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
             get().getString(R.string.codes_font_text),
             null
         )
-        insertHelper.setInsertListener { resultHeaders: ArrayList<Pair<String?, String?>>?, bodyResult: String? ->
+        insertHelper.setInsertListener { resultHeaders, bodyResult ->
             val bbcodes = createBbCode(item.text, resultHeaders, bodyResult)
             messagePanel.insertText(bbcodes[0], bbcodes[1], range[0], range[1])
         }
@@ -251,7 +250,7 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
             get().getString(R.string.codes_link_text),
             null
         )
-        insertHelper.setInsertListener { resultHeaders: ArrayList<Pair<String?, String?>>?, bodyResult: String? ->
+        insertHelper.setInsertListener { resultHeaders, bodyResult ->
             val bbcodes = createBbCode(item.text, resultHeaders, bodyResult)
             messagePanel.insertText(bbcodes[0], bbcodes[1], range[0], range[1])
         }
@@ -269,7 +268,7 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
             get().getString(R.string.codes_spoiler_text),
             null
         )
-        insertHelper.setInsertListener { resultHeaders: ArrayList<Pair<String?, String?>>?, bodyResult: String? ->
+        insertHelper.setInsertListener { resultHeaders, bodyResult ->
             val bbcodes = createBbCode(item.text, resultHeaders, bodyResult)
             messagePanel.insertText(bbcodes[0], bbcodes[1], range[0], range[1])
         }
@@ -287,7 +286,7 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
             get().getString(R.string.codes_code_text),
             null
         )
-        insertHelper.setInsertListener { resultHeaders: ArrayList<Pair<String?, String?>>?, bodyResult: String? ->
+        insertHelper.setInsertListener { resultHeaders, bodyResult ->
             val bbcodes = createBbCode(item.text, resultHeaders, bodyResult)
             messagePanel.insertText(bbcodes[0], bbcodes[1], range[0], range[1])
         }
@@ -307,7 +306,7 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
             get().getString(R.string.codes_quote_text),
             null
         )
-        insertHelper.setInsertListener { resultHeaders: ArrayList<Pair<String?, String?>>?, bodyResult: String? ->
+        insertHelper.setInsertListener { resultHeaders, bodyResult ->
             val bbcodes = createBbCode(item.text, resultHeaders, bodyResult)
             messagePanel.insertText(bbcodes[0], bbcodes[1], range[0], range[1])
         }
@@ -382,7 +381,7 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
         super.onDetachedFromWindow()
     }
 
-    private val codes: List<ButtonData>
+    private val codes: MutableList<ButtonData>
         get() {
             if (Companion.codes != null) return Companion.codes!!
             val codes = ArrayList<ButtonData>()

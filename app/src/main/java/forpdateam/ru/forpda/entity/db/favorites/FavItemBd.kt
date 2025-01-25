@@ -7,7 +7,7 @@ import io.realm.annotations.PrimaryKey
 /**
  * Created by radiationx on 25.03.17.
  */
-class FavItemBd : RealmObject, IFavItem {
+open class FavItemBd : RealmObject, IFavItem {
     @PrimaryKey
     override var favId: Int = 0
     override var topicId: Int = 0

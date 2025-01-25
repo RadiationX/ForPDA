@@ -111,7 +111,7 @@ class DynamicDialogMenu<T, E> {
         }
     }
 
-    interface OnClickListener<T, E> {
+    fun interface OnClickListener<T, E> {
         fun onClick(context: T, data: E)
     }
 }

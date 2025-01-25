@@ -264,13 +264,13 @@ class Client(
                         multipartBuilder.addFormDataPart(key, value)
                     }
                 }
-                if (request.file != null) {
-                    val type = MediaType.parse(request.file.mimeType)
+                request.file?.also {file->
+                    val type = MediaType.parse(file.mimeType)
                     val requestBody = RequestBodyUtil
-                        .create(type, request.file.fileStream)
+                        .create(type, file.fileStream)
                     multipartBuilder.addFormDataPart(
-                        request.file.requestName,
-                        request.file.fileName,
+                        file.requestName,
+                        file.fileName,
                         requestBody
                     )
                 }

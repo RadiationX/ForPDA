@@ -154,7 +154,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
         refreshLayout =
             findViewById(R.id.swipe_refresh_list) as SwipeRefreshLayout
         messagePanel = MessagePanel(requireContext(), fragmentContainer, coordinatorLayout, false)
-        paginationHelper = PaginationHelper(activity)
+        paginationHelper = PaginationHelper(requireActivity())
         paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow)
 
         notificationView = inflater.inflate(R.layout.new_message_notification, null)
@@ -190,20 +190,20 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
 
         messagePanel.enableBehavior()
         messagePanel.addSendOnClickListener { sendMessage() }
-        messagePanel.sendButton.setOnLongClickListener {
+        messagePanel.sendButton!!.setOnLongClickListener {
             presenter.openEditPostForm(messagePanel.message, messagePanel.attachments)
             true
         }
-        messagePanel.fullButton.visibility = View.VISIBLE
-        messagePanel.fullButton.setOnClickListener {
+        messagePanel.fullButton!!.visibility = View.VISIBLE
+        messagePanel.fullButton!!.setOnClickListener {
             presenter.openEditPostForm(
                 messagePanel.message,
                 messagePanel.attachments
             )
         }
-        messagePanel.hideButton.visibility = View.VISIBLE
-        messagePanel.hideButton.setOnClickListener { hideMessagePanel() }
-        attachmentsPopup = messagePanel.attachmentsPopup
+        messagePanel.hideButton!!.visibility = View.VISIBLE
+        messagePanel.hideButton!!.setOnClickListener { hideMessagePanel() }
+        attachmentsPopup = messagePanel.attachmentsPopup!!
         attachmentsPopup.setAddOnClickListener { tryPickFile() }
         attachmentsPopup.setDeleteOnClickListener { removeFiles() }
 
@@ -328,14 +328,14 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
             if (showKeyboard) {
                 messagePanel.show()
             }
-            messagePanel.heightChangeListener.onChangedHeight(messagePanel.lastHeight)
+            messagePanel.heightChangeListener!!.onChangedHeight(messagePanel.lastHeight)
             toggleMessagePanelItem.icon =
                 App.getVecDrawable(requireContext(), R.drawable.ic_toolbar_transcribe_close)
         }
         if (showKeyboard) {
             //messagePanel.getMessageField().setSelection(messagePanel.getMessageField().length());
-            messagePanel.messageField.requestFocus()
-            showKeyboard(messagePanel.messageField)
+            messagePanel.messageField!!.requestFocus()
+            showKeyboard(messagePanel.messageField!!)
         }
     }
 
@@ -343,7 +343,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
         messagePanel.visibility = View.GONE
         messagePanel.hidePopupWindows()
         hideKeyboard()
-        messagePanel.heightChangeListener.onChangedHeight(0)
+        messagePanel.heightChangeListener!!.onChangedHeight(0)
         toggleMessagePanelItem.icon = App.getVecDrawable(requireContext(), R.drawable.ic_toolbar_create)
     }
 
@@ -584,7 +584,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
 
     override fun syncEditPost(data: EditPostSyncData) {
         messagePanel.setText(data.message)
-        messagePanel.messageField.setSelection(data.selectionStart, data.selectionEnd)
+        messagePanel.messageField!!.setSelection(data.selectionStart, data.selectionEnd)
         data.attachments?.also { attachmentsPopup.setAttachments(it) }
     }
 

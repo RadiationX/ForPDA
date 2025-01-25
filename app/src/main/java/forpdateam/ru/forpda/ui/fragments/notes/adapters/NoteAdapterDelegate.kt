@@ -67,7 +67,7 @@ class NoteAdapterDelegate(
         override fun bind(item: NoteItem) {
             currentItem = item
             title.text = item.title
-            if (item.content == null || item.content.isEmpty()) {
+            if (item.content == null || item.content!!.isEmpty()) {
                 content.visibility = View.GONE
             } else {
                 content.visibility = View.VISIBLE

@@ -41,7 +41,7 @@ class ThemeApi(
 
     fun deletePost(postId: Int): Boolean {
         val url =
-            "https://4pda.to/forum/index.php?act=zmod&auth_key=${webClient.authKey}&code=postchoice&tact=delete&selectedpids=$postId"
+            "https://4pda.to/forum/index.php?act=zmod&auth_key=${webClient.getAuthKey()}&code=postchoice&tact=delete&selectedpids=$postId"
         val response = webClient.request(NetworkRequest.Builder().url(url).xhrHeader().build())
         val body = response.body
         if (body != "ok") {

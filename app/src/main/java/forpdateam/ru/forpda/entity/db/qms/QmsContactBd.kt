@@ -7,7 +7,7 @@ import io.realm.annotations.PrimaryKey
 /**
  * Created by radiationx on 25.03.17.
  */
-class QmsContactBd : RealmObject, IQmsContact {
+open class QmsContactBd : RealmObject, IQmsContact {
     @PrimaryKey
     override var nick: String? = null
     override var avatar: String? = null

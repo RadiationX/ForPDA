@@ -44,7 +44,7 @@ class EditPostParser(
                             poll.baseIndexOffset = questionIndex
                         }
                         index = questionIndex
-                        title = jsonMatcher.group(3).fromHtml()
+                        title = requireNotNull(jsonMatcher.group(3).fromHtml())
                     })
                 }
                 .reset(matcher.group(3)).findAll { jsonMatcher ->
@@ -57,7 +57,7 @@ class EditPostParser(
                             question.baseIndexOffset = choiceIndex
                         }
                         choice.index = choiceIndex
-                        choice.title = jsonMatcher.group(3).fromHtml()
+                        choice.title = requireNotNull(jsonMatcher.group(3).fromHtml())
                         question.addChoice(choice)
                     }
                 }
@@ -80,7 +80,7 @@ class EditPostParser(
 
             poll.maxQuestions = matcher.group(6).toInt()
             poll.maxChoices = matcher.group(7).toInt()
-            poll.title = matcher.group(8).fromHtml()
+            poll.title = requireNotNull(matcher.group(8).fromHtml())
             poll
         }
 

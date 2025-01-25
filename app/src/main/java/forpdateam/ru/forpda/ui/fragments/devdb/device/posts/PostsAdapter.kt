@@ -72,7 +72,7 @@ class PostsAdapter(
             }
         }
 
-        interface Listener {
+        fun interface Listener {
             fun onClick(item: PostItem)
         }
     }

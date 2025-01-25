@@ -31,7 +31,7 @@ class ScrimHelper(appBarLayout: AppBarLayout, toolbarLayout: CollapsingToolbarLa
         this.scrimListener = scrimListener
     }
 
-    interface ScrimListener {
+    fun interface ScrimListener {
         fun onScrimChanged(scrim: Boolean)
     }
 }

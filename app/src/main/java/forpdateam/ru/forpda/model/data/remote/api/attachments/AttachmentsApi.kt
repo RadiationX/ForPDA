@@ -83,7 +83,7 @@ class AttachmentsApi(
                     uploadRequest.formHeader("relType", relType)
                 }
 
-                response = webClient.request(uploadRequest.build(), item.progressListener)
+                response = webClient.request(uploadRequest.build(), item.itemProgressListener)
             }
             attachmentsParser.parseAttachment(response.body, item)
             item.status = AttachmentItem.STATUS_UPLOADED

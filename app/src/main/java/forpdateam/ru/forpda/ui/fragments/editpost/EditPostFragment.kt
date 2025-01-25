@@ -72,7 +72,7 @@ class EditPostFragment : TabFragment(), EditPostView {
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         messagePanel = MessagePanel(requireContext(), fragmentContainer, fragmentContent, true)
-        attachmentsPopup = messagePanel.attachmentsPopup
+        attachmentsPopup = messagePanel.attachmentsPopup!!
         return viewFragment
     }
 
@@ -91,7 +91,7 @@ class EditPostFragment : TabFragment(), EditPostView {
             )
         }
 
-        messagePanel.editPollButton.setOnClickListener {
+        messagePanel.editPollButton!!.setOnClickListener {
             pollPopup?.show()
         }
     }
@@ -162,22 +162,22 @@ class EditPostFragment : TabFragment(), EditPostView {
 
         if (form.poll != null) {
             pollPopup = EditPollPopup(requireContext())
-            pollPopup?.setPoll(form.poll)
-            messagePanel.editPollButton.visibility = View.VISIBLE
+            pollPopup?.setPoll(form.poll!!)
+            messagePanel.editPollButton!!.visibility = View.VISIBLE
         } else {
-            messagePanel.editPollButton.visibility = View.GONE
+            messagePanel.editPollButton!!.visibility = View.GONE
         }
 
         attachmentsPopup.onLoadAttachments(form)
         messagePanel.insertText(form.message)
-        messagePanel.messageField.requestFocus()
-        showKeyboard(messagePanel.messageField)
+        messagePanel.messageField!!.requestFocus()
+        showKeyboard(messagePanel.messageField!!)
     }
 
     override fun setRefreshing(isRefreshing: Boolean) {
-        messagePanel.formProgress.visibility = if (isRefreshing) View.VISIBLE else View.GONE
-        messagePanel.messageField.visibility = if (isRefreshing) View.GONE else View.VISIBLE
-        messagePanel.formProgress.visibility = View.GONE
+        messagePanel.formProgress!!.visibility = if (isRefreshing) View.VISIBLE else View.GONE
+        messagePanel.messageField!!.visibility = if (isRefreshing) View.GONE else View.VISIBLE
+        messagePanel.formProgress!!.visibility = View.GONE
     }
 
     override fun setSendRefreshing(isRefreshing: Boolean) {

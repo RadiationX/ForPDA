@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.entity.remote.devdb
 
-import android.util.Pair
-
 /**
  * Created by radiationx on 06.08.17.
  */

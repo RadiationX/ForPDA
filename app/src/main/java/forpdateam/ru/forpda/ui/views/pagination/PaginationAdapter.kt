@@ -1,65 +1,56 @@
-package forpdateam.ru.forpda.ui.views.pagination;
+package forpdateam.ru.forpda.ui.views.pagination
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.TextView;
-
-import java.util.Locale;
-
-import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.R;
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.BaseAdapter
+import android.widget.TextView
+import forpdateam.ru.forpda.App.Companion.get
+import forpdateam.ru.forpda.R
+import java.util.Locale
 
 /**
  * Created by radiationx on 26.10.16.
  */
-public class PaginationAdapter extends BaseAdapter {
-    private final String page = App.get().getString(R.string.pagination_page_number);
-    private final LayoutInflater inflater;
-    private final int[] data;
+class PaginationAdapter(context: Context?, private val data: IntArray) : BaseAdapter() {
+    private val page = get().getString(R.string.pagination_page_number)
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
 
-    public PaginationAdapter(Context context, int[] data) {
-        this.data = data;
-        inflater = LayoutInflater.from(context);
+    override fun getCount(): Int {
+        return data.size
     }
 
-    @Override
-    public int getCount() {
-        return data.length;
+    override fun getItem(i: Int): Any {
+        return data[i]
     }
 
-    @Override
-    public Object getItem(int i) {
-        return data[i];
+    override fun getItemId(i: Int): Long {
+        return i.toLong()
     }
 
-    @Override
-    public long getItemId(int i) {
-        return i;
-    }
-
-    @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        final ViewHolder holder;
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        var convertView = convertView
+        val holder: ViewHolder
 
         if (convertView == null) {
-            convertView = inflater.inflate(android.R.layout.simple_list_item_single_choice, parent, false);
-            holder = new ViewHolder();
-            assert convertView != null;
-            holder.text = convertView.findViewById(android.R.id.text1);
-            convertView.setTag(holder);
+            convertView =
+                inflater.inflate(android.R.layout.simple_list_item_single_choice, parent, false)
+            holder = ViewHolder()
+            checkNotNull(convertView)
+            holder.text = convertView.findViewById(android.R.id.text1)
+            convertView.tag = holder
         } else {
-            holder = (ViewHolder) convertView.getTag();
+            holder = convertView.tag as ViewHolder
         }
 
 
-        holder.text.setText(String.format(Locale.getDefault(), page, data[position]));
-        return convertView;
+        holder.text!!.text =
+            String.format(Locale.getDefault(), page, data[position])
+        return convertView
     }
 
-    private class ViewHolder {
-        public TextView text;
+    private inner class ViewHolder {
+        var text: TextView? = null
     }
 }

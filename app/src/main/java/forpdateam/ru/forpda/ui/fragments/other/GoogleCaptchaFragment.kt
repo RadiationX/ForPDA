@@ -75,7 +75,7 @@ class GoogleCaptchaFragment : TabFragment() {
             ) {
                 val nr = NetworkRequest.Builder().url(uri.toString()).withoutBody().build()
                 val disposable = Observable.fromCallable { App.get().Di().webClient.request(nr) }
-                    .onErrorReturn { NetworkResponse(null) }
+                    .onErrorReturn { NetworkResponse(uri.toString()) }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe { this@GoogleCaptchaFragment.onResponse() }

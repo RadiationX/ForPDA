@@ -225,7 +225,7 @@ class ThemePresenter(
 
     private fun createEditPostForm(
         message: String,
-        attachments: MutableList<AttachmentItem>
+        attachments: List<AttachmentItem>
     ): EditPostForm? = currentPage?.let {
         val form = EditPostForm()
         form.forumId = it.forumId
@@ -236,7 +236,7 @@ class ThemePresenter(
         form
     }
 
-    fun openEditPostForm(message: String, attachments: MutableList<AttachmentItem>) {
+    fun openEditPostForm(message: String, attachments: List<AttachmentItem>) {
         currentPage?.let { page ->
             createEditPostForm(message, attachments)?.let {
                 router.navigateTo(Screen.EditPost().apply {
@@ -276,7 +276,7 @@ class ThemePresenter(
     }
 
 
-    fun sendMessage(message: String, attachments: MutableList<AttachmentItem>) {
+    fun sendMessage(message: String, attachments: List<AttachmentItem>) {
         createEditPostForm(message, attachments)?.let {
             viewState.setMessageRefreshing(true)
             editorRepository

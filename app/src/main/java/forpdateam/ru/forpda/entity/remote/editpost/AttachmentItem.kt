@@ -22,7 +22,11 @@ class AttachmentItem : Parcelable {
     var height: Int = 0
 
     var name: String? = null
-    private var extension: String? = null
+    var extension: String? = null
+        set(value) {
+            field = value
+            if (imageExtensions.matcher(value).matches()) this.typeFile = TYPE_IMAGE
+        }
     var weight: String? = null
     var imageUrl: String? = null
     var md5: String? = null
@@ -48,15 +52,6 @@ class AttachmentItem : Parcelable {
 
     fun toggle() {
         isSelected = !isSelected
-    }
-
-    fun getExtension(): String? {
-        return extension
-    }
-
-    fun setExtension(extension: String) {
-        this.extension = extension
-        if (imageExtensions.matcher(extension).matches()) this.typeFile = TYPE_IMAGE
     }
 
     //PARCELABLE !!!!!!!!AAA!!!!!

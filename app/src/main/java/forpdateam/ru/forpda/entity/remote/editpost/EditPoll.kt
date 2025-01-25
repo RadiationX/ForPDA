@@ -16,7 +16,7 @@ class EditPoll {
         private set
     private val questions: MutableList<Question> = ArrayList()
 
-    fun getQuestions(): List<Question> {
+    fun getQuestions(): MutableList<Question> {
         return questions
     }
 

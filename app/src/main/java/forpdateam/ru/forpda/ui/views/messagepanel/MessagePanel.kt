@@ -51,7 +51,7 @@ class MessagePanel(
     private val advancedListeners: MutableList<OnClickListener> = ArrayList()
     private val attachmentsListeners: MutableList<OnClickListener> = ArrayList()
     private val sendListeners: MutableList<OnClickListener> = ArrayList()
-    private var messageField: CodeEditor? = null
+     var messageField: CodeEditor? = null
     private var panelBehavior: MessagePanelBehavior? = null
     private var advancedPopup: AdvancedPopup? = null
     var attachmentsPopup: AttachmentsPopup? = null
@@ -295,7 +295,7 @@ class MessagePanel(
         panelBehavior!!.setCanScrolling(canScrolling)
     }
 
-    interface HeightChangeListener {
+    fun interface HeightChangeListener {
         fun onChangedHeight(newHeight: Int)
     }
 

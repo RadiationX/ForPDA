@@ -195,7 +195,7 @@ class App : Application() {
                     override fun createConnection(url: String, extra: Any): HttpURLConnection {
                         val conn = super.createConnection(url, extra)
                         if (pattern4pda.matcher(url).find()) {
-                            val cookies = get().Di().webClient.clientCookies
+                            val cookies = get().Di().webClient.getClientCookies()
                             var stringCookies = ""
                             for ((key, value) in cookies) {
                                 stringCookies = stringCookies + key + "=" + value.value() + ";"

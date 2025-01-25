@@ -26,7 +26,7 @@ import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
  * Created by isanechek on 8/8/17.
  */
 
-public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder> {
+public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder<?>> {
     private static final int COMPAT_LAYOUT = 1;
     private static final int FULL_LAYOUT = 2;
     private static final int LOAD_MORE_LAYOUT = 3;

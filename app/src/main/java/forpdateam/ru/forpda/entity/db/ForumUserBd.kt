@@ -7,7 +7,7 @@ import io.realm.annotations.PrimaryKey
 /**
  * Created by radiationx on 08.07.17.
  */
-class ForumUserBd : RealmObject, IForumUser {
+open class ForumUserBd : RealmObject, IForumUser {
     @PrimaryKey
     override var id: Int = 0
     override var nick: String? = ""

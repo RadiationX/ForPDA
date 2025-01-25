@@ -125,7 +125,7 @@ class SearchPresenter(
     }
 
     fun refreshData() {
-        if (settings.query.isEmpty() && settings.nick.isEmpty()) {
+        if (settings.query.isNullOrEmpty() && settings.nick.isNullOrEmpty()) {
             return
         }
         val withHtml =

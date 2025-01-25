@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.model.data.remote.api.theme
 
-import android.util.Pair
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.entity.remote.theme.Poll
 import forpdateam.ru.forpda.entity.remote.theme.PollQuestion

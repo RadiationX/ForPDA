@@ -27,7 +27,7 @@ class WebSocketController(
             }
         }
 
-        override fun onMessage(webSocket: WebSocket, text: String?) {
+        override fun onMessage(webSocket: WebSocket, text: String) {
             val eventWebSocket = getByWebSocket(webSocket)
             val currentWebSocket = getById(currentId)
             Log.d(
@@ -40,7 +40,7 @@ class WebSocketController(
             }
         }
 
-        override fun onClosed(webSocket: WebSocket, code: Int, reason: String?) {}
+        override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {}
 
         override fun onFailure(webSocket: WebSocket, throwable: Throwable, response: Response?) {
             val eventWebSocket = getByWebSocket(webSocket)
@@ -106,7 +106,7 @@ class WebSocketController(
     open class Listener {
         open fun onConnected() {}
         open fun onDisconnected(throwable: Throwable, response: Response?) {}
-        open fun onMessage(text: String?) {}
+        open fun onMessage(text: String) {}
     }
 
     private class WebSocketState(

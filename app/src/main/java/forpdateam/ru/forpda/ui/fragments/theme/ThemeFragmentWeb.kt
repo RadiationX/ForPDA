@@ -23,6 +23,7 @@ import forpdateam.ru.forpda.presentation.theme.ThemePresenter
 import forpdateam.ru.forpda.ui.fragments.TabTopScroller
 import forpdateam.ru.forpda.ui.fragments.WebViewTopScroller
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
+import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
 import java.util.regex.Pattern
 
 /**
@@ -44,7 +45,7 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
     @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         jsInterface = ThemeJsInterface(presenter)
-        messagePanel.heightChangeListener = { newHeight ->
+        messagePanel.heightChangeListener = MessagePanel.HeightChangeListener { newHeight ->
             webView.paddingBottom = newHeight
         }
 

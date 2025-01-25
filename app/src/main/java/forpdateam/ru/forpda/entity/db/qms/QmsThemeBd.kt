@@ -7,7 +7,7 @@ import io.realm.annotations.PrimaryKey
 /**
  * Created by radiationx on 25.03.17.
  */
-class QmsThemeBd : RealmObject, IQmsTheme {
+open class QmsThemeBd : RealmObject, IQmsTheme {
     @PrimaryKey
     override var id: Int = 0
     override var countMessages: Int = 0

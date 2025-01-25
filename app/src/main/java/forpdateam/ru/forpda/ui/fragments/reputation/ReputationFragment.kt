@@ -102,7 +102,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
         savedInstanceState: Bundle?
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        paginationHelper = PaginationHelper(activity)
+        paginationHelper = PaginationHelper(requireActivity())
         paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow)
         return viewFragment
     }

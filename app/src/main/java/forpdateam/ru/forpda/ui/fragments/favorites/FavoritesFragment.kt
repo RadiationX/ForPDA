@@ -124,7 +124,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
         dialog.setOnShowListener { dialog1 ->
             (dialog1 as Dialog).window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         }
-        paginationHelper = PaginationHelper(activity)
+        paginationHelper = PaginationHelper(requireActivity())
         paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow)
         contentController.setFirstLoad(false)
         return viewFragment

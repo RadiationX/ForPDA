@@ -69,7 +69,7 @@ class CommentsAdapter(
             rating.background.colorFilter = getColorFilter(item.rating)
         }
 
-        interface Listener {
+        fun interface Listener {
             fun onClick(item: Device.Comment)
         }
     }

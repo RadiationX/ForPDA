@@ -86,7 +86,7 @@ public class TopicsAdapter extends BaseSectionedAdapter<TopicItem, BaseSectioned
             if (topDivider != null) {
                 topDivider.setVisibility(section == 0 ? View.GONE : View.VISIBLE);
             }
-            title.setText(sections.get(section).first);
+            title.setText(sections.get(section).getFirst());
         }
     }
 
@@ -151,8 +151,8 @@ public class TopicsAdapter extends BaseSectionedAdapter<TopicItem, BaseSectioned
         @Override
         public void bind(TopicItem item) {
             title.setText(item.getTitle());
-            title.setTypeface(item.isNew() ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
-            title.setTextColor(item.isNew() ? titleColorNew : titleColor);
+            title.setTypeface(item.isNew ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+            title.setTextColor(item.isNew ? titleColorNew : titleColor);
             if (false) {
                 desc.setVisibility(View.VISIBLE);
                 desc.setText(item.getDesc());

@@ -15,6 +15,7 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
+import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.ui.views.messagepanel.AutoFitRecyclerView
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
@@ -79,13 +80,13 @@ class AttachmentsPopup(context: Context, private val messagePanel: MessagePanel)
         recyclerView.setFakeLinear(isLinear)
         recyclerView.adapter = adapter
 
-        recyclerView.manager.spanSizeLookup =
+        recyclerView.manager!!.spanSizeLookup =
             object : androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(i: Int): Int {
                     return if (isLinear) {
                         1
                     } else if (i == 0) {
-                        recyclerView.manager.spanCount
+                        recyclerView.manager!!.spanCount
                     } else {
                         1
                     }
@@ -263,7 +264,7 @@ class AttachmentsPopup(context: Context, private val messagePanel: MessagePanel)
         val loadingItems = ArrayList<AttachmentItem>()
         for (file in files) {
             val item = AttachmentItem(file.fileName)
-            item.progressListener = { percent ->
+            item.progressListener = IWebClient.ProgressListener{ percent ->
 
             }
             Log.d(LOG_TAG, "Add loading item $item")

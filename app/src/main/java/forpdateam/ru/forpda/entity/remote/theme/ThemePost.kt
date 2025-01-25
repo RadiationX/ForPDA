@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.entity.remote.theme
 
-import android.util.Pair
 import forpdateam.ru.forpda.entity.remote.BaseForumPost
 
 /**

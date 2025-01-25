@@ -218,6 +218,7 @@ class ArticleParser(
     ): Comment {
         var level = argLevel
         val rootComments = Parser.findNode(root, "ul", "class", "comment-list")
+        requireNotNull(rootComments)
         val commentNodes = Parser.findChildNodes(rootComments, "li", null, null)
 
         /*if (commentNodes.size() == 0) {
@@ -253,6 +254,7 @@ class ArticleParser(
                 val avatarNode = Parser.findNode(commentNode, "a", "class", "comment-avatar")
                 val nickNode = Parser.findNode(commentNode, "a", "class", "nickname")
                     ?: Parser.findNode(commentNode, "span", "class", "nickname")
+                requireNotNull(nickNode)
                 val metaNode = Parser.findNode(commentNode, "a", "class", "date")
 
                 userId = avatarNode!!.getAttribute("href")
@@ -274,6 +276,7 @@ class ArticleParser(
             }
 
             val contentNode = Parser.findNode(commentNode, "p", "class", "content")
+            requireNotNull(contentNode)
             content = Parser.getHtml(contentNode, true)
             comment.content = ApiUtils.fromHtml(content)
             comment.level = level

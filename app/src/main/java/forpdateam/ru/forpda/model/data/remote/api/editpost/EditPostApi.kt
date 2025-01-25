@@ -53,7 +53,7 @@ class EditPostApi(
             .formHeader("CODE", if (form.type == EditPostForm.TYPE_NEW_POST) "03" else "9")
             .formHeader("f", form.forumId.toString())
             .formHeader("t", form.topicId.toString())
-            .formHeader("auth_key", webClient.authKey)
+            .formHeader("auth_key", webClient.getAuthKey())
             .formHeader("Post", form.message)
             .formHeader("enablesig", "yes")
             .formHeader("enableemo", "yes")
@@ -69,7 +69,7 @@ class EditPostApi(
         val poll = form.poll
         if (poll != null) {
             builder.formHeader("poll_question", poll.title.replace("\n".toRegex(), " "))
-            for (i in 0 until poll.questions.size) {
+            for (i in 0 until poll.getQuestions().size) {
                 val question = poll.getQuestion(i)
                 val q_index = i + 1
                 builder.formHeader(
@@ -77,7 +77,7 @@ class EditPostApi(
                     question.title.replace("\n".toRegex(), " ")
                 )
                 builder.formHeader("multi[$q_index]", if (question.isMulti) "1" else "0")
-                for (j in 0 until question.choices.size) {
+                for (j in 0 until question.getChoices().size) {
                     val choice = question.getChoice(j)
                     val c_index = j + 1
                     builder.formHeader(

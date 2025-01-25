@@ -58,7 +58,7 @@ public class BrandsAdapter extends BaseSectionedAdapter<Brands.Item, BaseSection
             if (topDivider != null) {
                 topDivider.setVisibility(section == 0 ? View.GONE : View.VISIBLE);
             }
-            title.setText(sections.get(section).first);
+            title.setText(sections.get(section).getFirst());
         }
     }
 

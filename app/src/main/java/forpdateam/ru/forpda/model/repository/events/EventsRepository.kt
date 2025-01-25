@@ -76,7 +76,7 @@ class EventsRepository(
                 webSocketController.send("""[0, "ea", "u${authHolder.get().userId}"]""")
             }
 
-            override fun onMessage(text: String?) {
+            override fun onMessage(text: String) {
                 Log.d(
                     LOG_TAG,
                     "WSContr onMessage ${webSocketController.getCurrentId()}, ${webSocketController.isConnected()}, $text"

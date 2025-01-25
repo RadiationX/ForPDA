@@ -32,9 +32,9 @@ class AuthApi(
     fun login(form: AuthForm): AuthForm {
         val builder = NetworkRequest.Builder()
             .url(AUTH_BASE_URL)
-            .formHeader("captcha-time", form.captchaTime)
-            .formHeader("captcha-sig", form.captchaSig)
-            .formHeader("captcha", form.captcha)
+            .formHeader("captcha-time", requireNotNull(form.captchaTime))
+            .formHeader("captcha-sig", requireNotNull(form.captchaSig))
+            .formHeader("captcha", requireNotNull(form.captcha))
             .formHeader("return", IWebClient.MINIMAL_PAGE)
             .formHeader("login", URLEncoder.encode(form.nick, "windows-1251"), true)
             .formHeader("password", URLEncoder.encode(form.password, "windows-1251"), true)
@@ -45,7 +45,7 @@ class AuthApi(
         val matcher = errorPattern.matcher(response.body)
         if (matcher.find()) {
             throw Exception(
-                ApiUtils.fromHtml(matcher.group(1)).replace("\\.".toRegex(), ".\n").trim()
+                ApiUtils.fromHtml(matcher.group(1))?.replace("\\.".toRegex(), ".\n")?.trim()
             )
         }
         if (!checkLogin(response.body)) {
@@ -56,7 +56,7 @@ class AuthApi(
 
     fun logout(): Boolean {
         val response =
-            webClient.get("https://4pda.to/forum/index.php?act=logout&CODE=03&k=" + webClient.authKey)
+            webClient.get("https://4pda.to/forum/index.php?act=logout&CODE=03&k=" + webClient.getAuthKey())
 
         val matcher = Pattern.compile("wr va-m text").matcher(response.body)
         if (matcher.find())

@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.ui.views.adapters;
 
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +10,8 @@ import com.afollestad.sectionedrecyclerview.SectionedRecyclerViewAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import kotlin.Pair;
 
 /**
  * Created by radiationx on 14.09.17.
@@ -29,7 +30,7 @@ public class BaseSectionedAdapter<E, VH extends BaseSectionedViewHolder> extends
 
     public void clear() {
         for (Pair<String, List<E>> section : sections)
-            section.second.clear();
+            section.getSecond().clear();
         sections.clear();
     }
 
@@ -54,11 +55,11 @@ public class BaseSectionedAdapter<E, VH extends BaseSectionedViewHolder> extends
         if (position[0] == -1) {
             return null;
         }
-        return sections.get(position[0]).second.get(position[1]);
+        return sections.get(position[0]).getSecond().get(position[1]);
     }
 
     public E getItem(int section, int relativePosition) {
-        return sections.get(section).second.get(relativePosition);
+        return sections.get(section).getSecond().get(relativePosition);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class BaseSectionedAdapter<E, VH extends BaseSectionedViewHolder> extends
 
     @Override
     public int getItemCount(int section) {
-        return sections.get(section).second.size();
+        return sections.get(section).getSecond().size();
     }
 
     @Override

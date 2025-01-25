@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.model.data.remote.api.devdb
 
-import android.util.Pair
 import forpdateam.ru.forpda.entity.remote.devdb.Brand
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
 import forpdateam.ru.forpda.entity.remote.devdb.Device

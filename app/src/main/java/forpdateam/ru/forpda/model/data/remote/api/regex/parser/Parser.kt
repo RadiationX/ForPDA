@@ -260,7 +260,7 @@ object Parser {
         return result
     }
 
-    fun findChildNodes(node: Node, tag: String?, attr: String?, value: String): ArrayList<Node> {
+    fun findChildNodes(node: Node, tag: String?, attr: String?, value: String?): ArrayList<Node> {
         val result = ArrayList<Node>()
         if (isNotElement(node)) {
             return result
@@ -274,7 +274,7 @@ object Parser {
                     continue
                 }
                 val attrValue = child.attributes[attr]
-                if (attrValue != null && attrValue.contains(value)) {
+                if (attrValue != null && value != null && attrValue.contains(value)) {
                     result.add(child)
                 }
             }

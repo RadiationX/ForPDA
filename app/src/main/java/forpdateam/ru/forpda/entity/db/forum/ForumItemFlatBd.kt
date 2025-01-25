@@ -7,7 +7,7 @@ import io.realm.RealmObject
 /**
  * Created by radiationx on 25.03.17.
  */
-class ForumItemFlatBd : RealmObject, IForumItemFlat {
+open class ForumItemFlatBd : RealmObject, IForumItemFlat {
     override var id: Int = -1
     override var parentId: Int = -1
     override var level: Int = -1

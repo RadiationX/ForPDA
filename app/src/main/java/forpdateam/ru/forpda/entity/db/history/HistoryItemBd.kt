@@ -7,7 +7,7 @@ import io.realm.annotations.PrimaryKey
 /**
  * Created by radiationx on 06.09.17.
  */
-class HistoryItemBd : RealmObject, IHistoryItem {
+open class HistoryItemBd : RealmObject, IHistoryItem {
     @PrimaryKey
     override var id: Int = 0
     override var url: String? = null

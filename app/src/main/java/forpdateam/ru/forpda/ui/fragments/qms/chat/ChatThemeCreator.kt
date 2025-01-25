@@ -96,7 +96,7 @@ class ChatThemeCreator internal constructor(
             ).show()
         } else {
             fragment.onCreateNewTheme(
-                userNick,
+                userNick!!,
                 titleField.text.toString(),
                 fragment.messagePanel.message
             )
@@ -110,6 +110,6 @@ class ChatThemeCreator internal constructor(
     }
 
     interface ThemeCreatorInterface {
-        fun onCreateNewTheme(nick: String?, title: String?, message: String?)
+        fun onCreateNewTheme(nick: String, title: String, message: String)
     }
 }

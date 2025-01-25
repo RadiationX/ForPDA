@@ -34,6 +34,7 @@ import forpdateam.ru.forpda.ui.fragments.WebViewTopScroller
 import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
+import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel.HeightChangeListener
 import forpdateam.ru.forpda.ui.views.messagepanel.attachments.AttachmentsPopup
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -114,7 +115,7 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface,
         )
         attachWebView(webView)
         chatContainer.addView(webView, 0)
-        attachmentsPopup = messagePanel.attachmentsPopup
+        attachmentsPopup = messagePanel.attachmentsPopup!!
         return viewFragment
     }
 
@@ -152,7 +153,9 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface,
         messagePanel.addSendOnClickListener { presenter.onSendClick() }
 
 
-        messagePanel.heightChangeListener = { newHeight -> webView.paddingBottom = newHeight }
+        messagePanel.heightChangeListener = HeightChangeListener {
+            webView.paddingBottom = it
+        }
 
         topScroller = WebViewTopScroller(webView, appBarLayout)
     }
@@ -178,7 +181,7 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface,
                     notAttached.add(item)
                 }
             }
-            messagePanel.messageField.setSelection(messagePanel.messageField.text.length)
+            messagePanel.messageField!!.setSelection(messagePanel.messageField!!.text!!.length)
             attachmentsPopup.insertAttachment(notAttached, false)
         } catch (ignore: Exception) {
         }
@@ -319,7 +322,8 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface,
 
     override fun onBlockUser(res: Boolean) {
         if (res) {
-            Toast.makeText(requireContext(), R.string.user_added_to_blacklist, Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.user_added_to_blacklist, Toast.LENGTH_SHORT)
+                .show()
         }
     }
 

@@ -68,6 +68,8 @@ object FilePickHelper {
             } else if (uri.scheme == "file") {
                 inputStream = FileInputStream(File(uri.path))
             }
+            checkNotNull(mimeType)
+            checkNotNull(inputStream)
             requestFile = RequestFile(name, mimeType, inputStream)
         } catch (e: Exception) {
             YandexMetrica.reportError(e.message!!, e)

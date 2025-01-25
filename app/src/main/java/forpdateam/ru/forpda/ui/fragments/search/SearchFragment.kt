@@ -248,7 +248,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         )
         refreshLayout.addView(recyclerView)
 
-        paginationHelper = PaginationHelper(activity)
+        paginationHelper = PaginationHelper(requireActivity())
         paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow)
 
         contentController.setMainRefresh(refreshLayout)
@@ -480,7 +480,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         refreshToolbarMenuItems(true)
     }
 
-    private fun checkArg(arg: String, pair: Pair<String, String>): Boolean {
+    private fun checkArg(arg: String?, pair: Pair<String, String>): Boolean {
         return arg == pair.first
     }
 
@@ -522,17 +522,17 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         }
 
         when {
-            checkArg(settings.result, SearchSettings.RESULT_TOPICS) -> {
+            checkArg(settings.result!!, SearchSettings.RESULT_TOPICS) -> {
                 setSelection(resultSpinner, resultItems, SearchSettings.RESULT_TOPICS)
             }
 
-            checkArg(settings.result, SearchSettings.RESULT_POSTS) -> {
+            checkArg(settings.result!!, SearchSettings.RESULT_POSTS) -> {
                 setSelection(resultSpinner, resultItems, SearchSettings.RESULT_POSTS)
             }
         }
 
         when {
-            checkArg(settings.sort, SearchSettings.SORT_DA) -> {
+            checkArg(settings.sort!!, SearchSettings.SORT_DA) -> {
                 setSelection(sortSpinner, sortItems, SearchSettings.SORT_DA)
             }
 
@@ -592,7 +592,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
             } else {
                 titleBuilder.append(" тем")
             }
-            if (!settings.nick.isEmpty()) {
+            if (!settings.nick.isNullOrEmpty()) {
                 titleBuilder.append(" пользователя \"").append(settings.nick).append("\"")
             }
         }
