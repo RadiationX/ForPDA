@@ -157,7 +157,7 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
                 val btnNext = AppCompatImageButton(searchView.context)
                 btnNext.setImageDrawable(
                     App.getVecDrawable(
-                        context,
+                        requireContext(),
                         R.drawable.ic_toolbar_search_next
                     )
                 )
@@ -166,7 +166,7 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
                 val btnPrev = AppCompatImageButton(searchView.context)
                 btnPrev.setImageDrawable(
                     App.getVecDrawable(
-                        context,
+                        requireContext(),
                         R.drawable.ic_toolbar_search_prev
                     )
                 )

@@ -143,7 +143,7 @@ class AnnounceFragment : TabFragment(), AnnounceView, TabTopScroller {
                 val btnNext = AppCompatImageButton(searchView.context)
                 btnNext.setImageDrawable(
                     App.getVecDrawable(
-                        context,
+                        requireContext(),
                         R.drawable.ic_toolbar_search_next
                     )
                 )
@@ -152,7 +152,7 @@ class AnnounceFragment : TabFragment(), AnnounceView, TabTopScroller {
                 val btnPrev = AppCompatImageButton(searchView.context)
                 btnPrev.setImageDrawable(
                     App.getVecDrawable(
-                        context,
+                        requireContext(),
                         R.drawable.ic_toolbar_search_prev
                     )
                 )

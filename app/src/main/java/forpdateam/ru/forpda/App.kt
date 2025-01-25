@@ -1,510 +1,535 @@
-package forpdateam.ru.forpda;
+package forpdateam.ru.forpda
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.res.Configuration;
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.VectorDrawable;
-import android.net.ConnectivityManager;
-import android.os.Build;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Messenger;
-import android.os.PowerManager;
-import android.preference.PreferenceManager;
-import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.TypedValue;
-import android.webkit.WebSettings;
-
-import androidx.annotation.AttrRes;
-import androidx.annotation.ColorInt;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.app.ActivityCompat;
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
-
-import com.evernote.android.job.JobConfig;
-import com.evernote.android.job.JobManager;
-import com.evernote.android.job.JobRequest;
-import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
-import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
-import com.yandex.metrica.YandexMetrica;
-import com.yandex.metrica.YandexMetricaConfig;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.net.HttpURLConnection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Observer;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
-
-import forpdateam.ru.forpda.common.DayNightHelper;
-import forpdateam.ru.forpda.common.LocaleHelper;
-import forpdateam.ru.forpda.common.realm.DbMigration;
-import forpdateam.ru.forpda.common.receivers.NetworkStateReceiver;
-import forpdateam.ru.forpda.common.receivers.WakeUpReceiver;
-import forpdateam.ru.forpda.common.simple.SimpleObservable;
-import forpdateam.ru.forpda.notifications.NotificationsJob;
-import forpdateam.ru.forpda.notifications.NotificationsJobCreator;
-import forpdateam.ru.forpda.notifications.NotificationsService;
-import forpdateam.ru.forpda.ui.fragments.TabFragment;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
-import okhttp3.Cookie;
+import android.Manifest
+import android.app.Activity
+import android.app.Application
+import android.content.BroadcastReceiver
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.ServiceConnection
+import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.VectorDrawable
+import android.net.ConnectivityManager
+import android.os.Build
+import android.os.Handler
+import android.os.IBinder
+import android.os.Messenger
+import android.os.PowerManager
+import android.preference.PreferenceManager
+import android.text.TextUtils
+import android.util.DisplayMetrics
+import android.util.Log
+import android.util.TypedValue
+import android.webkit.WebSettings
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
+import androidx.annotation.RequiresApi
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.app.ActivityCompat
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
+import com.evernote.android.job.JobConfig
+import com.evernote.android.job.JobManager
+import com.evernote.android.job.JobRequest
+import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
+import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache
+import com.nostra13.universalimageloader.core.DisplayImageOptions
+import com.nostra13.universalimageloader.core.ImageLoader
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
+import com.nostra13.universalimageloader.core.download.BaseImageDownloader
+import com.yandex.metrica.YandexMetrica
+import com.yandex.metrica.YandexMetricaConfig
+import forpdateam.ru.forpda.R.string
+import forpdateam.ru.forpda.common.DayNightHelper
+import forpdateam.ru.forpda.common.LocaleHelper
+import forpdateam.ru.forpda.common.Preferences.Main.ThemeMode
+import forpdateam.ru.forpda.common.realm.DbMigration
+import forpdateam.ru.forpda.common.receivers.NetworkStateReceiver
+import forpdateam.ru.forpda.common.receivers.WakeUpReceiver
+import forpdateam.ru.forpda.common.simple.SimpleObservable
+import forpdateam.ru.forpda.notifications.NotificationsJob
+import forpdateam.ru.forpda.notifications.NotificationsJobCreator
+import forpdateam.ru.forpda.notifications.NotificationsService
+import forpdateam.ru.forpda.ui.fragments.TabFragment
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.plugins.RxJavaPlugins
+import io.reactivex.schedulers.Schedulers
+import io.realm.Realm
+import io.realm.RealmConfiguration
+import java.io.IOException
+import java.io.InputStream
+import java.net.HttpURLConnection
+import java.util.Arrays
+import java.util.Observer
+import java.util.concurrent.TimeUnit
+import java.util.regex.Pattern
 
 /**
  * Created by radiationx on 28.07.16.
  */
+class App : Application() {
 
-public class App extends android.app.Application {
-    public static int px2, px4, px6, px8, px12, px14, px16, px20, px24, px32, px36, px40, px48, px56, px64;
-    private static App instance;
-    private final float density = 1.0f;
-    private SharedPreferences preferences;
+    companion object {
+        var px2: Int = 0
+        var px4: Int = 0
+        var px6: Int = 0
 
-    private final SimpleObservable networkForbidden = new SimpleObservable();
-    private Boolean webViewFound = null;
-    private Messenger mBoundService = null;
-    private boolean mServiceBound = false;
+        @JvmField
+        var px8: Int = 0
 
+        @JvmField
+        var px12: Int = 0
+        var px14: Int = 0
 
-    public App() {
-        instance = this;
-    }
+        @JvmField
+        var px16: Int = 0
+        var px20: Int = 0
 
-    public static App get() {
-        if (instance == null) {
-            instance = new App();
-        }
-        return instance;
-    }
+        @JvmField
+        var px24: Int = 0
+        var px32: Int = 0
+        var px36: Int = 0
+        var px40: Int = 0
 
-    public static Context getContext() {
-        return get();
-    }
+        @JvmField
+        var px48: Int = 0
 
-    @ColorInt
-    public static int getColorFromAttr(Context context, @AttrRes int attr) {
-        TypedValue typedValue = new TypedValue();
-        if (context != null && context.getTheme().resolveAttribute(attr, typedValue, true))
-            return typedValue.data;
-        else
-            return Color.RED;
-    }
+        @JvmField
+        var px56: Int = 0
+        var px64: Int = 0
+        private var instance: App? = null
 
-    @DrawableRes
-    public static int getDrawableResAttr(Context context, @AttrRes int attr) {
-        TypedArray a = context.getTheme().obtainStyledAttributes(new int[]{attr});
-        int attributeResourceId = a.getResourceId(0, 0);
-        a.recycle();
-        return attributeResourceId;
-    }
-
-    public static Drawable getDrawableAttr(Context context, @AttrRes int attr) {
-        return AppCompatResources.getDrawable(context, getDrawableResAttr(context, attr));
-    }
-
-    public boolean isWebViewFound(Context context) {
-        if (webViewFound == null) {
-            try {
-                WebSettings.getDefaultUserAgent(context);
-                webViewFound = true;
-            } catch (Exception e) {
-                webViewFound = false;
+        @JvmStatic
+        fun get(): App {
+            if (instance == null) {
+                instance = App()
             }
+            return requireNotNull(instance)
         }
-        return webViewFound;
-    }
 
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(LocaleHelper.onAttach(base));
-    }
+        @JvmStatic
+        fun getContext(): Context {
+            return get()
+        }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        instance = this;
-        long time = System.currentTimeMillis();
-        YandexMetricaConfig config = YandexMetricaConfig.newConfigBuilder("a94d9236-cdf3-4a5e-af30-d6dbffaea362").build();
-        YandexMetrica.activate(getApplicationContext(), config);
-        YandexMetrica.enableActivityAutoTracking(this);
+        @JvmStatic
+        @ColorInt
+        fun getColorFromAttr(context: Context?, @AttrRes attr: Int): Int {
+            val typedValue = TypedValue()
+            return if (context != null && context.theme.resolveAttribute(
+                    attr,
+                    typedValue,
+                    true
+                )
+            ) typedValue.data
+            else Color.RED
+        }
 
-        dependencies = new Dependencies(this);
+        @JvmStatic
+        @DrawableRes
+        fun getDrawableResAttr(context: Context, @AttrRes attr: Int): Int {
+            val a = context.theme.obtainStyledAttributes(intArrayOf(attr))
+            val attributeResourceId = a.getResourceId(0, 0)
+            a.recycle()
+            return attributeResourceId
+        }
 
+        @JvmStatic
+        fun getDrawableAttr(context: Context, @AttrRes attr: Int): Drawable? {
+            return AppCompatResources.getDrawable(context, getDrawableResAttr(context, attr))
+        }
 
-        RxJavaPlugins.setErrorHandler(throwable -> {
-            Log.d("SUKA", "RxJavaPlugins errorHandler " + throwable);
-            throwable.printStackTrace();
-            YandexMetrica.reportError("Крит " + throwable.getMessage(), throwable);
-        });
+        @JvmStatic
+        fun getToolBarHeight(context: Context): Int {
+            val attrs = intArrayOf(R.attr.actionBarSize)
+            val ta = context.obtainStyledAttributes(attrs)
+            val toolBarHeight = ta.getDimensionPixelSize(0, -1)
+            ta.recycle()
+            return toolBarHeight
+        }
 
-        Disposable disposable = dependencies
-                .getMainPreferencesHolder()
-                .observeThemeMode()
-                .distinctUntilChanged()
-                .subscribe(
-                        DayNightHelper.Companion::applyTheme,
-                        Throwable::printStackTrace
-                );
-
-        try {
-            String inputHistory = dependencies.getOtherPreferencesHolder().getAppVersionsHistory();
-            String[] history = TextUtils.split(inputHistory, ";");
-
-            int lastVNum = 0;
-            boolean disorder = false;
-            for (String version : history) {
-                int vNum = Integer.parseInt(version);
-                if (vNum < lastVNum) {
-                    disorder = true;
-                }
-                lastVNum = vNum;
+        /*Only vector icon*/
+        @JvmStatic
+        fun getVecDrawable(context: Context, @DrawableRes id: Int): Drawable {
+            val drawable = AppCompatResources.getDrawable(context, id)
+            if (!(drawable is VectorDrawableCompat || drawable is VectorDrawable)) {
+                throw RuntimeException()
             }
-            Object vCode = BuildConfig.VERSION_CODE;
-            String sVCode = "" + vCode;
-            int nVCode = Integer.parseInt(sVCode);
-
-            if (lastVNum < nVCode) {
-                List<String> list = new ArrayList<>(Arrays.asList(history));
-                list.add(Integer.toString(nVCode));
-                dependencies.getOtherPreferencesHolder().setAppVersionsHistory(TextUtils.join(";", list));
-            }
-            if (disorder) {
-                throw new Exception("Нарушение порядка версий!");
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            YandexMetrica.reportError("VERSIONS_HISTORY", ex);
+            return drawable
         }
 
-        initImageLoader(this);
-
-        updateStaticRes();
-
-        Realm.init(this);
-        RealmConfiguration configuration = new RealmConfiguration.Builder()
-                .name("forpda.realm")
-                .schemaVersion(4)
-                .migration(new DbMigration())
-                .build();
-        Realm.setDefaultConfiguration(configuration);
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            BroadcastReceiver receiver = new BroadcastReceiver() {
-                @RequiresApi(api = Build.VERSION_CODES.M)
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    Log.d(App.class.getSimpleName(), "DOZE ON RECEIVE " + intent);
-                    PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-                    if (pm == null)
-                        return;
-                    if (pm.isDeviceIdleMode()) {
-                        // the device is now in doze mode
-                        Log.d(App.class.getSimpleName(), "DOZE MODE ENABLYA");
-                    } else {
-                        // the device just woke up from doze mode
-                        Log.d(App.class.getSimpleName(), "DOZE MODE DISABLYA");
-                        NotificationsService.startAndCheck();
-                    }
-                }
-            };
-
-            registerReceiver(receiver, new IntentFilter(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED));
-        }
-
-
-        IntentFilter wakeUpFilter = new IntentFilter();
-        wakeUpFilter.addAction(Intent.ACTION_BOOT_COMPLETED);
-        wakeUpFilter.addAction(Intent.ACTION_SCREEN_ON);
-        registerReceiver(new WakeUpReceiver(), wakeUpFilter);
-
-        //На каких-то диких калькуляторах может быть ANR, поэтому в фоновый поток
-        Observable
-                .fromCallable(() -> {
-                    JobConfig.addLogger((priority, tag, message, t) -> {
-                        Log.e("JobLogger", "Job: pr=" + priority + "; t=" + tag + "; m=" + message + "; th=" + t);
-                    });
-                    JobConfig.setLogcatEnabled(false);
-                    JobManager.create(this).addJobCreator(new NotificationsJobCreator());
-                    JobManager.instance().cancelAllForTag(NotificationsJob.TAG);
-                    new JobRequest.Builder(NotificationsJob.TAG)
-                            .setPeriodic(TimeUnit.MINUTES.toMillis(16L))
-                            //only non periodic
-                            //.setBackoffCriteria(JobRequest.DEFAULT_BACKOFF_MS, JobRequest.BackoffPolicy.LINEAR)
-                            .setRequiresCharging(false)
-                            .setRequiresDeviceIdle(false)
-                            .setRequiredNetworkType(JobRequest.NetworkType.ANY)
-                            .build()
-                            .schedule();
-                    return true;
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
-
-        Log.e("APP", "TIME APP FINAL " + (System.currentTimeMillis() - time));
-
-        registerReceiver(
-                new NetworkStateReceiver(),
-                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-        );
-    }
-
-    private void updateStaticRes() {
-        Log.e("kekosina", "updateStaticRes");
-        px2 = getContext().getResources().getDimensionPixelSize(R.dimen.dp2);
-        px4 = getContext().getResources().getDimensionPixelSize(R.dimen.dp4);
-        px6 = getContext().getResources().getDimensionPixelSize(R.dimen.dp6);
-        px8 = getContext().getResources().getDimensionPixelSize(R.dimen.dp8);
-        px12 = getContext().getResources().getDimensionPixelSize(R.dimen.dp12);
-        px14 = getContext().getResources().getDimensionPixelSize(R.dimen.dp14);
-        px16 = getContext().getResources().getDimensionPixelSize(R.dimen.dp16);
-        px20 = getContext().getResources().getDimensionPixelSize(R.dimen.dp20);
-        px24 = getContext().getResources().getDimensionPixelSize(R.dimen.dp24);
-        px32 = getContext().getResources().getDimensionPixelSize(R.dimen.dp32);
-        px36 = getContext().getResources().getDimensionPixelSize(R.dimen.dp36);
-        px40 = getContext().getResources().getDimensionPixelSize(R.dimen.dp40);
-        px48 = getContext().getResources().getDimensionPixelSize(R.dimen.dp48);
-        px56 = getContext().getResources().getDimensionPixelSize(R.dimen.dp56);
-        px64 = getContext().getResources().getDimensionPixelSize(R.dimen.dp64);
-
-        HashMap<String, String> templateStringCache = new HashMap<>();
-        for (Field f : R.string.class.getFields()) {
-            try {
-                if (f.getName().contains("res_s_")) {
-                    templateStringCache.put(f.getName(), getString(f.getInt(f)));
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-        dependencies.getTemplateManager().setStaticStrings(templateStringCache);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        updateStaticRes();
-    }
-
-    private Dependencies dependencies;
-
-    public Dependencies Di() {
-        return dependencies;
-    }
-
-    private final ServiceConnection mServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mBoundService = null;
-            mServiceBound = false;
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            String n1 = name.getClassName();
-            String n2 = NotificationsService.class.getName();
-            if (n1.equals(n2)) {
-                mBoundService = new Messenger(service);
-                mServiceBound = true;
-            }
-        }
-    };
-
-    public ServiceConnection getServiceConnection() {
-        return mServiceConnection;
-    }
-
-    public static int getToolBarHeight(Context context) {
-        int[] attrs = new int[]{R.attr.actionBarSize};
-        TypedArray ta = context.obtainStyledAttributes(attrs);
-        int toolBarHeight = ta.getDimensionPixelSize(0, -1);
-        ta.recycle();
-        return toolBarHeight;
-    }
-
-    public void subscribeForbidden(Observer observer) {
-        networkForbidden.addObserver(observer);
-    }
-
-    public void unSubscribeForbidden(Observer observer) {
-        networkForbidden.deleteObserver(observer);
-    }
-
-    public void notifyForbidden(boolean isForbidden) {
-        networkForbidden.notifyObservers(isForbidden);
-    }
-
-    public int dpToPx(int dp, Context context) {
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-    }
-
-    /*Only vector icon*/
-    public static Drawable getVecDrawable(Context context, @DrawableRes int id) {
-        Drawable drawable = AppCompatResources.getDrawable(context, id);
-        if (!(drawable instanceof VectorDrawableCompat || drawable instanceof VectorDrawable)) {
-            throw new RuntimeException();
-        }
-        return drawable;
-    }
-
-    private static final DisplayImageOptions.Builder options = new DisplayImageOptions.Builder()
+        val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()
             .cacheInMemory(true)
             .resetViewBeforeLoading(true)
             .cacheOnDisk(true)
             .bitmapConfig(Bitmap.Config.ARGB_8888)
-            .handler(new Handler())
-            .displayer(new FadeInBitmapDisplayer(500, true, true, false));
+            .handler(Handler())
+            .displayer(FadeInBitmapDisplayer(500, true, true, false))
 
-    public static DisplayImageOptions.Builder getDefaultOptionsUIL() {
-        return options;
-    }
+        fun initImageLoader(context: Context) {
+            val config = ImageLoaderConfiguration.Builder(context)
+                .imageDownloader(object : BaseImageDownloader(context) {
+                    val pattern4pda: Pattern =
+                        Pattern.compile("(?:http?s?:)?\\/\\/.*?4pda\\.(?:ru|to)")
 
-    public static void initImageLoader(Context context) {
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
-                .imageDownloader(new BaseImageDownloader(context) {
-                    final Pattern pattern4pda = Pattern.compile("(?:http?s?:)?\\/\\/.*?4pda\\.(?:ru|to)");
-
-                    @Override
-                    public InputStream getStream(String imageUri, Object extra) throws IOException {
-                        if (imageUri.startsWith("//"))
-                            imageUri = "http:".concat(imageUri);
-                        Log.d(App.class.getSimpleName(), "ImageLoader getStream " + imageUri);
-                        return super.getStream(imageUri, extra);
+                    @Throws(IOException::class)
+                    override fun getStream(imageUri: String, extra: Any): InputStream {
+                        var imageUri = imageUri
+                        if (imageUri.startsWith("//")) imageUri = "http:$imageUri"
+                        Log.d(
+                            App::class.java.simpleName,
+                            "ImageLoader getStream $imageUri"
+                        )
+                        return super.getStream(imageUri, extra)
                     }
 
-                    @Override
-                    protected HttpURLConnection createConnection(String url, Object extra) throws IOException {
-                        HttpURLConnection conn = super.createConnection(url, extra);
+                    @Throws(IOException::class)
+                    override fun createConnection(url: String, extra: Any): HttpURLConnection {
+                        val conn = super.createConnection(url, extra)
                         if (pattern4pda.matcher(url).find()) {
-                            Map<String, Cookie> cookies = App.get().Di().getWebClient().getClientCookies();
-                            String stringCookies = "";
-                            for (Map.Entry<String, Cookie> cookieEntry : cookies.entrySet()) {
-                                stringCookies = stringCookies.concat(cookieEntry.getKey()).concat("=").concat(cookieEntry.getValue().value()).concat(";");
+                            val cookies = get().Di().webClient.clientCookies
+                            var stringCookies = ""
+                            for ((key, value) in cookies) {
+                                stringCookies = stringCookies + key + "=" + value.value() + ";"
                             }
-                            conn.setRequestProperty("Cookie", stringCookies);
+                            conn.setRequestProperty("Cookie", stringCookies)
                         }
-                        return conn;
+                        return conn
                     }
                 })
                 .threadPoolSize(5)
                 .threadPriority(Thread.MIN_PRIORITY)
                 .denyCacheImageMultipleSizesInMemory()
-                .memoryCache(new UsingFreqLimitedMemoryCache(5 * 1024 * 1024)) // 5 Mb
-                .diskCacheFileNameGenerator(new HashCodeFileNameGenerator())
-                .defaultDisplayImageOptions(options.build())
-                .build();
+                .memoryCache(UsingFreqLimitedMemoryCache(5 * 1024 * 1024)) // 5 Mb
+                .diskCacheFileNameGenerator(HashCodeFileNameGenerator())
+                .defaultDisplayImageOptions(defaultOptionsUIL.build())
+                .build()
 
-        ImageLoader.getInstance().init(config);
-    }
-
-
-    public SharedPreferences getPreferences() {
-        if (preferences == null)
-            preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        return preferences;
-    }
-
-    public static SharedPreferences getPreferences(Context context) {
-        if (context == null) {
-            return App.get().getPreferences();
+            ImageLoader.getInstance().init(config)
         }
-        return PreferenceManager.getDefaultSharedPreferences(context);
+
+
+        fun getActivity(): Activity? {
+            try {
+                val activityThreadClass = Class.forName("android.app.ActivityThread")
+                val activityThread =
+                    activityThreadClass.getMethod("currentActivityThread").invoke(null)
+                val activitiesField = activityThreadClass.getDeclaredField("mActivities")
+                activitiesField.isAccessible = true
+
+                val activities = activitiesField[activityThread] as? Map<Any, Any>? ?: return null
+
+                for (activityRecord in activities.values) {
+                    val activityRecordClass: Class<*> = activityRecord.javaClass
+                    val pausedField =
+                        activityRecordClass.getDeclaredField("paused")
+                    pausedField.isAccessible = true
+                    if (!pausedField.getBoolean(activityRecord)) {
+                        val activityField =
+                            activityRecordClass.getDeclaredField("activity")
+                        activityField.isAccessible = true
+                        val activity = activityField[activityRecord] as Activity
+                        return activity
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+            return null
+        }
     }
 
+    val preferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(this)
+    }
 
-    public static Activity getActivity() {
+    private val networkForbidden = SimpleObservable()
+    private var webViewFound: Boolean? = null
+    private var mBoundService: Messenger? = null
+    private var mServiceBound = false
+
+
+    fun isWebViewFound(context: Context?): Boolean {
+        if (webViewFound == null) {
+            try {
+                WebSettings.getDefaultUserAgent(context)
+                webViewFound = true
+            } catch (e: Exception) {
+                webViewFound = false
+            }
+        }
+        return requireNotNull(webViewFound)
+    }
+
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(LocaleHelper.onAttach(base))
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        instance = this
+        val time = System.currentTimeMillis()
+        val config =
+            YandexMetricaConfig.newConfigBuilder("a94d9236-cdf3-4a5e-af30-d6dbffaea362").build()
+        YandexMetrica.activate(applicationContext, config)
+        YandexMetrica.enableActivityAutoTracking(this)
+
+
+        RxJavaPlugins.setErrorHandler { throwable: Throwable ->
+            Log.d(
+                "SUKA",
+                "RxJavaPlugins errorHandler $throwable"
+            )
+            throwable.printStackTrace()
+            YandexMetrica.reportError("Крит " + throwable.message, throwable)
+        }
+
+        val disposable = dependencies
+            .mainPreferencesHolder
+            .observeThemeMode()
+            .distinctUntilChanged()
+            .subscribe(
+                { mode: ThemeMode ->
+                    DayNightHelper.applyTheme(mode)
+                },
+                { obj: Throwable -> obj.printStackTrace() }
+            )
+
         try {
-            Class activityThreadClass = Class.forName("android.app.ActivityThread");
-            Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null);
-            Field activitiesField = activityThreadClass.getDeclaredField("mActivities");
-            activitiesField.setAccessible(true);
+            val inputHistory = dependencies.otherPreferencesHolder.getAppVersionsHistory()
+            val history = TextUtils.split(inputHistory, ";")
 
-            Map<Object, Object> activities = (Map<Object, Object>) activitiesField.get(activityThread);
-            if (activities == null)
-                return null;
+            var lastVNum = 0
+            var disorder = false
+            for (version in history) {
+                val vNum = version.toInt()
+                if (vNum < lastVNum) {
+                    disorder = true
+                }
+                lastVNum = vNum
+            }
+            val vCode: Int = BuildConfig.VERSION_CODE
+            val sVCode = "" + vCode
+            val nVCode = sVCode.toInt()
 
-            for (Object activityRecord : activities.values()) {
-                Class activityRecordClass = activityRecord.getClass();
-                Field pausedField = activityRecordClass.getDeclaredField("paused");
-                pausedField.setAccessible(true);
-                if (!pausedField.getBoolean(activityRecord)) {
-                    Field activityField = activityRecordClass.getDeclaredField("activity");
-                    activityField.setAccessible(true);
-                    Activity activity = (Activity) activityField.get(activityRecord);
-                    return activity;
+            if (lastVNum < nVCode) {
+                val list: MutableList<String?> = ArrayList(Arrays.asList(*history))
+                list.add(nVCode.toString())
+                dependencies.otherPreferencesHolder.setAppVersionsHistory(
+                    TextUtils.join(
+                        ";",
+                        list
+                    )
+                )
+            }
+            if (disorder) {
+                throw Exception("Нарушение порядка версий!")
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            YandexMetrica.reportError("VERSIONS_HISTORY", ex)
+        }
+
+        initImageLoader(this)
+
+        updateStaticRes()
+
+        Realm.init(this)
+        val configuration = RealmConfiguration.Builder()
+            .name("forpda.realm")
+            .schemaVersion(4)
+            .migration(DbMigration())
+            .build()
+        Realm.setDefaultConfiguration(configuration)
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val receiver: BroadcastReceiver = object : BroadcastReceiver() {
+                @RequiresApi(api = Build.VERSION_CODES.M)
+                override fun onReceive(context: Context, intent: Intent) {
+                    Log.d(App::class.java.simpleName, "DOZE ON RECEIVE $intent")
+                    val pm =
+                        context.getSystemService(POWER_SERVICE) as PowerManager
+                            ?: return
+                    if (pm.isDeviceIdleMode) {
+                        // the device is now in doze mode
+                        Log.d(App::class.java.simpleName, "DOZE MODE ENABLYA")
+                    } else {
+                        // the device just woke up from doze mode
+                        Log.d(App::class.java.simpleName, "DOZE MODE DISABLYA")
+                        NotificationsService.startAndCheck()
+                    }
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+            registerReceiver(receiver, IntentFilter(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED))
         }
 
-        return null;
+
+        val wakeUpFilter = IntentFilter()
+        wakeUpFilter.addAction(Intent.ACTION_BOOT_COMPLETED)
+        wakeUpFilter.addAction(Intent.ACTION_SCREEN_ON)
+        registerReceiver(WakeUpReceiver(), wakeUpFilter)
+
+        //На каких-то диких калькуляторах может быть ANR, поэтому в фоновый поток
+        Observable
+            .fromCallable {
+                JobConfig.addLogger { priority: Int, tag: String, message: String, t: Throwable? ->
+                    Log.e(
+                        "JobLogger",
+                        "Job: pr=$priority; t=$tag; m=$message; th=$t"
+                    )
+                }
+                JobConfig.setLogcatEnabled(false)
+                JobManager.create(this).addJobCreator(NotificationsJobCreator())
+                JobManager.instance().cancelAllForTag(NotificationsJob.TAG)
+                JobRequest.Builder(NotificationsJob.TAG)
+                    .setPeriodic(TimeUnit.MINUTES.toMillis(16L)) //only non periodic
+                    //.setBackoffCriteria(JobRequest.DEFAULT_BACKOFF_MS, JobRequest.BackoffPolicy.LINEAR)
+                    .setRequiresCharging(false)
+                    .setRequiresDeviceIdle(false)
+                    .setRequiredNetworkType(JobRequest.NetworkType.ANY)
+                    .build()
+                    .schedule()
+                true
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+
+        Log.e("APP", "TIME APP FINAL " + (System.currentTimeMillis() - time))
+
+        registerReceiver(
+            NetworkStateReceiver(),
+            IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        )
     }
 
-    private final List<Runnable> permissionCallbacks = new ArrayList<>();
+    private fun updateStaticRes() {
+        Log.e("kekosina", "updateStaticRes")
+        px2 = getContext().resources.getDimensionPixelSize(R.dimen.dp2)
+        px4 = getContext().resources.getDimensionPixelSize(R.dimen.dp4)
+        px6 = getContext().resources.getDimensionPixelSize(R.dimen.dp6)
+        px8 = getContext().resources.getDimensionPixelSize(R.dimen.dp8)
+        px12 = getContext().resources.getDimensionPixelSize(R.dimen.dp12)
+        px14 = getContext().resources.getDimensionPixelSize(R.dimen.dp14)
+        px16 = getContext().resources.getDimensionPixelSize(R.dimen.dp16)
+        px20 = getContext().resources.getDimensionPixelSize(R.dimen.dp20)
+        px24 = getContext().resources.getDimensionPixelSize(R.dimen.dp24)
+        px32 = getContext().resources.getDimensionPixelSize(R.dimen.dp32)
+        px36 = getContext().resources.getDimensionPixelSize(R.dimen.dp36)
+        px40 = getContext().resources.getDimensionPixelSize(R.dimen.dp40)
+        px48 = getContext().resources.getDimensionPixelSize(R.dimen.dp48)
+        px56 = getContext().resources.getDimensionPixelSize(R.dimen.dp56)
+        px64 = getContext().resources.getDimensionPixelSize(R.dimen.dp64)
 
-    public void checkStoragePermission(Runnable runnable, Activity activity) {
-        if (runnable == null || activity == null)
-            return;
+        val templateStringCache = HashMap<String, String>()
+        for (f in string::class.java.fields) {
+            try {
+                if (f.name.contains("res_s_")) {
+                    templateStringCache[f.name] = getString(f.getInt(f))
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+        dependencies.templateManager.setStaticStrings(templateStringCache)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        updateStaticRes()
+    }
+
+    private val dependencies by lazy { Dependencies(this) }
+
+    fun Di(): Dependencies {
+        return dependencies
+    }
+
+    val serviceConnection: ServiceConnection = object : ServiceConnection {
+        override fun onServiceDisconnected(name: ComponentName) {
+            mBoundService = null
+            mServiceBound = false
+        }
+
+        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            val n1 = name.className
+            val n2 = NotificationsService::class.java.name
+            if (n1 == n2) {
+                mBoundService = Messenger(service)
+                mServiceBound = true
+            }
+        }
+    }
+
+    fun subscribeForbidden(observer: Observer?) {
+        networkForbidden.addObserver(observer)
+    }
+
+    fun unSubscribeForbidden(observer: Observer?) {
+        networkForbidden.deleteObserver(observer)
+    }
+
+    fun notifyForbidden(isForbidden: Boolean) {
+        networkForbidden.notifyObservers(isForbidden)
+    }
+
+    fun dpToPx(dp: Int, context: Context): Int {
+        val displayMetrics = context.resources.displayMetrics
+        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT))
+    }
+
+    private val permissionCallbacks: MutableList<Runnable> = ArrayList()
+
+    init {
+        instance = this
+    }
+
+    fun checkStoragePermission(runnable: Runnable?, activity: Activity?) {
+        if (runnable == null || activity == null) return
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, TabFragment.REQUEST_STORAGE);
-                permissionCallbacks.add(runnable);
-                return;
+                ActivityCompat.requestPermissions(
+                    activity,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    TabFragment.REQUEST_STORAGE
+                )
+                permissionCallbacks.add(runnable)
+                return
             }
         }
-        runnable.run();
+        runnable.run()
     }
 
     //PLS CALL THIS IN ALL ACTIVITIES
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        for (int i = 0; i < permissions.length; i++) {
-            if (permissions[i].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                for (Runnable runnable : permissionCallbacks) {
+    fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        for (i in permissions.indices) {
+            if (permissions[i] == Manifest.permission.WRITE_EXTERNAL_STORAGE && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                for (runnable in permissionCallbacks) {
                     try {
-                        runnable.run();
-                    } catch (Exception ignore) {
+                        runnable.run()
+                    } catch (ignore: Exception) {
                     }
                 }
-                break;
+                break
             }
         }
-        permissionCallbacks.clear();
+        permissionCallbacks.clear()
     }
+
 }

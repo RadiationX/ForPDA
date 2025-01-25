@@ -161,7 +161,7 @@ class ProfileFragment : TabFragment(), ProfileAdapter.ClickListener, ProfileView
                 true
             }
         writeMenuItem = menu.add(R.string.write)
-            .setIcon(App.getVecDrawable(context, R.drawable.ic_profile_toolbar_create))
+            .setIcon(App.getVecDrawable(requireContext(), R.drawable.ic_profile_toolbar_create))
             .setOnMenuItemClickListener {
                 presenter.navigateToQms()
                 true

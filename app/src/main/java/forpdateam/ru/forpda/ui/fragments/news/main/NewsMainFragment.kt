@@ -76,7 +76,7 @@ class NewsMainFragment : RecyclerFragment(), NewsListAdapter.ItemClickListener, 
     override fun addBaseToolbarMenu(menu: Menu) {
         super.addBaseToolbarMenu(menu)
         menu.add(R.string.fragment_title_search)
-            .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_search))
+            .setIcon(App.getVecDrawable(requireContext(), R.drawable.ic_toolbar_search))
             .setOnMenuItemClickListener {
                 presenter.openSearch()
                 true

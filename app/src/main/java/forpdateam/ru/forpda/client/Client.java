@@ -58,7 +58,7 @@ public class Client implements IWebClient {
         this.authHolder = authHolder;
         this.countersHolder = countersHolder;
         AuthData authData = authHolder.get();
-        SharedPreferences preferences = App.getPreferences(context);
+        SharedPreferences preferences = App.get().getPreferences();
         String member_id = preferences.getString("cookie_member_id", null);
         String pass_hash = preferences.getString("cookie_pass_hash", null);
         String session_id = preferences.getString("cookie_session_id", null);

@@ -21,7 +21,7 @@ import forpdateam.ru.forpda.R
 class ImageViewerAdapter : PagerAdapter() {
 
     private val options by lazy {
-        App.getDefaultOptionsUIL()
+        App.defaultOptionsUIL
             .bitmapConfig(Bitmap.Config.ARGB_8888)
             .considerExifParams(true)
             .build()

@@ -97,7 +97,7 @@ class QmsBlackListFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener
     override fun addBaseToolbarMenu(menu: Menu) {
         super.addBaseToolbarMenu(menu)
         menu.add(R.string.add)
-            .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_add))
+            .setIcon(App.getVecDrawable(requireContext(), R.drawable.ic_toolbar_add))
             .setOnMenuItemClickListener {
                 var nick = ""
                 if (nickField.text != null)

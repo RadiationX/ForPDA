@@ -139,7 +139,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
         super.addBaseToolbarMenu(menu)
         val subMenu = menu.addSubMenu(R.string.sorting_title)
         subMenu.item.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        subMenu.item.icon = App.getVecDrawable(context, R.drawable.ic_toolbar_sort)
+        subMenu.item.icon = App.getVecDrawable(requireContext(), R.drawable.ic_toolbar_sort)
         descSortMenuItem = subMenu.add(R.string.sorting_desc).setOnMenuItemClickListener {
             presenter.setSort(ReputationApi.SORT_DESC)
             false

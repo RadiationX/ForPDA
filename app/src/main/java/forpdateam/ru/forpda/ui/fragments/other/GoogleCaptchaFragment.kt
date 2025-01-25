@@ -92,6 +92,7 @@ class GoogleCaptchaFragment : TabFragment() {
             if (activity == null) {
                 Toast.makeText(App.getContext(), "Перезапустите приложение", Toast.LENGTH_SHORT)
                     .show()
+                return@postDelayed
             }
             MainActivity.restartApplication(activity)
         }, 1000)

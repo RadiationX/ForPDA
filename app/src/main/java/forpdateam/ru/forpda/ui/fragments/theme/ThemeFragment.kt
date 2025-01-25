@@ -330,7 +330,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
             }
             messagePanel.heightChangeListener.onChangedHeight(messagePanel.lastHeight)
             toggleMessagePanelItem.icon =
-                App.getVecDrawable(context, R.drawable.ic_toolbar_transcribe_close)
+                App.getVecDrawable(requireContext(), R.drawable.ic_toolbar_transcribe_close)
         }
         if (showKeyboard) {
             //messagePanel.getMessageField().setSelection(messagePanel.getMessageField().length());
@@ -344,14 +344,14 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
         messagePanel.hidePopupWindows()
         hideKeyboard()
         messagePanel.heightChangeListener.onChangedHeight(0)
-        toggleMessagePanelItem.icon = App.getVecDrawable(context, R.drawable.ic_toolbar_create)
+        toggleMessagePanelItem.icon = App.getVecDrawable(requireContext(), R.drawable.ic_toolbar_create)
     }
 
     override fun addBaseToolbarMenu(menu: Menu) {
         super.addBaseToolbarMenu(menu)
         toggleMessagePanelItem = menu
             .add(R.string.reply)
-            .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_create))
+            .setIcon(App.getVecDrawable(requireContext(), R.drawable.ic_toolbar_create))
             .setOnMenuItemClickListener {
                 if (!authHolder.get().isAuth()) {
                     Utils.showNeedAuthDialog(requireContext())
@@ -364,7 +364,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
 
         refreshMenuItem = menu
             .add(R.string.refresh)
-            .setIcon(App.getVecDrawable(context, R.drawable.ic_toolbar_refresh))
+            .setIcon(App.getVecDrawable(requireContext(), R.drawable.ic_toolbar_refresh))
             .setOnMenuItemClickListener {
                 presenter.reload()
                 false
@@ -491,7 +491,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
                 val btnNext = AppCompatImageButton(searchView.context)
                 btnNext.setImageDrawable(
                     App.getVecDrawable(
-                        context,
+                        requireContext(),
                         R.drawable.ic_toolbar_search_next
                     )
                 )
@@ -500,7 +500,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
                 val btnPrev = AppCompatImageButton(searchView.context)
                 btnPrev.setImageDrawable(
                     App.getVecDrawable(
-                        context,
+                        requireContext(),
                         R.drawable.ic_toolbar_search_prev
                     )
                 )
