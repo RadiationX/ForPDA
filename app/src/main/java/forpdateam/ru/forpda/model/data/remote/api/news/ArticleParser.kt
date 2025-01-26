@@ -276,6 +276,7 @@ class ArticleParser(
             }
 
             val contentNode = Parser.findNode(commentNode, "p", "class", "content")
+                ?: Parser.findNode(commentNode, "div", "class", "content")
             requireNotNull(contentNode)
             content = Parser.getHtml(contentNode, true)
             comment.content = ApiUtils.fromHtml(content)
