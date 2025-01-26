@@ -9,7 +9,7 @@ import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 class SearchResult {
     val items = mutableListOf<SearchItem>()
     var settings: SearchSettings? = null
-    var pagination = Pagination()
+    var pagination = Pagination.createForumDefault()
     var html: String? = null
 
     fun addItem(item: SearchItem) {

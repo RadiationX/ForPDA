@@ -6,11 +6,12 @@ import kotlin.math.ceil
 /**
  * Created by radiationx on 03.03.17.
  */
-class Pagination {
-    var perPage: Int = 20
-    var all: Int = 1
-    var current: Int = 1
-    private var isForum: Boolean = true
+data class Pagination(
+    val perPage: Int,
+    val all: Int,
+    val current: Int,
+    private val isForum: Boolean
+) {
 
 
     fun getPage(page: Int): Int {
@@ -50,43 +51,46 @@ class Pagination {
         return all <= 1
     }
 
-    override fun toString(): String {
-        return "Pagination(perPage=$perPage, all=$all, current=$current, isForum=$isForum)"
-    }
-
     companion object {
         private val forumPaginationPattern: Pattern =
             Pattern.compile("parseInt\\((\\d*)\\)[\\s\\S]*?parseInt\\(st\\*(\\d*)\\)[\\s\\S]*?pagination\">[\\s\\S]*?<span[^>]*?>([^<]*?)<\\/span>")
         private val newsPaginationPattern: Pattern =
             Pattern.compile("class=\"s-count[\\s\\S]*?<strong>(\\d+)<\\/strong>[\\s\\S]*?<ul class=\"page-nav[^>]*?>[\\s\\S]*?<li class=\"active\"><a[^>]*?>(\\d+)")
 
-        fun parseNews(page: String): Pagination {
-            return parseNews(Pagination(), page)
+        fun createForumDefault(): Pagination {
+            return Pagination(20, 1, 1, true)
         }
 
-        fun parseNews(pagination: Pagination, page: String): Pagination {
-            pagination.isForum = false
+        fun createNewsDefault(): Pagination {
+            return Pagination(30, 1, 1, false)
+        }
+
+        fun parseNews(page: String): Pagination {
             val matcher = newsPaginationPattern.matcher(page)
-            if (matcher.find()) {
-                pagination.perPage = 30
-                pagination.all = ceil(matcher.group(1).toInt() / 30.0).toInt()
-                pagination.current = matcher.group(2).toInt()
+            return if (matcher.find()) {
+                Pagination(
+                    perPage = 30,
+                    all = ceil(matcher.group(1).toInt() / 30.0).toInt(),
+                    current = matcher.group(2).toInt(),
+                    isForum = false
+                )
+            } else {
+                createNewsDefault()
             }
-            return pagination
         }
 
         fun parseForum(page: String): Pagination {
-            return parseForum(Pagination(), page)
-        }
-
-        fun parseForum(pagination: Pagination, page: String): Pagination {
             val matcher = forumPaginationPattern.matcher(page)
-            if (matcher.find()) {
-                pagination.all = matcher.group(1).toInt() + 1
-                pagination.perPage = matcher.group(2).toInt()
-                pagination.current = matcher.group(3).toInt()
+            return if (matcher.find()) {
+                Pagination(
+                    all = matcher.group(1).toInt() + 1,
+                    perPage = matcher.group(2).toInt(),
+                    current = matcher.group(3).toInt(),
+                    isForum = true
+                )
+            } else {
+                createForumDefault()
             }
-            return pagination
         }
     }
 }

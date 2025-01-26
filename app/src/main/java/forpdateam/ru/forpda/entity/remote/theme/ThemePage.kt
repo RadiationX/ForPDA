@@ -29,7 +29,7 @@ class ThemePage {
     var isHatOpen = false
     var isPollOpen = false
     val posts = ArrayList<ThemePost>()
-    var pagination = Pagination()
+    var pagination = Pagination.createForumDefault()
     var poll: Poll? = null
 
     val anchor: String?

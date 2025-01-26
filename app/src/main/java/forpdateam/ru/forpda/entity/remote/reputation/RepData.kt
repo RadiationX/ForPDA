@@ -15,6 +15,6 @@ class RepData {
     var nick: String? = null
     var mode = ReputationApi.MODE_TO
     var sort = ReputationApi.SORT_DESC
-    var pagination = Pagination()
+    var pagination = Pagination.createForumDefault()
     val items = mutableListOf<RepItem>()
 }

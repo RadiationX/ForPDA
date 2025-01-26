@@ -8,7 +8,7 @@ import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 
 class MentionsData {
     val items: MutableList<MentionItem> = mutableListOf()
-    var pagination = Pagination()
+    var pagination = Pagination.createForumDefault()
 
     fun addItem(item: MentionItem) {
         items.add(item)

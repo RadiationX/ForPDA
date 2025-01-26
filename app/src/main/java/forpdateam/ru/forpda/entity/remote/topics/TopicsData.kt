@@ -13,7 +13,7 @@ class TopicsData {
     val pinnedItems: MutableList<TopicItem> = ArrayList()
     val announceItems: MutableList<TopicItem> = ArrayList()
     val forumItems: MutableList<TopicItem> = ArrayList()
-    var pagination: Pagination = Pagination()
+    var pagination: Pagination = Pagination.createForumDefault()
 
     fun canCreateTopic(): Boolean {
         return canCreateTopic

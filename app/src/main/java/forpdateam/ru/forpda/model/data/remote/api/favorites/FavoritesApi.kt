@@ -1,11 +1,11 @@
 package forpdateam.ru.forpda.model.data.remote.api.favorites
 
 import android.net.Uri
+import android.util.Log
 import forpdateam.ru.forpda.entity.remote.favorites.FavData
 import forpdateam.ru.forpda.entity.remote.favorites.FavItem
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
-import java.util.Collections
 
 /**
  * Created by radiationx on 22.09.16.
@@ -17,6 +17,43 @@ class FavoritesApi(
 ) {
 
     fun getFavorites(st: Int, all: Boolean, sorting: Sorting): FavData {
+        var data = getFavorites(st, sorting)
+        if (all) {
+            while (data.pagination.hasNext()) {
+                val page = data.pagination.nextPage()
+                val favData = getFavorites(page, sorting)
+                data = data.copy(
+                    pagination = favData.pagination,
+                    items = data.items + favData.items
+                )
+                if (favData.items.isEmpty()) {
+                    break
+                }
+            }
+            val finalPagination = data.pagination.copy(
+                perPage = data.items.size,
+                current = 1,
+                all = 1
+            )
+
+            val finalItems = if (data.sorting.key == Sorting.Key.TITLE) {
+                when (data.sorting.order) {
+                    Sorting.Order.DESC -> data.items.sortedWith(DESC_ORDER)
+                    Sorting.Order.ASC -> data.items.sortedWith(ASC_ORDER)
+                    else -> data.items
+                }
+            } else {
+                data.items
+            }
+            data = data.copy(
+                pagination = finalPagination,
+                items = finalItems
+            )
+        }
+        return data
+    }
+
+    private fun getFavorites(st: Int, sorting: Sorting): FavData {
         val uriBuilder = Uri.Builder()
             .scheme("https")
             .authority("4pda.to")
@@ -28,36 +65,7 @@ class FavoritesApi(
             .appendQueryParameter(Sorting.Order.HEADER, sorting.order)
 
         val response = webClient.get(uriBuilder.build().toString())
-
-        var data = favoritesParser.parseFavorites(response.body)
-
-        if (all) {
-            while (true) {
-                if (!data.pagination.hasNext()) {
-                    break
-                }
-                val page = data.pagination.currentPage()
-                val favData = getFavorites(page, false, sorting)
-                data = data.copy(
-                    pagination = favData.pagination,
-                    items = data.items + favData.items
-                )
-                if (favData.items.isEmpty()) {
-                    break
-                }
-            }
-            data.pagination.all = 1
-
-            if (data.sorting.key == Sorting.Key.TITLE) {
-                if (data.sorting.order == Sorting.Order.DESC) {
-                    Collections.sort(data.items, DESC_ORDER)
-                } else if (data.sorting.order == Sorting.Order.ASC) {
-                    Collections.sort(data.items, ASC_ORDER)
-                }
-            }
-        }
-
-        return data
+        return favoritesParser.parseFavorites(response.body)
     }
 
     fun editSubscribeType(type: String?, favId: Int): Boolean {
