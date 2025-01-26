@@ -47,7 +47,7 @@ class DefaultForumHolder(context: Context?) : BaseNodeViewHolder<ForumItemTree>(
     }
 
     override fun toggle(active: Boolean) {
-        if (currentValue!!.forums.isEmpty()) {
+        if (currentValue!!.forums.isNotEmpty()) {
             icon!!.rotationY = if (active) 1f else 0f
             icon!!.setImageDrawable(
                 getVecDrawable(

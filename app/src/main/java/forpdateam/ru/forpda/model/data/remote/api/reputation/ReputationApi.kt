@@ -47,7 +47,7 @@ class ReputationApi(
         fun fromUrl(data: RepData, url: String): RepData {
             var matcher = Pattern.compile("st=(\\d+)").matcher(url)
             if (matcher.find()) {
-                data.pagination.st = Integer.parseInt(matcher.group(1))
+                data.initialSt = Integer.parseInt(matcher.group(1))
             }
             matcher = Pattern.compile("mid=(\\d+)").matcher(url)
             if (matcher.find())

@@ -10,12 +10,48 @@ class Pagination {
     var perPage: Int = 20
     var all: Int = 1
     var current: Int = 1
-    var st: Int = 0
-    var isForum: Boolean = true
+    private var isForum: Boolean = true
+
 
     fun getPage(page: Int): Int {
         if (!isForum) return page
         return page * perPage
+    }
+
+    fun firstPage(): Int {
+        return if (isForum) 0 else 1
+    }
+
+    fun prevPage(): Int {
+        return getPage(current - (if (isForum) 2 else 1))
+    }
+
+    fun currentPage(): Int {
+        return getPage(current - 1)
+    }
+
+    fun nextPage(): Int {
+        return getPage(current + (if (isForum) 0 else 1))
+    }
+
+    fun lastPage(): Int {
+        return getPage(all - (if (isForum) 1 else 0))
+    }
+
+    fun hasPrev(): Boolean {
+        return current > if (isForum) 1 else 2
+    }
+
+    fun hasNext(): Boolean {
+        return current < all
+    }
+
+    fun isSinglePage(): Boolean {
+        return all <= 1
+    }
+
+    override fun toString(): String {
+        return "Pagination(perPage=$perPage, all=$all, current=$current, isForum=$isForum)"
     }
 
     companion object {
@@ -33,7 +69,7 @@ class Pagination {
             val matcher = newsPaginationPattern.matcher(page)
             if (matcher.find()) {
                 pagination.perPage = 30
-                pagination.all = ceil(matcher.group(1).toInt() / 30.0) as Int
+                pagination.all = ceil(matcher.group(1).toInt() / 30.0).toInt()
                 pagination.current = matcher.group(2).toInt()
             }
             return pagination

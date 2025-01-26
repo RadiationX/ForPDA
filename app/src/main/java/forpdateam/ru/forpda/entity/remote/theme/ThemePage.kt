@@ -36,7 +36,7 @@ class ThemePage {
         get() = if (anchors.isEmpty()) null else anchors[anchors.size - 1]
 
     val st: Int
-        get() = pagination.current * pagination.perPage
+        get() = pagination.currentPage()
 
     fun addAnchor(anchor: String): Boolean {
         return anchors.add(anchor)

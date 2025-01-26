@@ -25,8 +25,8 @@ class SearchTemplate(
         val authData = authHolder.get()
         template.apply {
             templateManager.fillStaticStrings(template)
-            val prevDisabled = page.pagination.current <= 1
-            val nextDisabled = page.pagination.current == page.pagination.all
+            val prevDisabled = !page.pagination.hasPrev()
+            val nextDisabled = !page.pagination.hasNext()
 
             setVariableOpt("style_type", templateManager.getThemeType())
 

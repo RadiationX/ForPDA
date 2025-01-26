@@ -11,6 +11,7 @@ class RepData {
     var id = 0
     var positive = 0
     var negative = 0
+    var initialSt: Int = 0
     var nick: String? = null
     var mode = ReputationApi.MODE_TO
     var sort = ReputationApi.SORT_DESC

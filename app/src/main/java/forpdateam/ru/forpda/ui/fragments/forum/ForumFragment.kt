@@ -42,7 +42,7 @@ class ForumFragment : TabFragment(), ForumView {
 
     private val nodeClickListener = TreeNode.TreeNodeClickListener { _, value ->
         val item = value as ForumItemTree
-        if (item.forums == null) {
+        if (item.forums.isEmpty()) {
             presenter.navigateToForum(item)
         }
     }

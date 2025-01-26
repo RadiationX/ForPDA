@@ -182,7 +182,7 @@ class ThemePresenter(
     }
 
     private fun onLoadData(page: ThemePage) {
-        if (page.pagination.current >= page.pagination.all) {
+        if (!page.pagination.hasNext()) {
             crossScreenInteractor.onLoadTopic(page.id)
         }
         currentPage = page
@@ -230,7 +230,7 @@ class ThemePresenter(
         val form = EditPostForm()
         form.forumId = it.forumId
         form.topicId = it.id
-        form.st = it.pagination.current * it.pagination.perPage
+        form.st = it.pagination.currentPage()
         form.message = message
         form.attachments.addAll(attachments)
         form
@@ -613,7 +613,7 @@ class ThemePresenter(
                 var uri = Uri.parse(url)
                 uri = uri.buildUpon()
                     .appendQueryParameter("showtopic", Integer.toString(it.id))
-                    .appendQueryParameter("st", "" + it.pagination.current * it.pagination.perPage)
+                    .appendQueryParameter("st", "${it.pagination.currentPage()}")
                     .build()
                 loadUrl(uri.toString())
                 return true

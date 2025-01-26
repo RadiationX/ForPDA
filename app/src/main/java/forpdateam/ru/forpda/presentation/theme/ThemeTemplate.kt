@@ -29,8 +29,8 @@ class ThemeTemplate(
         val memberId = authData.userId
         template.apply {
             templateManager.fillStaticStrings(this)
-            val prevDisabled = page.pagination.current <= 1
-            val nextDisabled = page.pagination.current == page.pagination.all
+            val prevDisabled = !page.pagination.hasPrev()
+            val nextDisabled = !page.pagination.hasNext()
 
             setVariableOpt("style_type", templateManager.getThemeType())
 

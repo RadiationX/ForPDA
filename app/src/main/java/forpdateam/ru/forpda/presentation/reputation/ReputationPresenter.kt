@@ -28,16 +28,16 @@ class ReputationPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        loadReputation()
+        loadReputation(currentData.initialSt)
     }
 
-    fun loadReputation() {
+    fun loadReputation(page: Int? = null) {
         reputationRepository
             .loadReputation(
                 currentData.id,
                 currentData.mode,
                 currentData.sort,
-                currentData.pagination.st
+                page ?: currentData.pagination.currentPage()
             )
             .doOnSubscribe { viewState.setRefreshing(true) }
             .doAfterTerminate { viewState.setRefreshing(false) }
@@ -77,8 +77,7 @@ class ReputationPresenter(
     }
 
     fun selectPage(page: Int) {
-        currentData.pagination.st = page
-        loadReputation()
+        loadReputation(page)
     }
 
     fun setSort(sort: String) {

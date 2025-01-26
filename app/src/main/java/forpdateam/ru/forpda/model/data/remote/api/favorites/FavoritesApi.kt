@@ -33,10 +33,10 @@ class FavoritesApi(
 
         if (all) {
             while (true) {
-                if (data.pagination.current >= data.pagination.all) {
+                if (!data.pagination.hasNext()) {
                     break
                 }
-                val page = data.pagination.getPage(data.pagination.current)
+                val page = data.pagination.currentPage()
                 val favData = getFavorites(page, false, sorting)
                 data = data.copy(
                     pagination = favData.pagination,

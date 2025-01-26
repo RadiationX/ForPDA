@@ -167,35 +167,35 @@ class PaginationHelper(context: Activity) {
     }
 
     fun firstPage() {
-        if (pagination!!.current <= 1) return
-        selectPage(if (pagination!!.isForum) 0 else 1)
+        if (!pagination!!.hasPrev()) return
+        selectPage(pagination!!.firstPage())
     }
 
     fun prevPage() {
-        if (pagination!!.current <= 1) return
-        selectPage(pagination!!.getPage(pagination!!.current - (if (pagination!!.isForum) 2 else 1)))
+        if (!pagination!!.hasPrev()) return
+        selectPage(pagination!!.prevPage())
     }
 
     fun nextPage() {
-        if (pagination!!.current == pagination!!.all) return
-        selectPage(pagination!!.getPage(pagination!!.current + (if (pagination!!.isForum) 0 else 1)))
+        if (!pagination!!.hasNext()) return
+        selectPage(pagination!!.nextPage())
     }
 
     fun lastPage() {
-        if (pagination!!.current == pagination!!.all) return
-        selectPage(pagination!!.getPage(pagination!!.all - (if (pagination!!.isForum) 1 else 0)))
+        if (!pagination!!.hasNext()) return
+        selectPage(pagination!!.lastPage())
     }
 
     fun updatePagination(newPagination: Pagination?) {
         this.pagination = newPagination
         for (tabLayout in tabLayouts) {
-            if (pagination!!.all <= 1) {
+            if (pagination!!.isSinglePage()) {
                 tabLayout.visibility = View.GONE
                 return
             }
             tabLayout.visibility = View.VISIBLE
-            val prevDisabled = pagination!!.current <= 1
-            val nextDisabled = pagination!!.current == pagination!!.all
+            val prevDisabled = !pagination!!.hasPrev()
+            val nextDisabled = !pagination!!.hasNext()
             var tab: TabLayout.Tab?
             var tag: Int
             for (i in 0 until tabLayout.tabCount) {
@@ -213,7 +213,7 @@ class PaginationHelper(context: Activity) {
     }
 
     val title: String?
-        get() = if (pagination == null || pagination!!.all <= 1) null else (pagination!!.current.toString() + "/" + pagination!!.all.toString())
+        get() = if (pagination == null || pagination!!.isSinglePage()) null else (pagination!!.current.toString() + "/" + pagination!!.all.toString())
 
     fun selectPageDialog() {
         val pages = IntArray(pagination!!.all)
@@ -241,7 +241,7 @@ class PaginationHelper(context: Activity) {
                 if (listView.tag != null && !(listView.tag as Boolean)) {
                     return@OnItemClickListener
                 }
-                selectPage(i2 * pagination!!.perPage)
+                selectPage(pagination!!.getPage(i2))
                 dialog.cancel()
             }
     }

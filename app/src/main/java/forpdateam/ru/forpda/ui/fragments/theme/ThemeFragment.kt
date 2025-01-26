@@ -311,7 +311,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
         setTabTitle(String.format(getString(R.string.fragment_tab_title_theme), page.title))
 
         val pagination = page.pagination
-        setSubtitle("" + pagination.current + "/" + pagination.all)
+        setSubtitle("${pagination.current}/${pagination.all}")
     }
 
     private fun toggleMessagePanel() {
