@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.model
 import android.content.SharedPreferences
 import com.jakewharton.rxrelay2.BehaviorRelay
 import forpdateam.ru.forpda.entity.app.CloseableInfo
+import forpdateam.ru.forpda.extensions.replace
 import io.reactivex.Observable
 
 class CloseableInfoHolder(
@@ -40,8 +41,11 @@ class CloseableInfoHolder(
     fun get(): List<CloseableInfo> = relay.value!!
 
     fun close(item: CloseableInfo) {
-        val currentItems = get()
-        currentItems.firstOrNull { it.id == item.id }?.isClosed = true
+        val currentItems = get().toMutableList()
+        currentItems.replace(
+            condition = { it.id == item.id },
+            map = { it.copy(isClosed = true) }
+        )
         val closedItems = currentItems.filter { it.isClosed }
         preferences.edit().putString(
             "closeable_info_closed_ids",

@@ -117,7 +117,7 @@ class MenuRepository(
 
     private val menuRelay = BehaviorRelay.create<Map<Int, List<AppMenuItem>>>()
 
-    private var localCounters = MessageCounters()
+    private var localCounters: MessageCounters? = null
 
     private val rxPreferences = RxSharedPreferences.create(preferences)
 
@@ -207,9 +207,9 @@ class MenuRepository(
         systemMenu.clear()
         linkMenu.clear()
 
-        allItems.firstOrNull { it.id == item_qms_contacts }?.count = localCounters.qms
-        allItems.firstOrNull { it.id == item_mentions }?.count = localCounters.mentions
-        allItems.firstOrNull { it.id == item_favorites }?.count = localCounters.favorites
+        allItems.firstOrNull { it.id == item_qms_contacts }?.count = localCounters?.qms ?: 0
+        allItems.firstOrNull { it.id == item_mentions }?.count = localCounters?.mentions ?: 0
+        allItems.firstOrNull { it.id == item_favorites }?.count = localCounters?.favorites ?: 0
 
         if (authHolder.get().isAuth()) {
             blockedMenu.addAll(blockAuth)

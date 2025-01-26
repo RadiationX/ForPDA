@@ -219,12 +219,13 @@ class QmsRepository(
             }
         }
 
-        countersHolder.set(countersHolder.get().also { counters ->
-            if (event.isWebSocket) {
-                counters.qms = allContacts.sumOf { it.count }
+        val newCounters = countersHolder.get().copy(
+            qms = if (event.isWebSocket) {
+                allContacts.sumOf { it.count }
             } else {
-                counters.qms = event.loadedEvents.sumOf { it.msgCount }
+                event.loadedEvents.sumOf { it.msgCount }
             }
-        })
+        )
+        countersHolder.set(newCounters)
     }
 }

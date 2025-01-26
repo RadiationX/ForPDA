@@ -3,6 +3,8 @@ package forpdateam.ru.forpda.model.repository.auth
 import forpdateam.ru.forpda.entity.app.profile.IUserHolder
 import forpdateam.ru.forpda.entity.common.AuthData
 import forpdateam.ru.forpda.entity.common.AuthState
+import forpdateam.ru.forpda.entity.common.MessageCounters
+import forpdateam.ru.forpda.entity.remote.auth.AuthCaptcha
 import forpdateam.ru.forpda.entity.remote.auth.AuthForm
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.CountersHolder
@@ -23,12 +25,12 @@ class AuthRepository(
     private val userHolder: IUserHolder
 ) : BaseRepository(schedulers) {
 
-    fun loadForm(): Single<AuthForm> = Single
-        .fromCallable { authApi.getForm() }
+    fun loadCaptcha(): Single<AuthCaptcha> = Single
+        .fromCallable { authApi.getCaptcha() }
         .runInIoToUi()
 
-    fun signIn(authForm: AuthForm): Single<AuthForm> = Single
-        .fromCallable { authApi.login(authForm) }
+    fun signIn(captcha: AuthCaptcha, form: AuthForm): Single<Unit> = Single
+        .fromCallable { authApi.login(captcha, form) }
         .runInIoToUi()
 
     fun signOut(): Single<Boolean> = Single
@@ -38,11 +40,13 @@ class AuthRepository(
                 userId = AuthData.NO_ID
                 state = AuthState.NO_AUTH
             })
-            countersHolder.set(countersHolder.get().apply {
-                mentions = 0
-                favorites = 0
-                qms = 0
-            })
+            countersHolder.set(
+                MessageCounters(
+                    mentions = 0,
+                    favorites = 0,
+                    qms = 0
+                )
+            )
             userHolder.user = null
         }
         .runInIoToUi()

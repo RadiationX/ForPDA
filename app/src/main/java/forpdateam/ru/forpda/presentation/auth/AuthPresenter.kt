@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.presentation.auth
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.common.AuthData
 import forpdateam.ru.forpda.entity.common.AuthState
+import forpdateam.ru.forpda.entity.remote.auth.AuthCaptcha
 import forpdateam.ru.forpda.entity.remote.auth.AuthForm
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.model.AuthHolder
@@ -31,40 +32,31 @@ class AuthPresenter(
     private val systemLinkHandler: ISystemLinkHandler
 ) : BasePresenter<AuthView>() {
 
-    private var fieldsFilled = false
-    private var authForm: AuthForm? = null
+    private var captcha: AuthCaptcha? = null
+    private var form = AuthForm("", "", "", false)
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         loadForm()
     }
 
-    fun setFieldsFilled(isFilled: Boolean) {
-        fieldsFilled = isFilled
-        viewState.setSendEnabled(fieldsFilled)
+    fun updateForm(form: AuthForm) {
+        this.form = form
+        viewState.setSendEnabled(form.isFilled())
     }
 
-    fun signIn(
-        nick: String,
-        password: String,
-        captcha: String,
-        isHidden: Boolean
-    ) {
-        authForm?.also { authForm ->
-            authForm.nick = nick
-            authForm.password = password
-            authForm.captcha = captcha
-            authForm.isHidden = isHidden
+    fun signIn() {
+        this.captcha?.also { captcha ->
             authRepository
-                .signIn(authForm)
+                .signIn(captcha, form)
                 .doOnSubscribe { viewState.setSendRefreshing(true) }
                 .doAfterTerminate { viewState.setSendRefreshing(false) }
                 .subscribe({
                     viewState.onSuccessAuth()
                     loadProfile("https://4pda.to/forum/index.php?showuser=${authHolder.get().userId}")
                 }, {
-                    authForm.captcha = null
-                    viewState.onFormLoaded(authForm)
+                    form = form.copy(captcha = "")
+                    viewState.onFormChanged(form)
                     loadForm()
                     errorHandler.handle(it)
                 })
@@ -88,16 +80,12 @@ class AuthPresenter(
 
     private fun loadForm() {
         authRepository
-            .loadForm()
+            .loadCaptcha()
             .doOnSubscribe { viewState.setSendEnabled(false) }
-            .doAfterTerminate { viewState.setSendEnabled(fieldsFilled) }
+            .doAfterTerminate { viewState.setSendEnabled(form.isFilled()) }
             .subscribe({
-                it.apply {
-                    nick = authForm?.nick
-                    password = authForm?.password
-                }
-                authForm = it
-                viewState.onFormLoaded(it)
+                captcha = it
+                viewState.onCaptchaLoaded(it)
             }, {
                 errorHandler.handle(it)
             })

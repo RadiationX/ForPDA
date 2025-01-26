@@ -12,11 +12,13 @@ class CountersHolder(
     private val relay = BehaviorRelay.create<MessageCounters>()
 
     init {
-        set(MessageCounters().apply {
-            qms = preferences.getInt("counter_qms", 0)
-            favorites = preferences.getInt("counter_favorites", 0)
-            mentions = preferences.getInt("counter_mentions", 0)
-        })
+        set(
+            MessageCounters(
+                qms = preferences.getInt("counter_qms", 0),
+                favorites = preferences.getInt("counter_favorites", 0),
+                mentions = preferences.getInt("counter_mentions", 0)
+            )
+        )
     }
 
     fun observe(): Observable<MessageCounters> = relay

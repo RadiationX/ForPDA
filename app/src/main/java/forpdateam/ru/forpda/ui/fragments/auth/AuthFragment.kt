@@ -25,6 +25,7 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.simple.SimpleAnimationListener
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
+import forpdateam.ru.forpda.entity.remote.auth.AuthCaptcha
 import forpdateam.ru.forpda.entity.remote.auth.AuthForm
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
@@ -60,9 +61,7 @@ class AuthFragment : TabFragment(), AuthView {
 
     private val loginTextWatcher = object : SimpleTextWatcher() {
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-            val filled = !nick.text.toString().isEmpty() && !password.text.toString()
-                .isEmpty() && captcha.text.toString().length == 4
-            presenter.setFieldsFilled(filled)
+            updateForm()
         }
     }
 
@@ -134,6 +133,10 @@ class AuthFragment : TabFragment(), AuthView {
         fragmentContainer.fitsSystemWindows = true
         fragmentContent.fitsSystemWindows = true
 
+        hiddenAuth.setOnCheckedChangeListener { buttonView, isChecked ->
+            updateForm()
+        }
+
         captcha.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 if (sendButton.isEnabled) {
@@ -159,16 +162,11 @@ class AuthFragment : TabFragment(), AuthView {
         }
     }
 
-    override fun onFormLoaded(authForm: AuthForm) {
-        nick.setText(authForm.nick)
-        password.setText(authForm.password)
-        captcha.setText(authForm.captcha)
-        hiddenAuth.isChecked = authForm.isHidden
-
+    override fun onCaptchaLoaded(authCaptcha: AuthCaptcha) {
         captchaImage.visibility = View.GONE
         captchaProgress.visibility = View.VISIBLE
         ImageLoader.getInstance().displayImage(
-            authForm.captchaImageUrl,
+            authCaptcha.captchaImageUrl,
             captchaImage,
             object : SimpleImageLoadingListener() {
                 override fun onLoadingComplete(
@@ -182,14 +180,16 @@ class AuthFragment : TabFragment(), AuthView {
             })
     }
 
+    override fun onFormChanged(authForm: AuthForm) {
+        nick.setText(authForm.nick)
+        password.setText(authForm.password)
+        captcha.setText(authForm.captcha)
+        hiddenAuth.isChecked = authForm.isHidden
+    }
+
     private fun tryLogin() {
         hideKeyboard()
-        presenter.signIn(
-            nick.text.toString(),
-            password.text.toString(),
-            captcha.text.toString(),
-            hiddenAuth.isChecked
-        )
+        presenter.signIn()
     }
 
     override fun onSuccessAuth() {
@@ -239,5 +239,16 @@ class AuthFragment : TabFragment(), AuthView {
                 }
             })
         })
+    }
+
+    private fun updateForm() {
+        presenter.updateForm(
+            AuthForm(
+                nick = nick.text?.toString().orEmpty(),
+                password = password.text?.toString().orEmpty(),
+                captcha = captcha.text?.toString().orEmpty(),
+                isHidden = hiddenAuth.isChecked
+            )
+        )
     }
 }

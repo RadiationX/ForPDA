@@ -35,9 +35,9 @@ class QmsContactsPresenter(
                 localItems.clear()
                 localItems.addAll(it)
                 viewState.showContacts(it)
-                countersHolder.set(countersHolder.get().apply {
+                countersHolder.set(countersHolder.get().copy(
                     qms = it.sumOf { it.count }
-                })
+                ))
             }
             .untilDestroy()
     }

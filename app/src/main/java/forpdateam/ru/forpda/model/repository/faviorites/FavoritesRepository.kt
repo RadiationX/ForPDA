@@ -84,9 +84,11 @@ class FavoritesRepository(
             )
             val count = countersHolder.get().favorites
             handleEventTransaction(favItems, event, sorting, count).also {
-                countersHolder.set(countersHolder.get().apply {
-                    favorites = it
-                })
+                countersHolder.set(
+                    countersHolder.get().copy(
+                        favorites = it
+                    )
+                )
             }
         }
         .runInIoToUi()

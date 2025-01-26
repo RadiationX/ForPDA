@@ -7,6 +7,7 @@ import android.util.Log
 import forpdateam.ru.forpda.App.Companion.get
 import forpdateam.ru.forpda.entity.common.AuthData
 import forpdateam.ru.forpda.entity.common.AuthState
+import forpdateam.ru.forpda.entity.common.MessageCounters
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.CountersHolder
 import forpdateam.ru.forpda.model.data.remote.IWebClient
@@ -264,7 +265,7 @@ class Client(
                         multipartBuilder.addFormDataPart(key, value)
                     }
                 }
-                request.file?.also {file->
+                request.file?.also { file ->
                     val type = MediaType.parse(file.mimeType)
                     val requestBody = RequestBodyUtil
                         .create(type, file.fileStream)
@@ -348,20 +349,16 @@ class Client(
         val countsMatcher = IWebClient.countsPattern.matcher(res)
 
         if (countsMatcher.find()) {
-            val counters = countersHolder.get()
             try {
-                var tempGroup = countsMatcher.group(1)
-                counters.mentions = tempGroup?.toInt() ?: 0
-
-                tempGroup = countsMatcher.group(2)
-                counters.favorites = tempGroup?.toInt() ?: 0
-
-                tempGroup = countsMatcher.group(3)
-                counters.qms = tempGroup?.toInt() ?: 0
+                val counters = MessageCounters(
+                    mentions = countsMatcher.group(1)?.toInt() ?: 0,
+                    favorites = countsMatcher.group(2)?.toInt() ?: 0,
+                    qms = countsMatcher.group(3)?.toInt() ?: 0
+                )
+                countersHolder.set(counters)
             } catch (exception: Exception) {
-                Log.d("WATAFUCK", res)
+                Log.d("WATAFUCK", res, exception)
             }
-            countersHolder.set(counters)
         }
     }
 

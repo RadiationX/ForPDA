@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.model.data.remote.api.auth
 
 import forpdateam.ru.forpda.App
+import forpdateam.ru.forpda.entity.remote.auth.AuthCaptcha
 import forpdateam.ru.forpda.entity.remote.auth.AuthForm
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
@@ -17,7 +18,7 @@ class AuthApi(
     private val authParser: AuthParser
 ) {
 
-    fun getForm(): AuthForm {
+    fun getCaptcha(): AuthCaptcha {
         val response = webClient.get(AUTH_BASE_URL)
 
         if (response.body.isNullOrEmpty())
@@ -26,14 +27,14 @@ class AuthApi(
         if (checkLogin(response.body))
             throw Exception("You already logged")
 
-        return authParser.parseForm(response.body)
+        return authParser.parseCaptcha(response.body)
     }
 
-    fun login(form: AuthForm): AuthForm {
+    fun login(captcha: AuthCaptcha, form: AuthForm) {
         val builder = NetworkRequest.Builder()
             .url(AUTH_BASE_URL)
-            .formHeader("captcha-time", requireNotNull(form.captchaTime))
-            .formHeader("captcha-sig", requireNotNull(form.captchaSig))
+            .formHeader("captcha-time", requireNotNull(captcha.captchaTime))
+            .formHeader("captcha-sig", requireNotNull(captcha.captchaSig))
             .formHeader("captcha", requireNotNull(form.captcha))
             .formHeader("return", IWebClient.MINIMAL_PAGE)
             .formHeader("login", URLEncoder.encode(form.nick, "windows-1251"), true)
@@ -51,7 +52,6 @@ class AuthApi(
         if (!checkLogin(response.body)) {
             throw Exception("Ошибка при проверке авторизации")
         }
-        return form
     }
 
     fun logout(): Boolean {
