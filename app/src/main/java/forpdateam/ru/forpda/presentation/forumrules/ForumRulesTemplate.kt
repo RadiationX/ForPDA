@@ -7,7 +7,7 @@ class ForumRulesTemplate(
     private val templateManager: TemplateManager
 ) {
 
-    fun mapEntity(rules: ForumRules): ForumRules = rules.apply { html = mapString(rules) }
+    fun mapEntity(rules: ForumRules): ForumRules = rules.copy(html = mapString(rules))
 
     fun mapString(rules: ForumRules): String {
         val template = templateManager.getTemplate(TemplateManager.TEMPLATE_FORUM_RULES)

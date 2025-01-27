@@ -7,7 +7,7 @@ class AnnounceTemplate(
     private val templateManager: TemplateManager
 ) {
 
-    fun mapEntity(announce: Announce): Announce = announce.apply { html = mapString(announce) }
+    fun mapEntity(announce: Announce): Announce = announce.copy(html = mapString(announce))
 
     fun mapString(announce: Announce): String {
         val template = templateManager.getTemplate(TemplateManager.TEMPLATE_ANNOUNCE)

@@ -6,7 +6,6 @@ import forpdateam.ru.forpda.entity.remote.forum.ForumRules
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
-import java.util.regex.Matcher
 
 class ForumParser(
     private val patternProvider: IPatternProvider
@@ -53,39 +52,52 @@ class ForumParser(
             } ?: emptyList()
     }
 
-    fun parseRules(response: String): ForumRules = ForumRules().also { rules ->
-        var itemMatcher: Matcher? = null
+    fun parseRules(response: String): ForumRules {
+        val items = mutableListOf<ForumRules.Item>()
         patternProvider
             .getPattern(scope.scope, scope.rules_headers)
             .matcher(response)
             .findAll { headerMatcher ->
-                rules.addItem(ForumRules.Item().apply {
-                    isHeader = true
-                    number = headerMatcher.group(1)
-                    text = headerMatcher.group(2)
-                })
+                items.add(
+                    ForumRules.Item(
+                        number = headerMatcher.group(1),
+                        text = headerMatcher.group(2),
+                        isHeader = true,
+                    )
+                )
 
                 val itemContent = headerMatcher.group(3)
-                itemMatcher = itemMatcher?.reset(itemContent) ?: patternProvider
+                patternProvider
                     .getPattern(scope.scope, scope.rules_items)
                     .matcher(itemContent)
-                itemMatcher
-                    ?.findAll { itemMatcher ->
-                        rules.addItem(ForumRules.Item().apply {
-                            number = itemMatcher.group(1)
-                            text = itemMatcher.group(2)
-                        })
+                    .findAll { itemMatcher ->
+                        items.add(
+                            ForumRules.Item(
+                                number = itemMatcher.group(1),
+                                text = itemMatcher.group(2),
+                                isHeader = false
+                            )
+                        )
                     }
             }
+        return ForumRules(
+            items = items,
+            html = null
+        )
     }
 
-    fun parseAnnounce(response: String): Announce = Announce().also { data ->
-        patternProvider
+    fun parseAnnounce(response: String): Announce {
+        val announce = patternProvider
             .getPattern(scope.scope, scope.announce)
             .matcher(response)
-            .findOnce {
-                data.title = it.group(1)
-                data.html = it.group(2)
+            .mapOnce {
+                Announce(
+                    title = it.group(1),
+                    html = it.group(2)
+                )
             }
+        return requireNotNull(announce) {
+            "Can't parse announce"
+        }
     }
 }
