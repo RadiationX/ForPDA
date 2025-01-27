@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.model.data.remote.api.devdb
 
 import forpdateam.ru.forpda.entity.remote.devdb.Brand
+import forpdateam.ru.forpda.entity.remote.devdb.BrandSearch
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
 import forpdateam.ru.forpda.entity.remote.devdb.Device
 import forpdateam.ru.forpda.model.data.remote.IWebClient
@@ -30,7 +31,7 @@ class DevDbApi(
         return devDbParser.parseDevice(response.body, devId)
     }
 
-    fun search(query: String): Brand {
+    fun search(query: String): BrandSearch {
         val reqQuery = query.let {
             try {
                 URLDecoder.decode(query, "windows-1251")

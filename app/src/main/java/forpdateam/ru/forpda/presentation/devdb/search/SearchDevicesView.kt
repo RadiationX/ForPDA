@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.presentation.devdb.search
 
 import forpdateam.ru.forpda.common.mvp.IBaseView
 import forpdateam.ru.forpda.entity.remote.devdb.Brand
+import forpdateam.ru.forpda.entity.remote.devdb.BrandSearch
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
@@ -12,7 +13,7 @@ import moxy.viewstate.strategy.StateStrategyType
 
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface SearchDevicesView : IBaseView {
-    fun showData(data: Brand, query: String)
+    fun showData(data: BrandSearch, query: String)
 
     @StateStrategyType(SkipStrategy::class)
     fun showCreateNote(title: String, url: String)

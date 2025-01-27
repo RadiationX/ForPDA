@@ -16,6 +16,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.devdb.Brand
+import forpdateam.ru.forpda.entity.remote.devdb.BrandSearch
 import forpdateam.ru.forpda.presentation.devdb.search.SearchDevicesPresenter
 import forpdateam.ru.forpda.presentation.devdb.search.SearchDevicesView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
@@ -144,7 +145,7 @@ class DevDbSearchFragment : TabFragment(), SearchDevicesView,
         searchView.setIconifiedByDefault(true)
     }
 
-    override fun showData(data: Brand, query: String) {
+    override fun showData(data: BrandSearch, query: String) {
         setTitle("Поиск $query")
         adapter.addAll(data.devices)
     }

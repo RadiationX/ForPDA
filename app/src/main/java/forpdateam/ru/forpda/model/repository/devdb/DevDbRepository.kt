@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.model.repository.devdb
 
 import forpdateam.ru.forpda.entity.remote.devdb.Brand
+import forpdateam.ru.forpda.entity.remote.devdb.BrandSearch
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
 import forpdateam.ru.forpda.entity.remote.devdb.Device
 import forpdateam.ru.forpda.model.SchedulersProvider
@@ -29,7 +30,7 @@ class DevDbRepository(
         .fromCallable { devDbApi.getDevice(devId) }
         .runInIoToUi()
 
-    fun search(query: String): Single<Brand> = Single
+    fun search(query: String): Single<BrandSearch> = Single
         .fromCallable { devDbApi.search(query) }
         .runInIoToUi()
 

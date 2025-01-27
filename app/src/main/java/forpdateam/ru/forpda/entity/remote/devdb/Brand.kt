@@ -4,21 +4,22 @@ package forpdateam.ru.forpda.entity.remote.devdb
  * Created by radiationx on 06.08.17.
  */
 
-open class Brand {
-    val devices = mutableListOf<DeviceItem>()
-    var id: String? = null
-    var title: String? = null
-    var catId: String? = null
-    var catTitle: String? = null
-    var actual = 0
-    var all = 0
+data class Brand(
+    val id: String,
+    val title: String,
+    val catId: String,
+    val catTitle: String,
+    val actual: Int,
+    val all: Int,
+    val devices: List<DeviceItem>
+) {
 
-    class DeviceItem {
-        val specs = mutableListOf<Pair<String, String>>()
-        var id: String? = null
-        var title: String? = null
-        var price: String? = null
-        var imageSrc: String? = null
-        var rating = 0
-    }
+    data class DeviceItem(
+        val id: String,
+        val title: String,
+        val price: String?,
+        val imageSrc: String?,
+        val rating: Int,
+        val specs: List<Pair<String, String>>
+    )
 }

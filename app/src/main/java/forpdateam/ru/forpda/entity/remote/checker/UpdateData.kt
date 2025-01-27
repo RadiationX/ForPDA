@@ -3,21 +3,20 @@ package forpdateam.ru.forpda.entity.remote.checker
 /**
  * Created by radiationx on 28.01.18.
  */
-class UpdateData {
-    var code: Int = 0
-    var build: Int = 0
-    var name: String? = null
-    var date: String? = null
-    val links = mutableListOf<UpdateLink>()
+data class UpdateData(
+    val code: Int,
+    val build: Int,
+    val name: String?,
+    val date: String?,
+    val links: List<UpdateLink>,
+    val important: List<String>,
+    val added: List<String>,
+    val fixed: List<String>,
+    val changed: List<String>,
+    val patternsVersion: Int,
+) {
 
-    val important = mutableListOf<String>()
-    val added = mutableListOf<String>()
-    val fixed = mutableListOf<String>()
-    val changed = mutableListOf<String>()
-
-    var patternsVersion = 0
-
-    class UpdateLink(
+    data class UpdateLink(
         val name: String,
         val url: String,
         val type: String

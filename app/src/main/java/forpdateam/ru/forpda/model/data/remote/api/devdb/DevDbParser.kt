@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.model.data.remote.api.devdb
 
 import forpdateam.ru.forpda.entity.remote.devdb.Brand
+import forpdateam.ru.forpda.entity.remote.devdb.BrandSearch
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
 import forpdateam.ru.forpda.entity.remote.devdb.Device
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
@@ -13,7 +14,8 @@ class DevDbParser(
 
     private val scope = ParserPatterns.DevDb
 
-    fun parseBrands(response: String): Brands = Brands().also { data ->
+    fun parseBrands(response: String): Brands {
+        val letterMap = linkedMapOf<String, List<Brands.Item>>()
         patternProvider
             .getPattern(scope.scope, scope.brands_letters)
             .matcher(response)
@@ -23,82 +25,103 @@ class DevDbParser(
                     .getPattern(scope.scope, scope.brands_items_in_letter)
                     .matcher(matcher.group(2))
                     .map { itemsMatcher ->
-                        Brands.Item().apply {
-                            id = itemsMatcher.group(1)
-                            title = itemsMatcher.group(2).fromHtml()
-                            count = itemsMatcher.group(3).toInt()
+                        val title = requireNotNull(itemsMatcher.group(2).fromHtml()) {
+                            "brands.item.title"
                         }
+                        Brands.Item(
+                            id = itemsMatcher.group(1),
+                            title = title,
+                            count = itemsMatcher.group(3).toInt()
+                        )
                     }
-                data.letterMap[letter] = items
+                letterMap[letter] = items
             }
 
-        patternProvider
+        val brands = patternProvider
             .getPattern(scope.scope, scope.main_root)
             .matcher(response)
-            .findOnce { matcher ->
+            .mapOnce { matcher ->
+                var catId: String? = null
+                var catTitle: String? = null
                 patternProvider
                     .getPattern(scope.scope, scope.main_breadcrumb)
                     .matcher(matcher.group(1))
                     .findAll { bcMatcher ->
                         if (bcMatcher.group(2) == null) {
-                            data.catId = bcMatcher.group(1)
-                            data.catTitle = bcMatcher.group(3)
+                            catId = bcMatcher.group(1)
+                            catTitle = bcMatcher.group(3)
                         }
                     }
-                data.actual = matcher.group(5).toInt()
-                data.all = matcher.group(6).toInt()
+                Brands(
+                    catId = requireNotNull(catId) { "brands.catId" },
+                    catTitle = requireNotNull(catTitle) { "brands.catTitle" },
+                    actual = matcher.group(5).toInt(),
+                    all = matcher.group(6).toInt(),
+                    letterMap = letterMap
+                )
             }
-        return data
+        return requireNotNull(brands) {
+            "Brands not parsed"
+        }
     }
 
-    fun parseBrand(response: String): Brand = Brand().also { data ->
-        val list = patternProvider
+    fun parseBrand(response: String): Brand {
+        val devices = patternProvider
             .getPattern(scope.scope, scope.brand_devices)
             .matcher(response)
             .map { matcher ->
-                Brand.DeviceItem().apply {
-                    imageSrc = matcher.group(1)
-                    id = matcher.group(2)
-                    title = matcher.group(3).fromHtml()
-
-                    patternProvider
-                        .getPattern(scope.scope, scope.main_specs)
-                        .matcher(matcher.group(4))
-                        .findOnce {
-                            specs.add(Pair(it.group(1), it.group(2)))
-                        }
-
-                    matcher.group(5)?.also {
-                        price = it
-                    }
-                    matcher.group(7)?.also {
-                        rating = it.toInt()
-                    }
+                val specs = patternProvider
+                    .getPattern(scope.scope, scope.main_specs)
+                    .matcher(matcher.group(4))
+                    .map { Pair(it.group(1), it.group(2)) }
+                val title = requireNotNull(matcher.group(3).fromHtml()) {
+                    "brand.devices.title"
                 }
+                Brand.DeviceItem(
+                    imageSrc = matcher.group(1),
+                    id = matcher.group(2),
+                    title = title,
+                    price = matcher.group(5),
+                    rating = matcher.group(7)?.toInt() ?: 0,
+                    specs = specs
+                )
             }
-        data.devices.addAll(list)
 
-        patternProvider
+        val brand = patternProvider
             .getPattern(scope.scope, scope.main_root)
             .matcher(response)
-            .findOnce { matcher ->
+            .mapOnce { matcher ->
+                var catId: String? = null
+                var catTitle: String? = null
+                var id: String? = null
+                var title: String? = null
                 patternProvider
                     .getPattern(scope.scope, scope.main_breadcrumb)
                     .matcher(matcher.group(1))
                     .findAll { bcMatcher ->
                         if (bcMatcher.group(2) == null) {
-                            data.catId = bcMatcher.group(1)
-                            data.catTitle = bcMatcher.group(3)
+                            catId = bcMatcher.group(1)
+                            catTitle = bcMatcher.group(3)
                         } else {
-                            data.id = bcMatcher.group(2)
-                            data.title = bcMatcher.group(3)
+                            id = bcMatcher.group(2)
+                            title = bcMatcher.group(3)
                         }
                     }
-                data.title = matcher.group(4)
-                data.actual = matcher.group(5).toInt()
-                data.all = matcher.group(6).toInt()
+                title = matcher.group(4) ?: title
+                Brand(
+                    id = requireNotNull(id) { "brand.id" },
+                    title = requireNotNull(title) { "brand.title" },
+                    catId = requireNotNull(catId) { "brand.catId" },
+                    catTitle = requireNotNull(catTitle) { "brand.catTitle" },
+                    actual = matcher.group(5).toInt(),
+                    all = matcher.group(6).toInt(),
+                    devices = devices
+                )
             }
-        return data
+
+        return requireNotNull(brand) {
+            "Brand not parsed"
+        }
     }
 
     fun parseDevice(response: String, argDevId: String): Device = Device().also { data ->
@@ -230,20 +253,27 @@ class DevDbParser(
         return data
     }
 
-    fun parseSearch(response: String): Brand = Brand().also { data ->
+    fun parseSearch(response: String): BrandSearch {
         val devices = patternProvider
             .getPattern(scope.scope, scope.main_search)
             .matcher(response)
             .map { matcher ->
-                Brand.DeviceItem().apply {
-                    imageSrc = matcher.group(1)
-                    id = matcher.group(2)
-                    title = matcher.group(3).fromHtml()
+                val title = requireNotNull(matcher.group(3).fromHtml()) {
+                    "brandsearch.devices.title"
                 }
+                Brand.DeviceItem(
+                    id = matcher.group(2),
+                    imageSrc = matcher.group(1),
+                    title = title,
+                    price = null,
+                    rating = 0,
+                    specs = emptyList()
+                )
             }
-
-        data.devices.addAll(devices)
-        data.all = data.devices.size
-        data.actual = data.all
+        return BrandSearch(
+            actual = devices.size,
+            all = devices.size,
+            devices = devices
+        )
     }
 }

@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.presentation.devdb.search
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.devdb.Brand
+import forpdateam.ru.forpda.entity.remote.devdb.BrandSearch
 import forpdateam.ru.forpda.model.repository.devdb.DevDbRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.Screen
@@ -22,7 +23,7 @@ class SearchDevicesPresenter(
 
     var searchQuery: String? = null
 
-    var currentData: Brand? = null
+    var currentData: BrandSearch? = null
 
     fun refresh() = search(searchQuery)
 
@@ -70,7 +71,7 @@ class SearchDevicesPresenter(
 
     fun createNote(item: Brand.DeviceItem) {
         currentData?.let {
-            val title = "DevDb: ${it.title} ${item.title}"
+            val title = "DevDb: ${item.title}"
             val url = "https://4pda.to/devdb/" + item.id
             viewState.showCreateNote(title, url)
         }

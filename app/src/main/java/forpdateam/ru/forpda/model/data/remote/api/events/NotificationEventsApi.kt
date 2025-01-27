@@ -87,6 +87,8 @@ class NotificationEventsApi(private val webClient: IWebClient) {
         return event
     }
 
+    // also can use CODE=mentions i guess
+
     @get:Throws(Exception::class)
     val qmsEvents: List<NotificationEvent>
         get() {
