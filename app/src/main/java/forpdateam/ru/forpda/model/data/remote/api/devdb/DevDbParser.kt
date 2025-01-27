@@ -25,12 +25,9 @@ class DevDbParser(
                     .getPattern(scope.scope, scope.brands_items_in_letter)
                     .matcher(matcher.group(2))
                     .map { itemsMatcher ->
-                        val title = requireNotNull(itemsMatcher.group(2).fromHtml()) {
-                            "brands.item.title"
-                        }
                         Brands.Item(
                             id = itemsMatcher.group(1),
-                            title = title,
+                            title = itemsMatcher.group(2).fromHtml().orEmpty(),
                             count = itemsMatcher.group(3).toInt()
                         )
                     }
@@ -74,13 +71,10 @@ class DevDbParser(
                     .getPattern(scope.scope, scope.main_specs)
                     .matcher(matcher.group(4))
                     .map { Pair(it.group(1), it.group(2)) }
-                val title = requireNotNull(matcher.group(3).fromHtml()) {
-                    "brand.devices.title"
-                }
                 Brand.DeviceItem(
                     imageSrc = matcher.group(1),
                     id = matcher.group(2),
-                    title = title,
+                    title = matcher.group(3).fromHtml().orEmpty(),
                     price = matcher.group(5),
                     rating = matcher.group(7)?.toInt() ?: 0,
                     specs = specs
@@ -107,7 +101,7 @@ class DevDbParser(
                             title = bcMatcher.group(3)
                         }
                     }
-                title = matcher.group(4) ?: title
+                title = matcher.group(4)
                 Brand(
                     id = requireNotNull(id) { "brand.id" },
                     title = requireNotNull(title) { "brand.title" },
@@ -124,32 +118,41 @@ class DevDbParser(
         }
     }
 
-    fun parseDevice(response: String, argDevId: String): Device = Device().also { data ->
+    fun parseDevice(response: String, argDevId: String): Device {
+        var id: String? = null
+        var title: String? = null
+        var brandId: String? = null
+        var brandTitle: String? = null
+        var catId: String? = null
+        var catTitle: String? = null
+        var rating: Int = 0
+        val images = mutableListOf<Pair<String, String>>()
+        val specsGroups = mutableListOf<Pair<String, List<Pair<String, String>>>>()
         patternProvider
             .getPattern(scope.scope, scope.device_head)
             .matcher(response)
             .findOnce { matcher ->
-                data.title = matcher.group(1)
+                title = matcher.group(1)
 
                 patternProvider
                     .getPattern(scope.scope, scope.device_images)
                     .matcher(matcher.group(2))
                     .findAll {
-                        data.images.add(Pair(it.group(2), it.group(1)))
+                        images.add(Pair(it.group(2), it.group(1)))
                     }
 
                 patternProvider
                     .getPattern(scope.scope, scope.device_specs_titled)
                     .matcher(matcher.group(3))
                     .findAll {
-                        val title = it.group(1).fromHtml()
+                        val specTitle = it.group(1).fromHtml()
                         val specs = patternProvider
                             .getPattern(scope.scope, scope.main_specs)
                             .matcher(it.group(2))
                             .map {
                                 Pair(it.group(1), it.group(2))
                             }
-                        data.specs.add(Pair(title.orEmpty(), specs))
+                        specsGroups.add(Pair(specTitle.orEmpty(), specs))
                     }
             }
 
@@ -162,95 +165,99 @@ class DevDbParser(
                     .matcher(matcher.group(1))
                     .findAll {
                         if (it.group(2) == null) {
-                            data.catId = it.group(1)
-                            data.catTitle = it.group(3)
+                            catId = it.group(1)
+                            catTitle = it.group(3)
                         } else {
-                            data.brandId = it.group(2)
-                            data.brandTitle = it.group(3)
+                            brandId = it.group(2)
+                            brandTitle = it.group(3)
                         }
                     }
 
-                matcher.group(2)?.also {
-                    data.rating = it.toInt()
-                }
+                rating = matcher.group(2)?.toInt() ?: 0
 
-                data.title = matcher.group(4)
-                data.id = argDevId
+                title = matcher.group(4)
+                id = argDevId
             }
 
         val comments = patternProvider
             .getPattern(scope.scope, scope.device_comments)
             .matcher(response)
             .map { matcher ->
-                Device.Comment().apply {
-                    id = matcher.group(1).toInt()
-                    rating = matcher.group(3).toInt()
-                    userId = matcher.group(4).toInt()
-                    nick = matcher.group(5).fromHtml()
-                    date = matcher.group(6)
-                    text = (matcher.group(9) ?: matcher.group(7))?.trim()
-                    likes = matcher.group(10).toInt()
+                Device.Comment(
+                    id = matcher.group(1).toInt(),
+                    rating = matcher.group(3).toInt(),
+                    userId = matcher.group(4).toInt(),
+                    nick = requireNotNull(matcher.group(5).fromHtml()),
+                    date = matcher.group(6),
+                    text = (matcher.group(9) ?: matcher.group(7))?.trim().orEmpty(),
+                    likes = matcher.group(10).toInt(),
                     dislikes = matcher.group(11).toInt()
-                }
+                )
             }
-        data.comments.addAll(comments)
 
         val news = patternProvider
             .getPattern(scope.scope, scope.device_reviews)
             .matcher(response)
             .map { matcher ->
-                Device.PostItem().apply {
-                    id = matcher.group(1).toInt()
-                    image = matcher.group(2)
-                    title = matcher.group(3).fromHtml()
-                    date = matcher.group(4)
-                    matcher.group(5)?.also {
-                        desc = it.fromHtml()
-                    }
-                }
+                Device.PostItem(
+                    id = matcher.group(1).toInt(),
+                    image = matcher.group(2),
+                    title = matcher.group(3).fromHtml().orEmpty(),
+                    date = matcher.group(4),
+                    desc = matcher.group(5).fromHtml()
+                )
             }
-        data.news.addAll(news)
 
-        patternProvider
+        val discussions = patternProvider
             .getPattern(scope.scope, scope.device_discussions)
             .matcher(response)
-            .findOnce {
-                val discussions = patternProvider
+            .mapOnce {
+                patternProvider
                     .getPattern(scope.scope, scope.device_discuss_and_firm)
                     .matcher(it.group(1))
                     .map { matcher ->
-                        Device.PostItem().apply {
-                            id = matcher.group(1).toInt()
-                            title = matcher.group(2).fromHtml()
-                            date = matcher.group(3)
-                            matcher.group(4)?.also {
-                                desc = it.fromHtml()
-                            }
-                        }
+                        Device.PostItem(
+                            id = matcher.group(1).toInt(),
+                            image = null,
+                            title = matcher.group(2).fromHtml().orEmpty(),
+                            date = matcher.group(3),
+                            desc = matcher.group(4).fromHtml()
+                        )
                     }
-                data.discussions.addAll(discussions)
-            }
+            } ?: emptyList()
 
-        patternProvider
+        val firmwares = patternProvider
             .getPattern(scope.scope, scope.device_firmwares)
             .matcher(response)
-            .findOnce {
-                val firmwares = patternProvider
+            .mapOnce {
+                patternProvider
                     .getPattern(scope.scope, scope.device_discuss_and_firm)
                     .matcher(it.group(1))
                     .map { matcher ->
-                        Device.PostItem().apply {
-                            id = matcher.group(1).toInt()
-                            title = matcher.group(2).fromHtml()
-                            date = matcher.group(3)
-                            matcher.group(4)?.also {
-                                desc = it.fromHtml()
-                            }
-                        }
+                        Device.PostItem(
+                            id = matcher.group(1).toInt(),
+                            image = null,
+                            title = matcher.group(2).fromHtml().orEmpty(),
+                            date = matcher.group(3),
+                            desc = matcher.group(4).fromHtml()
+                        )
                     }
-                data.firmwares.addAll(firmwares)
-            }
-        return data
+            } ?: emptyList()
+        return Device(
+            id = requireNotNull(id),
+            title = requireNotNull(title),
+            brandId = requireNotNull(brandId),
+            brandTitle = requireNotNull(brandTitle),
+            catId = requireNotNull(catId),
+            catTitle = requireNotNull(catTitle),
+            rating = rating,
+            specs = specsGroups,
+            images = images,
+            comments = comments,
+            discussions = discussions,
+            firmwares = firmwares,
+            news = news
+        )
     }
 
     fun parseSearch(response: String): BrandSearch {
@@ -258,13 +265,10 @@ class DevDbParser(
             .getPattern(scope.scope, scope.main_search)
             .matcher(response)
             .map { matcher ->
-                val title = requireNotNull(matcher.group(3).fromHtml()) {
-                    "brandsearch.devices.title"
-                }
                 Brand.DeviceItem(
                     id = matcher.group(2),
                     imageSrc = matcher.group(1),
-                    title = title,
+                    title = matcher.group(3).fromHtml().orEmpty(),
                     price = null,
                     rating = 0,
                     specs = emptyList()
