@@ -18,17 +18,26 @@ class MentionsParser(
             .getPattern(scope.scope, scope.main)
             .matcher(response)
             .findAll { matcher ->
-                data.items.add(MentionItem().apply {
-                    state =
-                        if (matcher.group(1) == "read") MentionItem.STATE_READ else MentionItem.STATE_UNREAD
-                    type = if (matcher.group(2)
-                            .equals("Форум", ignoreCase = true)
-                    ) MentionItem.TYPE_TOPIC else MentionItem.TYPE_NEWS
-                    link = matcher.group(3)
-                    title = matcher.group(4).fromHtml()
-                    desc = matcher.group(5).fromHtml()
-                    date = matcher.group(6)
-                    nick = matcher.group(7).fromHtml()
+                val state = if (matcher.group(1) == "read") {
+                    MentionItem.STATE_READ
+                } else {
+                    MentionItem.STATE_UNREAD
+                }
+                val type = if (matcher.group(2).equals("Форум", ignoreCase = true)) {
+                    MentionItem.TYPE_TOPIC
+                } else {
+                    MentionItem.TYPE_NEWS
+                }
+                data.items.add(MentionItem(
+                    state = state,
+                    type = type,
+                    link = matcher.group(3),
+                    title = matcher.group(4).fromHtml().orEmpty(),
+                    desc = matcher.group(5).fromHtml().orEmpty(),
+                    date = matcher.group(6),
+                    nick = matcher.group(7).fromHtml().orEmpty()
+                ).apply {
+
                 })
             }
         data.pagination = Pagination.parseForum(response)
