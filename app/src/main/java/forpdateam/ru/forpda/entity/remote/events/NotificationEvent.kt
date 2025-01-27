@@ -4,25 +4,25 @@ package forpdateam.ru.forpda.entity.remote.events
  * Created by radiationx on 29.07.17.
  */
 
-data class NotificationEvent @JvmOverloads constructor(
-    var type: Type,
-    var source: Source,
+data class NotificationEvent(
+    val type: Type,
+    val source: Source,
 
-    var messageId: Int = 0,
+    val messageId: Int,
 
-    var sourceId: Int = 0,
-    var userId: Int = 0,
+    val sourceId: Int,
+    val userId: Int,
 
-    var timeStamp: Long = 0,
-    var lastTimeStamp: Long = 0,
+    val timeStamp: Long,
+    val lastTimeStamp: Long,
 
-    var msgCount: Int = 0,
-    var isImportant: Boolean = false,
+    val msgCount: Int,
+    val isImportant: Boolean,
 
-    var sourceTitle: String = "",
-    var userNick: String = "",
+    val sourceTitle: String,
+    val userNick: String,
 
-    var sourceEventText: String? = null
+    val sourceEventText: String?
 ) {
 
 

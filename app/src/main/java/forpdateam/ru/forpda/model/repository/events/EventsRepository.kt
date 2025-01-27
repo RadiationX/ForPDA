@@ -442,21 +442,23 @@ class EventsRepository(
                         for (newEvent in newEvents) {
                             if (newEvent.sourceId == event.sourceId) {
                                 stackedNewEvents.remove(newEvent)
-                                newEvent.type = event.type
-                                newEvent.messageId = event.messageId
+                                val eventToSend = newEvent.copy(
+                                    type = event.type,
+                                    messageId = event.messageId
+                                )
 
                                 notifyTabs(
                                     TabNotification(
-                                        newEvent.source,
-                                        newEvent.type,
-                                        newEvent,
+                                        eventToSend.source,
+                                        eventToSend.type,
+                                        eventToSend,
                                         false,
                                         loadedEvents.toList(),
                                         newEvents.toList()
                                     )
                                 )
 
-                                sendNotification(newEvent)
+                                sendNotification(eventToSend)
                             } else if (event.isMention && !notificationPreferencesHolder.getFavEnabled()) {
                                 stackedNewEvents.remove(newEvent)
                             }

@@ -16,37 +16,37 @@ class NotificationEventsApi(private val webClient: IWebClient) {
     }
 
     fun parseWebSocketEvent(matcher: Matcher): NotificationEvent? {
-        var wsEvent: NotificationEvent? = null
 
-        if (matcher.find()) {
-            wsEvent = NotificationEvent(
-                NotificationEvent.Type.NEW,
-                NotificationEvent.Source.THEME
-            )
-
-            //wsEvent.setUnknown1(Integer.parseInt(matcher.group(1)));
-            //wsEvent.setUnknown2(Integer.parseInt(matcher.group(2)));
-            when (matcher.group(3)) {
-                NotificationEvent.SRC_TYPE_THEME -> wsEvent.source = NotificationEvent.Source.THEME
-                NotificationEvent.SRC_TYPE_SITE -> wsEvent.source = NotificationEvent.Source.SITE
-                NotificationEvent.SRC_TYPE_QMS -> wsEvent.source = NotificationEvent.Source.QMS
-                else ->                     //// TODO: 02.10.17 сделать обратку нотификации форума
-                    return null
-            }
-
-            wsEvent.sourceId = matcher.group(4).toInt()
-
-            when (matcher.group(5).toInt()) {
-                NotificationEvent.SRC_EVENT_NEW -> wsEvent.type = NotificationEvent.Type.NEW
-                NotificationEvent.SRC_EVENT_READ -> wsEvent.type = NotificationEvent.Type.READ
-                NotificationEvent.SRC_EVENT_MENTION -> wsEvent.type = NotificationEvent.Type.MENTION
-                NotificationEvent.SRC_EVENT_HAT_EDITED -> wsEvent.type =
-                    NotificationEvent.Type.HAT_EDITED
-            }
-            wsEvent.messageId = matcher.group(6).toInt()
+        if (!matcher.find()) return null
+        //// TODO: 02.10.17 сделать обратку нотификации форума
+        val source = when (matcher.group(3)) {
+            NotificationEvent.SRC_TYPE_THEME -> NotificationEvent.Source.THEME
+            NotificationEvent.SRC_TYPE_SITE -> NotificationEvent.Source.SITE
+            NotificationEvent.SRC_TYPE_QMS -> NotificationEvent.Source.QMS
+            else -> return null
+        }
+        val type = when (matcher.group(5).toInt()) {
+            NotificationEvent.SRC_EVENT_NEW -> NotificationEvent.Type.NEW
+            NotificationEvent.SRC_EVENT_READ -> NotificationEvent.Type.READ
+            NotificationEvent.SRC_EVENT_MENTION -> NotificationEvent.Type.MENTION
+            NotificationEvent.SRC_EVENT_HAT_EDITED -> NotificationEvent.Type.HAT_EDITED
+            else -> return null
         }
 
-        return wsEvent
+        return NotificationEvent(
+            type = type,
+            source = source,
+            sourceId = matcher.group(4).toInt(),
+            messageId = matcher.group(6).toInt(),
+            userId = 0,
+            timeStamp = 0,
+            lastTimeStamp = 0,
+            msgCount = 0,
+            isImportant = false,
+            sourceTitle = "",
+            userNick = "",
+            sourceEventText = null,
+        )
     }
 
     @get:Throws(Exception::class)
@@ -70,20 +70,19 @@ class NotificationEventsApi(private val webClient: IWebClient) {
 
     fun getFavoritesEvent(matcher: Matcher): NotificationEvent {
         val event = NotificationEvent(
-            NotificationEvent.Type.NEW,
-            NotificationEvent.Source.THEME
+            type = NotificationEvent.Type.NEW,
+            source = NotificationEvent.Source.THEME,
+            sourceEventText = matcher.group(),
+            sourceId = matcher.group(1).toInt(),
+            sourceTitle = fromHtml(matcher.group(2))!!,
+            msgCount = matcher.group(3).toInt(),
+            userId = matcher.group(4).toInt(),
+            userNick = fromHtml(matcher.group(5))!!,
+            timeStamp = matcher.group(6).toInt().toLong(),
+            lastTimeStamp = matcher.group(7).toInt().toLong(),
+            isImportant = matcher.group(8) == "1",
+            messageId = 0
         )
-        event.sourceEventText = matcher.group()
-        event.source = NotificationEvent.Source.THEME
-        event.type = NotificationEvent.Type.NEW
-        event.sourceId = matcher.group(1).toInt()
-        event.sourceTitle = fromHtml(matcher.group(2))!!
-        event.msgCount = matcher.group(3).toInt()
-        event.userId = matcher.group(4).toInt()
-        event.userNick = fromHtml(matcher.group(5))!!
-        event.timeStamp = matcher.group(6).toInt().toLong()
-        event.lastTimeStamp = matcher.group(7).toInt().toLong()
-        event.isImportant = matcher.group(8) == "1"
         return event
     }
 
@@ -108,22 +107,25 @@ class NotificationEventsApi(private val webClient: IWebClient) {
     }
 
     fun getQmsEvent(matcher: Matcher): NotificationEvent {
-        val event = NotificationEvent(
-            NotificationEvent.Type.NEW,
-            NotificationEvent.Source.QMS
-        )
-        event.sourceEventText = matcher.group()
-        event.source = NotificationEvent.Source.QMS
-        event.type = NotificationEvent.Type.NEW
-        event.sourceId = matcher.group(1).toInt()
-        event.sourceTitle = fromHtml(matcher.group(2))!!
-        event.userId = matcher.group(3).toInt()
-        event.userNick = fromHtml(matcher.group(4))!!
-        event.timeStamp = matcher.group(5).toInt().toLong()
-        event.msgCount = matcher.group(6).toInt()
-        if (event.userNick.isEmpty() && event.sourceId == 0) {
-            event.userNick = "Сообщения 4PDA"
+        val sourceId = matcher.group(1).toInt()
+        var userNick = fromHtml(matcher.group(4))!!
+        if (userNick.isEmpty() && sourceId == 0) {
+            userNick = "Сообщения 4PDA"
         }
+        val event = NotificationEvent(
+            type = NotificationEvent.Type.NEW,
+            source = NotificationEvent.Source.QMS,
+            sourceEventText = matcher.group(),
+            sourceId = sourceId,
+            sourceTitle = fromHtml(matcher.group(2))!!,
+            userId = matcher.group(3).toInt(),
+            userNick = userNick,
+            timeStamp = matcher.group(5).toInt().toLong(),
+            msgCount = matcher.group(6).toInt(),
+            messageId = 0,
+            lastTimeStamp = 0,
+            isImportant = false,
+        )
         return event
     }
 
