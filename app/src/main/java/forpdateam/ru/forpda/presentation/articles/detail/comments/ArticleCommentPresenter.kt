@@ -28,7 +28,6 @@ class ArticleCommentPresenter(
         super.onFirstViewAttach()
         articleInteractor
             .observeComments()
-            .map { commentsToList(it) }
             .doOnTerminate { viewState.setRefreshing(true) }
             .doAfterTerminate { viewState.setRefreshing(false) }
             .subscribe({
@@ -85,19 +84,6 @@ class ArticleCommentPresenter(
             .untilDestroy()
     }
 
-    fun commentsToList(comment: Comment): ArrayList<Comment> {
-        val comments = ArrayList<Comment>()
-        recurseCommentsToList(comments, comment)
-        return comments
-    }
-
-
-    fun recurseCommentsToList(comments: ArrayList<Comment>, comment: Comment) {
-        for (child in comment.children) {
-            comments.add(Comment(child))
-            recurseCommentsToList(comments, child)
-        }
-    }
 
     fun openProfile(comment: Comment) {
         linkHandler.handle("https://4pda.to/forum/index.php?showuser=${comment.userId}", router)

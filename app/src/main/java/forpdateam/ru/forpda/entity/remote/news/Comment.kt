@@ -4,40 +4,21 @@ package forpdateam.ru.forpda.entity.remote.news
  * Created by radiationx on 02.09.17.
  */
 
-class Comment {
-    var id: Int = 0
-    var userId: Int = 0
-    var userNick: String? = null
-    var date: String? = null
-    var content: String? = null
-    var isDeleted = false
-    var isCollapsed = false
-    var isCanReply = false
-    val children = mutableListOf<Comment>()
-    var level: Int = 0
-    var karma: Karma? = null
+data class Comment(
+    val id: Int,
+    val userId: Int,
+    val userNick: String?,
+    val date: String?,
+    val content: String?,
+    val isDeleted: Boolean,
+    val level: Int,
+    val karma: Karma?,
+) {
 
-    constructor()
-
-    constructor(comment: Comment) {
-        this.id = comment.id
-        this.userId = comment.userId
-        this.userNick = comment.userNick
-        this.date = comment.date
-        this.content = comment.content
-        this.isDeleted = comment.isDeleted
-        this.isCanReply = comment.isCanReply
-        this.level = comment.level
-        this.isCollapsed = comment.isCollapsed
-        this.karma = comment.karma
-    }
-
-    class Karma {
-
-        var status: Int = 0
-        var count: Int = 0
-        private val unknown1: Int = 0
-        private val unknown2: Int = 0
+    data class Karma(
+        val status: Int,
+        val count: Int,
+    ) {
 
         companion object {
             const val NOT_LIKED = 0

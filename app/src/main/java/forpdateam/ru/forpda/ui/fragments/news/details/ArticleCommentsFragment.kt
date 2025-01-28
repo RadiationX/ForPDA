@@ -148,12 +148,7 @@ class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView,
             Utils.showNeedAuthDialog(requireContext())
             return
         }
-        comment.karma?.apply {
-            status = Comment.Karma.LIKED
-            count++
-        }
 
-        adapter.notifyItemChanged(position)
         presenter.likeComment(comment.id)
     }
 

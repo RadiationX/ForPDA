@@ -61,7 +61,7 @@ class NewsRepository(
         .fromCallable { newsApi.getDetails(url) }
         .runInIoToUi()
 
-    fun getComments(article: DetailsPage): Single<Comment> = Single
+    fun getComments(article: DetailsPage): Single<List<Comment>> = Single
         .fromCallable { newsApi.parseComments(article.karmaMap, article.commentsSource) }
         .runInIoToUi()
 

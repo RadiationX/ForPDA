@@ -26,5 +26,4 @@ class DetailsPage {
     val materials = mutableListOf<Material>()
     var navId: String? = null
     var commentsSource: String? = null
-    var commentTree: Comment? = null
 }

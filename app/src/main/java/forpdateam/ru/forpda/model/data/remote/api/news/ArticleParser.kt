@@ -188,10 +188,13 @@ class ArticleParser(
                     .findAll {
                         try {
                             val commentId = it.group(1).toInt()
-                            result.put(commentId, Comment.Karma().apply {
-                                status = it.group(2).toInt()
-                                count = it.group(5).toInt()
-                            })
+                            result.put(
+                                commentId,
+                                Comment.Karma(
+                                    status = it.group(2).toInt(),
+                                    count = it.group(5).toInt()
+                                )
+                            )
                         } catch (ex: Exception) {
                             ex.printStackTrace()
                         }
@@ -200,22 +203,34 @@ class ArticleParser(
         return result
     }
 
-    fun parseComments(karmaMap: SparseArray<Comment.Karma>, source: String?): Comment {
-        val comments = Comment()
+    fun parseComments(karmaMap: SparseArray<Comment.Karma>, source: String?): List<Comment> {
+        val comments = CommentNode()
         if (source != null) {
             val document = Parser.parse(source)
             recurseComments(karmaMap, document, comments, 0)
         }
+        return commentsToList(comments)
+    }
+
+    private fun commentsToList(comment: CommentNode): ArrayList<Comment> {
+        val comments = ArrayList<Comment>()
+        recurseCommentsToList(comments, comment)
         return comments
     }
 
+    private fun recurseCommentsToList(comments: ArrayList<Comment>, comment: CommentNode) {
+        for (child in comment.children) {
+            comments.add(child.toComment())
+            recurseCommentsToList(comments, child)
+        }
+    }
 
     private fun recurseComments(
         karmaMap: SparseArray<Comment.Karma>,
         root: Node,
-        parentComment: Comment,
+        parentComment: CommentNode,
         argLevel: Int
-    ): Comment {
+    ): CommentNode {
         var level = argLevel
         val rootComments = Parser.findNode(root, "ul", "class", "comment-list")
         requireNotNull(rootComments)
@@ -225,7 +240,7 @@ class ArticleParser(
             return null;
         }*/
         for (commentNode in commentNodes) {
-            val comment = Comment()
+            val comment = CommentNode()
 
             var id: String? = null
             var userId: String? = null
@@ -293,4 +308,28 @@ class ArticleParser(
         return parentComment
     }
 
+    private fun CommentNode.toComment(): Comment {
+        return Comment(
+            id = id,
+            userId = userId,
+            userNick = userNick,
+            date = date,
+            content = content,
+            isDeleted = isDeleted,
+            level = level,
+            karma = karma
+        )
+    }
+
+    private class CommentNode {
+        var id: Int = 0
+        var userId: Int = 0
+        var userNick: String? = null
+        var date: String? = null
+        var content: String? = null
+        var isDeleted = false
+        val children = mutableListOf<CommentNode>()
+        var level: Int = 0
+        var karma: Comment.Karma? = null
+    }
 }
