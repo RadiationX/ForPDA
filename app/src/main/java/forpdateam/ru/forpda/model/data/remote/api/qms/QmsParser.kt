@@ -140,22 +140,22 @@ class QmsParser(
         .getPattern(scope.scope, scope.chat_pattern)
         .matcher(response)
         .map { matcher ->
-            QmsMessage().apply {
-                if (matcher.group(1) == null && matcher.group(7) != null) {
-                    isDate = true
-                    date = matcher.group(7).trim()
-                } else {
-                    isMyMessage = !matcher.group(1).isEmpty()
-                    id = matcher.group(2).toInt()
-                    if (isMyMessage) {
-                        readStatus = matcher.group(3) != "1"
+            if (matcher.group(1) == null && matcher.group(7) != null) {
+                QmsMessage.Date(date = matcher.group(7).trim())
+            } else {
+                val isMyMessage = matcher.group(1).isNotEmpty()
+                QmsMessage.Regular(
+                    isMyMessage = isMyMessage,
+                    id = matcher.group(2).toInt(),
+                    readStatus = if (isMyMessage) {
+                        matcher.group(3) != "1"
                     } else {
-                        readStatus = true
-                    }
-                    time = matcher.group(4)
-                    avatar = matcher.group(5)
+                        true
+                    },
+                    time = matcher.group(4),
+                    avatar = matcher.group(5),
                     content = matcher.group(6).trim()
-                }
+                )
             }
         }
 

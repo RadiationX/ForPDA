@@ -6,6 +6,7 @@ import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.events.NotificationEvent
 import forpdateam.ru.forpda.entity.remote.qms.QmsChatModel
 import forpdateam.ru.forpda.entity.remote.qms.QmsMessage
+import forpdateam.ru.forpda.entity.remote.qms.asRegular
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.interactors.qms.QmsInteractor
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
@@ -234,7 +235,7 @@ class QmsChatPresenter(
 
     private fun onNewWsMessage(themeId: Int, messageId: Int) {
         currentData?.let {
-            val lastMessId = it.messages.lastOrNull()?.id ?: 0
+            val lastMessId = it.messages.lastOrNull()?.asRegular()?.id ?: 0
             qmsInteractor
                 .getMessagesFromWs(themeId, messageId, lastMessId)
                 .subscribe({
@@ -248,7 +249,7 @@ class QmsChatPresenter(
 
     fun checkNewMessages() {
         currentData?.let {
-            val lastMessId = it.messages.lastOrNull()?.id ?: 0
+            val lastMessId = it.messages.lastOrNull()?.asRegular()?.id ?: 0
             qmsInteractor
                 .getMessagesAfter(themeId, it.themeId, lastMessId)
                 .subscribe({
@@ -271,7 +272,7 @@ class QmsChatPresenter(
     private fun onNewMessages(items: List<QmsMessage>) {
         currentData?.let { data ->
             val result = items.filter { new ->
-                data.messages.find { it.id != new.id } != null
+                data.messages.find { it.asRegular()?.id != new.asRegular()?.id } != null
             }
             data.messages.addAll(result)
             viewState.onNewMessages(result)

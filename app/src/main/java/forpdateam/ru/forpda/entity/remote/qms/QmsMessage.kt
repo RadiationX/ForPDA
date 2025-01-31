@@ -3,13 +3,21 @@ package forpdateam.ru.forpda.entity.remote.qms
 /**
  * Created by radiationx on 03.08.16.
  */
-class QmsMessage : IQmsChatItem {
-    override var isMyMessage = false
-    override var isDate = false
-    override var id: Int = 0
-    override var readStatus = false
-    override var time: String? = null
-    override var avatar: String? = null
-    override var date: String? = null
-    override var content: String? = null
+sealed interface QmsMessage {
+    data class Date(
+        var date: String? = null
+    ) : QmsMessage
+
+    data class Regular(
+        var isMyMessage: Boolean = false,
+        var id: Int = 0,
+        var readStatus: Boolean = false,
+        var time: String? = null,
+        var avatar: String? = null,
+        var content: String? = null
+    ) : QmsMessage
+}
+
+fun QmsMessage.asRegular(): QmsMessage.Regular? {
+    return this as? QmsMessage.Regular
 }

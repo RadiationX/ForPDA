@@ -24,6 +24,7 @@ import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.qms.QmsChatModel
 import forpdateam.ru.forpda.entity.remote.qms.QmsMessage
+import forpdateam.ru.forpda.entity.remote.qms.asRegular
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.repository.temp.TempHelper
 import forpdateam.ru.forpda.presentation.qms.chat.QmsChatPresenter
@@ -301,7 +302,7 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface,
     }
 
     override fun onSentMessage(items: List<QmsMessage>) {
-        if (!items.isEmpty() && items[0].content != null) {
+        if (items.isNotEmpty() && items.getOrNull(0)?.asRegular()?.content != null) {
             //Empty because result returned from websocket
             messagePanel.clearMessage()
             messagePanel.clearAttachments()

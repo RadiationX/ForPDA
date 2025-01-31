@@ -84,16 +84,20 @@ class QmsChatTemplate(
 
     private fun generateMessage(template: MiniTemplator, mess: QmsMessage): MiniTemplator {
         template.apply {
-            if (mess.isDate) {
-                setVariableOpt("date", mess.date)
-                addBlockOpt("date")
-            } else {
-                setVariableOpt("from_class", if (mess.isMyMessage) "our" else "his")
-                setVariableOpt("unread_class", if (mess.readStatus) "" else "unread")
-                setVariableOpt("mess_id", mess.id)
-                setVariableOpt("content", mess.content)
-                setVariableOpt("time", mess.time)
-                addBlockOpt("mess")
+            when (mess) {
+                is QmsMessage.Date -> {
+                    setVariableOpt("date", mess.date)
+                    addBlockOpt("date")
+                }
+
+                is QmsMessage.Regular -> {
+                    setVariableOpt("from_class", if (mess.isMyMessage) "our" else "his")
+                    setVariableOpt("unread_class", if (mess.readStatus) "" else "unread")
+                    setVariableOpt("mess_id", mess.id)
+                    setVariableOpt("content", mess.content)
+                    setVariableOpt("time", mess.time)
+                    addBlockOpt("mess")
+                }
             }
             addBlockOpt("item")
         }
