@@ -20,6 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="?attr/default_text_color"
             android:textSize="14sp"
             tools:text="1724891024"/>
 

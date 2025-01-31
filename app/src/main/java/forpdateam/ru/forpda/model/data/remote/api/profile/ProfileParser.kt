@@ -68,25 +68,25 @@ class ProfileParser(
                     .getPattern(scope.scope, scope.contacts)
                     .matcher(mainMatcher.group(8))
                     .findAll { matcher ->
-                        val title = matcher.group(2)?.trim()
+                        val title = matcher.group(2).trim()
                         profile.addContact(
                             ProfileModel.Contact(
-                                url = matcher.group(1)?.trim(),
+                                url = matcher.group(1).trim(),
                                 title = title,
                                 type = when (title) {
                                     "QMS" -> ProfileModel.ContactType.QMS
-                                    "Вебсайт" -> ProfileModel.ContactType.WEBSITE
+                                    "Вебсайт" -> ProfileModel.ContactType.WebSite
                                     "ICQ" -> ProfileModel.ContactType.ICQ
-                                    "Twitter" -> ProfileModel.ContactType.TWITTER
-                                    "Вконтакте" -> ProfileModel.ContactType.VKONTAKTE
-                                    "Google+" -> ProfileModel.ContactType.GOOGLE_PLUS
-                                    "Facebook" -> ProfileModel.ContactType.FACEBOOK
-                                    "Instagram" -> ProfileModel.ContactType.INSTAGRAM
-                                    "Jabber" -> ProfileModel.ContactType.JABBER
-                                    "Telegram" -> ProfileModel.ContactType.TELEGRAM
-                                    "Mail.ru" -> ProfileModel.ContactType.MAIL_RU
-                                    "Windows Live" -> ProfileModel.ContactType.WINDOWS_LIVE
-                                    else -> ProfileModel.ContactType.WEBSITE
+                                    "Twitter" -> ProfileModel.ContactType.Twitter
+                                    "Вконтакте" -> ProfileModel.ContactType.VKontakte
+                                    "Google+" -> ProfileModel.ContactType.GooglePlus
+                                    "Facebook" -> ProfileModel.ContactType.Facebook
+                                    "Instagram" -> ProfileModel.ContactType.Instagram
+                                    "Jabber" -> ProfileModel.ContactType.Jabber
+                                    "Telegram" -> ProfileModel.ContactType.Telegram
+                                    "Mail.ru" -> ProfileModel.ContactType.MailRu
+                                    "Windows Live" -> ProfileModel.ContactType.WindowsLive
+                                    else -> ProfileModel.ContactType.WebSite
                                 }
                             )
                         )
@@ -98,9 +98,9 @@ class ProfileParser(
                     .findAll { matcher ->
                         profile.addDevice(
                             ProfileModel.Device(
-                                url = matcher.group(1)?.trim(),
-                                name = matcher.group(2)?.trim(),
-                                accessory = matcher.group(3)?.trim()
+                                url = matcher.group(1).trim(),
+                                name = matcher.group(2).trim(),
+                                accessory = matcher.group(3).trim()
                             )
                         )
                     }
@@ -116,10 +116,10 @@ class ProfileParser(
                                 url = matcher.group(2),
                                 value = matcher.group(3),
                                 type = when {
-                                    field.contains("Карма") -> ProfileModel.StatType.SITE_KARMA
-                                    field.contains("Постов") -> ProfileModel.StatType.SITE_POSTS
-                                    field.contains("Комментов") -> ProfileModel.StatType.SITE_COMMENTS
-                                    else -> null
+                                    field.contains("Карма") -> ProfileModel.StatType.SiteKarma
+                                    field.contains("Постов") -> ProfileModel.StatType.SitePosts
+                                    field.contains("Комментов") -> ProfileModel.StatType.SiteComments
+                                    else -> ProfileModel.StatType.Raw(field)
                                 }
                             )
                         )
@@ -136,10 +136,10 @@ class ProfileParser(
                                 url = matcher.group(3),
                                 value = matcher.group(4) ?: matcher.group(2),
                                 type = when {
-                                    field.contains("Репу") -> ProfileModel.StatType.FORUM_REPUTATION
-                                    field.contains("Тем") -> ProfileModel.StatType.FORUM_TOPICS
-                                    field.contains("Постов") -> ProfileModel.StatType.FORUM_POSTS
-                                    else -> null
+                                    field.contains("Репу") -> ProfileModel.StatType.ForumReputation
+                                    field.contains("Тем") -> ProfileModel.StatType.ForumTopics
+                                    field.contains("Постов") -> ProfileModel.StatType.ForumPosts
+                                    else -> ProfileModel.StatType.Raw(field)
                                 }
                             )
                         )
@@ -167,13 +167,13 @@ class ProfileParser(
                         profile.addWarning(
                             ProfileModel.Warning(
                                 type = when (matcher.group(1)) {
-                                    "pos" -> ProfileModel.WarningType.POSITIVE
-                                    "neg" -> ProfileModel.WarningType.NEGATIVE
-                                    else -> null
+                                    "pos" -> ProfileModel.WarningType.Positive
+                                    "neg" -> ProfileModel.WarningType.Negative
+                                    else -> ProfileModel.WarningType.Unknown
                                 },
                                 date = matcher.group(2),
-                                title = matcher.group(3).fromHtml(),
-                                content = matcher.group(4).fromHtmlToSpanned()
+                                title = matcher.group(3).fromHtml()!!,
+                                content = matcher.group(4).fromHtmlToSpanned()!!
                             )
                         )
                     }

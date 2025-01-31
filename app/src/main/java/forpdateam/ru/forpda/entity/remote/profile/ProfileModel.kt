@@ -22,7 +22,18 @@ class ProfileModel {
     val warnings = mutableListOf<Warning>()
 
     enum class ContactType {
-        QMS, WEBSITE, ICQ, TWITTER, VKONTAKTE, GOOGLE_PLUS, FACEBOOK, INSTAGRAM, TELEGRAM, MAIL_RU, JABBER, WINDOWS_LIVE
+        QMS,
+        WebSite,
+        ICQ,
+        Twitter,
+        VKontakte,
+        GooglePlus,
+        Facebook,
+        Instagram,
+        Telegram,
+        MailRu,
+        Jabber,
+        WindowsLive
     }
 
     sealed interface InfoType {
@@ -36,12 +47,18 @@ class ProfileModel {
         data class Raw(val value: String) : InfoType
     }
 
-    enum class StatType {
-        SITE_KARMA, SITE_POSTS, SITE_COMMENTS, FORUM_REPUTATION, FORUM_TOPICS, FORUM_POSTS
+    sealed interface StatType {
+        object SiteKarma : StatType
+        object SitePosts : StatType
+        object SiteComments : StatType
+        object ForumReputation : StatType
+        object ForumTopics : StatType
+        object ForumPosts : StatType
+        data class Raw(val value: String) : StatType
     }
 
     enum class WarningType {
-        POSITIVE, NEGATIVE
+        Positive, Negative, Unknown
     }
 
     fun addInfo(type: InfoType, value: String) {
@@ -71,26 +88,26 @@ class ProfileModel {
 
     data class Contact(
         val type: ContactType,
-        val url: String?,
-        val title: String?,
+        val url: String,
+        val title: String,
     )
 
     data class Device(
-        val url: String?,
-        val name: String?,
-        val accessory: String?,
+        val url: String,
+        val name: String,
+        val accessory: String,
     )
 
     data class Stat(
-        val type: StatType?,
+        val type: StatType,
         val url: String?,
-        val value: String?,
+        val value: String,
     )
 
     data class Warning(
-        val type: WarningType?,
-        val date: String?,
-        val title: String?,
-        val content: Spanned?
+        val type: WarningType,
+        val date: String,
+        val title: String,
+        val content: Spanned
     )
 }

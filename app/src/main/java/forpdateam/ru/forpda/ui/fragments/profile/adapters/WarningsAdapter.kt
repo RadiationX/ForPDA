@@ -4,6 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel.WarningType
@@ -36,25 +37,20 @@ internal class WarningsAdapter : BaseAdapter<ProfileModel.Warning, WarningHolder
             title.text = item.title
             date.text = item.date
             content.text = item.content
-            when (item.type) {
-                WarningType.POSITIVE -> title.setTextColor(
-                    ContextCompat.getColor(
-                        title.context,
-                        R.color.md_green_400
-                    )
-                )
+            val color = when (item.type) {
+                WarningType.Positive -> {
+                    ContextCompat.getColor(title.context, R.color.md_green_400)
+                }
 
-                WarningType.NEGATIVE -> title.setTextColor(
-                    ContextCompat.getColor(
-                        title.context,
-                        R.color.md_red_400
-                    )
-                )
+                WarningType.Negative -> {
+                    ContextCompat.getColor(title.context, R.color.md_red_400)
+                }
 
-                null -> {
-                    // do nothing
+                WarningType.Unknown -> {
+                    App.getColorFromAttr(title.context, R.attr.default_text_color)
                 }
             }
+            title.setTextColor(color)
         }
     }
 }

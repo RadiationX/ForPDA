@@ -40,17 +40,17 @@ object TempHelper {
     fun getTypeString(type: ProfileModel.ContactType): Int {
         return when (type) {
             ProfileModel.ContactType.QMS -> R.string.profile_contact_qms
-            ProfileModel.ContactType.WEBSITE -> R.string.profile_contact_site
+            ProfileModel.ContactType.WebSite -> R.string.profile_contact_site
             ProfileModel.ContactType.ICQ -> R.string.profile_contact_icq
-            ProfileModel.ContactType.TWITTER -> R.string.profile_contact_twitter
-            ProfileModel.ContactType.JABBER -> R.string.profile_contact_jabber
-            ProfileModel.ContactType.VKONTAKTE -> R.string.profile_contact_vk
-            ProfileModel.ContactType.GOOGLE_PLUS -> R.string.profile_contact_google_plus
-            ProfileModel.ContactType.FACEBOOK -> R.string.profile_contact_facebook
-            ProfileModel.ContactType.INSTAGRAM -> R.string.profile_contact_instagram
-            ProfileModel.ContactType.MAIL_RU -> R.string.profile_contact_mail_ru
-            ProfileModel.ContactType.TELEGRAM -> R.string.profile_contact_telegram
-            ProfileModel.ContactType.WINDOWS_LIVE -> R.string.profile_contact_windows_live
+            ProfileModel.ContactType.Twitter -> R.string.profile_contact_twitter
+            ProfileModel.ContactType.Jabber -> R.string.profile_contact_jabber
+            ProfileModel.ContactType.VKontakte -> R.string.profile_contact_vk
+            ProfileModel.ContactType.GooglePlus -> R.string.profile_contact_google_plus
+            ProfileModel.ContactType.Facebook -> R.string.profile_contact_facebook
+            ProfileModel.ContactType.Instagram -> R.string.profile_contact_instagram
+            ProfileModel.ContactType.MailRu -> R.string.profile_contact_mail_ru
+            ProfileModel.ContactType.Telegram -> R.string.profile_contact_telegram
+            ProfileModel.ContactType.WindowsLive -> R.string.profile_contact_windows_live
         }
     }
 
@@ -67,15 +67,15 @@ object TempHelper {
         }
     }
 
-    @StringRes
-    fun getTypeString(type: ProfileModel.StatType): Int {
+    fun getTypeString(context: Context, type: ProfileModel.StatType): String {
         return when (type) {
-            ProfileModel.StatType.SITE_KARMA -> R.string.profile_stat_site_karma
-            ProfileModel.StatType.SITE_POSTS -> R.string.profile_stat_site_posts
-            ProfileModel.StatType.SITE_COMMENTS -> R.string.profile_stat_site_comments
-            ProfileModel.StatType.FORUM_REPUTATION -> R.string.profile_stat_forum_reputation
-            ProfileModel.StatType.FORUM_TOPICS -> R.string.profile_stat_forum_topics
-            ProfileModel.StatType.FORUM_POSTS -> R.string.profile_stat_forum_posts
+            ProfileModel.StatType.SiteKarma -> context.getString(R.string.profile_stat_site_karma)
+            ProfileModel.StatType.SitePosts -> context.getString(R.string.profile_stat_site_posts)
+            ProfileModel.StatType.SiteComments -> context.getString(R.string.profile_stat_site_comments)
+            ProfileModel.StatType.ForumReputation -> context.getString(R.string.profile_stat_forum_reputation)
+            ProfileModel.StatType.ForumTopics -> context.getString(R.string.profile_stat_forum_topics)
+            ProfileModel.StatType.ForumPosts -> context.getString(R.string.profile_stat_forum_posts)
+            is ProfileModel.StatType.Raw -> type.value
         }
     }
 
@@ -83,17 +83,17 @@ object TempHelper {
     fun getContactIcon(type: ProfileModel.ContactType): Int {
         return when (type) {
             ProfileModel.ContactType.QMS -> R.drawable.contact_qms
-            ProfileModel.ContactType.WEBSITE -> R.drawable.contact_site
+            ProfileModel.ContactType.WebSite -> R.drawable.contact_site
             ProfileModel.ContactType.ICQ -> R.drawable.contact_icq
-            ProfileModel.ContactType.TWITTER -> R.drawable.contact_twitter
-            ProfileModel.ContactType.JABBER -> R.drawable.contact_jabber
-            ProfileModel.ContactType.VKONTAKTE -> R.drawable.contact_vk
-            ProfileModel.ContactType.GOOGLE_PLUS -> R.drawable.contact_google_plus
-            ProfileModel.ContactType.FACEBOOK -> R.drawable.contact_facebook
-            ProfileModel.ContactType.INSTAGRAM -> R.drawable.contact_instagram
-            ProfileModel.ContactType.MAIL_RU -> R.drawable.contact_mail_ru
-            ProfileModel.ContactType.TELEGRAM -> R.drawable.contact_telegram
-            ProfileModel.ContactType.WINDOWS_LIVE -> R.drawable.contact_site
+            ProfileModel.ContactType.Twitter -> R.drawable.contact_twitter
+            ProfileModel.ContactType.Jabber -> R.drawable.contact_jabber
+            ProfileModel.ContactType.VKontakte -> R.drawable.contact_vk
+            ProfileModel.ContactType.GooglePlus -> R.drawable.contact_google_plus
+            ProfileModel.ContactType.Facebook -> R.drawable.contact_facebook
+            ProfileModel.ContactType.Instagram -> R.drawable.contact_instagram
+            ProfileModel.ContactType.MailRu -> R.drawable.contact_mail_ru
+            ProfileModel.ContactType.Telegram -> R.drawable.contact_telegram
+            ProfileModel.ContactType.WindowsLive -> R.drawable.contact_site
         }
     }
 }

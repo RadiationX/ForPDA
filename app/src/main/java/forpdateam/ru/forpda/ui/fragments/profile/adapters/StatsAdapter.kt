@@ -41,7 +41,7 @@ internal class StatsAdapter(
 
         override fun bind(item: Stat) {
             currentItem = item
-            title.setText(getTypeString(item.type!!))
+            title.text = getTypeString(title.context, item.type)
             value.text = item.value
         }
 
