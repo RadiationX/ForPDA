@@ -247,7 +247,7 @@ class NewsDetailsFragment : TabFragment(), ArticleDetailView, TabTopScroller {
 
         val pagerAdapter = FragmentPagerAdapter(childFragmentManager)
         fragmentsPager.adapter = pagerAdapter
-        if (data.commentId > 0) {
+        if (interactor.initData.commentId > 0) {
             appBarLayout.setExpanded(false, true)
             fragmentsPager.setCurrentItem(1, true)
         }

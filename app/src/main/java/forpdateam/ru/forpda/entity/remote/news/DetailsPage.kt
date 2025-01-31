@@ -5,25 +5,19 @@ import android.util.SparseArray
 /**
  * Created by isanechek on 7/20/17.
  */
-// На время только, ибо оригинал в котлине
-class DetailsPage {
-    var id: Int = 0
-    var commentId: Int = 0
-    var authorId: Int = 0
-    var url: String? = null
-    var title: String? = null
-    var description: String? = null
-    var author: String? = null
-    var date: String? = null
-    var imgUrl: String? = null
-    var commentsCount: Int = 0
-    val tags = mutableListOf<Tag>()
-    var karmaMap = SparseArray<Comment.Karma>()
+data class DetailsPage(
+    val id: Int,
+    val authorId: Int,
+    val title: String,
+    val author: String,
+    val date: String,
+    val imgUrl: String,
+    val commentsCount: Int,
+    val tags: List<Tag>,
+    val karmaMap: SparseArray<Comment.Karma>,
 
     // for details
-
-    var html: String? = null
-    val materials = mutableListOf<Material>()
-    var navId: String? = null
-    var commentsSource: String? = null
-}
+    val html: String,
+    val materials: List<Material>,
+    val commentsSource: String?,
+) 

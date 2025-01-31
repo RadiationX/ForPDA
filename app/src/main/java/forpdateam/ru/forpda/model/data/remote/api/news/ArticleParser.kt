@@ -57,89 +57,61 @@ class ArticleParser(
         .getPattern(scope.scope, scope.detail)
         .matcher(response)
         .mapOnce { matcher ->
-            DetailsPage().apply {
-                id = matcher.group(1).toInt()
-                imgUrl = matcher.group(3)
-                title = matcher.group(4).fromHtml()
-                matcher.group(5)?.let {
-                    tags.addAll(parseTags(it))
-                }
-                date = matcher.group(6)
-                authorId = matcher.group(7).toInt()
-                author = matcher.group(8).fromHtml()
-                commentsCount = matcher.group(9).toInt()
-                html = matcher.group(10)
-                matcher.group(11)?.also {
-                    materials.addAll(parseMaterials(it))
-                }
-                //todo ignore group 12 after 22 PatternVersion
-                navId = matcher.group(12)
-
-                karmaMap = parseKarma(response)
-
-                commentsSource = matcher.group(13)?.let { comments ->
-                    patternProvider
-                        .getPattern(scope.scope, scope.exclude_form_comment)
-                        .matcher(comments)
-                        .replaceFirst("")
-                }
-
-                /*Comment commentTree = parseComments(getKarmaMap(), getCommentsSource());
-                setCommentTree(commentTree);*/
-            }
+            DetailsPage(
+                id = matcher.group(1).toInt(),
+                imgUrl = matcher.group(3),
+                title = matcher.group(4).fromHtml()!!,
+                tags = matcher.group(5)?.let { parseTags(it) }.orEmpty(),
+                date = matcher.group(6),
+                authorId = matcher.group(7).toInt(),
+                author = matcher.group(8).fromHtml()!!,
+                commentsCount = matcher.group(9).toInt(),
+                html = matcher.group(10),
+                materials = matcher.group(11)?.let { parseMaterials(it) }.orEmpty(),
+                karmaMap = parseKarma(response),
+                commentsSource = matcher.group(13)?.let { parseExcludeFormComment(it) },
+            )
         } ?: throw Exception("Not found article by pattern v1")
 
     private fun parseArticleV2(response: String): DetailsPage = patternProvider
         .getPattern(scope.scope, scope.detail_v2)
         .matcher(response)
         .mapOnce { matcher ->
-            DetailsPage().apply {
-                id = matcher.group(1).toInt()
-
-                patternProvider
-                    .getPattern(ParserPatterns.Global.scope, ParserPatterns.Global.meta_tags)
-                    .matcher(response)
-                    .findAll {
-                        val metaTarget = it.group(1)
-                        val metaType = it.group(2)
-                        val metaContent = it.group(3)
-                        if (metaTarget == "og" && metaType == "image") {
-                            imgUrl = metaContent
-                        }
+            var imgUrl: String? = null
+            patternProvider
+                .getPattern(ParserPatterns.Global.scope, ParserPatterns.Global.meta_tags)
+                .matcher(response)
+                .findAll {
+                    val metaTarget = it.group(1)
+                    val metaType = it.group(2)
+                    val metaContent = it.group(3)
+                    if (metaTarget == "og" && metaType == "image") {
+                        imgUrl = metaContent
                     }
-
-                //imgUrl = matcher.group(3)
-                title = matcher.group(3).fromHtml()
-                date = matcher.group(4)
-
+                }
+            DetailsPage(
+                id = matcher.group(1).toInt(),
+                imgUrl = requireNotNull(imgUrl) { "imgUrl" },
+                title = matcher.group(3).fromHtml()!!,
+                date = matcher.group(4),
                 //Дефолтный юзер с ником News
-                authorId = 204809
-                author = "News"
-
-                commentsCount = matcher.group(5).toInt()
-                html = matcher.group(6)
-                matcher.group(7)?.let {
-                    tags.addAll(parseTags(it))
-                }
-                matcher.group(8)?.also {
-                    materials.addAll(parseMaterials(it))
-                }
-                //todo ignore group 9 after 22 PatternVersion
-                navId = matcher.group(9)
-
-                karmaMap = parseKarma(response)
-
-                commentsSource = matcher.group(10)?.let { comments ->
-                    patternProvider
-                        .getPattern(scope.scope, scope.exclude_form_comment)
-                        .matcher(comments)
-                        .replaceFirst("")
-                }
-
-                /*Comment commentTree = parseComments(getKarmaMap(), getCommentsSource());
-                setCommentTree(commentTree);*/
-            }
+                authorId = 204809,
+                author = "News",
+                commentsCount = matcher.group(5).toInt(),
+                html = matcher.group(6),
+                tags = matcher.group(7)?.let { parseTags(it) }.orEmpty(),
+                materials = matcher.group(8)?.let { parseMaterials(it) }.orEmpty(),
+                karmaMap = parseKarma(response),
+                commentsSource = matcher.group(10)?.let { parseExcludeFormComment(it) },
+            )
         } ?: throw Exception("Not found article by pattern v2")
+
+    private fun parseExcludeFormComment(source: String): String {
+        return patternProvider
+            .getPattern(scope.scope, scope.exclude_form_comment)
+            .matcher(source)
+            .replaceFirst("")
+    }
 
     private fun parseMaterials(source: String): List<Material> = patternProvider
         .getPattern(scope.scope, scope.materials)

@@ -62,7 +62,6 @@ class ArticleInteractor(
 
     private fun updateData(article: DetailsPage) {
         initData.newsId = article.id
-        article.commentId = initData.commentId
         dataRelay.accept(article)
         parseComments(article)
     }

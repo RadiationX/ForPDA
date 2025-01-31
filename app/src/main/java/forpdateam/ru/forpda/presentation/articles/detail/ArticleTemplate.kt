@@ -8,7 +8,7 @@ class ArticleTemplate(
     private val templateManager: TemplateManager
 ) {
 
-    fun mapEntity(page: DetailsPage): DetailsPage = page.apply { html = mapString(page) }
+    fun mapEntity(page: DetailsPage): DetailsPage = page.copy(html = mapString(page))
 
     fun mapString(page: DetailsPage): String {
         val template = templateManager.getTemplate(TemplateManager.TEMPLATE_NEWS)
