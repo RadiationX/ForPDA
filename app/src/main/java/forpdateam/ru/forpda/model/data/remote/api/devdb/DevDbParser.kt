@@ -4,6 +4,10 @@ import forpdateam.ru.forpda.entity.remote.devdb.Brand
 import forpdateam.ru.forpda.entity.remote.devdb.BrandSearch
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
 import forpdateam.ru.forpda.entity.remote.devdb.Device
+import forpdateam.ru.forpda.extensions.findAll
+import forpdateam.ru.forpda.extensions.findOnce
+import forpdateam.ru.forpda.extensions.map
+import forpdateam.ru.forpda.extensions.mapOnce
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider

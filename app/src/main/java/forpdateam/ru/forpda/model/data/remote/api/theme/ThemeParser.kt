@@ -6,6 +6,9 @@ import forpdateam.ru.forpda.entity.remote.theme.PollQuestion
 import forpdateam.ru.forpda.entity.remote.theme.PollQuestionItem
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.entity.remote.theme.ThemePost
+import forpdateam.ru.forpda.extensions.findAll
+import forpdateam.ru.forpda.extensions.findOnce
+import forpdateam.ru.forpda.extensions.map
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider

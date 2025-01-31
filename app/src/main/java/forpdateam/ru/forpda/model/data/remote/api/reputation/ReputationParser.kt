@@ -3,6 +3,8 @@ package forpdateam.ru.forpda.model.data.remote.api.reputation
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.entity.remote.reputation.RepData
 import forpdateam.ru.forpda.entity.remote.reputation.RepItem
+import forpdateam.ru.forpda.extensions.findOnce
+import forpdateam.ru.forpda.extensions.map
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider

@@ -1,6 +1,8 @@
 package forpdateam.ru.forpda.model.data.remote.api.attachments
 
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
+import forpdateam.ru.forpda.extensions.findOnce
+import forpdateam.ru.forpda.extensions.map
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider

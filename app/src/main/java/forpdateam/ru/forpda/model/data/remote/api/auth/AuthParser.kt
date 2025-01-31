@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.model.data.remote.api.auth
 
 import forpdateam.ru.forpda.entity.remote.auth.AuthCaptcha
+import forpdateam.ru.forpda.extensions.mapOnce
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
