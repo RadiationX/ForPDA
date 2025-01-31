@@ -28,7 +28,7 @@ internal class InfoAdapter : BaseAdapter<ProfileModel.Info, InfoAdapter.InfoHold
             itemView.findViewById(R.id.item_value)
 
         override fun bind(item: ProfileModel.Info) {
-            title.setText(getTypeString(item.type!!))
+            title.text = getTypeString(title.context, item.type)
             value.text = item.value
         }
     }
