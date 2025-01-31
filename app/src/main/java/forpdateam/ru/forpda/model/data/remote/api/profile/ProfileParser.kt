@@ -29,18 +29,15 @@ class ProfileParser(
                     .getPattern(scope.scope, scope.info)
                     .matcher(mainMatcher.group(5))
                     .findAll { matcher ->
-                        val field = matcher.group(1)
-                        if (field.contains("Рег")) {
-                            profile.addInfo(
-                                ProfileModel.InfoType.RegDate,
-                                matcher.group(2)?.trim().fromHtml().orEmpty()
-                            )
-                        } else if (field.contains("Последнее")) {
-                            profile.addInfo(
-                                ProfileModel.InfoType.OnlineDate,
-                                matcher.group(2)?.trim().fromHtml().orEmpty()
-                            )
+                        val field = matcher.group(1).trimEnd(':')
+                        val value = matcher.group(2).trim().fromHtml()!!
+                        val type = when {
+                            field.contains("Рег") -> ProfileModel.InfoType.RegDate
+                            field.contains("Последнее") -> ProfileModel.InfoType.OnlineDate
+                            field.contains("Предупреждения") -> ProfileModel.InfoType.Alerts
+                            else -> ProfileModel.InfoType.Raw(field)
                         }
+                        profile.addInfo(type, value)
                     }
 
                 profile.sign = mainMatcher.group(6)?.trim()?.let {
