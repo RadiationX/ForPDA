@@ -38,10 +38,7 @@ class ProfileModel {
     }
 
     fun addInfo(type: InfoType, value: String) {
-        val info = Info()
-        info.type = type
-        info.value = value
-        this.info.add(info)
+        this.info.add(Info(type, value))
     }
 
     fun addStat(stat: Stat) {
@@ -60,33 +57,33 @@ class ProfileModel {
         warnings.add(arg)
     }
 
-    class Info {
-        var type: InfoType? = null
-        var value: String? = null
-    }
+    data class Info(
+        val type: InfoType,
+        val value: String?
+    )
 
-    class Contact {
-        var type = ContactType.WEBSITE
-        var url: String? = null
-        var title: String? = null
-    }
+    data class Contact(
+        val type: ContactType,
+        val url: String?,
+        val title: String?,
+    )
 
-    class Device {
-        var url: String? = null
-        var name: String? = null
-        var accessory: String? = null
-    }
+    data class Device(
+        val url: String?,
+        val name: String?,
+        val accessory: String?,
+    )
 
-    class Stat {
-        var type: StatType? = null
-        var url: String? = null
-        var value: String? = null
-    }
+    data class Stat(
+        val type: StatType?,
+        val url: String?,
+        val value: String?,
+    )
 
-    class Warning {
-        var type: WarningType? = null
-        var date: String? = null
-        var title: String? = null
-        var content: Spanned? = null
-    }
+    data class Warning(
+        val type: WarningType?,
+        val date: String?,
+        val title: String?,
+        val content: Spanned?
+    )
 }

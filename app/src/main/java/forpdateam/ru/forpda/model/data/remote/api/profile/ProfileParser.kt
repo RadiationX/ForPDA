@@ -80,36 +80,41 @@ class ProfileParser(
                     .getPattern(scope.scope, scope.contacts)
                     .matcher(mainMatcher.group(8))
                     .findAll { matcher ->
-                        profile.addContact(ProfileModel.Contact().apply {
-                            url = matcher.group(1)?.trim()
-                            title = matcher.group(2)?.trim()
-                            type = when (title) {
-                                "QMS" -> ProfileModel.ContactType.QMS
-                                "Вебсайт" -> ProfileModel.ContactType.WEBSITE
-                                "ICQ" -> ProfileModel.ContactType.ICQ
-                                "Twitter" -> ProfileModel.ContactType.TWITTER
-                                "Вконтакте" -> ProfileModel.ContactType.VKONTAKTE
-                                "Google+" -> ProfileModel.ContactType.GOOGLE_PLUS
-                                "Facebook" -> ProfileModel.ContactType.FACEBOOK
-                                "Instagram" -> ProfileModel.ContactType.INSTAGRAM
-                                "Jabber" -> ProfileModel.ContactType.JABBER
-                                "Telegram" -> ProfileModel.ContactType.TELEGRAM
-                                "Mail.ru" -> ProfileModel.ContactType.MAIL_RU
-                                "Windows Live" -> ProfileModel.ContactType.WINDOWS_LIVE
-                                else -> ProfileModel.ContactType.WEBSITE
-                            }
-                        })
+                        val title = matcher.group(2)?.trim()
+                        profile.addContact(
+                            ProfileModel.Contact(
+                                url = matcher.group(1)?.trim(),
+                                title = title,
+                                type = when (title) {
+                                    "QMS" -> ProfileModel.ContactType.QMS
+                                    "Вебсайт" -> ProfileModel.ContactType.WEBSITE
+                                    "ICQ" -> ProfileModel.ContactType.ICQ
+                                    "Twitter" -> ProfileModel.ContactType.TWITTER
+                                    "Вконтакте" -> ProfileModel.ContactType.VKONTAKTE
+                                    "Google+" -> ProfileModel.ContactType.GOOGLE_PLUS
+                                    "Facebook" -> ProfileModel.ContactType.FACEBOOK
+                                    "Instagram" -> ProfileModel.ContactType.INSTAGRAM
+                                    "Jabber" -> ProfileModel.ContactType.JABBER
+                                    "Telegram" -> ProfileModel.ContactType.TELEGRAM
+                                    "Mail.ru" -> ProfileModel.ContactType.MAIL_RU
+                                    "Windows Live" -> ProfileModel.ContactType.WINDOWS_LIVE
+                                    else -> ProfileModel.ContactType.WEBSITE
+                                }
+                            )
+                        )
                     }
 
                 patternProvider
                     .getPattern(scope.scope, scope.devices)
                     .matcher(mainMatcher.group(9))
                     .findAll { matcher ->
-                        profile.addDevice(ProfileModel.Device().apply {
-                            url = matcher.group(1)?.trim()
-                            name = matcher.group(2)?.trim()
-                            accessory = matcher.group(3)?.trim()
-                        })
+                        profile.addDevice(
+                            ProfileModel.Device(
+                                url = matcher.group(1)?.trim(),
+                                name = matcher.group(2)?.trim(),
+                                accessory = matcher.group(3)?.trim()
+                            )
+                        )
                     }
 
 
@@ -117,36 +122,39 @@ class ProfileParser(
                     .getPattern(scope.scope, scope.site_stats)
                     .matcher(mainMatcher.group(10))
                     .findAll { matcher ->
-                        profile.addStat(ProfileModel.Stat().apply {
-                            url = matcher.group(2)
-                            value = matcher.group(3)
-
-                            val field = matcher.group(1)
-                            type = when {
-                                field.contains("Карма") -> ProfileModel.StatType.SITE_KARMA
-                                field.contains("Постов") -> ProfileModel.StatType.SITE_POSTS
-                                field.contains("Комментов") -> ProfileModel.StatType.SITE_COMMENTS
-                                else -> null
-                            }
-                        })
+                        val field = matcher.group(1)
+                        profile.addStat(
+                            ProfileModel.Stat(
+                                url = matcher.group(2),
+                                value = matcher.group(3),
+                                type = when {
+                                    field.contains("Карма") -> ProfileModel.StatType.SITE_KARMA
+                                    field.contains("Постов") -> ProfileModel.StatType.SITE_POSTS
+                                    field.contains("Комментов") -> ProfileModel.StatType.SITE_COMMENTS
+                                    else -> null
+                                }
+                            )
+                        )
                     }
 
                 patternProvider
                     .getPattern(scope.scope, scope.forum_stats)
                     .matcher(mainMatcher.group(11))
                     .findAll { matcher ->
-                        profile.addStat(ProfileModel.Stat().apply {
-                            url = matcher.group(3)
-                            value = matcher.group(4) ?: matcher.group(2)
+                        val field = matcher.group(1)
 
-                            val field = matcher.group(1)
-                            type = when {
-                                field.contains("Репу") -> ProfileModel.StatType.FORUM_REPUTATION
-                                field.contains("Тем") -> ProfileModel.StatType.FORUM_TOPICS
-                                field.contains("Постов") -> ProfileModel.StatType.FORUM_POSTS
-                                else -> null
-                            }
-                        })
+                        profile.addStat(
+                            ProfileModel.Stat(
+                                url = matcher.group(3),
+                                value = matcher.group(4) ?: matcher.group(2),
+                                type = when {
+                                    field.contains("Репу") -> ProfileModel.StatType.FORUM_REPUTATION
+                                    field.contains("Тем") -> ProfileModel.StatType.FORUM_TOPICS
+                                    field.contains("Постов") -> ProfileModel.StatType.FORUM_POSTS
+                                    else -> null
+                                }
+                            )
+                        )
                     }
 
                 patternProvider
@@ -168,15 +176,18 @@ class ProfileParser(
                     .getPattern(scope.scope, scope.warnings)
                     .matcher(response)
                     .findAll { matcher ->
-                        profile.addWarning(ProfileModel.Warning().apply {
-                            when (matcher.group(1)) {
-                                "pos" -> type = ProfileModel.WarningType.POSITIVE
-                                "neg" -> type = ProfileModel.WarningType.NEGATIVE
-                            }
-                            date = matcher.group(2)
-                            title = matcher.group(3).fromHtml()
-                            content = matcher.group(4).fromHtmlToSpanned()
-                        })
+                        profile.addWarning(
+                            ProfileModel.Warning(
+                                type = when (matcher.group(1)) {
+                                    "pos" -> ProfileModel.WarningType.POSITIVE
+                                    "neg" -> ProfileModel.WarningType.NEGATIVE
+                                    else -> null
+                                },
+                                date = matcher.group(2),
+                                title = matcher.group(3).fromHtml(),
+                                content = matcher.group(4).fromHtmlToSpanned()
+                            )
+                        )
                     }
             }
         return profile
