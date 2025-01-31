@@ -158,21 +158,21 @@ class ArticleParser(
         .getPattern(scope.scope, scope.materials)
         .matcher(source)
         .map {
-            Material().apply {
-                imageUrl = it.group(1)
-                id = it.group(2).toInt()
-                title = it.group(3).fromHtml()
-            }
+            Material(
+                imageUrl = it.group(1),
+                id = it.group(2).toInt(),
+                title = it.group(3).fromHtml()!!
+            )
         }
 
     private fun parseTags(source: String): List<Tag> = patternProvider
         .getPattern(scope.scope, scope.tags)
         .matcher(source)
         .map {
-            Tag().apply {
-                tag = it.group(1)
-                title = it.group(2).fromHtml()
-            }
+            Tag(
+                tag = it.group(1),
+                title = it.group(2).fromHtml()!!
+            )
         }
 
     private fun parseKarma(source: String): SparseArray<Comment.Karma> {
