@@ -100,18 +100,25 @@ class QmsParser(
         return QmsThemes(argId, nick, themes)
     }
 
-    fun parseChat(response: String): QmsChatModel = QmsChatModel().also { data ->
-        data.messages.addAll(localParseMessages(response))
-        patternProvider
+    fun parseChat(response: String): QmsChatModel {
+        val chat = patternProvider
             .getPattern(scope.scope, scope.chat_info)
             .matcher(response)
-            .findOnce { matcher ->
-                data.nick = matcher.group(1).trim().fromHtml()
-                data.title = matcher.group(2).trim().fromHtml()
-                data.userId = matcher.group(3).toInt()
-                data.themeId = matcher.group(4).toInt()
-                data.avatarUrl = matcher.group(5)
+            .mapOnce { matcher ->
+                QmsChatModel(
+                    nick = matcher.group(1).trim().fromHtml()!!,
+                    title = matcher.group(2).trim().fromHtml()!!,
+                    userId = matcher.group(3).toInt(),
+                    themeId = matcher.group(4).toInt(),
+                    avatarUrl = matcher.group(5),
+                    messages = localParseMessages(response),
+                    showedMessIndex = 0,
+                    html = null
+                )
             }
+        return requireNotNull(chat) {
+            "Can't parse chat"
+        }
     }
 
     fun sendMessage(response: String): List<QmsMessage> = response

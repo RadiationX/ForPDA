@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.presentation.qms.chat
 
 import biz.source_code.miniTemplator.MiniTemplator
+import forpdateam.ru.forpda.entity.asDeferredData
 import forpdateam.ru.forpda.entity.remote.qms.QmsChatModel
 import forpdateam.ru.forpda.entity.remote.qms.QmsMessage
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
@@ -10,11 +11,10 @@ class QmsChatTemplate(
     private val templateManager: TemplateManager
 ) {
 
-    fun mapEntity(chatModel: QmsChatModel): QmsChatModel =
-        chatModel.apply { html = mapString(chatModel) }
-
-    fun mapString(chatModel: QmsChatModel): String {
+    fun mapEntity(chatModel: QmsChatModel): QmsChatModel {
         val template = templateManager.getTemplate(TemplateManager.TEMPLATE_QMS_CHAT)
+        val endIndex = chatModel.messages.size
+        val startIndex = Math.max(endIndex - 30, 0)
 
         template.apply {
             templateManager.fillStaticStrings(this)
@@ -25,10 +25,6 @@ class QmsChatTemplate(
             setVariableOpt("nick", chatModel.nick)
             setVariableOpt("avatarUrl", chatModel.avatarUrl)
 
-            val endIndex = chatModel.messages.size
-            val startIndex = Math.max(endIndex - 30, 0)
-            chatModel.showedMessIndex = startIndex
-
             val messTemplate = templateManager.getTemplate(TemplateManager.TEMPLATE_QMS_CHAT_MESS)
             templateManager.fillStaticStrings(messTemplate)
             generateMessages(messTemplate, chatModel.messages, startIndex, endIndex)
@@ -38,7 +34,10 @@ class QmsChatTemplate(
 
         val result = template.generateOutput()
         template.reset()
-        return result
+        return chatModel.copy(
+            html = result.asDeferredData(),
+            showedMessIndex = startIndex
+        )
     }
 
     fun generateHtmlBase(): String {

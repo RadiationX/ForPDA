@@ -264,8 +264,9 @@ class QmsChatPresenter(
     private fun initOnNewMessages(data: QmsChatModel) {
         val end = data.messages.size
         val start = Math.max(end - 30, 0)
-        data.showedMessIndex = start
+        val newData = data.copy(showedMessIndex = start)
         val newMessages = data.messages.subList(start, end).toList()
+        currentData = newData
         viewState.onNewMessages(newMessages)
     }
 
@@ -274,7 +275,10 @@ class QmsChatPresenter(
             val result = items.filter { new ->
                 data.messages.find { it.asRegular()?.id != new.asRegular()?.id } != null
             }
-            data.messages.addAll(result)
+            val newData = data.copy(
+                messages = data.messages + result
+            )
+            currentData = newData
             viewState.onNewMessages(result)
         }
     }
@@ -314,7 +318,8 @@ class QmsChatPresenter(
         currentData?.let {
             val endIndex = it.showedMessIndex
             val startIndex = Math.max(endIndex - 30, 0)
-            it.showedMessIndex = startIndex
+            val newData = it.copy(showedMessIndex = startIndex)
+            currentData = newData
             viewState.showMoreMessages(it.messages, startIndex, endIndex)
         }
     }
