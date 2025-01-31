@@ -5,21 +5,22 @@ import android.text.Spanned
 /**
  * Created by radiationx on 03.08.16.
  */
-class ProfileModel {
+data class ProfileModel(
+    val id: Int,
+    val sign: Spanned?,
+    val about: Spanned?,
+    val avatar: String,
+    val nick: String,
+    val status: String?,
+    val group: String,
+    val note: String?,
+    val contacts: List<Contact>,
+    val info: List<Info>,
+    val stats: List<Stat>,
+    val devices: List<Device>,
+    val warnings: List<Warning>,
+) {
 
-    var id = 0
-    var sign: Spanned? = null
-    var about: Spanned? = null
-    var avatar: String? = null
-    var nick: String? = null
-    var status: String? = null
-    var group: String? = null
-    var note: String? = null
-    val contacts = mutableListOf<Contact>()
-    val info = mutableListOf<Info>()
-    val stats = mutableListOf<Stat>()
-    val devices = mutableListOf<Device>()
-    val warnings = mutableListOf<Warning>()
 
     enum class ContactType {
         QMS,
@@ -59,26 +60,6 @@ class ProfileModel {
 
     enum class WarningType {
         Positive, Negative, Unknown
-    }
-
-    fun addInfo(type: InfoType, value: String) {
-        this.info.add(Info(type, value))
-    }
-
-    fun addStat(stat: Stat) {
-        this.stats.add(stat)
-    }
-
-    fun addContact(arg: Contact) {
-        contacts.add(arg)
-    }
-
-    fun addDevice(arg: Device) {
-        devices.add(arg)
-    }
-
-    fun addWarning(arg: Warning) {
-        warnings.add(arg)
     }
 
     data class Info(
