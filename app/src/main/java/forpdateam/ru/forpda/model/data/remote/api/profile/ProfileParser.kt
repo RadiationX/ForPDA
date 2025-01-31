@@ -32,12 +32,12 @@ class ProfileParser(
                         val field = matcher.group(1)
                         if (field.contains("Рег")) {
                             profile.addInfo(
-                                ProfileModel.InfoType.REG_DATE,
+                                ProfileModel.InfoType.RegDate,
                                 matcher.group(2)?.trim().fromHtml().orEmpty()
                             )
                         } else if (field.contains("Последнее")) {
                             profile.addInfo(
-                                ProfileModel.InfoType.ONLINE_DATE,
+                                ProfileModel.InfoType.OnlineDate,
                                 matcher.group(2)?.trim().fromHtml().orEmpty()
                             )
                         }
@@ -51,28 +51,19 @@ class ProfileParser(
                     .getPattern(scope.scope, scope.personal)
                     .matcher(mainMatcher.group(7))
                     .findAll { matcher ->
-                        val field = matcher.group(1)
-                        val value = matcher.group(2)
+                        val field = matcher.group(1)!!.trim().trimEnd(':')
+                        val value = matcher.group(2)?.trim()
 
                         if (value.isNullOrEmpty()) {
-                            profile.addInfo(ProfileModel.InfoType.GENDER, field?.trim().orEmpty())
+                            profile.addInfo(ProfileModel.InfoType.Gender, field.trim())
                         } else {
-                            when {
-                                field.contains("Дата") -> profile.addInfo(
-                                    ProfileModel.InfoType.BIRTHDAY,
-                                    matcher.group(2)?.trim().orEmpty()
-                                )
-
-                                field.contains("Время") -> profile.addInfo(
-                                    ProfileModel.InfoType.USER_TIME,
-                                    matcher.group(2)?.trim().orEmpty()
-                                )
-
-                                field.contains("Город") -> profile.addInfo(
-                                    ProfileModel.InfoType.CITY,
-                                    matcher.group(2)?.trim().orEmpty()
-                                )
+                            val type = when {
+                                field.contains("Дата") -> ProfileModel.InfoType.Birthday
+                                field.contains("Время") -> ProfileModel.InfoType.UserTime
+                                field.contains("Город") -> ProfileModel.InfoType.City
+                                else -> ProfileModel.InfoType.Raw(field)
                             }
+                            profile.addInfo(type, value)
                         }
                     }
 

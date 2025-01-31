@@ -24,7 +24,7 @@ class ProfileRepository(
     private val forumUsersCache: ForumUsersCache
 ) : BaseRepository(schedulers) {
 
-    fun observeCurrentUser(): Observable<EntityWrapper<ProfileModel?>> = userHolder
+    fun observeCurrentUser(): Observable<EntityWrapper<ForumUser?>> = userHolder
         .observeCurrentUser()
         .runInIoToUi()
 
@@ -34,16 +34,15 @@ class ProfileRepository(
     fun loadProfile(url: String): Single<ProfileModel> = Single
         .fromCallable { profileApi.getProfile(url) }
         .doOnSuccess {
-            if (it.id == authHolder.get().userId) {
-                userHolder.user = it
-            }
-            forumUsersCache.saveUser(
-                ForumUser(
-                    id = it.id,
-                    nick = it.nick,
-                    avatar = it.avatar
-                )
+            val forumUser = ForumUser(
+                id = it.id,
+                nick = it.nick,
+                avatar = it.avatar
             )
+            if (it.id == authHolder.get().userId) {
+                userHolder.user = forumUser
+            }
+            forumUsersCache.saveUser(forumUser)
         }
         .runInIoToUi()
 

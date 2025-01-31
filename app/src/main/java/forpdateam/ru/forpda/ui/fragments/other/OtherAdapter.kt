@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.ui.fragments.other
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.entity.app.other.AppMenuItem
+import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.model.MenuMapper
 import forpdateam.ru.forpda.model.interactors.other.MenuRepository
@@ -15,7 +16,7 @@ import forpdateam.ru.forpda.ui.views.drawers.adapters.ProfileListItem
 import java.util.Collections
 
 class OtherAdapter(
-    private val profileClickListener: (ProfileModel?) -> Unit,
+    private val profileClickListener: (ForumUser?) -> Unit,
     private val logoutClickListener: () -> Unit,
     private val menuClickListener: (DrawerMenuItem) -> Unit,
     private val menuSequenceListener: (List<AppMenuItem>) -> Unit,
@@ -49,13 +50,13 @@ class OtherAdapter(
 
 
     fun bindItems(
-        profileItem: ProfileModel?,
+        user: ForumUser?,
         infoList: List<CloseableInfo>,
         newItems: List<List<AppMenuItem>>
     ) {
         items.clear()
 
-        items.add(ProfileListItem(profileItem))
+        items.add(ProfileListItem(user))
         items.add(DividerShadowListItem())
 
         infoList.forEach {

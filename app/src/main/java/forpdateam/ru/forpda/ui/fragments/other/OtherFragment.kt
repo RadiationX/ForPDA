@@ -12,6 +12,7 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.entity.app.other.AppMenuItem
+import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.presentation.other.OtherPresenter
 import forpdateam.ru.forpda.presentation.other.OtherView
@@ -100,11 +101,11 @@ class OtherFragment : TabFragment(), OtherView {
     }
 
     override fun showItems(
-        profileItem: ProfileModel?,
+        user: ForumUser?,
         infoList: List<CloseableInfo>,
         menu: List<List<AppMenuItem>>
     ) {
-        otherAdapter.bindItems(profileItem, infoList, menu)
+        otherAdapter.bindItems(user, infoList, menu)
     }
 
     override fun updateProfile() {
@@ -113,7 +114,7 @@ class OtherFragment : TabFragment(), OtherView {
 
     override fun setRefreshing(refreshing: Boolean) {}
 
-    private val profileClickListener = { item: ProfileModel? ->
+    private val profileClickListener = { item: ForumUser? ->
         presenter.onProfileClick()
     }
 

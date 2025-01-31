@@ -1,11 +1,11 @@
 package forpdateam.ru.forpda.entity.app.profile
 
 import forpdateam.ru.forpda.entity.EntityWrapper
-import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
+import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import io.reactivex.Observable
 
 interface IUserHolder {
-    var user: ProfileModel?
+    var user: ForumUser?
 
-    fun observeCurrentUser(): Observable<EntityWrapper<ProfileModel?>>
+    fun observeCurrentUser(): Observable<EntityWrapper<ForumUser?>>
 }

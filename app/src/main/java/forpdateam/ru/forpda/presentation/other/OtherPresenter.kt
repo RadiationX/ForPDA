@@ -3,7 +3,7 @@ package forpdateam.ru.forpda.presentation.other
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.entity.app.other.AppMenuItem
-import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
+import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.CloseableInfoHolder
 import forpdateam.ru.forpda.model.interactors.other.MenuRepository
@@ -36,7 +36,7 @@ class OtherPresenter(
     private var localMenu = mapOf<Int, List<AppMenuItem>>()
     private val localCloseableInfo = mutableListOf<CloseableInfo>()
 
-    private var profileItem: ProfileModel? = null
+    private var user: ForumUser? = null
 
     private var isMenuDragMode = false
 
@@ -47,7 +47,7 @@ class OtherPresenter(
             .observe()
             .subscribe {
                 if (!authHolder.get().isAuth()) {
-                    profileItem = null
+                    user = null
                 }
                 updateMenuItems()
             }
@@ -78,7 +78,7 @@ class OtherPresenter(
 
     private fun updateMenuItems() {
         if (!isMenuDragMode) {
-            viewState.showItems(profileItem, localCloseableInfo, localMenu.map { it.value })
+            viewState.showItems(user, localCloseableInfo, localMenu.map { it.value })
         }
     }
 
@@ -90,7 +90,7 @@ class OtherPresenter(
         profileRepository
             .observeCurrentUser()
             .subscribe {
-                profileItem = it.value
+                user = it.value
                 updateMenuItems()
             }
             .untilDestroy()

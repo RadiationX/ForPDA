@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ProfileListItem
@@ -18,7 +19,7 @@ import kotlinx.android.synthetic.main.item_other_profile.view.profileLogout
 import kotlinx.android.synthetic.main.item_other_profile.view.profileNick
 
 class ProfileItemDelegate(
-    private val clickListener: (ProfileModel?) -> Unit,
+    private val clickListener: (ForumUser?) -> Unit,
     private val logoutClickListener: () -> Unit
 ) : AdapterDelegate<MutableList<ListItem>>() {
     //private val dimensionsProvider = App.injections.dimensionsProvider
@@ -34,7 +35,7 @@ class ProfileItemDelegate(
         payloads: MutableList<Any>
     ) {
         val item = items[position] as ProfileListItem
-        (holder as ViewHolder).bind(item.profileItem)
+        (holder as ViewHolder).bind(item.user)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder =
@@ -51,11 +52,11 @@ class ProfileItemDelegate(
 
     inner class ViewHolder(
         val view: View,
-        private val clickListener: (ProfileModel?) -> Unit,
+        private val clickListener: (ForumUser?) -> Unit,
         private val logoutClickListener: () -> Unit
     ) : RecyclerView.ViewHolder(view) {
 
-        private var item: ProfileModel? = null
+        private var item: ForumUser? = null
 
         init {
             /*compositeDisposable.add(dimensionsProvider.observeDimensions().subscribe {
@@ -72,15 +73,15 @@ class ProfileItemDelegate(
             }
         }
 
-        fun bind(profileItem: ProfileModel?) {
-            item = profileItem
-            Log.e("S_DEF_LOG", "bind prfile " + profileItem)
+        fun bind(user: ForumUser?) {
+            item = user
+            Log.e("S_DEF_LOG", "bind prfile " + user)
             view.run {
-                val imageUrl = profileItem?.avatar ?: "assets://av.png"
+                val imageUrl = user?.avatar ?: "assets://av.png"
                 ImageLoader.getInstance().displayImage(imageUrl, profileAvatar)
 
-                if (profileItem != null) {
-                    profileNick.text = profileItem.nick
+                if (user != null) {
+                    profileNick.text = user.nick
                     profileDesc.text = "Перейти в профиль"
                     //profileLogout.visibility = View.VISIBLE
                 } else {

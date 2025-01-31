@@ -3,14 +3,14 @@ package forpdateam.ru.forpda.ui.views.drawers.adapters
 import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
-import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
+import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 
 sealed class ListItem
 
 class NoteListItem(val item: NoteItem) : ListItem()
 
 class CloseableInfoListItem(val item: CloseableInfo) : ListItem()
-class ProfileListItem(val profileItem: ProfileModel?) : ListItem()
+class ProfileListItem(val user: ForumUser?) : ListItem()
 class MenuListItem(val menuItem: DrawerMenuItem) : ListItem()
 class DividerShadowListItem : ListItem()
 

@@ -57,13 +57,13 @@ object TempHelper {
     @StringRes
     fun getTypeString(type: ProfileModel.InfoType): Int {
         when (type) {
-            ProfileModel.InfoType.REG_DATE -> return R.string.profile_info_reg
-            ProfileModel.InfoType.ALERTS -> return R.string.profile_info_alerts
-            ProfileModel.InfoType.ONLINE_DATE -> return R.string.profile_info_last_online
-            ProfileModel.InfoType.GENDER -> return R.string.profile_info_gender
-            ProfileModel.InfoType.BIRTHDAY -> return R.string.profile_info_birthday
-            ProfileModel.InfoType.USER_TIME -> return R.string.profile_info_user_time
-            ProfileModel.InfoType.CITY -> return R.string.profile_info_city
+            ProfileModel.InfoType.RegDate -> return R.string.profile_info_reg
+            ProfileModel.InfoType.Alerts -> return R.string.profile_info_alerts
+            ProfileModel.InfoType.OnlineDate -> return R.string.profile_info_last_online
+            ProfileModel.InfoType.Gender -> return R.string.profile_info_gender
+            ProfileModel.InfoType.Birthday -> return R.string.profile_info_birthday
+            ProfileModel.InfoType.UserTime -> return R.string.profile_info_user_time
+            ProfileModel.InfoType.City -> return R.string.profile_info_city
             else -> return R.string.undefined
         }
     }

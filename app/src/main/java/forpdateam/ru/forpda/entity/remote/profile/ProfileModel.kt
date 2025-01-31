@@ -25,8 +25,15 @@ class ProfileModel {
         QMS, WEBSITE, ICQ, TWITTER, VKONTAKTE, GOOGLE_PLUS, FACEBOOK, INSTAGRAM, TELEGRAM, MAIL_RU, JABBER, WINDOWS_LIVE
     }
 
-    enum class InfoType {
-        REG_DATE, ALERTS, ONLINE_DATE, GENDER, BIRTHDAY, USER_TIME, CITY
+    sealed interface InfoType {
+        object RegDate : InfoType
+        object Alerts : InfoType
+        object OnlineDate : InfoType
+        object Gender : InfoType
+        object Birthday : InfoType
+        object UserTime : InfoType
+        object City : InfoType
+        data class Raw(val value: String) : InfoType
     }
 
     enum class StatType {
@@ -59,7 +66,7 @@ class ProfileModel {
 
     data class Info(
         val type: InfoType,
-        val value: String?
+        val value: String
     )
 
     data class Contact(
