@@ -28,22 +28,21 @@ class ReputationParser(
                 }
             }
 
-        patternProvider
+        val items = patternProvider
             .getPattern(scope.scope, scope.main)
             .matcher(response)
-            .findAll { matcher ->
-                data.items.add(RepItem().apply {
-                    userId = matcher.group(1).toInt()
-                    userNick = matcher.group(2).fromHtml()
-                    matcher.group(3)?.also {
-                        sourceUrl = it
-                        sourceTitle = matcher.group(4).fromHtml()
-                    }
-                    title = matcher.group(5).fromHtml()
-                    image = matcher.group(6)
+            .map { matcher ->
+                RepItem(
+                    userId = matcher.group(1).toInt(),
+                    userNick = matcher.group(2).fromHtml()!!,
+                    title = matcher.group(5).fromHtml()!!,
+                    sourceUrl = matcher.group(3),
+                    sourceTitle = matcher.group(4)?.fromHtml(),
+                    image = matcher.group(6),
                     date = matcher.group(7)
-                })
+                )
             }
+        data.items.addAll(items)
         data.pagination = Pagination.parseForum(response)
         return data
     }
