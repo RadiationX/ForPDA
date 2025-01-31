@@ -3,7 +3,9 @@ package forpdateam.ru.forpda.presentation.articles.list
 import android.util.Log
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
+import forpdateam.ru.forpda.entity.asDeferredData
 import forpdateam.ru.forpda.entity.remote.news.NewsItem
+import forpdateam.ru.forpda.extensions.replace
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.data.remote.api.news.Constants
@@ -87,12 +89,14 @@ class ArticlesListPresenter(
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
             .subscribe({ loaded ->
-                val updItems = currentItems
-                    .filter { it.authorId == loaded.first.first && it.avatar != loaded.second }
-                updItems.forEach {
-                    it.avatar = loaded.second
-                }
-                viewState.updateItems(updItems)
+                val updItems = currentItems.toMutableList()
+                updItems.replace(
+                    condition = { it.authorId == loaded.first.first && it.avatar?.value != loaded.second },
+                    map = { it.copy(avatar = loaded.second?.asDeferredData()) }
+                )
+                currentItems.clear()
+                currentItems.addAll(updItems)
+                viewState.updateItems(currentItems)
             }, {
                 errorHandler.handle(it)
             })

@@ -25,32 +25,19 @@ class ArticleParser(
         .getPattern(scope.scope, scope.list)
         .matcher(response)
         .map { matcher ->
-            NewsItem().apply {
-                val isReview = matcher.group(1) == null
-                if (!isReview) {
-                    url = matcher.group(1)
-                    id = matcher.group(2).toInt()
-                    title = matcher.group(3).fromHtml().fromHtml()
-                    imgUrl = matcher.group(4)
-                    commentsCount = matcher.group(5).toInt()
-                    date = matcher.group(6)
-                    authorId = matcher.group(7).toInt()
-                    author = matcher.group(8).fromHtml()
-                    description = matcher.group(9).fromHtml()
-                    matcher.group(10)?.let {
-                        tags.addAll(parseTags(it))
-                    }
-                } else {
-                    url = matcher.group(11)
-                    id = matcher.group(12).toInt()
-                    imgUrl = matcher.group(13)
-                    title = matcher.group(14).fromHtml().fromHtml()
-                    commentsCount = matcher.group(15).toInt()
-                    date = matcher.group(17).replace('-', '.')
-                    author = matcher.group(18).fromHtml()
-                    description = matcher.group(20).trim().fromHtml()
-                }
-            }
+            NewsItem(
+                url = matcher.group(1),
+                id = matcher.group(2).toInt(),
+                title = matcher.group(3).fromHtml().fromHtml()!!,
+                imgUrl = matcher.group(4),
+                commentsCount = matcher.group(5).toInt(),
+                date = matcher.group(6),
+                authorId = matcher.group(7).toInt(),
+                author = matcher.group(8).fromHtml()!!,
+                description = matcher.group(9).fromHtml()!!,
+                tags = matcher.group(10)?.let { parseTags(it) }.orEmpty(),
+                avatar = null
+            )
         }
 
     fun parseArticle(response: String): DetailsPage = patternProvider

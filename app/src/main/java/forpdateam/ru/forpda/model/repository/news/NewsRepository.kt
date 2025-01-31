@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.model.repository.news
 
 import android.util.Log
+import forpdateam.ru.forpda.entity.asDeferredData
 import forpdateam.ru.forpda.entity.remote.news.Comment
 import forpdateam.ru.forpda.entity.remote.news.DetailsPage
 import forpdateam.ru.forpda.entity.remote.news.NewsItem
@@ -22,21 +23,18 @@ class NewsRepository(
 
     fun getNews(category: String, pageNumber: Int): Single<List<NewsItem>> = Single
         .fromCallable { newsApi.getNews(category, pageNumber) }
-        .doOnSuccess { data ->
-            data.forEach {
+        .map { data ->
+            data.map {
                 val forumUser = forumUsersCache.getUserById(it.authorId)
                 Log.e(
                     "kekosina",
                     "forumUser ${it.authorId}, ${forumUser?.id}, ${forumUser?.nick}, ${forumUser?.avatar}"
                 )
                 if (forumUser != null) {
-                    it.avatar = forumUser.avatar
-                }/* else {
-                        forumUsersCache.saveUser(ForumUser().apply {
-                            id = it.authorId
-                            nick = it.author
-                        })
-                    }*/
+                    it.copy(avatar = forumUser.avatar?.asDeferredData())
+                } else {
+                    it
+                }
             }
         }
         .runInIoToUi()

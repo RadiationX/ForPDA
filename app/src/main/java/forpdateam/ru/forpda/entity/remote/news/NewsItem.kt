@@ -1,20 +1,21 @@
 package forpdateam.ru.forpda.entity.remote.news
 
+import forpdateam.ru.forpda.entity.DeferredData
+
 /**
  * Created by radiationx on 28.08.17.
  */
 
-class NewsItem {
-    var id: Int = 0
-    var authorId = 0
-    var url: String? = null
-    var title: String? = null
-    var description: String? = null
-    var author: String? = null
-    var date: String? = null
-    var imgUrl: String? = null
-    var commentsCount: Int = 0
-    var avatar: String? = null
-    val tags = mutableListOf<Tag>()
-
-}
+data class NewsItem(
+    val id: Int,
+    val authorId: Int,
+    val url: String,
+    val title: String,
+    val description: String,
+    val author: String,
+    val date: String,
+    val imgUrl: String,
+    val commentsCount: Int,
+    val tags: List<Tag>,
+    val avatar: DeferredData<String>?
+)

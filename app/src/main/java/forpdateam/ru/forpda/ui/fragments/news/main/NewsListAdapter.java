@@ -174,7 +174,7 @@ public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder<?>> {
             if (news.getAvatar() == null) {
                 ImageLoader.getInstance().displayImage("assets://av.png", avatar);
             } else {
-                ImageLoader.getInstance().displayImage(news.getAvatar(), avatar);
+                ImageLoader.getInstance().displayImage(news.getAvatar().getValue(), avatar);
             }
         }
     }
