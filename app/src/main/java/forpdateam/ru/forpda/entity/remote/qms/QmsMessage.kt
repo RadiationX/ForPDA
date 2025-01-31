@@ -5,16 +5,16 @@ package forpdateam.ru.forpda.entity.remote.qms
  */
 sealed interface QmsMessage {
     data class Date(
-        var date: String? = null
+        val date: String
     ) : QmsMessage
 
     data class Regular(
-        var isMyMessage: Boolean = false,
-        var id: Int = 0,
-        var readStatus: Boolean = false,
-        var time: String? = null,
-        var avatar: String? = null,
-        var content: String? = null
+        val isMyMessage: Boolean,
+        val id: Int,
+        val readStatus: Boolean,
+        val time: String,
+        val avatar: String,
+        val content: String
     ) : QmsMessage
 }
 
