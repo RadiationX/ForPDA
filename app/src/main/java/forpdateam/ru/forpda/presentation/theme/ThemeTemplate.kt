@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.presentation.theme
 
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.entity.asDeferredData
 import forpdateam.ru.forpda.entity.remote.theme.PollQuestionItem
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.model.AuthHolder
@@ -20,7 +21,7 @@ class ThemeTemplate(
 
     private val firstLetter = Pattern.compile("([a-zA-Zа-яА-Я])")
 
-    fun mapEntity(page: ThemePage): ThemePage = page.apply { html = mapString(page) }
+    fun mapEntity(page: ThemePage): ThemePage = page.copy(html = mapString(page).asDeferredData())
 
     fun mapString(page: ThemePage): String {
         val template = templateManager.getTemplate(TemplateManager.TEMPLATE_THEME)

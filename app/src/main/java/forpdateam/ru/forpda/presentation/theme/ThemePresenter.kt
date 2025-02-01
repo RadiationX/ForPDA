@@ -7,9 +7,11 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
+import forpdateam.ru.forpda.entity.DeferredData
 import forpdateam.ru.forpda.entity.app.EditPostSyncData
 import forpdateam.ru.forpda.entity.app.TabNotification
 import forpdateam.ru.forpda.entity.app.profile.IUserHolder
+import forpdateam.ru.forpda.entity.asDeferredData
 import forpdateam.ru.forpda.entity.remote.ForumPost
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
@@ -17,6 +19,7 @@ import forpdateam.ru.forpda.entity.remote.events.NotificationEvent
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.entity.remote.theme.ThemePost
+import forpdateam.ru.forpda.extensions.replaceAt
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
@@ -189,10 +192,10 @@ class ThemePresenter(
         currentPage = page
         viewState.onLoadData(page)
         if (loadAction === ActionState.NORMAL) {
-            saveToHistory(page)
+            saveToHistory()
         }
         if (loadAction === ActionState.REFRESH) {
-            updateHistoryLast(page)
+            updateHistoryLast()
         }
     }
 
@@ -201,7 +204,9 @@ class ThemePresenter(
             .editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
             .subscribe({
                 if (it) {
-                    currentPage?.isInFavorite = true
+                    currentPage = currentPage?.copy(
+                        isInFavorite = true
+                    )
                 }
                 viewState.onAddToFavorite(it)
             }, {
@@ -215,7 +220,9 @@ class ThemePresenter(
             .editFavorites(FavoritesApi.ACTION_DELETE, favId, -1, null)
             .subscribe({
                 if (it) {
-                    currentPage?.isInFavorite = false
+                    currentPage = currentPage?.copy(
+                        isInFavorite = false
+                    )
                 }
                 viewState.onDeleteFromFavorite(it)
             }, {
@@ -369,25 +376,31 @@ class ThemePresenter(
         loadUrl(url)
     }
 
-    private fun saveToHistory(themePage: ThemePage) {
-        history.add(themePage)
+    private fun saveToHistory() {
+        currentPage?.also { history.add(it) }
     }
 
-    private fun updateHistoryLast(themePage: ThemePage) {
+    private fun updateHistoryLast() {
+        val page = currentPage ?: return
         if (history.isNotEmpty()) {
-            history.last().let {
-                themePage.anchors.addAll(it.anchors)
-                themePage.scrollY = it.scrollY
+            val newPage = history.last().let {
+                page.copy(
+                    anchors = page.anchors + it.anchors,
+                    scrollY = it.scrollY
+                )
             }
-            history[history.size - 1] = themePage
+            currentPage = newPage
+            history.replaceAt(history.lastIndex) { newPage }
         }
     }
 
     fun updateHistoryLastHtml(html: String, scrollY: Int) {
         if (history.isNotEmpty()) {
-            history.last().let {
-                it.scrollY = scrollY
-                it.html = html
+            history.replaceAt(history.lastIndex) {
+                it.copy(
+                    scrollY = scrollY,
+                    html = html.asDeferredData()
+                )
             }
         }
     }
@@ -501,15 +514,15 @@ class ThemePresenter(
     }
 
     override fun onPollHeaderClick(bValue: Boolean) {
-        currentPage?.let { it.isPollOpen = bValue }
+        currentPage = currentPage?.copy(isPollOpen = bValue)
     }
 
     override fun onHatHeaderClick(bValue: Boolean) {
-        currentPage?.let { it.isHatOpen = bValue }
+        currentPage = currentPage?.copy(isHatOpen = bValue)
     }
 
     override fun setHistoryBody(index: Int, body: String) {
-        history[index].html = body
+        history[index] = history[index].copy(html = body.asDeferredData())
     }
 
     override fun copyText(text: String) {
@@ -563,11 +576,10 @@ class ThemePresenter(
                                 elem = matcher.group(1)
                             }
                             Log.d(LOG_TAG, " scroll to $postId : $elem")
-                            val finalAnchor =
-                                (if (elem == null) "entry" else "") + if (elem != null) elem else postId
-                            currentPage?.let {
-                                if (topicPreferencesHolder.getAnchorHistory()) {
-                                    it.addAnchor(finalAnchor)
+                            val finalAnchor = (if (elem == null) "entry" else "") + (elem ?: postId)
+                            if (topicPreferencesHolder.getAnchorHistory()) {
+                                currentPage = currentPage?.let {
+                                    it.copy(anchors = it.anchors + finalAnchor)
                                 }
                             }
 
@@ -636,8 +648,11 @@ class ThemePresenter(
         if (topicPreferencesHolder.getAnchorHistory()) {
             currentPage?.let {
                 if (it.anchors.size > 1) {
-                    it.removeAnchor()
-                    viewState.scrollToAnchor(it.anchor)
+                    val newAnchors = it.anchors.toMutableList()
+                    newAnchors.removeAt(newAnchors.lastIndex)
+                    val newPage = it.copy(anchors = newAnchors)
+                    currentPage = newPage
+                    viewState.scrollToAnchor(newPage.anchor)
                     return true
                 }
             }

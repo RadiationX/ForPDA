@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.presentation.search
 
 import forpdateam.ru.forpda.entity.DeferredData
+import forpdateam.ru.forpda.entity.asDeferredData
 import forpdateam.ru.forpda.entity.remote.search.SearchItem
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.model.AuthHolder
@@ -19,7 +20,7 @@ class SearchTemplate(
 
     private val firstLetter = Pattern.compile("([a-zA-Zа-яА-Я])")
 
-    fun mapEntity(page: SearchResult): SearchResult = page.copy(html = DeferredData(mapString(page)))
+    fun mapEntity(page: SearchResult): SearchResult = page.copy(html = mapString(page).asDeferredData())
 
     private fun mapString(page: SearchResult): String {
         val template = templateManager.getTemplate(TemplateManager.TEMPLATE_SEARCH)

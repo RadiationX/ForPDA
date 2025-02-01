@@ -1,48 +1,32 @@
 package forpdateam.ru.forpda.entity.remote.theme
 
+import forpdateam.ru.forpda.entity.DeferredData
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 
 /**
  * Created by radiationx on 04.08.16.
  */
-class ThemePage {
-    val anchors = mutableListOf<String>()
-    var title: String? = null
-    var desc: String? = null
-    var html: String? = null
-    var url: String? = null
-    var id = 0
-    var forumId = 0
-    var favId = 0
-    /*public boolean isCurator() {
-        return curator;
-    }
-
-    public void setCurator(boolean curator) {
-        this.curator = curator;
-    }*/
-
-    var scrollY = 0
-    var isInFavorite = false
-    var isCurator = false
-    var canQuote = false
-    var isHatOpen = false
-    var isPollOpen = false
-    val posts = ArrayList<ThemePost>()
-    var pagination = Pagination.createForumDefault()
-    var poll: Poll? = null
-
+data class ThemePage(
+    val id: Int,
+    val title: String,
+    val desc: String,
+    val forumId: Int,
+    val favId: Int,
+    val isInFavorite: Boolean,
+    val canQuote: Boolean,
+    val posts: List<ThemePost>,
+    val pagination: Pagination,
+    val poll: Poll?,
+    val html: DeferredData<String>?,
+    val url: String,
+    val isHatOpen: Boolean,
+    val isPollOpen: Boolean,
+    val scrollY: Int,
+    val anchors: List<String>
+) {
     val anchor: String?
         get() = if (anchors.isEmpty()) null else anchors[anchors.size - 1]
 
     val st: Int
         get() = pagination.currentPage()
-
-    fun addAnchor(anchor: String): Boolean {
-        return anchors.add(anchor)
-    }
-
-    fun removeAnchor(): String? {
-        return if (anchors.isEmpty()) null else anchors.removeAt(anchors.size - 1)
-    }
 }
