@@ -27,3 +27,10 @@ inline fun <R> Matcher.mapOnce(transform: (Matcher) -> R): R? {
     }
     return data
 }
+
+inline fun <R> Matcher.requireOnce(transform: (Matcher) -> R): R {
+    check(find()) {
+        "Required match not found"
+    }
+    return transform(this)
+}

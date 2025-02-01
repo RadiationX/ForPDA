@@ -91,7 +91,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
         super.onCreate(savedInstanceState)
         arguments?.apply {
             getString(ARG_TAB)?.also {
-                presenter.currentData = ReputationApi.fromUrl(it)
+                presenter.currentArgs = ReputationApi.fromUrl(it)
             }
         }
     }
@@ -149,7 +149,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
             false
         }
         repModeMenuItem =
-            menu.add(getString(if (presenter.currentData.mode == ReputationApi.MODE_FROM) R.string.reputation_mode_from else R.string.reputation_mode_to))
+            menu.add(getString(if (presenter.currentArgs.mode == ReputationApi.MODE_FROM) R.string.reputation_mode_from else R.string.reputation_mode_to))
                 .setOnMenuItemClickListener {
                     presenter.changeReputationMode()
                     false
@@ -182,8 +182,8 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
             ascSortMenuItem.isEnabled = true
             repModeMenuItem.isEnabled = true
             repModeMenuItem.title =
-                getString(if (presenter.currentData.mode == ReputationApi.MODE_FROM) R.string.reputation_mode_from else R.string.reputation_mode_to)
-            if (presenter.currentData.id != authHolder.get().userId) {
+                getString(if (presenter.currentArgs.mode == ReputationApi.MODE_FROM) R.string.reputation_mode_from else R.string.reputation_mode_to)
+            if (presenter.currentArgs.userId != authHolder.get().userId) {
                 upRepMenuItem.isEnabled = true
                 upRepMenuItem.isVisible = true
                 downRepMenuItem.isEnabled = true
@@ -202,7 +202,8 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
 
     @SuppressLint("InflateParams")
     fun showChangeReputationDialog(type: Boolean) {
-        val inflater = requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val inflater =
+            requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
         val layout = inflater.inflate(R.layout.reputation_change_layout, null)
 
@@ -211,7 +212,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
         text.text = String.format(
             getString(R.string.change_reputation_Type_Nick),
             getString(if (type) R.string.increase else R.string.decrease),
-            presenter.currentData.nick
+            presenter.currentData?.nick.orEmpty()
         )
 
         AlertDialog.Builder(requireContext())
@@ -224,7 +225,8 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
     }
 
     override fun onChangeReputation(result: Boolean) {
-        Toast.makeText(requireContext(), getString(R.string.reputation_changed), Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), getString(R.string.reputation_changed), Toast.LENGTH_SHORT)
+            .show()
     }
 
     override fun setRefreshing(isRefreshing: Boolean) {
@@ -255,8 +257,8 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
         paginationHelper.updatePagination(repData.pagination)
         refreshToolbarMenuItems(true)
         setSubtitle("${repData.positive - repData.negative} (+${repData.positive} / -${repData.negative})")
-        setTabTitle("Репутация ${repData.nick}${if (repData.mode == ReputationApi.MODE_FROM) ": кому изменял" else ""}")
-        setTitle("Репутация ${repData.nick}${if (repData.mode == ReputationApi.MODE_FROM) ": кому изменял" else ""}")
+        setTabTitle("Репутация ${repData.nick}${if (presenter.currentArgs.mode == ReputationApi.MODE_FROM) ": кому изменял" else ""}")
+        setTitle("Репутация ${repData.nick}${if (presenter.currentArgs.mode == ReputationApi.MODE_FROM) ": кому изменял" else ""}")
         listScrollTop()
         toolbarImageView.setOnClickListener { presenter.navigateToProfile(repData.id) }
     }

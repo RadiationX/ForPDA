@@ -3,8 +3,8 @@ package forpdateam.ru.forpda.model.data.remote.api.reputation
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.entity.remote.reputation.RepData
 import forpdateam.ru.forpda.entity.remote.reputation.RepItem
-import forpdateam.ru.forpda.extensions.findOnce
 import forpdateam.ru.forpda.extensions.map
+import forpdateam.ru.forpda.extensions.requireOnce
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
@@ -15,21 +15,7 @@ class ReputationParser(
 
     private val scope = ParserPatterns.Reputation
 
-    fun parse(response: String): RepData = RepData().also { data ->
-        patternProvider
-            .getPattern(scope.scope, scope.info)
-            .matcher(response)
-            .findOnce { matcher ->
-                data.id = matcher.group(1).toInt()
-                data.nick = matcher.group(2).fromHtml()
-                matcher.group(3)?.also {
-                    data.positive = it.toInt()
-                }
-                matcher.group(4)?.also {
-                    data.negative = it.toInt()
-                }
-            }
-
+    fun parse(response: String): RepData {
         val items = patternProvider
             .getPattern(scope.scope, scope.main)
             .matcher(response)
@@ -44,9 +30,20 @@ class ReputationParser(
                     date = matcher.group(7)
                 )
             }
-        data.items.addAll(items)
-        data.pagination = Pagination.parseForum(response)
-        return data
-    }
+        val pagination = Pagination.parseForum(response)
 
+        return patternProvider
+            .getPattern(scope.scope, scope.info)
+            .matcher(response)
+            .requireOnce { matcher ->
+                RepData(
+                    id = matcher.group(1).toInt(),
+                    nick = matcher.group(2).fromHtml(),
+                    positive = matcher.group(3)?.toInt() ?: 0,
+                    negative = matcher.group(4)?.toInt() ?: 0,
+                    items = items,
+                    pagination = pagination
+                )
+            }
+    }
 }

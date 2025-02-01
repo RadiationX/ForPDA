@@ -2,6 +2,8 @@ package forpdateam.ru.forpda.model.data.remote.api.reputation
 
 import forpdateam.ru.forpda.entity.remote.reputation.RepArgs
 import forpdateam.ru.forpda.entity.remote.reputation.RepData
+import forpdateam.ru.forpda.extensions.mapOnce
+import forpdateam.ru.forpda.extensions.requireOnce
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import java.util.regex.Pattern
@@ -41,34 +43,29 @@ class ReputationApi(
         const val SORT_ASC = "asc"
         const val SORT_DESC = "desc"
 
-        fun fromUrl(url: String): RepData {
-            return fromUrl(RepData(), url)
-        }
-
-        fun fromUrl(data: RepData, url: String): RepData {
-            var matcher = Pattern.compile("st=(\\d+)").matcher(url)
-            if (matcher.find()) {
-                data.initialSt = Integer.parseInt(matcher.group(1))
-            }
-            matcher = Pattern.compile("mid=(\\d+)").matcher(url)
-            if (matcher.find())
-                data.id = Integer.parseInt(matcher.group(1))
-            matcher = Pattern.compile("mode=([^&]+)").matcher(url)
-            if (matcher.find()) {
-                when (matcher.group(1)) {
-                    MODE_FROM -> data.mode = MODE_FROM
-                    MODE_TO -> data.mode = MODE_TO
-                }
-            }
-
-            matcher = Pattern.compile("order=([^&]+)").matcher(url)
-            if (matcher.find()) {
-                when (matcher.group(1)) {
-                    SORT_ASC -> data.mode = SORT_ASC
-                    SORT_DESC -> data.mode = SORT_DESC
-                }
-            }
-            return data
+        fun fromUrl(url: String): RepArgs {
+            return RepArgs(
+                userId = Pattern.compile("mid=(\\d+)").matcher(url).requireOnce {
+                    it.group(1).toInt()
+                },
+                initialSt = Pattern.compile("st=(\\d+)").matcher(url).mapOnce {
+                    it.group(1).toInt()
+                } ?: 0,
+                mode = Pattern.compile("mode=([^&]+)").matcher(url).mapOnce {
+                    when (it.group(1)) {
+                        MODE_FROM -> MODE_FROM
+                        MODE_TO -> MODE_TO
+                        else -> null
+                    }
+                } ?: MODE_TO,
+                sort = Pattern.compile("order=([^&]+)").matcher(url).mapOnce {
+                    when (it.group(1)) {
+                        SORT_ASC -> SORT_ASC
+                        SORT_DESC -> SORT_DESC
+                        else -> null
+                    }
+                } ?: SORT_DESC
+            )
         }
     }
 }

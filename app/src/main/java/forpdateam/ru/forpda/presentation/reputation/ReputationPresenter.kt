@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.presentation.reputation
 
 import forpdateam.ru.forpda.common.mvp.BasePresenter
+import forpdateam.ru.forpda.entity.remote.reputation.RepArgs
 import forpdateam.ru.forpda.entity.remote.reputation.RepData
 import forpdateam.ru.forpda.entity.remote.reputation.RepItem
 import forpdateam.ru.forpda.model.data.remote.api.reputation.ReputationApi
@@ -24,20 +25,21 @@ class ReputationPresenter(
     private val errorHandler: IErrorHandler
 ) : BasePresenter<ReputationView>() {
 
-    var currentData = RepData()
+    var currentArgs = RepArgs.empty()
+    var currentData: RepData? = null
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        loadReputation(currentData.initialSt)
+        loadReputation(currentArgs.initialSt)
     }
 
     fun loadReputation(page: Int? = null) {
         reputationRepository
             .loadReputation(
-                currentData.id,
-                currentData.mode,
-                currentData.sort,
-                page ?: currentData.pagination.currentPage()
+                currentArgs.userId,
+                currentArgs.mode,
+                currentArgs.sort,
+                page ?: currentData?.pagination?.currentPage() ?: currentArgs.initialSt
             )
             .doOnSubscribe { viewState.setRefreshing(true) }
             .doAfterTerminate { viewState.setRefreshing(false) }
@@ -53,7 +55,7 @@ class ReputationPresenter(
 
     fun changeReputation(type: Boolean, message: String) {
         reputationRepository
-            .changeReputation(0, currentData.id, type, message)
+            .changeReputation(0, currentArgs.userId, type, message)
             .doOnSubscribe { viewState.setRefreshing(true) }
             .doAfterTerminate { viewState.setRefreshing(false) }
             .subscribe({
@@ -81,13 +83,17 @@ class ReputationPresenter(
     }
 
     fun setSort(sort: String) {
-        currentData.sort = sort
+        currentArgs = currentArgs.copy(sort = sort)
         loadReputation()
     }
 
     fun changeReputationMode() {
-        currentData.mode =
-            if (currentData.mode == ReputationApi.MODE_FROM) ReputationApi.MODE_TO else ReputationApi.MODE_FROM
+        val mode = if (currentArgs.mode == ReputationApi.MODE_FROM) {
+            ReputationApi.MODE_TO
+        } else {
+            ReputationApi.MODE_FROM
+        }
+        currentArgs = currentArgs.copy(mode = mode)
         loadReputation()
     }
 
