@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.model.data.remote.api.theme
 
-import forpdateam.ru.forpda.entity.remote.BaseForumPost
+import forpdateam.ru.forpda.entity.remote.ForumPost
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.entity.remote.theme.Poll
 import forpdateam.ru.forpda.entity.remote.theme.PollQuestion
@@ -81,7 +81,7 @@ class ThemeParser(
                     .matcher(body)
                     .map { Pair("https://${it.group(1)}", it.group(2)) }
                 page.canQuote = matcher.group(20).isNotEmpty()
-                val forumPost = BaseForumPost(
+                val forumPost = ForumPost(
                     topicId = page.id,
                     id = matcher.group(1).toInt(),
                     date = matcher.group(5),

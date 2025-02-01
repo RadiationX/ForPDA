@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.common.webview.jsinterfaces;
 
-import forpdateam.ru.forpda.entity.remote.BaseForumPost;
+import forpdateam.ru.forpda.entity.remote.ForumPost;
 
 /**
  * Created by radiationx on 27.04.17.
@@ -9,23 +9,23 @@ import forpdateam.ru.forpda.entity.remote.BaseForumPost;
 public interface IPostFunctions {
     String JS_POSTS_FUNCTIONS = "IPostFunctions";
 
-    void showUserMenu(BaseForumPost post);
+    void showUserMenu(ForumPost post);
 
-    void showReputationMenu(BaseForumPost post);
+    void showReputationMenu(ForumPost post);
 
-    void showPostMenu(BaseForumPost post);
+    void showPostMenu(ForumPost post);
 
-    void reportPost(BaseForumPost post);
+    void reportPost(ForumPost post);
 
-    void reply(BaseForumPost post);
+    void reply(ForumPost post);
 
-    void quotePost(String text, BaseForumPost post);
+    void quotePost(String text, ForumPost post);
 
-    void deletePost(BaseForumPost post);
+    void deletePost(ForumPost post);
 
-    void editPost(BaseForumPost post);
+    void editPost(ForumPost post);
 
-    void votePost(BaseForumPost post, boolean type);
+    void votePost(ForumPost post, boolean type);
 
-    void changeReputation(BaseForumPost post, boolean type);
+    void changeReputation(ForumPost post, boolean type);
 }

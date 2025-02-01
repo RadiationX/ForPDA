@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.presentation.search
 
 import forpdateam.ru.forpda.common.mvp.IBaseView
-import forpdateam.ru.forpda.entity.remote.BaseForumPost
 import forpdateam.ru.forpda.entity.remote.search.SearchItem
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings

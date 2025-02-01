@@ -10,7 +10,7 @@ import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.app.EditPostSyncData
 import forpdateam.ru.forpda.entity.app.TabNotification
 import forpdateam.ru.forpda.entity.app.profile.IUserHolder
-import forpdateam.ru.forpda.entity.remote.BaseForumPost
+import forpdateam.ru.forpda.entity.remote.ForumPost
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
 import forpdateam.ru.forpda.entity.remote.events.NotificationEvent
@@ -436,7 +436,7 @@ class ThemePresenter(
         ?.posts
         ?.firstOrNull { it.post.id == postId }
 
-    private fun getPostById(postId: Int): BaseForumPost? = getThemePostById(postId)?.post
+    private fun getPostById(postId: Int): ForumPost? = getThemePostById(postId)?.post
 
 
     override fun onFirstPageClick() = viewState.firstPage()

@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.model.data.remote.api.search
 
-import forpdateam.ru.forpda.entity.remote.BaseForumPost
+import forpdateam.ru.forpda.entity.remote.ForumPost
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.entity.remote.search.SearchItem
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
@@ -76,7 +76,7 @@ class SearchParser(
         .matcher(response)
         .map { matcher ->
             val title = matcher.group(4).fromHtml()!!
-            val post = BaseForumPost(
+            val post = ForumPost(
                 topicId = matcher.group(2).toInt(),
                 id = matcher.group(3).toInt(),
 

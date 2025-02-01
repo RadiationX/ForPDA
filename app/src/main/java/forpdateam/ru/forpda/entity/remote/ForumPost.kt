@@ -4,7 +4,7 @@ package forpdateam.ru.forpda.entity.remote
  * Created by radiationx on 27.04.17.
  */
 
-class BaseForumPost(
+class ForumPost(
     val date: String,
     val avatar: String?,
     val nick: String,

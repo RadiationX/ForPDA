@@ -35,7 +35,7 @@ import forpdateam.ru.forpda.common.FilePickHelper
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.entity.app.EditPostSyncData
 import forpdateam.ru.forpda.entity.app.TabNotification
-import forpdateam.ru.forpda.entity.remote.BaseForumPost
+import forpdateam.ru.forpda.entity.remote.ForumPost
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
@@ -684,7 +684,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
         showMessagePanel(true)
     }
 
-    override fun editPost(post: BaseForumPost) {
+    override fun editPost(post: ForumPost) {
         presenter.openEditPostForm(post.id)
     }
 
@@ -702,27 +702,27 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
         }
     }
 
-    override fun showUserMenu(post: BaseForumPost) {
+    override fun showUserMenu(post: ForumPost) {
         dialogsHelper.showUserMenu(presenter, post)
     }
 
-    override fun showReputationMenu(post: BaseForumPost) {
+    override fun showReputationMenu(post: ForumPost) {
         dialogsHelper.showReputationMenu(presenter, post)
     }
 
-    override fun showPostMenu(post: BaseForumPost) {
+    override fun showPostMenu(post: ForumPost) {
         dialogsHelper.showPostMenu(presenter, post)
     }
 
-    override fun reportPost(post: BaseForumPost) {
+    override fun reportPost(post: ForumPost) {
         dialogsHelper.tryReportPost(presenter, post)
     }
 
-    override fun deletePost(post: BaseForumPost) {
+    override fun deletePost(post: ForumPost) {
         dialogsHelper.deletePost(presenter, post)
     }
 
-    override fun votePost(post: BaseForumPost, type: Boolean) {
+    override fun votePost(post: ForumPost, type: Boolean) {
         if (!authHolder.get().isAuth()) {
             Utils.showNeedAuthDialog(requireContext())
             return
@@ -730,7 +730,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
         dialogsHelper.votePost(presenter, post, type)
     }
 
-    override fun showChangeReputation(post: BaseForumPost, type: Boolean) {
+    override fun showChangeReputation(post: ForumPost, type: Boolean) {
         if (!authHolder.get().isAuth()) {
             Utils.showNeedAuthDialog(requireContext())
             return
