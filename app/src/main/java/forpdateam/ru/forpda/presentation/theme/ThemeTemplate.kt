@@ -70,10 +70,11 @@ class ThemeTemplate(
 
             var hatPostId = 0
             if (!page.posts.isEmpty()) {
-                hatPostId = page.posts[0].id
+                hatPostId = page.posts[0].post.id
             }
             var letterMatcher: Matcher? = null
-            for (post in page.posts) {
+            for (themePost in page.posts) {
+                val post = themePost.post
                 setVariableOpt("user_online", if (post.isOnline) "online" else "")
                 setVariableOpt("post_id", post.id)
                 setVariableOpt("user_id", post.userId)
@@ -97,7 +98,7 @@ class ThemeTemplate(
                 setVariableOpt("group", post.group)
                 setVariableOpt("reputation", post.reputation)
                 setVariableOpt("date", post.date)
-                setVariableOpt("number", post.number)
+                setVariableOpt("number", themePost.number)
 
                 //Post body
                 if (page.posts.size > 1 && hatPostId == post.id) {

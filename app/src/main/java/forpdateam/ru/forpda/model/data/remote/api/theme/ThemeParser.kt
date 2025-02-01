@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.model.data.remote.api.theme
 
+import forpdateam.ru.forpda.entity.remote.BaseForumPost
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.entity.remote.theme.Poll
 import forpdateam.ru.forpda.entity.remote.theme.PollQuestion
@@ -13,7 +14,6 @@ import forpdateam.ru.forpda.extensions.mapOnce
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
-import java.util.regex.Matcher
 
 class ThemeParser(
     private val patternProvider: IPatternProvider
@@ -69,46 +69,46 @@ class ThemeParser(
                     }
             }
 
-        var attachMatcher: Matcher? = null
         val posts = patternProvider
             .getPattern(scope.scope, scope.posts)
             .matcher(response)
             .map { matcher ->
-                ThemePost().apply {
-                    topicId = page.id
-                    forumId = page.forumId
-                    id = matcher.group(1).toInt()
-                    date = matcher.group(5)
-                    number = matcher.group(6).toInt()
-                    isOnline = matcher.group(7).contains("green")
-                    matcher.group(8).also {
-                        avatar = if (!it.isEmpty()) "https://s.4pda.to/forum/uploads/$it" else it
-                    }
-                    nick = matcher.group(9).fromHtml()
-                    userId = matcher.group(10).toInt()
-                    isCurator = matcher.group(11) != null
-                    groupColor = matcher.group(12) ?: "black"
-                    group = matcher.group(13)
-                    canMinusRep = !matcher.group(14).isEmpty()
-                    reputation = matcher.group(15)
-                    canPlusRep = !matcher.group(16).isEmpty()
-                    canReport = !matcher.group(17).isEmpty()
-                    canEdit = !matcher.group(18).isEmpty()
-                    canDelete = !matcher.group(19).isEmpty()
-                    page.canQuote = !matcher.group(20).isEmpty()
-                    canQuote = page.canQuote
-                    body = matcher.group(21)
-                    attachMatcher = attachMatcher?.reset(body) ?: patternProvider
-                        .getPattern(scope.scope, scope.attached_images)
-                        .matcher(body)
-                    attachMatcher
-                        ?.findAll {
-                            attachImages.add(Pair("https://${it.group(1)}", it.group(2)))
-                        }
-                }
-
-                /*if (isCurator() && getUserId() == ClientHelper.getUserId())
-                    page.setCurator(true);*/
+                val forumId = page.forumId
+                val number = matcher.group(6).toInt()
+                val body = matcher.group(21)
+                val attachImages = patternProvider
+                    .getPattern(scope.scope, scope.attached_images)
+                    .matcher(body)
+                    .map { Pair("https://${it.group(1)}", it.group(2)) }
+                page.canQuote = matcher.group(20).isNotEmpty()
+                val forumPost = BaseForumPost(
+                    topicId = page.id,
+                    id = matcher.group(1).toInt(),
+                    date = matcher.group(5),
+                    isOnline = matcher.group(7).contains("green"),
+                    avatar = matcher.group(8).let {
+                        if (it.isNotEmpty()) "https://s.4pda.to/forum/uploads/$it" else it
+                    },
+                    nick = matcher.group(9).fromHtml(),
+                    userId = matcher.group(10).toInt(),
+                    isCurator = matcher.group(11) != null,
+                    groupColor = matcher.group(12) ?: "black",
+                    group = matcher.group(13),
+                    canMinusRep = matcher.group(14).isNotEmpty(),
+                    reputation = matcher.group(15),
+                    canPlusRep = matcher.group(16).isNotEmpty(),
+                    canReport = matcher.group(17).isNotEmpty(),
+                    canEdit = matcher.group(18).isNotEmpty(),
+                    canDelete = matcher.group(19).isNotEmpty(),
+                    canQuote = page.canQuote,
+                    body = body
+                )
+                ThemePost(
+                    forumId = forumId,
+                    number = number,
+                    attachImages = attachImages,
+                    post = forumPost
+                )
             }
         page.posts.addAll(posts)
 

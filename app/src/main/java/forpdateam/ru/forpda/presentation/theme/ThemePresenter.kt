@@ -432,12 +432,12 @@ class ThemePresenter(
         }
     }
 
-
-    private fun getPostById(postId: Int): ThemePost? = currentPage
+    private fun getThemePostById(postId: Int): ThemePost? = currentPage
         ?.posts
-        ?.firstOrNull {
-            it.id == postId
-        }
+        ?.firstOrNull { it.post.id == postId }
+
+    private fun getPostById(postId: Int): IBaseForumPost? = getThemePostById(postId)?.post
+
 
     override fun onFirstPageClick() = viewState.firstPage()
 
@@ -679,13 +679,14 @@ class ThemePresenter(
     }
 
     override fun openSearchInTopic(postId: Int) {
-        getPostById(postId)?.let {
+        getThemePostById(postId)?.let {
+            val post = it.post
             linkHandler.handle(
                 SearchSettings.default().copy(
                     forums = listOf(it.forumId),
-                    topics = listOf(it.topicId),
+                    topics = listOf(post.topicId),
                     source = SearchSettings.SOURCE_CONTENT.first,
-                    nick = it.nick,
+                    nick = post.nick,
                     result = SearchSettings.RESULT_POSTS.first,
                     subforums = SearchSettings.SUB_FORUMS_FALSE
                 ).toUrl(),

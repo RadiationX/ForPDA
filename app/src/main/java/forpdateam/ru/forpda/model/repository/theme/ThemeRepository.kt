@@ -48,9 +48,9 @@ class ThemeRepository(
     private fun saveUsers(page: ThemePage) {
         val forumUsers = page.posts.map { post ->
             ForumUser(
-                id = post.userId,
-                nick = post.nick,
-                avatar = post.avatar
+                id = post.post.userId,
+                nick = post.post.nick,
+                avatar = post.post.avatar
             )
         }
         forumUsersCache.saveUsers(forumUsers)
