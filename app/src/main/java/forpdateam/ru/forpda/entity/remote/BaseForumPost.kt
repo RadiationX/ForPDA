@@ -6,7 +6,7 @@ package forpdateam.ru.forpda.entity.remote
 
 class BaseForumPost(
     val date: String,
-    val avatar: String,
+    val avatar: String?,
     val nick: String,
     val groupColor: String,
     val group: String,

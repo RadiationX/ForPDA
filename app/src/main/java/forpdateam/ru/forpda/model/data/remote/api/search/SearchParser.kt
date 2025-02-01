@@ -83,7 +83,7 @@ class SearchParser(
                 date = matcher.group(5),
                 isOnline = matcher.group(7).contains("green"),
                 avatar = matcher.group(8).let {
-                    if (it.isNotEmpty()) "https://s.4pda.to/forum/uploads/$it" else it
+                    if (it.isNotEmpty()) "https://s.4pda.to/forum/uploads/$it" else null
                 },
                 nick = matcher.group(9).fromHtml()!!,
                 userId = matcher.group(10).toInt(),
