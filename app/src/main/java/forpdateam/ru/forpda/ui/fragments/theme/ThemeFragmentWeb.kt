@@ -16,7 +16,7 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.webview.CustomWebChromeClient
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient
 import forpdateam.ru.forpda.common.webview.DialogsHelper
-import forpdateam.ru.forpda.entity.remote.IBaseForumPost
+import forpdateam.ru.forpda.entity.remote.BaseForumPost
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.presentation.theme.ThemeJsInterface
 import forpdateam.ru.forpda.presentation.theme.ThemePresenter
@@ -234,15 +234,15 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
         actions.add("setLoadAction(" + ThemePresenter.ActionState.NORMAL + ");")
     }
 
-    override fun deletePostUi(post: IBaseForumPost) {
+    override fun deletePostUi(post: BaseForumPost) {
         webView.evalJs("deletePost(" + post.id + ");")
     }
 
-    override fun openAnchorDialog(post: IBaseForumPost, anchorName: String) {
+    override fun openAnchorDialog(post: BaseForumPost, anchorName: String) {
         dialogsHelper.openAnchorDialog(presenter, post, anchorName)
     }
 
-    override fun openSpoilerLinkDialog(post: IBaseForumPost, spoilNumber: String) {
+    override fun openSpoilerLinkDialog(post: BaseForumPost, spoilNumber: String) {
         dialogsHelper.openSpoilerLinkDialog(presenter, post, spoilNumber)
     }
 

@@ -37,7 +37,7 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.webview.CustomWebChromeClient
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient
 import forpdateam.ru.forpda.common.webview.DialogsHelper
-import forpdateam.ru.forpda.entity.remote.IBaseForumPost
+import forpdateam.ru.forpda.entity.remote.BaseForumPost
 import forpdateam.ru.forpda.entity.remote.search.SearchItem
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings

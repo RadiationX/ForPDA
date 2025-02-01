@@ -3,7 +3,7 @@ package forpdateam.ru.forpda.presentation.theme
 import forpdateam.ru.forpda.common.mvp.IBaseView
 import forpdateam.ru.forpda.entity.app.EditPostSyncData
 import forpdateam.ru.forpda.entity.app.TabNotification
-import forpdateam.ru.forpda.entity.remote.IBaseForumPost
+import forpdateam.ru.forpda.entity.remote.BaseForumPost
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import moxy.viewstate.strategy.AddToEndSingleStrategy
@@ -81,40 +81,40 @@ interface ThemeView : IBaseView {
     fun selectPage()
 
     @StateStrategyType(SkipStrategy::class)
-    fun deletePostUi(post: IBaseForumPost)
+    fun deletePostUi(post: BaseForumPost)
 
     @StateStrategyType(SkipStrategy::class)
-    fun showUserMenu(post: IBaseForumPost)
+    fun showUserMenu(post: BaseForumPost)
 
     @StateStrategyType(SkipStrategy::class)
-    fun showReputationMenu(post: IBaseForumPost)
+    fun showReputationMenu(post: BaseForumPost)
 
     @StateStrategyType(SkipStrategy::class)
-    fun showPostMenu(post: IBaseForumPost)
+    fun showPostMenu(post: BaseForumPost)
 
     @StateStrategyType(SkipStrategy::class)
-    fun reportPost(post: IBaseForumPost)
+    fun reportPost(post: BaseForumPost)
 
     @StateStrategyType(SkipStrategy::class)
     fun insertText(text: String)
 
     @StateStrategyType(SkipStrategy::class)
-    fun deletePost(post: IBaseForumPost)
+    fun deletePost(post: BaseForumPost)
 
     @StateStrategyType(SkipStrategy::class)
-    fun editPost(post: IBaseForumPost)
+    fun editPost(post: BaseForumPost)
 
     @StateStrategyType(SkipStrategy::class)
-    fun votePost(post: IBaseForumPost, type: Boolean)
+    fun votePost(post: BaseForumPost, type: Boolean)
 
     @StateStrategyType(SkipStrategy::class)
-    fun showChangeReputation(post: IBaseForumPost, type: Boolean)
+    fun showChangeReputation(post: BaseForumPost, type: Boolean)
 
     @StateStrategyType(SkipStrategy::class)
-    fun openAnchorDialog(post: IBaseForumPost, anchorName: String)
+    fun openAnchorDialog(post: BaseForumPost, anchorName: String)
 
     @StateStrategyType(SkipStrategy::class)
-    fun openSpoilerLinkDialog(post: IBaseForumPost, spoilNumber: String)
+    fun openSpoilerLinkDialog(post: BaseForumPost, spoilNumber: String)
 
     @StateStrategyType(SkipStrategy::class)
     fun toast(text: String)

@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import forpdateam.ru.forpda.App.Companion.get
 import forpdateam.ru.forpda.R
-import forpdateam.ru.forpda.entity.remote.IBaseForumPost
+import forpdateam.ru.forpda.entity.remote.BaseForumPost
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.preferences.OtherPreferencesHolder
 import forpdateam.ru.forpda.presentation.theme.IThemePresenter
@@ -23,34 +23,34 @@ class ThemeDialogsHelper_V2(
     private val authHolder: AuthHolder,
     private val otherPreferencesHolder: OtherPreferencesHolder
 ) {
-    private val userMenu = DynamicDialogMenu<IThemePresenter, IBaseForumPost>()
-    private val reputationMenu = DynamicDialogMenu<IThemePresenter, IBaseForumPost>()
-    private val postMenu = DynamicDialogMenu<IThemePresenter, IBaseForumPost>()
+    private val userMenu = DynamicDialogMenu<IThemePresenter, BaseForumPost>()
+    private val reputationMenu = DynamicDialogMenu<IThemePresenter, BaseForumPost>()
+    private val postMenu = DynamicDialogMenu<IThemePresenter, BaseForumPost>()
 
     init {
         userMenu.addItem(
             get().getString(R.string.profile)
-        ) { context1: IThemePresenter, data: IBaseForumPost -> context1.openProfile(data.id) }
+        ) { context1: IThemePresenter, data: BaseForumPost -> context1.openProfile(data.id) }
         userMenu.addItem(
             get().getString(R.string.reputation)
-        ) { context1: IThemePresenter, data: IBaseForumPost -> context1.onReputationMenuClick(data.id) }
+        ) { context1: IThemePresenter, data: BaseForumPost -> context1.onReputationMenuClick(data.id) }
         userMenu.addItem(
             get().getString(R.string.pm_qms)
-        ) { context1: IThemePresenter, data: IBaseForumPost -> context1.openQms(data.id) }
+        ) { context1: IThemePresenter, data: BaseForumPost -> context1.openQms(data.id) }
         userMenu.addItem(
             get().getString(R.string.user_themes)
-        ) { context1: IThemePresenter, data: IBaseForumPost -> context1.openSearchUserTopic(data.id) }
+        ) { context1: IThemePresenter, data: BaseForumPost -> context1.openSearchUserTopic(data.id) }
         userMenu.addItem(
             get().getString(R.string.messages_in_this_theme)
-        ) { context1: IThemePresenter, data: IBaseForumPost -> context1.openSearchInTopic(data.id) }
+        ) { context1: IThemePresenter, data: BaseForumPost -> context1.openSearchInTopic(data.id) }
         userMenu.addItem(
             get().getString(R.string.user_messages)
-        ) { context1: IThemePresenter, data: IBaseForumPost -> context1.openSearchUserMessages(data.id) }
+        ) { context1: IThemePresenter, data: BaseForumPost -> context1.openSearchUserMessages(data.id) }
 
 
         reputationMenu.addItem(
             get().getString(R.string.increase)
-        ) { context1: IThemePresenter, data: IBaseForumPost ->
+        ) { context1: IThemePresenter, data: BaseForumPost ->
             context1.onChangeReputationClick(
                 data.id,
                 true
@@ -58,10 +58,10 @@ class ThemeDialogsHelper_V2(
         }
         reputationMenu.addItem(
             get().getString(R.string.look)
-        ) { context1: IThemePresenter, data: IBaseForumPost -> context1.openReputationHistory(data.id) }
+        ) { context1: IThemePresenter, data: BaseForumPost -> context1.openReputationHistory(data.id) }
         reputationMenu.addItem(
             get().getString(R.string.decrease)
-        ) { context1: IThemePresenter, data: IBaseForumPost ->
+        ) { context1: IThemePresenter, data: BaseForumPost ->
             context1.onChangeReputationClick(
                 data.id,
                 false
@@ -70,31 +70,31 @@ class ThemeDialogsHelper_V2(
 
         postMenu.addItem(
             get().getString(R.string.reply)
-        ) { context1: IThemePresenter, data: IBaseForumPost -> context1.onReplyPostClick(data.id) }
+        ) { context1: IThemePresenter, data: BaseForumPost -> context1.onReplyPostClick(data.id) }
         postMenu.addItem(
             get().getString(R.string.quote_from_clipboard)
-        ) { context1: IThemePresenter, data: IBaseForumPost -> context1.quoteFromBuffer(data.id) }
+        ) { context1: IThemePresenter, data: BaseForumPost -> context1.quoteFromBuffer(data.id) }
         postMenu.addItem(
             get().getString(R.string.report)
-        ) { context1: IThemePresenter, data: IBaseForumPost -> context1.onReportPostClick(data.id) }
+        ) { context1: IThemePresenter, data: BaseForumPost -> context1.onReportPostClick(data.id) }
         postMenu.addItem(
             get().getString(R.string.edit)
-        ) { context1: IThemePresenter, data: IBaseForumPost -> context1.onEditPostClick(data.id) }
+        ) { context1: IThemePresenter, data: BaseForumPost -> context1.onEditPostClick(data.id) }
         postMenu.addItem(
             get().getString(R.string.delete)
-        ) { context1: IThemePresenter, data: IBaseForumPost -> context1.onDeletePostClick(data.id) }
+        ) { context1: IThemePresenter, data: BaseForumPost -> context1.onDeletePostClick(data.id) }
         postMenu.addItem(
             get().getString(R.string.copy_link)
-        ) { context1: IThemePresenter, data: IBaseForumPost -> context1.copyPostLink(data.id) }
+        ) { context1: IThemePresenter, data: BaseForumPost -> context1.copyPostLink(data.id) }
         postMenu.addItem(
             get().getString(R.string.create_note)
-        ) { context1: IThemePresenter, data: IBaseForumPost -> context1.createNote(data.id) }
+        ) { context1: IThemePresenter, data: BaseForumPost -> context1.createNote(data.id) }
         postMenu.addItem(
             get().getString(R.string.share)
-        ) { context1: IThemePresenter, data: IBaseForumPost -> context1.sharePostLink(data.id) }
+        ) { context1: IThemePresenter, data: BaseForumPost -> context1.sharePostLink(data.id) }
     }
 
-    fun showUserMenu(presenter: IThemePresenter, post: IBaseForumPost) {
+    fun showUserMenu(presenter: IThemePresenter, post: BaseForumPost) {
         userMenu.disallowAll()
         userMenu.allow(0)
         userMenu.allow(1)
@@ -108,7 +108,7 @@ class ThemeDialogsHelper_V2(
         userMenu.show(context, presenter, post)
     }
 
-    fun showReputationMenu(presenter: IThemePresenter, post: IBaseForumPost) {
+    fun showReputationMenu(presenter: IThemePresenter, post: BaseForumPost) {
         reputationMenu.disallowAll()
         if (!authHolder.get().isAuth() || post.canPlusRep) {
             reputationMenu.allow(0)
@@ -121,7 +121,7 @@ class ThemeDialogsHelper_V2(
         reputationMenu.show(context, title, presenter, post)
     }
 
-    fun showPostMenu(presenter: IThemePresenter, post: IBaseForumPost) {
+    fun showPostMenu(presenter: IThemePresenter, post: BaseForumPost) {
         postMenu.disallowAll()
         if (!authHolder.get().isAuth() || post.canQuote) {
             postMenu.allow(0)
@@ -138,7 +138,7 @@ class ThemeDialogsHelper_V2(
         postMenu.show(context, presenter, post)
     }
 
-    fun tryReportPost(presenter: IThemePresenter, post: IBaseForumPost) {
+    fun tryReportPost(presenter: IThemePresenter, post: BaseForumPost) {
         if (otherPreferencesHolder.getShowReportWarning()) {
             AlertDialog.Builder(context)
                 .setTitle(R.string.attention)
@@ -154,7 +154,7 @@ class ThemeDialogsHelper_V2(
     }
 
     @SuppressLint("InflateParams")
-    fun showReportDialog(presenter: IThemePresenter, post: IBaseForumPost) {
+    fun showReportDialog(presenter: IThemePresenter, post: BaseForumPost) {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val layout = checkNotNull(inflater.inflate(R.layout.report_layout, null))
 
@@ -175,7 +175,7 @@ class ThemeDialogsHelper_V2(
             .show()
     }
 
-    fun deletePost(presenter: IThemePresenter, post: IBaseForumPost) {
+    fun deletePost(presenter: IThemePresenter, post: BaseForumPost) {
         AlertDialog.Builder(context)
             .setMessage(String.format(get().getString(R.string.ask_delete_post_Nick), post.nick))
             .setPositiveButton(
@@ -186,7 +186,7 @@ class ThemeDialogsHelper_V2(
     }
 
     @SuppressLint("InflateParams")
-    fun changeReputation(presenter: IThemePresenter, post: IBaseForumPost, type: Boolean) {
+    fun changeReputation(presenter: IThemePresenter, post: BaseForumPost, type: Boolean) {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val layout = checkNotNull(inflater.inflate(R.layout.reputation_change_layout, null))
 
@@ -213,7 +213,7 @@ class ThemeDialogsHelper_V2(
             .show()
     }
 
-    fun votePost(presenter: IThemePresenter, post: IBaseForumPost, type: Boolean) {
+    fun votePost(presenter: IThemePresenter, post: BaseForumPost, type: Boolean) {
         AlertDialog.Builder(context)
             .setMessage(
                 String.format(
@@ -229,7 +229,7 @@ class ThemeDialogsHelper_V2(
             .show()
     }
 
-    fun openAnchorDialog(presenter: IThemePresenter, post: IBaseForumPost, anchorName: String) {
+    fun openAnchorDialog(presenter: IThemePresenter, post: BaseForumPost, anchorName: String) {
         AlertDialog.Builder(context)
             .setTitle(R.string.link_to_anchor)
             .setPositiveButton(
@@ -246,7 +246,7 @@ class ThemeDialogsHelper_V2(
 
     fun openSpoilerLinkDialog(
         presenter: IThemePresenter,
-        post: IBaseForumPost,
+        post: BaseForumPost,
         spoilNumber: String
     ) {
         AlertDialog.Builder(context)
