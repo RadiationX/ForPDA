@@ -10,46 +10,60 @@ import java.util.regex.Pattern
 /**
  * Created by radiationx on 01.02.17.
  */
-class SearchSettings {
-    var resourceType: String
-    var result: String?
-    var sort: String?
-    var source: String?
-     var query = ""
-     var nick:String? = ""
-    var subforums: String?
-    var excludeTrash: Int = 0
-    var st: Int = 0
-    private val forums: MutableList<String?>
-    private val topics: MutableList<String?>
-
-    init {
-        resourceType = RESOURCE_FORUM.first
-        result = RESULT_TOPICS.first
-        sort = SORT_DD.first
-        source = SOURCE_TITLES.first
-        subforums = SUB_FORUMS_TRUE
-        forums = ArrayList()
-        topics = ArrayList()
-    }
-
-
-
-
-    fun addForum(forum: String?) {
-        forums.add(forum)
-    }
-
-
-    fun addTopic(topic: String?) {
-        topics.add(topic)
-    }
+data class SearchSettings(
+    val resourceType: String,
+    val result: String?,
+    val sort: String?,
+    val source: String?,
+    val query: String?,
+    val nick: String?,
+    val subforums: String?,
+    val excludeTrash: Int,
+    val st: Int,
+    val forums: List<Int>,
+    val topics: List<Int>
+) {
 
     fun toUrl(): String {
         return Companion.toUrl(this)
     }
 
+    private class Builder(
+        var resourceType: String = RESOURCE_FORUM.first,
+        var result: String? = RESULT_TOPICS.first,
+        var sort: String? = SORT_DD.first,
+        var source: String? = SOURCE_TITLES.first,
+        var query: String? = null,
+        var nick: String? = null,
+        var subforums: String? = SUB_FORUMS_TRUE,
+        var excludeTrash: Int = 0,
+        var st: Int = 0,
+        var forums: MutableList<Int> = mutableListOf(),
+        var topics: MutableList<Int> = mutableListOf()
+    ) {
+
+        fun build(): SearchSettings {
+            return SearchSettings(
+                resourceType = resourceType,
+                result = result,
+                sort = sort,
+                source = source,
+                query = query,
+                nick = nick,
+                subforums = subforums,
+                excludeTrash = excludeTrash,
+                st = st,
+                forums = forums,
+                topics = topics
+            )
+        }
+    }
+
     companion object {
+
+        private val _default by lazy { Builder().build() }
+        fun default(): SearchSettings = _default
+
         private val argsPattern: Pattern =
             Pattern.compile("(?:\\?|\\&)([^=]*?)=([\\s\\S]*?)(?=&| |$)")
         val RESOURCE_NEWS: Pair<String, String> = Pair("news", "Новости")
@@ -86,64 +100,58 @@ class SearchSettings {
         const val SUB_FORUMS_FALSE: String = "0"
 
         fun parseSettings(url: String): SearchSettings {
-            return parseSettings(SearchSettings(), url)
-        }
-
-        fun parseSettings(settings: SearchSettings, url: String): SearchSettings {
+            val builder = Builder()
             val matcher = argsPattern.matcher(url)
-            var name: String
-            var value: String?
             while (matcher.find()) {
-                name = matcher.group(1).lowercase(Locale.getDefault())
-                value = matcher.group(2)
+                val name = matcher.group(1).lowercase(Locale.getDefault())
+                val value = matcher.group(2)
                 when (name) {
-                    ARG_ST -> settings.st = value.toInt()
-                    ARG_RESULT -> settings.result = value
-                    ARG_SORT -> settings.sort = value
-                    ARG_SOURCE -> settings.source = value
+                    ARG_ST -> builder.st = value.toInt()
+                    ARG_RESULT -> builder.result = value
+                    ARG_SORT -> builder.sort = value
+                    ARG_SOURCE -> builder.source = value
                     ARG_QUERY_FORUM -> {
-                        settings.resourceType = RESOURCE_FORUM.first
+                        builder.resourceType = RESOURCE_FORUM.first
                         try {
-                            settings.query = URLDecoder.decode(value, "windows-1251")
+                            builder.query = URLDecoder.decode(value, "windows-1251")
                         } catch (e: UnsupportedEncodingException) {
                             e.printStackTrace()
                         }
                     }
 
                     ARG_QUERY_NEWS -> {
-                        settings.resourceType = RESOURCE_NEWS.first
+                        builder.resourceType = RESOURCE_NEWS.first
                         try {
-                            settings.query = URLDecoder.decode(value, "windows-1251")
+                            builder.query = URLDecoder.decode(value, "windows-1251")
                         } catch (e: UnsupportedEncodingException) {
                             e.printStackTrace()
                         }
                     }
 
                     ARG_NICK -> try {
-                        settings.nick = URLDecoder.decode(value, "windows-1251")
+                        builder.nick = URLDecoder.decode(value, "windows-1251")
                     } catch (e: UnsupportedEncodingException) {
                         e.printStackTrace()
                     }
 
-                    ARG_SUB_FORUMS -> settings.subforums = value
-                    ARG_EXCLUDE_TRASH -> settings.excludeTrash =
-                        value.toInt()
+                    ARG_SUB_FORUMS -> builder.subforums = value
+                    ARG_EXCLUDE_TRASH -> builder.excludeTrash = value.toInt()
                 }
 
                 if (name == ARG_FORUMS || name == ARG_FORUMS_SIMPLE) {
                     try {
-                        settings.addForum(value)
+                        builder.forums.add(value.toInt())
                     } catch (ignore: NumberFormatException) {
                     }
                 }
                 if (name == ARG_TOPICS || name == ARG_TOPICS_SIMPLE) {
                     try {
-                        settings.addTopic(value)
+                        builder.topics.add(value.toInt())
                     } catch (ignore: NumberFormatException) {
                     }
                 }
             }
-            return settings
+            return builder.build()
         }
 
         fun toUrl(settings: SearchSettings): String {
@@ -167,7 +175,7 @@ class SearchSettings {
                 builder.appendQueryParameter(ARG_RESULT, settings.result)
                 builder.appendQueryParameter(ARG_SORT, settings.sort)
                 builder.appendQueryParameter(ARG_SOURCE, settings.source)
-                if (settings.query != null && !settings.query!!.isEmpty()) {
+                if (!settings.query.isNullOrEmpty()) {
                     try {
                         builder.appendQueryParameter(
                             ARG_QUERY_FORUM,
@@ -177,7 +185,7 @@ class SearchSettings {
                         e.printStackTrace()
                     }
                 }
-                if (settings.nick != null && !settings.nick!!.isEmpty()) {
+                if (!settings.nick.isNullOrEmpty()) {
                     try {
                         builder.appendQueryParameter(
                             ARG_NICK,
@@ -188,15 +196,16 @@ class SearchSettings {
                     }
                 }
 
-                for (forum in settings.forums) builder.appendQueryParameter(ARG_FORUMS, forum)
+                for (forum in settings.forums) {
+                    builder.appendQueryParameter(ARG_FORUMS, forum.toString())
+                }
 
-                for (topic in settings.topics) builder.appendQueryParameter(ARG_TOPICS, topic)
+                for (topic in settings.topics) {
+                    builder.appendQueryParameter(ARG_TOPICS, topic.toString())
+                }
 
                 if (settings.subforums != null) {
-                    builder.appendQueryParameter(
-                        ARG_SUB_FORUMS,
-                        settings.subforums
-                    )
+                    builder.appendQueryParameter(ARG_SUB_FORUMS, settings.subforums)
                 }
                 builder.appendQueryParameter(ARG_NO_FORM, "1")
                 builder.appendQueryParameter(ARG_ST, settings.st.toString())

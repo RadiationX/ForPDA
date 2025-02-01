@@ -666,35 +666,44 @@ class ThemePresenter(
 
     override fun openSearchUserTopic(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle(SearchSettings().apply {
-                source = SearchSettings.SOURCE_ALL.first
-                nick = it.nick
-                result = SearchSettings.RESULT_TOPICS.first
-            }.toUrl(), router)
+            linkHandler.handle(
+                SearchSettings.default().copy(
+                    source = SearchSettings.SOURCE_ALL.first,
+                    nick = it.nick,
+                    result = SearchSettings.RESULT_TOPICS.first
+                ).toUrl(),
+                router
+            )
         }
     }
 
     override fun openSearchInTopic(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle(SearchSettings().apply {
-                addForum(Integer.toString(it.forumId))
-                addTopic(Integer.toString(it.topicId))
-                source = SearchSettings.SOURCE_CONTENT.first
-                nick = it.nick
-                result = SearchSettings.RESULT_POSTS.first
-                subforums = SearchSettings.SUB_FORUMS_FALSE
-            }.toUrl(), router)
+            linkHandler.handle(
+                SearchSettings.default().copy(
+                    forums = listOf(it.forumId),
+                    topics = listOf(it.topicId),
+                    source = SearchSettings.SOURCE_CONTENT.first,
+                    nick = it.nick,
+                    result = SearchSettings.RESULT_POSTS.first,
+                    subforums = SearchSettings.SUB_FORUMS_FALSE
+                ).toUrl(),
+                router
+            )
         }
     }
 
     override fun openSearchUserMessages(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle(SearchSettings().apply {
-                source = SearchSettings.SOURCE_CONTENT.first
-                nick = it.nick
-                result = SearchSettings.RESULT_POSTS.first
-                subforums = SearchSettings.SUB_FORUMS_FALSE
-            }.toUrl(), router)
+            linkHandler.handle(
+                SearchSettings.default().copy(
+                    source = SearchSettings.SOURCE_CONTENT.first,
+                    nick = it.nick,
+                    result = SearchSettings.RESULT_POSTS.first,
+                    subforums = SearchSettings.SUB_FORUMS_FALSE
+                ).toUrl(),
+                router
+            )
         }
     }
 

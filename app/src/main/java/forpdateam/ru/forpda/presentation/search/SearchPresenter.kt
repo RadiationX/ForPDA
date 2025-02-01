@@ -69,7 +69,7 @@ class SearchPresenter(
         FIELD_SOURCE to sourceItems
     )
 
-    private var settings = SearchSettings()
+    private var settings = SearchSettings.default()
 
     private var currentData: SearchResult? = null
 
@@ -79,7 +79,7 @@ class SearchPresenter(
 
     fun initSearchSettings(url: String?) {
         url?.let {
-            settings = SearchSettings.parseSettings(settings, it)
+            settings = SearchSettings.parseSettings(it)
         }
     }
 
@@ -152,14 +152,18 @@ class SearchPresenter(
     }
 
     fun search(query: String, nick: String) {
-        settings.st = 0
-        settings.query = query
-        settings.nick = nick
+        settings = settings.copy(
+            st = 0,
+            query = query,
+            nick = nick
+        )
         refreshData()
     }
 
     fun search(pageNumber: Int) {
-        settings.st = pageNumber
+        settings = settings.copy(
+            st = pageNumber
+        )
         refreshData()
     }
 
@@ -169,12 +173,16 @@ class SearchPresenter(
                 val name = resourceItems[position]
                 when {
                     checkName(name, SearchSettings.RESOURCE_NEWS) -> {
-                        settings.resourceType = SearchSettings.RESOURCE_NEWS.first
+                        settings = settings.copy(
+                            resourceType = SearchSettings.RESOURCE_NEWS.first
+                        )
                         viewState.setNewsMode()
                     }
 
                     checkName(name, SearchSettings.RESOURCE_FORUM) -> {
-                        settings.resourceType = SearchSettings.RESOURCE_FORUM.first
+                        settings = settings.copy(
+                            resourceType = SearchSettings.RESOURCE_FORUM.first
+                        )
                         viewState.setForumMode()
                     }
                 }
@@ -183,39 +191,47 @@ class SearchPresenter(
             FIELD_RESULT -> {
                 val name = resultItems[position]
                 when {
-                    checkName(name, SearchSettings.RESULT_TOPICS) -> settings.result =
-                        SearchSettings.RESULT_TOPICS.first
+                    checkName(name, SearchSettings.RESULT_TOPICS) -> {
+                        settings = settings.copy(result = SearchSettings.RESULT_TOPICS.first)
+                    }
 
-                    checkName(name, SearchSettings.RESULT_POSTS) -> settings.result =
-                        SearchSettings.RESULT_POSTS.first
+                    checkName(name, SearchSettings.RESULT_POSTS) -> {
+                        settings = settings.copy(result = SearchSettings.RESULT_POSTS.first)
+                    }
                 }
             }
 
             FIELD_SORT -> {
                 val name = sortItems[position]
                 when {
-                    checkName(name, SearchSettings.SORT_DA) -> settings.sort =
-                        SearchSettings.SORT_DA.first
+                    checkName(name, SearchSettings.SORT_DA) -> {
+                        settings = settings.copy(sort = SearchSettings.SORT_DA.first)
+                    }
 
-                    checkName(name, SearchSettings.SORT_DD) -> settings.sort =
-                        SearchSettings.SORT_DD.first
+                    checkName(name, SearchSettings.SORT_DD) -> {
+                        settings = settings.copy(sort = SearchSettings.SORT_DD.first)
+                    }
 
-                    checkName(name, SearchSettings.SORT_REL) -> settings.sort =
-                        SearchSettings.SORT_REL.first
+                    checkName(name, SearchSettings.SORT_REL) -> {
+                        settings = settings.copy(sort = SearchSettings.SORT_REL.first)
+                    }
                 }
             }
 
             FIELD_SOURCE -> {
                 val name = sourceItems[position]
                 when {
-                    checkName(name, SearchSettings.SOURCE_ALL) -> settings.source =
-                        SearchSettings.SOURCE_ALL.first
+                    checkName(name, SearchSettings.SOURCE_ALL) -> {
+                        settings = settings.copy(source = SearchSettings.SOURCE_ALL.first)
+                    }
 
-                    checkName(name, SearchSettings.SOURCE_TITLES) -> settings.source =
-                        SearchSettings.SOURCE_TITLES.first
+                    checkName(name, SearchSettings.SOURCE_TITLES) -> {
+                        settings = settings.copy(source = SearchSettings.SOURCE_TITLES.first)
+                    }
 
-                    checkName(name, SearchSettings.SOURCE_CONTENT) -> settings.source =
-                        SearchSettings.SOURCE_CONTENT.first
+                    checkName(name, SearchSettings.SOURCE_CONTENT) -> {
+                        settings = settings.copy(source = SearchSettings.SOURCE_CONTENT.first)
+                    }
                 }
             }
         }
@@ -227,11 +243,12 @@ class SearchPresenter(
 
 
     fun saveSettings() {
-        val saveSettings = SearchSettings()
-        saveSettings.resourceType = settings.resourceType
-        saveSettings.result = settings.result
-        saveSettings.sort = settings.sort
-        saveSettings.source = settings.source
+        val saveSettings = SearchSettings.default().copy(
+            resourceType = settings.resourceType,
+            result = settings.result,
+            sort = settings.sort,
+            source = settings.source
+        )
         val saveUrl = saveSettings.toUrl()
         otherPreferencesHolder.setSearchSettings(saveUrl)
     }
@@ -416,35 +433,44 @@ class SearchPresenter(
 
     override fun openSearchUserTopic(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle(SearchSettings().apply {
-                source = SearchSettings.SOURCE_ALL.first
-                nick = it.nick
-                result = SearchSettings.RESULT_TOPICS.first
-            }.toUrl(), router)
+            linkHandler.handle(
+                SearchSettings.default().copy(
+                    source = SearchSettings.SOURCE_ALL.first,
+                    nick = it.nick,
+                    result = SearchSettings.RESULT_TOPICS.first
+                ).toUrl(),
+                router
+            )
         }
     }
 
     override fun openSearchInTopic(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle(SearchSettings().apply {
-                addForum(Integer.toString(it.forumId))
-                addTopic(Integer.toString(it.topicId))
-                source = SearchSettings.SOURCE_CONTENT.first
-                nick = it.nick
-                result = SearchSettings.RESULT_POSTS.first
-                subforums = SearchSettings.SUB_FORUMS_FALSE
-            }.toUrl(), router)
+            linkHandler.handle(
+                SearchSettings.default().copy(
+                    forums = listOf(it.forumId),
+                    topics = listOf(it.topicId),
+                    source = SearchSettings.SOURCE_CONTENT.first,
+                    nick = it.nick,
+                    result = SearchSettings.RESULT_POSTS.first,
+                    subforums = SearchSettings.SUB_FORUMS_FALSE
+                ).toUrl(),
+                router
+            )
         }
     }
 
     override fun openSearchUserMessages(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle(SearchSettings().apply {
-                source = SearchSettings.SOURCE_CONTENT.first
-                nick = it.nick
-                result = SearchSettings.RESULT_POSTS.first
-                subforums = SearchSettings.SUB_FORUMS_FALSE
-            }.toUrl(), router)
+            linkHandler.handle(
+                SearchSettings.default().copy(
+                    source = SearchSettings.SOURCE_CONTENT.first,
+                    nick = it.nick,
+                    result = SearchSettings.RESULT_POSTS.first,
+                    subforums = SearchSettings.SUB_FORUMS_FALSE
+                ).toUrl(),
+                router
+            )
         }
     }
 

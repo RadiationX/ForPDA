@@ -596,7 +596,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
                 titleBuilder.append(" пользователя \"").append(settings.nick).append("\"")
             }
         }
-        if (!settings.query.isEmpty()) {
+        if (!settings.query.isNullOrEmpty()) {
             titleBuilder.append(" по запросу \"").append(settings.query).append("\"")
         }
         setTitle(titleBuilder.toString())
