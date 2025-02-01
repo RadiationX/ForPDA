@@ -3,7 +3,7 @@ package forpdateam.ru.forpda.model.data.remote.api.mentions
 import forpdateam.ru.forpda.entity.remote.mentions.MentionItem
 import forpdateam.ru.forpda.entity.remote.mentions.MentionsData
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
-import forpdateam.ru.forpda.extensions.findAll
+import forpdateam.ru.forpda.extensions.map
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
@@ -14,11 +14,11 @@ class MentionsParser(
 
     private val scope = ParserPatterns.Mentions
 
-    fun parse(response: String): MentionsData = MentionsData().also { data ->
-        patternProvider
+    fun parse(response: String): MentionsData {
+        val items = patternProvider
             .getPattern(scope.scope, scope.main)
             .matcher(response)
-            .findAll { matcher ->
+            .map { matcher ->
                 val state = if (matcher.group(1) == "read") {
                     MentionItem.STATE_READ
                 } else {
@@ -29,7 +29,7 @@ class MentionsParser(
                 } else {
                     MentionItem.TYPE_NEWS
                 }
-                data.items.add(MentionItem(
+                MentionItem(
                     state = state,
                     type = type,
                     link = matcher.group(3),
@@ -37,10 +37,12 @@ class MentionsParser(
                     desc = matcher.group(5).fromHtml().orEmpty(),
                     date = matcher.group(6),
                     nick = matcher.group(7).fromHtml().orEmpty()
-                ).apply {
-
-                })
+                )
             }
-        data.pagination = Pagination.parseForum(response)
+
+        return MentionsData(
+            items = items,
+            pagination = Pagination.parseForum(response)
+        )
     }
 }
