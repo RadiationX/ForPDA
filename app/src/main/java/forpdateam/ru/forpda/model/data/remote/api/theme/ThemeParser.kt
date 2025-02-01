@@ -89,7 +89,7 @@ class ThemeParser(
                     avatar = matcher.group(8).let {
                         if (it.isNotEmpty()) "https://s.4pda.to/forum/uploads/$it" else it
                     },
-                    nick = matcher.group(9).fromHtml(),
+                    nick = matcher.group(9).fromHtml()!!,
                     userId = matcher.group(10).toInt(),
                     isCurator = matcher.group(11) != null,
                     groupColor = matcher.group(12) ?: "black",

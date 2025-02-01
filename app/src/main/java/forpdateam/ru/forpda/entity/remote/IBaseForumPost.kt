@@ -7,13 +7,13 @@ package forpdateam.ru.forpda.entity.remote
 interface IBaseForumPost {
     val topicId: Int
     val id: Int
-    val date: String?
-    val avatar: String?
-    val nick: String?
-    val groupColor: String?
-    val group: String?
+    val date: String
+    val avatar: String
+    val nick: String
+    val groupColor: String
+    val group: String
     val userId: Int
-    val reputation: String?
+    val reputation: String
     val body: String?
     val isCurator: Boolean
     val isOnline: Boolean
