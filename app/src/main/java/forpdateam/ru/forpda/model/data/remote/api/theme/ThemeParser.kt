@@ -9,6 +9,7 @@ import forpdateam.ru.forpda.entity.remote.theme.ThemePost
 import forpdateam.ru.forpda.extensions.findAll
 import forpdateam.ru.forpda.extensions.findOnce
 import forpdateam.ru.forpda.extensions.map
+import forpdateam.ru.forpda.extensions.mapOnce
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
@@ -111,60 +112,65 @@ class ThemeParser(
             }
         page.posts.addAll(posts)
 
-        patternProvider
+        page.poll = patternProvider
             .getPattern(scope.scope, scope.poll_main)
             .matcher(response)
-            .findOnce { matcher ->
+            .mapOnce { matcher ->
                 val isResult = matcher.group().contains("<img")
-
-                val poll = Poll()
-                poll.isResult = isResult
-                poll.title = matcher.group(1).fromHtml()
 
                 val questions = patternProvider
                     .getPattern(scope.scope, scope.poll_questions)
                     .matcher(matcher.group(2))
                     .map {
-                        PollQuestion().apply {
-                            title = it.group(1).fromHtml()
-                            val items = patternProvider
-                                .getPattern(scope.scope, scope.poll_question_item)
-                                .matcher(it.group(2))
-                                .map {
-                                    PollQuestionItem().apply {
-                                        if (!isResult) {
-                                            type = it.group(1)
-                                            name = it.group(2).fromHtml()
-                                            value = it.group(3).toInt()
-                                            title = it.group(4).fromHtml()
-                                        } else {
-                                            title = it.group(5).fromHtml()
-                                            votes = it.group(6).toInt()
-                                            percent = java.lang.Float.parseFloat(
-                                                it.group(7).replace(",", ".")
-                                            )
-                                        }
-                                    }
+                        val items = patternProvider
+                            .getPattern(scope.scope, scope.poll_question_item)
+                            .matcher(it.group(2))
+                            .map {
+                                if (isResult) {
+                                    PollQuestionItem.Result(
+                                        title = it.group(5).fromHtml()!!,
+                                        votes = it.group(6).toInt(),
+                                        percent = it.group(7).replace(",", ".").toFloat()
+                                    )
+                                } else {
+                                    PollQuestionItem.Regular(
+                                        type = it.group(1),
+                                        name = it.group(2).fromHtml()!!,
+                                        value = it.group(3).toInt(),
+                                        title = it.group(4).fromHtml()!!,
+                                    )
                                 }
-                            this.questionItems.addAll(items)
-                        }
+                            }
+                        PollQuestion(
+                            title = it.group(1).fromHtml()!!,
+                            questionItems = items
+                        )
                     }
-                poll.questions.addAll(questions)
 
+                var voteButton = false
+                var showResultsButton = false
+                var showPollButton = false
                 patternProvider
                     .getPattern(scope.scope, scope.poll_buttons)
                     .matcher(matcher.group(4))
                     .findAll {
                         val value = it.group(1)
                         when {
-                            value.contains("Голосовать") -> poll.voteButton = true
-                            value.contains("результаты") -> poll.showResultsButton = true
-                            value.contains("пункты опроса") -> poll.showPollButton = true
+                            value.contains("Голосовать") -> voteButton = true
+                            value.contains("результаты") -> showResultsButton = true
+                            value.contains("пункты опроса") -> showPollButton = true
                         }
                     }
 
-                poll.votesCount = matcher.group(3).toInt()
-                page.poll = poll
+                Poll(
+                    title = matcher.group(1).fromHtml(),
+                    isResult = isResult,
+                    votesCount = matcher.group(3).toInt(),
+                    voteButton = voteButton,
+                    showResultsButton = showResultsButton,
+                    showPollButton = showPollButton,
+                    questions = questions
+                )
             }
         return page
     }

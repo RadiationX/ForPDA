@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.presentation.theme
 
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.entity.remote.theme.PollQuestionItem
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
@@ -143,20 +144,24 @@ class ThemeTemplate(
                     setVariableOpt("question_title", question.title)
 
                     for (questionItem in question.questionItems) {
-                        setVariableOpt("question_item_title", questionItem.title)
+                        when (questionItem) {
+                            is PollQuestionItem.Regular -> {
+                                setVariableOpt("question_item_title", questionItem.title)
+                                setVariableOpt("question_item_type", questionItem.type)
+                                setVariableOpt("question_item_name", questionItem.name)
+                                setVariableOpt("question_item_value", questionItem.value)
+                                addBlockOpt("poll_default_item")
+                            }
 
-                        if (isResult) {
-                            setVariableOpt("question_item_votes", questionItem.votes)
-                            setVariableOpt(
-                                "question_item_percent",
-                                java.lang.Float.toString(questionItem.percent)
-                            )
-                            addBlockOpt("poll_result_item")
-                        } else {
-                            setVariableOpt("question_item_type", questionItem.type)
-                            setVariableOpt("question_item_name", questionItem.name)
-                            setVariableOpt("question_item_value", questionItem.value)
-                            addBlockOpt("poll_default_item")
+                            is PollQuestionItem.Result -> {
+                                setVariableOpt("question_item_title", questionItem.title)
+                                setVariableOpt("question_item_votes", questionItem.votes)
+                                setVariableOpt(
+                                    "question_item_percent",
+                                    questionItem.percent.toString()
+                                )
+                                addBlockOpt("poll_result_item")
+                            }
                         }
                     }
                     addBlockOpt("poll_question_block")
