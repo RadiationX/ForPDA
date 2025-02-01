@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.presentation.search
 
+import forpdateam.ru.forpda.entity.DeferredData
+import forpdateam.ru.forpda.entity.remote.search.SearchItem
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
@@ -17,7 +19,7 @@ class SearchTemplate(
 
     private val firstLetter = Pattern.compile("([a-zA-Zа-яА-Я])")
 
-    fun mapEntity(page: SearchResult): SearchResult = page.apply { html = mapString(page) }
+    fun mapEntity(page: SearchResult): SearchResult = page.copy(html = DeferredData(mapString(page)))
 
     private fun mapString(page: SearchResult): String {
         val template = templateManager.getTemplate(TemplateManager.TEMPLATE_SEARCH)
@@ -57,9 +59,10 @@ class SearchTemplate(
 
 
             var letterMatcher: Matcher? = null
-            for (post in page.items) {
+            for (searchPost in page.items.filterIsInstance<SearchItem.ForumPost>()) {
+                val post = searchPost.post
                 setVariableOpt("topic_id", post.topicId)
-                setVariableOpt("post_title", post.title)
+                setVariableOpt("post_title", searchPost.title)
 
                 setVariableOpt("user_online", if (post.isOnline) "online" else "")
                 setVariableOpt("post_id", post.id)

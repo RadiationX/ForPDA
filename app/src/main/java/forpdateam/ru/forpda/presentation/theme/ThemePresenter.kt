@@ -16,6 +16,7 @@ import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
 import forpdateam.ru.forpda.entity.remote.events.NotificationEvent
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
+import forpdateam.ru.forpda.entity.remote.theme.ThemePost
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
@@ -432,7 +433,7 @@ class ThemePresenter(
     }
 
 
-    private fun getPostById(postId: Int): IBaseForumPost? = currentPage
+    private fun getPostById(postId: Int): ThemePost? = currentPage
         ?.posts
         ?.firstOrNull {
             it.id == postId

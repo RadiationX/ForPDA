@@ -4,7 +4,6 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
-import forpdateam.ru.forpda.entity.remote.IBaseForumPost
 import forpdateam.ru.forpda.entity.remote.search.SearchItem
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
@@ -254,15 +253,7 @@ class SearchPresenter(
     }
 
     fun onItemClick(item: SearchItem) {
-        var url = ""
-        if (settings.resourceType.equals(SearchSettings.RESOURCE_NEWS.first)) {
-            url = "https://4pda.to/index.php?p=${item.id}"
-        } else {
-            url = "https://4pda.to/forum/index.php?showtopic=${item.topicId}"
-            if (item.id != 0) {
-                url += "&view=findpost&p=${item.id}"
-            }
-        }
+        val url = getItemUrl(item)
         linkHandler.handle(url, router)
     }
 
@@ -274,46 +265,71 @@ class SearchPresenter(
         Utils.copyToClipBoard(settings.toUrl())
     }
 
-    fun copyLink(item: IBaseForumPost) {
-        var url = ""
-        if (settings.resourceType.equals(SearchSettings.RESOURCE_NEWS.first)) {
-            url = "https://4pda.to/index.php?p=${item.id}"
-        } else {
-            url = "https://4pda.to/forum/index.php?showtopic=${item.topicId}"
-            if (item.id != 0) {
-                url += "&view=findpost&p=${item.id}"
-            }
-        }
+    fun copyLink(item: SearchItem) {
+        val url = getItemUrl(item)
         Utils.copyToClipBoard(url)
     }
 
-    fun openTopicBegin(item: IBaseForumPost) {
-        linkHandler.handle("https://4pda.to/forum/index.php?showtopic=${item.topicId}", router)
+    private fun getItemUrl(item: SearchItem): String {
+        return when (item) {
+            is SearchItem.News -> "https://4pda.to/index.php?p=${item.id}"
+            is SearchItem.Topic -> "https://4pda.to/forum/index.php?showtopic=${item.topicId}"
+            is SearchItem.ForumPost -> "https://4pda.to/forum/index.php?showtopic=${item.post.topicId}&view=findpost&p=${item.post.id}"
+        }
     }
 
-    fun openTopicNew(item: IBaseForumPost) {
+    fun openTopicBegin(item: SearchItem) {
+        val topicId = when (item) {
+            is SearchItem.ForumPost -> item.post.topicId
+            is SearchItem.Topic -> item.topicId
+            is SearchItem.News -> return
+        }
+        linkHandler.handle("https://4pda.to/forum/index.php?showtopic=${topicId}", router)
+    }
+
+    fun openTopicNew(item: SearchItem) {
+        val topicId = when (item) {
+            is SearchItem.ForumPost -> item.post.topicId
+            is SearchItem.Topic -> item.topicId
+            is SearchItem.News -> return
+        }
         linkHandler.handle(
-            "https://4pda.to/forum/index.php?showtopic=${item.topicId}&view=getnewpost",
+            "https://4pda.to/forum/index.php?showtopic=${topicId}&view=getnewpost",
             router
         )
     }
 
-    fun openTopicLast(item: IBaseForumPost) {
+    fun openTopicLast(item: SearchItem) {
+        val topicId = when (item) {
+            is SearchItem.ForumPost -> item.post.topicId
+            is SearchItem.Topic -> item.topicId
+            is SearchItem.News -> return
+        }
         linkHandler.handle(
-            "https://4pda.to/forum/index.php?showtopic=${item.topicId}&view=getlastpost",
+            "https://4pda.to/forum/index.php?showtopic=${topicId}&view=getlastpost",
             router
         )
     }
 
-    fun openForum(item: IBaseForumPost) {
-        linkHandler.handle("https://4pda.to/forum/index.php?showforum=${item.forumId}", router)
+    fun openForum(item: SearchItem) {
+        val forumId = when (item) {
+            is SearchItem.Topic -> item.forumId
+            is SearchItem.ForumPost -> return
+            is SearchItem.News -> return
+        }
+        linkHandler.handle("https://4pda.to/forum/index.php?showforum=${forumId}", router)
     }
 
-    fun onClickAddInFav(item: IBaseForumPost) {
+    fun onClickAddInFav(item: SearchItem) {
         viewState.showAddInFavDialog(item)
     }
 
-    fun addTopicToFavorite(topicId: Int, subType: String) {
+    fun addTopicToFavorite(item: SearchItem, subType: String) {
+        val topicId = when (item) {
+            is SearchItem.ForumPost -> item.post.topicId
+            is SearchItem.Topic -> item.topicId
+            is SearchItem.News -> return
+        }
         favoritesRepository
             .editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
             .subscribe({
@@ -350,11 +366,10 @@ class SearchPresenter(
         Utils.shareText(text)
     }
 
-    private fun getPostById(postId: Int): IBaseForumPost? = currentData
+    private fun getPostById(postId: Int): SearchItem.ForumPost? = currentData
         ?.items
-        ?.firstOrNull {
-            it.id == postId
-        }
+        ?.filterIsInstance<SearchItem.ForumPost>()
+        ?.firstOrNull { it.post.id == postId }
 
     override fun onFirstPageClick() = viewState.firstPage()
 
@@ -418,14 +433,14 @@ class SearchPresenter(
 
     override fun openProfile(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.userId}", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.post.userId}", router)
         }
     }
 
     override fun openQms(postId: Int) {
         getPostById(postId)?.let {
             linkHandler.handle(
-                "https://4pda.to/forum/index.php?act=qms&amp;mid=${it.userId}",
+                "https://4pda.to/forum/index.php?act=qms&amp;mid=${it.post.userId}",
                 router
             )
         }
@@ -436,7 +451,7 @@ class SearchPresenter(
             linkHandler.handle(
                 SearchSettings.default().copy(
                     source = SearchSettings.SOURCE_ALL.first,
-                    nick = it.nick,
+                    nick = it.post.nick,
                     result = SearchSettings.RESULT_TOPICS.first
                 ).toUrl(),
                 router
@@ -448,10 +463,9 @@ class SearchPresenter(
         getPostById(postId)?.let {
             linkHandler.handle(
                 SearchSettings.default().copy(
-                    forums = listOf(it.forumId),
-                    topics = listOf(it.topicId),
+                    topics = listOf(it.post.topicId),
                     source = SearchSettings.SOURCE_CONTENT.first,
-                    nick = it.nick,
+                    nick = it.post.nick,
                     result = SearchSettings.RESULT_POSTS.first,
                     subforums = SearchSettings.SUB_FORUMS_FALSE
                 ).toUrl(),
@@ -465,7 +479,7 @@ class SearchPresenter(
             linkHandler.handle(
                 SearchSettings.default().copy(
                     source = SearchSettings.SOURCE_CONTENT.first,
-                    nick = it.nick,
+                    nick = it.post.nick,
                     result = SearchSettings.RESULT_POSTS.first,
                     subforums = SearchSettings.SUB_FORUMS_FALSE
                 ).toUrl(),
@@ -481,7 +495,7 @@ class SearchPresenter(
     override fun changeReputation(postId: Int, type: Boolean, message: String) {
         getPostById(postId)?.let {
             reputationRepository
-                .changeReputation(it.id, it.userId, type, message)
+                .changeReputation(it.post.id, it.post.userId, type, message)
                 .subscribe({
                     router.showSystemMessage(App.get().getString(R.string.reputation_changed))
                 }, {
@@ -494,7 +508,7 @@ class SearchPresenter(
     override fun votePost(postId: Int, type: Boolean) {
         getPostById(postId)?.let {
             themeRepository
-                .votePost(it.id, type)
+                .votePost(it.post.id, type)
                 .subscribe({
                     router.showSystemMessage(it)
                 }, {
@@ -507,7 +521,7 @@ class SearchPresenter(
     override fun openReputationHistory(postId: Int) {
         getPostById(postId)?.let {
             linkHandler.handle(
-                "https://4pda.to/forum/index.php?act=rep&view=history&amp;mid=${it.userId}",
+                "https://4pda.to/forum/index.php?act=rep&view=history&amp;mid=${it.post.userId}",
                 router
             )
         }
@@ -518,7 +532,7 @@ class SearchPresenter(
         getPostById(postId)?.let { post ->
             currentData?.let {
                 themeRepository
-                    .reportPost(post.topicId, post.id, message)
+                    .reportPost(post.post.topicId, post.post.id, message)
                     .subscribe({
                         router.showSystemMessage("Жалоба отправлена")
                     }, {
@@ -532,7 +546,7 @@ class SearchPresenter(
     override fun deletePost(postId: Int) {
         getPostById(postId)?.let { post ->
             themeRepository
-                .deletePost(post.id)
+                .deletePost(post.post.id)
                 .subscribe({
                     if (it) {
                         viewState.deletePostUi(post)
@@ -547,34 +561,25 @@ class SearchPresenter(
 
     override fun createNote(postId: Int) {
         getPostById(postId)?.let {
-            val topicTitle: String = if (it is SearchItem) {
-                it.title.orEmpty()
-            } else {
-                "пост из поиска_"
-            }
+            val topicTitle: String = it.title
             val title = String.format(
                 App.get().getString(R.string.post_Topic_Nick_Number),
                 topicTitle,
-                it.nick,
-                it.id
+                it.post.nick,
+                it.post.id
             )
             val url =
-                "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
+                "https://4pda.to/forum/index.php?s=&showtopic=${it.post.topicId}&view=findpost&p=${it.post.id}"
             viewState.showNoteCreate(title, url)
         }
     }
 
     fun openEditPostForm(postId: Int) {
         getPostById(postId)?.let {
-            val title: String = if (it is SearchItem) {
-                it.title.orEmpty()
-            } else {
-                "пост из поиска_"
-            }
+            val title: String = it.title
             router.navigateTo(Screen.EditPost().apply {
-                this.postId = postId
-                topicId = it.topicId
-                forumId = it.forumId
+                this.postId = it.post.id
+                topicId = it.post.topicId
                 st = settings.st
                 themeName = title
             })
@@ -584,7 +589,7 @@ class SearchPresenter(
     override fun copyPostLink(postId: Int) {
         getPostById(postId)?.let {
             val url =
-                "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
+                "https://4pda.to/forum/index.php?s=&showtopic=${it.post.topicId}&view=findpost&p=${it.post.id}"
             copyText(url)
         }
     }
@@ -592,14 +597,14 @@ class SearchPresenter(
     override fun sharePostLink(postId: Int) {
         getPostById(postId)?.let {
             val url =
-                "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
+                "https://4pda.to/forum/index.php?s=&showtopic=${it.post.topicId}&view=findpost&p=${it.post.id}"
             shareText(url)
         }
     }
 
     override fun copyAnchorLink(postId: Int, name: String) {
         getPostById(postId)?.let {
-            val url = "https://4pda.to/forum/index.php?act=findpost&pid=${it.id}&anchor=$name"
+            val url = "https://4pda.to/forum/index.php?act=findpost&pid=${it.post.id}&anchor=$name"
             copyText(url)
         }
     }
@@ -607,7 +612,7 @@ class SearchPresenter(
     override fun copySpoilerLink(postId: Int, spoilNumber: String) {
         getPostById(postId)?.let {
             val url =
-                "https://4pda.to/forum/index.php?act=findpost&pid=${it.id}&anchor=Spoil-${it.id}-$spoilNumber"
+                "https://4pda.to/forum/index.php?act=findpost&pid=${it.post.id}&anchor=Spoil-${it.post.id}-$spoilNumber"
             copyText(url)
         }
     }

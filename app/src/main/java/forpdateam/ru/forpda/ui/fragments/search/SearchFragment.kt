@@ -93,7 +93,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
 
 
     private lateinit var paginationHelper: PaginationHelper
-    private lateinit var dialogMenu: DynamicDialogMenu<SearchFragment, IBaseForumPost>
+    private lateinit var dialogMenu: DynamicDialogMenu<SearchFragment, SearchItem>
 
 
     private lateinit var searchView: SearchView
@@ -462,11 +462,11 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         webView.evalJs("changeStyleType(\"$type\")")
     }
 
-    override fun showAddInFavDialog(item: IBaseForumPost) {
+    override fun showAddInFavDialog(item: SearchItem) {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.favorites_subscribe_email)
             .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
-                presenter.addTopicToFavorite(item.topicId, FavoritesApi.SUB_TYPES[which])
+                presenter.addTopicToFavorite(item, FavoritesApi.SUB_TYPES[which])
             }
             .show()
     }
@@ -642,7 +642,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
             Log.d("SUKA", "SEARCH SHOW WEBVIEW")
             webView.loadDataWithBaseURL(
                 "https://4pda.to/forum/",
-                searchResult.html,
+                searchResult.html?.value,
                 "text/html",
                 "utf-8",
                 null
@@ -731,16 +731,16 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         NotesAddPopup.showAddNoteDialog(requireContext(), title, url)
     }
 
-    override fun deletePostUi(post: IBaseForumPost) {
-        webView.evalJs("onDeletePostClick(" + post.id + ");")
+    override fun deletePostUi(post: SearchItem.ForumPost) {
+        webView.evalJs("onDeletePostClick(" + post.post.id + ");")
     }
 
-    override fun openAnchorDialog(post: IBaseForumPost, anchorName: String) {
-        dialogsHelper.openAnchorDialog(presenter, post, anchorName)
+    override fun openAnchorDialog(post: SearchItem.ForumPost, anchorName: String) {
+        dialogsHelper.openAnchorDialog(presenter, post.post, anchorName)
     }
 
-    override fun openSpoilerLinkDialog(post: IBaseForumPost, spoilNumber: String) {
-        dialogsHelper.openSpoilerLinkDialog(presenter, post, spoilNumber)
+    override fun openSpoilerLinkDialog(post: SearchItem.ForumPost, spoilNumber: String) {
+        dialogsHelper.openSpoilerLinkDialog(presenter, post.post, spoilNumber)
     }
 
     override fun firstPage() {
@@ -778,36 +778,36 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         }
     }
 
-    override fun showUserMenu(post: IBaseForumPost) {
-        dialogsHelper.showUserMenu(presenter, post)
+    override fun showUserMenu(post: SearchItem.ForumPost) {
+        dialogsHelper.showUserMenu(presenter, post.post)
     }
 
-    override fun showReputationMenu(post: IBaseForumPost) {
-        dialogsHelper.showReputationMenu(presenter, post)
+    override fun showReputationMenu(post: SearchItem.ForumPost) {
+        dialogsHelper.showReputationMenu(presenter, post.post)
     }
 
-    override fun showPostMenu(post: IBaseForumPost) {
-        dialogsHelper.showPostMenu(presenter, post)
+    override fun showPostMenu(post: SearchItem.ForumPost) {
+        dialogsHelper.showPostMenu(presenter, post.post)
     }
 
-    override fun reportPost(post: IBaseForumPost) {
-        dialogsHelper.tryReportPost(presenter, post)
+    override fun reportPost(post: SearchItem.ForumPost) {
+        dialogsHelper.tryReportPost(presenter, post.post)
     }
 
-    override fun deletePost(post: IBaseForumPost) {
-        dialogsHelper.deletePost(presenter, post)
+    override fun deletePost(post: SearchItem.ForumPost) {
+        dialogsHelper.deletePost(presenter, post.post)
     }
 
-    override fun votePost(post: IBaseForumPost, type: Boolean) {
-        dialogsHelper.votePost(presenter, post, type)
+    override fun votePost(post: SearchItem.ForumPost, type: Boolean) {
+        dialogsHelper.votePost(presenter, post.post, type)
     }
 
-    override fun showChangeReputation(post: IBaseForumPost, type: Boolean) {
-        dialogsHelper.changeReputation(presenter, post, type)
+    override fun showChangeReputation(post: SearchItem.ForumPost, type: Boolean) {
+        dialogsHelper.changeReputation(presenter, post.post, type)
     }
 
-    override fun editPost(post: IBaseForumPost) {
-        presenter.openEditPostForm(post.id)
+    override fun editPost(post: SearchItem.ForumPost) {
+        presenter.openEditPostForm(post.post.id)
     }
 
     companion object {

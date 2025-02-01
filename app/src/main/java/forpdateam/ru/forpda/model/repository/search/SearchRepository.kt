@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.model.repository.search
 
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
+import forpdateam.ru.forpda.entity.remote.search.SearchItem
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.model.SchedulersProvider
@@ -25,11 +26,11 @@ class SearchRepository(
         .runInIoToUi()
 
     private fun saveUsers(page: SearchResult) {
-        val forumUsers = page.items.map { post ->
+        val forumUsers = page.items.filterIsInstance<SearchItem.ForumPost>().map { post ->
             ForumUser(
-                id = post.userId,
-                nick = post.nick,
-                avatar = post.avatar
+                id = post.post.userId,
+                nick = post.post.nick,
+                avatar = post.post.avatar
             )
         }
         forumUsersCache.saveUsers(forumUsers)

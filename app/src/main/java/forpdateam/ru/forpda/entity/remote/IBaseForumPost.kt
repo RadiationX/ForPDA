@@ -6,10 +6,8 @@ package forpdateam.ru.forpda.entity.remote
 
 interface IBaseForumPost {
     val topicId: Int
-    val forumId: Int
     val id: Int
     val date: String?
-    val number: Int
     val avatar: String?
     val nick: String?
     val groupColor: String?

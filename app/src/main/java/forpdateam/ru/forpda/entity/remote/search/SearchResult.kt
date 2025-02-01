@@ -1,18 +1,15 @@
 package forpdateam.ru.forpda.entity.remote.search
 
+import forpdateam.ru.forpda.entity.DeferredData
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 
 /**
  * Created by radiationx on 01.02.17.
  */
 
-class SearchResult {
-    val items = mutableListOf<SearchItem>()
-    var settings: SearchSettings? = null
-    var pagination = Pagination.createForumDefault()
-    var html: String? = null
-
-    fun addItem(item: SearchItem) {
-        items.add(item)
-    }
-}
+data class SearchResult(
+    val items: List<SearchItem>,
+    val settings: SearchSettings,
+    val pagination: Pagination,
+    val html: DeferredData<String>?
+) 

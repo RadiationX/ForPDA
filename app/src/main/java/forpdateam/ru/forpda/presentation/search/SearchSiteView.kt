@@ -32,7 +32,7 @@ interface SearchSiteView : IBaseView {
     fun onAddToFavorite(result: Boolean)
 
     @StateStrategyType(SkipStrategy::class)
-    fun showAddInFavDialog(item: IBaseForumPost)
+    fun showAddInFavDialog(item: SearchItem)
 
     @StateStrategyType(SkipStrategy::class)
     fun showNoteCreate(title: String, url: String)
@@ -54,37 +54,37 @@ interface SearchSiteView : IBaseView {
     fun selectPage()
 
     @StateStrategyType(SkipStrategy::class)
-    fun deletePostUi(post: IBaseForumPost)
+    fun deletePostUi(post: SearchItem.ForumPost)
 
     @StateStrategyType(SkipStrategy::class)
-    fun showUserMenu(post: IBaseForumPost)
+    fun showUserMenu(post: SearchItem.ForumPost)
 
     @StateStrategyType(SkipStrategy::class)
-    fun showReputationMenu(post: IBaseForumPost)
+    fun showReputationMenu(post: SearchItem.ForumPost)
 
     @StateStrategyType(SkipStrategy::class)
-    fun showPostMenu(post: IBaseForumPost)
+    fun showPostMenu(post: SearchItem.ForumPost)
 
     @StateStrategyType(SkipStrategy::class)
-    fun reportPost(post: IBaseForumPost)
+    fun reportPost(post: SearchItem.ForumPost)
 
     @StateStrategyType(SkipStrategy::class)
-    fun deletePost(post: IBaseForumPost)
+    fun deletePost(post: SearchItem.ForumPost)
 
     @StateStrategyType(SkipStrategy::class)
-    fun editPost(post: IBaseForumPost)
+    fun editPost(post: SearchItem.ForumPost)
 
     @StateStrategyType(SkipStrategy::class)
-    fun votePost(post: IBaseForumPost, type: Boolean)
+    fun votePost(post: SearchItem.ForumPost, type: Boolean)
 
     @StateStrategyType(SkipStrategy::class)
-    fun showChangeReputation(post: IBaseForumPost, type: Boolean)
+    fun showChangeReputation(post: SearchItem.ForumPost, type: Boolean)
 
     @StateStrategyType(SkipStrategy::class)
-    fun openAnchorDialog(post: IBaseForumPost, anchorName: String)
+    fun openAnchorDialog(post: SearchItem.ForumPost, anchorName: String)
 
     @StateStrategyType(SkipStrategy::class)
-    fun openSpoilerLinkDialog(post: IBaseForumPost, spoilNumber: String)
+    fun openSpoilerLinkDialog(post: SearchItem.ForumPost, spoilNumber: String)
 
     @StateStrategyType(SkipStrategy::class)
     fun toast(text: String)

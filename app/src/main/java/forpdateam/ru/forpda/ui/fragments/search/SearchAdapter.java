@@ -29,7 +29,7 @@ class SearchAdapter extends BaseAdapter<SearchItem, BaseViewHolder<SearchItem>> 
     @Override
     public int getItemViewType(int position) {
         SearchItem item = getItem(position);
-        if (item.getImageUrl() != null) {
+        if (item instanceof SearchItem.News) {
             return NEWS_LAYOUT;
         }
         return TOPIC_LAYOUT;
@@ -65,25 +65,14 @@ class SearchAdapter extends BaseAdapter<SearchItem, BaseViewHolder<SearchItem>> 
         }
 
         @Override
-        public void bind(SearchItem item, int position) {
+        public void bind(SearchItem searchItem, int position) {
+            SearchItem.Topic item = (SearchItem.Topic) searchItem;
             title.setText(item.getTitle());
             nick.setText(item.getNick());
             date.setText(item.getDate());
-            String contentText = null;
-            if (item.getBody() != null && !item.getBody().isEmpty()) {
-                contentText = item.getBody();
-            }
-            if (contentText == null) {
-                if (item.getDesc() != null && !item.getDesc().isEmpty()) {
-                    contentText = item.getDesc();
-                }
-            }
-            if (contentText != null) {
-                content.setText(contentText);
-                content.setVisibility(View.VISIBLE);
-            } else {
-                content.setVisibility(View.GONE);
-            }
+            String contentText = item.getDesc();
+            content.setText(contentText);
+            content.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -138,7 +127,8 @@ class SearchAdapter extends BaseAdapter<SearchItem, BaseViewHolder<SearchItem>> 
             commentsCount.setVisibility(View.GONE);
         }
 
-        public void bind(SearchItem item, int position) {
+        public void bind(SearchItem searchItem, int position) {
+            SearchItem.News item = (SearchItem.News) searchItem;
             /*if (news.newNews && nContainer.getVisibility() == View.GONE) {
                 nContainer.setVisibility(View.VISIBLE);
             }*/

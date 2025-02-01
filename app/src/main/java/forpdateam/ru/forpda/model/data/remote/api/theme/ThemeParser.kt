@@ -87,7 +87,7 @@ class ThemeParser(
                     nick = matcher.group(9).fromHtml()
                     userId = matcher.group(10).toInt()
                     isCurator = matcher.group(11) != null
-                    groupColor = matcher.group(12)
+                    groupColor = matcher.group(12) ?: "black"
                     group = matcher.group(13)
                     canMinusRep = !matcher.group(14).isEmpty()
                     reputation = matcher.group(15)
