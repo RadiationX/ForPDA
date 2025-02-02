@@ -1,6 +1,9 @@
 package forpdateam.ru.forpda.extensions
 
 import java.util.regex.Matcher
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 inline fun Matcher.findOnce(action: (Matcher) -> Unit): Matcher {
     if (this.find()) action(this)
@@ -28,7 +31,11 @@ inline fun <R> Matcher.mapOnce(transform: (Matcher) -> R): R? {
     return data
 }
 
+@OptIn(ExperimentalContracts::class)
 inline fun <R> Matcher.requireOnce(transform: (Matcher) -> R): R {
+    contract {
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
+    }
     check(find()) {
         "Required match not found"
     }

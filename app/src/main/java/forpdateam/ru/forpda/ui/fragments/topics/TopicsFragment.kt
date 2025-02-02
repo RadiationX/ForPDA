@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
-import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.entity.remote.topics.TopicItem
 import forpdateam.ru.forpda.entity.remote.topics.TopicsData
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
@@ -102,21 +101,18 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
         dialogMenu = DynamicDialogMenu()
         dialogMenu.apply {
             addItem(getString(R.string.copy_link)) { _, data1 ->
-                val url: String = if (data1.isAnnounce) {
-                    data1.announceUrl!!
-                } else {
-                    "https://4pda.to/forum/index.php?showtopic=" + data1.id
-                }
-                Utils.copyToClipBoard(url)
+                presenter.copyLink(data1)
             }
             addItem(getString(R.string.open_theme_forum)) { _, _ ->
                 presenter.openTopicForum()
             }
             addItem(getString(R.string.add_to_favorites)) { _, data1 ->
-                if (data1.isForum) {
-                    openAddForumToFavoriteDialog(data1.id)
-                } else {
-                    openAddTopicToFavoriteDialog(data1.id)
+                when (data1) {
+                    is TopicItem.Forum -> openAddForumToFavoriteDialog(data1.id)
+                    is TopicItem.Topic -> openAddTopicToFavoriteDialog(data1.id)
+                    is TopicItem.Announce -> {
+                        // do nothing
+                    }
                 }
             }
         }
@@ -137,13 +133,17 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
     override fun showTopics(data: TopicsData) {
         setTitle(data.title)
         adapter.clear()
-        if (!data.forumItems.isEmpty())
+        if (data.forumItems.isNotEmpty())
             adapter.addSection(getString(R.string.forum_section), data.forumItems)
-        if (!data.announceItems.isEmpty())
+        if (data.announceItems.isNotEmpty())
             adapter.addSection(getString(R.string.announce_section), data.announceItems)
-        if (!data.pinnedItems.isEmpty())
-            adapter.addSection(getString(R.string.pinned_section), data.pinnedItems)
-        adapter.addSection(getString(R.string.themes_section), data.topicItems)
+
+        val pinnedItems = data.topicItems.filter { it.flags.isPinned }
+        val notPinnedItems = data.topicItems.filter { !it.flags.isPinned }
+        if (pinnedItems.isNotEmpty())
+            adapter.addSection(getString(R.string.pinned_section), pinnedItems)
+        adapter.addSection(getString(R.string.themes_section), notPinnedItems)
+
         adapter.notifyDataSetChanged()
         paginationHelper.updatePagination(data.pagination)
         setSubtitle(paginationHelper.title)
@@ -229,7 +229,7 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
         dialogMenu.apply {
             disallowAll()
             allow(0)
-            if (!item.isAnnounce) {
+            if (item !is TopicItem.Announce) {
                 allow(1)
                 if (authHolder.get().isAuth()) {
                     allow(2)

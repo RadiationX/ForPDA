@@ -50,7 +50,7 @@ public class TopicsAdapter extends BaseSectionedAdapter<TopicItem, BaseSectioned
     @Override
     public int getItemViewType(int section, int relativePosition, int absolutePosition) {
         TopicItem item = getItem(section, relativePosition);
-        if (item.isAnnounce() || item.isForum())
+        if (item instanceof TopicItem.Announce || item instanceof TopicItem.Forum)
             return VIEW_TYPE_ANNOUNCE;
         return super.getItemViewType(section, relativePosition, absolutePosition);
     }
@@ -102,7 +102,15 @@ public class TopicsAdapter extends BaseSectionedAdapter<TopicItem, BaseSectioned
 
         @Override
         public void bind(TopicItem item) {
-            title.setText(item.getTitle());
+            String itemTitle;
+            if (item instanceof TopicItem.Announce) {
+                itemTitle = ((TopicItem.Announce) item).getTitle();
+            } else if (item instanceof TopicItem.Forum) {
+                itemTitle = ((TopicItem.Forum) item).getTitle();
+            } else {
+                itemTitle = null;
+            }
+            title.setText(itemTitle);
         }
 
         @Override
@@ -149,10 +157,11 @@ public class TopicsAdapter extends BaseSectionedAdapter<TopicItem, BaseSectioned
         }
 
         @Override
-        public void bind(TopicItem item) {
+        public void bind(TopicItem topicItem) {
+            TopicItem.Topic item = (TopicItem.Topic) topicItem;
             title.setText(item.getTitle());
-            title.setTypeface(item.isNew ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
-            title.setTextColor(item.isNew ? titleColorNew : titleColor);
+            title.setTypeface(item.getFlags().isNew() ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+            title.setTextColor(item.getFlags().isNew() ? titleColorNew : titleColor);
             if (false) {
                 desc.setVisibility(View.VISIBLE);
                 desc.setText(item.getDesc());
@@ -160,9 +169,9 @@ public class TopicsAdapter extends BaseSectionedAdapter<TopicItem, BaseSectioned
                 desc.setVisibility(View.GONE);
             }
             //forumIcon.setVisibility(item.isPinned() ? View.VISIBLE : View.GONE);
-            lockIcon.setVisibility(item.isClosed() ? View.VISIBLE : View.GONE);
-            pollIcon.setVisibility(item.isPoll() ? View.VISIBLE : View.GONE);
-            lastNick.setText(item.getLastUserNick());
+            lockIcon.setVisibility(item.getFlags().isClosed() ? View.VISIBLE : View.GONE);
+            pollIcon.setVisibility(item.getFlags().isPoll() ? View.VISIBLE : View.GONE);
+            lastNick.setText(item.getLastUser().getNick());
             date.setText(item.getDate());
         }
 

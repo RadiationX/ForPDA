@@ -1,10 +1,13 @@
 package forpdateam.ru.forpda.model.data.remote.api.topcis
 
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
+import forpdateam.ru.forpda.entity.remote.others.user.User
+import forpdateam.ru.forpda.entity.remote.topics.TopicFlags
 import forpdateam.ru.forpda.entity.remote.topics.TopicItem
 import forpdateam.ru.forpda.entity.remote.topics.TopicsData
-import forpdateam.ru.forpda.extensions.findAll
-import forpdateam.ru.forpda.extensions.findOnce
+import forpdateam.ru.forpda.extensions.map
+import forpdateam.ru.forpda.extensions.mapOnce
+import forpdateam.ru.forpda.extensions.requireOnce
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
@@ -15,84 +18,88 @@ class TopicsParser(
 
     private val scope = ParserPatterns.Topics
 
-    fun parse(response: String, argId: Int): TopicsData = TopicsData().also { data ->
+    fun parse(response: String, argId: Int): TopicsData {
+        var id = argId
+        var title: String
         patternProvider
             .getPattern(scope.scope, scope.title)
             .matcher(response)
-            .also { matcher ->
-                if (matcher.find()) {
-                    data.id = matcher.group(1).toInt()
-                    data.title = matcher.group(2).fromHtml()
-                } else {
-                    data.id = argId
-                }
+            .requireOnce {
+                id = it.group(1).toInt()
+                title = it.group(2).fromHtml()!!
             }
 
-        patternProvider
+        val canCreateTopic = patternProvider
             .getPattern(scope.scope, scope.can_new_topic)
             .matcher(response)
-            .findOnce { matcher ->
-                data.setCanCreateTopic(matcher.find())
-            }
+            .mapOnce { true }
+            ?: false
 
-        patternProvider
+        val announces = patternProvider
             .getPattern(scope.scope, scope.announce)
             .matcher(response)
-            .findAll { matcher ->
-                data.addAnnounceItem(TopicItem().apply {
-                    isAnnounce = true
-                    announceUrl = "https://4pda.to" + matcher.group(1).replace("&amp;", "&", false)
-                    title = matcher.group(2).fromHtml()
-                })
+            .map { matcher ->
+                TopicItem.Announce(
+                    title = matcher.group(2).fromHtml()!!,
+                    url = "https://4pda.to" + matcher.group(1).replace("&amp;", "&", false)
+                )
             }
 
-        patternProvider
+        val topicItems = patternProvider
             .getPattern(scope.scope, scope.topics)
             .matcher(response)
-            .findAll { matcher ->
-                val item = TopicItem().apply {
-                    id = matcher.group(1).toInt()
-                    matcher.group(2)?.also {
-                        isNew = it.contains("+")
-                        isPoll = it.contains("^")
-                        isClosed = it.contains("Х")
+            .map { matcher ->
+                val flagsGroup = matcher.group(2)
+                val flags = TopicFlags(
+                    isPinned = matcher.group(3) != null,
+                    isNew = flagsGroup?.contains("+") == true,
+                    isPoll = flagsGroup?.contains("^") == true,
+                    isClosed = flagsGroup?.contains("Х") == true,
+                )
+                TopicItem.Topic(
+                    id = matcher.group(1).toInt(),
+                    flags = flags,
+                    title = matcher.group(4).fromHtml()!!,
+                    desc = matcher.group(5)?.fromHtml(),
+                    author = User(
+                        id = matcher.group(6).toInt(),
+                        nick = matcher.group(7).fromHtml()!!
+                    ),
+                    lastUser = User(
+                        id = matcher.group(8).toInt(),
+                        nick = matcher.group(9).fromHtml()!!
+                    ),
+                    date = matcher.group(10),
+                    curator = matcher.group(11)?.let {
+                        User(
+                            id = it.toInt(),
+                            nick = matcher.group(12).fromHtml()!!
+                        )
                     }
-
-                    isPinned = matcher.group(3) != null
-                    title = matcher.group(4).fromHtml()
-                    matcher.group(5)?.also {
-                        desc = it.fromHtml()
-                    }
-
-                    authorId = matcher.group(6).toInt()
-                    authorNick = matcher.group(7).fromHtml()
-                    lastUserId = matcher.group(8).toInt()
-                    lastUserNick = matcher.group(9).fromHtml()
-                    date = matcher.group(10)
-                    matcher.group(11)?.also {
-                        curatorId = it.toInt()
-                        curatorNick = matcher.group(12).fromHtml()
-                    }
-                }
-                if (item.isPinned) {
-                    data.addPinnedItem(item)
-                } else {
-                    data.addTopicItem(item)
-                }
+                )
             }
 
-        patternProvider
+
+        val forums = patternProvider
             .getPattern(scope.scope, scope.forum)
             .matcher(response)
-            .findAll { matcher ->
-                data.addForumItem(TopicItem().apply {
-                    id = matcher.group(1).toInt()
-                    title = matcher.group(2).fromHtml()
-                    isForum = true
-                })
+            .map { matcher ->
+                TopicItem.Forum(
+                    id = matcher.group(1).toInt(),
+                    title = matcher.group(2).fromHtml()!!
+                )
             }
 
-        data.pagination = Pagination.parseForum(response)
+        val pagination = Pagination.parseForum(response)
+        return TopicsData(
+            id = id,
+            title = title,
+            canCreateTopic = canCreateTopic,
+            topicItems = topicItems,
+            announceItems = announces,
+            forumItems = forums,
+            pagination = pagination
+        )
     }
 
 }

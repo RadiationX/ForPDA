@@ -1,8 +1,10 @@
 package forpdateam.ru.forpda.presentation.topics
 
+import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.topics.TopicItem
 import forpdateam.ru.forpda.entity.remote.topics.TopicsData
+import forpdateam.ru.forpda.extensions.replace
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.interactors.CrossScreenInteractor
 import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
@@ -97,9 +99,12 @@ class TopicsPresenter(
     }
 
     private fun markRead(id: Int) {
-        currentData?.also { currentData ->
-            currentData.topicItems.firstOrNull { it.id == id }?.isNew = false
-            currentData.pinnedItems.firstOrNull { it.id == id }?.isNew = false
+        currentData?.also { data ->
+            val newItems = data.topicItems.replace(
+                condition = { it.id == id },
+                map = { it.copy(flags = it.flags.copy(isNew = false)) }
+            )
+            currentData = data.copy(topicItems = newItems)
             viewState.updateList()
         }
     }
@@ -123,26 +128,35 @@ class TopicsPresenter(
     }
 
     fun onItemClick(item: TopicItem) {
-        if (item.isAnnounce) {
-            linkHandler.handle(
-                item.announceUrl, router, mapOf(
-                    Screen.ARG_TITLE to item.title
-                )
-            )
-            return
+        when (item) {
+            is TopicItem.Announce -> {
+                linkHandler.handle(getItemLink(item), router, mapOf(Screen.ARG_TITLE to item.title))
+            }
+
+            is TopicItem.Forum -> {
+                linkHandler.handle(getItemLink(item), router)
+            }
+
+            is TopicItem.Topic -> {
+                linkHandler.handle(getItemLink(item), router, mapOf(Screen.ARG_TITLE to item.title))
+            }
         }
-        if (item.isForum) {
-            linkHandler.handle("https://4pda.to/forum/index.php?showforum=${item.id}", router)
-            return
-        }
-        linkHandler.handle(
-            "https://4pda.to/forum/index.php?showtopic=${item.id}", router, mapOf(
-                Screen.ARG_TITLE to item.title
-            )
-        )
     }
 
     fun onItemLongClick(item: TopicItem) {
         viewState.showItemDialogMenu(item)
+    }
+
+    fun copyLink(item: TopicItem) {
+        val link = getItemLink(item)
+        Utils.copyToClipBoard(link)
+    }
+
+    private fun getItemLink(item: TopicItem): String {
+        return when (item) {
+            is TopicItem.Announce -> item.url
+            is TopicItem.Forum -> "https://4pda.to/forum/index.php?showforum=${item.id}"
+            is TopicItem.Topic -> "https://4pda.to/forum/index.php?showtopic=${item.id}"
+        }
     }
 }
