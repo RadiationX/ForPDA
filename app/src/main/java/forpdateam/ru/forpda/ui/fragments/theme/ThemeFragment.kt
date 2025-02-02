@@ -585,7 +585,7 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
     override fun syncEditPost(data: EditPostSyncData) {
         messagePanel.setText(data.message)
         messagePanel.messageField!!.setSelection(data.selectionStart, data.selectionEnd)
-        data.attachments?.also { attachmentsPopup.setAttachments(it) }
+        attachmentsPopup.setAttachments(data.attachments)
     }
 
     private fun sendMessage() {

@@ -122,13 +122,15 @@ class EditPostPresenter(
     }
 
     fun exitWithSync(message: String, intArray: IntArray, attachments: List<AttachmentItem>) {
-        router.sendResult(Screen.Theme.CODE_RESULT_SYNC, EditPostSyncData().also {
-            it.topicId = postForm.topicId
-            it.message = message
-            it.selectionStart = intArray[0]
-            it.selectionEnd = intArray[1]
-            it.attachments = attachments
-        })
+        router.sendResult(
+            Screen.Theme.CODE_RESULT_SYNC, EditPostSyncData(
+                topicId = postForm.topicId,
+                message = message,
+                selectionStart = intArray[0],
+                selectionEnd = intArray[1],
+                attachments = attachments,
+            )
+        )
     }
 
     fun exitWithPage(page: ThemePage) {
