@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.entity.remote.search
 
 import forpdateam.ru.forpda.entity.remote.ForumPost
+import forpdateam.ru.forpda.entity.remote.others.user.User
 
 /**
  * Created by radiationx on 01.02.17.
@@ -12,8 +13,7 @@ sealed interface SearchItem {
         val id: Int,
         val imageUrl: String,
         val date: String,
-        val userId: Int,
-        val nick: String,
+        val user: User,
         val title: String,
         val body: String,
     ) : SearchItem
@@ -23,8 +23,7 @@ sealed interface SearchItem {
         val title: String,
         val desc: String,
         val forumId: Int,
-        val userId: Int,
-        val nick: String,
+        val user: User,
         val date: String,
     ) : SearchItem
 

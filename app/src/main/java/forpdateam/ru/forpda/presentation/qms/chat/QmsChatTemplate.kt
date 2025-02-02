@@ -21,9 +21,9 @@ class QmsChatTemplate(
             setVariableOpt("style_type", templateManager.getThemeType())
             setVariableOpt("chat_title", ApiUtils.htmlEncode(chatModel.title))
             setVariableOpt("chatId", chatModel.themeId)
-            setVariableOpt("userId", chatModel.userId)
-            setVariableOpt("nick", chatModel.nick)
-            setVariableOpt("avatarUrl", chatModel.avatarUrl)
+            setVariableOpt("userId", chatModel.user.id)
+            setVariableOpt("nick", chatModel.user.nick)
+            setVariableOpt("avatarUrl", chatModel.user.avatar)
 
             val messTemplate = templateManager.getTemplate(TemplateManager.TEMPLATE_QMS_CHAT_MESS)
             templateManager.fillStaticStrings(messTemplate)

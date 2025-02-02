@@ -129,11 +129,7 @@ class QmsRepository(
 
     private fun saveUsers(contacts: List<QmsContact>) {
         val forumUsers = contacts.map { contact ->
-            ForumUser(
-                id = contact.id,
-                nick = contact.nick,
-                avatar = contact.avatar
-            )
+            contact.user
         }
         forumUsersCache.saveUsers(forumUsers)
     }
@@ -154,7 +150,7 @@ class QmsRepository(
 
     private fun saveThemesCache(data: QmsThemes): Single<QmsThemes> = Single
         .fromCallable { qmsCache.saveThemes(data) }
-        .flatMap { getThemesCache(data.userId) }
+        .flatMap { getThemesCache(data.user.id) }
 
     private fun getThemesCache(userId: Int): Single<QmsThemes> = Single
         .fromCallable { qmsCache.getThemes(userId) }
@@ -211,7 +207,7 @@ class QmsRepository(
             val updatedDialog = targetDialog.copy(themes = updatedThemes)
             qmsCache.saveThemes(updatedDialog)
 
-            allContacts.firstOrNull { it.id == targetDialog.userId }?.let { contact ->
+            allContacts.firstOrNull { it.user.id == targetDialog.user.id }?.let { contact ->
                 val newContactCount = targetDialog.themes.sumOf { it.countNew }
                 Log.d("kokoso", "upd contact cound ${contact.count} to $newContactCount")
                 val newContact = contact.copy(count = newContactCount)

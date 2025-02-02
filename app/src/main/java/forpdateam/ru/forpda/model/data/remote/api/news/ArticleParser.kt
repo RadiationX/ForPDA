@@ -7,6 +7,7 @@ import forpdateam.ru.forpda.entity.remote.news.DetailsPage
 import forpdateam.ru.forpda.entity.remote.news.Material
 import forpdateam.ru.forpda.entity.remote.news.NewsItem
 import forpdateam.ru.forpda.entity.remote.news.Tag
+import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.extensions.findAll
 import forpdateam.ru.forpda.extensions.findOnce
 import forpdateam.ru.forpda.extensions.map
@@ -274,8 +275,7 @@ class ArticleParser(
     private fun CommentNode.toComment(): Comment {
         return Comment(
             id = id,
-            userId = userId,
-            userNick = userNick,
+            user = User.required(userId, userNick),
             date = date,
             content = content,
             isDeleted = isDeleted,

@@ -180,7 +180,7 @@ public class FavoritesAdapter extends BaseSectionedAdapter<FavItem, BaseSectione
                 pollIcon.setVisibility(item.isPoll() ? View.VISIBLE : View.GONE);
             }
 
-            lastNick.setText(item.getLastUserNick());
+            lastNick.setText(item.getLastUser().getNick());
             date.setText(item.getDate());
             if (desc.getVisibility() == View.VISIBLE) {
                 desc.setVisibility(View.GONE);

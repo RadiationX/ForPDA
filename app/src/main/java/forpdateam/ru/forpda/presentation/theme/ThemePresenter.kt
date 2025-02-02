@@ -136,7 +136,7 @@ class ThemePresenter(
         Log.e("SUKAT", "handleEvent " + event.event.sourceId + " : " + getId())
         if (event.event.sourceId != getId())
             return
-        if (event.event.userId == authHolder.get().userId)
+        if (event.event.user?.id == authHolder.get().userId)
             return
 
         if (event.source == NotificationEvent.Source.THEME) {
@@ -480,7 +480,7 @@ class ThemePresenter(
 
     override fun onReplyPostClick(postId: Int) {
         getPostById(postId)?.let {
-            val text = "[snapback]${it.id}[/snapback] [b]${it.nick},[/b] \n"
+            val text = "[snapback]${it.id}[/snapback] [b]${it.user.nick},[/b] \n"
             viewState.insertText(text)
         }
     }
@@ -488,7 +488,7 @@ class ThemePresenter(
     override fun onQuotePostClick(postId: Int, text: String) {
         getPostById(postId)?.let {
             val date = Utils.getForumDateTime(Utils.parseForumDateTime(it.date))
-            val insert = "[quote name=\"${it.nick}\" date=\"$date\" post=${it.id}]$text[/quote]\n"
+            val insert = "[quote name=\"${it.user.nick}\" date=\"$date\" post=${it.id}]$text[/quote]\n"
             viewState.insertText(insert)
         }
     }
@@ -667,14 +667,14 @@ class ThemePresenter(
 
     override fun openProfile(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.userId}", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.user.id}", router)
         }
     }
 
     override fun openQms(postId: Int) {
         getPostById(postId)?.let {
             linkHandler.handle(
-                "https://4pda.to/forum/index.php?act=qms&amp;mid=${it.userId}",
+                "https://4pda.to/forum/index.php?act=qms&amp;mid=${it.user.id}",
                 router
             )
         }
@@ -685,7 +685,7 @@ class ThemePresenter(
             linkHandler.handle(
                 SearchSettings.default().copy(
                     source = SearchSettings.SOURCE_ALL.first,
-                    nick = it.nick,
+                    nick = it.user.nick,
                     result = SearchSettings.RESULT_TOPICS.first
                 ).toUrl(),
                 router
@@ -701,7 +701,7 @@ class ThemePresenter(
                     forums = listOf(it.forumId),
                     topics = listOf(post.topicId),
                     source = SearchSettings.SOURCE_CONTENT.first,
-                    nick = post.nick,
+                    nick = post.user.nick,
                     result = SearchSettings.RESULT_POSTS.first,
                     subforums = SearchSettings.SUB_FORUMS_FALSE
                 ).toUrl(),
@@ -715,7 +715,7 @@ class ThemePresenter(
             linkHandler.handle(
                 SearchSettings.default().copy(
                     source = SearchSettings.SOURCE_CONTENT.first,
-                    nick = it.nick,
+                    nick = it.user.nick,
                     result = SearchSettings.RESULT_POSTS.first,
                     subforums = SearchSettings.SUB_FORUMS_FALSE
                 ).toUrl(),
@@ -731,7 +731,7 @@ class ThemePresenter(
     override fun changeReputation(postId: Int, type: Boolean, message: String) {
         getPostById(postId)?.let {
             reputationRepository
-                .changeReputation(it.id, it.userId, type, message)
+                .changeReputation(it.id, it.user.id, type, message)
                 .subscribe({
                     router.showSystemMessage(App.get().getString(R.string.reputation_changed))
                 }, {
@@ -757,7 +757,7 @@ class ThemePresenter(
     override fun openReputationHistory(postId: Int) {
         getPostById(postId)?.let {
             linkHandler.handle(
-                "https://4pda.to/forum/index.php?act=rep&view=history&amp;mid=${it.userId}",
+                "https://4pda.to/forum/index.php?act=rep&view=history&amp;mid=${it.user.id}",
                 router
             )
         }
@@ -809,7 +809,7 @@ class ThemePresenter(
             val title = String.format(
                 App.get().getString(R.string.post_Topic_Nick_Number),
                 themeTitle,
-                it.nick,
+                it.user.nick,
                 it.id
             )
             val url =

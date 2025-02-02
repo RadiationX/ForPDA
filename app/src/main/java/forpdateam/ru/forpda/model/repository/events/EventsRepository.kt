@@ -237,9 +237,9 @@ class EventsRepository(
     private fun sendNotification(event: NotificationEvent) {
         Log.e(
             "events_lalala",
-            "send notification rep " + event.sourceEventText + " : " + event.source + " : " + event.sourceTitle + " : " + event.userNick
+            "send notification rep " + event.sourceEventText + " : " + event.source + " : " + event.sourceTitle + " : " + event.user?.nick
         )
-        if (event.userId == authHolder.get().userId) {
+        if (event.user?.id == authHolder.get().userId) {
             return
         }
         eventsHistory[event.notifyId()] = event

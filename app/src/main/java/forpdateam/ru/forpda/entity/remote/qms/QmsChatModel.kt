@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.entity.remote.qms
 
 import forpdateam.ru.forpda.entity.DeferredData
+import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 
 /**
  * Created by radiationx on 20.09.16.
@@ -8,10 +9,8 @@ import forpdateam.ru.forpda.entity.DeferredData
 
 data class QmsChatModel(
     val themeId: Int,
-    val userId: Int,
+    val user: ForumUser,
     val title: String,
-    val nick: String,
-    val avatarUrl: String,
     val messages: List<QmsMessage>,
     val showedMessIndex: Int,
     val html: DeferredData<String>?

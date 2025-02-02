@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.entity.remote.qms
 
+import forpdateam.ru.forpda.entity.remote.others.user.User
+
 /**
  * Created by radiationx on 03.08.16.
  */
@@ -10,6 +12,5 @@ data class QmsTheme(
     val name: String?,
     val date: String?,
     // from parent
-    val userId: Int,
-    val nick: String?
+    val user: User
 )

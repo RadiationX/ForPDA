@@ -23,10 +23,10 @@ class UserHolder(
                 .getString("current_user", null)
                 ?.let {
                     val jsonProfile = JSONObject(it)
-                    ForumUser(
+                    ForumUser.required(
                         id = jsonProfile.getInt("id"),
-                        avatar = jsonProfile.nullString("avatar"),
-                        nick = jsonProfile.nullString("nick")
+                        nick = jsonProfile.nullString("nick"),
+                        avatar = jsonProfile.nullString("avatar")
                     )
                 }
         }
@@ -35,8 +35,8 @@ class UserHolder(
             val result = value?.let { profile ->
                 JSONObject().apply {
                     put("id", profile.id)
-                    put("avatar", profile.avatar)
                     put("nick", profile.nick)
+                    put("avatar", profile.avatar)
                 }
             }
             if (result == null) {

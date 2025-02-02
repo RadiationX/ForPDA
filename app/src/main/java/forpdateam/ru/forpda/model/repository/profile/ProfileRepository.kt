@@ -34,15 +34,10 @@ class ProfileRepository(
     fun loadProfile(url: String): Single<ProfileModel> = Single
         .fromCallable { profileApi.getProfile(url) }
         .doOnSuccess {
-            val forumUser = ForumUser(
-                id = it.id,
-                nick = it.nick,
-                avatar = it.avatar
-            )
-            if (it.id == authHolder.get().userId) {
-                userHolder.user = forumUser
+            if (it.user.id == authHolder.get().userId) {
+                userHolder.user = it.user
             }
-            forumUsersCache.saveUser(forumUser)
+            forumUsersCache.saveUser(it.user)
         }
         .runInIoToUi()
 

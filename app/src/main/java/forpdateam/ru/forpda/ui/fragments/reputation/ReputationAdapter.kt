@@ -49,7 +49,7 @@ class ReputationAdapter :
 
         override fun bind(item: RepItem, position: Int) {
             title.text = item.title
-            lastNick.text = item.userNick
+            lastNick.text = item.user.nick
             date.text = item.date
             if (item.sourceUrl == null) {
                 desc.visibility = View.GONE

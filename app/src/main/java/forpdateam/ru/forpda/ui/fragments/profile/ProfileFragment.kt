@@ -237,9 +237,9 @@ class ProfileFragment : TabFragment(), ProfileAdapter.ClickListener, ProfileView
         adapter.setProfile(data)
         adapter.notifyDataSetChanged()
 
-        setTabTitle(String.format(getString(R.string.profile_with_Nick), data.nick))
-        setTitle(data.nick)
-        nick.text = data.nick
+        setTabTitle(String.format(getString(R.string.profile_with_Nick), data.user.nick))
+        setTitle(data.user.nick)
+        nick.text = data.user.nick
         group.text = data.group
         if (data.sign != null) {
             sign.text = data.sign
@@ -247,8 +247,8 @@ class ProfileFragment : TabFragment(), ProfileAdapter.ClickListener, ProfileView
             sign.movementMethod = LinkMovementMethod { url -> linkHandler.handle(url, null) }
         }
 
-        if (!data.contacts.isEmpty()) {
-            val isMe = data.id == authHolder.get().userId
+        if (data.contacts.isNotEmpty()) {
+            val isMe = data.user.id == authHolder.get().userId
             writeMenuItem.isVisible = !isMe
         }
     }

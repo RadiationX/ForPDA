@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.model.data.remote.api.theme
 
 import forpdateam.ru.forpda.entity.remote.ForumPost
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
+import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.theme.Poll
 import forpdateam.ru.forpda.entity.remote.theme.PollQuestion
 import forpdateam.ru.forpda.entity.remote.theme.PollQuestionItem
@@ -114,11 +115,13 @@ class ThemeParser(
                 id = matcher.group(1).toInt(),
                 date = matcher.group(5),
                 isOnline = matcher.group(7).contains("green"),
-                avatar = matcher.group(8).let {
-                    if (it.isNotEmpty()) "https://s.4pda.to/forum/uploads/$it" else null
-                },
-                nick = matcher.group(9).fromHtml()!!,
-                userId = matcher.group(10).toInt(),
+                user = ForumUser.required(
+                    id = matcher.group(10).toInt(),
+                    nick = matcher.group(9).fromHtml(),
+                    avatar = matcher.group(8)!!.let {
+                        if (it.isNotEmpty()) "https://s.4pda.to/forum/uploads/$it" else null
+                    },
+                ),
                 isCurator = matcher.group(11) != null,
                 groupColor = matcher.group(12) ?: "black",
                 group = matcher.group(13),

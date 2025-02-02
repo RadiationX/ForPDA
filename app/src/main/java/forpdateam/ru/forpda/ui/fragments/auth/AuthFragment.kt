@@ -216,12 +216,12 @@ class AuthFragment : TabFragment(), AuthView {
     }
 
     override fun showProfile(profile: ProfileModel) {
-        ImageLoader.getInstance().displayImage(profile.avatar, avatar)
+        ImageLoader.getInstance().displayImage(profile.user.avatar, avatar)
         completeText.text = ApiUtils.spannedFromHtml(
             String.format(
                 "%s, <b>%s</b>!",
                 getString(R.string.auth_hello),
-                profile.nick
+                profile.user.nick
             )
         )
         completeText.visibility = View.VISIBLE

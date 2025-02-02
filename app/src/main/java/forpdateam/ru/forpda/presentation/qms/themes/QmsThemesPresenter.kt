@@ -46,7 +46,7 @@ class QmsThemesPresenter(
             .doAfterTerminate { viewState.setRefreshing(false) }
             .subscribe({
                 currentData = it
-                if (it.themes.isEmpty() && it.nick != null) {
+                if (it.themes.isEmpty()) {
                     openChat()
                 }
                 //viewState.showThemes(it)
@@ -57,10 +57,10 @@ class QmsThemesPresenter(
     }
 
     fun blockUser() {
-        currentData?.nick?.let { nick ->
+        currentData?.user?.nick?.let { nick ->
             qmsInteractor
                 .blockUser(nick)
-                .map { it.firstOrNull { it.nick == nick } != null }
+                .map { it.firstOrNull { it.user.nick == nick } != null }
                 .subscribe({
                     viewState.onBlockUser(it)
                 }, {
@@ -73,7 +73,7 @@ class QmsThemesPresenter(
     fun deleteTheme(themeId: Int) {
         currentData?.let {
             qmsInteractor
-                .deleteTheme(it.userId, themeId)
+                .deleteTheme(it.user.id, themeId)
                 .subscribe({
                     //viewState.showThemes(it)
                 }, {
@@ -91,8 +91,8 @@ class QmsThemesPresenter(
         currentData?.let {
             Log.e("kokosina", "openChat")
             router.replaceScreen(Screen.QmsChat().apply {
-                userId = it.userId
-                userNick = it.nick
+                userId = it.user.id
+                userNick = it.user.nick
                 avatarUrl = this@QmsThemesPresenter.avatarUrl
             })
         }
@@ -100,15 +100,15 @@ class QmsThemesPresenter(
 
     fun createNote() {
         currentData?.let {
-            val url = "https://4pda.to/forum/index.php?act=qms&mid=${it.userId}"
-            viewState.showCreateNote(it.nick.orEmpty(), url)
+            val url = "https://4pda.to/forum/index.php?act=qms&mid=${it.user.id}"
+            viewState.showCreateNote(it.user.nick, url)
         }
     }
 
     fun createThemeNote(item: QmsTheme) {
         currentData?.let {
-            val url = "https://4pda.to/forum/index.php?act=qms&mid=${it.userId}&t=${item.userId}"
-            viewState.showCreateNote(item.name.orEmpty(), it.nick.orEmpty(), url)
+            val url = "https://4pda.to/forum/index.php?act=qms&mid=${it.user.id}&t=${item.id}"
+            viewState.showCreateNote(item.name.orEmpty(), it.user.nick, url)
         }
     }
 
@@ -116,8 +116,8 @@ class QmsThemesPresenter(
         currentData?.let {
             router.navigateTo(Screen.QmsChat().apply {
                 screenTitle = item.name
-                screenSubTitle = it.nick
-                userId = it.userId
+                screenSubTitle = it.user.nick
+                userId = it.user.id
                 avatarUrl = this@QmsThemesPresenter.avatarUrl
                 themeId = item.id
                 themeTitle = item.name

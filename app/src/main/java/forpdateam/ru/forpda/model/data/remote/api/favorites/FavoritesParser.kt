@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.model.data.remote.api.favorites
 import forpdateam.ru.forpda.entity.remote.favorites.FavData
 import forpdateam.ru.forpda.entity.remote.favorites.FavItem
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
+import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.extensions.map
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
@@ -125,20 +126,17 @@ class FavoritesParser(
                 favId = favId,
                 topicId = topicId,
                 forumId = forumId,
-                authorId = authorId,
-                lastUserId = lastUserId,
+                author = User.required(authorId, authorUserNick),
+                lastUser = User.required(lastUserId, lastUserNick),
+                curator = User.optional(curatorId, curatorNick),
                 stParam = stParam,
                 pages = pages,
-                curatorId = curatorId,
                 trackType = trackType,
                 infoColor = infoColor,
                 topicTitle = topicTitle,
                 forumTitle = forumTitle,
-                authorUserNick = authorUserNick,
-                lastUserNick = lastUserNick,
                 date = date,
                 desc = desc,
-                curatorNick = curatorNick,
                 subType = subType,
                 isPin = isPin,
                 isForum = isForum,

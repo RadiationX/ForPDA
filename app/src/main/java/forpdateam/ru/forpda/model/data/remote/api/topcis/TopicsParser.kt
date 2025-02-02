@@ -61,19 +61,19 @@ class TopicsParser(
                     flags = flags,
                     title = matcher.group(4).fromHtml()!!,
                     desc = matcher.group(5)?.fromHtml(),
-                    author = User(
+                    author = User.required(
                         id = matcher.group(6).toInt(),
                         nick = matcher.group(7).fromHtml()!!
                     ),
-                    lastUser = User(
+                    lastUser = User.required(
                         id = matcher.group(8).toInt(),
                         nick = matcher.group(9).fromHtml()!!
                     ),
                     date = matcher.group(10),
                     curator = matcher.group(11)?.let {
-                        User(
+                        User.required(
                             id = it.toInt(),
-                            nick = matcher.group(12).fromHtml()!!
+                            nick = matcher.group(12).fromHtml()
                         )
                     }
                 )

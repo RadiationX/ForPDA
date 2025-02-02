@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.model.data.remote.api.reputation
 
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
+import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.entity.remote.reputation.RepData
 import forpdateam.ru.forpda.entity.remote.reputation.RepItem
 import forpdateam.ru.forpda.extensions.map
@@ -21,8 +22,10 @@ class ReputationParser(
             .matcher(response)
             .map { matcher ->
                 RepItem(
-                    userId = matcher.group(1).toInt(),
-                    userNick = matcher.group(2).fromHtml()!!,
+                    user = User.required(
+                        id = matcher.group(1).toInt(),
+                        nick = matcher.group(2).fromHtml()
+                    ),
                     title = matcher.group(5).fromHtml()!!,
                     sourceUrl = matcher.group(3),
                     sourceTitle = matcher.group(4)?.fromHtml(),

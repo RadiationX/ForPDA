@@ -99,7 +99,7 @@ class ThemeDialogsHelper_V2(
         userMenu.allow(0)
         userMenu.allow(1)
         val authData = authHolder.get()
-        if (authData.isAuth() && post.userId != authData.userId) {
+        if (authData.isAuth() && post.user.id != authData.userId) {
             userMenu.allow(2)
         }
         userMenu.allow(3)
@@ -117,7 +117,7 @@ class ThemeDialogsHelper_V2(
         if (!authHolder.get().isAuth() || post.canMinusRep) {
             reputationMenu.allow(2)
         }
-        val title = get().getString(R.string.reputation) + (" " + post.nick)
+        val title = get().getString(R.string.reputation) + (" " + post.user.nick)
         reputationMenu.show(context, title, presenter, post)
     }
 
@@ -161,7 +161,7 @@ class ThemeDialogsHelper_V2(
         val messageField = layout.findViewById<EditText>(R.id.report_text_field)
 
         AlertDialog.Builder(context)
-            .setTitle(String.format(get().getString(R.string.report_to_post_Nick), post.nick))
+            .setTitle(String.format(get().getString(R.string.report_to_post_Nick), post.user.nick))
             .setView(layout)
             .setPositiveButton(
                 R.string.send
@@ -177,7 +177,7 @@ class ThemeDialogsHelper_V2(
 
     fun deletePost(presenter: IThemePresenter, post: ForumPost) {
         AlertDialog.Builder(context)
-            .setMessage(String.format(get().getString(R.string.ask_delete_post_Nick), post.nick))
+            .setMessage(String.format(get().getString(R.string.ask_delete_post_Nick), post.user.nick))
             .setPositiveButton(
                 R.string.ok
             ) { dialogInterface: DialogInterface?, i: Int -> presenter.deletePost(post.id) }
@@ -195,7 +195,7 @@ class ThemeDialogsHelper_V2(
         text.text = String.format(
             context.getString(R.string.change_reputation_Type_Nick),
             context.getString(if (type) R.string.increase else R.string.decrease),
-            post.nick
+            post.user.nick
         )
 
         AlertDialog.Builder(context)
@@ -219,7 +219,7 @@ class ThemeDialogsHelper_V2(
                 String.format(
                     context.getString(R.string.change_post_reputation_Type_Nick),
                     context.getString(if (type) R.string.increase else R.string.decrease),
-                    post.nick
+                    post.user.nick
                 )
             )
             .setPositiveButton(

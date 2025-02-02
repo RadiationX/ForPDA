@@ -1,13 +1,13 @@
 package forpdateam.ru.forpda.entity.remote
 
+import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
+
 /**
  * Created by radiationx on 27.04.17.
  */
 
 class ForumPost(
     val date: String,
-    val avatar: String?,
-    val nick: String,
     val groupColor: String,
     val group: String,
     val reputation: String,
@@ -22,5 +22,5 @@ class ForumPost(
     val canQuote: Boolean,
     val id: Int,
     val topicId: Int,
-    val userId: Int,
+    val user: ForumUser
 ) 

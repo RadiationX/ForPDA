@@ -86,7 +86,7 @@ class ArticleCommentPresenter(
 
 
     fun openProfile(comment: Comment) {
-        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${comment.userId}", router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${comment.user.id}", router)
     }
 
 }

@@ -4,6 +4,7 @@ import forpdateam.ru.forpda.entity.remote.devdb.Brand
 import forpdateam.ru.forpda.entity.remote.devdb.BrandSearch
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
 import forpdateam.ru.forpda.entity.remote.devdb.Device
+import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.extensions.findAll
 import forpdateam.ru.forpda.extensions.findOnce
 import forpdateam.ru.forpda.extensions.map
@@ -190,8 +191,10 @@ class DevDbParser(
                 Device.Comment(
                     id = matcher.group(1).toInt(),
                     rating = matcher.group(3).toInt(),
-                    userId = matcher.group(4).toInt(),
-                    nick = requireNotNull(matcher.group(5).fromHtml()),
+                    user = User.required(
+                        id = matcher.group(4).toInt(),
+                        nick = matcher.group(5).fromHtml()
+                    ),
                     date = matcher.group(6),
                     text = (matcher.group(9) ?: matcher.group(7))?.trim().orEmpty(),
                     likes = matcher.group(10).toInt(),

@@ -1,9 +1,11 @@
 package forpdateam.ru.forpda.model.data.remote.api.profile
 
 import android.text.Spanned
+import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.extensions.map
 import forpdateam.ru.forpda.extensions.mapOnce
+import forpdateam.ru.forpda.extensions.requireOnce
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
@@ -20,11 +22,8 @@ class ProfileParser(
             .getPattern(scope.scope, scope.main)
             .matcher(response)
             .mapOnce { mainMatcher ->
-                val id = Pattern.compile("showuser=(\\d+)").matcher(argUrl).mapOnce { matcher ->
+                val id = Pattern.compile("showuser=(\\d+)").matcher(argUrl).requireOnce { matcher ->
                     matcher.group(1).toInt()
-                }
-                requireNotNull(id) {
-                    "id is null"
                 }
                 val sign = mainMatcher.group(6).trim().let {
                     if (it == "Нет подписи") null else it.fromHtmlToColored()
@@ -36,9 +35,11 @@ class ProfileParser(
                 stats.addAll(parseSiteStats(mainMatcher.group(10)))
                 stats.addAll(parseForumStats(mainMatcher.group(11)))
                 ProfileModel(
-                    id = id,
-                    avatar = mainMatcher.group(1).trim(),
-                    nick = mainMatcher.group(2).trim().fromHtml()!!,
+                    user = ForumUser.required(
+                        id = id,
+                        avatar = mainMatcher.group(1).trim(),
+                        nick = mainMatcher.group(2).trim().fromHtml()!!
+                    ),
                     status = mainMatcher.group(3)?.trim(),
                     group = mainMatcher.group(4).trim(),
                     info = info,

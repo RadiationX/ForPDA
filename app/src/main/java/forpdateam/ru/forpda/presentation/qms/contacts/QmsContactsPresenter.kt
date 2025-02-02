@@ -44,10 +44,11 @@ class QmsContactsPresenter(
 
     fun searchLocal(nick: String) {
         searchContacts.clear()
-        if (!nick.isEmpty()) {
+        if (nick.isNotEmpty()) {
             searchContacts.filter {
-                it.nick?.lowercase(Locale.getDefault())
-                    ?.contains(nick.lowercase(Locale.getDefault())) ?: false
+                it.user.nick
+                    .lowercase(Locale.getDefault())
+                    .contains(nick.lowercase(Locale.getDefault()))
             }
             viewState.showContacts(searchContacts)
         } else {
@@ -83,8 +84,8 @@ class QmsContactsPresenter(
 
     fun blockUser(item: QmsContact) {
         qmsInteractor
-            .blockUser(item.nick.orEmpty())
-            .map { it.firstOrNull { it.nick == item.nick } != null }
+            .blockUser(item.user.nick)
+            .map { it.firstOrNull { it.user.nick == item.user.nick } != null }
             .subscribe({
                 viewState.onBlockUser(it)
             }, {
@@ -95,9 +96,9 @@ class QmsContactsPresenter(
 
     fun onItemClick(item: QmsContact) {
         router.navigateTo(Screen.QmsThemes().apply {
-            screenTitle = item.nick
-            userId = item.id
-            avatarUrl = item.avatar
+            screenTitle = item.user.nick
+            userId = item.user.id
+            avatarUrl = item.user.avatar
         })
     }
 
@@ -106,12 +107,12 @@ class QmsContactsPresenter(
     }
 
     fun createNote(item: QmsContact) {
-        val url = "https://4pda.to/forum/index.php?act=qms&mid=${item.id}"
-        viewState.showCreateNote(item.nick.orEmpty(), url)
+        val url = "https://4pda.to/forum/index.php?act=qms&mid=${item.user.id}"
+        viewState.showCreateNote(item.user.nick, url)
     }
 
     fun openProfile(item: QmsContact) {
-        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.id}", router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.user.id}", router)
     }
 
     fun openBlackList() {

@@ -1,13 +1,14 @@
 package forpdateam.ru.forpda.entity.remote.news
 
+import forpdateam.ru.forpda.entity.remote.others.user.User
+
 /**
  * Created by radiationx on 02.09.17.
  */
 
 data class Comment(
     val id: Int,
-    val userId: Int,
-    val userNick: String?,
+    val user: User,
     val date: String?,
     val content: String?,
     val isDeleted: Boolean,

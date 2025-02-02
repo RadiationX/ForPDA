@@ -130,8 +130,8 @@ class QmsThemesFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<Qm
     override fun showThemes(data: QmsThemes) {
         recyclerView.scrollToPosition(0)
 
-        setTabTitle(String.format(getString(R.string.dialogs_Nick), data.nick))
-        setTitle(data.nick)
+        setTabTitle(String.format(getString(R.string.dialogs_Nick), data.user.nick))
+        setTitle(data.user.nick)
 
         adapter.addAll(data.themes)
         adapter.notifyDataSetChanged()

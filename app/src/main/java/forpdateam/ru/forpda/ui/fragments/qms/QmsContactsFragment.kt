@@ -83,7 +83,7 @@ class QmsContactsFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<
                 presenter.blockUser(data)
             }
             addItem(getString(R.string.delete)) { _, data ->
-                presenter.deleteDialog(data.id)
+                presenter.deleteDialog(data.user.id)
             }
             addItem(getString(R.string.create_note)) { _, data ->
                 presenter.createNote(data)

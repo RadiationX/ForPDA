@@ -433,14 +433,14 @@ class SearchPresenter(
 
     override fun openProfile(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.post.userId}", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.post.user.id}", router)
         }
     }
 
     override fun openQms(postId: Int) {
         getPostById(postId)?.let {
             linkHandler.handle(
-                "https://4pda.to/forum/index.php?act=qms&amp;mid=${it.post.userId}",
+                "https://4pda.to/forum/index.php?act=qms&amp;mid=${it.post.user.id}",
                 router
             )
         }
@@ -451,7 +451,7 @@ class SearchPresenter(
             linkHandler.handle(
                 SearchSettings.default().copy(
                     source = SearchSettings.SOURCE_ALL.first,
-                    nick = it.post.nick,
+                    nick = it.post.user.nick,
                     result = SearchSettings.RESULT_TOPICS.first
                 ).toUrl(),
                 router
@@ -465,7 +465,7 @@ class SearchPresenter(
                 SearchSettings.default().copy(
                     topics = listOf(it.post.topicId),
                     source = SearchSettings.SOURCE_CONTENT.first,
-                    nick = it.post.nick,
+                    nick = it.post.user.nick,
                     result = SearchSettings.RESULT_POSTS.first,
                     subforums = SearchSettings.SUB_FORUMS_FALSE
                 ).toUrl(),
@@ -479,7 +479,7 @@ class SearchPresenter(
             linkHandler.handle(
                 SearchSettings.default().copy(
                     source = SearchSettings.SOURCE_CONTENT.first,
-                    nick = it.post.nick,
+                    nick = it.post.user.nick,
                     result = SearchSettings.RESULT_POSTS.first,
                     subforums = SearchSettings.SUB_FORUMS_FALSE
                 ).toUrl(),
@@ -495,7 +495,7 @@ class SearchPresenter(
     override fun changeReputation(postId: Int, type: Boolean, message: String) {
         getPostById(postId)?.let {
             reputationRepository
-                .changeReputation(it.post.id, it.post.userId, type, message)
+                .changeReputation(it.post.id, it.post.user.id, type, message)
                 .subscribe({
                     router.showSystemMessage(App.get().getString(R.string.reputation_changed))
                 }, {
@@ -521,7 +521,7 @@ class SearchPresenter(
     override fun openReputationHistory(postId: Int) {
         getPostById(postId)?.let {
             linkHandler.handle(
-                "https://4pda.to/forum/index.php?act=rep&view=history&amp;mid=${it.post.userId}",
+                "https://4pda.to/forum/index.php?act=rep&view=history&amp;mid=${it.post.user.nick}",
                 router
             )
         }
@@ -565,7 +565,7 @@ class SearchPresenter(
             val title = String.format(
                 App.get().getString(R.string.post_Topic_Nick_Number),
                 topicTitle,
-                it.post.nick,
+                it.post.user.nick,
                 it.post.id
             )
             val url =

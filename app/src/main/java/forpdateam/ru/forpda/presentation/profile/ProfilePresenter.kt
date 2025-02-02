@@ -86,7 +86,7 @@ class ProfilePresenter(
     private fun loadAvatar(profile: ProfileModel) {
         Single
             .fromCallable {
-                ImageLoader.getInstance().loadImageSync(profile.avatar)
+                ImageLoader.getInstance().loadImageSync(profile.user.avatar)
             }
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())

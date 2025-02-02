@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.entity.remote.events
 
+import forpdateam.ru.forpda.entity.remote.others.user.User
+
 /**
  * Created by radiationx on 29.07.17.
  */
@@ -11,7 +13,6 @@ data class NotificationEvent(
     val messageId: Int,
 
     val sourceId: Int,
-    val userId: Int,
 
     val timeStamp: Long,
     val lastTimeStamp: Long,
@@ -20,7 +21,7 @@ data class NotificationEvent(
     val isImportant: Boolean,
 
     val sourceTitle: String,
-    val userNick: String,
+    val user: User?,
 
     val sourceEventText: String?
 ) {

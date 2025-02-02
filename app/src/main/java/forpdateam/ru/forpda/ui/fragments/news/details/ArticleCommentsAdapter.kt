@@ -95,7 +95,7 @@ class ArticleCommentsAdapter(
                 holder.date.visibility = View.VISIBLE
             }
 
-            holder.nick.text = item.userNick
+            holder.nick.text = item.user.nick
             holder.date.text = item.date
 
             if (karma!!.count == 0) {
@@ -125,7 +125,7 @@ class ArticleCommentsAdapter(
                 Karma.NOT_LIKED -> {
                     holder.likeImage.setImageDrawable(holder.heart_outline)
                     holder.likeImage.clearColorFilter()
-                    holder.likeImage.isClickable = authData.userId != item.userId
+                    holder.likeImage.isClickable = authData.userId != item.user.id
                 }
             }
         }

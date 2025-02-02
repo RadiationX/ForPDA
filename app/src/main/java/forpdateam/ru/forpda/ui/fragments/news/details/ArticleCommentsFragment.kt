@@ -174,7 +174,7 @@ class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView,
     @SuppressLint("SetTextI18n")
     private fun fillMessageField(comment: Comment) {
         currentReplyComment = comment
-        messageField.setText("${currentReplyComment?.userNick},\n")
+        messageField.setText("${currentReplyComment?.user?.nick},\n")
         messageField.setSelection(messageField.text.length)
         messageField.requestFocus()
         val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

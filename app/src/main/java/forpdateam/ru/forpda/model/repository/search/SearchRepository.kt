@@ -27,11 +27,7 @@ class SearchRepository(
 
     private fun saveUsers(page: SearchResult) {
         val forumUsers = page.items.filterIsInstance<SearchItem.Post>().map { post ->
-            ForumUser(
-                id = post.post.userId,
-                nick = post.post.nick,
-                avatar = post.post.avatar
-            )
+            post.post.user
         }
         forumUsersCache.saveUsers(forumUsers)
     }

@@ -66,22 +66,22 @@ class SearchTemplate(
 
                 setVariableOpt("user_online", if (post.isOnline) "online" else "")
                 setVariableOpt("post_id", post.id)
-                setVariableOpt("user_id", post.userId)
+                setVariableOpt("user_id", post.user.id)
 
                 //Post header
-                setVariableOpt("avatar", post.avatar)
+                setVariableOpt("avatar", post.user.avatar)
                 setVariableOpt(
                     "none_avatar",
-                    if (post.avatar.isNullOrEmpty()) "none_avatar" else ""
+                    if (post.user.avatar.isNullOrEmpty()) "none_avatar" else ""
                 )
 
-                letterMatcher = letterMatcher?.reset(post.nick) ?: firstLetter.matcher(post.nick)
+                letterMatcher = letterMatcher?.reset(post.user.nick) ?: firstLetter.matcher(post.user.nick)
                 val letter: String = letterMatcher?.run {
                     if (find()) group(1) else null
-                } ?: post.nick?.substring(0, 1).orEmpty()
+                } ?: post.user.nick.takeIf { it.isNotEmpty() }?.substring(0, 1).orEmpty()
 
                 setVariableOpt("nick_letter", letter)
-                setVariableOpt("nick", ApiUtils.htmlEncode(post.nick))
+                setVariableOpt("nick", ApiUtils.htmlEncode(post.user.nick))
                 //t.setVariableOpt("curator", false ? "curator" : "");
                 setVariableOpt("group_color", post.groupColor)
                 setVariableOpt("group", post.group)

@@ -169,10 +169,11 @@ class NotificationsService : Service() {
 
     fun sendNotification(event: NotificationEvent) {
         Log.e("kulolo", "sendNotification " + event.notifyId())
-        if (notificationPreferencesHolder.getMainAvatarsEnabled()) {
+        val user = event.user
+        if (user != null && notificationPreferencesHolder.getMainAvatarsEnabled()) {
             val schedulers = get().Di().schedulers
             val disposable = avatarRepository
-                .getAvatar(event.userId, event.userNick)
+                .getAvatar(user.id, user.nick)
                 .flatMap(Function<String?, SingleSource<Bitmap>> { s: String? ->
                     Single
                         .fromCallable { ImageLoader.getInstance().loadImageSync(s) }
@@ -208,7 +209,7 @@ class NotificationsService : Service() {
     fun sendNotification(event: NotificationEvent, avatar: Bitmap?) {
         Log.e(
             "events_lalala",
-            "send notification " + event.sourceEventText + " : " + event.source + " : " + event.sourceTitle + " : " + event.userNick
+            "send notification " + event.sourceEventText + " : " + event.source + " : " + event.sourceTitle + " : " + event.user?.nick
         )
         val title = createTitle(event)
         val text = createContent(event)
@@ -368,13 +369,13 @@ class NotificationsService : Service() {
 
     fun createTitle(event: NotificationEvent): String {
         if (event.fromQms()) {
-            val nick = event.userNick
-            if (nick == null || nick.isEmpty()) return "Сообщения 4PDA"
+            val nick = event.user?.nick
+            if (nick.isNullOrEmpty()) return "Сообщения 4PDA"
         }
 
         if (event.fromSite()) return "ForPDA"
 
-        return event.userNick
+        return event.user?.nick ?: "Unknown User"
     }
 
     fun createContent(event: NotificationEvent): String {
@@ -420,7 +421,7 @@ class NotificationsService : Service() {
             if (event.fromSite()) return "https://4pda.to/index.php?p=" + event.sourceId + "/#comment" + event.messageId
         }
 
-        if (event.fromQms()) return "https://4pda.to/forum/index.php?act=qms&mid=" + event.userId + "&t=" + event.sourceId
+        if (event.fromQms()) return "https://4pda.to/forum/index.php?act=qms&mid=" + event.user?.id + "&t=" + event.sourceId
 
         if (event.fromTheme()) return "https://4pda.to/forum/index.php?showtopic=" + event.sourceId + "&view=getnewpost"
 
@@ -445,8 +446,8 @@ class NotificationsService : Service() {
         for (i in 0 until size) {
             val event = events[i]
             if (event.fromQms()) {
-                var nick = event.userNick
-                if (nick == null || nick.isEmpty()) nick = "Сообщения 4PDA"
+                var nick = event.user?.nick
+                if (nick.isNullOrEmpty()) nick = "Сообщения 4PDA"
                 content.append("<b>").append(nick).append("</b>")
                 content.append(": ").append(event.sourceTitle)
             } else if (event.fromTheme()) {

@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.model.data.remote.api.events
 
 import forpdateam.ru.forpda.entity.remote.events.NotificationEvent
+import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils.fromHtml
 import java.util.regex.Matcher
@@ -38,13 +39,12 @@ class NotificationEventsApi(private val webClient: IWebClient) {
             source = source,
             sourceId = matcher.group(4).toInt(),
             messageId = matcher.group(6).toInt(),
-            userId = 0,
+            user = null,
             timeStamp = 0,
             lastTimeStamp = 0,
             msgCount = 0,
             isImportant = false,
             sourceTitle = "",
-            userNick = "",
             sourceEventText = null,
         )
     }
@@ -76,8 +76,10 @@ class NotificationEventsApi(private val webClient: IWebClient) {
             sourceId = matcher.group(1).toInt(),
             sourceTitle = fromHtml(matcher.group(2))!!,
             msgCount = matcher.group(3).toInt(),
-            userId = matcher.group(4).toInt(),
-            userNick = fromHtml(matcher.group(5))!!,
+            user = User.required(
+                id = matcher.group(4).toInt(),
+                nick = fromHtml(matcher.group(5))
+            ),
             timeStamp = matcher.group(6).toInt().toLong(),
             lastTimeStamp = matcher.group(7).toInt().toLong(),
             isImportant = matcher.group(8) == "1",
@@ -118,8 +120,10 @@ class NotificationEventsApi(private val webClient: IWebClient) {
             sourceEventText = matcher.group(),
             sourceId = sourceId,
             sourceTitle = fromHtml(matcher.group(2))!!,
-            userId = matcher.group(3).toInt(),
-            userNick = userNick,
+            user = User.required(
+                id = matcher.group(3).toInt(),
+                nick = userNick
+            ),
             timeStamp = matcher.group(5).toInt().toLong(),
             msgCount = matcher.group(6).toInt(),
             messageId = 0,

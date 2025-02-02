@@ -68,7 +68,7 @@ class SearchAdapter extends BaseAdapter<SearchItem, BaseViewHolder<SearchItem>> 
         public void bind(SearchItem searchItem, int position) {
             SearchItem.Topic item = (SearchItem.Topic) searchItem;
             title.setText(item.getTitle());
-            nick.setText(item.getNick());
+            nick.setText(item.getUser().getNick());
             date.setText(item.getDate());
             String contentText = item.getDesc();
             content.setText(contentText);
@@ -132,7 +132,7 @@ class SearchAdapter extends BaseAdapter<SearchItem, BaseViewHolder<SearchItem>> 
             /*if (news.newNews && nContainer.getVisibility() == View.GONE) {
                 nContainer.setVisibility(View.VISIBLE);
             }*/
-            username.setText(item.getNick());
+            username.setText(item.getUser().getNick());
             //category.setText(news.category);
             title.setText(item.getTitle());
             description.setText(item.getBody());

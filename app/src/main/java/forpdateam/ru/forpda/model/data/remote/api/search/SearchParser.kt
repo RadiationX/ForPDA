@@ -2,6 +2,8 @@ package forpdateam.ru.forpda.model.data.remote.api.search
 
 import forpdateam.ru.forpda.entity.remote.ForumPost
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
+import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
+import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.entity.remote.search.SearchItem
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
@@ -49,8 +51,10 @@ class SearchParser(
                 id = matcher.group(1).toInt(),
                 imageUrl = matcher.group(2),
                 date = matcher.group(3),
-                userId = matcher.group(4).toInt(),
-                nick = matcher.group(5).fromHtml()!!,
+                user = User.required(
+                    id = matcher.group(4).toInt(),
+                    nick = matcher.group(5).fromHtml()
+                ),
                 title = matcher.group(6).fromHtml()!!,
                 body = matcher.group(7)
             )
@@ -65,8 +69,10 @@ class SearchParser(
                 title = matcher.group(4).fromHtml()!!,
                 desc = matcher.group(5).fromHtml()!!,
                 forumId = matcher.group(6).toInt(),
-                userId = matcher.group(10).toInt(),
-                nick = matcher.group(11).fromHtml()!!,
+                user = User.required(
+                    id = matcher.group(10).toInt(),
+                    nick = matcher.group(11).fromHtml(),
+                ),
                 date = matcher.group(12)
             )
         }
@@ -82,11 +88,13 @@ class SearchParser(
 
                 date = matcher.group(5),
                 isOnline = matcher.group(7).contains("green"),
-                avatar = matcher.group(8).let {
-                    if (it.isNotEmpty()) "https://s.4pda.to/forum/uploads/$it" else null
-                },
-                nick = matcher.group(9).fromHtml()!!,
-                userId = matcher.group(10).toInt(),
+                user = ForumUser.required(
+                    id = matcher.group(10).toInt(),
+                    nick = matcher.group(9).fromHtml(),
+                    avatar = matcher.group(8)!!.let {
+                        if (it.isNotEmpty()) "https://s.4pda.to/forum/uploads/$it" else null
+                    },
+                ),
                 isCurator = matcher.group(11) != null,
                 groupColor = matcher.group(12),
                 group = matcher.group(13),

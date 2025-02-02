@@ -112,7 +112,7 @@ class FavoritesRepository(
 
         Log.e(
             "testtabnotify",
-            "handleEventTransaction $newCount, $topicId, $isRead, ${loadedEvent.userNick}"
+            "handleEventTransaction $newCount, $topicId, $isRead, ${loadedEvent.user?.nick}"
         )
 
         if (isRead) {
@@ -133,9 +133,8 @@ class FavoritesRepository(
                 condition = { it.topicId == topicId },
                 map = {
                     it.copy(
-                        isNew = it.lastUserId != authHolder.get().userId,
-                        lastUserNick = loadedEvent.userNick,
-                        lastUserId = loadedEvent.userId,
+                        isNew = it.lastUser.id != authHolder.get().userId,
+                        lastUser = loadedEvent.user ?: it.lastUser,
                         isPin = loadedEvent.isImportant
                     )
                 }

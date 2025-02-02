@@ -60,7 +60,7 @@ class CommentsAdapter(
 
         override fun bind(item: Device.Comment, position: Int) {
             currentItem = item
-            title.text = item.nick
+            title.text = item.user.nick
             date.text = item.date
             desc.text = spannedFromHtml(item.text)
             rating.text = item.rating.toString()

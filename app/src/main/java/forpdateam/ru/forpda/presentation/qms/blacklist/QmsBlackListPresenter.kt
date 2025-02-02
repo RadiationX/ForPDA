@@ -81,14 +81,14 @@ class QmsBlackListPresenter(
     }
 
     fun openProfile(item: QmsContact) {
-        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.id}", router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.user.id}", router)
     }
 
     fun openDialogs(item: QmsContact) {
         router.navigateTo(Screen.QmsThemes().apply {
-            screenTitle = item.nick
-            userId = item.id
-            avatarUrl = item.avatar
+            screenTitle = item.user.nick
+            userId = item.user.id
+            avatarUrl = item.user.avatar
         })
     }
 }

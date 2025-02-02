@@ -40,7 +40,7 @@ class ForumUsersCache(
 }
 
 fun ForumUserBd.toDomain(): ForumUser {
-    return ForumUser(id, nick, avatar)
+    return ForumUser.required(id, nick, avatar)
 }
 
 fun ForumUser.toDb(): ForumUserBd {

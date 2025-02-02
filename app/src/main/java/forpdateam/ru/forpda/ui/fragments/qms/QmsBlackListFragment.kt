@@ -85,7 +85,7 @@ class QmsBlackListFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener
                 presenter.openDialogs(data)
             }
             addItem(getString(R.string.delete)) { _, data ->
-                presenter.unBlockUser(data.id)
+                presenter.unBlockUser(data.user.id)
             }
         }
 

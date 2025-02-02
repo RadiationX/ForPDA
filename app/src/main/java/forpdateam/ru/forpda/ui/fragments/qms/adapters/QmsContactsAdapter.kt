@@ -45,8 +45,8 @@ class QmsContactsAdapter : BaseAdapter<QmsContact, ContactHolder>() {
         }
 
         override fun bind(item: QmsContact, position: Int) {
-            nick.text = item.nick
-            ImageLoader.getInstance().displayImage(item.avatar, avatar)
+            nick.text = item.user.nick
+            ImageLoader.getInstance().displayImage(item.user.avatar, avatar)
             nick.typeface = if (item.count > 0) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
             if (item.count == 0) {
                 count.visibility = View.GONE

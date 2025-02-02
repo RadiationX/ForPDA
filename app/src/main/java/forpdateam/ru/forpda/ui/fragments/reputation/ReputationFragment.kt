@@ -114,7 +114,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
         dialogMenu = DynamicDialogMenu()
         dialogMenu.apply {
             addItem(getString(R.string.profile)) { _, data ->
-                presenter.navigateToProfile(data.userId)
+                presenter.navigateToProfile(data.user.id)
             }
             addItem(getString(R.string.go_to_message)) { _, data ->
                 presenter.navigateToMessage(data)
@@ -268,6 +268,6 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
         dialogMenu.allow(0)
         if (item.sourceUrl != null)
             dialogMenu.allow(1)
-        dialogMenu.show(requireContext(), item.userNick, this@ReputationFragment, item)
+        dialogMenu.show(requireContext(), item.user.nick, this@ReputationFragment, item)
     }
 }

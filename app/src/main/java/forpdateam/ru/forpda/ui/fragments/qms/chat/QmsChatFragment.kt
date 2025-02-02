@@ -267,7 +267,7 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface,
     override fun showChat(data: QmsChatModel) {
         progressBar.visibility = View.GONE
         refreshToolbarMenuItems(true)
-        setTitles(data.title.orEmpty(), data.nick.orEmpty())
+        setTitles(data.title.orEmpty(), data.user.nick.orEmpty())
     }
 
     override fun setTitles(title: String, nick: String) {

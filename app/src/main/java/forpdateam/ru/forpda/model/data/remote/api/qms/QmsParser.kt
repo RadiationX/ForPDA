@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.model.data.remote.api.qms
 
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
+import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.entity.remote.qms.QmsChatModel
 import forpdateam.ru.forpda.entity.remote.qms.QmsContact
 import forpdateam.ru.forpda.entity.remote.qms.QmsMessage
@@ -25,9 +26,9 @@ class QmsParser(
         .getPattern(scope.scope, scope.finduser)
         .matcher(response)
         .map { matcher ->
-            ForumUser(
+            ForumUser.required(
                 id = matcher.group(1).toInt(),
-                nick = matcher.group(2).fromHtml().orEmpty(),
+                nick = matcher.group(2).fromHtml(),
                 avatar = matcher.group(3)?.let {
                     when {
                         it.substring(0, 2) == "//" -> "https:$it"
@@ -46,9 +47,11 @@ class QmsParser(
                 .matcher(it)
                 .map { matcher ->
                     QmsContact(
-                        id = matcher.group(1).toInt(),
-                        avatar = matcher.group(2),
-                        nick = matcher.group(3).fromHtml(),
+                        user = ForumUser.required(
+                            id = matcher.group(1).toInt(),
+                            nick = matcher.group(3).fromHtml(),
+                            avatar = matcher.group(2)
+                        ),
                         count = 0
                     )
                 }
@@ -68,14 +71,13 @@ class QmsParser(
         .matcher(response)
         .map { matcher ->
             QmsContact(
-                id = matcher.group(1).toInt(),
-                avatar = matcher.group(3),
-                nick = ApiUtils.fromHtml(matcher.group(4).trim()),
+                user = ForumUser.required(
+                    id = matcher.group(1).toInt(),
+                    nick = ApiUtils.fromHtml(matcher.group(4).trim()),
+                    avatar = matcher.group(3)
+                ),
                 count = matcher.group(2).asCount()
-            ).apply {
-
-
-            }
+            )
         }
 
     fun parseThemes(response: String, argId: Int): QmsThemes {
@@ -96,12 +98,11 @@ class QmsParser(
                     name = matcher.group(3).trim().fromHtml(),
                     countMessages = matcher.group(4).toInt(),
                     countNew = matcher.group(5).asCount(),
-                    userId = argId,
-                    nick = nick
+                    user = User.required(argId, nick)
                 )
             }
 
-        return QmsThemes(argId, nick, themes)
+        return QmsThemes(User.required(argId, nick), themes)
     }
 
     fun parseChat(response: String): QmsChatModel {
@@ -110,11 +111,13 @@ class QmsParser(
             .matcher(response)
             .mapOnce { matcher ->
                 QmsChatModel(
-                    nick = matcher.group(1).trim().fromHtml()!!,
                     title = matcher.group(2).trim().fromHtml()!!,
-                    userId = matcher.group(3).toInt(),
                     themeId = matcher.group(4).toInt(),
-                    avatarUrl = matcher.group(5),
+                    user = ForumUser.required(
+                        id = matcher.group(3).toInt(),
+                        nick = matcher.group(1).trim().fromHtml(),
+                        avatar = matcher.group(5),
+                    ),
                     messages = localParseMessages(response),
                     showedMessIndex = 0,
                     html = null

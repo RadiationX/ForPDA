@@ -4,6 +4,8 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import forpdateam.ru.forpda.entity.db.qms.QmsContactBd
 import forpdateam.ru.forpda.entity.db.qms.QmsThemeBd
 import forpdateam.ru.forpda.entity.db.qms.QmsThemesBd
+import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
+import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.entity.remote.qms.QmsContact
 import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
@@ -41,11 +43,11 @@ class QmsCache {
         }
         if (contactsRelay.hasValue()) {
             realm.where(QmsContactBd::class.java)
-                .equalTo("id", item.id)
+                .equalTo("id", item.user.id)
                 .findFirst()
                 ?.also { newItem ->
                     val currentItems = contactsRelay.value!!.toMutableList()
-                    val index = currentItems.indexOfFirst { newItem.id == it.id }
+                    val index = currentItems.indexOfFirst { newItem.id == it.user.id }
                     if (index == -1) {
                         contactsRelay.accept(getContacts())
                     } else {
@@ -74,7 +76,7 @@ class QmsCache {
             themesDb.toDomain()
         }
     }.onEach { themes ->
-        getOrCreateThemesRelay(themes.userId).also {
+        getOrCreateThemesRelay(themes.user.id).also {
             if (!it.hasValue()) {
                 it.accept(themes)
             }
@@ -83,11 +85,11 @@ class QmsCache {
 
     fun saveThemes(data: QmsThemes) = Realm.getDefaultInstance().use { realm ->
         realm.executeTransaction { realmTr ->
-            realmTr.where(QmsThemesBd::class.java).equalTo("userId", data.userId).findAll()
+            realmTr.where(QmsThemesBd::class.java).equalTo("userId", data.user.id).findAll()
                 .deleteAllFromRealm()
             realmTr.copyToRealmOrUpdate(data.toDb())
         }
-        getOrCreateThemesRelay(data.userId).accept(getThemes(data.userId))
+        getOrCreateThemesRelay(data.user.id).accept(getThemes(data.user.id))
     }
 
     private fun getOrCreateThemesRelay(userId: Int): BehaviorRelay<QmsThemes> = themesRelays[userId]
@@ -97,27 +99,58 @@ class QmsCache {
 }
 
 fun QmsContactBd.toDomain(): QmsContact {
-    return QmsContact(id, nick, avatar, count)
+    return QmsContact(
+        user = ForumUser.required(
+            id = id,
+            nick = nick,
+            avatar = avatar
+        ),
+        count = count
+    )
 }
 
 fun QmsThemesBd.toDomain(): QmsThemes {
-    return QmsThemes(userId, nick, themes.map { it.toDomain(userId, nick) })
+    return QmsThemes(
+        user = User.required(userId, nick),
+        themes = themes.map { it.toDomain(userId, nick) }
+    )
 }
 
 fun QmsThemeBd.toDomain(userId: Int, nick: String?): QmsTheme {
-    return QmsTheme(id, countMessages, countNew, name, date, userId, nick)
+    return QmsTheme(
+        id = id,
+        countMessages = countMessages,
+        countNew = countNew,
+        name = name,
+        date = date,
+        user = User.required(userId, nick)
+    )
 }
 
 fun QmsContact.toDb(): QmsContactBd {
-    return QmsContactBd(nick, avatar, id, count)
+    return QmsContactBd(
+        nick = user.nick,
+        avatar = user.avatar,
+        id = user.id,
+        count = count
+    )
 }
 
 fun QmsThemes.toDb(): QmsThemesBd {
-    return QmsThemesBd(userId, nick, themes.toRealmList { it.toDb() })
+    return QmsThemesBd(
+        userId = user.id,
+        nick = user.nick,
+        themes = themes.toRealmList { it.toDb() })
 }
 
 fun QmsTheme.toDb(): QmsThemeBd {
-    return QmsThemeBd(id, countMessages, countNew, name, date)
+    return QmsThemeBd(
+        id = id,
+        countMessages = countMessages,
+        countNew = countNew,
+        name = name,
+        date = date
+    )
 }
 
 fun <T, R> Iterable<T>.toRealmList(block: (T) -> R): RealmList<R> {

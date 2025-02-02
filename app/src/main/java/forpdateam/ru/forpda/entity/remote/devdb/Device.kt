@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.entity.remote.devdb
 
+import forpdateam.ru.forpda.entity.remote.others.user.User
+
 /**
  * Created by radiationx on 06.08.17.
  */
@@ -23,10 +25,9 @@ data class Device(
     data class Comment(
         val id: Int,
         val rating: Int,
-        val userId: Int,
         val likes: Int,
         val dislikes: Int,
-        val nick: String,
+        val user: User,
         val date: String,
         val text: String
     )

@@ -1,16 +1,15 @@
 package forpdateam.ru.forpda.entity.remote.profile
 
 import android.text.Spanned
+import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 
 /**
  * Created by radiationx on 03.08.16.
  */
 data class ProfileModel(
-    val id: Int,
+    val user: ForumUser,
     val sign: Spanned?,
     val about: Spanned?,
-    val avatar: String,
-    val nick: String,
     val status: String?,
     val group: String,
     val note: String?,

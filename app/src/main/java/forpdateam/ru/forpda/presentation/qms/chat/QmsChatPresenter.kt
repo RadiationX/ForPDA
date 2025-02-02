@@ -95,10 +95,10 @@ class QmsChatPresenter(
     private fun updateCurrentData(newData: QmsChatModel) {
         currentData = newData
         themeId = newData.themeId
-        userId = newData.userId
+        userId = newData.user.id
         title = newData.title
-        nick = newData.nick
-        avatarUrl = newData.avatarUrl
+        nick = newData.user.nick
+        avatarUrl = newData.user.avatar
         updateMode()
     }
 
@@ -162,10 +162,10 @@ class QmsChatPresenter(
     }
 
     fun blockUser() {
-        currentData?.nick?.let { nick ->
+        currentData?.user?.nick?.let { nick ->
             qmsInteractor
                 .blockUser(nick)
-                .map { it.firstOrNull { it.nick == nick } != null }
+                .map { it.firstOrNull { it.user.nick == nick } != null }
                 .subscribe({
                     viewState.onBlockUser(it)
                 }, {
@@ -176,13 +176,13 @@ class QmsChatPresenter(
     }
 
     private fun tryShowAvatar() {
-        val result = avatarUrl?.let { it } ?: currentData?.avatarUrl?.let { it }
+        val result = avatarUrl?.let { it } ?: currentData?.user?.avatar?.let { it }
         if (result != null) {
             viewState.showAvatar(result)
         } else {
             currentData?.let {
                 avatarRepository
-                    .getAvatar(it.nick.orEmpty())
+                    .getAvatar(it.user.nick)
                     .subscribe({
                         viewState.showAvatar(it)
                     }, {
@@ -285,23 +285,23 @@ class QmsChatPresenter(
 
     fun createThemeNote() {
         currentData?.let {
-            val url = "https://4pda.to/forum/index.php?act=qms&mid=${it.userId}&t=${it.themeId}"
-            viewState.showCreateNote(it.title.orEmpty(), it.nick.orEmpty(), url)
+            val url = "https://4pda.to/forum/index.php?act=qms&mid=${it.user.id}&t=${it.themeId}"
+            viewState.showCreateNote(it.title, it.user.nick, url)
         }
     }
 
     fun openProfile() {
         currentData?.let {
-            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.userId}", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.user.id}", router)
         }
     }
 
     fun openDialogs() {
         currentData?.let {
             router.navigateTo(Screen.QmsThemes().apply {
-                screenTitle = it.nick
-                userId = it.userId
-                avatarUrl = it.avatarUrl
+                screenTitle = it.user.nick
+                userId = it.user.id
+                avatarUrl = it.user.avatar
             })
         }
     }
