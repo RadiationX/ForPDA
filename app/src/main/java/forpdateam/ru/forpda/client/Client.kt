@@ -78,10 +78,10 @@ class Client(
                     if (cookie.name() == "member_id") {
                         editor.putString("member_id", cookie.value())
                         val userId = cookie.value().toInt()
-                        val authData = authHolder.get()
-                        authData.userId = userId
-                        authData.state =
-                            if (userId == AuthData.NO_ID) AuthState.NO_AUTH else AuthState.AUTH
+                        val authData = authHolder.get().copy(
+                            userId = userId,
+                            state = if (userId == AuthData.NO_ID) AuthState.NO_AUTH else AuthState.AUTH
+                        )
                         authHolder.set(authData)
                     }
                     if (!clientCookies.containsKey(cookie.name())) {
@@ -138,7 +138,6 @@ class Client(
     //Контекст нужен, для чтения настроек
     //Не необходимо, но вдруг случится шо у App не будет контекста
     init {
-        val authData = authHolder.get()
         val preferences = get().preferences
         val member_id = preferences.getString("cookie_member_id", null)
         val pass_hash = preferences.getString("cookie_pass_hash", null)
@@ -153,8 +152,11 @@ class Client(
 
         if (member_id != null && pass_hash != null) {
             val userId = preferences.getString("member_id", "0")!!.toInt()
-            authData.state = AuthState.AUTH
-            authData.userId = userId
+            val authData = authHolder.get().copy(
+                state = AuthState.AUTH,
+                userId = userId
+            )
+            authHolder.set(authData)
 
             //Первичная загрузка кукисов
             clientCookies["member_id"] = parseCookie(member_id)!!
@@ -164,10 +166,12 @@ class Client(
                 clientCookies["anonymous"] = parseCookie(anonymous)!!
             }
         } else {
-            authData.state = AuthState.SKIP
-            authData.userId = 0
+            val authData = authHolder.get().copy(
+                userId = AuthData.NO_ID,
+                state = AuthState.SKIP
+            )
+            authHolder.set(authData)
         }
-        authHolder.set(authData)
     }
 
     private val newSslContext: SSLContext

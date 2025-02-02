@@ -36,10 +36,12 @@ class AuthRepository(
     fun signOut(): Single<Boolean> = Single
         .fromCallable { authApi.logout() }
         .doOnSuccess {
-            authHolder.set(authHolder.get().apply {
-                userId = AuthData.NO_ID
-                state = AuthState.NO_AUTH
-            })
+            authHolder.set(
+                AuthData(
+                    userId = AuthData.NO_ID,
+                    state = AuthState.NO_AUTH
+                )
+            )
             countersHolder.set(
                 MessageCounters(
                     mentions = 0,

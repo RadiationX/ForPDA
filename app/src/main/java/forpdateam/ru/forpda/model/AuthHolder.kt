@@ -13,19 +13,21 @@ class AuthHolder(
     private val relay = BehaviorRelay.create<AuthData>()
 
     init {
-        set(AuthData().apply {
-            userId = preferences.getString("member_id", null)?.toInt() ?: AuthData.NO_ID
-            state = enumValueOf(
-                preferences.getString("auth_state", null)
-                    ?: AuthState.NO_AUTH.toString()
+        val userId = preferences.getString("member_id", null)?.toInt() ?: AuthData.NO_ID
+        var state = enumValueOf<AuthState>(
+            preferences.getString("auth_state", null) ?: AuthState.NO_AUTH.toString()
+        )
+        val cookieMemberId = preferences.getString("cookie_member_id", null)
+        val cookiePassHash = preferences.getString("cookie_pass_hash", null)
+        if (cookieMemberId != null && cookiePassHash != null) {
+            state = AuthState.AUTH
+        }
+        set(
+            AuthData(
+                userId = userId,
+                state = state
             )
-
-            val cookieMemberId = preferences.getString("cookie_member_id", null)
-            val cookiePassHash = preferences.getString("cookie_pass_hash", null)
-            if (cookieMemberId != null && cookiePassHash != null) {
-                state = AuthState.AUTH
-            }
-        })
+        )
     }
 
     fun observe(): Observable<AuthData> = relay

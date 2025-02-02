@@ -65,12 +65,18 @@ class AuthPresenter(
     }
 
     fun onClickSkip() {
-        authHolder.set(authHolder.get().apply {
-            userId = AuthData.NO_ID
-            if (authHolder.get().state != AuthState.AUTH) {
-                state = AuthState.SKIP
-            }
-        })
+        val data = authHolder.get()
+        val state = if (data.state != AuthState.AUTH) {
+            AuthState.SKIP
+        } else {
+            data.state
+        }
+        authHolder.set(
+            AuthData(
+                userId = AuthData.NO_ID,
+                state = state
+            )
+        )
         router.exit()
     }
 

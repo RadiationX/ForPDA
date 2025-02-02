@@ -1,13 +1,13 @@
 package forpdateam.ru.forpda.entity.common
 
-class AuthData {
+data class AuthData(
+    val userId: Int,
+    val state: AuthState
+) {
 
     companion object {
         const val NO_ID = 0
     }
-
-    var userId: Int = NO_ID
-    var state = AuthState.NO_AUTH
 
     fun isAuth() = state == AuthState.AUTH
 }
