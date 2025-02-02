@@ -274,13 +274,13 @@ class SearchPresenter(
         return when (item) {
             is SearchItem.News -> "https://4pda.to/index.php?p=${item.id}"
             is SearchItem.Topic -> "https://4pda.to/forum/index.php?showtopic=${item.topicId}"
-            is SearchItem.ForumPost -> "https://4pda.to/forum/index.php?showtopic=${item.post.topicId}&view=findpost&p=${item.post.id}"
+            is SearchItem.Post -> "https://4pda.to/forum/index.php?showtopic=${item.post.topicId}&view=findpost&p=${item.post.id}"
         }
     }
 
     fun openTopicBegin(item: SearchItem) {
         val topicId = when (item) {
-            is SearchItem.ForumPost -> item.post.topicId
+            is SearchItem.Post -> item.post.topicId
             is SearchItem.Topic -> item.topicId
             is SearchItem.News -> return
         }
@@ -289,7 +289,7 @@ class SearchPresenter(
 
     fun openTopicNew(item: SearchItem) {
         val topicId = when (item) {
-            is SearchItem.ForumPost -> item.post.topicId
+            is SearchItem.Post -> item.post.topicId
             is SearchItem.Topic -> item.topicId
             is SearchItem.News -> return
         }
@@ -301,7 +301,7 @@ class SearchPresenter(
 
     fun openTopicLast(item: SearchItem) {
         val topicId = when (item) {
-            is SearchItem.ForumPost -> item.post.topicId
+            is SearchItem.Post -> item.post.topicId
             is SearchItem.Topic -> item.topicId
             is SearchItem.News -> return
         }
@@ -314,7 +314,7 @@ class SearchPresenter(
     fun openForum(item: SearchItem) {
         val forumId = when (item) {
             is SearchItem.Topic -> item.forumId
-            is SearchItem.ForumPost -> return
+            is SearchItem.Post -> return
             is SearchItem.News -> return
         }
         linkHandler.handle("https://4pda.to/forum/index.php?showforum=${forumId}", router)
@@ -326,7 +326,7 @@ class SearchPresenter(
 
     fun addTopicToFavorite(item: SearchItem, subType: String) {
         val topicId = when (item) {
-            is SearchItem.ForumPost -> item.post.topicId
+            is SearchItem.Post -> item.post.topicId
             is SearchItem.Topic -> item.topicId
             is SearchItem.News -> return
         }
@@ -366,9 +366,9 @@ class SearchPresenter(
         Utils.shareText(text)
     }
 
-    private fun getPostById(postId: Int): SearchItem.ForumPost? = currentData
+    private fun getPostById(postId: Int): SearchItem.Post? = currentData
         ?.items
-        ?.filterIsInstance<SearchItem.ForumPost>()
+        ?.filterIsInstance<SearchItem.Post>()
         ?.firstOrNull { it.post.id == postId }
 
     override fun onFirstPageClick() = viewState.firstPage()

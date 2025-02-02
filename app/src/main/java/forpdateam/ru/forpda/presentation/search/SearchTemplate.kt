@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.presentation.search
 
-import forpdateam.ru.forpda.entity.DeferredData
 import forpdateam.ru.forpda.entity.asDeferredData
 import forpdateam.ru.forpda.entity.remote.search.SearchItem
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
@@ -60,7 +59,7 @@ class SearchTemplate(
 
 
             var letterMatcher: Matcher? = null
-            for (searchPost in page.items.filterIsInstance<SearchItem.ForumPost>()) {
+            for (searchPost in page.items.filterIsInstance<SearchItem.Post>()) {
                 val post = searchPost.post
                 setVariableOpt("topic_id", post.topicId)
                 setVariableOpt("post_title", searchPost.title)

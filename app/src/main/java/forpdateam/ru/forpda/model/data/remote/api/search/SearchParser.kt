@@ -99,7 +99,7 @@ class SearchParser(
                 canQuote = matcher.group(20).isNotEmpty(),
                 body = matcher.group(21),
             )
-            SearchItem.ForumPost(
+            SearchItem.Post(
                 title = title,
                 post = post
             )

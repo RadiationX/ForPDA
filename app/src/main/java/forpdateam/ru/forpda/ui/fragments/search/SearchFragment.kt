@@ -730,15 +730,15 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         NotesAddPopup.showAddNoteDialog(requireContext(), title, url)
     }
 
-    override fun deletePostUi(post: SearchItem.ForumPost) {
+    override fun deletePostUi(post: SearchItem.Post) {
         webView.evalJs("onDeletePostClick(" + post.post.id + ");")
     }
 
-    override fun openAnchorDialog(post: SearchItem.ForumPost, anchorName: String) {
+    override fun openAnchorDialog(post: SearchItem.Post, anchorName: String) {
         dialogsHelper.openAnchorDialog(presenter, post.post, anchorName)
     }
 
-    override fun openSpoilerLinkDialog(post: SearchItem.ForumPost, spoilNumber: String) {
+    override fun openSpoilerLinkDialog(post: SearchItem.Post, spoilNumber: String) {
         dialogsHelper.openSpoilerLinkDialog(presenter, post.post, spoilNumber)
     }
 
@@ -777,35 +777,35 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         }
     }
 
-    override fun showUserMenu(post: SearchItem.ForumPost) {
+    override fun showUserMenu(post: SearchItem.Post) {
         dialogsHelper.showUserMenu(presenter, post.post)
     }
 
-    override fun showReputationMenu(post: SearchItem.ForumPost) {
+    override fun showReputationMenu(post: SearchItem.Post) {
         dialogsHelper.showReputationMenu(presenter, post.post)
     }
 
-    override fun showPostMenu(post: SearchItem.ForumPost) {
+    override fun showPostMenu(post: SearchItem.Post) {
         dialogsHelper.showPostMenu(presenter, post.post)
     }
 
-    override fun reportPost(post: SearchItem.ForumPost) {
+    override fun reportPost(post: SearchItem.Post) {
         dialogsHelper.tryReportPost(presenter, post.post)
     }
 
-    override fun deletePost(post: SearchItem.ForumPost) {
+    override fun deletePost(post: SearchItem.Post) {
         dialogsHelper.deletePost(presenter, post.post)
     }
 
-    override fun votePost(post: SearchItem.ForumPost, type: Boolean) {
+    override fun votePost(post: SearchItem.Post, type: Boolean) {
         dialogsHelper.votePost(presenter, post.post, type)
     }
 
-    override fun showChangeReputation(post: SearchItem.ForumPost, type: Boolean) {
+    override fun showChangeReputation(post: SearchItem.Post, type: Boolean) {
         dialogsHelper.changeReputation(presenter, post.post, type)
     }
 
-    override fun editPost(post: SearchItem.ForumPost) {
+    override fun editPost(post: SearchItem.Post) {
         presenter.openEditPostForm(post.post.id)
     }
 

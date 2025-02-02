@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.entity.remote.search
 
+import forpdateam.ru.forpda.entity.remote.ForumPost
+
 /**
  * Created by radiationx on 01.02.17.
  */
@@ -26,8 +28,8 @@ sealed interface SearchItem {
         val date: String,
     ) : SearchItem
 
-    data class ForumPost(
+    data class Post(
         val title: String,
-        val post: forpdateam.ru.forpda.entity.remote.ForumPost
+        val post: ForumPost
     ) : SearchItem
 }

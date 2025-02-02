@@ -53,37 +53,37 @@ interface SearchSiteView : IBaseView {
     fun selectPage()
 
     @StateStrategyType(SkipStrategy::class)
-    fun deletePostUi(post: SearchItem.ForumPost)
+    fun deletePostUi(post: SearchItem.Post)
 
     @StateStrategyType(SkipStrategy::class)
-    fun showUserMenu(post: SearchItem.ForumPost)
+    fun showUserMenu(post: SearchItem.Post)
 
     @StateStrategyType(SkipStrategy::class)
-    fun showReputationMenu(post: SearchItem.ForumPost)
+    fun showReputationMenu(post: SearchItem.Post)
 
     @StateStrategyType(SkipStrategy::class)
-    fun showPostMenu(post: SearchItem.ForumPost)
+    fun showPostMenu(post: SearchItem.Post)
 
     @StateStrategyType(SkipStrategy::class)
-    fun reportPost(post: SearchItem.ForumPost)
+    fun reportPost(post: SearchItem.Post)
 
     @StateStrategyType(SkipStrategy::class)
-    fun deletePost(post: SearchItem.ForumPost)
+    fun deletePost(post: SearchItem.Post)
 
     @StateStrategyType(SkipStrategy::class)
-    fun editPost(post: SearchItem.ForumPost)
+    fun editPost(post: SearchItem.Post)
 
     @StateStrategyType(SkipStrategy::class)
-    fun votePost(post: SearchItem.ForumPost, type: Boolean)
+    fun votePost(post: SearchItem.Post, type: Boolean)
 
     @StateStrategyType(SkipStrategy::class)
-    fun showChangeReputation(post: SearchItem.ForumPost, type: Boolean)
+    fun showChangeReputation(post: SearchItem.Post, type: Boolean)
 
     @StateStrategyType(SkipStrategy::class)
-    fun openAnchorDialog(post: SearchItem.ForumPost, anchorName: String)
+    fun openAnchorDialog(post: SearchItem.Post, anchorName: String)
 
     @StateStrategyType(SkipStrategy::class)
-    fun openSpoilerLinkDialog(post: SearchItem.ForumPost, spoilNumber: String)
+    fun openSpoilerLinkDialog(post: SearchItem.Post, spoilNumber: String)
 
     @StateStrategyType(SkipStrategy::class)
     fun toast(text: String)
