@@ -3,7 +3,6 @@ import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'realm-android'
 
@@ -110,6 +109,9 @@ android {
         targetCompatibility 1.8
         sourceCompatibility 1.8
     }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
     packagingOptions {
         resources {
             excludes += ['META-INF/DEPENDENCIES.txt', 'META-INF/LICENSE.txt', 'META-INF/NOTICE.txt', 'META-INF/NOTICE', 'META-INF/LICENSE', 'META-INF/DEPENDENCIES', 'META-INF/notice.txt', 'META-INF/license.txt', 'META-INF/dependencies.txt']
@@ -175,7 +177,7 @@ dependencies {
     kapt 'com.github.moxy-community:moxy-compiler:2.2.2'
 
     implementation "com.jakewharton.rxrelay2:rxrelay:2.1.0"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     implementation 'com.github.terrakok:cicerone:7.1'
     implementation 'com.hannesdorfmann:adapterdelegates3:3.0.1'
