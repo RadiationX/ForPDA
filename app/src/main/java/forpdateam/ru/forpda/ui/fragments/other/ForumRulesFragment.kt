@@ -205,8 +205,8 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
         webView.findAllAsync(text)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         webView.endWork()
     }
 

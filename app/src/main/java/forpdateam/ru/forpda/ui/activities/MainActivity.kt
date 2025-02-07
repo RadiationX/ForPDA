@@ -13,7 +13,11 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.RelativeLayout
 import androidx.appcompat.app.AlertDialog
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.recyclerview.widget.RecyclerView
 import com.daasuu.ei.Ease
 import com.daasuu.ei.EasingInterpolator
 import com.yandex.metrica.YandexMetrica
@@ -32,12 +36,6 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_main.bottomMenuRecycler
-import kotlinx.android.synthetic.main.activity_main.bottom_sheet2
-import kotlinx.android.synthetic.main.activity_main.drawer_layout
-import kotlinx.android.synthetic.main.activity_main.fragments_container
-import kotlinx.android.synthetic.main.activity_main.measure_root_content
-import kotlinx.android.synthetic.main.activity_main.measure_view
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -48,6 +46,13 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
 
     private var checkWebView = true
+
+    private lateinit var bottomMenuRecycler: RecyclerView
+    private lateinit var bottom_sheet2: ConstraintLayout
+    private lateinit var drawer_layout: RelativeLayout
+    private lateinit var fragments_container: CoordinatorLayout
+    private lateinit var measure_root_content: CoordinatorLayout
+    private lateinit var measure_view: View
 
     private lateinit var bottomDrawer: BottomDrawer
     private var firstStartAnimator: ObjectAnimator? = null
@@ -114,6 +119,12 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         )
 
         setContentView(R.layout.activity_main)
+        bottomMenuRecycler = findViewById(R.id.bottomMenuRecycler)
+        bottom_sheet2 = findViewById(R.id.bottom_sheet2)
+        drawer_layout = findViewById(R.id.drawer_layout)
+        fragments_container = findViewById(R.id.fragments_container)
+        measure_root_content = findViewById(R.id.measure_root_content)
+        measure_view = findViewById(R.id.measure_view)
 
         presenter.setIsRestored(savedInstanceState != null)
         intent?.data?.also {

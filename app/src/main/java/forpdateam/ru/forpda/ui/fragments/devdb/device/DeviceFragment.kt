@@ -289,11 +289,6 @@ class DeviceFragment : TabFragment(), DeviceView {
         NotesAddPopup.showAddNoteDialog(requireContext(), title, url)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        disposables.dispose()
-    }
-
     private inner class FragmentPagerAdapter(
         fm: FragmentManager,
         private val device: Device

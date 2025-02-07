@@ -685,15 +685,11 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
 
     override fun onDestroyView() {
         super.onDestroyView()
+        paginationHelper.destroy()
         unregisterForContextMenu(webView)
         webView.removeJavascriptInterface(ThemeFragmentWeb.JS_INTERFACE)
         webView.setJsLifeCycleListener(null)
         webView.endWork()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        paginationHelper.destroy()
     }
 
     override fun onDomContentComplete(actions: ArrayList<String>) {}

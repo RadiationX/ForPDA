@@ -18,7 +18,6 @@ import forpdateam.ru.forpda.presentation.other.OtherPresenter
 import forpdateam.ru.forpda.presentation.other.OtherView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.views.drawers.adapters.DrawerMenuItem
-import kotlinx.android.synthetic.main.fragment_other.recyclerView
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 
@@ -27,6 +26,8 @@ import moxy.presenter.ProvidePresenter
  * Created by radiationx on 16.12.17.
  */
 class OtherFragment : TabFragment(), OtherView {
+
+    private lateinit var recyclerView: RecyclerView
 
     private val otherAdapter by lazy {
         OtherAdapter(
@@ -69,6 +70,7 @@ class OtherFragment : TabFragment(), OtherView {
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         baseInflateFragment(inflater, R.layout.fragment_other)
+        recyclerView = findViewById(R.id.recyclerView) as RecyclerView
         return viewFragment
     }
 

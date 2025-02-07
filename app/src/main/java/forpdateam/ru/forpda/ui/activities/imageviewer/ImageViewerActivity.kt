@@ -9,21 +9,23 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
 import com.github.chrisbanes.photoview.OnPhotoTapListener
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.LocaleHelper
 import forpdateam.ru.forpda.common.Utils
-import kotlinx.android.synthetic.main.activity_img_viewer.image_viewer_pullBack
-import kotlinx.android.synthetic.main.activity_img_viewer.img_viewer_pager
-import kotlinx.android.synthetic.main.activity_img_viewer.toolbar
 
 /**
  * Created by radiationx on 24.05.17.
  */
 
 class ImageViewerActivity : AppCompatActivity() {
+
+    private lateinit var image_viewer_pullBack: PullBackLayout
+    private lateinit var img_viewer_pager: HackyViewPager
+    private lateinit var toolbar: Toolbar
 
     private val currentImages = mutableListOf<String>()
     private val names = mutableListOf<String>()
@@ -38,6 +40,10 @@ class ImageViewerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setTheme(R.style.ImageViewTheme)
         setContentView(R.layout.activity_img_viewer)
+        image_viewer_pullBack = findViewById(R.id.image_viewer_pullBack)
+        img_viewer_pager = findViewById(R.id.img_viewer_pager)
+        toolbar = findViewById(R.id.toolbar)
+
         window.decorView.systemUiVisibility =
             View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_IMMERSIVE
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)

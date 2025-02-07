@@ -3,6 +3,8 @@ package forpdateam.ru.forpda.ui.fragments.other
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
@@ -10,9 +12,6 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.ui.views.drawers.adapters.DrawerMenuItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.MenuListItem
-import kotlinx.android.synthetic.main.item_other_menu.view.otherMenuCounter
-import kotlinx.android.synthetic.main.item_other_menu.view.otherMenuIcon
-import kotlinx.android.synthetic.main.item_other_menu.view.otherMenuTitle
 
 class MenuItemDelegate(
     private val clickListener: (DrawerMenuItem) -> Unit
@@ -41,6 +40,10 @@ class MenuItemDelegate(
         val view: View,
         val clickListener: (DrawerMenuItem) -> Unit
     ) : RecyclerView.ViewHolder(view) {
+
+        private val otherMenuCounter: TextView = view.findViewById(R.id.otherMenuCounter)
+        private val otherMenuIcon: ImageView = view.findViewById(R.id.otherMenuIcon)
+        private val otherMenuTitle: TextView = view.findViewById(R.id.otherMenuTitle)
 
         private lateinit var currentItem: DrawerMenuItem
 

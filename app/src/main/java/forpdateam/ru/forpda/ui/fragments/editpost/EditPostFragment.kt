@@ -106,8 +106,8 @@ class EditPostFragment : TabFragment(), EditPostView {
         messagePanel.onPause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         messagePanel.onDestroy()
     }
 
@@ -155,7 +155,8 @@ class EditPostFragment : TabFragment(), EditPostView {
 
     override fun showForm(form: EditPostForm) {
         if (form.errorCode != EditPostForm.ERROR_NONE) {
-            Toast.makeText(requireContext(), R.string.editpost_error_edit, Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.editpost_error_edit, Toast.LENGTH_SHORT)
+                .show()
             presenter.exit()
             return
         }

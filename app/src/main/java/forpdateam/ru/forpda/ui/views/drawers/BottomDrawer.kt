@@ -7,6 +7,10 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -33,13 +37,6 @@ import forpdateam.ru.forpda.ui.views.drawers.adapters.DrawerMenuItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.TabAdapter
 import forpdateam.ru.forpda.ui.views.drawers.adapters.TabSwipeToDeleteCallback
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_main.view.bottomCloseAllTabs
-import kotlinx.android.synthetic.main.activity_main.view.bottomMenuContainer
-import kotlinx.android.synthetic.main.activity_main.view.bottomMenuFade
-import kotlinx.android.synthetic.main.activity_main.view.bottomMenuRecycler
-import kotlinx.android.synthetic.main.activity_main.view.bottomTabsRecycler
-import kotlinx.android.synthetic.main.activity_main.view.bottomToggleArrow
-import kotlinx.android.synthetic.main.activity_main.view.bottom_sheet2
 import kotlin.math.min
 
 class BottomDrawer(
@@ -50,6 +47,20 @@ class BottomDrawer(
     private val menuRepository: MenuRepository,
     private val mainPreferencesHolder: MainPreferencesHolder
 ) {
+
+    private val bottomCloseAllTabs: AppCompatButton =
+        drawerLayout.findViewById(R.id.bottomCloseAllTabs)
+    private val bottomMenuContainer: CoordinatorLayout =
+        drawerLayout.findViewById(R.id.bottomMenuContainer)
+    private val bottomMenuFade: View = drawerLayout.findViewById(R.id.bottomMenuFade)
+    private val bottomMenuRecycler: RecyclerView =
+        drawerLayout.findViewById(R.id.bottomMenuRecycler)
+    private val bottomTabsRecycler: RecyclerView =
+        drawerLayout.findViewById(R.id.bottomTabsRecycler)
+    private val bottomToggleArrow: AppCompatImageView =
+        drawerLayout.findViewById(R.id.bottomToggleArrow)
+    private val bottom_sheet2: ConstraintLayout = drawerLayout.findViewById(R.id.bottom_sheet2)
+
     private val menuAdapter = BottomMenuAdapter(object : BottomMenuAdapter.Listener {
         override fun onTabClick(menu: DrawerMenuItem) {
             menu.appItem.let { item ->
@@ -242,13 +253,13 @@ class BottomDrawer(
     }
 
     private fun updateMenu() {
-        (drawerLayout.bottomMenuRecycler.layoutManager as? GridLayoutManager)?.spanCount =
+        (bottomMenuRecycler.layoutManager as? GridLayoutManager)?.spanCount =
             localItems.size
         menuAdapter.bindItems(localItems)
     }
 
     private fun updateArrowVisible(isVisible: Boolean) {
-        drawerLayout.bottomToggleArrow.visibility = if (isVisible) {
+        bottomToggleArrow.visibility = if (isVisible) {
             View.VISIBLE
         } else {
             View.GONE
@@ -281,11 +292,11 @@ class BottomDrawer(
     или просто открывается intentchoser и ты скрываешь приложение, то не обновляется список
     фрагментов. Прям вот вызывается notify... но ничего не происходит */
     fun onStop() {
-        drawerLayout.bottomTabsRecycler.layoutManager = null
+        bottomTabsRecycler.layoutManager = null
     }
 
     fun onStart() {
-        drawerLayout.bottomTabsRecycler.apply {
+        bottomTabsRecycler.apply {
             layoutManager = LinearLayoutManager(context).apply {
                 stackFromEnd = true
             }

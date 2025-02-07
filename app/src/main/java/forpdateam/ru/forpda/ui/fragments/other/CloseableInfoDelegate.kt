@@ -3,6 +3,8 @@ package forpdateam.ru.forpda.ui.fragments.other
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import forpdateam.ru.forpda.R
@@ -10,8 +12,6 @@ import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.model.CloseableInfoHolder
 import forpdateam.ru.forpda.ui.views.drawers.adapters.CloseableInfoListItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
-import kotlinx.android.synthetic.main.item_closeable_info.view.infoItemClose
-import kotlinx.android.synthetic.main.item_closeable_info.view.infoItemTitle
 
 class CloseableInfoDelegate(
     private val clickListener: (CloseableInfo) -> Unit
@@ -42,10 +42,13 @@ class CloseableInfoDelegate(
         val closeClickListener: (CloseableInfo) -> Unit
     ) : RecyclerView.ViewHolder(view) {
 
+        private val infoItemClose: ImageView = view.findViewById(R.id.infoItemClose)
+        private val infoItemTitle: TextView = view.findViewById(R.id.infoItemTitle)
+
         private lateinit var currentItem: CloseableInfo
 
         init {
-            view.infoItemClose.setOnClickListener { closeClickListener.invoke(currentItem) }
+            infoItemClose.setOnClickListener { closeClickListener.invoke(currentItem) }
         }
 
         fun bind(item: CloseableInfo) {

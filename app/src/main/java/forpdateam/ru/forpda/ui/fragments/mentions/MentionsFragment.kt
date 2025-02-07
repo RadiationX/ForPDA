@@ -129,8 +129,8 @@ class MentionsFragment : RecyclerFragment(), MentionsView {
         listScrollTop()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         paginationHelper.destroy()
     }
 

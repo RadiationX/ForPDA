@@ -5,14 +5,14 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
-import kotlinx.android.synthetic.main.item_bottom_tab.view.itemBottomMenuCounter
-import kotlinx.android.synthetic.main.item_bottom_tab.view.itemBottomMenuIcon
 
 class BottomMenuDelegate(
     private val clickListener: Listener
@@ -38,6 +38,10 @@ class BottomMenuDelegate(
 
     private inner class ViewHolder(val view: View) :
         RecyclerView.ViewHolder(view) {
+
+        private val itemBottomMenuCounter: AppCompatTextView =
+            view.findViewById(R.id.itemBottomMenuCounter)
+        private val itemBottomMenuIcon: ImageView = view.findViewById(R.id.itemBottomMenuIcon)
 
         private lateinit var currentItem: DrawerMenuItem
 

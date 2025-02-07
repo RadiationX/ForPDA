@@ -394,8 +394,8 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface,
         messagePanel.onPause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         messagePanel.onDestroy()
         unregisterForContextMenu(webView)
         webView.removeJavascriptInterface(JS_INTERFACE)

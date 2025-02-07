@@ -277,8 +277,8 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
         spinner.setSelection(0)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         paginationHelper.destroy()
     }
 

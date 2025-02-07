@@ -220,8 +220,8 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
         ).show()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         paginationHelper.destroy()
     }
 

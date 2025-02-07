@@ -11,6 +11,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -32,7 +33,6 @@ import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.presentation.auth.AuthPresenter
 import forpdateam.ru.forpda.presentation.auth.AuthView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
-import kotlinx.android.synthetic.main.fragment_auth.auth_top_buttons
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 
@@ -57,6 +57,8 @@ class AuthFragment : TabFragment(), AuthView {
     private lateinit var complete: RelativeLayout
     private lateinit var completeText: TextView
     private lateinit var progressView: CircularProgressView
+
+    private lateinit var auth_top_buttons: FrameLayout
 
 
     private val loginTextWatcher = object : SimpleTextWatcher() {
@@ -105,6 +107,7 @@ class AuthFragment : TabFragment(), AuthView {
         sendButton = findViewById(R.id.auth_send) as Button
         skipButton = findViewById(R.id.auth_skip) as Button
         regButton = findViewById(R.id.auth_reg) as Button
+        auth_top_buttons = findViewById(R.id.auth_top_buttons) as FrameLayout
         return viewFragment
     }
 

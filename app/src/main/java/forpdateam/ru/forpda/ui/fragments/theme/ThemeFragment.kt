@@ -249,8 +249,8 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
         messagePanel.onPause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         messagePanel.onDestroy()
         paginationHelper.destroy()
     }

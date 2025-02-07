@@ -130,8 +130,8 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
         adapter.setOnItemClickListener(adapterListener)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         paginationHelper.destroy()
     }
 

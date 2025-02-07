@@ -4,19 +4,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.nostra13.universalimageloader.core.ImageLoader
+import de.hdodenhof.circleimageview.CircleImageView
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
-import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ProfileListItem
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.item_other_profile.view.profileAvatar
-import kotlinx.android.synthetic.main.item_other_profile.view.profileDesc
-import kotlinx.android.synthetic.main.item_other_profile.view.profileLogout
-import kotlinx.android.synthetic.main.item_other_profile.view.profileNick
 
 class ProfileItemDelegate(
     private val clickListener: (ForumUser?) -> Unit,
@@ -55,6 +54,11 @@ class ProfileItemDelegate(
         private val clickListener: (ForumUser?) -> Unit,
         private val logoutClickListener: () -> Unit
     ) : RecyclerView.ViewHolder(view) {
+
+        private val profileAvatar: CircleImageView = view.findViewById(R.id.profileAvatar)
+        private val profileDesc: TextView = view.findViewById(R.id.profileDesc)
+        private val profileLogout: ImageButton = view.findViewById(R.id.profileLogout)
+        private val profileNick: TextView = view.findViewById(R.id.profileNick)
 
         private var item: ForumUser? = null
 

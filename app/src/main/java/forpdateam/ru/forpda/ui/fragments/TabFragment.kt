@@ -33,7 +33,6 @@ import forpdateam.ru.forpda.ui.views.ExtendedWebView
 import forpdateam.ru.forpda.ui.views.ScrollAwareFABBehavior
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.fragment_base.view.toolbar
 import moxy.MvpAppCompatFragment
 
 /**
@@ -230,13 +229,6 @@ open class TabFragment : MvpAppCompatFragment() {
             dimensionsProvider
                 .observeDimensions()
                 .subscribe { dimensions ->
-                    if (viewFragment.toolbar != null) {
-                        toolbar.post {
-                            if (viewFragment.toolbar != null) {
-                                updateDimens(dimensions)
-                            }
-                        }
-                    }
                     updateDimens(dimensions)
                 }
         )
@@ -385,16 +377,22 @@ open class TabFragment : MvpAppCompatFragment() {
     }
 
     @CallSuper
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         mainActivity.tabNavigator.unsubscribe(this)
         attachedWebView = null
-        Log.d(LOG_TAG, "onDestroy " + this)
+        Log.d(LOG_TAG, "onDestroyView " + this)
         if (!disposables.isDisposed) {
             disposables.dispose()
         }
         hideKeyboard()
         contentController.destroy()
+    }
+
+    @CallSuper
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(LOG_TAG, "onDestroy " + this)
     }
 
     protected open fun attachWebView(webView: ExtendedWebView) {

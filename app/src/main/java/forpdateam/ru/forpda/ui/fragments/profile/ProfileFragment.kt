@@ -307,8 +307,8 @@ class ProfileFragment : TabFragment(), ProfileAdapter.ClickListener, ProfileView
         addToDisposable(disposable)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
 
         if (blurLayoutListener != null) {
             toolbarBackground.viewTreeObserver.removeOnGlobalLayoutListener(blurLayoutListener)

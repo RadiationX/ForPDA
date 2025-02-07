@@ -6,9 +6,12 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.Toolbar
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.BuildConfig
 import forpdateam.ru.forpda.R
@@ -17,13 +20,6 @@ import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.presentation.checker.CheckerPresenter
 import forpdateam.ru.forpda.presentation.checker.CheckerView
 import forpdateam.ru.forpda.ui.activities.MainActivity
-import kotlinx.android.synthetic.main.activity_updater.currentInfo
-import kotlinx.android.synthetic.main.activity_updater.divider
-import kotlinx.android.synthetic.main.activity_updater.progressBar
-import kotlinx.android.synthetic.main.activity_updater.toolbar
-import kotlinx.android.synthetic.main.activity_updater.updateButton
-import kotlinx.android.synthetic.main.activity_updater.updateContent
-import kotlinx.android.synthetic.main.activity_updater.updateInfo
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -41,6 +37,14 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
         const val ARG_FORCE = "force"
     }
 
+    private lateinit var currentInfo: TextView
+    private lateinit var divider: View
+    private lateinit var progressBar: ProgressBar
+    private lateinit var toolbar: Toolbar
+    private lateinit var updateButton: Button
+    private lateinit var updateContent: LinearLayout
+    private lateinit var updateInfo: TextView
+
     private val systemLinkHandler = App.get().Di().systemLinkHandler
 
     @InjectPresenter
@@ -55,6 +59,13 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_updater)
+        currentInfo = findViewById(R.id.currentInfo)
+        divider = findViewById(R.id.divider)
+        progressBar = findViewById(R.id.progressBar)
+        toolbar = findViewById(R.id.toolbar)
+        updateButton = findViewById(R.id.updateButton)
+        updateContent = findViewById(R.id.updateContent)
+        updateInfo = findViewById(R.id.updateInfo)
         MainActivity.setLightStatusBar(this, false)
 
         intent?.let {
