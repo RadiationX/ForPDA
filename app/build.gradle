@@ -1,10 +1,12 @@
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'realm-android'
+plugins {
+    alias libs.plugins.android.application
+    alias libs.plugins.kotlin.android
+    alias libs.plugins.kapt
+    id("realm-android")
+}
 
 static def getDateTime() {
     DateFormat df = new SimpleDateFormat("dd MMMMM yyyy")
@@ -132,63 +134,54 @@ android {
     }
 }
 
-ext {
-    supportLibVersion = '28.0.0'
-    okHttpVersion = '3.11.0'
-    rxCoreVersion = '2.2.2'
-    rxAndroidVersion = '2.1.0'
-    archVersion = '1.0.0-alpha5'
-}
-
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'androidx.palette:palette:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.android.material:material:1.2.1'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'androidx.preference:preference:1.1.1'
+    implementation libs.androidx.constraintlayout
+    implementation libs.androidx.palette.ktx
+    implementation libs.androidx.appcompat
+    implementation libs.material
+    implementation libs.androidx.cardview
+    implementation libs.androidx.recyclerview
+    implementation libs.androidx.preference.ktx
 
-    implementation "com.squareup.okhttp3:okhttp:${okHttpVersion}"
-    implementation "com.squareup.okhttp3:okhttp-urlconnection:${okHttpVersion}"
+    implementation libs.okhttp
+    implementation libs.okhttp.urlconnection
     //implementation 'com.annimon:stream:1.1.4'
-    implementation "io.reactivex.rxjava2:rxandroid:${rxAndroidVersion}"
-    implementation "io.reactivex.rxjava2:rxjava:${rxCoreVersion}"
-    implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
-    implementation 'com.github.rahatarmanahmed:circularprogressview:2.5.0'
-    implementation 'de.hdodenhof:circleimageview:2.2.0'
-    implementation group: 'org.ccil.cowan.tagsoup', name: 'tagsoup', version: '1.2'
-    implementation 'org.bsc.util:minitemplator-repackaged:1.2'
+    implementation libs.rxandroid
+    implementation libs.rxjava
+    implementation libs.universal.image.loader
+    implementation libs.circularprogressview
+    implementation libs.circleimageview
+    implementation libs.tagsoup
+    implementation libs.minitemplator.repackaged
     //implementation 'com.lapism:searchview:4.0'
-    implementation 'com.github.bmelnychuk:atv:1.2.9'
-    implementation 'com.afollestad:sectioned-recyclerview:0.5.0'
+    implementation libs.atv
+    implementation libs.sectioned.recyclerview
 
-    implementation 'com.github.chrisbanes:PhotoView:2.1.3'
-    implementation 'com.wada811:android-material-design-colors:3.0.0'
-    implementation 'com.thebluealliance:spectrum:0.7.1'
-    implementation 'com.github.douglasjunior:android-simple-tooltip:0.2.0'
-    implementation 'com.github.robohorse:PagerBullet:1.2.0'
-    //implementation 'com.github.apg-mobile:android-round-textview:v0.0.3'
-    implementation 'com.evernote:android-job:1.2.6'
+    implementation libs.photoview
+    implementation libs.android.material.design.colors
+    implementation libs.spectrum
+    implementation libs.android.simple.tooltip
+    implementation libs.pagerbullet
+    implementation libs.android.job
 
-    implementation "com.github.moxy-community:moxy:2.2.2"
-    implementation 'com.github.moxy-community:moxy-androidx:2.2.2'
-    kapt 'com.github.moxy-community:moxy-compiler:2.2.2'
+    implementation libs.moxy
+    implementation libs.moxy.androidx
+    kapt libs.moxy.compiler
 
-    implementation "com.jakewharton.rxrelay2:rxrelay:2.1.0"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation libs.rxrelay
+    implementation libs.kotlin.stdlib
 
-    implementation 'com.github.terrakok:cicerone:7.1'
-    implementation 'com.hannesdorfmann:adapterdelegates3:3.0.1'
-    implementation 'com.github.MasayukiSuda:EasingInterpolator:v1.3.2'
-    implementation 'com.f2prateek.rx.preferences2:rx-preferences:2.0.0'
+    implementation libs.cicerone
+    implementation libs.adapterdelegates3
+    implementation libs.easinginterpolator
+    implementation libs.rx.preferences
 
 
-    implementation("com.github.permissions-dispatcher:permissionsdispatcher:4.9.2")
-    kapt "com.github.permissions-dispatcher:permissionsdispatcher-processor:4.9.2"
+    implementation(libs.permissionsdispatcher)
+    kapt libs.permissionsdispatcher.processor
 
-    implementation 'com.yandex.android:mobmetricalib:3.13.1'
+    implementation libs.mobmetricalib
 
-    implementation 'com.makeramen:roundedimageview:2.3.0'
+    implementation libs.roundedimageview
 }
