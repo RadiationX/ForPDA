@@ -8,6 +8,7 @@ import okio.BufferedSink
 import okio.ForwardingSink
 import okio.Okio
 import okio.Sink
+import okio.buffer
 import java.io.IOException
 
 /**
@@ -34,7 +35,7 @@ class ProgressRequestBody internal constructor(
     @Throws(IOException::class)
     override fun writeTo(sink: BufferedSink) {
         val mCountingSink: CountingSink = CountingSink(sink)
-        val bufferedSink = Okio.buffer(mCountingSink)
+        val bufferedSink = mCountingSink.buffer()
         mDelegate.writeTo(bufferedSink)
         bufferedSink.flush()
     }

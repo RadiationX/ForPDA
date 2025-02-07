@@ -18,7 +18,10 @@ import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.FormBody
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -39,7 +42,7 @@ class Client(
     private val observerHandler = Handler(Looper.getMainLooper())
     private val privateHeaders: List<String> =
         ArrayList(mutableListOf("pass_hash", "session_id", "auth_key", "password"))
-    private val mobileCookie = Cookie.parse(HttpUrl.parse("https://4pda.to/"), "ngx_mb=1;")
+    private val mobileCookie = Cookie.parse("https://4pda.to/".toHttpUrl(), "ngx_mb=1;")
 
     override fun getAuthKey(): String {
         return get().preferences.getString("auth_key", null) ?: ""
@@ -49,7 +52,7 @@ class Client(
         /*Хранение: Url|:|Cookie*/
         val fields =
             cookieFields.split("\\|:\\|".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        return Cookie.parse(HttpUrl.parse(fields[0]), fields[1])
+        return Cookie.parse(fields[0].toHttpUrl(), fields[1])
     }
 
     private fun cookieToPref(url: String, cookie: Cookie): String {
@@ -67,34 +70,34 @@ class Client(
                 Log.e("SUKA", "save COOK " + cookie.name() + " : " + cookie.value());
             }*/
             for (cookie in cookies) {
-                if (cookie.value() == "deleted") {
-                    editor.remove("cookie_" + cookie.name())
-                    clientCookies.remove(cookie.name())
+                if (cookie.value == "deleted") {
+                    editor.remove("cookie_" + cookie.name)
+                    clientCookies.remove(cookie.name)
                 } else {
                     editor.putString(
-                        "cookie_" + cookie.name(),
+                        "cookie_" + cookie.name,
                         cookieToPref(url.toString(), cookie)
                     )
-                    if (cookie.name() == "member_id") {
-                        editor.putString("member_id", cookie.value())
-                        val userId = cookie.value().toInt()
+                    if (cookie.name == "member_id") {
+                        editor.putString("member_id", cookie.value)
+                        val userId = cookie.value.toInt()
                         val authData = authHolder.get().copy(
                             userId = userId,
                             state = if (userId == AuthData.NO_ID) AuthState.NO_AUTH else AuthState.AUTH
                         )
                         authHolder.set(authData)
                     }
-                    if (!clientCookies.containsKey(cookie.name())) {
-                        clientCookies.remove(cookie.name())
+                    if (!clientCookies.containsKey(cookie.name)) {
+                        clientCookies.remove(cookie.name)
                     }
-                    clientCookies[cookie.name()] = cookie
+                    clientCookies[cookie.name] = cookie
                 }
             }
             editor.apply()
         }
 
         override fun loadForRequest(url: HttpUrl): List<Cookie> {
-            val external = !url.host().lowercase(Locale.getDefault()).contains("4pda")
+            val external = !url.host.lowercase(Locale.getDefault()).contains("4pda")
             if (!external) {
                 clientCookies["ngx_mb"] = mobileCookie!!
             }
@@ -103,7 +106,7 @@ class Client(
             if (external) {
                 for (privateName in privateHeaders) {
                     for (i in cookies.indices) {
-                        if (cookies[i].name() == privateName) {
+                        if (cookies[i].name == privateName) {
                             cookies.removeAt(i)
                             break
                         }
@@ -121,7 +124,6 @@ class Client(
         .connectTimeout(45, TimeUnit.SECONDS)
         .writeTimeout(45, TimeUnit.SECONDS)
         .readTimeout(45, TimeUnit.SECONDS)
-        .sslSocketFactory(newSslContext.socketFactory)
         .cookieJar(cookieJar)
         .build()
 
@@ -129,7 +131,6 @@ class Client(
         .connectTimeout(30, TimeUnit.SECONDS)
         .writeTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
-        .sslSocketFactory(newSslContext.socketFactory)
         .retryOnConnectionFailure(true)
         .cookieJar(cookieJar)
         .build()
@@ -173,18 +174,6 @@ class Client(
             authHolder.set(authData)
         }
     }
-
-    private val newSslContext: SSLContext
-        get() {
-            val sslContext: SSLContext
-            try {
-                sslContext = SSLContext.getInstance("TLS")
-                sslContext.init(null, null, null)
-            } catch (e: GeneralSecurityException) {
-                throw AssertionError() // The system has no TLS. Just give up.
-            }
-            return sslContext
-        }
 
     //Network
     @Throws(Exception::class)
@@ -270,11 +259,11 @@ class Client(
                     }
                 }
                 request.file?.also { file ->
-                    val type = MediaType.parse(file.mimeType)
+                    val type = file.mimeType.toMediaTypeOrNull()
                     val requestBody = RequestBodyUtil
                         .create(type, file.fileStream)
                     multipartBuilder.addFormDataPart(
-                        file.requestName,
+                        file.requestName!!,
                         file.fileName,
                         requestBody
                     )
@@ -302,24 +291,24 @@ class Client(
         try {
             okHttpResponse = client.newCall(requestBuilder.build()).execute()
             if (!okHttpResponse.isSuccessful) {
-                if (okHttpResponse.code() == 403) {
-                    val content = okHttpResponse.body()!!.string()
+                if (okHttpResponse.code == 403) {
+                    val content = okHttpResponse.body!!.string()
                     //todo catch this is errorhandler
                     throw GoogleCaptchaException(content)
                 }
                 throw OkHttpResponseException(
-                    okHttpResponse.code(),
-                    okHttpResponse.message(),
+                    okHttpResponse.code,
+                    okHttpResponse.message,
                     request.url
                 )
             }
 
-            response.code = okHttpResponse.code()
-            response.message = okHttpResponse.message()
-            response.redirect = okHttpResponse.request().url().toString()
+            response.code = okHttpResponse.code
+            response.message = okHttpResponse.message
+            response.redirect = okHttpResponse.request.url.toString()
 
             if (!request.isWithoutBody) {
-                response.body = okHttpResponse.body()!!.string()
+                response.body = okHttpResponse.body!!.string()
                 getCounts(response.body)
                 checkForumErrors(response.body)
             }

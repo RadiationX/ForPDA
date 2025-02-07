@@ -198,7 +198,7 @@ class App : Application() {
                             val cookies = get().Di().webClient.getClientCookies()
                             var stringCookies = ""
                             for ((key, value) in cookies) {
-                                stringCookies = stringCookies + key + "=" + value.value() + ";"
+                                stringCookies = stringCookies + key + "=" + value.value + ";"
                             }
                             conn.setRequestProperty("Cookie", stringCookies)
                         }

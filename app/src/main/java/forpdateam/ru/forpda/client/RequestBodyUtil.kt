@@ -2,10 +2,8 @@ package forpdateam.ru.forpda.client
 
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import okhttp3.internal.Util
 import okio.BufferedSink
-import okio.Okio
-import okio.Source
+import okio.source
 import java.io.IOException
 import java.io.InputStream
 
@@ -29,7 +27,7 @@ object RequestBodyUtil {
 
             @Throws(IOException::class)
             override fun writeTo(sink: BufferedSink) {
-                Okio.source(inputStream).use {
+                inputStream.source().use {
                     sink.writeAll(it)
                 }
             }

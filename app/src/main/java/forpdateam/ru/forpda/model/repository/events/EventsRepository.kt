@@ -98,8 +98,8 @@ class EventsRepository(
                     "WSContr onDisconnected ${webSocketController.getCurrentId()}, ${webSocketController.isConnected()}, ${throwable.message}, $response"
                 )
                 if (response != null) {
-                    Log.d(LOG_TAG, "WSContr onDisconnected: code=${response.code()}")
-                    if (response.code() == 403) {
+                    Log.d(LOG_TAG, "WSContr onDisconnected: code=${response.code}")
+                    if (response.code == 403) {
                         App.get().notifyForbidden(true)
                     }
                 }
