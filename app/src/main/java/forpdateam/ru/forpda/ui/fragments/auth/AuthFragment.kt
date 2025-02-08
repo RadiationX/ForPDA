@@ -26,6 +26,7 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.simple.SimpleAnimationListener
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
+import forpdateam.ru.forpda.databinding.FragmentAuthBinding
 import forpdateam.ru.forpda.entity.remote.auth.AuthCaptcha
 import forpdateam.ru.forpda.entity.remote.auth.AuthForm
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
@@ -33,32 +34,51 @@ import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.presentation.auth.AuthPresenter
 import forpdateam.ru.forpda.presentation.auth.AuthView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
+import forpdateam.ru.forpda.ui.fragments.tabBinding
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 29.07.16.
  */
-class AuthFragment : TabFragment(), AuthView {
+class AuthFragment : TabFragment(R.layout.fragment_auth), AuthView {
 
-    private lateinit var nick: EditText
-    private lateinit var password: EditText
-    private lateinit var captcha: EditText
-    private lateinit var captchaImage: ImageView
-    private lateinit var avatar: ImageView
-    private lateinit var sendButton: Button
-    private lateinit var skipButton: Button
-    private lateinit var regButton: Button
-    private lateinit var loginProgress: ProgressBar
-    private lateinit var captchaProgress: ProgressBar
-    private lateinit var hiddenAuth: CheckBox
+    private val binding by tabBinding(FragmentAuthBinding::bind)
 
-    private lateinit var mainForm: LinearLayout
-    private lateinit var complete: RelativeLayout
-    private lateinit var completeText: TextView
-    private lateinit var progressView: CircularProgressView
+    private val nick: EditText
+        get() = binding.authLogin
+    private val password: EditText
+        get() = binding.authPassword
+    private val captcha: EditText
+        get() = binding.authCaptcha
+    private val captchaImage: ImageView
+        get() = binding.captchaImage
+    private val avatar: ImageView
+        get() = binding.authAvatar
+    private val sendButton: Button
+        get() = binding.authSend
+    private val skipButton: Button
+        get() = binding.authSkip
+    private val regButton: Button
+        get() = binding.authReg
+    private val loginProgress: ProgressBar
+        get() = binding.loginProgress
+    private val captchaProgress: ProgressBar
+        get() = binding.captchaProgress
+    private val hiddenAuth: CheckBox
+        get() = binding.authHidden
 
-    private lateinit var auth_top_buttons: FrameLayout
+    private val mainForm: LinearLayout
+        get() = binding.authMainForm
+    private val complete: RelativeLayout
+        get() = binding.authComplete
+    private val completeText: TextView
+        get() = binding.authCompleteText
+    private val progressView: CircularProgressView
+        get() = binding.authProgress
+
+    private val authTopButtons: FrameLayout
+        get() = binding.authTopButtons
 
 
     private val loginTextWatcher = object : SimpleTextWatcher() {
@@ -83,32 +103,6 @@ class AuthFragment : TabFragment(), AuthView {
 
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_auth)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        baseInflateFragment(inflater, R.layout.fragment_auth)
-        nick = findViewById(R.id.auth_login) as EditText
-        password = findViewById(R.id.auth_password) as EditText
-        captcha = findViewById(R.id.auth_captcha) as EditText
-        captchaImage = findViewById(R.id.captchaImage) as ImageView
-        captchaProgress = findViewById(R.id.captcha_progress) as ProgressBar
-        avatar = findViewById(R.id.auth_avatar) as ImageView
-        mainForm = findViewById(R.id.auth_main_form) as LinearLayout
-        complete = findViewById(R.id.auth_complete) as RelativeLayout
-        completeText = findViewById(R.id.auth_complete_text) as TextView
-        progressView = findViewById(R.id.auth_progress) as CircularProgressView
-        loginProgress = findViewById(R.id.login_progress) as ProgressBar
-        hiddenAuth = findViewById(R.id.auth_hidden) as CheckBox
-        sendButton = findViewById(R.id.auth_send) as Button
-        skipButton = findViewById(R.id.auth_skip) as Button
-        regButton = findViewById(R.id.auth_reg) as Button
-        auth_top_buttons = findViewById(R.id.auth_top_buttons) as FrameLayout
-        return viewFragment
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -204,11 +198,11 @@ class AuthFragment : TabFragment(), AuthView {
                 }
             })
         })
-        auth_top_buttons.startAnimation(AlphaAnimation(1.0f, 0.0f).apply {
+        authTopButtons.startAnimation(AlphaAnimation(1.0f, 0.0f).apply {
             duration = 225
             setAnimationListener(object : SimpleAnimationListener() {
                 override fun onAnimationEnd(animation: Animation) {
-                    auth_top_buttons?.visibility = View.GONE
+                    authTopButtons?.visibility = View.GONE
                 }
             })
         })

@@ -6,15 +6,14 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.Toolbar
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.BuildConfig
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.ActivityUpdaterBinding
 import forpdateam.ru.forpda.entity.remote.checker.UpdateData
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.presentation.checker.CheckerPresenter
@@ -31,19 +30,13 @@ import permissions.dispatcher.RuntimePermissions
  */
 
 @RuntimePermissions
-class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
+class UpdateCheckerActivity : MvpAppCompatActivity(R.layout.activity_updater), CheckerView {
 
     companion object {
         const val ARG_FORCE = "force"
     }
 
-    private lateinit var currentInfo: TextView
-    private lateinit var divider: View
-    private lateinit var progressBar: ProgressBar
-    private lateinit var toolbar: Toolbar
-    private lateinit var updateButton: Button
-    private lateinit var updateContent: LinearLayout
-    private lateinit var updateInfo: TextView
+    private val binding by viewBinding<ActivityUpdaterBinding>()
 
     private val systemLinkHandler = App.get().Di().systemLinkHandler
 
@@ -58,47 +51,42 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_updater)
-        currentInfo = findViewById(R.id.currentInfo)
-        divider = findViewById(R.id.divider)
-        progressBar = findViewById(R.id.progressBar)
-        toolbar = findViewById(R.id.toolbar)
-        updateButton = findViewById(R.id.updateButton)
-        updateContent = findViewById(R.id.updateContent)
-        updateInfo = findViewById(R.id.updateInfo)
+
         MainActivity.setLightStatusBar(this, false)
 
         intent?.let {
             presenter.forceLoad = it.getBooleanExtra(ARG_FORCE, false)
         }
 
-        toolbar.setNavigationOnClickListener { finish() }
-        toolbar.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
+        binding.toolbar.setNavigationOnClickListener { finish() }
+        binding.toolbar.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
 
-        currentInfo.text = generateCurrentInfo(BuildConfig.VERSION_NAME, BuildConfig.BUILD_DATE)
+        binding.currentInfo.text =
+            generateCurrentInfo(BuildConfig.VERSION_NAME, BuildConfig.BUILD_DATE)
     }
 
     override fun showUpdateData(update: UpdateData) {
         val currentVersionCode = BuildConfig.VERSION_CODE
 
         if (update.code > currentVersionCode) {
-            updateInfo.text = generateCurrentInfo(update.name, update.date)
+            binding.updateInfo.text = generateCurrentInfo(update.name, update.date)
             addSection("Важно", update.important)
             addSection("Добавлено", update.added)
             addSection("Исправлено", update.fixed)
             addSection("Изменено", update.changed)
 
-            updateInfo.visibility = View.VISIBLE
-            updateButton.visibility = View.VISIBLE
-            divider.visibility = View.VISIBLE
+            binding.updateInfo.visibility = View.VISIBLE
+            binding.updateButton.visibility = View.VISIBLE
+            binding.divider.visibility = View.VISIBLE
         } else {
-            updateInfo.text = "Нет обновлений, но вы можете загрузить текущую версию еще раз"
-            updateInfo.visibility = View.VISIBLE
-            updateContent.visibility = View.GONE
-            divider.visibility = View.GONE
+            binding.updateInfo.text =
+                "Нет обновлений, но вы можете загрузить текущую версию еще раз"
+            binding.updateInfo.visibility = View.VISIBLE
+            binding.updateContent.visibility = View.GONE
+            binding.divider.visibility = View.GONE
         }
-        updateButton.visibility = View.VISIBLE
-        updateButton.setOnClickListener {
+        binding.updateButton.visibility = View.VISIBLE
+        binding.updateButton.setOnClickListener {
             openDownloadDialog(update)
         }
     }
@@ -146,17 +134,17 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
 
     override fun setRefreshing(isRefreshing: Boolean) {
         if (isRefreshing) {
-            progressBar.visibility = View.VISIBLE
-            updateInfo.visibility = View.GONE
-            updateContent.visibility = View.GONE
-            updateButton.visibility = View.GONE
-            divider.visibility = View.GONE
+            binding.progressBar.visibility = View.VISIBLE
+            binding.updateInfo.visibility = View.GONE
+            binding.updateContent.visibility = View.GONE
+            binding.updateButton.visibility = View.GONE
+            binding.divider.visibility = View.GONE
         } else {
-            progressBar.visibility = View.GONE
-            updateInfo.visibility = View.VISIBLE
-            updateContent.visibility = View.VISIBLE
-            updateButton.visibility = View.VISIBLE
-            divider.visibility = View.VISIBLE
+            binding.progressBar.visibility = View.GONE
+            binding.updateInfo.visibility = View.VISIBLE
+            binding.updateContent.visibility = View.VISIBLE
+            binding.updateButton.visibility = View.VISIBLE
+            binding.divider.visibility = View.VISIBLE
         }
     }
 
@@ -190,7 +178,7 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
         //sectionText.setTextColor(ContextCompat.getColor(this, R.color.textDefault))
         root.addView(sectionText)
 
-        updateContent.addView(
+        binding.updateContent.addView(
             root,
             ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,

@@ -4,8 +4,9 @@ import android.graphics.Typeface
 import android.view.View
 import android.view.View.OnLongClickListener
 import android.view.ViewGroup
-import android.widget.TextView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.QmsThemeItemBinding
 import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
 import forpdateam.ru.forpda.ui.fragments.qms.adapters.QmsThemesAdapter.ThemeHolder
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
@@ -32,8 +33,8 @@ class QmsThemesAdapter : BaseAdapter<QmsTheme, ThemeHolder>() {
 
     inner class ThemeHolder(v: View) : BaseViewHolder<QmsTheme>(v), View.OnClickListener,
         OnLongClickListener {
-        var name: TextView = v.findViewById(R.id.qms_theme_name)
-        var count: TextView = v.findViewById(R.id.qms_theme_count)
+
+        private val binding by viewBinding<QmsThemeItemBinding>()
 
         init {
             v.setOnClickListener(this)
@@ -41,13 +42,14 @@ class QmsThemesAdapter : BaseAdapter<QmsTheme, ThemeHolder>() {
         }
 
         override fun bind(item: QmsTheme, position: Int) {
-            name.text = item.name
-            name.typeface = if (item.countNew > 0) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
+            binding.qmsThemeName.text = item.name
+            binding.qmsThemeName.typeface =
+                if (item.countNew > 0) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
             if (item.countNew == 0) {
-                count.visibility = View.GONE
+                binding.qmsThemeCount.visibility = View.GONE
             } else {
-                count.text = item.countNew.toString()
-                count.visibility = View.VISIBLE
+                binding.qmsThemeCount.text = item.countNew.toString()
+                binding.qmsThemeCount.visibility = View.VISIBLE
             }
         }
 

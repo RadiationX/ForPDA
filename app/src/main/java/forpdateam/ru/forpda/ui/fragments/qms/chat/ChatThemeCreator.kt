@@ -1,13 +1,13 @@
 package forpdateam.ru.forpda.ui.fragments.qms.chat
 
 import android.view.View
-import android.view.ViewStub
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import androidx.appcompat.widget.AppCompatEditText
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
+import forpdateam.ru.forpda.databinding.ToolbarQmsNewThemeBinding
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.presentation.qms.chat.QmsChatPresenter
 
@@ -16,22 +16,18 @@ import forpdateam.ru.forpda.presentation.qms.chat.QmsChatPresenter
  */
 class ChatThemeCreator internal constructor(
     private val fragment: QmsChatFragment,
-    private val presenter: QmsChatPresenter
+    private val presenter: QmsChatPresenter,
+    private val toolbarBinding: ToolbarQmsNewThemeBinding
 ) {
-    private val viewStub =
-        fragment.findViewById(R.id.toolbar_content) as ViewStub
     private val nickField: AppCompatAutoCompleteTextView
+        get() = toolbarBinding.qmsThemeNickField
     private val titleField: AppCompatEditText
+        get() = toolbarBinding.qmsThemeTitleField
 
     private var userNick: String?
     private var themeTitle: String?
 
     init {
-        viewStub.layoutResource = R.layout.toolbar_qms_new_theme
-        viewStub.inflate()
-        nickField =
-            fragment.findViewById(R.id.qms_theme_nick_field) as AppCompatAutoCompleteTextView
-        titleField = fragment.findViewById(R.id.qms_theme_title_field) as AppCompatEditText
         this.userNick = presenter.nick
         this.themeTitle = presenter.title
         initCreatorViews()
@@ -104,7 +100,7 @@ class ChatThemeCreator internal constructor(
     }
 
     fun setVisible(isVisible: Boolean) {
-        viewStub.visibility = if (isVisible) View.VISIBLE else View.GONE
+        toolbarBinding.root.visibility = if (isVisible) View.VISIBLE else View.GONE
         //editItem.setVisible(isVisible);
         //doneItem.setVisible(isVisible);
     }

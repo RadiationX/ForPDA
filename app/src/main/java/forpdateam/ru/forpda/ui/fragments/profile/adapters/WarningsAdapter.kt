@@ -2,10 +2,11 @@ package forpdateam.ru.forpda.ui.fragments.profile.adapters
 
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.content.ContextCompat
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.ProfileSubItemWarningBinding
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel.WarningType
 import forpdateam.ru.forpda.ui.fragments.profile.adapters.WarningsAdapter.WarningHolder
@@ -26,31 +27,26 @@ internal class WarningsAdapter : BaseAdapter<ProfileModel.Warning, WarningHolder
     }
 
     inner class WarningHolder(itemView: View) : BaseViewHolder<ProfileModel.Warning>(itemView) {
-        private val title: TextView =
-            itemView.findViewById(R.id.item_title)
-        private val date: TextView =
-            itemView.findViewById(R.id.item_date)
-        private val content: TextView =
-            itemView.findViewById(R.id.item_content)
+        private val binding by viewBinding<ProfileSubItemWarningBinding>()
 
         override fun bind(item: ProfileModel.Warning) {
-            title.text = item.title
-            date.text = item.date
-            content.text = item.content
+            binding.itemTitle.text = item.title
+            binding.itemDate.text = item.date
+            binding.itemContent.text = item.content
             val color = when (item.type) {
                 WarningType.Positive -> {
-                    ContextCompat.getColor(title.context, R.color.md_green_400)
+                    ContextCompat.getColor(binding.itemTitle.context, R.color.md_green_400)
                 }
 
                 WarningType.Negative -> {
-                    ContextCompat.getColor(title.context, R.color.md_red_400)
+                    ContextCompat.getColor(binding.itemTitle.context, R.color.md_red_400)
                 }
 
                 WarningType.Unknown -> {
-                    App.getColorFromAttr(title.context, R.attr.default_text_color)
+                    App.getColorFromAttr(binding.itemTitle.context, R.attr.default_text_color)
                 }
             }
-            title.setTextColor(color)
+            binding.itemTitle.setTextColor(color)
         }
     }
 }

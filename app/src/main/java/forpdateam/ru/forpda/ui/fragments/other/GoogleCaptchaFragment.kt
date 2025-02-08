@@ -40,12 +40,9 @@ class GoogleCaptchaFragment : TabFragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         webView = ExtendedWebView(requireContext())
         webView.setDialogsHelper(
             DialogsHelper(
@@ -57,11 +54,7 @@ class GoogleCaptchaFragment : TabFragment() {
         )
         attachWebView(webView)
         fragmentContent.addView(webView)
-        return viewFragment
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         setSubtitle("Это из-за VPN/Proxy и т.д.")
         webView.webViewClient = CaptchaWebViewClient()
         webView.loadDataWithBaseURL("https://4pda.to/forum/", content, "text/html", "utf-8", null)

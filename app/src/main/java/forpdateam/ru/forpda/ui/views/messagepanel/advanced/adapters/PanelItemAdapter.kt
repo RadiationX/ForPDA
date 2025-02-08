@@ -9,8 +9,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App.Companion.getVecDrawable
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.MessagePanelAdvancedItemBinding
 import forpdateam.ru.forpda.ui.views.messagepanel.advanced.ButtonData
 import forpdateam.ru.forpda.ui.views.messagepanel.advanced.adapters.ItemDragCallback.ItemTouchHelperAdapter
 import java.util.Collections
@@ -31,30 +33,7 @@ class PanelItemAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = items[position]
-        if (type == TYPE_ASSET) {
-            ImageLoader.getInstance()
-                .loadImage(urlsToAssets!![position], object : SimpleImageLoadingListener() {
-                    override fun onLoadingComplete(
-                        imageUri: String,
-                        view: View,
-                        loadedImage: Bitmap
-                    ) {
-                        holder.button.setImageBitmap(loadedImage)
-                    }
-                })
-        } else if (type == TYPE_DRAWABLE) {
-            holder.button.setImageDrawable(getVecDrawable(holder.itemView.context, item!!.iconRes))
-            //holder.button.setColorFilter(colorFilter);
-        }
-        if (item!!.title == null) {
-            holder.title.visibility = View.GONE
-            holder.itemView.contentDescription = item.text
-        } else {
-            holder.itemView.contentDescription = item.title
-            holder.title.text = item.title
-            holder.title.visibility = View.VISIBLE
-        }
+        holder.bind(items[position], urlsToAssets?.getOrNull(position), type)
     }
 
     private var itemClickListener: OnItemClickListener? = null
@@ -72,18 +51,42 @@ class PanelItemAdapter(
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
-        var button: ImageButton
-        var title: TextView
+
+        private val binding by viewBinding<MessagePanelAdvancedItemBinding>()
 
         init {
             view.setOnClickListener(this)
-            button = view.findViewById(R.id.item_icon)
-            title = view.findViewById(R.id.item_title)
+        }
+
+        fun bind(item: ButtonData, urlToAsset: String?, type: Int){
+            if (type == TYPE_ASSET) {
+                ImageLoader.getInstance()
+                    .loadImage(urlToAsset!!, object : SimpleImageLoadingListener() {
+                        override fun onLoadingComplete(
+                            imageUri: String,
+                            view: View,
+                            loadedImage: Bitmap
+                        ) {
+                            binding.itemIcon.setImageBitmap(loadedImage)
+                        }
+                    })
+            } else if (type == TYPE_DRAWABLE) {
+                binding.itemIcon.setImageDrawable(getVecDrawable(binding.root.context, item.iconRes))
+                //holder.button.setColorFilter(colorFilter);
+            }
+            if (item.title == null) {
+                binding.itemTitle.visibility = View.GONE
+                binding.root.contentDescription = item.text
+            } else {
+                binding.root.contentDescription = item.title
+                binding.itemTitle.text = item.title
+                binding.itemTitle.visibility = View.VISIBLE
+            }
         }
 
         override fun onClick(v: View) {
             val item = items[layoutPosition]
-            if (item!!.listener != null) {
+            if (item.listener != null) {
                 item.listener!!.onClick(item)
             } else if (itemClickListener != null) {
                 itemClickListener!!.onItemClick(item)

@@ -7,19 +7,20 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.LocaleHelper
+import forpdateam.ru.forpda.databinding.ActivityWvNotFoundBinding
 
 /**
  * Created by radiationx on 23.07.17.
  */
 
-class WebVewNotFoundActivity : AppCompatActivity() {
+class WebVewNotFoundActivity : AppCompatActivity(R.layout.activity_wv_not_found) {
+
+    private val binding by viewBinding<ActivityWvNotFoundBinding>()
 
     private val nougatMsg = """Убедитесь, что сервис WebView установлен и активирован:
 1. Включите режим разработчика на вашем Android-устройстве.
@@ -34,18 +35,13 @@ class WebVewNotFoundActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_wv_not_found)
-        val getInGp = findViewById<View>(R.id.get_in_gp) as ImageView
-        val getIn4pda = findViewById<View>(R.id.get_in_4pda) as ImageView
-        val tryStart = findViewById<View>(R.id.wv_try_start) as Button
-        val nougatPlus = findViewById<TextView>(R.id.nougatplus)
 
-        nougatPlus.visibility =
+        binding.nougatplus.visibility =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) View.VISIBLE else View.GONE
-        nougatPlus.text = nougatMsg
+        binding.nougatplus.text = nougatMsg
 
 
-        getInGp.setOnClickListener {
+        binding.getInGp.setOnClickListener {
             val intent = Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.webview")
@@ -55,7 +51,7 @@ class WebVewNotFoundActivity : AppCompatActivity() {
             )
         }
 
-        getIn4pda.setOnClickListener {
+        binding.getIn4pda.setOnClickListener {
             val intent = Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse("https://4pda.to/forum/index.php?showtopic=705513")
@@ -65,7 +61,7 @@ class WebVewNotFoundActivity : AppCompatActivity() {
             )
         }
 
-        tryStart.setOnClickListener {
+        binding.wvTryStart.setOnClickListener {
             val intent = Intent(applicationContext, MainActivity::class.java)
                 .putExtra(MainActivity.ARG_CHECK_WEBVIEW, false)
             startActivity(intent)

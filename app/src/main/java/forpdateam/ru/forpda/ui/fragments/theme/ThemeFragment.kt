@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.ui.fragments.theme
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.SearchManager
 import android.content.Context
@@ -10,7 +9,6 @@ import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -33,6 +31,7 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.FilePickHelper
 import forpdateam.ru.forpda.common.Utils
+import forpdateam.ru.forpda.databinding.FragmentThemeBinding
 import forpdateam.ru.forpda.entity.app.EditPostSyncData
 import forpdateam.ru.forpda.entity.app.TabNotification
 import forpdateam.ru.forpda.entity.remote.ForumPost
@@ -45,6 +44,7 @@ import forpdateam.ru.forpda.presentation.theme.ThemeView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesFragment
 import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup
+import forpdateam.ru.forpda.ui.fragments.tabBinding
 import forpdateam.ru.forpda.ui.views.FabOnScroll
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
 import forpdateam.ru.forpda.ui.views.messagepanel.attachments.AttachmentsPopup
@@ -56,7 +56,13 @@ import moxy.presenter.ProvidePresenter
  * Created by radiationx on 20.10.16.
  */
 
-abstract class ThemeFragment : TabFragment(), ThemeView {
+abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
+
+    private val binding by tabBinding(FragmentThemeBinding::bind)
+
+    protected val refreshLayout: SwipeRefreshLayout
+        get() = binding.swipeRefreshList
+
 
     protected lateinit var dialogsHelper: ThemeDialogsHelper_V2
 
@@ -70,7 +76,6 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
     protected lateinit var addFavoritesMenuItem: MenuItem
     protected lateinit var openForumMenuItem: MenuItem
 
-    protected lateinit var refreshLayout: SwipeRefreshLayout
 
     private lateinit var paginationHelper: PaginationHelper
 
@@ -141,23 +146,16 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
         fab.requestLayout()
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    @SuppressLint("InflateParams")
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
         initFabBehavior()
-        baseInflateFragment(inflater, R.layout.fragment_theme)
-        refreshLayout =
-            findViewById(R.id.swipe_refresh_list) as SwipeRefreshLayout
         messagePanel = MessagePanel(requireContext(), fragmentContainer, coordinatorLayout, false)
         paginationHelper = PaginationHelper(requireActivity())
-        paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow)
+        paginationHelper.addInToolbar(toolbarLayout, configuration.isFitSystemWindow)
 
-        notificationView = inflater.inflate(R.layout.new_message_notification, null)
+        notificationView =
+            View.inflate(fragmentContent.context, R.layout.new_message_notification, null)
         notificationTitle = notificationView.findViewById<View>(R.id.title) as TextView
         notificationButton = notificationView.findViewById<View>(R.id.icon) as ImageButton
         fragmentContent.addView(notificationView)
@@ -167,11 +165,8 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
         )
 
         contentController.setMainRefresh(refreshLayout)
-        return viewFragment
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+
         setFontSize(mainPreferencesHolder.getWebViewFontSize())
 
         notificationButton.setColorFilter(
@@ -344,7 +339,8 @@ abstract class ThemeFragment : TabFragment(), ThemeView {
         messagePanel.hidePopupWindows()
         hideKeyboard()
         messagePanel.heightChangeListener!!.onChangedHeight(0)
-        toggleMessagePanelItem.icon = App.getVecDrawable(requireContext(), R.drawable.ic_toolbar_create)
+        toggleMessagePanelItem.icon =
+            App.getVecDrawable(requireContext(), R.drawable.ic_toolbar_create)
     }
 
     override fun addBaseToolbarMenu(menu: Menu) {

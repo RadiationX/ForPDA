@@ -15,7 +15,7 @@ import forpdateam.ru.forpda.ui.fragments.settings.SettingsFragment
  * Created by radiationx on 25.12.16.
  */
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : AppCompatActivity(R.layout.activity_settings) {
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(LocaleHelper.onAttach(base))
@@ -24,7 +24,6 @@ class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightPreferenceTheme)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
 
         supportActionBar?.apply {
             setHomeButtonEnabled(true)

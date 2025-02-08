@@ -3,7 +3,9 @@ package forpdateam.ru.forpda.ui.fragments.profile.adapters
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.ProfileSubItemDeviceBinding
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
@@ -29,7 +31,7 @@ internal class DevicesAdapter(
         itemView: View,
         listener: Listener
     ) : BaseViewHolder<ProfileModel.Device>(itemView) {
-        private val title: TextView = itemView.findViewById(R.id.item_title)
+        private val binding by viewBinding<ProfileSubItemDeviceBinding>()
         private var currentItem: ProfileModel.Device? = null
 
         init {
@@ -38,7 +40,7 @@ internal class DevicesAdapter(
 
         override fun bind(item: ProfileModel.Device) {
             currentItem = item
-            title.text = String.format("%s %s", item.name, item.accessory)
+            binding.itemTitle.text = String.format("%s %s", item.name, item.accessory)
         }
 
         internal interface Listener {

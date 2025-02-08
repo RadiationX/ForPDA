@@ -3,10 +3,11 @@ package forpdateam.ru.forpda.ui.fragments.devdb.device.specs
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App.Companion.getColorFromAttr
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.DeviceSpecItemBinding
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils.coloredFromHtml
 
 /**
@@ -37,29 +38,7 @@ class SpecsAdapter : RecyclerView.Adapter<SpecsAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
-        holder.title.text = item.first
-        val builder = StringBuilder()
-
-        for (i in item.second.indices) {
-            val pair = item.second[i]
-            val strColor = String.format(
-                "#%06X",
-                0xFFFFFF and getColorFromAttr(holder.itemView.context, R.attr.second_text_color)
-            )
-            builder.append("<small style=\"font-size:10px\"><span style=\"color: ").append(strColor)
-                .append("\">").append(pair.first).append("</span></small><br>").append(pair.second)
-            if (i + 1 < item.second.size) {
-                builder.append("<br><br>")
-            }
-        }
-
-        holder.desc.text = coloredFromHtml(builder.toString())
-
-        /*holder.price.setVisibility(item.getPrice() == null ? View.GONE : View.VISIBLE);
-        if (item.getPrice() != null) {
-            holder.price.setText(item.getPrice());
-        }*/
+        holder.bind(getItem(position))
     }
 
     override fun getItemCount(): Int {
@@ -70,8 +49,30 @@ class SpecsAdapter : RecyclerView.Adapter<SpecsAdapter.ViewHolder>() {
         return list[position]
     }
 
-    inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        var title: TextView = v.findViewById(R.id.item_title)
-        var desc: TextView = v.findViewById(R.id.item_desc)
+    class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+
+        private val binding by viewBinding<DeviceSpecItemBinding>()
+
+        fun bind(item: Pair<String, List<Pair<String, String>>>) {
+            binding.itemTitle.text = item.first
+            val builder = StringBuilder()
+
+            for (i in item.second.indices) {
+                val pair = item.second[i]
+                val strColor = String.format(
+                    "#%06X",
+                    0xFFFFFF and getColorFromAttr(binding.root.context, R.attr.second_text_color)
+                )
+                builder.append("<small style=\"font-size:10px\"><span style=\"color: ")
+                    .append(strColor)
+                    .append("\">").append(pair.first).append("</span></small><br>")
+                    .append(pair.second)
+                if (i + 1 < item.second.size) {
+                    builder.append("<br><br>")
+                }
+            }
+
+            binding.itemDesc.text = coloredFromHtml(builder.toString())
+        }
     }
 }

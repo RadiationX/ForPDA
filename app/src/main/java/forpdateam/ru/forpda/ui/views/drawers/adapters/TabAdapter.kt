@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.DrawerTabItemBinding
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
@@ -50,18 +52,13 @@ class TabAdapter : BaseAdapter<TabFragment, TabHolder>() {
     }
 
     inner class TabHolder(v: View) : BaseViewHolder<TabFragment>(v), View.OnClickListener {
-        var text: TextView
-        var close: ImageView
-        var wrapper: ViewGroup
+
+        private val binding by viewBinding<DrawerTabItemBinding>()
         private var currentItem: TabFragment? = null
 
         init {
-            text = v.findViewById(R.id.drawer_item_title)
-            close = v.findViewById(R.id.drawer_item_close)
-            wrapper = v.findViewById(R.id.drawer_item_wrapper)
-
             v.setOnClickListener(this)
-            close.setOnClickListener { v1: View? ->
+            binding.drawerItemClose.setOnClickListener { v1: View? ->
                 if (closeClickListener != null) {
                     closeClickListener!!.onItemClick(requireNotNull(currentItem))
                 }
@@ -73,10 +70,10 @@ class TabAdapter : BaseAdapter<TabFragment, TabHolder>() {
             val isActive = item.tag != null && item.tag == currentFragmentTag
             Log.d("lalala", "TabAdapter bind $item : $isActive : $position")
 
-            if (isActive) wrapper.setBackgroundColor(color)
-            else wrapper.setBackgroundColor(Color.TRANSPARENT)
+            if (isActive) binding.drawerItemWrapper.setBackgroundColor(color)
+            else binding.drawerItemWrapper.setBackgroundColor(Color.TRANSPARENT)
 
-            text.text = item.getTabTitle()
+            binding.drawerItemTitle.text = item.getTabTitle()
         }
 
         override fun onClick(view: View) {

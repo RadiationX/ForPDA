@@ -14,10 +14,12 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App.Companion.get
 import forpdateam.ru.forpda.App.Companion.getContext
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
+import forpdateam.ru.forpda.databinding.EditPollQuestionBinding
 import forpdateam.ru.forpda.entity.remote.editpost.EditPoll
 import forpdateam.ru.forpda.entity.remote.editpost.EditPoll.Companion.findQuestionByIndex
 import forpdateam.ru.forpda.entity.remote.editpost.EditPoll.Question
@@ -69,55 +71,30 @@ class PollQuestionsAdapter : RecyclerView.Adapter<PollQuestionsAdapter.ViewHolde
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = checkNotNull(getItem(holder.adapterPosition))
-        val qstr =
-            String.format(get().getString(R.string.poll_question_Pos), (holder.adapterPosition + 1))
-        holder.customTextWatcher.updatePosition(holder.adapterPosition)
-        holder.checkedChangeListener.updatePosition(holder.adapterPosition)
 
-        holder.title.text = qstr
-        holder.titleField.setText(item.title)
-        holder.titleField.hint = qstr
-
-        holder.multi.isChecked = item.isMulti
-
-        var choicesAdapter = choiceAdapters[item]
-
-        if (choicesAdapter == null) {
-            choicesAdapter = PollChoicesAdapter(item, poll)
-            choiceAdapters[item] = choicesAdapter
-        }
-
-
-        holder.choices.adapter = choicesAdapter
     }
 
     inner class ViewHolder(
         v: View,
-        var customTextWatcher: CustomTextWatcher,
-        checkedChangeListener: CustomCheckedChangeListener
+        private var customTextWatcher: CustomTextWatcher,
+        private val checkedChangeListener: CustomCheckedChangeListener
     ) : RecyclerView.ViewHolder(v) {
-        var title: AppCompatTextView = v.findViewById(R.id.poll_question_title)
-        var titleField: AppCompatEditText = v.findViewById(R.id.poll_question_title_field)
-        var multi: AppCompatCheckBox = v.findViewById(R.id.poll_question_multi)
-        var choices: RecyclerView = v.findViewById(R.id.poll_question_choices)
-        var addChoice: Button = v.findViewById(R.id.poll_add_choice)
-        var delete: ImageButton = v.findViewById(R.id.poll_question_delete)
-        var checkedChangeListener: CustomCheckedChangeListener
+
+        private val binding by viewBinding<EditPollQuestionBinding>()
 
         init {
-            titleField.addTextChangedListener(customTextWatcher)
+            binding.pollQuestionTitleField.addTextChangedListener(customTextWatcher)
 
-            this.checkedChangeListener = checkedChangeListener
-            multi.setOnCheckedChangeListener(checkedChangeListener)
+            binding.pollQuestionMulti.setOnCheckedChangeListener(checkedChangeListener)
 
-            choices.layoutManager = LinearLayoutManager(choices.context)
+            binding.pollQuestionChoices.layoutManager = LinearLayoutManager(binding.pollQuestionChoices.context)
 
-            addChoice.setOnClickListener { v1: View? ->
+            binding.pollAddChoice.setOnClickListener { v1: View? ->
                 val choicesAdapter = choiceAdapters[questions[layoutPosition]]
                 choicesAdapter!!.add(EditPoll.Choice())
             }
 
-            delete.setOnClickListener { v1: View? ->
+            binding.pollQuestionDelete.setOnClickListener { v1: View? ->
                 AlertDialog.Builder(v.context)
                     .setMessage(R.string.ask_delete_question)
                     .setPositiveButton(R.string.ok) { dialog: DialogInterface?, which: Int ->
@@ -141,6 +118,29 @@ class PollQuestionsAdapter : RecyclerView.Adapter<PollQuestionsAdapter.ViewHolde
                     .setNegativeButton(R.string.no, null)
                     .show()
             }
+        }
+
+        fun bind(item:Question){
+            val qstr =
+                String.format(get().getString(R.string.poll_question_Pos), (adapterPosition + 1))
+            customTextWatcher.updatePosition(adapterPosition)
+            checkedChangeListener.updatePosition(adapterPosition)
+
+            binding.pollQuestionTitle.text = qstr
+            binding.pollQuestionTitleField.setText(item.title)
+            binding.pollQuestionTitleField.hint = qstr
+
+            binding.pollQuestionMulti.isChecked = item.isMulti
+
+            var choicesAdapter = choiceAdapters[item]
+
+            if (choicesAdapter == null) {
+                choicesAdapter = PollChoicesAdapter(item, poll)
+                choiceAdapters[item] = choicesAdapter
+            }
+
+
+            binding.pollQuestionChoices.adapter = choicesAdapter
         }
     }
 

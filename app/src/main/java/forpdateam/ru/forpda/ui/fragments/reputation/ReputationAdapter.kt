@@ -3,10 +3,10 @@ package forpdateam.ru.forpda.ui.fragments.reputation
 import android.view.View
 import android.view.View.OnLongClickListener
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import com.nostra13.universalimageloader.core.ImageLoader
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.ReputationItemBinding
 import forpdateam.ru.forpda.entity.remote.reputation.RepItem
 import forpdateam.ru.forpda.ui.fragments.reputation.ReputationAdapter.ReputationHolder
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
@@ -34,13 +34,8 @@ class ReputationAdapter :
 
     inner class ReputationHolder(v: View) : BaseViewHolder<RepItem>(v), View.OnClickListener,
         OnLongClickListener {
-        var title: TextView = v.findViewById(R.id.rep_item_title)
-        var lastNick: TextView =
-            v.findViewById(R.id.rep_item_last_nick)
-        var date: TextView = v.findViewById(R.id.rep_item_date)
-        var desc: TextView = v.findViewById(R.id.rep_item_desc)
-        var image: ImageView =
-            v.findViewById(R.id.rep_item_image)
+
+        private val binding by viewBinding<ReputationItemBinding>()
 
         init {
             v.setOnClickListener(this)
@@ -48,16 +43,16 @@ class ReputationAdapter :
         }
 
         override fun bind(item: RepItem, position: Int) {
-            title.text = item.title
-            lastNick.text = item.user.nick
-            date.text = item.date
+            binding.repItemTitle.text = item.title
+            binding.repItemLastNick.text = item.user.nick
+            binding.repItemDate.text = item.date
             if (item.sourceUrl == null) {
-                desc.visibility = View.GONE
+                binding.repItemDesc.visibility = View.GONE
             } else {
-                desc.visibility = View.VISIBLE
-                desc.text = item.sourceTitle
+                binding.repItemDesc.visibility = View.VISIBLE
+                binding.repItemDesc.text = item.sourceTitle
             }
-            ImageLoader.getInstance().displayImage(item.image, image)
+            ImageLoader.getInstance().displayImage(item.image, binding.repItemImage)
         }
 
         override fun onClick(view: View) {

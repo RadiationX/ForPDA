@@ -2,13 +2,13 @@ package forpdateam.ru.forpda.ui.fragments.devdb.device.posts
 
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import com.nostra13.universalimageloader.core.ImageLoader
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.DevicePostForumItemBinding
+import forpdateam.ru.forpda.databinding.DevicePostNewsItemBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Device.PostItem
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils.spannedFromHtml
-import forpdateam.ru.forpda.ui.fragments.devdb.device.posts.PostsAdapter.PostHolder
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
 
@@ -16,14 +16,10 @@ import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
  * Created by radiationx on 09.08.17.
  */
 class PostsAdapter(
-    private val listener: PostHolder.Listener
-) : BaseAdapter<PostItem, PostHolder>() {
+    private val source: Int,
+    private val listener: Listener
+) : BaseAdapter<PostItem, BaseViewHolder<PostItem>>() {
 
-    private var source = 0
-
-    fun setSource(source: Int) {
-        this.source = source
-    }
 
     val layout: Int
         get() {
@@ -33,20 +29,23 @@ class PostsAdapter(
             return R.layout.device_post_forum_item
         }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostHolder {
-        val v = inflateLayout(parent, layout)
-        return PostHolder(v, listener)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<PostItem> {
+        if (source == PostsFragment.SRC_NEWS) {
+            return NewsPostHolder(inflateLayout(parent, R.layout.device_post_news_item), listener)
+        }
+        return ForumPostHolder(inflateLayout(parent, R.layout.device_post_news_item), listener)
     }
 
-    override fun onBindViewHolder(holder: PostHolder, position: Int) {
-        holder.bind(getItem(position), position)
+    override fun onBindViewHolder(holder: BaseViewHolder<PostItem>, position: Int) {
+        if (source == PostsFragment.SRC_NEWS) {
+            (holder as NewsPostHolder).bind(getItem(position), position)
+        } else {
+            (holder as ForumPostHolder).bind(getItem(position), position)
+        }
     }
 
-    class PostHolder(v: View, listener: Listener) : BaseViewHolder<PostItem>(v) {
-        private val title: TextView = v.findViewById(R.id.item_title)
-        private val date: TextView = v.findViewById(R.id.item_date)
-        private val desc: TextView? = v.findViewById(R.id.item_desc)
-        private val image: ImageView? = v.findViewById(R.id.item_image)
+    class NewsPostHolder(v: View, listener: Listener) : BaseViewHolder<PostItem>(v) {
+        private val binding by viewBinding<DevicePostNewsItemBinding>()
         private var currentItem: PostItem? = null
 
         init {
@@ -57,23 +56,44 @@ class PostsAdapter(
 
         override fun bind(item: PostItem, position: Int) {
             currentItem = item
-            title.text = item.title
-            date.text = item.date
-            if (desc != null) {
-                if (item.desc != null) {
-                    desc.text = spannedFromHtml(item.desc)
-                    desc.visibility = View.VISIBLE
-                } else {
-                    desc.visibility = View.GONE
-                }
+            binding.itemTitle.text = item.title
+            binding.itemDate.text = item.date
+            if (item.desc != null) {
+                binding.itemDesc.text = spannedFromHtml(item.desc)
+                binding.itemDesc.visibility = View.VISIBLE
+            } else {
+                binding.itemDesc.visibility = View.GONE
             }
-            if (image != null && item.image != null) {
-                ImageLoader.getInstance().displayImage(item.image, image)
+            if (item.image != null) {
+                ImageLoader.getInstance().displayImage(item.image, binding.itemImage)
             }
+        }
+    }
+
+    class ForumPostHolder(v: View, listener: Listener) : BaseViewHolder<PostItem>(v) {
+        private val binding by viewBinding<DevicePostForumItemBinding>()
+        private var currentItem: PostItem? = null
+
+        init {
+            v.setOnClickListener((View.OnClickListener { v1: View? ->
+                listener.onClick(requireNotNull(currentItem))
+            }))
         }
 
-        fun interface Listener {
-            fun onClick(item: PostItem)
+        override fun bind(item: PostItem, position: Int) {
+            currentItem = item
+            binding.itemTitle.text = item.title
+            binding.itemDate.text = item.date
+            if (item.desc != null) {
+                binding.itemDesc.text = spannedFromHtml(item.desc)
+                binding.itemDesc.visibility = View.VISIBLE
+            } else {
+                binding.itemDesc.visibility = View.GONE
+            }
         }
+    }
+
+    fun interface Listener {
+        fun onClick(item: PostItem)
     }
 }

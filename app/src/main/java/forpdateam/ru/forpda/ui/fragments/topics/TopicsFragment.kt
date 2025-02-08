@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -83,19 +82,12 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        paginationHelper = PaginationHelper(requireActivity())
-        paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow)
-        return viewFragment
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        paginationHelper = PaginationHelper(requireActivity())
+        paginationHelper.addInToolbar(toolbarLayout, configuration.isFitSystemWindow)
+
         setScrollFlagsEnterAlways()
 
         dialogMenu = DynamicDialogMenu()

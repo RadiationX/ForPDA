@@ -13,6 +13,7 @@ import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ListView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.doOnLayout
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.tabs.TabLayout
@@ -74,10 +75,10 @@ class PaginationHelper(context: Activity) {
     }
 
     fun addInToolbar(
-        inflater: LayoutInflater,
         target: CollapsingToolbarLayout,
         enablePadding: Boolean
     ) {
+        val inflater = LayoutInflater.from(target.context)
         val tabLayout = inflater.inflate(R.layout.pagination_toolbar, target, false) as TabLayout
         target.addView(tabLayout, target.indexOfChild(target.findViewById(R.id.toolbar)))
         tabLayoutInToolbar = tabLayout
@@ -87,7 +88,7 @@ class PaginationHelper(context: Activity) {
                     .observeDimensions()
                     .subscribe { dimensions: Dimensions ->
                         if (tabLayoutInToolbar != null) {
-                            tabLayoutInToolbar!!.post {
+                            tabLayoutInToolbar!!.doOnLayout {
                                 if (tabLayoutInToolbar != null) {
                                     updateDimens(dimensions)
                                 }
@@ -108,7 +109,8 @@ class PaginationHelper(context: Activity) {
         target.requestLayout()
     }
 
-    fun addInList(inflater: LayoutInflater, target: ViewGroup) {
+    fun addInList(target: ViewGroup) {
+        val inflater = LayoutInflater.from(target.context)
         val tabLayout = inflater.inflate(R.layout.pagination_list, target, false) as TabLayout
         target.addView(tabLayout)
         setupTabLayout(tabLayout, false)

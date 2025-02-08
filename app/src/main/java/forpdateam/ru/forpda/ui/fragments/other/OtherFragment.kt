@@ -2,21 +2,20 @@ package forpdateam.ru.forpda.ui.fragments.other
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.FragmentOtherBinding
 import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.entity.app.other.AppMenuItem
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
-import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.presentation.other.OtherPresenter
 import forpdateam.ru.forpda.presentation.other.OtherView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
+import forpdateam.ru.forpda.ui.fragments.tabBinding
 import forpdateam.ru.forpda.ui.views.drawers.adapters.DrawerMenuItem
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -25,9 +24,12 @@ import moxy.presenter.ProvidePresenter
 /**
  * Created by radiationx on 16.12.17.
  */
-class OtherFragment : TabFragment(), OtherView {
+class OtherFragment : TabFragment(R.layout.fragment_other), OtherView {
 
-    private lateinit var recyclerView: RecyclerView
+    private val binding by tabBinding(FragmentOtherBinding::bind)
+
+    private val recyclerView: RecyclerView
+        get() = binding.recyclerView
 
     private val otherAdapter by lazy {
         OtherAdapter(
@@ -61,17 +63,6 @@ class OtherFragment : TabFragment(), OtherView {
 
     init {
         configuration.defaultTitle = "Полное меню приложения"
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        baseInflateFragment(inflater, R.layout.fragment_other)
-        recyclerView = findViewById(R.id.recyclerView) as RecyclerView
-        return viewFragment
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

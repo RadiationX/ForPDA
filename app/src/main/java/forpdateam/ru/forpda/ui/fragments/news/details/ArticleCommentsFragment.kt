@@ -4,9 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ProgressBar
@@ -16,10 +14,12 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
+import forpdateam.ru.forpda.databinding.ArticleCommentsBinding
 import forpdateam.ru.forpda.entity.remote.news.Comment
 import forpdateam.ru.forpda.presentation.articles.detail.comments.ArticleCommentPresenter
 import forpdateam.ru.forpda.presentation.articles.detail.comments.ArticleCommentView
@@ -36,14 +36,24 @@ import moxy.presenter.ProvidePresenter
  * Created by radiationx on 03.09.17.
  */
 
-class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView,
+class ArticleCommentsFragment : MvpAppCompatFragment(R.layout.article_comments), ArticleCommentView,
     ArticleCommentsAdapter.ClickListener, TabTopScroller {
-    private lateinit var refreshLayout: SwipeRefreshLayout
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var messageField: EditText
-    private lateinit var buttonSend: AppCompatImageButton
-    private lateinit var progressBarSend: ProgressBar
-    private lateinit var writePanel: RelativeLayout
+
+    private val binding by viewBinding<ArticleCommentsBinding>()
+
+    private val refreshLayout: SwipeRefreshLayout
+        get() = binding.swipeRefreshList
+    private val recyclerView: RecyclerView
+        get() = binding.baseList
+    private val messageField: EditText
+        get() = binding.messageField
+    private val buttonSend: AppCompatImageButton
+        get() = binding.buttonSend
+    private val progressBarSend: ProgressBar
+        get() = binding.sendProgress
+    private val writePanel: RelativeLayout
+        get() = binding.commentWritePanel
+
     private val authHolder = App.get().Di().authHolder
     private val adapter = ArticleCommentsAdapter(authHolder)
     private var currentReplyComment: Comment? = null
@@ -62,23 +72,10 @@ class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView,
         App.get().Di().errorHandler
     )
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.article_comments, container, false)
-        refreshLayout =
-            view.findViewById<View>(R.id.swipe_refresh_list) as SwipeRefreshLayout
-        recyclerView =
-            view.findViewById<View>(R.id.base_list) as RecyclerView
-        writePanel = view.findViewById<View>(R.id.comment_write_panel) as RelativeLayout
-        messageField = view.findViewById<View>(R.id.message_field) as EditText
-        //val sendContainer = view.findViewById<View>(R.id.send_container) as FrameLayout
-        buttonSend = view.findViewById<View>(R.id.button_send) as AppCompatImageButton
-        progressBarSend = view.findViewById<View>(R.id.send_progress) as ProgressBar
-        val additionalContent = view.findViewById<View>(R.id.additional_content) as ViewGroup
-        contentController = ContentController(null, additionalContent, refreshLayout)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        contentController = ContentController(null, binding.additionalContent, refreshLayout)
 
         refreshLayout.setProgressBackgroundColorSchemeColor(
             App.getColorFromAttr(
@@ -86,10 +83,20 @@ class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView,
                 R.attr.colorPrimary
             )
         )
-        refreshLayout.setColorSchemeColors(App.getColorFromAttr(requireContext(), R.attr.colorAccent))
+        refreshLayout.setColorSchemeColors(
+            App.getColorFromAttr(
+                requireContext(),
+                R.attr.colorAccent
+            )
+        )
         refreshLayout.setOnRefreshListener { presenter.updateComments() }
 
-        recyclerView.setBackgroundColor(App.getColorFromAttr(requireContext(), R.attr.background_for_lists))
+        recyclerView.setBackgroundColor(
+            App.getColorFromAttr(
+                requireContext(),
+                R.attr.background_for_lists
+            )
+        )
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.setHasFixedSize(true)
         recyclerView.addItemDecoration(DevicesFragment.SpacingItemDecoration(App.px12, false))
@@ -109,7 +116,6 @@ class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView,
         })
 
         buttonSend.setOnClickListener { sendComment() }
-        return view
     }
 
     override fun toggleScrollTop() {
@@ -177,7 +183,8 @@ class ArticleCommentsFragment : MvpAppCompatFragment(), ArticleCommentView,
         messageField.setText("${currentReplyComment?.user?.nick},\n")
         messageField.setSelection(messageField.text.length)
         messageField.requestFocus()
-        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(messageField, InputMethodManager.SHOW_IMPLICIT)
     }
 

@@ -2,43 +2,34 @@ package forpdateam.ru.forpda.ui.fragments
 
 import android.os.Bundle
 import android.os.Handler
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.appbar.AppBarLayout
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.FragmentBaseListBinding
 
 /**
  * Created by radiationx on 14.08.17.
  */
 
-abstract class RecyclerFragment : TabFragment(), TabTopScroller {
-    protected lateinit var refreshLayout: SwipeRefreshLayout
-    protected lateinit var recyclerView: RecyclerView
+abstract class RecyclerFragment : TabFragment(R.layout.fragment_base_list), TabTopScroller {
+
+    private val binding by tabBinding(FragmentBaseListBinding::bind)
+
+    protected val refreshLayout: SwipeRefreshLayout
+        get() = binding.swipeRefreshList
+    protected val recyclerView: RecyclerView
+        get() = binding.baseList
 
     private var listScrollY = 0
     private var appBarOffset = 0
 
     private lateinit var topScroller: RecyclerTopScroller
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
-        baseInflateFragment(inflater, R.layout.fragment_base_list)
-        refreshLayout =
-            findViewById(R.id.swipe_refresh_list) as SwipeRefreshLayout
-        recyclerView = findViewById(R.id.base_list) as RecyclerView
-        contentController.setMainRefresh(refreshLayout)
-        return viewFragment
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        contentController.setMainRefresh(refreshLayout)
         setListsBackground()
         recyclerView.setHasFixedSize(true)
         refreshLayoutStyle(refreshLayout)

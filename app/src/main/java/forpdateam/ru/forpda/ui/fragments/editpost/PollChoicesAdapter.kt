@@ -4,15 +4,15 @@ import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.textfield.TextInputLayout
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App.Companion.get
 import forpdateam.ru.forpda.App.Companion.getContext
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
+import forpdateam.ru.forpda.databinding.EditPollChoiceBinding
 import forpdateam.ru.forpda.entity.remote.editpost.EditPoll
 import forpdateam.ru.forpda.entity.remote.editpost.EditPoll.Companion.findChoiceByIndex
 import forpdateam.ru.forpda.entity.remote.editpost.EditPoll.Question
@@ -21,7 +21,7 @@ import forpdateam.ru.forpda.entity.remote.editpost.EditPoll.Question
  * Created by radiationx on 28.07.17.
  */
 class PollChoicesAdapter : RecyclerView.Adapter<PollChoicesAdapter.ViewHolder> {
-    private var choices:ArrayList<EditPoll.Choice> = ArrayList<EditPoll.Choice>()
+    private var choices: ArrayList<EditPoll.Choice> = ArrayList<EditPoll.Choice>()
     private var poll: EditPoll? = null
     private var question: Question? = null
 
@@ -30,8 +30,6 @@ class PollChoicesAdapter : RecyclerView.Adapter<PollChoicesAdapter.ViewHolder> {
         this.poll = poll
         this.question = question
     }
-
-    constructor()
 
     fun add(choice: EditPoll.Choice) {
         if (choices.size < poll!!.maxChoices) {
@@ -64,26 +62,19 @@ class PollChoicesAdapter : RecyclerView.Adapter<PollChoicesAdapter.ViewHolder> {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = checkNotNull(getItem(holder.adapterPosition))
-        holder.myCustomEditTextListener.updatePosition(holder.adapterPosition)
-        holder.title.editText!!.setText(item.title)
-        holder.title.hint = String.format(
-            get().getString(R.string.poll_answer_Pos),
-            holder.adapterPosition + 1
-        )
+        holder.bind(getItem(position))
     }
-
 
     inner class ViewHolder(
         v: View,
-        var myCustomEditTextListener: MyCustomEditTextListener
+        private val myCustomEditTextListener: MyCustomEditTextListener
     ) : RecyclerView.ViewHolder(v) {
-        var title: TextInputLayout = v.findViewById(R.id.poll_choice_title)
-        var delete: ImageButton = v.findViewById(R.id.poll_choice_delete)
+
+        private val binding by viewBinding<EditPollChoiceBinding>()
 
         init {
-            title.editText!!.addTextChangedListener(myCustomEditTextListener)
-            delete.setOnClickListener { v1: View? ->
+            binding.pollChoiceTitle.editText!!.addTextChangedListener(myCustomEditTextListener)
+            binding.pollChoiceDelete.setOnClickListener { v1: View? ->
                 AlertDialog.Builder(v.context)
                     .setMessage(R.string.ask_delete_answer)
                     .setPositiveButton(R.string.ok) { dialog: DialogInterface?, which: Int ->
@@ -108,6 +99,15 @@ class PollChoicesAdapter : RecyclerView.Adapter<PollChoicesAdapter.ViewHolder> {
                     .setNegativeButton(R.string.no, null)
                     .show()
             }
+        }
+
+        fun bind(item: EditPoll.Choice) {
+            myCustomEditTextListener.updatePosition(adapterPosition)
+            binding.pollChoiceTitle.editText!!.setText(item.title)
+            binding.pollChoiceTitle.hint = String.format(
+                get().getString(R.string.poll_answer_Pos),
+                adapterPosition + 1
+            )
         }
     }
 

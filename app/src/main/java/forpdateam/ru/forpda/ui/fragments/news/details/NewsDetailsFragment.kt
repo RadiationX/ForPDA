@@ -5,11 +5,8 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
-import android.view.ViewGroup
-import android.view.ViewStub
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -20,6 +17,8 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.FragmentArticleBinding
+import forpdateam.ru.forpda.databinding.ToolbarNewsDetailsBinding
 import forpdateam.ru.forpda.entity.remote.news.DetailsPage
 import forpdateam.ru.forpda.model.interactors.news.ArticleInteractor
 import forpdateam.ru.forpda.presentation.articles.detail.ArticleDetailPresenter
@@ -28,6 +27,8 @@ import forpdateam.ru.forpda.ui.activities.MainActivity
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.TabTopScroller
 import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup
+import forpdateam.ru.forpda.ui.fragments.tabBinding
+import forpdateam.ru.forpda.ui.fragments.tabToolbarBinding
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
 import forpdateam.ru.forpda.ui.views.ScrimHelper
 import moxy.presenter.InjectPresenter
@@ -37,19 +38,30 @@ import moxy.presenter.ProvidePresenter
  * Created by isanechek on 8/19/17.
  */
 
-class NewsDetailsFragment : TabFragment(), ArticleDetailView, TabTopScroller {
+class NewsDetailsFragment : TabFragment(R.layout.fragment_article), ArticleDetailView,
+    TabTopScroller {
+
+    private val binding by tabBinding(FragmentArticleBinding::bind)
+    private val toolbarBinding by tabToolbarBinding(ToolbarNewsDetailsBinding::bind)
 
 
-    lateinit var fragmentsPager: ViewPager
-        private set
-    private lateinit var progressBar: ProgressBar
-    private lateinit var imageProgressBar: ProgressBar
-    private lateinit var detailsImage: ImageView
+    val fragmentsPager: ViewPager
+        get() = binding.viewPager
+    private val progressBar: ProgressBar
+        get() = binding.progressBar
+    private val imageProgressBar: ProgressBar
+        get() = toolbarBinding.articleProgressBar
+    private val detailsImage: ImageView
+        get() = toolbarBinding.articleImage
 
-    private lateinit var detailsTitle: TextView
-    private lateinit var detailsNick: TextView
-    private lateinit var detailsCount: TextView
-    private lateinit var detailsDate: TextView
+    private val detailsTitle: TextView
+        get() = toolbarBinding.articleTitle
+    private val detailsNick: TextView
+        get() = toolbarBinding.articleNick
+    private val detailsCount: TextView
+        get() = toolbarBinding.articleCommentsCount
+    private val detailsDate: TextView
+        get() = toolbarBinding.articleDate
 
     private var isResume = false
     private var isScrim = false
@@ -96,34 +108,12 @@ class NewsDetailsFragment : TabFragment(), ArticleDetailView, TabTopScroller {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        baseInflateFragment(inflater, R.layout.fragment_article)
-        val viewStub = findViewById(R.id.toolbar_content) as ViewStub
-        viewStub.layoutResource = R.layout.toolbar_news_details
-        viewStub.inflate()
-        fragmentsPager = findViewById(R.id.view_pager) as ViewPager
-        progressBar = findViewById(R.id.progress_bar) as ProgressBar
-        detailsImage = findViewById(R.id.article_image) as ImageView
-        detailsTitle = findViewById(R.id.article_title) as TextView
-        detailsNick = findViewById(R.id.article_nick) as TextView
-        detailsCount = findViewById(R.id.article_comments_count) as TextView
-        detailsDate = findViewById(R.id.article_date) as TextView
-        imageProgressBar = findViewById(R.id.article_progress_bar) as ProgressBar
-
-        detailsImage.maxHeight = App.px24 * 10
-
-        setScrollFlagsExitUntilCollapsed()
-
-        return viewFragment
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        baseInflateToolbar(R.layout.toolbar_news_details)
+        detailsImage.maxHeight = App.px24 * 10
+        setScrollFlagsExitUntilCollapsed()
 
         val scrimHelper = ScrimHelper(appBarLayout, toolbarLayout)
         scrimHelper.setScrimListener { scrim1 ->

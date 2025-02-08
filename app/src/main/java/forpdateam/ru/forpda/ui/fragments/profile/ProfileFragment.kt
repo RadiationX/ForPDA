@@ -6,12 +6,9 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
-import android.view.ViewStub
 import android.view.ViewTreeObserver
 import android.view.animation.AlphaAnimation
 import android.widget.ImageView
@@ -25,12 +22,16 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.BitmapUtils
 import forpdateam.ru.forpda.common.LinkMovementMethod
+import forpdateam.ru.forpda.databinding.FragmentProfileBinding
+import forpdateam.ru.forpda.databinding.ToolbarProfileBinding
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.presentation.profile.ProfilePresenter
 import forpdateam.ru.forpda.presentation.profile.ProfileView
 import forpdateam.ru.forpda.ui.activities.MainActivity
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.profile.adapters.ProfileAdapter
+import forpdateam.ru.forpda.ui.fragments.tabBinding
+import forpdateam.ru.forpda.ui.fragments.tabToolbarBinding
 import forpdateam.ru.forpda.ui.views.ScrimHelper
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -41,14 +42,24 @@ import moxy.presenter.ProvidePresenter
 /**
  * Created by radiationx on 03.08.16.
  */
-class ProfileFragment : TabFragment(), ProfileAdapter.ClickListener, ProfileView {
+class ProfileFragment : TabFragment(R.layout.fragment_profile), ProfileAdapter.ClickListener,
+    ProfileView {
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var nick: TextView
-    private lateinit var group: TextView
-    private lateinit var sign: TextView
-    private lateinit var avatar: ImageView
-    private lateinit var progressView: CircularProgressView
+    private val binding by tabBinding(FragmentProfileBinding::bind)
+    private val toolbarBinding by tabToolbarBinding(ToolbarProfileBinding::bind)
+
+    private val recyclerView: RecyclerView
+        get() = binding.profileList
+    private val nick: TextView
+        get() = toolbarBinding.profileNick
+    private val group: TextView
+        get() = toolbarBinding.profileGroup
+    private val sign: TextView
+        get() = toolbarBinding.profileSign
+    private val avatar: ImageView
+        get() = toolbarBinding.profileAvatar
+    private val progressView: CircularProgressView
+        get() = toolbarBinding.profileProgress
 
     private var blurLayoutListener: ViewTreeObserver.OnGlobalLayoutListener? = null
 
@@ -94,32 +105,14 @@ class ProfileFragment : TabFragment(), ProfileAdapter.ClickListener, ProfileView
         presenter.profileUrl = profileUrl
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        baseInflateFragment(inflater, R.layout.fragment_profile)
-        val viewStub = findViewById(R.id.toolbar_content) as ViewStub
-        viewStub.layoutResource = R.layout.toolbar_profile
-        viewStub.inflate()
-        nick = findViewById(R.id.profile_nick) as TextView
-        group = findViewById(R.id.profile_group) as TextView
-        sign = findViewById(R.id.profile_sign) as TextView
-        avatar = findViewById(R.id.profile_avatar) as ImageView
-        recyclerView = findViewById(R.id.profile_list) as RecyclerView
-        progressView = findViewById(R.id.profile_progress) as CircularProgressView
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        baseInflateToolbar(R.layout.toolbar_profile)
 
         val params = toolbarLayout.layoutParams as AppBarLayout.LayoutParams
         params.scrollFlags =
             AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED
         toolbarLayout.layoutParams = params
-        return viewFragment
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager =
             LinearLayoutManager(recyclerView.context)

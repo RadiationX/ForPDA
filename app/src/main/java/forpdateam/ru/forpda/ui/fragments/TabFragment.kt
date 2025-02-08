@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewStub
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -20,12 +22,19 @@ import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.doOnLayout
+import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.viewbinding.ViewBinding
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import by.kirich1409.viewbindingdelegate.ViewBindingProperty
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.FragmentBaseBinding
 import forpdateam.ru.forpda.ui.DimensionHelper
 import forpdateam.ru.forpda.ui.activities.MainActivity
 import forpdateam.ru.forpda.ui.views.ContentController
@@ -38,7 +47,33 @@ import moxy.MvpAppCompatFragment
 /**
  * Created by radiationx on 07.08.16.
  */
-open class TabFragment : MvpAppCompatFragment() {
+fun <T : ViewBinding> TabFragment.tabBinding(
+    vbFactory: (View) -> T,
+): ViewBindingProperty<Fragment, T> {
+    return viewBinding(
+        vbFactory = vbFactory,
+        viewProvider = {
+            ViewCompat
+                .requireViewById<FrameLayout>(requireView(), R.id.fragment_content)
+                .getChildAt(0)
+        }
+    )
+}
+
+fun <T : ViewBinding> TabFragment.tabToolbarBinding(
+    vbFactory: (View) -> T,
+): ViewBindingProperty<Fragment, T> {
+    return viewBinding(
+        vbFactory = vbFactory,
+        viewProvider = {
+            ViewCompat.requireViewById(requireView(), R.id.toolbar_content)
+        }
+    )
+}
+
+open class TabFragment(
+    @LayoutRes private val contentLayoutId: Int = 0
+) : MvpAppCompatFragment(R.layout.fragment_base) {
 
     private val mHandler = Handler(Looper.getMainLooper())
     private lateinit var mUiThread: Thread
@@ -49,25 +84,47 @@ open class TabFragment : MvpAppCompatFragment() {
     private var tabTitleText: String? = null
     private var subtitleText: String? = null
 
-    protected lateinit var toolbarProgress: ProgressBar
-    protected lateinit var fragmentContainer: RelativeLayout
-    protected lateinit var fragmentContent: ViewGroup
-    protected lateinit var additionalContent: ViewGroup
-    protected lateinit var contentProgress: ProgressBar
-    protected lateinit var titlesWrapper: LinearLayout
-    protected lateinit var coordinatorLayout: CoordinatorLayout
-    protected lateinit var appBarLayout: AppBarLayout
-    protected lateinit var toolbarLayout: CollapsingToolbarLayout
-    protected lateinit var toolbar: Toolbar
-    protected lateinit var toolbarBackground: ImageView
-    protected lateinit var toolbarImageView: ImageView
-    protected lateinit var toolbarTitleView: TextView
-    protected lateinit var toolbarSubtitleView: TextView
-    protected lateinit var toolbarSpinner: Spinner
-    protected lateinit var viewFragment: View
-    protected lateinit var fab: FloatingActionButton
-    protected lateinit var contentController: ContentController
-    protected lateinit var preLpShadow: View
+    private val baseBinding by viewBinding<FragmentBaseBinding>()
+
+    protected val toolbarProgress: ProgressBar
+        get() = baseBinding.toolbarProgress
+    protected val fragmentContainer: RelativeLayout
+        get() = baseBinding.fragmentContainer
+    protected val fragmentContent: ViewGroup
+        get() = baseBinding.fragmentContent
+    protected val additionalContent: ViewGroup
+        get() = baseBinding.additionalContent
+    protected val contentProgress: ProgressBar
+        get() = baseBinding.contentProgress
+    protected val titlesWrapper: LinearLayout
+        get() = baseBinding.toolbarTitlesWrapper
+    protected val coordinatorLayout: CoordinatorLayout
+        get() = baseBinding.coordinatorLayout
+    protected val appBarLayout: AppBarLayout
+        get() = baseBinding.appbarLayout
+    protected val toolbarLayout: CollapsingToolbarLayout
+        get() = baseBinding.toolbarLayout
+    protected val toolbar: Toolbar
+        get() = baseBinding.toolbar
+    protected val toolbarBackground: ImageView
+        get() = baseBinding.toolbarImageBackground
+    protected val toolbarImageView: ImageView
+        get() = baseBinding.toolbarImageIcon
+    protected val toolbarTitleView: TextView
+        get() = baseBinding.toolbarTitle
+    protected val toolbarSubtitleView: TextView
+        get() = baseBinding.toolbarSubtitle
+    protected val toolbarSpinner: Spinner
+        get() = baseBinding.toolbarSpinner
+    private val viewFragment: View
+        get() = baseBinding.root
+    protected val fab: FloatingActionButton
+        get() = baseBinding.fab
+    protected val preLpShadow: View
+        get() = baseBinding.toolbarShadowPrelp
+    protected val contentController: ContentController by lazy {
+        ContentController(contentProgress, additionalContent, fragmentContent)
+    }
 
     protected var disposables = CompositeDisposable()
     protected var networkState = App.get().Di().networkState
@@ -160,39 +217,26 @@ open class TabFragment : MvpAppCompatFragment() {
     }
 
     @CallSuper
-    override fun onCreateView(
+    final override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewFragment = inflater.inflate(R.layout.fragment_base, container, false)
-        //Осторожно! Чувствительно к структуре разметки! (по идеи так должно работать чуть быстрее)
-        fragmentContainer = findViewById(R.id.fragment_container) as RelativeLayout
-        coordinatorLayout = fragmentContainer.findViewById(R.id.coordinator_layout)
-        appBarLayout = coordinatorLayout.findViewById(R.id.appbar_layout)
-        toolbarLayout = appBarLayout.findViewById(R.id.toolbar_layout)
-        toolbarBackground = toolbarLayout.findViewById(R.id.toolbar_image_background)
-        toolbar = toolbarLayout.findViewById(R.id.toolbar)
-        toolbarImageView = toolbar.findViewById(R.id.toolbar_image_icon)
-        toolbarTitleView = toolbar.findViewById(R.id.toolbar_title)
-        toolbarSubtitleView = toolbar.findViewById(R.id.toolbar_subtitle)
-        toolbarProgress = toolbar.findViewById(R.id.toolbar_progress)
-        titlesWrapper = toolbar.findViewById(R.id.toolbar_titles_wrapper)
-        toolbarSpinner = toolbar.findViewById(R.id.toolbar_spinner)
-        fragmentContent = coordinatorLayout.findViewById(R.id.fragment_content)
-        additionalContent = coordinatorLayout.findViewById(R.id.additional_content)
-        contentProgress = additionalContent.findViewById(R.id.content_progress)
-        preLpShadow = findViewById(R.id.toolbar_shadow_prelp)
-        //// TODO: 20.03.17 удалить и юзать только там, где нужно
-        fab = coordinatorLayout.findViewById(R.id.fab)
-        contentController = ContentController(contentProgress, additionalContent, fragmentContent)
-        return viewFragment
+        val view = super.onCreateView(inflater, container, savedInstanceState)
+        if (contentLayoutId != 0 && view != null) {
+            inflater.inflate(
+                contentLayoutId,
+                view.findViewById(R.id.fragment_content),
+                true
+            )
+        }
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view.post { this.updateToolbarShadow() }
+        view.doOnLayout { this.updateToolbarShadow() }
 
         toolbarTitleView.apply {
             ellipsize = TextUtils.TruncateAt.MARQUEE
@@ -229,6 +273,9 @@ open class TabFragment : MvpAppCompatFragment() {
             dimensionsProvider
                 .observeDimensions()
                 .subscribe { dimensions ->
+                    toolbar.doOnLayout {
+                        updateDimens(dimensions)
+                    }
                     updateDimens(dimensions)
                 }
         )
@@ -249,8 +296,9 @@ open class TabFragment : MvpAppCompatFragment() {
         toolbar.layoutParams = params
     }
 
-    protected fun baseInflateFragment(inflater: LayoutInflater, @LayoutRes res: Int) {
-        inflater.inflate(res, fragmentContent, true)
+    protected fun baseInflateToolbar(@LayoutRes res: Int) {
+        baseBinding.toolbarContent.layoutResource = res
+        baseBinding.toolbarContent.inflate()
     }
 
     @JvmOverloads
@@ -293,7 +341,12 @@ open class TabFragment : MvpAppCompatFragment() {
                 R.attr.colorPrimary
             )
         )
-        refreshLayout.setColorSchemeColors(App.getColorFromAttr(requireContext(), R.attr.colorAccent))
+        refreshLayout.setColorSchemeColors(
+            App.getColorFromAttr(
+                requireContext(),
+                R.attr.colorAccent
+            )
+        )
     }
 
     protected fun refreshLayoutLongTrigger(refreshLayout: SwipeRefreshLayout) {
@@ -326,11 +379,6 @@ open class TabFragment : MvpAppCompatFragment() {
         outState.putString(BUNDLE_TAB_TITLE, tabTitleText)
         outState.putBoolean(BUNDLE_CONFIG_ALONE, configuration.isAlone)
         outState.putBoolean(BUNDLE_CONFIG_MENU, configuration.isMenu)
-    }
-
-
-    fun findViewById(@IdRes id: Int): View {
-        return viewFragment.findViewById(id)
     }
 
     override fun onResume() {

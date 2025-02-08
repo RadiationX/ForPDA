@@ -9,23 +9,23 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.doOnLayout
 import androidx.viewpager.widget.ViewPager
 import com.github.chrisbanes.photoview.OnPhotoTapListener
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.LocaleHelper
 import forpdateam.ru.forpda.common.Utils
+import forpdateam.ru.forpda.databinding.ActivityImgViewerBinding
 
 /**
  * Created by radiationx on 24.05.17.
  */
 
-class ImageViewerActivity : AppCompatActivity() {
+class ImageViewerActivity : AppCompatActivity(R.layout.activity_img_viewer) {
 
-    private lateinit var image_viewer_pullBack: PullBackLayout
-    private lateinit var img_viewer_pager: HackyViewPager
-    private lateinit var toolbar: Toolbar
+    private val binding by viewBinding<ActivityImgViewerBinding>()
 
     private val currentImages = mutableListOf<String>()
     private val names = mutableListOf<String>()
@@ -37,24 +37,21 @@ class ImageViewerActivity : AppCompatActivity() {
     }
 
     public override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         setTheme(R.style.ImageViewTheme)
-        setContentView(R.layout.activity_img_viewer)
-        image_viewer_pullBack = findViewById(R.id.image_viewer_pullBack)
-        img_viewer_pager = findViewById(R.id.img_viewer_pager)
-        toolbar = findViewById(R.id.toolbar)
+        super.onCreate(savedInstanceState)
 
         window.decorView.systemUiVisibility =
             View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_IMMERSIVE
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
 
-        image_viewer_pullBack.setCallback(pullBackCallback)
-        setSupportActionBar(toolbar)
-        toolbar.setNavigationOnClickListener { finish() }
-        toolbar.navigationIcon =
-            ContextCompat.getDrawable(toolbar.context, R.drawable.ic_arrow_back_white_24dp)?.apply {
-                setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
-            }
+        binding.imageViewerPullBack.setCallback(pullBackCallback)
+        setSupportActionBar(binding.toolbar)
+        binding.toolbar.setNavigationOnClickListener { finish() }
+        binding.toolbar.navigationIcon =
+            ContextCompat.getDrawable(binding.toolbar.context, R.drawable.ic_arrow_back_white_24dp)
+                ?.apply {
+                    setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+                }
 
 
         val extUrls = mutableListOf<String>()
@@ -80,23 +77,24 @@ class ImageViewerActivity : AppCompatActivity() {
         }
 
 
-        img_viewer_pager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+        binding.imgViewerPager.addOnPageChangeListener(object :
+            ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 updateTitle(position)
             }
         })
         adapter.setTapListener(OnPhotoTapListener { view, x, y -> toggle() })
         adapter.bindItem(currentImages)
-        img_viewer_pager.adapter = adapter
-        img_viewer_pager.currentItem = currentIndex
-        img_viewer_pager.clipChildren = false
-        toolbar.post { updateTitle(currentIndex) }
+        binding.imgViewerPager.adapter = adapter
+        binding.imgViewerPager.currentItem = currentIndex
+        binding.imgViewerPager.clipChildren = false
+        binding.toolbar.doOnLayout { updateTitle(currentIndex) }
     }
 
     private fun updateTitle(selectedPageIndex: Int) {
         currentIndex = selectedPageIndex
-        toolbar.title = names[selectedPageIndex]
-        toolbar.subtitle = String.format(
+        binding.toolbar.title = names[selectedPageIndex]
+        binding.toolbar.subtitle = String.format(
             getString(R.string.image_viewer_subtitle_Cur_All),
             selectedPageIndex + 1,
             currentImages.size

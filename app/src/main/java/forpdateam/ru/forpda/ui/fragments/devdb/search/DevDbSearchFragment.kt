@@ -15,6 +15,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.FragmentBrandBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Brand
 import forpdateam.ru.forpda.entity.remote.devdb.BrandSearch
 import forpdateam.ru.forpda.presentation.devdb.search.SearchDevicesPresenter
@@ -23,6 +24,7 @@ import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.devdb.brand.DevicesAdapter
 import forpdateam.ru.forpda.ui.fragments.devdb.brand.DevicesFragment
 import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup
+import forpdateam.ru.forpda.ui.fragments.tabBinding
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.PauseOnScrollListener
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
@@ -34,11 +36,17 @@ import moxy.presenter.ProvidePresenter
  * Created by radiationx on 09.11.17.
  */
 
-class DevDbSearchFragment : TabFragment(), SearchDevicesView,
+class DevDbSearchFragment : TabFragment(R.layout.fragment_brand), SearchDevicesView,
     BaseAdapter.OnItemClickListener<Brand.DeviceItem> {
+
+    private val binding by tabBinding(FragmentBrandBinding::bind)
+
+    private val refreshLayout: SwipeRefreshLayout
+        get() = binding.swipeRefreshList
+    private val recyclerView: AutoFitRecyclerView
+        get() = binding.baseList
+
     private lateinit var adapter: DevicesAdapter
-    private lateinit var refreshLayout: SwipeRefreshLayout
-    private lateinit var recyclerView: AutoFitRecyclerView
     private lateinit var searchView: SearchView
     private lateinit var searchMenuItem: MenuItem
     private val dialogMenu = DynamicDialogMenu<DevDbSearchFragment, Brand.DeviceItem>()
@@ -57,22 +65,9 @@ class DevDbSearchFragment : TabFragment(), SearchDevicesView,
         configuration.defaultTitle = "Поиск устройств"
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        baseInflateFragment(inflater, R.layout.fragment_brand)
-        refreshLayout =
-            findViewById(R.id.swipe_refresh_list) as SwipeRefreshLayout
-        recyclerView = findViewById(R.id.base_list) as AutoFitRecyclerView
-        contentController.setMainRefresh(refreshLayout)
-        return viewFragment
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        contentController.setMainRefresh(refreshLayout)
         setCardsBackground()
         refreshLayoutStyle(refreshLayout)
         setScrollFlagsEnterAlways()

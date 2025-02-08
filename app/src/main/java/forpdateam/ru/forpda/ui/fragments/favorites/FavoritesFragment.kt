@@ -109,12 +109,8 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
         )
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         sortingView = View.inflate(requireContext(), R.layout.favorite_sorting, null) as ViewGroup
         keySpinner = sortingView.findViewById<View>(R.id.sorting_key) as Spinner
         orderSpinner = sortingView.findViewById<View>(R.id.sorting_order) as Spinner
@@ -125,13 +121,8 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
             (dialog1 as Dialog).window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         }
         paginationHelper = PaginationHelper(requireActivity())
-        paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow)
+        paginationHelper.addInToolbar(toolbarLayout, configuration.isFitSystemWindow)
         contentController.setFirstLoad(false)
-        return viewFragment
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         dialogMenu = DynamicDialogMenu()
         dialogMenu.apply {

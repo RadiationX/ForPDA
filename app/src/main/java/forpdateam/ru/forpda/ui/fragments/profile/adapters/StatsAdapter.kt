@@ -3,7 +3,9 @@ package forpdateam.ru.forpda.ui.fragments.profile.adapters
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.ProfileSubItemStatBinding
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel.Stat
 import forpdateam.ru.forpda.model.repository.temp.TempHelper.getTypeString
 import forpdateam.ru.forpda.ui.fragments.profile.adapters.StatsAdapter.StatHolder
@@ -31,8 +33,7 @@ internal class StatsAdapter(
         itemView: View,
         listener: Listener
     ) : BaseViewHolder<Stat>(itemView) {
-        private val title: TextView = itemView.findViewById(R.id.item_title)
-        private val value: TextView = itemView.findViewById(R.id.item_value)
+        private val binding by viewBinding<ProfileSubItemStatBinding>()
         private var currentItem: Stat? = null
 
         init {
@@ -41,8 +42,8 @@ internal class StatsAdapter(
 
         override fun bind(item: Stat) {
             currentItem = item
-            title.text = getTypeString(title.context, item.type)
-            value.text = item.value
+            binding.itemTitle.text = getTypeString(binding.itemTitle.context, item.type)
+            binding.itemValue.text = item.value
         }
 
         internal interface Listener {

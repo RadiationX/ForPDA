@@ -65,19 +65,11 @@ class EditPostFragment : TabFragment(), EditPostView {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        messagePanel = MessagePanel(requireContext(), fragmentContainer, fragmentContent, true)
-        attachmentsPopup = messagePanel.attachmentsPopup!!
-        return viewFragment
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        messagePanel = MessagePanel(requireContext(), fragmentContainer, fragmentContent, true)
+        attachmentsPopup = messagePanel.attachmentsPopup!!
+
         messagePanel.addSendOnClickListener { presenter.onSendClick() }
         attachmentsPopup.setAddOnClickListener { tryPickFile() }
         attachmentsPopup.setDeleteOnClickListener { removeFiles() }

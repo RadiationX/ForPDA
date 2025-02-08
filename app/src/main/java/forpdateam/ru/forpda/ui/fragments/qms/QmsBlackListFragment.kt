@@ -13,12 +13,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
+import forpdateam.ru.forpda.databinding.ToolbarQmsBlackListBinding
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.qms.QmsContact
 import forpdateam.ru.forpda.presentation.qms.blacklist.QmsBlackListPresenter
 import forpdateam.ru.forpda.presentation.qms.blacklist.QmsBlackListView
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
 import forpdateam.ru.forpda.ui.fragments.qms.adapters.QmsContactsAdapter
+import forpdateam.ru.forpda.ui.fragments.tabToolbarBinding
 import forpdateam.ru.forpda.ui.views.ContentController
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.FunnyContent
@@ -33,7 +35,11 @@ import moxy.presenter.ProvidePresenter
 class QmsBlackListFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<QmsContact>,
     QmsBlackListView {
 
-    private lateinit var nickField: AppCompatAutoCompleteTextView
+    private val toolbarBinding by tabToolbarBinding(ToolbarQmsBlackListBinding::bind)
+
+    private val nickField: AppCompatAutoCompleteTextView
+        get() = toolbarBinding.qmsBlackListNickField
+
     private lateinit var adapter: QmsContactsAdapter
     private val dialogMenu = DynamicDialogMenu<QmsBlackListFragment, QmsContact>()
 
@@ -52,21 +58,9 @@ class QmsBlackListFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_blacklist)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        val viewStub = findViewById(R.id.toolbar_content) as ViewStub
-        viewStub.layoutResource = R.layout.toolbar_qms_black_list
-        viewStub.inflate()
-        nickField = findViewById(R.id.qms_black_list_nick_field) as AppCompatAutoCompleteTextView
-        return viewFragment
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        baseInflateToolbar(R.layout.toolbar_qms_black_list)
         setScrollFlagsEnterAlways()
         nickField.addTextChangedListener(object : SimpleTextWatcher() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {

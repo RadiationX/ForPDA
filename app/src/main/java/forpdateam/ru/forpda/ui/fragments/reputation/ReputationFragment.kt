@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -96,19 +95,11 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        paginationHelper = PaginationHelper(requireActivity())
-        paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow)
-        return viewFragment
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        paginationHelper = PaginationHelper(requireActivity())
+        paginationHelper.addInToolbar(toolbarLayout, configuration.isFitSystemWindow)
         setScrollFlagsEnterAlways()
 
         dialogMenu = DynamicDialogMenu()

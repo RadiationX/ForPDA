@@ -20,6 +20,8 @@ import forpdateam.ru.forpda.common.FilePickHelper
 import forpdateam.ru.forpda.common.webview.CustomWebChromeClient
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient
 import forpdateam.ru.forpda.common.webview.DialogsHelper
+import forpdateam.ru.forpda.databinding.FragmentQmsChatBinding
+import forpdateam.ru.forpda.databinding.ToolbarQmsNewThemeBinding
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.qms.QmsChatModel
@@ -33,6 +35,8 @@ import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.TabTopScroller
 import forpdateam.ru.forpda.ui.fragments.WebViewTopScroller
 import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup
+import forpdateam.ru.forpda.ui.fragments.tabBinding
+import forpdateam.ru.forpda.ui.fragments.tabToolbarBinding
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel.HeightChangeListener
@@ -44,16 +48,23 @@ import java.util.regex.Pattern
 /**
  * Created by radiationx on 25.08.16.
  */
-class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface,
+class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
+    ChatThemeCreator.ThemeCreatorInterface,
     ExtendedWebView.JsLifeCycleListener, QmsChatView, TabTopScroller {
+
+    private val binding by tabBinding(FragmentQmsChatBinding::bind)
+    private val toolbarBinding by tabToolbarBinding(ToolbarQmsNewThemeBinding::bind)
+
+    private val chatContainer: FrameLayout
+        get() = binding.qmsChatContainer
+    private val progressBar: ProgressBar
+        get() = binding.progressBar
 
     private lateinit var blackListMenuItem: MenuItem
     private lateinit var noteMenuItem: MenuItem
     private lateinit var toDialogsMenuItem: MenuItem
     private var themeCreator: ChatThemeCreator? = null
     private lateinit var webView: ExtendedWebView
-    private lateinit var chatContainer: FrameLayout
-    private lateinit var progressBar: ProgressBar
     lateinit var messagePanel: MessagePanel
         private set
     private lateinit var attachmentsPopup: AttachmentsPopup
@@ -94,16 +105,8 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface,
         }
     }
 
-    @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        baseInflateFragment(inflater, R.layout.fragment_qms_chat)
-        chatContainer = findViewById(R.id.qms_chat_container) as FrameLayout
-        progressBar = findViewById(R.id.progress_bar) as ProgressBar
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         messagePanel = MessagePanel(requireContext(), fragmentContainer, coordinatorLayout, false)
         webView = ExtendedWebView(requireContext())
         webView.setDialogsHelper(
@@ -117,11 +120,8 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface,
         attachWebView(webView)
         chatContainer.addView(webView, 0)
         attachmentsPopup = messagePanel.attachmentsPopup!!
-        return viewFragment
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+
         jsInterface = QmsChatJsInterface(presenter)
         webView.setJsLifeCycleListener(this)
         webView.addJavascriptInterface(jsInterface, JS_INTERFACE)
@@ -236,7 +236,8 @@ class QmsChatFragment : TabFragment(), ChatThemeCreator.ThemeCreatorInterface,
             themeCreator?.setVisible(false)
         } else if (mode == QmsChatPresenter.MODE_CREATING) {
             if (themeCreator == null) {
-                themeCreator = ChatThemeCreator(this, presenter)
+                baseInflateToolbar(R.layout.toolbar_qms_new_theme)
+                themeCreator = ChatThemeCreator(this, presenter, toolbarBinding)
             }
             themeCreator?.setVisible(true)
         }

@@ -7,7 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.ItemCloseableInfoBinding
 import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.model.CloseableInfoHolder
 import forpdateam.ru.forpda.ui.views.drawers.adapters.CloseableInfoListItem
@@ -39,23 +41,20 @@ class CloseableInfoDelegate(
 
     class ViewHolder(
         val view: View,
-        val closeClickListener: (CloseableInfo) -> Unit
+        private val closeClickListener: (CloseableInfo) -> Unit
     ) : RecyclerView.ViewHolder(view) {
 
-        private val infoItemClose: ImageView = view.findViewById(R.id.infoItemClose)
-        private val infoItemTitle: TextView = view.findViewById(R.id.infoItemTitle)
+        private val binding by viewBinding<ItemCloseableInfoBinding>()
 
         private lateinit var currentItem: CloseableInfo
 
         init {
-            infoItemClose.setOnClickListener { closeClickListener.invoke(currentItem) }
+            binding.infoItemClose.setOnClickListener { closeClickListener.invoke(currentItem) }
         }
 
         fun bind(item: CloseableInfo) {
             currentItem = item
-            view.apply {
-                infoItemTitle.setText(getStringRes(item))
-            }
+            binding.infoItemTitle.setText(getStringRes(item))
         }
 
         private fun getStringRes(item: CloseableInfo): Int = when (item.id) {

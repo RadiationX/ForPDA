@@ -2,10 +2,8 @@ package forpdateam.ru.forpda.ui.fragments.forum
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.NestedScrollView
@@ -14,12 +12,14 @@ import com.unnamed.b.atv.model.TreeNode
 import com.unnamed.b.atv.view.AndroidTreeView
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.FragmentForumBinding
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemTree
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.presentation.forum.ForumPresenter
 import forpdateam.ru.forpda.presentation.forum.ForumView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesFragment
+import forpdateam.ru.forpda.ui.fragments.tabBinding
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -28,11 +28,14 @@ import moxy.presenter.ProvidePresenter
  * Created by radiationx on 15.02.17.
  */
 
-class ForumFragment : TabFragment(), ForumView {
+class ForumFragment : TabFragment(R.layout.fragment_forum), ForumView {
+
+    private val binding by tabBinding(FragmentForumBinding::bind)
+    private val treeContainer: NestedScrollView
+        get() = binding.nestedScrollView
 
     private lateinit var root: TreeNode
     private lateinit var treeView: AndroidTreeView
-    private lateinit var treeContainer: NestedScrollView
 
     private lateinit var dialogMenu: DynamicDialogMenu<ForumFragment, ForumItemTree>
     private val authHolder = App.get().Di().authHolder
@@ -86,17 +89,6 @@ class ForumFragment : TabFragment(), ForumView {
         arguments?.apply {
             presenter.targetForumId = getInt(ARG_FORUM_ID, -1)
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        baseInflateFragment(inflater, R.layout.fragment_forum)
-        treeContainer = findViewById(R.id.nested_scroll_view) as NestedScrollView
-        return viewFragment
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

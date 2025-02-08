@@ -62,12 +62,10 @@ class AnnounceFragment : TabFragment(), AnnounceView, TabTopScroller {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
+    @SuppressLint("JavascriptInterface")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         webView = ExtendedWebView(requireContext())
         webView.setDialogsHelper(
             DialogsHelper(
@@ -79,12 +77,7 @@ class AnnounceFragment : TabFragment(), AnnounceView, TabTopScroller {
         )
         attachWebView(webView)
         fragmentContent.addView(webView)
-        return viewFragment
-    }
 
-    @SuppressLint("JavascriptInterface")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         webView.addJavascriptInterface(this, JS_INTERFACE)
         webView.webViewClient = CustomWebViewClient()
         webView.webChromeClient = CustomWebChromeClient()

@@ -4,11 +4,11 @@ import android.graphics.Typeface
 import android.view.View
 import android.view.View.OnLongClickListener
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App.Companion.getColorFromAttr
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.TopicItemBinding
 import forpdateam.ru.forpda.entity.remote.mentions.MentionItem
 import forpdateam.ru.forpda.entity.remote.mentions.MentionItem.Companion.STATE_UNREAD
 import forpdateam.ru.forpda.ui.fragments.mentions.MentionsAdapter.MentionHolder
@@ -44,17 +44,8 @@ internal class MentionsAdapter : BaseAdapter<MentionItem, MentionHolder>() {
 
     internal inner class MentionHolder(v: View) : BaseViewHolder<MentionItem>(v),
         View.OnClickListener, OnLongClickListener {
-        var title: TextView = v.findViewById(R.id.topic_item_title)
-        var lastNick: TextView =
-            v.findViewById(R.id.topic_item_last_nick)
-        var date: TextView = v.findViewById(R.id.topic_item_date)
-        var desc: TextView = v.findViewById(R.id.topic_item_desc)
-        var forumIcon: ImageView =
-            v.findViewById(R.id.topic_item_forum_icon)
-        var lockIcon: ImageView =
-            v.findViewById(R.id.topic_item_lock_icon)
-        var pollIcon: ImageView =
-            v.findViewById(R.id.topic_item_poll_icon)
+
+        private val binding by viewBinding<TopicItemBinding>()
 
         init {
             v.setOnClickListener(this)
@@ -62,14 +53,14 @@ internal class MentionsAdapter : BaseAdapter<MentionItem, MentionHolder>() {
         }
 
         override fun bind(item: MentionItem, position: Int) {
-            title.text = item.title
-            title.typeface =
+            binding.topicItemTitle.text = item.title
+            binding.topicItemTitle.typeface =
                 if (item.state == STATE_UNREAD) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
-            title.setTextColor(if (item.state == STATE_UNREAD) titleColorNew else titleColor)
-            lastNick.text = item.nick
-            date.text = item.date
-            if (desc.visibility == View.VISIBLE) {
-                desc.visibility = View.GONE
+            binding.topicItemTitle.setTextColor(if (item.state == STATE_UNREAD) titleColorNew else titleColor)
+            binding.topicItemLastNick.text = item.nick
+            binding.topicItemDate.text = item.date
+            if (binding.topicItemDesc.visibility == View.VISIBLE) {
+                binding.topicItemDesc.visibility = View.GONE
             }
         }
 

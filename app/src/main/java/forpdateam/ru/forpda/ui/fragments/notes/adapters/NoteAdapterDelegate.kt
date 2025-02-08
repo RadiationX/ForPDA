@@ -6,7 +6,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.ItemNoteBinding
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
@@ -45,15 +47,11 @@ class NoteAdapterDelegate(
             val LAYOUT: Int = R.layout.item_note
         }
 
-        private var title: TextView
-        private var date: TextView
-        private var content: TextView
+        private val binding by viewBinding<ItemNoteBinding>()
+
         private lateinit var currentItem: NoteItem
 
         init {
-            title = itemView.findViewById<View>(R.id.item_title) as TextView
-            date = itemView.findViewById<View>(R.id.item_date) as TextView
-            content = itemView.findViewById<View>(R.id.item_content) as TextView
             itemView.setOnClickListener { v: View? ->
                 clickListener.onItemClick(currentItem)
             }
@@ -66,12 +64,12 @@ class NoteAdapterDelegate(
 
         override fun bind(item: NoteItem) {
             currentItem = item
-            title.text = item.title
-            if (item.content == null || item.content!!.isEmpty()) {
-                content.visibility = View.GONE
+            binding.itemTitle.text = item.title
+            if (item.content.isNullOrEmpty()) {
+                binding.itemContent.visibility = View.GONE
             } else {
-                content.visibility = View.VISIBLE
-                content.text = item.content
+                binding.itemContent.visibility = View.VISIBLE
+                binding.itemContent.text = item.content
             }
             //date.setText(item.getDate());
         }

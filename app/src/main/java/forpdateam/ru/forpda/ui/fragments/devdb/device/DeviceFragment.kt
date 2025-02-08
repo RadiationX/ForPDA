@@ -10,11 +10,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewStub
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager.widget.PagerAdapter
@@ -28,6 +28,8 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.robohorse.pagerbullet.PagerBullet
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.FragmentDeviceBinding
+import forpdateam.ru.forpda.databinding.ToolbarDeviceBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Device
 import forpdateam.ru.forpda.presentation.devdb.device.DevicePresenter
 import forpdateam.ru.forpda.presentation.devdb.device.DeviceView
@@ -39,6 +41,8 @@ import forpdateam.ru.forpda.ui.fragments.devdb.device.comments.CommentsFragment
 import forpdateam.ru.forpda.ui.fragments.devdb.device.posts.PostsFragment
 import forpdateam.ru.forpda.ui.fragments.devdb.device.specs.SpecsFragment
 import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup
+import forpdateam.ru.forpda.ui.fragments.tabBinding
+import forpdateam.ru.forpda.ui.fragments.tabToolbarBinding
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import java.util.Locale
@@ -47,13 +51,21 @@ import java.util.Locale
  * Created by radiationx on 08.08.17.
  */
 
-class DeviceFragment : TabFragment(), DeviceView {
-    private lateinit var imagesPager: PagerBullet
-    private lateinit var tabLayout: TabLayout
-    private lateinit var rating: TextView
-    private lateinit var fragmentsPager: ViewPager
-    private lateinit var progressBar: ProgressBar
-    private var toolbarContent: RelativeLayout? = null
+class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
+
+    private val binding by tabBinding(FragmentDeviceBinding::bind)
+    private val toolbarBinding by tabToolbarBinding(ToolbarDeviceBinding::bind)
+
+    private val imagesPager: PagerBullet
+        get() = toolbarBinding.imagesPager
+    private val rating: TextView
+        get() = toolbarBinding.itemRating
+    private val fragmentsPager: ViewPager
+        get() = binding.viewPager
+    private val progressBar: ProgressBar
+        get() = binding.progressBar
+    private val toolbarContent: RelativeLayout
+        get() = toolbarBinding.root
 
     private val dimensionsProvider = App.get().Di().dimensionsProvider
 
@@ -94,22 +106,12 @@ class DeviceFragment : TabFragment(), DeviceView {
         childFragmentManager.executePendingTransactions()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        baseInflateFragment(inflater, R.layout.fragment_device)
-        val viewStub = findViewById(R.id.toolbar_content) as ViewStub
-        viewStub.layoutResource = R.layout.toolbar_device
-        toolbarContent = viewStub.inflate() as RelativeLayout
-        imagesPager = findViewById(R.id.images_pager) as PagerBullet
-        progressBar = findViewById(R.id.progress_bar) as ProgressBar
-        rating = findViewById(R.id.item_rating) as TextView
-        fragmentsPager = findViewById(R.id.view_pager) as ViewPager
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        tabLayout = TabLayout(requireContext())
+        baseInflateToolbar(R.layout.toolbar_device)
+
+        val tabLayout = TabLayout(requireContext())
         val tabParams = CollapsingToolbarLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -129,11 +131,6 @@ class DeviceFragment : TabFragment(), DeviceView {
         newParams.bottomMargin = App.px48
         toolbar.layoutParams = newParams
         toolbar.requestLayout()
-        return viewFragment
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         setCardsBackground()
         toolbarTitleView.setShadowLayer(
@@ -173,10 +170,8 @@ class DeviceFragment : TabFragment(), DeviceView {
                 dimensionsProvider
                     .observeDimensions()
                     .subscribe { dimensions ->
-                        toolbarContent?.post {
-                            if (toolbarContent != null) {
-                                updateDimens(dimensions)
-                            }
+                        toolbarContent.doOnLayout {
+                            updateDimens(dimensions)
                         }
                         updateDimens(dimensions)
                     }
@@ -375,7 +370,11 @@ class DeviceFragment : TabFragment(), DeviceView {
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val imageLayout = inflater.inflate(R.layout.device_image_page, container, false)
             imageLayout.setOnClickListener {
-                ImageViewerActivity.startActivity(this@DeviceFragment.requireContext(), fullUrls, position)
+                ImageViewerActivity.startActivity(
+                    this@DeviceFragment.requireContext(),
+                    fullUrls,
+                    position
+                )
             }
             container.addView(imageLayout, 0)
             loadImage(imageLayout, position)

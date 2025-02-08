@@ -130,9 +130,14 @@ android {
     }
     namespace 'forpdateam.ru.forpda'
     buildFeatures {
+        viewBinding true
         buildConfig true
     }
 }
+/*
+kotlin {
+    jvmToolchain(17)
+}*/
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -184,4 +189,5 @@ dependencies {
     implementation libs.mobmetricalib
 
     implementation libs.roundedimageview
+    implementation libs.viewbindingpropertydelegate
 }

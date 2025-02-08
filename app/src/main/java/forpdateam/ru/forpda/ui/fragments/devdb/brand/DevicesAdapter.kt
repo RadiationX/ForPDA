@@ -10,8 +10,10 @@ import android.widget.TextView
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.assist.FailReason
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App.Companion.getDrawableAttr
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.BrandItemBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Brand.DeviceItem
 import forpdateam.ru.forpda.ui.fragments.devdb.DevDbHelper.getColorFilter
 import forpdateam.ru.forpda.ui.fragments.devdb.brand.DevicesAdapter.DeviceItemHolder
@@ -40,40 +42,33 @@ class DevicesAdapter : BaseAdapter<DeviceItem, DeviceItemHolder>() {
 
     inner class DeviceItemHolder(v: View) : BaseViewHolder<DeviceItem>(v),
         View.OnClickListener, OnLongClickListener {
-        var title: TextView = v.findViewById(R.id.item_title)
-        var rating: TextView = v.findViewById(R.id.item_rating)
-        var image: ImageView =
-            v.findViewById(R.id.item_image)
-        var progressBar: ProgressBar =
-            v.findViewById(R.id.progress_bar)
+
+        private val binding by viewBinding<BrandItemBinding>()
 
         init {
-            image.tag = progressBar
-            rating.background =
-                getDrawableAttr(rating.context, R.attr.count_background)
+            binding.itemRating.background =
+                getDrawableAttr(binding.itemRating.context, R.attr.count_background)
             v.setOnClickListener(this)
             v.setOnLongClickListener(this)
         }
 
         override fun bind(item: DeviceItem, position: Int) {
-            title.text = item.title
+            binding.itemTitle.text = item.title
             if (item.rating > 0) {
-                rating.text = item.rating.toString()
-                rating.background.colorFilter = getColorFilter(item.rating)
-                rating.visibility = View.VISIBLE
+                binding.itemRating.text = item.rating.toString()
+                binding.itemRating.background.colorFilter = getColorFilter(item.rating)
+                binding.itemRating.visibility = View.VISIBLE
             } else {
-                rating.visibility = View.GONE
+                binding.itemRating.visibility = View.GONE
             }
             ImageLoader.getInstance()
-                .displayImage(item.imageSrc, image, object : SimpleImageLoadingListener() {
+                .displayImage(item.imageSrc, binding.itemImage, object : SimpleImageLoadingListener() {
                     override fun onLoadingStarted(imageUri: String, view: View) {
-                        val progressBar = view.tag as ProgressBar
-                        progressBar.visibility = View.VISIBLE
+                        binding.progressBar.visibility = View.VISIBLE
                     }
 
                     override fun onLoadingCancelled(imageUri: String, view: View) {
-                        val progressBar = view.tag as ProgressBar
-                        progressBar.visibility = View.GONE
+                        binding.progressBar.visibility = View.GONE
                     }
 
                     override fun onLoadingComplete(
@@ -81,8 +76,7 @@ class DevicesAdapter : BaseAdapter<DeviceItem, DeviceItemHolder>() {
                         view: View,
                         loadedImage: Bitmap
                     ) {
-                        val progressBar = view.tag as ProgressBar
-                        progressBar.visibility = View.GONE
+                        binding.progressBar.visibility = View.GONE
                     }
 
                     override fun onLoadingFailed(
@@ -90,8 +84,7 @@ class DevicesAdapter : BaseAdapter<DeviceItem, DeviceItemHolder>() {
                         view: View,
                         failReason: FailReason
                     ) {
-                        val progressBar = view.tag as ProgressBar
-                        progressBar.visibility = View.GONE
+                        binding.progressBar.visibility = View.GONE
                     }
                 })
         }

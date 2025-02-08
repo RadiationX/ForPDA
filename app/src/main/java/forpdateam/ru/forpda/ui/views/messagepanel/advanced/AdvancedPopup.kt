@@ -6,6 +6,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
+import androidx.core.view.doOnLayout
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
@@ -78,7 +79,7 @@ class AdvancedPopup(private val context: Context, private val messagePanel: Mess
                 .observeDimensions()
                 .subscribe { dimensions: Dimensions ->
                     if (messagePanel != null) {
-                        messagePanel.post {
+                        messagePanel.doOnLayout {
                             if (messagePanel != null) {
                                 updateDimens(dimensions)
                             }

@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -25,6 +24,7 @@ import androidx.appcompat.view.menu.ActionMenuItemView
 import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.SearchView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.doOnLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -37,6 +37,7 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.webview.CustomWebChromeClient
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient
 import forpdateam.ru.forpda.common.webview.DialogsHelper
+import forpdateam.ru.forpda.databinding.FragmentSearchBinding
 import forpdateam.ru.forpda.entity.remote.search.SearchItem
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
@@ -48,6 +49,7 @@ import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.devdb.brand.DevicesFragment
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesFragment
 import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup
+import forpdateam.ru.forpda.ui.fragments.tabBinding
 import forpdateam.ru.forpda.ui.fragments.theme.ThemeDialogsHelper_V2
 import forpdateam.ru.forpda.ui.fragments.theme.ThemeFragmentWeb
 import forpdateam.ru.forpda.ui.views.ContentController
@@ -66,8 +68,14 @@ import moxy.presenter.ProvidePresenter
  * Created by radiationx on 29.01.17.
  */
 
-class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycleListener,
+class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
+    ExtendedWebView.JsLifeCycleListener,
     BaseAdapter.OnItemClickListener<SearchItem> {
+
+    private val binding by tabBinding(FragmentSearchBinding::bind)
+
+    private val refreshLayout: SwipeRefreshLayout
+        get() = binding.swipeRefreshList
 
     private lateinit var searchSettingsView: ViewGroup
     private lateinit var nickBlock: ViewGroup
@@ -86,7 +94,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
 
     private lateinit var webView: ExtendedWebView
     private lateinit var recyclerView: RecyclerView
-    private lateinit var refreshLayout: SwipeRefreshLayout
+
     private val adapter = SearchAdapter()
     private var webViewClient: CustomWebViewClient? = null
 
@@ -193,19 +201,12 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         fab.requestLayout()
     }
 
-    @SuppressLint("JavascriptInterface")
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        initFabBehavior()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        baseInflateFragment(inflater, R.layout.fragment_search)
-        refreshLayout =
-            findViewById(R.id.swipe_refresh_list) as SwipeRefreshLayout
-        searchSettingsView = View.inflate(requireContext(), R.layout.search_settings, null) as ViewGroup
+        initFabBehavior()
+        searchSettingsView =
+            View.inflate(requireContext(), R.layout.search_settings, null) as ViewGroup
 
         nickBlock = searchSettingsView.findViewById<View>(R.id.search_nick_block) as ViewGroup
         resourceBlock =
@@ -248,14 +249,11 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
         refreshLayout.addView(recyclerView)
 
         paginationHelper = PaginationHelper(requireActivity())
-        paginationHelper.addInToolbar(inflater, toolbarLayout, configuration.isFitSystemWindow)
+        paginationHelper.addInToolbar(toolbarLayout, configuration.isFitSystemWindow)
 
         contentController.setMainRefresh(refreshLayout)
-        return viewFragment
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+
         jsInterface = ThemeJsInterface(presenter)
         setScrollFlagsEnterAlways()
 
@@ -496,7 +494,7 @@ class SearchFragment : TabFragment(), SearchSiteView, ExtendedWebView.JsLifeCycl
     }
 
     override fun fillSettingsData(settings: SearchSettings, fields: Map<String, List<String>>) {
-        searchView.post { searchView.setQuery(settings.query, false) }
+        searchView.doOnLayout { searchView.setQuery(settings.query, false) }
 
         nickField.text = settings.nick
 

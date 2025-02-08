@@ -25,7 +25,9 @@ import moxy.presenter.ProvidePresenter
 
 class ArticleContentFragment : MvpAppCompatFragment(), ArticleContentView, TabTopScroller {
 
-    private lateinit var webView: ExtendedWebView
+    private val webView: ExtendedWebView
+        get() = requireView() as ExtendedWebView
+
     private lateinit var topScroller: WebViewTopScroller
 
     @InjectPresenter
@@ -44,7 +46,11 @@ class ArticleContentFragment : MvpAppCompatFragment(), ArticleContentView, TabTo
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        webView = ExtendedWebView(requireContext())
+        return ExtendedWebView(requireContext())
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         (parentFragment as? NewsDetailsFragment)?.attachWebView(webView)
         topScroller =
             WebViewTopScroller(webView, (parentFragment as NewsDetailsFragment).getAppBar())
@@ -60,7 +66,6 @@ class ArticleContentFragment : MvpAppCompatFragment(), ArticleContentView, TabTo
         webView.webViewClient = CustomWebViewClient()
         webView.webChromeClient = CustomWebChromeClient()
         webView.addJavascriptInterface(this, JS_INTERFACE)
-        return webView
     }
 
     override fun toggleScrollTop() {

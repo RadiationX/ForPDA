@@ -13,6 +13,7 @@ import com.nostra13.universalimageloader.core.assist.FailReason
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.ImgViewPageBinding
 
 /**
  * Created by radiationx on 24.05.17.
@@ -46,12 +47,14 @@ class ImageViewerAdapter : PagerAdapter() {
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val imageLayout = LayoutInflater
-            .from(container.context)
-            .inflate(R.layout.img_view_page, container, false)
-        container.addView(imageLayout, 0)
-        loadImage(imageLayout, position)
-        return imageLayout
+        val binding = ImgViewPageBinding.inflate(
+            LayoutInflater.from(container.context),
+            container,
+            false
+        )
+        container.addView(binding.root, 0)
+        loadImage(binding, position)
+        return binding
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
@@ -62,21 +65,19 @@ class ImageViewerAdapter : PagerAdapter() {
         return view == `object`
     }
 
-    private fun loadImage(imageLayout: View, position: Int) {
-        val progressBar = imageLayout.findViewById<CircularProgressView>(R.id.progress_bar)
-        val photoView: PhotoView = imageLayout.findViewById(R.id.photo_view)
-        progressBar.visibility = View.VISIBLE
+    private fun loadImage(binding: ImgViewPageBinding, position: Int) {
+        binding.progressBar.visibility = View.VISIBLE
         val item = items[position]
 
 
         ImageLoader.getInstance()
-            .displayImage(item, photoView, options, object : SimpleImageLoadingListener() {
+            .displayImage(item, binding.photoView, options, object : SimpleImageLoadingListener() {
                 override fun onLoadingFailed(
                     imageUri: String?,
                     view: View?,
                     failReason: FailReason?
                 ) {
-                    progressBar.visibility = View.GONE
+                    binding.progressBar.visibility = View.GONE
                 }
 
                 override fun onLoadingComplete(
@@ -84,24 +85,24 @@ class ImageViewerAdapter : PagerAdapter() {
                     view: View?,
                     loadedImage: Bitmap?
                 ) {
-                    progressBar.visibility = View.GONE
+                    binding. progressBar.visibility = View.GONE
                     //delayedHide(1000);
                 }
 
                 override fun onLoadingCancelled(imageUri: String?, view: View?) {
-                    progressBar.visibility = View.GONE
+                    binding.progressBar.visibility = View.GONE
                 }
 
                 override fun onLoadingStarted(imageUri: String?, view: View?) {
-                    progressBar.visibility = View.VISIBLE
-                    if (progressBar.isIndeterminate) {
-                        progressBar.isIndeterminate = false
-                        progressBar.stopAnimation()
+                    binding.progressBar.visibility = View.VISIBLE
+                    if (binding.progressBar.isIndeterminate) {
+                        binding.progressBar.isIndeterminate = false
+                        binding.progressBar.stopAnimation()
                     }
                 }
-            }) { s, view, i, i1 -> progressBar.progress = (100f * i / i1).toInt().toFloat() }
+            }) { s, view, i, i1 -> binding.progressBar.progress = (100f * i / i1).toInt().toFloat() }
 
-        photoView.setOnPhotoTapListener(tapListener)
+        binding.photoView.setOnPhotoTapListener(tapListener)
     }
 
 }

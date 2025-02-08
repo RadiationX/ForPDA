@@ -3,7 +3,9 @@ package forpdateam.ru.forpda.ui.fragments.history
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.ItemHistoryBinding
 import forpdateam.ru.forpda.entity.app.history.HistoryItem
 import forpdateam.ru.forpda.ui.fragments.history.HistoryAdapter.HistoryHolder
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
@@ -29,8 +31,7 @@ class HistoryAdapter : BaseAdapter<HistoryItem, HistoryHolder>() {
 
 
     inner class HistoryHolder(itemView: View) : BaseViewHolder<HistoryItem>(itemView) {
-        private val title: TextView = itemView.findViewById(R.id.item_title)
-        private val date: TextView = itemView.findViewById(R.id.item_date)
+        private val binding by viewBinding<ItemHistoryBinding>()
 
         init {
             itemView.setOnClickListener { v: View? ->
@@ -48,8 +49,8 @@ class HistoryAdapter : BaseAdapter<HistoryItem, HistoryHolder>() {
         }
 
         override fun bind(item: HistoryItem, position: Int) {
-            title.text = item.title
-            date.text = item.date
+            binding.itemTitle.text = item.title
+            binding.itemDate.text = item.date
         }
     }
 }

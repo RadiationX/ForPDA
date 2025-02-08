@@ -3,10 +3,8 @@ package forpdateam.ru.forpda.ui.fragments.qms
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -50,18 +48,11 @@ class QmsContactsFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_contacts)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        contentController.setFirstLoad(false)
-        return viewFragment
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        contentController.setFirstLoad(false)
+
+
         initFabBehavior()
         refreshLayoutStyle(refreshLayout)
         setScrollFlagsEnterAlways()
@@ -141,7 +132,8 @@ class QmsContactsFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<
 
     override fun onBlockUser(res: Boolean) {
         if (res) {
-            Toast.makeText(requireContext(), R.string.user_added_to_blacklist, Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.user_added_to_blacklist, Toast.LENGTH_SHORT)
+                .show()
         }
     }
 

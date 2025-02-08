@@ -5,14 +5,15 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.doOnLayout
 import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.ItemBottomTabBinding
 
 class BottomMenuDelegate(
     private val clickListener: Listener
@@ -39,9 +40,8 @@ class BottomMenuDelegate(
     private inner class ViewHolder(val view: View) :
         RecyclerView.ViewHolder(view) {
 
-        private val itemBottomMenuCounter: AppCompatTextView =
-            view.findViewById(R.id.itemBottomMenuCounter)
-        private val itemBottomMenuIcon: ImageView = view.findViewById(R.id.itemBottomMenuIcon)
+        private val binding by viewBinding<ItemBottomTabBinding>()
+
 
         private lateinit var currentItem: DrawerMenuItem
 
@@ -53,28 +53,33 @@ class BottomMenuDelegate(
             this.currentItem = item
             view.apply {
                 contentDescription = context.getString(item.title)
-                itemBottomMenuIcon.setImageDrawable(ContextCompat.getDrawable(context, item.icon))
+                binding.itemBottomMenuIcon.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        context,
+                        item.icon
+                    )
+                )
 
                 val colorRes = if (selected) App.getColorFromAttr(
                     context,
                     R.attr.colorAccent
                 ) else App.getColorFromAttr(context, R.attr.icon_base)
-                itemBottomMenuIcon.setColorFilter(
+                binding.itemBottomMenuIcon.setColorFilter(
                     colorRes,
                     PorterDuff.Mode.SRC_ATOP
                 )
 
-                itemBottomMenuCounter.visibility = if (item.appItem.count > 0) {
+                binding.itemBottomMenuCounter.visibility = if (item.appItem.count > 0) {
                     // This is done that way because of a bug in the support library related to autosizing when width/height=WRAP_CONTENT
                     TextViewCompat.setAutoSizeTextTypeWithDefaults(
-                        itemBottomMenuCounter,
+                        binding.itemBottomMenuCounter,
                         TextViewCompat.AUTO_SIZE_TEXT_TYPE_NONE
                     )
-                    itemBottomMenuCounter.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10.0f)
-                    itemBottomMenuCounter.text = item.appItem.count.toString()
-                    post {
+                    binding.itemBottomMenuCounter.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10.0f)
+                    binding.itemBottomMenuCounter.text = item.appItem.count.toString()
+                    doOnLayout {
                         TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
-                            itemBottomMenuCounter,
+                            binding.itemBottomMenuCounter,
                             3,
                             10,
                             1,

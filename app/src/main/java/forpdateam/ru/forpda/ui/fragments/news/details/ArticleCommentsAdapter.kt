@@ -7,14 +7,14 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.App.Companion.getColorFromAttr
 import forpdateam.ru.forpda.App.Companion.getVecDrawable
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.ArticleCommentItemBinding
 import forpdateam.ru.forpda.entity.remote.news.Comment
 import forpdateam.ru.forpda.entity.remote.news.Comment.Karma
 import forpdateam.ru.forpda.model.AuthHolder
@@ -62,76 +62,7 @@ class ArticleCommentsAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
-        val karma = item.karma
-        holder.content.text = item.content
-        val authData = authHolder.get()
-        if (item.isDeleted) {
-            holder.itemView.isClickable = false
-            if (holder.likeImage.visibility != View.GONE) {
-                holder.likeImage.visibility = View.GONE
-            }
-            if (holder.likeCount.visibility != View.GONE) {
-                holder.likeCount.visibility = View.GONE
-            }
-            if (holder.nick.visibility != View.GONE) {
-                holder.nick.visibility = View.GONE
-            }
-            if (holder.date.visibility != View.GONE) {
-                holder.date.visibility = View.GONE
-            }
-        } else {
-            if (holder.likeImage.visibility != View.VISIBLE) {
-                holder.likeImage.visibility = View.VISIBLE
-            }
-            if (holder.likeCount.visibility != View.VISIBLE) {
-                holder.likeCount.visibility = View.VISIBLE
-            }
-
-            if (holder.nick.visibility != View.VISIBLE) {
-                holder.nick.visibility = View.VISIBLE
-            }
-            if (holder.date.visibility != View.VISIBLE) {
-                holder.date.visibility = View.VISIBLE
-            }
-
-            holder.nick.text = item.user.nick
-            holder.date.text = item.date
-
-            if (karma!!.count == 0) {
-                if (holder.likeCount.visibility != View.GONE) {
-                    holder.likeCount.visibility = View.GONE
-                }
-            } else {
-                if (holder.likeCount.visibility != View.VISIBLE) {
-                    holder.likeCount.visibility = View.VISIBLE
-                }
-                holder.likeCount.text = karma.count.toString()
-            }
-
-            when (karma.status) {
-                Karma.LIKED -> {
-                    holder.likeImage.setImageDrawable(holder.heart)
-                    holder.likeImage.colorFilter = likedColorFilter
-                    holder.likeImage.isClickable = false
-                }
-
-                Karma.DISLIKED -> {
-                    holder.likeImage.setImageDrawable(holder.heart_outline)
-                    holder.likeImage.colorFilter = dislikedColorFilter
-                    holder.likeImage.isClickable = false
-                }
-
-                Karma.NOT_LIKED -> {
-                    holder.likeImage.setImageDrawable(holder.heart_outline)
-                    holder.likeImage.clearColorFilter()
-                    holder.likeImage.isClickable = authData.userId != item.user.id
-                }
-            }
-        }
-
-
-        holder.itemView.setPadding(App.px12 * item.level, 0, 0, 0)
+        holder.bind(getItem(position))
     }
 
     override fun getItemCount(): Int {
@@ -143,34 +74,81 @@ class ArticleCommentsAdapter(
     }
 
     inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        var content: TextView = v.findViewById(R.id.comment_content)
-        var nick: TextView = v.findViewById(R.id.comment_nick)
-        var date: TextView = v.findViewById(R.id.comment_date)
-        var likeCount: TextView =
-            v.findViewById(R.id.comment_like_count)
-        var likeImage: ImageView =
-            v.findViewById(R.id.comment_like_image)
-        val heart: Drawable =
+
+        private val binding by viewBinding<ArticleCommentItemBinding>()
+        private val heart: Drawable =
             getVecDrawable(v.context, R.drawable.ic_heart)
-        val heart_outline: Drawable =
+        private val heart_outline: Drawable =
             getVecDrawable(v.context, R.drawable.ic_heart_outline)
 
         init {
-            nick.setOnClickListener { v1: View? ->
+            binding.commentNick.setOnClickListener { v1: View? ->
                 if (clickListener != null) {
                     clickListener!!.onNickClick(getItem(layoutPosition), layoutPosition)
                 }
             }
-            likeImage.setOnClickListener { v1: View? ->
+            binding.commentLikeImage.setOnClickListener { v1: View? ->
                 if (clickListener != null) {
                     clickListener!!.onLikeClick(getItem(layoutPosition), layoutPosition)
                 }
             }
-            content.setOnClickListener { v1: View? ->
+            binding.commentContent.setOnClickListener { v1: View? ->
                 if (clickListener != null) {
                     clickListener!!.onReplyClick(getItem(layoutPosition), layoutPosition)
                 }
             }
+        }
+
+        fun bind(item: Comment) {
+            val karma = item.karma
+            binding.commentContent.text = item.content
+            val authData = authHolder.get()
+            if (item.isDeleted) {
+                binding.root.isClickable = false
+                binding.commentLikeImage.visibility = View.GONE
+                binding.commentLikeCount.visibility = View.GONE
+                binding.commentNick.visibility = View.GONE
+                binding.commentDate.visibility = View.GONE
+            } else {
+                binding.commentLikeImage.visibility = View.VISIBLE
+                binding.commentLikeCount.visibility = View.VISIBLE
+
+                binding.commentNick.visibility = View.VISIBLE
+                binding.commentDate.visibility = View.VISIBLE
+
+                binding.commentNick.text = item.user.nick
+                binding.commentDate.text = item.date
+
+                if (karma!!.count == 0) {
+                    binding.commentLikeCount.visibility = View.GONE
+                } else {
+                    binding.commentLikeCount.visibility = View.VISIBLE
+                    binding.commentLikeCount.text = karma.count.toString()
+                }
+
+                when (karma.status) {
+                    Karma.LIKED -> {
+                        binding.commentLikeImage.setImageDrawable(heart)
+                        binding.commentLikeImage.colorFilter = likedColorFilter
+                        binding.commentLikeImage.isClickable = false
+                    }
+
+                    Karma.DISLIKED -> {
+                        binding.commentLikeImage.setImageDrawable(heart_outline)
+                        binding.commentLikeImage.colorFilter = dislikedColorFilter
+                        binding.commentLikeImage.isClickable = false
+                    }
+
+                    Karma.NOT_LIKED -> {
+                        binding.commentLikeImage.setImageDrawable(heart_outline)
+                        binding.commentLikeImage.clearColorFilter()
+                        binding.commentLikeImage.isClickable = authData.userId != item.user.id
+                    }
+                }
+            }
+
+
+            binding.root.setPadding(App.px12 * item.level, 0, 0, 0)
         }
     }
 

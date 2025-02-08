@@ -2,11 +2,9 @@ package forpdateam.ru.forpda.ui.fragments.devdb.brand
 
 import android.graphics.Rect
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -14,6 +12,7 @@ import com.google.android.material.appbar.AppBarLayout
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.FragmentBrandBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Brand
 import forpdateam.ru.forpda.presentation.devdb.devices.DevicesPresenter
 import forpdateam.ru.forpda.presentation.devdb.devices.DevicesView
@@ -21,6 +20,7 @@ import forpdateam.ru.forpda.ui.fragments.RecyclerTopScroller
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.TabTopScroller
 import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup
+import forpdateam.ru.forpda.ui.fragments.tabBinding
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.PauseOnScrollListener
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
@@ -32,11 +32,16 @@ import moxy.presenter.ProvidePresenter
  * Created by radiationx on 08.08.17.
  */
 
-class DevicesFragment : TabFragment(), DevicesView,
+class DevicesFragment : TabFragment(R.layout.fragment_brand), DevicesView,
     BaseAdapter.OnItemClickListener<Brand.DeviceItem>, TabTopScroller {
 
-    private lateinit var refreshLayout: SwipeRefreshLayout
-    private lateinit var recyclerView: AutoFitRecyclerView
+    private val binding by tabBinding(FragmentBrandBinding::bind)
+
+    private val refreshLayout: SwipeRefreshLayout
+        get() = binding.swipeRefreshList
+    private val recyclerView: AutoFitRecyclerView
+        get() = binding.baseList
+
     private lateinit var adapter: DevicesAdapter
     private val dialogMenu = DynamicDialogMenu<DevicesFragment, Brand.DeviceItem>()
 
@@ -68,23 +73,10 @@ class DevicesFragment : TabFragment(), DevicesView,
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        baseInflateFragment(inflater, R.layout.fragment_brand)
-        refreshLayout =
-            findViewById(R.id.swipe_refresh_list) as SwipeRefreshLayout
-        recyclerView = findViewById(R.id.base_list) as AutoFitRecyclerView
-        contentController.setMainRefresh(refreshLayout)
-        setScrollFlagsEnterAlways()
-        return viewFragment
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        contentController.setMainRefresh(refreshLayout)
+        setScrollFlagsEnterAlways()
         setCardsBackground()
         refreshLayoutStyle(refreshLayout)
         refreshLayout.setOnRefreshListener { presenter.loadBrand() }

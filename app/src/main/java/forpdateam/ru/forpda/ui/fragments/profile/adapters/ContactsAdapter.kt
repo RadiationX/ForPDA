@@ -2,9 +2,10 @@ package forpdateam.ru.forpda.ui.fragments.profile.adapters
 
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App.Companion.getVecDrawable
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.ProfileSubItemContactBinding
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel.Contact
 import forpdateam.ru.forpda.model.repository.temp.TempHelper.getContactIcon
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
@@ -31,7 +32,7 @@ internal class ContactsAdapter(
         itemView: View,
         listener: Listener
     ) : BaseViewHolder<Contact>(itemView) {
-        private val icon: ImageView = itemView.findViewById(R.id.item_icon)
+        private val binding by viewBinding<ProfileSubItemContactBinding>()
         private var currentItem: Contact? = null
 
         init {
@@ -40,8 +41,13 @@ internal class ContactsAdapter(
 
         override fun bind(item: Contact) {
             currentItem = item
-            icon.setImageDrawable(getVecDrawable(icon.context, getContactIcon(item.type)))
-            icon.contentDescription = item.title
+            binding.itemIcon.setImageDrawable(
+                getVecDrawable(
+                    binding.itemIcon.context,
+                    getContactIcon(item.type)
+                )
+            )
+            binding.itemIcon.contentDescription = item.title
         }
 
         internal interface Listener {

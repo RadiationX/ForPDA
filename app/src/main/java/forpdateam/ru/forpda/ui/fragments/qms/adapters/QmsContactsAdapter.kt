@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.nostra13.universalimageloader.core.ImageLoader
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.QmsContactItemBinding
 import forpdateam.ru.forpda.entity.remote.qms.QmsContact
 import forpdateam.ru.forpda.ui.fragments.qms.adapters.QmsContactsAdapter.ContactHolder
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
@@ -34,10 +36,7 @@ class QmsContactsAdapter : BaseAdapter<QmsContact, ContactHolder>() {
 
     inner class ContactHolder(v: View) : BaseViewHolder<QmsContact>(v), View.OnClickListener,
         OnLongClickListener {
-        var avatar: ImageView =
-            v.findViewById(R.id.qms_contact_avatar)
-        var nick: TextView = v.findViewById(R.id.qms_contact_nick)
-        var count: TextView = v.findViewById(R.id.qms_contact_count)
+        private val binding by viewBinding<QmsContactItemBinding>()
 
         init {
             v.setOnClickListener(this)
@@ -45,14 +44,14 @@ class QmsContactsAdapter : BaseAdapter<QmsContact, ContactHolder>() {
         }
 
         override fun bind(item: QmsContact, position: Int) {
-            nick.text = item.user.nick
-            ImageLoader.getInstance().displayImage(item.user.avatar, avatar)
-            nick.typeface = if (item.count > 0) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
+            binding.qmsContactNick.text = item.user.nick
+            ImageLoader.getInstance().displayImage(item.user.avatar, binding.qmsContactAvatar)
+            binding.qmsContactNick.typeface = if (item.count > 0) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
             if (item.count == 0) {
-                count.visibility = View.GONE
+                binding.qmsContactCount.visibility = View.GONE
             } else {
-                count.text = item.count.toString()
-                count.visibility = View.VISIBLE
+                binding.qmsContactCount.text = item.count.toString()
+                binding.qmsContactCount.visibility = View.VISIBLE
             }
         }
 

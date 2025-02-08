@@ -57,12 +57,9 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
         configuration.defaultTitle = "Правила форума"
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         webView = ExtendedWebView(requireContext())
         webView.setDialogsHelper(
             DialogsHelper(
@@ -74,11 +71,8 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
         )
         attachWebView(webView)
         fragmentContent.addView(webView)
-        return viewFragment
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+
         webView.addJavascriptInterface(this, JS_INTERFACE)
         webView.webViewClient = CustomWebViewClient()
         webView.webChromeClient = CustomWebChromeClient()

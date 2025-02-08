@@ -5,12 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -19,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.databinding.ActivityMainBinding
 import forpdateam.ru.forpda.entity.app.other.AppMenuItem
 import forpdateam.ru.forpda.model.MenuMapper
 import forpdateam.ru.forpda.model.interactors.other.MenuRepository
@@ -41,25 +37,12 @@ import kotlin.math.min
 
 class BottomDrawer(
     private val activity: FragmentActivity,
-    private val drawerLayout: ViewGroup,
+    private val binding: ActivityMainBinding,
     private val tabNavigator: TabNavigator,
     private val router: TabRouter,
     private val menuRepository: MenuRepository,
     private val mainPreferencesHolder: MainPreferencesHolder
 ) {
-
-    private val bottomCloseAllTabs: AppCompatButton =
-        drawerLayout.findViewById(R.id.bottomCloseAllTabs)
-    private val bottomMenuContainer: CoordinatorLayout =
-        drawerLayout.findViewById(R.id.bottomMenuContainer)
-    private val bottomMenuFade: View = drawerLayout.findViewById(R.id.bottomMenuFade)
-    private val bottomMenuRecycler: RecyclerView =
-        drawerLayout.findViewById(R.id.bottomMenuRecycler)
-    private val bottomTabsRecycler: RecyclerView =
-        drawerLayout.findViewById(R.id.bottomTabsRecycler)
-    private val bottomToggleArrow: AppCompatImageView =
-        drawerLayout.findViewById(R.id.bottomToggleArrow)
-    private val bottom_sheet2: ConstraintLayout = drawerLayout.findViewById(R.id.bottom_sheet2)
 
     private val menuAdapter = BottomMenuAdapter(object : BottomMenuAdapter.Listener {
         override fun onTabClick(menu: DrawerMenuItem) {
@@ -89,9 +72,9 @@ class BottomDrawer(
     private var localItems = listOf(otherMenuItem)
 
     init {
-        drawerLayout.apply {
+        binding.drawerLayout.apply {
 
-            bottomSheetBehavior = BottomSheetBehaviorFixed.from<View>(bottom_sheet2).apply {
+            bottomSheetBehavior = BottomSheetBehaviorFixed.from<View>(binding.bottomSheet2).apply {
                 isHideable = false
                 state = BottomSheetBehaviorFixed.STATE_COLLAPSED
                 peekHeight = context.resources.getDimensionPixelSize(R.dimen.dp48)
@@ -100,7 +83,7 @@ class BottomDrawer(
                     private val colorDrawable = ColorDrawable(Color.TRANSPARENT)
 
                     init {
-                        bottomMenuFade.background = colorDrawable
+                        binding.bottomMenuFade.background = colorDrawable
                     }
 
                     private fun getColor(offset: Float) = Color.argb((96 * offset).toInt(), 0, 0, 0)
@@ -108,7 +91,7 @@ class BottomDrawer(
                     override fun onSlide(bottomSheet: View, slideOffset: Float) {
                         colorDrawable.color = getColor(slideOffset)
                         drawerListener?.onSlide(slideOffset)
-                        bottomToggleArrow.rotationX = 180 * slideOffset
+                        binding.bottomToggleArrow.rotationX = 180 * slideOffset
                     }
 
                     @SuppressLint("SwitchIntDef")
@@ -118,17 +101,17 @@ class BottomDrawer(
                         when (newState) {
                             BottomSheetBehaviorFixed.STATE_EXPANDED -> {
                                 colorDrawable.color = getColor(1.0f)
-                                bottomMenuContainer.setOnClickListener {
+                                binding.bottomMenuContainer.setOnClickListener {
                                     hide()
                                 }
-                                bottomMenuContainer.isClickable = true
+                                binding.bottomMenuContainer.isClickable = true
                                 drawerListener?.onShow()
                             }
 
                             BottomSheetBehaviorFixed.STATE_COLLAPSED -> {
                                 colorDrawable.color = Color.TRANSPARENT
-                                bottomMenuContainer.setOnClickListener(null)
-                                bottomMenuContainer.isClickable = false
+                                binding.bottomMenuContainer.setOnClickListener(null)
+                                binding.bottomMenuContainer.isClickable = false
                                 drawerListener?.onHide()
                             }
                         }
@@ -136,30 +119,30 @@ class BottomDrawer(
                 })
             }
 
-            bottomToggleArrow.setOnClickListener {
+            binding.bottomToggleArrow.setOnClickListener {
                 toggle()
             }
             updateArrowVisible(mainPreferencesHolder.getShowBottomArrow())
 
-            bottomMenuRecycler.apply {
+            binding.bottomMenuRecycler.apply {
                 layoutManager = GridLayoutManager(context, 5)
                 adapter = menuAdapter
                 isNestedScrollingEnabled = false
             }
 
             val manager = BottomSheetBehaviorRecyclerManager(
-                bottomMenuContainer,
+                binding.bottomMenuContainer,
                 bottomSheetBehavior,
-                bottom_sheet2
+                binding.bottomSheet2
             )
-            manager.addControl(bottomTabsRecycler)
+            manager.addControl(binding.bottomTabsRecycler)
             manager.create()
 
-            bottomCloseAllTabs.setOnClickListener {
+            binding.bottomCloseAllTabs.setOnClickListener {
                 removeAllTabs()
             }
 
-            bottomTabsRecycler.apply {
+            binding.bottomTabsRecycler.apply {
                 layoutManager = LinearLayoutManager(context).apply {
                     stackFromEnd = true
                 }
@@ -253,13 +236,13 @@ class BottomDrawer(
     }
 
     private fun updateMenu() {
-        (bottomMenuRecycler.layoutManager as? GridLayoutManager)?.spanCount =
+        (binding.bottomMenuRecycler.layoutManager as? GridLayoutManager)?.spanCount =
             localItems.size
         menuAdapter.bindItems(localItems)
     }
 
     private fun updateArrowVisible(isVisible: Boolean) {
-        bottomToggleArrow.visibility = if (isVisible) {
+        binding.bottomToggleArrow.visibility = if (isVisible) {
             View.VISIBLE
         } else {
             View.GONE
@@ -292,11 +275,11 @@ class BottomDrawer(
     или просто открывается intentchoser и ты скрываешь приложение, то не обновляется список
     фрагментов. Прям вот вызывается notify... но ничего не происходит */
     fun onStop() {
-        bottomTabsRecycler.layoutManager = null
+        binding.bottomTabsRecycler.layoutManager = null
     }
 
     fun onStart() {
-        bottomTabsRecycler.apply {
+        binding.bottomTabsRecycler.apply {
             layoutManager = LinearLayoutManager(context).apply {
                 stackFromEnd = true
             }

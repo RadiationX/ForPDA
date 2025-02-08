@@ -17,14 +17,17 @@ import android.widget.RelativeLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.doOnLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.daasuu.ei.Ease
 import com.daasuu.ei.EasingInterpolator
 import com.yandex.metrica.YandexMetrica
+import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.common.LocaleHelper
+import forpdateam.ru.forpda.databinding.ActivityMainBinding
 import forpdateam.ru.forpda.notifications.NotificationsService
 import forpdateam.ru.forpda.presentation.main.MainPresenter
 import forpdateam.ru.forpda.presentation.main.MainView
@@ -41,18 +44,13 @@ import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import kotlin.math.max
 
-class MainActivity : MvpAppCompatActivity(), MainView {
+class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
     val removeTabListener = { view: View -> backHandler(true) }
 
 
     private var checkWebView = true
 
-    private lateinit var bottomMenuRecycler: RecyclerView
-    private lateinit var bottom_sheet2: ConstraintLayout
-    private lateinit var drawer_layout: RelativeLayout
-    private lateinit var fragments_container: CoordinatorLayout
-    private lateinit var measure_root_content: CoordinatorLayout
-    private lateinit var measure_view: View
+    private val binding by viewBinding<ActivityMainBinding>()
 
     private lateinit var bottomDrawer: BottomDrawer
     private var firstStartAnimator: ObjectAnimator? = null
@@ -118,13 +116,6 @@ class MainActivity : MvpAppCompatActivity(), MainView {
             "oncreate UiMode: ${resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK}"
         )
 
-        setContentView(R.layout.activity_main)
-        bottomMenuRecycler = findViewById(R.id.bottomMenuRecycler)
-        bottom_sheet2 = findViewById(R.id.bottom_sheet2)
-        drawer_layout = findViewById(R.id.drawer_layout)
-        fragments_container = findViewById(R.id.fragments_container)
-        measure_root_content = findViewById(R.id.measure_root_content)
-        measure_view = findViewById(R.id.measure_view)
 
         presenter.setIsRestored(savedInstanceState != null)
         intent?.data?.also {
@@ -133,7 +124,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
         bottomDrawer = BottomDrawer(
             this,
-            drawer_layout,
+            binding,
             tabNavigator,
             App.get().Di().router,
             App.get().Di().menuRepository,
@@ -157,7 +148,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
                     window.navigationBarDividerColor =
                         App.getColorFromAttr(this@MainActivity, R.attr.divider_line_bottom_nav)
                 }
-                val container = findViewById<View>(R.id.fragments_container)
+                val container = binding.fragmentsContainer
                 val translate = -slideOffset * 0.1f * container.height
                 container.translationY = translate
                 cancelStartAnimation()
@@ -168,15 +159,15 @@ class MainActivity : MvpAppCompatActivity(), MainView {
             resources.getDimensionPixelSize(R.dimen.default_statusbar_height)
         val defaultKeyboardHeight = resources.getDimensionPixelSize(R.dimen.default_keyboard_height)
 
-        drawer_layout.systemUiVisibility =
+        binding.drawerLayout.systemUiVisibility =
             View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 
         DimensionHelper(
-            measure_view,
-            measure_root_content,
+            binding.measureView,
+            binding.measureRootContent,
             object : DimensionHelper.DimensionsListener {
                 override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
-                    Log.e("lalala", "Dim: $dimensions, bmr=${bottomMenuRecycler.height}")
+                    Log.e("lalala", "Dim: $dimensions, bmr=${binding.bottomMenuRecycler.height}")
                     dimensionsProvider.update(dimensions)
                 }
             },
@@ -188,8 +179,8 @@ class MainActivity : MvpAppCompatActivity(), MainView {
             dimensionsProvider
                 .observeDimensions()
                 .subscribe { dimensions ->
-                    bottomMenuRecycler?.post {
-                        fragments_container?.also { updateDimens(dimensions) }
+                    binding.bottomMenuRecycler.doOnLayout {
+                        binding.fragmentsContainer.also { updateDimens(dimensions) }
                     }
                 }
         )
@@ -212,7 +203,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     override fun showFirstStartAnimation() {
         val height = resources.getDimensionPixelSize(R.dimen.dp48)
         firstStartAnimator =
-            ObjectAnimator.ofFloat(bottom_sheet2, "translationY", 0f, -height.toFloat(), 0f).apply {
+            ObjectAnimator.ofFloat(binding.bottomSheet2, "translationY", 0f, -height.toFloat(), 0f).apply {
                 interpolator = EasingInterpolator(Ease.BOUNCE_IN_OUT)
                 startDelay = 500
                 duration = 1500
@@ -223,14 +214,14 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     private fun cancelStartAnimation() {
         firstStartAnimator?.cancel()
-        bottom_sheet2?.translationY = 0f
+        binding.bottomSheet2.translationY = 0f
     }
 
     private fun updateDimens(dimensions: DimensionHelper.Dimensions) {
-        fragments_container?.apply {
+        binding.fragmentsContainer.apply {
             val pb =
-                dimensions.keyboardHeight + if (dimensions.isKeyboardShow() || dimensions.isFakeKeyboardShow) 0 else bottomMenuRecycler.height
-            Log.e("lalala", "Post Dim: $dimensions, bmr=${bottomMenuRecycler.height}, pb=$pb")
+                dimensions.keyboardHeight + if (dimensions.isKeyboardShow() || dimensions.isFakeKeyboardShow) 0 else binding.bottomMenuRecycler.height
+            Log.e("lalala", "Post Dim: $dimensions, bmr=${binding.bottomMenuRecycler.height}, pb=$pb")
             setPadding(
                 paddingLeft,
                 paddingTop,
