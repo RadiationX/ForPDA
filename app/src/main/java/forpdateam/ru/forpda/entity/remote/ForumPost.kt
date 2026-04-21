@@ -6,7 +6,7 @@ import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
  * Created by radiationx on 27.04.17.
  */
 
-class ForumPost(
+data class ForumPost(
     val date: String,
     val groupColor: String,
     val group: String,

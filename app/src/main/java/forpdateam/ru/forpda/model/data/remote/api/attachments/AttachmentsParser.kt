@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.model.data.remote.api.attachments
 
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
+import forpdateam.ru.forpda.entity.remote.editpost.EditPost
 import forpdateam.ru.forpda.extensions.findOnce
 import forpdateam.ru.forpda.extensions.map
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
@@ -15,11 +16,27 @@ class AttachmentsParser(
 
     private val scope = ParserPatterns.EditPost
 
-    fun parseAttachments(response: String): List<AttachmentItem> = patternProvider
+    fun parseAttachments(response: String): List<EditPost.Attachment> = patternProvider
         .getPattern(scope.scope, scope.attachments)
         .matcher(response)
-        .map {
-            fillAttachment(AttachmentItem(), it)
+        .map { matcher ->
+            val type = matcher.group(7)?.let { imageUrl ->
+                EditPost.Attachment.Type.Image(
+                    url = "https:$imageUrl",
+                    width = matcher.group(8).toInt(),
+                    height = matcher.group(9).toInt()
+                )
+            } ?: EditPost.Attachment.Type.File
+            val size = matcher.group(5).toLong()
+            EditPost.Attachment(
+                id = matcher.group(1).toInt(),
+                name = matcher.group(2),
+                extension = matcher.group(3),
+                size = size,
+                sizeFormatted = readableFileSize(size),
+                md5 = matcher.group(6),
+                type = type
+            )
         }
 
     fun parseAttachment(response: String, item: AttachmentItem?): AttachmentItem {

@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.model.repository.posteditor
 
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
+import forpdateam.ru.forpda.entity.remote.editpost.EditPost
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
@@ -23,7 +24,7 @@ class PostEditorRepository(
     private val forumUsersCache: ForumUsersCache
 ) : BaseRepository(schedulers) {
 
-    fun loadForm(postId: Int): Single<EditPostForm> = Single
+    fun loadForm(postId: Int): Single<EditPost> = Single
         .fromCallable { editPostApi.loadForm(postId) }
         .runInIoToUi()
 

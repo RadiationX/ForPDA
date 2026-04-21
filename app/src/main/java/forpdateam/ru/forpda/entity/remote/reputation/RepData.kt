@@ -6,7 +6,7 @@ import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
  * Created by radiationx on 20.03.17.
  */
 
-class RepData(
+data class RepData(
     val id: Int,
     val positive: Int,
     val negative: Int,

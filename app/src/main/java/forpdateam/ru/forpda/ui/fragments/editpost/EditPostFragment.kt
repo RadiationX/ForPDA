@@ -3,9 +3,7 @@ package forpdateam.ru.forpda.ui.fragments.editpost
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -145,14 +143,14 @@ class EditPostFragment : TabFragment(), EditPostView {
         }
     }
 
-    override fun showForm(form: EditPostForm) {
-        if (form.errorCode != EditPostForm.ERROR_NONE) {
-            Toast.makeText(requireContext(), R.string.editpost_error_edit, Toast.LENGTH_SHORT)
-                .show()
-            presenter.exit()
-            return
-        }
+    override fun onNoPermission() {
+        Toast.makeText(requireContext(), R.string.editpost_error_edit, Toast.LENGTH_SHORT)
+            .show()
+        presenter.exit()
+        return
+    }
 
+    override fun showForm(form: EditPostForm) {
         if (form.poll != null) {
             pollPopup = EditPollPopup(requireContext())
             pollPopup?.setPoll(form.poll!!)

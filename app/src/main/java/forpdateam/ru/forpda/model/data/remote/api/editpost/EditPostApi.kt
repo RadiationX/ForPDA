@@ -1,6 +1,8 @@
 package forpdateam.ru.forpda.model.data.remote.api.editpost
 
+import forpdateam.ru.forpda.entity.remote.editpost.EditPost
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
+import forpdateam.ru.forpda.entity.remote.editpost.EditPostPermissionException
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
@@ -20,25 +22,26 @@ class EditPostApi(
     private val themeParser: ThemeParser
 ) {
 
-    fun loadForm(postId: Int): EditPostForm {
-        val url =
-            "https://4pda.to/forum/index.php?act=post&do=edit_post&p=" + Integer.toString(postId)
-        var response = webClient.get(url)
-        if (response.body == "nopermission") {
-            return EditPostForm().apply {
-                errorCode = EditPostForm.ERROR_NO_PERMISSION
-            }
+    fun loadForm(postId: Int): EditPost {
+        val postUrl = "https://4pda.to/forum/index.php?act=post&do=edit_post&p=$postId"
+        val attachmentsUrl =
+            "https://4pda.to/forum/index.php?act=attach&index=1&relId=$postId&maxSize=134217728&allowExt=&code=init&unlinked="
+        val postResponse = webClient.get(postUrl)
+        if (postResponse.body == "nopermission") {
+            throw EditPostPermissionException()
         }
 
-        val form = editPostParser.parseForm(response.body)
-        form.poll = editPostParser.parsePoll(response.body)
+        val attachmentsResponse = webClient.get(attachmentsUrl)
+        val form = editPostParser.parseForm(postResponse.body)
+        val poll = editPostParser.parsePoll(postResponse.body)
+        val attachments = attachmentsParser.parseAttachments(attachmentsResponse.body)
 
-        response =
-            webClient.get("https://4pda.to/forum/index.php?act=attach&index=1&relId=$postId&maxSize=134217728&allowExt=&code=init&unlinked=")
-        val attachments = attachmentsParser.parseAttachments(response.body)
-        form.attachments.addAll(attachments)
-
-        return form
+        return EditPost(
+            postId = postId,
+            form = form,
+            poll = poll,
+            attachments = attachments
+        )
     }
 
     fun sendPost(form: EditPostForm): ThemePage {

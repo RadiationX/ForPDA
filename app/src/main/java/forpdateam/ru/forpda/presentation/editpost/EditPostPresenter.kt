@@ -4,6 +4,7 @@ import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.app.EditPostSyncData
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
+import forpdateam.ru.forpda.entity.remote.editpost.EditPostPermissionException
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.repository.posteditor.PostEditorRepository
@@ -69,15 +70,14 @@ class EditPostPresenter(
         editorRepository
             .loadForm(postForm.postId)
             .subscribe({
-                postForm.message = it.message
-                postForm.editReason = it.editReason
-                postForm.attachments.addAll(it.attachments)
-                it.poll?.let {
-                    postForm.poll = it
-                }
-                viewState.showForm(it)
+                postForm.fillFrom(it)
+                viewState.showForm(postForm)
             }, {
-                errorHandler.handle(it)
+                if (it is EditPostPermissionException) {
+                    viewState.onNoPermission()
+                } else {
+                    errorHandler.handle(it)
+                }
             })
             .untilDestroy()
     }

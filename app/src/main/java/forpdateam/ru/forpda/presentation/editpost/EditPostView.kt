@@ -14,6 +14,7 @@ import moxy.viewstate.strategy.StateStrategyType
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface EditPostView : IBaseView {
     fun onPostSend(page: ThemePage, form: EditPostForm)
+    fun onNoPermission()
     fun showForm(form: EditPostForm)
 
     fun setSendRefreshing(isRefreshing: Boolean)
