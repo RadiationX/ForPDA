@@ -13,9 +13,9 @@ class ForumUsersCache(
     private val userSource: UserSource
 ) {
 
-    fun saveUser(forumUser: ForumUser) = saveUsers(listOf(forumUser))
+    suspend fun saveUser(forumUser: ForumUser) = saveUsers(listOf(forumUser))
 
-    fun saveUsers(forumUsers: List<ForumUser>) = Realm.getDefaultInstance().use {
+    suspend fun saveUsers(forumUsers: List<ForumUser>) = Realm.getDefaultInstance().use {
         it.executeTransaction { realm ->
             realm.insertOrUpdate(forumUsers.map { user ->
                 Log.e("kekosina", "saveUser  ${user.id}, ${user.nick}")
@@ -25,11 +25,11 @@ class ForumUsersCache(
     }
 
 
-    fun getUserById(id: Int): ForumUser? = Realm.getDefaultInstance().use {
+    suspend fun getUserById(id: Int): ForumUser? = Realm.getDefaultInstance().use {
         it.where(ForumUserBd::class.java).equalTo("id", id).findFirst()?.toDomain()
     }
 
-    fun getUserByNick(nick: String): ForumUser? = Realm.getDefaultInstance().use {
+    suspend fun getUserByNick(nick: String): ForumUser? = Realm.getDefaultInstance().use {
         it.where(ForumUserBd::class.java).equalTo("nick", nick).findFirst()
             ?.toDomain()
             ?: userSource.getUsers(nick).getOrNull(0)?.also { user ->

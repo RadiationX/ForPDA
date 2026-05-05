@@ -1,60 +1,61 @@
 package forpdateam.ru.forpda.model.data.cache.favorites
 
-import com.jakewharton.rxrelay2.BehaviorRelay
 import forpdateam.ru.forpda.entity.db.favorites.FavItemBd
 import forpdateam.ru.forpda.entity.remote.favorites.FavItem
 import forpdateam.ru.forpda.entity.remote.others.user.User
-import io.reactivex.Observable
 import io.realm.Realm
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 
 class FavoritesCache {
 
-    private val dataRelay = BehaviorRelay.create<List<FavItem>>()
+    private val dataFlow = MutableStateFlow<List<FavItem>?>(null)
 
-    fun observeItems(): Observable<List<FavItem>> = dataRelay.hide()
+    fun observeItems(): Flow<List<FavItem>> = dataFlow.filterNotNull()
 
-    fun getItems(): List<FavItem> = Realm.getDefaultInstance().use { realm ->
+    suspend fun getItems(): List<FavItem> = Realm.getDefaultInstance().use { realm ->
         realm.where(FavItemBd::class.java).findAll().map { it.toDomain() }
     }.also {
-        if (!dataRelay.hasValue()) {
-            dataRelay.accept(it)
+        if (dataFlow.value == null) {
+            dataFlow.value = it
         }
     }
 
-    fun saveFavorites(items: List<FavItem>) = Realm.getDefaultInstance().use { realm ->
+    suspend fun saveFavorites(items: List<FavItem>) = Realm.getDefaultInstance().use { realm ->
         realm.executeTransaction { realmTr ->
             realmTr.delete(FavItemBd::class.java)
             realmTr.copyToRealmOrUpdate(items.map { it.toDb() })
         }
-        dataRelay.accept(getItems())
+        dataFlow.value = getItems()
     }
 
-    fun getItemByFavId(favId: Int): FavItem? = Realm.getDefaultInstance().use { realm ->
+    suspend fun getItemByFavId(favId: Int): FavItem? = Realm.getDefaultInstance().use { realm ->
         realm.where(FavItemBd::class.java).equalTo("favId", favId).findFirst()?.toDomain()
     }
 
-    fun getItemByTopicId(topicId: Int): FavItem? = Realm.getDefaultInstance().use { realm ->
+    suspend fun getItemByTopicId(topicId: Int): FavItem? = Realm.getDefaultInstance().use { realm ->
         realm.where(FavItemBd::class.java).equalTo("topicId", topicId).findFirst()?.toDomain()
     }
 
-    fun updateItem(item: FavItem) = Realm.getDefaultInstance().use { realm ->
+    suspend fun updateItem(item: FavItem) = Realm.getDefaultInstance().use { realm ->
         realm.executeTransaction { realmTr ->
             realmTr.where(FavItemBd::class.java).equalTo("favId", item.favId).findFirst()?.let {
                 realmTr.copyToRealmOrUpdate(item.toDb())
             }
         }
-        if (dataRelay.hasValue()) {
+        if (dataFlow.value != null) {
             realm.where(FavItemBd::class.java)
                 .equalTo("favId", item.favId)
                 .findFirst()
                 ?.also { newItem ->
-                    val currentItems = dataRelay.value!!.toMutableList()
+                    val currentItems = dataFlow.value!!.toMutableList()
                     val index = currentItems.indexOfFirst { newItem.favId == it.favId }
                     if (index == -1) {
-                        dataRelay.accept(getItems())
+                        dataFlow.value = getItems()
                     } else {
                         currentItems[index] = newItem.toDomain()
-                        dataRelay.accept(currentItems)
+                        dataFlow.value = currentItems
                     }
                 }
         }

@@ -14,23 +14,17 @@ class AvatarRepository(
     private val schedulers: SchedulersProvider
 ) : BaseRepository(schedulers) {
 
-    fun getAvatar(id: Int, nick: String): Single<String> = Single
-        .fromCallable {
-            getAvatarSync(id, nick) ?: throw NullPointerException("No avatar/user by id: $id")
-        }
-        .runInIoToUi()
+    fun getAvatar(id: Int, nick: String): String {
+        return getAvatarSync(id, nick) ?: throw NullPointerException("No avatar/user by id: $id")
+    }
 
-    fun getAvatar(id: Int): Single<String> = Single
-        .fromCallable {
-            getAvatarSync(id) ?: throw NullPointerException("No avatar/user by id: $id")
-        }
-        .runInIoToUi()
+    fun getAvatar(id: Int): String {
+        return getAvatarSync(id) ?: throw NullPointerException("No avatar/user by id: $id")
+    }
 
-    fun getAvatar(nick: String): Single<String> = Single
-        .fromCallable {
-            getAvatarSync(nick) ?: throw NullPointerException("No avatar/user by nick: $nick")
-        }
-        .runInIoToUi()
+    fun getAvatar(nick: String): String {
+        return getAvatarSync(nick) ?: throw NullPointerException("No avatar/user by nick: $nick")
+    }
 
     fun getAvatarSync(id: Int, nick: String): String? {
         val forumUser = forumUsersCache.getUserById(id)

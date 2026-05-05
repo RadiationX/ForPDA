@@ -11,7 +11,6 @@ import forpdateam.ru.forpda.model.CountersHolder
 import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.data.remote.api.auth.AuthApi
 import forpdateam.ru.forpda.model.repository.BaseRepository
-import io.reactivex.Single
 
 /**
  * Created by radiationx on 02.01.18.
@@ -25,30 +24,30 @@ class AuthRepository(
     private val userHolder: IUserHolder
 ) : BaseRepository(schedulers) {
 
-    suspend fun loadCaptcha(): Single<AuthCaptcha> = authApi.getCaptcha()
+    suspend fun loadCaptcha(): AuthCaptcha {
+        return authApi.getCaptcha()
+    }
 
-    fun signIn(captcha: AuthCaptcha, form: AuthForm): Single<Unit> = Single
-        .fromCallable { authApi.login(captcha, form) }
-        .runInIoToUi()
+    suspend fun signIn(captcha: AuthCaptcha, form: AuthForm) {
+        authApi.login(captcha, form)
+    }
 
-    fun signOut(): Single<Boolean> = Single
-        .fromCallable { authApi.logout() }
-        .doOnSuccess {
-            authHolder.set(
-                AuthData(
-                    userId = AuthData.NO_ID,
-                    state = AuthState.NO_AUTH
-                )
+    suspend fun signOut() {
+        authApi.logout()
+        authHolder.set(
+            AuthData(
+                userId = AuthData.NO_ID,
+                state = AuthState.NO_AUTH
             )
-            countersHolder.set(
-                MessageCounters(
-                    mentions = 0,
-                    favorites = 0,
-                    qms = 0
-                )
+        )
+        countersHolder.set(
+            MessageCounters(
+                mentions = 0,
+                favorites = 0,
+                qms = 0
             )
-            userHolder.user = null
-        }
-        .runInIoToUi()
+        )
+        userHolder.user = null
+    }
 
 }

@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.model.data.cache.qms
 
-import com.jakewharton.rxrelay2.BehaviorRelay
 import forpdateam.ru.forpda.entity.db.qms.QmsContactBd
 import forpdateam.ru.forpda.entity.db.qms.QmsThemeBd
 import forpdateam.ru.forpda.entity.db.qms.QmsThemesBd
@@ -9,23 +8,25 @@ import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.entity.remote.qms.QmsContact
 import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
-import io.reactivex.Observable
 import io.realm.Realm
 import io.realm.RealmList
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 
 class QmsCache {
 
-    private val contactsRelay = BehaviorRelay.create<List<QmsContact>>()
-    private val themesRelays = mutableMapOf<Int, BehaviorRelay<QmsThemes>>()
+    private val contactsFlow = MutableStateFlow<List<QmsContact>?>(null)
+    private val themesFlows = mutableMapOf<Int, MutableStateFlow<QmsThemes?>>()
 
-    fun observeContacts(): Observable<List<QmsContact>> = contactsRelay.hide()
-    fun observeThemes(userId: Int): Observable<QmsThemes> = getOrCreateThemesRelay(userId).hide()
+    fun observeContacts(): Flow<List<QmsContact>> = contactsFlow.filterNotNull()
+    fun observeThemes(userId: Int): Flow<QmsThemes> = getOrCreateThemesRelay(userId).filterNotNull()
 
     fun getContacts(): List<QmsContact> = Realm.getDefaultInstance().use { realm ->
         realm.where(QmsContactBd::class.java).findAll().map { it.toDomain() }
     }.also {
-        if (!contactsRelay.hasValue()) {
-            contactsRelay.accept(it)
+        if (contactsFlow.value == null) {
+            contactsFlow.value = it
         }
     }
 
@@ -34,25 +35,25 @@ class QmsCache {
             realmTr.delete(QmsContactBd::class.java)
             realmTr.copyToRealmOrUpdate(items.map { it.toDb() })
         }
-        contactsRelay.accept(getContacts())
+        contactsFlow.value = getContacts()
     }
 
     fun updateContact(item: QmsContact) = Realm.getDefaultInstance().use { realm ->
         realm.executeTransaction { realmTr ->
             realmTr.copyToRealmOrUpdate(item.toDb())
         }
-        if (contactsRelay.hasValue()) {
+        if (contactsFlow.value != null) {
             realm.where(QmsContactBd::class.java)
                 .equalTo("id", item.user.id)
                 .findFirst()
                 ?.also { newItem ->
-                    val currentItems = contactsRelay.value!!.toMutableList()
+                    val currentItems = contactsFlow.value!!.toMutableList()
                     val index = currentItems.indexOfFirst { newItem.id == it.user.id }
                     if (index == -1) {
-                        contactsRelay.accept(getContacts())
+                        contactsFlow.value = getContacts()
                     } else {
                         currentItems[index] = newItem.toDomain()
-                        contactsRelay.accept(currentItems)
+                        contactsFlow.value = currentItems
                     }
                 }
         }
@@ -65,8 +66,8 @@ class QmsCache {
             ?: throw Exception("Not found by userId=$userId")
     }.also { themes ->
         getOrCreateThemesRelay(userId).also {
-            if (!it.hasValue()) {
-                it.accept(themes)
+            if (it.value == null) {
+                it.value = themes
             }
         }
     }
@@ -77,8 +78,8 @@ class QmsCache {
         }
     }.onEach { themes ->
         getOrCreateThemesRelay(themes.user.id).also {
-            if (!it.hasValue()) {
-                it.accept(themes)
+            if (it.value == null) {
+                it.value = themes
             }
         }
     }
@@ -89,13 +90,14 @@ class QmsCache {
                 .deleteAllFromRealm()
             realmTr.copyToRealmOrUpdate(data.toDb())
         }
-        getOrCreateThemesRelay(data.user.id).accept(getThemes(data.user.id))
+        getOrCreateThemesRelay(data.user.id).value = getThemes(data.user.id)
     }
 
-    private fun getOrCreateThemesRelay(userId: Int): BehaviorRelay<QmsThemes> = themesRelays[userId]
-        ?: BehaviorRelay.create<QmsThemes>().also {
-            themesRelays[userId] = it
+    private fun getOrCreateThemesRelay(userId: Int): MutableStateFlow<QmsThemes?> {
+        return themesFlows[userId] ?: MutableStateFlow<QmsThemes?>(null).also {
+            themesFlows[userId] = it
         }
+    }
 }
 
 fun QmsContactBd.toDomain(): QmsContact {

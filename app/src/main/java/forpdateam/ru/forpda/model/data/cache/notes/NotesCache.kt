@@ -1,28 +1,29 @@
 package forpdateam.ru.forpda.model.data.cache.notes
 
-import com.jakewharton.rxrelay2.BehaviorRelay
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
 import forpdateam.ru.forpda.entity.db.notes.NoteItemBd
-import io.reactivex.Observable
 import io.realm.Realm
 import io.realm.Sort
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 
 class NotesCache {
 
-    private val dataRelay = BehaviorRelay.create<List<NoteItem>>()
+    private val dataFlow = MutableStateFlow<List<NoteItem>?>(null)
 
-    fun observeItems(): Observable<List<NoteItem>> = dataRelay.hide()
+    fun observeItems(): Flow<List<NoteItem>> = dataFlow.filterNotNull()
 
-    fun getItems(): List<NoteItem> = Realm.getDefaultInstance().use { realm ->
+    suspend fun getItems(): List<NoteItem> = Realm.getDefaultInstance().use { realm ->
         realm.where(NoteItemBd::class.java).findAll().sort("id", Sort.DESCENDING)
             .map { it.toDomain() }
     }.also {
-        if (!dataRelay.hasValue()) {
-            dataRelay.accept(it)
+        if (dataFlow.value == null) {
+            dataFlow.value = it
         }
     }
 
-    fun update(item: NoteItem) = Realm.getDefaultInstance().use { realm ->
+    suspend fun update(item: NoteItem) = Realm.getDefaultInstance().use { realm ->
         realm.executeTransaction { realmTr ->
             val itemBd = getItemById(item.id, realmTr)?.apply {
                 title = item.title
@@ -31,53 +32,52 @@ class NotesCache {
             } ?: item.toDb()
             realmTr.insertOrUpdate(itemBd)
         }
-        if (dataRelay.hasValue()) {
+        if (dataFlow.value != null) {
             getItemById(item.id, realm)
                 ?.also { newItem ->
-                    val currentItems = dataRelay.value!!.toMutableList()
+                    val currentItems = dataFlow.value!!.toMutableList()
                     val index = currentItems.indexOfFirst { newItem.id == it.id }
                     if (index == -1) {
-                        dataRelay.accept(getItems())
+                        dataFlow.value = getItems()
                     } else {
                         currentItems[index] = newItem.toDomain()
-                        dataRelay.accept(currentItems)
+                        dataFlow.value = currentItems
                     }
                 }
         }
     }
 
-    fun delete(id: Long) = Realm.getDefaultInstance().use { realm ->
+    suspend fun delete(id: Long) = Realm.getDefaultInstance().use { realm ->
         realm.executeTransaction { realmTr ->
             realmTr.where(NoteItemBd::class.java).equalTo("id", id).findAll().deleteAllFromRealm()
         }
-        if (dataRelay.hasValue()) {
-            val currentItems = dataRelay.value!!.toMutableList()
+        if (dataFlow.value != null) {
+            val currentItems = dataFlow.value!!.toMutableList()
             val index = currentItems.indexOfFirst { id == it.id }
             if (index == -1) {
-                dataRelay.accept(getItems())
+                dataFlow.value = getItems()
             } else {
                 currentItems.removeAt(index)
-                dataRelay.accept(currentItems)
+                dataFlow.value = currentItems
             }
         }
     }
 
-    fun add(item: NoteItem) = Realm.getDefaultInstance().use { realm ->
+    suspend fun add(item: NoteItem) = Realm.getDefaultInstance().use { realm ->
         realm.executeTransaction { realmTr ->
             realmTr.insertOrUpdate(item.toDb())
         }
-        dataRelay.accept(getItems())
+        dataFlow.value = getItems()
     }
 
-    fun add(items: List<NoteItem>) = Realm.getDefaultInstance().use { realm ->
+    suspend fun add(items: List<NoteItem>) = Realm.getDefaultInstance().use { realm ->
         realm.executeTransaction { realmTr ->
             realmTr.insertOrUpdate(items.map { it.toDb() })
         }
-
-        dataRelay.accept(getItems())
+        dataFlow.value = getItems()
     }
 
-    private fun getItemById(id: Long, realm: Realm) = realm.where(NoteItemBd::class.java)
+    private suspend fun getItemById(id: Long, realm: Realm) = realm.where(NoteItemBd::class.java)
         .equalTo("id", id)
         .findFirst()
 
