@@ -17,13 +17,13 @@ class ReputationApi(
     private val reputationParser: ReputationParser
 ) {
 
-    fun getReputation(userId: Int, mode: String, sort: String, st: Int): RepData {
+    suspend fun getReputation(userId: Int, mode: String, sort: String, st: Int): RepData {
         val response =
             webClient.get("https://4pda.to/forum/index.php?act=rep&view=history&mid=$userId&mode=$mode&order=$sort&st=$st")
         return reputationParser.parse(response.body)
     }
 
-    fun editReputation(postId: Int, userId: Int, type: Boolean, message: String): Boolean {
+    suspend fun editReputation(postId: Int, userId: Int, type: Boolean, message: String) {
         val builder = NetworkRequest.Builder()
             .url("https://4pda.to/forum/index.php")
             .formHeader("act", "rep")
@@ -34,7 +34,6 @@ class ReputationApi(
             builder.formHeader("p", postId.toString())
         }
         webClient.request(builder.build())
-        return true
     }
 
     companion object {

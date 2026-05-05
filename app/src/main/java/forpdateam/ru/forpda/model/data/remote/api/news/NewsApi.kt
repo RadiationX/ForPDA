@@ -65,23 +65,23 @@ class NewsApi(
     private val articleParser: ArticleParser
 ) {
 
-    fun getNews(category: String, pageNumber: Int): List<NewsItem> {
+    suspend fun getNews(category: String, pageNumber: Int): List<NewsItem> {
         val url = getLink(category, pageNumber)
         val response = webClient.get(url)
         return articleParser.parseArticles(response.body)
     }
 
-    fun getDetails(id: Int): DetailsPage {
+    suspend fun getDetails(id: Int): DetailsPage {
         val response = webClient.get("https://4pda.to/index.php?p=$id")
         return articleParser.parseArticle(response.body)
     }
 
-    fun getDetails(url: String): DetailsPage {
+    suspend fun getDetails(url: String): DetailsPage {
         val response = webClient.get(url)
         return articleParser.parseArticle(response.body)
     }
 
-    fun sendPoll(from: String, pollId: Int, answersId: IntArray): DetailsPage {
+    suspend fun sendPoll(from: String, pollId: Int, answersId: IntArray): DetailsPage {
         val url = "https://4pda.to/pages/poll/?act=vote&poll_id=$pollId"
         val rBuilder = NetworkRequest.Builder()
             .url(url)
@@ -98,7 +98,7 @@ class NewsApi(
         return articleParser.parseArticle(response.body)
     }
 
-    fun likeComment(articleId: Int, commentId: Int): Boolean {
+    suspend fun likeComment(articleId: Int, commentId: Int): Boolean {
         val url = "https://4pda.to/pages/karma?p=$articleId&c=$commentId&v=1"
         webClient.request(NetworkRequest.Builder().url(url).xhrHeader().build())
         return true
@@ -108,7 +108,7 @@ class NewsApi(
         return articleParser.parseComments(karmaMap, source)
     }
 
-    fun replyComment(articleId: Int, commentId: Int, text: String): DetailsPage {
+    suspend fun replyComment(articleId: Int, commentId: Int, text: String): DetailsPage {
         var comment = text
         try {
             comment = URLEncoder.encode(comment, "Windows-1251")

@@ -22,7 +22,7 @@ class EditPostApi(
     private val themeParser: ThemeParser
 ) {
 
-    fun loadForm(postId: Int): EditPost {
+    suspend fun loadForm(postId: Int): EditPost {
         val postUrl = "https://4pda.to/forum/index.php?act=post&do=edit_post&p=$postId"
         val attachmentsUrl =
             "https://4pda.to/forum/index.php?act=attach&index=1&relId=$postId&maxSize=134217728&allowExt=&code=init&unlinked="
@@ -44,7 +44,7 @@ class EditPostApi(
         )
     }
 
-    fun sendPost(form: EditPostForm): ThemePage {
+    suspend fun sendPost(form: EditPostForm): ThemePage {
         val url = "https://4pda.to/forum/index.php"
         val headers = HashMap<String, String>()
 
@@ -110,7 +110,7 @@ class EditPostApi(
             builder.formHeader("p", form.postId.toString())
 
         val response = webClient.request(builder.build())
-        val redirectUrl = response.redirect ?: url
+        val redirectUrl = response.redirect
         return themeParser.parsePage(response.body, redirectUrl, false, false)
     }
 

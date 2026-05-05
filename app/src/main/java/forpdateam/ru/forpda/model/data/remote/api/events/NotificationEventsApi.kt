@@ -49,13 +49,10 @@ class NotificationEventsApi(private val webClient: IWebClient) {
         )
     }
 
-    @get:Throws(Exception::class)
-    val favoritesEvents: List<NotificationEvent>
-        get() {
-            val response =
-                webClient.get("https://4pda.to/forum/index.php?act=inspector&CODE=fav")
-            return getFavoritesEvents(response.body)
-        }
+    suspend fun getFavoritesEvents(): List<NotificationEvent> {
+        val response = webClient.get("https://4pda.to/forum/index.php?act=inspector&CODE=fav")
+        return getFavoritesEvents(response.body)
+    }
 
     fun getFavoritesEvents(response: String): List<NotificationEvent> {
         val events: MutableList<NotificationEvent> = ArrayList()
@@ -90,13 +87,10 @@ class NotificationEventsApi(private val webClient: IWebClient) {
 
     // also can use CODE=mentions i guess
 
-    @get:Throws(Exception::class)
-    val qmsEvents: List<NotificationEvent>
-        get() {
-            val response =
-                webClient.get("https://4pda.to/forum/index.php?act=inspector&CODE=qms")
-            return getQmsEvents(response.body)
-        }
+    suspend fun getQmsEvents(): List<NotificationEvent> {
+        val response = webClient.get("https://4pda.to/forum/index.php?act=inspector&CODE=qms")
+        return getQmsEvents(response.body)
+    }
 
     fun getQmsEvents(response: String): List<NotificationEvent> {
         val events: MutableList<NotificationEvent> = ArrayList()

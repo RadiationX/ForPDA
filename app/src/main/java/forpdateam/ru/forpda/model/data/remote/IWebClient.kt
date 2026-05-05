@@ -12,13 +12,13 @@ import java.util.regex.Pattern
  */
 interface IWebClient {
     @Throws(Exception::class)
-    fun get(url: String): NetworkResponse
+    suspend fun get(url: String): NetworkResponse
 
     @Throws(Exception::class)
-    fun request(request: NetworkRequest): NetworkResponse
+    suspend fun request(request: NetworkRequest): NetworkResponse
 
     @Throws(Exception::class)
-    fun request(request: NetworkRequest, progressListener: ProgressListener): NetworkResponse
+    suspend fun request(request: NetworkRequest, progressListener: ProgressListener): NetworkResponse
 
     fun getAuthKey(): String
 

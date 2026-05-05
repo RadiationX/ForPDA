@@ -11,7 +11,7 @@ class MentionsApi(
     private val webClient: IWebClient,
     private val mentionsParser: MentionsParser
 ) {
-    fun getMentions(st: Int): MentionsData {
+    suspend fun getMentions(st: Int): MentionsData {
         val response = webClient.get("https://4pda.to/forum/index.php?act=mentions&st=$st")
         return mentionsParser.parse(response.body)
     }

@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.model.data.remote.api.auth
 
+import androidx.core.content.edit
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.entity.remote.auth.AuthCaptcha
 import forpdateam.ru.forpda.entity.remote.auth.AuthForm
@@ -18,10 +19,10 @@ class AuthApi(
     private val authParser: AuthParser
 ) {
 
-    fun getCaptcha(): AuthCaptcha {
+    suspend fun getCaptcha(): AuthCaptcha {
         val response = webClient.get(AUTH_BASE_URL)
 
-        if (response.body.isNullOrEmpty())
+        if (response.body.isEmpty())
             throw Exception("Page empty!")
 
         if (checkLogin(response.body))
@@ -30,7 +31,7 @@ class AuthApi(
         return authParser.parseCaptcha(response.body)
     }
 
-    fun login(captcha: AuthCaptcha, form: AuthForm) {
+    suspend fun login(captcha: AuthCaptcha, form: AuthForm) {
         val builder = NetworkRequest.Builder()
             .url(AUTH_BASE_URL)
             .formHeader("captcha-time", requireNotNull(captcha.captchaTime))
@@ -54,7 +55,7 @@ class AuthApi(
         }
     }
 
-    fun logout(): Boolean {
+    suspend fun logout(): Boolean {
         val response =
             webClient.get("https://4pda.to/forum/index.php?act=logout&CODE=03&k=" + webClient.getAuthKey())
 
@@ -63,7 +64,11 @@ class AuthApi(
             throw Exception("You already logout")
 
         webClient.clearCookies()
-        App.get().preferences.edit().remove("cookie_member_id").remove("cookie_pass_hash").apply()
+
+        App.get().preferences.edit {
+            remove("cookie_member_id")
+            remove("cookie_pass_hash")
+        }
 
         return !checkLogin(webClient.get(IWebClient.MINIMAL_PAGE).body)
     }
@@ -73,14 +78,16 @@ class AuthApi(
             Pattern.compile("<i class=\"icon-profile\">[\\s\\S]*?<ul class=\"dropdown-menu\">[\\s\\S]*?showuser=(\\d+)\"[\\s\\S]*?action=logout[^\"]*?k=([a-z0-9]{32})")
                 .matcher(response)
         if (matcher.find()) {
-            App.get().preferences.edit().putString("auth_key", matcher.group(2)).apply()
+            App.get().preferences.edit {
+                putString("auth_key", matcher.group(2))
+            }
             return true
         }
         return false
     }
 
     companion object {
-        val AUTH_BASE_URL = "https://4pda.to/forum/index.php?act=auth"
+        private val AUTH_BASE_URL = "https://4pda.to/forum/index.php?act=auth"
         private val errorPattern = Pattern.compile("errors-list\">([\\s\\S]*?)</ul>")
     }
 

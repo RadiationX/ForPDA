@@ -14,13 +14,13 @@ class ThemeApi(
     private val themeParser: ThemeParser
 ) {
 
-    fun getTheme(url: String, hatOpen: Boolean, pollOpen: Boolean): ThemePage {
+    suspend fun getTheme(url: String, hatOpen: Boolean, pollOpen: Boolean): ThemePage {
         val response = webClient.get(url)
-        val redirectUrl: String = response.redirect ?: url
+        val redirectUrl: String = response.redirect
         return themeParser.parsePage(response.body, redirectUrl, hatOpen, pollOpen)
     }
 
-    fun reportPost(topicId: Int, postId: Int, message: String): Boolean {
+    suspend fun reportPost(topicId: Int, postId: Int, message: String) {
         val request = NetworkRequest.Builder()
             .url("https://4pda.to/forum/index.php?act=report&send=1&t=$topicId&p=$postId")
             .formHeader("message", URLEncoder.encode(message, "windows-1251"), true)
@@ -36,10 +36,9 @@ class ThemeApi(
         if (m.find()) {
             throw Exception("Ошибка отправки жалобы: " + m.group(1))
         }
-        return true
     }
 
-    fun deletePost(postId: Int): Boolean {
+    suspend fun deletePost(postId: Int) {
         val url =
             "https://4pda.to/forum/index.php?act=zmod&auth_key=${webClient.getAuthKey()}&code=postchoice&tact=delete&selectedpids=$postId"
         val response = webClient.request(NetworkRequest.Builder().url(url).xhrHeader().build())
@@ -47,10 +46,9 @@ class ThemeApi(
         if (body != "ok") {
             throw Exception("Ошибка изменения репутации поста")
         }
-        return true
     }
 
-    fun votePost(postId: Int, type: Boolean): String {
+    suspend  fun votePost(postId: Int, type: Boolean): String {
         val response =
             webClient.get("https://4pda.to/forum/zka.php?i=$postId&v=${if (type) "1" else "-1"}")
         var result: String? = null

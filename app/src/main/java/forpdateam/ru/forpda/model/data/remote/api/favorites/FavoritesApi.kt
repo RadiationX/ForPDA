@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.model.data.remote.api.favorites
 
 import android.net.Uri
-import android.util.Log
 import forpdateam.ru.forpda.entity.remote.favorites.FavData
 import forpdateam.ru.forpda.entity.remote.favorites.FavItem
 import forpdateam.ru.forpda.model.data.remote.IWebClient
@@ -16,7 +15,7 @@ class FavoritesApi(
     private val favoritesParser: FavoritesParser
 ) {
 
-    fun getFavorites(st: Int, all: Boolean, sorting: Sorting): FavData {
+    suspend fun getFavorites(st: Int, all: Boolean, sorting: Sorting): FavData {
         var data = getFavorites(st, sorting)
         if (all) {
             while (data.pagination.hasNext()) {
@@ -53,7 +52,7 @@ class FavoritesApi(
         return data
     }
 
-    private fun getFavorites(st: Int, sorting: Sorting): FavData {
+    private suspend fun getFavorites(st: Int, sorting: Sorting): FavData {
         val uriBuilder = Uri.Builder()
             .scheme("https")
             .authority("4pda.to")
@@ -68,14 +67,14 @@ class FavoritesApi(
         return favoritesParser.parseFavorites(response.body)
     }
 
-    fun editSubscribeType(type: String?, favId: Int): Boolean {
+    suspend fun editSubscribeType(type: String?, favId: Int): Boolean {
         checkNotNull(type)
         val response =
             webClient.get("https://4pda.to/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0&tact=$type&selectedtids=$favId")
         return favoritesParser.checkIsComplete(response.body)
     }
 
-    fun editPinState(type: String?, favId: Int): Boolean {
+    suspend fun editPinState(type: String?, favId: Int): Boolean {
         checkNotNull(type)
         val builder = NetworkRequest.Builder()
             .url("https://4pda.to/forum/index.php?act=fav")
@@ -85,7 +84,7 @@ class FavoritesApi(
         return favoritesParser.checkIsComplete(response.body)
     }
 
-    fun delete(favId: Int): Boolean {
+    suspend fun delete(favId: Int): Boolean {
         val builder = NetworkRequest.Builder()
             .url("https://4pda.to/forum/index.php?act=fav")
             .xhrHeader()
@@ -95,7 +94,7 @@ class FavoritesApi(
         return favoritesParser.checkIsComplete(response.body)
     }
 
-    fun add(id: Int, action: Int, type: String?): Boolean {
+    suspend fun add(id: Int, action: Int, type: String?): Boolean {
         checkNotNull(type)
         var url = "https://4pda.to/forum/index.php?act=fav&type=add&track_type=$type"
         if (action == ACTION_ADD_FORUM) {

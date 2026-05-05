@@ -13,20 +13,24 @@ class AttachmentsApi(
     private val attachmentsParser: AttachmentsParser
 ) {
 
-    fun uploadQmsFiles(files: List<RequestFile>, pending: List<AttachmentItem>) =
+    suspend fun uploadQmsFiles(files: List<RequestFile>, pending: List<AttachmentItem>) =
         uploadFiles(-1, "MSG", files, pending)
 
-    fun uploadTopicFiles(postId: Int, files: List<RequestFile>, pending: List<AttachmentItem>) =
+    suspend fun uploadTopicFiles(
+        postId: Int,
+        files: List<RequestFile>,
+        pending: List<AttachmentItem>
+    ) =
         uploadFiles(postId, null, files, pending)
 
-    fun deleteQmsFiles(items: List<AttachmentItem>) =
+    suspend fun deleteQmsFiles(items: List<AttachmentItem>) =
         deleteFiles(-1, "MSG", items)
 
-    fun deleteTopicFiles(postId: Int, items: List<AttachmentItem>) =
+    suspend fun deleteTopicFiles(postId: Int, items: List<AttachmentItem>) =
         deleteFiles(postId, null, items)
 
 
-    private fun uploadFiles(
+    private suspend fun uploadFiles(
         postId: Int,
         relType: String?,
         files: List<RequestFile>,
@@ -91,7 +95,7 @@ class AttachmentsApi(
         return pending
     }
 
-    private fun deleteFiles(
+    private suspend fun deleteFiles(
         postId: Int,
         relType: String?,
         items: List<AttachmentItem>

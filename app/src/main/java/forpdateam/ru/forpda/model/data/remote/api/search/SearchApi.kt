@@ -13,7 +13,7 @@ class SearchApi(
     private val searchParser: SearchParser
 ) {
 
-    fun getSearch(settings: SearchSettings): SearchResult {
+    suspend fun getSearch(settings: SearchSettings): SearchResult {
         val response = webClient.get(settings.toUrl())
         return searchParser.parse(response.body, settings)
     }

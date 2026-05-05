@@ -19,19 +19,15 @@ import okhttp3.CookieJar
 import okhttp3.FormBody
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
-import java.security.GeneralSecurityException
+import okhttp3.coroutines.executeAsync
 import java.util.Locale
 import java.util.concurrent.TimeUnit
-import javax.net.ssl.SSLContext
 
 class Client(
     context: Context?,
@@ -177,17 +173,17 @@ class Client(
 
     //Network
     @Throws(Exception::class)
-    override fun get(url: String): NetworkResponse {
+    override suspend fun get(url: String): NetworkResponse {
         return request(NetworkRequest.Builder().url(url).build())
     }
 
     @Throws(Exception::class)
-    override fun request(request: NetworkRequest): NetworkResponse {
+    override suspend fun request(request: NetworkRequest): NetworkResponse {
         return request(request, this.client, null)
     }
 
     @Throws(Exception::class)
-    override fun request(
+    override suspend fun request(
         request: NetworkRequest,
         progressListener: IWebClient.ProgressListener
     ): NetworkResponse {
@@ -280,47 +276,46 @@ class Client(
     }
 
     @Throws(Exception::class)
-    fun request(
+    private suspend fun request(
         request: NetworkRequest,
         client: OkHttpClient,
         uploadProgressListener: IWebClient.ProgressListener?
     ): NetworkResponse {
         val requestBuilder = prepareRequest(request, uploadProgressListener)
-        val response = NetworkResponse(request.url)
-        var okHttpResponse: Response? = null
-        try {
-            okHttpResponse = client.newCall(requestBuilder.build()).execute()
-            if (!okHttpResponse.isSuccessful) {
-                if (okHttpResponse.code == 403) {
-                    val content = okHttpResponse.body!!.string()
+
+        val call = client.newCall(requestBuilder.build())
+
+        return call.executeAsync().use { response ->
+            if (!response.isSuccessful) {
+                if (response.code == 403) {
+                    val content = response.body.string()
                     //todo catch this is errorhandler
                     throw GoogleCaptchaException(content)
                 }
                 throw OkHttpResponseException(
-                    okHttpResponse.code,
-                    okHttpResponse.message,
+                    response.code,
+                    response.message,
                     request.url
                 )
             }
 
-            response.code = okHttpResponse.code
-            response.message = okHttpResponse.message
-            response.redirect = okHttpResponse.request.url.toString()
-
-            if (!request.isWithoutBody) {
-                response.body = okHttpResponse.body!!.string()
-                getCounts(response.body)
-                checkForumErrors(response.body)
+            val body = if (request.isWithoutBody) {
+                ""
+            } else {
+                response.body.string()
             }
 
-            Log.d(
-                LOG_TAG,
-                "Response: $response"
+            getCounts(body)
+            checkForumErrors(body)
+
+            NetworkResponse(
+                request.url,
+                response.code,
+                response.message,
+                response.request.url.toString(),
+                body
             )
-        } finally {
-            okHttpResponse?.close()
         }
-        return response
     }
 
     override fun createWebSocketConnection(webSocketListener: WebSocketListener): WebSocket {

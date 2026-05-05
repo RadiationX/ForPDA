@@ -16,22 +16,22 @@ class DevDbApi(
     private val devDbParser: DevDbParser
 ) {
 
-    fun getBrands(catId: String): Brands {
+    suspend fun getBrands(catId: String): Brands {
         val response = webClient.get("https://4pda.to/devdb/$catId/all")
         return devDbParser.parseBrands(response.body)
     }
 
-    fun getBrand(catId: String, brandId: String): Brand {
+    suspend fun getBrand(catId: String, brandId: String): Brand {
         val response = webClient.get("https://4pda.to/devdb/$catId/$brandId/all")
         return devDbParser.parseBrand(response.body)
     }
 
-    fun getDevice(devId: String): Device {
+    suspend fun getDevice(devId: String): Device {
         val response = webClient.get("https://4pda.to/devdb/$devId")
         return devDbParser.parseDevice(response.body, devId)
     }
 
-    fun search(query: String): BrandSearch {
+    suspend fun search(query: String): BrandSearch {
         val reqQuery = query.let {
             try {
                 URLDecoder.decode(query, "windows-1251")

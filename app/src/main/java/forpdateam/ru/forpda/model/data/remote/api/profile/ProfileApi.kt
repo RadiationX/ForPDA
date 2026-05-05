@@ -12,7 +12,7 @@ class ProfileApi(
     private val profileParser: ProfileParser
 ) {
 
-    fun getProfile(url: String): ProfileModel {
+    suspend fun getProfile(url: String): ProfileModel {
         val response = webClient.get(url)
         return profileParser.parse(response.body, url)
     }

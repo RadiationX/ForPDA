@@ -18,7 +18,7 @@ material = "1.2.1"
 minitemplator-repackaged = "1.4.1"
 mobmetricalib = "3.13.1"
 moxy = "2.2.2"
-okhttp = "4.12.0"
+okhttp = "5.3.2"
 pagerbullet = "1.2.0"
 palette-ktx = "1.0.0"
 permissionsdispatcher = "4.9.2"
@@ -61,8 +61,11 @@ mobmetricalib = { module = "com.yandex.android:mobmetricalib", version.ref = "mo
 moxy = { module = "com.github.moxy-community:moxy", version.ref = "moxy" }
 moxy-androidx = { module = "com.github.moxy-community:moxy-androidx", version.ref = "moxy" }
 moxy-compiler = { module = "com.github.moxy-community:moxy-compiler", version.ref = "moxy" }
-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
-okhttp-urlconnection = { module = "com.squareup.okhttp3:okhttp-urlconnection", version.ref = "okhttp" }
+okhttp-bom = { module = "com.squareup.okhttp3:okhttp-bom", version.ref = "okhttp" }
+okhttp = { module = "com.squareup.okhttp3:okhttp" }
+okhttp-urlconnection = { module = "com.squareup.okhttp3:okhttp-urlconnection" }
+okhttp-coroutines = { module = "com.squareup.okhttp3:okhttp-coroutines" }
+okhttp-logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor" }
 pagerbullet = { module = "com.github.robohorse:PagerBullet", version.ref = "pagerbullet" }
 permissionsdispatcher = { module = "com.github.permissions-dispatcher:permissionsdispatcher", version.ref = "permissionsdispatcher" }
 permissionsdispatcher-processor = { module = "com.github.permissions-dispatcher:permissionsdispatcher-processor", version.ref = "permissionsdispatcher" }

@@ -411,9 +411,9 @@ class EventsRepository(
 
         var observable: Single<List<NotificationEvent>>? = null
         if (NotificationEvent.fromQms(source)) {
-            observable = Single.fromCallable { eventsApi.qmsEvents }
+            observable = Single.fromCallable { eventsApi.getQmsEvents() }
         } else if (NotificationEvent.fromTheme(source)) {
-            observable = Single.fromCallable { eventsApi.favoritesEvents }
+            observable = Single.fromCallable { eventsApi.getFavoritesEvents() }
         }
 
         if (observable != null) {

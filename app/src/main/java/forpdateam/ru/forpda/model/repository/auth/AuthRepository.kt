@@ -25,9 +25,7 @@ class AuthRepository(
     private val userHolder: IUserHolder
 ) : BaseRepository(schedulers) {
 
-    fun loadCaptcha(): Single<AuthCaptcha> = Single
-        .fromCallable { authApi.getCaptcha() }
-        .runInIoToUi()
+    suspend fun loadCaptcha(): Single<AuthCaptcha> = authApi.getCaptcha()
 
     fun signIn(captcha: AuthCaptcha, form: AuthForm): Single<Unit> = Single
         .fromCallable { authApi.login(captcha, form) }

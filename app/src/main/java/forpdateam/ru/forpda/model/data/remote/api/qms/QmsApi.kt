@@ -25,7 +25,7 @@ class QmsApi(
     private val imgBbPattern =
         Pattern.compile("PF\\.obj\\.config\\.json_api=\"([^\"]*?)\"[\\s\\S]*?PF\\.obj\\.config\\.auth_token=\"([^\"]*?)\"")
 
-    fun getBlackList(): List<QmsContact> {
+    suspend fun getBlackList(): List<QmsContact> {
         val builder = NetworkRequest.Builder()
             .url("https://4pda.to/forum/index.php?act=qms&settings=blacklist")
             .formHeader("xhr", "body")
@@ -33,7 +33,7 @@ class QmsApi(
         return qmsParser.parseBlackList(response.body)
     }
 
-    fun getContactList(): List<QmsContact> {
+    suspend fun getContactList(): List<QmsContact> {
         val response = webClient.request(
             NetworkRequest.Builder()
                 .url("https://4pda.to/forum/index.php?&act=qms-xhr&action=userlist").build()
@@ -41,7 +41,7 @@ class QmsApi(
         return qmsParser.parseContacts(response.body)
     }
 
-    fun unBlockUsers(id: Int): List<QmsContact> {
+    suspend fun unBlockUsers(id: Int): List<QmsContact> {
         val builder = NetworkRequest.Builder()
             .url("https://4pda.to/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1")
             .formHeader("action", "delete-users")
@@ -51,7 +51,7 @@ class QmsApi(
         return qmsParser.parseBlackList(response.body)
     }
 
-    fun blockUser(nick: String): List<QmsContact> {
+    suspend fun blockUser(nick: String): List<QmsContact> {
         val builder = NetworkRequest.Builder()
             .url("https://4pda.to/forum/index.php?act=qms&settings=blacklist&xhr=blacklist-form&do=1")
             .formHeader("action", "add-user")
@@ -60,7 +60,7 @@ class QmsApi(
         return qmsParser.parseBlackList(response.body)
     }
 
-    fun getThemesList(id: Int): QmsThemes {
+    suspend fun getThemesList(id: Int): QmsThemes {
         val builder = NetworkRequest.Builder()
             .url("https://4pda.to/forum/index.php?act=qms&mid=$id")
             .formHeader("xhr", "body")
@@ -68,7 +68,7 @@ class QmsApi(
         return qmsParser.parseThemes(response.body, id)
     }
 
-    fun deleteTheme(id: Int, themeId: Int): QmsThemes {
+    suspend fun deleteTheme(id: Int, themeId: Int): QmsThemes {
         val builder = NetworkRequest.Builder()
             .url("https://4pda.to/forum/index.php?act=qms&mid=$id&xhr=body&do=1")
             .formHeader("xhr", "body")
@@ -78,7 +78,7 @@ class QmsApi(
         return qmsParser.parseThemes(response.body, id)
     }
 
-    fun getChat(userId: Int, themeId: Int): QmsChatModel {
+    suspend fun getChat(userId: Int, themeId: Int): QmsChatModel {
         val builder = NetworkRequest.Builder()
             .url("https://4pda.to/forum/index.php?act=qms&mid=$userId&t=$themeId")
             .formHeader("xhr", "body")
@@ -86,7 +86,7 @@ class QmsApi(
         return qmsParser.parseChat(response.body)
     }
 
-    fun findUser(nick: String): List<ForumUser> {
+    suspend fun findUser(nick: String): List<ForumUser> {
         val encodedNick = URLEncoder.encode(nick, "UTF-8")
         val builder = NetworkRequest.Builder()
             .url("https://4pda.to/forum/index.php?act=qms-xhr&action=autocomplete-username&q=$encodedNick")
@@ -95,7 +95,7 @@ class QmsApi(
         return qmsParser.parseSearch(response.body)
     }
 
-    fun sendNewTheme(
+    suspend fun sendNewTheme(
         nick: String,
         title: String,
         mess: String,
@@ -111,7 +111,7 @@ class QmsApi(
         return qmsParser.parseChat(response.body)
     }
 
-    fun sendMessage(
+    suspend fun sendMessage(
         userId: Int,
         themeId: Int,
         text: String,
@@ -129,7 +129,11 @@ class QmsApi(
         return qmsParser.sendMessage(response.body)
     }
 
-    fun getMessagesFromWs(themeId: Int, messageId: Int, afterMessageId: Int): List<QmsMessage> {
+    suspend fun getMessagesFromWs(
+        themeId: Int,
+        messageId: Int,
+        afterMessageId: Int
+    ): List<QmsMessage> {
         val messInfoBuilder = NetworkRequest.Builder()
             .url("https://4pda.to/forum/index.php?act=qms-xhr&")
             .formHeader("action", "message-info")
@@ -140,7 +144,7 @@ class QmsApi(
         return getMessagesAfter(userId, themeId, afterMessageId)
     }
 
-    fun getMessagesAfter(userId: Int, themeId: Int, afterMessageId: Int): List<QmsMessage> {
+    suspend fun getMessagesAfter(userId: Int, themeId: Int, afterMessageId: Int): List<QmsMessage> {
         val threadMessagesBuilder = NetworkRequest.Builder()
             .url("https://4pda.to/forum/index.php?act=qms-xhr&")
             .xhrHeader()
@@ -152,7 +156,7 @@ class QmsApi(
         return qmsParser.parseMoreMessages(response.body)
     }
 
-    fun deleteDialog(mid: Int): String {
+    suspend fun deleteDialog(mid: Int): String {
         val builder = NetworkRequest.Builder()
             .url("https://4pda.to/forum/index.php")
             .formHeader("act", "qms-xhr")
@@ -161,7 +165,10 @@ class QmsApi(
         return webClient.request(builder.build()).body
     }
 
-    fun uploadFiles(files: List<RequestFile>, pending: List<AttachmentItem>): List<AttachmentItem> {
+    suspend fun uploadFiles(
+        files: List<RequestFile>,
+        pending: List<AttachmentItem>
+    ): List<AttachmentItem> {
         val baseUrl = "https://ru.imgbb.com/"
         var uploadUrl = "https://ru.imgbb.com/json"
         var authToken = "null"

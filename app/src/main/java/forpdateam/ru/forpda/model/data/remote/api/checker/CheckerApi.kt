@@ -11,13 +11,11 @@ class CheckerApi(
     private val checkerParser: CheckerParser
 ) {
 
-    fun checkUpdate(): UpdateData = client
+    suspend fun checkUpdate(): UpdateData = client
         .get("https://bitbucket.org/RadiationX/apps-updates/raw/master/forpda/check.json")
-        .let {
-            checkerParser.parse(it.body)
-        }
+        .let { checkerParser.parse(it.body) }
 
-    fun loadPatterns(): String = client
+    suspend fun loadPatterns(): String = client
         .get("https://bitbucket.org/RadiationX/apps-updates/raw/master/forpda/patterns.json")
         .body
 

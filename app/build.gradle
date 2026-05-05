@@ -149,8 +149,11 @@ dependencies {
     implementation libs.androidx.recyclerview
     implementation libs.androidx.preference.ktx
 
+    implementation platform(libs.okhttp.bom)
     implementation libs.okhttp
+    implementation libs.okhttp.coroutines
     implementation libs.okhttp.urlconnection
+    implementation libs.okhttp.logging.interceptor
     //implementation 'com.annimon:stream:1.1.4'
     implementation libs.rxandroid
     implementation libs.rxjava
