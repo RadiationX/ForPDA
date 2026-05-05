@@ -3,49 +3,45 @@ package forpdateam.ru.forpda.model.repository.posteditor
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.editpost.EditPost
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
-import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
-import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.data.cache.forumuser.ForumUsersCache
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.attachments.AttachmentsApi
 import forpdateam.ru.forpda.model.data.remote.api.editpost.EditPostApi
-import forpdateam.ru.forpda.model.repository.BaseRepository
-import io.reactivex.Single
 
 /**
  * Created by radiationx on 01.01.18.
  */
 
 class PostEditorRepository(
-    private val schedulers: SchedulersProvider,
     private val editPostApi: EditPostApi,
     private val attachmentsApi: AttachmentsApi,
     private val forumUsersCache: ForumUsersCache
-) : BaseRepository(schedulers) {
+) {
 
-    fun loadForm(postId: Int): Single<EditPost> = Single
-        .fromCallable { editPostApi.loadForm(postId) }
-        .runInIoToUi()
+    suspend fun loadForm(postId: Int): EditPost {
+        return editPostApi.loadForm(postId)
+    }
 
-    fun uploadFiles(
+    suspend fun uploadFiles(
         id: Int,
         files: List<RequestFile>,
         pending: List<AttachmentItem>
-    ): Single<List<AttachmentItem>> = Single
-        .fromCallable { attachmentsApi.uploadTopicFiles(id, files, pending) }
-        .runInIoToUi()
+    ): List<AttachmentItem> {
+        return attachmentsApi.uploadTopicFiles(id, files, pending)
+    }
 
-    fun deleteFiles(id: Int, items: List<AttachmentItem>): Single<List<AttachmentItem>> = Single
-        .fromCallable { attachmentsApi.deleteTopicFiles(id, items) }
-        .runInIoToUi()
+    suspend fun deleteFiles(id: Int, items: List<AttachmentItem>): List<AttachmentItem> {
+        return attachmentsApi.deleteTopicFiles(id, items)
+    }
 
-    fun sendPost(form: EditPostForm): Single<ThemePage> = Single
-        .fromCallable { editPostApi.sendPost(form) }
-        .doOnSuccess { saveUsers(it) }
-        .runInIoToUi()
+    suspend fun sendPost(form: EditPostForm): Any {
+        return editPostApi.sendPost(form).also {
+            saveUsers(it)
+        }
+    }
 
-    private fun saveUsers(page: ThemePage) {
+    private suspend fun saveUsers(page: ThemePage) {
         val forumUsers = page.posts.map { post ->
             post.post.user
         }

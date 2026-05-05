@@ -1,14 +1,14 @@
 package forpdateam.ru.forpda.model
 
 import android.content.SharedPreferences
-import com.jakewharton.rxrelay2.BehaviorRelay
+import androidx.core.content.edit
 import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.extensions.replace
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class CloseableInfoHolder(
-    private val preferences: SharedPreferences,
-    private val schedulers: SchedulersProvider
+    private val preferences: SharedPreferences
 ) {
 
     companion object {
@@ -22,23 +22,11 @@ class CloseableInfoHolder(
         )
     }
 
-    private val relay = BehaviorRelay.create<List<CloseableInfo>>()
+    private val dataFlow = MutableStateFlow(load())
 
-    init {
-        val closedIds: List<Int> =
-            preferences.getString("closeable_info_closed_ids", null)?.let { savedIds ->
-                savedIds.split(',').map { it.toInt() }
-            } ?: emptyList()
+    fun observe(): Flow<List<CloseableInfo>> = dataFlow
 
-        val allItems = ALL_ITEMS.map { CloseableInfo(it, closedIds.contains(it)) }
-        relay.accept(allItems)
-    }
-
-    fun observe(): Observable<List<CloseableInfo>> = relay
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
-
-    fun get(): List<CloseableInfo> = relay.value!!
+    fun get(): List<CloseableInfo> = dataFlow.value
 
     fun close(item: CloseableInfo) {
         val currentItems = get().toMutableList()
@@ -47,11 +35,21 @@ class CloseableInfoHolder(
             map = { it.copy(isClosed = true) }
         )
         val closedItems = currentItems.filter { it.isClosed }
-        preferences.edit().putString(
-            "closeable_info_closed_ids",
-            closedItems.joinToString(",") { it.id.toString() }).apply()
-        relay.accept(currentItems)
+        preferences.edit {
+            putString(
+                "closeable_info_closed_ids",
+                closedItems.joinToString(",") { it.id.toString() }
+            )
+        }
+        dataFlow.value = currentItems
     }
 
+    private fun load(): List<CloseableInfo> {
+        val closedIds: List<Int> =
+            preferences.getString("closeable_info_closed_ids", null)?.let { savedIds ->
+                savedIds.split(',').map { it.toInt() }
+            } ?: emptyList()
 
+        return ALL_ITEMS.map { CloseableInfo(it, closedIds.contains(it)) }
+    }
 }

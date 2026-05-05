@@ -5,62 +5,56 @@ import forpdateam.ru.forpda.entity.asDeferredData
 import forpdateam.ru.forpda.entity.remote.news.Comment
 import forpdateam.ru.forpda.entity.remote.news.DetailsPage
 import forpdateam.ru.forpda.entity.remote.news.NewsItem
-import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.data.cache.forumuser.ForumUsersCache
 import forpdateam.ru.forpda.model.data.remote.api.news.NewsApi
-import forpdateam.ru.forpda.model.repository.BaseRepository
-import io.reactivex.Single
 
 /**
  * Created by radiationx on 01.01.18.
  */
 
 class NewsRepository(
-    private val schedulers: SchedulersProvider,
     private val newsApi: NewsApi,
     private val forumUsersCache: ForumUsersCache
-) : BaseRepository(schedulers) {
+) {
 
-    fun getNews(category: String, pageNumber: Int): Single<List<NewsItem>> = Single
-        .fromCallable { newsApi.getNews(category, pageNumber) }
-        .map { data ->
-            data.map {
-                val forumUser = forumUsersCache.getUserById(it.authorId)
-                Log.e(
-                    "kekosina",
-                    "forumUser ${it.authorId}, ${forumUser?.id}, ${forumUser?.nick}, ${forumUser?.avatar}"
-                )
-                if (forumUser != null) {
-                    it.copy(avatar = forumUser.avatar?.asDeferredData())
-                } else {
-                    it
-                }
+    suspend fun getNews(category: String, pageNumber: Int): List<NewsItem> {
+        val news = newsApi.getNews(category, pageNumber)
+        return news.map {
+            val forumUser = forumUsersCache.getUserById(it.authorId)
+            Log.e(
+                "kekosina",
+                "forumUser ${it.authorId}, ${forumUser?.id}, ${forumUser?.nick}, ${forumUser?.avatar}"
+            )
+            if (forumUser != null) {
+                it.copy(avatar = forumUser.avatar?.asDeferredData())
+            } else {
+                it
             }
         }
-        .runInIoToUi()
+    }
 
-    fun likeComment(articleId: Int, commentId: Int): Single<Boolean> = Single
-        .fromCallable { newsApi.likeComment(articleId, commentId) }
-        .runInIoToUi()
+    suspend fun likeComment(articleId: Int, commentId: Int): Boolean {
+        return newsApi.likeComment(articleId, commentId)
+    }
 
-    fun sendPoll(from: String, pollId: Int, answersId: IntArray): Single<DetailsPage> = Single
-        .fromCallable { newsApi.sendPoll(from, pollId, answersId) }
-        .runInIoToUi()
+    suspend fun sendPoll(from: String, pollId: Int, answersId: IntArray): DetailsPage {
+        return newsApi.sendPoll(from, pollId, answersId)
+    }
 
-    fun replyComment(articleId: Int, commentId: Int, comment: String): Single<DetailsPage> = Single
-        .fromCallable { newsApi.replyComment(articleId, commentId, comment) }
-        .runInIoToUi()
+    suspend fun replyComment(articleId: Int, commentId: Int, comment: String): DetailsPage {
+        return newsApi.replyComment(articleId, commentId, comment)
+    }
 
-    fun getDetails(id: Int): Single<DetailsPage> = Single
-        .fromCallable { newsApi.getDetails(id) }
-        .runInIoToUi()
+    suspend fun getDetails(id: Int): DetailsPage {
+        return newsApi.getDetails(id)
+    }
 
-    fun getDetails(url: String): Single<DetailsPage> = Single
-        .fromCallable { newsApi.getDetails(url) }
-        .runInIoToUi()
+    suspend fun getDetails(url: String): DetailsPage {
+        return newsApi.getDetails(url)
+    }
 
-    fun getComments(article: DetailsPage): Single<List<Comment>> = Single
-        .fromCallable { newsApi.parseComments(article.karmaMap, article.commentsSource) }
-        .runInIoToUi()
+    suspend fun getComments(article: DetailsPage): List<Comment> {
+        return newsApi.parseComments(article.karmaMap, article.commentsSource)
+    }
 
 }

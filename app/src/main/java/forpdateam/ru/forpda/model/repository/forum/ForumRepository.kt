@@ -4,58 +4,48 @@ import forpdateam.ru.forpda.entity.remote.forum.Announce
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemTree
 import forpdateam.ru.forpda.entity.remote.forum.ForumRules
-import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.data.cache.forum.ForumCache
 import forpdateam.ru.forpda.model.data.remote.api.forum.ForumApi
-import forpdateam.ru.forpda.model.repository.BaseRepository
-import io.reactivex.Completable
-import io.reactivex.Single
 
 /**
  * Created by radiationx on 03.01.18.
  */
 
 class ForumRepository(
-    private val schedulers: SchedulersProvider,
     private val forumApi: ForumApi,
     private val forumCache: ForumCache
-) : BaseRepository(schedulers) {
+) {
 
-    fun getForums(): Single<ForumItemTree> = Single
-        .fromCallable { transformToTree(forumApi.getForums()) }
-        .runInIoToUi()
+    suspend fun getForums(): ForumItemTree {
+        return transformToTree(forumApi.getForums())
+    }
 
-    fun getCache(): Single<ForumItemTree> = Single
-        .fromCallable {
-            transformToTree(forumCache.getItems())
+    suspend fun getCache(): ForumItemTree {
+        return transformToTree(forumCache.getItems())
+    }
+
+    suspend fun markAllRead() {
+        forumApi.markAllRead()
+    }
+
+    suspend fun markRead(id: Int) {
+        forumApi.markRead(id)
+    }
+
+    suspend fun getRules(): ForumRules {
+        return forumApi.getRules()
+    }
+
+    suspend fun getAnnounce(id: Int, forumId: Int): Announce {
+        return forumApi.getAnnounce(id, forumId)
+    }
+
+    suspend fun saveCache(rootForum: ForumItemTree) {
+        val items = mutableListOf<ForumItemFlat>().apply {
+            transformToList(this, rootForum)
         }
-        .runInIoToUi()
-
-    fun markAllRead(): Single<Any> = Single
-        .fromCallable { forumApi.markAllRead() }
-        .runInIoToUi()
-
-    fun markRead(id: Int): Single<Any> = Single
-        .fromCallable { forumApi.markRead(id) }
-        .runInIoToUi()
-
-    fun getRules(): Single<ForumRules> = Single
-        .fromCallable { forumApi.getRules() }
-        .runInIoToUi()
-
-    fun getAnnounce(id: Int, forumId: Int): Single<Announce> = Single
-        .fromCallable { forumApi.getAnnounce(id, forumId) }
-        .runInIoToUi()
-
-    fun saveCache(rootForum: ForumItemTree): Completable = Completable
-        .fromRunnable {
-            val items = mutableListOf<ForumItemFlat>().apply {
-                transformToList(this, rootForum)
-            }
-            forumCache.saveItems(items)
-        }
-        .runInIoToUi()
-
+        forumCache.saveItems(items)
+    }
 
     private fun transformToList(
         list: MutableList<ForumItemFlat>,

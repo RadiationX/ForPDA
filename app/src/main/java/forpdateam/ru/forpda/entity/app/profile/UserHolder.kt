@@ -8,14 +8,17 @@ import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.extensions.nullString
 import io.reactivex.Observable
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.json.JSONArray
 import org.json.JSONObject
+import androidx.core.content.edit
+import kotlinx.coroutines.flow.Flow
 
 class UserHolder(
     private val sharedPreferences: SharedPreferences
 ) : IUserHolder {
 
-    private val currentUserRelay = BehaviorRelay.createDefault(EntityWrapper(user))
+    private val currentUserRelay = MutableStateFlow<ForumUser?>(user)
 
     override var user: ForumUser?
         get() {
@@ -31,7 +34,7 @@ class UserHolder(
                 }
         }
         set(value) {
-            currentUserRelay.accept(EntityWrapper(value))
+            currentUserRelay.value = value
             val result = value?.let { profile ->
                 JSONObject().apply {
                     put("id", profile.id)
@@ -39,12 +42,14 @@ class UserHolder(
                     put("avatar", profile.avatar)
                 }
             }
-            if (result == null) {
-                sharedPreferences.edit().remove("current_user").apply()
-            } else {
-                sharedPreferences.edit().putString("current_user", result.toString()).apply()
+            sharedPreferences.edit {
+                if (result == null) {
+                    remove("current_user")
+                } else {
+                    putString("current_user", result.toString())
+                }
             }
         }
 
-    override fun observeCurrentUser(): Observable<EntityWrapper<ForumUser?>> = currentUserRelay
+    override fun observeCurrentUser(): Flow<ForumUser?> = currentUserRelay
 }

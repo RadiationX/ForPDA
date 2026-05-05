@@ -1,14 +1,10 @@
 package forpdateam.ru.forpda.model.repository.note
 
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
-import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.data.cache.notes.NotesCache
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.storage.ExternalStorageProvider
-import forpdateam.ru.forpda.model.repository.BaseRepository
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -17,90 +13,81 @@ import java.util.Date
 import java.util.Locale
 
 class NotesRepository(
-    private val schedulers: SchedulersProvider,
     private val notesCache: NotesCache,
     private val externalStorage: ExternalStorageProvider
-) : BaseRepository(schedulers) {
+) {
 
-    fun observeItems(): Observable<List<NoteItem>> = notesCache
-        .observeItems()
-        .runInIoToUi()
+    fun observeItems(): Flow<List<NoteItem>> {
+        return notesCache.observeItems()
+    }
 
-    fun loadNotes(): Single<List<NoteItem>> = Single
-        .fromCallable { notesCache.getItems() }
-        .runInIoToUi()
+    suspend fun loadNotes(): List<NoteItem> {
+        return notesCache.getItems()
+    }
 
-    fun deleteNote(id: Long): Completable = Completable
-        .fromCallable { notesCache.delete(id) }
-        .runInIoToUi()
+    suspend fun deleteNote(id: Long) {
+        notesCache.delete(id)
+    }
 
-    fun addNote(item: NoteItem): Completable = Completable
-        .fromCallable { notesCache.add(item) }
-        .runInIoToUi()
+    suspend fun addNote(item: NoteItem) {
+        notesCache.add(item)
+    }
 
-    fun addNotes(items: List<NoteItem>): Completable = Completable
-        .fromCallable { notesCache.add(items) }
-        .runInIoToUi()
+    suspend fun addNotes(items: List<NoteItem>) {
+        notesCache.add(items)
+    }
 
-    fun importNotes(file: RequestFile) = Single
-        .fromCallable {
-            if (file.fileName.matches("[\\s\\S]*?\\.json$".toRegex())) {
-                externalStorage.getText(file.fileStream)
-            } else {
-                throw Exception("Файл имеет неправильное расширение")
-            }
+    suspend fun importNotes(file: RequestFile): List<NoteItem> {
+        val jsonSource = if (file.fileName.matches("[\\s\\S]*?\\.json$".toRegex())) {
+            externalStorage.getText(file.fileStream)
+        } else {
+            throw Exception("Файл имеет неправильное расширение")
         }
-        .flatMap { importNotes(it) }
-        .runInIoToUi()
+        return importNotes(jsonSource)
+    }
 
-
-    fun importNotes(jsonSource: String) = Single
-        .fromCallable {
-            val jsonBody = JSONArray(jsonSource)
-            val noteItems = mutableListOf<NoteItem>()
-            for (i in 0 until jsonBody.length()) {
-                try {
-                    val jsonItem = jsonBody.getJSONObject(i)
-                    noteItems.add(
-                        NoteItem(
-                            id = jsonItem.getLong("id"),
-                            title = jsonItem.getString("title"),
-                            link = jsonItem.getString("link"),
-                            content = jsonItem.getString("content"),
-                        )
+    suspend fun importNotes(jsonSource: String): List<NoteItem> {
+        val jsonBody = JSONArray(jsonSource)
+        val noteItems = mutableListOf<NoteItem>()
+        for (i in 0 until jsonBody.length()) {
+            try {
+                val jsonItem = jsonBody.getJSONObject(i)
+                noteItems.add(
+                    NoteItem(
+                        id = jsonItem.getLong("id"),
+                        title = jsonItem.getString("title"),
+                        link = jsonItem.getString("link"),
+                        content = jsonItem.getString("content"),
                     )
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
+                )
+            } catch (e: JSONException) {
+                e.printStackTrace()
             }
-            return@fromCallable noteItems
         }
-        .doOnSuccess { notesCache.add(it) }
-        .runInIoToUi()
+        notesCache.add(noteItems)
+        return noteItems
+    }
 
-    fun exportNotes() = Single
-        .fromCallable {
-            val jsonBody = JSONArray()
-            notesCache.getItems().forEach {
-                try {
-                    jsonBody.put(JSONObject().apply {
-                        put("id", it.id)
-                        put("title", it.title)
-                        put("link", it.link)
-                        put("content", it.content)
-                    })
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
+    suspend fun exportNotes(): String {
+        val jsonBody = JSONArray()
+        notesCache.getItems().forEach {
+            try {
+                jsonBody.put(JSONObject().apply {
+                    put("id", it.id)
+                    put("title", it.title)
+                    put("link", it.link)
+                    put("content", it.content)
+                })
+            } catch (e: JSONException) {
+                e.printStackTrace()
             }
-            val date = SimpleDateFormat(
-                "MMddyyy-HHmmss",
-                Locale.getDefault()
-            ).format(Date(System.currentTimeMillis()))
-            val fileName = "ForPDA_Notes_$date.json"
-            externalStorage.saveTextDefault(jsonBody.toString(), fileName)
-
         }
-        .runInIoToUi()
+        val date = SimpleDateFormat(
+            "MMddyyy-HHmmss",
+            Locale.getDefault()
+        ).format(Date(System.currentTimeMillis()))
+        val fileName = "ForPDA_Notes_$date.json"
+        return externalStorage.saveTextDefault(jsonBody.toString(), fileName)
+    }
 
 }

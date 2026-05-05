@@ -7,7 +7,6 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
-import forpdateam.ru.forpda.entity.DeferredData
 import forpdateam.ru.forpda.entity.app.EditPostSyncData
 import forpdateam.ru.forpda.entity.app.TabNotification
 import forpdateam.ru.forpda.entity.app.profile.IUserHolder
@@ -173,7 +172,7 @@ class ThemePresenter(
         loadAction = action
         viewState.updateHistoryLastHtml()
         themeRepository
-            .getTheme(url, true, hatOpen, pollOpen)
+            .getTheme(url, hatOpen, pollOpen)
             .map { themeTemplate.mapEntity(it) }
             .doOnSubscribe { viewState.setRefreshing(true) }
             .doAfterTerminate { viewState.setRefreshing(false) }

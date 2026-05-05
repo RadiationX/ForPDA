@@ -11,152 +11,123 @@ import forpdateam.ru.forpda.entity.remote.qms.QmsMessage
 import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
 import forpdateam.ru.forpda.model.CountersHolder
-import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.data.cache.forumuser.ForumUsersCache
 import forpdateam.ru.forpda.model.data.cache.qms.QmsCache
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.attachments.AttachmentsApi
 import forpdateam.ru.forpda.model.data.remote.api.qms.QmsApi
-import forpdateam.ru.forpda.model.repository.BaseRepository
-import io.reactivex.Observable
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by radiationx on 01.01.18.
  */
 
 class QmsRepository(
-    private val schedulers: SchedulersProvider,
     private val qmsApi: QmsApi,
     private val attachmentsApi: AttachmentsApi,
     private val qmsCache: QmsCache,
     private val forumUsersCache: ForumUsersCache,
     private val countersHolder: CountersHolder
-) : BaseRepository(schedulers) {
+) {
 
-    fun observeContacts(): Observable<List<QmsContact>> = qmsCache
-        .observeContacts()
-        .runInIoToUi()
+    fun observeContacts(): Flow<List<QmsContact>> {
+        return qmsCache.observeContacts()
+    }
 
-    fun observeThemes(userId: Int): Observable<QmsThemes> = qmsCache
-        .observeThemes(userId)
-        .runInIoToUi()
+    fun observeThemes(userId: Int): Flow<QmsThemes?> {
+        return qmsCache.observeThemes(userId)
+    }
 
     //Common
-    fun findUser(nick: String): Single<List<ForumUser>> = Single
-        .fromCallable { qmsApi.findUser(nick) }
-        .runInIoToUi()
+    suspend fun findUser(nick: String): List<ForumUser> {
+        return qmsApi.findUser(nick)
+    }
 
-    fun blockUser(nick: String): Single<List<QmsContact>> = Single
-        .fromCallable { qmsApi.blockUser(nick) }
-        .runInIoToUi()
+    suspend fun blockUser(nick: String): List<QmsContact> {
+        return qmsApi.blockUser(nick)
+    }
 
-    fun unBlockUsers(userId: Int): Single<List<QmsContact>> = Single
-        .fromCallable { qmsApi.unBlockUsers(userId) }
-        .runInIoToUi()
+    suspend fun unBlockUsers(userId: Int): List<QmsContact> {
+        return qmsApi.unBlockUsers(userId)
+    }
 
     //Contacts
-    fun getContactList(): Single<List<QmsContact>> = Single
-        .fromCallable { qmsApi.getContactList() }
-        .doOnSuccess { saveUsers(it) }
-        .flatMap { saveContactsCache(it) }
-        .runInIoToUi()
+    suspend fun getContactList(): List<QmsContact> {
+        return qmsApi.getContactList().let { contacts ->
+            forumUsersCache.saveUsers(contacts.map { it.user })
+            qmsCache.saveContacts(contacts)
+            qmsCache.getContacts()
+        }
+    }
 
-    fun getBlackList(): Single<List<QmsContact>> = Single
-        .fromCallable { qmsApi.getBlackList() }
-        .runInIoToUi()
+    suspend fun getBlackList(): List<QmsContact> {
+        return qmsApi.getBlackList()
+    }
 
-    fun deleteDialog(mid: Int): Single<String> = Single
-        .fromCallable { qmsApi.deleteDialog(mid) }
-        .runInIoToUi()
+    suspend fun deleteDialog(mid: Int): String {
+        return qmsApi.deleteDialog(mid)
+    }
 
 
     //Themes
-    fun getThemesList(id: Int): Single<QmsThemes> = Single
-        .fromCallable { qmsApi.getThemesList(id) }
-        .flatMap { saveThemesCache(it) }
-        .runInIoToUi()
+    suspend fun getThemesList(id: Int): QmsThemes {
+        return qmsApi.getThemesList(id).let {
+            qmsCache.saveThemes(it)
+            qmsCache.getThemes(it.user.id)
+        }
+    }
 
-    fun deleteTheme(id: Int, themeId: Int): Single<QmsThemes> = Single
-        .fromCallable { qmsApi.deleteTheme(id, themeId) }
-        .flatMap { saveThemesCache(it) }
-        .runInIoToUi()
+    suspend fun deleteTheme(id: Int, themeId: Int): QmsThemes {
+        return qmsApi.deleteTheme(id, themeId).let {
+            qmsCache.saveThemes(it)
+            qmsCache.getThemes(it.user.id)
+        }
+    }
 
 
     //Chat
-    fun getChat(userId: Int, themeId: Int): Single<QmsChatModel> = Single
-        .fromCallable { qmsApi.getChat(userId, themeId) }
-        .runInIoToUi()
+    suspend fun getChat(userId: Int, themeId: Int): QmsChatModel {
+        return qmsApi.getChat(userId, themeId)
+    }
 
-    fun sendNewTheme(
+    suspend fun sendNewTheme(
         nick: String,
         title: String,
         mess: String,
         files: List<AttachmentItem>
-    ): Single<QmsChatModel> = Single
-        .fromCallable { qmsApi.sendNewTheme(nick, title, mess, files) }
-        .runInIoToUi()
+    ): QmsChatModel {
+        return qmsApi.sendNewTheme(nick, title, mess, files)
+    }
 
-    fun sendMessage(
+    suspend fun sendMessage(
         userId: Int,
         themeId: Int,
         text: String,
         files: List<AttachmentItem>
-    ): Single<List<QmsMessage>> = Single
-        .fromCallable { qmsApi.sendMessage(userId, themeId, text, files) }
-        .runInIoToUi()
+    ): List<QmsMessage> {
+        return qmsApi.sendMessage(userId, themeId, text, files)
+    }
 
-    fun getMessagesFromWs(
+    suspend fun getMessagesFromWs(
         themeId: Int,
         messageId: Int,
         afterMessageId: Int
-    ): Single<List<QmsMessage>> = Single
-        .fromCallable { qmsApi.getMessagesFromWs(themeId, messageId, afterMessageId) }
-        .runInIoToUi()
-
-    fun getMessagesAfter(userId: Int, themeId: Int, afterMessageId: Int): Single<List<QmsMessage>> =
-        Single
-            .fromCallable { qmsApi.getMessagesAfter(userId, themeId, afterMessageId) }
-            .runInIoToUi()
-
-    fun uploadFiles(
-        files: List<RequestFile>,
-        pending: List<AttachmentItem>
-    ): Single<List<AttachmentItem>> = Single
-        .fromCallable { attachmentsApi.uploadQmsFiles(files, pending) }
-        .runInIoToUi()
-
-
-    private fun saveUsers(contacts: List<QmsContact>) {
-        val forumUsers = contacts.map { contact ->
-            contact.user
-        }
-        forumUsersCache.saveUsers(forumUsers)
+    ): List<QmsMessage> {
+        return qmsApi.getMessagesFromWs(themeId, messageId, afterMessageId)
     }
 
+    suspend fun getMessagesAfter(userId: Int, themeId: Int, afterMessageId: Int): List<QmsMessage> {
+        return qmsApi.getMessagesAfter(userId, themeId, afterMessageId)
+    }
 
-    /*
-    *
-    * cache
-    *
-    * */
+    suspend fun uploadFiles(
+        files: List<RequestFile>,
+        pending: List<AttachmentItem>
+    ): List<AttachmentItem> {
+        return attachmentsApi.uploadQmsFiles(files, pending)
+    }
 
-    private fun saveContactsCache(items: List<QmsContact>): Single<List<QmsContact>> = Single
-        .fromCallable { qmsCache.saveContacts(items) }
-        .flatMap { getContactsCache() }
-
-    private fun getContactsCache(): Single<List<QmsContact>> = Single
-        .fromCallable { qmsCache.getContacts() }
-
-    private fun saveThemesCache(data: QmsThemes): Single<QmsThemes> = Single
-        .fromCallable { qmsCache.saveThemes(data) }
-        .flatMap { getThemesCache(data.user.id) }
-
-    private fun getThemesCache(userId: Int): Single<QmsThemes> = Single
-        .fromCallable { qmsCache.getThemes(userId) }
-
-
-    fun handleEvent(event: TabNotification) {
+    suspend fun handleEvent(event: TabNotification) {
         if (!NotificationEvent.fromQms(event.source)) {
             return
         }

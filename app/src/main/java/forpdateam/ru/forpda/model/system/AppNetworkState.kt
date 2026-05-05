@@ -2,9 +2,9 @@ package forpdateam.ru.forpda.model.system
 
 import android.content.Context
 import android.net.ConnectivityManager
-import com.jakewharton.rxrelay2.BehaviorRelay
 import forpdateam.ru.forpda.model.NetworkStateProvider
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * Created by radiationx on 10.02.18.
@@ -13,30 +13,24 @@ import io.reactivex.Observable
 class AppNetworkState(
     private val context: Context
 ) : NetworkStateProvider {
-    private val stateRelay: BehaviorRelay<Boolean>
+
+    private val stateFlow = MutableStateFlow(getLocalState())
 
     private fun getLocalState(): Boolean {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return cm.activeNetworkInfo?.isConnected ?: false
     }
 
-    init {
-        stateRelay = BehaviorRelay.createDefault(getLocalState())
-    }
-
-    override fun observeState(): Observable<Boolean> {
-        return stateRelay
+    override fun observeState(): Flow<Boolean> {
+        return stateFlow
     }
 
     override fun getState(): Boolean {
-        val result = getLocalState()
-        if (result != stateRelay.value) {
-            stateRelay.accept(result)
-        }
-        return stateRelay.value!!
+        stateFlow.value = getLocalState()
+        return stateFlow.value
     }
 
     override fun setState(state: Boolean) {
-        stateRelay.accept(state)
+        stateFlow.value = state
     }
 }

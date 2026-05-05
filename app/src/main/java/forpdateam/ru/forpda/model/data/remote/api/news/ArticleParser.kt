@@ -18,6 +18,8 @@ import forpdateam.ru.forpda.model.data.remote.api.regex.parser.Node
 import forpdateam.ru.forpda.model.data.remote.api.regex.parser.Parser
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.regex.Matcher
 
 class ArticleParser(
@@ -167,13 +169,18 @@ class ArticleParser(
         return result
     }
 
-    fun parseComments(karmaMap: SparseArray<Comment.Karma>, source: String?): List<Comment> {
-        val comments = CommentNode()
-        if (source != null) {
-            val document = Parser.parse(source)
-            recurseComments(karmaMap, document, comments, 0)
+    suspend fun parseComments(
+        karmaMap: SparseArray<Comment.Karma>,
+        source: String?
+    ): List<Comment> {
+        return withContext(Dispatchers.Default) {
+            val comments = CommentNode()
+            if (source != null) {
+                val document = Parser.parse(source)
+                recurseComments(karmaMap, document, comments, 0)
+            }
+            commentsToList(comments)
         }
-        return commentsToList(comments)
     }
 
     private fun commentsToList(comment: CommentNode): ArrayList<Comment> {

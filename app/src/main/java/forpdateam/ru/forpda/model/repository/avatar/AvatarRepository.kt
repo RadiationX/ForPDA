@@ -1,39 +1,29 @@
 package forpdateam.ru.forpda.model.repository.avatar
 
-import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.data.cache.forumuser.ForumUsersCache
-import forpdateam.ru.forpda.model.repository.BaseRepository
-import io.reactivex.Single
 
 /**
  * Created by radiationx on 01.01.18.
  */
 
 class AvatarRepository(
-    private val forumUsersCache: ForumUsersCache,
-    private val schedulers: SchedulersProvider
-) : BaseRepository(schedulers) {
+    private val forumUsersCache: ForumUsersCache
+) {
 
-    fun getAvatar(id: Int, nick: String): String {
-        return getAvatarSync(id, nick) ?: throw NullPointerException("No avatar/user by id: $id")
+    suspend fun getAvatar(id: Int): String {
+        return forumUsersCache.getUserById(id)?.avatar
+            ?: throw NullPointerException("No avatar/user by id: $id")
     }
 
-    fun getAvatar(id: Int): String {
-        return getAvatarSync(id) ?: throw NullPointerException("No avatar/user by id: $id")
+    suspend fun getAvatar(nick: String): String {
+        return forumUsersCache.getUserByNick(nick)?.avatar
+            ?: throw NullPointerException("No avatar/user by nick: $nick")
     }
 
-    fun getAvatar(nick: String): String {
-        return getAvatarSync(nick) ?: throw NullPointerException("No avatar/user by nick: $nick")
+    suspend fun getAvatar(id: Int, nick: String): String {
+        val avatar = forumUsersCache.getUserById(id)?.avatar
+            ?: forumUsersCache.getUserByNick(nick)?.avatar
+            ?: throw NullPointerException("No avatar/user by id: $id")
+        return avatar
     }
-
-    fun getAvatarSync(id: Int, nick: String): String? {
-        val forumUser = forumUsersCache.getUserById(id)
-            ?: forumUsersCache.getUserByNick(nick)
-        return forumUser?.avatar
-    }
-
-    fun getAvatarSync(id: Int): String? = forumUsersCache.getUserById(id)?.avatar
-
-    fun getAvatarSync(nick: String): String? = forumUsersCache.getUserByNick(nick)?.avatar
-
 }

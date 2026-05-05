@@ -17,7 +17,7 @@ class ProfileApi(
         return profileParser.parse(response.body, url)
     }
 
-    fun saveNote(note: String): Boolean {
+    suspend fun saveNote(note: String): Boolean {
         val builder = NetworkRequest.Builder()
             .url("https://4pda.to/forum/index.php?act=profile-xhr&action=save-note")
             .formHeader("note", note)

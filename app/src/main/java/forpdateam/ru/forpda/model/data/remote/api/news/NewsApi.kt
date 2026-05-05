@@ -104,7 +104,7 @@ class NewsApi(
         return true
     }
 
-    fun parseComments(karmaMap: SparseArray<Comment.Karma>, source: String?): List<Comment> {
+    suspend fun parseComments(karmaMap: SparseArray<Comment.Karma>, source: String?): List<Comment> {
         return articleParser.parseComments(karmaMap, source)
     }
 

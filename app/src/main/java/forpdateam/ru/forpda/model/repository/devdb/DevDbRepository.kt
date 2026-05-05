@@ -4,34 +4,30 @@ import forpdateam.ru.forpda.entity.remote.devdb.Brand
 import forpdateam.ru.forpda.entity.remote.devdb.BrandSearch
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
 import forpdateam.ru.forpda.entity.remote.devdb.Device
-import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.data.remote.api.devdb.DevDbApi
-import forpdateam.ru.forpda.model.repository.BaseRepository
-import io.reactivex.Single
 
 /**
  * Created by radiationx on 01.01.18.
  */
 
 class DevDbRepository(
-    private val schedulers: SchedulersProvider,
     private val devDbApi: DevDbApi
-) : BaseRepository(schedulers) {
+) {
 
-    fun getBrands(catId: String): Single<Brands> = Single
-        .fromCallable { devDbApi.getBrands(catId) }
-        .runInIoToUi()
+    suspend fun getBrands(catId: String): Brands {
+        return devDbApi.getBrands(catId)
+    }
 
-    fun getBrand(catId: String, brandId: String): Single<Brand> = Single
-        .fromCallable { devDbApi.getBrand(catId, brandId) }
-        .runInIoToUi()
+    suspend fun getBrand(catId: String, brandId: String): Brand {
+        return devDbApi.getBrand(catId, brandId)
+    }
 
-    fun getDevice(devId: String): Single<Device> = Single
-        .fromCallable { devDbApi.getDevice(devId) }
-        .runInIoToUi()
+    suspend fun getDevice(devId: String): Device {
+        return devDbApi.getDevice(devId)
+    }
 
-    fun search(query: String): Single<BrandSearch> = Single
-        .fromCallable { devDbApi.search(query) }
-        .runInIoToUi()
+    suspend fun search(query: String): BrandSearch {
+        return devDbApi.search(query)
+    }
 
 }

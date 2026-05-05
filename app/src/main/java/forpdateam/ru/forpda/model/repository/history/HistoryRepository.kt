@@ -1,36 +1,31 @@
 package forpdateam.ru.forpda.model.repository.history
 
 import forpdateam.ru.forpda.entity.app.history.HistoryItem
-import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.data.cache.history.HistoryCache
-import forpdateam.ru.forpda.model.repository.BaseRepository
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by radiationx on 01.01.18.
  */
 
 class HistoryRepository(
-    private val schedulers: SchedulersProvider,
     private val historyCache: HistoryCache
-) : BaseRepository(schedulers) {
+) {
 
-    fun observeItems(): Observable<List<HistoryItem>> = historyCache
-        .observeItems()
-        .runInIoToUi()
+    fun observeItems(): Flow<List<HistoryItem>> {
+        return historyCache.observeItems()
+    }
 
-    fun getHistory(): Single<List<HistoryItem>> = Single
-        .fromCallable { historyCache.getHistory() }
-        .runInIoToUi()
+    suspend fun getHistory(): List<HistoryItem> {
+        return historyCache.getHistory()
+    }
 
-    fun remove(id: Int): Completable = Completable
-        .fromRunnable { historyCache.remove(id) }
-        .runInIoToUi()
+    suspend fun remove(id: Int) {
+        historyCache.remove(id)
+    }
 
-    fun clear(): Completable = Completable
-        .fromRunnable { historyCache.clear() }
-        .runInIoToUi()
+    suspend fun clear() {
+        historyCache.clear()
+    }
 
 }

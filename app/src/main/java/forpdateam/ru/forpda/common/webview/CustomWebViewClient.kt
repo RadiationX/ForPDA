@@ -46,11 +46,13 @@ open class CustomWebViewClient : WebViewClient() {
                 val type = matcher.group(1)
                 var value = matcher.group(2)
                 value = URLDecoder.decode(value, "UTF-8")
+                val avatarUrl = when (type) {
+                    TYPE_NICK -> runCatching {
+                        avatarRepository.getAvatar(value)
+                    }.getOrNull()
 
-                var avatarUrl: String? = null
-                when (type) {
-                    TYPE_NICK -> avatarUrl = avatarRepository.getAvatarSync(value)
-                    TYPE_URL -> avatarUrl = value
+                    TYPE_URL -> value
+                    else -> null
                 }
                 Log.d(
                     "lalala",

@@ -8,93 +8,87 @@ import forpdateam.ru.forpda.entity.remote.favorites.FavItem
 import forpdateam.ru.forpda.extensions.replace
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.CountersHolder
-import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.data.cache.favorites.FavoritesCache
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.data.remote.api.favorites.Sorting
 import forpdateam.ru.forpda.model.preferences.ListsPreferencesHolder
 import forpdateam.ru.forpda.model.preferences.NotificationPreferencesHolder
-import forpdateam.ru.forpda.model.repository.BaseRepository
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by radiationx on 01.01.18.
  */
 
 class FavoritesRepository(
-    private val schedulers: SchedulersProvider,
     private val favoritesApi: FavoritesApi,
     private val favoritesCache: FavoritesCache,
     private val authHolder: AuthHolder,
     private val countersHolder: CountersHolder,
     private val listsPreferencesHolder: ListsPreferencesHolder,
     private val notificationPreferencesHolder: NotificationPreferencesHolder
-) : BaseRepository(schedulers) {
+) {
 
+    fun observeItems(): Flow<List<FavItem>> {
+        return favoritesCache.observeItems()
+    }
 
-    fun observeItems(): Observable<List<FavItem>> = favoritesCache
-        .observeItems()
-        .runInIoToUi()
+    suspend fun loadCache(): List<FavItem> {
+        return favoritesCache.getItems()
+    }
 
-    fun loadCache(): Single<List<FavItem>> = Single
-        .fromCallable { favoritesCache.getItems() }
-        .runInIoToUi()
+    suspend fun loadFavorites(st: Int, all: Boolean, sorting: Sorting): FavData {
+        return favoritesApi.getFavorites(st, all, sorting).also {
+            favoritesCache.saveFavorites(it.items)
+        }
+    }
 
-    fun loadFavorites(st: Int, all: Boolean, sorting: Sorting): Single<FavData> = Single
-        .fromCallable { favoritesApi.getFavorites(st, all, sorting) }
-        .doOnSuccess { favData -> favoritesCache.saveFavorites(favData.items) }
-        .runInIoToUi()
+    suspend fun editFavorites(act: Int, favId: Int, id: Int, type: String?): Boolean {
+        return when (act) {
+            FavoritesApi.ACTION_EDIT_SUB_TYPE -> {
+                favoritesApi.editSubscribeType(type, favId)
+            }
 
-    fun editFavorites(act: Int, favId: Int, id: Int, type: String?): Single<Boolean> = Single
-        .fromCallable {
-            when (act) {
-                FavoritesApi.ACTION_EDIT_SUB_TYPE -> favoritesApi.editSubscribeType(type, favId)
-                FavoritesApi.ACTION_EDIT_PIN_STATE -> favoritesApi.editPinState(type, favId)
-                FavoritesApi.ACTION_DELETE -> favoritesApi.delete(favId)
-                FavoritesApi.ACTION_ADD, FavoritesApi.ACTION_ADD_FORUM -> favoritesApi.add(
-                    id,
-                    act,
-                    type
+            FavoritesApi.ACTION_EDIT_PIN_STATE -> {
+                favoritesApi.editPinState(type, favId)
+            }
+
+            FavoritesApi.ACTION_DELETE -> {
+                favoritesApi.delete(favId)
+            }
+
+            FavoritesApi.ACTION_ADD, FavoritesApi.ACTION_ADD_FORUM -> {
+                favoritesApi.add(id, act, type)
+            }
+
+            else -> {
+                false
+            }
+        }
+    }
+
+    suspend fun markRead(topicId: Int) {
+        favoritesCache.getItemByTopicId(topicId)?.also {
+            favoritesCache.updateItem(it.copy(isNew = false))
+        }
+    }
+
+    suspend fun handleEvent(event: TabNotification): Int {
+        val favItems = favoritesCache.getItems()
+        val sorting = Sorting(
+            listsPreferencesHolder.getSortingKey(),
+            listsPreferencesHolder.getSortingOrder()
+        )
+        val count = countersHolder.get().favorites
+        return handleEventTransaction(favItems, event, sorting, count).also {
+            countersHolder.set(
+                countersHolder.get().copy(
+                    favorites = it
                 )
-
-                else -> false
-            }
-        }
-        .runInIoToUi()
-
-    fun markRead(topicId: Int): Completable = Completable
-        .fromRunnable {
-            val favItem = favoritesCache.getItemByTopicId(topicId)
-            if (favItem != null) {
-                val newItem = favItem.copy(isNew = false)
-                favoritesCache.updateItem(newItem)
-            }
-        }
-        .runInIoToUi()
-
-
-    fun handleEvent(event: TabNotification): Single<Int> = Single
-        .fromCallable {
-            val favItems = favoritesCache.getItems()
-            val sorting = Sorting(
-                listsPreferencesHolder.getSortingKey(),
-                listsPreferencesHolder.getSortingOrder()
             )
-            val count = countersHolder.get().favorites
-            handleEventTransaction(favItems, event, sorting, count).also {
-                countersHolder.set(
-                    countersHolder.get().copy(
-                        favorites = it
-                    )
-                )
-            }
         }
-        .runInIoToUi()
+    }
 
-
-    private fun handleEventTransaction(
+    private suspend fun handleEventTransaction(
         favItems: List<FavItem>,
         event: TabNotification,
         sorting: Sorting,

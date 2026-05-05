@@ -149,13 +149,12 @@ class Dependencies internal constructor(
 
     val externalStorage: ExternalStorageProvider by lazy { ExternalStorage() }
 
-    val authHolder: AuthHolder by lazy { AuthHolder(preferences, schedulers) }
-    val countersHolder: CountersHolder by lazy { CountersHolder(preferences, schedulers) }
+    val authHolder: AuthHolder by lazy { AuthHolder(preferences) }
+    val countersHolder: CountersHolder by lazy { CountersHolder(preferences) }
     val userHolder: IUserHolder by lazy { UserHolder(dataStoragePreferences) }
     val closeableInfoHolder: CloseableInfoHolder by lazy {
         CloseableInfoHolder(
-            preferences,
-            schedulers
+            preferences
         )
     }
 
@@ -252,10 +251,9 @@ class Dependencies internal constructor(
     val qmsCache by lazy { QmsCache(realm) }
     val notesCache by lazy { NotesCache(realm) }
 
-    val avatarRepository by lazy { AvatarRepository(forumUsersCache, schedulers) }
+    val avatarRepository by lazy { AvatarRepository(forumUsersCache) }
     val favoritesRepository by lazy {
         FavoritesRepository(
-            schedulers,
             favoritesApi,
             favoritesCache,
             authHolder,
@@ -264,11 +262,10 @@ class Dependencies internal constructor(
             notificationPreferencesHolder
         )
     }
-    val historyRepository by lazy { HistoryRepository(schedulers, historyCache) }
-    val mentionsRepository by lazy { MentionsRepository(schedulers, mentionsApi) }
+    val historyRepository by lazy { HistoryRepository(historyCache) }
+    val mentionsRepository by lazy { MentionsRepository(mentionsApi) }
     val authRepository by lazy {
         AuthRepository(
-            schedulers,
             authApi,
             authHolder,
             countersHolder,
@@ -277,19 +274,17 @@ class Dependencies internal constructor(
     }
     val profileRepository by lazy {
         ProfileRepository(
-            schedulers,
             profileApi,
             userHolder,
             authHolder,
             forumUsersCache
         )
     }
-    val reputationRepository by lazy { ReputationRepository(schedulers, reputationApi) }
-    val forumRepository by lazy { ForumRepository(schedulers, forumApi, forumCache) }
-    val topicsRepository by lazy { TopicsRepository(schedulers, topicsApi) }
+    val reputationRepository by lazy { ReputationRepository(reputationApi) }
+    val forumRepository by lazy { ForumRepository(forumApi, forumCache) }
+    val topicsRepository by lazy { TopicsRepository(topicsApi) }
     val themeRepository by lazy {
         ThemeRepository(
-            schedulers,
             themeApi,
             historyCache,
             forumUsersCache
@@ -297,7 +292,6 @@ class Dependencies internal constructor(
     }
     val qmsRepository by lazy {
         QmsRepository(
-            schedulers,
             qmsApi,
             attachmentsApi,
             qmsCache,
@@ -305,31 +299,28 @@ class Dependencies internal constructor(
             countersHolder
         )
     }
-    val searchRepository by lazy { SearchRepository(schedulers, searchApi, forumUsersCache) }
-    val newsRepository by lazy { NewsRepository(schedulers, newsApi, forumUsersCache) }
-    val devDbRepository by lazy { DevDbRepository(schedulers, devDbApi) }
+    val searchRepository by lazy { SearchRepository(searchApi, forumUsersCache) }
+    val newsRepository by lazy { NewsRepository(newsApi, forumUsersCache) }
+    val devDbRepository by lazy { DevDbRepository(devDbApi) }
     val editPostRepository by lazy {
         PostEditorRepository(
-            schedulers,
             editPostApi,
             attachmentsApi,
             forumUsersCache
         )
     }
-    val notesRepository by lazy { NotesRepository(schedulers, notesCache, externalStorage) }
+    val notesRepository by lazy { NotesRepository(notesCache, externalStorage) }
     val eventsRepository by lazy {
         EventsRepository(
-            context,
             webClient,
             eventsApi,
-            schedulers,
             networkState,
             authHolder,
             notificationPreferencesHolder
         )
     }
     val menuRepository by lazy { MenuRepository(preferences, authHolder, countersHolder) }
-    val checkerRepository by lazy { CheckerRepository(schedulers, checkerApi, patternProvider) }
+    val checkerRepository by lazy { CheckerRepository(checkerApi, patternProvider) }
 
     val otherPreferencesHolder by lazy { OtherPreferencesHolder(preferences) }
     val mainPreferencesHolder by lazy { MainPreferencesHolder(preferences) }
