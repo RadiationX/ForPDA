@@ -3,7 +3,7 @@ package forpdateam.ru.forpda.entity.remote.editpost
 /**
  * Created by radiationx on 10.01.17.
  */
-
+// TODO refactor dis shiet
 class EditPostForm {
     var type = TYPE_NEW_POST
     val attachments = ArrayList<AttachmentItem>()
