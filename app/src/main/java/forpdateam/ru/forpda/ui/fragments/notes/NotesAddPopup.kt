@@ -73,17 +73,10 @@ class NotesAddPopup(context: Context, item: NoteItem?) {
                 link = link,
                 content = content
             )
-            if (editingMode) {
-                val disposable = notesRepository
-                    .updateNote(result)
-                    .subscribe { dialog.dismiss() }
-                compositeDisposable.add(disposable)
-            } else {
-                val disposable = notesRepository
-                    .addNote(result)
-                    .subscribe { dialog.dismiss() }
-                compositeDisposable.add(disposable)
-            }
+            val disposable = notesRepository
+                .addNote(result)
+                .subscribe { dialog.dismiss() }
+            compositeDisposable.add(disposable)
         }
 
         dialog.setContentView(view)

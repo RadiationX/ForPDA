@@ -1,15 +1,15 @@
 package forpdateam.ru.forpda.entity.db.qms
 
-import io.realm.RealmObject
-import io.realm.annotations.PrimaryKey
+import io.realm.kotlin.types.RealmObject
+import io.realm.kotlin.types.annotations.PrimaryKey
 
 /**
  * Created by radiationx on 25.03.17.
  */
-open class QmsContactBd(
+class QmsContactBd(
     @PrimaryKey
     var nick: String? = null,
     var avatar: String? = null,
     var id: Int = 0,
     var count: Int = 0,
-) : RealmObject()
+) : RealmObject

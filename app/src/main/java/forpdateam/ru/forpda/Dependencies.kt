@@ -6,8 +6,18 @@ import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.NavigatorHolder
 import forpdateam.ru.forpda.client.Client
 import forpdateam.ru.forpda.common.DayNightHelper
+import forpdateam.ru.forpda.common.realm.DbMigration
+import forpdateam.ru.forpda.common.realm.wrapper.RealmWrapper
 import forpdateam.ru.forpda.entity.app.profile.IUserHolder
 import forpdateam.ru.forpda.entity.app.profile.UserHolder
+import forpdateam.ru.forpda.entity.db.ForumUserBd
+import forpdateam.ru.forpda.entity.db.favorites.FavItemBd
+import forpdateam.ru.forpda.entity.db.forum.ForumItemFlatBd
+import forpdateam.ru.forpda.entity.db.history.HistoryItemBd
+import forpdateam.ru.forpda.entity.db.notes.NoteItemBd
+import forpdateam.ru.forpda.entity.db.qms.QmsContactBd
+import forpdateam.ru.forpda.entity.db.qms.QmsThemeBd
+import forpdateam.ru.forpda.entity.db.qms.QmsThemesBd
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.CloseableInfoHolder
 import forpdateam.ru.forpda.model.CountersHolder
@@ -99,6 +109,8 @@ import forpdateam.ru.forpda.presentation.search.SearchTemplate
 import forpdateam.ru.forpda.presentation.theme.ThemeTemplate
 import forpdateam.ru.forpda.ui.DimensionsProvider
 import forpdateam.ru.forpda.ui.TemplateManager
+import io.realm.kotlin.Realm
+import io.realm.kotlin.RealmConfiguration
 
 /**
  * Created by radiationx on 01.01.18.
@@ -211,13 +223,34 @@ class Dependencies internal constructor(
     val checkerApi by lazy { CheckerApi(webClient, checkerParser) }
     val attachmentsApi by lazy { AttachmentsApi(webClient, attachmentsParser) }
 
+
+    private val realmConfig by lazy {
+        val schemas = setOf(
+            FavItemBd::class,
+            ForumItemFlatBd::class,
+            HistoryItemBd::class,
+            NoteItemBd::class,
+            QmsContactBd::class,
+            QmsThemeBd::class,
+            QmsThemesBd::class,
+            ForumUserBd::class
+        )
+        RealmConfiguration.Builder(schemas)
+            .name("forpda.realm")
+            .schemaVersion(4)
+            .migration(DbMigration())
+            .build()
+    }
+    private val rawRealm by lazy { Realm.open(realmConfig) }
+    private val realm by lazy { RealmWrapper(rawRealm) }
+
     val userSource by lazy { UserSourceProvider(qmsApi) }
-    val forumUsersCache by lazy { ForumUsersCache(userSource) }
-    val favoritesCache by lazy { FavoritesCache() }
-    val forumCache by lazy { ForumCache() }
-    val historyCache by lazy { HistoryCache() }
-    val qmsCache by lazy { QmsCache() }
-    val notesCache by lazy { NotesCache() }
+    val forumUsersCache by lazy { ForumUsersCache(userSource, realm) }
+    val favoritesCache by lazy { FavoritesCache(realm) }
+    val forumCache by lazy { ForumCache(realm) }
+    val historyCache by lazy { HistoryCache(realm) }
+    val qmsCache by lazy { QmsCache(realm) }
+    val notesCache by lazy { NotesCache(realm) }
 
     val avatarRepository by lazy { AvatarRepository(forumUsersCache, schedulers) }
     val favoritesRepository by lazy {

@@ -24,7 +24,7 @@ palette-ktx = "1.0.0"
 permissionsdispatcher = "4.9.2"
 photoview = "2.1.3"
 preference-ktx = "1.1.1"
-realm-gradle-plugin = "10.19.0"
+realm-kotlin = "1.16.0"
 recyclerview = "1.1.0"
 roundedimageview = "2.3.0"
 rx-preferences = "2.0.1"
@@ -79,8 +79,8 @@ sectioned-recyclerview = { module = "com.afollestad:sectioned-recyclerview", ver
 spectrum = { module = "com.thebluealliance:spectrum", version.ref = "spectrum" }
 tagsoup = { module = "org.ccil.cowan.tagsoup:tagsoup", version.ref = "tagsoup" }
 universal-image-loader = { module = "com.nostra13.universalimageloader:universal-image-loader", version.ref = "universal-image-loader" }
-realm-gradle-plugin = { module = "io.realm:realm-gradle-plugin", version.ref = "realm-gradle-plugin" }
 viewbindingpropertydelegate = { module = "com.github.kirich1409:viewbindingpropertydelegate", version.ref = "viewbindingpropertydelegate" }
+realm-base = { module = "io.realm.kotlin:library-base", version.ref = "realm-kotlin" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-plugin" }
@@ -88,3 +88,4 @@ android-library = { id = "com.android.library", version.ref = "android-plugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-plugin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-plugin" }
 kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin-plugin" }
+realm = { id = "io.realm.kotlin", version.ref = "realm-kotlin" }

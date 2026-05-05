@@ -34,10 +34,6 @@ class NotesRepository(
         .fromCallable { notesCache.delete(id) }
         .runInIoToUi()
 
-    fun updateNote(item: NoteItem): Completable = Completable
-        .fromCallable { notesCache.update(item) }
-        .runInIoToUi()
-
     fun addNote(item: NoteItem): Completable = Completable
         .fromCallable { notesCache.add(item) }
         .runInIoToUi()

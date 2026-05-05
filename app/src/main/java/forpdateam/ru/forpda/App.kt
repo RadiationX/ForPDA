@@ -50,7 +50,6 @@ import forpdateam.ru.forpda.R.string
 import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.common.LocaleHelper
 import forpdateam.ru.forpda.common.Preferences.Main.ThemeMode
-import forpdateam.ru.forpda.common.realm.DbMigration
 import forpdateam.ru.forpda.common.receivers.NetworkStateReceiver
 import forpdateam.ru.forpda.common.receivers.WakeUpReceiver
 import forpdateam.ru.forpda.common.simple.SimpleObservable
@@ -62,8 +61,6 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
-import io.realm.Realm
-import io.realm.RealmConfiguration
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -343,13 +340,7 @@ class App : Application() {
 
         updateStaticRes()
 
-        Realm.init(this)
-        val configuration = RealmConfiguration.Builder()
-            .name("forpda.realm")
-            .schemaVersion(4)
-            .migration(DbMigration())
-            .build()
-        Realm.setDefaultConfiguration(configuration)
+
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

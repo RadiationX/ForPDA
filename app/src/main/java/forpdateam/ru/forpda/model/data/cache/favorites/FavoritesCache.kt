@@ -1,64 +1,41 @@
 package forpdateam.ru.forpda.model.data.cache.favorites
 
+import forpdateam.ru.forpda.common.realm.wrapper.RealmWrapper
+import forpdateam.ru.forpda.common.realm.wrapper.query
+import forpdateam.ru.forpda.common.realm.wrapper.queryEquals
 import forpdateam.ru.forpda.entity.db.favorites.FavItemBd
 import forpdateam.ru.forpda.entity.remote.favorites.FavItem
 import forpdateam.ru.forpda.entity.remote.others.user.User
-import io.realm.Realm
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 
-class FavoritesCache {
+class FavoritesCache(
+    private val realm: RealmWrapper
+) {
 
-    private val dataFlow = MutableStateFlow<List<FavItem>?>(null)
+    fun observeItems(): Flow<List<FavItem>> = realm
+        .query<FavItemBd>()
+        .flowMapAll { it.toDomain() }
 
-    fun observeItems(): Flow<List<FavItem>> = dataFlow.filterNotNull()
+    suspend fun getItems(): List<FavItem> {
+        return observeItems().first()
+    }
 
-    suspend fun getItems(): List<FavItem> = Realm.getDefaultInstance().use { realm ->
-        realm.where(FavItemBd::class.java).findAll().map { it.toDomain() }
-    }.also {
-        if (dataFlow.value == null) {
-            dataFlow.value = it
+    suspend fun saveFavorites(items: List<FavItem>) {
+        realm.write {
+            delete(FavItemBd::class)
+            upsertAll(items.map { it.toDb() })
         }
     }
 
-    suspend fun saveFavorites(items: List<FavItem>) = Realm.getDefaultInstance().use { realm ->
-        realm.executeTransaction { realmTr ->
-            realmTr.delete(FavItemBd::class.java)
-            realmTr.copyToRealmOrUpdate(items.map { it.toDb() })
-        }
-        dataFlow.value = getItems()
+    suspend fun getItemByTopicId(topicId: Int): FavItem? {
+        return realm
+            .queryEquals<FavItemBd>("topicId", topicId)
+            .mapFirst { it.toDomain() }
     }
 
-    suspend fun getItemByFavId(favId: Int): FavItem? = Realm.getDefaultInstance().use { realm ->
-        realm.where(FavItemBd::class.java).equalTo("favId", favId).findFirst()?.toDomain()
-    }
-
-    suspend fun getItemByTopicId(topicId: Int): FavItem? = Realm.getDefaultInstance().use { realm ->
-        realm.where(FavItemBd::class.java).equalTo("topicId", topicId).findFirst()?.toDomain()
-    }
-
-    suspend fun updateItem(item: FavItem) = Realm.getDefaultInstance().use { realm ->
-        realm.executeTransaction { realmTr ->
-            realmTr.where(FavItemBd::class.java).equalTo("favId", item.favId).findFirst()?.let {
-                realmTr.copyToRealmOrUpdate(item.toDb())
-            }
-        }
-        if (dataFlow.value != null) {
-            realm.where(FavItemBd::class.java)
-                .equalTo("favId", item.favId)
-                .findFirst()
-                ?.also { newItem ->
-                    val currentItems = dataFlow.value!!.toMutableList()
-                    val index = currentItems.indexOfFirst { newItem.favId == it.favId }
-                    if (index == -1) {
-                        dataFlow.value = getItems()
-                    } else {
-                        currentItems[index] = newItem.toDomain()
-                        dataFlow.value = currentItems
-                    }
-                }
-        }
+    suspend fun updateItem(item: FavItem) = realm.write {
+        upsert(item.toDb())
     }
 
 }

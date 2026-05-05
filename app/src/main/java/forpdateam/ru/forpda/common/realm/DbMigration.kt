@@ -1,10 +1,7 @@
 package forpdateam.ru.forpda.common.realm
 
-import android.util.Log
-import io.realm.DynamicRealm
-import io.realm.DynamicRealmObject
-import io.realm.RealmMigration
-import io.realm.RealmObjectSchema
+import io.realm.kotlin.dynamic.getNullableValue
+import io.realm.kotlin.migration.AutomaticSchemaMigration
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -17,70 +14,75 @@ import java.util.Locale
  * Это хрень нужна для того чтобы мигрировать с одной версии обьекта на другой.
  * Ну вдруг там поля поменялись или еще чего.
  */
-class DbMigration : RealmMigration {
-    override fun migrate(realm: DynamicRealm, oldVersion: Long, newVersion: Long) {
-        var updVersion = oldVersion
-        val schema = realm.schema
+class DbMigration : AutomaticSchemaMigration {
 
-        /*
-            for oldest versions
-            */
-        val oldFavSchema = schema["FavItemBd"]
-        if (oldFavSchema != null && !oldFavSchema.hasField("isForum")) {
-            oldFavSchema.addField("isForum", Boolean::class.javaPrimitiveType!!)
-        }
-        val oldHistorySchema = schema["HistoryItemBd"]
-        if (oldHistorySchema != null && !oldHistorySchema.hasField("url")) {
-            oldHistorySchema.addField("url", String::class.java)
-        }
+    override fun migrate(migrationContext: AutomaticSchemaMigration.MigrationContext) {
+        var updVersion = migrationContext.oldRealm.version().version
+
+        migrateOldest(migrationContext)
 
         if (updVersion == 1L) {
-            val favSchema = schema["FavItemBd"]
-            favSchema?.removeField("isNewMessages")?.removeField("info")
-                ?.addField("isNew", Boolean::class.javaPrimitiveType!!)?.addField(
-                    "isPoll",
-                    Boolean::class.javaPrimitiveType!!
-                )?.addField(
-                    "isClosed",
-                    Boolean::class.javaPrimitiveType!!
-                )
-
+            migrateV2(migrationContext)
             updVersion++
         }
 
         if (updVersion == 2L) {
-            val historySchema = schema["HistoryItemBd"]
-            if (historySchema != null) {
-                val oldDateFormat = SimpleDateFormat("MM.dd.yy, HH:mm", Locale.getDefault())
-                val newDateFormat = SimpleDateFormat("dd.MM.yy, HH:mm", Locale.getDefault())
-                historySchema
-                    .transform(RealmObjectSchema.Function { dynamicRealmObject: DynamicRealmObject ->
-                        val dateString = dynamicRealmObject.getString("date")
-                        var date = Date()
-                        try {
-                            date = requireNotNull(oldDateFormat.parse(dateString))
-                        } catch (e: ParseException) {
-                            e.printStackTrace()
-                        }
-                        Log.d("SUKA", "DATES " + dateString + " : " + newDateFormat.format(date))
-                        dynamicRealmObject.setString("date", newDateFormat.format(date))
-                    })
-            }
-
+            migrateV3(migrationContext)
             updVersion++
         }
 
         if (updVersion == 3L) {
-            val favSchema = schema["FavItemBd"]
-            favSchema?.addField("curatorId", Int::class.javaPrimitiveType!!)?.addField(
-                "curatorNick",
-                String::class.java
-            )?.addField(
-                "subType",
-                String::class.java
-            )
-
+            migrateV4(migrationContext)
             updVersion++
+        }
+    }
+
+    private fun migrateOldest(context: AutomaticSchemaMigration.MigrationContext) {
+        context.enumerate("FavItemBd") { old, new ->
+            if (old.getObject("isForum") == null) {
+                new?.set("isForum", false)
+            }
+        }
+        context.enumerate("HistoryItemBd") { old, new ->
+            if (old.getObject("url") == null) {
+                new?.set("url", false)
+            }
+        }
+    }
+
+    private fun migrateV2(context: AutomaticSchemaMigration.MigrationContext) {
+        context.enumerate("FavItemBd") { old, new ->
+            // removed isNewMessages
+            // removed info
+            new?.set("isNew", false)
+            new?.set("isPoll", false)
+            new?.set("isClosed", false)
+        }
+    }
+
+    private fun migrateV3(context: AutomaticSchemaMigration.MigrationContext) {
+        val oldDateFormat = SimpleDateFormat("MM.dd.yy, HH:mm", Locale.getDefault())
+        val newDateFormat = SimpleDateFormat("dd.MM.yy, HH:mm", Locale.getDefault())
+        context.enumerate("HistoryItemBd") { old, new ->
+            val newDate = old.getNullableValue<String>("date")?.also {
+                var date = Date()
+                try {
+                    date = requireNotNull(oldDateFormat.parse(it))
+                } catch (e: ParseException) {
+                    e.printStackTrace()
+                }
+                newDateFormat.format(date)
+            }
+            new?.set("date", newDate)
+        }
+    }
+
+    private fun migrateV4(context: AutomaticSchemaMigration.MigrationContext) {
+        context.enumerate("FavItemBd") { old, new ->
+            val nullString: String? = null
+            new?.set("curatorId", 0)
+            new?.set("curatorNick", nullString)
+            new?.set("subType", nullString)
         }
     }
 }

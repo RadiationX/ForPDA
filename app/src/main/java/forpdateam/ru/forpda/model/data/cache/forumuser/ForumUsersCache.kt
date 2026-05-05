@@ -1,40 +1,45 @@
 package forpdateam.ru.forpda.model.data.cache.forumuser
 
-import android.util.Log
+import forpdateam.ru.forpda.common.realm.wrapper.RealmWrapper
+import forpdateam.ru.forpda.common.realm.wrapper.queryEquals
 import forpdateam.ru.forpda.entity.db.ForumUserBd
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
-import io.realm.Realm
 
 /**
  * Created by radiationx on 08.07.17.
  */
 
 class ForumUsersCache(
-    private val userSource: UserSource
+    private val userSource: UserSource,
+    private val realm: RealmWrapper
 ) {
 
-    suspend fun saveUser(forumUser: ForumUser) = saveUsers(listOf(forumUser))
-
-    suspend fun saveUsers(forumUsers: List<ForumUser>) = Realm.getDefaultInstance().use {
-        it.executeTransaction { realm ->
-            realm.insertOrUpdate(forumUsers.map { user ->
-                Log.e("kekosina", "saveUser  ${user.id}, ${user.nick}")
-                user.toDb()
-            })
+    suspend fun saveUser(forumUser: ForumUser) {
+        realm.write {
+            upsert(forumUser.toDb())
         }
     }
 
-
-    suspend fun getUserById(id: Int): ForumUser? = Realm.getDefaultInstance().use {
-        it.where(ForumUserBd::class.java).equalTo("id", id).findFirst()?.toDomain()
+    suspend fun saveUsers(forumUsers: List<ForumUser>) {
+        realm.write {
+            upsertAll(forumUsers.map { it.toDb() })
+        }
     }
 
-    suspend fun getUserByNick(nick: String): ForumUser? = Realm.getDefaultInstance().use {
-        it.where(ForumUserBd::class.java).equalTo("nick", nick).findFirst()
-            ?.toDomain()
-            ?: userSource.getUsers(nick).getOrNull(0)?.also { user ->
-                saveUser(user)
-            }
+    suspend fun getUserById(id: Int): ForumUser? {
+        return realm
+            .queryEquals<ForumUserBd>("id", id)
+            .mapFirst { it.toDomain() }
+    }
+
+    suspend fun getUserByNick(nick: String): ForumUser? {
+        val user = realm
+            .queryEquals<ForumUserBd>("nick", nick)
+            .mapFirst { it.toDomain() }
+        userSource.findUsers(nick).getOrNull(0)?.also { foundUser ->
+            saveUser(foundUser)
+        }
+        return user
     }
 
 }

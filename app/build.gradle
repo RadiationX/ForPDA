@@ -5,7 +5,7 @@ plugins {
     alias libs.plugins.android.application
     alias libs.plugins.kotlin.android
     alias libs.plugins.kapt
-    id("realm-android")
+    alias libs.plugins.realm
 }
 
 static def getDateTime() {
@@ -185,6 +185,7 @@ dependencies {
     implementation libs.easinginterpolator
     implementation libs.rx.preferences
 
+    implementation libs.realm.base
 
     implementation(libs.permissionsdispatcher)
     kapt libs.permissionsdispatcher.processor

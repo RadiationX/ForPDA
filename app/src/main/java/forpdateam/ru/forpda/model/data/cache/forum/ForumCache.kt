@@ -1,19 +1,24 @@
 package forpdateam.ru.forpda.model.data.cache.forum
 
+import forpdateam.ru.forpda.common.realm.wrapper.RealmWrapper
+import forpdateam.ru.forpda.common.realm.wrapper.query
 import forpdateam.ru.forpda.entity.db.forum.ForumItemFlatBd
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
-import io.realm.Realm
 
-class ForumCache {
+class ForumCache(
+    private val realm: RealmWrapper
+) {
 
-    suspend fun getItems() = Realm.getDefaultInstance().use {
-        it.where(ForumItemFlatBd::class.java).findAll().map { it.toDomain() }
+    suspend fun getItems(): List<ForumItemFlat> {
+        return realm
+            .query<ForumItemFlatBd>()
+            .mapAll { it.toDomain() }
     }
 
-    suspend fun saveItems(items: List<ForumItemFlat>) = Realm.getDefaultInstance().use {
-        it.executeTransaction { realmTr ->
-            realmTr.delete(ForumItemFlatBd::class.java)
-            realmTr.copyToRealmOrUpdate(items.map { it.toDb() })
+    suspend fun saveItems(items: List<ForumItemFlat>) {
+        realm.write {
+            delete(ForumItemFlatBd::class)
+            upsertAll(items.map { it.toDb() })
         }
     }
 }

@@ -1,13 +1,13 @@
 package forpdateam.ru.forpda.entity.db.favorites
 
-import io.realm.RealmObject
-import io.realm.annotations.PrimaryKey
-import io.realm.annotations.RealmField
+import io.realm.kotlin.types.RealmObject
+import io.realm.kotlin.types.annotations.PersistedName
+import io.realm.kotlin.types.annotations.PrimaryKey
 
 /**
  * Created by radiationx on 25.03.17.
  */
-open class FavItemBd(
+class FavItemBd(
     @PrimaryKey
     var favId: Int = 0,
     var topicId: Int = 0,
@@ -27,10 +27,10 @@ open class FavItemBd(
     var desc: String? = null,
     var curatorNick: String? = null,
     var subType: String? = null,
-    @RealmField(name = "pin")
+    @PersistedName(name = "pin")
     var isPin: Boolean = false,
     var isForum: Boolean = false,
     var isNew: Boolean = false,
     var isPoll: Boolean = false,
     var isClosed: Boolean = false,
-) : RealmObject()
+) : RealmObject
