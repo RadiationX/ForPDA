@@ -4,14 +4,9 @@ import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.CompoundButton
-import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.AppCompatCheckBox
-import androidx.appcompat.widget.AppCompatEditText
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -70,8 +65,7 @@ class PollQuestionsAdapter : RecyclerView.Adapter<PollQuestionsAdapter.ViewHolde
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = checkNotNull(getItem(holder.adapterPosition))
-
+        holder.bind(getItem(position))
     }
 
     inner class ViewHolder(
@@ -87,7 +81,8 @@ class PollQuestionsAdapter : RecyclerView.Adapter<PollQuestionsAdapter.ViewHolde
 
             binding.pollQuestionMulti.setOnCheckedChangeListener(checkedChangeListener)
 
-            binding.pollQuestionChoices.layoutManager = LinearLayoutManager(binding.pollQuestionChoices.context)
+            binding.pollQuestionChoices.layoutManager =
+                LinearLayoutManager(binding.pollQuestionChoices.context)
 
             binding.pollAddChoice.setOnClickListener { v1: View? ->
                 val choicesAdapter = choiceAdapters[questions[layoutPosition]]
@@ -120,7 +115,7 @@ class PollQuestionsAdapter : RecyclerView.Adapter<PollQuestionsAdapter.ViewHolde
             }
         }
 
-        fun bind(item:Question){
+        fun bind(item: Question) {
             val qstr =
                 String.format(get().getString(R.string.poll_question_Pos), (adapterPosition + 1))
             customTextWatcher.updatePosition(adapterPosition)
