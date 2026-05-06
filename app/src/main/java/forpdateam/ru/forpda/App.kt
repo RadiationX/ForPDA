@@ -52,7 +52,6 @@ import forpdateam.ru.forpda.common.LocaleHelper
 import forpdateam.ru.forpda.common.Preferences.Main.ThemeMode
 import forpdateam.ru.forpda.common.receivers.NetworkStateReceiver
 import forpdateam.ru.forpda.common.receivers.WakeUpReceiver
-import forpdateam.ru.forpda.common.simple.SimpleObservable
 import forpdateam.ru.forpda.notifications.NotificationsJob
 import forpdateam.ru.forpda.notifications.NotificationsJobCreator
 import forpdateam.ru.forpda.notifications.NotificationsService
@@ -65,7 +64,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.util.Arrays
-import java.util.Observer
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
@@ -249,7 +247,6 @@ class App : Application() {
         PreferenceManager.getDefaultSharedPreferences(this)
     }
 
-    private val networkForbidden = SimpleObservable()
     private var webViewFound: Boolean? = null
     private var mBoundService: Messenger? = null
     private var mServiceBound = false
@@ -461,18 +458,6 @@ class App : Application() {
                 mServiceBound = true
             }
         }
-    }
-
-    fun subscribeForbidden(observer: Observer?) {
-        networkForbidden.addObserver(observer)
-    }
-
-    fun unSubscribeForbidden(observer: Observer?) {
-        networkForbidden.deleteObserver(observer)
-    }
-
-    fun notifyForbidden(isForbidden: Boolean) {
-        networkForbidden.notifyObservers(isForbidden)
     }
 
     fun dpToPx(dp: Int, context: Context): Int {

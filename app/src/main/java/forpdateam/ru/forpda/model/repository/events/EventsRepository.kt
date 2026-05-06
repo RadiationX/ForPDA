@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.model.repository.events
 
 import android.util.Log
 import androidx.collection.ArraySet
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.client.WebSocketController
 import forpdateam.ru.forpda.entity.app.TabNotification
 import forpdateam.ru.forpda.entity.remote.events.NotificationEvent
@@ -63,25 +62,18 @@ class EventsRepository(
     private val controllerListener: WebSocketController.Listener =
         object : WebSocketController.Listener() {
             override fun onConnected() {
-                Log.d(
-                    LOG_TAG,
-                    "WSContr onConnected ${webSocketController.getCurrentId()},  ${webSocketController.isConnected()}"
-                )
+                Log.d(LOG_TAG, "WSContr onConnected")
                 webSocketController.send("""[${webSocketController.getCurrentId()}, "sv"]""")
                 webSocketController.send("""[0, "ea", "u${authHolder.get().userId}"]""")
             }
 
             override fun onMessage(text: String) {
-                Log.d(
-                    LOG_TAG,
-                    "WSContr onMessage ${webSocketController.getCurrentId()}, ${webSocketController.isConnected()}, $text"
-                )
+                Log.d(LOG_TAG, "WSContr onMessage $text")
                 try {
                     eventsApi.parseWebSocketEvent(text)?.also {
                         if (it.type != NotificationEvent.Type.HAT_EDITED) {
                             GlobalScope.launch {
                                 handleWebSocketEvent(it)
-
                             }
                         }
                     }
@@ -91,23 +83,11 @@ class EventsRepository(
             }
 
             override fun onDisconnected(throwable: Throwable, response: Response?) {
-                Log.d(
-                    LOG_TAG,
-                    "WSContr onDisconnected ${webSocketController.getCurrentId()}, ${webSocketController.isConnected()}, ${throwable.message}, $response"
-                )
-                if (response != null) {
-                    Log.d(LOG_TAG, "WSContr onDisconnected: code=${response.code}")
-                    if (response.code == 403) {
-                        App.get().notifyForbidden(true)
-                    }
-                }
-
-                throwable.printStackTrace()
+                Log.d(LOG_TAG, "WSContr onDisconnected $response", throwable)
                 if (throwable is SocketTimeoutException || throwable is TimeoutException) {
                     Log.d(LOG_TAG, "start onFailure")
                     GlobalScope.launch {
                         start(true)
-
                     }
                 }
             }
@@ -202,7 +182,7 @@ class EventsRepository(
     private fun stop() {
         Log.d(LOG_TAG, "stop")
         cancelTimer()
-        webSocketController.disconnectAll()
+        webSocketController.disconnect()
     }
 
     private fun resetTimer() {
@@ -220,9 +200,7 @@ class EventsRepository(
     }
 
     private fun cancelTimer() {
-        checkTimerJob?.apply {
-            cancel()
-        }
+        checkTimerJob?.cancel()
         checkTimerJob = null
     }
 

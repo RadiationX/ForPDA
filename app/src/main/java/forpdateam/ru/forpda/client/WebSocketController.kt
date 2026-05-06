@@ -2,106 +2,79 @@ package forpdateam.ru.forpda.client
 
 import android.util.Log
 import forpdateam.ru.forpda.model.data.remote.IWebClient
+import kotlinx.coroutines.flow.MutableStateFlow
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
-import java.util.Random
 
 class WebSocketController(
     private val webClient: IWebClient,
     private val listener: Listener
 ) {
 
-    private val webSockets = mutableListOf<WebSocketState>()
-    private var currentId = NO_ID
+    companion object {
+        private const val LOG_TAG = "WebSocketController"
+    }
 
-    private val webSocketListener = object : WebSocketListener() {
+    private var currentWebSocket: WebSocket? = null
+    private var currentId: Int = 0
+    private val connectionState = MutableStateFlow<ConnectionState>(ConnectionState.Disconnected)
+
+    private fun createWebSocketListener(): WebSocketListener = object : WebSocketListener() {
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
-            val eventWebSocket = getByWebSocket(webSocket)
-            val currentWebSocket = getById(currentId)
-            Log.d(LOG_TAG, "WSListener onOpen; ${eventWebSocket?.id}, ${currentWebSocket?.id}")
-            eventWebSocket?.connected = true
-            if (currentWebSocket == eventWebSocket) {
-                listener.onConnected()
-            }
+            Log.d(LOG_TAG, "WSListener onOpen")
+            connectionState.value = ConnectionState.Connected
+            listener.onConnected()
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
-            val eventWebSocket = getByWebSocket(webSocket)
-            val currentWebSocket = getById(currentId)
-            Log.d(
-                LOG_TAG,
-                "WSListener onMessage: $text; ${eventWebSocket?.id}, ${currentWebSocket?.id}"
-            )
-            eventWebSocket?.connected = true
-            if (currentWebSocket == eventWebSocket) {
-                listener.onMessage(text)
-            }
+            Log.d(LOG_TAG, "WSListener onMessage: $text")
+            connectionState.value = ConnectionState.Connected
+            listener.onMessage(text)
         }
 
-        override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {}
+        override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+            Log.d(LOG_TAG, "WSListener onClosing: $code, $reason")
+            connectionState.value = ConnectionState.Disconnected
+        }
 
-        override fun onFailure(webSocket: WebSocket, throwable: Throwable, response: Response?) {
-            val eventWebSocket = getByWebSocket(webSocket)
-            val currentWebSocket = getById(currentId)
-            Log.d(
-                LOG_TAG,
-                "WSListener onFailure: ${throwable.message} $response; ${eventWebSocket?.id}, ${currentWebSocket?.id}"
-            )
-            eventWebSocket?.connected = false
-            eventWebSocket?.also {
-                try {
-                    webSockets.remove(eventWebSocket)
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-            }
-            if (currentWebSocket == eventWebSocket) {
-                listener.onDisconnected(throwable, response)
-            }
+        override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+            Log.d(LOG_TAG, "WSListener onClosing: $code, $reason")
+            connectionState.value = ConnectionState.Disconnected
+        }
+
+        override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+            Log.d(LOG_TAG, "WSListener onFailure: $response;", t)
+            connectionState.value = ConnectionState.Disconnected
+            listener.onDisconnected(t, response)
         }
     }
 
     fun connect() {
+        disconnect()
         val newId = (1000..16384).random()
-        val newWebSocket = webClient.createWebSocketConnection(webSocketListener)
-        val newWebSocketState = WebSocketState(newId, newWebSocket, true)
+        val newWebSocket = webClient.createWebSocketConnection(createWebSocketListener())
+        currentWebSocket = newWebSocket
         currentId = newId
-        webSockets.add(newWebSocketState)
+        connectionState.value = ConnectionState.Connecting
     }
 
     fun send(message: String) {
-        getById(currentId)?.webSocket?.send(message)
+        currentWebSocket?.send(message)
     }
 
-    fun disconnectAll() {
-        webSockets.forEach {
-            it.webSocket.cancel()
-            it.connected = false
-        }
+    fun disconnect() {
+        currentWebSocket?.cancel()
+        currentWebSocket = null
+        connectionState.value = ConnectionState.Disconnected
     }
 
     fun isConnected(): Boolean {
-        return (currentId != NO_ID && getById(currentId)?.connected ?: false).also {
-
-            Log.d(LOG_TAG, "isConnected $currentId, ${getById(currentId)} ... $it")
-        }
+        return connectionState.value == ConnectionState.Connected
     }
 
     fun getCurrentId() = currentId
-
-    private fun getById(id: Int): WebSocketState? = webSockets.firstOrNull { it.id == id }
-
-    private fun getByWebSocket(webSocket: WebSocket): WebSocketState? =
-        webSockets.firstOrNull { it.webSocket == webSocket }
-
-    private fun IntRange.random() = Random().nextInt((endInclusive + 1) - start) + start
-
-    companion object {
-        const val NO_ID = -1
-        private const val LOG_TAG = "WebSocketController"
-    }
 
     open class Listener {
         open fun onConnected() {}
@@ -109,13 +82,9 @@ class WebSocketController(
         open fun onMessage(text: String) {}
     }
 
-    private class WebSocketState(
-        var id: Int,
-        var webSocket: WebSocket,
-        var connected: Boolean = false
-    ) {
-        override fun toString(): String {
-            return "WebSocketState[$id, $connected]"
-        }
+    enum class ConnectionState {
+        Disconnected,
+        Connecting,
+        Connected
     }
 }
